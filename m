@@ -2,182 +2,193 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3644DC43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 15:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C79CC433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 15:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D564521D7F
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 15:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D54E722210
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 15:59:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BFLuqVFA"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Hytq5zNc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbgIQPv3 (ORCPT
+        id S1728091AbgIQP7L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 11:51:29 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:55182 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbgIQPvA (ORCPT
+        Thu, 17 Sep 2020 11:59:11 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44092 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728216AbgIQP66 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 11:51:00 -0400
-Received: from [192.168.254.38] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B4CB020B7178;
-        Thu, 17 Sep 2020 08:36:03 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B4CB020B7178
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600356964;
-        bh=QO+LfG0Faopxheg2cutvYRBT+pPhms6wveYLa1LgL+U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BFLuqVFA/BDQQm7DZtjpCvIA39dAw9ux6L9xLBXRs6zIIXnRN+iAbXLuSLqhrzA+k
-         BG7bFfSeOzurlviYcp2xoC7KmQR6uPkch48sGL+8ZSgMbTtNqSk+vcT3F4zKwn48wg
-         Rw5oLxGtZN7S6/Kam+IanR5OdBOQIIId/5GCFEoU=
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Florian Weimer <fw@deneb.enyo.de>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
-Date:   Thu, 17 Sep 2020 10:36:02 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <87v9gdz01h.fsf@mid.deneb.enyo.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 17 Sep 2020 11:58:58 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08HFWOrI195002;
+        Thu, 17 Sep 2020 11:55:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=RlLu7fEzQhErA1mRCwGKGmNdVADPy1rMotSoaBtBdIg=;
+ b=Hytq5zNcwaqjrHNcFhh5Td0LiQaEVe7PVTvvMRcIygGNT1Qa/FmtoVPCKjc7koH81vV6
+ ytzPPiGGqV45LHDn9D+GLHx3xvck0F59cQbUhIvxCVegRAOtvUNACmDZaVQc2+tP2pd+
+ UHw18R+TWFLbgu++PLcHg94AGlmG7MEyjPislsHNdVsmZnVu1ErKID7kH3MDdvfRs188
+ T7EchYazjccmpo9nAAP/U3VBAWPhL/JTTZE/Vb9d8ZsqR0/K3ZOLVYyfpAeRM486wMIo
+ np3liptkYverIlV0zmXW1gYqmHuw87wt9mNb1Zj0zBZ55REfDkmJc9m+AYVnk7UVdtGJ ZA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33m9wuj2b3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 11:55:38 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08HFYIN8005616;
+        Thu, 17 Sep 2020 11:55:37 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33m9wuj29w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 11:55:37 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08HFrnvO005229;
+        Thu, 17 Sep 2020 15:55:35 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma03fra.de.ibm.com with ESMTP id 33k65v15px-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 15:55:35 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08HFrw7933423620
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Sep 2020 15:53:58 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3B70A4054;
+        Thu, 17 Sep 2020 15:55:32 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE937A4067;
+        Thu, 17 Sep 2020 15:55:31 +0000 (GMT)
+Received: from sig-9-65-208-105.ibm.com (unknown [9.65.208.105])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Sep 2020 15:55:31 +0000 (GMT)
+Message-ID: <c2aca1d65e8febdd83237d0babd840bb2b6c282d.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 11/12] ima: Introduce template field evmsig and write
+ to field sig as fallback
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "mjg59@google.com" <mjg59@google.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Date:   Thu, 17 Sep 2020 11:55:30 -0400
+In-Reply-To: <860d8441788b4ff799db738e535e2d7e@huawei.com>
+References: <20200904092339.19598-1-roberto.sassu@huawei.com>
+         <20200904092643.20013-7-roberto.sassu@huawei.com>
+         <c8d3c70e74e607a4b73239bef1e9db0d304200fc.camel@linux.ibm.com>
+         <860d8441788b4ff799db738e535e2d7e@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-17_10:2020-09-16,2020-09-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 clxscore=1015 adultscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=3 bulkscore=0 priorityscore=1501 spamscore=0 mlxlogscore=999
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009170117
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 9/16/20 8:04 PM, Florian Weimer wrote:
-> * madvenka:
+On Thu, 2020-09-17 at 15:05 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Thursday, September 17, 2020 4:25 PM
+> > Hi Roberto,
+> > 
+> > On Fri, 2020-09-04 at 11:26 +0200, Roberto Sassu wrote:
+> > > With the patch to accept EVM portable signatures when the
+> > > appraise_type=imasig requirement is specified in the policy, appraisal can
+> > > be successfully done even if the file does not have an IMA signature.
+> > >
+> > > However, remote attestation would not see that a different signature
+> > type
+> > > was used, as only IMA signatures can be included in the measurement list.
+> > > This patch solves the issue by introducing the new template field 'evmsig'
+> > > to show EVM portable signatures and by including its value in the existing
+> > > field 'sig' if the IMA signature is not found.
+> > >
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > 
+> > Thank you!   Just a minor comment below.
+> > 
+> > <snip>
+> > 
+> > > diff --git a/security/integrity/ima/ima_template_lib.c
+> > b/security/integrity/ima/ima_template_lib.c
+> > > index c022ee9e2a4e..2c596c2a89cc 100644
+> > > --- a/security/integrity/ima/ima_template_lib.c
+> > > +++ b/security/integrity/ima/ima_template_lib.c
+> > >
+> > > @@ -438,7 +439,7 @@ int ima_eventsig_init(struct ima_event_data
+> > *event_data,
+> > >  	struct evm_ima_xattr_data *xattr_value = event_data->xattr_value;
+> > >
+> > >  	if ((!xattr_value) || (xattr_value->type !=
+> > EVM_IMA_XATTR_DIGSIG))
+> > > -		return 0;
+> > > +		return ima_eventevmsig_init(event_data, field_data);
+> > >
+> > >  	return ima_write_template_field_data(xattr_value, event_data-
+> > >xattr_len,
+> > >  					     DATA_FMT_HEX, field_data);
+> > > @@ -484,3 +485,39 @@ int ima_eventmodsig_init(struct ima_event_data
+> > *event_data,
+> > >  	return ima_write_template_field_data(data, data_len,
+> > DATA_FMT_HEX,
+> > >  					     field_data);
+> > >  }
+> > > +
+> > > +/*
+> > > + *  ima_eventevmsig_init - include the EVM portable signature as part of
+> > the
+> > > + *  template data
+> > > + */
+> > > +int ima_eventevmsig_init(struct ima_event_data *event_data,
+> > > +			 struct ima_field_data *field_data)
+> > > +{
+> > > +	struct evm_ima_xattr_data *xattr_data = NULL;
+> > > +	int rc = 0;
+> > > +
+> > > +	if (!event_data->file)
+> > > +		return 0;
+> > > +
+> > > +	if (!(file_inode(event_data->file)->i_opflags & IOP_XATTR))
+> > > +		return 0;
+> > > +
+> > > +	rc = vfs_getxattr_alloc(file_dentry(event_data->file),
+> > XATTR_NAME_EVM,
+> > > +				(char **)&xattr_data, 0, GFP_NOFS);
+> > > +	if (rc <= 0) {
+> > > +		if (!rc || rc == -ENODATA)
+> > > +			return 0;
+> > > +
+> > > +		return rc;
+> > 
+> > We're including the EVM signature on a best effort basis to help with
+> > attestation.  Do we really care why it failed?   Are we going to act on
+> > it?
 > 
->> Examples of trampolines
->> =======================
->>
->> libffi (A Portable Foreign Function Interface Library):
->>
->> libffi allows a user to define functions with an arbitrary list of
->> arguments and return value through a feature called "Closures".
->> Closures use trampolines to jump to ABI handlers that handle calling
->> conventions and call a target function. libffi is used by a lot
->> of different applications. To name a few:
->>
->> 	- Python
->> 	- Java
->> 	- Javascript
->> 	- Ruby FFI
->> 	- Lisp
->> 	- Objective C
+> Hi Mimi
 > 
-> libffi does not actually need this.  It currently collocates
-> trampolines and the data they need on the same page, but that's
-> actually unecessary.  It's possible to avoid doing this just by
-> changing libffi, without any kernel changes.
-> 
-> I think this has already been done for the iOS port.
-> 
+> other template field functions have a similar behavior. They return
+> an error if an operation necessary to retrieve the data cannot be
+> performed. Should I always return 0?
 
-The trampoline table that has been implemented for the iOS port (MACH)
-is based on PC-relative data referencing. That is, the code and data
-are placed in adjacent pages so that the code can access the data using
-an address relative to the current PC.
+The EVM signature case is more similar to the IMA signature case, than
+to other fields.  In the signature cases, if the signature exists, it
+is included.   My suggestion is based on the difference in how the
+vfs_getxattr_alloc() results are handled.
 
-This is an ISA feature that is not supported on all architectures.
+thanks,
 
-Now, if it is a performance feature, we can include some architectures
-and exclude others. But this is a security feature. IMO, we cannot
-exclude any architecture even if it is a legacy one as long as Linux
-is running on the architecture. So, we need a solution that does
-not assume any specific ISA feature.
+Mimi
 
->> The code for trampoline X in the trampoline table is:
->>
->> 	load	&code_table[X], code_reg
->> 	load	(code_reg), code_reg
->> 	load	&data_table[X], data_reg
->> 	load	(data_reg), data_reg
->> 	jump	code_reg
->>
->> The addresses &code_table[X] and &data_table[X] are baked into the
->> trampoline code. So, PC-relative data references are not needed. The user
->> can modify code_table[X] and data_table[X] dynamically.
-> 
-> You can put this code into the libffi shared object and map it from
-> there, just like the rest of the libffi code.  To get more
-> trampolines, you can map the page containing the trampolines multiple
-> times, each instance preceded by a separate data page with the control
-> information.
-> 
-
-If you put the code in the libffi shared object, how do you pass data to
-the code at runtime? If the code we are talking about is a function, then
-there is an ABI defined way to pass data to the function. But if the
-code we are talking about is some arbitrary code such as a trampoline,
-there is no ABI defined way to pass data to it except in a couple of
-platforms such as HP PA-RISC that have support for function descriptors
-in the ABI itself.
-
-As mentioned before, if the ISA supports PC-relative data references
-(e.g., X86 64-bit platforms support RIP-relative data references)
-then we can pass data to that code by placing the code and data in
-adjacent pages. So, you can implement the trampoline table for X64.
-i386 does not support it.
-
-
-> I think the previous patch submission has also resulted in several
-> comments along those lines, so I'm not sure why you are reposting
-> this.
-
-IIRC, I have answered all of those comments by mentioning the point
-that we need to support all architectures without requiring special
-ISA features. Taking the kernel's help in this is one solution.
-
-
-> 
->> libffi
->> ======
->>
->> I have implemented my solution for libffi and provided the changes for
->> X86 and ARM, 32-bit and 64-bit. Here is the reference patch:
->>
->> http://linux.microsoft.com/~madvenka/libffi/libffi.v2.txt
-> 
-> The URL does not appear to work, I get a 403 error.
-
-I apologize for that. That site is supposed to be accessible publicly.
-I will contact the administrator and get this resolved.
-
-Sorry for the annoyance.
-
-> 
->> If the trampfd patchset gets accepted, I will send the libffi changes
->> to the maintainers for a review. BTW, I have also successfully executed
->> the libffi self tests.
-> 
-> I have not seen your libffi changes, but I expect that the complexity
-> is about the same as a userspace-only solution.
-> 
-> 
-
-I agree. The complexity is about the same. But the support is for all
-architectures. Once the common code is in place, the changes for each
-architecture are trivial.
-
-Madhavan
-
-> Cc:ing libffi upstream for awareness.  The start of the thread is
-> here:
-> 
-> <https://lore.kernel.org/linux-api/20200916150826.5990-1-madvenka@linux.microsoft.com/>
-> 
