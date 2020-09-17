@@ -2,103 +2,187 @@ Return-Path: <SRS0=t07G=C2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F3EC433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 12:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7130DC2BBD1
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 13:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53C062087D
-	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 12:40:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34EC921734
+	for <linux-security-module@archiver.kernel.org>; Thu, 17 Sep 2020 13:08:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PjBj6GFW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbgIQMkX (ORCPT
+        id S1726959AbgIQNIj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 08:40:23 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56492 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727033AbgIQMkL (ORCPT
+        Thu, 17 Sep 2020 09:08:39 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21152 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727052AbgIQNIi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 08:40:11 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 54A5E59A57131FDCA942;
-        Thu, 17 Sep 2020 20:22:26 +0800 (CST)
-Received: from huawei.com (10.175.104.82) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Thu, 17 Sep 2020
- 20:22:25 +0800
-From:   Huang Guobin <huangguobin4@huawei.com>
-To:     <john.johansen@canonical.com>, <jmorris@namei.org>,
-        <serge@hallyn.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] apparmor: Fix several kernel-doc warnings
-Date:   Thu, 17 Sep 2020 08:32:50 -0400
-Message-ID: <20200917123250.206639-1-huangguobin4@huawei.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.82]
-X-CFilter-Loop: Reflected
+        Thu, 17 Sep 2020 09:08:38 -0400
+X-Greylist: delayed 3999 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Sep 2020 09:08:38 EDT
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 08HBWANL175921;
+        Thu, 17 Sep 2020 08:01:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=xkhbtwxwiJ5oxSi+vXXQzqn/Hqfn4aHBAZBrlhH489g=;
+ b=PjBj6GFWY99P8ZypO2Ap/cLOL89ZQ022gEBKoOipoNdy3/YMewYWK4ByuGnPwOrNOnEc
+ 8+Qc+xrayhaZseX/MicDnULjzVp5MAXByxEL/1IQc37zURf8EDj8fVXcPG+rny23q0US
+ 2ns9Va9OWqVe9Z3mFTW2s2BxBudFQsueY0nUIaDijYx5B/tdwIejmmu8te4C1OUQ1ZzL
+ O1nJe5b52pJM84JggIWCUNWg2idpCG7Pm/5BOuyvMUtREpp1mfWc2KCds6uOocVsVG46
+ 4MUhZnAhsHUYGsMhQicLFEN2/+1IKTg3KzWDMDlE9OUq4QdfeGVA1vEn6/bgSYGQx4D3 bg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33m6ufh4wd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 08:01:22 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 08HBWJqM177301;
+        Thu, 17 Sep 2020 08:01:21 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 33m6ufh4t5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 08:01:21 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 08HBxA2H006051;
+        Thu, 17 Sep 2020 12:01:18 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03fra.de.ibm.com with ESMTP id 33k65v128x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Sep 2020 12:01:18 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 08HC1FI729098486
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Sep 2020 12:01:15 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E4D2011C05E;
+        Thu, 17 Sep 2020 12:01:15 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3160611C06F;
+        Thu, 17 Sep 2020 12:01:14 +0000 (GMT)
+Received: from sig-9-65-208-105.ibm.com (unknown [9.65.208.105])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 17 Sep 2020 12:01:14 +0000 (GMT)
+Message-ID: <5bbf2169cfa38bb7a3d696e582c1de954a82d5c6.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 07/12] evm: Introduce EVM_RESET_STATUS atomic flag
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com,
+        John Johansen <john.johansen@canonical.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org
+Date:   Thu, 17 Sep 2020 08:01:13 -0400
+In-Reply-To: <20200904092643.20013-3-roberto.sassu@huawei.com>
+References: <20200904092339.19598-1-roberto.sassu@huawei.com>
+         <20200904092643.20013-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-09-17_08:2020-09-16,2020-09-17 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1015
+ mlxlogscore=999 bulkscore=0 spamscore=0 malwarescore=0 impostorscore=0
+ adultscore=0 suspectscore=3 mlxscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2009170085
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fixes the following W=1 kernel build warning(s):
+[Cc'ing John Johansen]
 
-security/apparmor/apparmorfs.c:2127: warning: Excess function parameter 'profile' description in '__next_profile'
-security/apparmor/domain.c:1292: warning: Excess function parameter 'onexec' description in 'aa_change_profile'
-security/apparmor/domain.c:136: warning: Excess function parameter 'start' description in 'label_compound_match'
+Hi Roberto,
 
-Rename profile to p.
-@onexec in 'aa_change_profile' and @start in 'label_compound_match' are not in use, Remove it.
+On Fri, 2020-09-04 at 11:26 +0200, Roberto Sassu wrote:
+> When EVM_ALLOW_METADATA_WRITES is set, EVM allows any operation on
+> metadata. Its main purpose is to allow users to freely set metadata when
+> they are protected by a portable signature, until the HMAC key is loaded.
+> 
+> However, IMA is not notified about metadata changes and, after the first
+> successful appraisal, always allows access to the files without checking
+> metadata again.
+> 
+> This patch introduces the new atomic flag EVM_RESET_STATUS in
+> integrity_iint_cache that is set in the EVM post hooks and cleared in
+> evm_verify_hmac(). IMA checks the new flag in process_measurement() and if
+> it is set, it clears the appraisal flags.
+> 
+> Although the flag could be cleared also by evm_inode_setxattr() and
+> evm_inode_setattr() before IMA sees it, this does not happen if
+> EVM_ALLOW_METADATA_WRITES is set. Since the only remaining caller is
+> evm_verifyxattr(), this ensures that IMA always sees the flag set before it
+> is cleared.
+> 
+> This patch also adds a call to evm_reset_status() in
+> evm_inode_post_setattr() so that EVM won't return the cached status the
+> next time appraisal is performed.
+> 
+> Cc: stable@vger.kernel.org # 4.16.x
+> Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/evm/evm_main.c | 17 +++++++++++++++--
+>  security/integrity/ima/ima_main.c |  8 ++++++--
+>  security/integrity/integrity.h    |  1 +
+>  3 files changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index 4e9f5e8b21d5..05be1ad3e6f3 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -221,8 +221,15 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  		evm_status = (rc == -ENODATA) ?
+>  				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
+>  out:
+> -	if (iint)
+> +	if (iint) {
+> +		/*
+> +		 * EVM_RESET_STATUS can be cleared only by evm_verifyxattr()
+> +		 * when EVM_ALLOW_METADATA_WRITES is set. This guarantees that
+> +		 * IMA sees the EVM_RESET_STATUS flag set before it is cleared.
+> +		 */
+> +		clear_bit(EVM_RESET_STATUS, &iint->atomic_flags);
+>  		iint->evm_status = evm_status;
 
-Signed-off-by: Huang Guobin <huangguobin4@huawei.com>
----
- security/apparmor/apparmorfs.c | 2 +-
- security/apparmor/domain.c     | 4 ----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+True IMA is currently the only caller of evm_verifyxattr() in the
+upstreamed kernel, but it is an exported function, which may be called
+from elsewhere.  The previous version crossed the boundary between EVM
+& IMA with EVM modifying the IMA flag directly.  This version assumes
+that IMA will be the only caller.  Otherwise, I like this version.
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 5fd4a64e431f..f00a372be7b6 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -2116,7 +2116,7 @@ static struct aa_profile *__first_profile(struct aa_ns *root,
- 
- /**
-  * __next_profile - step to the next profile in a profile tree
-- * @profile: current profile in tree (NOT NULL)
-+ * @p: current profile in tree (NOT NULL)
-  *
-  * Perform a depth first traversal on the profile tree in a namespace
-  *
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index f919ebd042fd..12a9d80cd63a 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -178,7 +178,6 @@ static int label_compound_match(struct aa_profile *profile,
-  * @profile: profile to find perms for
-  * @label: label to check access permissions for
-  * @stack: whether this is a stacking request
-- * @start: state to start match in
-  * @subns: whether to do permission checks on components in a subns
-  * @request: permissions to request
-  * @perms: an initialized perms struct to add accumulation to
-@@ -1277,14 +1276,11 @@ static int change_profile_perms_wrapper(const char *op, const char *name,
- /**
-  * aa_change_profile - perform a one-way profile transition
-  * @fqname: name of profile may include namespace (NOT NULL)
-- * @onexec: whether this transition is to take place immediately or at exec
-  * @flags: flags affecting change behavior
-  *
-  * Change to new profile @name.  Unlike with hats, there is no way
-  * to change back.  If @name isn't specified the current profile name is
-  * used.
-- * If @onexec then the transition is delayed until
-- * the next exec.
-  *
-  * Returns %0 on success, error otherwise.
-  */
--- 
-2.25.1
+Mimi
+
+> +	}
+>  	kfree(xattr_data);
+>  	return evm_status;
+>  }
+> @@ -418,8 +425,12 @@ static void evm_reset_status(struct inode *inode)
+>  	struct integrity_iint_cache *iint;
+>  
+>  	iint = integrity_iint_find(inode);
+> -	if (iint)
+> +	if (iint) {
+> +		if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
+> +			set_bit(EVM_RESET_STATUS, &iint->atomic_flags);
+> +
+>  		iint->evm_status = INTEGRITY_UNKNOWN;
+> +	}
+>  }
+>  
+>  /**
+> @@ -513,6 +524,8 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+>  	if (!evm_key_loaded())
+>  		return;
+>  
+> +	evm_reset_status(dentry->d_inode);
+> +
+>  	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+>  		evm_update_evmxattr(dentry, NULL, NULL, 0);
+>  }
 
