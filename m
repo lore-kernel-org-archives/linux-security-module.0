@@ -5,41 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC048C43464
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 02:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BACC43465
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 02:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B24A623600
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 02:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11BD32075B
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 02:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600395448;
-	bh=VdfvPI2L/8LAtm8y6SS7utxBrVk3AbiPhArVErrYgOA=;
+	s=default; t=1600397263;
+	bh=i1ZgjExRvDCjhGcCJkiP8I89j+dferq7go6VHY189IY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VuFqng8npJk0ylIgTAnXT0G4/Y1Z5BklcVlREeZqH9RXLIYQm5N2E/DiTjgMZoYI1
-	 cywDRvwBb82ls3NfcfF4oCJuyrxjh2YqmP48tbLYu9gJKhJ0gwNDlu/0Qr/Cojupdt
-	 f5HW6LpRYL5x6iiErrRFUNrGrZiI5xTmbB1aECpg=
+	b=pdIhuKR8pQ4pFmdBCffmHryAcpLB5XlFgxY9Xknl0ED7hUDmgmK6sn/kJbyeyQ5jq
+	 FDKy5k9kLI/REQuwowuL+gd2HFUL7ylIXZyCOwLHlTfr8vSJDyP8P4/fzDWnLKE9+b
+	 4rJKZKxnhPo+8+L50axlKkicP2rXH/UZz/Stkow4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbgIRCR2 (ORCPT
+        id S1726326AbgIRCri (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 22:17:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47708 "EHLO mail.kernel.org"
+        Thu, 17 Sep 2020 22:47:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729177AbgIRCRP (ORCPT
+        id S1727445AbgIRCJc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:17:15 -0400
+        Thu, 17 Sep 2020 22:09:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24EFD238A0;
-        Fri, 18 Sep 2020 02:17:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 212DE2311A;
+        Fri, 18 Sep 2020 02:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600395435;
-        bh=VdfvPI2L/8LAtm8y6SS7utxBrVk3AbiPhArVErrYgOA=;
+        s=default; t=1600394972;
+        bh=i1ZgjExRvDCjhGcCJkiP8I89j+dferq7go6VHY189IY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OWrVXKEDTm+O4FpGXpolkXrKaNdDXrhrlrMHa0mJ9KbzACSd1s8UCEQFibcbakhVT
-         mrvpNP2d8L67AUOrhY7hEj27s9qwIHnJyWqdb2+t3u49iByYG0x1vMNjfDiEMwnkgK
-         CkhwgPwWT7HB6Gs77Nm7O/xPcRWEUEe0LwhEziTI=
+        b=vRHGAjNQM4Kq7SX/wXL4F2iYhwgLtYI2H7lbSmbRlGeN38EkZ8F/7NG91pr3AMbav
+         Q0Iu9ihUviY7ZAQSbEeUS4xF/BcsWFUjvNVEHZ2KZOxr7ozXiyj0jx5iKFy0ZbaXEb
+         IAIPkCtPgczdSxxSNmGVZoBdmXLJhz+FMbLXlKus=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Vasily Averin <vvs@virtuozzo.com>,
@@ -47,12 +47,12 @@ Cc:     Vasily Averin <vvs@virtuozzo.com>,
         Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>, selinux@tycho.nsa.gov,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 25/64] selinux: sel_avc_get_stat_idx should increase position index
-Date:   Thu, 17 Sep 2020 22:16:04 -0400
-Message-Id: <20200918021643.2067895-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 073/206] selinux: sel_avc_get_stat_idx should increase position index
+Date:   Thu, 17 Sep 2020 22:05:49 -0400
+Message-Id: <20200918020802.2065198-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918021643.2067895-1-sashal@kernel.org>
-References: <20200918021643.2067895-1-sashal@kernel.org>
+In-Reply-To: <20200918020802.2065198-1-sashal@kernel.org>
+References: <20200918020802.2065198-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -105,10 +105,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index c02da25d7b631..7778e28cce9d7 100644
+index f3a5a138a096d..60b3f16bb5c7b 100644
 --- a/security/selinux/selinuxfs.c
 +++ b/security/selinux/selinuxfs.c
-@@ -1370,6 +1370,7 @@ static struct avc_cache_stats *sel_avc_get_stat_idx(loff_t *idx)
+@@ -1509,6 +1509,7 @@ static struct avc_cache_stats *sel_avc_get_stat_idx(loff_t *idx)
  		*idx = cpu + 1;
  		return &per_cpu(avc_cache_stats, cpu);
  	}
