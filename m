@@ -2,54 +2,54 @@ Return-Path: <SRS0=iYml=C3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-21.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C03C43464
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 03:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ED5C43464
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 03:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2F2206DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 03:08:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D527A208C3
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 03:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600398482;
-	bh=f0+XAjM5+5/LhxBHnBVlXukbbef4qgWjJksQ0qln4Fs=;
+	s=default; t=1600398950;
+	bh=WXxXPySre0YM/NS4OlELtHdlnYCawUYpcYb+CjbhLTY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XhmtwcNjl0PUJ7gEliD4dIQv+rOwvLJXcNoFUbHD0qY3gx3OWXoc8dkJuZyoMXrh3
-	 4q14emc/CTJGs5v1plpyqtZk36o2U5BZ+cmKvOvalvybx+oJWPm4GYiB/2Ojvshw5k
-	 R/XQk8S7qOUoPAQmJRtBCgRE6QZYooDJrtJR6ses=
+	b=tpP8KoVa6HoweZTtxfSl+slYcmi5qmwntIptDVGJuVIxFrCl7314vzRgi1deBLxAn
+	 /4vqnKYHDMGezE8KRzshKFSdqksrhaTkFwsKI/Tn52hSNX/h/R5vSjRjdo8WpzBIBt
+	 71S2NnT0swW+6x5QQKmBLMG6uwsMwO/hiHMRnFmM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbgIRDHs (ORCPT
+        id S1726247AbgIRCBS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 23:07:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50184 "EHLO mail.kernel.org"
+        Thu, 17 Sep 2020 22:01:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbgIRCDk (ORCPT
+        id S1726221AbgIRCBS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:03:40 -0400
+        Thu, 17 Sep 2020 22:01:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B10E208DB;
-        Fri, 18 Sep 2020 02:03:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D014A208E4;
+        Fri, 18 Sep 2020 02:01:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600394619;
-        bh=f0+XAjM5+5/LhxBHnBVlXukbbef4qgWjJksQ0qln4Fs=;
+        s=default; t=1600394477;
+        bh=WXxXPySre0YM/NS4OlELtHdlnYCawUYpcYb+CjbhLTY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VzHLpXd+dfRZHx5lf666/Lw78cB9+6MmPOdAlxUdcKedp+UdErp5/VXocHj6lwA4b
-         YFSniNRCYLtEbQuQbRZGoCZ017OmOURhlfwtprpCP2syBzmJ63OgRf9KugewFZvUdM
-         zOkjbiELWmuOKJihHU9xiDIVuKJMe1VJ4l4lhdfc=
+        b=tEttgHxoPUXXUWIpumRTvAKHW5GFsImXG0+M7sWiri1iv8DhWPjo7lzhPK25wCNok
+         4yb7CeqZ/rJCPG8y5VcgryecUbNQTZ4VjkNf7FqqwmvQK9JI6HtKB50OunjLdEMxlD
+         y+uBKX5GOyHFTntNUqFN1njTT3p5cgeOR3fXGqyQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Averin <vvs@virtuozzo.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
+Cc:     Jonathan Lebon <jlebon@redhat.com>,
+        Victor Kamensky <kamensky@cisco.com>,
         Paul Moore <paul@paul-moore.com>,
         Sasha Levin <sashal@kernel.org>, selinux@tycho.nsa.gov,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 121/330] selinux: sel_avc_get_stat_idx should increase position index
-Date:   Thu, 17 Sep 2020 21:57:41 -0400
-Message-Id: <20200918020110.2063155-121-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 005/330] selinux: allow labeling before policy is loaded
+Date:   Thu, 17 Sep 2020 21:55:45 -0400
+Message-Id: <20200918020110.2063155-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
 References: <20200918020110.2063155-1-sashal@kernel.org>
@@ -60,62 +60,84 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Jonathan Lebon <jlebon@redhat.com>
 
-[ Upstream commit 8d269a8e2a8f0bca89022f4ec98de460acb90365 ]
+[ Upstream commit 3e3e24b42043eceb97ed834102c2d094dfd7aaa6 ]
 
-If seq_file .next function does not change position index,
-read after some lseek can generate unexpected output.
+Currently, the SELinux LSM prevents one from setting the
+`security.selinux` xattr on an inode without a policy first being
+loaded. However, this restriction is problematic: it makes it impossible
+to have newly created files with the correct label before actually
+loading the policy.
 
-$ dd if=/sys/fs/selinux/avc/cache_stats # usual output
-lookups hits misses allocations reclaims frees
-817223 810034 7189 7189 6992 7037
-1934894 1926896 7998 7998 7632 7683
-1322812 1317176 5636 5636 5456 5507
-1560571 1551548 9023 9023 9056 9115
-0+1 records in
-0+1 records out
-189 bytes copied, 5,1564e-05 s, 3,7 MB/s
+This is relevant in distributions like Fedora, where the policy is
+loaded by systemd shortly after pivoting out of the initrd. In such
+instances, all files created prior to pivoting will be unlabeled. One
+then has to relabel them after pivoting, an operation which inherently
+races with other processes trying to access those same files.
 
-$# read after lseek to midle of last line
-$ dd if=/sys/fs/selinux/avc/cache_stats bs=180 skip=1
-dd: /sys/fs/selinux/avc/cache_stats: cannot skip to specified offset
-056 9115   <<<< end of last line
-1560571 1551548 9023 9023 9056 9115  <<< whole last line once again
-0+1 records in
-0+1 records out
-45 bytes copied, 8,7221e-05 s, 516 kB/s
+Going further, there are use cases for creating the entire root
+filesystem on first boot from the initrd (e.g. Container Linux supports
+this today[1], and we'd like to support it in Fedora CoreOS as well[2]).
+One can imagine doing this in two ways: at the block device level (e.g.
+laying down a disk image), or at the filesystem level. In the former,
+labeling can simply be part of the image. But even in the latter
+scenario, one still really wants to be able to set the right labels when
+populating the new filesystem.
 
-$# read after lseek beyond  end of of file
-$ dd if=/sys/fs/selinux/avc/cache_stats bs=1000 skip=1
-dd: /sys/fs/selinux/avc/cache_stats: cannot skip to specified offset
-1560571 1551548 9023 9023 9056 9115  <<<< generates whole last line
-0+1 records in
-0+1 records out
-36 bytes copied, 9,0934e-05 s, 396 kB/s
+This patch enables this by changing behaviour in the following two ways:
+1. allow `setxattr` if we're not initialized
+2. don't try to set the in-core inode SID if we're not initialized;
+   instead leave it as `LABEL_INVALID` so that revalidation may be
+   attempted at a later time
 
-https://bugzilla.kernel.org/show_bug.cgi?id=206283
+Note the first hunk of this patch is mostly the same as a previously
+discussed one[3], though it was part of a larger series which wasn't
+accepted.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+[1] https://coreos.com/os/docs/latest/root-filesystem-placement.html
+[2] https://github.com/coreos/fedora-coreos-tracker/issues/94
+[3] https://www.spinics.net/lists/linux-initramfs/msg04593.html
+
+Co-developed-by: Victor Kamensky <kamensky@cisco.com>
+Signed-off-by: Victor Kamensky <kamensky@cisco.com>
+Signed-off-by: Jonathan Lebon <jlebon@redhat.com>
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/selinuxfs.c | 1 +
- 1 file changed, 1 insertion(+)
+ security/selinux/hooks.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index e6c7643c3fc08..e9eaff90cbccd 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -1508,6 +1508,7 @@ static struct avc_cache_stats *sel_avc_get_stat_idx(loff_t *idx)
- 		*idx = cpu + 1;
- 		return &per_cpu(avc_cache_stats, cpu);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 552e73d90fd25..212f48025db81 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3156,6 +3156,9 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
+ 		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
  	}
-+	(*idx)++;
- 	return NULL;
- }
  
++	if (!selinux_state.initialized)
++		return (inode_owner_or_capable(inode) ? 0 : -EPERM);
++
+ 	sbsec = inode->i_sb->s_security;
+ 	if (!(sbsec->flags & SBLABEL_MNT))
+ 		return -EOPNOTSUPP;
+@@ -3239,6 +3242,15 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 		return;
+ 	}
+ 
++	if (!selinux_state.initialized) {
++		/* If we haven't even been initialized, then we can't validate
++		 * against a policy, so leave the label as invalid. It may
++		 * resolve to a valid label on the next revalidation try if
++		 * we've since initialized.
++		 */
++		return;
++	}
++
+ 	rc = security_context_to_sid_force(&selinux_state, value, size,
+ 					   &newsid);
+ 	if (rc) {
 -- 
 2.25.1
 
