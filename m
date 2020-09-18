@@ -2,142 +2,209 @@ Return-Path: <SRS0=iYml=C3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ED5C43464
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 03:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6ACC43463
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 07:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D527A208C3
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 03:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600398950;
-	bh=WXxXPySre0YM/NS4OlELtHdlnYCawUYpcYb+CjbhLTY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tpP8KoVa6HoweZTtxfSl+slYcmi5qmwntIptDVGJuVIxFrCl7314vzRgi1deBLxAn
-	 /4vqnKYHDMGezE8KRzshKFSdqksrhaTkFwsKI/Tn52hSNX/h/R5vSjRjdo8WpzBIBt
-	 71S2NnT0swW+6x5QQKmBLMG6uwsMwO/hiHMRnFmM=
+	by mail.kernel.org (Postfix) with ESMTP id B673B21534
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 07:03:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aYMkTBVE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbgIRCBS (ORCPT
+        id S1726564AbgIRHDb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Sep 2020 22:01:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbgIRCBS (ORCPT
+        Fri, 18 Sep 2020 03:03:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbgIRHDa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Sep 2020 22:01:18 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D014A208E4;
-        Fri, 18 Sep 2020 02:01:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600394477;
-        bh=WXxXPySre0YM/NS4OlELtHdlnYCawUYpcYb+CjbhLTY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEttgHxoPUXXUWIpumRTvAKHW5GFsImXG0+M7sWiri1iv8DhWPjo7lzhPK25wCNok
-         4yb7CeqZ/rJCPG8y5VcgryecUbNQTZ4VjkNf7FqqwmvQK9JI6HtKB50OunjLdEMxlD
-         y+uBKX5GOyHFTntNUqFN1njTT3p5cgeOR3fXGqyQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonathan Lebon <jlebon@redhat.com>,
-        Victor Kamensky <kamensky@cisco.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <sashal@kernel.org>, selinux@tycho.nsa.gov,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 005/330] selinux: allow labeling before policy is loaded
-Date:   Thu, 17 Sep 2020 21:55:45 -0400
-Message-Id: <20200918020110.2063155-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200918020110.2063155-1-sashal@kernel.org>
-References: <20200918020110.2063155-1-sashal@kernel.org>
+        Fri, 18 Sep 2020 03:03:30 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D014C06178A
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2020 00:03:30 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id y11so4978638lfl.5
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Sep 2020 00:03:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NmmjmHcBY8BbhioV7WK8K+GOMybyd/oBkZZKD/aKF+E=;
+        b=aYMkTBVEhpmeibkJNMW8F0pM9TM7QFOuWu/3srU31dDTGy8DT7vhwP20g1CaVTkKED
+         tln3quJTl/JUFcaUYDO+GW1fOyC7OZcRlLfOjlVvUTecHce9SzjaOVjHH1Pqyll8JB4K
+         GqE11kfv6p9VAaMUrG+NvXu5AnHWPGGxmemtz02FxTVDSwd33MMwzBDPoL9q+VRvzXk+
+         isfXxEhOGHr08L0zlwQO0PZI+6DtNPGih9FniPrTlrkE3HHi3NudmVg7zO+gZMdIjknU
+         /+Ovorz6Sc/96FRDNZIJAVDrUI0mfOkt3rPTpKfRJ8iuKXg0vYQRu9k7jw//2ksgPGnd
+         Hekg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NmmjmHcBY8BbhioV7WK8K+GOMybyd/oBkZZKD/aKF+E=;
+        b=sjn1QtjHKvZ49kLZlZjA9EFN8t928QieKulCggeN+dB4XCof977q9tdL2WnyDKW33u
+         rITn+rYT9dVzBvrb6k0zXkiViorxUididoJJEQDnS1REl3ehiKbWdmKCognQRmP9NUAC
+         W7o2YnXVE/eKvLU2lzHx0m2J1QaU84rgzn9xaPEJEG/xjHyZBq8N260/UI/DaJsrTP0p
+         skb7WJmMtYBEDMaeHwblFqUc2qkpSm78FfbTencQUzYo9cgvntQQCJi66uksxBV1Giqw
+         OIBouaFciO4rCo/2C4Qd0ihPxMYQgjnecCkolLkIh61viNkPpW3UKDgnoZ7fUFaYB2ji
+         wPKQ==
+X-Gm-Message-State: AOAM531/f5o0xAq2Yk5iS9To8Ino7kG3LsvIVE04hmIAHObfSet4UzYT
+        j3An580KRuftnZ+u7X2zYDaAy3D2OkOE7SwrdMmNRw==
+X-Google-Smtp-Source: ABdhPJz6k7WIbUShytMLjZXYouPFD4sNGIoslozx6Fxb93jmSonJHYJ1qWh6s2afHrjoNsg/kefS7+OKREWfMI/SpYc=
+X-Received: by 2002:a05:6512:2e5:: with SMTP id m5mr9808120lfq.598.1600412608442;
+ Fri, 18 Sep 2020 00:03:28 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <1600350398-4813-1-git-send-email-sumit.garg@linaro.org>
+ <1600350398-4813-2-git-send-email-sumit.garg@linaro.org> <20200917162142.GB9750@linux.intel.com>
+ <20200917162506.GC9750@linux.intel.com>
+In-Reply-To: <20200917162506.GC9750@linux.intel.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Fri, 18 Sep 2020 12:33:17 +0530
+Message-ID: <CAFA6WYNR2rMkEskJooDjQuu+dQ_zwVq-_9paW=zBgXmqM1GJqA@mail.gmail.com>
+Subject: Re: [PATCH v6 1/4] KEYS: trusted: Add generic trusted keys framework
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Jonathan Lebon <jlebon@redhat.com>
+On Thu, 17 Sep 2020 at 21:55, Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Thu, Sep 17, 2020 at 07:21:49PM +0300, Jarkko Sakkinen wrote:
+> > On Thu, Sep 17, 2020 at 07:16:35PM +0530, Sumit Garg wrote:
+> > > Current trusted keys framework is tightly coupled to use TPM device as
+> > > an underlying implementation which makes it difficult for implementations
+> > > like Trusted Execution Environment (TEE) etc. to provide trusted keys
+> > > support in case platform doesn't posses a TPM device.
+> > >
+> > > So this patch tries to add generic trusted keys framework where underlying
+> > > implementations like TPM, TEE etc. could be easily plugged-in.
+> >
+> > I would rephrase this a bit:
+> >
+> > "Add a generic trusted keys framework where underlying implementations
+> > can be easily plugged in. Create struct trusted_key_ops to achieve this,
+> > which contains necessary functions of a backend."
+> >
 
-[ Upstream commit 3e3e24b42043eceb97ed834102c2d094dfd7aaa6 ]
+Okay, will use it instead.
 
-Currently, the SELinux LSM prevents one from setting the
-`security.selinux` xattr on an inode without a policy first being
-loaded. However, this restriction is problematic: it makes it impossible
-to have newly created files with the correct label before actually
-loading the policy.
+> > I remember asking about this approach that what if there was just a
+> > header for trusted key functions and a compile time decision, which C
+> > file to include instead of ops struct. I don't remember if these was a
+> > conclusion on this or not.
 
-This is relevant in distributions like Fedora, where the policy is
-loaded by systemd shortly after pivoting out of the initrd. In such
-instances, all files created prior to pivoting will be unlabeled. One
-then has to relabel them after pivoting, an operation which inherently
-races with other processes trying to access those same files.
+This approach was implemented as part of v5 and we concluded here [1]
+to revert back to the dynamic approach as distro vendors won't like to
+make opinionated selection at compile time which could rather be
+achieved dynamically based on platform capability.
 
-Going further, there are use cases for creating the entire root
-filesystem on first boot from the initrd (e.g. Container Linux supports
-this today[1], and we'd like to support it in Fedora CoreOS as well[2]).
-One can imagine doing this in two ways: at the block device level (e.g.
-laying down a disk image), or at the filesystem level. In the former,
-labeling can simply be part of the image. But even in the latter
-scenario, one still really wants to be able to set the right labels when
-populating the new filesystem.
+[1] https://www.spinics.net/lists/keyrings/msg08161.html
 
-This patch enables this by changing behaviour in the following two ways:
-1. allow `setxattr` if we're not initialized
-2. don't try to set the in-core inode SID if we're not initialized;
-   instead leave it as `LABEL_INVALID` so that revalidation may be
-   attempted at a later time
+> >
+> > E.g. lets say you have a device with TEE and TPM, should you be able
+> > to be use both at run-time? I might play along how this works now but
+> > somehow, in the commit message preferably, it should be conclude why
+> > one alternative is chosen over another.
+>
 
-Note the first hunk of this patch is mostly the same as a previously
-discussed one[3], though it was part of a larger series which wasn't
-accepted.
+Okay, so how about adding a kernel module parameter which can enforce
+the user's preference about which trust source to use at runtime? And
+we should only check availability for that trust source if preference
+is provided otherwise by default we can traverse the trust sources
+list.
 
-[1] https://coreos.com/os/docs/latest/root-filesystem-placement.html
-[2] https://github.com/coreos/fedora-coreos-tracker/issues/94
-[3] https://www.spinics.net/lists/linux-initramfs/msg04593.html
+See following change, if this approach looks sane, I can include it in
+next version:
 
-Co-developed-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Victor Kamensky <kamensky@cisco.com>
-Signed-off-by: Jonathan Lebon <jlebon@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/selinux/hooks.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+index edd635a..a566451 100644
+--- a/include/keys/trusted-type.h
++++ b/include/keys/trusted-type.h
+@@ -63,6 +63,11 @@ struct trusted_key_ops {
+        void (*exit)(void);
+ };
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 552e73d90fd25..212f48025db81 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3156,6 +3156,9 @@ static int selinux_inode_setxattr(struct dentry *dentry, const char *name,
- 		return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
- 	}
- 
-+	if (!selinux_state.initialized)
-+		return (inode_owner_or_capable(inode) ? 0 : -EPERM);
++struct trusted_key_source {
++       char *name;
++       struct trusted_key_ops *ops;
++};
 +
- 	sbsec = inode->i_sb->s_security;
- 	if (!(sbsec->flags & SBLABEL_MNT))
- 		return -EOPNOTSUPP;
-@@ -3239,6 +3242,15 @@ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
- 		return;
- 	}
- 
-+	if (!selinux_state.initialized) {
-+		/* If we haven't even been initialized, then we can't validate
-+		 * against a policy, so leave the label as invalid. It may
-+		 * resolve to a valid label on the next revalidation try if
-+		 * we've since initialized.
-+		 */
-+		return;
-+	}
-+
- 	rc = security_context_to_sid_force(&selinux_state, value, size,
- 					   &newsid);
- 	if (rc) {
--- 
-2.25.1
+ extern struct key_type key_type_trusted;
 
+ #define TRUSTED_DEBUG 0
+diff --git a/security/keys/trusted-keys/trusted_core.c
+b/security/keys/trusted-keys/trusted_core.c
+index 83a6a15..74a3d80 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -21,12 +21,16 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+
+-static struct trusted_key_ops *available_trusted_key_ops[] = {
++static char *trusted_key_source;
++module_param_named(source, trusted_key_source, charp, 0);
++MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
++
++static struct trusted_key_source trusted_key_sources[] = {
+ #if defined(CONFIG_TCG_TPM)
+-       &tpm_trusted_key_ops,
++       { "tpm", &tpm_trusted_key_ops },
+ #endif
+ #if defined(CONFIG_TEE)
+-       &tee_trusted_key_ops,
++       { "tee", &tee_trusted_key_ops },
+ #endif
+ };
+ static struct trusted_key_ops *trusted_key_ops;
+@@ -296,8 +300,13 @@ static int __init init_trusted(void)
+ {
+        int i, ret = 0;
+
+-       for (i = 0; i < sizeof(available_trusted_key_ops); i++) {
+-               trusted_key_ops = available_trusted_key_ops[i];
++       for (i = 0; i < ARRAY_SIZE(trusted_key_sources); i++) {
++               if (trusted_key_source &&
++                   strncmp(trusted_key_source, trusted_key_sources[i].name,
++                           strlen(trusted_key_sources[i].name)))
++                       continue;
++
++               trusted_key_ops = trusted_key_sources[i].ops;
+
+                ret = trusted_key_ops->init();
+                if (!ret)
+
+> We must somehow seal this discussion because the other changes are
+> based on this decision.
+>
+> I don't think tail of this patch set takes a long time spin. This
+> is the main architectural decision.
+
+Agree.
+
+-Sumit
+
+>
+> /Jarkko
