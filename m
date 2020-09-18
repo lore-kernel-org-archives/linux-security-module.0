@@ -2,100 +2,81 @@ Return-Path: <SRS0=iYml=C3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEDCC43464
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 13:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E61C43466
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 13:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C48B6235FA
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 13:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7519B206A2
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 13:40:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbgIRNev (ORCPT
+        id S1726518AbgIRNk3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Sep 2020 09:34:51 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:51263 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726768AbgIRNeu (ORCPT
+        Fri, 18 Sep 2020 09:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48366 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbgIRNk1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Sep 2020 09:34:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R911e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=30;SR=0;TI=SMTPD_---0U9K7wHw_1600436072;
-Received: from B-455UMD6M-2027.local(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U9K7wHw_1600436072)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 18 Sep 2020 21:34:34 +0800
-Subject: Re: [PATCH v6 5/8] crypto: testmgr - support test with different
- ciphertext per encryption
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        Fri, 18 Sep 2020 09:40:27 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F46CC0613CE;
+        Fri, 18 Sep 2020 06:40:27 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJGcW-0014PO-Gq; Fri, 18 Sep 2020 13:40:12 +0000
+Date:   Fri, 18 Sep 2020 14:40:12 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
- <20200903131242.128665-6-tianjia.zhang@linux.alibaba.com>
- <20200918064721.GA9520@gondor.apana.org.au>
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Message-ID: <861bc3cc-2119-0325-33ea-828bd7e8544d@linux.alibaba.com>
-Date:   Fri, 18 Sep 2020 21:34:32 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.2.2
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Message-ID: <20200918134012.GY3421308@ZenIV.linux.org.uk>
+References: <20200918124533.3487701-1-hch@lst.de>
+ <20200918124533.3487701-2-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20200918064721.GA9520@gondor.apana.org.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200918124533.3487701-2-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 9/18/20 2:47 PM, Herbert Xu wrote:
-> On Thu, Sep 03, 2020 at 09:12:39PM +0800, Tianjia Zhang wrote:
->> Some asymmetric algorithms will get different ciphertext after
->> each encryption, such as SM2, and let testmgr support the testing
->> of such algorithms.
->>
->> In struct akcipher_testvec, set c and c_size to be empty, skip
->> the comparison of the ciphertext, and compare the decrypted
->> plaintext with m to achieve the test purpose.
->>
->> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
->> ---
->>   crypto/testmgr.c | 7 ++++++-
->>   1 file changed, 6 insertions(+), 1 deletion(-)
+On Fri, Sep 18, 2020 at 02:45:25PM +0200, Christoph Hellwig wrote:
+> Add a flag to force processing a syscall as a compat syscall.  This is
+> required so that in_compat_syscall() works for I/O submitted by io_uring
+> helper threads on behalf of compat syscalls.
 > 
-> Is there supposed to be another patch that contains test vectors?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/sparc/include/asm/compat.h | 3 ++-
+>  arch/x86/include/asm/compat.h   | 2 +-
+>  fs/io_uring.c                   | 9 +++++++++
+>  include/linux/compat.h          | 5 ++++-
+>  include/linux/sched.h           | 1 +
+>  5 files changed, 17 insertions(+), 3 deletions(-)
 > 
-> Thanks,
-> 
+> diff --git a/arch/sparc/include/asm/compat.h b/arch/sparc/include/asm/compat.h
+> index 40a267b3bd5208..fee6c51d36e869 100644
+> --- a/arch/sparc/include/asm/compat.h
+> +++ b/arch/sparc/include/asm/compat.h
+> @@ -211,7 +211,8 @@ static inline int is_compat_task(void)
+>  static inline bool in_compat_syscall(void)
+>  {
+>  	/* Vector 0x110 is LINUX_32BIT_SYSCALL_TRAP */
+> -	return pt_regs_trap_type(current_pt_regs()) == 0x110;
+> +	return pt_regs_trap_type(current_pt_regs()) == 0x110 ||
+> +		(current->flags & PF_FORCE_COMPAT);
 
-Yes, I was negligent. It is necessary to provide a test vector and I 
-will support it as soon as possible.
-
-Thanks,
-Tianjia
+Can't say I like that approach ;-/  Reasoning about the behaviour is much
+harder when it's controlled like that - witness set_fs() shite...
