@@ -2,92 +2,178 @@ Return-Path: <SRS0=iYml=C3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB4A0C43464
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 07:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB5AC43464
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 12:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7505720789
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 07:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7851208C3
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Sep 2020 12:46:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s9ZOEgea"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgIRHKx (ORCPT
+        id S1726710AbgIRMpt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Sep 2020 03:10:53 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:57514 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726170AbgIRHKx (ORCPT
+        Fri, 18 Sep 2020 08:45:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbgIRMpr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Sep 2020 03:10:53 -0400
-X-Greylist: delayed 1337 seconds by postgrey-1.27 at vger.kernel.org; Fri, 18 Sep 2020 03:10:52 EDT
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1kJAAz-0002f5-5k; Fri, 18 Sep 2020 16:47:22 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 18 Sep 2020 16:47:21 +1000
-Date:   Fri, 18 Sep 2020 16:47:21 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
+        Fri, 18 Sep 2020 08:45:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 341F5C06174A;
+        Fri, 18 Sep 2020 05:45:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=9yRRDQwct1JF6ZjH1ZNHGCkZ32QJgvqPcvKB0dar+RA=; b=s9ZOEgeausCRzTAIKECqvkUxtU
+        mBy6UNf6RRm6AlyFjmIkQ3cVDdDYzfwSdhLijuDrQUI+A78+ZqGwh62ALTJTxP+Hb8b83fxY6Qyi6
+        isvS5QdYE1J4kBdCQWs+MMQ4aSFmky4TbtL3CMmkNu1/mGKdA0TuWf6yx7Uk0Ps1g7r1gKN2xuwhK
+        HRHNr25lHpABcK0AvSVrpaODyp1+JRO4exW0ZmPuLFmNoS3AjrOgbDe3M4ZooZEY0dg3iws/po7YP
+        mnoC1b0zsP8OSDeJX3yk3JwikUwzt2CQzpFw1N1+BKD+glSDIGYYTqxd9FdthshAjsDRO8EDuc8gB
+        68Zuo9Zg==;
+Received: from [80.122.85.238] (helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kJFlh-0008Sq-JK; Fri, 18 Sep 2020 12:45:37 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        Gilad Ben-Yossef <gilad@benyossef.com>,
-        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>
-Subject: Re: [PATCH v6 5/8] crypto: testmgr - support test with different
- ciphertext per encryption
-Message-ID: <20200918064721.GA9520@gondor.apana.org.au>
-References: <20200903131242.128665-1-tianjia.zhang@linux.alibaba.com>
- <20200903131242.128665-6-tianjia.zhang@linux.alibaba.com>
+        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-mm@kvack.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Date:   Fri, 18 Sep 2020 14:45:25 +0200
+Message-Id: <20200918124533.3487701-2-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200918124533.3487701-1-hch@lst.de>
+References: <20200918124533.3487701-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200903131242.128665-6-tianjia.zhang@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 03, 2020 at 09:12:39PM +0800, Tianjia Zhang wrote:
-> Some asymmetric algorithms will get different ciphertext after
-> each encryption, such as SM2, and let testmgr support the testing
-> of such algorithms.
-> 
-> In struct akcipher_testvec, set c and c_size to be empty, skip
-> the comparison of the ciphertext, and compare the decrypted
-> plaintext with m to achieve the test purpose.
-> 
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> Tested-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
-> ---
->  crypto/testmgr.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+Add a flag to force processing a syscall as a compat syscall.  This is
+required so that in_compat_syscall() works for I/O submitted by io_uring
+helper threads on behalf of compat syscalls.
 
-Is there supposed to be another patch that contains test vectors?
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/sparc/include/asm/compat.h | 3 ++-
+ arch/x86/include/asm/compat.h   | 2 +-
+ fs/io_uring.c                   | 9 +++++++++
+ include/linux/compat.h          | 5 ++++-
+ include/linux/sched.h           | 1 +
+ 5 files changed, 17 insertions(+), 3 deletions(-)
 
-Thanks,
+diff --git a/arch/sparc/include/asm/compat.h b/arch/sparc/include/asm/compat.h
+index 40a267b3bd5208..fee6c51d36e869 100644
+--- a/arch/sparc/include/asm/compat.h
++++ b/arch/sparc/include/asm/compat.h
+@@ -211,7 +211,8 @@ static inline int is_compat_task(void)
+ static inline bool in_compat_syscall(void)
+ {
+ 	/* Vector 0x110 is LINUX_32BIT_SYSCALL_TRAP */
+-	return pt_regs_trap_type(current_pt_regs()) == 0x110;
++	return pt_regs_trap_type(current_pt_regs()) == 0x110 ||
++		(current->flags & PF_FORCE_COMPAT);
+ }
+ #define in_compat_syscall in_compat_syscall
+ #endif
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index d4edf281fff49d..fbab072d4e5b31 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -208,7 +208,7 @@ static inline bool in_32bit_syscall(void)
+ #ifdef CONFIG_COMPAT
+ static inline bool in_compat_syscall(void)
+ {
+-	return in_32bit_syscall();
++	return in_32bit_syscall() || (current->flags & PF_FORCE_COMPAT);
+ }
+ #define in_compat_syscall in_compat_syscall	/* override the generic impl */
+ #endif
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 3790c7fe9fee22..5755d557c3f7bc 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5449,6 +5449,9 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 	if (unlikely(ret))
+ 		return ret;
+ 
++	if (req->ctx->compat)
++		current->flags |= PF_FORCE_COMPAT;
++
+ 	switch (req->opcode) {
+ 	case IORING_OP_NOP:
+ 		break;
+@@ -5546,6 +5549,7 @@ static int io_req_defer_prep(struct io_kiocb *req,
+ 		break;
+ 	}
+ 
++	current->flags &= ~PF_FORCE_COMPAT;
+ 	return ret;
+ }
+ 
+@@ -5669,6 +5673,9 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 	struct io_ring_ctx *ctx = req->ctx;
+ 	int ret;
+ 
++	if (ctx->compat)
++		current->flags |= PF_FORCE_COMPAT;
++
+ 	switch (req->opcode) {
+ 	case IORING_OP_NOP:
+ 		ret = io_nop(req, cs);
+@@ -5898,6 +5905,8 @@ static int io_issue_sqe(struct io_kiocb *req, const struct io_uring_sqe *sqe,
+ 		break;
+ 	}
+ 
++	current->flags &= ~PF_FORCE_COMPAT;
++
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index b354ce58966e2d..685066f7ad325f 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -891,7 +891,10 @@ asmlinkage long compat_sys_socketcall(int call, u32 __user *args);
+  */
+ 
+ #ifndef in_compat_syscall
+-static inline bool in_compat_syscall(void) { return is_compat_task(); }
++static inline bool in_compat_syscall(void)
++{
++	return is_compat_task() || (current->flags & PF_FORCE_COMPAT);
++}
+ #endif
+ 
+ /**
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index afe01e232935fa..c8b183b5655a1e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1491,6 +1491,7 @@ extern struct pid *cad_pid;
+  */
+ #define PF_IDLE			0x00000002	/* I am an IDLE thread */
+ #define PF_EXITING		0x00000004	/* Getting shut down */
++#define PF_FORCE_COMPAT		0x00000008	/* acting as compat task */
+ #define PF_VCPU			0x00000010	/* I'm a virtual CPU */
+ #define PF_WQ_WORKER		0x00000020	/* I'm a workqueue worker */
+ #define PF_FORKNOEXEC		0x00000040	/* Forked but didn't exec */
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.28.0
+
