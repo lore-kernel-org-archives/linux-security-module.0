@@ -2,142 +2,129 @@ Return-Path: <SRS0=d0ee=C5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 170D4C43465
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Sep 2020 16:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F32C4346A
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Sep 2020 16:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD45C20EDD
-	for <linux-security-module@archiver.kernel.org>; Sun, 20 Sep 2020 16:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EABD3214F1
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Sep 2020 16:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600621199;
+	bh=x0CbGoy7QDKeuRiDyZ0r+bpumnscmCVOPI/85NlktW8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=d4Oxh6Jdcpblt4fABS3I/+XO4xSn02rqrNhq/umgenTbwOX/tAll+jHRcNRB2A75K
+	 oDTa8QF+QJx197kRR/1mEgBDFuDAlETar83yF/neyS6TAdiZ6l/KIIy6Xj7buj8A7g
+	 qpIA8JoLBaWl6AFiZ6kDvpx8maaVJTvWpW1FF6XU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgITQWO (ORCPT
+        id S1726444AbgITQ76 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 20 Sep 2020 12:22:14 -0400
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:47448 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726375AbgITQWA (ORCPT
+        Sun, 20 Sep 2020 12:59:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbgITQ7v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 20 Sep 2020 12:22:00 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=tianjia.zhang@linux.alibaba.com;NM=1;PH=DS;RN=34;SR=0;TI=SMTPD_---0U9VME2p_1600618867;
-Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0U9VME2p_1600618867)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 21 Sep 2020 00:21:07 +0800
-From:   Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Marcelo Henrique Cerri <marcelo.cerri@canonical.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Waiman Long <longman@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        "Gilad Ben-Yossef" <gilad@benyossef.com>,
-        Pascal van Leeuwen <pvanleeuwen@rambus.com>,
-        linux-crypto@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>,
-        Jia Zhang <zhang.jia@linux.alibaba.com>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Subject: [PATCH v7 06/10] crypto: testmgr - Fix potential memory leak in test_akcipher_one()
-Date:   Mon, 21 Sep 2020 00:20:59 +0800
-Message-Id: <20200920162103.83197-7-tianjia.zhang@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.3.ge56e4f7
-In-Reply-To: <20200920162103.83197-1-tianjia.zhang@linux.alibaba.com>
-References: <20200920162103.83197-1-tianjia.zhang@linux.alibaba.com>
+        Sun, 20 Sep 2020 12:59:51 -0400
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C439823788
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2020 16:59:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600621191;
+        bh=x0CbGoy7QDKeuRiDyZ0r+bpumnscmCVOPI/85NlktW8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=STZH/t3yOYC4lt6Mbr2vmd9GDCGx8Do5AUPf2HvBn5gwFKMQ3g4WFLR/bZxO/Emf0
+         YAXVcXDnnKpM12deRHGOwsnphIt05ikwCvTQNr2FQ2s0fWMIK36VWVl89rPjxqXYb7
+         Sm0INJJVrL1NorNVa7M3stCqorDtqJTlsBOwypoE=
+Received: by mail-wm1-f44.google.com with SMTP id s13so9863660wmh.4
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2020 09:59:50 -0700 (PDT)
+X-Gm-Message-State: AOAM5326fCj/F1DnUCUYLxGqyIMQxsv/lOSqOgPRx+THdWVuJUr8TsIt
+        v7wMpcKSec8OKLXit4IHH0dNwMXbSIPmRURZUgb4DA==
+X-Google-Smtp-Source: ABdhPJwqhOCovrDdCcRZECZNQYs8Sx/d9wwPnQKSY4d4VjHeXmP8XzKxWrTfmcwJ7rQVtp7oa0fbaMUpJAjukisl/1Y=
+X-Received: by 2002:a1c:7e15:: with SMTP id z21mr25730921wmc.21.1600621188572;
+ Sun, 20 Sep 2020 09:59:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200919224122.GJ3421308@ZenIV.linux.org.uk> <36CF3DE7-7B4B-41FD-9818-FDF8A5B440FB@amacapital.net>
+ <20200919232411.GK3421308@ZenIV.linux.org.uk> <CALCETrViwOdFia_aX4p4riE8aqop1zoOqVfiQtSAZEzheC+Ozg@mail.gmail.com>
+ <20200920025745.GL3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200920025745.GL3421308@ZenIV.linux.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 20 Sep 2020 09:59:36 -0700
+X-Gmail-Original-Message-ID: <CALCETrWj1i-oyfA1rCXsNqdJddK6Vwm=W31YEf=k-OMBTC0vHw@mail.gmail.com>
+Message-ID: <CALCETrWj1i-oyfA1rCXsNqdJddK6Vwm=W31YEf=k-OMBTC0vHw@mail.gmail.com>
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andy Lutomirski <luto@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Network Development <netdev@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When the 'key' allocation fails, the 'req' will not be released,
-which will cause memory leakage on this path. This patch adds a
-'free_req' tag used to solve this problem, and two new err values
-are added to reflect the real reason of the error.
+On Sat, Sep 19, 2020 at 7:57 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sat, Sep 19, 2020 at 05:14:41PM -0700, Andy Lutomirski wrote:
+>
+> > > 2) have you counted the syscalls that do and do not need that?
+> >
+> > No.
+>
+> Might be illuminating...
+>
+> > > 3) how many of those realistically *can* be unified with their
+> > > compat counterparts?  [hint: ioctl(2) cannot]
+> >
+> > There would be no requirement to unify anything.  The idea is that
+> > we'd get rid of all the global state flags.
+>
+> _What_ global state flags?  When you have separate SYSCALL_DEFINE3(ioctl...)
+> and COMPAT_SYSCALL_DEFINE3(ioctl...), there's no flags at all, global or
+> local.  They only come into the play when you try to share the same function
+> for both, right on the top level.
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
----
- crypto/testmgr.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+...
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index cd002a030af5..ed8e29efe280 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3954,7 +3954,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	key = kmalloc(vecs->key_len + sizeof(u32) * 2 + vecs->param_len,
- 		      GFP_KERNEL);
- 	if (!key)
--		goto free_xbuf;
-+		goto free_req;
- 	memcpy(key, vecs->key, vecs->key_len);
- 	ptr = key + vecs->key_len;
- 	ptr = test_pack_u32(ptr, vecs->algo);
-@@ -3966,7 +3966,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	else
- 		err = crypto_akcipher_set_priv_key(tfm, key, vecs->key_len);
- 	if (err)
--		goto free_req;
-+		goto free_key;
- 
- 	/*
- 	 * First run test which do not require a private key, such as
-@@ -3976,7 +3976,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 	out_len_max = crypto_akcipher_maxsize(tfm);
- 	outbuf_enc = kzalloc(out_len_max, GFP_KERNEL);
- 	if (!outbuf_enc)
--		goto free_req;
-+		goto free_key;
- 
- 	if (!vecs->siggen_sigver_test) {
- 		m = vecs->m;
-@@ -3995,6 +3995,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 		op = "verify";
- 	}
- 
-+	err = -E2BIG;
- 	if (WARN_ON(m_size > PAGE_SIZE))
- 		goto free_all;
- 	memcpy(xbuf[0], m, m_size);
-@@ -4061,6 +4062,7 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- 		c_size = req->dst_len;
- 	}
- 
-+	err = -E2BIG;
- 	op = vecs->siggen_sigver_test ? "sign" : "decrypt";
- 	if (WARN_ON(c_size > PAGE_SIZE))
- 		goto free_all;
-@@ -4097,9 +4099,10 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
- free_all:
- 	kfree(outbuf_dec);
- 	kfree(outbuf_enc);
-+free_key:
-+	kfree(key);
- free_req:
- 	akcipher_request_free(req);
--	kfree(key);
- free_xbuf:
- 	testmgr_free_buf(xbuf);
- 	return err;
--- 
-2.19.1.3.ge56e4f7
+>
+> > For ioctl, we'd have a new file_operation:
+> >
+> > long ioctl(struct file *, unsigned int, unsigned long, enum syscall_arch);
+> >
+> > I'm not saying this is easy, but I think it's possible and the result
+> > would be more obviously correct than what we have now.
+>
+> No, it would not.  Seriously, from time to time a bit of RTFS before grand
+> proposals turns out to be useful.
 
+As one example, look at __sys_setsockopt().  It's called for the
+native and compat versions, and it contains an in_compat_syscall()
+check.  (This particularly check looks dubious to me, but that's
+another story.)  If this were to be done with equivalent semantics
+without a separate COMPAT_DEFINE_SYSCALL and without
+in_compat_syscall(), there would need to be some indication as to
+whether this is compat or native setsockopt.  There are other
+setsockopt implementations in the net stack with more
+legitimate-seeming uses of in_compat_syscall() that would need some
+other mechanism if in_compat_syscall() were to go away.
+
+setsockopt is (I hope!) out of scope for io_uring, but the situation
+isn't fundamentally different from read and write.
