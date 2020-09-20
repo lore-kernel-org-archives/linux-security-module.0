@@ -1,69 +1,127 @@
-Return-Path: <SRS0=Flj4=C4=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=d0ee=C5=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBC6C43465
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Sep 2020 23:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F26AFC43464
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Sep 2020 00:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D793023119
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Sep 2020 23:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B12132311D
+	for <linux-security-module@archiver.kernel.org>; Sun, 20 Sep 2020 00:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600560899;
+	bh=hFlNFuPTeOm0L/kdCL4zZ1r5D8O6dPLmjujTGrKOlYM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=wb0DzZtCo6EFD3OCJiI2iAPerDIzq1USs33l/fI2ZrYVDcFrlDtjw0UtXBbDwXZYI
+	 WXzjPaEZckCs5IcrbOUY4kWGXbUn0EAsTRQwAP0Yse2yLQltR4zT9TjLBpKVpALbNe
+	 qVRcd0dKlAZ6cCzeV7MriqzGcZL4ft6CDGW2qt48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgISXYU (ORCPT
+        id S1726817AbgITAO5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 19 Sep 2020 19:24:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbgISXYU (ORCPT
+        Sat, 19 Sep 2020 20:14:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726826AbgITAO4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 19 Sep 2020 19:24:20 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFE7C0613CE;
-        Sat, 19 Sep 2020 16:24:19 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kJmDD-0020kM-6N; Sat, 19 Sep 2020 23:24:11 +0000
-Date:   Sun, 20 Sep 2020 00:24:11 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Andy Lutomirski <luto@amacapital.net>
+        Sat, 19 Sep 2020 20:14:56 -0400
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B19FA23600
+        for <linux-security-module@vger.kernel.org>; Sun, 20 Sep 2020 00:14:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600560896;
+        bh=hFlNFuPTeOm0L/kdCL4zZ1r5D8O6dPLmjujTGrKOlYM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JdpTFUSGe1SVP3GYoHMA/1+WAOgDwyAZh592KmHbxVYan4JptN2Ey4qtv/JhhMmdD
+         4/+2hOJn0bB2vl1+CA1vsA98Zss+NNVMyBMeVtqPcslQ6drhtIH53blqmBsy4rTawx
+         5AYjLp/I2l7q6tcX617SK/tanVf0CoYUpDb3JlE0=
+Received: by mail-lj1-f179.google.com with SMTP id n25so8111377ljj.4
+        for <linux-security-module@vger.kernel.org>; Sat, 19 Sep 2020 17:14:55 -0700 (PDT)
+X-Gm-Message-State: AOAM5300rw9EU1ykak2V+uGqtNN/VUkWE//PlCWHUN0giJ7rnwKgv+Go
+        9zHRdzz4Ls01Ro1omafj23lconxMxyx+Fqd/Xuo7Aw==
+X-Google-Smtp-Source: ABdhPJwNa+g9tI1uon0gRHcB2mOJvq7bEiosz+i+17dS26MXBg9h+I1xFom2CJCFuIf/wJaqwzsOPjK0guk9bG2/Zms=
+X-Received: by 2002:adf:a3c3:: with SMTP id m3mr251480wrb.70.1600560893353;
+ Sat, 19 Sep 2020 17:14:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200919224122.GJ3421308@ZenIV.linux.org.uk> <36CF3DE7-7B4B-41FD-9818-FDF8A5B440FB@amacapital.net>
+ <20200919232411.GK3421308@ZenIV.linux.org.uk>
+In-Reply-To: <20200919232411.GK3421308@ZenIV.linux.org.uk>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 19 Sep 2020 17:14:41 -0700
+X-Gmail-Original-Message-ID: <CALCETrViwOdFia_aX4p4riE8aqop1zoOqVfiQtSAZEzheC+Ozg@mail.gmail.com>
+Message-ID: <CALCETrViwOdFia_aX4p4riE8aqop1zoOqVfiQtSAZEzheC+Ozg@mail.gmail.com>
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Christoph Hellwig <hch@lst.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Message-ID: <20200919232411.GK3421308@ZenIV.linux.org.uk>
-References: <20200919224122.GJ3421308@ZenIV.linux.org.uk>
- <36CF3DE7-7B4B-41FD-9818-FDF8A5B440FB@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <36CF3DE7-7B4B-41FD-9818-FDF8A5B440FB@amacapital.net>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Network Development <netdev@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Sep 19, 2020 at 03:53:40PM -0700, Andy Lutomirski wrote:
+On Sat, Sep 19, 2020 at 4:24 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Sat, Sep 19, 2020 at 03:53:40PM -0700, Andy Lutomirski wrote:
+>
+> > > It would not be a win - most of the syscalls don't give a damn
+> > > about 32bit vs. 64bit...
+> >
+> > Any reasonable implementation would optimize it out for syscalls that d=
+on=E2=80=99t care.  Or it could be explicit:
+> >
+> > DEFINE_MULTIARCH_SYSCALL(...)
+>
+> 1) what would that look like?
 
-> > It would not be a win - most of the syscalls don't give a damn
-> > about 32bit vs. 64bit...
-> 
-> Any reasonable implementation would optimize it out for syscalls that don’t care.  Or it could be explicit:
-> 
-> DEFINE_MULTIARCH_SYSCALL(...)
+In effect, it would work like this:
 
-1) what would that look like?
-2) have you counted the syscalls that do and do not need that?
-3) how many of those realistically *can* be unified with their
-compat counterparts?  [hint: ioctl(2) cannot]
+/* Arch-specific, but there's a generic case for sane architectures. */
+enum syscall_arch {
+  SYSCALL_NATIVE,
+  SYSCALL_COMPAT,
+  SYSCALL_X32,
+};
+
+DEFINE_MULTIARCH_SYSCALLn(args, arch)
+{
+  args are the args here, and arch is the arch.
+}
+
+> 2) have you counted the syscalls that do and do not need that?
+
+No.
+
+> 3) how many of those realistically *can* be unified with their
+> compat counterparts?  [hint: ioctl(2) cannot]
+
+There would be no requirement to unify anything.  The idea is that
+we'd get rid of all the global state flags.
+
+For ioctl, we'd have a new file_operation:
+
+long ioctl(struct file *, unsigned int, unsigned long, enum syscall_arch);
+
+I'm not saying this is easy, but I think it's possible and the result
+would be more obviously correct than what we have now.
