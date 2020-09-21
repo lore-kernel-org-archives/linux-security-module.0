@@ -2,98 +2,80 @@ Return-Path: <SRS0=i+Ac=C6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2006C43465
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 14:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46113C4346A
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 14:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97C39238D6
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 14:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600699268;
-	bh=3wKhPCJK4e88PuLvX2Hp1ADWTWdm1mMqRIpGDGZjUag=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=n6KyBmH4fng6YsyU8mA36CvJLcHiWxgNdK9MMC/VB2xT4NKCGJIF063eKiP26Up6p
-	 6HIEBW9ZNDDZ1X8jOpzCSLCaFl3rXIwaLmvu9IZ58C9M0u8OJ/sGS32x72Oln5fP2L
-	 i8L2XdrSAVMOd1nZ2fSQ39Wf9zFNgKSvTtIglgMY=
+	by mail.kernel.org (Postfix) with ESMTP id 0BA382311D
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 14:48:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S8rXcGNB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbgIUOk5 (ORCPT
+        id S1728177AbgIUOsW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 10:40:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49798 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727837AbgIUOk5 (ORCPT
+        Mon, 21 Sep 2020 10:48:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbgIUOsT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 10:40:57 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B391523888;
-        Mon, 21 Sep 2020 14:40:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600699256;
-        bh=3wKhPCJK4e88PuLvX2Hp1ADWTWdm1mMqRIpGDGZjUag=;
-        h=From:To:Cc:Subject:Date:From;
-        b=prEX5My8a6UDJq2KfhZDacmShbvTu2g/0DTFx57j4nsBs5fm4FY6qshPhWGVl6jNP
-         pB8S8ISXjBmGSxv1wg/lZPM7PV5NsGqVGv0gZuNjMuRiXl95ry+eZja0jwMH6Z9eIo
-         I8ziqG3dBjYtvu/f6WO2EADVeTHIukAm/q/Iaurc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Amol Grover <frextrite@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        Sasha Levin <sashal@kernel.org>,
+        Mon, 21 Sep 2020 10:48:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EACAC061755;
+        Mon, 21 Sep 2020 07:48:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=GrLgQ81RMs4yZLkbL25hSswMVubhakBrsXk6y8LUTp8=; b=S8rXcGNBi4i4qPD575hId32KQP
+        nqI0uPNrzjdQyj4vl0WSsJjqoLdiHU15JD1QivHJE4gsE9/TJFijUkmzx5PTowCkBnlyPqxob4RLC
+        g2OXJsSYMe2XxF/qrlzQ7lUj5CLowOZfdUeitiDgvjL0vok0YlCDOptjFYkIwRz2amnUfKLAMpxWs
+        2L9E7YRIK5ucqdS/0WgivYaSwDXpH/HNj0bdbbrCRjJyIOhnR4envxalVmDy7Nd3SjyV7VPX22s6G
+        He+tEU28SCP4TsdzxKZjtGYCdDpqu2O8SYVePA8n7SQLKmiA0QJhgmYonOPb/A76qlqHpCJlQFCa1
+        Z1eFhQPA==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKN6v-0001MT-TO; Mon, 21 Sep 2020 14:48:09 +0000
+Date:   Mon, 21 Sep 2020 15:48:09 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 01/15] device_cgroup: Fix RCU list debugging warning
-Date:   Mon, 21 Sep 2020 10:40:40 -0400
-Message-Id: <20200921144054.2135602-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
+Subject: Re: [PATCH 02/11] mm: call import_iovec() instead of
+ rw_copy_check_uvector() in process_vm_rw()
+Message-ID: <20200921144809.GV32101@casper.infradead.org>
+References: <20200921143434.707844-1-hch@lst.de>
+ <20200921143434.707844-3-hch@lst.de>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200921143434.707844-3-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Amol Grover <frextrite@gmail.com>
+On Mon, Sep 21, 2020 at 04:34:25PM +0200, Christoph Hellwig wrote:
+>  {
+> -	WARN_ON(direction & ~(READ | WRITE));
+> +	WARN_ON(direction & ~(READ | WRITE | CHECK_IOVEC_ONLY));
 
-[ Upstream commit bc62d68e2a0a69fcdcf28aca8edb01abf306b698 ]
+This is now a no-op because:
 
-exceptions may be traversed using list_for_each_entry_rcu()
-outside of an RCU read side critical section BUT under the
-protection of decgroup_mutex. Hence add the corresponding
-lockdep expression to fix the following false-positive
-warning:
+include/linux/fs.h:#define CHECK_IOVEC_ONLY -1
 
-[    2.304417] =============================
-[    2.304418] WARNING: suspicious RCU usage
-[    2.304420] 5.5.4-stable #17 Tainted: G            E
-[    2.304422] -----------------------------
-[    2.304424] security/device_cgroup.c:355 RCU-list traversed in non-reader section!!
+I'd suggest we renumber it to 2?
 
-Signed-off-by: Amol Grover <frextrite@gmail.com>
-Signed-off-by: James Morris <jmorris@namei.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/device_cgroup.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-index 725674f3276d3..5d7bb91c64876 100644
---- a/security/device_cgroup.c
-+++ b/security/device_cgroup.c
-@@ -352,7 +352,8 @@ static bool match_exception_partial(struct list_head *exceptions, short type,
- {
- 	struct dev_exception_item *ex;
- 
--	list_for_each_entry_rcu(ex, exceptions, list) {
-+	list_for_each_entry_rcu(ex, exceptions, list,
-+				lockdep_is_held(&devcgroup_mutex)) {
- 		if ((type & DEVCG_DEV_BLOCK) && !(ex->type & DEVCG_DEV_BLOCK))
- 			continue;
- 		if ((type & DEVCG_DEV_CHAR) && !(ex->type & DEVCG_DEV_CHAR))
--- 
-2.25.1
-
+(READ is 0, WRITE is 1.  This WARN_ON should probably be
+	WARN_ON(direction > CHECK_IOVEC_ONLY)
