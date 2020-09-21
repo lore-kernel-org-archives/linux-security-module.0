@@ -2,114 +2,78 @@ Return-Path: <SRS0=i+Ac=C6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4F8C4346D
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 15:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FB9C43465
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7B520866
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 15:44:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 074E2216C4
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727822AbgIUPoH convert rfc822-to-8bit (ORCPT
+        id S1727720AbgIUQJ0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 11:44:07 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:47000 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727651AbgIUPoH (ORCPT
+        Mon, 21 Sep 2020 12:09:26 -0400
+Received: from verein.lst.de ([213.95.11.211]:40664 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726395AbgIUQJ0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 11:44:07 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-29--2oWre79P1qw86_f0GzqkQ-1; Mon, 21 Sep 2020 16:44:02 +0100
-X-MC-Unique: -2oWre79P1qw86_f0GzqkQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 16:44:00 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 21 Sep 2020 16:44:00 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Al Viro' <viro@zeniv.linux.org.uk>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: [PATCH 02/11] mm: call import_iovec() instead of
- rw_copy_check_uvector() in process_vm_rw()
-Thread-Topic: [PATCH 02/11] mm: call import_iovec() instead of
- rw_copy_check_uvector() in process_vm_rw()
-Thread-Index: AQHWkCg9ha58Xpw3RkmKZfc82fYDTKlzMiEw///00oCAABILoA==
-Date:   Mon, 21 Sep 2020 15:44:00 +0000
-Message-ID: <226e03bf941844eba4d64af31633c177@AcuMS.aculab.com>
-References: <20200921143434.707844-1-hch@lst.de>
- <20200921143434.707844-3-hch@lst.de>
- <20200921150211.GS3421308@ZenIV.linux.org.uk>
- <ef67787edb2f48548d69caaaff6997ba@AcuMS.aculab.com>
- <20200921152937.GX3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200921152937.GX3421308@ZenIV.linux.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Mon, 21 Sep 2020 12:09:26 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 0D29968AFE; Mon, 21 Sep 2020 18:09:23 +0200 (CEST)
+Date:   Mon, 21 Sep 2020 18:09:22 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Ian Kent <raven@themaw.net>,
+        autofs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Zdenek Pytela <zpytela@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
+Message-ID: <20200921160922.GA23870@lst.de>
+References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Al Viro
-> Sent: 21 September 2020 16:30
+[adding Linus and Al]
+
+On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
+> Hi folks,
 > 
-> On Mon, Sep 21, 2020 at 03:21:35PM +0000, David Laight wrote:
+> It seems that after commit 13c164b1a186 ("autofs: switch to
+> kernel_write") there is now an extra LSM permission required (for the
+> current task to write to the automount pipe) for processes accessing
+> some yet-to-to-be mounted directory on which an autofs mount is set
+> up. The call chain is:
+> [...]
+> autofs_wait() ->
+> autofs_notify_daemon() ->
+> autofs_write() ->
+> kernel_write() ->
+> rw_verify_area() ->
+> security_file_permission()
 > 
-> > You really don't want to be looping through the array twice.
+> The bug report that led me to this commit is at [1].
 > 
-> Profiles, please.
+> Technically, this is a regression for LSM users, since this is a
+> kernel-internal operation and an LSM permission for the current task
+> shouldn't be required. Can this patch be reverted? Perhaps
+> __kernel_{read|write}() could instead be renamed to kernel_*_nocheck()
+> so that the name is more descriptive?
 
-I did some profiling of send() v sendmsg() much earlier in the year.
-I can't remember the exact details but the extra cost of sendmsg()
-is far more than you might expect.
-(I was timing sending fully built IPv4 UDP packets using a raw socket.)
+So we obviously should not break existing user space and need to fix
+this ASAP.  The trivial "fix" would be to export __kernel_write again
+and switch autofs to use it.  The other option would be a FMODE flag
+to bypass security checks, only to be set if the callers ensures
+they've been valided (i.e. in autofs_prepare_pipe).
 
-About half the difference does away if you change the
-copy_from_user() to __copy_from_user() when reading the struct msghdr
-and iov[] from userspace (user copy hardening is expensive).
-
-The rest is just code path, my gut feeling is that a lot of that
-is in import_iovec().
-
-Remember semdmsg() is likely to be called with an iov count of 1.
-
-	David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
-
+Any opinions?
