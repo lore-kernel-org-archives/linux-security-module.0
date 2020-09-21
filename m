@@ -2,164 +2,148 @@ Return-Path: <SRS0=i+Ac=C6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2EDEC43469
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA432C4363A
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 18:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78EB3206D9
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:55:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 777CC206FB
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 18:07:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDn64YZD"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eoxk8SCF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbgIUQzR (ORCPT
+        id S1727302AbgIUSHf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 12:55:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35844 "EHLO
+        Mon, 21 Sep 2020 14:07:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727197AbgIUQzK (ORCPT
+        with ESMTP id S1726436AbgIUSHf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 12:55:10 -0400
-Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7292C061755;
-        Mon, 21 Sep 2020 09:55:09 -0700 (PDT)
-Received: by mail-qv1-xf42.google.com with SMTP id cv8so7764256qvb.12;
-        Mon, 21 Sep 2020 09:55:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=szNXVWJGAZwpx75f6+30VLnmCJsuz9HNHCal9KjzTxA=;
-        b=VDn64YZD7uGTR5IfNAzvRKx/fUPWDVeJhEkElc4Niv9OxBlyDFFaHR6z+35iqyj3/O
-         BliFZbaiZwYEvVGoadb6FBF+Sp/j6RBgiE8DpU8msmpdb7DnAnbKjJAHQa0pNNa9CuAC
-         nn4s4tg+qFp5BnNiFfBFeuAR/O1Ddk67uZfSFkp8VzhribC/Sh/YchpFuGySKm7mS8bG
-         naQ3A1BijQS8iGjPKaJYuL4uk+gyVIL0rjIN0mrlpuN+CYpKuApqV34JvZ1G8/CHZQrJ
-         x4rjWuwXbTLJrXnIk0AVLlUyHu9qs0XvCf/0R874bdGFmG2XBwlpL7eV4KNs0JJHtEsn
-         vVQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=szNXVWJGAZwpx75f6+30VLnmCJsuz9HNHCal9KjzTxA=;
-        b=UU3bqRgZvmjykzefD4Xdl/I0tQs3vL2wGdtZ1VvlnABvn6pSCk2Ar8F0bq8pA2BSPR
-         +C9jesk8QfnsZ3FtJAQvc1CHHyrnMEKVK+zWkfMQsRD3W41JAuKELfntdSn77A5o0utn
-         Xwtq8lf2Qlww3191qvRoCUxdbIt5sUxFGhxUkVFjpGWPgYLYuAyJTyHtcSjBvzikuvWz
-         qsm87vk/+Yqy3d6k9/RllNjkCIbc73YOhsJk3jFjdtNr+y1QhiD7CP/MZXXsjhlrtOHr
-         dUi6yUpmD+tmPzMu7eENgr9eOycQpnl3cvala9bqwwUYkJsD+mhkjNncTcreOX/Za7wF
-         aXEg==
-X-Gm-Message-State: AOAM533hKqzyeb9PDx/rqnd9Z0aSP6rbB7h6hwsW77EEPTTToSy0TDVj
-        6DcboMtDZv7t8Fcxlj1tqo3qTm36UCc=
-X-Google-Smtp-Source: ABdhPJxWkRsh4KQ3MogZdppcRx9qC7pDE25loMBRP41MENhVQE3NQq8Gg69UfbxYDA2R1s75Y3Xlwg==
-X-Received: by 2002:a05:6214:8f2:: with SMTP id dr18mr884106qvb.49.1600707308876;
-        Mon, 21 Sep 2020 09:55:08 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id 8sm9353802qkc.100.2020.09.21.09.55.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Sep 2020 09:55:08 -0700 (PDT)
-Sender: Arvind Sankar <niveditas98@gmail.com>
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Mon, 21 Sep 2020 12:55:06 -0400
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Arvind Sankar <nivedita@alum.mit.edu>,
-        Lenny Szubowicz <lszubowi@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
-        James Morris <jmorris@namei.org>, serge@hallyn.com,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Peter Jones <pjones@redhat.com>,
-        David Howells <dhowells@redhat.com>, prarit@redhat.com
-Subject: Re: [PATCH V2 1/3] efi: Support for MOK variable config table
-Message-ID: <20200921165506.GA549786@rani.riverdale.lan>
-References: <20200905013107.10457-1-lszubowi@redhat.com>
- <20200905013107.10457-2-lszubowi@redhat.com>
- <20200921161859.GA544292@rani.riverdale.lan>
- <CAMj1kXFV7LqsyHM8iM5yQwJX4tKbY=w9vfjERvjyabVDKcbJpA@mail.gmail.com>
+        Mon, 21 Sep 2020 14:07:35 -0400
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17A4CC061755;
+        Mon, 21 Sep 2020 11:07:35 -0700 (PDT)
+Received: from zn.tnic (p200300ec2f07e300fdce2fa8e8fa3e27.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:e300:fdce:2fa8:e8fa:3e27])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 351A11EC0281;
+        Mon, 21 Sep 2020 20:07:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1600711653;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=wahZCqLRHJ6s4gwTioPt1wQsyT0dIRsptngyIn/tpk8=;
+        b=eoxk8SCFiSF0PVOxe4Kep/f7Zv7V4qI6hJkoqIw1+iKcnx/6Q4qDUCgdhR1U1x5VZOprF5
+        2syiaYZ0QLo/GkwRweS/1UEQD2n2u/EUoFynlz7J8Kb46ckMlMhKGrNAzvrkfWVO23sday
+        86VJIaDzBvJHfvIzYM3WkoHJ0MNaukQ=
+Date:   Mon, 21 Sep 2020 20:07:28 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com
+Subject: Re: [PATCH v38 15/24] x86/sgx: Enable provisioning for remote
+ attestation
+Message-ID: <20200921180728.GJ5901@zn.tnic>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXFV7LqsyHM8iM5yQwJX4tKbY=w9vfjERvjyabVDKcbJpA@mail.gmail.com>
+In-Reply-To: <20200915112842.897265-16-jarkko.sakkinen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Sep 21, 2020 at 06:27:17PM +0200, Ard Biesheuvel wrote:
-> On Mon, 21 Sep 2020 at 18:19, Arvind Sankar <nivedita@alum.mit.edu> wrote:
-> >
-> > On Fri, Sep 04, 2020 at 09:31:05PM -0400, Lenny Szubowicz wrote:
-> > > +     /*
-> > > +      * The EFI MOK config table must fit within a single EFI memory
-> > > +      * descriptor range.
-> > > +      */
-> > > +     err = efi_mem_desc_lookup(efi.mokvar_table, &md);
-> > > +     if (err) {
-> > > +             pr_warn("EFI MOKvar config table is not within the EFI memory map\n");
-> > > +             return;
-> > > +     }
-> > > +     end_pa = efi_mem_desc_end(&md);
-> > > +     if (efi.mokvar_table >= end_pa) {
-> > > +             pr_err("EFI memory descriptor containing MOKvar config table is invalid\n");
-> > > +             return;
-> > > +     }
-> >
-> > efi_mem_desc_lookup() can't return success if efi.mokvar_table >= end_pa,
-> > why check it again?
-> >
-> > > +     offset_limit = end_pa - efi.mokvar_table;
-> > > +     /*
-> > > +      * Validate the MOK config table. Since there is no table header
-> > > +      * from which we could get the total size of the MOK config table,
-> > > +      * we compute the total size as we validate each variably sized
-> > > +      * entry, remapping as necessary.
-> > > +      */
-> > > +     while (cur_offset + sizeof(*mokvar_entry) <= offset_limit) {
-> > > +             mokvar_entry = va + cur_offset;
-> > > +             map_size_needed = cur_offset + sizeof(*mokvar_entry);
-> > > +             if (map_size_needed > map_size) {
-> > > +                     if (va)
-> > > +                             early_memunmap(va, map_size);
-> > > +                     /*
-> > > +                      * Map a little more than the fixed size entry
-> > > +                      * header, anticipating some data. It's safe to
-> > > +                      * do so as long as we stay within current memory
-> > > +                      * descriptor.
-> > > +                      */
-> > > +                     map_size = min(map_size_needed + 2*EFI_PAGE_SIZE,
-> > > +                                    offset_limit);
-> > > +                     va = early_memremap(efi.mokvar_table, map_size);
-> >
-> > Can't we just map the entire region from efi.mokvar_table to end_pa in
-> > one early_memremap call before the loop and avoid all the remapping
-> > logic?
-> >
-> 
-> I suppose that depends on whether there is a reasonable upper bound on
-> the size which is guaranteed to be mappable using early_memremap()
-> (e.g., 128 KB on 32-bit ARM, or 256 KB on other architectures)
+On Tue, Sep 15, 2020 at 02:28:33PM +0300, Jarkko Sakkinen wrote:
+> @@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
+>  		return ret;
+>  	}
+>  
+> +	ret = misc_register(&sgx_dev_provision);
+> +	if (ret) {
+> +		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
+> +		misc_deregister(&sgx_dev_enclave);
 
-Ah, sorry, I thought only the number of early mappings was limited, not
-the size as well. We could still just map the maximum possible
-(NR_FIX_BTMAPS * PAGE_SIZE), since it will fail anyway if the config
-table turns out to be bigger than that?
+The comment over misc_deregister() says:
 
-> 
-> 
-> > > +     if (va)
-> > > +             early_memunmap(va, map_size);
-> > > +     if (err) {
-> > > +             pr_err("EFI MOKvar config table is not valid\n");
-> > > +             return;
-> > > +     }
-> >
-> > err will never be non-zero here: it was cleared when the
-> > efi_mem_desc_lookup() was done. I think the initialization of err to
-> > -EINVAL needs to be moved just prior to the loop.
-> >
-> > > +     efi_mem_reserve(efi.mokvar_table, map_size_needed);
-> > > +     efi_mokvar_table_size = map_size_needed;
-> > > +}
+ *      Unregister a miscellaneous device that was previously
+ *      successfully registered with misc_register().
+
+but this is not a successful registration here, in the if (ret) case...
+
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+> diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
+> index e4063923115b..72747d01c046 100644
+> --- a/arch/x86/kernel/cpu/sgx/driver.h
+> +++ b/arch/x86/kernel/cpu/sgx/driver.h
+> @@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
+>  extern u64 sgx_xfrm_reserved_mask;
+>  extern u32 sgx_xsave_size_tbl[64];
+>  
+> +extern const struct file_operations sgx_provision_fops;
+> +
+>  long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+>  
+>  int sgx_drv_init(void);
+> diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+> index de2ed4f35ffb..4227bca7b477 100644
+> --- a/arch/x86/kernel/cpu/sgx/ioctl.c
+> +++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+> @@ -673,6 +673,50 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+>  	return ret;
+>  }
+>  
+> +/**
+> + * sgx_ioc_enclave_set_attribute - handler for %SGX_IOC_ENCLAVE_PROVISION
+> + * @filep:	open file to /dev/sgx
+       ^^^^^^
+
+Can you guess what my comment to that would be...?
+
+> + * @arg:	userspace pointer to a struct sgx_enclave_provision instance
+> + *
+> + * Mark the enclave as being allowed to access a restricted attribute bit.
+> + * The requested attribute is specified via the attribute_fd field in the
+> + * provided struct sgx_enclave_provision.  The attribute_fd must be a
+> + * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
+> + *
+> + * Failure to explicitly request access to a restricted attribute will cause
+> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
+> + * is access to the PROVISION_KEY.
+> + *
+> + * Note, access to the EINITTOKEN_KEY is disallowed entirely.
+> + *
+> + * Return: 0 on success, -errno otherwise
+> + */
+> +static long sgx_ioc_enclave_provision(struct sgx_encl *encl,
+> +					  void __user *arg)
+
+No need for the line break: both function args can fit on the same line.
+
+...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
