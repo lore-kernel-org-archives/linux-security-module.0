@@ -2,94 +2,96 @@ Return-Path: <SRS0=i+Ac=C6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 634AAC43466
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 09:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64681C43464
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 11:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DBB721D80
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 09:30:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="b5SniYU9"
+	by mail.kernel.org (Postfix) with ESMTP id 35A0F20EDD
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 11:11:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgIUJaO (ORCPT
+        id S1726710AbgIULL0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 05:30:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726347AbgIUJaN (ORCPT
+        Mon, 21 Sep 2020 07:11:26 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:23414 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726424AbgIULL0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 05:30:13 -0400
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7990C061755;
-        Mon, 21 Sep 2020 02:30:13 -0700 (PDT)
-Received: from zn.tnic (p200300ec2f07e300a1766583a478f392.dip0.t-ipconnect.de [IPv6:2003:ec:2f07:e300:a176:6583:a478:f392])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 895891EC02FE;
-        Mon, 21 Sep 2020 11:30:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1600680611;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=ul1sT/JJqcPq+/FHC38hKbn8CrigKI2NTRXzyRlVYq8=;
-        b=b5SniYU9WfZ2MYH+c/k2qn56pXh/3q+o07CEdFzfUDWTzhjDRKc/G3n43UwhXseEQLx+nE
-        CQU3Z79Hw0SKHkZKuT3uP2KXFMF26WtuuWH2tdSSZ9rAfomyrfENo9uGzFKNCgoyoy7jsW
-        5zVCR83U/XZDIE4Ua4K6Gc1DJTp/3ek=
-Date:   Mon, 21 Sep 2020 11:30:06 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Mon, 21 Sep 2020 07:11:26 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-233-9UYq0ao9O6ejB4ujVxtO9g-1; Mon, 21 Sep 2020 12:11:22 +0100
+X-MC-Unique: 9UYq0ao9O6ejB4ujVxtO9g-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 21 Sep 2020 12:11:21 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 21 Sep 2020 12:11:21 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@lst.de>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20200921093006.GA5901@zn.tnic>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-12-jarkko.sakkinen@linux.intel.com>
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: let import_iovec deal with compat_iovecs as well
+Thread-Topic: let import_iovec deal with compat_iovecs as well
+Thread-Index: AQHWjbnKEn35LxofhEeT1lmdzdUiWqlwBNiwgAJx3YCAAH2K4A==
+Date:   Mon, 21 Sep 2020 11:11:21 +0000
+Message-ID: <ac8a3691c4f5442f908c51298260ca0e@AcuMS.aculab.com>
+References: <20200918124533.3487701-1-hch@lst.de>
+ <2c7bf42ee4314484ae0177280cd8f5f3@AcuMS.aculab.com>
+ <20200921044125.GA16522@lst.de>
+In-Reply-To: <20200921044125.GA16522@lst.de>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200915112842.897265-12-jarkko.sakkinen@linux.intel.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 15, 2020 at 02:28:29PM +0300, Jarkko Sakkinen wrote:
-> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that can
-> be used by applications to set aside private regions of code and data. The
-> code outside the SGX hosted software entity is prevented from accessing the
-> memory inside the enclave by the CPU. We call these entities as enclaves.
+> On Sat, Sep 19, 2020 at 02:24:10PM +0000, David Laight wrote:
+> > I thought about that change while writing my import_iovec() => iovec_import()
+> > patch - and thought that the io_uring code would (as usual) cause grief.
+> >
+> > Christoph - did you see those patches?
 
-It was correct before:
+Link to cover email.
 
--memory inside the enclave by the CPU. We call these entities enclaves.
-+memory inside the enclave by the CPU. We call these entities as enclaves.
+https://lkml.org/lkml/2020/9/15/661
 
-"as " is not needed.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
