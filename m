@@ -2,107 +2,200 @@ Return-Path: <SRS0=i+Ac=C6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FF5C43466
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 14:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92906C43466
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 15:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99B6020735
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 14:51:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KV2uFtsW"
+	by mail.kernel.org (Postfix) with ESMTP id 525C12075E
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 15:02:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbgIUOvz (ORCPT
+        id S1727380AbgIUPC1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 10:51:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39182 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726795AbgIUOvz (ORCPT
+        Mon, 21 Sep 2020 11:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46594 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbgIUPC0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 10:51:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600699913;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=fS4tEIUXzLiN1infPPE8WhHFvu+7kD6d4GBJkxQpXVA=;
-        b=KV2uFtsWWSJdosHNJQuTLJumbPAuyvJoqzsgxIesY/hS1BeyprizTk8mauzmawV2SDJkT/
-        53iolt05h6eTZohQqww9LziYi/UjnImBf/zlcHDgrCLHeXs10OKn5O42KAKT1sDJ113r3k
-        KUBTtiSB76iZJFLHoIeYmSw0BTowXRI=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-165-y-N9BlbROxO1JtSqCu_sYw-1; Mon, 21 Sep 2020 10:51:48 -0400
-X-MC-Unique: y-N9BlbROxO1JtSqCu_sYw-1
-Received: by mail-lf1-f70.google.com with SMTP id z77so2514331lfc.2
-        for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2020 07:51:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=fS4tEIUXzLiN1infPPE8WhHFvu+7kD6d4GBJkxQpXVA=;
-        b=V80h3+cNWhZMVWy1jNKIwXSFu4TOhAeH0RStHXL9rFQlkiS1I7XxlvrJQdEdhFop1U
-         OfQZrirg4etOvSK1ua2EMAtcY3CqdSzuyYlCHv51LcxIxhQpc+6yd5hgQv83vTmcBscS
-         8XeMlrC4MEOsk1opgzKUiLRLKrbKNwvLGayVDoWAJp6y7ZaD7lNGXujvuBYV+xwz/0h9
-         JNyxg/yVqeS+AQjjuNyij4zr6/54bb3O3qTtq8ZXIZq+xqipzyP5y5+SVABW35Nop8Mc
-         oprkMJxue25+lbVICXr/HF/uePfvrJ/Ap2PNb6yNZVSBamHVz2z2N4FR0PRfSTah/vzw
-         R6Rg==
-X-Gm-Message-State: AOAM533QqljQGzwwKCU8OSET62uH1KCzO34FtqtBVM8GVoFn/JdgdLOl
-        /j4Gyw/pdfjTl0yeYlzFCG2Qcvy7E2txKg1c/dE8KjPKPm2jjysWRHnbTZjsh7ks/XjwtSXCtfp
-        1UXjXo0kDQCjThgOVYMHnu4ReGXSHHlL1eJJihp+cWoTXZsW4MUAj
-X-Received: by 2002:a05:651c:38d:: with SMTP id e13mr45404ljp.38.1600699906825;
-        Mon, 21 Sep 2020 07:51:46 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzWDA/v70U48siYhVA/gEo8+KsPOGYyZfPRgMFWmKODx4TZj6mRHbwGLf09leGYyYHOxCYCfm3AB2zLCE926Vk=
-X-Received: by 2002:a05:651c:38d:: with SMTP id e13mr45395ljp.38.1600699906595;
- Mon, 21 Sep 2020 07:51:46 -0700 (PDT)
+        Mon, 21 Sep 2020 11:02:26 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 724C2C061755;
+        Mon, 21 Sep 2020 08:02:26 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKNKV-003BjE-Jk; Mon, 21 Sep 2020 15:02:11 +0000
+Date:   Mon, 21 Sep 2020 16:02:11 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 02/11] mm: call import_iovec() instead of
+ rw_copy_check_uvector() in process_vm_rw()
+Message-ID: <20200921150211.GS3421308@ZenIV.linux.org.uk>
+References: <20200921143434.707844-1-hch@lst.de>
+ <20200921143434.707844-3-hch@lst.de>
 MIME-Version: 1.0
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 21 Sep 2020 16:51:35 +0200
-Message-ID: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
-Subject: Commit 13c164b1a186 - regression for LSMs/SELinux?
-To:     Christoph Hellwig <hch@lst.de>, Ian Kent <raven@themaw.net>
-Cc:     autofs@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Zdenek Pytela <zpytela@redhat.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200921143434.707844-3-hch@lst.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi folks,
+On Mon, Sep 21, 2020 at 04:34:25PM +0200, Christoph Hellwig wrote:
+> From: David Laight <David.Laight@ACULAB.COM>
+> 
+> This is the only direct call of rw_copy_check_uvector().  Removing it
+> will allow rw_copy_check_uvector() to be inlined into import_iovec(),
+> while only paying a minor price by setting up an otherwise unused
+> iov_iter in the process_vm_readv/process_vm_writev syscalls that aren't
+> in a super hot path.
 
-It seems that after commit 13c164b1a186 ("autofs: switch to
-kernel_write") there is now an extra LSM permission required (for the
-current task to write to the automount pipe) for processes accessing
-some yet-to-to-be mounted directory on which an autofs mount is set
-up. The call chain is:
-[...]
-autofs_wait() ->
-autofs_notify_daemon() ->
-autofs_write() ->
-kernel_write() ->
-rw_verify_area() ->
-security_file_permission()
+> @@ -443,7 +443,7 @@ void iov_iter_init(struct iov_iter *i, unsigned int direction,
+>  			const struct iovec *iov, unsigned long nr_segs,
+>  			size_t count)
+>  {
+> -	WARN_ON(direction & ~(READ | WRITE));
+> +	WARN_ON(direction & ~(READ | WRITE | CHECK_IOVEC_ONLY));
+>  	direction &= READ | WRITE;
 
-The bug report that led me to this commit is at [1].
+Ugh...
 
-Technically, this is a regression for LSM users, since this is a
-kernel-internal operation and an LSM permission for the current task
-shouldn't be required. Can this patch be reverted? Perhaps
-__kernel_{read|write}() could instead be renamed to kernel_*_nocheck()
-so that the name is more descriptive?
+> -	rc = rw_copy_check_uvector(CHECK_IOVEC_ONLY, rvec, riovcnt, UIO_FASTIOV,
+> -				   iovstack_r, &iov_r);
+> +	rc = import_iovec(CHECK_IOVEC_ONLY, rvec, riovcnt, UIO_FASTIOV, &iov_r,
+> +			  &iter_r);
+>  	if (rc <= 0)
+>  		goto free_iovecs;
+>  
+> -	rc = process_vm_rw_core(pid, &iter, iov_r, riovcnt, flags, vm_write);
+> +	rc = process_vm_rw_core(pid, &iter_l, iter_r.iov, iter_r.nr_segs,
+> +				flags, vm_write);
 
-Thanks,
+... and ugh^2, since now you are not only setting a meaningless iov_iter,
+you are creating a new place that pokes directly into struct iov_iter
+guts.
 
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=1874338
+Sure, moving rw_copy_check_uvector() over to lib/iov_iter.c makes sense.
+But I would rather split the access_ok()-related checks out of that thing
+and bury CHECK_IOVEC_ONLY.
 
--- 
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
+Step 1: move the damn thing to lib/iov_iter.c (same as you do, but without
+making it static)
 
+Step 2: split it in two:
+
+ssize_t rw_copy_check_uvector(const struct iovec __user * uvector,
+                              unsigned long nr_segs, unsigned long fast_segs,
+                              struct iovec *fast_pointer,
+                              struct iovec **ret_pointer)
+{
+	unsigned long seg;
+	ssize_t ret;
+	struct iovec *iov = fast_pointer;
+
+	*ret_pointer = fast_pointer;
+	/*
+	 * SuS says "The readv() function *may* fail if the iovcnt argument
+	 * was less than or equal to 0, or greater than {IOV_MAX}.  Linux has
+	 * traditionally returned zero for zero segments, so...
+	 */
+	if (nr_segs == 0)
+		return 0;
+
+	/*
+	 * First get the "struct iovec" from user memory and
+	 * verify all the pointers
+	 */
+	if (nr_segs > UIO_MAXIOV)
+		return -EINVAL;
+
+	if (nr_segs > fast_segs) {
+		iov = kmalloc_array(nr_segs, sizeof(struct iovec), GFP_KERNEL);
+		if (!iov)
+			return -ENOMEM;
+		*ret_pointer = iov;
+	}
+	if (copy_from_user(iov, uvector, nr_segs*sizeof(*uvector)))
+		return -EFAULT;
+
+	/*
+	 * According to the Single Unix Specification we should return EINVAL
+	 * if an element length is < 0 when cast to ssize_t or if the
+	 * total length would overflow the ssize_t return value of the
+	 * system call.
+	 *
+	 * Linux caps all read/write calls to MAX_RW_COUNT, and avoids the
+	 * overflow case.
+	 */
+	ret = 0;
+	for (seg = 0; seg < nr_segs; seg++) {
+		void __user *buf = iov[seg].iov_base;
+		ssize_t len = (ssize_t)iov[seg].iov_len;
+
+		/* see if we we're about to use an invalid len or if
+		 * it's about to overflow ssize_t */
+		if (len < 0)
+			return -EINVAL;
+		if (len > MAX_RW_COUNT - ret) {
+			len = MAX_RW_COUNT - ret;
+			iov[seg].iov_len = len;
+		}
+		ret += len;
+	}
+	return ret;
+}
+
+/*
+ *  This is merely an early sanity check; we do _not_ rely upon
+ *  it when we get to the actual memory accesses.
+ */
+static bool check_iovecs(const struct iovec *iov, int nr_segs)
+{
+        for (seg = 0; seg < nr_segs; seg++) {
+                void __user *buf = iov[seg].iov_base;
+                ssize_t len = (ssize_t)iov[seg].iov_len;
+
+                if (unlikely(!access_ok(buf, len)))
+                        return false;
+        }
+	return true;
+}
+
+ssize_t import_iovec(int type, const struct iovec __user * uvector,
+                 unsigned nr_segs, unsigned fast_segs,
+                 struct iovec **iov, struct iov_iter *i)
+{
+	struct iovec *p;
+	ssize_t n;
+
+	n = rw_copy_check_uvector(uvector, nr_segs, fast_segs, *iov, &p);
+	if (n > 0 && !check_iovecs(p, nr_segs))
+		n = -EFAULT;
+	if (n < 0) {
+		if (p != *iov)
+			kfree(p);
+		*iov = NULL;
+		return n;
+	}
+	iov_iter_init(i, type, p, nr_segs, n);
+	*iov = p == *iov ? NULL : p;
+	return n;
+}
+
+kill CHECK_IOVEC_ONLY and use rw_copy_check_uvector() without the type
+argument in mm/process_vm_access.c
+
+Saner that way, IMO...
