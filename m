@@ -6,74 +6,67 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FB9C43465
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5070FC43465
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 074E2216C4
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:09:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0419E206FB
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Sep 2020 16:12:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbgIUQJ0 (ORCPT
+        id S1728189AbgIUQMb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 12:09:26 -0400
-Received: from verein.lst.de ([213.95.11.211]:40664 "EHLO verein.lst.de"
+        Mon, 21 Sep 2020 12:12:31 -0400
+Received: from verein.lst.de ([213.95.11.211]:40705 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726395AbgIUQJ0 (ORCPT
+        id S1727361AbgIUQMa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 12:09:26 -0400
+        Mon, 21 Sep 2020 12:12:30 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0D29968AFE; Mon, 21 Sep 2020 18:09:23 +0200 (CEST)
-Date:   Mon, 21 Sep 2020 18:09:22 +0200
+        id AF5CF68B02; Mon, 21 Sep 2020 18:12:24 +0200 (CEST)
+Date:   Mon, 21 Sep 2020 18:12:24 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Ian Kent <raven@themaw.net>,
-        autofs@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Zdenek Pytela <zpytela@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
-Message-ID: <20200921160922.GA23870@lst.de>
-References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH 02/11] mm: call import_iovec() instead of
+ rw_copy_check_uvector() in process_vm_rw()
+Message-ID: <20200921161224.GA24807@lst.de>
+References: <20200921143434.707844-1-hch@lst.de> <20200921143434.707844-3-hch@lst.de> <20200921150211.GS3421308@ZenIV.linux.org.uk> <ef67787edb2f48548d69caaaff6997ba@AcuMS.aculab.com> <20200921152937.GX3421308@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+In-Reply-To: <20200921152937.GX3421308@ZenIV.linux.org.uk>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[adding Linus and Al]
-
-On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
-> Hi folks,
+On Mon, Sep 21, 2020 at 04:29:37PM +0100, Al Viro wrote:
+> On Mon, Sep 21, 2020 at 03:21:35PM +0000, David Laight wrote:
 > 
-> It seems that after commit 13c164b1a186 ("autofs: switch to
-> kernel_write") there is now an extra LSM permission required (for the
-> current task to write to the automount pipe) for processes accessing
-> some yet-to-to-be mounted directory on which an autofs mount is set
-> up. The call chain is:
-> [...]
-> autofs_wait() ->
-> autofs_notify_daemon() ->
-> autofs_write() ->
-> kernel_write() ->
-> rw_verify_area() ->
-> security_file_permission()
+> > You really don't want to be looping through the array twice.
 > 
-> The bug report that led me to this commit is at [1].
-> 
-> Technically, this is a regression for LSM users, since this is a
-> kernel-internal operation and an LSM permission for the current task
-> shouldn't be required. Can this patch be reverted? Perhaps
-> __kernel_{read|write}() could instead be renamed to kernel_*_nocheck()
-> so that the name is more descriptive?
+> Profiles, please.
 
-So we obviously should not break existing user space and need to fix
-this ASAP.  The trivial "fix" would be to export __kernel_write again
-and switch autofs to use it.  The other option would be a FMODE flag
-to bypass security checks, only to be set if the callers ensures
-they've been valided (i.e. in autofs_prepare_pipe).
-
-Any opinions?
+Given that the iov array should be cache hot I'd be surprised to
+see a huge difference.  
