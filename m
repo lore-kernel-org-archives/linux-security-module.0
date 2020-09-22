@@ -2,152 +2,268 @@ Return-Path: <SRS0=wc+g=C7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DB0C4727D
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800FAC4727E
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 992C72396D
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B642399A
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:44:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMtqG3An"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxtHuWnX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbgIVM3V (ORCPT
+        id S1726605AbgIVMoR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Sep 2020 08:29:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbgIVM3V (ORCPT
+        Tue, 22 Sep 2020 08:44:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31691 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726641AbgIVMoR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Sep 2020 08:29:21 -0400
-Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87652C061755;
-        Tue, 22 Sep 2020 05:29:21 -0700 (PDT)
-Received: by mail-oi1-x241.google.com with SMTP id w16so20800229oia.2;
-        Tue, 22 Sep 2020 05:29:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lw8l2XF27GiXIs5D2LDmdbIHtbPV/9IzZuH5gha+dXU=;
-        b=hMtqG3AnIdzhd8FhSJgasZRgxKX1BljRAI3iQ76ON6vFjNvk6LxCNISVCaxXPse8i4
-         ft813JH+9Sm/PFyoejP7USwNGwwkoZ35rNf3OETQy8Mgl+ybxX8pp0NAZuvQqi64mZkN
-         48N08Anmat/0Y9DOCODiO5gqh228M8QaRLVkuxf8agrXMsZ4C8WnpeL/260Hqh0z6rtO
-         OXgfVoIk5m03bCrWR8Q1j+XdX+nvMhbOvQhnDljSMpXLd0HjQIn8pXWQIyWBK7d/V3df
-         2BYvDj49sJRHwb3JtyJo4ctAPiPrKPp/iYP5xW/kGBc3FBzCNyvE8c4J0602KcD/DoP+
-         WnaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lw8l2XF27GiXIs5D2LDmdbIHtbPV/9IzZuH5gha+dXU=;
-        b=VxEAiAqyM1nyeovkGLGWm45rFATeBSGeqO/z/wl4Y5GwZ5QBPaEj25SrSDgrCg1u+B
-         N7ha7oIJfzx+CjdBmcY9wVkX/Eux0ibV2m0DUSU3+41KyEZ5TRxqKWKHsfJTdDqxZn8G
-         DON5UnCAWTGzWaM3gs3FDZdVVGLjyal2lI49mzHAL1dTVXV/X9EowhxS6Mgt5IDADPus
-         mm8kk07cU086AQHdMFUaWXbBTPGck24pvkQA252qpQ+NhsOAbexMNIBWHhiGSQR3on6s
-         0H7lih4obEfOdCc/GGCllWJfy+Xk7YkJ7X5ol37vJZyd5hA/IyLpveGJvkhmKifJwVis
-         d+MQ==
-X-Gm-Message-State: AOAM531CzEUJqMnBs9lAew1WZp2+VaoDKYnOO/xY76IkeCW905GiQMfF
-        uh1VErCE4GE6JN8KYvbc1V+2wGXx2IG1ErmKWwpQ/FyC
-X-Google-Smtp-Source: ABdhPJwXjzZtghSQAOmQh6XXAPH+VTjj0QVlpHN8OBZNnzLzgvtJqOiAnWnrQ0OmZRNMZE8kLL3LauL7kJ3Ovs6g9UI=
-X-Received: by 2002:aca:4007:: with SMTP id n7mr2319303oia.160.1600777760931;
- Tue, 22 Sep 2020 05:29:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
- <20200921160922.GA23870@lst.de> <20200921163011.GZ3421308@ZenIV.linux.org.uk> <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
-In-Reply-To: <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 22 Sep 2020 08:29:10 -0400
-Message-ID: <CAEjxPJ5zjZLP0LoGy-VGRdhO+hCa=+nPNx3f_AJ-+iVSOaO_-g@mail.gmail.com>
-Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        Ian Kent <raven@themaw.net>, autofs@vger.kernel.org,
+        Tue, 22 Sep 2020 08:44:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600778655;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CCDgCmaw/qHn5rHYijbzeEMop3DTo9+RByuy9r1+j2o=;
+        b=VxtHuWnXDzJBj9x+HtFxSkQ5TKEAvXidqL5/0rDkltKBGzGCuGW+JJV2dBQ64bO083RH+h
+        +KeZCQQYxeyoV3MygRwV0Rym488d14z5VWXdSJfUokUCg0sR8fWplkfDm7a/Wc/2F9fpgf
+        n3/5RvwCvphJVp3jZnYAhTOCbWFaVGM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-567-7fBJwtkaMjmoQ_M32LDbjA-1; Tue, 22 Sep 2020 08:44:06 -0400
+X-MC-Unique: 7fBJwtkaMjmoQ_M32LDbjA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8925A801FDF;
+        Tue, 22 Sep 2020 12:44:05 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.10.110.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4784F10027AB;
+        Tue, 22 Sep 2020 12:43:51 +0000 (UTC)
+Date:   Tue, 22 Sep 2020 08:43:49 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Zdenek Pytela <zpytela@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Eric Paris <eparis@redhat.com>
+Subject: Re: [[PATCH V4]] audit: trigger accompanying records when no rules
+ present
+Message-ID: <20200922124349.GI822320@madcap2.tricolour.ca>
+References: <35f2b8c69b4b9abbc076dd55a6f0f52cf20abad7.1599687447.git.rgb@redhat.com>
+ <CAHC9VhRN33KcW2dL1KJZZJC_Sg4JEdBJdnecRz6SB+PQ0BSg9A@mail.gmail.com>
+ <20200921195655.GH822320@madcap2.tricolour.ca>
+ <CAHC9VhR2Xqp1wVe6UmLgGryyp_5bGwSHzgpVEdixKP6Y4srewA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhR2Xqp1wVe6UmLgGryyp_5bGwSHzgpVEdixKP6Y4srewA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 22, 2020 at 3:34 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> On Mon, Sep 21, 2020 at 6:30 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
-> > > [adding Linus and Al]
-> > >
-> > > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
-> > > > Hi folks,
+On 2020-09-21 19:31, Paul Moore wrote:
+> On Mon, Sep 21, 2020 at 3:57 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2020-09-15 12:18, Paul Moore wrote:
+> > > On Thu, Sep 10, 2020 at 11:03 AM Richard Guy Briggs <rgb@redhat.com> wrote:
 > > > >
-> > > > It seems that after commit 13c164b1a186 ("autofs: switch to
-> > > > kernel_write") there is now an extra LSM permission required (for the
-> > > > current task to write to the automount pipe) for processes accessing
-> > > > some yet-to-to-be mounted directory on which an autofs mount is set
-> > > > up. The call chain is:
-> > > > [...]
-> > > > autofs_wait() ->
-> > > > autofs_notify_daemon() ->
-> > > > autofs_write() ->
-> > > > kernel_write() ->
-> > > > rw_verify_area() ->
-> > > > security_file_permission()
+> > > > When there are no audit rules registered, mandatory records (config,
+> > > > etc.) are missing their accompanying records (syscall, proctitle, etc.).
 > > > >
-> > > > The bug report that led me to this commit is at [1].
+> > > > This is due to audit context dummy set on syscall entry based on absence
+> > > > of rules that signals that no other records are to be printed.
 > > > >
-> > > > Technically, this is a regression for LSM users, since this is a
-> > > > kernel-internal operation and an LSM permission for the current task
-> > > > shouldn't be required. Can this patch be reverted? Perhaps
-> > > > __kernel_{read|write}() could instead be renamed to kernel_*_nocheck()
-> > > > so that the name is more descriptive?
+> > > > Clear the dummy bit if any record is generated.
+> > > >
+> > > > The proctitle context and dummy checks are pointless since the
+> > > > proctitle record will not be printed if no syscall records are printed.
+> > > >
+> > > > The fds array is reset to -1 after the first syscall to indicate it
+> > > > isn't valid any more, but was never set to -1 when the context was
+> > > > allocated to indicate it wasn't yet valid.
+> > > >
+> > > > The audit_inode* functions can be called without going through
+> > > > getname_flags() or getname_kernel() that sets audit_names and cwd, so
+> > > > set the cwd if it has not already been done so due to audit_names being
+> > > > valid.
+> > > >
+> > > > The LSM dump_common_audit_data() LSM_AUDIT_DATA_NET:AF_UNIX case was
+> > > > missed with the ghak96 patch, so add that case here.
+> > > >
+> > > > Thanks to bauen1 <j2468h@googlemail.com> for reporting LSM situations in
+> > > > which context->cwd is not valid, inadvertantly fixed by the ghak96 patch.
+> > > >
+> > > > Please see upstream github issue
+> > > > https://github.com/linux-audit/audit-kernel/issues/120
+> > > > This is also related to upstream github issue
+> > > > https://github.com/linux-audit/audit-kernel/issues/96
+> > > >
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > ---
+> > > > Passes audit-testsuite.
+> > > >
+> > > > Chagelog:
+> > > > v4:
+> > > > - rebase on audit/next v5.9-rc1
+> > > > - squash v2+v3fix
+> > > > - add pwd NULL check in audit_log_name()
+> > > > - resubmit after revert
+> > > >
+> > > > v3:
+> > > > - initialize fds[0] to -1
+> > > > - init cwd for ghak96 LSM_AUDIT_DATA_NET:AF_UNIX case
+> > > > - init cwd for audit_inode{,_child}
+> > > >
+> > > > v2:
+> > > > - unconditionally clear dummy
+> > > > - create audit_clear_dummy accessor function
+> > > > - remove proctitle context and dummy checks
+> > > >
+> > > >  kernel/audit.c       |  1 +
+> > > >  kernel/audit.h       |  8 ++++++++
+> > > >  kernel/auditsc.c     | 11 +++++++----
+> > > >  security/lsm_audit.c |  1 +
+> > > >  4 files changed, 17 insertions(+), 4 deletions(-)
 > > >
-> > > So we obviously should not break existing user space and need to fix
-> > > this ASAP.  The trivial "fix" would be to export __kernel_write again
-> > > and switch autofs to use it.  The other option would be a FMODE flag
-> > > to bypass security checks, only to be set if the callers ensures
-> > > they've been valided (i.e. in autofs_prepare_pipe).
->
-> IMHO that sounds like an overkill in this scenario. I don't think it
-> makes sense to do the LSM check here (or at least not against the
-> current task's creds), because it is not the current task that wants
-> to communicate with the daemon, it just wants to to access some
-> directory on the system that just happens to be special to the kernel,
-> which needs to do some communication on the side to service this
-> request. So if we do want to do any LSM check here, there should at
-> least be some "bool internal" flag passed to the LSM, signalizing that
-> this is an internal read/write operation that wasn't directly
-> initiated/requested by the current process. SELinux could then either
-> use the kernel secid instead of the current task's secid or skip the
-> check completely in such case.
->
-> I'd like Stephen to weigh in on this, but it looks he might be on
-> vacation right now...
-
-No, just wasn't cc'd previously.  I don't think we want any LSM check
-here.  As the long term fix, I would suggest moving the
-security_file_permission() call up from rw_verify_area() to the
-callers (and not call it from kernel_write() at all).
-
->
-> > >
-> > > Any opinions?
+> > > Comments below, but can you elaborate on if any testing was done
+> > > beyond the audit-testsuite?
 > >
-> > Reexport for now.  Incidentally, what is LSM doing rejecting writes
-> > into a pipe?
->
-> With SELinux at least, what is allowed or denied is defined in the
-> policy. And the policy usually defaults to everything denied and then
-> you add rules to allow what needs (and makes sense) to be allowed.
-> Since until kernel 5.8 random processes didn't need to write to pipes
-> created by the automount daemon, it has never been explicitly allowed
-> and so the automounting now fails. It is in no way obvious that all
-> processes should have the permission to talk to the automount daemon
-> just to traverse the filesystem...
+> > Yes, it was tested with audit-testsuite and bauen1's reproducer
+> >
+> > > > diff --git a/kernel/audit.h b/kernel/audit.h
+> > > > index 3b9c0945225a..abcfef58435b 100644
+> > > > --- a/kernel/audit.h
+> > > > +++ b/kernel/audit.h
+> > > > @@ -290,6 +290,13 @@ extern int audit_signal_info_syscall(struct task_struct *t);
+> > > >  extern void audit_filter_inodes(struct task_struct *tsk,
+> > > >                                 struct audit_context *ctx);
+> > > >  extern struct list_head *audit_killed_trees(void);
+> > > > +
+> > > > +static inline void audit_clear_dummy(struct audit_context *ctx)
+> > > > +{
+> > > > +       if (ctx)
+> > > > +               ctx->dummy = 0;
+> > > > +}
+> > >
+> > > With the only caller being audit_log_start(), should this be moved to
+> > > kernel/audit.c?  I'm just not sure this is something we would ever
+> > > need (or want) to call from elsewhere, thoughts?
+> >
+> > Yes, move it, or better yet just open code it.
+> 
+> Sure.  It might also help to put a one-liner comment in there about why.
 
-Yes, controlling pipe writes is just one part of controlling
-information flow between processes but the intent here is to control
-userspace actions, not kernel-internal operations.
+No problem.
+
+> > > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > > > index 8dba8f0983b5..9d2de93f40b3 100644
+> > > > --- a/kernel/auditsc.c
+> > > > +++ b/kernel/auditsc.c
+> > > > @@ -1367,7 +1368,10 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
+> > > >                         /* name was specified as a relative path and the
+> > > >                          * directory component is the cwd
+> > > >                          */
+> > > > -                       audit_log_d_path(ab, " name=", &context->pwd);
+> > > > +                       if (&context->pwd)
+> > >
+> > > Hmm, I don't think this is going to work the way you are intending; I
+> > > believe this will always evaluate to true regardless of the state of
+> > > context->pwd.  If you look elsewhere in kernel/auditsc.c you will see
+> > > some examples of checking to see if context->pwd is valid (e.g.
+> > > _audit_getcwd() and audit_log_exit()).
+> >
+> > Sorry for the ctx->pwd.dentry/mnt brainfart, the compiler *did*
+> > complain.
+> 
+> That begs the question: why did you submit the patch?  I don't want to
+> dwell too much on this, but compilers are pretty smart these days,
+> it's best not to ignore their warnings unless you are *really* sure
+> you are right.
+
+I didn't ignore the compiler warning.  I fixed it a bit too hastily,
+incorrectly, the first time.
+
+> > > > +                               audit_log_d_path(ab, " name=", &context->pwd);
+> > > > +                       else
+> > > > +                               audit_log_format(ab, " name=(null)");
+> > > >                         break;
+> > > >                 default:
+> > > >                         /* log the name's directory component */...
+> > >
+> > > > @@ -2079,6 +2080,7 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
+> > > >         }
+> > > >         handle_path(dentry);
+> > > >         audit_copy_inode(n, dentry, inode, flags & AUDIT_INODE_NOEVAL);
+> > > > +       _audit_getcwd(context);
+> > > >  }
+> > > >
+> > > >  void __audit_file(const struct file *file)
+> > > > @@ -2197,6 +2199,7 @@ void __audit_inode_child(struct inode *parent,
+> > > >                 audit_copy_inode(found_child, dentry, inode, 0);
+> > > >         else
+> > > >                 found_child->ino = AUDIT_INO_UNSET;
+> > > > +       _audit_getcwd(context);
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(__audit_inode_child);
+> > > >
+> > > > diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+> > > > index 53d0d183db8f..e93077612246 100644
+> > > > --- a/security/lsm_audit.c
+> > > > +++ b/security/lsm_audit.c
+> > > > @@ -369,6 +369,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+> > > >                                         audit_log_untrustedstring(ab, p);
+> > > >                                 else
+> > > >                                         audit_log_n_hex(ab, p, len);
+> > > > +                               audit_getcwd();
+> > > >                                 break;
+> > > >                         }
+> > > >                 }
+> > >
+> > > I'm starting to wonder if audit is doing this wrong (it is audit after
+> > > all) ... why not just fetch the cwd in audit_log_exit() if there are
+> > > entries in the context->names_list?  The only time we care about
+> > > logging the working dir is when we actually have PATH records, right?
+> > > My initial thinking is that we can simplify a lot of code if we just
+> > > add a audit_getcwd() call in audit_log_exit() if the
+> > > context->names_list is not empty.  We should even be safe in the task
+> > > exit case as the fs info appears to get cleaned up *after*
+> > > audit_log_exit() is called.
+> >
+> > > Assuming we go this route, we can probably get rid of all the
+> > > audit_getcwd() calls outside of the audit code (e.g. the lsm_audit.c
+> > > code).  I guess we would need to make sure things still behave the
+> > > same for chdir(2), getcwd(2), etc. but even if we have to insert one
+> > > or two audit_getcwd() calls in that case we should still come out on
+> > > top (although I suspect the necessary calls are already being made).
+> >
+> > Or just open code audit_getcwd() in audit_alloc_name() and kill all
+> > audit_getcwd() calls since it is audit_names that is populated as the
+> > result of a call to audit_alloc_name().
+> >
+> > How does this look?: 4 files changed, 9 insertions(+), 33 deletions(-)
+> 
+> It looks like a diffstat ... ?  I'm guessing you meant to copy-n-paste
+> a diff here?
+
+No, it was a teaser of the patch I intended to send immediately
+afterwards, but life intervened and I have yet to send out the patch,
+which should be imminent.
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
