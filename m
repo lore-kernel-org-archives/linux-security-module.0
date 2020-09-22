@@ -2,286 +2,156 @@ Return-Path: <SRS0=wc+g=C7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46911C2D0E2
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97254C47425
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 16:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6255206DC
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3080B2086A
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 16:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IPvSkLfy"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="vkrTbtOH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgIVMpa (ORCPT
+        id S1726662AbgIVQUO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Sep 2020 08:45:30 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36350 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726571AbgIVMp3 (ORCPT
+        Tue, 22 Sep 2020 12:20:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54880 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbgIVQUN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Sep 2020 08:45:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1600778727;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc; bh=+Jv1Wo3uUQSIMwzegggWKyycsTQOaza4eSXUljZNlQE=;
-        b=IPvSkLfyd+BKlmBhjnmwJ80oV/jWNTMLPTac4fVpAfJnSGUFXU0VmDpNPe74+s7k0DvpwE
-        +UfIBH2uTcFinQ69KXwfHd5ZpNIvlP6jmlTtdmKXbfyV8fudXEaRlGFfo6Ughg+AqGkQDF
-        KtbwrC3quexfbp0Bzr6VeFUGe9aGEug=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-344-URCr8RkoMr6xq3tfDwsmQA-1; Tue, 22 Sep 2020 08:45:25 -0400
-X-MC-Unique: URCr8RkoMr6xq3tfDwsmQA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6E217809ACE;
-        Tue, 22 Sep 2020 12:45:24 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.10.110.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B5E4B19C4F;
-        Tue, 22 Sep 2020 12:45:16 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH ghak120 V5] audit: trigger accompanying records when no rules present
-Date:   Tue, 22 Sep 2020 08:44:50 -0400
-Message-Id: <7081a5b9c7d2e8085c49cec2fa72fcbb0b25e0d7.1600778472.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+        Tue, 22 Sep 2020 12:20:13 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96E1C061755
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2020 09:20:13 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id t14so12355970pgl.10
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2020 09:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=OuYZ36WnxwIp9b6camA1INonBCd7PS5F7n5lbvDtQoE=;
+        b=vkrTbtOH4vHnR/84aYqVDHrQ5AGvI5gJZ+epaaRbPDginNWZ7IQOaHp0KiQGLoRIqK
+         lCtpCBfEppwh5xdm5Fg2E09yGBsQ1omUh0FsVnB0AGbc0KabsZevsMs5kdugIv8CVE5/
+         WA4g4A2X6yhuybhLsZ26G3b/9jK9koGpq3H8xumPWJXJrnSzbLUYbfDR++IgN0bKoBQq
+         n0DG/oDelKPnE35WpGCvEELD66Jz17cs7lC56sr6mITihQA1DVJ1mt9BGhniHUyWF6Lh
+         zzYPOu4uBf4nQ34xtWqSlA6XpnJ8NFviCNNpjE2H0nhrpatshwJ5hPmeTiRqtrX3VMpc
+         QmhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=OuYZ36WnxwIp9b6camA1INonBCd7PS5F7n5lbvDtQoE=;
+        b=CSKf2iA0Y6oYxzd637efoLRHO4Yze77yCItvTr+IrPFBW8uWqEqcsEbPlHXT8wTSiq
+         2oiNdElHNlGcTdtd6Jlguc8Qb1VxpV0xHT99ZxJ0RBchirPkbcXxHjmoRNxCAOF4ejpE
+         pn69SaOi5y4lW7aL+452ahYuuECG0Dy3aOIBmYgnVONqBRVFiXjG2L+CW2dmIKFBKiuj
+         DUcxUwj6K7ZF22BDr3lNYdjnMTS4Rh8TxDyD4SOmUzCux6KsmTALVq+SsqH+XWdGJZk/
+         YUjI6EQ9u4PKhJEWBxd6iPrhhFCOwM3wSquHBxUPPvrfAAcvZwtnsObDPbse2fXNPTwO
+         qSUg==
+X-Gm-Message-State: AOAM530BufiIuFDYH8cb2dnLsCk0r1ZhjAhci0eMqyUWC7gLkbh+MFeX
+        4P6m6XQARPZGOjSRXYVs0xB9ww==
+X-Google-Smtp-Source: ABdhPJzVdW+N5Ufbpna8vjsXyt2h2YPelrT15cDlhJa791IGnC+04vroQZTdEBrKNKjccVmTF6OthA==
+X-Received: by 2002:a17:902:fe88:b029:d2:2a16:254 with SMTP id x8-20020a170902fe88b02900d22a160254mr5598643plm.23.1600791613205;
+        Tue, 22 Sep 2020 09:20:13 -0700 (PDT)
+Received: from localhost.localdomain ([2601:646:c200:1ef2:f4bd:fe2:85ed:ea92])
+        by smtp.gmail.com with ESMTPSA id gk14sm2982522pjb.41.2020.09.22.09.20.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Sep 2020 09:20:12 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+Date:   Tue, 22 Sep 2020 09:20:07 -0700
+Message-Id: <446566DF-ECBC-449C-92A1-A7D5AEBE9935@amacapital.net>
+References: <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Network Development <netdev@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+In-Reply-To: <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+X-Mailer: iPhone Mail (18A373)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When there are no audit rules registered, mandatory records (config,
-etc.) are missing their accompanying records (syscall, proctitle, etc.).
 
-This is due to audit context dummy set on syscall entry based on absence
-of rules that signals that no other records are to be printed.  Clear the dummy
-bit if any record is generated, open coding this in audit_log_start().
 
-The proctitle context and dummy checks are pointless since the
-proctitle record will not be printed if no syscall records are printed.
+> On Sep 22, 2020, at 2:01 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>=20
+> =EF=BB=BFOn Tue, Sep 22, 2020 at 9:59 AM Pavel Begunkov <asml.silence@gmai=
+l.com> wrote:
+>>> On 22/09/2020 10:23, Arnd Bergmann wrote:
+>>> On Tue, Sep 22, 2020 at 8:32 AM Pavel Begunkov <asml.silence@gmail.com> w=
+rote:
+>>>> On 22/09/2020 03:58, Andy Lutomirski wrote:
+>>>>> On Mon, Sep 21, 2020 at 5:24 PM Pavel Begunkov <asml.silence@gmail.com=
+> wrote:
+>>>>> I may be looking at a different kernel than you, but aren't you
+>>>>> preventing creating an io_uring regardless of whether SQPOLL is
+>>>>> requested?
+>>>>=20
+>>>> I diffed a not-saved file on a sleepy head, thanks for noticing.
+>>>> As you said, there should be an SQPOLL check.
+>>>>=20
+>>>> ...
+>>>> if (ctx->compat && (p->flags & IORING_SETUP_SQPOLL))
+>>>>        goto err;
+>>>=20
+>>> Wouldn't that mean that now 32-bit containers behave differently
+>>> between compat and native execution?
+>>>=20
+>>> I think if you want to prevent 32-bit applications from using SQPOLL,
+>>> it needs to be done the same way on both to be consistent:
+>>=20
+>> The intention was to disable only compat not native 32-bit.
+>=20
+> I'm not following why that would be considered a valid option,
+> as that clearly breaks existing users that update from a 32-bit
+> kernel to a 64-bit one.
+>=20
+> Taking away the features from users that are still on 32-bit kernels
+> already seems questionable to me, but being inconsistent
+> about it seems much worse, in particular when the regression
+> is on the upgrade path.
+>=20
+>>> Can we expect all existing and future user space to have a sane
+>>> fallback when IORING_SETUP_SQPOLL fails?
+>>=20
+>> SQPOLL has a few differences with non-SQPOLL modes, but it's easy
+>> to convert between them. Anyway, SQPOLL is a privileged special
+>> case that's here for performance/latency reasons, I don't think
+>> there will be any non-accidental users of it.
+>=20
+> Ok, so the behavior of 32-bit tasks would be the same as running
+> the same application as unprivileged 64-bit tasks, with applications
+> already having to implement that fallback, right?
+>=20
+>=20
 
-The fds array is reset to -1 after the first syscall to indicate it
-isn't valid any more, but was never set to -1 when the context was
-allocated to indicate it wasn't yet valid.
+I don=E2=80=99t have any real preference wrt SQPOLL, and it may be that we h=
+ave a problem even without SQPOLL when IO gets punted without one of the fix=
+es discussed.
 
-Check ctx->pwd in audit_log_name().
-
-The audit_inode* functions can be called without going through
-getname_flags() or getname_kernel() that sets audit_names and cwd, so
-set the cwd in audit_alloc_name() if it has not already been done so due to
-audit_names being valid and purge all other audit_getcwd() calls.
-
-Revert the LSM dump_common_audit_data() LSM_AUDIT_DATA_* cases from the
-ghak96 patch since they are no longer necessary due to cwd coverage in
-audit_alloc_name().
-
-Thanks to bauen1 <j2468h@googlemail.com> for reporting LSM situations in
-which context->cwd is not valid, inadvertantly fixed by the ghak96 patch.
-
-Please see upstream github issue
-https://github.com/linux-audit/audit-kernel/issues/120
-This is also related to upstream github issue
-https://github.com/linux-audit/audit-kernel/issues/96
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
-Chagelog:
-v5:
-- open code audit_clear_dummy() in audit_log_start()
-- fix check for ctx->pwd in audit_log_name()
-- open code _audit_getcwd() contents in audit_alloc_name()
-- ditch all *audit_getcwd() calls
-
-v4:
-- resubmit after revert
-
-v3:
-- initialize fds[0] to -1
-- init cwd for ghak96 LSM_AUDIT_DATA_NET:AF_UNIX case
-- init cwd for audit_inode{,_child}
-
-v2:
-- unconditionally clear dummy
-- create audit_clear_dummy accessor function
-- remove proctitle context and dummy checks
-
- include/linux/audit.h |  8 --------
- kernel/audit.c        |  3 +++
- kernel/auditsc.c      | 27 +++++++--------------------
- security/lsm_audit.c  |  5 -----
- 4 files changed, 10 insertions(+), 33 deletions(-)
-
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index b3d859831a31..82b7c1116a85 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -292,7 +292,6 @@ extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
- extern void __audit_syscall_exit(int ret_success, long ret_value);
- extern struct filename *__audit_reusename(const __user char *uptr);
- extern void __audit_getname(struct filename *name);
--extern void __audit_getcwd(void);
- extern void __audit_inode(struct filename *name, const struct dentry *dentry,
- 				unsigned int flags);
- extern void __audit_file(const struct file *);
-@@ -351,11 +350,6 @@ static inline void audit_getname(struct filename *name)
- 	if (unlikely(!audit_dummy_context()))
- 		__audit_getname(name);
- }
--static inline void audit_getcwd(void)
--{
--	if (unlikely(audit_context()))
--		__audit_getcwd();
--}
- static inline void audit_inode(struct filename *name,
- 				const struct dentry *dentry,
- 				unsigned int aflags) {
-@@ -584,8 +578,6 @@ static inline struct filename *audit_reusename(const __user char *name)
- }
- static inline void audit_getname(struct filename *name)
- { }
--static inline void audit_getcwd(void)
--{ }
- static inline void audit_inode(struct filename *name,
- 				const struct dentry *dentry,
- 				unsigned int aflags)
-diff --git a/kernel/audit.c b/kernel/audit.c
-index 68cee3bc8cfe..dd9d22ba4fd2 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1865,6 +1865,9 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
- 	}
- 
- 	audit_get_stamp(ab->ctx, &t, &serial);
-+	/* cancel dummy context to enable supporting records */
-+	if (ctx)
-+		ctx->dummy = 0;
- 	audit_log_format(ab, "audit(%llu.%03lu:%u): ",
- 			 (unsigned long long)t.tv_sec, t.tv_nsec/1000000, serial);
- 
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 8dba8f0983b5..183d79cc2e12 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -929,6 +929,7 @@ static inline struct audit_context *audit_alloc_context(enum audit_state state)
- 	context->prio = state == AUDIT_RECORD_CONTEXT ? ~0ULL : 0;
- 	INIT_LIST_HEAD(&context->killed_trees);
- 	INIT_LIST_HEAD(&context->names_list);
-+	context->fds[0] = -1;
- 	return context;
- }
- 
-@@ -1367,7 +1368,10 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
- 			/* name was specified as a relative path and the
- 			 * directory component is the cwd
- 			 */
--			audit_log_d_path(ab, " name=", &context->pwd);
-+			if (context->pwd.dentry && context->pwd.mnt)
-+				audit_log_d_path(ab, " name=", &context->pwd);
-+			else
-+				audit_log_format(ab, " name=(null)");
- 			break;
- 		default:
- 			/* log the name's directory component */
-@@ -1435,9 +1439,6 @@ static void audit_log_proctitle(void)
- 	struct audit_context *context = audit_context();
- 	struct audit_buffer *ab;
- 
--	if (!context || context->dummy)
--		return;
--
- 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_PROCTITLE);
- 	if (!ab)
- 		return;	/* audit_panic or being filtered */
-@@ -1866,6 +1867,8 @@ static struct audit_names *audit_alloc_name(struct audit_context *context,
- 	list_add_tail(&aname->list, &context->names_list);
- 
- 	context->name_count++;
-+	if (!context->pwd.dentry)
-+		get_fs_pwd(current->fs, &context->pwd);
- 	return aname;
- }
- 
-@@ -1894,20 +1897,6 @@ __audit_reusename(const __user char *uptr)
- 	return NULL;
- }
- 
--inline void _audit_getcwd(struct audit_context *context)
--{
--	if (!context->pwd.dentry)
--		get_fs_pwd(current->fs, &context->pwd);
--}
--
--void __audit_getcwd(void)
--{
--	struct audit_context *context = audit_context();
--
--	if (context->in_syscall)
--		_audit_getcwd(context);
--}
--
- /**
-  * __audit_getname - add a name to the list
-  * @name: name to add
-@@ -1931,8 +1920,6 @@ void __audit_getname(struct filename *name)
- 	n->name_len = AUDIT_NAME_FULL;
- 	name->aname = n;
- 	name->refcnt++;
--
--	_audit_getcwd(context);
- }
- 
- static inline int audit_copy_fcaps(struct audit_names *name,
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 53d0d183db8f..221370794d14 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -241,7 +241,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
- 			audit_log_format(ab, " ino=%lu", inode->i_ino);
- 		}
--		audit_getcwd();
- 		break;
- 	}
- 	case LSM_AUDIT_DATA_FILE: {
-@@ -255,7 +254,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
- 			audit_log_format(ab, " ino=%lu", inode->i_ino);
- 		}
--		audit_getcwd();
- 		break;
- 	}
- 	case LSM_AUDIT_DATA_IOCTL_OP: {
-@@ -271,7 +269,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 		}
- 
- 		audit_log_format(ab, " ioctlcmd=0x%hx", a->u.op->cmd);
--		audit_getcwd();
- 		break;
- 	}
- 	case LSM_AUDIT_DATA_DENTRY: {
-@@ -286,7 +283,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 			audit_log_untrustedstring(ab, inode->i_sb->s_id);
- 			audit_log_format(ab, " ino=%lu", inode->i_ino);
- 		}
--		audit_getcwd();
- 		break;
- 	}
- 	case LSM_AUDIT_DATA_INODE: {
-@@ -304,7 +300,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 		audit_log_format(ab, " dev=");
- 		audit_log_untrustedstring(ab, inode->i_sb->s_id);
- 		audit_log_format(ab, " ino=%lu", inode->i_ino);
--		audit_getcwd();
- 		break;
- 	}
- 	case LSM_AUDIT_DATA_TASK: {
--- 
-2.18.4
-
+But banning the mismatched io_uring and io_uring_enter seems like it may be w=
+orthwhile regardless.=
