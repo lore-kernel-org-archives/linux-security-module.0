@@ -2,144 +2,205 @@ Return-Path: <SRS0=wc+g=C7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6133AC4727E
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1F3C4727E
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2108A23A32
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83B7F23A62
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600736325;
+	bh=mO4DYr7N0RLjWZa37eU/VgHJpvS4aRf2iPegAH0iEtc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=V3HlNpE5pv7frgy/ZlYp6hxRLvi7ivfnAaqUlfmimpUcuJv/zd8bh9ArSDA9Gs09F
+	 rUdzAcLGocq9pSsiBwbjYdDRLVMhiPCaol1IRBu662NjJ5PmqemTtFfjeujOJgf2mq
+	 cFqLw3Bp2ZVBB/TQDWL/1AW1n3pHlFT5P344Irjo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbgIVAku (ORCPT
+        id S1729407AbgIVA6p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 20:40:50 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:52941 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729036AbgIVAku (ORCPT
+        Mon, 21 Sep 2020 20:58:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729423AbgIVA6g (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 20:40:50 -0400
-X-Greylist: delayed 607 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 20:40:49 EDT
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 148165C027E;
-        Mon, 21 Sep 2020 20:30:40 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 21 Sep 2020 20:30:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        /TBmWUlwG0EUyxkJ3YhTS5vlwG38Wpg66NogD/xSEuc=; b=jWr/6YjlySqXxom7
-        kbekEpNztcasla3E5DKgrSJrEG8yQl6qzSsWMMtjOGXX4sonmWns+riZ8+kAbmRs
-        dGVauyITEciLGui669a5dFZieScnp4Ih4fpYaqmLnWZyyyv4AaUcPa3fu/jmD7RM
-        E74sL6tWdHeNaij+gf8ndBMu0XYbi9brc5tmO2zXOaNvWAX+ranZnRYFpAsvNL5m
-        KQRYMZX1HQbCw+FsSw33k3F42R9uw6+4hO3yP/rLDm+tnNRqszBC8XgUDIHM6CID
-        C+iHTuFYGVdmwUQQ9rDWzTYZy3ZC+hNGlnhGPBBVaJxxSDQ4Bx6KmZpeZ1TxTtHH
-        w3dnOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=/TBmWUlwG0EUyxkJ3YhTS5vlwG38Wpg66NogD/xSE
-        uc=; b=NWnoQvSnwW7141IFoXAITtniYxmYi516g8t8H8DIWqQ/eq9PEQrPNY2FY
-        PgMULasv49ofCtwnOEQr018Im2Bkx0rKqBW/rqcHg0xA0tm+gZQrs5jDhnx1IKX2
-        XP1n2V3znLduEWV9VozQ4Ye0vP0f4VrdXk2sNUOZpHK6xUpJLF0gph/v5NccZQBi
-        DMMjXEALgs5iUt2vlFXLrwJ0OEvLq/+qy43G132mdZh43O42QvJ05VXhjgl08Qe0
-        MR/TfF8YiJypldVb8Ib2972C7TOBkQ7jli6/nSDb2M0VM5c2s3LWAehfUhDzionK
-        R1ZDeh5gnoOhz4zB46nD+IiArmr7w==
-X-ME-Sender: <xms:rkVpX3OVfUTempUErsYdFVRUVtOJj-JkJcR7vU3B3BwhRIn7uu2OtA>
-    <xme:rkVpXx8QuMVmM4bULyWcX27ksbwUIkFcSkt-MooniKmTZpAZJ5D_lmCexAdVWQyZV
-    xd6t-wybc1y>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudefgdefhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    pedutdeirdeiledrvdefledrudegjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:rkVpX2QPz0NfEVztsmJwXCFz5cuhNDGng49uLAtih5ENJJfCrpe0Bw>
-    <xmx:rkVpX7vREBTmrKlEOJlLTjT45WsFraabvIzNbvXyBAz72-XZ4z_wXA>
-    <xmx:rkVpX_cSP2byEwWOkFFjsAyxr7ZNfGTfbjOxWQnQavFr6g0VozN0-A>
-    <xmx:sEVpX26hBU2cn_RHrYTp7Z7O7T8oerbtQuu-a-USGkd-QkG6SjviVA>
-Received: from mickey.themaw.net (106-69-239-147.dyn.iinet.net.au [106.69.239.147])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F39513064680;
-        Mon, 21 Sep 2020 20:30:35 -0400 (EDT)
-Message-ID: <0c966f624c22fef7e641f9520b85152ede3dd371.camel@themaw.net>
-Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
-From:   Ian Kent <raven@themaw.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>, autofs@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Zdenek Pytela <zpytela@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 22 Sep 2020 08:30:31 +0800
-In-Reply-To: <20200921163011.GZ3421308@ZenIV.linux.org.uk>
-References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
-         <20200921160922.GA23870@lst.de>
-         <20200921163011.GZ3421308@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Mon, 21 Sep 2020 20:58:36 -0400
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D437C23AC8
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Sep 2020 00:58:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600736315;
+        bh=mO4DYr7N0RLjWZa37eU/VgHJpvS4aRf2iPegAH0iEtc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NcH2VkLBgDzvNIcwu92WQk4IAewPXtNoyAN5ZuO8pHvo1p+Rn1Ou8f+8UcnDfmQCh
+         RwG2NziW5jzt2iYAfirGZDU632aRajjo/G+x78cv/5v0WMOpY6g8gUKcWrozhHCxYh
+         Z9K4X8JU7DVwK0bapy70hqrLYXRdGWUnkheGMJIA=
+Received: by mail-wm1-f53.google.com with SMTP id l9so1605804wme.3
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Sep 2020 17:58:34 -0700 (PDT)
+X-Gm-Message-State: AOAM533vJ9AhgCWvcNCuU18myOl4Ad0K4qnqxGIf22sCusRzarl3mo5Z
+        Kjx1mlZe5BYmohhlPtVaqvplMqqNIQ1BaAquD8ipEQ==
+X-Google-Smtp-Source: ABdhPJzzXZz8FGhOqJIy3SOg0uhFjle8bEWKILqBSG3M41u7cJLjsHkjpP4JLeSfHDUPrx8gGM2D3rP9PVKnU83D0i8=
+X-Received: by 2002:a1c:740c:: with SMTP id p12mr1761323wmc.176.1600736312695;
+ Mon, 21 Sep 2020 17:58:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <CAK8P3a2Mi+1yttyGk4k7HxRVrMtmFqJewouVhynqUL0PJycmog@mail.gmail.com>
+ <D0791499-1190-4C3F-A984-0A313ECA81C7@amacapital.net> <563138b5-7073-74bc-f0c5-b2bad6277e87@gmail.com>
+ <486c92d0-0f2e-bd61-1ab8-302524af5e08@gmail.com> <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
+ <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com>
+In-Reply-To: <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 21 Sep 2020 17:58:20 -0700
+X-Gmail-Original-Message-ID: <CALCETrUEC81va8-fuUXG1uA5rbKxnKDYsDOXC70_HtKD4LAeAg@mail.gmail.com>
+Message-ID: <CALCETrUEC81va8-fuUXG1uA5rbKxnKDYsDOXC70_HtKD4LAeAg@mail.gmail.com>
+Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        David Howells <dhowells@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Network Development <netdev@vger.kernel.org>,
+        keyrings@vger.kernel.org,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-09-21 at 17:30 +0100, Al Viro wrote:
-> On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
-> > [adding Linus and Al]
-> > 
-> > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
-> > > Hi folks,
-> > > 
-> > > It seems that after commit 13c164b1a186 ("autofs: switch to
-> > > kernel_write") there is now an extra LSM permission required (for
-> > > the
-> > > current task to write to the automount pipe) for processes
-> > > accessing
-> > > some yet-to-to-be mounted directory on which an autofs mount is
-> > > set
-> > > up. The call chain is:
-> > > [...]
-> > > autofs_wait() ->
-> > > autofs_notify_daemon() ->
-> > > autofs_write() ->
-> > > kernel_write() ->
-> > > rw_verify_area() ->
-> > > security_file_permission()
-> > > 
-> > > The bug report that led me to this commit is at [1].
-> > > 
-> > > Technically, this is a regression for LSM users, since this is a
-> > > kernel-internal operation and an LSM permission for the current
-> > > task
-> > > shouldn't be required. Can this patch be reverted? Perhaps
-> > > __kernel_{read|write}() could instead be renamed to
-> > > kernel_*_nocheck()
-> > > so that the name is more descriptive?
-> > 
-> > So we obviously should not break existing user space and need to
-> > fix
-> > this ASAP.  The trivial "fix" would be to export __kernel_write
-> > again
-> > and switch autofs to use it.  The other option would be a FMODE
-> > flag
-> > to bypass security checks, only to be set if the callers ensures
-> > they've been valided (i.e. in autofs_prepare_pipe).
-> > 
-> > Any opinions?
-> 
-> Reexport for now.  Incidentally, what is LSM doing rejecting writes
-> into a pipe?
+On Mon, Sep 21, 2020 at 5:24 PM Pavel Begunkov <asml.silence@gmail.com> wro=
+te:
+>
+>
+>
+> On 22/09/2020 02:51, Andy Lutomirski wrote:
+> > On Mon, Sep 21, 2020 at 9:15 AM Pavel Begunkov <asml.silence@gmail.com>=
+ wrote:
+> >>
+> >> On 21/09/2020 19:10, Pavel Begunkov wrote:
+> >>> On 20/09/2020 01:22, Andy Lutomirski wrote:
+> >>>>
+> >>>>> On Sep 19, 2020, at 2:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> >>>>>
+> >>>>> =EF=BB=BFOn Sat, Sep 19, 2020 at 6:21 PM Andy Lutomirski <luto@kern=
+el.org> wrote:
+> >>>>>>> On Fri, Sep 18, 2020 at 8:16 AM Christoph Hellwig <hch@lst.de> wr=
+ote:
+> >>>>>>> On Fri, Sep 18, 2020 at 02:58:22PM +0100, Al Viro wrote:
+> >>>>>>>> Said that, why not provide a variant that would take an explicit
+> >>>>>>>> "is it compat" argument and use it there?  And have the normal
+> >>>>>>>> one pass in_compat_syscall() to that...
+> >>>>>>>
+> >>>>>>> That would help to not introduce a regression with this series ye=
+s.
+> >>>>>>> But it wouldn't fix existing bugs when io_uring is used to access
+> >>>>>>> read or write methods that use in_compat_syscall().  One example =
+that
+> >>>>>>> I recently ran into is drivers/scsi/sg.c.
+> >>>>>
+> >>>>> Ah, so reading /dev/input/event* would suffer from the same issue,
+> >>>>> and that one would in fact be broken by your patch in the hypotheti=
+cal
+> >>>>> case that someone tried to use io_uring to read /dev/input/event on=
+ x32...
+> >>>>>
+> >>>>> For reference, I checked the socket timestamp handling that has a
+> >>>>> number of corner cases with time32/time64 formats in compat mode,
+> >>>>> but none of those appear to be affected by the problem.
+> >>>>>
+> >>>>>> Aside from the potentially nasty use of per-task variables, one th=
+ing
+> >>>>>> I don't like about PF_FORCE_COMPAT is that it's one-way.  If we're
+> >>>>>> going to have a generic mechanism for this, shouldn't we allow a f=
+ull
+> >>>>>> override of the syscall arch instead of just allowing forcing comp=
+at
+> >>>>>> so that a compat syscall can do a non-compat operation?
+> >>>>>
+> >>>>> The only reason it's needed here is that the caller is in a kernel
+> >>>>> thread rather than a system call. Are there any possible scenarios
+> >>>>> where one would actually need the opposite?
+> >>>>>
+> >>>>
+> >>>> I can certainly imagine needing to force x32 mode from a kernel thre=
+ad.
+> >>>>
+> >>>> As for the other direction: what exactly are the desired bitness/arc=
+h semantics of io_uring?  Is the operation bitness chosen by the io_uring c=
+reation or by the io_uring_enter() bitness?
+> >>>
+> >>> It's rather the second one. Even though AFAIR it wasn't discussed
+> >>> specifically, that how it works now (_partially_).
+> >>
+> >> Double checked -- I'm wrong, that's the former one. Most of it is base=
+d
+> >> on a flag that was set an creation.
+> >>
+> >
+> > Could we get away with making io_uring_enter() return -EINVAL (or
+> > maybe -ENOTTY?) if you try to do it with bitness that doesn't match
+> > the io_uring?  And disable SQPOLL in compat mode?
+>
+> Something like below. If PF_FORCE_COMPAT or any other solution
+> doesn't lend by the time, I'll take a look whether other io_uring's
+> syscalls need similar checks, etc.
+>
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 0458f02d4ca8..aab20785fa9a 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -8671,6 +8671,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, =
+u32, to_submit,
+>         if (ctx->flags & IORING_SETUP_R_DISABLED)
+>                 goto out;
+>
+> +       ret =3D -EINVAl;
+> +       if (ctx->compat !=3D in_compat_syscall())
+> +               goto out;
+> +
 
-I had seen this too but thought it was due to selinux policy changes
-but the previously linked bug shows the rejection is more widespread
-than I thought.
+This seems entirely reasonable to me.  Sharing an io_uring ring
+between programs with different ABIs seems a bit nutty.
 
-A revert seems sensible for now but I'd like to understand why the
-writes are being rejected too, I'll have a look around.
+>         /*
+>          * For SQ polling, the thread will do all submissions and complet=
+ions.
+>          * Just return the requested submit count, and wake the thread if
+> @@ -9006,6 +9010,10 @@ static int io_uring_create(unsigned entries, struc=
+t io_uring_params *p,
+>         if (ret)
+>                 goto err;
+>
+> +       ret =3D -EINVAL;
+> +       if (ctx->compat)
+> +               goto err;
+> +
 
-Ian
+I may be looking at a different kernel than you, but aren't you
+preventing creating an io_uring regardless of whether SQPOLL is
+requested?
 
+>         /* Only gets the ring fd, doesn't install it in the file table */
+>         fd =3D io_uring_get_fd(ctx, &file);
+>         if (fd < 0) {
+> --
+> Pavel Begunkov
