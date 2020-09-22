@@ -2,235 +2,144 @@ Return-Path: <SRS0=wc+g=C7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739ADC4727E
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6133AC4727E
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AC7923A79
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:24:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5tY9xMB"
+	by mail.kernel.org (Postfix) with ESMTP id 2108A23A32
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 00:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbgIVAYl (ORCPT
+        id S1729284AbgIVAku (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Sep 2020 20:24:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728773AbgIVAYk (ORCPT
+        Mon, 21 Sep 2020 20:40:50 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:52941 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729036AbgIVAku (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Sep 2020 20:24:40 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DF92C061755;
-        Mon, 21 Sep 2020 17:24:40 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id a17so15083234wrn.6;
-        Mon, 21 Sep 2020 17:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:autocrypt:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wIBgQDjMpBc9eHjG5ciq3jUVwixS2wtL8ramLW/UpOw=;
-        b=M5tY9xMBgtGvsKK8eOdWQQO+KsgbPJMemCZI3/tNiSm0Xz8lHCWZiojHACMAPByoT9
-         fDtG5zLCnZIDOtKK8b16UFbyYByfWbTV38xOXLLFiAP10gXbgQGEUrEDTlEwpVhM0raj
-         4Nd+GwlczLaTF7LKsbHBxvfbn/eqYFWZLe1rolh+WVg1RiyjEy1OWSgn0CeNqD8jJkc9
-         RHkXhrdrFAkiW9zCDxyHUXBz9Yzdyok+t1h/kOLmYW6TlgWckxF0AZ+meRtK6o958jEC
-         5pLBkJic1D38s2HAN3IBQX2BgG54RrQOLjDWDs4lSk0nnlJ0q+CFqRilSh8iEpB+yABx
-         dKkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=wIBgQDjMpBc9eHjG5ciq3jUVwixS2wtL8ramLW/UpOw=;
-        b=YD5OKFCKxQuVO9fsTQHp/NfjMUGmXth4eFialBDaqtR1QgUTtGq2aPYD4Zzm+4qt17
-         jJZKsMLtki3MhFSyiM3zKAViR0WBUBggzNiY82JltnDP7jwrFApAad8NPX/+KtEqcxZl
-         qgOZPSKvn2V+GKwEgZ7gMb0UCbr0TnRRH6xBSsNNhItj9StqKzcgBpRb/OCSy4viFxvU
-         PaqUhDU1WZieKdhJ9UW+B5K/c2QZfGATrkZVl1qSn/ZEVKS34/ZPAoVQdjZ3MuP7aFgd
-         nTbkzMKmDcvF1IHKkviiFFHkEuu1MIrvmdVVi200nhKNgjlM8Mu1JS0HMP7NYY03pHLr
-         mPiQ==
-X-Gm-Message-State: AOAM533EG+2Jex+1YBazxIg0C5Ii9LZl6/fTyNNYEaxkxGp/jAU6KExN
-        R2lzNxBn2WDn5hRtAswNT3enWxs203uyCw==
-X-Google-Smtp-Source: ABdhPJxmzXm3LMafAJlajJw6mEDB155mO9zJr+xZSy1GQzleX1BLBZK0Un+mf22JCYogMfkbFJ92Wg==
-X-Received: by 2002:adf:fed1:: with SMTP id q17mr2217863wrs.85.1600734278437;
-        Mon, 21 Sep 2020 17:24:38 -0700 (PDT)
-Received: from [192.168.43.240] ([5.100.192.97])
-        by smtp.gmail.com with ESMTPSA id 91sm25208848wrq.9.2020.09.21.17.24.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Sep 2020 17:24:37 -0700 (PDT)
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-References: <CAK8P3a2Mi+1yttyGk4k7HxRVrMtmFqJewouVhynqUL0PJycmog@mail.gmail.com>
- <D0791499-1190-4C3F-A984-0A313ECA81C7@amacapital.net>
- <563138b5-7073-74bc-f0c5-b2bad6277e87@gmail.com>
- <486c92d0-0f2e-bd61-1ab8-302524af5e08@gmail.com>
- <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
- 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 bA==
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Message-ID: <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com>
-Date:   Tue, 22 Sep 2020 03:22:06 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 21 Sep 2020 20:40:50 -0400
+X-Greylist: delayed 607 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Sep 2020 20:40:49 EDT
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id 148165C027E;
+        Mon, 21 Sep 2020 20:30:40 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Mon, 21 Sep 2020 20:30:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        /TBmWUlwG0EUyxkJ3YhTS5vlwG38Wpg66NogD/xSEuc=; b=jWr/6YjlySqXxom7
+        kbekEpNztcasla3E5DKgrSJrEG8yQl6qzSsWMMtjOGXX4sonmWns+riZ8+kAbmRs
+        dGVauyITEciLGui669a5dFZieScnp4Ih4fpYaqmLnWZyyyv4AaUcPa3fu/jmD7RM
+        E74sL6tWdHeNaij+gf8ndBMu0XYbi9brc5tmO2zXOaNvWAX+ranZnRYFpAsvNL5m
+        KQRYMZX1HQbCw+FsSw33k3F42R9uw6+4hO3yP/rLDm+tnNRqszBC8XgUDIHM6CID
+        C+iHTuFYGVdmwUQQ9rDWzTYZy3ZC+hNGlnhGPBBVaJxxSDQ4Bx6KmZpeZ1TxTtHH
+        w3dnOg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=/TBmWUlwG0EUyxkJ3YhTS5vlwG38Wpg66NogD/xSE
+        uc=; b=NWnoQvSnwW7141IFoXAITtniYxmYi516g8t8H8DIWqQ/eq9PEQrPNY2FY
+        PgMULasv49ofCtwnOEQr018Im2Bkx0rKqBW/rqcHg0xA0tm+gZQrs5jDhnx1IKX2
+        XP1n2V3znLduEWV9VozQ4Ye0vP0f4VrdXk2sNUOZpHK6xUpJLF0gph/v5NccZQBi
+        DMMjXEALgs5iUt2vlFXLrwJ0OEvLq/+qy43G132mdZh43O42QvJ05VXhjgl08Qe0
+        MR/TfF8YiJypldVb8Ib2972C7TOBkQ7jli6/nSDb2M0VM5c2s3LWAehfUhDzionK
+        R1ZDeh5gnoOhz4zB46nD+IiArmr7w==
+X-ME-Sender: <xms:rkVpX3OVfUTempUErsYdFVRUVtOJj-JkJcR7vU3B3BwhRIn7uu2OtA>
+    <xme:rkVpXx8QuMVmM4bULyWcX27ksbwUIkFcSkt-MooniKmTZpAZJ5D_lmCexAdVWQyZV
+    xd6t-wybc1y>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudefgdefhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    pedutdeirdeiledrvdefledrudegjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:rkVpX2QPz0NfEVztsmJwXCFz5cuhNDGng49uLAtih5ENJJfCrpe0Bw>
+    <xmx:rkVpX7vREBTmrKlEOJlLTjT45WsFraabvIzNbvXyBAz72-XZ4z_wXA>
+    <xmx:rkVpX_cSP2byEwWOkFFjsAyxr7ZNfGTfbjOxWQnQavFr6g0VozN0-A>
+    <xmx:sEVpX26hBU2cn_RHrYTp7Z7O7T8oerbtQuu-a-USGkd-QkG6SjviVA>
+Received: from mickey.themaw.net (106-69-239-147.dyn.iinet.net.au [106.69.239.147])
+        by mail.messagingengine.com (Postfix) with ESMTPA id F39513064680;
+        Mon, 21 Sep 2020 20:30:35 -0400 (EDT)
+Message-ID: <0c966f624c22fef7e641f9520b85152ede3dd371.camel@themaw.net>
+Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
+From:   Ian Kent <raven@themaw.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>, autofs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Zdenek Pytela <zpytela@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 22 Sep 2020 08:30:31 +0800
+In-Reply-To: <20200921163011.GZ3421308@ZenIV.linux.org.uk>
+References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+         <20200921160922.GA23870@lst.de>
+         <20200921163011.GZ3421308@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-In-Reply-To: <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-
-On 22/09/2020 02:51, Andy Lutomirski wrote:
-> On Mon, Sep 21, 2020 at 9:15 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
->>
->> On 21/09/2020 19:10, Pavel Begunkov wrote:
->>> On 20/09/2020 01:22, Andy Lutomirski wrote:
->>>>
->>>>> On Sep 19, 2020, at 2:16 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->>>>>
->>>>> ﻿On Sat, Sep 19, 2020 at 6:21 PM Andy Lutomirski <luto@kernel.org> wrote:
->>>>>>> On Fri, Sep 18, 2020 at 8:16 AM Christoph Hellwig <hch@lst.de> wrote:
->>>>>>> On Fri, Sep 18, 2020 at 02:58:22PM +0100, Al Viro wrote:
->>>>>>>> Said that, why not provide a variant that would take an explicit
->>>>>>>> "is it compat" argument and use it there?  And have the normal
->>>>>>>> one pass in_compat_syscall() to that...
->>>>>>>
->>>>>>> That would help to not introduce a regression with this series yes.
->>>>>>> But it wouldn't fix existing bugs when io_uring is used to access
->>>>>>> read or write methods that use in_compat_syscall().  One example that
->>>>>>> I recently ran into is drivers/scsi/sg.c.
->>>>>
->>>>> Ah, so reading /dev/input/event* would suffer from the same issue,
->>>>> and that one would in fact be broken by your patch in the hypothetical
->>>>> case that someone tried to use io_uring to read /dev/input/event on x32...
->>>>>
->>>>> For reference, I checked the socket timestamp handling that has a
->>>>> number of corner cases with time32/time64 formats in compat mode,
->>>>> but none of those appear to be affected by the problem.
->>>>>
->>>>>> Aside from the potentially nasty use of per-task variables, one thing
->>>>>> I don't like about PF_FORCE_COMPAT is that it's one-way.  If we're
->>>>>> going to have a generic mechanism for this, shouldn't we allow a full
->>>>>> override of the syscall arch instead of just allowing forcing compat
->>>>>> so that a compat syscall can do a non-compat operation?
->>>>>
->>>>> The only reason it's needed here is that the caller is in a kernel
->>>>> thread rather than a system call. Are there any possible scenarios
->>>>> where one would actually need the opposite?
->>>>>
->>>>
->>>> I can certainly imagine needing to force x32 mode from a kernel thread.
->>>>
->>>> As for the other direction: what exactly are the desired bitness/arch semantics of io_uring?  Is the operation bitness chosen by the io_uring creation or by the io_uring_enter() bitness?
->>>
->>> It's rather the second one. Even though AFAIR it wasn't discussed
->>> specifically, that how it works now (_partially_).
->>
->> Double checked -- I'm wrong, that's the former one. Most of it is based
->> on a flag that was set an creation.
->>
+On Mon, 2020-09-21 at 17:30 +0100, Al Viro wrote:
+> On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
+> > [adding Linus and Al]
+> > 
+> > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
+> > > Hi folks,
+> > > 
+> > > It seems that after commit 13c164b1a186 ("autofs: switch to
+> > > kernel_write") there is now an extra LSM permission required (for
+> > > the
+> > > current task to write to the automount pipe) for processes
+> > > accessing
+> > > some yet-to-to-be mounted directory on which an autofs mount is
+> > > set
+> > > up. The call chain is:
+> > > [...]
+> > > autofs_wait() ->
+> > > autofs_notify_daemon() ->
+> > > autofs_write() ->
+> > > kernel_write() ->
+> > > rw_verify_area() ->
+> > > security_file_permission()
+> > > 
+> > > The bug report that led me to this commit is at [1].
+> > > 
+> > > Technically, this is a regression for LSM users, since this is a
+> > > kernel-internal operation and an LSM permission for the current
+> > > task
+> > > shouldn't be required. Can this patch be reverted? Perhaps
+> > > __kernel_{read|write}() could instead be renamed to
+> > > kernel_*_nocheck()
+> > > so that the name is more descriptive?
+> > 
+> > So we obviously should not break existing user space and need to
+> > fix
+> > this ASAP.  The trivial "fix" would be to export __kernel_write
+> > again
+> > and switch autofs to use it.  The other option would be a FMODE
+> > flag
+> > to bypass security checks, only to be set if the callers ensures
+> > they've been valided (i.e. in autofs_prepare_pipe).
+> > 
+> > Any opinions?
 > 
-> Could we get away with making io_uring_enter() return -EINVAL (or
-> maybe -ENOTTY?) if you try to do it with bitness that doesn't match
-> the io_uring?  And disable SQPOLL in compat mode?
+> Reexport for now.  Incidentally, what is LSM doing rejecting writes
+> into a pipe?
 
-Something like below. If PF_FORCE_COMPAT or any other solution
-doesn't lend by the time, I'll take a look whether other io_uring's
-syscalls need similar checks, etc.
+I had seen this too but thought it was due to selinux policy changes
+but the previously linked bug shows the rejection is more widespread
+than I thought.
 
+A revert seems sensible for now but I'd like to understand why the
+writes are being rejected too, I'll have a look around.
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 0458f02d4ca8..aab20785fa9a 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -8671,6 +8671,10 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
- 	if (ctx->flags & IORING_SETUP_R_DISABLED)
- 		goto out;
- 
-+	ret = -EINVAl;
-+	if (ctx->compat != in_compat_syscall())
-+		goto out;
-+
- 	/*
- 	 * For SQ polling, the thread will do all submissions and completions.
- 	 * Just return the requested submit count, and wake the thread if
-@@ -9006,6 +9010,10 @@ static int io_uring_create(unsigned entries, struct io_uring_params *p,
- 	if (ret)
- 		goto err;
- 
-+	ret = -EINVAL;
-+	if (ctx->compat)
-+		goto err;
-+
- 	/* Only gets the ring fd, doesn't install it in the file table */
- 	fd = io_uring_get_fd(ctx, &file);
- 	if (fd < 0) {
--- 
-Pavel Begunkov
+Ian
+
