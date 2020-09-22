@@ -2,135 +2,152 @@ Return-Path: <SRS0=wc+g=C7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB228C4727D
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 09:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DB0C4727D
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9223B20715
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 09:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 992C72396D
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Sep 2020 12:29:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMtqG3An"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbgIVJB4 (ORCPT
+        id S1726531AbgIVM3V (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Sep 2020 05:01:56 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:48239 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbgIVJBz (ORCPT
+        Tue, 22 Sep 2020 08:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47494 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726505AbgIVM3V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Sep 2020 05:01:55 -0400
-Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1M8QJq-1kP1tX30wS-004R66; Tue, 22 Sep 2020 11:01:51 +0200
-Received: by mail-qk1-f174.google.com with SMTP id 16so18290762qkf.4;
-        Tue, 22 Sep 2020 02:01:50 -0700 (PDT)
-X-Gm-Message-State: AOAM531+93v+0pc6Wi7zIypNe7Vgpz/NCT5EEwScNq/ES31+DcqqIzIF
-        wjBHiQJRNRN0efUxhQeFDvY1TrHFTG/Dy6uuW7w=
-X-Google-Smtp-Source: ABdhPJyRqkNrv5vljO58DCgwZZgH8gYzn8Pg1f10DkzXAekHvwLoBvZT9T4MCMOwP2QMtNaCPo1tGJEV8E4gZYbkeUE=
-X-Received: by 2002:ae9:c30d:: with SMTP id n13mr3794670qkg.138.1600765309262;
- Tue, 22 Sep 2020 02:01:49 -0700 (PDT)
+        Tue, 22 Sep 2020 08:29:21 -0400
+Received: from mail-oi1-x241.google.com (mail-oi1-x241.google.com [IPv6:2607:f8b0:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87652C061755;
+        Tue, 22 Sep 2020 05:29:21 -0700 (PDT)
+Received: by mail-oi1-x241.google.com with SMTP id w16so20800229oia.2;
+        Tue, 22 Sep 2020 05:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lw8l2XF27GiXIs5D2LDmdbIHtbPV/9IzZuH5gha+dXU=;
+        b=hMtqG3AnIdzhd8FhSJgasZRgxKX1BljRAI3iQ76ON6vFjNvk6LxCNISVCaxXPse8i4
+         ft813JH+9Sm/PFyoejP7USwNGwwkoZ35rNf3OETQy8Mgl+ybxX8pp0NAZuvQqi64mZkN
+         48N08Anmat/0Y9DOCODiO5gqh228M8QaRLVkuxf8agrXMsZ4C8WnpeL/260Hqh0z6rtO
+         OXgfVoIk5m03bCrWR8Q1j+XdX+nvMhbOvQhnDljSMpXLd0HjQIn8pXWQIyWBK7d/V3df
+         2BYvDj49sJRHwb3JtyJo4ctAPiPrKPp/iYP5xW/kGBc3FBzCNyvE8c4J0602KcD/DoP+
+         WnaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lw8l2XF27GiXIs5D2LDmdbIHtbPV/9IzZuH5gha+dXU=;
+        b=VxEAiAqyM1nyeovkGLGWm45rFATeBSGeqO/z/wl4Y5GwZ5QBPaEj25SrSDgrCg1u+B
+         N7ha7oIJfzx+CjdBmcY9wVkX/Eux0ibV2m0DUSU3+41KyEZ5TRxqKWKHsfJTdDqxZn8G
+         DON5UnCAWTGzWaM3gs3FDZdVVGLjyal2lI49mzHAL1dTVXV/X9EowhxS6Mgt5IDADPus
+         mm8kk07cU086AQHdMFUaWXbBTPGck24pvkQA252qpQ+NhsOAbexMNIBWHhiGSQR3on6s
+         0H7lih4obEfOdCc/GGCllWJfy+Xk7YkJ7X5ol37vJZyd5hA/IyLpveGJvkhmKifJwVis
+         d+MQ==
+X-Gm-Message-State: AOAM531CzEUJqMnBs9lAew1WZp2+VaoDKYnOO/xY76IkeCW905GiQMfF
+        uh1VErCE4GE6JN8KYvbc1V+2wGXx2IG1ErmKWwpQ/FyC
+X-Google-Smtp-Source: ABdhPJwXjzZtghSQAOmQh6XXAPH+VTjj0QVlpHN8OBZNnzLzgvtJqOiAnWnrQ0OmZRNMZE8kLL3LauL7kJ3Ovs6g9UI=
+X-Received: by 2002:aca:4007:: with SMTP id n7mr2319303oia.160.1600777760931;
+ Tue, 22 Sep 2020 05:29:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAK8P3a2Mi+1yttyGk4k7HxRVrMtmFqJewouVhynqUL0PJycmog@mail.gmail.com>
- <D0791499-1190-4C3F-A984-0A313ECA81C7@amacapital.net> <563138b5-7073-74bc-f0c5-b2bad6277e87@gmail.com>
- <486c92d0-0f2e-bd61-1ab8-302524af5e08@gmail.com> <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
- <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com> <CALCETrUEC81va8-fuUXG1uA5rbKxnKDYsDOXC70_HtKD4LAeAg@mail.gmail.com>
- <e0a1b4d1-ff47-18d1-d535-c62812cb3105@gmail.com> <CAK8P3a2-6JNS38EbZcLrk=cTT526oP=Rf0aoqWNSJ-k4XTYehQ@mail.gmail.com>
- <f25b4708-eba6-78d6-03f9-5bfb04e07627@gmail.com>
-In-Reply-To: <f25b4708-eba6-78d6-03f9-5bfb04e07627@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 22 Sep 2020 11:01:32 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
-Message-ID: <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
+References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+ <20200921160922.GA23870@lst.de> <20200921163011.GZ3421308@ZenIV.linux.org.uk> <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
+In-Reply-To: <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Tue, 22 Sep 2020 08:29:10 -0400
+Message-ID: <CAEjxPJ5zjZLP0LoGy-VGRdhO+hCa=+nPNx3f_AJ-+iVSOaO_-g@mail.gmail.com>
+Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
+        Ian Kent <raven@themaw.net>, autofs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Zdenek Pytela <zpytela@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:8U3QhqUgQssKpQivIurx1QhO0HcizCTbv9FM2dYjR7qI/BYtgBT
- aXnBt+gH3i7BkW4ORLrCt4H46/pNjWBK/mpqCyumcjcVfj1/zotel3weBob9uElfz3DwR7K
- SD73O72POJ3pwjD8gWBnHZGyAwt1MpkpQv9XkBHvto4Q+XAgPzYoa4EjGe8Z/x39gDR9cGO
- QujCKw+EEJbaSeenNDMzw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lxgMs8VhhiM=:l+UfaADbxVKseh338rQzK0
- QfABKRk1uOM8j+TCS6sCwMVp7ftwkOoJIGxGdG6L6VzI7cEX/MhwRXSQNk8YlDVPqekFAwqsJ
- K748wMagnWb5anQxTXdEkOBo0uWtUSAEwztEdQ2OBKdjwEG1J6pIlrCcDyitdMMoAz861eF0u
- z2iEwNTG7KaprxuPyh3LpnSFr4t9fNgbzFOS7H+wEZEnC9CeAWNx5wP0L6sE37HsEVzBj0klw
- rCdMwj/xQX550kfGtz5Tst5P+5qFFcpSycGh7yxzuA7IfUTo0Jtcxxq8Nsoy2hdLMsRB5AeEU
- hTJ1KV0t+ZNP/UDzzsqu7H5kqZnJRYF/Z8Ji6rftWofkhI6uKJJ8Cfjq8tWrO/UeP3XIf9v2i
- DQj5nXdMHge7GHqPvPrsVFMyAkUL1J4r8j1ePLIXjlpNWnjVBfzHviGfTGbMYidP8nHyfMUv4
- hEG02hwSHv9Zn7QmlN72PGM4XbtnD7nIM85CCGS+B86CUtmOfBWj5gRwwocYygk0Mfzi0STau
- 9lBglupWtfGYz14JMgT+7eEGaMn3WNy19TESYPhKMsyiDYRSSu38/SERTgtuUQo8ptjsjNOMw
- hMWuBgTKGkOX+0SeCUD2zOGOi/+ubpkvRVlttuUSAIEUl1xdqDzZNS6siOVdInCDtDO3VcOwL
- tz/kxsgWRCy7enDEmiF8nZGkmBV+bcNr8kAHKqyZDkcgcSxHstfrPlSvQ8eU70sysdob1c6pH
- o6m1IdiLADPf36SBZ2b/E1EXaXU5wEKpga7xW5vj4MkINkTWIONy6jvzXbTYJ5RaLNmyXl2Xq
- CcmZaAJaQnOwp55YtAfNvehwZlUtix7GjXWpSVDKul5QTnf8MdHSUm66q7etTCD1nugbL5krf
- nX96T+FtWTicJ8P6Rd2wiUyg+fLf10H8SOm4BOpcrhYne4qDBpHCkC3Wl4ydqivn66oeOEyJ9
- sHgF+76xRs7ep05tWnMmeiHdPlcAupShCEbkpfyQnpooyIq1sTbAL
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 22, 2020 at 9:59 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> On 22/09/2020 10:23, Arnd Bergmann wrote:
-> > On Tue, Sep 22, 2020 at 8:32 AM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >> On 22/09/2020 03:58, Andy Lutomirski wrote:
-> >>> On Mon, Sep 21, 2020 at 5:24 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
-> >>> I may be looking at a different kernel than you, but aren't you
-> >>> preventing creating an io_uring regardless of whether SQPOLL is
-> >>> requested?
-> >>
-> >> I diffed a not-saved file on a sleepy head, thanks for noticing.
-> >> As you said, there should be an SQPOLL check.
-> >>
-> >> ...
-> >> if (ctx->compat && (p->flags & IORING_SETUP_SQPOLL))
-> >>         goto err;
-> >
-> > Wouldn't that mean that now 32-bit containers behave differently
-> > between compat and native execution?
-> >
-> > I think if you want to prevent 32-bit applications from using SQPOLL,
-> > it needs to be done the same way on both to be consistent:
+On Tue, Sep 22, 2020 at 3:34 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 >
-> The intention was to disable only compat not native 32-bit.
-
-I'm not following why that would be considered a valid option,
-as that clearly breaks existing users that update from a 32-bit
-kernel to a 64-bit one.
-
-Taking away the features from users that are still on 32-bit kernels
-already seems questionable to me, but being inconsistent
-about it seems much worse, in particular when the regression
-is on the upgrade path.
-
-> > Can we expect all existing and future user space to have a sane
-> > fallback when IORING_SETUP_SQPOLL fails?
+> On Mon, Sep 21, 2020 at 6:30 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
+> > > [adding Linus and Al]
+> > >
+> > > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
+> > > > Hi folks,
+> > > >
+> > > > It seems that after commit 13c164b1a186 ("autofs: switch to
+> > > > kernel_write") there is now an extra LSM permission required (for the
+> > > > current task to write to the automount pipe) for processes accessing
+> > > > some yet-to-to-be mounted directory on which an autofs mount is set
+> > > > up. The call chain is:
+> > > > [...]
+> > > > autofs_wait() ->
+> > > > autofs_notify_daemon() ->
+> > > > autofs_write() ->
+> > > > kernel_write() ->
+> > > > rw_verify_area() ->
+> > > > security_file_permission()
+> > > >
+> > > > The bug report that led me to this commit is at [1].
+> > > >
+> > > > Technically, this is a regression for LSM users, since this is a
+> > > > kernel-internal operation and an LSM permission for the current task
+> > > > shouldn't be required. Can this patch be reverted? Perhaps
+> > > > __kernel_{read|write}() could instead be renamed to kernel_*_nocheck()
+> > > > so that the name is more descriptive?
+> > >
+> > > So we obviously should not break existing user space and need to fix
+> > > this ASAP.  The trivial "fix" would be to export __kernel_write again
+> > > and switch autofs to use it.  The other option would be a FMODE flag
+> > > to bypass security checks, only to be set if the callers ensures
+> > > they've been valided (i.e. in autofs_prepare_pipe).
 >
-> SQPOLL has a few differences with non-SQPOLL modes, but it's easy
-> to convert between them. Anyway, SQPOLL is a privileged special
-> case that's here for performance/latency reasons, I don't think
-> there will be any non-accidental users of it.
+> IMHO that sounds like an overkill in this scenario. I don't think it
+> makes sense to do the LSM check here (or at least not against the
+> current task's creds), because it is not the current task that wants
+> to communicate with the daemon, it just wants to to access some
+> directory on the system that just happens to be special to the kernel,
+> which needs to do some communication on the side to service this
+> request. So if we do want to do any LSM check here, there should at
+> least be some "bool internal" flag passed to the LSM, signalizing that
+> this is an internal read/write operation that wasn't directly
+> initiated/requested by the current process. SELinux could then either
+> use the kernel secid instead of the current task's secid or skip the
+> check completely in such case.
+>
+> I'd like Stephen to weigh in on this, but it looks he might be on
+> vacation right now...
 
-Ok, so the behavior of 32-bit tasks would be the same as running
-the same application as unprivileged 64-bit tasks, with applications
-already having to implement that fallback, right?
+No, just wasn't cc'd previously.  I don't think we want any LSM check
+here.  As the long term fix, I would suggest moving the
+security_file_permission() call up from rw_verify_area() to the
+callers (and not call it from kernel_write() at all).
 
-      Arnd
+>
+> > >
+> > > Any opinions?
+> >
+> > Reexport for now.  Incidentally, what is LSM doing rejecting writes
+> > into a pipe?
+>
+> With SELinux at least, what is allowed or denied is defined in the
+> policy. And the policy usually defaults to everything denied and then
+> you add rules to allow what needs (and makes sense) to be allowed.
+> Since until kernel 5.8 random processes didn't need to write to pipes
+> created by the automount daemon, it has never been explicitly allowed
+> and so the automounting now fails. It is in no way obvious that all
+> processes should have the permission to talk to the automount daemon
+> just to traverse the filesystem...
+
+Yes, controlling pipe writes is just one part of controlling
+information flow between processes but the intent here is to control
+userspace actions, not kernel-internal operations.
