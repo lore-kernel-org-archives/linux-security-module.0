@@ -2,202 +2,91 @@ Return-Path: <SRS0=Tise=DA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5D9C47420
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 01:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E496C4727D
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 06:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68EEF238A1
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 01:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42AA20739
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 06:06:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uvDI5uJj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbgIWBzR (ORCPT
+        id S1726685AbgIWGGD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Sep 2020 21:55:17 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56527 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726960AbgIWBzR (ORCPT
+        Wed, 23 Sep 2020 02:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbgIWGGC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Sep 2020 21:55:17 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id D75765C0216;
-        Tue, 22 Sep 2020 21:55:15 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Tue, 22 Sep 2020 21:55:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        upiM+ps2iylCJwR0Y5k0EaubVoVcvjREARfubzQL5PE=; b=au8olLs0jmhkc5PY
-        ldppotT1EOXipsk1kR+s+IO4jj8r685ipoVWLUz47rMQzzVKEz87oZNfCEh13bdf
-        g4jl6jDvun+dllI35EHg0QbZLsaAccBxkmT1dPEHZ/p+6REGyARGj0dSIl2VTMjz
-        P2GcP1OUw9sRQ8oU38L2Twt6Dwt97eiqv/rYPz34TQOYanVPpy8g+04ajcexX2Hp
-        rrHMqLpjd4FnXsZFUg9lh09Cd0kbd6ow0MhXiNtrcSmOlX7lwtWGOnxrQT3/Louz
-        x5XEyQmB2xuf4s6w+9gA+pdzvSa4PpuYd5sIdtarVOlYkY0e5qj9yRo228RoqXB6
-        DZLnIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=upiM+ps2iylCJwR0Y5k0EaubVoVcvjREARfubzQL5
-        PE=; b=Z3VxcDFzyxLcnpMPp7Z9ARxuFT3j4H/7vb4aeaiWMYT/6yeHQoyvQnRS4
-        N5aAupvWVXTLFbLX2DaK8DcBhCfRnTKEW23DjxjF/V7tWLujWY7NHeJz93CLFV+6
-        kfnilsneen8NpCtGwC9t/jAKy/6Ntslp6fioeAmAo5HEo36uLnD3BxxcXK/3v4U8
-        VLXlqr+61n5Tpqll6HBlgWejvJrYB63ph1UMgGIEuj2C7BiWMaH1rc+FIm4FJWSB
-        SeiIc7+rwrVXLdLp/1xm1l6PaBAbxGDJizd3JIreDaXMSQzR1/+Ji3Pg9bwzaEYD
-        1hzhGf7RBlBLxqNrk+NromXHiTRmw==
-X-ME-Sender: <xms:A6tqX6RqEkuysMMbm3iwLtqXdMJKyHZ_MGVXRWZvlTXFK1kcV6ZcHA>
-    <xme:A6tqX_zbzFG5zeSThhKIJ3aiAsqZ8n9aEo-3sgBNR-FzLGf7Zup4cV9jbnPiwaxu9
-    70JonFUJb9c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudehgdehudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
-    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
-    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
-    pedutdeirdeiledrvdehgedrudehtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
-X-ME-Proxy: <xmx:A6tqX31qji0tUcRp9FXghSKBvUkCiJw05G-hjkk2dYOd5EIzFQmnBw>
-    <xmx:A6tqX2ARby8jTkO5HjR9fkJOBzCeIOsTwzxNb2BgfAHR1eJJMRKuCA>
-    <xmx:A6tqXzhqqnxbCl1LC1_q8RAwUvPmTCkgaiXvz2BGSM0AYKtkSvAe6w>
-    <xmx:A6tqX5bE9xi3csggUlQ9clG5Xlod2K1bhZv6E5sV3oWOb7-127aFtg>
-Received: from mickey.themaw.net (106-69-254-150.dyn.iinet.net.au [106.69.254.150])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AD5643064684;
-        Tue, 22 Sep 2020 21:55:11 -0400 (EDT)
-Message-ID: <0764629d33d151aee743d0429ac87a5b0c300235.camel@themaw.net>
-Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
-From:   Ian Kent <raven@themaw.net>
-To:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>, autofs@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Zdenek Pytela <zpytela@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Wed, 23 Sep 2020 09:55:07 +0800
-In-Reply-To: <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
-References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
-         <20200921160922.GA23870@lst.de>
-         <20200921163011.GZ3421308@ZenIV.linux.org.uk>
-         <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
+        Wed, 23 Sep 2020 02:06:02 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C292C061755;
+        Tue, 22 Sep 2020 23:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=tfXqHGtFwgmM6UcSRx58+EM7ODTSdMOtwKoRg1u1yAY=; b=uvDI5uJjUUyytfSIz9Fh9itDBb
+        timhA1QL0/NVl3J6u5M2HW3nARnp+nrUU6+ecCci6CsZKmYqfYuR8gyHxpqyVNqrn3MdPeOsJJWvy
+        950qhPb+/2DfbCQgKlhKDtU5vmvNF+PDbFkHMp1mkRP3rWH8u6qUenY44fQojX6Uqtm4THbw20WLL
+        GWMBkRDZ1GR/JQbS9MCzRO2VxzTVrNvmchBhMbPURHpWCdmaGljvUGEu39WuHYi9z2ZiSxt+gaQQ+
+        D4nj+9YtljE0KpYVnHjo1Gui3cPa2uMIL3iJJ7yzazD7tzFlk3mevDknnUo1gBGah7VrboHOaGe8J
+        //9F2Zlw==;
+Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kKxua-0003TG-5D; Wed, 23 Sep 2020 06:05:52 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 1/9] compat.h: fix a spelling error in <linux/compat.h>
+Date:   Wed, 23 Sep 2020 08:05:39 +0200
+Message-Id: <20200923060547.16903-2-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200923060547.16903-1-hch@lst.de>
+References: <20200923060547.16903-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-09-22 at 09:33 +0200, Ondrej Mosnacek wrote:
-> On Mon, Sep 21, 2020 at 6:30 PM Al Viro <viro@zeniv.linux.org.uk>
-> wrote:
-> > On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
-> > > [adding Linus and Al]
-> > > 
-> > > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
-> > > > Hi folks,
-> > > > 
-> > > > It seems that after commit 13c164b1a186 ("autofs: switch to
-> > > > kernel_write") there is now an extra LSM permission required
-> > > > (for the
-> > > > current task to write to the automount pipe) for processes
-> > > > accessing
-> > > > some yet-to-to-be mounted directory on which an autofs mount is
-> > > > set
-> > > > up. The call chain is:
-> > > > [...]
-> > > > autofs_wait() ->
-> > > > autofs_notify_daemon() ->
-> > > > autofs_write() ->
-> > > > kernel_write() ->
-> > > > rw_verify_area() ->
-> > > > security_file_permission()
-> > > > 
-> > > > The bug report that led me to this commit is at [1].
-> > > > 
-> > > > Technically, this is a regression for LSM users, since this is
-> > > > a
-> > > > kernel-internal operation and an LSM permission for the current
-> > > > task
-> > > > shouldn't be required. Can this patch be reverted? Perhaps
-> > > > __kernel_{read|write}() could instead be renamed to
-> > > > kernel_*_nocheck()
-> > > > so that the name is more descriptive?
-> > > 
-> > > So we obviously should not break existing user space and need to
-> > > fix
-> > > this ASAP.  The trivial "fix" would be to export __kernel_write
-> > > again
-> > > and switch autofs to use it.  The other option would be a FMODE
-> > > flag
-> > > to bypass security checks, only to be set if the callers ensures
-> > > they've been valided (i.e. in autofs_prepare_pipe).
-> 
-> IMHO that sounds like an overkill in this scenario. I don't think it
-> makes sense to do the LSM check here (or at least not against the
-> current task's creds), because it is not the current task that wants
-> to communicate with the daemon, it just wants to to access some
-> directory on the system that just happens to be special to the
-> kernel,
-> which needs to do some communication on the side to service this
-> request. So if we do want to do any LSM check here, there should at
-> least be some "bool internal" flag passed to the LSM, signalizing
-> that
-> this is an internal read/write operation that wasn't directly
-> initiated/requested by the current process. SELinux could then either
-> use the kernel secid instead of the current task's secid or skip the
-> check completely in such case.
+There is no compat_sys_readv64v2 syscall, only a compat_sys_preadv64v2
+one.
 
-Perhaps, but see below.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ include/linux/compat.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> I'd like Stephen to weigh in on this, but it looks he might be on
-> vacation right now...
-> 
-> > > Any opinions?
-> > 
-> > Reexport for now.  Incidentally, what is LSM doing rejecting writes
-> > into a pipe?
-> 
-> With SELinux at least, what is allowed or denied is defined in the
-> policy. And the policy usually defaults to everything denied and then
-> you add rules to allow what needs (and makes sense) to be allowed.
-> Since until kernel 5.8 random processes didn't need to write to pipes
-> created by the automount daemon, it has never been explicitly allowed
-> and so the automounting now fails. It is in no way obvious that all
-> processes should have the permission to talk to the automount daemon
-> just to traverse the filesystem...
-
-I think you might have misunderstood what lead to this, just a bit.
-
-Previously the __kern_write() function was used for this communication
-and Christoph's patch changed that to use kern_write() instead.
-
-In theory that's a good idea because kern_write() adds some additional
-sanity checks, one being a call to rw_verify_area() which is where the
-security_file_permission() call fails.
-
-So previously any random process could avoid these checks by calling
-__kern_write() so the change to kern_write() is, in theory, that's a
-good thing and simply reverting that hunk in Christoph's patch
-probably isn't the best thing to do.
-
-But any random process does need to be able to write to the automount
-daemon pipe for trailing path components and the root dentry of autofs
-mounts, depending on case.
-
-So it's true that any write to any autofs dentry probably doesn't
-need to be allowed but I question what that gets us in terms of
-security improvement over allowing pipe writes for automount_t
-labelled pipes in selinux policy since they must be within an autofs
-mounted file system.
-
-But Stephen has a different recommendation (and that appears to
-consider the cause I outlined above) so I'll wait to see what others
-think about the recommendations.
-
-Ian
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index b354ce58966e2d..654c1ec36671a4 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -812,7 +812,7 @@ asmlinkage ssize_t compat_sys_pwritev2(compat_ulong_t fd,
+ 		const struct compat_iovec __user *vec,
+ 		compat_ulong_t vlen, u32 pos_low, u32 pos_high, rwf_t flags);
+ #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64V2
+-asmlinkage long  compat_sys_readv64v2(unsigned long fd,
++asmlinkage long  compat_sys_preadv64v2(unsigned long fd,
+ 		const struct compat_iovec __user *vec,
+ 		unsigned long vlen, loff_t pos, rwf_t flags);
+ #endif
+-- 
+2.28.0
 
