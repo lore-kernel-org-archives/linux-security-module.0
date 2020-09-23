@@ -2,82 +2,195 @@ Return-Path: <SRS0=Tise=DA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8290C4727E
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 13:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861DCC4727E
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 14:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BEF7238D6
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 13:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE6423787
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 14:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbgIWNXJ (ORCPT
+        id S1726606AbgIWOLQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Sep 2020 09:23:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWNXI (ORCPT
+        Wed, 23 Sep 2020 10:11:16 -0400
+Received: from mother.openwall.net ([195.42.179.200]:55689 "HELO
+        mother.openwall.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726151AbgIWOLO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Sep 2020 09:23:08 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A9BC0613CE;
-        Wed, 23 Sep 2020 06:23:08 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kL4jW-004YbY-CV; Wed, 23 Sep 2020 13:22:54 +0000
-Date:   Wed, 23 Sep 2020 14:22:54 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Pavel Begunkov <asml.silence@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Andy Lutomirski <luto@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 1/9] kernel: add a PF_FORCE_COMPAT flag
-Message-ID: <20200923132254.GI3421308@ZenIV.linux.org.uk>
-References: <563138b5-7073-74bc-f0c5-b2bad6277e87@gmail.com>
- <486c92d0-0f2e-bd61-1ab8-302524af5e08@gmail.com>
- <CALCETrW3rwGsgfLNnu_0JAcL5jvrPVTLTWM3JpbB5P9Hye6Fdw@mail.gmail.com>
- <d5c6736a-2cb4-4e22-78da-a667bda5c05a@gmail.com>
- <CALCETrUEC81va8-fuUXG1uA5rbKxnKDYsDOXC70_HtKD4LAeAg@mail.gmail.com>
- <e0a1b4d1-ff47-18d1-d535-c62812cb3105@gmail.com>
- <CAK8P3a2-6JNS38EbZcLrk=cTT526oP=Rf0aoqWNSJ-k4XTYehQ@mail.gmail.com>
- <f25b4708-eba6-78d6-03f9-5bfb04e07627@gmail.com>
- <CAK8P3a39jN+t2hhLg0oKZnbYATQXmYE2-Z1JkmFyc1EPdg1HXw@mail.gmail.com>
- <91209170-dcb4-d9ee-afa0-a819f8877b86@gmail.com>
-MIME-Version: 1.0
+        Wed, 23 Sep 2020 10:11:14 -0400
+Received: (qmail 30262 invoked from network); 23 Sep 2020 14:11:11 -0000
+Received: from localhost (HELO pvt.openwall.com) (127.0.0.1)
+  by localhost with SMTP; 23 Sep 2020 14:11:11 -0000
+Received: by pvt.openwall.com (Postfix, from userid 503)
+        id C2648AB844; Wed, 23 Sep 2020 16:11:02 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 16:11:02 +0200
+From:   Solar Designer <solar@openwall.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     madvenka@linux.microsoft.com, kernel-hardening@lists.openwall.com,
+        linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net,
+        Rich Felker <dalias@libc.org>
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923141102.GA7142@openwall.com>
+References: <20200922215326.4603-1-madvenka@linux.microsoft.com> <20200923081426.GA30279@amd> <20200923091456.GA6177@openwall.com>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <91209170-dcb4-d9ee-afa0-a819f8877b86@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20200923091456.GA6177@openwall.com>
+User-Agent: Mutt/1.4.2.3i
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 23, 2020 at 11:01:34AM +0300, Pavel Begunkov wrote:
-
-> > I'm not following why that would be considered a valid option,
-> > as that clearly breaks existing users that update from a 32-bit
-> > kernel to a 64-bit one.
+On Wed, Sep 23, 2020 at 11:14:56AM +0200, Solar Designer wrote:
+> On Wed, Sep 23, 2020 at 10:14:26AM +0200, Pavel Machek wrote:
+> > > Introduction
+> > > ============
+> > > 
+> > > Dynamic code is used in many different user applications. Dynamic code is
+> > > often generated at runtime. Dynamic code can also just be a pre-defined
+> > > sequence of machine instructions in a data buffer. Examples of dynamic
+> > > code are trampolines, JIT code, DBT code, etc.
+> > > 
+> > > Dynamic code is placed either in a data page or in a stack page. In order
+> > > to execute dynamic code, the page it resides in needs to be mapped with
+> > > execute permissions. Writable pages with execute permissions provide an
+> > > attack surface for hackers. Attackers can use this to inject malicious
+> > > code, modify existing code or do other harm.
+> > > 
+> > > To mitigate this, LSMs such as SELinux implement W^X. That is, they may not
+> > > allow pages to have both write and execute permissions. This prevents
+> > > dynamic code from executing and blocks applications that use it. To allow
+> > > genuine applications to run, exceptions have to be made for them (by setting
+> > > execmem, etc) which opens the door to security issues.
+> > > 
+> > > The W^X implementation today is not complete. There exist many user level
+> > > tricks that can be used to load and execute dynamic code. E.g.,
+> > > 
+> > > - Load the code into a file and map the file with R-X.
+> > > 
+> > > - Load the code in an RW- page. Change the permissions to R--. Then,
+> > >   change the permissions to R-X.
+> > > 
+> > > - Load the code in an RW- page. Remap the page with R-X to get a separate
+> > >   mapping to the same underlying physical page.
+> > > 
+> > > IMO, these are all security holes as an attacker can exploit them to inject
+> > > his own code.
+> > 
+> > IMO, you are smoking crack^H^H very seriously misunderstanding what
+> > W^X is supposed to protect from.
+> > 
+> > W^X is not supposed to protect you from attackers that can already do
+> > system calls. So loading code into a file then mapping the file as R-X
+> > is in no way security hole in W^X.
+> > 
+> > If you want to provide protection from attackers that _can_ do system
+> > calls, fine, but please don't talk about W^X and please specify what
+> > types of attacks you want to prevent and why that's good thing.
 > 
-> Do you mean users who move 32-bit binaries (without recompiling) to a
-> new x64 kernel? Does the kernel guarantees that to work?
+> On one hand, Pavel is absolutely right.  It is ridiculous to say that
+> "these are all security holes as an attacker can exploit them to inject
+> his own code."
 
-Yes.
+I stand corrected, due to Brad's tweet and follow-ups here:
 
-No further (printable) comments for now...
+https://twitter.com/spendergrsec/status/1308728284390318082
+
+It sure does make sense to combine ret2libc/ROP to mprotect() with one's
+own injected shellcode.  Compared to doing everything from ROP, this is
+easier and more reliable across versions/builds if the desired payload
+is non-trivial.  My own example: invoking a shell in a local attack on
+Linux is trivial enough to do via ret2libc only, but a connect-back
+shell in a remote attack might be easier and more reliably done via
+mprotect() + shellcode.
+
+Per the follow-ups, this was an established technique on Windows and iOS
+until further hardening prevented it.  So it does make sense for Linux
+to do the same (as an option because of it breaking existing stuff), and
+not so much as policy enforcement for the sake of it and ease of
+reasoning, but mostly to force real-world exploits to be more complex
+and less reliable.
+
+> On the other hand, "what W^X is supposed to protect from" depends on how
+> the term W^X is defined (historically, by PaX and OpenBSD).  It may be
+> that W^X is partially not a feature to defeat attacks per se, but also a
+> policy enforcement feature preventing use of dangerous techniques (JIT).
+> 
+> Such policy might or might not make sense.  It might make sense for ease
+> of reasoning, e.g. "I've flipped this setting, and now I'm certain the
+> system doesn't have JIT within a process (can still have it through
+> dynamically creating and invoking an entire new program), so there are
+> no opportunities for an attacker to inject code nor generate previously
+> non-existing ROP gadgets into an executable mapping within a process."
+> 
+> I do find it questionable whether such policy and such reasoning make
+> sense beyond academia.
+
+I was wrong in the above, focusing on the wrong thing.
+
+> Then, there might be even more ways in which W^X is not perfect enough
+> to enable such reasoning.  What about using ptrace(2) to inject code?
+> Should enabling W^X also disable ability to debug programs by non-root?
+> We already have Yama ptrace_scope, which can achieve that at the highest
+> setting, although that's rather inconvenient and is probably unexpected
+> by most to be a requirement for having (ridiculously?) full W^X allowing
+> for the academic reasoning.
+
+Thinking out loud:
+
+Technically, ptrace() is also usable from a ROP chain.  It might be too
+cumbersome to bother using to get a shellcode going, but OTOH it's just
+one function to be invoked in a similar fashion multiple times, so might
+be more reliable than having a ROP chain depend on multiple actually
+needed functions directly (moving that dependency into the shellcode).
+
+> Personally, I am for policies that make more practical sense.  For
+> example, years ago I advocated here on kernel-hardening that we should
+> have a mode where ELF flags enabling/disabling executable stack are
+> ignored, and non-executable stack is always enforced.  This should also
+> be extended to default (at program startup) permissions on more than
+> just stack (but also on .bss, typical libcs' heap allocations, etc.)
+> However, I am not convinced there's enough value in extending the policy
+> to restricting explicit uses of mprotect(2).
+> 
+> Yes, PaX did that, and its emutramp.txt said "runtime code generation is
+> by its nature incompatible with PaX's PAGEEXEC/SEGMEXEC and MPROTECT
+> features, therefore the real solution is not in emulation but by
+> designing a kernel API for runtime code generation and modifying
+> userland to make use of it."  However, not being convinced in the
+> MPROTECT feature having enough practical value,
+
+I am convinced now, however:
+
+> I am also not convinced
+> "a kernel API for runtime code generation and modifying userland to make
+> use of it" is the way to go.
+
+doesn't automatically follow from the above, because:
+
+> Having static instead of dynamically-generated trampolines in userland
+> code where possible (and making other userland/ABI changes to make that
+> possible in more/all cases) is an obvious improvement, and IMO should be
+> a priority over the above.
+> 
+> While I share my opinion here, I don't mean that to block Madhavan's
+> work.  I'd rather defer to people more knowledgeable in current userland
+> and ABI issues/limitations and plans on dealing with those, especially
+> to Florian Weimer.  I haven't seen Florian say anything specific for or
+> against Madhavan's proposal, and I'd like to.  (Have I missed that?)
+> It'd be wrong to introduce a kernel API that userland doesn't need, and
+> it'd be right to introduce one that userland actually intends to use.
+> 
+> I've also added Rich Felker to CC here, for musl libc and its possible
+> intent to use the proposed API.  (My guess is there's no such need, and
+> thus no intent, but Rich might want to confirm that or correct me.)
+
+So need to hear more from the userland folks, I guess.
+
+Alexander
