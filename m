@@ -2,182 +2,202 @@ Return-Path: <SRS0=Tise=DA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A28C4727F
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 01:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5D9C47420
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 01:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FD612371F
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 01:46:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uhilotA2"
+	by mail.kernel.org (Postfix) with ESMTP id 68EEF238A1
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 01:55:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbgIWBqU (ORCPT
+        id S1727046AbgIWBzR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Sep 2020 21:46:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57152 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726716AbgIWBqU (ORCPT
+        Tue, 22 Sep 2020 21:55:17 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56527 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726960AbgIWBzR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Sep 2020 21:46:20 -0400
-Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D437C061755;
-        Tue, 22 Sep 2020 18:46:20 -0700 (PDT)
-Received: by mail-qv1-xf41.google.com with SMTP id z18so10608530qvp.6;
-        Tue, 22 Sep 2020 18:46:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ssYhrlHCw7Ub9xPyJrNfDQfuZKnG7yNmanf9qk5D/30=;
-        b=uhilotA2RIu/i3TSt6riD62hHewNX0HCYmMAm6Yecx7s6wLqAfVdwPC94TV27TBtq4
-         +0q0YajK8JyGTHcprchBDFv2ayV59vk0oXGyJlBiFXIqPW4j7qGv0v4IRsopqpngRSr1
-         Sy4HfLiaqVt6AkHeytLRBjGlCNtInHzH2aFM4TGr3Pn3QrgB/tRSBLBkE+o0ihGxfUiX
-         dhbC8CXns3F1amdB7aenJ/Cxc4yWDSvifq4ZHXkuT03S+tFjT5yxE/eAMet3CHs3A7Hk
-         OXdUPZQvllLZfjnidcNs42c0LsQ0538v8PzsgpNJMClW1XGO0YSC62irz5h/fviXUgUI
-         YbEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=ssYhrlHCw7Ub9xPyJrNfDQfuZKnG7yNmanf9qk5D/30=;
-        b=N3H6UYz/F43n73Oq3O6ceVIQmEvcsb4CmiFo8SgdK18Dd+qlW/5d46j6nUf38Ld3ef
-         8kAmw1PTEsB2Xpc6jrLTrkrvDHgtbC1O+bAjpPspQo+z9IIfS8kqcmcDO4xc23QKT4/n
-         WCkpTZne7dBxteu9ByhBJbeifBXJEtCeMtAe98Zw0W5Tr/n8DykBZu6GXLFCdk6nsXo4
-         q4nquK6gJ0wayAJFmFlFtWx6fqooOBiWpupTxK/Fj2kTdHH3QmklhNoVkR8h/rpbGvMJ
-         4XMslm1g7dEbD4ZGEsAGCE11AtWJeIo2PfssdELOpd4Z1Cu5LGtG3tWYXBBWNKnA9Afl
-         Yq5w==
-X-Gm-Message-State: AOAM533WRUwqBoOaNYmGnSDwKK7yFFE2Q21an85szWr1zPTeSaCTdyS0
-        66xRKz+45aUeHEPY/SZ18y3CQJthSgg=
-X-Google-Smtp-Source: ABdhPJx+f5G7LH8pGHaNrTcMRrb4zK95unM48fxm9EqaXus2Z/Ijl+3SuFhTwPqbe2UA1MqvfJS/1Q==
-X-Received: by 2002:a0c:cdc4:: with SMTP id a4mr9110819qvn.31.1600825579406;
-        Tue, 22 Sep 2020 18:46:19 -0700 (PDT)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id g4sm13248370qth.30.2020.09.22.18.46.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Sep 2020 18:46:18 -0700 (PDT)
-Sender: Arvind Sankar <niveditas98@gmail.com>
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
-Date:   Tue, 22 Sep 2020 21:46:16 -0400
-To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     Florian Weimer <fw@deneb.enyo.de>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org, luto@kernel.org,
-        David.Laight@ACULAB.COM, mark.rutland@arm.com, mic@digikod.net,
-        pavel@ucw.cz
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-Message-ID: <20200923014616.GA1216401@rani.riverdale.lan>
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
- <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
+        Tue, 22 Sep 2020 21:55:17 -0400
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailout.nyi.internal (Postfix) with ESMTP id D75765C0216;
+        Tue, 22 Sep 2020 21:55:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Tue, 22 Sep 2020 21:55:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
+        message-id:subject:from:to:cc:date:in-reply-to:references
+        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
+        upiM+ps2iylCJwR0Y5k0EaubVoVcvjREARfubzQL5PE=; b=au8olLs0jmhkc5PY
+        ldppotT1EOXipsk1kR+s+IO4jj8r685ipoVWLUz47rMQzzVKEz87oZNfCEh13bdf
+        g4jl6jDvun+dllI35EHg0QbZLsaAccBxkmT1dPEHZ/p+6REGyARGj0dSIl2VTMjz
+        P2GcP1OUw9sRQ8oU38L2Twt6Dwt97eiqv/rYPz34TQOYanVPpy8g+04ajcexX2Hp
+        rrHMqLpjd4FnXsZFUg9lh09Cd0kbd6ow0MhXiNtrcSmOlX7lwtWGOnxrQT3/Louz
+        x5XEyQmB2xuf4s6w+9gA+pdzvSa4PpuYd5sIdtarVOlYkY0e5qj9yRo228RoqXB6
+        DZLnIg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=upiM+ps2iylCJwR0Y5k0EaubVoVcvjREARfubzQL5
+        PE=; b=Z3VxcDFzyxLcnpMPp7Z9ARxuFT3j4H/7vb4aeaiWMYT/6yeHQoyvQnRS4
+        N5aAupvWVXTLFbLX2DaK8DcBhCfRnTKEW23DjxjF/V7tWLujWY7NHeJz93CLFV+6
+        kfnilsneen8NpCtGwC9t/jAKy/6Ntslp6fioeAmAo5HEo36uLnD3BxxcXK/3v4U8
+        VLXlqr+61n5Tpqll6HBlgWejvJrYB63ph1UMgGIEuj2C7BiWMaH1rc+FIm4FJWSB
+        SeiIc7+rwrVXLdLp/1xm1l6PaBAbxGDJizd3JIreDaXMSQzR1/+Ji3Pg9bwzaEYD
+        1hzhGf7RBlBLxqNrk+NromXHiTRmw==
+X-ME-Sender: <xms:A6tqX6RqEkuysMMbm3iwLtqXdMJKyHZ_MGVXRWZvlTXFK1kcV6ZcHA>
+    <xme:A6tqX_zbzFG5zeSThhKIJ3aiAsqZ8n9aEo-3sgBNR-FzLGf7Zup4cV9jbnPiwaxu9
+    70JonFUJb9c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudehgdehudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpefkrghnucfm
+    vghnthcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepfe
+    efteetvdeguddvveefveeftedtffduudehueeihfeuvefgveehffeludeggfejnecukfhp
+    pedutdeirdeiledrvdehgedrudehtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgvth
+X-ME-Proxy: <xmx:A6tqX31qji0tUcRp9FXghSKBvUkCiJw05G-hjkk2dYOd5EIzFQmnBw>
+    <xmx:A6tqX2ARby8jTkO5HjR9fkJOBzCeIOsTwzxNb2BgfAHR1eJJMRKuCA>
+    <xmx:A6tqXzhqqnxbCl1LC1_q8RAwUvPmTCkgaiXvz2BGSM0AYKtkSvAe6w>
+    <xmx:A6tqX5bE9xi3csggUlQ9clG5Xlod2K1bhZv6E5sV3oWOb7-127aFtg>
+Received: from mickey.themaw.net (106-69-254-150.dyn.iinet.net.au [106.69.254.150])
+        by mail.messagingengine.com (Postfix) with ESMTPA id AD5643064684;
+        Tue, 22 Sep 2020 21:55:11 -0400 (EDT)
+Message-ID: <0764629d33d151aee743d0429ac87a5b0c300235.camel@themaw.net>
+Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
+From:   Ian Kent <raven@themaw.net>
+To:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@lst.de>, autofs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Zdenek Pytela <zpytela@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Wed, 23 Sep 2020 09:55:07 +0800
+In-Reply-To: <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
+References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+         <20200921160922.GA23870@lst.de>
+         <20200921163011.GZ3421308@ZenIV.linux.org.uk>
+         <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 (3.34.4-1.fc31) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 17, 2020 at 10:36:02AM -0500, Madhavan T. Venkataraman wrote:
+On Tue, 2020-09-22 at 09:33 +0200, Ondrej Mosnacek wrote:
+> On Mon, Sep 21, 2020 at 6:30 PM Al Viro <viro@zeniv.linux.org.uk>
+> wrote:
+> > On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
+> > > [adding Linus and Al]
+> > > 
+> > > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
+> > > > Hi folks,
+> > > > 
+> > > > It seems that after commit 13c164b1a186 ("autofs: switch to
+> > > > kernel_write") there is now an extra LSM permission required
+> > > > (for the
+> > > > current task to write to the automount pipe) for processes
+> > > > accessing
+> > > > some yet-to-to-be mounted directory on which an autofs mount is
+> > > > set
+> > > > up. The call chain is:
+> > > > [...]
+> > > > autofs_wait() ->
+> > > > autofs_notify_daemon() ->
+> > > > autofs_write() ->
+> > > > kernel_write() ->
+> > > > rw_verify_area() ->
+> > > > security_file_permission()
+> > > > 
+> > > > The bug report that led me to this commit is at [1].
+> > > > 
+> > > > Technically, this is a regression for LSM users, since this is
+> > > > a
+> > > > kernel-internal operation and an LSM permission for the current
+> > > > task
+> > > > shouldn't be required. Can this patch be reverted? Perhaps
+> > > > __kernel_{read|write}() could instead be renamed to
+> > > > kernel_*_nocheck()
+> > > > so that the name is more descriptive?
+> > > 
+> > > So we obviously should not break existing user space and need to
+> > > fix
+> > > this ASAP.  The trivial "fix" would be to export __kernel_write
+> > > again
+> > > and switch autofs to use it.  The other option would be a FMODE
+> > > flag
+> > > to bypass security checks, only to be set if the callers ensures
+> > > they've been valided (i.e. in autofs_prepare_pipe).
 > 
-> 
-> On 9/16/20 8:04 PM, Florian Weimer wrote:
-> > * madvenka:
-> > 
-> >> Examples of trampolines
-> >> =======================
-> >>
-> >> libffi (A Portable Foreign Function Interface Library):
-> >>
-> >> libffi allows a user to define functions with an arbitrary list of
-> >> arguments and return value through a feature called "Closures".
-> >> Closures use trampolines to jump to ABI handlers that handle calling
-> >> conventions and call a target function. libffi is used by a lot
-> >> of different applications. To name a few:
-> >>
-> >> 	- Python
-> >> 	- Java
-> >> 	- Javascript
-> >> 	- Ruby FFI
-> >> 	- Lisp
-> >> 	- Objective C
-> > 
-> > libffi does not actually need this.  It currently collocates
-> > trampolines and the data they need on the same page, but that's
-> > actually unecessary.  It's possible to avoid doing this just by
-> > changing libffi, without any kernel changes.
-> > 
-> > I think this has already been done for the iOS port.
-> > 
-> 
-> The trampoline table that has been implemented for the iOS port (MACH)
-> is based on PC-relative data referencing. That is, the code and data
-> are placed in adjacent pages so that the code can access the data using
-> an address relative to the current PC.
-> 
-> This is an ISA feature that is not supported on all architectures.
-> 
-> Now, if it is a performance feature, we can include some architectures
-> and exclude others. But this is a security feature. IMO, we cannot
-> exclude any architecture even if it is a legacy one as long as Linux
-> is running on the architecture. So, we need a solution that does
-> not assume any specific ISA feature.
+> IMHO that sounds like an overkill in this scenario. I don't think it
+> makes sense to do the LSM check here (or at least not against the
+> current task's creds), because it is not the current task that wants
+> to communicate with the daemon, it just wants to to access some
+> directory on the system that just happens to be special to the
+> kernel,
+> which needs to do some communication on the side to service this
+> request. So if we do want to do any LSM check here, there should at
+> least be some "bool internal" flag passed to the LSM, signalizing
+> that
+> this is an internal read/write operation that wasn't directly
+> initiated/requested by the current process. SELinux could then either
+> use the kernel secid instead of the current task's secid or skip the
+> check completely in such case.
 
-Which ISA does not support PIC objects? You mentioned i386 below, but
-i386 does support them, it just needs to copy the PC into a GPR first
-(see below).
+Perhaps, but see below.
 
 > 
-> >> The code for trampoline X in the trampoline table is:
-> >>
-> >> 	load	&code_table[X], code_reg
-> >> 	load	(code_reg), code_reg
-> >> 	load	&data_table[X], data_reg
-> >> 	load	(data_reg), data_reg
-> >> 	jump	code_reg
-> >>
-> >> The addresses &code_table[X] and &data_table[X] are baked into the
-> >> trampoline code. So, PC-relative data references are not needed. The user
-> >> can modify code_table[X] and data_table[X] dynamically.
+> I'd like Stephen to weigh in on this, but it looks he might be on
+> vacation right now...
+> 
+> > > Any opinions?
 > > 
-> > You can put this code into the libffi shared object and map it from
-> > there, just like the rest of the libffi code.  To get more
-> > trampolines, you can map the page containing the trampolines multiple
-> > times, each instance preceded by a separate data page with the control
-> > information.
-> > 
+> > Reexport for now.  Incidentally, what is LSM doing rejecting writes
+> > into a pipe?
 > 
-> If you put the code in the libffi shared object, how do you pass data to
-> the code at runtime? If the code we are talking about is a function, then
-> there is an ABI defined way to pass data to the function. But if the
-> code we are talking about is some arbitrary code such as a trampoline,
-> there is no ABI defined way to pass data to it except in a couple of
-> platforms such as HP PA-RISC that have support for function descriptors
-> in the ABI itself.
-> 
-> As mentioned before, if the ISA supports PC-relative data references
-> (e.g., X86 64-bit platforms support RIP-relative data references)
-> then we can pass data to that code by placing the code and data in
-> adjacent pages. So, you can implement the trampoline table for X64.
-> i386 does not support it.
-> 
+> With SELinux at least, what is allowed or denied is defined in the
+> policy. And the policy usually defaults to everything denied and then
+> you add rules to allow what needs (and makes sense) to be allowed.
+> Since until kernel 5.8 random processes didn't need to write to pipes
+> created by the automount daemon, it has never been explicitly allowed
+> and so the automounting now fails. It is in no way obvious that all
+> processes should have the permission to talk to the automount daemon
+> just to traverse the filesystem...
 
-i386 just needs a tiny bit of code to copy the PC into a GPR first, i.e.
-the trampoline would be:
+I think you might have misunderstood what lead to this, just a bit.
 
-	call	1f
-1:	pop	%data_reg
-	movl	(code_table + X - 1b)(%data_reg), %code_reg
-	movl	(data_table + X - 1b)(%data_reg), %data_reg
-	jmp	*(%code_reg)
+Previously the __kern_write() function was used for this communication
+and Christoph's patch changed that to use kern_write() instead.
 
-I do not understand the point about passing data at runtime. This
-trampoline is to achieve exactly that, no? 
+In theory that's a good idea because kern_write() adds some additional
+sanity checks, one being a call to rw_verify_area() which is where the
+security_file_permission() call fails.
 
-Thanks.
+So previously any random process could avoid these checks by calling
+__kern_write() so the change to kern_write() is, in theory, that's a
+good thing and simply reverting that hunk in Christoph's patch
+probably isn't the best thing to do.
+
+But any random process does need to be able to write to the automount
+daemon pipe for trailing path components and the root dentry of autofs
+mounts, depending on case.
+
+So it's true that any write to any autofs dentry probably doesn't
+need to be allowed but I question what that gets us in terms of
+security improvement over allowing pipe writes for automount_t
+labelled pipes in selinux policy since they must be within an autofs
+mounted file system.
+
+But Stephen has a different recommendation (and that appears to
+consider the cause I outlined above) so I'll wait to see what others
+think about the recommendations.
+
+Ian
+
