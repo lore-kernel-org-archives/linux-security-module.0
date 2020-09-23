@@ -2,91 +2,110 @@ Return-Path: <SRS0=Tise=DA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9D0C4727E
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 19:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8DDC4727D
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 19:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 427A0221EF
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 19:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F312145D
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 19:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="R/f7vi7J"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="m7RL+cJJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbgIWTRd (ORCPT
+        id S1726760AbgIWTUV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Sep 2020 15:17:33 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:46954 "EHLO
+        Wed, 23 Sep 2020 15:20:21 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:47374 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgIWTRc (ORCPT
+        with ESMTP id S1726498AbgIWTUU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Sep 2020 15:17:32 -0400
-Received: from [192.168.254.38] (unknown [47.187.206.220])
-        by linux.microsoft.com (Postfix) with ESMTPSA id CE99120B7179;
-        Wed, 23 Sep 2020 12:17:30 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CE99120B7179
+        Wed, 23 Sep 2020 15:20:20 -0400
+Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id BF3E420B36E7;
+        Wed, 23 Sep 2020 12:20:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BF3E420B36E7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1600888651;
-        bh=3V9yRh0zCmTojKK1USEI2jDBEq7wh/QbrL/41M/+wzU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=R/f7vi7J2qckScOCWh3kF/qy9S0K/1T6lHGGHPjotwbfa9uILSrVnoq4jZ3kOTEvo
-         nllS7aBXEK+MSRSIiDfi9E0VmYqam8vNJ2ZSS4AtYLBqZgF45tCOyMP35SAjXg2jnk
-         Ji3oSzQihgZhuEoO5YOa1VhHw0IBIwzXgyXJJYkw=
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Florian Weimer <fw@deneb.enyo.de>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, libffi-discuss@sourceware.org, luto@kernel.org,
-        David.Laight@ACULAB.COM, mark.rutland@arm.com, mic@digikod.net,
-        pavel@ucw.cz
-References: <20200916150826.5990-1-madvenka@linux.microsoft.com>
- <87v9gdz01h.fsf@mid.deneb.enyo.de>
- <96ea02df-4154-5888-1669-f3beeed60b33@linux.microsoft.com>
- <20200923014616.GA1216401@rani.riverdale.lan>
- <20200923091125.GB1240819@rani.riverdale.lan>
-From:   "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Message-ID: <a742b9cd-4ffb-60e0-63b8-894800009700@linux.microsoft.com>
-Date:   Wed, 23 Sep 2020 14:17:30 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200923091125.GB1240819@rani.riverdale.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        s=default; t=1600888820;
+        bh=msIiW4AnSlFN198DxHsM0/k20Lg9ddIuwcYdunV1Csc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=m7RL+cJJpxVV/AF4UUNJvcJiibwinq+e4AdIbro/l70SzJ8ilEVriJlWR++7+6Dtr
+         qagJZPU4s+bB8ndhibWdoJwooDaIRdh4+tM+dsymPoWroOA3XcVhOAjScdGjxpXMAN
+         P/TKZdqRZ46Lb04mkQbRKAzBspH94cABUafIGPWc=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: [PATCH v4 2/6] IMA: conditionally allow empty rule data
+Date:   Wed, 23 Sep 2020 12:20:07 -0700
+Message-Id: <20200923192011.5293-3-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
+References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+ima_match_rule_data() permits the func to pass empty func_data.
+For instance, for the following func, the func_data keyrings= is
+optional.
+    measure func=KEY_CHECK keyrings=.ima
 
+But a new func in future may want to constrain the func_data to
+be non-empty.  ima_match_rule_data() should support this constraint
+and it shouldn't be hard-coded in ima_match_rule_data().
 
-On 9/23/20 4:11 AM, Arvind Sankar wrote:
-> For libffi, I think the proposed standard trampoline won't actually
-> work, because not all ABIs have two scratch registers available to use
-> as code_reg and data_reg. Eg i386 fastcall only has one, and register
-> has zero scratch registers. I believe 32-bit ARM only has one scratch
-> register as well.
+Update ima_match_rule_data() to conditionally allow empty func_data
+for the func that needs it.
 
-The trampoline is invoked as a function call in the libffi case. Any
-caller saved register can be used as code_reg, can it not? And the
-scratch register is needed only to jump to the code. After that, it
-can be reused for any other purpose.
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
+ security/integrity/ima/ima_policy.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-However, for ARM, you are quite correct. There is only one scratch
-register. This means that I have to provide two types of trampolines:
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 31a772d8a86b..8866e84d0062 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -456,6 +456,7 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+  * @rule: IMA policy rule
+  * @opt_list: rule data to match func_data against
+  * @func_data: data to match against the measure rule data
++ * @allow_empty_opt_list: If true matches all func_data
+  * @cred: a pointer to a credentials structure for user validation
+  *
+  * Returns true if func_data matches one in the rule, false otherwise.
+@@ -463,6 +464,7 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ static bool ima_match_rule_data(struct ima_rule_entry *rule,
+ 				const struct ima_rule_opt_list *opt_list,
+ 				const char *func_data,
++				bool allow_empty_opt_list,
+ 				const struct cred *cred)
+ {
+ 	bool matched = false;
+@@ -472,7 +474,7 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
+ 		return false;
+ 
+ 	if (!opt_list)
+-		return true;
++		return allow_empty_opt_list;
+ 
+ 	if (!func_data)
+ 		return false;
+@@ -509,7 +511,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+ 	if (func == KEY_CHECK) {
+ 		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
+ 		       ima_match_rule_data(rule, rule->keyrings, func_data,
+-					   cred);
++					   true, cred);
+ 	}
+ 	if ((rule->flags & IMA_FUNC) &&
+ 	    (rule->func != func && func != POST_SETATTR))
+-- 
+2.17.1
 
-	- If an architecture has enough scratch registers, use the currently
-	  defined trampoline.
-
-	- If the architecture has only one scratch register, but has PC-relative
-	  data references, then embed the code address at the bottom of the
-	  trampoline and access it using PC-relative addressing.
-
-Thanks for pointing this out.
-
-Madhavan
