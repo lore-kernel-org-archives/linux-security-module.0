@@ -2,95 +2,129 @@ Return-Path: <SRS0=Tise=DA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B59AC2D0A8
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 14:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8196AC4727F
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 15:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DEC73206D9
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 14:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F2B2075B
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 15:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgIWO7N (ORCPT
+        id S1726706AbgIWPSj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Sep 2020 10:59:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbgIWO7M (ORCPT
+        Wed, 23 Sep 2020 11:18:39 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:56626 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726603AbgIWPSj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Sep 2020 10:59:12 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B643C0613CE;
-        Wed, 23 Sep 2020 07:59:12 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kL6EX-004bOc-Io; Wed, 23 Sep 2020 14:59:01 +0000
-Date:   Wed, 23 Sep 2020 15:59:01 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
-Message-ID: <20200923145901.GN3421308@ZenIV.linux.org.uk>
-References: <20200923060547.16903-1-hch@lst.de>
- <20200923060547.16903-6-hch@lst.de>
- <20200923142549.GK3421308@ZenIV.linux.org.uk>
- <20200923143251.GA14062@lst.de>
+        Wed, 23 Sep 2020 11:18:39 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 8B8181C0BBB; Wed, 23 Sep 2020 17:18:35 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 17:18:35 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Solar Designer <solar@openwall.com>
+Cc:     madvenka@linux.microsoft.com, kernel-hardening@lists.openwall.com,
+        linux-api@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net,
+        Rich Felker <dalias@libc.org>
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923151835.GA32555@duo.ucw.cz>
+References: <20200922215326.4603-1-madvenka@linux.microsoft.com>
+ <20200923081426.GA30279@amd>
+ <20200923091456.GA6177@openwall.com>
+ <20200923141102.GA7142@openwall.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
 Content-Disposition: inline
-In-Reply-To: <20200923143251.GA14062@lst.de>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20200923141102.GA7142@openwall.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 23, 2020 at 04:32:51PM +0200, Christoph Hellwig wrote:
-> On Wed, Sep 23, 2020 at 03:25:49PM +0100, Al Viro wrote:
-> > On Wed, Sep 23, 2020 at 08:05:43AM +0200, Christoph Hellwig wrote:
-> > >  COMPAT_SYSCALL_DEFINE3(readv, compat_ulong_t, fd,
-> > > -		const struct compat_iovec __user *,vec,
-> > > +		const struct iovec __user *, vec,
-> > 
-> > Um...  Will it even compile?
-> > 
-> > >  #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64
-> > >  COMPAT_SYSCALL_DEFINE4(preadv64, unsigned long, fd,
-> > > -		const struct compat_iovec __user *,vec,
-> > > +		const struct iovec __user *, vec,
-> > 
-> > Ditto.  Look into include/linux/compat.h and you'll see
-> > 
-> > asmlinkage long compat_sys_preadv64(unsigned long fd,
-> >                 const struct compat_iovec __user *vec,
-> >                 unsigned long vlen, loff_t pos);
-> > 
-> > How does that manage to avoid the compiler screaming bloody
-> > murder?
-> 
-> That's a very good question.  But it does not just compile but actually
-> works.  Probably because all the syscall wrappers mean that we don't
-> actually generate the normal names.  I just tried this:
-> 
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -468,7 +468,7 @@ asmlinkage long sys_lseek(unsigned int fd, off_t offset,
->  asmlinkage long sys_read(unsigned int fd, char __user *buf, size_t count);
->  asmlinkage long sys_write(unsigned int fd, const char __user *buf,
->                             size_t count);
-> -asmlinkage long sys_readv(unsigned long fd,
-> +asmlinkage long sys_readv(void *fd,
-> 
-> for fun, and the compiler doesn't care either..
 
-Try to build it for sparc or ppc...
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > > > The W^X implementation today is not complete. There exist many user=
+ level
+> > > > tricks that can be used to load and execute dynamic code. E.g.,
+> > > >=20
+> > > > - Load the code into a file and map the file with R-X.
+> > > >=20
+> > > > - Load the code in an RW- page. Change the permissions to R--. Then,
+> > > >   change the permissions to R-X.
+> > > >=20
+> > > > - Load the code in an RW- page. Remap the page with R-X to get a se=
+parate
+> > > >   mapping to the same underlying physical page.
+> > > >=20
+> > > > IMO, these are all security holes as an attacker can exploit them t=
+o inject
+> > > > his own code.
+> > >=20
+> > > IMO, you are smoking crack^H^H very seriously misunderstanding what
+> > > W^X is supposed to protect from.
+> > >=20
+> > > W^X is not supposed to protect you from attackers that can already do
+> > > system calls. So loading code into a file then mapping the file as R-X
+> > > is in no way security hole in W^X.
+> > >=20
+> > > If you want to provide protection from attackers that _can_ do system
+> > > calls, fine, but please don't talk about W^X and please specify what
+> > > types of attacks you want to prevent and why that's good thing.
+> >=20
+> > On one hand, Pavel is absolutely right.  It is ridiculous to say that
+> > "these are all security holes as an attacker can exploit them to inject
+> > his own code."
+>=20
+> I stand corrected, due to Brad's tweet and follow-ups here:
+>=20
+> https://twitter.com/spendergrsec/status/1308728284390318082
+>=20
+> It sure does make sense to combine ret2libc/ROP to mprotect() with one's
+> own injected shellcode.  Compared to doing everything from ROP, this is
+> easier and more reliable across versions/builds if the desired
+> payload
+
+Ok, so this starts to be a bit confusing.
+
+I thought W^X is to protect from attackers that have overflowed buffer
+somewhere, but can not to do arbitrary syscalls, yet.
+
+You are saying that there's important class of attackers that can do
+some syscalls but not arbitrary ones.
+
+I'd like to see definition of that attacker (and perhaps description
+of the system the protection is expected to be useful on -- if it is
+not close to common Linux distros).
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2tnSwAKCRAw5/Bqldv6
+8i65AKCaFokdFtwbykoqIQdSHvCvSHOLDQCdFG4dtfWtOuYiT5+Qq+ozWoM46eM=
+=Ferp
+-----END PGP SIGNATURE-----
+
+--fUYQa+Pmc3FrFX/N--
