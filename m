@@ -2,108 +2,136 @@ Return-Path: <SRS0=Tise=DA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 010C7C4741F
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 19:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C207C2D0A8
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 20:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A24522193E
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 19:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38C4B214F1
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Sep 2020 20:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726662AbgIWTxK (ORCPT
+        id S1726668AbgIWUwC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Sep 2020 15:53:10 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:49141 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbgIWTxJ (ORCPT
+        Wed, 23 Sep 2020 16:52:02 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:33862 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbgIWUwC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Sep 2020 15:53:09 -0400
-Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Mof1D-1knLhY1WDR-00p1Cg; Wed, 23 Sep 2020 21:53:05 +0200
-Received: by mail-qk1-f175.google.com with SMTP id c62so1009747qke.1;
-        Wed, 23 Sep 2020 12:53:03 -0700 (PDT)
-X-Gm-Message-State: AOAM530ZlfmksSqecWKDQ3DFtZU062m1eW50TJHuAOM1NehNCZNSs1hi
-        XGsSJeH6U+rOX7g6WJ5h3KiEI72zgD5M/7gTGgc=
-X-Google-Smtp-Source: ABdhPJw80vxbxwT0bQ4Vkw0aE+k6Uuv2/dRNGRP/PGmAg2m3M1syddgA8VQgAKVqDM0S7SkWa6ZTkZVQ5JNt1c0Eq1g=
-X-Received: by 2002:a37:5d8:: with SMTP id 207mr1587539qkf.352.1600890783036;
- Wed, 23 Sep 2020 12:53:03 -0700 (PDT)
+        Wed, 23 Sep 2020 16:52:02 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 2992C1C0BB6; Wed, 23 Sep 2020 22:51:57 +0200 (CEST)
+Date:   Wed, 23 Sep 2020 22:51:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
+Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, oleg@redhat.com,
+        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
+        fweimer@redhat.com, mark.rutland@arm.com, mic@digikod.net
+Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
+Message-ID: <20200923205156.GA12034@duo.ucw.cz>
+References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
+ <20200922215326.4603-1-madvenka@linux.microsoft.com>
+ <20200923084232.GB30279@amd>
+ <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
 MIME-Version: 1.0
-References: <20200923060547.16903-1-hch@lst.de> <20200923060547.16903-6-hch@lst.de>
- <20200923142549.GK3421308@ZenIV.linux.org.uk> <20200923143251.GA14062@lst.de>
- <20200923145901.GN3421308@ZenIV.linux.org.uk> <20200923163831.GO3421308@ZenIV.linux.org.uk>
- <CAK8P3a3nkLUOkR+jwz2_2LcYTUTqdVf8JOtZqKWbtEDotNhFZA@mail.gmail.com> <20200923194755.GR3421308@ZenIV.linux.org.uk>
-In-Reply-To: <20200923194755.GR3421308@ZenIV.linux.org.uk>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Sep 2020 21:52:47 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1VPh0ufiUMbcRuj9wrpqojzQ_8mO68Vjc8yzLGxVNkpw@mail.gmail.com>
-Message-ID: <CAK8P3a1VPh0ufiUMbcRuj9wrpqojzQ_8mO68Vjc8yzLGxVNkpw@mail.gmail.com>
-Subject: Re: [PATCH 5/9] fs: remove various compat readv/writev helpers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        linux-aio <linux-aio@kvack.org>, io-uring@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Networking <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:FcOmYEc7S70x327+yC5nQPBEM0rt3a6h0aY4XmvYdCQO/8YHm6L
- kQ4zWoMsMiqUpkNCuPq40vpPiey/pLiaKIbN7QkQudHxc4Jh3awCIgTkZ9zYNjIGusQwsP4
- 1f1B0nElrTF0UDKdAoVLxWVksyAkcP1rgW6OWMr1s5U6Ho/SuN3wPdE/qoJwLEFRspiRqUj
- yq6+or7yQpPXAv/J1caXQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WeZ7mFq3nUo=:ejU75HdVaJwErPbl07WyY/
- SzJqUDCrQEJB1WeBXC2y8Ssm/xYmjapzEBN2ahXTydur/hOzj69Kg2Qzgtoc3VNc8XFmw919o
- ESSsgSfQzPzPrlX3MgopJwOnkQ3I4bvWzTa2ZlS7YrZa/AyhvFw4gd4FCpGxRi6WmPfp76f1e
- myF7aStZTXsarPDA2STRNrZOIUYyDueuimX9V2S7rv5BW/onorUna7NOsEwkE7aU0mJt+v0Hl
- HIA6IfIR05QbpoKPI/OpdgJEact/NAJX3zC1ZJXh62ABmy+E/nnChSTV1nsGJIXjNhCuBVdFk
- bQBjXBaT8FGfl83RztO1RmQ3bqsqk8ku9XIaqGrmQ9i5OX6DAQHK7c30Vm+EMZDuan5IKUoxh
- cYHDHFlB37P7T0CXow6euG48MwQQRXwNWG94LigYmIKrGfCNIQ4DHyCeRw1+68wkbtADxLVH8
- CB0nRpMe7rUrmHGpqYNqt8wLM0pJKHM0tsjdDP650XCTmpPS3/NlStYy3mgCJIW9hqkuS7w7A
- GkIBYy2IUu1bbRxzL8ypcn4Cp96IkenTf/tXQXtLAggbQEk+CIKr/QP9S6AMOum8srwv1+VKM
- ORMh1sY7JkDqzxIAYpvgHUPA1mej8HF4555mPWMlPk7ICBIsJDcaGzkmlBgB6B23rbiKuCCsr
- iyC89P2nxjFi+GzaaYFHYRrz399DxPlViaNhzrAVJsWX0gM3VD02wi37/y8AW5K3d0vI6p/7f
- DV1q85DyULmO6ez5MisWBBUBROpFlvx1IghlxiINd/QvCa5H+comengpnbWjgMe/VluZszkB9
- P0Qk+w+vd9NiE3WeN+I42nTS8gMPYeMp7/0S9Nib8gESVnNDFc2shVtY2bhFcaVX6Tkq2thRH
- 4RYELGgsPV/p/jHf0yA1sgT5WRYlN6txBoLIeSX9HQ3uUovY6j9F6HIzPfzzcZCcKlkVPUElJ
- DqEhYfcAAh7V0lJVm7vBtu55QYk5+o4wTMvTEFkCyMYNWNypOQGY7
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
+Content-Disposition: inline
+In-Reply-To: <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 23, 2020 at 9:48 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> FWIW, after playing with that for a while...  Do we really want the
-> compat_sys_...() declarations to live in linux/compat.h?  Most of
-> the users of that file don't want those; why not move them to
-> linux/syscalls.h?
 
-Sure, let's do that. The trend overall is to integrate the compat stuff
-more closely into where the native implementation lives, so this
-would just follow that trend.
+--45Z9DzgjV8m4Oswq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think with Christoph's latest patches, about half of them are
-going away as well.
+Hi!
 
-> Reason: there's a lot more users of linux/compat.h than those of
-> linux/syscalls.h - it's pulled by everything in the networking stack,
-> for starters...
+> >> Scenario 2
+> >> ----------
+> >>
+> >> We know what code we need in advance. User trampolines are a good exam=
+ple of
+> >> this. It is possible to define such code statically with some help fro=
+m the
+> >> kernel.
+> >>
+> >> This RFC addresses (2). (1) needs a general purpose trusted code gener=
+ator
+> >> and is out of scope for this RFC.
+> >=20
+> > This is slightly less crazy talk than introduction talking about holes
+> > in W^X. But it is very, very far from normal Unix system, where you
+> > have selection of interpretters to run your malware on (sh, python,
+> > awk, emacs, ...) and often you can even compile malware from sources.=
+=20
+> >=20
+> > And as you noted, we don't have "a general purpose trusted code
+> > generator" for our systems.
+> >=20
+> > I believe you should simply delete confusing "introduction" and
+> > provide details of super-secure system where your patches would be
+> > useful, instead.
+>=20
+> This RFC talks about converting dynamic code (which cannot be authenticat=
+ed)
+> to static code that can be authenticated using signature verification. Th=
+at
+> is the scope of this RFC.
+>=20
+> If I have not been clear before, by dynamic code, I mean machine code tha=
+t is
+> dynamic in nature. Scripts are beyond the scope of this RFC.
+>=20
+> Also, malware compiled from sources is not dynamic code. That is orthogon=
+al
+> to this RFC. If such malware has a valid signature that the kernel permit=
+s its
+> execution, we have a systemic problem.
+>=20
+> I am not saying that script authentication or compiled malware are not pr=
+oblems.
+> I am just saying that this RFC is not trying to solve all of the security=
+ problems.
+> It is trying to define one way to convert dynamic code to static code to =
+address
+> one class of problems.
 
-Right, the network headers pull in almost everything else through
-multiple indirect inclusions, anything we can do to reduce that
-helps.
+Well, you don't have to solve all problems at once.
 
-     Arnd
+But solutions have to exist, and AFAIK in this case they don't. You
+are armoring doors, but ignoring open windows.
+
+Or very probably you are thinking about something different than
+normal desktop distros (Debian 10). Because on my systems, I have
+python, gdb and gcc...
+
+It would be nice to specify what other pieces need to be present for
+this to make sense -- because it makes no sense on Debian 10.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--45Z9DzgjV8m4Oswq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX2u1bAAKCRAw5/Bqldv6
+8ov1AJ9oh8sVA5W7qErLEsJzifoDuHM8DACgh6w28VCKvVj+dLDCdmUuI6zKsgc=
+=0Viq
+-----END PGP SIGNATURE-----
+
+--45Z9DzgjV8m4Oswq--
