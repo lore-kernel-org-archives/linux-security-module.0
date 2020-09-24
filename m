@@ -2,126 +2,171 @@ Return-Path: <SRS0=+/1B=DB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2897CC4727D
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Sep 2020 16:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BDBC4727E
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Sep 2020 19:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFFE02395C
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Sep 2020 16:44:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1857523899
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Sep 2020 19:09:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NevDrEEF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbgIXQod (ORCPT
+        id S1728678AbgIXTJs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Sep 2020 12:44:33 -0400
-Received: from smtp-bc08.mail.infomaniak.ch ([45.157.188.8]:47637 "EHLO
-        smtp-bc08.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727330AbgIXQoc (ORCPT
+        Thu, 24 Sep 2020 15:09:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:59087 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728381AbgIXTJs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Sep 2020 12:44:32 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4By19B01Y1zlhTqt;
-        Thu, 24 Sep 2020 18:44:30 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4By1972FNszlh8Yx;
-        Thu, 24 Sep 2020 18:44:27 +0200 (CEST)
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Pavel Machek <pavel@ucw.cz>,
-        "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>
-Cc:     kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
-        fweimer@redhat.com, mark.rutland@arm.com
-References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
- <20200922215326.4603-1-madvenka@linux.microsoft.com>
- <20200923084232.GB30279@amd>
- <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
- <20200923205156.GA12034@duo.ucw.cz>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
-Date:   Thu, 24 Sep 2020 18:44:26 +0200
-User-Agent: 
+        Thu, 24 Sep 2020 15:09:48 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1600974586;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1xBZCyYKlE5WRUUtzWjHwjgmCmL0z091Bn3uVsUx0eo=;
+        b=NevDrEEF8pQjw21jntcX3nUp0XH0yHxojjlII3cEnBTYXDqsMDsmx/lnX3LG2ZXgWDp1oJ
+        VQXUOnBOWTUP8pMeOKLtLem+agsUVcaKmpBlW3xueK+CBQj6JG57lbgZHwkLC93dD66TP3
+        I3Hz97TUlTEGOKRizIkUE4hXOWVy32M=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-106-V9gDJwwwM46Cw7RYWDdzCQ-1; Thu, 24 Sep 2020 15:09:42 -0400
+X-MC-Unique: V9gDJwwwM46Cw7RYWDdzCQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C569D425E6;
+        Thu, 24 Sep 2020 19:09:40 +0000 (UTC)
+Received: from [10.10.110.8] (unknown [10.10.110.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E87610013C1;
+        Thu, 24 Sep 2020 19:09:37 +0000 (UTC)
+Subject: Re: [PATCH V2 1/3] efi: Support for MOK variable config table
+To:     Arvind Sankar <nivedita@alum.mit.edu>,
+        Ard Biesheuvel <ardb@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
+        James Morris <jmorris@namei.org>, serge@hallyn.com,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Jones <pjones@redhat.com>,
+        David Howells <dhowells@redhat.com>, prarit@redhat.com
+References: <20200905013107.10457-1-lszubowi@redhat.com>
+ <20200905013107.10457-2-lszubowi@redhat.com>
+ <20200921161859.GA544292@rani.riverdale.lan>
+ <CAMj1kXFV7LqsyHM8iM5yQwJX4tKbY=w9vfjERvjyabVDKcbJpA@mail.gmail.com>
+ <20200921165506.GA549786@rani.riverdale.lan>
+From:   Lenny Szubowicz <lszubowi@redhat.com>
+Message-ID: <e01b3f50-20ee-0168-b6ee-4d3d2d4dc13f@redhat.com>
+Date:   Thu, 24 Sep 2020 15:09:36 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <20200923205156.GA12034@duo.ucw.cz>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20200921165506.GA549786@rani.riverdale.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 23/09/2020 22:51, Pavel Machek wrote:
-> Hi!
-> 
->>>> Scenario 2
->>>> ----------
->>>>
->>>> We know what code we need in advance. User trampolines are a good example of
->>>> this. It is possible to define such code statically with some help from the
->>>> kernel.
->>>>
->>>> This RFC addresses (2). (1) needs a general purpose trusted code generator
->>>> and is out of scope for this RFC.
+On 9/21/20 12:55 PM, Arvind Sankar wrote:
+> On Mon, Sep 21, 2020 at 06:27:17PM +0200, Ard Biesheuvel wrote:
+>> On Mon, 21 Sep 2020 at 18:19, Arvind Sankar <nivedita@alum.mit.edu> wrote:
 >>>
->>> This is slightly less crazy talk than introduction talking about holes
->>> in W^X. But it is very, very far from normal Unix system, where you
->>> have selection of interpretters to run your malware on (sh, python,
->>> awk, emacs, ...) and often you can even compile malware from sources. 
+>>> On Fri, Sep 04, 2020 at 09:31:05PM -0400, Lenny Szubowicz wrote:
+>>>> +     /*
+>>>> +      * The EFI MOK config table must fit within a single EFI memory
+>>>> +      * descriptor range.
+>>>> +      */
+>>>> +     err = efi_mem_desc_lookup(efi.mokvar_table, &md);
+>>>> +     if (err) {
+>>>> +             pr_warn("EFI MOKvar config table is not within the EFI memory map\n");
+>>>> +             return;
+>>>> +     }
+>>>> +     end_pa = efi_mem_desc_end(&md);
+>>>> +     if (efi.mokvar_table >= end_pa) {
+>>>> +             pr_err("EFI memory descriptor containing MOKvar config table is invalid\n");
+>>>> +             return;
+>>>> +     }
 >>>
->>> And as you noted, we don't have "a general purpose trusted code
->>> generator" for our systems.
+>>> efi_mem_desc_lookup() can't return success if efi.mokvar_table >= end_pa,
+>>> why check it again?
+
+I agree it's unnecessary and I see that Ard has addressed this in a patch.
+
 >>>
->>> I believe you should simply delete confusing "introduction" and
->>> provide details of super-secure system where your patches would be
->>> useful, instead.
+>>>> +     offset_limit = end_pa - efi.mokvar_table;
+>>>> +     /*
+>>>> +      * Validate the MOK config table. Since there is no table header
+>>>> +      * from which we could get the total size of the MOK config table,
+>>>> +      * we compute the total size as we validate each variably sized
+>>>> +      * entry, remapping as necessary.
+>>>> +      */
+>>>> +     while (cur_offset + sizeof(*mokvar_entry) <= offset_limit) {
+>>>> +             mokvar_entry = va + cur_offset;
+>>>> +             map_size_needed = cur_offset + sizeof(*mokvar_entry);
+>>>> +             if (map_size_needed > map_size) {
+>>>> +                     if (va)
+>>>> +                             early_memunmap(va, map_size);
+>>>> +                     /*
+>>>> +                      * Map a little more than the fixed size entry
+>>>> +                      * header, anticipating some data. It's safe to
+>>>> +                      * do so as long as we stay within current memory
+>>>> +                      * descriptor.
+>>>> +                      */
+>>>> +                     map_size = min(map_size_needed + 2*EFI_PAGE_SIZE,
+>>>> +                                    offset_limit);
+>>>> +                     va = early_memremap(efi.mokvar_table, map_size);
+>>>
+>>> Can't we just map the entire region from efi.mokvar_table to end_pa in
+>>> one early_memremap call before the loop and avoid all the remapping
+>>> logic?
+>>>
 >>
->> This RFC talks about converting dynamic code (which cannot be authenticated)
->> to static code that can be authenticated using signature verification. That
->> is the scope of this RFC.
+>> I suppose that depends on whether there is a reasonable upper bound on
+>> the size which is guaranteed to be mappable using early_memremap()
+>> (e.g., 128 KB on 32-bit ARM, or 256 KB on other architectures)
+> 
+> Ah, sorry, I thought only the number of early mappings was limited, not
+> the size as well. We could still just map the maximum possible
+> (NR_FIX_BTMAPS * PAGE_SIZE), since it will fail anyway if the config
+> table turns out to be bigger than that?
+
+In practice, the loop will only do one or two mappings. That's because of
+two factors.
+
+First the code attempts to map a little more than it needs (2*EFI_PAGE_SIZE).
+Secondly, right now only one entry in the MOKvar config table might be quite
+large, i.e. the entry named MoKListRT. It's extremely likely that the header
+of MokListRT entry will be encountered on the first mapping. If that entry
+goes beyond what was originally mapped, then a second mapping will cover all
+the data in that large entry as well as the remaining small entries that might
+follow it.
+
+> 
 >>
->> If I have not been clear before, by dynamic code, I mean machine code that is
->> dynamic in nature. Scripts are beyond the scope of this RFC.
 >>
->> Also, malware compiled from sources is not dynamic code. That is orthogonal
->> to this RFC. If such malware has a valid signature that the kernel permits its
->> execution, we have a systemic problem.
->>
->> I am not saying that script authentication or compiled malware are not problems.
->> I am just saying that this RFC is not trying to solve all of the security problems.
->> It is trying to define one way to convert dynamic code to static code to address
->> one class of problems.
+>>>> +     if (va)
+>>>> +             early_memunmap(va, map_size);
+>>>> +     if (err) {
+>>>> +             pr_err("EFI MOKvar config table is not valid\n");
+>>>> +             return;
+>>>> +     }
+>>>
+>>> err will never be non-zero here: it was cleared when the
+>>> efi_mem_desc_lookup() was done. I think the initialization of err to
+>>> -EINVAL needs to be moved just prior to the loop.
+>>>
+>>>> +     efi_mem_reserve(efi.mokvar_table, map_size_needed);
+>>>> +     efi_mokvar_table_size = map_size_needed;
+>>>> +}
 > 
-> Well, you don't have to solve all problems at once.
-> 
-> But solutions have to exist, and AFAIK in this case they don't. You
-> are armoring doors, but ignoring open windows.
 
-FYI, script execution is being addressed (for the kernel part) by this
-patch series:
-https://lore.kernel.org/lkml/20200924153228.387737-1-mic@digikod.net/
-
-> 
-> Or very probably you are thinking about something different than
-> normal desktop distros (Debian 10). Because on my systems, I have
-> python, gdb and gcc...
-
-It doesn't make sense for a tailored security system to leave all these
-tools available to an attacker.
-
-> 
-> It would be nice to specify what other pieces need to be present for
-> this to make sense -- because it makes no sense on Debian 10.
-
-Not all kernel features make sense for a generic/undefined usage,
-especially specific security mechanisms (e.g. SELinux, Smack, Tomoyo,
-SafeSetID, LoadPin, IMA, IPE, secure/trusted boot, lockdown, etc.), but
-they can still be definitely useful.
-
-> 
-> Best regards,
-> 									Pavel
-> 
