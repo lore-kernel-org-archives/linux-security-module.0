@@ -2,153 +2,195 @@ Return-Path: <SRS0=8ECw=EK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4111C2D0A3
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 17:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A917C388F9
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 17:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63A142074B
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 17:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6081D205CA
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 17:46:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="M7sTa4A3"
+	dkim=pass (2048-bit key) header.d=btinternet.com header.i=@btinternet.com header.b="V6LYn+Nf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731426AbgKDRC5 (ORCPT
+        id S1731313AbgKDRqc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Nov 2020 12:02:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41910 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731283AbgKDRC4 (ORCPT
+        Wed, 4 Nov 2020 12:46:32 -0500
+Received: from mailomta5-sa.btinternet.com ([213.120.69.11]:58476 "EHLO
+        sa-prd-fep-043.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731989AbgKDRqa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Nov 2020 12:02:56 -0500
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FAA3C0613D3
-        for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2020 09:02:55 -0800 (PST)
-Received: by mail-ej1-x642.google.com with SMTP id o9so28686969ejg.1
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2020 09:02:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x2M/mARoDzrcfFFiwEe2r6gawenXxInWJUsbPLXI4aU=;
-        b=M7sTa4A3JZbX13eK8mgywZ5kdDjq33XlU/mpL1bHzx7FoLS3ztmx9M9jWTjyj1wfCe
-         s4N1kwTO9+A0wg+7pPU5k95P7JqFWQN1hHzwrzWO+IpYNzYRFmYpzZAv5Kc5wjJia+wl
-         65vkjtjKE6b52MBX9xVcDRMRdlWj1Rw1clG+312fBrHk5k1tlLpWaibkbe2Z5Kqpq9+U
-         1EZn6bUY51uaVkjJtrchPAq6GJ7mOhY5N4M7DLhxQhxcPoiQ2VEJ6rrKF/Pj/PyAOW/z
-         lhhpy5AWmnZvME8LvXYIzSHyoaFgMnW45UfjiBWxz0X/tpkmusE8zKDNuh8d4jjde4Bg
-         v8Tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x2M/mARoDzrcfFFiwEe2r6gawenXxInWJUsbPLXI4aU=;
-        b=jRyVlhLvJk9xrdw9UWmmgWhD8VkPA+Dqg7U5TLSocpt5Qfb0AKMf5Ccd3a20qtz6my
-         7FoxVf5M+m/fNJey6ZZyQllMiIY2ETZQqOZWp56FBFCP7boeP5RdJDkZyWhZQTusifRl
-         yHW1fLnT5iIvd2IWBbROWSowNrw0RgegzGrcomxU/Mgkr2dkRnOC04hybfDGjUkKB/2k
-         gEVXO0L5Nxx20VQpI9Xa3trZKRe3HdJUS4ufMkyIQKTP6G1WjZoRfiHSzzkXtNnnT8Bi
-         q+LYNeqjXuh2mBopXsNpoLQ4IkmKXytQAZY/bnCLpdJYNo/8dbg4R8fnqZx65s4iopve
-         Nn3g==
-X-Gm-Message-State: AOAM530bQL+Y1FinpVpd8zdZBglQeqDwi3eqWwWxLiDChbIyDTuRzQs/
-        yJJe2hZW4jIC97uVAvmwgHhOKAAWr3X8fuJiisnn
-X-Google-Smtp-Source: ABdhPJwnz1UtFa7ZfNIrVWs1o+Tvv5+b2V30m/yWN9QZtdmkerlPloaXcjzTHxCBxaQbBdQJ58kX093S2c9nCvxtPDo=
-X-Received: by 2002:a17:906:1159:: with SMTP id i25mr5847474eja.398.1604509374270;
- Wed, 04 Nov 2020 09:02:54 -0800 (PST)
+        Wed, 4 Nov 2020 12:46:30 -0500
+Received: from sa-prd-rgout-003.btmx-prd.synchronoss.net ([10.2.38.6])
+          by sa-prd-fep-045.btinternet.com with ESMTP
+          id <20200924085108.YTZV4112.sa-prd-fep-045.btinternet.com@sa-prd-rgout-003.btmx-prd.synchronoss.net>;
+          Thu, 24 Sep 2020 09:51:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1600937468; 
+        bh=gfshxmOa7pyOBPfnZC73Pf8y0/WY1PIHuQRoM6dbw24=;
+        h=From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version;
+        b=V6LYn+NfiFITNcFXv8whY2tH2EpAa3w91PxQlayp+kzA4aPUH2m8EWuZYscF6TN/0RI0Fu/yz3KLhnheEYiLRs49qcTVMrre4ZG27Nr6/I6QqBF1pi32jUL+/CYYWoW7iQuSqNrwT4vAIHgHzykN7iqjO5XBncmoVF+NrJyc0TVfOyBp5jmQ8nOrBGsI5HfhLFM+umx0UwPAM9cJN2SlfCJ8IK+hY8Q/91o/35ZRB+UGR1baeO8s+x7lzBWsNQ2GJALCYbGwKsW97+p+MN2G0P82hy0rfPvvIPy8N7tX++v9+/ZV3pjjmMZkFt9lXN6h9MUdqy1Iq4QSlBe/ISphAA==
+Authentication-Results: btinternet.com; none
+X-Originating-IP: [86.146.219.130]
+X-OWM-Source-IP: 86.146.219.130 (GB)
+X-OWM-Env-Sender: richard_c_haines@btinternet.com
+X-VadeSecure-score: verdict=clean score=0/300, class=clean
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedujedrudekgddutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuggftrfgrthhtvghrnhepuedttdelleehueeggfeihfeitdehueekffeviedtffegffeiueegleejgeevgfeinecukfhppeekiedrudegiedrvdduledrudeftdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkeeirddugeeirddvudelrddufedtpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqedprhgtphhtthhopeeojhhmohhrrhhishesnhgrmhgvihdrohhrgheqpdhrtghpthhtohepoehlrghfohhrghgvsehgnhhumhhonhhkshdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeoohhsmhhotghomhdqnhgvthdqghhprhhssehlihhsthhsrdhoshhmohgtohhmrdhorhhgqedprhgtphhtthhopeeo
+        phgrsghlohesnhgvthhfihhlthgvrhdrohhrgheqpdhrtghpthhtohepoehprghulhesphgruhhlqdhmohhorhgvrdgtohhmqedprhgtphhtthhopeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhequcfqtfevrffvpehrfhgtkedvvdenrhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhdprhgtphhtthhopeeoshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehsthgvphhhvghnrdhsmhgrlhhlvgihrdifohhrkhesghhmrghilhdrtghomheq
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+X-SNCR-hdrdom: btinternet.com
+Received: from localhost.localdomain (86.146.219.130) by sa-prd-rgout-003.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
+        id 5ED9AFBE1282CF1D; Thu, 24 Sep 2020 09:51:08 +0100
+From:   Richard Haines <richard_c_haines@btinternet.com>
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org
+Cc:     stephen.smalley.work@gmail.com, paul@paul-moore.com,
+        pablo@netfilter.org, laforge@gnumonks.org, jmorris@namei.org,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [RFC PATCH 2/3] gtp: Add LSM hooks to GPRS Tunneling Protocol (GTP)
+Date:   Thu, 24 Sep 2020 09:51:01 +0100
+Message-Id: <20200924085102.5960-3-richard_c_haines@btinternet.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200924085102.5960-1-richard_c_haines@btinternet.com>
+References: <20200924085102.5960-1-richard_c_haines@btinternet.com>
 MIME-Version: 1.0
-References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
- <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
- <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com>
- <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
- <CAN-5tyGJxUZb5QdJ=fh+L-6rc2B-MhQbDcDkTZNAZAAJm9Q8YQ@mail.gmail.com>
- <FB6C74CE-5D9F-4469-A49B-93CC8A51D7D5@gmail.com> <CAN-5tyFQbfkiuno07C6Azc7RcF3z3qF3PP0FutFMD3raBgnQmA@mail.gmail.com>
- <CAEjxPJ7PoAG6f+gVdodx=6X8+_Z_WCFXAuxnpB8WmC1gTF4iQQ@mail.gmail.com>
- <CAN-5tyEy57xoqEbZAThZKHriJywx-5DMKBD5tsXwo5ccGwuctw@mail.gmail.com>
- <CAHC9VhQpCXFySZY42==KR57hfAkVLdS6mSAcp2UHn-GWjEfVLg@mail.gmail.com>
- <bc766b2b-d1f1-d767-579c-02e10ae32a9a@schaufler-ca.com> <CAHC9VhS7UeCX9BXPrHNH90_sLHKGxTbbtjdm6GBOgDM9=T05FA@mail.gmail.com>
- <CAN-5tyF_JTMr4+05_YH2VQGft4aXXon3ZjuiVuOn-Z-DLVvTQg@mail.gmail.com>
-In-Reply-To: <CAN-5tyF_JTMr4+05_YH2VQGft4aXXon3ZjuiVuOn-Z-DLVvTQg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 4 Nov 2020 12:02:41 -0500
-Message-ID: <CAHC9VhQgJ93LrEFBBJ-kz8C9b4RukODzRRRJVKgwGEL8jPVZaQ@mail.gmail.com>
-Subject: Re: selinux: how to query if selinux is enabled
-To:     Olga Kornievskaia <aglo@umich.edu>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Chuck Lever <chucklever@gmail.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 4, 2020 at 9:21 AM Olga Kornievskaia <aglo@umich.edu> wrote:
-> On Wed, Oct 14, 2020 at 8:11 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Wed, Oct 14, 2020 at 12:31 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > On 10/14/2020 8:57 AM, Paul Moore wrote:
-> > > > On Wed, Oct 14, 2020 at 10:37 AM Olga Kornievskaia <aglo@umich.edu> wrote:
-> > > >> On Tue, Oct 13, 2020 at 7:51 PM Stephen Smalley wrote:
+Add security hooks to allow security modules to exercise access control
+over GTP.
 
-...
+Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+---
+ drivers/net/gtp.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
 
-> > > > To start the discussion I might suggest the following:
-> > > >
-> > > > #define LSM_FQUERY_VFS_NONE     0x00000000
-> > > > #define LSM_FQUERY_VFS_XATTRS   0x00000001
-> > > > int security_func_query_vfs(unsigned int flags);
-> > > >
-> > > > ... with an example SELinux implementation looks like this:
-> > > >
-> > > > int selinux_func_query_vfs(unsigned int flags)
-> > > > {
-> > > >     return !!(flags & LSM_FQUERY_VFS_XATTRS);
-> > > > }
-> > >
-> > > Not a bad start, but I see optimizations and issues.
-> > >
-> > > It would be really easy to collect the LSM features at module
-> > > initialization by adding the feature flags to struct lsm_info.
-> > > We could maintain a variable lsm_features in security.c that
-> > > has the cumulative feature set. Rather than have an LSM hook for
-> > > func_query_vfs we'd get
-> > >
-> > > int security_func_query_vfs(void)
-> > > {
-> > >         return !!(lsm_features & LSM_FQUERY_VFS_XATTRS);
-> > > }
-> >
-> > Works for me.
-> >
-> > > In either case there could be confusion in the case where more
-> > > than one security module provides the feature. NFS, for example,
-> > > cares about the SELinux "selinux" attribute, but probably not
-> > > about the Smack "SMACK64EXEC" attribute. It's entirely possible
-> > > that a bit isn't enough information to check about a "feature".
-> >
-> > In the LSM stacking world that shouldn't matter to callers, right?  Or
-> > perhaps more correctly, if it matters to the caller which individual
-> > LSM supports what feature then the caller is doing it wrong, right?
->
-> Hi folks,
->
-> I would like to resurrect this discussion and sorry for a delayed
-> response. I'm a little bit unsure about the suggested approach of
-> adding something like selinux_func_query_vfs() call where selinux has
-> such a function. What happens when selinux is configured to be
-> "disabled" wouldn't this call still return the same value as when it
-> is configured as "permissive or enforcing"?
-
-Hello again.
-
-To start, the non-LSM portion of the kernel shouldn't be calling
-selinux_func_query_vfs() directly, it should call
-security_func_query_vfs(); it would be up to the individual LSMs to
-indicate to the LSM hooks layer what is required.  If SELinux wasn't
-built into the kernel, or was disabled at boot, I would expect that
-the security_func_query_vfs() function would adjust to exclude the
-SELinux requirements.
-
+diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
+index 21640a035..ee00b12ab 100644
+--- a/drivers/net/gtp.c
++++ b/drivers/net/gtp.c
+@@ -73,6 +73,8 @@ struct gtp_dev {
+ 	unsigned int		hash_size;
+ 	struct hlist_head	*tid_hash;
+ 	struct hlist_head	*addr_hash;
++
++	void			*security;
+ };
+ 
+ static unsigned int gtp_net_id __read_mostly;
+@@ -663,6 +665,12 @@ static int gtp_newlink(struct net *src_net, struct net_device *dev,
+ 
+ 	gtp = netdev_priv(dev);
+ 
++	err = security_gtp_dev_add(&gtp->security);
++	pr_debug("security_gtp_dev_add() ptr: %p err: %d\n",
++		 gtp->security, err);
++	if (err < 0)
++		return err;
++
+ 	err = gtp_encap_enable(gtp, data);
+ 	if (err < 0)
+ 		return err;
+@@ -705,7 +713,15 @@ static void gtp_dellink(struct net_device *dev, struct list_head *head)
+ {
+ 	struct gtp_dev *gtp = netdev_priv(dev);
+ 	struct pdp_ctx *pctx;
+-	int i;
++	int i, err;
++
++	err = security_gtp_dev_del(gtp->security);
++	pr_debug("security_gtp_dev_del() ptr: %p err: %d\n",
++		 gtp->security, err);
++	if (err < 0) {
++		pr_err("Failed security_gtp_dev_del_link() err: %d\n", err);
++		return;
++	}
+ 
+ 	for (i = 0; i < gtp->hash_size; i++)
+ 		hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i], hlist_tid)
+@@ -1076,6 +1092,12 @@ static int gtp_genl_new_pdp(struct sk_buff *skb, struct genl_info *info)
+ 		goto out_unlock;
+ 	}
+ 
++	err = security_gtp_dev_cmd(gtp->security, GTP_CMD_NEWPDP);
++	pr_debug("security_gtp_dev_cmd(GTP_CMD_NEWPDP) ptr: %p err: %d\n",
++		 gtp->security, err);
++	if (err < 0)
++		goto out_unlock;
++
+ 	if (version == GTP_V0)
+ 		sk = gtp->sk0;
+ 	else if (version == GTP_V1)
+@@ -1139,6 +1161,7 @@ static struct pdp_ctx *gtp_find_pdp(struct net *net, struct nlattr *nla[])
+ static int gtp_genl_del_pdp(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	struct pdp_ctx *pctx;
++	struct gtp_dev *gtp;
+ 	int err = 0;
+ 
+ 	if (!info->attrs[GTPA_VERSION])
+@@ -1152,6 +1175,13 @@ static int gtp_genl_del_pdp(struct sk_buff *skb, struct genl_info *info)
+ 		goto out_unlock;
+ 	}
+ 
++	gtp = netdev_priv(pctx->dev);
++	err = security_gtp_dev_cmd(gtp->security, GTP_CMD_DELPDP);
++	pr_debug("security_gtp_dev_cmd(GTP_CMD_DELPDP) ptr: %p err: %d\n",
++		 gtp->security, err);
++	if (err < 0)
++		goto out_unlock;
++
+ 	if (pctx->gtp_version == GTP_V0)
+ 		netdev_dbg(pctx->dev, "GTPv0-U: deleting tunnel id = %llx (pdp %p)\n",
+ 			   pctx->u.v0.tid, pctx);
+@@ -1208,6 +1238,7 @@ static int gtp_genl_get_pdp(struct sk_buff *skb, struct genl_info *info)
+ {
+ 	struct pdp_ctx *pctx = NULL;
+ 	struct sk_buff *skb2;
++	struct gtp_dev *gtp;
+ 	int err;
+ 
+ 	if (!info->attrs[GTPA_VERSION])
+@@ -1221,6 +1252,13 @@ static int gtp_genl_get_pdp(struct sk_buff *skb, struct genl_info *info)
+ 		goto err_unlock;
+ 	}
+ 
++	gtp = netdev_priv(pctx->dev);
++	err = security_gtp_dev_cmd(gtp->security, GTP_CMD_GETPDP);
++	pr_debug("security_gtp_dev_cmd(GTP_CMD_GETPDP) ptr: %p err: %d\n",
++		 gtp->security, err);
++	if (err < 0)
++		goto err_unlock;
++
+ 	skb2 = genlmsg_new(NLMSG_GOODSIZE, GFP_ATOMIC);
+ 	if (skb2 == NULL) {
+ 		err = -ENOMEM;
+@@ -1250,6 +1288,7 @@ static int gtp_genl_dump_pdp(struct sk_buff *skb,
+ 	struct net *net = sock_net(skb->sk);
+ 	struct pdp_ctx *pctx;
+ 	struct gtp_net *gn;
++	int err;
+ 
+ 	gn = net_generic(net, gtp_net_id);
+ 
+@@ -1263,6 +1302,14 @@ static int gtp_genl_dump_pdp(struct sk_buff *skb,
+ 		else
+ 			last_gtp = NULL;
+ 
++		err = security_gtp_dev_cmd(gtp->security, GTP_CMD_GETPDP);
++		pr_debug("security_gtp_dev_cmd(GTP_CMD_GETPDP) ptr: %p err: %d\n",
++			 gtp->security, err);
++		if (err < 0) {
++			rcu_read_unlock();
++			return err;
++		}
++
+ 		for (i = bucket; i < gtp->hash_size; i++) {
+ 			j = 0;
+ 			hlist_for_each_entry_rcu(pctx, &gtp->tid_hash[i],
 -- 
-paul moore
-www.paul-moore.com
+2.26.2
+
