@@ -2,143 +2,302 @@ Return-Path: <SRS0=6XiI=DC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6614EC4727F
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 10:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99232C4363D
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 13:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C3B522B2D
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 10:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D6642076D
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 13:38:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OhucX0A2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbgIYKMg (ORCPT
+        id S1728736AbgIYNiT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Sep 2020 06:12:36 -0400
-Received: from smtp-190c.mail.infomaniak.ch ([185.125.25.12]:41039 "EHLO
-        smtp-190c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727819AbgIYKMg (ORCPT
+        Fri, 25 Sep 2020 09:38:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:44470 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728171AbgIYNiS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Sep 2020 06:12:36 -0400
-X-Greylist: delayed 67191 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Sep 2020 06:12:34 EDT
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4BySPv3N5jzlhwQV;
-        Fri, 25 Sep 2020 12:12:03 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4BySPs41tdzllmgP;
-        Fri, 25 Sep 2020 12:12:01 +0200 (CEST)
-Subject: Re: [PATCH v2 0/4] [RFC] Implement Trampoline File Descriptor
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     "Madhavan T. Venkataraman" <madvenka@linux.microsoft.com>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, oleg@redhat.com,
-        x86@kernel.org, luto@kernel.org, David.Laight@ACULAB.COM,
-        fweimer@redhat.com, mark.rutland@arm.com
-References: <210d7cd762d5307c2aa1676705b392bd445f1baa>
- <20200922215326.4603-1-madvenka@linux.microsoft.com>
- <20200923084232.GB30279@amd>
- <34257bc9-173d-8ef9-0c97-fb6bd0f69ecb@linux.microsoft.com>
- <20200923205156.GA12034@duo.ucw.cz>
- <c5ddf0c2-962a-f93a-e666-1c6f64482d97@digikod.net>
- <20200924220540.GA13185@amd>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <eec5d097-c70f-365b-3548-66726ad49f04@digikod.net>
-Date:   Fri, 25 Sep 2020 12:12:01 +0200
-User-Agent: 
+        Fri, 25 Sep 2020 09:38:18 -0400
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1601041095;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=iQnzFWAdeAe6WY95XobLeXkTFapJnpBOtUwG9I4Ug4E=;
+        b=OhucX0A2lym/Jc+JQXracza6K4ymEtwvG/DVuUevCz66ccgO7fuNGzZw3Yv/kzLqyIhXcD
+        tdXncPUtutLqZKwikEuOQ7M2vZ3/9UWKlDm5q0zzA/BzjxVKrTl7dMtWkBrUclu6YfNi/R
+        Kg8ScK09scN93JNezlgI7obOmtxT0d8=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-UnIgvAILMHqii9cmw6D9lw-1; Fri, 25 Sep 2020 09:38:10 -0400
+X-MC-Unique: UnIgvAILMHqii9cmw6D9lw-1
+Received: by mail-lj1-f200.google.com with SMTP id f16so1035828ljm.17
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Sep 2020 06:38:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iQnzFWAdeAe6WY95XobLeXkTFapJnpBOtUwG9I4Ug4E=;
+        b=os43hJpbTZIpptRkQoHwf/EtJ4bejeJ0Hzw+MHbqHXuRtSVM9K8pngXCRkdRlISLz5
+         YLYdRxOz134tVQz0k6PAY+YiF8+vVlcSKB8RaNl3oQc9gc8GaO0eKWBwrIMOZPxGnUrV
+         kdvi4j0ILc8YbSet6VaHjnD3pHoGTQVmivjeWuqZmGTJcpXCT0hS4SmWHPebzL7CMiJK
+         oLr8j5QY6KofylrxbYrVrolk6bV+6hZasIHeYyUZQqZf17orTPKBDxfwGodPBm/ZYnFF
+         f07OASJyFvWDAzhqGodm/NZYAF7bzLmMlOM+ySUMw9nlpYmp1RcHXmqjOLK73i6+4EuD
+         mJRg==
+X-Gm-Message-State: AOAM5322SIvV+COj/VgLH/XkJ8epWZjZzz8Ol7WW2nCudQRseyd1YwXk
+        qHyx578d7h8OIt0Mj6WQ45fQtRhGRbnUsG+ztnnZnhItY2qr9nV3wAn41Ol57LL0akPeuXcRy9e
+        8/t0CBNNh9rOuHRd12lSqTXqCdUfX5aAmCyJS7wWA4j6Fmogw3f2+
+X-Received: by 2002:a19:4a0b:: with SMTP id x11mr1508820lfa.354.1601041089139;
+        Fri, 25 Sep 2020 06:38:09 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxODIfqhG8fjvX9GdIvn/jJUH97N9yYt4N6KOJkpUvJsoeh+xdzPOdX5Hp4c2XiJw0NgkZyuF1VHYFQ0m+JlPs=
+X-Received: by 2002:a19:4a0b:: with SMTP id x11mr1508780lfa.354.1601041087307;
+ Fri, 25 Sep 2020 06:38:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200924220540.GA13185@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
+ <20200921160922.GA23870@lst.de> <20200921163011.GZ3421308@ZenIV.linux.org.uk>
+ <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com>
+ <0764629d33d151aee743d0429ac87a5b0c300235.camel@themaw.net>
+ <CAFqZXNsqD73hptXxBn+g98ngbFd=Sx+CghtwVqM+NC47VFZhVQ@mail.gmail.com> <CAEjxPJ4oZvtqUpW0bMzoZwVsi9kDvL5LtouHQZAO7gM7_qyHMg@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4oZvtqUpW0bMzoZwVsi9kDvL5LtouHQZAO7gM7_qyHMg@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 25 Sep 2020 15:37:56 +0200
+Message-ID: <CAFqZXNs0oZ+_RNvwE-e62H2FSS=N4wbvJ+tgk0_dSn=5mbPhcw@mail.gmail.com>
+Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, autofs@vger.kernel.org,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Zdenek Pytela <zpytela@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Sep 24, 2020 at 4:16 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+> On Thu, Sep 24, 2020 at 4:36 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > On Wed, Sep 23, 2020 at 3:55 AM Ian Kent <raven@themaw.net> wrote:
+> > > On Tue, 2020-09-22 at 09:33 +0200, Ondrej Mosnacek wrote:
+> > > > On Mon, Sep 21, 2020 at 6:30 PM Al Viro <viro@zeniv.linux.org.uk>
+> > > > wrote:
+> > > > > On Mon, Sep 21, 2020 at 06:09:22PM +0200, Christoph Hellwig wrote:
+> > > > > > [adding Linus and Al]
+> > > > > >
+> > > > > > On Mon, Sep 21, 2020 at 04:51:35PM +0200, Ondrej Mosnacek wrote:
+> > > > > > > Hi folks,
+> > > > > > >
+> > > > > > > It seems that after commit 13c164b1a186 ("autofs: switch to
+> > > > > > > kernel_write") there is now an extra LSM permission required
+> > > > > > > (for the
+> > > > > > > current task to write to the automount pipe) for processes
+> > > > > > > accessing
+> > > > > > > some yet-to-to-be mounted directory on which an autofs mount is
+> > > > > > > set
+> > > > > > > up. The call chain is:
+> > > > > > > [...]
+> > > > > > > autofs_wait() ->
+> > > > > > > autofs_notify_daemon() ->
+> > > > > > > autofs_write() ->
+> > > > > > > kernel_write() ->
+> > > > > > > rw_verify_area() ->
+> > > > > > > security_file_permission()
+> > > > > > >
+> > > > > > > The bug report that led me to this commit is at [1].
+> > > > > > >
+> > > > > > > Technically, this is a regression for LSM users, since this is
+> > > > > > > a
+> > > > > > > kernel-internal operation and an LSM permission for the current
+> > > > > > > task
+> > > > > > > shouldn't be required. Can this patch be reverted? Perhaps
+> > > > > > > __kernel_{read|write}() could instead be renamed to
+> > > > > > > kernel_*_nocheck()
+> > > > > > > so that the name is more descriptive?
+> > > > > >
+> > > > > > So we obviously should not break existing user space and need to
+> > > > > > fix
+> > > > > > this ASAP.  The trivial "fix" would be to export __kernel_write
+> > > > > > again
+> > > > > > and switch autofs to use it.  The other option would be a FMODE
+> > > > > > flag
+> > > > > > to bypass security checks, only to be set if the callers ensures
+> > > > > > they've been valided (i.e. in autofs_prepare_pipe).
+> > > >
+> > > > IMHO that sounds like an overkill in this scenario. I don't think it
+> > > > makes sense to do the LSM check here (or at least not against the
+> > > > current task's creds), because it is not the current task that wants
+> > > > to communicate with the daemon, it just wants to to access some
+> > > > directory on the system that just happens to be special to the
+> > > > kernel,
+> > > > which needs to do some communication on the side to service this
+> > > > request. So if we do want to do any LSM check here, there should at
+> > > > least be some "bool internal" flag passed to the LSM, signalizing
+> > > > that
+> > > > this is an internal read/write operation that wasn't directly
+> > > > initiated/requested by the current process. SELinux could then either
+> > > > use the kernel secid instead of the current task's secid or skip the
+> > > > check completely in such case.
+> > >
+> > > Perhaps, but see below.
+> > >
+> > > >
+> > > > I'd like Stephen to weigh in on this, but it looks he might be on
+> > > > vacation right now...
+> > > >
+> > > > > > Any opinions?
+> > > > >
+> > > > > Reexport for now.  Incidentally, what is LSM doing rejecting writes
+> > > > > into a pipe?
+> > > >
+> > > > With SELinux at least, what is allowed or denied is defined in the
+> > > > policy. And the policy usually defaults to everything denied and then
+> > > > you add rules to allow what needs (and makes sense) to be allowed.
+> > > > Since until kernel 5.8 random processes didn't need to write to pipes
+> > > > created by the automount daemon, it has never been explicitly allowed
+> > > > and so the automounting now fails. It is in no way obvious that all
+> > > > processes should have the permission to talk to the automount daemon
+> > > > just to traverse the filesystem...
+> > >
+> > > I think you might have misunderstood what lead to this, just a bit.
+> > >
+> > > Previously the __kern_write() function was used for this communication
+> > > and Christoph's patch changed that to use kern_write() instead.
+> > >
+> > > In theory that's a good idea because kern_write() adds some additional
+> > > sanity checks, one being a call to rw_verify_area() which is where the
+> > > security_file_permission() call fails.
+> > >
+> > > So previously any random process could avoid these checks by calling
+> > > __kern_write() so the change to kern_write() is, in theory, that's a
+> > > good thing and simply reverting that hunk in Christoph's patch
+> > > probably isn't the best thing to do.
+> >
+> > I understand that and I'm not proposing the revert as a long-term fix.
+> > For a long-term solution I propose using kernel_write() and extending
+> > it to allow the caller to suppress (just) the
+> > security_file_permission() call. Then each caller would have to decide
+> > whether the LSM check makes sense in that situation or not. It seems
+> > safer against future mistakes than leaving it up to the caller to call
+> > security_file_permission() explicitly (I predict that no new user
+> > would even realize that the call might be needed).
+> >
+> > >
+> > > But any random process does need to be able to write to the automount
+> > > daemon pipe for trailing path components and the root dentry of autofs
+> > > mounts, depending on case.
+> > >
+> > > So it's true that any write to any autofs dentry probably doesn't
+> > > need to be allowed but I question what that gets us in terms of
+> > > security improvement over allowing pipe writes for automount_t
+> > > labelled pipes in selinux policy since they must be within an autofs
+> > > mounted file system.
+> >
+> > The difference is not in security, but in usability. The kernel
+> > communicating with the autofs daemon is an internal detail that
+> > shouldn't need special rules in policy. Even if we want to do any LSM
+> > checking here, the subject should be kernel_t, not the current running
+> > process. The process doesn't have any control on whether the kernel
+> > does the communication and it doesn't control the content of the
+> > communication, so the permission check as it is doesn't make any
+> > sense. People writing the policy should be burdened by low-level
+> > details about how the kernel works internally as little as possible.
+> >
+> > >
+> > > But Stephen has a different recommendation (and that appears to
+> > > consider the cause I outlined above) so I'll wait to see what others
+> > > think about the recommendations.
+> >
+> > As I said above, I think Stephen's approach is less future-proof. And
+> > it seems that rw_verify_area() has many other callers, most/all of
+> > which probably service actual requests from userspace and we'd need to
+> > retain the security_file_permission() call in those cases.
+> >
+> > Let me try to put my proposal into a patch, so we have something
+> > concrete to talk about...
+>
+> Up-thread I thought Linus indicated he didn't really want a flag to
+> disable pemission checking due to potential abuse (and I agree).
 
-On 25/09/2020 00:05, Pavel Machek wrote:
-> Hi!
-> 
->>>>> I believe you should simply delete confusing "introduction" and
->>>>> provide details of super-secure system where your patches would be
->>>>> useful, instead.
->>>>
->>>> This RFC talks about converting dynamic code (which cannot be authenticated)
->>>> to static code that can be authenticated using signature verification. That
->>>> is the scope of this RFC.
->>>>
->>>> If I have not been clear before, by dynamic code, I mean machine code that is
->>>> dynamic in nature. Scripts are beyond the scope of this RFC.
->>>>
->>>> Also, malware compiled from sources is not dynamic code. That is orthogonal
->>>> to this RFC. If such malware has a valid signature that the kernel permits its
->>>> execution, we have a systemic problem.
->>>>
->>>> I am not saying that script authentication or compiled malware are not problems.
->>>> I am just saying that this RFC is not trying to solve all of the security problems.
->>>> It is trying to define one way to convert dynamic code to static code to address
->>>> one class of problems.
->>>
->>> Well, you don't have to solve all problems at once.
->>>
->>> But solutions have to exist, and AFAIK in this case they don't. You
->>> are armoring doors, but ignoring open windows.
->>
->> FYI, script execution is being addressed (for the kernel part) by this
->> patch series:
->> https://lore.kernel.org/lkml/20200924153228.387737-1-mic@digikod.net/
-> 
-> Ok.
-> 
->>> Or very probably you are thinking about something different than
->>> normal desktop distros (Debian 10). Because on my systems, I have
->>> python, gdb and gcc...
->>
->> It doesn't make sense for a tailored security system to leave all these
->> tools available to an attacker.
-> 
-> And it also does not make sense to use "trampoline file descriptor" on
-> generic system... while W^X should make sense there.
+IIUC he was against adding an FMODE flag, while I was rather
+suggesting a new function parameter (I realize it probably wasn't
+clear from what I wrote). The latter is less prone to accidents and
+any new user would have to set that parameter to *something* and so
+would be forced to think about whether he needs an LSM check or not.
+Whereas with a separate _nosec()/nolsmcheck()/_whatever() function
+they would likely just use the kernel_write() function they already
+know and may not even realize that there is some decision to be made.
 
-Well, as said before, (full/original/system-wide) W^X may require
-trampfd (as well as other building-blocks).
+But that's just my opinion, I would still be happier with a separate
+function than reverting to __kernel_write().
 
-I guess most Linux deployments are not on "generic systems"
-anyway (even if they may be based on generic distros), and W^X
-contradicts the fact that users/attackers can do whatever they want on
-the system.
+> Historically we have taken one of two approaches for these situations:
+> 1) Provide a separate interface like kernel_write() for use when we
+> don't want permission checking and don't have it call the security
+> hook at all.  If you prefer kernel_write_nosec() that's fine but I
+> think that's somewhat implicit in the fact that it is a
+> kernel-initiated write, not a userspace write (which would hopefully
+> go through vfs_write() or similar and end up calling the hook).
 
-> 
->>> It would be nice to specify what other pieces need to be present for
->>> this to make sense -- because it makes no sense on Debian 10.
->>
->> Not all kernel features make sense for a generic/undefined usage,
->> especially specific security mechanisms (e.g. SELinux, Smack, Tomoyo,
->> SafeSetID, LoadPin, IMA, IPE, secure/trusted boot, lockdown, etc.), but
->> they can still be definitely useful.
-> 
-> Yep... so... I'd expect something like... "so you have single-purpose
-> system
+Unfortunately not all of the kernel_write() calls seem to be of the
+kind that we want to skip the permission checking. One in particular
+that caught my attention is this btrfs one:
+https://elixir.bootlin.com/linux/v5.9-rc6/source/fs/btrfs/send.c#L561
 
-No one talked about a single-purpose system.
+Basically a userspace process passes some fd via ioctl and kernel then
+writes something in it. If we don't do any check here (and BTW we in
+fact want the current's creds to apply here), then the process could
+pass any open fd and bypass any LSM write permissions to the file
+behind that fd. Possibly there are some checks that restrict what can
+be passed there (I didn't check), but it would still be fragile to
+rely on them.
 
-> with all script interpreters removed,
+So I guess we can't just skip the check whenever the kernel_*()
+function is called.
 
-Not necessarily with the patch series I pointed out just before.
+> 2) Temporarily override creds to the init_cred or the result of
+> prepare_kernel_creds() before calling any credential-checking
+> functions and then revert creds afterward.
 
-> IMA hashing all the files
-> to make sure they are not modified, and W^X enabled.
+Most users of kernel_write() seem to also create/open the file
+themselves, usually using the current's creds, so this would break
+consistency when applied universally. Autofs (and also
+bpfilter_send_req()) are special in that they first get the fd from a
+userspace process and then write into it from other tasks' syscalls.
+Then there are one or two users that create the file using
+shmem_kernel_file_setup(), which does use prepare_kernel_creds(), but
+the resulting file is marked S_PRIVATE, so all LSM checks are already
+skipped for it anyway.
 
-System-wide W^X is not only for memory, and as Madhavan said: "this RFC
-pertains to converting dynamic [writable] machine code to static
-[non-writable] code".
+>
+> The problem with #2 is that it still requires that the policy allow
+> kernel_t (or its equivalent) to be able to write to these pipes, which
+> wasn't previously necessary and thus might not be allowed in all
+> policies (e.g. Android?).  #1 avoids any need for policy for these
+> operations.
 
-> Attacker can
-> still execute code after buffer overflow by .... and trapoline file
-> descriptor addrsses that"... so that people running generic systems
-> can stop reading after first sentence.
+Yeah, I'm starting to think checking "kernel creds -> userspace
+object" access vectors on purpose doesn't make much sense... you would
+pretty much want to always allow that (no point in kernel blocking its
+own operations) so just skipping the check in those cases where using
+the current's creds doesn't make sense seems to be a better choice.
 
-Are you proposing to add a
-"[feature-not-useful-without-a-proper-system-configuration]" tag in
-subjects? :)
+BTW, I don't have the candidate patch written yet, as I haven't had
+time and also need to process new information after having reviewed
+the existing callers.
+
+-- 
+Ondrej Mosnacek
+Software Engineer, Platform Security - SELinux kernel
+Red Hat, Inc.
+
