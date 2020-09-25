@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A1BC47425
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37525C47429
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21C3F21D7A
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 024CC21D7A
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:53:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Crx+C9ZQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rj0XDp8u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbgIYEwJ (ORCPT
+        id S1727395AbgIYExC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Sep 2020 00:52:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49410 "EHLO
+        Fri, 25 Sep 2020 00:53:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbgIYEwB (ORCPT
+        with ESMTP id S1727204AbgIYEwF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Sep 2020 00:52:01 -0400
+        Fri, 25 Sep 2020 00:52:05 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD886C0613D4;
-        Thu, 24 Sep 2020 21:52:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4077AC0613CE;
+        Thu, 24 Sep 2020 21:52:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=daVxxVGwNuqpVtzxj/iEsrKI5X+tJ/AZyhGqHWXLHn0=; b=Crx+C9ZQWL9VDKF2agroxeBfi/
-        jDo8KTuhECLVKSYDO3j4y+viiUzvyT+pX5q8zzftPUeI1rk15yurpEhR9u4AEspkehMunXOKgJkGv
-        w+unq9LcMoOgonKoksqNVGnTnwZaaAD3+wyWegslmN2iT63CxcEhAXUCbBMTOnM5zB3wYQkSe2Fhg
-        V9/PCFpQDxHU1qKc25pg1Cf45i3blzEy3+F1YjsQNTqnNLFiaLXqpa3Rmn0lPC8G7noYiZj4dIeIA
-        DWYeK5BG4+aW3eWxld7p7Bz7uUiQIGGlYVqzCTZn1Oh5SjiF6XfD0BRgttRUt9Fdj+uqZZg6Qkw3P
-        DLv40HdA==;
+        bh=7X3/qUs2y75UUlnvdA2vy1FAPs/IUNMhWXsjmEB0AzE=; b=rj0XDp8uPSxcFWegIpHdgd9P2W
+        C+tprcq6864iqgbcp5H4iIODTIo5tCQ0qDP/KeidYUv3PasCLpAEAT+LJm0Jj2FppcYGkG/y6sxcl
+        UoGQQZrZxBSbgeVpmO0GY94F8eOhJGQSuwRuSPxO6jIan4/4ujpCcdQXHiw0iAzOrXpO4Gn5r6l7g
+        uEnQPUL31d/eJfTm9tKxykGcSc9oHEoC3GNSwpAyuPlOCI+A/jDGpBDM/kuY8lSk5MdbKwGwajT6y
+        pRdVgA2AQsC8qrAaohbb7uoyYXfgJcBynl1Pz14zbi2i+0fYizQFCTsaLYJG7jbPVM4V+fsJ6DuGO
+        NU9DZnpw==;
 Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
         by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kLfi2-0002pl-4B; Fri, 25 Sep 2020 04:51:50 +0000
+        id 1kLfiB-0002ru-4C; Fri, 25 Sep 2020 04:51:59 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -53,12 +53,10 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-aio@kvack.org, io-uring@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        David Laight <David.Laight@ACULAB.COM>,
-        David Laight <david.laight@aculab.com>
-Subject: [PATCH 2/9] iov_iter: move rw_copy_check_uvector() into lib/iov_iter.c
-Date:   Fri, 25 Sep 2020 06:51:39 +0200
-Message-Id: <20200925045146.1283714-3-hch@lst.de>
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 9/9] security/keys: remove compat_keyctl_instantiate_key_iov
+Date:   Fri, 25 Sep 2020 06:51:46 +0200
+Message-Id: <20200925045146.1283714-10-hch@lst.de>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20200925045146.1283714-1-hch@lst.de>
 References: <20200925045146.1283714-1-hch@lst.de>
@@ -68,402 +66,99 @@ X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.in
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: David Laight <David.Laight@ACULAB.COM>
+Now that import_iovec handles compat iovecs, the native version of
+keyctl_instantiate_key_iov can be used for the compat case as well.
 
-This lets the compiler inline it into import_iovec() generating
-much better code.
-
-Signed-off-by: David Laight <david.laight@aculab.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/read_write.c | 179 ------------------------------------------------
- lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 176 insertions(+), 179 deletions(-)
+ security/keys/compat.c   | 36 ++----------------------------------
+ security/keys/internal.h |  5 -----
+ security/keys/keyctl.c   |  2 +-
+ 3 files changed, 3 insertions(+), 40 deletions(-)
 
-diff --git a/fs/read_write.c b/fs/read_write.c
-index 5db58b8c78d0dd..e5e891a88442ef 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -752,185 +752,6 @@ static ssize_t do_loop_readv_writev(struct file *filp, struct iov_iter *iter,
- 	return ret;
- }
+diff --git a/security/keys/compat.c b/security/keys/compat.c
+index 7ae531db031cf8..1545efdca56227 100644
+--- a/security/keys/compat.c
++++ b/security/keys/compat.c
+@@ -11,38 +11,6 @@
+ #include <linux/slab.h>
+ #include "internal.h"
  
--/**
-- * rw_copy_check_uvector() - Copy an array of &struct iovec from userspace
-- *     into the kernel and check that it is valid.
+-/*
+- * Instantiate a key with the specified compatibility multipart payload and
+- * link the key into the destination keyring if one is given.
 - *
-- * @type: One of %CHECK_IOVEC_ONLY, %READ, or %WRITE.
-- * @uvector: Pointer to the userspace array.
-- * @nr_segs: Number of elements in userspace array.
-- * @fast_segs: Number of elements in @fast_pointer.
-- * @fast_pointer: Pointer to (usually small on-stack) kernel array.
-- * @ret_pointer: (output parameter) Pointer to a variable that will point to
-- *     either @fast_pointer, a newly allocated kernel array, or NULL,
-- *     depending on which array was used.
+- * The caller must have the appropriate instantiation permit set for this to
+- * work (see keyctl_assume_authority).  No other permissions are required.
 - *
-- * This function copies an array of &struct iovec of @nr_segs from
-- * userspace into the kernel and checks that each element is valid (e.g.
-- * it does not point to a kernel address or cause overflow by being too
-- * large, etc.).
-- *
-- * As an optimization, the caller may provide a pointer to a small
-- * on-stack array in @fast_pointer, typically %UIO_FASTIOV elements long
-- * (the size of this array, or 0 if unused, should be given in @fast_segs).
-- *
-- * @ret_pointer will always point to the array that was used, so the
-- * caller must take care not to call kfree() on it e.g. in case the
-- * @fast_pointer array was used and it was allocated on the stack.
-- *
-- * Return: The total number of bytes covered by the iovec array on success
-- *   or a negative error code on error.
+- * If successful, 0 will be returned.
 - */
--ssize_t rw_copy_check_uvector(int type, const struct iovec __user * uvector,
--			      unsigned long nr_segs, unsigned long fast_segs,
--			      struct iovec *fast_pointer,
--			      struct iovec **ret_pointer)
+-static long compat_keyctl_instantiate_key_iov(
+-	key_serial_t id,
+-	const struct compat_iovec __user *_payload_iov,
+-	unsigned ioc,
+-	key_serial_t ringid)
 -{
--	unsigned long seg;
--	ssize_t ret;
--	struct iovec *iov = fast_pointer;
+-	struct iovec iovstack[UIO_FASTIOV], *iov = iovstack;
+-	struct iov_iter from;
+-	long ret;
 -
--	/*
--	 * SuS says "The readv() function *may* fail if the iovcnt argument
--	 * was less than or equal to 0, or greater than {IOV_MAX}.  Linux has
--	 * traditionally returned zero for zero segments, so...
--	 */
--	if (nr_segs == 0) {
--		ret = 0;
--		goto out;
--	}
+-	if (!_payload_iov)
+-		ioc = 0;
 -
--	/*
--	 * First get the "struct iovec" from user memory and
--	 * verify all the pointers
--	 */
--	if (nr_segs > UIO_MAXIOV) {
--		ret = -EINVAL;
--		goto out;
--	}
--	if (nr_segs > fast_segs) {
--		iov = kmalloc_array(nr_segs, sizeof(struct iovec), GFP_KERNEL);
--		if (iov == NULL) {
--			ret = -ENOMEM;
--			goto out;
--		}
--	}
--	if (copy_from_user(iov, uvector, nr_segs*sizeof(*uvector))) {
--		ret = -EFAULT;
--		goto out;
--	}
+-	ret = import_iovec(WRITE, (const struct iovec __user *)_payload_iov,
+-			   ioc, ARRAY_SIZE(iovstack), &iov, &from);
+-	if (ret < 0)
+-		return ret;
 -
--	/*
--	 * According to the Single Unix Specification we should return EINVAL
--	 * if an element length is < 0 when cast to ssize_t or if the
--	 * total length would overflow the ssize_t return value of the
--	 * system call.
--	 *
--	 * Linux caps all read/write calls to MAX_RW_COUNT, and avoids the
--	 * overflow case.
--	 */
--	ret = 0;
--	for (seg = 0; seg < nr_segs; seg++) {
--		void __user *buf = iov[seg].iov_base;
--		ssize_t len = (ssize_t)iov[seg].iov_len;
--
--		/* see if we we're about to use an invalid len or if
--		 * it's about to overflow ssize_t */
--		if (len < 0) {
--			ret = -EINVAL;
--			goto out;
--		}
--		if (type >= 0
--		    && unlikely(!access_ok(buf, len))) {
--			ret = -EFAULT;
--			goto out;
--		}
--		if (len > MAX_RW_COUNT - ret) {
--			len = MAX_RW_COUNT - ret;
--			iov[seg].iov_len = len;
--		}
--		ret += len;
--	}
--out:
--	*ret_pointer = iov;
+-	ret = keyctl_instantiate_key_common(id, &from, ringid);
+-	kfree(iov);
 -	return ret;
 -}
 -
--#ifdef CONFIG_COMPAT
--ssize_t compat_rw_copy_check_uvector(int type,
--		const struct compat_iovec __user *uvector, unsigned long nr_segs,
--		unsigned long fast_segs, struct iovec *fast_pointer,
--		struct iovec **ret_pointer)
--{
--	compat_ssize_t tot_len;
--	struct iovec *iov = *ret_pointer = fast_pointer;
--	ssize_t ret = 0;
--	int seg;
+ /*
+  * The key control system call, 32-bit compatibility version for 64-bit archs
+  */
+@@ -113,8 +81,8 @@ COMPAT_SYSCALL_DEFINE5(keyctl, u32, option,
+ 		return keyctl_reject_key(arg2, arg3, arg4, arg5);
+ 
+ 	case KEYCTL_INSTANTIATE_IOV:
+-		return compat_keyctl_instantiate_key_iov(
+-			arg2, compat_ptr(arg3), arg4, arg5);
++		return keyctl_instantiate_key_iov(arg2, compat_ptr(arg3), arg4,
++						  arg5);
+ 
+ 	case KEYCTL_INVALIDATE:
+ 		return keyctl_invalidate_key(arg2);
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 338a526cbfa516..9b9cf3b6fcbb4d 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -262,11 +262,6 @@ extern long keyctl_instantiate_key_iov(key_serial_t,
+ 				       const struct iovec __user *,
+ 				       unsigned, key_serial_t);
+ extern long keyctl_invalidate_key(key_serial_t);
 -
--	/*
--	 * SuS says "The readv() function *may* fail if the iovcnt argument
--	 * was less than or equal to 0, or greater than {IOV_MAX}.  Linux has
--	 * traditionally returned zero for zero segments, so...
--	 */
--	if (nr_segs == 0)
--		goto out;
--
--	ret = -EINVAL;
--	if (nr_segs > UIO_MAXIOV)
--		goto out;
--	if (nr_segs > fast_segs) {
--		ret = -ENOMEM;
--		iov = kmalloc_array(nr_segs, sizeof(struct iovec), GFP_KERNEL);
--		if (iov == NULL)
--			goto out;
--	}
--	*ret_pointer = iov;
--
--	ret = -EFAULT;
--	if (!access_ok(uvector, nr_segs*sizeof(*uvector)))
--		goto out;
--
--	/*
--	 * Single unix specification:
--	 * We should -EINVAL if an element length is not >= 0 and fitting an
--	 * ssize_t.
--	 *
--	 * In Linux, the total length is limited to MAX_RW_COUNT, there is
--	 * no overflow possibility.
--	 */
--	tot_len = 0;
--	ret = -EINVAL;
--	for (seg = 0; seg < nr_segs; seg++) {
--		compat_uptr_t buf;
--		compat_ssize_t len;
--
--		if (__get_user(len, &uvector->iov_len) ||
--		   __get_user(buf, &uvector->iov_base)) {
--			ret = -EFAULT;
--			goto out;
--		}
--		if (len < 0)	/* size_t not fitting in compat_ssize_t .. */
--			goto out;
--		if (type >= 0 &&
--		    !access_ok(compat_ptr(buf), len)) {
--			ret = -EFAULT;
--			goto out;
--		}
--		if (len > MAX_RW_COUNT - tot_len)
--			len = MAX_RW_COUNT - tot_len;
--		tot_len += len;
--		iov->iov_base = compat_ptr(buf);
--		iov->iov_len = (compat_size_t) len;
--		uvector++;
--		iov++;
--	}
--	ret = tot_len;
--
--out:
--	return ret;
--}
--#endif
--
- static ssize_t do_iter_read(struct file *file, struct iov_iter *iter,
- 		loff_t *pos, rwf_t flags)
+-struct iov_iter;
+-extern long keyctl_instantiate_key_common(key_serial_t,
+-					  struct iov_iter *,
+-					  key_serial_t);
+ extern long keyctl_restrict_keyring(key_serial_t id,
+ 				    const char __user *_type,
+ 				    const char __user *_restriction);
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 9febd37a168fd0..e26bbccda7ccee 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -1164,7 +1164,7 @@ static int keyctl_change_reqkey_auth(struct key *key)
+  *
+  * If successful, 0 will be returned.
+  */
+-long keyctl_instantiate_key_common(key_serial_t id,
++static long keyctl_instantiate_key_common(key_serial_t id,
+ 				   struct iov_iter *from,
+ 				   key_serial_t ringid)
  {
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 5e40786c8f1232..ccea9db3f72be8 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1650,6 +1650,109 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
- }
- EXPORT_SYMBOL(dup_iter);
- 
-+/**
-+ * rw_copy_check_uvector() - Copy an array of &struct iovec from userspace
-+ *     into the kernel and check that it is valid.
-+ *
-+ * @type: One of %CHECK_IOVEC_ONLY, %READ, or %WRITE.
-+ * @uvector: Pointer to the userspace array.
-+ * @nr_segs: Number of elements in userspace array.
-+ * @fast_segs: Number of elements in @fast_pointer.
-+ * @fast_pointer: Pointer to (usually small on-stack) kernel array.
-+ * @ret_pointer: (output parameter) Pointer to a variable that will point to
-+ *     either @fast_pointer, a newly allocated kernel array, or NULL,
-+ *     depending on which array was used.
-+ *
-+ * This function copies an array of &struct iovec of @nr_segs from
-+ * userspace into the kernel and checks that each element is valid (e.g.
-+ * it does not point to a kernel address or cause overflow by being too
-+ * large, etc.).
-+ *
-+ * As an optimization, the caller may provide a pointer to a small
-+ * on-stack array in @fast_pointer, typically %UIO_FASTIOV elements long
-+ * (the size of this array, or 0 if unused, should be given in @fast_segs).
-+ *
-+ * @ret_pointer will always point to the array that was used, so the
-+ * caller must take care not to call kfree() on it e.g. in case the
-+ * @fast_pointer array was used and it was allocated on the stack.
-+ *
-+ * Return: The total number of bytes covered by the iovec array on success
-+ *   or a negative error code on error.
-+ */
-+ssize_t rw_copy_check_uvector(int type, const struct iovec __user *uvector,
-+		unsigned long nr_segs, unsigned long fast_segs,
-+		struct iovec *fast_pointer, struct iovec **ret_pointer)
-+{
-+	unsigned long seg;
-+	ssize_t ret;
-+	struct iovec *iov = fast_pointer;
-+
-+	/*
-+	 * SuS says "The readv() function *may* fail if the iovcnt argument
-+	 * was less than or equal to 0, or greater than {IOV_MAX}.  Linux has
-+	 * traditionally returned zero for zero segments, so...
-+	 */
-+	if (nr_segs == 0) {
-+		ret = 0;
-+		goto out;
-+	}
-+
-+	/*
-+	 * First get the "struct iovec" from user memory and
-+	 * verify all the pointers
-+	 */
-+	if (nr_segs > UIO_MAXIOV) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+	if (nr_segs > fast_segs) {
-+		iov = kmalloc_array(nr_segs, sizeof(struct iovec), GFP_KERNEL);
-+		if (iov == NULL) {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+	}
-+	if (copy_from_user(iov, uvector, nr_segs*sizeof(*uvector))) {
-+		ret = -EFAULT;
-+		goto out;
-+	}
-+
-+	/*
-+	 * According to the Single Unix Specification we should return EINVAL
-+	 * if an element length is < 0 when cast to ssize_t or if the
-+	 * total length would overflow the ssize_t return value of the
-+	 * system call.
-+	 *
-+	 * Linux caps all read/write calls to MAX_RW_COUNT, and avoids the
-+	 * overflow case.
-+	 */
-+	ret = 0;
-+	for (seg = 0; seg < nr_segs; seg++) {
-+		void __user *buf = iov[seg].iov_base;
-+		ssize_t len = (ssize_t)iov[seg].iov_len;
-+
-+		/* see if we we're about to use an invalid len or if
-+		 * it's about to overflow ssize_t */
-+		if (len < 0) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
-+		if (type >= 0
-+		    && unlikely(!access_ok(buf, len))) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
-+		if (len > MAX_RW_COUNT - ret) {
-+			len = MAX_RW_COUNT - ret;
-+			iov[seg].iov_len = len;
-+		}
-+		ret += len;
-+	}
-+out:
-+	*ret_pointer = iov;
-+	return ret;
-+}
-+
- /**
-  * import_iovec() - Copy an array of &struct iovec from userspace
-  *     into the kernel, check that it is valid, and initialize a new
-@@ -1695,6 +1798,79 @@ EXPORT_SYMBOL(import_iovec);
- #ifdef CONFIG_COMPAT
- #include <linux/compat.h>
- 
-+ssize_t compat_rw_copy_check_uvector(int type,
-+		const struct compat_iovec __user *uvector,
-+		unsigned long nr_segs, unsigned long fast_segs,
-+		struct iovec *fast_pointer, struct iovec **ret_pointer)
-+{
-+	compat_ssize_t tot_len;
-+	struct iovec *iov = *ret_pointer = fast_pointer;
-+	ssize_t ret = 0;
-+	int seg;
-+
-+	/*
-+	 * SuS says "The readv() function *may* fail if the iovcnt argument
-+	 * was less than or equal to 0, or greater than {IOV_MAX}.  Linux has
-+	 * traditionally returned zero for zero segments, so...
-+	 */
-+	if (nr_segs == 0)
-+		goto out;
-+
-+	ret = -EINVAL;
-+	if (nr_segs > UIO_MAXIOV)
-+		goto out;
-+	if (nr_segs > fast_segs) {
-+		ret = -ENOMEM;
-+		iov = kmalloc_array(nr_segs, sizeof(struct iovec), GFP_KERNEL);
-+		if (iov == NULL)
-+			goto out;
-+	}
-+	*ret_pointer = iov;
-+
-+	ret = -EFAULT;
-+	if (!access_ok(uvector, nr_segs*sizeof(*uvector)))
-+		goto out;
-+
-+	/*
-+	 * Single unix specification:
-+	 * We should -EINVAL if an element length is not >= 0 and fitting an
-+	 * ssize_t.
-+	 *
-+	 * In Linux, the total length is limited to MAX_RW_COUNT, there is
-+	 * no overflow possibility.
-+	 */
-+	tot_len = 0;
-+	ret = -EINVAL;
-+	for (seg = 0; seg < nr_segs; seg++) {
-+		compat_uptr_t buf;
-+		compat_ssize_t len;
-+
-+		if (__get_user(len, &uvector->iov_len) ||
-+		   __get_user(buf, &uvector->iov_base)) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
-+		if (len < 0)	/* size_t not fitting in compat_ssize_t .. */
-+			goto out;
-+		if (type >= 0 &&
-+		    !access_ok(compat_ptr(buf), len)) {
-+			ret = -EFAULT;
-+			goto out;
-+		}
-+		if (len > MAX_RW_COUNT - tot_len)
-+			len = MAX_RW_COUNT - tot_len;
-+		tot_len += len;
-+		iov->iov_base = compat_ptr(buf);
-+		iov->iov_len = (compat_size_t) len;
-+		uvector++;
-+		iov++;
-+	}
-+	ret = tot_len;
-+
-+out:
-+	return ret;
-+}
-+
- ssize_t compat_import_iovec(int type,
- 		const struct compat_iovec __user * uvector,
- 		unsigned nr_segs, unsigned fast_segs,
 -- 
 2.28.0
 
