@@ -2,118 +2,402 @@ Return-Path: <SRS0=6XiI=DC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8200C4363D
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 001EAC47420
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 784B121775
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAA7921D7A
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Sep 2020 04:52:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ltDau4pr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbgIYEnR (ORCPT
+        id S1727220AbgIYEwH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Sep 2020 00:43:17 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:52492 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgIYEnR (ORCPT
+        Fri, 25 Sep 2020 00:52:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbgIYEwA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Sep 2020 00:43:17 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1kLfZQ-0003Uw-Ce; Fri, 25 Sep 2020 14:42:57 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 25 Sep 2020 14:42:56 +1000
-Date:   Fri, 25 Sep 2020 14:42:56 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     syzbot <syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com>
-Cc:     davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, steffen.klassert@secunet.com,
-        syzkaller-bugs@googlegroups.com, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Fri, 25 Sep 2020 00:52:00 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A49AC0613D3;
+        Thu, 24 Sep 2020 21:52:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=XLI4wWnTND6XjkdS+V7znPEFtJ3sYq4EUOFrFZbEOM4=; b=ltDau4prtIYwpMEhyb+cdqxWTK
+        GQAYP8faWYGCeQ5y9rXhu4VrSOuWAm8vpUTAaftV7VWf+gl59R8pGUhMazJ6EwpoQ++j9Ib+x6ibK
+        S6A7SODjHRYDevm7+f3DVFp2RheB04CY4/1cAtKGPpyqv8WK+Kgxef40BUZwoQwL5r7/pIT1j9rou
+        AOawdNyXcs7aXV/ZSST8iyc7ZCAA4+Ogm3x1GnUgJhgy9bAcFVkJ0cMiOO7TyZJwAo94yS2SU3UeL
+        AobxOj3YCPWJwKilFg5y8sTwcEZ8UObu76Bj3XdaY9tnU/TNtGH5YipPXhrIj7eTT7jQnIkdj0D6J
+        vVvtSS7Q==;
+Received: from p4fdb0c34.dip0.t-ipconnect.de ([79.219.12.52] helo=localhost)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kLfi6-0002qp-CZ; Fri, 25 Sep 2020 04:51:54 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH] xfrm: Use correct address family in xfrm_state_find
-Message-ID: <20200925044256.GA18246@gondor.apana.org.au>
-References: <0000000000009fc91605afd40d89@google.com>
- <20200925030759.GA17939@gondor.apana.org.au>
+Subject: [PATCH 5/9] fs: remove various compat readv/writev helpers
+Date:   Fri, 25 Sep 2020 06:51:42 +0200
+Message-Id: <20200925045146.1283714-6-hch@lst.de>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200925045146.1283714-1-hch@lst.de>
+References: <20200925045146.1283714-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200925030759.GA17939@gondor.apana.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Resend with proper subject.
+Now that import_iovec handles compat iovecs as well, all the duplicated
+code in the compat readv/writev helpers is not needed.  Remove them
+and switch the compat syscall handlers to use the native helpers.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/read_write.c        | 179 +++++++----------------------------------
+ include/linux/compat.h |  20 ++---
+ 2 files changed, 40 insertions(+), 159 deletions(-)
+
+diff --git a/fs/read_write.c b/fs/read_write.c
+index 0a68037580b455..eab427b7cc0a3f 100644
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -1068,226 +1068,107 @@ SYSCALL_DEFINE6(pwritev2, unsigned long, fd, const struct iovec __user *, vec,
+ 	return do_pwritev(fd, vec, vlen, pos, flags);
+ }
  
----8<---
-The struct flowi must never be interpreted by itself as its size
-depends on the address family.  Therefore it must always be grouped
-with its original family value.
-
-In this particular instance, the original family value is lost in
-the function xfrm_state_find.  Therefore we get a bogus read when
-it's coupled with the wrong family which would occur with inter-
-family xfrm states.
-
-This patch fixes it by keeping the original family value.
-
-Note that the same bug could potentially occur in LSM through
-the xfrm_state_pol_flow_match hook.  I checked the current code
-there and it seems to be safe for now as only secid is used which
-is part of struct flowi_common.  But that API should be changed
-so that so that we don't get new bugs in the future.  We could
-do that by replacing fl with just secid or adding a family field.
-
-Reported-by: syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com
-Fixes: 48b8d78315bf ("[XFRM]: State selection update to use inner...")
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 69520ad3d83b..9b5f2c2b9770 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -1019,7 +1019,8 @@ static void xfrm_state_look_at(struct xfrm_policy *pol, struct xfrm_state *x,
- 	 */
- 	if (x->km.state == XFRM_STATE_VALID) {
- 		if ((x->sel.family &&
--		     !xfrm_selector_match(&x->sel, fl, x->sel.family)) ||
-+		     (x->sel.family != family ||
-+		      !xfrm_selector_match(&x->sel, fl, family))) ||
- 		    !security_xfrm_state_pol_flow_match(x, pol, fl))
- 			return;
++/*
++ * Various compat syscalls.  Note that they all pretend to take a native
++ * iovec - import_iovec will properly treat those as compat_iovecs based on
++ * in_compat_syscall().
++ */
+ #ifdef CONFIG_COMPAT
+-static size_t compat_readv(struct file *file,
+-			   const struct compat_iovec __user *vec,
+-			   unsigned long vlen, loff_t *pos, rwf_t flags)
+-{
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
+-	struct iov_iter iter;
+-	ssize_t ret;
+-
+-	ret = import_iovec(READ, (const struct iovec __user *)vec, vlen,
+-			   UIO_FASTIOV, &iov, &iter);
+-	if (ret >= 0) {
+-		ret = do_iter_read(file, &iter, pos, flags);
+-		kfree(iov);
+-	}
+-	if (ret > 0)
+-		add_rchar(current, ret);
+-	inc_syscr(current);
+-	return ret;
+-}
+-
+-static size_t do_compat_readv(compat_ulong_t fd,
+-				 const struct compat_iovec __user *vec,
+-				 compat_ulong_t vlen, rwf_t flags)
+-{
+-	struct fd f = fdget_pos(fd);
+-	ssize_t ret;
+-	loff_t pos;
+-
+-	if (!f.file)
+-		return -EBADF;
+-	pos = f.file->f_pos;
+-	ret = compat_readv(f.file, vec, vlen, &pos, flags);
+-	if (ret >= 0)
+-		f.file->f_pos = pos;
+-	fdput_pos(f);
+-	return ret;
+-
+-}
+-
+ COMPAT_SYSCALL_DEFINE3(readv, compat_ulong_t, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		compat_ulong_t, vlen)
+ {
+-	return do_compat_readv(fd, vec, vlen, 0);
+-}
+-
+-static long do_compat_preadv64(unsigned long fd,
+-				  const struct compat_iovec __user *vec,
+-				  unsigned long vlen, loff_t pos, rwf_t flags)
+-{
+-	struct fd f;
+-	ssize_t ret;
+-
+-	if (pos < 0)
+-		return -EINVAL;
+-	f = fdget(fd);
+-	if (!f.file)
+-		return -EBADF;
+-	ret = -ESPIPE;
+-	if (f.file->f_mode & FMODE_PREAD)
+-		ret = compat_readv(f.file, vec, vlen, &pos, flags);
+-	fdput(f);
+-	return ret;
++	return do_readv(fd, vec, vlen, 0);
+ }
  
-@@ -1032,7 +1033,9 @@ static void xfrm_state_look_at(struct xfrm_policy *pol, struct xfrm_state *x,
- 		*acq_in_progress = 1;
- 	} else if (x->km.state == XFRM_STATE_ERROR ||
- 		   x->km.state == XFRM_STATE_EXPIRED) {
--		if (xfrm_selector_match(&x->sel, fl, x->sel.family) &&
-+		if ((!x->sel.family ||
-+		     (x->sel.family == family &&
-+		      xfrm_selector_match(&x->sel, fl, family))) &&
- 		    security_xfrm_state_pol_flow_match(x, pol, fl))
- 			*error = -ESRCH;
- 	}
-@@ -1072,7 +1075,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- 		    tmpl->mode == x->props.mode &&
- 		    tmpl->id.proto == x->id.proto &&
- 		    (tmpl->id.spi == x->id.spi || !tmpl->id.spi))
--			xfrm_state_look_at(pol, x, fl, encap_family,
-+			xfrm_state_look_at(pol, x, fl, family,
- 					   &best, &acquire_in_progress, &error);
- 	}
- 	if (best || acquire_in_progress)
-@@ -1089,7 +1092,7 @@ xfrm_state_find(const xfrm_address_t *daddr, const xfrm_address_t *saddr,
- 		    tmpl->mode == x->props.mode &&
- 		    tmpl->id.proto == x->id.proto &&
- 		    (tmpl->id.spi == x->id.spi || !tmpl->id.spi))
--			xfrm_state_look_at(pol, x, fl, encap_family,
-+			xfrm_state_look_at(pol, x, fl, family,
- 					   &best, &acquire_in_progress, &error);
- 	}
+ #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64
+ COMPAT_SYSCALL_DEFINE4(preadv64, unsigned long, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		unsigned long, vlen, loff_t, pos)
+ {
+-	return do_compat_preadv64(fd, vec, vlen, pos, 0);
++	return do_preadv(fd, vec, vlen, pos, 0);
+ }
+ #endif
+ 
+ COMPAT_SYSCALL_DEFINE5(preadv, compat_ulong_t, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high)
+ {
+ 	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
+ 
+-	return do_compat_preadv64(fd, vec, vlen, pos, 0);
++	return do_preadv(fd, vec, vlen, pos, 0);
+ }
+ 
+ #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64V2
+ COMPAT_SYSCALL_DEFINE5(preadv64v2, unsigned long, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		unsigned long, vlen, loff_t, pos, rwf_t, flags)
+ {
+ 	if (pos == -1)
+-		return do_compat_readv(fd, vec, vlen, flags);
+-
+-	return do_compat_preadv64(fd, vec, vlen, pos, flags);
++		return do_readv(fd, vec, vlen, flags);
++	return do_preadv(fd, vec, vlen, pos, flags);
+ }
+ #endif
+ 
+ COMPAT_SYSCALL_DEFINE6(preadv2, compat_ulong_t, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high,
+ 		rwf_t, flags)
+ {
+ 	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
+ 
+ 	if (pos == -1)
+-		return do_compat_readv(fd, vec, vlen, flags);
+-
+-	return do_compat_preadv64(fd, vec, vlen, pos, flags);
+-}
+-
+-static size_t compat_writev(struct file *file,
+-			    const struct compat_iovec __user *vec,
+-			    unsigned long vlen, loff_t *pos, rwf_t flags)
+-{
+-	struct iovec iovstack[UIO_FASTIOV];
+-	struct iovec *iov = iovstack;
+-	struct iov_iter iter;
+-	ssize_t ret;
+-
+-	ret = import_iovec(WRITE, (const struct iovec __user *)vec, vlen,
+-			   UIO_FASTIOV, &iov, &iter);
+-	if (ret >= 0) {
+-		file_start_write(file);
+-		ret = do_iter_write(file, &iter, pos, flags);
+-		file_end_write(file);
+-		kfree(iov);
+-	}
+-	if (ret > 0)
+-		add_wchar(current, ret);
+-	inc_syscw(current);
+-	return ret;
+-}
+-
+-static size_t do_compat_writev(compat_ulong_t fd,
+-				  const struct compat_iovec __user* vec,
+-				  compat_ulong_t vlen, rwf_t flags)
+-{
+-	struct fd f = fdget_pos(fd);
+-	ssize_t ret;
+-	loff_t pos;
+-
+-	if (!f.file)
+-		return -EBADF;
+-	pos = f.file->f_pos;
+-	ret = compat_writev(f.file, vec, vlen, &pos, flags);
+-	if (ret >= 0)
+-		f.file->f_pos = pos;
+-	fdput_pos(f);
+-	return ret;
++		return do_readv(fd, vec, vlen, flags);
++	return do_preadv(fd, vec, vlen, pos, flags);
+ }
+ 
+ COMPAT_SYSCALL_DEFINE3(writev, compat_ulong_t, fd,
+-		const struct compat_iovec __user *, vec,
++		const struct iovec __user *, vec,
+ 		compat_ulong_t, vlen)
+ {
+-	return do_compat_writev(fd, vec, vlen, 0);
+-}
+-
+-static long do_compat_pwritev64(unsigned long fd,
+-				   const struct compat_iovec __user *vec,
+-				   unsigned long vlen, loff_t pos, rwf_t flags)
+-{
+-	struct fd f;
+-	ssize_t ret;
+-
+-	if (pos < 0)
+-		return -EINVAL;
+-	f = fdget(fd);
+-	if (!f.file)
+-		return -EBADF;
+-	ret = -ESPIPE;
+-	if (f.file->f_mode & FMODE_PWRITE)
+-		ret = compat_writev(f.file, vec, vlen, &pos, flags);
+-	fdput(f);
+-	return ret;
++	return do_writev(fd, vec, vlen, 0);
+ }
+ 
+ #ifdef __ARCH_WANT_COMPAT_SYS_PWRITEV64
+ COMPAT_SYSCALL_DEFINE4(pwritev64, unsigned long, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		unsigned long, vlen, loff_t, pos)
+ {
+-	return do_compat_pwritev64(fd, vec, vlen, pos, 0);
++	return do_pwritev(fd, vec, vlen, pos, 0);
+ }
+ #endif
+ 
+ COMPAT_SYSCALL_DEFINE5(pwritev, compat_ulong_t, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *,vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high)
+ {
+ 	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
+ 
+-	return do_compat_pwritev64(fd, vec, vlen, pos, 0);
++	return do_pwritev(fd, vec, vlen, pos, 0);
+ }
+ 
+ #ifdef __ARCH_WANT_COMPAT_SYS_PWRITEV64V2
+ COMPAT_SYSCALL_DEFINE5(pwritev64v2, unsigned long, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *, vec,
+ 		unsigned long, vlen, loff_t, pos, rwf_t, flags)
+ {
+ 	if (pos == -1)
+-		return do_compat_writev(fd, vec, vlen, flags);
+-
+-	return do_compat_pwritev64(fd, vec, vlen, pos, flags);
++		return do_writev(fd, vec, vlen, flags);
++	return do_pwritev(fd, vec, vlen, pos, flags);
+ }
+ #endif
+ 
+ COMPAT_SYSCALL_DEFINE6(pwritev2, compat_ulong_t, fd,
+-		const struct compat_iovec __user *,vec,
++		const struct iovec __user *,vec,
+ 		compat_ulong_t, vlen, u32, pos_low, u32, pos_high, rwf_t, flags)
+ {
+ 	loff_t pos = ((loff_t)pos_high << 32) | pos_low;
+ 
+ 	if (pos == -1)
+-		return do_compat_writev(fd, vec, vlen, flags);
+-
+-	return do_compat_pwritev64(fd, vec, vlen, pos, flags);
++		return do_writev(fd, vec, vlen, flags);
++	return do_pwritev(fd, vec, vlen, pos, flags);
+ }
+-
+-#endif
++#endif /* CONFIG_COMPAT */
+ 
+ static ssize_t do_sendfile(int out_fd, int in_fd, loff_t *ppos,
+ 		  	   size_t count, loff_t max)
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index b930de791ff16b..306ea7e1172d8d 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -546,25 +546,25 @@ asmlinkage long compat_sys_getdents(unsigned int fd,
+ /* fs/read_write.c */
+ asmlinkage long compat_sys_lseek(unsigned int, compat_off_t, unsigned int);
+ asmlinkage ssize_t compat_sys_readv(compat_ulong_t fd,
+-		const struct compat_iovec __user *vec, compat_ulong_t vlen);
++		const struct iovec __user *vec, compat_ulong_t vlen);
+ asmlinkage ssize_t compat_sys_writev(compat_ulong_t fd,
+-		const struct compat_iovec __user *vec, compat_ulong_t vlen);
++		const struct iovec __user *vec, compat_ulong_t vlen);
+ /* No generic prototype for pread64 and pwrite64 */
+ asmlinkage ssize_t compat_sys_preadv(compat_ulong_t fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		compat_ulong_t vlen, u32 pos_low, u32 pos_high);
+ asmlinkage ssize_t compat_sys_pwritev(compat_ulong_t fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		compat_ulong_t vlen, u32 pos_low, u32 pos_high);
+ #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64
+ asmlinkage long compat_sys_preadv64(unsigned long fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		unsigned long vlen, loff_t pos);
+ #endif
+ 
+ #ifdef __ARCH_WANT_COMPAT_SYS_PWRITEV64
+ asmlinkage long compat_sys_pwritev64(unsigned long fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		unsigned long vlen, loff_t pos);
+ #endif
+ 
+@@ -800,20 +800,20 @@ asmlinkage long compat_sys_execveat(int dfd, const char __user *filename,
+ 		     const compat_uptr_t __user *argv,
+ 		     const compat_uptr_t __user *envp, int flags);
+ asmlinkage ssize_t compat_sys_preadv2(compat_ulong_t fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		compat_ulong_t vlen, u32 pos_low, u32 pos_high, rwf_t flags);
+ asmlinkage ssize_t compat_sys_pwritev2(compat_ulong_t fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		compat_ulong_t vlen, u32 pos_low, u32 pos_high, rwf_t flags);
+ #ifdef __ARCH_WANT_COMPAT_SYS_PREADV64V2
+ asmlinkage long  compat_sys_preadv64v2(unsigned long fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		unsigned long vlen, loff_t pos, rwf_t flags);
+ #endif
+ 
+ #ifdef __ARCH_WANT_COMPAT_SYS_PWRITEV64V2
+ asmlinkage long compat_sys_pwritev64v2(unsigned long fd,
+-		const struct compat_iovec __user *vec,
++		const struct iovec __user *vec,
+ 		unsigned long vlen, loff_t pos, rwf_t flags);
+ #endif
  
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.28.0
+
