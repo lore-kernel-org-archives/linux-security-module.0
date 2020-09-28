@@ -2,92 +2,84 @@ Return-Path: <SRS0=XUbZ=DF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C73E6C4741F
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 14:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC554C2D0A8
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 14:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86E5B21548
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 14:02:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGyWZIIp"
+	by mail.kernel.org (Postfix) with ESMTP id AB2312075A
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 14:36:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbgI1OCN (ORCPT
+        id S1726567AbgI1Og0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Sep 2020 10:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbgI1OCN (ORCPT
+        Mon, 28 Sep 2020 10:36:26 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:33497 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726461AbgI1OgZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Sep 2020 10:02:13 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4543C061755;
-        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id h9so1007571ybm.4;
-        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
-        b=kGyWZIIp5KWHAGEvNGD57Jds877X3K30zUvrXMhCc2uGut7+7RFaiCu90WSaeaNwOM
-         d8wtBroD9M2FLfLJdOrX/buE+n96izF0nKrSYXOuIg6OD30rVF14YzFKy8rpxvtT5Fjk
-         wVE53d3XHzGKunmib6ALKFy3VbutjolaGRb0Kr0zY3Pf4JPGuXQ1QOxRKshk7MeOoQzt
-         FJBVuUd8GPQW3kWzHpxa5R4FccXnumytkjL2sU2AujF1pG1E3jQlVH8EBYl4WZS1yVm3
-         MWf0+CX7hQrPHpucd/4SyLLvlbXEAyiM7lMJ7MtJNCfTiUoMCauZpOEnhTELypeC8B8M
-         WI/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
-        b=Y9xd0z5iRnCVBASnEcvxv4+cpNclNjb0SNnhmhdz8vmLYAxrwBnVkA2CPD2JAtPn0X
-         nVrb9SoTfkU1+BBl8MrmvdO/oEUh9YUaXM4l0seiAcKgZ6dhc7jJnPzsnx4b+qFjNTVE
-         GaBUabEp3/nfVaoXMUmHuyE7ZFvhvVHQmmH2FSh3CY+K7S/7fauWrvjJI5xiX+DKogTt
-         5nB7VGjXsqnJ7ZeTPopMW0dlM8X1DmLch7VIwL1V84cLiUkvya3zZFFcNA+rtUsvT6Tx
-         It6RYmpv6JPyEdzoGam2Ar8X4Hq7SBR5KpPTiqHRySzbpBdRQIPMSKp5TvMKb651ePNj
-         UNqw==
-X-Gm-Message-State: AOAM530CoWOE6Gl9utvh8n8OPsT9yHxnPIylQ3pU/Rmqc1oeBShkFNef
-        45NklKyLABj99KTDjqHCi1UcHwrxoEqDRCvPoKNKeqAi4t1xaw==
-X-Google-Smtp-Source: ABdhPJzjyxAmAQJq3yUMV41ZaU6Jib4Hra0UERJdaARNie1e5vycnV4dot72wEdcHL/iFF2THt+3kbIbKOzP/jul6kE=
-X-Received: by 2002:a25:b219:: with SMTP id i25mr2027503ybj.52.1601301731841;
- Mon, 28 Sep 2020 07:02:11 -0700 (PDT)
-MIME-Version: 1.0
-From:   Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Date:   Mon, 28 Sep 2020 17:02:50 +0300
-Message-ID: <CACE9dm_eypZ4wn8PpYYCYNuM501_M-8pH7by=U-6hOmJCwuxig@mail.gmail.com>
-Subject: Mount options may be silently discarded
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Mon, 28 Sep 2020 10:36:25 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-94-MLV1u31VP7mjvYEQ13qqnA-1; Mon, 28 Sep 2020 15:36:22 +0100
+X-MC-Unique: MLV1u31VP7mjvYEQ13qqnA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 28 Sep 2020 15:36:21 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 28 Sep 2020 15:36:21 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Dmitry Kasatkin' <dmitry.kasatkin@gmail.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: Mount options may be silently discarded
+Thread-Topic: Mount options may be silently discarded
+Thread-Index: AQHWlZ/5eWLTSDvNKUCiSiyDXsLcfql+HVKQ
+Date:   Mon, 28 Sep 2020 14:36:21 +0000
+Message-ID: <87bb66c2a7f94bd1ab768a8160e48e39@AcuMS.aculab.com>
+References: <CACE9dm_eypZ4wn8PpYYCYNuM501_M-8pH7by=U-6hOmJCwuxig@mail.gmail.com>
+In-Reply-To: <CACE9dm_eypZ4wn8PpYYCYNuM501_M-8pH7by=U-6hOmJCwuxig@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+RnJvbTogRG1pdHJ5IEthc2F0a2luDQo+IFNlbnQ6IDI4IFNlcHRlbWJlciAyMDIwIDE1OjAzDQo+
+IA0KPiAiY29weV9tb3VudF9vcHRpb25zIiBmdW5jdGlvbiBjYW1lIHRvIG15IGV5ZXMuDQo+IEl0
+IHNwbGl0cyBjb3B5IGludG8gMiBwaWVjZXMgLSBvdmVyIHBhZ2UgYm91bmRhcmllcy4NCj4gSSB3
+b25kZXIgd2hhdCBpcyB0aGUgcmVhbCByZWFzb24gZm9yIGRvaW5nIHRoaXM/DQo+IE9yaWdpbmFs
+IGNvbW1lbnQgd2FzIHRoYXQgd2UgbmVlZCBleGFjdCBieXRlcyBhbmQgc29tZSB1c2VyIG1lbWNw
+eQ0KPiBmdW5jdGlvbnMgIGRvIG5vdCByZXR1cm4gY29ycmVjdCBudW1iZXIgb24gcGFnZSBmYXVs
+dC4NCj4gDQo+IEJ1dCBob3cgd291bGQgYWxsIG90aGVyIGNhc2VzIHdvcms/DQo+IA0KPiBodHRw
+czovL2VsaXhpci5ib290bGluLmNvbS9saW51eC9sYXRlc3Qvc291cmNlL2ZzL25hbWVzcGFjZS5j
+I0wzMDc1DQo+IA0KPiBpZiAoc2l6ZSAhPSBQQUdFX1NJWkUpIHsNCj4gICAgICAgIGlmIChjb3B5
+X2Zyb21fdXNlcihjb3B5ICsgc2l6ZSwgZGF0YSArIHNpemUsIFBBR0VfU0laRSAtIHNpemUpKQ0K
+PiAgICAgICAgICAgICBtZW1zZXQoY29weSArIHNpemUsIDAsIFBBR0VfU0laRSAtIHNpemUpOw0K
+PiB9DQo+IA0KPiBUaGlzIGxvb2tzIGxpa2Ugc29tZSBvcHRpb25zIG1heSBiZSBqdXN0IGRpc2Nh
+cmRlZD8NCj4gV2hhdCBpZiBpdCBpcyBhbiBpbXBvcnRhbnQgc2VjdXJpdHkgb3B0aW9uPw0KPiAN
+Cj4gV2h5IGl0IGRvZXMgbm90IHJldHVybiBFRkFVTFQsIGJ1dCBqdXN0IG1lbXNldD8NCg0KVGhl
+IHVzZXIgZG9lc24ndCBzdXBwbHkgdGhlIHRyYW5zZmVyIGxlbmd0aCwgdGhlIG1heCBzaXplDQpp
+cyBhIHBhZ2UuDQpTaW5jZSB0aGUgY29weSBjYW4gb25seSBzdGFydCB0byBmYWlsIG9uIGEgcGFn
+ZSBib3VuZGFyeQ0KcmVhZGluZyBpbiB0d28gcGllY2VzIGlzIGV4YWN0bHkgdGhlIHNhbWUgYXMg
+a25vd2luZyB0aGUNCmFkZHJlc3MgYXQgd2hpY2ggdGhlIHRyYW5zZmVyIHN0YXJ0ZWQgdG8gZmFp
+bC4NCg0KU2luY2UgdGhlIGFjdHVhbCBtb3VudCBvcHRpb25zIGNhbiBiZSBtdWNoIHNtYWxsZXIg
+dGhhbg0KYSBwYWdlIChhbmQgdXN1YWxseSBhcmUpIHplcm8tZmlsbGluZyBpcyBiZXN0Lg0KDQoJ
+RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
+dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
+OTczODYgKFdhbGVzKQ0K
 
-"copy_mount_options" function came to my eyes.
-It splits copy into 2 pieces - over page boundaries.
-I wonder what is the real reason for doing this?
-Original comment was that we need exact bytes and some user memcpy
-functions  do not return correct number on page fault.
-
-But how would all other cases work?
-
-https://elixir.bootlin.com/linux/latest/source/fs/namespace.c#L3075
-
-if (size != PAGE_SIZE) {
-       if (copy_from_user(copy + size, data + size, PAGE_SIZE - size))
-            memset(copy + size, 0, PAGE_SIZE - size);
-}
-
-This looks like some options may be just discarded?
-What if it is an important security option?
-
-Why it does not return EFAULT, but just memset?
-
--- 
-Thanks,
-Dmitry
