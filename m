@@ -2,138 +2,97 @@ Return-Path: <SRS0=XUbZ=DF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2A4C4346E
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 02:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A45C4727C
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 05:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C219208D5
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 02:22:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="qWrMSVm6"
+	by mail.kernel.org (Postfix) with ESMTP id 2FC2122262
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 05:12:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbgI1CWC (ORCPT
+        id S1726409AbgI1FMv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 27 Sep 2020 22:22:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbgI1CWC (ORCPT
+        Mon, 28 Sep 2020 01:12:51 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:39534 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725287AbgI1FMv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 27 Sep 2020 22:22:02 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5CDC0613CE
-        for <linux-security-module@vger.kernel.org>; Sun, 27 Sep 2020 19:22:02 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id b12so8379939edz.11
-        for <linux-security-module@vger.kernel.org>; Sun, 27 Sep 2020 19:22:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vOX5Sd+xpTPA9/G3a3HyLwKA39unA0IaH2aJ/ahSQ48=;
-        b=qWrMSVm6zYmVaFJcTErsVXateVeWWiDTida+WlvUE+uTdTpqtnEDoAS5/Fab3urTai
-         zVC/L+EmWCWMmZZLXmcfTTewmXUlNJHZKMHMlOXI21wFMAIiCPKQBsVcXWBOuIWdkSJw
-         wRjVb0qNA/Wr0py5s32t6cT2qH4mMisal2HMbwAzd587SjYazqjs730xTKftVO/LuVh8
-         z5SqJGPe6Z6FkYdOzbDRlTuU8q6aT+KfFqcKMNC6Uq0DHawFoME2NoXJCWrpEwOSakwj
-         aqz4/eyirVDPTcjNHeg2KSOdgmBn2yafu/pWbZ8fXwYjpOa4lrAz9lroe+Wfwt0jlbYj
-         xUug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vOX5Sd+xpTPA9/G3a3HyLwKA39unA0IaH2aJ/ahSQ48=;
-        b=FCi3j7YHz2VLnx7zbOx/Pm+x/Z3Tn9O4ySmgWLl5HKRCjpSoG83wajXkYgooEsn2ob
-         JejfJLwDvZ8ik1W3lHMzNYG6oOw8N7vYXHVyoZNupBJpBMay90eqlXFfwGeGB02zZJKz
-         ddBnXCaMUUQE57tGK5rr6saAMdkBySVwv3T9v78sVrwRXM7Tg0dc3SLoo7dzJHizZWEE
-         AckKozBhf4ucgkxe1TgzU7OTekgoTul1zPZEvKcv1QiwjBoth+AR/Y2acsNUDSb2zDrV
-         I5lo2rh4AyXcrjLtyojjpyOoV/B+tqLABq1KTrfWA0pQUCAoN0HEBeZfI7uuZLgZKXUf
-         rqKw==
-X-Gm-Message-State: AOAM532CeZg85RzJoj0h8Zyj4zowL9OPS62zkqxM9fVmy1cKUwvXiKtj
-        BJbfN6GPVhpP4srtGLjNFQHICIa+/QEsRzdD6GrF
-X-Google-Smtp-Source: ABdhPJzsqAtfa9f1NG8hfvEATJbi9eEwRIg9uIFPEmWBfP9DD88yDxmZdKhWH6XK21EL7PJHsV83fl/LkgW6hEmDjDQ=
-X-Received: by 2002:a05:6402:1805:: with SMTP id g5mr13063002edy.135.1601259720569;
- Sun, 27 Sep 2020 19:22:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <0000000000009fc91605afd40d89@google.com> <20200925030759.GA17939@gondor.apana.org.au>
-In-Reply-To: <20200925030759.GA17939@gondor.apana.org.au>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 27 Sep 2020 22:21:48 -0400
-Message-ID: <CAHC9VhQjfqAaPnsT20T8zsT1kGHk3LRU1fqL8kNxiKsQ_E6TWQ@mail.gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds Read in xfrm_selector_match (2)
+        Mon, 28 Sep 2020 01:12:51 -0400
+X-Greylist: delayed 319 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Sep 2020 01:12:49 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id 2371E2049A;
+        Mon, 28 Sep 2020 07:07:29 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id RtOjFdq8NlJC; Mon, 28 Sep 2020 07:07:28 +0200 (CEST)
+Received: from mail-essen-02.secunet.de (unknown [10.53.40.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 98897200AA;
+        Mon, 28 Sep 2020 07:07:28 +0200 (CEST)
+Received: from mbx-essen-01.secunet.de (10.53.40.197) by
+ mail-essen-02.secunet.de (10.53.40.205) with Microsoft SMTP Server (TLS) id
+ 14.3.487.0; Mon, 28 Sep 2020 07:07:28 +0200
+Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-01.secunet.de
+ (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2044.4; Mon, 28 Sep
+ 2020 07:07:28 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 82E3D318470F;
+ Mon, 28 Sep 2020 07:07:27 +0200 (CEST)
+Date:   Mon, 28 Sep 2020 07:07:27 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     syzbot <syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com>,
-        davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, steffen.klassert@secunet.com,
-        syzkaller-bugs@googlegroups.com, James Morris <jmorris@namei.org>,
+CC:     syzbot <syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com>,
+        <davem@davemloft.net>, <kuba@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <syzkaller-bugs@googlegroups.com>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH] xfrm: Use correct address family in xfrm_state_find
+Message-ID: <20200928050727.GE20687@gauss3.secunet.de>
+References: <0000000000009fc91605afd40d89@google.com>
+ <20200925030759.GA17939@gondor.apana.org.au>
+ <20200925044256.GA18246@gondor.apana.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200925044256.GA18246@gondor.apana.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
+ mbx-essen-01.secunet.de (10.53.40.197)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 24, 2020 at 11:08 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> On Mon, Sep 21, 2020 at 07:56:20AM -0700, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    eb5f95f1 Merge tag 's390-5.9-6' of git://git.kernel.org/pu..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=13996ad5900000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=ffe85b197a57c180
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=577fbac3145a6eb2e7a5
-> > compiler:       gcc (GCC) 10.1.0-syz 20200507
-> >
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> >
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com
-> >
-> > ==================================================================
-> > BUG: KASAN: stack-out-of-bounds in xfrm_flowi_dport include/net/xfrm.h:877 [inline]
-> > BUG: KASAN: stack-out-of-bounds in __xfrm6_selector_match net/xfrm/xfrm_policy.c:216 [inline]
-> > BUG: KASAN: stack-out-of-bounds in xfrm_selector_match+0xf36/0xf60 net/xfrm/xfrm_policy.c:229
-> > Read of size 2 at addr ffffc9001914f55c by task syz-executor.4/15633
-> >
-> > CPU: 0 PID: 15633 Comm: syz-executor.4 Not tainted 5.9.0-rc5-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Call Trace:
-> >  __dump_stack lib/dump_stack.c:77 [inline]
-> >  dump_stack+0x198/0x1fd lib/dump_stack.c:118
-> >  print_address_description.constprop.0.cold+0x5/0x497 mm/kasan/report.c:383
-> >  __kasan_report mm/kasan/report.c:513 [inline]
-> >  kasan_report.cold+0x1f/0x37 mm/kasan/report.c:530
-> >  xfrm_flowi_dport include/net/xfrm.h:877 [inline]
->
-> This one goes back more than ten years.  This patch should fix
-> it.
->
+On Fri, Sep 25, 2020 at 02:42:56PM +1000, Herbert Xu wrote:
+> Resend with proper subject.
+>  
 > ---8<---
 > The struct flowi must never be interpreted by itself as its size
 > depends on the address family.  Therefore it must always be grouped
 > with its original family value.
->
+> 
 > In this particular instance, the original family value is lost in
 > the function xfrm_state_find.  Therefore we get a bogus read when
 > it's coupled with the wrong family which would occur with inter-
 > family xfrm states.
->
+> 
 > This patch fixes it by keeping the original family value.
->
+> 
 > Note that the same bug could potentially occur in LSM through
 > the xfrm_state_pol_flow_match hook.  I checked the current code
 > there and it seems to be safe for now as only secid is used which
 > is part of struct flowi_common.  But that API should be changed
 > so that so that we don't get new bugs in the future.  We could
 > do that by replacing fl with just secid or adding a family field.
+> 
+> Reported-by: syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com
+> Fixes: 48b8d78315bf ("[XFRM]: State selection update to use inner...")
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-I'm thinking it might be better to pass the family along with the flow
-instead of passing just the secid (less worry of passing an incorrect
-secid that way).  Let me see if I can cobble together a quick patch
-for testing before bed ...
-
--- 
-paul moore
-www.paul-moore.com
+Applied, thanks a lot Herbert!
