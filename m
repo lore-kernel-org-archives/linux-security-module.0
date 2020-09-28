@@ -2,97 +2,92 @@ Return-Path: <SRS0=XUbZ=DF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A45C4727C
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 05:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73E6C4741F
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 14:02:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC2122262
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 05:12:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86E5B21548
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Sep 2020 14:02:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kGyWZIIp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbgI1FMv (ORCPT
+        id S1726350AbgI1OCN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Sep 2020 01:12:51 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:39534 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbgI1FMv (ORCPT
+        Mon, 28 Sep 2020 10:02:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbgI1OCN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Sep 2020 01:12:51 -0400
-X-Greylist: delayed 319 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Sep 2020 01:12:49 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 2371E2049A;
-        Mon, 28 Sep 2020 07:07:29 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id RtOjFdq8NlJC; Mon, 28 Sep 2020 07:07:28 +0200 (CEST)
-Received: from mail-essen-02.secunet.de (unknown [10.53.40.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 98897200AA;
-        Mon, 28 Sep 2020 07:07:28 +0200 (CEST)
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- mail-essen-02.secunet.de (10.53.40.205) with Microsoft SMTP Server (TLS) id
- 14.3.487.0; Mon, 28 Sep 2020 07:07:28 +0200
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-01.secunet.de
- (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2044.4; Mon, 28 Sep
- 2020 07:07:28 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 82E3D318470F;
- Mon, 28 Sep 2020 07:07:27 +0200 (CEST)
-Date:   Mon, 28 Sep 2020 07:07:27 +0200
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-CC:     syzbot <syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com>,
-        <davem@davemloft.net>, <kuba@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <syzkaller-bugs@googlegroups.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH] xfrm: Use correct address family in xfrm_state_find
-Message-ID: <20200928050727.GE20687@gauss3.secunet.de>
-References: <0000000000009fc91605afd40d89@google.com>
- <20200925030759.GA17939@gondor.apana.org.au>
- <20200925044256.GA18246@gondor.apana.org.au>
+        Mon, 28 Sep 2020 10:02:13 -0400
+Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4543C061755;
+        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
+Received: by mail-yb1-xb30.google.com with SMTP id h9so1007571ybm.4;
+        Mon, 28 Sep 2020 07:02:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
+        b=kGyWZIIp5KWHAGEvNGD57Jds877X3K30zUvrXMhCc2uGut7+7RFaiCu90WSaeaNwOM
+         d8wtBroD9M2FLfLJdOrX/buE+n96izF0nKrSYXOuIg6OD30rVF14YzFKy8rpxvtT5Fjk
+         wVE53d3XHzGKunmib6ALKFy3VbutjolaGRb0Kr0zY3Pf4JPGuXQ1QOxRKshk7MeOoQzt
+         FJBVuUd8GPQW3kWzHpxa5R4FccXnumytkjL2sU2AujF1pG1E3jQlVH8EBYl4WZS1yVm3
+         MWf0+CX7hQrPHpucd/4SyLLvlbXEAyiM7lMJ7MtJNCfTiUoMCauZpOEnhTELypeC8B8M
+         WI/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=dkyo8YCHgnrpbLgoEtVwNnrBxmfXSOu3Lqhnq9hqnlU=;
+        b=Y9xd0z5iRnCVBASnEcvxv4+cpNclNjb0SNnhmhdz8vmLYAxrwBnVkA2CPD2JAtPn0X
+         nVrb9SoTfkU1+BBl8MrmvdO/oEUh9YUaXM4l0seiAcKgZ6dhc7jJnPzsnx4b+qFjNTVE
+         GaBUabEp3/nfVaoXMUmHuyE7ZFvhvVHQmmH2FSh3CY+K7S/7fauWrvjJI5xiX+DKogTt
+         5nB7VGjXsqnJ7ZeTPopMW0dlM8X1DmLch7VIwL1V84cLiUkvya3zZFFcNA+rtUsvT6Tx
+         It6RYmpv6JPyEdzoGam2Ar8X4Hq7SBR5KpPTiqHRySzbpBdRQIPMSKp5TvMKb651ePNj
+         UNqw==
+X-Gm-Message-State: AOAM530CoWOE6Gl9utvh8n8OPsT9yHxnPIylQ3pU/Rmqc1oeBShkFNef
+        45NklKyLABj99KTDjqHCi1UcHwrxoEqDRCvPoKNKeqAi4t1xaw==
+X-Google-Smtp-Source: ABdhPJzjyxAmAQJq3yUMV41ZaU6Jib4Hra0UERJdaARNie1e5vycnV4dot72wEdcHL/iFF2THt+3kbIbKOzP/jul6kE=
+X-Received: by 2002:a25:b219:: with SMTP id i25mr2027503ybj.52.1601301731841;
+ Mon, 28 Sep 2020 07:02:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20200925044256.GA18246@gondor.apana.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-01.secunet.de (10.53.40.197)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+From:   Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Date:   Mon, 28 Sep 2020 17:02:50 +0300
+Message-ID: <CACE9dm_eypZ4wn8PpYYCYNuM501_M-8pH7by=U-6hOmJCwuxig@mail.gmail.com>
+Subject: Mount options may be silently discarded
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 25, 2020 at 02:42:56PM +1000, Herbert Xu wrote:
-> Resend with proper subject.
->  
-> ---8<---
-> The struct flowi must never be interpreted by itself as its size
-> depends on the address family.  Therefore it must always be grouped
-> with its original family value.
-> 
-> In this particular instance, the original family value is lost in
-> the function xfrm_state_find.  Therefore we get a bogus read when
-> it's coupled with the wrong family which would occur with inter-
-> family xfrm states.
-> 
-> This patch fixes it by keeping the original family value.
-> 
-> Note that the same bug could potentially occur in LSM through
-> the xfrm_state_pol_flow_match hook.  I checked the current code
-> there and it seems to be safe for now as only secid is used which
-> is part of struct flowi_common.  But that API should be changed
-> so that so that we don't get new bugs in the future.  We could
-> do that by replacing fl with just secid or adding a family field.
-> 
-> Reported-by: syzbot+577fbac3145a6eb2e7a5@syzkaller.appspotmail.com
-> Fixes: 48b8d78315bf ("[XFRM]: State selection update to use inner...")
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Hi,
 
-Applied, thanks a lot Herbert!
+"copy_mount_options" function came to my eyes.
+It splits copy into 2 pieces - over page boundaries.
+I wonder what is the real reason for doing this?
+Original comment was that we need exact bytes and some user memcpy
+functions  do not return correct number on page fault.
+
+But how would all other cases work?
+
+https://elixir.bootlin.com/linux/latest/source/fs/namespace.c#L3075
+
+if (size != PAGE_SIZE) {
+       if (copy_from_user(copy + size, data + size, PAGE_SIZE - size))
+            memset(copy + size, 0, PAGE_SIZE - size);
+}
+
+This looks like some options may be just discarded?
+What if it is an important security option?
+
+Why it does not return EFAULT, but just memset?
+
+-- 
+Thanks,
+Dmitry
