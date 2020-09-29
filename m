@@ -2,66 +2,80 @@ Return-Path: <SRS0=OEdb=DG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1618C4727C
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 23:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A466C47420
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 23:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4609721531
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 23:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB83C21531
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 23:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbgI2XJ3 (ORCPT
+        id S1728688AbgI2XrR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Sep 2020 19:09:29 -0400
-Received: from namei.org ([65.99.196.166]:60414 "EHLO namei.org"
+        Tue, 29 Sep 2020 19:47:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728651AbgI2XJ3 (ORCPT
+        id S1728192AbgI2XrQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Sep 2020 19:09:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 08TN9KBD006807;
-        Tue, 29 Sep 2020 23:09:20 GMT
-Date:   Wed, 30 Sep 2020 09:09:20 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Paul Moore <paul@paul-moore.com>
-cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org
-Subject: Re: [RFC PATCH] lsm,selinux: pass the family information along with
- xfrm flow
-In-Reply-To: <160141647786.7997.5490924406329369782.stgit@sifl>
-Message-ID: <alpine.LRH.2.21.2009300909150.6592@namei.org>
-References: <160141647786.7997.5490924406329369782.stgit@sifl>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Tue, 29 Sep 2020 19:47:16 -0400
+Received: from oasis.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E17E7206DC;
+        Tue, 29 Sep 2020 23:47:13 +0000 (UTC)
+Date:   Tue, 29 Sep 2020 19:47:12 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, John Wood <john.wood@gmx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 3/6] security/fbfam: Use the api to manage
+ statistics
+Message-ID: <20200929194712.541c860c@oasis.local.home>
+In-Reply-To: <202009101625.0E3B6242@keescook>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+        <20200910202107.3799376-4-keescook@chromium.org>
+        <202009101625.0E3B6242@keescook>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 29 Sep 2020, Paul Moore wrote:
+On Thu, 10 Sep 2020 16:33:38 -0700
+Kees Cook <keescook@chromium.org> wrote:
 
-> As pointed out by Herbert in a recent related patch, the LSM hooks
-> should pass the address family in addition to the xfrm flow as the
-> family information is needed to safely access the flow.
+> > @@ -1940,6 +1941,7 @@ static int bprm_execve(struct linux_binprm *bprm,
+> >  	task_numa_free(current, false);
+> >  	if (displaced)
+> >  		put_files_struct(displaced);
+> > +	fbfam_execve();  
 > 
-> While this is not technically a problem for the current LSM/SELinux
-> code as it only accesses fields common to all address families, we
-> should still pass the address family so that the LSM hook isn't
-> inherently flawed.  An alternate solution could be to simply pass
-> the LSM secid instead of flow, but this introduces the problem of
-> the LSM hook callers sending the wrong secid which would be much
-> worse.
-> 
-> Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> As mentioned in the other emails, I think this could trivially be
+> converted into an LSM: all the hooks are available AFAICT. If you only
+> want to introspect execve _happening_, you can use bprm_creds_for_exec
+> which is called a few lines above. Otherwise, my prior suggestion ("the
+> exec has happened" hook via brpm_cred_committing, etc).
 
-I'm not keen on adding a parameter which nobody is using. Perhaps a note 
-in the header instead?
+And if its information only, you could just register a callback to the
+trace_sched_process_exec() tracepoint and do whatever you want then.
 
--- 
-James Morris
-<jmorris@namei.org>
+The tracepoints are available for anyone to attach to. Not just tracing.
 
+-- Steve
