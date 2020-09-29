@@ -2,71 +2,222 @@ Return-Path: <SRS0=OEdb=DG=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7F6C47420
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 18:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED60C47423
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 21:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EF37206F7
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 18:00:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6528A2076D
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 21:54:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="pU+wH0op"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgI2SAl (ORCPT
+        id S1728461AbgI2Vyn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Sep 2020 14:00:41 -0400
-Received: from verein.lst.de ([213.95.11.211]:41188 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725320AbgI2SAl (ORCPT
+        Tue, 29 Sep 2020 17:54:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49562 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728448AbgI2Vym (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Sep 2020 14:00:41 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id E781267373; Tue, 29 Sep 2020 20:00:37 +0200 (CEST)
-Date:   Tue, 29 Sep 2020 20:00:37 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>, Ian Kent <raven@themaw.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>, autofs@vger.kernel.org,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Zdenek Pytela <zpytela@redhat.com>
-Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
-Message-ID: <20200929180037.GA12447@lst.de>
-References: <20200921163011.GZ3421308@ZenIV.linux.org.uk> <CAFqZXNsBqvCj0NjEd9+C0H1EPjz7Fst296AA5eOFSVx=SKjfOg@mail.gmail.com> <0764629d33d151aee743d0429ac87a5b0c300235.camel@themaw.net> <CAFqZXNsqD73hptXxBn+g98ngbFd=Sx+CghtwVqM+NC47VFZhVQ@mail.gmail.com> <CAEjxPJ4oZvtqUpW0bMzoZwVsi9kDvL5LtouHQZAO7gM7_qyHMg@mail.gmail.com> <CAFqZXNs0oZ+_RNvwE-e62H2FSS=N4wbvJ+tgk0_dSn=5mbPhcw@mail.gmail.com> <CAHk-=wjYB+q1=3_x97VSNo5cPTL=eHnuMDXoKhGJOJvo+pbp9g@mail.gmail.com> <05c18390d485ae6d84c49f707d20b49e28f210a6.camel@themaw.net> <CAFqZXNt2pWwRnnzB0KfZfZy-dJuXfKkJeejpuXcHCBLq1htA8w@mail.gmail.com> <CAHk-=wi3+AhZ0Q3nvGJCgdL0Vq8b_soy8rhS5_HE79VBP7Q-LQ@mail.gmail.com>
+        Tue, 29 Sep 2020 17:54:42 -0400
+Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88DB2C061755
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Sep 2020 14:54:40 -0700 (PDT)
+Received: by mail-qk1-x741.google.com with SMTP id s131so6073546qke.0
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Sep 2020 14:54:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=xHo033oar0KgYc4e1ROf65XOwizUiV3znFMSkSu+y78=;
+        b=pU+wH0opGREdfVhc3VSiSME5TJWZYmy/jOWNVDwwtSS5v6hYxIdKLs0rpmZs1XmjUx
+         w+vtdrFion68m7I360d33S6IkOnmXMIK3sYDtMzdmb/YVsX1lrDjxcqgUROfYWyvC2T+
+         HJuEdM3x7yI7Ttqm+kQdzbSC6/3e54kFH6EFas/uy037Nxu5q/8EKKFV0GATrJBLgp2F
+         lO6baOWhOQGzuqwVXvCJi+xfw5tz49QTqjCmjZgMVfrlJHu4Frkrt+u61HA0F5adV9N9
+         PRR1j5iABgdkGsS23Kl3Lpxvgw8CwiJ8km7Ox/rlwPdPDom/WmSVWGIW1sdDs788eguG
+         GtNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=xHo033oar0KgYc4e1ROf65XOwizUiV3znFMSkSu+y78=;
+        b=LIc2XKeT0caeOEZa2uvUOfj7wXJkCVbPkySQoyypGWqIHUbD7HoV+VM6BB4usKwKYD
+         trqm2FYMGcl5LAmafhWaK6FTkagL27aAMdSKc4QNJ/ZTGttlTlNRVuIytNvCd57wcMqt
+         SzrqEDxnaDHW2wwxDCEcuLkUoBJEPI5/QiqQKOm2gkirUtuSFdRC24KGNVbjTXGHxMF/
+         VdKFzGw7KXL12G3/DurfgFYE8UxKdYsuXwXZJ7EgLq7gj0j1x3jGdNNKA7wkdYskpCQs
+         Lo2ox9lfWGy7Slq3fJ7Fv8d6ZDDsLF7pWTmWH5gYYHLKe49Jkyz14v4QV9wwnNzMHRm3
+         Ld8g==
+X-Gm-Message-State: AOAM530keckFkzDy3Bc7T+U+6YNZMLnXRNOiUoixt0ANWoab5iUBsDB5
+        VtAuKWmOVRPI9btgl8c6Dj8x
+X-Google-Smtp-Source: ABdhPJw/6NYT2k3x6xGaYNBrYodwIdaQqNXOTPmefZeuiRKMRPi60CfDM1jnBuTF6NOsQPWaOfgVWw==
+X-Received: by 2002:a37:4e45:: with SMTP id c66mr6729503qkb.36.1601416479560;
+        Tue, 29 Sep 2020 14:54:39 -0700 (PDT)
+Received: from localhost (pool-96-230-24-152.bstnma.fios.verizon.net. [96.230.24.152])
+        by smtp.gmail.com with ESMTPSA id z131sm6251880qkb.59.2020.09.29.14.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Sep 2020 14:54:38 -0700 (PDT)
+Subject: [RFC PATCH] lsm,selinux: pass the family information along with xfrm
+ flow
+From:   Paul Moore <paul@paul-moore.com>
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>, netdev@vger.kernel.org
+Date:   Tue, 29 Sep 2020 17:54:37 -0400
+Message-ID: <160141647786.7997.5490924406329369782.stgit@sifl>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi3+AhZ0Q3nvGJCgdL0Vq8b_soy8rhS5_HE79VBP7Q-LQ@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 29, 2020 at 10:23:50AM -0700, Linus Torvalds wrote:
-> On Tue, Sep 29, 2020 at 5:16 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > OK, so it seems that reverting comes out as the best choice here.
-> 
-> Yeah.
-> 
-> > BTW, I'm looking at rw_verify_area() and I see this "If (ppos)" check
-> > and the comment above it... And then I look at autofs_write(), which
-> > passes &file->f_pos, while ksys_write() passes file_ppos(file)
-> 
-> Ok, that doesn't matter for the security_file_permission() issue, but
-> yes, autofs is doing the traditional thing, and it's pointless. Using
-> file_ppos(file) isn't an option since it's an inline to read_write.c,
-> but it could just pass in NULL these days and avoid that too.
-> 
-> So how about we just do the appended patch? Can whoever sees this
-> problem just verify, even though it looks trivially correct...
+As pointed out by Herbert in a recent related patch, the LSM hooks
+should pass the address family in addition to the xfrm flow as the
+family information is needed to safely access the flow.
 
-This looks sensible to me.  I'd throw in a
+While this is not technically a problem for the current LSM/SELinux
+code as it only accesses fields common to all address families, we
+should still pass the address family so that the LSM hook isn't
+inherently flawed.  An alternate solution could be to simply pass
+the LSM secid instead of flow, but this introduces the problem of
+the LSM hook callers sending the wrong secid which would be much
+worse.
 
-/* only for autofs, don't use in new code */
+Reported-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ include/linux/lsm_hook_defs.h   |    2 +-
+ include/linux/lsm_hooks.h       |    1 +
+ include/linux/security.h        |    7 +++++--
+ net/xfrm/xfrm_state.c           |    4 ++--
+ security/security.c             |    5 +++--
+ security/selinux/include/xfrm.h |    3 ++-
+ security/selinux/xfrm.c         |    3 ++-
+ 7 files changed, 16 insertions(+), 9 deletions(-)
 
-near the export, but users of these kind of functions tend to be
-blind copy and paste code anyway, so the comment probably isn't
-even read by the relevant parties..
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2a8c74d99015..e3c3b5d20469 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -349,7 +349,7 @@ LSM_HOOK(int, 0, xfrm_state_delete_security, struct xfrm_state *x)
+ LSM_HOOK(int, 0, xfrm_policy_lookup, struct xfrm_sec_ctx *ctx, u32 fl_secid,
+ 	 u8 dir)
+ LSM_HOOK(int, 1, xfrm_state_pol_flow_match, struct xfrm_state *x,
+-	 struct xfrm_policy *xp, const struct flowi *fl)
++	 struct xfrm_policy *xp, const struct flowi *fl, unsigned short family)
+ LSM_HOOK(int, 0, xfrm_decode_session, struct sk_buff *skb, u32 *secid,
+ 	 int ckall)
+ #endif /* CONFIG_SECURITY_NETWORK_XFRM */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9e2e3e63719d..ea088aacfdad 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1093,6 +1093,7 @@
+  *	@x contains the state to match.
+  *	@xp contains the policy to check for a match.
+  *	@fl contains the flow to check for a match.
++ *	@family the flow's address family.
+  *	Return 1 if there is a match.
+  * @xfrm_decode_session:
+  *	@skb points to skb to decode.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 0a0a03b36a3b..701b41eb090c 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -1625,7 +1625,8 @@ void security_xfrm_state_free(struct xfrm_state *x);
+ int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir);
+ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 				       struct xfrm_policy *xp,
+-				       const struct flowi *fl);
++				       const struct flowi *fl,
++				       unsigned short family);
+ int security_xfrm_decode_session(struct sk_buff *skb, u32 *secid);
+ void security_skb_classify_flow(struct sk_buff *skb, struct flowi *fl);
+ 
+@@ -1679,7 +1680,9 @@ static inline int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_s
+ }
+ 
+ static inline int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+-			struct xfrm_policy *xp, const struct flowi *fl)
++						     struct xfrm_policy *xp,
++						     const struct flowi *fl,
++						     unsigned short family)
+ {
+ 	return 1;
+ }
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 69520ad3d83b..f90d2f1da44a 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -1020,7 +1020,7 @@ static void xfrm_state_look_at(struct xfrm_policy *pol, struct xfrm_state *x,
+ 	if (x->km.state == XFRM_STATE_VALID) {
+ 		if ((x->sel.family &&
+ 		     !xfrm_selector_match(&x->sel, fl, x->sel.family)) ||
+-		    !security_xfrm_state_pol_flow_match(x, pol, fl))
++		    !security_xfrm_state_pol_flow_match(x, pol, fl, family))
+ 			return;
+ 
+ 		if (!*best ||
+@@ -1033,7 +1033,7 @@ static void xfrm_state_look_at(struct xfrm_policy *pol, struct xfrm_state *x,
+ 	} else if (x->km.state == XFRM_STATE_ERROR ||
+ 		   x->km.state == XFRM_STATE_EXPIRED) {
+ 		if (xfrm_selector_match(&x->sel, fl, x->sel.family) &&
+-		    security_xfrm_state_pol_flow_match(x, pol, fl))
++		    security_xfrm_state_pol_flow_match(x, pol, fl, family))
+ 			*error = -ESRCH;
+ 	}
+ }
+diff --git a/security/security.c b/security/security.c
+index 70a7ad357bc6..62dd0af7c6bc 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2391,7 +2391,8 @@ int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
+ 
+ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 				       struct xfrm_policy *xp,
+-				       const struct flowi *fl)
++				       const struct flowi *fl,
++				       unsigned short family)
+ {
+ 	struct security_hook_list *hp;
+ 	int rc = LSM_RET_DEFAULT(xfrm_state_pol_flow_match);
+@@ -2407,7 +2408,7 @@ int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 	 */
+ 	hlist_for_each_entry(hp, &security_hook_heads.xfrm_state_pol_flow_match,
+ 				list) {
+-		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, fl);
++		rc = hp->hook.xfrm_state_pol_flow_match(x, xp, fl, family);
+ 		break;
+ 	}
+ 	return rc;
+diff --git a/security/selinux/include/xfrm.h b/security/selinux/include/xfrm.h
+index a0b465316292..36907dd06647 100644
+--- a/security/selinux/include/xfrm.h
++++ b/security/selinux/include/xfrm.h
+@@ -26,7 +26,8 @@ int selinux_xfrm_state_delete(struct xfrm_state *x);
+ int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir);
+ int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 				      struct xfrm_policy *xp,
+-				      const struct flowi *fl);
++				      const struct flowi *fl,
++				      unsigned short family);
+ 
+ #ifdef CONFIG_SECURITY_NETWORK_XFRM
+ extern atomic_t selinux_xfrm_refcount;
+diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
+index 7314196185d1..5beb30237d3a 100644
+--- a/security/selinux/xfrm.c
++++ b/security/selinux/xfrm.c
+@@ -175,7 +175,8 @@ int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
+  */
+ int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x,
+ 				      struct xfrm_policy *xp,
+-				      const struct flowi *fl)
++				      const struct flowi *fl,
++				      unsigned short family)
+ {
+ 	u32 state_sid;
+ 
+
