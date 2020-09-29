@@ -4,59 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CA6C4727C
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 12:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFD8C4727C
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 17:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5A3C20759
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 12:17:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lpx5Ohd0"
+	by mail.kernel.org (Postfix) with ESMTP id 0403E208B8
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Sep 2020 17:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601400266;
+	bh=DfVo+QTy1+Ugv+kDx0DjL4/XsDfAyp7qiuKBUZYURrU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=FfMIH3jXnB2kHCnyFrXxUxyJjJKyEqH3zakF1D/V70lDU1uGQtE9vv/MfSXWpKWbl
+	 urbPepmfhbu477z/pFYeJTlEoFHHrKvITEiaf9un4L8pIvT2Te7BwtExUuip0UgHvC
+	 9wv40cfcbaYiZVJYL9yvV8ppfUpe/ZhuRcfwucUE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbgI2MQ7 (ORCPT
+        id S1728372AbgI2RYZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Sep 2020 08:16:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36086 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730189AbgI2MQt (ORCPT
+        Tue, 29 Sep 2020 13:24:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35736 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbgI2RYZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Sep 2020 08:16:49 -0400
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601381807;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=C1hoLwkXB3t3tvpnB48LHPZiaL0srQuk1qO89dBM94g=;
-        b=Lpx5Ohd0cRpOxImPQBECg6oeq122xPk4sbHh3hZimE2YTs1KAXfR39eNCtbCGCFgMoix+4
-        YQWhqe3HxY8gVyvVHCNjgYqDUG4H32RLzaynAmkv2Lxb6oT5evsQYiuyn8KkebkIJAS0QA
-        EIzRWozdqwj/KhwE6zc0a5eO5bZ5dWU=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-426-UofWkZrfOL26fOAXaIpbiw-1; Tue, 29 Sep 2020 08:16:45 -0400
-X-MC-Unique: UofWkZrfOL26fOAXaIpbiw-1
-Received: by mail-lj1-f197.google.com with SMTP id 184so1127315ljf.14
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Sep 2020 05:16:45 -0700 (PDT)
+        Tue, 29 Sep 2020 13:24:25 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4814C061755
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Sep 2020 10:24:23 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id b12so6444604lfp.9
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Sep 2020 10:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lLAA/pJeKW+cqg50Ky57VCHaGTK5qDXo2yqA2pvF+eQ=;
+        b=LjUkXudSoFBbDOO0M3Aw/aA5ORisoLfOBbWS+EuHcCdJ4UVE9j8EhvhFGCA/Zca0w7
+         4AaPgkaAJsBVuA6YpTFf7WTJVEp9xTmUeQvlINdGGPRg09Hegrf+uVZEXdkKqgmMKiN+
+         Ebp/oOmLKEC9pbX17X2DwXblyrVa/XS3QfE+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C1hoLwkXB3t3tvpnB48LHPZiaL0srQuk1qO89dBM94g=;
-        b=oSczSJN2jaYwMfATyHFluSEBJbk3tiaiqnTD0/S6D1QbOHVPKkekxUWwT9iK+MKPsv
-         kHC6qz8qJwd7qJWvnVcmFYIxcN2Nb813a0+x8cIOgnpaDT+7rsH3sPI4tZI4pZ1zZRwl
-         D4FmH3+y9AJ6mMijHNHd/yWydPzYopGA86W7lGl+kTKvoITqQ9576NzLHzqHdIZzqxiA
-         PAgUZm1jB+3Q6MXIS+s1FbZGcFxudvJSzsD5OjjYgikENcwG4wu+tzOKOqzim9Zm4nUF
-         xiQshZjdLVjCs4FnjOJsxh+zSnrJ3ADcpw5fuGg5VKW59Tmuu01Jx4SZByNyy7StCCiu
-         8dAw==
-X-Gm-Message-State: AOAM531uhh+6YWOdTAtLoAJqnkyMLopT2NpW4DmebCHv/yn285hLoBkX
-        zjH8xcit+r+PgYrulZwnOGfn4BHb0QMMYkolf+D2C5nC3KmCcjFXQOcH03KsU5eFRCxQYkU1odC
-        4T3A7GjribSqnzHVX/paipyQh/F4pkquE8JYDAgr16wwI2nNlDZuo
-X-Received: by 2002:a05:651c:10d:: with SMTP id a13mr1017976ljb.217.1601381803824;
-        Tue, 29 Sep 2020 05:16:43 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJw0wAN1g0mJoPRemnBeRoOHrscZEmxfN7P/VaV8PCgYFEgJUUhx3QFC5sJAzFENjRdqM8X9hzSDmaCflJ7kHnM=
-X-Received: by 2002:a05:651c:10d:: with SMTP id a13mr1017968ljb.217.1601381803483;
- Tue, 29 Sep 2020 05:16:43 -0700 (PDT)
+        bh=lLAA/pJeKW+cqg50Ky57VCHaGTK5qDXo2yqA2pvF+eQ=;
+        b=nR/ueu4KPRwv5QzTPce8hRdEMi9b74TEvX1HB8jEBIW0Oyr5n9uSCvh9cdiLD+cq4Q
+         qNTbARe4X3ybx5+0nIQr49Ess0MQuDGeZskKl6VKquMOklekYMVpnIAGjmhnlK0mzhBK
+         UdioLtJZF17VzPDwOLUHJp1DSNUUnXctqWSJb5LzFjW1c9Q+v1PL4XF1d0bryMDcuKQO
+         Aa1+buIKipDisUdIp/OwTBEgLRDWRX03Luu8pPqzFBPU9H5BxQ5SPVG2w2hVAb/rtiB4
+         podm/LQ/37q3h/rzue3pI5pAq5nlHLszi3+2jqME5yNStALAOtMpx6jdp1fnXwqzYUz4
+         ViWA==
+X-Gm-Message-State: AOAM532GkphoelMyc2ruqmEM8c3P6p4jg+f5EisNcTTl4fbXR+Vv+Jz8
+        581UAPeau/jD3wSD7vZALSSWZ6OWDy4acA==
+X-Google-Smtp-Source: ABdhPJzA6QxZnm2DVKDYszh533OoGMG2NwEBsdAAJuQEi4WEGblOEz9FVeLnJGvSs02jFQGZ9JaWpA==
+X-Received: by 2002:a19:8286:: with SMTP id e128mr1502567lfd.307.1601400255800;
+        Tue, 29 Sep 2020 10:24:15 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id x14sm3297234lfc.93.2020.09.29.10.24.06
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Sep 2020 10:24:06 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id w11so6484604lfn.2
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Sep 2020 10:24:06 -0700 (PDT)
+X-Received: by 2002:a19:e00a:: with SMTP id x10mr1747057lfg.603.1601400246233;
+ Tue, 29 Sep 2020 10:24:06 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
  <20200921160922.GA23870@lst.de> <20200921163011.GZ3421308@ZenIV.linux.org.uk>
@@ -65,14 +74,16 @@ References: <CAFqZXNsoXr1eA4C8==Nvujs5ONpRnuSqaOQQ0n78R=Dbm-EFGA@mail.gmail.com>
  <CAFqZXNsqD73hptXxBn+g98ngbFd=Sx+CghtwVqM+NC47VFZhVQ@mail.gmail.com>
  <CAEjxPJ4oZvtqUpW0bMzoZwVsi9kDvL5LtouHQZAO7gM7_qyHMg@mail.gmail.com>
  <CAFqZXNs0oZ+_RNvwE-e62H2FSS=N4wbvJ+tgk0_dSn=5mbPhcw@mail.gmail.com>
- <CAHk-=wjYB+q1=3_x97VSNo5cPTL=eHnuMDXoKhGJOJvo+pbp9g@mail.gmail.com> <05c18390d485ae6d84c49f707d20b49e28f210a6.camel@themaw.net>
-In-Reply-To: <05c18390d485ae6d84c49f707d20b49e28f210a6.camel@themaw.net>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 29 Sep 2020 14:16:32 +0200
-Message-ID: <CAFqZXNt2pWwRnnzB0KfZfZy-dJuXfKkJeejpuXcHCBLq1htA8w@mail.gmail.com>
+ <CAHk-=wjYB+q1=3_x97VSNo5cPTL=eHnuMDXoKhGJOJvo+pbp9g@mail.gmail.com>
+ <05c18390d485ae6d84c49f707d20b49e28f210a6.camel@themaw.net> <CAFqZXNt2pWwRnnzB0KfZfZy-dJuXfKkJeejpuXcHCBLq1htA8w@mail.gmail.com>
+In-Reply-To: <CAFqZXNt2pWwRnnzB0KfZfZy-dJuXfKkJeejpuXcHCBLq1htA8w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 29 Sep 2020 10:23:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi3+AhZ0Q3nvGJCgdL0Vq8b_soy8rhS5_HE79VBP7Q-LQ@mail.gmail.com>
+Message-ID: <CAHk-=wi3+AhZ0Q3nvGJCgdL0Vq8b_soy8rhS5_HE79VBP7Q-LQ@mail.gmail.com>
 Subject: Re: Commit 13c164b1a186 - regression for LSMs/SELinux?
-To:     Ian Kent <raven@themaw.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Ian Kent <raven@themaw.net>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@lst.de>, autofs@vger.kernel.org,
@@ -80,84 +91,54 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         <linux-security-module@vger.kernel.org>,
         SElinux list <selinux@vger.kernel.org>,
         Zdenek Pytela <zpytela@redhat.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="000000000000d2228705b0770cbc"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Sep 27, 2020 at 5:08 AM Ian Kent <raven@themaw.net> wrote:
->
-> On Fri, 2020-09-25 at 10:38 -0700, Linus Torvalds wrote:
-> > On Fri, Sep 25, 2020 at 6:38 AM Ondrej Mosnacek <omosnace@redhat.com>
-> > wrote:
-> > > On Thu, Sep 24, 2020 at 4:16 PM Stephen Smalley
-> > > <stephen.smalley.work@gmail.com> wrote:
-> > > > Up-thread I thought Linus indicated he didn't really want a flag
-> > > > to
-> > > > disable pemission checking due to potential abuse (and I agree).
-> > >
-> > > IIUC he was against adding an FMODE flag, while I was rather
-> > > suggesting a new function parameter (I realize it probably wasn't
-> > > clear from what I wrote).
-> >
-> > I really would prefer neither.
-> >
-> > Any kind of dynamic behavior that depends on a flag is generally
-> > worse
-> > than something that can be statically seen.
-> >
-> > Now, if the flag is _purely_ a constant argument in every single
-> > user,
-> > and there's no complex flow through multiple different layers, an
-> > argument flag is certainly fairly close to just having two different
-> > functions for two different behaviors.
-> >
-> > But I don't really see much of an advantage to adding a new argument
-> > to kernel_write() for this - because absolutely *nobody* should ever
-> > use it apart from this very special autofs case.
-> >
-> > So I'd rather just re-export the old __kernel_write() (or whatever it
-> > was that broke autofs) that didn't do that particular check. We
-> > already use it for splice and core dumping.
-> >
-> > autofs isn't that different from those two, and I think the only real
-> > difference is that autofs is a module. No?
->
-> It can be, yes, many distro builds compile it in.
->
-> >
-> > So I think the fix is as simple as exporting __kernel_write() again -
-> > and let's just make it a GPL-only export since we really don't want
-> > anybody to use it - and revert  commit 13c164b1a186 ("autofs: switch
-> > to kernel_write").
->
-> Yes, sorry I missed this initially.
->
-> There are a couple of other sanity checks in kern_write() but since
-> __kern_write() is meant to be for internal use that's not really
-> an issue IMHO.
+--000000000000d2228705b0770cbc
+Content-Type: text/plain; charset="UTF-8"
 
-OK, so it seems that reverting comes out as the best choice here.
+On Tue, Sep 29, 2020 at 5:16 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> OK, so it seems that reverting comes out as the best choice here.
 
-BTW, I'm looking at rw_verify_area() and I see this "If (ppos)" check
-and the comment above it... And then I look at autofs_write(), which
-passes &file->f_pos, while ksys_write() passes file_ppos(file), which
-checks FMODE_STREAM and returns NULL if it is set. And since the
-autofs pipe should be a... well... pipe, which AFAIK implies
-FMODE_STREAM, file_ppos() should return NULL for it. So shouldn't
-autofs_write() use file_ppos(file) instead of &file->f_pos? Not sure
-if there are any practical implications, but seems more
-correct/consistent that way... And in that case most of the
-rw_verify_area() checks would be skipped anyway. And
-file_start_write()/file_end_write() do nothing on non-regular files,
-so it seems kernel_write() vs. __kernel_write() makes only very little
-difference for pipes.
+Yeah.
 
---
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
+> BTW, I'm looking at rw_verify_area() and I see this "If (ppos)" check
+> and the comment above it... And then I look at autofs_write(), which
+> passes &file->f_pos, while ksys_write() passes file_ppos(file)
 
+Ok, that doesn't matter for the security_file_permission() issue, but
+yes, autofs is doing the traditional thing, and it's pointless. Using
+file_ppos(file) isn't an option since it's an inline to read_write.c,
+but it could just pass in NULL these days and avoid that too.
+
+So how about we just do the appended patch? Can whoever sees this
+problem just verify, even though it looks trivially correct...
+
+            Linus
+
+--000000000000d2228705b0770cbc
+Content-Type: application/octet-stream; name=patch
+Content-Disposition: attachment; filename=patch
+Content-Transfer-Encoding: base64
+Content-ID: <f_kfo8cery0>
+X-Attachment-Id: f_kfo8cery0
+
+IGZzL2F1dG9mcy93YWl0cS5jIHwgMiArLQogZnMvcmVhZF93cml0ZS5jICAgfCAxICsKIDIgZmls
+ZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEv
+ZnMvYXV0b2ZzL3dhaXRxLmMgYi9mcy9hdXRvZnMvd2FpdHEuYwppbmRleCA3NGM4ODZmN2M1MWMu
+LjVjZWQ4NTlkYWM1MyAxMDA2NDQKLS0tIGEvZnMvYXV0b2ZzL3dhaXRxLmMKKysrIGIvZnMvYXV0
+b2ZzL3dhaXRxLmMKQEAgLTUzLDcgKzUzLDcgQEAgc3RhdGljIGludCBhdXRvZnNfd3JpdGUoc3Ry
+dWN0IGF1dG9mc19zYl9pbmZvICpzYmksCiAKIAltdXRleF9sb2NrKCZzYmktPnBpcGVfbXV0ZXgp
+OwogCXdoaWxlIChieXRlcykgewotCQl3ciA9IGtlcm5lbF93cml0ZShmaWxlLCBkYXRhLCBieXRl
+cywgJmZpbGUtPmZfcG9zKTsKKwkJd3IgPSBfX2tlcm5lbF93cml0ZShmaWxlLCBkYXRhLCBieXRl
+cywgTlVMTCk7CiAJCWlmICh3ciA8PSAwKQogCQkJYnJlYWs7CiAJCWRhdGEgKz0gd3I7CmRpZmYg
+LS1naXQgYS9mcy9yZWFkX3dyaXRlLmMgYi9mcy9yZWFkX3dyaXRlLmMKaW5kZXggNWRiNThiOGM3
+OGQwLi4yZmMzMTk0ZTRkMzAgMTAwNjQ0Ci0tLSBhL2ZzL3JlYWRfd3JpdGUuYworKysgYi9mcy9y
+ZWFkX3dyaXRlLmMKQEAgLTUzOCw2ICs1MzgsNyBAQCBzc2l6ZV90IF9fa2VybmVsX3dyaXRlKHN0
+cnVjdCBmaWxlICpmaWxlLCBjb25zdCB2b2lkICpidWYsIHNpemVfdCBjb3VudCwgbG9mZl90CiAJ
+aW5jX3N5c2N3KGN1cnJlbnQpOwogCXJldHVybiByZXQ7CiB9CitFWFBPUlRfU1lNQk9MX0dQTChf
+X2tlcm5lbF93cml0ZSk7CiAKIHNzaXplX3Qga2VybmVsX3dyaXRlKHN0cnVjdCBmaWxlICpmaWxl
+LCBjb25zdCB2b2lkICpidWYsIHNpemVfdCBjb3VudCwKIAkJCSAgICBsb2ZmX3QgKnBvcykK
+--000000000000d2228705b0770cbc--
