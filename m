@@ -2,89 +2,277 @@ Return-Path: <SRS0=3ULx=DW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85477C43457
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 23:06:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5ECC433E7
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 23:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33917207DE
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 23:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602803188;
-	bh=z+fHkeoc+SdFIMzQryaf5p4T5IH/eRj3B/VcjPe/yTE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=2GbpK1lstd7t+IY75Y+3/wZccqik0OSYGgB0nmcpI0diuBWYz1i9+ZH5eHfG6htSq
-	 73Q0stvKkCRcLoXiXQi1pK2ZLzmUlEWPnyKaect27ySIZKDzljgyNuBO14Meeg4M8M
-	 0UStSQJv1uplwyFLneL0WdFqNmHD8mAIORugwTzY=
+	by mail.kernel.org (Postfix) with ESMTP id 7BA7E2074F
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 23:44:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=btinternet.com header.i=@btinternet.com header.b="qaubQGkr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732441AbgJOXGZ (ORCPT
+        id S1732981AbgJOXo6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Oct 2020 19:06:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732436AbgJOXGY (ORCPT
+        Thu, 15 Oct 2020 19:44:58 -0400
+Received: from mailomta29-re.btinternet.com ([213.120.69.122]:12771 "EHLO
+        re-prd-fep-043.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732877AbgJOXo6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Oct 2020 19:06:24 -0400
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31135C0613CF
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 16:06:24 -0700 (PDT)
-Received: by mail-lj1-x234.google.com with SMTP id f21so507077ljh.7
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 16:06:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/ySCIwp29O4ociJzzOVOKh5KY68CfkZIAay+F6Ok3yY=;
-        b=e3so42TRsxuJ5mfPkYxoGNiW4GBI/Yl75Lc/i38Ex2+2KqlheN4ZFDlPXUX0UKQnhA
-         JMtYEt1aWnwC1ngp0X+lLfsTMfzivxRw90SqLT+MnFlkj7RWmj4zvVQDRAi2bY9yacEZ
-         UuE9J4R3Xd701mCWp6XRRasGIN1q0IKac4DUQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/ySCIwp29O4ociJzzOVOKh5KY68CfkZIAay+F6Ok3yY=;
-        b=gBu/+uBH+9rg7lF0WIvKWbE33mg7bLnE5oz2IgEO4THwx9F4LyqTeMjLMf109xbWTY
-         /OUDx+EN+DKGFiFs5XGe8yOYY4UhURC+i5PzULoGgCf4Rq7fLgvJVZj+LnCtQ7WjJB37
-         3oLON0/uTvKmAr9756Qcz9xpnBZn88xvJIC2IUDprFRWxNPG+peljl4JxpPvMdud44Y6
-         rAr1nkZ6LYoLBH0ZOcKMZ5MGNQ6pzzkPOCJrbpPgxZEOyltGj2ShcBMcdMW3XpeB1ish
-         6SBd1x8+3u/FTvlNjtyH2hZMDl7mpbtIzWysV4aVmH8bDb9BNOWvanHtQ6esqhIIN9OW
-         468w==
-X-Gm-Message-State: AOAM533z76cvNS3k34i/KSD4+ja/zqYBzGIMLYHQqLYPKqaQ7YYhR5hX
-        70kfzlgNwai0UMzQFYKH8p94x5+BLjmCCw==
-X-Google-Smtp-Source: ABdhPJyaMUmqDLK9M7M2mPoQsKihHxsiZ8CpBIqPPkeYgNNMnLi31xNIsC6xtkumKl9lZEfZ6uyXjw==
-X-Received: by 2002:a05:651c:1b6:: with SMTP id c22mr388288ljn.447.1602803181942;
-        Thu, 15 Oct 2020 16:06:21 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 80sm158149lff.61.2020.10.15.16.06.20
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Oct 2020 16:06:21 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id z2so621732lfr.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 16:06:20 -0700 (PDT)
-X-Received: by 2002:a19:4815:: with SMTP id v21mr291703lfa.603.1602803180597;
- Thu, 15 Oct 2020 16:06:20 -0700 (PDT)
+        Thu, 15 Oct 2020 19:44:58 -0400
+Received: from re-prd-rgout-005.btmx-prd.synchronoss.net ([10.2.54.8])
+          by re-prd-fep-042.btinternet.com with ESMTP
+          id <20200930094938.NUGK13627.re-prd-fep-042.btinternet.com@re-prd-rgout-005.btmx-prd.synchronoss.net>;
+          Wed, 30 Sep 2020 10:49:38 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1601459378; 
+        bh=GqbtTJobxnddkygFdq3baVZ7r4hha6OmE6WiBxVBwNU=;
+        h=From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version;
+        b=qaubQGkris5/I/PefYlao45hHlq4/nIEvvvyhh4AEpTjtOVNOVyJzjk0oBTwdgM4YFY1zJ5U8hFoFJEflFTbZdZRzTJSnGu6eyJ/dAdx8LRg6+gLz0PsBlSTp55hkSmog90q7pQgL3/Zqn7r2KSBUzD6nYQ1NLr4w9wB2Wv7c+SwtOWGY5Jn+8flY39OLh5bUVCfNiFOGjXapeIxL2n2+8jLBET/VJUwhziFwTKU/RQOqbgqP0Dod+ESHAx0cWJNFEqkzq0d9qG6S59jOE5YMOrFM0UArJK2FvTZe+FNOAH8H1I+0J+Bsq83LfeiDzkjUHcol/e4v1m37teRgKiOgg==
+Authentication-Results: btinternet.com; none
+X-Originating-IP: [81.141.56.129]
+X-OWM-Source-IP: 81.141.56.129 (GB)
+X-OWM-Env-Sender: richard_c_haines@btinternet.com
+X-VadeSecure-score: verdict=clean score=0/300, class=clean
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedujedrfedvgdduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuggftrfgrthhtvghrnhepuedttdelleehueeggfeihfeitdehueekffeviedtffegffeiueegleejgeevgfeinecukfhppeekuddrudeguddrheeirdduvdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplhhotggrlhhhohhsthdrlhhotggrlhguohhmrghinhdpihhnvghtpeekuddrudeguddrheeirdduvdelpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqedprhgtphhtthhopeeojhhmohhrrhhishesnhgrmhgvihdrohhrgheqpdhrtghpthhtohepoehlrghfohhrghgvsehgnhhumhhonhhkshdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeonhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeoohhsmhhotghomhdqnhgvthdqghhp
+        rhhssehlihhsthhsrdhoshhmohgtohhmrdhorhhgqedprhgtphhtthhopeeophgrsghlohesnhgvthhfihhlthgvrhdrohhrgheqpdhrtghpthhtohepoehprghulhesphgruhhlqdhmohhorhgvrdgtohhmqedprhgtphhtthhopeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhequcfqtfevrffvpehrfhgtkedvvdenrhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhdprhgtphhtthhopeeoshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehsthgvphhhvghnrdhsmhgrlhhlvgihrdifohhrkhesghhmrghilhdrtghomheq
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+X-SNCR-hdrdom: btinternet.com
+Received: from localhost.localdomain (81.141.56.129) by re-prd-rgout-005.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
+        id 5ED9C74D136117DE; Wed, 30 Sep 2020 10:49:38 +0100
+From:   Richard Haines <richard_c_haines@btinternet.com>
+To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org
+Cc:     stephen.smalley.work@gmail.com, paul@paul-moore.com,
+        pablo@netfilter.org, laforge@gnumonks.org, jmorris@namei.org,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [PATCH 3/3] selinux: Add SELinux GTP support
+Date:   Wed, 30 Sep 2020 10:49:34 +0100
+Message-Id: <20200930094934.32144-4-richard_c_haines@btinternet.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200930094934.32144-1-richard_c_haines@btinternet.com>
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
 MIME-Version: 1.0
-References: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
-In-Reply-To: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 15 Oct 2020 16:06:04 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com>
-Message-ID: <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID changes for v5.10
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These were rebased since the merge window started, for no apparent reason.
+The SELinux GTP implementation is explained in:
+Documentation/security/GTP.rst
 
-Were they in linux-next?
+Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
+---
+ Documentation/security/GTP.rst      | 61 ++++++++++++++++++++++++++
+ security/selinux/hooks.c            | 66 +++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  2 +
+ security/selinux/include/objsec.h   |  4 ++
+ 4 files changed, 133 insertions(+)
 
-And if so, why was I sent some different version?
+diff --git a/Documentation/security/GTP.rst b/Documentation/security/GTP.rst
+index c748587ec..433fcb688 100644
+--- a/Documentation/security/GTP.rst
++++ b/Documentation/security/GTP.rst
+@@ -15,6 +15,9 @@ For security module support, three GTP specific hooks have been implemented::
+     security_gtp_dev_free()
+     security_gtp_dev_cmd()
+ 
++The usage of these hooks are described below with the SELinux implementation
++described in the `GTP SELinux Support`_ chapter.
++
+ 
+ security_gtp_dev_alloc()
+ ~~~~~~~~~~~~~~~~~~~~~~
+@@ -37,3 +40,61 @@ zero on success, negative values on failure. The commands are based on values
+ from ``include/uapi/linux/gtp.h`` as follows::
+ 
+ ``enum gtp_genl_cmds { GTP_CMD_NEWPDP, GTP_CMD_DELPDP, GTP_CMD_GETPDP };``
++
++
++GTP SELinux Support
++===================
++
++Policy Statements
++-----------------
++The following class and permissions to support GTP are available within the
++kernel::
++
++    class gtp { add del get }
++
++The permissions are described in the sections that follow.
++
++
++Security Hooks
++--------------
++
++The `GTP LSM Support`_ chapter above describes the following GTP security
++hooks with the SELinux specifics expanded below::
++
++    security_gtp_dev_alloc -> selinux_gtp_dev_alloc_security(gtp)
++    security_gtp_dev_free  -> selinux_gtp_dev_free_security(gtp)
++    security_gtp_dev_cmd   -> selinux_gtp_dev_cmd(gtp, cmd)
++
++
++selinux_gtp_dev_alloc_security()
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++Allocates a security structure for a GTP device provided the caller has the
++``gtp { add }`` permission. Can return errors ``-ENOMEM`` or ``-EACCES``.
++Returns zero if the security structure has been allocated.
++
++
++selinux_gtp_dev_free_security()
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++Frees a security structure for a GTP device provided the caller has the
++``gtp { del }`` permission. Can return error ``-EACCES``. Returns zero if the
++security structure has been freed.
++
++
++selinux_gtp_dev_cmd()
++~~~~~~~~~~~~~~~~~~~~~
++Validate if the caller (current SID) and the GTP device SID have the required
++permission to perform the operation. The GTP/SELinux permission map is
++as follow::
++
++    GTP_CMD_NEWPDP = gtp { add }
++    GTP_CMD_DELPDP = gtp { del }
++    GTP_CMD_GETPDP = gtp { get }
++
++Returns ``-EACCES`` if denied or zero if allowed.
++
++NOTES::
++   1) If the GTP device has the ``{ add }`` permission it can add device and
++      also add PDP's (packet data protocol).
++
++   2) If the GTP device has the ``{ del }`` permission it can delete a device
++      and also delete PDP's.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index d6b182c11..5229a4f20 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -91,6 +91,7 @@
+ #include <uapi/linux/mount.h>
+ #include <linux/fsnotify.h>
+ #include <linux/fanotify.h>
++#include <net/gtp.h>
+ 
+ #include "avc.h"
+ #include "objsec.h"
+@@ -5520,6 +5521,68 @@ static int selinux_tun_dev_open(void *security)
+ 	return 0;
+ }
+ 
++static int selinux_gtp_dev_alloc_security(struct gtp_dev *gtp)
++{
++	struct gtp_security_struct *gtpsec;
++	u32 sid = current_sid();
++	int err;
++
++	err = avc_has_perm(&selinux_state, sid, sid,
++			   SECCLASS_GTP, GTP__ADD, NULL);
++	if (err < 0)
++		return err;
++
++	gtpsec = kzalloc(sizeof(*gtpsec), GFP_KERNEL);
++	if (!gtpsec)
++		return -ENOMEM;
++
++	gtpsec->sid = sid;
++	gtp->security = gtpsec;
++
++	return 0;
++}
++
++static int selinux_gtp_dev_free_security(struct gtp_dev *gtp)
++{
++	struct gtp_security_struct *gtpsec = gtp->security;
++	u32 sid = current_sid();
++	int err;
++
++	err = avc_has_perm(&selinux_state, sid, gtpsec->sid,
++			   SECCLASS_GTP, GTP__DEL, NULL);
++	if (err < 0)
++		return err;
++
++	gtp->security = NULL;
++	kfree(gtpsec);
++
++	return 0;
++}
++
++static int selinux_gtp_dev_cmd(struct gtp_dev *gtp, enum gtp_genl_cmds cmd)
++{
++	struct gtp_security_struct *gtpsec = gtp->security;
++	u32 perm, sid = current_sid();
++
++	switch (cmd) {
++	case GTP_CMD_NEWPDP:
++		perm = GTP__ADD;
++		break;
++	case GTP_CMD_DELPDP:
++		perm = GTP__DEL;
++		break;
++	case GTP_CMD_GETPDP:
++		perm = GTP__GET;
++		break;
++	default:
++		WARN_ON(1);
++		return -EPERM;
++	}
++
++	return avc_has_perm(&selinux_state, sid, gtpsec->sid,
++			    SECCLASS_GTP, perm, NULL);
++}
++
+ #ifdef CONFIG_NETFILTER
+ 
+ static unsigned int selinux_ip_forward(struct sk_buff *skb,
+@@ -7130,6 +7193,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(tun_dev_attach_queue, selinux_tun_dev_attach_queue),
+ 	LSM_HOOK_INIT(tun_dev_attach, selinux_tun_dev_attach),
+ 	LSM_HOOK_INIT(tun_dev_open, selinux_tun_dev_open),
++	LSM_HOOK_INIT(gtp_dev_free_security, selinux_gtp_dev_free_security),
++	LSM_HOOK_INIT(gtp_dev_cmd, selinux_gtp_dev_cmd),
+ #ifdef CONFIG_SECURITY_INFINIBAND
+ 	LSM_HOOK_INIT(ib_pkey_access, selinux_ib_pkey_access),
+ 	LSM_HOOK_INIT(ib_endport_manage_subnet,
+@@ -7204,6 +7269,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_getsecctx, selinux_inode_getsecctx),
+ 	LSM_HOOK_INIT(sk_alloc_security, selinux_sk_alloc_security),
+ 	LSM_HOOK_INIT(tun_dev_alloc_security, selinux_tun_dev_alloc_security),
++	LSM_HOOK_INIT(gtp_dev_alloc_security, selinux_gtp_dev_alloc_security),
+ #ifdef CONFIG_SECURITY_INFINIBAND
+ 	LSM_HOOK_INIT(ib_alloc_security, selinux_ib_alloc_security),
+ #endif
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 40cebde62..3865a4549 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -249,6 +249,8 @@ struct security_class_mapping secclass_map[] = {
+ 	  {"open", "cpu", "kernel", "tracepoint", "read", "write"} },
+ 	{ "lockdown",
+ 	  { "integrity", "confidentiality", NULL } },
++	{ "gtp",
++	  { "add", "del", "get", NULL } },
+ 	{ NULL }
+   };
+ 
+diff --git a/security/selinux/include/objsec.h b/security/selinux/include/objsec.h
+index 330b7b6d4..311ffb6ea 100644
+--- a/security/selinux/include/objsec.h
++++ b/security/selinux/include/objsec.h
+@@ -148,6 +148,10 @@ struct perf_event_security_struct {
+ 	u32 sid;  /* SID of perf_event obj creator */
+ };
+ 
++struct gtp_security_struct {
++	u32 sid;  /* SID of gtp obj creator */
++};
++
+ extern struct lsm_blob_sizes selinux_blob_sizes;
+ static inline struct task_security_struct *selinux_cred(const struct cred *cred)
+ {
+-- 
+2.26.2
 
-             Linus
