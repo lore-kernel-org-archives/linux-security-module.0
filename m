@@ -2,56 +2,97 @@ Return-Path: <SRS0=Thbb=DH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18957C47420
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 10:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2567EC4727E
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 10:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E15422074A
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 10:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEDD82076B
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 10:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbgI3KO3 (ORCPT
+        id S1728983AbgI3KX6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Sep 2020 06:14:29 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:42710 "EHLO fornost.hmeau.com"
+        Wed, 30 Sep 2020 06:23:58 -0400
+Received: from correo.us.es ([193.147.175.20]:59640 "EHLO mail.us.es"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbgI3KO3 (ORCPT
+        id S1725776AbgI3KX6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Sep 2020 06:14:29 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.0.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1kNZ7u-00049c-8C; Wed, 30 Sep 2020 20:14:23 +1000
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Wed, 30 Sep 2020 20:14:22 +1000
-Date:   Wed, 30 Sep 2020 20:14:22 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     James Morris <jmorris@namei.org>
-Cc:     Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH] lsm,selinux: pass the family information along with
- xfrm flow
-Message-ID: <20200930101422.GC25359@gondor.apana.org.au>
-References: <160141647786.7997.5490924406329369782.stgit@sifl>
- <alpine.LRH.2.21.2009300909150.6592@namei.org>
+        Wed, 30 Sep 2020 06:23:58 -0400
+X-Greylist: delayed 374 seconds by postgrey-1.27 at vger.kernel.org; Wed, 30 Sep 2020 06:23:57 EDT
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id BFA1C18D00E
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2020 12:17:39 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id B0991DA8F5
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2020 12:17:39 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id A44A0DA90C; Wed, 30 Sep 2020 12:17:39 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 20932DA722;
+        Wed, 30 Sep 2020 12:17:37 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Wed, 30 Sep 2020 12:17:37 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (unknown [90.77.255.23])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id DFFF742EF9E2;
+        Wed, 30 Sep 2020 12:17:36 +0200 (CEST)
+Date:   Wed, 30 Sep 2020 12:17:36 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Richard Haines <richard_c_haines@btinternet.com>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        stephen.smalley.work@gmail.com, paul@paul-moore.com,
+        laforge@gnumonks.org, jmorris@namei.org
+Subject: Re: [PATCH 0/3] Add LSM/SELinux support for GPRS Tunneling Protocol
+ (GTP)
+Message-ID: <20200930101736.GA18687@salvia>
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.2009300909150.6592@namei.org>
+In-Reply-To: <20200930094934.32144-1-richard_c_haines@btinternet.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 30, 2020 at 09:09:20AM +1000, James Morris wrote:
->
-> I'm not keen on adding a parameter which nobody is using. Perhaps a note 
-> in the header instead?
+On Wed, Sep 30, 2020 at 10:49:31AM +0100, Richard Haines wrote:
+> These patches came about after looking at 5G open source in particular
+> the updated 5G GTP driver at [1]. As this driver is still under
+> development, added the LSM/SELinux hooks to the current stable GTP
+> version in kernel selinux-next [2]. Similar hooks have also been
+> implemented in [1] as it uses the same base code as the current 3G
+> version (except that it handles different packet types).
 
-Please at least change to the struct flowi to flowi_common if we're
-not adding a family field.
+Yes, [1] looks like it is based on the existing 3G driver in the Linux
+tree.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> To test the 3G GTP driver there is an RFC patch for the selinux-testsuite
+> at [3].
+> 
+> To enable the selinux-testsuite GTP tests, the libgtpnl [4] library and
+> tools needed to be modified to:
+> Return ERRNO on error to detect EACCES, Add gtp_match_tunnel function,
+> Allow gtp-link to specify port numbers for multiple instances to
+> run in the same namespace.
+> 
+> A patch for libgtpnl is supplied in the selinux-testsuite patch as well
+> as setup/test instructions (libgtpnl is not packaged by Fedora)
+> 
+> These patches were tested on Fedora 32 with kernel [2] using the
+> 'targeted' policy. Also ran the Linux Kernel GTP-U basic tests [5].
+
+I don't remember to have seen anything similar in the existing tunnel
+net_devices.
+
+Why do you need this?
+
+> [1] https://github.com/PrinzOwO/gtp5g
