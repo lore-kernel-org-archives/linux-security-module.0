@@ -2,88 +2,88 @@ Return-Path: <SRS0=Thbb=DH=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C38B1C4727E
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 13:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C68C4727E
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 15:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 859FC206B7
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 13:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77829206F7
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 15:56:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="kZXhuwkp"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YREuWAA9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730218AbgI3NoP (ORCPT
+        id S1730195AbgI3P4Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Sep 2020 09:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729663AbgI3NoP (ORCPT
+        Wed, 30 Sep 2020 11:56:24 -0400
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com ([66.163.184.49]:34979
+        "EHLO sonic317-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725893AbgI3P4Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Sep 2020 09:44:15 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF066C0613D1
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2020 06:44:14 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id qp15so1980093ejb.3
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Sep 2020 06:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Uv+0SEm3ZBbuCilDEG/CT4tZmdLu+h9w/O+Bpd1VJEw=;
-        b=kZXhuwkp+0Pj2nq+Wdm8mrhdY9dD6koq1af5Fk5s6iJWJreLo6FGGg++D7B+iF2Z16
-         Gc9IuJzNwpLIbJBk14f/+KcHO4zb07BLd3JdWWZ/6Sq53QRfNWGgZnNYraOqYw+NaV/S
-         Oa52DvX7NZE2OAQai8XFn19vQRqJ7DZCWAYCPzunUkclSon5s8WuKyspntOGXBUGi+kM
-         gSQSDp6Ih1tOXtz8Jfo8XC+2RHN6ucdjBH/ZZAh5bB8x9kBEAQie6wWnc+SvOSu9cFkb
-         00sAviQPAdrFOZOxV0PZQ7ktzrj1OS69sEMG7wsu9RcsJSPo9XGLG0Ver4XX44A5fflG
-         WC8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Uv+0SEm3ZBbuCilDEG/CT4tZmdLu+h9w/O+Bpd1VJEw=;
-        b=kO8+bCDQA4uJB6+sOEP7C5rOA1IVZ+JXl2NTO/YQn0VdecKEFgXyUOAFSwq9ALD/8N
-         TfBamg28XHliTWPME3p2UCrIvUmurW1x17RSnsdz/bUVA45H5NDPFbg/MWOj6YR5JD9O
-         Xii7JM0VLt5cGVc4u5i28QpDG12frntVWn9XW2IQZh2VnPeQiAYUbpuw2JlqeYNHIisC
-         vTpREfll0IjDXmsfhqDipTncFRF8dLW284OVDECvIz6y3Xk33PcHAdHriP5Lgbur9UKm
-         sOGfc5AxJOT3uSv0bqyqCK5yfhopnjNyPcIlSdHOS7qJc6WH8TKwDb+QhW8cAK/XQGhl
-         WULw==
-X-Gm-Message-State: AOAM532XF11aeFsmPeemyBqCh9VOzba+W24G3VqzskoEJEi0v3kc6Vqu
-        javYDj9qIESyrrEEE6P82T9/vKnHK9JpSXZmrUrHsY987O5t
-X-Google-Smtp-Source: ABdhPJyIyHapkdpsMZlH1k0VMzFpSD2bBOeAOJPN9zjb137yZwO+lFN8UEOnqZPlBqsUFSYFjZaRiRi8PRSDcuT8Xyg=
-X-Received: by 2002:a17:906:77cd:: with SMTP id m13mr2817282ejn.106.1601473453339;
- Wed, 30 Sep 2020 06:44:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <160141647786.7997.5490924406329369782.stgit@sifl> <alpine.LRH.2.21.2009300909150.6592@namei.org>
-In-Reply-To: <alpine.LRH.2.21.2009300909150.6592@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 30 Sep 2020 09:44:02 -0400
-Message-ID: <CAHC9VhTM_a+L8nY8QLVdA1FcL8hjdV1ZNLJcr6G_Q27qPD_5EQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,selinux: pass the family information along with
- xfrm flow
-To:     James Morris <jmorris@namei.org>
+        Wed, 30 Sep 2020 11:56:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1601481383; bh=RELQ6zEaKUzKotEk3T33ncEVq3IqazKA87XFz5LBnDQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=YREuWAA9BgI+sDAXKonin6pM1Z6JePzC6H3DozvvlkI+8QHbUk9L3rRz9ws+XDtHxxv7UNK1rVRsBfNsGGOXW//b2pTVzyoS2lIWVWe4J1CLCT50niU8+Y2iEckvaG0lqXd6soJ6q1YR0hzEgNHuEaix5ICY5te/1bSI6+mvrjO3LV5z3QsmrMAWLVvDBN5b/omKVXI38VRnFDwYCbrwc6iaD2IuBxxnjl3yhvHXlwnBqBhNMCRur5Kbjd7P55VIjr8sqm6wqSOt9xAJHrj0BcR3wN5knxcpyXtgH6upgkfNSA+Rcp+x2fIRUeYlvBfwXfKIKazk3ggYjdJpgd3Yog==
+X-YMail-OSG: DlAYhWIVM1nEoZgQ.gTV2uevcLhaWDdPyQW7eTYyCPW.jtc_Xu7KWxL9.P7S5JI
+ OIspIMKrRxqo92PuCKA2P4pOLQ3jXgs3axUgZL_rQdDkVJrM2YnUQBOh6aPGVRdxm3ELchi8QYd0
+ VzXFpJ221xM.VNOta15KkE98zc1HPI4Z_JOqkHqOHDPbcV22wCNOpnWX8jysDi06jjUkMtsTCivc
+ Vnd9CK2en9c9YFUNZgElmz4lAbvQ8582O0bs2RGrglrBIFWfIeMYUvoUVQ37SjzLaAI1kfc2LPrq
+ fL_VJYV4xDqWzCVE2R_Y2L5b.7R1OsHL7o9jrUTgwxZXqfkcLf5xDBtKrqBrSaUcXQXtsmA1utLM
+ vgiRzU3JQvVJEOCSCy3HcvJSy2tQGhD9NZkuCnK7BpY3IT5oYc8QhmYICDeF3.DrJHaoPYkVQsql
+ c69aZPDEU.T9nZkjfd59MzUFgt65aehOplaqyv_o1Zc9wJw3Py6EMt9zXCFtd.MsQ58A5n0vcqAd
+ r3gRZ_YmLC4wd7KOTl5JuNKolNyuN6WIg3NdOjKAGALXKxZbu2ABQUmioO5rKjF1WE7HboTRITGd
+ _WIDGbAlIjOadwWpdy0YM8qPANZMApoZH8DA9xgFh7NQcEVadDoq15603Q9NK5SolEb_YHPcwA6C
+ rh.GAJ4_zbR_Tfs8iYBWs1atyE5xKQ87eDL0kxD6AOj8DAfTpbOgsiTCoXHb2ujrEKJHb8WR58rP
+ WxBCyUiSNWB22C3a9dtVozf.OEgLTNH4YL58UbwDvxb5Odcvuh1Kji5L3B1fMhtM.SX.L0WDarZh
+ nPoMYPpegkyD97yMs4AomVfmxMGHbP1GvY6d_GHXUUy4auENbEmTs1YymA7J7iyoQWwDGdW6g5V1
+ C.xLx_itN09.R.cP6v7OIArQjZzXIyQOsfnM7.x212204byEtvY3gxuyQG1pB4bmQ1JEbiFgPlzQ
+ XJ8YAgXDRgJC44c_NlBqxiGfEx5NTpKLOiMIW39LwIV10Ht7TQOUhI6FJ75wVdIAMABtbUXS9EN2
+ Edk80ao1jic82hiS7Cb519pAi066.pU.Vqujy7WM0_EHFPrska4gmmUGi9mNo4kqka9kOVsd2ZYg
+ iP_MFLE30z7rkNfHYkcyC1Sh_dFeXHnonGjE47kdO.fzXDz6xn1nz2kTh1WUJPN.q7giwTbjePoG
+ 6BtF6hIf7I.z0XO1RTdZ1MD_b8J6c4AdHFpDMGQz.jYKZmSFgqKO4MSCbqCNlI.n3LJCiFcGjzDO
+ tBNQVQriJJ0fFmv9QGtrpNxnm0b15r2DkG6nJaW6a_0Y.zOyUVVCTuYL.vqgMOhlpE0R.Sjge5cl
+ Cza3l6Ad_DEUx1yJnWM7jTZ.jKuP01CzfiYOvMTHHYn6aLdZwS.kIP3TuV1JL50vgkJ13oZ3dXTX
+ oJq4Q6gULZ18tuTgTioj2igkfsuKOKsRKSCXLWK4hqs5ja9Octq23Iym4t.QglT8HZeJ0oYXGxLf
+ ayXIcuHJz3B5KVhPsH5QcU1C3qcSzVSZ30nwi5Ab4P9kVLhwqOKZyI7Mk2AEMGpj.TVmTUL1GXbL
+ SlMxMW6Polw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Wed, 30 Sep 2020 15:56:23 +0000
+Received: by smtp418.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 8a38d755fdf2675bafdb143cab02cede;
+          Wed, 30 Sep 2020 15:56:22 +0000 (UTC)
+Subject: Re: [PATCH 0/3] Add LSM/SELinux support for GPRS Tunneling Protocol
+ (GTP)
+To:     Richard Haines <richard_c_haines@btinternet.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
 Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        stephen.smalley.work@gmail.com, paul@paul-moore.com,
+        laforge@gnumonks.org, jmorris@namei.org
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
+ <20200930101736.GA18687@salvia>
+ <0a5e4f19d7bb5c61985dece7614dc33329858f36.camel@btinternet.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <c075cd58-983f-0386-4281-6ff1edb6920c@schaufler-ca.com>
+Date:   Wed, 30 Sep 2020 08:56:22 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.2.2
+MIME-Version: 1.0
+In-Reply-To: <0a5e4f19d7bb5c61985dece7614dc33329858f36.camel@btinternet.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.16718 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Sep 29, 2020 at 7:09 PM James Morris <jmorris@namei.org> wrote:
-> I'm not keen on adding a parameter which nobody is using. Perhaps a note
-> in the header instead?
+On 9/30/2020 5:20 AM, Richard Haines wrote:
+> On Wed, 2020-09-30 at 12:17 +0200, Pablo Neira Ayuso wrote:
+> ....
+>> Why do you need this?
+> I don't actually have a use for this, I only did it out of idle
+> curiosity. If it is useful to the community then okay. Given the
+> attemped move to Open 5G I thought adding MAC support might be useful
+> somewhere along the line.
 
-On Wed, Sep 30, 2020 at 6:14 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> Please at least change to the struct flowi to flowi_common if we're
-> not adding a family field.
+I am not a fan of adding code that "might be useful someday".
+There's no way to determine if it's been done correctly and
+may interfere with a "real" implementation later.
 
-It did feel a bit weird adding a (currently) unused parameter, so I
-can understand the concern, I just worry that a comment in the code
-will be easily overlooked.  I also thought about passing a pointer to
-the nested flowi_common struct, but it doesn't appear that this is
-done anywhere else in the stack so it felt wrong to do it here.
-
--- 
-paul moore
-www.paul-moore.com
