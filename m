@@ -1,89 +1,592 @@
-Return-Path: <SRS0=Thbb=DH=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=6CmR=DI=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C68C4727E
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 15:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A37C47420
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 17:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77829206F7
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Sep 2020 15:56:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="YREuWAA9"
+	by mail.kernel.org (Postfix) with ESMTP id 7007520B1F
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 17:03:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbgI3P4Y (ORCPT
+        id S1732867AbgJARDC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Sep 2020 11:56:24 -0400
-Received: from sonic317-38.consmr.mail.ne1.yahoo.com ([66.163.184.49]:34979
-        "EHLO sonic317-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725893AbgI3P4Y (ORCPT
+        Thu, 1 Oct 2020 13:03:02 -0400
+Received: from smtp-bc0c.mail.infomaniak.ch ([45.157.188.12]:60577 "EHLO
+        smtp-bc0c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732861AbgJARC7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Sep 2020 11:56:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1601481383; bh=RELQ6zEaKUzKotEk3T33ncEVq3IqazKA87XFz5LBnDQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=YREuWAA9BgI+sDAXKonin6pM1Z6JePzC6H3DozvvlkI+8QHbUk9L3rRz9ws+XDtHxxv7UNK1rVRsBfNsGGOXW//b2pTVzyoS2lIWVWe4J1CLCT50niU8+Y2iEckvaG0lqXd6soJ6q1YR0hzEgNHuEaix5ICY5te/1bSI6+mvrjO3LV5z3QsmrMAWLVvDBN5b/omKVXI38VRnFDwYCbrwc6iaD2IuBxxnjl3yhvHXlwnBqBhNMCRur5Kbjd7P55VIjr8sqm6wqSOt9xAJHrj0BcR3wN5knxcpyXtgH6upgkfNSA+Rcp+x2fIRUeYlvBfwXfKIKazk3ggYjdJpgd3Yog==
-X-YMail-OSG: DlAYhWIVM1nEoZgQ.gTV2uevcLhaWDdPyQW7eTYyCPW.jtc_Xu7KWxL9.P7S5JI
- OIspIMKrRxqo92PuCKA2P4pOLQ3jXgs3axUgZL_rQdDkVJrM2YnUQBOh6aPGVRdxm3ELchi8QYd0
- VzXFpJ221xM.VNOta15KkE98zc1HPI4Z_JOqkHqOHDPbcV22wCNOpnWX8jysDi06jjUkMtsTCivc
- Vnd9CK2en9c9YFUNZgElmz4lAbvQ8582O0bs2RGrglrBIFWfIeMYUvoUVQ37SjzLaAI1kfc2LPrq
- fL_VJYV4xDqWzCVE2R_Y2L5b.7R1OsHL7o9jrUTgwxZXqfkcLf5xDBtKrqBrSaUcXQXtsmA1utLM
- vgiRzU3JQvVJEOCSCy3HcvJSy2tQGhD9NZkuCnK7BpY3IT5oYc8QhmYICDeF3.DrJHaoPYkVQsql
- c69aZPDEU.T9nZkjfd59MzUFgt65aehOplaqyv_o1Zc9wJw3Py6EMt9zXCFtd.MsQ58A5n0vcqAd
- r3gRZ_YmLC4wd7KOTl5JuNKolNyuN6WIg3NdOjKAGALXKxZbu2ABQUmioO5rKjF1WE7HboTRITGd
- _WIDGbAlIjOadwWpdy0YM8qPANZMApoZH8DA9xgFh7NQcEVadDoq15603Q9NK5SolEb_YHPcwA6C
- rh.GAJ4_zbR_Tfs8iYBWs1atyE5xKQ87eDL0kxD6AOj8DAfTpbOgsiTCoXHb2ujrEKJHb8WR58rP
- WxBCyUiSNWB22C3a9dtVozf.OEgLTNH4YL58UbwDvxb5Odcvuh1Kji5L3B1fMhtM.SX.L0WDarZh
- nPoMYPpegkyD97yMs4AomVfmxMGHbP1GvY6d_GHXUUy4auENbEmTs1YymA7J7iyoQWwDGdW6g5V1
- C.xLx_itN09.R.cP6v7OIArQjZzXIyQOsfnM7.x212204byEtvY3gxuyQG1pB4bmQ1JEbiFgPlzQ
- XJ8YAgXDRgJC44c_NlBqxiGfEx5NTpKLOiMIW39LwIV10Ht7TQOUhI6FJ75wVdIAMABtbUXS9EN2
- Edk80ao1jic82hiS7Cb519pAi066.pU.Vqujy7WM0_EHFPrska4gmmUGi9mNo4kqka9kOVsd2ZYg
- iP_MFLE30z7rkNfHYkcyC1Sh_dFeXHnonGjE47kdO.fzXDz6xn1nz2kTh1WUJPN.q7giwTbjePoG
- 6BtF6hIf7I.z0XO1RTdZ1MD_b8J6c4AdHFpDMGQz.jYKZmSFgqKO4MSCbqCNlI.n3LJCiFcGjzDO
- tBNQVQriJJ0fFmv9QGtrpNxnm0b15r2DkG6nJaW6a_0Y.zOyUVVCTuYL.vqgMOhlpE0R.Sjge5cl
- Cza3l6Ad_DEUx1yJnWM7jTZ.jKuP01CzfiYOvMTHHYn6aLdZwS.kIP3TuV1JL50vgkJ13oZ3dXTX
- oJq4Q6gULZ18tuTgTioj2igkfsuKOKsRKSCXLWK4hqs5ja9Octq23Iym4t.QglT8HZeJ0oYXGxLf
- ayXIcuHJz3B5KVhPsH5QcU1C3qcSzVSZ30nwi5Ab4P9kVLhwqOKZyI7Mk2AEMGpj.TVmTUL1GXbL
- SlMxMW6Polw--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Wed, 30 Sep 2020 15:56:23 +0000
-Received: by smtp418.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 8a38d755fdf2675bafdb143cab02cede;
-          Wed, 30 Sep 2020 15:56:22 +0000 (UTC)
-Subject: Re: [PATCH 0/3] Add LSM/SELinux support for GPRS Tunneling Protocol
- (GTP)
-To:     Richard Haines <richard_c_haines@btinternet.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
-        stephen.smalley.work@gmail.com, paul@paul-moore.com,
-        laforge@gnumonks.org, jmorris@namei.org
-References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
- <20200930101736.GA18687@salvia>
- <0a5e4f19d7bb5c61985dece7614dc33329858f36.camel@btinternet.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <c075cd58-983f-0386-4281-6ff1edb6920c@schaufler-ca.com>
-Date:   Wed, 30 Sep 2020 08:56:22 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.2.2
+        Thu, 1 Oct 2020 13:02:59 -0400
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4C2KFD6MR9zlhPwV;
+        Thu,  1 Oct 2020 19:02:56 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4C2KFD2CXnzlh8TM;
+        Thu,  1 Oct 2020 19:02:56 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: [PATCH v11 3/3] selftest/interpreter: Add tests for trusted_for(2) policies
+Date:   Thu,  1 Oct 2020 19:02:32 +0200
+Message-Id: <20201001170232.522331-4-mic@digikod.net>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201001170232.522331-1-mic@digikod.net>
+References: <20201001170232.522331-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <0a5e4f19d7bb5c61985dece7614dc33329858f36.camel@btinternet.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.16718 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/30/2020 5:20 AM, Richard Haines wrote:
-> On Wed, 2020-09-30 at 12:17 +0200, Pablo Neira Ayuso wrote:
-> ....
->> Why do you need this?
-> I don't actually have a use for this, I only did it out of idle
-> curiosity. If it is useful to the community then okay. Given the
-> attemped move to Open 5G I thought adding MAC support might be useful
-> somewhere along the line.
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-I am not a fan of adding code that "might be useful someday".
-There's no way to determine if it's been done correctly and
-may interfere with a "real" implementation later.
+Test that checks performed by trusted_for(2) on file descriptors are
+consistent with noexec mount points and file execute permissions,
+according to the policy configured with the fs.trust_policy sysctl.
+
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+---
+
+Changes since v10:
+* Update selftest Makefile.
+
+Changes since v9:
+* Rename the syscall and the sysctl.
+* Update tests for enum trusted_for_usage
+
+Changes since v8:
+* Update with the dedicated syscall introspect_access(2) and the renamed
+  fs.introspection_policy sysctl.
+* Remove check symlink which can't be use as is anymore.
+* Use socketpair(2) to test UNIX socket.
+
+Changes since v7:
+* Update tests with faccessat2/AT_INTERPRETED, including new ones to
+  check that setting R_OK or W_OK returns EINVAL.
+* Add tests for memfd, pipefs and nsfs.
+* Rename and move back tests to a standalone directory.
+
+Changes since v6:
+* Add full combination tests for all file types, including block
+  devices, character devices, fifos, sockets and symlinks.
+* Properly save and restore initial sysctl value for all tests.
+
+Changes since v5:
+* Refactor with FIXTURE_VARIANT, which make the tests much more easy to
+  read and maintain.
+* Save and restore initial sysctl value (suggested by Kees Cook).
+* Test with a sysctl value of 0.
+* Check errno in sysctl_access_write test.
+* Update tests for the CAP_SYS_ADMIN switch.
+* Update tests to check -EISDIR (replacing -EACCES).
+* Replace FIXTURE_DATA() with FIXTURE() (spotted by Kees Cook).
+* Use global const strings.
+
+Changes since v3:
+* Replace RESOLVE_MAYEXEC with O_MAYEXEC.
+* Add tests to check that O_MAYEXEC is ignored by open(2) and openat(2).
+
+Changes since v2:
+* Move tests from exec/ to openat2/ .
+* Replace O_MAYEXEC with RESOLVE_MAYEXEC from openat2(2).
+* Cleanup tests.
+
+Changes since v1:
+* Move tests from yama/ to exec/ .
+* Fix _GNU_SOURCE in kselftest_harness.h .
+* Add a new test sysctl_access_write to check if CAP_MAC_ADMIN is taken
+  into account.
+* Test directory execution which is always forbidden since commit
+  73601ea5b7b1 ("fs/open.c: allow opening only regular files during
+  execve()"), and also check that even the root user can not bypass file
+  execution checks.
+* Make sure delete_workspace() always as enough right to succeed.
+* Cosmetic cleanup.
+---
+ tools/testing/selftests/Makefile              |   1 +
+ .../testing/selftests/interpreter/.gitignore  |   2 +
+ tools/testing/selftests/interpreter/Makefile  |  21 +
+ tools/testing/selftests/interpreter/config    |   1 +
+ .../selftests/interpreter/trust_policy_test.c | 362 ++++++++++++++++++
+ 5 files changed, 387 insertions(+)
+ create mode 100644 tools/testing/selftests/interpreter/.gitignore
+ create mode 100644 tools/testing/selftests/interpreter/Makefile
+ create mode 100644 tools/testing/selftests/interpreter/config
+ create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 9018f45d631d..5a7cf8dd7ce2 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -21,6 +21,7 @@ TARGETS += ftrace
+ TARGETS += futex
+ TARGETS += gpio
+ TARGETS += intel_pstate
++TARGETS += interpreter
+ TARGETS += ipc
+ TARGETS += ir
+ TARGETS += kcmp
+diff --git a/tools/testing/selftests/interpreter/.gitignore b/tools/testing/selftests/interpreter/.gitignore
+new file mode 100644
+index 000000000000..82a4846cbc4b
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/.gitignore
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0-only
++/*_test
+diff --git a/tools/testing/selftests/interpreter/Makefile b/tools/testing/selftests/interpreter/Makefile
+new file mode 100644
+index 000000000000..dbca8ebda67e
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/Makefile
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0-or-later
++
++CFLAGS += -Wall -O2
++LDLIBS += -lcap
++
++src_test := $(wildcard *_test.c)
++TEST_GEN_PROGS := $(src_test:.c=)
++
++KSFT_KHDR_INSTALL := 1
++include ../lib.mk
++
++khdr_dir = $(top_srcdir)/usr/include
++
++$(khdr_dir)/asm-generic/unistd.h: khdr
++	@:
++
++$(khdr_dir)/linux/trusted-for.h: khdr
++	@:
++
++$(OUTPUT)/%_test: %_test.c $(khdr_dir)/asm-generic/unistd.h $(khdr_dir)/linux/trusted-for.h ../kselftest_harness.h
++	$(LINK.c) $< $(LDLIBS) -o $@ -I$(khdr_dir)
+diff --git a/tools/testing/selftests/interpreter/config b/tools/testing/selftests/interpreter/config
+new file mode 100644
+index 000000000000..dd53c266bf52
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/config
+@@ -0,0 +1 @@
++CONFIG_SYSCTL=y
+diff --git a/tools/testing/selftests/interpreter/trust_policy_test.c b/tools/testing/selftests/interpreter/trust_policy_test.c
+new file mode 100644
+index 000000000000..4818c5524ec0
+--- /dev/null
++++ b/tools/testing/selftests/interpreter/trust_policy_test.c
+@@ -0,0 +1,362 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Test trusted_for(2) with fs.trust_policy sysctl
++ *
++ * Copyright © 2018-2020 ANSSI
++ *
++ * Author: Mickaël Salaün <mic@digikod.net>
++ */
++
++#define _GNU_SOURCE
++#include <asm-generic/unistd.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <linux/trusted-for.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/capability.h>
++#include <sys/mman.h>
++#include <sys/mount.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++#include <sys/syscall.h>
++#include <sys/sysmacros.h>
++#include <sys/types.h>
++#include <unistd.h>
++
++#include "../kselftest_harness.h"
++
++#ifndef trusted_for
++static int trusted_for(const int fd, const enum trusted_for_usage usage,
++		const __u32 flags)
++{
++	errno = 0;
++	return syscall(__NR_trusted_for, fd, usage, flags);
++}
++#endif
++
++static const char sysctl_path[] = "/proc/sys/fs/trust_policy";
++
++static const char workdir_path[] = "./test-mount";
++static const char reg_file_path[] = "./test-mount/regular_file";
++static const char dir_path[] = "./test-mount/directory";
++static const char block_dev_path[] = "./test-mount/block_device";
++static const char char_dev_path[] = "./test-mount/character_device";
++static const char fifo_path[] = "./test-mount/fifo";
++
++static void ignore_dac(struct __test_metadata *_metadata, int override)
++{
++	cap_t caps;
++	const cap_value_t cap_val[2] = {
++		CAP_DAC_OVERRIDE,
++		CAP_DAC_READ_SEARCH,
++	};
++
++	caps = cap_get_proc();
++	ASSERT_NE(NULL, caps);
++	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_val,
++				override ? CAP_SET : CAP_CLEAR));
++	ASSERT_EQ(0, cap_set_proc(caps));
++	EXPECT_EQ(0, cap_free(caps));
++}
++
++static void ignore_sys_admin(struct __test_metadata *_metadata, int override)
++{
++	cap_t caps;
++	const cap_value_t cap_val[1] = {
++		CAP_SYS_ADMIN,
++	};
++
++	caps = cap_get_proc();
++	ASSERT_NE(NULL, caps);
++	ASSERT_EQ(0, cap_set_flag(caps, CAP_EFFECTIVE, 1, cap_val,
++				override ? CAP_SET : CAP_CLEAR));
++	ASSERT_EQ(0, cap_set_proc(caps));
++	EXPECT_EQ(0, cap_free(caps));
++}
++
++static void test_omx(struct __test_metadata *_metadata,
++		const char *const path, const int err_access)
++{
++	int flags = O_RDONLY | O_CLOEXEC;
++	int fd, access_ret, access_errno;
++
++	/* Do not block on pipes. */
++	if (path == fifo_path)
++		flags |= O_NONBLOCK;
++
++	fd = open(path, flags);
++	ASSERT_LE(0, fd) {
++		TH_LOG("Failed to open %s: %s", path, strerror(errno));
++	}
++	access_ret = trusted_for(fd, TRUSTED_FOR_EXECUTION, 0);
++	access_errno = errno;
++	if (err_access) {
++		ASSERT_EQ(err_access, access_errno) {
++			TH_LOG("Wrong error for trusted_for(2) with %s: %s",
++					path, strerror(access_errno));
++		}
++		ASSERT_EQ(-1, access_ret);
++	} else {
++		ASSERT_EQ(0, access_ret) {
++			TH_LOG("Access denied for %s: %s", path, strerror(access_errno));
++		}
++	}
++
++	/* Tests unsupported trusted usage. */
++	access_ret = trusted_for(fd, 0, 0);
++	ASSERT_EQ(-1, access_ret);
++	ASSERT_EQ(EINVAL, errno);
++
++	access_ret = trusted_for(fd, 2, 0);
++	ASSERT_EQ(-1, access_ret);
++	ASSERT_EQ(EINVAL, errno);
++
++	EXPECT_EQ(0, close(fd));
++}
++
++static void test_policy_fd(struct __test_metadata *_metadata, const int fd,
++		const bool has_policy)
++{
++	const int ret = trusted_for(fd, TRUSTED_FOR_EXECUTION, 0);
++
++	if (has_policy) {
++		ASSERT_EQ(-1, ret);
++		ASSERT_EQ(EACCES, errno) {
++			TH_LOG("Wrong error for trusted_for(2) with FD: %s", strerror(errno));
++		}
++	} else {
++		ASSERT_EQ(0, ret) {
++			TH_LOG("Access denied for FD: %s", strerror(errno));
++		}
++	}
++}
++
++FIXTURE(access) {
++	char initial_sysctl_value;
++	int memfd, pipefd;
++	int pipe_fds[2], socket_fds[2];
++};
++
++static void test_file_types(struct __test_metadata *_metadata, FIXTURE_DATA(access) *self,
++		const int err_code, const bool has_policy)
++{
++	/* Tests are performed on a tmpfs mount point. */
++	test_omx(_metadata, reg_file_path, err_code);
++	test_omx(_metadata, dir_path, has_policy ? EACCES : 0);
++	test_omx(_metadata, block_dev_path, has_policy ? EACCES : 0);
++	test_omx(_metadata, char_dev_path, has_policy ? EACCES : 0);
++	test_omx(_metadata, fifo_path, has_policy ? EACCES : 0);
++
++	/* Checks that exec is denied for any socket FD. */
++	test_policy_fd(_metadata, self->socket_fds[0], has_policy);
++
++	/* Checks that exec is denied for any memfd. */
++	test_policy_fd(_metadata, self->memfd, has_policy);
++
++	/* Checks that exec is denied for any pipefs FD. */
++	test_policy_fd(_metadata, self->pipefd, has_policy);
++}
++
++static void test_files(struct __test_metadata *_metadata, FIXTURE_DATA(access) *self,
++		const int err_code, const bool has_policy)
++{
++	/* Tests as root. */
++	ignore_dac(_metadata, 1);
++	test_file_types(_metadata, self, err_code, has_policy);
++
++	/* Tests without bypass. */
++	ignore_dac(_metadata, 0);
++	test_file_types(_metadata, self, err_code, has_policy);
++}
++
++static void sysctl_write_char(struct __test_metadata *_metadata, const char value)
++{
++	int fd;
++
++	fd = open(sysctl_path, O_WRONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ASSERT_EQ(1, write(fd, &value, 1));
++	EXPECT_EQ(0, close(fd));
++}
++
++static char sysctl_read_char(struct __test_metadata *_metadata)
++{
++	int fd;
++	char sysctl_value;
++
++	fd = open(sysctl_path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ASSERT_EQ(1, read(fd, &sysctl_value, 1));
++	EXPECT_EQ(0, close(fd));
++	return sysctl_value;
++}
++
++FIXTURE_VARIANT(access) {
++	const bool mount_exec;
++	const bool file_exec;
++	const int sysctl_err_code[3];
++};
++
++FIXTURE_VARIANT_ADD(access, mount_exec_file_exec) {
++	.mount_exec = true,
++	.file_exec = true,
++	.sysctl_err_code = {0, 0, 0},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_exec_file_noexec)
++{
++	.mount_exec = true,
++	.file_exec = false,
++	.sysctl_err_code = {0, EACCES, EACCES},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_noexec_file_exec)
++{
++	.mount_exec = false,
++	.file_exec = true,
++	.sysctl_err_code = {EACCES, 0, EACCES},
++};
++
++FIXTURE_VARIANT_ADD(access, mount_noexec_file_noexec)
++{
++	.mount_exec = false,
++	.file_exec = false,
++	.sysctl_err_code = {EACCES, EACCES, EACCES},
++};
++
++FIXTURE_SETUP(access)
++{
++	int procfd_path_size;
++	static const char path_template[] = "/proc/self/fd/%d";
++	char procfd_path[sizeof(path_template) + 10];
++
++	/*
++	 * Cleans previous workspace if any error previously happened (don't
++	 * check errors).
++	 */
++	umount(workdir_path);
++	rmdir(workdir_path);
++
++	/* Creates a clean mount point. */
++	ASSERT_EQ(0, mkdir(workdir_path, 00700));
++	ASSERT_EQ(0, mount("test", workdir_path, "tmpfs", MS_MGC_VAL |
++				(variant->mount_exec ? 0 : MS_NOEXEC),
++				"mode=0700,size=4k"));
++
++	/* Creates a regular file. */
++	ASSERT_EQ(0, mknod(reg_file_path, S_IFREG | (variant->file_exec ? 0500 : 0400), 0));
++	/* Creates a directory. */
++	ASSERT_EQ(0, mkdir(dir_path, variant->file_exec ? 0500 : 0400));
++	/* Creates a character device: /dev/null. */
++	ASSERT_EQ(0, mknod(char_dev_path, S_IFCHR | 0400, makedev(1, 3)));
++	/* Creates a block device: /dev/loop0 */
++	ASSERT_EQ(0, mknod(block_dev_path, S_IFBLK | 0400, makedev(7, 0)));
++	/* Creates a fifo. */
++	ASSERT_EQ(0, mknod(fifo_path, S_IFIFO | 0400, 0));
++
++	/* Creates a regular file without user mount point. */
++	self->memfd = memfd_create("test-interpreted", MFD_CLOEXEC);
++	ASSERT_LE(0, self->memfd);
++	/* Sets mode, which must be ignored by the exec check. */
++	ASSERT_EQ(0, fchmod(self->memfd, variant->file_exec ? 0500 : 0400));
++
++	/* Creates a pipefs file descriptor. */
++	ASSERT_EQ(0, pipe(self->pipe_fds));
++	procfd_path_size = snprintf(procfd_path, sizeof(procfd_path),
++			path_template, self->pipe_fds[0]);
++	ASSERT_LT(procfd_path_size, sizeof(procfd_path));
++	self->pipefd = open(procfd_path, O_RDONLY | O_CLOEXEC);
++	ASSERT_LE(0, self->pipefd);
++	ASSERT_EQ(0, fchmod(self->pipefd, variant->file_exec ? 0500 : 0400));
++
++	/* Creates a socket file descriptor. */
++	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0, self->socket_fds));
++
++	/* Saves initial sysctl value. */
++	self->initial_sysctl_value = sysctl_read_char(_metadata);
++
++	/* Prepares for sysctl writes. */
++	ignore_sys_admin(_metadata, 1);
++}
++
++FIXTURE_TEARDOWN(access)
++{
++	EXPECT_EQ(0, close(self->memfd));
++	EXPECT_EQ(0, close(self->pipefd));
++	EXPECT_EQ(0, close(self->pipe_fds[0]));
++	EXPECT_EQ(0, close(self->pipe_fds[1]));
++	EXPECT_EQ(0, close(self->socket_fds[0]));
++	EXPECT_EQ(0, close(self->socket_fds[1]));
++
++	/* Restores initial sysctl value. */
++	sysctl_write_char(_metadata, self->initial_sysctl_value);
++
++	/* There is no need to unlink the test files. */
++	ASSERT_EQ(0, umount(workdir_path));
++	ASSERT_EQ(0, rmdir(workdir_path));
++}
++
++TEST_F(access, sysctl_0)
++{
++	/* Do not enforce anything. */
++	sysctl_write_char(_metadata, '0');
++	test_files(_metadata, self, 0, false);
++}
++
++TEST_F(access, sysctl_1)
++{
++	/* Enforces mount exec check. */
++	sysctl_write_char(_metadata, '1');
++	test_files(_metadata, self, variant->sysctl_err_code[0], true);
++}
++
++TEST_F(access, sysctl_2)
++{
++	/* Enforces file exec check. */
++	sysctl_write_char(_metadata, '2');
++	test_files(_metadata, self, variant->sysctl_err_code[1], true);
++}
++
++TEST_F(access, sysctl_3)
++{
++	/* Enforces mount and file exec check. */
++	sysctl_write_char(_metadata, '3');
++	test_files(_metadata, self, variant->sysctl_err_code[2], true);
++}
++
++FIXTURE(cleanup) {
++	char initial_sysctl_value;
++};
++
++FIXTURE_SETUP(cleanup)
++{
++	/* Saves initial sysctl value. */
++	self->initial_sysctl_value = sysctl_read_char(_metadata);
++}
++
++FIXTURE_TEARDOWN(cleanup)
++{
++	/* Restores initial sysctl value. */
++	ignore_sys_admin(_metadata, 1);
++	sysctl_write_char(_metadata, self->initial_sysctl_value);
++}
++
++TEST_F(cleanup, sysctl_access_write)
++{
++	int fd;
++	ssize_t ret;
++
++	ignore_sys_admin(_metadata, 1);
++	sysctl_write_char(_metadata, '0');
++
++	ignore_sys_admin(_metadata, 0);
++	fd = open(sysctl_path, O_WRONLY | O_CLOEXEC);
++	ASSERT_LE(0, fd);
++	ret = write(fd, "0", 1);
++	ASSERT_EQ(-1, ret);
++	ASSERT_EQ(EPERM, errno);
++	EXPECT_EQ(0, close(fd));
++}
++
++TEST_HARNESS_MAIN
+-- 
+2.28.0
 
