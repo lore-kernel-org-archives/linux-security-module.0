@@ -2,104 +2,132 @@ Return-Path: <SRS0=6CmR=DI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA17C4727E
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 20:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1E4C4727E
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 20:57:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4AD2074B
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 20:26:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2C7220759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 20:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1601585845;
+	bh=KlZU6JDzjRF28UWN2Q1zA7irgAccRi7hkXZ+HCnev7k=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=bbjyb1TT7pwZMPeo7Z3mDGdZP15mvgrfE9TZd9DB5WmQfLMf0gaAm+rF2J64HMU04
+	 AmCqlkjN8xjMLo2hoKNt2xfyCnyTO118SYuMHSww5fDLzYxIEKvTSgrAuoLP1fvln8
+	 vhGKnUSfuECKNqu9ojnosS5C73OVdUSa874rZSOo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730147AbgJAUZ3 (ORCPT
+        id S1728090AbgJAU5U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Oct 2020 16:25:29 -0400
-Received: from smtp-bc0a.mail.infomaniak.ch ([45.157.188.10]:52973 "EHLO
-        smtp-bc0a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726671AbgJAUYA (ORCPT
+        Thu, 1 Oct 2020 16:57:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726515AbgJAU5T (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Oct 2020 16:24:00 -0400
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4C2PjB3MxpzlhX62;
-        Thu,  1 Oct 2020 22:23:58 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4C2Pj72KZtzllmgR;
-        Thu,  1 Oct 2020 22:23:55 +0200 (CEST)
-Subject: Re: [PATCH v11 2/3] arch: Wire up trusted_for(2)
-To:     Tycho Andersen <tycho@tycho.pizza>, Arnd Bergmann <arnd@arndb.de>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Shuah Khan <shuah@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christian Heimes <christian@python.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Deven Bowers <deven.desai@linux.microsoft.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Eric Chiang <ericchiang@google.com>,
-        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Scott Shell <scottsh@microsoft.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Steve Dower <steve.dower@python.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-References: <20201001170232.522331-1-mic@digikod.net>
- <20201001170232.522331-3-mic@digikod.net> <20201001193306.GE1260245@cisco>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <7ccdf4b0-8158-fb82-fb4f-ad78518dbc30@digikod.net>
-Date:   Thu, 1 Oct 2020 22:23:54 +0200
-User-Agent: 
+        Thu, 1 Oct 2020 16:57:19 -0400
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 044CE207FB;
+        Thu,  1 Oct 2020 20:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1601585839;
+        bh=KlZU6JDzjRF28UWN2Q1zA7irgAccRi7hkXZ+HCnev7k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iyq/nDS71g/0jZhjClQE07vEb8x3Pg0F1gAle9l+VW/Pey9PoBPrGTSHkYWi7S/3u
+         2qmheQD6XCrnjb7nbIdMtUcay6xOk/smlAFItlqCld0GgbWIkgZf2BBg6p82hsVB9T
+         cBb+CgETu2DMZ/exanYbpjMOB510m/EvO6JYeWPE=
+Received: by mail-ot1-f53.google.com with SMTP id c2so75421otp.7;
+        Thu, 01 Oct 2020 13:57:18 -0700 (PDT)
+X-Gm-Message-State: AOAM5314HA4pJn1mFvw4EWWKKEm3YJEtAN86kX9J0NJXaymfqmQ5i6yi
+        Of38aRXr9tTT+iVRPWK4BEgg3dNn3csIFuVMlwo=
+X-Google-Smtp-Source: ABdhPJyOOLdA7jWUEtZBFDL23RTFxBrkUWqbZEFAKE4ZkSt+VXNgvBHPldjBfbu3uOml/MENyenVJzKXeu0JMfE4b0s=
+X-Received: by 2002:a9d:6250:: with SMTP id i16mr6707860otk.77.1601585838357;
+ Thu, 01 Oct 2020 13:57:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201001193306.GE1260245@cisco>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200905013107.10457-1-lszubowi@redhat.com> <20200905013107.10457-2-lszubowi@redhat.com>
+ <20201001174436.GA2622286@ubuntu-m3-large-x86>
+In-Reply-To: <20201001174436.GA2622286@ubuntu-m3-large-x86>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 1 Oct 2020 22:57:07 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFoCsO3YqvTZx4nU4mQOhoux1iS1vsa73AZhtc5Y8j59Q@mail.gmail.com>
+Message-ID: <CAMj1kXFoCsO3YqvTZx4nU4mQOhoux1iS1vsa73AZhtc5Y8j59Q@mail.gmail.com>
+Subject: Re: [PATCH V2 1/3] efi: Support for MOK variable config table
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Lenny Szubowicz <lszubowi@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
+        James Morris <jmorris@namei.org>, serge@hallyn.com,
+        Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Jones <pjones@redhat.com>,
+        David Howells <dhowells@redhat.com>, prarit@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, 1 Oct 2020 at 19:44, Nathan Chancellor <natechancellor@gmail.com> wrote:
+>
+> On Fri, Sep 04, 2020 at 09:31:05PM -0400, Lenny Szubowicz wrote:
+> > Because of system-specific EFI firmware limitations, EFI volatile
+> > variables may not be capable of holding the required contents of
+> > the Machine Owner Key (MOK) certificate store when the certificate
+> > list grows above some size. Therefore, an EFI boot loader may pass
+> > the MOK certs via a EFI configuration table created specifically for
+> > this purpose to avoid this firmware limitation.
+> >
+> > An EFI configuration table is a much more primitive mechanism
+> > compared to EFI variables and is well suited for one-way passage
+> > of static information from a pre-OS environment to the kernel.
+> >
+> > This patch adds initial kernel support to recognize, parse,
+> > and validate the EFI MOK configuration table, where named
+> > entries contain the same data that would otherwise be provided
+> > in similarly named EFI variables.
+> >
+> > Additionally, this patch creates a sysfs binary file for each
+> > EFI MOK configuration table entry found. These files are read-only
+> > to root and are provided for use by user space utilities such as
+> > mokutil.
+> >
+> > A subsequent patch will load MOK certs into the trusted platform
+> > key ring using this infrastructure.
+> >
+> > Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+>
+> I have not seen this reported yet but this breaks arm allyesconfig and
+> allmodconfig when CPU_LITTLE_ENDIAN is force selected (because CONFIG_EFI
+> will actually be enabled):
+>
+> $ cat le.config
+> CONFIG_CPU_BIG_ENDIAN=n
+>
+> $ make -skj"$(nproc)" ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- KCONFIG_ALLCONFIG=le.config allyesconfig drivers/firmware/efi/mokvar-table.o
+> drivers/firmware/efi/mokvar-table.c: In function 'efi_mokvar_table_init':
+> drivers/firmware/efi/mokvar-table.c:139:5: error: implicit declaration of function 'early_memunmap' [-Werror=implicit-function-declaration]
+>   139 |     early_memunmap(va, map_size);
+>       |     ^~~~~~~~~~~~~~
+> drivers/firmware/efi/mokvar-table.c:148:9: error: implicit declaration of function 'early_memremap' [-Werror=implicit-function-declaration]
+>   148 |    va = early_memremap(efi.mokvar_table, map_size);
+>       |         ^~~~~~~~~~~~~~
+> drivers/firmware/efi/mokvar-table.c:148:7: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+>   148 |    va = early_memremap(efi.mokvar_table, map_size);
+>       |       ^
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:283: drivers/firmware/efi/mokvar-table.o] Error 1
+>
+> Cheers,
+> Nathan
 
-On 01/10/2020 21:33, Tycho Andersen wrote:
-> On Thu, Oct 01, 2020 at 07:02:31PM +0200, Mickaël Salaün wrote:
->> --- a/include/uapi/asm-generic/unistd.h
->> +++ b/include/uapi/asm-generic/unistd.h
->> @@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
->>  __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
->>  #define __NR_faccessat2 439
->>  __SYSCALL(__NR_faccessat2, sys_faccessat2)
->> +#define __NR_trusted_for 443
->> +__SYSCALL(__NR_trusted_for, sys_trusted_for)
->>  
->>  #undef __NR_syscalls
->> -#define __NR_syscalls 440
->> +#define __NR_syscalls 444
-> 
-> Looks like a rebase problem here?
+Hi Nathan,
 
-No, it is a synchronization with the -next tree (cf. changelog) as asked
-(and acked for a previous version) by Arnd.
+Does adding
+
+#include <asm/early_ioremap.h>
+
+to drivers/firmware/efi/mokvar-table.c fix the issue?
