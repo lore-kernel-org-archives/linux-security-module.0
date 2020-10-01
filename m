@@ -2,130 +2,116 @@ Return-Path: <SRS0=6CmR=DI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDBFC47423
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 17:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CA4C4727E
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 18:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C51A02054F
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 17:44:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BV7v1qkf"
+	by mail.kernel.org (Postfix) with ESMTP id 5BCDA20878
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 18:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732829AbgJARoj (ORCPT
+        id S1729418AbgJASuJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Oct 2020 13:44:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59840 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732096AbgJARoj (ORCPT
+        Thu, 1 Oct 2020 14:50:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:56900 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729047AbgJASuJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Oct 2020 13:44:39 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45DC5C0613D0;
-        Thu,  1 Oct 2020 10:44:39 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id 144so382443pfb.4;
-        Thu, 01 Oct 2020 10:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xwkaw38cgwHkNtoVtJK2JhdTeVpjV+AYAxG0kMKtMnI=;
-        b=BV7v1qkfQ2xRfiu8NpANEPoUbG97BoDOHD2KhaTguGsC2qxZ7V+Gg+u52jc8XTx5dH
-         NgRPDWBJbjMK+uxRg9Weux7CPLdIo8EZZRkmpvDHsPB9D8gtkAHWDUoV7Z7CawXtGkBg
-         ct35he9NGxcYsaI6NuvvwSSrQQYDbawVCsItv/2uEsLuMRLZnugHUfB9LnbO0PD3LuFG
-         nPm7QTqrJ9LG6ADc81EHDwn/y8cglED7qHsr0wMcmOkbnL+Z7IK5kg51hb6AR96Jt1Xa
-         AxUXwqanWOKoNIwMDUZO8JVjmPaMRsGk4K8CeXAdq+Bj6JukVzAbDLYwO2n3Y60mCAp0
-         2oNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xwkaw38cgwHkNtoVtJK2JhdTeVpjV+AYAxG0kMKtMnI=;
-        b=L+qJb+l5pHFVLHkp8QFB/uwCtO6n/TZ0PrPdkaeEOfvnKn77l1adqtf0FXUPIzR0+4
-         mqjd+D7keAoZVSrBf5L1UgL7wOkhF4VvW6FBvuXKaAziGz0/CCd19oP2HJTma2dhx3jh
-         Jb1Il517X4BE03jWtEYbr84soOatWmTF2YPI8Z3bxS7GF5xFznUW4BDyVLvJHdx+7V3q
-         2iUVjYe3k6mJSmxsxMFzTwZVsAEqVS6sJZ3rTtGc9WXtP5v0FqJ4czGYo4CKk4OQm5E2
-         LnGuPcciS3GsBbyZEJ9Rp2FyEsCWRFwgx3mZun368cDm3HbHlI+nmrVNc68p5SrPo2zh
-         UiUg==
-X-Gm-Message-State: AOAM531NKRbaqeDysFzRuQwmTVKB+VZ2pIdGulbNwaCUpa7u2zLACn9h
-        a+96OtHTWVDQHHJqNIzHY6w=
-X-Google-Smtp-Source: ABdhPJzlg9wioDaDQeFELxBiW6SWSo+AK0dG8aWp4yY632RVWNfS7tpzlqLDRpZ9Vd9fusarLXSf5Q==
-X-Received: by 2002:a62:19c4:0:b029:13e:d13d:a081 with SMTP id 187-20020a6219c40000b029013ed13da081mr3804867pfz.24.1601574278745;
-        Thu, 01 Oct 2020 10:44:38 -0700 (PDT)
-Received: from ubuntu-m3-large-x86 ([2604:1380:45e1:2200::1])
-        by smtp.gmail.com with ESMTPSA id o4sm7001277pfh.39.2020.10.01.10.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Oct 2020 10:44:38 -0700 (PDT)
-Date:   Thu, 1 Oct 2020 10:44:36 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Lenny Szubowicz <lszubowi@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-security-module@vger.kernel.org, andy.shevchenko@gmail.com,
-        ardb@kernel.org, jmorris@namei.org, serge@hallyn.com,
-        keescook@chromium.org, zohar@linux.ibm.com, bp@alien8.de,
-        pjones@redhat.com, dhowells@redhat.com, prarit@redhat.com
-Subject: Re: [PATCH V2 1/3] efi: Support for MOK variable config table
-Message-ID: <20201001174436.GA2622286@ubuntu-m3-large-x86>
-References: <20200905013107.10457-1-lszubowi@redhat.com>
- <20200905013107.10457-2-lszubowi@redhat.com>
+        Thu, 1 Oct 2020 14:50:09 -0400
+IronPort-SDR: NFLs3TnL7jDTdE/go0I/J1uvuwqlEp26GhJIqcuoNSDzXnxTHH3kM2jj50yGMh5toa1ui4p9lD
+ 9yKcopWpVDRw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9761"; a="160222603"
+X-IronPort-AV: E=Sophos;i="5.77,324,1596524400"; 
+   d="scan'208";a="160222603"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 11:50:06 -0700
+IronPort-SDR: tYnWAxqffu3NS3Z3wq3K+Ona77mGv7Ka3NTdtibynD1yUlo8VFi40YPCPah5MsARiPnd3ruMKB
+ 0zwTiL1hdg1A==
+X-IronPort-AV: E=Sophos;i="5.77,324,1596524400"; 
+   d="scan'208";a="504946958"
+Received: from mcampone-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.88])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 11:49:58 -0700
+Date:   Thu, 1 Oct 2020 21:49:56 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com,
+        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, luto@kernel.org,
+        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v38 11/24] x86/sgx: Add SGX enclave driver
+Message-ID: <20201001184956.GB15664@linux.intel.com>
+References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
+ <20200915112842.897265-12-jarkko.sakkinen@linux.intel.com>
+ <20201001173653.GG7474@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200905013107.10457-2-lszubowi@redhat.com>
+In-Reply-To: <20201001173653.GG7474@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Sep 04, 2020 at 09:31:05PM -0400, Lenny Szubowicz wrote:
-> Because of system-specific EFI firmware limitations, EFI volatile
-> variables may not be capable of holding the required contents of
-> the Machine Owner Key (MOK) certificate store when the certificate
-> list grows above some size. Therefore, an EFI boot loader may pass
-> the MOK certs via a EFI configuration table created specifically for
-> this purpose to avoid this firmware limitation.
+On Thu, Oct 01, 2020 at 10:36:53AM -0700, Sean Christopherson wrote:
+> On Tue, Sep 15, 2020 at 02:28:29PM +0300, Jarkko Sakkinen wrote:
+> > +int __init sgx_drv_init(void)
+> > +{
+> > +	unsigned int eax, ebx, ecx, edx;
+> > +	u64 attr_mask, xfrm_mask;
+> > +	int ret;
+> > +	int i;
+> > +
+> > +	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
+> > +		pr_info("The public key MSRs are not writable.\n");
+> > +		return -ENODEV;
+> > +	}
+> > +
+> > +	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
+> > +	sgx_misc_reserved_mask = ~ebx | SGX_MISC_RESERVED_MASK;
+> > +	sgx_encl_size_max_64 = 1ULL << ((edx >> 8) & 0xFF);
+> > +	sgx_encl_size_max_32 = 1ULL << (edx & 0xFF);
+> > +
+> > +	cpuid_count(SGX_CPUID, 1, &eax, &ebx, &ecx, &edx);
+> > +
+> > +	attr_mask = (((u64)ebx) << 32) + (u64)eax;
+> > +	sgx_attributes_reserved_mask = ~attr_mask | SGX_ATTR_RESERVED_MASK;
+> > +
+> > +	if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
+> > +		xfrm_mask = (((u64)edx) << 32) + (u64)ecx;
+> > +
+> > +		for (i = 2; i < 64; i++) {
+> > +			cpuid_count(0x0D, i, &eax, &ebx, &ecx, &edx);
+> > +			if ((1UL << i) & xfrm_mask)
 > 
-> An EFI configuration table is a much more primitive mechanism
-> compared to EFI variables and is well suited for one-way passage
-> of static information from a pre-OS environment to the kernel.
-> 
-> This patch adds initial kernel support to recognize, parse,
-> and validate the EFI MOK configuration table, where named
-> entries contain the same data that would otherwise be provided
-> in similarly named EFI variables.
-> 
-> Additionally, this patch creates a sysfs binary file for each
-> EFI MOK configuration table entry found. These files are read-only
-> to root and are provided for use by user space utilities such as
-> mokutil.
-> 
-> A subsequent patch will load MOK certs into the trusted platform
-> key ring using this infrastructure.
-> 
-> Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+> Any reason not to use BIT()?  The max size computations are arguably not
+> bit operation, but XFRM is a set of bits.
 
-I have not seen this reported yet but this breaks arm allyesconfig and
-allmodconfig when CPU_LITTLE_ENDIAN is force selected (because CONFIG_EFI
-will actually be enabled):
+AFAIK, yes.
 
-$ cat le.config
-CONFIG_CPU_BIG_ENDIAN=n
+If you have bandwidth drop a patch for this and provision thing. I'm
+busy with the documentation. If not, that's fine, I'll do it once I'm
+able to.
 
-$ make -skj"$(nproc)" ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- KCONFIG_ALLCONFIG=le.config allyesconfig drivers/firmware/efi/mokvar-table.o
-drivers/firmware/efi/mokvar-table.c: In function 'efi_mokvar_table_init':
-drivers/firmware/efi/mokvar-table.c:139:5: error: implicit declaration of function 'early_memunmap' [-Werror=implicit-function-declaration]
-  139 |     early_memunmap(va, map_size);
-      |     ^~~~~~~~~~~~~~
-drivers/firmware/efi/mokvar-table.c:148:9: error: implicit declaration of function 'early_memremap' [-Werror=implicit-function-declaration]
-  148 |    va = early_memremap(efi.mokvar_table, map_size);
-      |         ^~~~~~~~~~~~~~
-drivers/firmware/efi/mokvar-table.c:148:7: warning: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-  148 |    va = early_memremap(efi.mokvar_table, map_size);
-      |       ^
-cc1: some warnings being treated as errors
-make[4]: *** [scripts/Makefile.build:283: drivers/firmware/efi/mokvar-table.o] Error 1
+Thanks.
 
-Cheers,
-Nathan
+/Jarkko
