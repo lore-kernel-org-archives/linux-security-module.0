@@ -2,116 +2,141 @@ Return-Path: <SRS0=6CmR=DI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CA4C4727E
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 18:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0CFC4727E
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 19:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCDA20878
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 18:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C76EC20759
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Oct 2020 19:43:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbgJASuJ (ORCPT
+        id S1730101AbgJATm7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Oct 2020 14:50:09 -0400
-Received: from mga04.intel.com ([192.55.52.120]:56900 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729047AbgJASuJ (ORCPT
+        Thu, 1 Oct 2020 15:42:59 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:59689 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729990AbgJATlf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Oct 2020 14:50:09 -0400
-IronPort-SDR: NFLs3TnL7jDTdE/go0I/J1uvuwqlEp26GhJIqcuoNSDzXnxTHH3kM2jj50yGMh5toa1ui4p9lD
- 9yKcopWpVDRw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9761"; a="160222603"
-X-IronPort-AV: E=Sophos;i="5.77,324,1596524400"; 
-   d="scan'208";a="160222603"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 11:50:06 -0700
-IronPort-SDR: tYnWAxqffu3NS3Z3wq3K+Ona77mGv7Ka3NTdtibynD1yUlo8VFi40YPCPah5MsARiPnd3ruMKB
- 0zwTiL1hdg1A==
-X-IronPort-AV: E=Sophos;i="5.77,324,1596524400"; 
-   d="scan'208";a="504946958"
-Received: from mcampone-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.88])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2020 11:49:58 -0700
-Date:   Thu, 1 Oct 2020 21:49:56 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Thu, 1 Oct 2020 15:41:35 -0400
+X-Greylist: delayed 461 seconds by postgrey-1.27 at vger.kernel.org; Thu, 01 Oct 2020 15:41:34 EDT
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 1118D5801AD;
+        Thu,  1 Oct 2020 15:33:24 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Thu, 01 Oct 2020 15:33:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm1; bh=T
+        avF71lBlL6nBdjv5tFqv1tjUk2DGNXMCqE9op0VZ2Q=; b=H7sl1jHjD7RJU5Xfy
+        R7+BWtx6TORRox+x/EBMJICRYKvR6xgTrQ+djSOjK1xEUENmSxmfDaReKKu1sVSX
+        oVoZ0W/NrADNHFEg7vOIurQmHwFwU2RQXEUcIZuzNLyH6/a3h67/QgAu2Otkpt4J
+        ZVGx4VlJz4B/HG2XT+irPPs5LkC/d52PPyv5mi816tRUzPK72rAlsTRRVelu4yTu
+        FmpBXbepqilYZY+Z1bSxXXETyMEeJ8Rq+Tm2GVFoRJ57PiTuyXiFTKMK2vNltzNO
+        tSh43UpIhFUvYWTNrZK0hS9nILr26nXi9Z2cQzBl3jWBRe5RN9CBFTz8AdZN7PDt
+        GNyqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=TavF71lBlL6nBdjv5tFqv1tjUk2DGNXMCqE9op0VZ
+        2Q=; b=hAH2AVTa9yCO7FGUQGrojKp/3r6j0dYp8ieilCpUAuZP7vcDYF9spGl7/
+        ZCF0cwDyATtI9QvAm2bXy8iC5s2FQx/kusgT89ax1PTgED1hwFS2XuB+qcWcJ5do
+        DIYigOh6swsrd6ekJBSMf0v8ZvfvTnALIWSsD9zL+ddF90LcSAK86olirh7ULGXI
+        P9I6h++5tyIlIvI1R40pI4BO/Ac0TG7Z2b9nSOFH5ANXktE6bz/YSd9XUMXRC2PG
+        Ml4nHJU1W1aKT+C/4BS1ZfisY3A2uaOcef6bvY+DFgjDLdmyGliiEB98Zsvqoesz
+        +FXH6Y5wyIrugIY1sITtfUZ5gBhIA==
+X-ME-Sender: <xms:_S52X187-qJxUt7IQ-jYKh0FfXBFw3u32M0ThHucgNiJhDkiItUJyQ>
+    <xme:_S52X5u9bJvf-deIsQ_khz8fGcdpuZy-bgparwGQyQ9obhtV_UWfcFs0pksZ4Ll9K
+    -E-X31M1Bhj5ReYDSU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrfeeggddugedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtugfgjgesthekredttddtudenucfhrhhomhepvfihtghh
+    ohcutehnuggvrhhsvghnuceothihtghhohesthihtghhohdrphhiiiiirgeqnecuggftrf
+    grthhtvghrnheplefgudefleejhefhvedufeegudffgfelgeevgfejfeffieeufefgffet
+    udeljeefnecukfhppeduvdekrddutdejrddvgedurddujeeinecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepthihtghhohesthihtghhohdrphhi
+    iiiirg
+X-ME-Proxy: <xmx:_S52XzBV6gtZHK1akrygkJU1hQhCNNEC-GqUotHiOC8Qt9ROd43xcw>
+    <xmx:_S52X5fRcgiySVAueUx9Dzr_6NNywkMDxpsPseB0L0XPQaHnvjiwGg>
+    <xmx:_S52X6OrqCaEHBqw9O47JJfc5eBWrFPnYdlxjp5XgJquckmunk4uEw>
+    <xmx:Ay92XzMHukmtAlVW3f0yw7L0osJxhu2Evb0JtOoYWHOQTQ8AXQ5EGyGGevY>
+Received: from cisco (unknown [128.107.241.176])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 50394306467E;
+        Thu,  1 Oct 2020 15:33:08 -0400 (EDT)
+Date:   Thu, 1 Oct 2020 13:33:06 -0600
+From:   Tycho Andersen <tycho@tycho.pizza>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Shuah Khan <shuah@kernel.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com,
-        josh@joshtriplett.org, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, luto@kernel.org,
-        nhorman@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v38 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20201001184956.GB15664@linux.intel.com>
-References: <20200915112842.897265-1-jarkko.sakkinen@linux.intel.com>
- <20200915112842.897265-12-jarkko.sakkinen@linux.intel.com>
- <20201001173653.GG7474@linux.intel.com>
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: Re: [PATCH v11 2/3] arch: Wire up trusted_for(2)
+Message-ID: <20201001193306.GE1260245@cisco>
+References: <20201001170232.522331-1-mic@digikod.net>
+ <20201001170232.522331-3-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20201001173653.GG7474@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201001170232.522331-3-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 01, 2020 at 10:36:53AM -0700, Sean Christopherson wrote:
-> On Tue, Sep 15, 2020 at 02:28:29PM +0300, Jarkko Sakkinen wrote:
-> > +int __init sgx_drv_init(void)
-> > +{
-> > +	unsigned int eax, ebx, ecx, edx;
-> > +	u64 attr_mask, xfrm_mask;
-> > +	int ret;
-> > +	int i;
-> > +
-> > +	if (!boot_cpu_has(X86_FEATURE_SGX_LC)) {
-> > +		pr_info("The public key MSRs are not writable.\n");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	cpuid_count(SGX_CPUID, 0, &eax, &ebx, &ecx, &edx);
-> > +	sgx_misc_reserved_mask = ~ebx | SGX_MISC_RESERVED_MASK;
-> > +	sgx_encl_size_max_64 = 1ULL << ((edx >> 8) & 0xFF);
-> > +	sgx_encl_size_max_32 = 1ULL << (edx & 0xFF);
-> > +
-> > +	cpuid_count(SGX_CPUID, 1, &eax, &ebx, &ecx, &edx);
-> > +
-> > +	attr_mask = (((u64)ebx) << 32) + (u64)eax;
-> > +	sgx_attributes_reserved_mask = ~attr_mask | SGX_ATTR_RESERVED_MASK;
-> > +
-> > +	if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
-> > +		xfrm_mask = (((u64)edx) << 32) + (u64)ecx;
-> > +
-> > +		for (i = 2; i < 64; i++) {
-> > +			cpuid_count(0x0D, i, &eax, &ebx, &ecx, &edx);
-> > +			if ((1UL << i) & xfrm_mask)
-> 
-> Any reason not to use BIT()?  The max size computations are arguably not
-> bit operation, but XFRM is a set of bits.
+On Thu, Oct 01, 2020 at 07:02:31PM +0200, Mickaël Salaün wrote:
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
+>  __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+>  #define __NR_faccessat2 439
+>  __SYSCALL(__NR_faccessat2, sys_faccessat2)
+> +#define __NR_trusted_for 443
+> +__SYSCALL(__NR_trusted_for, sys_trusted_for)
+>  
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 440
+> +#define __NR_syscalls 444
 
-AFAIK, yes.
+Looks like a rebase problem here?
 
-If you have bandwidth drop a patch for this and provision thing. I'm
-busy with the documentation. If not, that's fine, I'll do it once I'm
-able to.
-
-Thanks.
-
-/Jarkko
+Tycho
