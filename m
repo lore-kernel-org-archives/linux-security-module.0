@@ -2,234 +2,137 @@ Return-Path: <SRS0=GFaw=DK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA1AC4727F
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26259C4727D
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Oct 2020 09:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 337642220D
-	for <linux-security-module@archiver.kernel.org>; Sat,  3 Oct 2020 04:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAD86206C9
+	for <linux-security-module@archiver.kernel.org>; Sat,  3 Oct 2020 09:53:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="YgyxAo9i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725835AbgJCEvv (ORCPT
+        id S1725790AbgJCJxo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 3 Oct 2020 00:51:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51628 "EHLO mail.kernel.org"
+        Sat, 3 Oct 2020 05:53:44 -0400
+Received: from mout.gmx.net ([212.227.15.18]:55189 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbgJCEvk (ORCPT
+        id S1725775AbgJCJxo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 3 Oct 2020 00:51:40 -0400
-Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A63F2220C;
-        Sat,  3 Oct 2020 04:51:38 +0000 (UTC)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-Date:   Sat,  3 Oct 2020 07:50:50 +0300
-Message-Id: <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+        Sat, 3 Oct 2020 05:53:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1601718746;
+        bh=+J10i8bNFrOqOG+3GURM3R/KC2tKxHk7bbB91+yozrE=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=YgyxAo9ipXCQEdwyhONQS+h1PTqn+hieEUf2kcfmMKmC2iYTGHN7xL2TmTFzp0TtB
+         mf5ffJupFNvyQJoKYlHbI2fMpjGIMKdHsig7UZZDDhhNc/MOlDRh66QmtxQASKpHsh
+         uBc2ARI0Bt9UPKGOIeW6rbl2UzdAcJDvpo0/4NVg=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([79.150.73.70]) by mail.gmx.com (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MSKyI-1jw0SA1wlc-00Sft4; Sat, 03
+ Oct 2020 11:52:26 +0200
+Date:   Sat, 3 Oct 2020 11:52:12 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        kernel-hardening@lists.openwall.com, John Wood <john.wood@gmx.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH 3/6] security/fbfam: Use the api to manage statistics
+Message-ID: <20201003095212.GA2911@ubuntu>
+References: <20200910202107.3799376-1-keescook@chromium.org>
+ <20200910202107.3799376-4-keescook@chromium.org>
+ <202009101625.0E3B6242@keescook>
+ <20200929194712.541c860c@oasis.local.home>
+ <20200929194924.31640617@oasis.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200929194924.31640617@oasis.local.home>
+X-Provags-ID: V03:K1:ggAP+Xm36kOZKXGb8H7ns8txs5t75Yr2LN5k1wKKGh7OrSyP4rv
+ hABdr9ji9QjJMvdKJxa0Bo3pYk88oKRhyy8fuCUgx+hQKixmUvHbc1MDhKrV5cNsE+bxTP2
+ Dk9PDaf2LUhtvdfHI+c0tcesCUkPkqHAYbnqWHE26/KCx1PlkWnubZnT6EbHkaMsMgXGyuU
+ xlSBDE65qQDt9mTbJg9QA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:3i4hMYig/Sg=:QgDlo3Fo4OAuy7Zosj84zw
+ ldZ6Q2QLZiTRCIufr3bSmOYnjwZ1lFU18uEMJkn+4Fr8NbsA9s42eEVDlMksDspaRsYMexdGO
+ 45XVRt/IoXnOVWdrg2jyNDsQsFsDT+3H1Ktx5oT8R9JIL9uxREu+JqSjEwscQEoNmE+2FDWK9
+ w3ENzD6ACmNPB7bStYhkzZXhtS3OlXIMeRHFBKaPl4LjgliDTwfcZ42K2KSfJaV2ut3iyunwk
+ OvrkZsHIHx2N+CC45RRk+zAse5/4ZmTd2llFRdGacvZyVD5G5Amt5tmbhEK8Io7fSkxqtQMTb
+ yDTVfCdXw9Ou2YjoTZGdc29O3NWP9ksSQr2s0Jm4KF+PSAIFY0MVvQ3tkz9QEGZeCTNiJl24t
+ AYWmCP8MFQunYK+/7KQUkV4syjZfKQsOGhWoBeGCogNxTVGAl7eau5NWc506r8MwznKGP0E7X
+ 5H/soS8iQ9tGJsbrQW2bi4Cr9aI+n9aKj8QSpG9Gyg+tJSh7pnxX7nDG0r5KOYZIavMNAoJTm
+ 7O1XtZagVphvyo8BF5X4B0nqUuRwvWiHSa0j31be255+FxswtdXj4AGteOxTeHdryUNcC2N4c
+ IXfBlvZOOtceo/mv8+KomewuYW8ZJyA2FiOXYI98B17Ox7ywOnqeJ33erC301YOEqIhKqpSUB
+ +SnDwitQk+63gfTYzwTfBb6WyjfY0SG+ko9aDzqPTtrRgQU9k9GDC50hN0+lTY6UcxuKz2GWx
+ 3rsTrH4I5k+HD4pxZRyybfx9ezKoAeC+CW17blJUyroVYsqcc7BoaOllFwrrHUqHL8MY4U8Wn
+ gaaOtEm4hIEfgxa4uztTg0NUDg7O7ioBZqC/x+IvNEswdLiS1uYlqTYNUvFhyO49Is7036EVX
+ LiR8BLxqRq3Q+T9OXQQzLOe1RMa2iZjvWxCHq0e9nKAq/mZxo+ZeNv24yNDjQ4pafCASpkTl5
+ 70/RcD2tUgsEg2XVTTpfBuOCUXF3pJr8FyW26PMeJ87GMMR/QCJWUzw4O7E/hT95AP5/rpNIL
+ VaoQENCp6HmFy1Y4ufI99vRrKQHUYIhaGbVh8XMbtSsb9LUS0MtfJUWhVAO0d1T9xywLoHp/e
+ ZgQE09w+RUrtSAEjD6tj+aj/MuFI7e4IMmAqlimOSAnwzxIyC44HiVHojeYn6G4FKtK74g6sC
+ NtpHowXAs6E12LUUobi0vXwNrCdz1IgyUGcpsfaU6OcKS4f50Pb61rPs/b3S5+WDqCnUgcMhI
+ US28q0ydgG9GDKNrO6/GL+5MNwwcCb3XfMxjC9g==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provisioning Certification Enclave (PCE), the root of trust for other
-enclaves, generates a signing key from a fused key called Provisioning
-Certification Key. PCE can then use this key to certify an attestation key
-of a Quoting Enclave (QE), e.g. we get the chain of trust down to the
-hardware if the Intel signed PCE is used.
+Hi Steven,
 
-To use the needed keys, ATTRIBUTE.PROVISIONKEY is required but should be
-only allowed for those who actually need it so that only the trusted
-parties can certify QE's.
+On Tue, Sep 29, 2020 at 07:49:24PM -0400, Steven Rostedt wrote:
+> On Tue, 29 Sep 2020 19:47:12 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> > On Thu, 10 Sep 2020 16:33:38 -0700
+> > Kees Cook <keescook@chromium.org> wrote:
+> >
+> > > > @@ -1940,6 +1941,7 @@ static int bprm_execve(struct linux_binprm *=
+bprm,
+> > > >  	task_numa_free(current, false);
+> > > >  	if (displaced)
+> > > >  		put_files_struct(displaced);
+> > > > +	fbfam_execve();
+> > >
+> > > As mentioned in the other emails, I think this could trivially be
+> > > converted into an LSM: all the hooks are available AFAICT. If you on=
+ly
+> > > want to introspect execve _happening_, you can use bprm_creds_for_ex=
+ec
+> > > which is called a few lines above. Otherwise, my prior suggestion ("=
+the
+> > > exec has happened" hook via brpm_cred_committing, etc).
+> >
+> > And if its information only, you could just register a callback to the
+> > trace_sched_process_exec() tracepoint and do whatever you want then.
+> >
+> > The tracepoints are available for anyone to attach to. Not just tracin=
+g.
+> >
+> And there's also trace_sched_process_fork() and
+> trace_sched_process_exit().
 
-Obviously the attestation service should know the public key of the used
-PCE and that way detect illegit attestation, but whitelisting the legit
-users still adds an additional layer of defence.
+Since this feature requires a pointer to the statistical data in the
+task_struct structure, and the LSM allows this using the security blobs,
+I think that the best for now is convert all the code to an LSM. Anyway,
+thanks for the suggestion.
 
-Add new device file called /dev/sgx/provision. The sole purpose of this
-file is to provide file descriptors that act as privilege tokens to allow
-to build enclaves with ATTRIBUTE.PROVISIONKEY set. A new ioctl called
-SGX_IOC_ENCLAVE_PROVISION is used to assign this token to an enclave.
+> -- Steve
 
-Cc: linux-security-module@vger.kernel.org
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 18 +++++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 46 ++++++++++++++++++++++++++++++++
- 4 files changed, 77 insertions(+)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index e401fa72eaab..b6ba036a9b82 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_PROVISION \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_provision - parameter structure for the
-+ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
-+ * @attribute_fd:	file handle of the attribute file in the securityfs
-+ */
-+struct sgx_enclave_provision {
-+	__u64 attribute_fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index 7bdb49dfcca6..d01b28f7ce4a 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -134,6 +134,10 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
-+
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "enclave",
-@@ -141,6 +145,13 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "provision",
-+	.nodename = "sgx/provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
-@@ -181,5 +192,12 @@ int __init sgx_drv_init(void)
- 		return ret;
- 	}
- 
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		pr_err("Creating /dev/sgx/provision failed with %d.\n", ret);
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
- 	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index e4063923115b..72747d01c046 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -23,6 +23,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_xsave_size_tbl[64];
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index cf5a43d6daa2..3c04798e83e5 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -679,6 +679,49 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_provision - handler for %SGX_IOC_ENCLAVE_PROVISION
-+ * @enclave:	an enclave pointer
-+ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
-+ *
-+ * Mark the enclave as being allowed to access a restricted attribute bit.
-+ * The requested attribute is specified via the attribute_fd field in the
-+ * provided struct sgx_enclave_provision.  The attribute_fd must be a
-+ * handle to an SGX attribute file, e.g. "/dev/sgx/provision".
-+ *
-+ * Failure to explicitly request access to a restricted attribute will cause
-+ * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-+ * is access to the PROVISION_KEY.
-+ *
-+ * Note, access to the EINITTOKEN_KEY is disallowed entirely.
-+ *
-+ * Return: 0 on success, -errno otherwise
-+ */
-+static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
-+{
-+	struct sgx_enclave_provision params;
-+	struct file *attribute_file;
-+	int ret;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	attribute_file = fget(params.attribute_fd);
-+	if (!attribute_file)
-+		return -EINVAL;
-+
-+	if (attribute_file->f_op != &sgx_provision_fops) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	encl->attributes_mask |= SGX_ATTR_PROVISIONKEY;
-+	ret = 0;
-+
-+out:
-+	fput(attribute_file);
-+	return ret;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -704,6 +747,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_PROVISION:
-+		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
--- 
-2.25.1
+Thanks,
+John Wood
 
