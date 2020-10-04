@@ -2,128 +2,343 @@ Return-Path: <SRS0=csXq=DL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 660ADC4363C
-	for <linux-security-module@archiver.kernel.org>; Sun,  4 Oct 2020 14:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE01AC4363C
+	for <linux-security-module@archiver.kernel.org>; Sun,  4 Oct 2020 14:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1197A20735
-	for <linux-security-module@archiver.kernel.org>; Sun,  4 Oct 2020 14:24:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IA6xWNby"
+	by mail.kernel.org (Postfix) with ESMTP id ACED12067D
+	for <linux-security-module@archiver.kernel.org>; Sun,  4 Oct 2020 14:32:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725925AbgJDOYd (ORCPT
+        id S1725940AbgJDOc6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 4 Oct 2020 10:24:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41311 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725825AbgJDOYd (ORCPT
+        Sun, 4 Oct 2020 10:32:58 -0400
+Received: from mga05.intel.com ([192.55.52.43]:49353 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725827AbgJDOc6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 4 Oct 2020 10:24:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1601821471;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:content-type:content-type;
-        bh=ImS+DzrKsQVbgZPvAgl58XuPNm8KTHvfc5J8ftfxKXw=;
-        b=IA6xWNby//VZulgXUkm5mI9ayFA36KHqT+LeOMfMl/Ue78q1XZYgImgVoXGZE0BwX4l6oU
-        4dtR7rJxBjG7LUXCrA416FVmBIgOIK9TVN9d4xcbqc/CUzG4FIud8L0HOGEOHMH4JDNyqk
-        UTA3JPJ29Fx5Oj3QlcsuCt9DR0E85bI=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-350-oW2FiNNKNTmH9LoReL-NOw-1; Sun, 04 Oct 2020 10:24:30 -0400
-X-MC-Unique: oW2FiNNKNTmH9LoReL-NOw-1
-Received: by mail-qv1-f72.google.com with SMTP id y45so1668305qve.15
-        for <linux-security-module@vger.kernel.org>; Sun, 04 Oct 2020 07:24:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ImS+DzrKsQVbgZPvAgl58XuPNm8KTHvfc5J8ftfxKXw=;
-        b=QqxsF2mBkmF7mx9eI4mantvJXgH5TrZ+Qs+UJ7zNUOBqwTIV4fFmq6ZnJYhfb6BcL0
-         EFrIymbwb0aL8RXBcRWG8egxiuc6WUSA/hGE2h77Zi9f3xXLVaaTExEj+Q0CN5oVguT0
-         EyPvPtJb7gG0ApOP5rtpd4VPgzmY2uy3GX1A+lAMg3kJ3Ed6yiOx7M0JCnR0YoLLvfIk
-         6/fjOKIAs7rpgYCmkLym1BztHIepja2Nl0aBqKh7h9EZi2LWtkRQ78vlgI+Gb6VBrLYl
-         u9gksgIc+UFppDrV2wbgYOO7avMDtJT4+wmGNPFwSf+/BnHdjTA3S0ejuL+xvRAxlBrn
-         reIA==
-X-Gm-Message-State: AOAM533WR3fw5BGjuyMFlXPdiGjAVcHUmfVS8+RjsvtEzpr5H+V2m3ab
-        iRnvZMX59CEX1NR03EW7f4uKMkbAdI64IwaHIZXy9GORMz+7A5+84+/BzVZScoGjhO80ANmDWgB
-        VCs74OtTMM4XqK722B2kOIMqevlobdbSpPC2Y
-X-Received: by 2002:a05:620a:10a7:: with SMTP id h7mr2850460qkk.40.1601821469671;
-        Sun, 04 Oct 2020 07:24:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJznXfn0azZEw4IrpOhwWc02Vc6jdkQKYSLJTj5F+V8VauW2yCaxAoTWsPnZlcn+8Dc1Cr58Yg==
-X-Received: by 2002:a05:620a:10a7:: with SMTP id h7mr2850439qkk.40.1601821469386;
-        Sun, 04 Oct 2020 07:24:29 -0700 (PDT)
-Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
-        by smtp.gmail.com with ESMTPSA id g12sm5292344qke.90.2020.10.04.07.24.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Oct 2020 07:24:28 -0700 (PDT)
-From:   trix@redhat.com
-To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
-        natechancellor@gmail.com, ndesaulniers@google.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
-        Tom Rix <trix@redhat.com>
-Subject: [PATCH] apparmor: fix error check
-Date:   Sun,  4 Oct 2020 07:24:22 -0700
-Message-Id: <20201004142422.5717-1-trix@redhat.com>
-X-Mailer: git-send-email 2.18.1
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="US-ASCII"
+        Sun, 4 Oct 2020 10:32:58 -0400
+IronPort-SDR: ILKPSoNOsdJpnD0es5voKnDH875NR8YiImQDOL7Rhtpfw4Z/0BytQgvpzNV+hy7OzzC3BBsUXb
+ QYDitoVnMYQA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9763"; a="248026200"
+X-IronPort-AV: E=Sophos;i="5.77,335,1596524400"; 
+   d="scan'208";a="248026200"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 07:32:56 -0700
+IronPort-SDR: 4Xvz+TMkm+Qpbjp+2v6pfbZheZBTQpWTrakW+HOcLN3bIvhBqiL/xddm00pP8FI7Js7AlcB83z
+ o/PbvDM8QrnA==
+X-IronPort-AV: E=Sophos;i="5.77,335,1596524400"; 
+   d="scan'208";a="520142122"
+Received: from pkozlov-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.35.250])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 07:32:48 -0700
+Date:   Sun, 4 Oct 2020 17:32:46 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v39 11/24] x86/sgx: Add SGX enclave driver
+Message-ID: <20201004143246.GA3561@linux.intel.com>
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-12-jarkko.sakkinen@linux.intel.com>
+ <20201003143925.GB800720@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201003143925.GB800720@kroah.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tom Rix <trix@redhat.com>
+On Sat, Oct 03, 2020 at 04:39:25PM +0200, Greg KH wrote:
+> On Sat, Oct 03, 2020 at 07:50:46AM +0300, Jarkko Sakkinen wrote:
+> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that can
+> > be used by applications to set aside private regions of code and data. The
+> > code outside the SGX hosted software entity is prevented from accessing the
+> > memory inside the enclave by the CPU. We call these entities enclaves.
+> > 
+> > Add a driver that provides an ioctl API to construct and run enclaves.
+> > Enclaves are constructed from pages residing in reserved physical memory
+> > areas. The contents of these pages can only be accessed when they are
+> > mapped as part of an enclave, by a hardware thread running inside the
+> > enclave.
+> > 
+> > The starting state of an enclave consists of a fixed measured set of
+> > pages that are copied to the EPC during the construction process by
+> > using the opcode ENCLS leaf functions and Software Enclave Control
+> > Structure (SECS) that defines the enclave properties.
+> > 
+> > Enclaves are constructed by using ENCLS leaf functions ECREATE, EADD and
+> > EINIT. ECREATE initializes SECS, EADD copies pages from system memory to
+> > the EPC and EINIT checks a given signed measurement and moves the enclave
+> > into a state ready for execution.
+> > 
+> > An initialized enclave can only be accessed through special Thread Control
+> > Structure (TCS) pages by using ENCLU (ring-3 only) leaf EENTER.  This leaf
+> > function converts a thread into enclave mode and continues the execution in
+> > the offset defined by the TCS provided to EENTER. An enclave is exited
+> > through syscall, exception, interrupts or by explicitly calling another
+> > ENCLU leaf EEXIT.
+> > 
+> > The mmap() permissions are capped by the contained enclave page
+> > permissions. The mapped areas must also be populated, i.e. each page
+> > address must contain a page. This logic is implemented in
+> > sgx_encl_may_map().
+> > 
+> > Cc: linux-security-module@vger.kernel.org
+> > Cc: linux-mm@kvack.org
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Acked-by: Jethro Beekman <jethro@fortanix.com>
+> > Tested-by: Jethro Beekman <jethro@fortanix.com>
+> > Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+> > Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+> > Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+> > Tested-by: Seth Moore <sethmo@google.com>
+> > Tested-by: Darren Kenny <darren.kenny@oracle.com>
+> > Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
+> > Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> > Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/kernel/cpu/sgx/Makefile |   2 +
+> >  arch/x86/kernel/cpu/sgx/driver.c | 173 ++++++++++++++++
+> >  arch/x86/kernel/cpu/sgx/driver.h |  29 +++
+> >  arch/x86/kernel/cpu/sgx/encl.c   | 331 +++++++++++++++++++++++++++++++
+> >  arch/x86/kernel/cpu/sgx/encl.h   |  85 ++++++++
+> >  arch/x86/kernel/cpu/sgx/main.c   |  11 +
+> >  6 files changed, 631 insertions(+)
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
+> >  create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+> > 
+> > diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
+> > index 79510ce01b3b..3fc451120735 100644
+> > --- a/arch/x86/kernel/cpu/sgx/Makefile
+> > +++ b/arch/x86/kernel/cpu/sgx/Makefile
+> > @@ -1,2 +1,4 @@
+> >  obj-y += \
+> > +	driver.o \
+> > +	encl.o \
+> >  	main.o
+> > diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+> > new file mode 100644
+> > index 000000000000..f54da5f19c2b
+> > --- /dev/null
+> > +++ b/arch/x86/kernel/cpu/sgx/driver.c
+> > @@ -0,0 +1,173 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> 
+> You use gpl-only header files in this file, so how in the world can it
+> be bsd-3 licensed?
+> 
+> Please get your legal department to agree with this, after you explain
+> to them how you are mixing gpl2-only code in with this file.
 
-clang static analysis reports this representative problem:
+I'll do what I already stated that I will do. Should I do something
+more?
 
-label.c:1463:16: warning: Assigned value is garbage or undefined
-        label->hname = name;
-                     ^ ~~~~
+> > +// Copyright(c) 2016-18 Intel Corporation.
+> 
+> Dates are hard to get right :(
 
-In aa_update_label_name(), this the problem block of code
+Will fix.
 
-	if (aa_label_acntsxprint(&name, ...) == -1)
-		return res;
+> 
+> > +
+> > +#include <linux/acpi.h>
+> > +#include <linux/miscdevice.h>
+> > +#include <linux/mman.h>
+> > +#include <linux/security.h>
+> > +#include <linux/suspend.h>
+> > +#include <asm/traps.h>
+> > +#include "driver.h"
+> > +#include "encl.h"
+> > +
+> > +u64 sgx_encl_size_max_32;
+> > +u64 sgx_encl_size_max_64;
+> > +u32 sgx_misc_reserved_mask;
+> > +u64 sgx_attributes_reserved_mask;
+> > +u64 sgx_xfrm_reserved_mask = ~0x3;
+> > +u32 sgx_xsave_size_tbl[64];
+> > +
+> > +static int sgx_open(struct inode *inode, struct file *file)
+> > +{
+> > +	struct sgx_encl *encl;
+> > +	int ret;
+> > +
+> > +	encl = kzalloc(sizeof(*encl), GFP_KERNEL);
+> > +	if (!encl)
+> > +		return -ENOMEM;
+> > +
+> > +	atomic_set(&encl->flags, 0);
+> > +	kref_init(&encl->refcount);
+> > +	xa_init(&encl->page_array);
+> > +	mutex_init(&encl->lock);
+> > +	INIT_LIST_HEAD(&encl->mm_list);
+> > +	spin_lock_init(&encl->mm_lock);
+> > +
+> > +	ret = init_srcu_struct(&encl->srcu);
+> > +	if (ret) {
+> > +		kfree(encl);
+> > +		return ret;
+> > +	}
+> > +
+> > +	file->private_data = encl;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int sgx_release(struct inode *inode, struct file *file)
+> > +{
+> > +	struct sgx_encl *encl = file->private_data;
+> > +	struct sgx_encl_mm *encl_mm;
+> > +
+> > +	for ( ; ; )  {
+> > +		spin_lock(&encl->mm_lock);
+> > +
+> > +		if (list_empty(&encl->mm_list)) {
+> > +			encl_mm = NULL;
+> > +		} else {
+> > +			encl_mm = list_first_entry(&encl->mm_list,
+> > +						   struct sgx_encl_mm, list);
+> > +			list_del_rcu(&encl_mm->list);
+> > +		}
+> > +
+> > +		spin_unlock(&encl->mm_lock);
+> > +
+> > +		/* The list is empty, ready to go. */
+> > +		if (!encl_mm)
+> > +			break;
+> > +
+> > +		synchronize_srcu(&encl->srcu);
+> > +		mmu_notifier_unregister(&encl_mm->mmu_notifier, encl_mm->mm);
+> > +		kfree(encl_mm);
+> > +	}
+> > +
+> > +	mutex_lock(&encl->lock);
+> > +	atomic_or(SGX_ENCL_DEAD, &encl->flags);
+> 
+> So you set a flag that this is dead, and then instantly delete it?  Why
+> does that matter?  I see you check for this flag elsewhere, but as you
+> are just about to delete this structure, how can this be an issue?
 
-On failure, aa_label_acntsxprint() has a more complicated return
-that just -1.  So check for a negative return.
+It matters because ksgxswapd (sgx_reclaimer_*) might be processing it.
 
-It was also noted that the aa_label_acntsxprint() main comment refers
-to a nonexistent parameter, so clean up the comment.
+It will use the flag to skip the operations that it would do to a victim
+page, when the enclave is still alive.
 
-Fixes: f1bd904175e8 ("apparmor: add the base fns() for domain labels")
-Signed-off-by: Tom Rix <trix@redhat.com>
----
- security/apparmor/label.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> > +	mutex_unlock(&encl->lock);
+> > +
+> > +	kref_put(&encl->refcount, sgx_encl_release);
+> 
+> Don't you need to hold the lock across the put?  If not, what is
+> serializing this?
+> 
+> But an even larger comment, why is this reference count needed at all?
+> 
+> You never grab it except at init time, and you free it at close time.
+> Why not rely on the reference counting that the vfs ensures you?
 
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index e68bcedca976..6222fdfebe4e 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -1454,7 +1454,7 @@ bool aa_update_label_name(struct aa_ns *ns, struct aa_label *label, gfp_t gfp)
- 	if (label->hname || labels_ns(label) != ns)
- 		return res;
- 
--	if (aa_label_acntsxprint(&name, ns, label, FLAGS_NONE, gfp) == -1)
-+	if (aa_label_acntsxprint(&name, ns, label, FLAGS_NONE, gfp) < 0)
- 		return res;
- 
- 	ls = labels_set(label);
-@@ -1704,7 +1704,7 @@ int aa_label_asxprint(char **strp, struct aa_ns *ns, struct aa_label *label,
- 
- /**
-  * aa_label_acntsxprint - allocate a __counted string buffer and print label
-- * @strp: buffer to write to. (MAY BE NULL if @size == 0)
-+ * @strp: buffer to write to.
-  * @ns: namespace profile is being viewed from
-  * @label: label to view (NOT NULL)
-  * @flags: flags controlling what label info is printed
--- 
-2.18.1
+Because ksgxswapd needs the alive enclave instance while it is in the
+process of swapping a victim page. The reason for this is the
+hierarchical nature of the enclave pages.
 
+As an example, a write operation to main memory, EWB (SDM vol 3D 40-79)
+needs to access SGX Enclave Control Structure (SECS) page, which is
+contains global data for an enclave, like the unswapped child count.
+
+
+> > +	return 0;
+> > +}
+> > +
+> > +static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+> > +{
+> > +	struct sgx_encl *encl = file->private_data;
+> > +	int ret;
+> > +
+> > +	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end, vma->vm_flags);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret = sgx_encl_mm_add(encl, vma->vm_mm);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	vma->vm_ops = &sgx_vm_ops;
+> > +	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
+> > +	vma->vm_private_data = encl;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static unsigned long sgx_get_unmapped_area(struct file *file,
+> > +					   unsigned long addr,
+> > +					   unsigned long len,
+> > +					   unsigned long pgoff,
+> > +					   unsigned long flags)
+> > +{
+> > +	if ((flags & MAP_TYPE) == MAP_PRIVATE)
+> > +		return -EINVAL;
+> > +
+> > +	if (flags & MAP_FIXED)
+> > +		return addr;
+> > +
+> > +	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
+> > +}
+> > +
+> > +static const struct file_operations sgx_encl_fops = {
+> > +	.owner			= THIS_MODULE,
+> > +	.open			= sgx_open,
+> > +	.release		= sgx_release,
+> > +	.mmap			= sgx_mmap,
+> > +	.get_unmapped_area	= sgx_get_unmapped_area,
+> > +};
+> > +
+> > +static struct miscdevice sgx_dev_enclave = {
+> > +	.minor = MISC_DYNAMIC_MINOR,
+> > +	.name = "enclave",
+> > +	.nodename = "sgx/enclave",
+> 
+> A subdir for a single device node?  Ok, odd, but why not just
+> "sgx_enclave"?  How "special" is this device node?
+
+There is a patch that adds "sgx/provision".
+
+Either works for me. Should I flatten them to "sgx_enclave" and
+"sgx_provision", or keep them as they are?
+
+> thanks,
+> 
+> greg k-h
+
+/Jarkko
