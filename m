@@ -1,179 +1,293 @@
-Return-Path: <SRS0=csXq=DL=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=y/Jz=DM=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8288CC4727D
-	for <linux-security-module@archiver.kernel.org>; Sun,  4 Oct 2020 23:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56909C4363C
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Oct 2020 00:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 536C2206A1
-	for <linux-security-module@archiver.kernel.org>; Sun,  4 Oct 2020 23:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26F90206B6
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Oct 2020 00:27:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725839AbgJDXmJ (ORCPT
+        id S1725862AbgJEA1i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 4 Oct 2020 19:42:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20869 "EHLO mga07.intel.com"
+        Sun, 4 Oct 2020 20:27:38 -0400
+Received: from mga17.intel.com ([192.55.52.151]:31334 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbgJDXmJ (ORCPT
+        id S1725841AbgJEA1i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 4 Oct 2020 19:42:09 -0400
-IronPort-SDR: R5Zpscd5C8uGdYaWjIKupHhcGZJb0yjG2oKenRgYERg7mJ9ON4q5XsMW21q11og/W0xTXM0ej8
- LG+9/7zWSfcQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="227448155"
+        Sun, 4 Oct 2020 20:27:38 -0400
+IronPort-SDR: YWFh3ql9KBuqfChqRqSKLuXF3WnTxsbbrJvChhP1FXnvOm/w/vLdwHx/SOdSQTKI7vyudBAWqD
+ V6caEihwb/PQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="143304497"
 X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="227448155"
+   d="scan'208";a="143304497"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 16:42:07 -0700
-IronPort-SDR: seGpSuZbW+Slv1I+Z7lk0E2yUnPxGWRnioLNMY1aTZKPNE2VrS6ifA2Nh788vAzGFJ/MqBgfmE
- NgF6YJL73RIw==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 17:27:36 -0700
+IronPort-SDR: RW5I9R4s0IuMFy5vjd1whlcSK74JY+DVuOEOfNnJ5XDuPXLwsVcKr8p7t0P8USvJG+muZY7Olr
+ XCntPq49G+qw==
 X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="522376134"
+   d="scan'208";a="295931148"
 Received: from avahldie-mobl.amr.corp.intel.com (HELO localhost) ([10.249.32.74])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 16:41:55 -0700
-Date:   Mon, 5 Oct 2020 02:41:53 +0300
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 17:27:32 -0700
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
-        mikko.ylinen@intel.com
-Subject: Re: [PATCH v39 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20201004234153.GA49415@linux.intel.com>
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-12-jarkko.sakkinen@linux.intel.com>
- <20201003195440.GD20115@casper.infradead.org>
- <20201004215049.GA43926@linux.intel.com>
- <20201004222750.GI20115@casper.infradead.org>
+To:     linux-integrity@vger.kernel.org
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Alexey Klimov <aklimov@redhat.com>,
+        linux-kernel@vger.kernel.org (open list),
+        keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH 2/3] KEYS: trusted: Reserve TPM for seal and unseal operations
+Date:   Mon,  5 Oct 2020 03:26:58 +0300
+Message-Id: <20201005002659.81588-3-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201005002659.81588-1-jarkko.sakkinen@linux.intel.com>
+References: <20201005002659.81588-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201004222750.GI20115@casper.infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 04, 2020 at 11:27:50PM +0100, Matthew Wilcox wrote:
-> On Mon, Oct 05, 2020 at 12:50:49AM +0300, Jarkko Sakkinen wrote:
-> > What is shoukd take is encl->lock.
-> > 
-> > The loop was pre-v36 like:
-> > 
-> > 	idx_start = PFN_DOWN(start);
-> > 	idx_end = PFN_DOWN(end - 1);
-> > 
-> > 	for (idx = idx_start; idx <= idx_end; ++idx) {
-> > 		mutex_lock(&encl->lock);
-> > 		page = radix_tree_lookup(&encl->page_tree, idx);
-> > 		mutex_unlock(&encl->lock);
-> > 
-> > 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> > 			return -EACCES;
-> > 	}
-> > 
-> > Looking at xarray.h and filemap.c, I'm thinking something along the
-> > lines of:
-> > 
-> > 	for (idx = idx_start; idx <= idx_end; ++idx) {
-> > 		mutex_lock(&encl->lock);
-> > 		page = xas_find(&xas, idx + 1);
-> > 		mutex_unlock(&encl->lock);
-> > 
-> > 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> > 			return -EACCES;
-> > 	}
-> > 
-> > Does this look about right?
-> 
-> Not really ...
-> 
-> 	int ret = 0;
-> 
-> 	mutex_lock(&encl->lock);
-> 	rcu_read_lock();
+When TPM 2.0 trusted keys code was moved to the trusted keys subsystem,
+the operations were unwrapped from tpm_try_get_ops() and tpm_put_ops(),
+which are used to take temporarily the ownership of the TPM chip. The
+ownership is only taken inside tpm_send(), but this is not sufficient,
+as in the key load TPM2_CC_LOAD, TPM2_CC_UNSEAL and TPM2_FLUSH_CONTEXT
+need to be done as a one single atom.
 
-Right, so xa_*() take RCU lock implicitly and xas_* do not.
+Fix this issue by introducting trusted_tpm_load() and trusted_tpm_new(),
+which wrap these operations, and take the TPM chip ownership before
+sending anything. Use tpm_transmit_cmd() to send TPM commands instead
+of tpm_send(), reverting back to the old behaviour.
 
-> 	while (xas.index < idx_end) {
-> 		page = xas_next(&xas);
+Fixes: 2e19e10131a0 ("KEYS: trusted: Move TPM2 trusted keys code")
+Reported-by: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+Cc: stable@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm.h                    |  4 --
+ include/linux/tpm.h                       | 16 ++++-
+ security/keys/trusted-keys/trusted_tpm1.c | 78 +++++++++++++++--------
+ security/keys/trusted-keys/trusted_tpm2.c |  6 +-
+ 4 files changed, 71 insertions(+), 33 deletions(-)
 
-It should iterate through every possible page index within the range,
-even the ones that do not have an entry, i.e. this loop also checks
-that there are no empty slots.
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 947d1db0a5cc..283f78211c3a 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -164,8 +164,6 @@ extern const struct file_operations tpmrm_fops;
+ extern struct idr dev_nums_idr;
+ 
+ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
+-ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
+-			 size_t min_rsp_body_length, const char *desc);
+ int tpm_get_timeouts(struct tpm_chip *);
+ int tpm_auto_startup(struct tpm_chip *chip);
+ 
+@@ -194,8 +192,6 @@ static inline void tpm_msleep(unsigned int delay_msec)
+ int tpm_chip_start(struct tpm_chip *chip);
+ void tpm_chip_stop(struct tpm_chip *chip);
+ struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+-__must_check int tpm_try_get_ops(struct tpm_chip *chip);
+-void tpm_put_ops(struct tpm_chip *chip);
+ 
+ struct tpm_chip *tpm_chip_alloc(struct device *dev,
+ 				const struct tpm_class_ops *ops);
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 8f4ff39f51e7..c908349a2f15 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -397,6 +397,10 @@ static inline u32 tpm2_rc_value(u32 rc)
+ #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
+ 
+ extern int tpm_is_tpm2(struct tpm_chip *chip);
++extern __must_check int tpm_try_get_ops(struct tpm_chip *chip);
++extern void tpm_put_ops(struct tpm_chip *chip);
++extern ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
++				size_t min_rsp_body_length, const char *desc);
+ extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+ 			struct tpm_digest *digest);
+ extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+@@ -410,7 +414,17 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip)
+ {
+ 	return -ENODEV;
+ }
+-
++static inline int tpm_try_get_ops(struct tpm_chip *chip)
++{
++	return -ENODEV;
++}
++static inline void tpm_put_ops(struct tpm_chip *chip)
++{
++}
++extern ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
++				size_t min_rsp_body_length, const char *desc)
++{
++}
+ static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
+ 			       struct tpm_digest *digest)
+ {
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index c7b1701cdac5..c1dfc32c780b 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -950,6 +950,51 @@ static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
+ 	return p;
+ }
+ 
++static int trusted_tpm_load(struct tpm_chip *chip,
++			    struct trusted_key_payload *payload,
++			    struct trusted_key_options *options)
++{
++	int ret;
++
++	if (tpm_is_tpm2(chip)) {
++		ret = tpm_try_get_ops(chip);
++		if (!ret) {
++			ret = tpm2_unseal_trusted(chip, payload, options);
++			tpm_put_ops(chip);
++		}
++	} else {
++		ret = key_unseal(payload, options);
++	}
++
++	return ret;
++}
++
++static int trusted_tpm_new(struct tpm_chip *chip,
++			   struct trusted_key_payload *payload,
++			   struct trusted_key_options *options)
++{
++	int ret;
++
++	ret = tpm_get_random(chip, payload->key, payload->key_len);
++	if (ret < 0)
++		return ret;
++
++	if (ret != payload->key_len)
++		return -EIO;
++
++	if (tpm_is_tpm2(chip)) {
++		ret = tpm_try_get_ops(chip);
++		if (!ret) {
++			ret = tpm2_seal_trusted(chip, payload, options);
++			tpm_put_ops(chip);
++		}
++	} else {
++		ret = key_seal(payload, options);
++	}
++
++	return ret;
++}
++
+ /*
+  * trusted_instantiate - create a new trusted key
+  *
+@@ -968,12 +1013,6 @@ static int trusted_instantiate(struct key *key,
+ 	char *datablob;
+ 	int ret = 0;
+ 	int key_cmd;
+-	size_t key_len;
+-	int tpm2;
+-
+-	tpm2 = tpm_is_tpm2(chip);
+-	if (tpm2 < 0)
+-		return tpm2;
+ 
+ 	if (datalen <= 0 || datalen > 32767 || !prep->data)
+ 		return -EINVAL;
+@@ -1011,32 +1050,21 @@ static int trusted_instantiate(struct key *key,
+ 
+ 	switch (key_cmd) {
+ 	case Opt_load:
+-		if (tpm2)
+-			ret = tpm2_unseal_trusted(chip, payload, options);
+-		else
+-			ret = key_unseal(payload, options);
++		ret = trusted_tpm_load(chip, payload, options);
++
+ 		dump_payload(payload);
+ 		dump_options(options);
++
+ 		if (ret < 0)
+-			pr_info("trusted_key: key_unseal failed (%d)\n", ret);
++			pr_info("%s: load failed (%d)\n", __func__, ret);
++
+ 		break;
+ 	case Opt_new:
+-		key_len = payload->key_len;
+-		ret = tpm_get_random(chip, payload->key, key_len);
+-		if (ret < 0)
+-			goto out;
++		ret = trusted_tpm_new(chip, payload, options);
+ 
+-		if (ret != key_len) {
+-			pr_info("trusted_key: key_create failed (%d)\n", ret);
+-			ret = -EIO;
+-			goto out;
+-		}
+-		if (tpm2)
+-			ret = tpm2_seal_trusted(chip, payload, options);
+-		else
+-			ret = key_seal(payload, options);
+ 		if (ret < 0)
+-			pr_info("trusted_key: key_seal failed (%d)\n", ret);
++			pr_info("%s: new failed (%d)\n", __func__, ret);
++
+ 		break;
+ 	default:
+ 		ret = -EINVAL;
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 08ec7f48f01d..effdb67fac6d 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -130,7 +130,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		goto out;
+ 	}
+ 
+-	rc = tpm_send(chip, buf.data, tpm_buf_length(&buf));
++	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
+ 	if (rc)
+ 		goto out;
+ 
+@@ -211,7 +211,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		goto out;
+ 	}
+ 
+-	rc = tpm_send(chip, buf.data, tpm_buf_length(&buf));
++	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
+ 	if (!rc)
+ 		*blob_handle = be32_to_cpup(
+ 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
+@@ -260,7 +260,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			     options->blobauth /* hmac */,
+ 			     TPM_DIGEST_SIZE);
+ 
+-	rc = tpm_send(chip, buf.data, tpm_buf_length(&buf));
++	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
+ 	if (rc > 0)
+ 		rc = -EPERM;
+ 
+-- 
+2.25.1
 
-Does xas_next() go through every possible index, or skip the non-empty
-ones?
-
-> 		if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-> 			ret = -EACCESS;
-> 			break;
-> 		}
-> 	}
-> 	rcu_read_unlock();
-> 	mutex_unlock(&encl->lock);
-
-In my Geminilake NUC the maximum size of the address space is 64GB for
-an enclave, and it is not fixed but can grow in microarchitectures
-beyond that.
-
-That means that in (*artificial*) worst case the locks would be kept for
-64*1024*1024*1024/4096 = 16777216 iterations.
-
-I just realized that in sgx_encl_load_page ([1], the encl->lock is
-acquired by the caller) I have used xa_load(), which more or less would
-be compatible with the old radix_tree pattern, i.e.
-
-for (idx = idx_start; idx <= idx_end; ++idx) {
-	mutex_lock(&encl->lock);
-	page = xas_load(&encl->page_array, idx);
-	mutex_unlock(&encl->lock);
-
-	if (!page || (~page->vm_max_prot_bits & vm_prot_bits))
-		return -EACCES;
-}
-
-To make things stable again, I'll go with this for the immediate future.
-
-> 	return ret;
-> 
-> ... or you could rework to use the xa_lock instead of encl->lock.
-> I don't know how feasible that is for you.
-
-encl->lock is used to protect enclave state but it is true that
-page->vm_max_prort_bits is not modified through concurrent access, once
-the page is added (e.g. by the reclaimer, which gets pages through
-sgx_activate_page_list, not through xarray).
-
-It's an interesting idea, but before even considering it I want to fix
-the bug, even if the fix ought to be somehow unoptimal in terms of
-performance.
-
-Thanks for helping with this. xarray is still somewhat alien to me and
-most of the code I see just use the iterator macros excep mm/*, but
-I'm slowly adapting the concepts.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git/tree/arch/x86/kernel/cpu/sgx/encl.c
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-sgx.git/tree/arch/x86/kernel/cpu/sgx/main.c
-
-/Jarkko
