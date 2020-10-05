@@ -2,102 +2,92 @@ Return-Path: <SRS0=y/Jz=DM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2979AC35257
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Oct 2020 03:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7570C4363A
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Oct 2020 08:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E671120809
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Oct 2020 03:50:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B95E2078D
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Oct 2020 08:46:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="be0vEecm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbgJEDuW (ORCPT
+        id S1725887AbgJEIqB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 4 Oct 2020 23:50:22 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58110 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbgJEDuU (ORCPT
+        Mon, 5 Oct 2020 04:46:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42698 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725880AbgJEIqB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 4 Oct 2020 23:50:20 -0400
-IronPort-SDR: uptD8U17immlurGd9ENjXZK0RLD0Vob5upo6+ncnSA74Py9+rbuTzUrhLtX75zKUE20hulglvf
- oAhAMxh7nYbg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9764"; a="227459661"
-X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="227459661"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 20:50:15 -0700
-IronPort-SDR: +78de7BTlqIULS/Zxm5ve24hn9db3Xmtj/8xNCINYlnMzS6tR/HizVcMsHNpUKmwAymjxlVgtR
- BiOgwX62BQsg==
-X-IronPort-AV: E=Sophos;i="5.77,337,1596524400"; 
-   d="scan'208";a="295962488"
-Received: from sidorovd-mobl1.ccr.corp.intel.com (HELO localhost) ([10.252.48.68])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Oct 2020 20:50:11 -0700
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        David Safford <safford@watson.ibm.com>,
-        keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/3] KEYS: trusted: Fix migratable=1 failing
-Date:   Mon,  5 Oct 2020 06:49:48 +0300
-Message-Id: <20201005034948.174228-4-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201005034948.174228-1-jarkko.sakkinen@linux.intel.com>
-References: <20201005034948.174228-1-jarkko.sakkinen@linux.intel.com>
+        Mon, 5 Oct 2020 04:46:01 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86DCEC0613CE;
+        Mon,  5 Oct 2020 01:46:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bPm+NXaF58oJ4pjj4kj4P9hwCIv8anAVYU31I1Ay3xI=; b=be0vEecmIPJUInhqujERdVjiSw
+        slWf5EO2sCfw41bwcU9ciclcTkqSrJ0VfD0OYwwi7lxu3zLvjDfsDjvsdssh1lo1KjP9PQIlCEWXi
+        cnCKvReenjphE6Y3kY0Ns7UnmKUpBom+XgoqzWsF1XIah9qN3rW4c4yYrlbg2UvYwgg59/oDX0ATE
+        4lBnzfitFtYJpY9MImEf15N8pAP3nc09m7dhoT6a4eHzujyUUUW62091GddUvyAE+NoqREw0drYHI
+        ZML1gTsEnixC3/hXFtpamePthAtxcHyH1MM8IJif1UKn6+v+GZYmdmA6vgtX/stzX3szmHfdWm64f
+        FxSICqZA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kPM82-00014G-E5; Mon, 05 Oct 2020 08:45:54 +0000
+Date:   Mon, 5 Oct 2020 09:45:54 +0100
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v39 11/24] x86/sgx: Add SGX enclave driver
+Message-ID: <20201005084554.GA3403@infradead.org>
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-12-jarkko.sakkinen@linux.intel.com>
+ <20201003143925.GB800720@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201003143925.GB800720@kroah.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Consider the following transcript:
+On Sat, Oct 03, 2020 at 04:39:25PM +0200, Greg KH wrote:
+> > @@ -0,0 +1,173 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
+> 
+> You use gpl-only header files in this file, so how in the world can it
+> be bsd-3 licensed?
+> 
+> Please get your legal department to agree with this, after you explain
+> to them how you are mixing gpl2-only code in with this file.
+> 
+> > +// Copyright(c) 2016-18 Intel Corporation.
+> 
+> Dates are hard to get right :(
 
-$ keyctl add trusted kmk "new 32 blobauth=helloworld keyhandle=80000000 migratable=1" @u
-add_key: Invalid argument
-
-The documentation has the following description:
-
-  migratable=   0|1 indicating permission to reseal to new PCR values,
-                default 1 (resealing allowed)
-
-The consequence is that "migratable=1" should succeed. Fix this by
-allowing this condition to pass instead of return -EINVAL.
-
-[*] Documentation/security/keys/trusted-encrypted.rst
-
-Cc: stable@vger.kernel.org
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: David Howells <dhowells@redhat.com>
-Fixes: d00a1c72f7f4 ("keys: add new trusted key-type")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- security/keys/trusted-keys/trusted_tpm1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index c1dfc32c780b..20ca18e17437 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -801,7 +801,7 @@ static int getoptions(char *c, struct trusted_key_payload *pay,
- 		case Opt_migratable:
- 			if (*args[0].from == '0')
- 				pay->migratable = 0;
--			else
-+			else if (*args[0].from != '1')
- 				return -EINVAL;
- 			break;
- 		case Opt_pcrlock:
--- 
-2.25.1
-
+As is comment formatting apparently.  Don't use // comments for anything
+but the SPDX header, please.
