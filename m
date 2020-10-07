@@ -2,97 +2,73 @@ Return-Path: <SRS0=peEt=DO=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D8AC47095
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Oct 2020 12:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F034C41604
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Oct 2020 16:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E08C720872
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Oct 2020 12:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27806206FC
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Oct 2020 16:50:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbgJGMit (ORCPT
+        id S1727005AbgJGQuF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Oct 2020 08:38:49 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2964 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727927AbgJGMit (ORCPT
+        Wed, 7 Oct 2020 12:50:05 -0400
+Received: from mga12.intel.com ([192.55.52.136]:1632 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726948AbgJGQuE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Oct 2020 08:38:49 -0400
-Received: from lhreml737-chm.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 51B82FE16407BB6B87D2;
-        Wed,  7 Oct 2020 13:38:44 +0100 (IST)
-Received: from fraeml702-chm.china.huawei.com (10.206.15.51) by
- lhreml737-chm.china.huawei.com (10.201.108.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Wed, 7 Oct 2020 13:38:44 +0100
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Wed, 7 Oct 2020 14:38:43 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Wed, 7 Oct 2020 14:38:43 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Colin King <colin.king@canonical.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+        Wed, 7 Oct 2020 12:50:04 -0400
+IronPort-SDR: JBibSw9JQUkvjf8svBRGePcjX13PgvkVGMyP1SkUQ+FeUb8tcsX/L0q4USOh3rJPhm+7KaKjWb
+ cgZqQQ4loD9g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9767"; a="144400703"
+X-IronPort-AV: E=Sophos;i="5.77,347,1596524400"; 
+   d="scan'208";a="144400703"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 09:50:04 -0700
+IronPort-SDR: 0f+EG1A00l6z1hUghZw9f9jpHEWqPaisY8h+zEDQzhrqtzc50Y4k340UIVEDp5Vj9XVHr7y+Cd
+ Be2Be8cKTM0w==
+X-IronPort-AV: E=Sophos;i="5.77,347,1596524400"; 
+   d="scan'208";a="528047390"
+Received: from dumser-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.51.100])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2020 09:49:54 -0700
+Date:   Wed, 7 Oct 2020 19:49:50 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         Roberto Sassu <roberto.sassu@polito.it>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Silviu Vlasceanu" <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH] ima: Fix sizeof mismatches
-Thread-Topic: [PATCH] ima: Fix sizeof mismatches
-Thread-Index: AQHWnJmhl+2ccdx8rkqE0F+MK/ZxlKmMEx7g
-Date:   Wed, 7 Oct 2020 12:38:43 +0000
-Message-ID: <cf66956ac2df49e6b51cacf94a8a31b9@huawei.com>
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ima: Fix sizeof mismatches
+Message-ID: <20201007164950.GA3885@linux.intel.com>
 References: <20201007110243.19033-1-colin.king@canonical.com>
-In-Reply-To: <20201007110243.19033-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201007110243.19033-1-colin.king@canonical.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBDb2xpbiBLaW5nIFttYWlsdG86Y29saW4ua2luZ0BjYW5vbmljYWwuY29tXQ0KPiBT
-ZW50OiBXZWRuZXNkYXksIE9jdG9iZXIgNywgMjAyMCAxOjAzIFBNDQo+IEZyb206IENvbGluIElh
-biBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+IA0KPiBBbiBpbmNvcnJlY3Qgc2l6
-ZW9mIGlzIGJlaW5nIHVzZWQsIHNpemVvZigqZmllbGRzKSBpcyBub3QgY29ycmVjdCwNCj4gaXQg
-c2hvdWxkIGJlIHNpemVvZigqKmZpZWxkcykuIFRoaXMgaXMgbm90IGNhdXNpbmcgYSBwcm9ibGVt
-IHNpbmNlDQo+IHRoZSBzaXplIG9mIHRoZXNlIGlzIHRoZSBzYW1lLiBGaXggdGhpcyBpbiB0aGUg
-a21hbGxvY19hcnJheSBhbmQNCj4gbWVtY3B5IGNhbGxzLg0KPiANCj4gQWRkcmVzc2VzLUNvdmVy
-aXR5OiAoIlNpemVvZiBub3QgcG9ydGFibGUgKFNJWkVPRl9NSVNNQVRDSCkiKQ0KPiBGaXhlczog
-MWJkN2ZhY2U3NDM5ICgiaW1hOiBhbGxvY2F0ZSBmaWVsZCBwb2ludGVycyBhcnJheSBvbiBkZW1h
-bmQgaW4NCj4gdGVtcGxhdGVfZGVzY19pbml0X2ZpZWxkcygpIikNCj4gU2lnbmVkLW9mZi1ieTog
-Q29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCg0KVGhhbmtzIENvbGlu
-Lg0KDQpSZXZpZXdlZC1ieTogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29t
-Pg0KDQpSb2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwgSFJC
-IDU2MDYzDQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgTGkgSmlhbiwgU2hpIFlhbmxpDQoN
-Cj4gLS0tDQo+ICBzZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV90ZW1wbGF0ZS5jIHwgNCArKy0t
-DQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3RlbXBsYXRlLmMNCj4g
-Yi9zZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV90ZW1wbGF0ZS5jDQo+IGluZGV4IDFlODllMmQz
-ODUxZi4uODg4NGJiZjAzYjQzIDEwMDY0NA0KPiAtLS0gYS9zZWN1cml0eS9pbnRlZ3JpdHkvaW1h
-L2ltYV90ZW1wbGF0ZS5jDQo+ICsrKyBiL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3RlbXBs
-YXRlLmMNCj4gQEAgLTIxNiwxMSArMjE2LDExIEBAIGludCB0ZW1wbGF0ZV9kZXNjX2luaXRfZmll
-bGRzKGNvbnN0IGNoYXINCj4gKnRlbXBsYXRlX2ZtdCwNCj4gIAl9DQo+IA0KPiAgCWlmIChmaWVs
-ZHMgJiYgbnVtX2ZpZWxkcykgew0KPiAtCQkqZmllbGRzID0ga21hbGxvY19hcnJheShpLCBzaXpl
-b2YoKmZpZWxkcyksIEdGUF9LRVJORUwpOw0KPiArCQkqZmllbGRzID0ga21hbGxvY19hcnJheShp
-LCBzaXplb2YoKipmaWVsZHMpLCBHRlBfS0VSTkVMKTsNCj4gIAkJaWYgKCpmaWVsZHMgPT0gTlVM
-TCkNCj4gIAkJCXJldHVybiAtRU5PTUVNOw0KPiANCj4gLQkJbWVtY3B5KCpmaWVsZHMsIGZvdW5k
-X2ZpZWxkcywgaSAqIHNpemVvZigqZmllbGRzKSk7DQo+ICsJCW1lbWNweSgqZmllbGRzLCBmb3Vu
-ZF9maWVsZHMsIGkgKiBzaXplb2YoKipmaWVsZHMpKTsNCj4gIAkJKm51bV9maWVsZHMgPSBpOw0K
-PiAgCX0NCj4gDQo+IC0tDQo+IDIuMjcuMA0KDQo=
+On Wed, Oct 07, 2020 at 12:02:43PM +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> An incorrect sizeof is being used, sizeof(*fields) is not correct,
+> it should be sizeof(**fields). This is not causing a problem since
+> the size of these is the same. Fix this in the kmalloc_array and
+> memcpy calls.
+> 
+> Addresses-Coverity: ("Sizeof not portable (SIZEOF_MISMATCH)")
+> Fixes: 1bd7face7439 ("ima: allocate field pointers array on demand in template_desc_init_fields()")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
