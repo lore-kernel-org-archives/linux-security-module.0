@@ -3,89 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CDEC4363D
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Oct 2020 01:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCFFC04EBE
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Oct 2020 13:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12F3C20882
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Oct 2020 01:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A871421D41
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Oct 2020 13:50:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="hDW/iDI/"
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="W0UOq3Lf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbgJHBHW (ORCPT
+        id S1730391AbgJHNuE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Oct 2020 21:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45930 "EHLO
+        Thu, 8 Oct 2020 09:50:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbgJHBHW (ORCPT
+        with ESMTP id S1725871AbgJHNuE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Oct 2020 21:07:22 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7204C061755
-        for <linux-security-module@vger.kernel.org>; Wed,  7 Oct 2020 18:07:21 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id u21so5638136eja.2
-        for <linux-security-module@vger.kernel.org>; Wed, 07 Oct 2020 18:07:21 -0700 (PDT)
+        Thu, 8 Oct 2020 09:50:04 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A010EC061755;
+        Thu,  8 Oct 2020 06:50:03 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id dg9so3557538edb.12;
+        Thu, 08 Oct 2020 06:50:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=umich.edu; s=google-2016-06-03;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=q/fw/vuv+jpX7naIQJNtmb+BuD3O/GoY3uFVsTJ1Bfs=;
-        b=hDW/iDI/5zAUvZa/ZFpCvsDx9a+9piT6TL23o6bYiK65glSzEbGfsXy0HqRm4rSDGI
-         TJ38VP+bs2L9m9woEI1omY9nCGyeZOGjwB29PUIUn1bj6TZuV7F5iUknuxvmoLohA6CI
-         D4eoqPGneGKemHfBXRaoQq8TrVReQSkMhtDdBAuE+ZBYIkH+8i58BfQGFVqdjjxw4Ugl
-         o/e+kU8wLFsH6IDGq1PsvHk+yH+tGNgBPENSON3Hbq3sQLIvo+zlLHVqCYqdeQz2HIIO
-         bNk9nLA+uugX5vK0KZK/vDL4KHGK8phwYLlOpO9+Yv1zMM3joLCxk679lxthppcz1I+m
-         0iWg==
+        bh=566aGx0fjn/Cf/+3IIVZxccUrWM+zMuL27UgTu3X9qI=;
+        b=W0UOq3LfBHP7GlKANOemtnFlYbU7E1dykEyeE1U+8klIf99LuDjOldc2Cn84agNugG
+         GzvuAUpJNpDpmM16q6zoKstSPd4AxTyZIxa2pooWY7ggfJoKwYKjK0IRoyZx1qM6TXzz
+         epmkkoOc2QMR+m6PHXDYTm2GA91q2hkYBGhWl7WyyflcXgyjRDgACkqFruFxvndKA4Bq
+         LCN3zZ9+T6CkglnVA0H2pf2iouw2YOVkj/W8Oiwuorh3g7U4U/OWmHrlYkhSU+dE8T2Q
+         A29RH/kwnfPXp2xVLOM/LO0AMwat55vwcqksrv1EDFLCI8L0L0SO+/lltjo++7o77eBn
+         5uQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=q/fw/vuv+jpX7naIQJNtmb+BuD3O/GoY3uFVsTJ1Bfs=;
-        b=jYGLtmQGvz9rw5QxFl/jX+MeDV8H9zflpqWR2/guz3X4Qqs8W6FBTVOcjd64f7CnXM
-         K2XZEvwls+ZlbQo6FPssAuZISATCBUW+xRDlZLgpRV9oLi5wJ9l3NKZJWkh3mKfYX5Lr
-         3hk8PiIQmcSN/MWcYyBllH2msiguVBZ4GPiZ/BseGouQQl3yrjSMlgrl00CeL78wXiDp
-         JNY8wMuVhjFMEIk/PHRbnR1NitVRAM00+BGsTDOl9dg8lCPUMDnkMXUlBw1ZvbK4XOwq
-         ooxv0AHJTTeNNWt3bmGuXrRU/XbffSE665m/3/HSTATap6IMJVNYcPXHpYWq5Rha4IgD
-         hoUg==
-X-Gm-Message-State: AOAM532cCVyUd/TSbSxvX+hbINLFDZvIVjbcaojgG0A/mfaiiM7pULFf
-        /zh2nw9VexGXD7v88rCm5xRIIEVwSxkdw6gZTSS/5ZaJwg==
-X-Google-Smtp-Source: ABdhPJyq302K8QytrlX+hwl6vTBW38bJQQ98PHyDjDLem6jTF6PUhQcylf9edQ8uoAxsI0yXeldAmZjvGkcF5H609FE=
-X-Received: by 2002:a17:906:4811:: with SMTP id w17mr5770585ejq.431.1602119240009;
- Wed, 07 Oct 2020 18:07:20 -0700 (PDT)
+        bh=566aGx0fjn/Cf/+3IIVZxccUrWM+zMuL27UgTu3X9qI=;
+        b=f7qnNwKr2yFzIgcm3GG790aF4qj0maq68FOPagvav9MqjETnP3b77s5PqLxeb027J6
+         SYLmlSdvJCgZpjuMdtTPl5y7ELXWLlPoIRv9A+T9L/ajLor+NzLcQj0AWMhK5UGFTcHA
+         6OGPOFFOOpOXv57RPjWVgCUJNfv++d12Do+N+FvJXjtaXGxM+FThQ2vQuIT368UsFSpC
+         Mp/1l/hdy0gXu7fRN9HG4+G1dT4s+OzIazvpZo8GdmOipmFEC1qs5XUPxNqMgw5sU8rT
+         ZuKX9AKGZQedfQnMu5wbTpNO952sPy71lWQVq2XSgzlZKb89Ik5cmhsGs4kunMesUpan
+         FDnA==
+X-Gm-Message-State: AOAM530gNvhmRWG6KUuJ1aVG9cLE2Uzk5MBykwb4MMOVEAJn4Y6l41t0
+        NntiyHirBxfpCReOoqPRM014f9ovQuTgSiIbsTkGUHeHEaU=
+X-Google-Smtp-Source: ABdhPJzC6M5m72vSKXA2IhJ5e8O7fla/erUCzPWS5NyyQmhxjmmlf0MHjhEspnLduJfvw4foauBn3K+bHLvjQHKthrg=
+X-Received: by 2002:a05:6402:176c:: with SMTP id da12mr9250328edb.28.1602165002282;
+ Thu, 08 Oct 2020 06:50:02 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
-In-Reply-To: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 7 Oct 2020 21:07:08 -0400
-Message-ID: <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+ <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+In-Reply-To: <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Thu, 8 Oct 2020 09:49:51 -0400
+Message-ID: <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com>
 Subject: Re: selinux: how to query if selinux is enabled
-To:     Olga Kornievskaia <aglo@umich.edu>
+To:     Paul Moore <paul@paul-moore.com>
 Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 7, 2020 at 8:41 PM Olga Kornievskaia <aglo@umich.edu> wrote:
-> Hi folks,
+On Wed, Oct 7, 2020 at 9:07 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> From some linux kernel module, is it possible to query and find out
-> whether or not selinux is currently enabled or not?
+> On Wed, Oct 7, 2020 at 8:41 PM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > Hi folks,
+> >
+> > From some linux kernel module, is it possible to query and find out
+> > whether or not selinux is currently enabled or not?
+> >
+> > Thank you.
 >
-> Thank you.
+> [NOTE: CC'ing the SELinux list as it's probably a bit more relevant
+> that the LSM list]
+>
+> In general most parts of the kernel shouldn't need to worry about what
+> LSMs are active and/or enabled; the simply interact with the LSM(s)
+> via the interfaces defined in include/linux/security.h (there are some
+> helpful comments in include/linux/lsm_hooks.h).  Can you elaborate a
+> bit more on what you are trying to accomplish?
 
-[NOTE: CC'ing the SELinux list as it's probably a bit more relevant
-that the LSM list]
+Hi Paul,
 
-In general most parts of the kernel shouldn't need to worry about what
-LSMs are active and/or enabled; the simply interact with the LSM(s)
-via the interfaces defined in include/linux/security.h (there are some
-helpful comments in include/linux/lsm_hooks.h).  Can you elaborate a
-bit more on what you are trying to accomplish?
+Thank you for the response. What I'm trying to accomplish is the
+following. Within a file system (NFS), typically any queries for
+security labels are triggered by the SElinux (or I guess an LSM in
+general) (thru the xattr_handler hooks). However, when the VFS is
+calling to get directory entries NFS will always get the labels
+(baring server not supporting it). However this is useless and affects
+performance (ie., this makes servers do extra work  and adds to the
+network traffic) when selinux is disabled. It would be useful if NFS
+can check if there is anything that requires those labels, if SElinux
+is enabled or disabled.
 
-P.S. Go Blue :)
+Thank you.
 
--- 
-paul moore
-www.paul-moore.com
+> P.S. Go Blue :)
+
+Go Blue! :)
+
+>
+> --
+> paul moore
+> www.paul-moore.com
