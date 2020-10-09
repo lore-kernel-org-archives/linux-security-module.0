@@ -2,128 +2,136 @@ Return-Path: <SRS0=sYvJ=DQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9A6C433E7
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 08:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EFEC43457
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 11:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7093422269
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 08:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1B72226B
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 11:49:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="rsm45zT2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732612AbgJIIVu (ORCPT
+        id S2388226AbgJILte (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Oct 2020 04:21:50 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:55756 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732337AbgJIIVu (ORCPT
+        Fri, 9 Oct 2020 07:49:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732520AbgJILtd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Oct 2020 04:21:50 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A9C211C0B88; Fri,  9 Oct 2020 10:21:48 +0200 (CEST)
-Date:   Fri, 9 Oct 2020 10:21:47 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Pavel Machek <pavel@denx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
-        mikko.ylinen@intel.com
-Subject: Re: [PATCH v39 11/24] x86/sgx: Add SGX enclave driver
-Message-ID: <20201009082146.GA15188@amd>
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-12-jarkko.sakkinen@linux.intel.com>
- <20201003143925.GB800720@kroah.com>
- <20201009071045.GA10335@amd>
- <20201009072141.GA12545@kroah.com>
+        Fri, 9 Oct 2020 07:49:33 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80B6EC0613D2;
+        Fri,  9 Oct 2020 04:49:33 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id qp15so12652010ejb.3;
+        Fri, 09 Oct 2020 04:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8pT8vQashcbJSEQIERb420Ltn8jcbZ9+zc3sDEilK40=;
+        b=rsm45zT2E4nAZ0tunm4wqkaPwDISBch1FKQvZgOt9lSh5Rgp76SfZG4iLGiUC9mdIk
+         aUeV1oj1jrcBvC7yNKxrATvQ5XbSpWjqXcJWGBc4kGBA3TTWQGO8wx39R45bJqzvcZoy
+         pD/S6VHPOzx/p82JtxmiaHpIgNFp+X1J8cPljnsrTOQdAfJ8uMN0ZPf5X3f6vZxGu1i/
+         +/wZ78ySkh5Vl3SF7zeFNSS+J/vAnuJMI8joywot8U9oehLx/s+lUfJgfN7VTzG79T45
+         nTAMuNVe6MHAPPTpXU/e5wGX2M05K7ZqnpmK3qGQh3FF540s0vvmvjjqkdwRUq3Njg5e
+         f96w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8pT8vQashcbJSEQIERb420Ltn8jcbZ9+zc3sDEilK40=;
+        b=JJ9itY69Q8Nycqlu5dME3obHbVPFLS5GFOX/24n4JlO190ybRaGKvz7rDmdqNCcx69
+         Nq5zlP+5mMGYsdqBxejGMeomrkhYQAgn5X17BP4RETumQpWuL2obIyxz5L3XSnJ9uK1C
+         DCZ0AwCHFMkqs9dA98FdXpTpUJICpT84WAhYW4Rn7GNH5rqgzL75U4PPQvMxw+MTc53l
+         WPD6PFC5UaqgFs/wNE+cxdm7JvLim5M8T9a4J5jgl8ihtcOk6e1twedndhA8nNmkl3s9
+         WJ4GeQD0ohL6/r8Vgk932ZLfvKZIzLw2cd9O21ouITlD7H7qQ8CI30AGS16yzHRMBKIi
+         bhsg==
+X-Gm-Message-State: AOAM5313vTw7lWOAPeWn64A15u8lNVbpeOAaW2uj2xcqTs9HvUTMo9u0
+        F9YH+C7PEKOfE1Z7q/sv8ZVSN9Hh4hVOywoHo0s=
+X-Google-Smtp-Source: ABdhPJwA4yTGf1UKUCfiRzsWMruM2d5SWZcLas+ZWR6jJZ/9DKKq8qvE7hPeiJg84hV67aHxlES4xjOBYTWQyn9ERSw=
+X-Received: by 2002:a17:906:c015:: with SMTP id e21mr13533313ejz.432.1602244172064;
+ Fri, 09 Oct 2020 04:49:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
-Content-Disposition: inline
-In-Reply-To: <20201009072141.GA12545@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
+ <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+ <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com> <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Fri, 9 Oct 2020 07:49:21 -0400
+Message-ID: <CAN-5tyGJxUZb5QdJ=fh+L-6rc2B-MhQbDcDkTZNAZAAJm9Q8YQ@mail.gmail.com>
+Subject: Re: selinux: how to query if selinux is enabled
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Chuck Lever <chucklever@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Oct 8, 2020 at 9:03 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> ->On Thu, Oct 8, 2020 at 9:50 AM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > On Wed, Oct 7, 2020 at 9:07 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Wed, Oct 7, 2020 at 8:41 PM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > > > Hi folks,
+> > > >
+> > > > From some linux kernel module, is it possible to query and find out
+> > > > whether or not selinux is currently enabled or not?
+> > > >
+> > > > Thank you.
+> > >
+> > > [NOTE: CC'ing the SELinux list as it's probably a bit more relevant
+> > > that the LSM list]
+> > >
+> > > In general most parts of the kernel shouldn't need to worry about what
+> > > LSMs are active and/or enabled; the simply interact with the LSM(s)
+> > > via the interfaces defined in include/linux/security.h (there are some
+> > > helpful comments in include/linux/lsm_hooks.h).  Can you elaborate a
+> > > bit more on what you are trying to accomplish?
+> >
+> > Hi Paul,
+> >
+> > Thank you for the response. What I'm trying to accomplish is the
+> > following. Within a file system (NFS), typically any queries for
+> > security labels are triggered by the SElinux (or I guess an LSM in
+> > general) (thru the xattr_handler hooks). However, when the VFS is
+> > calling to get directory entries NFS will always get the labels
+> > (baring server not supporting it). However this is useless and affects
+> > performance (ie., this makes servers do extra work  and adds to the
+> > network traffic) when selinux is disabled. It would be useful if NFS
+> > can check if there is anything that requires those labels, if SElinux
+> > is enabled or disabled.
+>
+> [Adding Chuck Lever to the CC line as I believe he has the most recent
+> LSM experience from the NFS side - sorry Chuck :)]
+>
+> I'll need to ask your patience on this as I am far from a NFS expert.
+>
+> Looking through the NFS readdir/getdents code this evening, I was
+> wondering if the solution in the readdir case is to simply tell the
+> server you are not interested in the security label by masking out
+> FATTR4_WORD2_SECURITY_LABEL in the nfs4_readdir_arg->bitmask in
+> _nfs4_proc_readdir()?  Of course this assumes that the security label
+> genuinely isn't needed in this case (and not requesting it doesn't
+> bypass access controls or break something on the server side), and we
+> don't screw up some NFS client side cache by *not* fetching the
+> security label attribute.
+>
+> Is this remotely close to workable, or am I missing something fundamental?
+>
 
---5mCyUwZo2JvN/JJP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No this is not going to work, as NFS requires labels when labels are
+indeed needed by the LSM. What I'm looking for is an optimization.
+What we have is functionality correct but performance might suffer for
+the standard case of NFSv4.2 seclabel enabled server and clients that
+don't care about seclabels.
 
-On Fri 2020-10-09 09:21:41, Greg KH wrote:
-> On Fri, Oct 09, 2020 at 09:10:45AM +0200, Pavel Machek wrote:
-> > Hi!
-> >=20
-> > > > new file mode 100644
-> > > > index 000000000000..f54da5f19c2b
-> > > > --- /dev/null
-> > > > +++ b/arch/x86/kernel/cpu/sgx/driver.c
-> > > > @@ -0,0 +1,173 @@
-> > > > +// SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> > >=20
-> > > You use gpl-only header files in this file, so how in the world can it
-> > > be bsd-3 licensed?
-> > >=20
-> > > Please get your legal department to agree with this, after you explain
-> > > to them how you are mixing gpl2-only code in with this file.
-> >=20
-> > This specifies license of driver.c, not of the headers included. Are
-> > you saying that it is impossible to have a kernel driver with anything
-> > else than GPL-2? That would be news to many, and that's not what
-> > current consensus is.
->=20
-> If you want to write any non-GPL-2-only kernel code, you had better be
-> consulting your lawyers and get very explicit instructions on how to do
-> this in a way that does not violate any licenses.
->=20
-> I am not a lawyer, and will not be giving you any such advice, as I
-> think it's not something that people should be doing.
 
-You are pushing view that is well outside accepted community
-consensus, then try to hide it by claiming that you are not a lawyer.
-
-Stop it.
-
-Dual licensed drivers are common in the kernel, and are considered
-okay by everyone but you. Author is free to select license for his
-work.
-
-								Pavel
---=20
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---5mCyUwZo2JvN/JJP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl+AHZoACgkQMOfwapXb+vKOjACgl9a8pvMx5bpSZjOeW06bWO7I
-Z6oAniRaZ5xNHGC/MQ/hB3c/rW5oYhGI
-=jELf
------END PGP SIGNATURE-----
-
---5mCyUwZo2JvN/JJP--
+> --
+> paul moore
+> www.paul-moore.com
