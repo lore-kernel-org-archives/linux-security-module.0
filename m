@@ -2,169 +2,131 @@ Return-Path: <SRS0=sYvJ=DQ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD87C433E7
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 16:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45E4FC4363A
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 20:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50C312227F
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 16:33:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="ncQeW3Rz"
+	by mail.kernel.org (Postfix) with ESMTP id 196562222F
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Oct 2020 20:14:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389821AbgJIQdd (ORCPT
+        id S2388178AbgJIUO0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Oct 2020 12:33:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44620 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389818AbgJIQdd (ORCPT
+        Fri, 9 Oct 2020 16:14:26 -0400
+Received: from mga05.intel.com ([192.55.52.43]:58066 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726427AbgJIUO0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Oct 2020 12:33:33 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B00DC0613D2;
-        Fri,  9 Oct 2020 09:33:33 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id p15so13953985ejm.7;
-        Fri, 09 Oct 2020 09:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umich.edu; s=google-2016-06-03;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lG0OSVPziKHc6Mg8l0qWbO9mcnKpzSjXHAItvjG7zj4=;
-        b=ncQeW3RzLPsOjh8Uhi68eGc6A/wMRysr5879vD9BwOYq3KJnaqFEwpI8FHYHe3EryP
-         nWG5GmBsV0im+RukgzDrrwtnNGCwGos0jxJZsDOd5kBYTNriCNGdYv43xQZZYF6dmPbD
-         4nmuOKmtX4aggqYS3p6cCfmWFk9ojyYzUov3r7RNrvBtrB8VGnty7lz1F6yz/7Cg0OYr
-         a9MdCmkgSWr5Rk14t9ip0+mRS9vPPeEtK/lZGWAvneppmax6+J7W2a2sM/22DMoqiAJR
-         cv9NmG8qoA9FbO6DUh8TYX5a1PgDV8avkVEE5BH5rv/mC4sWD/k/6j+v4T1v2IkUyM2Y
-         oJDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lG0OSVPziKHc6Mg8l0qWbO9mcnKpzSjXHAItvjG7zj4=;
-        b=GKHRqzFEwHhy/Ioh18LhTKn/Bkd2ZFhD24JQB7p6U0s0SsD79bu5aiHIo/LnUnUsBN
-         splOr7Sn8N+JeK1/mFLz1X364MDCFt4WpvCdGPFWUUCtvJOLPVk6U36TKJSv5nuEw4jz
-         ZiM6hIresKSP2kJAcj5v8seba0+sYqIGImgbtOM+hDRCuyPT6vbdVToW2GJMkU2eDUXK
-         m1nQ+eheoGCAzZPBGQzE4cpm0e+mFGDrk4mbMCfrUDa/VYgFQ3H4yrldZwoZDadK28YW
-         WBS2CRVaP700Xl2UvwY2/MBE5ke6iI6MLsecLqDt+L5V9BKDo51gseTaDfSNOcMcOdcW
-         6baw==
-X-Gm-Message-State: AOAM531rhtgvhQ3+behcfsR5ZPelN5qKDsaazi5//XrEsmz4eGLRVHxk
-        Gz5b6PdvGN6x7sUd0VYoQeoMFzfRUsnCTBCvAw9j0SGQTK8=
-X-Google-Smtp-Source: ABdhPJwMvP2opYbBt9kjj+djsM+tt6K/ZHC7rt2EBXtuJyoTsue9zBicHFs0klzUUux+SkNHHMTZ2G4gncDfX+TdZ9M=
-X-Received: by 2002:a17:906:9701:: with SMTP id k1mr16071264ejx.0.1602261211981;
- Fri, 09 Oct 2020 09:33:31 -0700 (PDT)
+        Fri, 9 Oct 2020 16:14:26 -0400
+IronPort-SDR: bsY2K8rwrGA3OXjmhN7svQU4qo1suUhOGPQza7mhMWH7Or4xQoaZHdovQMgWSK2vxAjFTZOJvJ
+ seA6hp1/VDAQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9769"; a="250228369"
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; 
+   d="scan'208";a="250228369"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 13:14:24 -0700
+IronPort-SDR: IXEGMVyDlvLok8NfI+TgUT2zaqZMMuibHZuc/fyZxHw/Tz+YeeNyn/uSHL8eXxwdNMNFzoQQ7K
+ WzMGn3a/SXLg==
+X-IronPort-AV: E=Sophos;i="5.77,355,1596524400"; 
+   d="scan'208";a="529062329"
+Received: from iweiny-desk2.sc.intel.com (HELO localhost) ([10.3.52.147])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2020 13:14:24 -0700
+From:   ira.weiny@intel.com
+To:     Jonathan Corbet <corbet@lwn.net>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-integrity@vger.kernel.org (open list:KEYS-TRUSTED),
+        keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH RFC PKS/Trusted keys 0/2] trusted keys: Add PKS protection to trusted keys
+Date:   Fri,  9 Oct 2020 13:14:08 -0700
+Message-Id: <20201009201410.3209180-1-ira.weiny@intel.com>
+X-Mailer: git-send-email 2.28.0.rc0.12.gb6a658bd00c9
 MIME-Version: 1.0
-References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
- <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
- <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com>
- <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
- <CAN-5tyGJxUZb5QdJ=fh+L-6rc2B-MhQbDcDkTZNAZAAJm9Q8YQ@mail.gmail.com> <FB6C74CE-5D9F-4469-A49B-93CC8A51D7D5@gmail.com>
-In-Reply-To: <FB6C74CE-5D9F-4469-A49B-93CC8A51D7D5@gmail.com>
-From:   Olga Kornievskaia <aglo@umich.edu>
-Date:   Fri, 9 Oct 2020 12:33:20 -0400
-Message-ID: <CAN-5tyFQbfkiuno07C6Azc7RcF3z3qF3PP0FutFMD3raBgnQmA@mail.gmail.com>
-Subject: Re: selinux: how to query if selinux is enabled
-To:     Chuck Lever <chucklever@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 9, 2020 at 10:08 AM Chuck Lever <chucklever@gmail.com> wrote:
->
->
->
-> > On Oct 9, 2020, at 7:49 AM, Olga Kornievskaia <aglo@umich.edu> wrote:
-> >
-> > On Thu, Oct 8, 2020 at 9:03 PM Paul Moore <paul@paul-moore.com> wrote:
-> >>
-> >> ->On Thu, Oct 8, 2020 at 9:50 AM Olga Kornievskaia <aglo@umich.edu> wrote:
-> >>> On Wed, Oct 7, 2020 at 9:07 PM Paul Moore <paul@paul-moore.com> wrote:
-> >>>> On Wed, Oct 7, 2020 at 8:41 PM Olga Kornievskaia <aglo@umich.edu> wrote:
-> >>>>> Hi folks,
-> >>>>>
-> >>>>> From some linux kernel module, is it possible to query and find out
-> >>>>> whether or not selinux is currently enabled or not?
-> >>>>>
-> >>>>> Thank you.
-> >>>>
-> >>>> [NOTE: CC'ing the SELinux list as it's probably a bit more relevant
-> >>>> that the LSM list]
-> >>>>
-> >>>> In general most parts of the kernel shouldn't need to worry about what
-> >>>> LSMs are active and/or enabled; the simply interact with the LSM(s)
-> >>>> via the interfaces defined in include/linux/security.h (there are some
-> >>>> helpful comments in include/linux/lsm_hooks.h).  Can you elaborate a
-> >>>> bit more on what you are trying to accomplish?
-> >>>
-> >>> Hi Paul,
-> >>>
-> >>> Thank you for the response. What I'm trying to accomplish is the
-> >>> following. Within a file system (NFS), typically any queries for
-> >>> security labels are triggered by the SElinux (or I guess an LSM in
-> >>> general) (thru the xattr_handler hooks). However, when the VFS is
-> >>> calling to get directory entries NFS will always get the labels
-> >>> (baring server not supporting it). However this is useless and affects
-> >>> performance (ie., this makes servers do extra work  and adds to the
-> >>> network traffic) when selinux is disabled. It would be useful if NFS
-> >>> can check if there is anything that requires those labels, if SElinux
-> >>> is enabled or disabled.
-> >>
-> >> [Adding Chuck Lever to the CC line as I believe he has the most recent
-> >> LSM experience from the NFS side - sorry Chuck :)]
-> >>
-> >> I'll need to ask your patience on this as I am far from a NFS expert.
-> >>
-> >> Looking through the NFS readdir/getdents code this evening, I was
-> >> wondering if the solution in the readdir case is to simply tell the
-> >> server you are not interested in the security label by masking out
-> >> FATTR4_WORD2_SECURITY_LABEL in the nfs4_readdir_arg->bitmask in
-> >> _nfs4_proc_readdir()?  Of course this assumes that the security label
-> >> genuinely isn't needed in this case (and not requesting it doesn't
-> >> bypass access controls or break something on the server side), and we
-> >> don't screw up some NFS client side cache by *not* fetching the
-> >> security label attribute.
-> >>
-> >> Is this remotely close to workable, or am I missing something fundamental?
-> >>
-> >
-> > No this is not going to work, as NFS requires labels when labels are
-> > indeed needed by the LSM. What I'm looking for is an optimization.
-> > What we have is functionality correct but performance might suffer for
-> > the standard case of NFSv4.2 seclabel enabled server and clients that
-> > don't care about seclabels.
->
-> Initial thought: We should ask linux-nfs for help with this.
-> I've added them to the Cc: list.
->
-> Olga, are you asking if the kernel NFS client module can somehow find
-> out whether the rest of the kernel is configured to care about security
-> labels before it forms an NFSv4 READDIR or LOOKUP request?
+From: Ira Weiny <ira.weiny@intel.com>
 
-Yes exactly, but I'm having a hard time trying to figure out how to
-use security_ismaclabel() function as has been suggested by Casey.
+Leaking a trusted key would be a critical security issue.  PKS provides an
+additional mechanism to restrict access to the memory holding trusted keys.
 
-> I would certainly like to take the security label query out of every
-> LOOKUP operation if that is feasible!
+This series depends on the core patches and PMEM PKS API change submitted
+separately.
 
-A LOOKUP doesn't add the seclabel query (by default) like READDIR does
-(it's hard-coded in the xdr code). LOOKUP uses server's bitmask and
-chooses the version without the seclabel bitmask because no label is
-passed into it. It looks like LOOKUP just allocates a label in
-nfs_lookup_revalidate_dentry().  So it's not driven by the something
-that I see used by the xattr_handle example in the NFS code.
+	Core PKS support:
+	https://lore.kernel.org/lkml/20201009194258.3207172-1-ira.weiny@intel.com/
 
->
->
-> --
-> Chuck Lever
-> chucklever@gmail.com
->
->
->
+	PKS/PMEM support (includes global API change):
+	https://lore.kernel.org/lkml/20201009195033.3208459-1-ira.weiny@intel.com/
+
+And contained in the git tree here:
+
+	https://github.com/weiny2/linux-kernel/tree/pks-rfc-v3
+
+
+Provide a skeleton of a new allocation call which provides a PKS restricted
+mapping of the trusted key memory.  Allocate a PKS domain (pkey), create a
+mapping with that key, and enable/disable access as needed to that mapping.
+
+The issue with this approach is that it fails to protect the direct mapping.
+The current ideas to protect the direct mapping are:
+
+	1) Do nothing.
+	2) Allow the direct map to be fragmented through a set_memory_pks() like call.
+	3) Piggy back on secretmem's solution to map out some direct map memory
+	   then overlay that with PKS.
+	4) Integrate PKS into secretmem and use this enhanced secretmem for
+	   trusted keys.
+
+Doing nothing is not really providing the level of security we need for this
+use case.
+
+Allowing the direct map to fragment may be ok as trusted keys don't use a lot
+of pages and are usually allocated early in the system boot but that is not
+always the case.  In addition the current code could be made
+to not allocating an entire page for each key to limit the number of pages, and
+therfore the fragmentation, needed.
+
+The use of secretmem is complicated by its newness but whatever solution is
+used there should be used here.  And probalby through some nice interface.
+
+The final thought is to determine if a 'general allocator' for PKS protected
+memory should be developed at all.  The current implementation is limited in
+key space and so a higher bar to entry may be a good thing.  On the other hand,
+dealing with mappings for the average driver writer is complicated and doing
+this wrong could result in a false sense of 'security'.
+
+
+Elena Reshetova (1):
+  keys/trusted: protect trusted keys using PKS
+
+Ira Weiny (1):
+  vmalloc: Add vmalloc_pks() call
+
+ Documentation/core-api/protection-keys.rst |  4 +
+ include/keys/trusted-type.h                |  2 +-
+ include/keys/trusted_tpm.h                 | 15 ++++
+ include/linux/vmalloc.h                    |  1 +
+ mm/vmalloc.c                               | 28 +++++++
+ security/keys/encrypted-keys/encrypted.c   | 38 ++++++---
+ security/keys/trusted-keys/trusted_tpm1.c  | 90 +++++++++++++++++++---
+ security/keys/trusted-keys/trusted_tpm2.c  |  9 +++
+ 8 files changed, 164 insertions(+), 23 deletions(-)
+
+-- 
+2.28.0.rc0.12.gb6a658bd00c9
+
