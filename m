@@ -2,163 +2,125 @@ Return-Path: <SRS0=n1M3=DT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163DBC43457
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 08:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34839C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 09:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC6AA21655
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 08:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602491804;
-	bh=xGcSgxMYQFxatWCkytqqmruYRAdLAQg4c++Ihzfeilk=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=g5KF9t3iwbr2mlvZWL4OHdGKqhksEuOJlXN2n+Du7RJHQreHp3+v+sDGtOIbPwief
-	 Q1s8xafRYmnZ6ks8t6AJohvWZjUthY+8Cl0G/beDTXdlA4G1HaTX50aVFDEmVLxKNN
-	 CXqr8auSyxMYRucbET58aUW2MbJDRx8SpJiKsF/s=
+	by mail.kernel.org (Postfix) with ESMTP id D685820776
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 09:40:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726332AbgJLIgo (ORCPT
+        id S1727626AbgJLJkK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Oct 2020 04:36:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726104AbgJLIgn (ORCPT
+        Mon, 12 Oct 2020 05:40:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbgJLJkK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Oct 2020 04:36:43 -0400
-Received: from e123331-lin.nice.arm.com (lfbn-nic-1-188-42.w2-15.abo.wanadoo.fr [2.15.37.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A12B20714;
-        Mon, 12 Oct 2020 08:36:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602491803;
-        bh=xGcSgxMYQFxatWCkytqqmruYRAdLAQg4c++Ihzfeilk=;
-        h=From:To:Cc:Subject:Date:From;
-        b=bPmPBhsiqQe/SZalLiOr6kMou1sPqsknAquA/3ICQz/fvbGe+NAiqnOKRNyekagSF
-         7wtZRPFd6l0AOUH5qxtDcsAi4pbXb+AT6Fr010MvyvLoKBmzZtnmAKV3t/4yrzodUw
-         kX7eT2VZ/6i2icJJWPo90BGu4reJThTOWQZLl/w8=
-From:   Ard Biesheuvel <ardb@kernel.org>
-To:     linux-efi@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>, Chester Lin <clin@suse.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH] ima: defer arch_ima_get_secureboot() call to IMA init time
-Date:   Mon, 12 Oct 2020 10:36:31 +0200
-Message-Id: <20201012083631.12724-1-ardb@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Mon, 12 Oct 2020 05:40:10 -0400
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [IPv6:2001:780:45:1d:225:90ff:fe52:c662])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A66C0613CE;
+        Mon, 12 Oct 2020 02:40:10 -0700 (PDT)
+Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.89)
+        (envelope-from <laforge@gnumonks.org>)
+        id 1kRuJH-0002Xh-Vl; Mon, 12 Oct 2020 11:40:04 +0200
+Received: from laforge by localhost.localdomain with local (Exim 4.94)
+        (envelope-from <laforge@gnumonks.org>)
+        id 1kRuI7-004DOg-CW; Mon, 12 Oct 2020 11:38:51 +0200
+Date:   Mon, 12 Oct 2020 11:38:51 +0200
+From:   Harald Welte <laforge@gnumonks.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     pablo@netfilter.org,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH 3/3] selinux: Add SELinux GTP support
+Message-ID: <20201012093851.GF947663@nataraja>
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
+ <20200930094934.32144-4-richard_c_haines@btinternet.com>
+ <20200930110153.GT3871@nataraja>
+ <33cf57c9599842247c45c92aa22468ec89f7ba64.camel@btinternet.com>
+ <20200930133847.GD238904@nataraja>
+ <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Chester reports that it is necessary to introduce a new way to pass
-the EFI secure boot status between the EFI stub and the core kernel
-on ARM systems. The usual way of obtaining this information is by
-checking the SecureBoot and SetupMode EFI variables, but this can
-only be done after the EFI variable workqueue is created, which
-occurs in a subsys_initcall(), whereas arch_ima_get_secureboot()
-is called much earlier by the IMA framework.
+Hi Paul,
 
-However, the IMA framework itself is started as a late_initcall,
-and the only reason the call to arch_ima_get_secureboot() occurs
-so early is because it happens in the context of a __setup()
-callback that parses the ima_appraise= command line parameter.
+On Sun, Oct 11, 2020 at 10:09:11PM -0400, Paul Moore wrote:
+> Harald, Pablo - I know you both suggested taking a slow iterative
+> approach to merging functionality, perhaps you could also help those
+> of us on the SELinux side better understand some of the common GTP use
+> cases?
 
-So let's refactor this code a little bit, by using a core_param()
-callback to capture the command line argument, and deferring any
-reasoning based on its contents to the IMA init routine.
+There really only is one use case for this code:  The GGSN or P-GW function
+in the 3GPP network architecture.  There are open source implementations
+like OsmoGGSN and (at least older/previos versions) of ergw, but also
+non-FOSS-but-shared-source (like OpenAirInterface) and proprietary
+software that use the existing kernel GTP for that.
 
-Cc: Chester Lin <clin@suse.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Link: https://lore.kernel.org/linux-arm-kernel/20200904072905.25332-2-clin@suse.com/
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- include/linux/ima.h                   |  6 +++++
- security/integrity/ima/ima_appraise.c | 24 +++++++++++---------
- security/integrity/ima/ima_main.c     |  1 +
- 3 files changed, 20 insertions(+), 11 deletions(-)
+In a GGSN (2G/3G) or P-GW (4G), you have a control plane instance
+talking a control plane protocol GTP-C (GTPv1-C or GTPv2-C) with other
+elements in the network, such as the SGSN (2G/3G) or S-GW (4G)
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index d15100de6cdd..8aefee9c36ab 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -27,6 +27,12 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
- 
-+#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-+extern void ima_appraise_parse_cmdline(void);
-+#else
-+static inline void ima_appraise_parse_cmdline(void) {}
-+#endif
-+
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index b8848f53c8cc..a0135dbf2a64 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -16,26 +16,28 @@
- 
- #include "ima.h"
- 
--static int __init default_appraise_setup(char *str)
--{
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-+static char *ima_appraise_cmdline_default __initdata;
-+core_param(ima_appraise, ima_appraise_cmdline_default, charp, 0);
-+
-+void __init ima_appraise_parse_cmdline(void)
-+{
-+	if (!ima_appraise_cmdline_default)
-+		return;
- 	if (arch_ima_get_secureboot()) {
- 		pr_info("Secure boot enabled: ignoring ima_appraise=%s boot parameter option",
--			str);
--		return 1;
-+			ima_appraise_cmdline_default);
-+		return;
- 	}
- 
--	if (strncmp(str, "off", 3) == 0)
-+	if (strncmp(ima_appraise_cmdline_default, "off", 3) == 0)
- 		ima_appraise = 0;
--	else if (strncmp(str, "log", 3) == 0)
-+	else if (strncmp(ima_appraise_cmdline_default, "log", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_LOG;
--	else if (strncmp(str, "fix", 3) == 0)
-+	else if (strncmp(ima_appraise_cmdline_default, "fix", 3) == 0)
- 		ima_appraise = IMA_APPRAISE_FIX;
--#endif
--	return 1;
- }
--
--__setup("ima_appraise=", default_appraise_setup);
-+#endif
- 
- /*
-  * is_ima_appraise_enabled - return appraise status
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 8a91711ca79b..31d72cf04768 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -850,6 +850,7 @@ static int __init init_ima(void)
- {
- 	int error;
- 
-+	ima_appraise_parse_cmdline();
- 	ima_init_template_list();
- 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
- 	error = ima_init();
+This control plane instance will then talk to the user plane instance
+(which is, in the case of the kernel GTP module, netlink) to crate PDP
+contexts (2G/3G) or "barers" (4G).
+
+Those PDP contexts / bearers are constantly being created, modified and
+torn down.  Creation happens at the time your modern phone attaches to
+the network (once you have "mobile data" enabled).  Modification happens
+when you start roaming around the country / coverage area as you change
+between larger regions.  Deletion happens once you disable "mobile data'
+or go into airplane mode.
+
+The kernel GTP "tun" device typically represents an "APN", i.e. one
+specific IP network your phones/modems want to attach to.  There could be
+multiple in parallel (e.g. public internet, private operator network for
+VoLTE, company-private networks).
+
+So you have one tun device per APN which is mostly static configuration,
+stable for months, years, ...  and then you have the hightly volatile
+PDP contexts / bearers within each of those APN.  That's why I was
+hinting from a security policy point of view, it makes sense to separate
+those two, as one only happens at system boot / application start time,
+and the other happens at any point during runtime of your GGSN/PGW.
+
+If you want to see how that looks on the wire, check the OsmoGGSN
+automatic test suite, where every test case generates a pcap file:
+overview at https://jenkins.osmocom.org/jenkins/view/TTCN3/job/ttcn3-ggsn-test/
+actual artefacts including per-test pcap files:
+https://jenkins.osmocom.org/jenkins/view/TTCN3/job/ttcn3-ggsn-test/lastSuccessfulBuild/artifact/logs/ggsn-tester/
+specifically, if you open
+https://jenkins.osmocom.org/jenkins/view/TTCN3/job/ttcn3-ggsn-test/lastSuccessfulBuild/artifact/logs/ggsn-tester/GGSN_Tests.TC_pdp6_act_deact_gtpu_access.pcap.gz
+in wirehark and filter on 'gtp', you will see the GTP-C traffic on udp
+port 2123, and the GTP-U traffic on UDP port 2152.  This second part is
+where you would use the kernel-GTP-U implementation to avoid the
+kernel-userspace-kernel roundtrip for every user IP packet.
+
+There are many other use cases for GTP in general in other network
+elements such as a S-GW (which basically acts as a proxy for GTP-U), but
+those are not implemented in the existing Linux kernel GTP module.
+
+I think OsmoGGSN is about the most simple to understand user out there,
+due to its very limited code size.  Check
+https://git.osmocom.org/osmo-ggsn/tree/lib/gtp-kernel.c for the libgtpnl
+interface and https://git.osmocom.org/osmo-ggsn/tree/ggsn/ggsn.c for the
+hearth of the logic, including the calls to the gtp_kernel_tunnel_*() API.
+
+Hope this helps,
+	Harald
+
 -- 
-2.17.1
-
+- Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
+============================================================================
+"Privacy in residential applications is a desirable marketing option."
+                                                  (ETSI EN 300 175-7 Ch. A6)
