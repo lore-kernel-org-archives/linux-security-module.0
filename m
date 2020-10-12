@@ -2,125 +2,129 @@ Return-Path: <SRS0=n1M3=DT=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34839C433DF
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 09:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478CAC433E7
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 17:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D685820776
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 09:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAD072073A
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Oct 2020 17:51:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MbsOPyGh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727626AbgJLJkK (ORCPT
+        id S2390672AbgJLRve (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Oct 2020 05:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbgJLJkK (ORCPT
+        Mon, 12 Oct 2020 13:51:34 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29084 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389562AbgJLRvd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Oct 2020 05:40:10 -0400
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [IPv6:2001:780:45:1d:225:90ff:fe52:c662])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10A66C0613CE;
-        Mon, 12 Oct 2020 02:40:10 -0700 (PDT)
-Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.89)
-        (envelope-from <laforge@gnumonks.org>)
-        id 1kRuJH-0002Xh-Vl; Mon, 12 Oct 2020 11:40:04 +0200
-Received: from laforge by localhost.localdomain with local (Exim 4.94)
-        (envelope-from <laforge@gnumonks.org>)
-        id 1kRuI7-004DOg-CW; Mon, 12 Oct 2020 11:38:51 +0200
-Date:   Mon, 12 Oct 2020 11:38:51 +0200
-From:   Harald Welte <laforge@gnumonks.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     pablo@netfilter.org,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [PATCH 3/3] selinux: Add SELinux GTP support
-Message-ID: <20201012093851.GF947663@nataraja>
-References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
- <20200930094934.32144-4-richard_c_haines@btinternet.com>
- <20200930110153.GT3871@nataraja>
- <33cf57c9599842247c45c92aa22468ec89f7ba64.camel@btinternet.com>
- <20200930133847.GD238904@nataraja>
- <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
+        Mon, 12 Oct 2020 13:51:33 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09CHV0le096101;
+        Mon, 12 Oct 2020 13:51:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=dnPHlw+SixLjPSOZAiUrHZmthvdDEw5HoO6Is7k2hMs=;
+ b=MbsOPyGhAzqqUc5MJgSZL6J360vhWP5fGgsQbDXnzZMJxU8ddFzWPzEPhllq/s+K+urj
+ 2fGLPdkNeuoCMMtlBUk06N3GzyhdG7IfR8jWnUWo/Wv8q08RipFhnF2rp1WnXD0wJW4s
+ zeGrlPR67argHVXE/bY5YPz46D0YeueztYeT6eMHcArlOr+StVr3ro8AyCXdAFkOKx4X
+ TUKptLDxgPoVm9HpW4nnWEXQSAZQUiB20+nFeJBBGd6bnZQ8GJHY/sYtwlyCft/k2Ao1
+ QGxmNP4eqmIDP62w/kvpMtG1pzD210520XMe3u1leOC6Y/jZ0ahT1i4gj3KCzqqsEwhP Kw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 344udbgxj9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Oct 2020 13:51:19 -0400
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09CHV5Uo096899;
+        Mon, 12 Oct 2020 13:51:18 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 344udbgxhg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Oct 2020 13:51:18 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09CHlVmn018816;
+        Mon, 12 Oct 2020 17:51:16 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06fra.de.ibm.com with ESMTP id 34347h15q3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Oct 2020 17:51:16 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09CHpEcV23200054
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Oct 2020 17:51:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6760052052;
+        Mon, 12 Oct 2020 17:51:14 +0000 (GMT)
+Received: from sig-9-65-230-9.ibm.com (unknown [9.65.230.9])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 061D75204E;
+        Mon, 12 Oct 2020 17:51:11 +0000 (GMT)
+Message-ID: <a9a35d8b480112fe40b45392d0f0e9dcb5be536e.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fix sizeof mismatches
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Joe Perches <joe@perches.com>,
+        Colin King <colin.king@canonical.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Roberto Sassu <roberto.sassu@polito.it>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 12 Oct 2020 13:51:11 -0400
+In-Reply-To: <55ae0b6152c84013d483b1bbecb28a425801c408.camel@perches.com>
+References: <20201007110243.19033-1-colin.king@canonical.com>
+         <55ae0b6152c84013d483b1bbecb28a425801c408.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-12_14:2020-10-12,2020-10-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 clxscore=1011 bulkscore=0 mlxscore=0
+ impostorscore=0 suspectscore=3 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2010120131
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Paul,
+On Wed, 2020-10-07 at 11:27 -0700, Joe Perches wrote:
+> On Wed, 2020-10-07 at 12:02 +0100, Colin King wrote:
+> > An incorrect sizeof is being used, sizeof(*fields) is not correct,
+> > it should be sizeof(**fields). This is not causing a problem since
+> > the size of these is the same. Fix this in the kmalloc_array and
+> > memcpy calls.
+> []
+> > diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+> []
+> > @@ -216,11 +216,11 @@ int template_desc_init_fields(const char *template_fmt,
+> >  	}
+> >  
+> >  	if (fields && num_fields) {
+> > -		*fields = kmalloc_array(i, sizeof(*fields), GFP_KERNEL);
+> > +		*fields = kmalloc_array(i, sizeof(**fields), GFP_KERNEL);
+> >  		if (*fields == NULL)
+> >  			return -ENOMEM;
+> >  
+> > -		memcpy(*fields, found_fields, i * sizeof(*fields));
+> > +		memcpy(*fields, found_fields, i * sizeof(**fields));
+> 
+> Maybe use kmemdup instead.
+> 
+> 	if (fields && num_fields) {
+> 		*fields = kmemdup(found_fields, i * sizeof(**fields), GFP_KERNEL);
+> 		etc...
+> 
 
-On Sun, Oct 11, 2020 at 10:09:11PM -0400, Paul Moore wrote:
-> Harald, Pablo - I know you both suggested taking a slow iterative
-> approach to merging functionality, perhaps you could also help those
-> of us on the SELinux side better understand some of the common GTP use
-> cases?
+Thanks, Joe.  Since this patch will be backported, perhaps it would be
+better to leave this as a bug fix and upstream other changes
+independently.
 
-There really only is one use case for this code:  The GGSN or P-GW function
-in the 3GPP network architecture.  There are open source implementations
-like OsmoGGSN and (at least older/previos versions) of ergw, but also
-non-FOSS-but-shared-source (like OpenAirInterface) and proprietary
-software that use the existing kernel GTP for that.
+Mimi
 
-In a GGSN (2G/3G) or P-GW (4G), you have a control plane instance
-talking a control plane protocol GTP-C (GTPv1-C or GTPv2-C) with other
-elements in the network, such as the SGSN (2G/3G) or S-GW (4G)
-
-This control plane instance will then talk to the user plane instance
-(which is, in the case of the kernel GTP module, netlink) to crate PDP
-contexts (2G/3G) or "barers" (4G).
-
-Those PDP contexts / bearers are constantly being created, modified and
-torn down.  Creation happens at the time your modern phone attaches to
-the network (once you have "mobile data" enabled).  Modification happens
-when you start roaming around the country / coverage area as you change
-between larger regions.  Deletion happens once you disable "mobile data'
-or go into airplane mode.
-
-The kernel GTP "tun" device typically represents an "APN", i.e. one
-specific IP network your phones/modems want to attach to.  There could be
-multiple in parallel (e.g. public internet, private operator network for
-VoLTE, company-private networks).
-
-So you have one tun device per APN which is mostly static configuration,
-stable for months, years, ...  and then you have the hightly volatile
-PDP contexts / bearers within each of those APN.  That's why I was
-hinting from a security policy point of view, it makes sense to separate
-those two, as one only happens at system boot / application start time,
-and the other happens at any point during runtime of your GGSN/PGW.
-
-If you want to see how that looks on the wire, check the OsmoGGSN
-automatic test suite, where every test case generates a pcap file:
-overview at https://jenkins.osmocom.org/jenkins/view/TTCN3/job/ttcn3-ggsn-test/
-actual artefacts including per-test pcap files:
-https://jenkins.osmocom.org/jenkins/view/TTCN3/job/ttcn3-ggsn-test/lastSuccessfulBuild/artifact/logs/ggsn-tester/
-specifically, if you open
-https://jenkins.osmocom.org/jenkins/view/TTCN3/job/ttcn3-ggsn-test/lastSuccessfulBuild/artifact/logs/ggsn-tester/GGSN_Tests.TC_pdp6_act_deact_gtpu_access.pcap.gz
-in wirehark and filter on 'gtp', you will see the GTP-C traffic on udp
-port 2123, and the GTP-U traffic on UDP port 2152.  This second part is
-where you would use the kernel-GTP-U implementation to avoid the
-kernel-userspace-kernel roundtrip for every user IP packet.
-
-There are many other use cases for GTP in general in other network
-elements such as a S-GW (which basically acts as a proxy for GTP-U), but
-those are not implemented in the existing Linux kernel GTP module.
-
-I think OsmoGGSN is about the most simple to understand user out there,
-due to its very limited code size.  Check
-https://git.osmocom.org/osmo-ggsn/tree/lib/gtp-kernel.c for the libgtpnl
-interface and https://git.osmocom.org/osmo-ggsn/tree/ggsn/ggsn.c for the
-hearth of the logic, including the calls to the gtp_kernel_tunnel_*() API.
-
-Hope this helps,
-	Harald
-
--- 
-- Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
-============================================================================
-"Privacy in residential applications is a desirable marketing option."
-                                                  (ETSI EN 300 175-7 Ch. A6)
