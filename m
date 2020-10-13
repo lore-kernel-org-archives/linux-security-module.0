@@ -1,161 +1,79 @@
 Return-Path: <SRS0=uW8r=DU=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=ADVANCE_FEE_3_NEW_FRM_MNY,
+	BAYES_50,HEADER_FROM_DIFFERENT_DOMAINS,HK_NAME_MR_MRS,LOTS_OF_MONEY,
+	MAILING_LIST_MULTI,MONEY_FORM,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCC9C43457
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 08:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBC5C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 08:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2CE521BE5
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 08:18:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602577109;
-	bh=7aBU9lDEUXen8HeupJi7723iiG7XIrGp0iNfq6lCotc=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=N1a/AWJ6w9p/ayuKxXnImkHQvm2WXmtpmKy/X+QmF0vjCZLzEzRvCMv19uB1TCVYu
-	 9vzpNC8yX15pUIxoevG8XhVINuuS/3nVFdJZdPuKf1FLxMBCPWmrE8IKWsd6vyf4pP
-	 oIBImO03e8VdWS2K2D/O2ybgiyyMedhakg9bSMKI=
+	by mail.kernel.org (Postfix) with ESMTP id 1EB31208D5
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 08:45:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387916AbgJMIS2 (ORCPT
+        id S2403918AbgJMIpV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Oct 2020 04:18:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387718AbgJMIS0 (ORCPT
+        Tue, 13 Oct 2020 04:45:21 -0400
+Received: from [178.252.167.140] ([178.252.167.140]:59850 "EHLO EXG16.DOE.ir"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2403912AbgJMIpV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Oct 2020 04:18:26 -0400
-Received: from e123331-lin.nice.arm.com (lfbn-nic-1-188-42.w2-15.abo.wanadoo.fr [2.15.37.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5B6F2078A;
-        Tue, 13 Oct 2020 08:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602577105;
-        bh=7aBU9lDEUXen8HeupJi7723iiG7XIrGp0iNfq6lCotc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=y5YduaJR3w30ue1Jdje2lFT7jcXhOBW1N4BBMZdso9n5ms/gzhMEm7740YkTRHwXH
-         EE0h1N4V3EJQSVJFHiQlhEhlNKgoiqpvt2NSl5q1JK+G6ud+ydgXY9JQ33cL/Gzogj
-         oCojvnCna9JGKJFEiZbqJKHb3/lrWe8OrldYKabk=
-From:   Ard Biesheuvel <ardb@kernel.org>
-To:     linux-efi@vger.kernel.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ard Biesheuvel <ardb@kernel.org>, Chester Lin <clin@suse.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH v2] ima: defer arch_ima_get_secureboot() call to IMA init time
-Date:   Tue, 13 Oct 2020 10:18:04 +0200
-Message-Id: <20201013081804.17332-1-ardb@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 13 Oct 2020 04:45:21 -0400
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Oct 2020 04:45:20 EDT
+Received: from doe.ir (217.218.14.250) by EXG16.DOE.ir (172.20.1.44) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1261.35; Tue, 13 Oct
+ 2020 12:00:15 +0330
+Reply-To: <imfc@mail2washington.com>
+From:   "Mrs. Roonie Holbrook" <n.saffar@doe.ir>
+To:     <linux-security-module@vger.kernel.org>
+Subject: From Mrs. Roonie Holbrook !!
+Date:   Tue, 13 Oct 2020 01:29:52 -0700
+Message-ID: <20201013012950.A8AAE38B768C22BB@doe.ir>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [217.218.14.250]
+X-ClientProxiedBy: EXG16.DOE.ir (172.20.1.44) To EXG16.DOE.ir (172.20.1.44)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Chester reports that it is necessary to introduce a new way to pass
-the EFI secure boot status between the EFI stub and the core kernel
-on ARM systems. The usual way of obtaining this information is by
-checking the SecureBoot and SetupMode EFI variables, but this can
-only be done after the EFI variable workqueue is created, which
-occurs in a subsys_initcall(), whereas arch_ima_get_secureboot()
-is called much earlier by the IMA framework.
+Attention,
 
-However, the IMA framework itself is started as a late_initcall,
-and the only reason the call to arch_ima_get_secureboot() occurs
-so early is because it happens in the context of a __setup()
-callback that parses the ima_appraise= command line parameter.
+Nice day and Congratulations !!!.
 
-So let's refactor this code a little bit, by using a core_param()
-callback to capture the command line argument, and deferring any
-reasoning based on its contents to the IMA init routine.
+You are qualified for the IMFC Covid 19 grant of $750,000.00 
+dollars to support the people in your community. Now respond to 
+details to claim your money.
 
-Cc: Chester Lin <clin@suse.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Link: https://lore.kernel.org/linux-arm-kernel/20200904072905.25332-2-clin@suse.com/
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
-v2: rebase onto series 'integrity: improve user feedback for invalid bootparams'
+You are directed to contact the below Office of Paymaster General 
+immediately through his contact details below:
 
- include/linux/ima.h                   |  6 ++++++
- security/integrity/ima/ima_appraise.c | 16 ++++++++++------
- security/integrity/ima/ima_main.c     |  1 +
- 3 files changed, 17 insertions(+), 6 deletions(-)
+Mr. Williams Fox
+Email: claim.dept@mail2finance.com 
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index d15100de6cdd..8aefee9c36ab 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -27,6 +27,12 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
- extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
+This is to avoid mistake while transferring your overdue payment 
+to you, You have to forward to him below details of yours to 
+start processing your payment file and this ref: 
+UN/FM14/WB/Covid-19:
  
-+#ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-+extern void ima_appraise_parse_cmdline(void);
-+#else
-+static inline void ima_appraise_parse_cmdline(void) {}
-+#endif
-+
- #ifdef CONFIG_IMA_KEXEC
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 3dd8c2e4314e..dfe08489faea 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -16,12 +16,19 @@
+Your Full Name:
+Your Contact Address:
+State:
+Country:
+Telephone and Fax Number:
+Occupation:
+Age:
  
- #include "ima.h"
+Kindly get back to Mr. Williams Fox  as soon as possible so that 
+he will direct you on what to do for the claims through our 
+Affiliated Bank.
  
--static int __init default_appraise_setup(char *str)
--{
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
-+static char *ima_appraise_cmdline_default __initdata;
-+core_param(ima_appraise, ima_appraise_cmdline_default, charp, 0);
-+
-+void __init ima_appraise_parse_cmdline(void)
-+{
-+	const char *str = ima_appraise_cmdline_default;
- 	bool sb_state = arch_ima_get_secureboot();
- 	int appraisal_state = ima_appraise;
- 
-+	if (!str)
-+		return;
-+
- 	if (strncmp(str, "off", 3) == 0)
- 		appraisal_state = 0;
- 	else if (strncmp(str, "log", 3) == 0)
-@@ -42,11 +49,8 @@ static int __init default_appraise_setup(char *str)
- 	} else {
- 		ima_appraise = appraisal_state;
- 	}
--#endif
--	return 1;
- }
--
--__setup("ima_appraise=", default_appraise_setup);
-+#endif
- 
- /*
-  * is_ima_appraise_enabled - return appraise status
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index a5a2ae36a36d..2497412b1ad2 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -865,6 +865,7 @@ static int __init init_ima(void)
- {
- 	int error;
- 
-+	ima_appraise_parse_cmdline();
- 	ima_init_template_list();
- 	hash_setup(CONFIG_IMA_DEFAULT_HASH);
- 	error = ima_init();
--- 
-2.17.1
 
+Best regards
+
+Mrs. Roonie Holbrook
+IMFC Grant Claim Department
+Email: imfc@mail2washington.com
