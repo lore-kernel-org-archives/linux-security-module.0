@@ -2,133 +2,193 @@ Return-Path: <SRS0=uW8r=DU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B75C83014
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 02:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8769CC8301E
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 02:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F13320678
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 02:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 462AB20674
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 02:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="TBcwAfss";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="TBcwAfss"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="FEFVCX/+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbgJMBDm (ORCPT
+        id S1728057AbgJMBPY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Oct 2020 21:03:42 -0400
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:43932 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727950AbgJMBDm (ORCPT
+        Mon, 12 Oct 2020 21:15:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728053AbgJMBPX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Oct 2020 21:03:42 -0400
-X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Oct 2020 21:03:41 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 71CD71280606;
-        Mon, 12 Oct 2020 17:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1602550686;
-        bh=nbQ1CDoSn294pE1sw8CK2+ECGhZdnj5Vl/PP6DgpkMA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TBcwAfss8IXbR6MoAvkjSpxA9lUvtg0gX7/IYm0MwF9BTgrP3r5l/owiN7qssYN5q
-         0q9yK4BAod5msY69rQAjkKeGClagHI0FGuLXWKVYWYdzgZ8HbRN/HyzuV/rNAPk4TU
-         odtrTwXJr6gNHw7Sgt6VXRc5goYeFKQct/92VSWw=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id aYc40rcVWBG3; Mon, 12 Oct 2020 17:58:06 -0700 (PDT)
-Received: from jarvis.int.hansenpartnership.com (c-73-35-198-56.hsd1.wa.comcast.net [73.35.198.56])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 3F3A812805AB;
-        Mon, 12 Oct 2020 17:58:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1602550686;
-        bh=nbQ1CDoSn294pE1sw8CK2+ECGhZdnj5Vl/PP6DgpkMA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TBcwAfss8IXbR6MoAvkjSpxA9lUvtg0gX7/IYm0MwF9BTgrP3r5l/owiN7qssYN5q
-         0q9yK4BAod5msY69rQAjkKeGClagHI0FGuLXWKVYWYdzgZ8HbRN/HyzuV/rNAPk4TU
-         odtrTwXJr6gNHw7Sgt6VXRc5goYeFKQct/92VSWw=
-Message-ID: <b56dd2e9f3934e24f08005b9c5588c54b4837ff6.camel@HansenPartnership.com>
-Subject: Re: [PATCH v3 3/3] KEYS: trusted: Reserve TPM for seal and unseal
- operations
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, stable@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
-        kernel test robot <lkp@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Alexey Klimov <aklimov@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Date:   Mon, 12 Oct 2020 17:58:04 -0700
-In-Reply-To: <20201013002815.40256-4-jarkko.sakkinen@linux.intel.com>
-References: <20201013002815.40256-1-jarkko.sakkinen@linux.intel.com>
-         <20201013002815.40256-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Mon, 12 Oct 2020 21:15:23 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 772C9C0613D1
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Oct 2020 18:15:21 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id p15so25895801ejm.7
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Oct 2020 18:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=sriivWtFoi5P+y8iWJ5C09llKR2ed5ZfEWA0LWNTcX0=;
+        b=FEFVCX/+dW0jLiNqAckex96To29CxPbhIc7UTFOe0z+RQV99pfU/Af/e5mVJzEMMZc
+         yZV2KTN4Or/psTLBPFoNUIV+h+2wW9m/JeVTeXuDaf6qQWYyDnZm/aPp88kNHzneG0W+
+         hzKWDEg8HoQukkKfcdtaTKALIeBTBU8cgB0aUSQ/ZxfaBf/rxyOASCe2xAOAc+GT/uKm
+         2aL1gyUZyZI3HyiSk7ypyGMzclmztpl2lsQ3BrTWvjfqUtkZv3yF7WPYSoRLau9qklwB
+         9OxEirsQTJLkm4oIeOHhhGgel7FkdW0uatT3lLfnI80iLjLBDUZRjxfqtZTSEH8OXxGN
+         Y3KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
+         :content-transfer-encoding;
+        bh=sriivWtFoi5P+y8iWJ5C09llKR2ed5ZfEWA0LWNTcX0=;
+        b=NIXcGLzu6f+OuzGzXwb3oOIoHKEl0Z5lxbkVk23lKz9kvYgxjFCPy2BDWqxhu4IuQ4
+         X3nUnZjDmSp8g+Zf5N3EkueUWElJ95cxcn9x02/SGT7yA1Tdzx9ySUWXg40B8u4LiQsi
+         nbPfQP76HRbIc70mer3YYk3EIVgz3RpxXYLdw70TC87cQeSDbZ/5lLTCR8AdZ6od+MlU
+         +feCSqrUrO/E2qjICmYdDl2KEvdjCt1/E+6umEKRBkao9ZkRZJB97fcA4M83HF7mzGWS
+         EOXp/OI9iGKngdBu6JMT77Dp8C+11+xChZl3RNdZWvKHqgkASiKMN2iaEh4KPRS782nY
+         ljRQ==
+X-Gm-Message-State: AOAM531FQWSv/MEfg/gWd0OA6mRO0Klk3sHvzWhh5Vi/jKgikCguSAUv
+        6LH8LwLizB4H7QCTuaRKmMHTZX87Mq7YVHu+g9a0
+X-Google-Smtp-Source: ABdhPJyw/aW8jICPx6dj38zdbA20PH/TsVqvNiFW5OZM0kDyyH+4I1k5Dt3wS6ximU1UKip6HnGt+bXeausBm+/2rEE=
+X-Received: by 2002:a17:906:c444:: with SMTP id ck4mr29111638ejb.398.1602551719875;
+ Mon, 12 Oct 2020 18:15:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 12 Oct 2020 21:15:09 -0400
+Message-ID: <CAHC9VhShMEWOQFWOnbDuZDN9D397QbZaSuGs95AddSc_LQA1rg@mail.gmail.com>
+Subject: [GIT PULL] SELinux patches for v5.10
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-10-13 at 03:28 +0300, Jarkko Sakkinen wrote:
-[...]
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 8f4ff39f51e7..f0ebce14d2f8 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -397,6 +397,10 @@ static inline u32 tpm2_rc_value(u32 rc)
->  #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
->  
->  extern int tpm_is_tpm2(struct tpm_chip *chip);
-> +extern __must_check int tpm_try_get_ops(struct tpm_chip *chip);
-> +extern void tpm_put_ops(struct tpm_chip *chip);
-> +extern ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct
-> tpm_buf *buf,
-> +				size_t min_rsp_body_length, const char
-> *desc);
->  extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
->  			struct tpm_digest *digest);
->  extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> @@ -410,7 +414,18 @@ static inline int tpm_is_tpm2(struct tpm_chip
-> *chip)
->  {
->  	return -ENODEV;
->  }
-> -
-> +static inline int tpm_try_get_ops(struct tpm_chip *chip)
-> +{
-> +	return -ENODEV;
-> +}
-> +static inline void tpm_put_ops(struct tpm_chip *chip)
-> +{
-> +}
-> +static inline ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct
-> tpm_buf *buf,
-> +				       size_t min_rsp_body_length,
-> const char *desc)
-> +{
-> +	return -ENODEV;
-> +}
->  static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
+Hi Linus,
 
-I don't think we want this, do we?  That's only for API access which
-should be available when the TPM isn't selected.  Given that get/put
-are TPM critical operations, they should only appear when inside code
-where the TPM has already been selected.  If they appear outside TPM
-selected code, I think we want the compile to fail, which is why we
-don't want these backup definitions.
+A decent number of SELinux patches for v5.10, twenty two in total.
+The highlights are listed below, but all of the patches pass our test
+suite and merge cleanly against your tree.  Please merge for v5.10.
 
-James
+- A number of changes to how the SELinux policy is loaded and managed
+inside the kernel with the goal of improving the atomicity of a
+SELinux policy load operation.  These changes account for the bulk of
+the diffstat as well as the patch count.  A special thanks to everyone
+who contributed patches and fixes for this work.
 
+- Convert the SELinux policy read-write lock to RCU.
 
+- A tracepoint was added for audited SELinux access control events;
+this should help provide a more unified backtrace across kernel and
+userspace.
+
+- Allow the removal of security.selinux xattrs when a SELinux policy
+is not loaded.
+
+- Enable policy capabilities in SELinux policies created with the
+scripts/selinux/mdp tool.
+
+- Provide some "no sooner than" dates for the SELinux checkreqprot
+sysfs deprecation.
+
+Thanks,
+-Paul
+
+--
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5=
+:
+
+ Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
+
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20201012
+
+for you to fetch changes up to 0d50f059c4cdc9e436f6f4db8779ac0795bfdadf:
+
+ selinux: provide a "no sooner than" date for the checkreqprot removal
+   (2020-09-29 16:50:57 -0400)
+
+----------------------------------------------------------------
+selinux/stable-5.10 PR 20201012
+
+----------------------------------------------------------------
+Colin Ian King (1):
+     selinux: fix allocation failure check on newpolicy->sidtab
+
+Dan Carpenter (1):
+     selinux: fix error handling bugs in security_load_policy()
+
+Daniel Burgener (4):
+     selinux: Create function for selinuxfs directory cleanup
+     selinux: Refactor selinuxfs directory populating functions
+     selinux: Standardize string literal usage for selinuxfs directory name=
+s
+     selinux: Create new booleans and class dirs out of tree
+
+Lakshmi Ramasubramanian (1):
+     selinux: Add helper functions to get and set checkreqprot
+
+Ondrej Mosnacek (1):
+     selinux: simplify away security_policydb_len()
+
+Paul Moore (1):
+     selinux: provide a "no sooner than" date for the checkreqprot removal
+
+Peter Enderborg (1):
+     selinux: add basic filtering for audit trace events
+
+Randy Dunlap (1):
+     selinux: delete repeated words in comments
+
+Stephen Smalley (9):
+     scripts/selinux,selinux: update mdp to enable policy capabilities
+     selinux: encapsulate policy state, refactor policy load
+     selinux: move policy commit after updating selinuxfs
+     selinux: refactor changing booleans
+     selinux: avoid dereferencing the policy prior to initialization
+     selinux: permit removing security.selinux xattr before policy load
+     selinux: convert policy read-write lock to RCU
+     selinux: move policy mutex to selinux_state, use in lockdep checks
+     selinux: access policycaps with READ_ONCE/WRITE_ONCE
+
+Thi=C3=A9baud Weksteen (1):
+     selinux: add tracepoint on audited events
+
+kernel test robot (1):
+     selinux: fix memdup.cocci warnings
+
+.../ABI/obsolete/sysfs-selinux-checkreqprot        |   2 +-
+MAINTAINERS                                        |   1 +
+include/trace/events/avc.h                         |  53 ++
+scripts/selinux/mdp/mdp.c                          |   7 +
+security/selinux/avc.c                             |  29 +-
+security/selinux/hooks.c                           |  17 +-
+security/selinux/include/conditional.h             |   2 +-
+security/selinux/include/policycap.h               |  20 +
+security/selinux/include/policycap_names.h         |  18 +
+security/selinux/include/security.h                |  63 +-
+security/selinux/selinuxfs.c                       | 259 ++++--
+security/selinux/ss/avtab.c                        |  49 +-
+security/selinux/ss/avtab.h                        |   1 +
+security/selinux/ss/conditional.c                  | 155 ++++
+security/selinux/ss/conditional.h                  |   2 +
+security/selinux/ss/hashtab.c                      |  53 ++
+security/selinux/ss/hashtab.h                      |   6 +
+security/selinux/ss/services.c                     | 875 ++++++++++-------
+security/selinux/ss/services.h                     |   5 +-
+security/selinux/ss/sidtab.c                       |  10 +
+security/selinux/ss/sidtab.h                       |   2 +
+21 files changed, 1130 insertions(+), 499 deletions(-)
+create mode 100644 include/trace/events/avc.h
+create mode 100644 security/selinux/include/policycap.h
+create mode 100644 security/selinux/include/policycap_names.h
+
+--=20
+paul moore
+www.paul-moore.com
