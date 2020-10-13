@@ -2,159 +2,106 @@ Return-Path: <SRS0=uW8r=DU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED10C433E7
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 13:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEBAC433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 13:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72E0D24748
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 13:40:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1602596452;
-	bh=hMKks0yH+1QbT8lmw2IcB9FvKt0uw8hZHVUF20d9isU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xs6RlaR2FEubNkABM/mZvENE6F+kv93YBkNcCWAJcrGq+YYBmuxLrqh4HtCbFIC0W
-	 45Jb7CgYA86Q9uUmABLuxNKpHPQ6PrtLRQzoyZcZ5TSTgY4bWZq6aVCXj+l3q28tsy
-	 ABjSsiwGmw8vZLavp4dWHaUW6nqHzmztVPq9qTmI=
+	by mail.kernel.org (Postfix) with ESMTP id BC1B524791
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 13:55:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="fsKgrx1n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbgJMNkv (ORCPT
+        id S2388113AbgJMNz6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Oct 2020 09:40:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729110AbgJMNkv (ORCPT
+        Tue, 13 Oct 2020 09:55:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59060 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388109AbgJMNz6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Oct 2020 09:40:51 -0400
-Received: from localhost (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5114024741;
-        Tue, 13 Oct 2020 13:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1602596450;
-        bh=hMKks0yH+1QbT8lmw2IcB9FvKt0uw8hZHVUF20d9isU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iEP+KtkxdbveqHc3o6dc0NabtkgQBAMQRm6bRQ2wdx9i0idUyeoN5bGhVU9LshPhp
-         RQ63GxGtL7rGZLClYXAzipFBusI5YRWl3Ei/5GCzmB4WQdmknstsXe4e0k9JPY8ebc
-         MIveOdrgpZSUwYYlnCVuFPoWuCxl9brA4QH81e+I=
-Date:   Tue, 13 Oct 2020 16:40:48 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Subject: Re: [PATCH v7 4/4] MAINTAINERS: Add entry for TEE based Trusted Keys
-Message-ID: <20201013134048.GA147135@kernel.org>
-References: <1602065268-26017-1-git-send-email-sumit.garg@linaro.org>
- <1602065268-26017-5-git-send-email-sumit.garg@linaro.org>
- <20201013022157.GA47751@linux.intel.com>
- <CAFA6WYO6zNKtxhpNpTpqAjZnMPrEygs1k7Gwg3hwJV8Ynrr=qQ@mail.gmail.com>
+        Tue, 13 Oct 2020 09:55:58 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CE98C0613D0
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2020 06:55:57 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id lw21so28415967ejb.6
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Oct 2020 06:55:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2DKMoCh7i0xXAWOnYeO6FL9jlempYdRNzXVQVsNyqDY=;
+        b=fsKgrx1nEp+1zchBFjTXcKd5V+R173W0PhVeHFHzr9UIGmX3MklhJFXn4qfqDfr9Wj
+         M1q9af5G/pwZETq9WS174yp7qv8oxPxJDa5PtmhUiDPn1MYom3w2nac2S9MYTO+rn1gM
+         0+zDNYuAkmMqx0p0crmRnaFlMMNn0zlvO8I0gAmub3bgGzFzc8cUfeYIewe5hP+37f8D
+         sDAzTfzD+/hytUKJl++0KWGnJFOLQr8YBmFtuOIvF311sMne2ArIczKOgqF6/6QXM0TJ
+         O0drHevOIsrkeWKH1j5vXcCeQDElotKIrg/YMioV+/hZvXeEgJ6F8cO1eVJtOAF85FKA
+         itSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2DKMoCh7i0xXAWOnYeO6FL9jlempYdRNzXVQVsNyqDY=;
+        b=Vh4mse9/eW/3TJLllkG9G/bJ9kZ180rtP1TRcdMWHZys5GDcaCUgrmVVSYUzmZ7WmS
+         thrViMU7asBKLUP9COBScBY49j7fAEjJ9AwhdOTAGK2a7hR2Sksi2eA21L9aoVD6P702
+         Z03cmxlr/t6QeSdXftgBOl3cYfkMZZvYZ10pggd4uKj/EzOG0KgUXXjSiVuQBQ6P2ODq
+         GVuwGG6PCVfJ51W4jq6PAZFiylQEb0w0i2DbmjSQEoCqFJJIL1TkBN5np1mQsQ56vZGk
+         Re791jVOfRHOproHDIugbHiyxTMjXq7xZXzCbn8vTaFRZCfEamIOpDzSZ1gpp0D0Hoxj
+         liVg==
+X-Gm-Message-State: AOAM531UQZe5vkDvVCWBHPGFVoHpZCRVDT+yDylSM0o5gRTueq9NhrgL
+        1iDX7aDgp/DS3l5+9KPjkpsIiB0tlRyQPBVuSRtLTvqvUXRH
+X-Google-Smtp-Source: ABdhPJz4mWBTImguVLP1oOYwD74t1j+Rz05Yi+H2J8qQGgIbt2DJB2D6fzj+alkUR+BDXvSGkJshtQiiAMzkKwjckkw=
+X-Received: by 2002:a17:906:c444:: with SMTP id ck4mr31616284ejb.398.1602597352084;
+ Tue, 13 Oct 2020 06:55:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYO6zNKtxhpNpTpqAjZnMPrEygs1k7Gwg3hwJV8Ynrr=qQ@mail.gmail.com>
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
+ <20200930094934.32144-4-richard_c_haines@btinternet.com> <20200930110153.GT3871@nataraja>
+ <33cf57c9599842247c45c92aa22468ec89f7ba64.camel@btinternet.com>
+ <20200930133847.GD238904@nataraja> <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
+ <20201012093851.GF947663@nataraja>
+In-Reply-To: <20201012093851.GF947663@nataraja>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 13 Oct 2020 09:55:40 -0400
+Message-ID: <CAHC9VhTrSBsm-qVh95J2SzUq5=_pESwTUBRmVSjXOoyG+97jYA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] selinux: Add SELinux GTP support
+To:     Harald Welte <laforge@gnumonks.org>
+Cc:     pablo@netfilter.org,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        James Morris <jmorris@namei.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 13, 2020 at 04:58:47PM +0530, Sumit Garg wrote:
-> On Tue, 13 Oct 2020 at 07:52, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Wed, Oct 07, 2020 at 03:37:48PM +0530, Sumit Garg wrote:
-> > > Add MAINTAINERS entry for TEE based Trusted Keys framework.
-> > >
-> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > ---
-> > >  MAINTAINERS | 8 ++++++++
-> > >  1 file changed, 8 insertions(+)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 48aff80..eb3d889 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -9663,6 +9663,14 @@ F:     include/keys/trusted-type.h
-> > >  F:   include/keys/trusted_tpm.h
-> > >  F:   security/keys/trusted-keys/
-> > >
-> > > +KEYS-TRUSTED-TEE
-> > > +M:   Sumit Garg <sumit.garg@linaro.org>
-> > > +L:   linux-integrity@vger.kernel.org
-> > > +L:   keyrings@vger.kernel.org
-> > > +S:   Supported
-> > > +F:   include/keys/trusted_tee.h
-> > > +F:   security/keys/trusted-keys/trusted_tee.c
-> > > +
-> > >  KEYS/KEYRINGS
-> > >  M:   David Howells <dhowells@redhat.com>
-> > >  M:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > --
-> > > 2.7.4
-> >
-> > I'm sorry but I think I have changed my mind on this. This has been
-> > spinning for a while and sometimes conclusions change over the time.
-> >
-> > I don't think that we really need a separate subsystem tag.
-> 
-> I don't see it as a separate subsystem but rather a kind of underlying
-> trust source (TEE) driver plugged into existing trusted keys
-> subsystem. We could relate it to the RNG subsystem as well where there
-> is a subsystem maintainer and specific driver maintainers.
-> 
-> IMO, having a dedicated entry like this brings clarity in maintenance
-> and in future we may have more trust sources like this added where
-> everyone may not have access to all the trust sources to test.
+On Mon, Oct 12, 2020 at 5:40 AM Harald Welte <laforge@gnumonks.org> wrote:
+>
+> Hi Paul,
+>
+> On Sun, Oct 11, 2020 at 10:09:11PM -0400, Paul Moore wrote:
+> > Harald, Pablo - I know you both suggested taking a slow iterative
+> > approach to merging functionality, perhaps you could also help those
+> > of us on the SELinux side better understand some of the common GTP use
+> > cases?
+>
+> There really only is one use case for this code:  The GGSN or P-GW function
+> in the 3GPP network architecture ...
+>
+> Hope this helps,
+>         Harald
 
-More entries pointing to the exact same stuff does not necessarily mean
-clarity in my books.
+It does, thank you.
 
-> > I'd be for a
-> > new M-entry or R-entry to the existing subsystem tag. It's essential to
-> > have ack from someone with ARM and TEE knowledge but this way too heavy
-> > for the purpose.
-> 
-> If you still think otherwise then I am fine with a new M-entry for
-> existing trusted keys subsystem as well.
+It looks like this patchset is not really a candidate for merging in
+its current form, but I didn't want to lose this information (both the
+patches and Harald's comments) so I created a GH issue to track this
+at the URL below.
 
-Adding a M-entry does makes sense because trusted keys backends can be
-based on various technologies and standard. It's a different in that
-sense than lets say a TPM hardware driver.
+* https://github.com/SELinuxProject/selinux-kernel/issues/54
 
-> > I also see it the most manageable if the trusted keys PR's come from a
-> > single source.
-> 
-> I echo here with you to have a single source for trusted keys PR's
-> irrespective of whether we go with a separate trust source entry or
-> update existing subsystem entry.
-> 
-> -Sumit
-
-And I echo that oviously if there is someone to say the final ack about
-TEE, I will require that as the minimum to ever pick any of those
-changes :-)
-
-I would resolve this with just the M-entry, and we can *later on*
-restructure, if there is a need for that. These things are not sealed
-to stone.
-
-/Jarkko
+-- 
+paul moore
+www.paul-moore.com
