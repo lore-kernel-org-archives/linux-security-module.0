@@ -2,123 +2,119 @@ Return-Path: <SRS0=uW8r=DU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD2DC43467
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 19:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977ABC433E7
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 20:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4E2120BED
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 19:46:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ofbmEHpj"
+	by mail.kernel.org (Postfix) with ESMTP id 4D3A5208D5
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 20:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732377AbgJMTqH (ORCPT
+        id S1726201AbgJMUmj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Oct 2020 15:46:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:4548 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728042AbgJMTqH (ORCPT
+        Tue, 13 Oct 2020 16:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37190 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbgJMUmj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Oct 2020 15:46:07 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09DJY4d0179336;
-        Tue, 13 Oct 2020 15:45:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=wjgRi0JKXCA+0MevYmBRStAWxi1vVqqvVpMDV3OGaHY=;
- b=ofbmEHpj/HiqpFVYoUpJc1CptudDCiqJuewrLBlLd6fhph58Ir1kclCkuSUK3j5p/MFY
- FUoYrmA4nYUwMkULfI4E4GgR4bXVatntZGhq4QDgtZ+KxJxJfQHR2WtMDvdNXnhVsc2p
- ivS4wEeclmH6hZb3G116bEJYT8Pho6nMCSMgFA5ZWhEDoxaHnF0nt14Dwd+lfYDRAYCJ
- kUL4KuoOa8hascylFLRFbKk3K8BtRPSGjoU8xyoA/bo0Vk/kcZ0UdRWHezWBq8ZLRuLS
- FZusq++dnZSSJ9Akli9JVrLK28+6vAZS5HrgVgZnoxXGRbogqhvx0xAsZkQMOOUGiGSJ AQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 345jac8k3x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Oct 2020 15:45:50 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09DJYlcD184984;
-        Tue, 13 Oct 2020 15:45:49 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 345jac8k37-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Oct 2020 15:45:49 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09DJbP5F001513;
-        Tue, 13 Oct 2020 19:45:47 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma05fra.de.ibm.com with ESMTP id 3434k81s1j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Oct 2020 19:45:47 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09DJjiBN17236448
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Oct 2020 19:45:45 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DEDA511C050;
-        Tue, 13 Oct 2020 19:45:44 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D215111C054;
-        Tue, 13 Oct 2020 19:45:42 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.65.195])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 13 Oct 2020 19:45:42 +0000 (GMT)
-Message-ID: <6a4ad1dbf6d7a59b3728f3847fdbea04b73aff69.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: defer arch_ima_get_secureboot() call to IMA
- init time
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, Chester Lin <clin@suse.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>
-Date:   Tue, 13 Oct 2020 15:45:41 -0400
-In-Reply-To: <CAMj1kXFZVR46_oeYTxJ59q-7u+zFCFtOQuSQoiEzKLhXzpydow@mail.gmail.com>
-References: <20201013081804.17332-1-ardb@kernel.org>
-         <ae9ab2560f6d7b114726efb1ec26f0a36f695335.camel@linux.ibm.com>
-         <CAMj1kXFZVR46_oeYTxJ59q-7u+zFCFtOQuSQoiEzKLhXzpydow@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-13_13:2020-10-13,2020-10-13 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- adultscore=0 spamscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 priorityscore=1501 clxscore=1015 mlxlogscore=995
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010130137
+        Tue, 13 Oct 2020 16:42:39 -0400
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [IPv6:2001:780:45:1d:225:90ff:fe52:c662])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76D70C061755;
+        Tue, 13 Oct 2020 13:42:39 -0700 (PDT)
+Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.89)
+        (envelope-from <laforge@gnumonks.org>)
+        id 1kSR7w-0000MJ-Ft; Tue, 13 Oct 2020 22:42:32 +0200
+Received: from laforge by localhost.localdomain with local (Exim 4.94)
+        (envelope-from <laforge@gnumonks.org>)
+        id 1kSR7r-004aJc-Tg; Tue, 13 Oct 2020 22:42:27 +0200
+Date:   Tue, 13 Oct 2020 22:42:27 +0200
+From:   Harald Welte <laforge@gnumonks.org>
+To:     Richard Haines <richard_c_haines@btinternet.com>
+Cc:     Paul Moore <paul@paul-moore.com>, pablo@netfilter.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH 3/3] selinux: Add SELinux GTP support
+Message-ID: <20201013204227.GP947663@nataraja>
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
+ <20200930094934.32144-4-richard_c_haines@btinternet.com>
+ <20200930110153.GT3871@nataraja>
+ <33cf57c9599842247c45c92aa22468ec89f7ba64.camel@btinternet.com>
+ <20200930133847.GD238904@nataraja>
+ <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
+ <20201012093851.GF947663@nataraja>
+ <CAHC9VhTrSBsm-qVh95J2SzUq5=_pESwTUBRmVSjXOoyG+97jYA@mail.gmail.com>
+ <77226ae9dc60113d1953c1f957849d6460c5096f.camel@btinternet.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77226ae9dc60113d1953c1f957849d6460c5096f.camel@btinternet.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-10-13 at 18:59 +0200, Ard Biesheuvel wrote:
-> Suggestion: can we take the get_sb_mode() code from ima_arch.c in
-> arch/x86, and generalize it for all EFI architectures? That way, we
-> can enable 32-bit ARM and RISC-V seamlessly once someone gets around
-> to enabling IMA on those platforms. In fact, get_sb_mode() itself
-> should probably be factored out into a generic helper for use outside
-> of IMA as well (Xen/x86 has code that does roughly the same already)
+Hi Richard and list[s],
 
-On Power, there are three different policies - secure, trusted, and
-secure & trusted boot policy rules.  Based on whether secure or trusted
-boot is enabled, the appropriate policy is enabled.  On x86, if
-secure_boot is enabled (and CONFIG_IMA_ARCH_POLICY is enabled) both the
-secure and trusted boot rules are defined.  Is this design fine enough
-granularity or should should there be a get_trustedboot_mode() function
-as well?
+On Tue, Oct 13, 2020 at 05:38:16PM +0100, Richard Haines wrote:
+> There is in development a 5G version of GTP at [1]. 
 
-Agreed, the code should not be duplicated across arch's.  As for making
-get_sb_mode() generic, not dependent on IMA, where would it reside? 
-Would this be in EFI?
+Please note that there is no such thing as "5G version of GTP".  The GTP-U
+(user plane) did not change between 2G, 3G, 4G or even 5G:  IT is still the
+same protocol version (GTPv1-U), which you can see from looking at
+3GPP TS 29.281 even in its latest release (Rel 15), which is what the authors
+of the "gtp5g" github repository reference.
 
-thanks,
+What has changed over time is how the protocol is used, and what kind of
+QoS/classification features are added in order to use different GTP
+tunnels for different traffic (to the same subscriber / IP address) in
+order to subject it to different QoS within the 3GPP network.  This
+functionality, by the way, can also be used in 4G networks, and even in
+3G/2G networks that follow some of the later releases.
 
-Mimi
+The "gtp5g" module hence should in my point not be a separate module,
+but it should be broken down in incremental feature enhancements to the
+existing in-kernel GTP user plane module.  The netlink interface should
+also obviously be extended in a backwards-compatible way.
 
+My most active kernel years are long gone, but I still think we never
+have two implementations of the same protocol (GTPv1U in this case) in
+the Kernel.
+
+One could of course also consider to switch to a completely new
+implementation / rewrite, but only if it is backwards compatible in
+terms of use cases as well as the netlink interface (and hence existing
+users of the GTPv1U kernel support).
+
+> The other component that seems to be widely used in these systems is
+> SCTP that I added hooks to a few years ago, [...]
+
+indeed, SCTP is extremely heavily used in all cellular systems, from 2G
+to 4G (with a peak in 4G), but still used on some 5G interfaces.
+
+Unfortunately it is the tradition (until today) that none of the
+industry players that need and use those protocols (GTP, SCTP) seem
+to be participating in the development and maintenance effort of related
+implementation.  So rather than Nokia, Ericsson or others improving the
+in-kernel SCTP, their Linux based devices tend to roll their own
+[userspace] SCTP implementations.
+
+Even while in 2020 everybody in "marketing land" speaks about "open
+source" in the context of cellular/5G, it is not happening.  It is only
+open-washing in order to appear attractive.  In reality, anyone in this
+industry derives a *massive* revenue from their patent royalty
+collection and they would do anything but release or contribute to code
+that comes with an explicit or implicit patent license grant.
+
+So here we are, in 2020, where every single cellular equipment maker
+uses Linux, but the most relevant real open source projects in the industry
+are run by small enthusiast or very small players...
+
+Regards,
+	Harald
+-- 
+- Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
+============================================================================
+"Privacy in residential applications is a desirable marketing option."
+                                                  (ETSI EN 300 175-7 Ch. A6)
