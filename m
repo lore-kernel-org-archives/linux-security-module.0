@@ -2,113 +2,124 @@ Return-Path: <SRS0=uW8r=DU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDF7C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57255C433DF
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A55E42527A
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D26DB252B1
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:38:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=btinternet.com header.i=@btinternet.com header.b="RKTqQ+oO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389692AbgJMQXy (ORCPT
+        id S1727245AbgJMQi2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Oct 2020 12:23:54 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:58179 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389679AbgJMQXw (ORCPT
+        Tue, 13 Oct 2020 12:38:28 -0400
+Received: from mailomta13-sa.btinternet.com ([213.120.69.19]:49493 "EHLO
+        sa-prd-fep-047.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726942AbgJMQi1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Oct 2020 12:23:52 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1kSN5Y-0007Jb-4T; Tue, 13 Oct 2020 16:23:48 +0000
-Subject: Re: [PATCH] ima: Fix sizeof mismatches
-To:     Mimi Zohar <zohar@linux.ibm.com>, Joe Perches <joe@perches.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Roberto Sassu <roberto.sassu@polito.it>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20201007110243.19033-1-colin.king@canonical.com>
- <55ae0b6152c84013d483b1bbecb28a425801c408.camel@perches.com>
- <a9a35d8b480112fe40b45392d0f0e9dcb5be536e.camel@linux.ibm.com>
- <ea06c7431075c57d274a9076077f28fd2c7634a5.camel@perches.com>
- <0ceb198a-a313-f542-49cc-c0b9f6b1ea52@canonical.com>
- <ba5f4d90c714eba5d5a1d822bca25305b40a73e1.camel@linux.ibm.com>
-From:   Colin Ian King <colin.king@canonical.com>
-Message-ID: <047842e3-da9d-2dc5-6fa8-60cf6e9fe92d@canonical.com>
-Date:   Tue, 13 Oct 2020 17:23:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.2
+        Tue, 13 Oct 2020 12:38:27 -0400
+Received: from sa-prd-rgout-004.btmx-prd.synchronoss.net ([10.2.38.7])
+          by sa-prd-fep-047.btinternet.com with ESMTP
+          id <20201013163824.GNHU4609.sa-prd-fep-047.btinternet.com@sa-prd-rgout-004.btmx-prd.synchronoss.net>;
+          Tue, 13 Oct 2020 17:38:24 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1602607104; 
+        bh=wACf3Mpnrb86ay9KbtonDAJZf/90XXOvVorm3FbySaE=;
+        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:MIME-Version;
+        b=RKTqQ+oOwL2NjtW18VBTcqLkuibQyXNmit/VqWooqgrxDhlXqqR9HB16m5ApYY6/p3NWlrhrJQZ7cafem+mRbGty2Mgm+tdakbKjU5EJWx3TBsuxKk5sasRL9ktyzUKSzP+s3iToVhgrAgx5xWwfNqx5NwAuLgnZWmj1u7hYh1zMwPmxnwoMbfYxHZl12GyIZq7pYtnZsHYqUKySdjUm+1m5NRabDC1qoL+1lfL6Ef9mCEic6FnIrfzD/scYIHmShqf/ubz41UPPmR7/gjei/kBd8lSNmvw8Z2Yqaf24W8ltPY98rM5C8AKlX1WZcfKbwsggFkJih+BepUdWNuiZBg==
+Authentication-Results: btinternet.com;
+    auth=pass (LOGIN) smtp.auth=richard_c_haines@btinternet.com
+X-Originating-IP: [81.147.56.93]
+X-OWM-Source-IP: 81.147.56.93 (GB)
+X-OWM-Env-Sender: richard_c_haines@btinternet.com
+X-VadeSecure-score: verdict=clean score=0/300, class=clean
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedujedrheelgddutdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuueftkffvkffujffvgffngfevqffopdfqfgfvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpeftihgthhgrrhguucfjrghinhgvshcuoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucggtffrrghtthgvrhhnpeetteevgeehveeiieefkedvieehjeevtdeileffffefveelieejvedvjedvuddugeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeekuddrudegjedrheeirdelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddugeejrdehiedrleefpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqecuuefqffgjpeekuefkvffokffogfdprhgtphhtthhopeeojhhmohhrrhhishesnhgrmhgvihdrohhrgheqpdhrtghpthhtohepoehlrghfohhrghgvsehgnhhumhhonhhkshdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgt
+        phhtthhopeeonhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeoohhsmhhotghomhdqnhgvthdqghhprhhssehlihhsthhsrdhoshhmohgtohhmrdhorhhgqedprhgtphhtthhopeeophgrsghlohesnhgvthhfihhlthgvrhdrohhrgheqpdhrtghpthhtohepoehprghulhesphgruhhlqdhmohhorhgvrdgtohhmqedprhgtphhtthhopeeoshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehsthgvphhhvghnrdhsmhgrlhhlvgihrdifohhrkhesghhmrghilhdrtghomheq
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+X-SNCR-hdrdom: btinternet.com
+Received: from localhost.localdomain (81.147.56.93) by sa-prd-rgout-004.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
+        id 5ED9B66115DDE5BF; Tue, 13 Oct 2020 17:38:24 +0100
+Message-ID: <77226ae9dc60113d1953c1f957849d6460c5096f.camel@btinternet.com>
+Subject: Re: [PATCH 3/3] selinux: Add SELinux GTP support
+From:   Richard Haines <richard_c_haines@btinternet.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Harald Welte <laforge@gnumonks.org>
+Cc:     pablo@netfilter.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        James Morris <jmorris@namei.org>
+Date:   Tue, 13 Oct 2020 17:38:16 +0100
+In-Reply-To: <CAHC9VhTrSBsm-qVh95J2SzUq5=_pESwTUBRmVSjXOoyG+97jYA@mail.gmail.com>
+References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
+         <20200930094934.32144-4-richard_c_haines@btinternet.com>
+         <20200930110153.GT3871@nataraja>
+         <33cf57c9599842247c45c92aa22468ec89f7ba64.camel@btinternet.com>
+         <20200930133847.GD238904@nataraja>
+         <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
+         <20201012093851.GF947663@nataraja>
+         <CAHC9VhTrSBsm-qVh95J2SzUq5=_pESwTUBRmVSjXOoyG+97jYA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
 MIME-Version: 1.0
-In-Reply-To: <ba5f4d90c714eba5d5a1d822bca25305b40a73e1.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 13/10/2020 17:17, Mimi Zohar wrote:
-> On Mon, 2020-10-12 at 19:10 +0100, Colin Ian King wrote:
->> On 12/10/2020 19:06, Joe Perches wrote:
->>> On Mon, 2020-10-12 at 13:51 -0400, Mimi Zohar wrote:
->>>> On Wed, 2020-10-07 at 11:27 -0700, Joe Perches wrote:
->>>>> On Wed, 2020-10-07 at 12:02 +0100, Colin King wrote:
->>>>>> An incorrect sizeof is being used, sizeof(*fields) is not correct,
->>>>>> it should be sizeof(**fields). This is not causing a problem since
->>>>>> the size of these is the same. Fix this in the kmalloc_array and
->>>>>> memcpy calls.
->>>>> []
->>>>>> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
->>>>> []
->>>>>> @@ -216,11 +216,11 @@ int template_desc_init_fields(const char *template_fmt,
->>>>>>  	}
->>>>>>  
->>>>>>  	if (fields && num_fields) {
->>>>>> -		*fields = kmalloc_array(i, sizeof(*fields), GFP_KERNEL);
->>>>>> +		*fields = kmalloc_array(i, sizeof(**fields), GFP_KERNEL);
->>>>>>  		if (*fields == NULL)
->>>>>>  			return -ENOMEM;
->>>>>>  
->>>>>> -		memcpy(*fields, found_fields, i * sizeof(*fields));
->>>>>> +		memcpy(*fields, found_fields, i * sizeof(**fields));
->>>>>
->>>>> Maybe use kmemdup instead.
->>>>>
->>>>> 	if (fields && num_fields) {
->>>>> 		*fields = kmemdup(found_fields, i * sizeof(**fields), GFP_KERNEL);
->>>>> 		etc...
->>>>>
->>>>
->>>> Thanks, Joe.  Since this patch will be backported, perhaps it would be
->>>> better to leave this as a bug fix and upstream other changes
->>>> independently.
->>>
->>> IMO:
->>>
->>> This patch doesn't need need backporting as it doesn't
->>> actually fix anything other than a style defect.
->>>
->>> void * and void ** are the same size.
->>
->> indeed, same size, it's a semantic difference *and* a style fix :-)
+On Tue, 2020-10-13 at 09:55 -0400, Paul Moore wrote:
+> On Mon, Oct 12, 2020 at 5:40 AM Harald Welte <laforge@gnumonks.org>
+> wrote:
+> > Hi Paul,
+> > 
+> > On Sun, Oct 11, 2020 at 10:09:11PM -0400, Paul Moore wrote:
+> > > Harald, Pablo - I know you both suggested taking a slow iterative
+> > > approach to merging functionality, perhaps you could also help
+> > > those
+> > > of us on the SELinux side better understand some of the common
+> > > GTP use
+> > > cases?
+> > 
+> > There really only is one use case for this code:  The GGSN or P-GW
+> > function
+> > in the 3GPP network architecture ...
+> > 
+> > Hope this helps,
+> >         Harald
 > 
-> Colin, based on Joe's suggestion of using kmemdup and his opinion of
-> not backporting this change, can I assume you'll address his comments
-> and re-post v3?
+> It does, thank you.
+> 
+> It looks like this patchset is not really a candidate for merging in
+> its current form, but I didn't want to lose this information (both
+> the
+> patches and Harald's comments) so I created a GH issue to track this
+> at the URL below.
+> 
+> * https://github.com/SELinuxProject/selinux-kernel/issues/54
+> 
 
-Oops, I missed that email. Yep, I'll address that later today
+While I was not expecting these patches to be excepted for the current
+version, the main aim was to see what LSM security services could be
+implemented on possible 5G components, bearing in mind the DARPA Open
+Programmable Secure 5G (OPS-5G) initiative (probably 'jumping the gun'
+here a bit though). 
 
-Colin
-> 
-> thanks,
-> 
-> Mimi
-> 
+There is in development a 5G version of GTP at [1]. I have added the
+enhanced hooks to this (plus retrieve contexts via call-backs etc.),
+and have it running on 5.9, passing their tests. I'm not sure how far
+this development will go, but a starter ??.
+
+The other component that seems to be widely used in these systems is
+SCTP that I added hooks to a few years ago, also TCP/UDP etc. that are
+already well catered for. Also there would be a large amount of
+userspace code ....
+
+Anyway food for thought.
+
+[1] https://github.com/PrinzOwO/gtp5g
+
 
