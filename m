@@ -2,124 +2,135 @@ Return-Path: <SRS0=uW8r=DU=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57255C433DF
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B2CC43457
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D26DB252B1
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11821252CE
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Oct 2020 16:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=btinternet.com header.i=@btinternet.com header.b="RKTqQ+oO"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M0G5/idk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727245AbgJMQi2 (ORCPT
+        id S1728264AbgJMQqX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Oct 2020 12:38:28 -0400
-Received: from mailomta13-sa.btinternet.com ([213.120.69.19]:49493 "EHLO
-        sa-prd-fep-047.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726942AbgJMQi1 (ORCPT
+        Tue, 13 Oct 2020 12:46:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33670 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727696AbgJMQqW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Oct 2020 12:38:27 -0400
-Received: from sa-prd-rgout-004.btmx-prd.synchronoss.net ([10.2.38.7])
-          by sa-prd-fep-047.btinternet.com with ESMTP
-          id <20201013163824.GNHU4609.sa-prd-fep-047.btinternet.com@sa-prd-rgout-004.btmx-prd.synchronoss.net>;
-          Tue, 13 Oct 2020 17:38:24 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1602607104; 
-        bh=wACf3Mpnrb86ay9KbtonDAJZf/90XXOvVorm3FbySaE=;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:MIME-Version;
-        b=RKTqQ+oOwL2NjtW18VBTcqLkuibQyXNmit/VqWooqgrxDhlXqqR9HB16m5ApYY6/p3NWlrhrJQZ7cafem+mRbGty2Mgm+tdakbKjU5EJWx3TBsuxKk5sasRL9ktyzUKSzP+s3iToVhgrAgx5xWwfNqx5NwAuLgnZWmj1u7hYh1zMwPmxnwoMbfYxHZl12GyIZq7pYtnZsHYqUKySdjUm+1m5NRabDC1qoL+1lfL6Ef9mCEic6FnIrfzD/scYIHmShqf/ubz41UPPmR7/gjei/kBd8lSNmvw8Z2Yqaf24W8ltPY98rM5C8AKlX1WZcfKbwsggFkJih+BepUdWNuiZBg==
-Authentication-Results: btinternet.com;
-    auth=pass (LOGIN) smtp.auth=richard_c_haines@btinternet.com
-X-Originating-IP: [81.147.56.93]
-X-OWM-Source-IP: 81.147.56.93 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedujedrheelgddutdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuueftkffvkffujffvgffngfevqffopdfqfgfvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkuffhvfffjghftggfggfgsehtjeertddtreejnecuhfhrohhmpeftihgthhgrrhguucfjrghinhgvshcuoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucggtffrrghtthgvrhhnpeetteevgeehveeiieefkedvieehjeevtdeileffffefveelieejvedvjedvuddugeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppeekuddrudegjedrheeirdelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkedurddugeejrdehiedrleefpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqecuuefqffgjpeekuefkvffokffogfdprhgtphhtthhopeeojhhmohhrrhhishesnhgrmhgvihdrohhrgheqpdhrtghpthhtohepoehlrghfohhrghgvsehgnhhumhhonhhkshdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgt
-        phhtthhopeeonhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeoohhsmhhotghomhdqnhgvthdqghhprhhssehlihhsthhsrdhoshhmohgtohhmrdhorhhgqedprhgtphhtthhopeeophgrsghlohesnhgvthhfihhlthgvrhdrohhrgheqpdhrtghpthhtohepoehprghulhesphgruhhlqdhmohhorhgvrdgtohhmqedprhgtphhtthhopeeoshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehsthgvphhhvghnrdhsmhgrlhhlvgihrdifohhrkhesghhmrghilhdrtghomheq
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-X-SNCR-hdrdom: btinternet.com
-Received: from localhost.localdomain (81.147.56.93) by sa-prd-rgout-004.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
-        id 5ED9B66115DDE5BF; Tue, 13 Oct 2020 17:38:24 +0100
-Message-ID: <77226ae9dc60113d1953c1f957849d6460c5096f.camel@btinternet.com>
-Subject: Re: [PATCH 3/3] selinux: Add SELinux GTP support
-From:   Richard Haines <richard_c_haines@btinternet.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Harald Welte <laforge@gnumonks.org>
-Cc:     pablo@netfilter.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        James Morris <jmorris@namei.org>
-Date:   Tue, 13 Oct 2020 17:38:16 +0100
-In-Reply-To: <CAHC9VhTrSBsm-qVh95J2SzUq5=_pESwTUBRmVSjXOoyG+97jYA@mail.gmail.com>
-References: <20200930094934.32144-1-richard_c_haines@btinternet.com>
-         <20200930094934.32144-4-richard_c_haines@btinternet.com>
-         <20200930110153.GT3871@nataraja>
-         <33cf57c9599842247c45c92aa22468ec89f7ba64.camel@btinternet.com>
-         <20200930133847.GD238904@nataraja>
-         <CAHC9VhT5HahBhow0RzWHs1yAh5qQw2dZ-3vgJv5GuyFWrXau1A@mail.gmail.com>
-         <20201012093851.GF947663@nataraja>
-         <CAHC9VhTrSBsm-qVh95J2SzUq5=_pESwTUBRmVSjXOoyG+97jYA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
-MIME-Version: 1.0
+        Tue, 13 Oct 2020 12:46:22 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09DGXMqU165007;
+        Tue, 13 Oct 2020 12:46:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=sjJID2OIHZzArz/nQ6l5yNCTkjThYM/EUEbxpLbM6Sc=;
+ b=M0G5/idk55jAC9fvZAxYZlEdSJN611so7huv2zS9dfPKebXygr9AoVwNvAZrRloFVgx1
+ NtPMBg5oUJToiPvSYVF+L2pFjT874uSlWAavH3xBunQBlfBDm0S9HARxoibelymdpB0M
+ 7ESqw7dntuoQD3ZgvlB4Ek3P++caLRgB5LDDQxD1Q/H5LBggvWGrpKiYDWtOhofVIXhT
+ Xjah2tjMwaanXzzVjYZYadNrZTv5eDYZ0FL8TwYeMIWZTRJP7TRcftS4pu7E0Uk+yOAv
+ VN8bUmxYgDDPuWcsscSJSx90VHvXEHvRLFIv+sYHkp9PjGyUH8HCmJOzc/4XPurUt6lU kg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 345fkqrtx7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Oct 2020 12:46:08 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09DGYotE169823;
+        Tue, 13 Oct 2020 12:46:08 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 345fkqrtw1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Oct 2020 12:46:08 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09DGWV9a020429;
+        Tue, 13 Oct 2020 16:46:05 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04fra.de.ibm.com with ESMTP id 3434k7spqh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Oct 2020 16:46:05 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09DGk3uX23396752
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Oct 2020 16:46:03 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 66905A4054;
+        Tue, 13 Oct 2020 16:46:03 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 84AF9A4060;
+        Tue, 13 Oct 2020 16:46:01 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.65.195])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 13 Oct 2020 16:46:01 +0000 (GMT)
+Message-ID: <ae9ab2560f6d7b114726efb1ec26f0a36f695335.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] ima: defer arch_ima_get_secureboot() call to IMA
+ init time
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Chester Lin <clin@suse.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 13 Oct 2020 12:46:00 -0400
+In-Reply-To: <20201013081804.17332-1-ardb@kernel.org>
+References: <20201013081804.17332-1-ardb@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-10-13_08:2020-10-13,2020-10-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 adultscore=0 mlxscore=0 bulkscore=0
+ phishscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
+ spamscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010130118
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-10-13 at 09:55 -0400, Paul Moore wrote:
-> On Mon, Oct 12, 2020 at 5:40 AM Harald Welte <laforge@gnumonks.org>
-> wrote:
-> > Hi Paul,
-> > 
-> > On Sun, Oct 11, 2020 at 10:09:11PM -0400, Paul Moore wrote:
-> > > Harald, Pablo - I know you both suggested taking a slow iterative
-> > > approach to merging functionality, perhaps you could also help
-> > > those
-> > > of us on the SELinux side better understand some of the common
-> > > GTP use
-> > > cases?
-> > 
-> > There really only is one use case for this code:  The GGSN or P-GW
-> > function
-> > in the 3GPP network architecture ...
-> > 
-> > Hope this helps,
-> >         Harald
+[Cc'ing linuxppc-dev@lists.ozlabs.org]
+
+On Tue, 2020-10-13 at 10:18 +0200, Ard Biesheuvel wrote:
+> Chester reports that it is necessary to introduce a new way to pass
+> the EFI secure boot status between the EFI stub and the core kernel
+> on ARM systems. The usual way of obtaining this information is by
+> checking the SecureBoot and SetupMode EFI variables, but this can
+> only be done after the EFI variable workqueue is created, which
+> occurs in a subsys_initcall(), whereas arch_ima_get_secureboot()
+> is called much earlier by the IMA framework.
 > 
-> It does, thank you.
+> However, the IMA framework itself is started as a late_initcall,
+> and the only reason the call to arch_ima_get_secureboot() occurs
+> so early is because it happens in the context of a __setup()
+> callback that parses the ima_appraise= command line parameter.
 > 
-> It looks like this patchset is not really a candidate for merging in
-> its current form, but I didn't want to lose this information (both
-> the
-> patches and Harald's comments) so I created a GH issue to track this
-> at the URL below.
+> So let's refactor this code a little bit, by using a core_param()
+> callback to capture the command line argument, and deferring any
+> reasoning based on its contents to the IMA init routine.
 > 
-> * https://github.com/SELinuxProject/selinux-kernel/issues/54
-> 
+> Cc: Chester Lin <clin@suse.com>
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Link: https://lore.kernel.org/linux-arm-kernel/20200904072905.25332-2-clin@suse.com/
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+> v2: rebase onto series 'integrity: improve user feedback for invalid bootparams'
 
-While I was not expecting these patches to be excepted for the current
-version, the main aim was to see what LSM security services could be
-implemented on possible 5G components, bearing in mind the DARPA Open
-Programmable Secure 5G (OPS-5G) initiative (probably 'jumping the gun'
-here a bit though). 
+Thanks, Ard.  Based on my initial, limited testing on Power, it looks
+good, but I'm hesistant to include it in the integrity 5.10 pull
+request without it having been in linux-next and some additional
+testing.  It's now queued in the next-integrity-testing branch awaiting
+some tags.
 
-There is in development a 5G version of GTP at [1]. I have added the
-enhanced hooks to this (plus retrieve contexts via call-backs etc.),
-and have it running on 5.9, passing their tests. I'm not sure how far
-this development will go, but a starter ??.
+thanks,
 
-The other component that seems to be widely used in these systems is
-SCTP that I added hooks to a few years ago, also TCP/UDP etc. that are
-already well catered for. Also there would be a large amount of
-userspace code ....
-
-Anyway food for thought.
-
-[1] https://github.com/PrinzOwO/gtp5g
-
+Mimi
 
