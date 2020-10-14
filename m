@@ -2,186 +2,184 @@ Return-Path: <SRS0=3zgL=DV=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A733C43457
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Oct 2020 11:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D92C43457
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Oct 2020 14:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D335620848
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Oct 2020 11:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A239212CC
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Oct 2020 14:37:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DdPbZfv2"
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="k5J+g+Kw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388109AbgJNLjW (ORCPT
+        id S1728711AbgJNOhj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Oct 2020 07:39:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44974 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387867AbgJNLjU (ORCPT
+        Wed, 14 Oct 2020 10:37:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60976 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727875AbgJNOhi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Oct 2020 07:39:20 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09EBV9pr128561;
-        Wed, 14 Oct 2020 07:38:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ybbBBc1ubBi+MYs3l37BnscOxOb29Z2bSOcLI0t8Q84=;
- b=DdPbZfv2bcZKQ2yY003LFhSgm52urs3ER9lhahzoSBPPJQ3uuuXqXQvNhrqJvaMVEL+Q
- 70WhTwaMHxyA0Iszv7UuUxzgHbfnkkszcfdGlwmig/bvtC7HO+EQ0k1KAjQtT6B/8xUW
- l4Az2CDLsfnEKCdkxFSalWagAIiHx5pGQbp7v7QZzu2kz74riMdAwvgkNJ+AM9e9J6ul
- gAwEzI2cwB9oP+rrNF5x1ilEVE+zbCyq69Rooo5KYgY19d/2SQcNYcgCni6n9Bur14p/
- bfvkKBIR6SRsuNPVBEFpxhy7GTkxSitnl+bx0wLCSYe00zmO+we0iqsuJl4kPlnlpqAz zQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3460a68jb1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Oct 2020 07:38:58 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09EBVGIF129173;
-        Wed, 14 Oct 2020 07:38:57 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3460a68jae-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Oct 2020 07:38:57 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09EBbwd6021184;
-        Wed, 14 Oct 2020 11:38:55 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 3434k7v31m-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Oct 2020 11:38:55 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09EBcrN629032888
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Oct 2020 11:38:53 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5004CA4062;
-        Wed, 14 Oct 2020 11:38:53 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B4D3A4054;
-        Wed, 14 Oct 2020 11:38:51 +0000 (GMT)
-Received: from sig-9-65-216-73.ibm.com (unknown [9.65.216.73])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Oct 2020 11:38:51 +0000 (GMT)
-Message-ID: <98b04c130708893ebefdf81e127a66356b4a6129.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: defer arch_ima_get_secureboot() call to IMA
- init time
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Chester Lin <clin@suse.com>, Ard Biesheuvel <ardb@kernel.org>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" 
-        <linuxppc-dev@lists.ozlabs.org>, jlee@suse.com
-Date:   Wed, 14 Oct 2020 07:38:50 -0400
-In-Reply-To: <20201014093531.GA9408@linux-8mug>
-References: <20201013081804.17332-1-ardb@kernel.org>
-         <ae9ab2560f6d7b114726efb1ec26f0a36f695335.camel@linux.ibm.com>
-         <CAMj1kXFZVR46_oeYTxJ59q-7u+zFCFtOQuSQoiEzKLhXzpydow@mail.gmail.com>
-         <20201014093531.GA9408@linux-8mug>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-10-14_07:2020-10-14,2020-10-14 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 priorityscore=1501
- malwarescore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010140081
+        Wed, 14 Oct 2020 10:37:38 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47628C061755;
+        Wed, 14 Oct 2020 07:37:38 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id c22so5237781ejx.0;
+        Wed, 14 Oct 2020 07:37:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WWQUs1iKiL0g+WuQeTob+uddOusmv5uTWIOTWJtZDHc=;
+        b=k5J+g+KwT03/K1PomluP39o+tUilGk44BG0xTfzs3jHO+5lgUDz0elaz/0WlzMo8zj
+         mV6lcGRRId/5lG9mh8l96zURAVT0xrwHoVUZuPBJO5Tj444U5jdMjNyB1kQOAcKB8mDU
+         LImFQkhUAY1UGdUk3wTCLB1TV5jaatZt7juMqkpxoYxOHmoV05KjFAO3UX8bM1A89Um8
+         TxAihmKrq/dgMZIrDUNzjEds4F7vxM9rkwe5sUxcVz46PhknsluYMrh1CDM8sdEm3v79
+         lXi7FokpNEVBzriVI+Jok17g3Xn59D0hi3j3EIJsFSfTevGizGOV2t8Y1rLiiqTZEyN6
+         HqmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WWQUs1iKiL0g+WuQeTob+uddOusmv5uTWIOTWJtZDHc=;
+        b=o5/tL5kr+MGpSFeY9FUgo67nyc9QW8NZ9U972ToyN8f1CH8yuuxoSy7O05OQ5g5usw
+         S6BgvRNO22XSOCyFNGBCkpTFgekqGGxSq8sEB9GNAmFHGrW7gMWgKuVZMVG818Jx4G47
+         FK75FLVwlb6XtEP+/6IYtANVGACZ6qOPgRJhgxySzYS6ZHT3iDQx/dnbkwR5ziDjRzsP
+         4OLjfqniUWt4xmPi+EZ2RogmtJ/huIjPRTFLC//0C7mFWTuF/4u+mvozpapAMLhbY++O
+         jsb1XH8hZx+MpCbeWiBDRMhBtHYFuvnjSixR8PWFkm3hw4xDZl943NHX8Ac3kZGyUEIZ
+         ZAEA==
+X-Gm-Message-State: AOAM530XzwMVI5bpGPOmAKXpdh8sgbka/UdDVRbIgSiFIgo3tUZDYii1
+        rN5oozl2mL0nhgt8LEBz//nIVzPU/dmrAqComUw=
+X-Google-Smtp-Source: ABdhPJyoJT2DnvAYr186xONfeWoAVBGf9jXVT4NM0KNKlQmd7sC+AwDmDY/d+5amEclT/rVc5QxueLx/HujFttEzFcM=
+X-Received: by 2002:a17:906:7013:: with SMTP id n19mr5582979ejj.388.1602686256864;
+ Wed, 14 Oct 2020 07:37:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
+ <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+ <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com>
+ <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
+ <CAN-5tyGJxUZb5QdJ=fh+L-6rc2B-MhQbDcDkTZNAZAAJm9Q8YQ@mail.gmail.com>
+ <FB6C74CE-5D9F-4469-A49B-93CC8A51D7D5@gmail.com> <CAN-5tyFQbfkiuno07C6Azc7RcF3z3qF3PP0FutFMD3raBgnQmA@mail.gmail.com>
+ <CAEjxPJ7PoAG6f+gVdodx=6X8+_Z_WCFXAuxnpB8WmC1gTF4iQQ@mail.gmail.com>
+In-Reply-To: <CAEjxPJ7PoAG6f+gVdodx=6X8+_Z_WCFXAuxnpB8WmC1gTF4iQQ@mail.gmail.com>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Wed, 14 Oct 2020 10:37:26 -0400
+Message-ID: <CAN-5tyEy57xoqEbZAThZKHriJywx-5DMKBD5tsXwo5ccGwuctw@mail.gmail.com>
+Subject: Re: selinux: how to query if selinux is enabled
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc:     Chuck Lever <chucklever@gmail.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-10-14 at 17:35 +0800, Chester Lin wrote:
-> Hi Ard & Mimi,
-> 
-> On Tue, Oct 13, 2020 at 06:59:21PM +0200, Ard Biesheuvel wrote:
-> > On Tue, 13 Oct 2020 at 18:46, Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Tue, Oct 13, 2020 at 7:51 PM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Fri, Oct 9, 2020 at 12:36 PM Olga Kornievskaia <aglo@umich.edu> wrote:
+> >
+> > On Fri, Oct 9, 2020 at 10:08 AM Chuck Lever <chucklever@gmail.com> wrote:
 > > >
-> > > [Cc'ing linuxppc-dev@lists.ozlabs.org]
 > > >
-> > > On Tue, 2020-10-13 at 10:18 +0200, Ard Biesheuvel wrote:
-> > > > Chester reports that it is necessary to introduce a new way to pass
-> > > > the EFI secure boot status between the EFI stub and the core kernel
-> > > > on ARM systems. The usual way of obtaining this information is by
-> > > > checking the SecureBoot and SetupMode EFI variables, but this can
-> > > > only be done after the EFI variable workqueue is created, which
-> > > > occurs in a subsys_initcall(), whereas arch_ima_get_secureboot()
-> > > > is called much earlier by the IMA framework.
+> > >
+> > > > On Oct 9, 2020, at 7:49 AM, Olga Kornievskaia <aglo@umich.edu> wrote:
 > > > >
-> > > > However, the IMA framework itself is started as a late_initcall,
-> > > > and the only reason the call to arch_ima_get_secureboot() occurs
-> > > > so early is because it happens in the context of a __setup()
-> > > > callback that parses the ima_appraise= command line parameter.
+> > > > On Thu, Oct 8, 2020 at 9:03 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > >>
+> > > >> ->On Thu, Oct 8, 2020 at 9:50 AM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > > >>> On Wed, Oct 7, 2020 at 9:07 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > >>>> On Wed, Oct 7, 2020 at 8:41 PM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > > >>>>> Hi folks,
+> > > >>>>>
+> > > >>>>> From some linux kernel module, is it possible to query and find out
+> > > >>>>> whether or not selinux is currently enabled or not?
+> > > >>>>>
+> > > >>>>> Thank you.
+> > > >>>>
+> > > >>>> [NOTE: CC'ing the SELinux list as it's probably a bit more relevant
+> > > >>>> that the LSM list]
+> > > >>>>
+> > > >>>> In general most parts of the kernel shouldn't need to worry about what
+> > > >>>> LSMs are active and/or enabled; the simply interact with the LSM(s)
+> > > >>>> via the interfaces defined in include/linux/security.h (there are some
+> > > >>>> helpful comments in include/linux/lsm_hooks.h).  Can you elaborate a
+> > > >>>> bit more on what you are trying to accomplish?
+> > > >>>
+> > > >>> Hi Paul,
+> > > >>>
+> > > >>> Thank you for the response. What I'm trying to accomplish is the
+> > > >>> following. Within a file system (NFS), typically any queries for
+> > > >>> security labels are triggered by the SElinux (or I guess an LSM in
+> > > >>> general) (thru the xattr_handler hooks). However, when the VFS is
+> > > >>> calling to get directory entries NFS will always get the labels
+> > > >>> (baring server not supporting it). However this is useless and affects
+> > > >>> performance (ie., this makes servers do extra work  and adds to the
+> > > >>> network traffic) when selinux is disabled. It would be useful if NFS
+> > > >>> can check if there is anything that requires those labels, if SElinux
+> > > >>> is enabled or disabled.
+> > > >>
+> > > >> [Adding Chuck Lever to the CC line as I believe he has the most recent
+> > > >> LSM experience from the NFS side - sorry Chuck :)]
+> > > >>
+> > > >> I'll need to ask your patience on this as I am far from a NFS expert.
+> > > >>
+> > > >> Looking through the NFS readdir/getdents code this evening, I was
+> > > >> wondering if the solution in the readdir case is to simply tell the
+> > > >> server you are not interested in the security label by masking out
+> > > >> FATTR4_WORD2_SECURITY_LABEL in the nfs4_readdir_arg->bitmask in
+> > > >> _nfs4_proc_readdir()?  Of course this assumes that the security label
+> > > >> genuinely isn't needed in this case (and not requesting it doesn't
+> > > >> bypass access controls or break something on the server side), and we
+> > > >> don't screw up some NFS client side cache by *not* fetching the
+> > > >> security label attribute.
+> > > >>
+> > > >> Is this remotely close to workable, or am I missing something fundamental?
+> > > >>
 > > > >
-> > > > So let's refactor this code a little bit, by using a core_param()
-> > > > callback to capture the command line argument, and deferring any
-> > > > reasoning based on its contents to the IMA init routine.
-> > > >
-> > > > Cc: Chester Lin <clin@suse.com>
-> > > > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > > > Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> > > > Cc: James Morris <jmorris@namei.org>
-> > > > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > > > Link: https://lore.kernel.org/linux-arm-kernel/20200904072905.25332-2-clin@suse.com/
-> > > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > > ---
-> > > > v2: rebase onto series 'integrity: improve user feedback for invalid bootparams'
+> > > > No this is not going to work, as NFS requires labels when labels are
+> > > > indeed needed by the LSM. What I'm looking for is an optimization.
+> > > > What we have is functionality correct but performance might suffer for
+> > > > the standard case of NFSv4.2 seclabel enabled server and clients that
+> > > > don't care about seclabels.
 > > >
-> > > Thanks, Ard.  Based on my initial, limited testing on Power, it looks
-> > > good, but I'm hesistant to include it in the integrity 5.10 pull
-> > > request without it having been in linux-next and some additional
-> > > testing.  It's now queued in the next-integrity-testing branch awaiting
-> > > some tags.
+> > > Initial thought: We should ask linux-nfs for help with this.
+> > > I've added them to the Cc: list.
 > > >
-> 
-> Tested-by: Chester Lin <clin@suse.com>
-> 
-> I have tested this patch on x86 VM.
-> 
-> * System configuration:
->   - Platform: QEMU/KVM
->   - Firmware: EDK2/OVMF + secure boot enabled.
->   - OS: SLE15-SP2 + SUSE's kernel-vanilla (=linux v5.9) + the follow commits
->     from linux-next and upstream:
->     * [PATCH v2] ima: defer arch_ima_get_secureboot() call to IMA init time
->       https://www.spinics.net/lists/linux-efi/msg20645.html
->     * e4d7e2df3a09 "ima: limit secure boot feedback scope for appraise"
->     * 7fe2bb7e7e5c "integrity: invalid kernel parameters feedback"
->     * 4afb28ab03d5 "ima: add check for enforced appraise option"
-> 
-> * Logs with UEFI secure boot enabled:
-> 
->   [    0.000000] Linux version 5.9.0-858-g865c50e1d279-1.g8764d18-vanilla (geeko@b
->   uildhost) (gcc (SUSE Linux) 10.2.1 20200825 [revision c0746a1beb1ba073c7981eb09f
->   55b3d993b32e5c], GNU ld (GNU Binutils; openSUSE Tumbleweed) 2.34.0.20200325-1) #
->   1 SMP Wed Oct 14 04:00:11 UTC 2020 (8764d18)
->   [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-5.9.0-858-g865c50e1d279-1.
->   g8764d18-vanilla root=UUID=5304c03e-4d8a-4d67-873a-32a32e57cdeb console=ttyS0,11
->   5200 resume=/dev/disk/by-path/pci-0000:04:00.0-part4 mitigations=auto ignore_log
->   level crashkernel=192M,high crashkernel=72M,low ima_appraise=off
->   [    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point regi
->   sters'
->   [    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
->   [    0.000000] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
->   ....
->   ....
->   [    1.720309] ima: Secure boot enabled: ignoring ima_appraise=off option
->   [    1.720314] ima: No TPM chip found, activating TPM-bypass!
->   [    1.722129] ima: Allocated hash algorithm: sha256
+> > > Olga, are you asking if the kernel NFS client module can somehow find
+> > > out whether the rest of the kernel is configured to care about security
+> > > labels before it forms an NFSv4 READDIR or LOOKUP request?
+> >
+> > Yes exactly, but I'm having a hard time trying to figure out how to
+> > use security_ismaclabel() function as has been suggested by Casey.
+>
+> I would suggest either introducing a new hook for your purpose, or
+> altering the existing one to support a form of query that isn't based
+> on a particular xattr name but rather just checking whether the module
+> supports/uses MAC labels at all.  Options: 1) NULL argument to the
+> existing hook indicates a general query (could hide a bug in the
+> caller, so not optimal), 2) Add a new bool argument to the existing
+> hook to indicate whether the name should be used, or 3) Add a new hook
+> that doesn't take any arguments.
 
+Hi Stephen,
 
-Thank you for testing the options aren't being set in secure boot mode.
-My main concern, however, is that IMA doesn't go into TPM-bypass mode. 
-Does this system have a TPM?
+Yes it seems like current api lacks the needed functionality and what
+you are suggesting is needed. Thank you for confirming it.
 
-Mimi
-
+>
+> >
+> > > I would certainly like to take the security label query out of every
+> > > LOOKUP operation if that is feasible!
+> >
+> > A LOOKUP doesn't add the seclabel query (by default) like READDIR does
+> > (it's hard-coded in the xdr code). LOOKUP uses server's bitmask and
+> > chooses the version without the seclabel bitmask because no label is
+> > passed into it. It looks like LOOKUP just allocates a label in
+> > nfs_lookup_revalidate_dentry().  So it's not driven by the something
+> > that I see used by the xattr_handle example in the NFS code.
