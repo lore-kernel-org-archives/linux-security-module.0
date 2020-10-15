@@ -2,118 +2,89 @@ Return-Path: <SRS0=3ULx=DW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9056C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 22:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85477C43457
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 23:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10C9020789
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 22:28:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=btinternet.com header.i=@btinternet.com header.b="DqrPHxHv"
+	by mail.kernel.org (Postfix) with ESMTP id 33917207DE
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 23:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1602803188;
+	bh=z+fHkeoc+SdFIMzQryaf5p4T5IH/eRj3B/VcjPe/yTE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=2GbpK1lstd7t+IY75Y+3/wZccqik0OSYGgB0nmcpI0diuBWYz1i9+ZH5eHfG6htSq
+	 73Q0stvKkCRcLoXiXQi1pK2ZLzmUlEWPnyKaect27ySIZKDzljgyNuBO14Meeg4M8M
+	 0UStSQJv1uplwyFLneL0WdFqNmHD8mAIORugwTzY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbgJOW2n (ORCPT
+        id S1732441AbgJOXGZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Oct 2020 18:28:43 -0400
-Received: from mailomta24-re.btinternet.com ([213.120.69.117]:23375 "EHLO
-        re-prd-fep-045.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730160AbgJOW2n (ORCPT
+        Thu, 15 Oct 2020 19:06:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52554 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732436AbgJOXGY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Oct 2020 18:28:43 -0400
-Received: from re-prd-rgout-005.btmx-prd.synchronoss.net ([10.2.54.8])
-          by re-prd-fep-041.btinternet.com with ESMTP
-          id <20200930094937.YAYH30588.re-prd-fep-041.btinternet.com@re-prd-rgout-005.btmx-prd.synchronoss.net>;
-          Wed, 30 Sep 2020 10:49:37 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1601459377; 
-        bh=YNsOkUZujBTp1VIhvorGSCJE/j6KGbTrOkO5VSFNFN8=;
-        h=From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version;
-        b=DqrPHxHvqmH7LX/vwWop3jtNl2Yqrr9Ow5Sj6CeB5L2TpH0LaeRHRKN2Uc0hDUykXM0RavbyxvsDxZxnHboNWUOlxlQH1j0mdrJlPGzxdGZzkLpgqCJgeZdI6Femno1jqAEjhXcmLCjURmb90frPBYsQ/ZZYDB0yB+eOm7ZWEAnNaKweCwf34HGWnzDcznkN8WquvAvb1e/NiXFsjTC6psHE1J20dT8rSn1MwVKIH9PpXNzhgoDldMYtOv+zUhb58N+0+hKaVuiGogOgh2JALGwjyK5GNPZQggoMnDrlzWpRfMlFdz2zdIg24B8gYQ+OvyoqC5a+9gsoQ6SDs9pWUw==
-Authentication-Results: btinternet.com;
-    auth=pass (PLAIN) smtp.auth=richard_c_haines@btinternet.com
-X-Originating-IP: [81.141.56.129]
-X-OWM-Source-IP: 81.141.56.129 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgedujedrfedvgdduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemuceutffkvffkuffjvffgnffgvefqofdpqfgfvfenuceurghilhhouhhtmecufedtudenucenucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomheptfhitghhrghrugcujfgrihhnvghsuceorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqnecuggftrfgrthhtvghrnhepgedvgeelgfefvdeftefhhfelveekgffhudektdelveduueejudevueejleekfffgnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgpdhoshhmohgtohhmrdhorhhgnecukfhppeekuddrudeguddrheeirdduvdelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplhhotggrlhhhohhsthdrlhhotggrlhguohhmrghinhdpihhnvghtpeekuddrudeguddrheeirdduvdelpdhmrghilhhfrhhomhepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqedprhgtphhtthhopeeojhhmohhrrhhishesnhgrmhgvihdrohhrgheqpdhrtghpthhtohepoehlrghfohhrghgvsehgnhhumhhonhhkshdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeonhgvthguvghv
-        sehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeoohhsmhhotghomhdqnhgvthdqghhprhhssehlihhsthhsrdhoshhmohgtohhmrdhorhhgqedprhgtphhtthhopeeophgrsghlohesnhgvthhfihhlthgvrhdrohhrgheqpdhrtghpthhtohepoehprghulhesphgruhhlqdhmohhorhgvrdgtohhmqedprhgtphhtthhopeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhequcfqtfevrffvpehrfhgtkedvvdenrhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhdprhgtphhtthhopeeoshgvlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehsthgvphhhvghnrdhsmhgrlhhlvgihrdifohhrkhesghhmrghilhdrtghomheq
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-X-SNCR-hdrdom: btinternet.com
-Received: from localhost.localdomain (81.141.56.129) by re-prd-rgout-005.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
-        id 5ED9C74D136117B5; Wed, 30 Sep 2020 10:49:37 +0100
-From:   Richard Haines <richard_c_haines@btinternet.com>
-To:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        osmocom-net-gprs@lists.osmocom.org, netdev@vger.kernel.org
-Cc:     stephen.smalley.work@gmail.com, paul@paul-moore.com,
-        pablo@netfilter.org, laforge@gnumonks.org, jmorris@namei.org,
-        Richard Haines <richard_c_haines@btinternet.com>
-Subject: [PATCH 0/3] Add LSM/SELinux support for GPRS Tunneling Protocol (GTP)
-Date:   Wed, 30 Sep 2020 10:49:31 +0100
-Message-Id: <20200930094934.32144-1-richard_c_haines@btinternet.com>
-X-Mailer: git-send-email 2.26.2
+        Thu, 15 Oct 2020 19:06:24 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31135C0613CF
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 16:06:24 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id f21so507077ljh.7
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 16:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/ySCIwp29O4ociJzzOVOKh5KY68CfkZIAay+F6Ok3yY=;
+        b=e3so42TRsxuJ5mfPkYxoGNiW4GBI/Yl75Lc/i38Ex2+2KqlheN4ZFDlPXUX0UKQnhA
+         JMtYEt1aWnwC1ngp0X+lLfsTMfzivxRw90SqLT+MnFlkj7RWmj4zvVQDRAi2bY9yacEZ
+         UuE9J4R3Xd701mCWp6XRRasGIN1q0IKac4DUQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/ySCIwp29O4ociJzzOVOKh5KY68CfkZIAay+F6Ok3yY=;
+        b=gBu/+uBH+9rg7lF0WIvKWbE33mg7bLnE5oz2IgEO4THwx9F4LyqTeMjLMf109xbWTY
+         /OUDx+EN+DKGFiFs5XGe8yOYY4UhURC+i5PzULoGgCf4Rq7fLgvJVZj+LnCtQ7WjJB37
+         3oLON0/uTvKmAr9756Qcz9xpnBZn88xvJIC2IUDprFRWxNPG+peljl4JxpPvMdud44Y6
+         rAr1nkZ6LYoLBH0ZOcKMZ5MGNQ6pzzkPOCJrbpPgxZEOyltGj2ShcBMcdMW3XpeB1ish
+         6SBd1x8+3u/FTvlNjtyH2hZMDl7mpbtIzWysV4aVmH8bDb9BNOWvanHtQ6esqhIIN9OW
+         468w==
+X-Gm-Message-State: AOAM533z76cvNS3k34i/KSD4+ja/zqYBzGIMLYHQqLYPKqaQ7YYhR5hX
+        70kfzlgNwai0UMzQFYKH8p94x5+BLjmCCw==
+X-Google-Smtp-Source: ABdhPJyaMUmqDLK9M7M2mPoQsKihHxsiZ8CpBIqPPkeYgNNMnLi31xNIsC6xtkumKl9lZEfZ6uyXjw==
+X-Received: by 2002:a05:651c:1b6:: with SMTP id c22mr388288ljn.447.1602803181942;
+        Thu, 15 Oct 2020 16:06:21 -0700 (PDT)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id 80sm158149lff.61.2020.10.15.16.06.20
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Oct 2020 16:06:21 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id z2so621732lfr.1
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 16:06:20 -0700 (PDT)
+X-Received: by 2002:a19:4815:: with SMTP id v21mr291703lfa.603.1602803180597;
+ Thu, 15 Oct 2020 16:06:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
+In-Reply-To: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 15 Oct 2020 16:06:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com>
+Message-ID: <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID changes for v5.10
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-These patches came about after looking at 5G open source in particular
-the updated 5G GTP driver at [1]. As this driver is still under
-development, added the LSM/SELinux hooks to the current stable GTP
-version in kernel selinux-next [2]. Similar hooks have also been
-implemented in [1] as it uses the same base code as the current 3G
-version (except that it handles different packet types).
+These were rebased since the merge window started, for no apparent reason.
 
-To test the 3G GTP driver there is an RFC patch for the selinux-testsuite
-at [3].
+Were they in linux-next?
 
-To enable the selinux-testsuite GTP tests, the libgtpnl [4] library and
-tools needed to be modified to:
-Return ERRNO on error to detect EACCES, Add gtp_match_tunnel function,
-Allow gtp-link to specify port numbers for multiple instances to
-run in the same namespace.
+And if so, why was I sent some different version?
 
-A patch for libgtpnl is supplied in the selinux-testsuite patch as well
-as setup/test instructions (libgtpnl is not packaged by Fedora)
-
-These patches were tested on Fedora 32 with kernel [2] using the
-'targeted' policy. Also ran the Linux Kernel GTP-U basic tests [5].
-
-[1] https://github.com/PrinzOwO/gtp5g
-[2] https://github.com/SELinuxProject/selinux-kernel
-[3] https://lore.kernel.org/selinux/20200924085314.6120-1-richard_c_haines@btinternet.com/
-[4] git://git.osmocom.org/libgtpnl.git
-[5] https://osmocom.org/projects/linux-kernel-gtp-u/wiki/Basic_Testing
-
-Changes from RFC patches:
-1) Rework the LSM hook names and contents as suggested by Casey Schaufler.
-This resulted in moving the gtp_dev struct from gtp.c to include/net/gtp.h
-so that it is visible to the LSM modules for storing the security blob.
-2) Remove pr_debug's from gtp.c security_* calls.
-3) Minor GTP.rst updates.
-4) Added netdev to distribution list.
-
-Richard Haines (3):
-  security: Add GPRS Tunneling Protocol (GTP) security hooks
-  gtp: Add LSM hooks to GPRS Tunneling Protocol (GTP)
-  selinux: Add SELinux GTP support
-
- Documentation/security/GTP.rst      | 100 ++++++++++++++++++++++++++++
- Documentation/security/index.rst    |   1 +
- drivers/net/gtp.c                   |  50 +++++++++-----
- include/linux/lsm_hook_defs.h       |   3 +
- include/linux/lsm_hooks.h           |  13 ++++
- include/linux/security.h            |  22 ++++++
- include/net/gtp.h                   |  21 ++++++
- security/security.c                 |  18 +++++
- security/selinux/hooks.c            |  66 ++++++++++++++++++
- security/selinux/include/classmap.h |   2 +
- security/selinux/include/objsec.h   |   4 ++
- 11 files changed, 284 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/security/GTP.rst
-
--- 
-2.26.2
-
+             Linus
