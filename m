@@ -2,174 +2,111 @@ Return-Path: <SRS0=3ULx=DW=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040F5C433DF
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 15:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 069DFC433E7
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 18:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA8BC22255
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 15:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8833720878
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Oct 2020 18:15:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VQcnZxYN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389752AbgJOPjQ (ORCPT
+        id S1732890AbgJOSPb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Oct 2020 11:39:16 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:48058 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389749AbgJOPjP (ORCPT
+        Thu, 15 Oct 2020 14:15:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgJOSPa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Oct 2020 11:39:15 -0400
-X-Greylist: delayed 544 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Oct 2020 11:39:14 EDT
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 505261105; Thu, 15 Oct 2020 10:30:09 -0500 (CDT)
-Date:   Thu, 15 Oct 2020 10:30:09 -0500
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Aleksandr Nogikh <a.nogikh@gmail.com>
-Cc:     jmorris@namei.org, serge@hallyn.com, akinobu.mita@gmail.com,
-        andreyknvl@google.com, dvyukov@google.com, elver@google.com,
-        glider@google.com, keescook@google.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Aleksandr Nogikh <nogikh@google.com>
-Subject: Re: [RFC PATCH 1/1] security: add fault injection capability
-Message-ID: <20201015153009.GA26517@mail.hallyn.com>
-References: <20201015104649.2104432-1-a.nogikh@gmail.com>
- <20201015104649.2104432-2-a.nogikh@gmail.com>
+        Thu, 15 Oct 2020 14:15:30 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3F8C0613D2
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 11:15:30 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id dt13so4923536ejb.12
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 11:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=hV2kzljzkPtlmabMiMR4tfaBM+VlAVmvUSlWLpICaPs=;
+        b=VQcnZxYNoqwWWKhsVR9IcKy7FA5LslWVlI7LkqdXV7QDISXJtrEr7hdM0qXaD18BvI
+         u1v5WkAly0t9EDxfyBHEDAqjyC9WOAsEb+d2sdss9TF/1NTLtysgYR/SYJsB4gbHDr03
+         MBlwWDi7RwFVCPkhqB3xjwh1dcr9zDvi9XVuA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=hV2kzljzkPtlmabMiMR4tfaBM+VlAVmvUSlWLpICaPs=;
+        b=a9R/Mo1OLmjrZi9h51e/Ocu9fyZM5B5BB0Q9VBS9Q41d6F9VPQ1sLq124bXwlIvfJu
+         iP7HiNC1M1SQuvwyPkBhxW/BfkzxgNS3SJ1P2MEgh69/KpHnDbO7kxAea5G8fjYCIVI2
+         WNmeRC77cSkXZVLL7fAU/NEAghIGkFfZ3KgGk3vy263WTwnBb5v5wM6/OQ3obRCF1y70
+         lTlcqPghS/VDHvID2c0GVBMZ9uEleWws4RO5S0vk1CxdEbILScfB8dUyHeQPRZWi6QhT
+         TVgPQq+DQmCNCFhgMa96hN3XiaVLXNMuHUr2jusZ1XPnpxglIO7jJpXuVujtWKa2K/qB
+         DPCg==
+X-Gm-Message-State: AOAM531JOLGmxTae1GrbVFpi/M63GkPW5WMM0sjuAdZgF9hgrzIrwfsP
+        MpE59ZgexCyWfcK9yJ9n2ZSEqPFa2YJ6jtJgrFf6mtyNvAp0kw==
+X-Google-Smtp-Source: ABdhPJy0H4kXoNR3cKvxKxNi/cMqUcFkeks5ROSvOXlaFHJgTp0Fq4kw3L79EnQiNzORlO6xBDY8GEyzvA/5x5lhPA4=
+X-Received: by 2002:a17:906:6d0c:: with SMTP id m12mr5820394ejr.498.1602785728757;
+ Thu, 15 Oct 2020 11:15:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201015104649.2104432-2-a.nogikh@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+From:   Micah Morton <mortonm@chromium.org>
+Date:   Thu, 15 Oct 2020 11:15:18 -0700
+Message-ID: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
+Subject: [GIT PULL] SafeSetID changes for v5.10
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 15, 2020 at 10:46:49AM +0000, Aleksandr Nogikh wrote:
-> From: Aleksandr Nogikh <nogikh@google.com>
-> 
-> Add a fault injection capability to call_int_hook macro. This will
-> facilitate testing of fault tolerance of the code that invokes
-> security hooks as well as the fault tolerance of the LSM
-> implementations themselves.
-> 
-> Add a KConfig option (CONFIG_FAIL_LSM_HOOKS) that controls whether the
-> capability is enabled. In order to enable configuration from the user
-> space, add the standard debugfs entries for fault injection (if
-> CONFIG_FAULT_INJECTION_DEBUG_FS is enabled).
-> 
-> Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
-> ---
->  lib/Kconfig.debug   |  6 +++++
->  security/security.c | 53 ++++++++++++++++++++++++++++++++++++++++++---
->  2 files changed, 56 insertions(+), 3 deletions(-)
-> 
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 08c82666cf3e..0c9913ebe1c1 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1803,6 +1803,12 @@ config FAIL_MAKE_REQUEST
->  	help
->  	  Provide fault-injection capability for disk IO.
->  
-> +config FAIL_LSM_HOOKS
-> +	bool "Fault-injection capability for LSM hooks"
-> +	depends on FAULT_INJECTION
-> +	help
-> +	  Provide fault-injection capability for LSM hooks.
-> +
->  config FAIL_IO_TIMEOUT
->  	bool "Fault-injection capability for faking disk interrupts"
->  	depends on FAULT_INJECTION && BLOCK
-> diff --git a/security/security.c b/security/security.c
-> index 69ff6e2e2cd4..bd4dbe720098 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -28,6 +28,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/string.h>
->  #include <linux/msg.h>
-> +#include <linux/fault-inject.h>
->  #include <net/flow.h>
->  
->  #define MAX_LSM_EVM_XATTR	2
-> @@ -669,6 +670,51 @@ static void __init lsm_early_task(struct task_struct *task)
->  		panic("%s: Early task alloc failed.\n", __func__);
->  }
->  
-> +
-> +#ifdef CONFIG_FAIL_LSM_HOOKS
-> +
-> +static struct {
-> +	struct fault_attr attr;
-> +	int retval;
-> +} fail_lsm_hooks = {
-> +	.attr = FAULT_ATTR_INITIALIZER,
-> +	.retval = -EACCES
-> +};
-> +
-> +static int __init setup_fail_lsm_hooks(char *str)
-> +{
-> +	return setup_fault_attr(&fail_lsm_hooks.attr, str);
-> +}
-> +__setup("fail_lsm_hooks=", setup_fail_lsm_hooks);
-> +
-> +static int should_fail_lsm_hook(void)
-> +{
-> +	return should_fail(&fail_lsm_hooks.attr, 1) ? fail_lsm_hooks.retval : 0;
-> +}
-> +
-> +#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-> +
-> +static int __init fail_lsm_hooks_debugfs(void)
-> +{
-> +	umode_t mode = S_IFREG | 0600;
-> +	struct dentry *dir;
-> +
-> +	dir = fault_create_debugfs_attr("fail_lsm_hooks", NULL,
-> +					&fail_lsm_hooks.attr);
-> +	debugfs_create_u32("retval", mode, dir, &fail_lsm_hooks.retval);
-> +	return 0;
-> +}
-> +
-> +late_initcall(fail_lsm_hooks_debugfs);
-> +
-> +#endif /* CONFIG_FAULT_INJECTION_DEBUG_FS */
-> +
-> +#else
-> +
-> +static inline int should_fail_lsm_hook(void) { return 0; }
-> +
-> +#endif /* CONFIG_FAIL_LSM_HOOKS */
-> +
->  /*
->   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->   * can be accessed with:
-> @@ -707,16 +753,17 @@ static void __init lsm_early_task(struct task_struct *task)
->  	} while (0)
->  
->  #define call_int_hook(FUNC, IRC, ...) ({			\
-> -	int RC = IRC;						\
-> -	do {							\
-> +	int RC = should_fail_lsm_hook();			\
+The following changes since commit bbf5c979011a099af5dc76498918ed7df445635b:
 
-seeing 'should_fail' here, kind of out of context, would be confusing to
-thousands of ppl reading the code and wondering why it should fail.  maybe
-"inject_fail_lsm_hook()" ?
+  Linux 5.9 (2020-10-11 14:15:50 -0700)
 
-> +	if (RC == 0) {								\
->  		struct security_hook_list *P;			\
-> +		RC = IRC;								\
->  								\
->  		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
->  			RC = P->hook.FUNC(__VA_ARGS__);		\
->  			if (RC != 0)				\
->  				break;				\
->  		}						\
-> -	} while (0);						\
-> +	}							\
->  	RC;							\
->  })
->  
-> -- 
-> 2.28.0.1011.ga647a8990f-goog
+are available in the Git repository at:
+
+  https://github.com/micah-morton/linux.git tags/safesetid-5.10
+
+for you to fetch changes up to 03ca0ec138927b16fab0dad7b869f42eb2849c94:
+
+  LSM: SafeSetID: Fix warnings reported by test bot (2020-10-13 09:17:36 -0700)
+
+----------------------------------------------------------------
+SafeSetID changes for v5.10
+
+The changes in this pull request are mostly contained to within the
+SafeSetID LSM, with the exception of a few 1-line changes to change
+some ns_capable() calls to ns_capable_setid() -- causing a flag
+(CAP_OPT_INSETID) to be set that is examined by SafeSetID code and
+nothing else in the kernel. These changes have been baking in -next and
+actually were in -next for the entire v5.9 merge window but I didn't
+have a chance to send them.
+
+The changes to SafeSetID internally allow for setting up GID transition
+security policies, as already existed for UIDs.
+
+NOTE: I'm re-using my safesetid-next branch here as the branch for
+creating the pull request. I think that's fine, not sure if this is the
+normal workflow or not. Also, I use 'git rebase vX.X' to put my commits
+on top of the latest stable release. Again, I verified with gitk that I
+don't have any weird history in my branch that will mess things up so
+AFAICT that should be fine too.
+
+----------------------------------------------------------------
+
+Thomas Cedeno (3):
+      LSM: Signal to SafeSetID when setting group IDs
+      LSM: SafeSetID: Add GID security policy handling
+      LSM: SafeSetID: Fix warnings reported by test bot
+
+ Documentation/admin-guide/LSM/SafeSetID.rst |  29 +++--
+ kernel/capability.c                         |   2 +-
+ kernel/groups.c                             |   2 +-
+ kernel/sys.c                                |  10 +-
+ security/safesetid/lsm.c                    | 190 +++++++++++++++++++++-------
+ security/safesetid/lsm.h                    |  38 ++++--
+ security/safesetid/securityfs.c             | 190 ++++++++++++++++++++--------
+ 7 files changed, 336 insertions(+), 125 deletions(-)
