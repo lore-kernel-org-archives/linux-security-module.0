@@ -2,90 +2,86 @@ Return-Path: <SRS0=8q/C=DX=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3855C433DF
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Oct 2020 00:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815BEC433E7
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Oct 2020 07:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68EDF206CA
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Oct 2020 00:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08F5220848
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Oct 2020 07:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="egXQczmu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lM2A1SkJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733030AbgJPABn (ORCPT
+        id S2404332AbgJPHAg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Oct 2020 20:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32840 "EHLO
+        Fri, 16 Oct 2020 03:00:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733028AbgJPABn (ORCPT
+        with ESMTP id S2404330AbgJPHAg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Oct 2020 20:01:43 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B2DC0613CF
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 17:01:43 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id x1so515703eds.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Oct 2020 17:01:43 -0700 (PDT)
+        Fri, 16 Oct 2020 03:00:36 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 330B1C061755;
+        Fri, 16 Oct 2020 00:00:36 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id u19so2557997ion.3;
+        Fri, 16 Oct 2020 00:00:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=a/1IntEkdWKImHNOT+qrBdO4BgCV+2jRbRdBJi8ptLs=;
-        b=egXQczmuoyRvh6M/he1kd7PQ4dgg2oOgmQXK19ba+2lhe626jeXg8WMf0DaPeWUlVC
-         bUhHRXqbb1VNrT4Xb2gNjmbxJBPbt43FrX+vt8ZKUWg3wiBoChwuc1jzxh4bevC9sR/8
-         Re5O8J7oGzKbfCI5ZLYWjILsESNlNbH27JNVc=
+        bh=jLX4tjetRKA0PHysqPRRicfLzPtIoW91Ix3UaAsDkAQ=;
+        b=lM2A1SkJeHKn/589JN7Rcy6DLmtQ22uuUWp7ZKgzrST+0Ay3G5BLs68yMx8YTLxVdD
+         ksoUhGKLlbAdV370+mkh2N4C42rWKHKH57UOgXNyiqCOLbX4B7vKQCLKBXJCqaj2Pd/+
+         LIkp+D0Ly+DDN0UN/qg4HRlFX/A9ukomIqWLvkilCLg6jtJJOe4xbtEjPZJ3ckcu43uG
+         vd+W2+2+H30W3qAZ5xFVPbFd713k1DprkJZ0dvuDKwvyMK8v9Tx9cOMUWjax6VkuDpM1
+         S3oLs0l8+TEeKPbn6RroedX9CTS5yzqjMXU4hNLRQSD+uDdZMzuxS97REkO/cF3DNzvT
+         4jVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a/1IntEkdWKImHNOT+qrBdO4BgCV+2jRbRdBJi8ptLs=;
-        b=ErcWXcE7CeAnkoOJXD/74DHyARvEpLU8o/eTnkY0MZSDnbgbhzNECZwcRzexlt1TIh
-         SYvlaamQGSGXuMeu3jl5GY1c+xNUbKdrxyveS1yeZbmdB3sJ+HDUTrXQVRPMCeVDQR0G
-         IvsvpYOBpRGZ4wbH8t8egxkrQDnn9NWxSpA2lyVaCQIiJ3NvpXmatMLAhZun9J87S8/r
-         yZjmEnr4RLHC4KxLTaOc51VwnnvbB4j9Fw1Ug1einTnM/LToBqyhXh4YTBncOqDNHrWZ
-         qELn6cxfAZEthuWbK1yaXi2cY4cae3Hmqc2NRRBsoGQgX4dRe8IRlC8pvOrNMdaoiwfR
-         6PMw==
-X-Gm-Message-State: AOAM531bEqqs3m1ZqlxED5e32htfaVjXhO63XjLmr2NIHtNJnWX8jUvD
-        Dcu1ZLAT17Y7BtiuoF7j77PUEGo9PsYz0v8ovACyCgtuki8Pcg==
-X-Google-Smtp-Source: ABdhPJwfQrrcT6QUMBHBgIm/m4g7SUq0+p4qrE08K2xMTDwSO9lwXA2IPSiEEa8yuchfyZh3lCSWC1CNlrA5c14ypsc=
-X-Received: by 2002:a05:6402:602:: with SMTP id n2mr969028edv.327.1602806499816;
- Thu, 15 Oct 2020 17:01:39 -0700 (PDT)
+        bh=jLX4tjetRKA0PHysqPRRicfLzPtIoW91Ix3UaAsDkAQ=;
+        b=ndc1zJdX3PGo4fIhzw32tTbsC3crYmBbKM9oNdJPXVlDHY49bsVm6HrDg9D/+BZokS
+         GbYHTrsW6OKEDD0UkR22SPjNjcGLrLwEnzmNR2lRxE2NgRWZuWxclNiVsmLNZAAthSJ6
+         j+ce8J2F3zi0LRbaTJuKE0sv8LNFRmLrMQn4VSxNX04svtCIMp6++CaDCA8SNpNUGVnm
+         Kdp+DNAYUbvRYuVBie0yBtKRtjyNUXea6ki5va2IfKf5XxEUoDgf6+PoK+R+JF0lpYhG
+         PuUDSdImH/XKu260n1RAWnyBHgL7QYU/hFi+Q1BvCf/jmUY1V+Ywc7mVYG/VY17+TVGS
+         EKig==
+X-Gm-Message-State: AOAM533P2cPkDz8rP/EC78II9Po7nuMSUv4nkwi9UaK0jgWaSVCLuQS8
+        Em6V13dEjHv9upASAuIpU8z2yGTSS+9VBjPOPKg=
+X-Google-Smtp-Source: ABdhPJyC+ZT0LhfpxJkVNKRfWURve8qq2+TPFnG/9acZvbeoYoUUWhR0dm1V+hqHw6E97nrueuLJ/rWyk1/AOl2WuBc=
+X-Received: by 2002:a5d:8487:: with SMTP id t7mr1402987iom.35.1602831635544;
+ Fri, 16 Oct 2020 00:00:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
- <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com>
-In-Reply-To: <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com>
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Thu, 15 Oct 2020 17:01:29 -0700
-Message-ID: <CAJ-EccPLAD5TGg=KQ-m54ymrVdd++Dg7A_UR+v535iOVRsDe4w@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID changes for v5.10
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+References: <20201015104649.2104432-1-a.nogikh@gmail.com> <20201015104649.2104432-2-a.nogikh@gmail.com>
+ <20201015153009.GA26517@mail.hallyn.com>
+In-Reply-To: <20201015153009.GA26517@mail.hallyn.com>
+From:   Aleksandr Nogikh <a.nogikh@gmail.com>
+Date:   Fri, 16 Oct 2020 10:00:25 +0300
+Message-ID: <CADpXja-oWx7K4Zcsv57boUhg08-JhxzSYiVpWSNh9DfpxKTXjA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] security: add fault injection capability
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     jmorris@namei.org, akinobu.mita@gmail.com,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Marco Elver <elver@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Kees Cook <keescook@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Aleksandr Nogikh <nogikh@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 15, 2020 at 4:06 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> These were rebased since the merge window started, for no apparent reason.
->
-> Were they in linux-next?
+On Thu, 15 Oct 2020 at 18:30, Serge E. Hallyn <serge@hallyn.com> wrote:
+[...]
+> seeing 'should_fail' here, kind of out of context, would be confusing to
+> thousands of ppl reading the code and wondering why it should fail.  maybe
+> "inject_fail_lsm_hook()" ?
 
-Yeah, they are changes that were originally targeting the v5.9 merge
-window (and thus were in -next during July/August) but I didn't get
-the chance to send a pull request for them. Since I didn't touch my
--next branch since then they are also in 'next-20201013' and
-'next-20201015'.
-
-I just rebased to v5.9 to make sure the 1-line changes that touch
-kernel/capability.c, kernel/groups.c and kernel/sys.c still applied
-cleanly without conflicts. Should I have rebased onto one of the -rc's
-for v5.9 instead?
-
->
-> And if so, why was I sent some different version?
->
->              Linus
+Sounds reasonable, thank you for the suggestion. I'll rename this
+function in v2.
