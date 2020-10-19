@@ -2,95 +2,319 @@ Return-Path: <SRS0=+Ebz=D2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D8BC433E7
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 16:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEB7C43467
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 16:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C0AB22365
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 16:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC7022365
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 16:49:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbgJSQpK (ORCPT
+        id S1730668AbgJSQtq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Oct 2020 12:45:10 -0400
-Received: from mga01.intel.com ([192.55.52.88]:47643 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730025AbgJSQpK (ORCPT
+        Mon, 19 Oct 2020 12:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730570AbgJSQtp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Oct 2020 12:45:10 -0400
-IronPort-SDR: 7OSZMk8+jCcMxpVdInmFo65l0vuhGzF156Eh7e+WKlK5ddSz7Y2JRlcK++k4aT9TZOeTbixvk/
- 5N1hxnhkuoQg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9779"; a="184676365"
-X-IronPort-AV: E=Sophos;i="5.77,395,1596524400"; 
-   d="scan'208";a="184676365"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2020 09:45:09 -0700
-IronPort-SDR: wj8CvrY57y34RZg+YoKd5VOTuCUrWy4AlNiJ7qhrcot1M9pxK+P6wyNU0iiOFl82OPx864Zwgx
- Yj4aGnR2qyGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,395,1596524400"; 
-   d="scan'208";a="392083208"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 19 Oct 2020 09:45:09 -0700
-Received: from [10.249.225.38] (abudanko-mobl.ccr.corp.intel.com [10.249.225.38])
-        by linux.intel.com (Postfix) with ESMTP id 10D00580127;
-        Mon, 19 Oct 2020 09:45:06 -0700 (PDT)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v1 0/2] doc/admin-guide: update perf-security.rst with
- CAP_PERFMON usage flows
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-Organization: Intel Corp.
-Message-ID: <ebc702ad-9991-625f-ef42-92ba99b20865@linux.intel.com>
-Date:   Mon, 19 Oct 2020 19:45:05 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Mon, 19 Oct 2020 12:49:45 -0400
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6F10C0613D3
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2020 09:49:44 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CFN5d16ykzlhCRp;
+        Mon, 19 Oct 2020 18:49:41 +0200 (CEST)
+Received: from localhost (unknown [94.23.54.103])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4CFN5b3mVrzlh8TP;
+        Mon, 19 Oct 2020 18:49:39 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Subject: [RESEND PATCH v11 2/3] arch: Wire up trusted_for(2)
+Date:   Mon, 19 Oct 2020 18:49:31 +0200
+Message-Id: <20201019164932.1430614-3-mic@digikod.net>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201019164932.1430614-1-mic@digikod.net>
+References: <20201019164932.1430614-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Assignment of CAP_PERFMON [1] Linux capability to an executable located
-on a file system requires extended attributes (xattrs) [2] to be supported
-by the file system. Even if the file system supports xattrs an fs device
-should be mounted with permission to use xattrs for files located on the
-device (e.g. without nosuid option [3]). No xattrs support and nosuid
-mounts are quite common in HPC and Cloud multiuser environments thus
-applicability of privileged Perf user groups based on file capabilities
-[4] is limited in that environments. Alternative method to confer Linux
-capabilities into a process does still exist and it is thru creation of
-capabilities-enabled-semi-privileged shell environment. Usage of this
-method to extend privileged Perf user groups approach is documented in
-this patch set as an extension to perf-security.rst admin guide file.
+Wire up trusted_for(2) for all architectures.
 
-[1] https://man7.org/linux/man-pages/man7/capabilities.7.html
-[2] https://man7.org/linux/man-pages/man7/xattr.7.html
-[3] https://man7.org/linux/man-pages/man8/mount.8.html
-[4] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html#privileged-perf-users-groups
-
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
 ---
-Alexey Budankov (2):
-  doc/admin-guide: note credentials consolidation under CAP_PERFMON
-  doc/admin-guide: document creation of CAP_PERFMON privileged shell
 
- Documentation/admin-guide/perf-security.rst | 81 ++++++++++++++++++---
- 1 file changed, 70 insertions(+), 11 deletions(-)
+Changes since v9:
+* Rename introspect_access(2) to trusted_for(2).
+* Increase syscall number to leave space for memfd_secret(2) in -next.
 
+Changes since v7:
+* New patch for the new syscall.
+* Increase syscall numbers by 2 to leave space for new ones (in
+  linux-next): watch_mount(2) and process_madvise(2).
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      | 1 +
+ arch/arm/tools/syscall.tbl                  | 1 +
+ arch/arm64/include/asm/unistd.h             | 2 +-
+ arch/arm64/include/asm/unistd32.h           | 2 ++
+ arch/ia64/kernel/syscalls/syscall.tbl       | 1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       | 1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl | 1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   | 1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 1 +
+ arch/parisc/kernel/syscalls/syscall.tbl     | 1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 1 +
+ arch/s390/kernel/syscalls/syscall.tbl       | 1 +
+ arch/sh/kernel/syscalls/syscall.tbl         | 1 +
+ arch/sparc/kernel/syscalls/syscall.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_32.tbl      | 1 +
+ arch/x86/entry/syscalls/syscall_64.tbl      | 1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 1 +
+ include/uapi/asm-generic/unistd.h           | 4 +++-
+ 19 files changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index ec8bed9e7b75..0175cfc0f66f 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -479,3 +479,4 @@
+ 547	common	openat2				sys_openat2
+ 548	common	pidfd_getfd			sys_pidfd_getfd
+ 549	common	faccessat2			sys_faccessat2
++553	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 171077cbf419..db9c8d35e75b 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -453,3 +453,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 3b859596840d..d1f7d35f986e 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -38,7 +38,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		440
++#define __NR_compat_syscalls		444
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 734860ac7cf9..33716dd2c04c 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -887,6 +887,8 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trusted_for 443
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index f52a41f4c340..68e56436b611 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -360,3 +360,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index 81fc799d8392..67f0bc2fc4d0 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -439,3 +439,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index b4e263916f41..acd3057886b7 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -445,3 +445,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index f9df9edb67a4..8164dc51ebf8 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -378,3 +378,4 @@
+ 437	n32	openat2				sys_openat2
+ 438	n32	pidfd_getfd			sys_pidfd_getfd
+ 439	n32	faccessat2			sys_faccessat2
++443	n32	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index 557f9954a2b9..28bc5bb76987 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -354,3 +354,4 @@
+ 437	n64	openat2				sys_openat2
+ 438	n64	pidfd_getfd			sys_pidfd_getfd
+ 439	n64	faccessat2			sys_faccessat2
++443	n64	trusted_for			sys_trusted_for
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 195b43cf27c8..6a62cc5b4999 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -427,3 +427,4 @@
+ 437	o32	openat2				sys_openat2
+ 438	o32	pidfd_getfd			sys_pidfd_getfd
+ 439	o32	faccessat2			sys_faccessat2
++443	o32	trusted_for			sys_trusted_for
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index def64d221cd4..654707acfa6c 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -437,3 +437,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index c2d737ff2e7b..eb1c6d7655e6 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -529,3 +529,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index 10456bc936fb..6e77640e2976 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437  common	openat2			sys_openat2			sys_openat2
+ 438  common	pidfd_getfd		sys_pidfd_getfd			sys_pidfd_getfd
+ 439  common	faccessat2		sys_faccessat2			sys_faccessat2
++443  common	trusted_for		sys_trusted_for			sys_trusted_for
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index ae0a00beea5f..f5fd0d63b43b 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -442,3 +442,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index 4af114e84f20..70806eb828b8 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -485,3 +485,4 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 9d1102873666..a0824f88fcfb 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -444,3 +444,4 @@
+ 437	i386	openat2			sys_openat2
+ 438	i386	pidfd_getfd		sys_pidfd_getfd
+ 439	i386	faccessat2		sys_faccessat2
++443	i386	trusted_for		sys_trusted_for
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f30d6ae9a688..0b0ce536acf1 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -361,6 +361,7 @@
+ 437	common	openat2			sys_openat2
+ 438	common	pidfd_getfd		sys_pidfd_getfd
+ 439	common	faccessat2		sys_faccessat2
++443	common	trusted_for		sys_trusted_for
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 6276e3c2d3fc..22fd070f2565 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -410,3 +410,4 @@
+ 437	common	openat2				sys_openat2
+ 438	common	pidfd_getfd			sys_pidfd_getfd
+ 439	common	faccessat2			sys_faccessat2
++443	common	trusted_for			sys_trusted_for
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 995b36c2ea7d..6b55804d9df9 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -859,9 +859,11 @@ __SYSCALL(__NR_openat2, sys_openat2)
+ __SYSCALL(__NR_pidfd_getfd, sys_pidfd_getfd)
+ #define __NR_faccessat2 439
+ __SYSCALL(__NR_faccessat2, sys_faccessat2)
++#define __NR_trusted_for 443
++__SYSCALL(__NR_trusted_for, sys_trusted_for)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 440
++#define __NR_syscalls 444
+ 
+ /*
+  * 32 bit systems traditionally used different
 -- 
-2.24.1
+2.28.0
 
