@@ -2,180 +2,143 @@ Return-Path: <SRS0=+Ebz=D2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9ACC43467
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 17:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5672C433DF
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 17:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C693222EA
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 17:18:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43E2C222EA
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 17:37:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aeJyWmqE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730897AbgJSRST (ORCPT
+        id S1727307AbgJSRhC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Oct 2020 13:18:19 -0400
-Received: from mga04.intel.com ([192.55.52.120]:17145 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729916AbgJSRST (ORCPT
+        Mon, 19 Oct 2020 13:37:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:33331 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726124AbgJSRhC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Oct 2020 13:18:19 -0400
-IronPort-SDR: L8wNw8c3HPslVFpV8BiHrbBUvmK5JP4ehpAfnCQvgGq1jHHpq4SoalOryRXmeqHnaNRg1yf6fX
- ZfxT3RHk4Cnw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9779"; a="164453863"
-X-IronPort-AV: E=Sophos;i="5.77,395,1596524400"; 
-   d="scan'208";a="164453863"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2020 10:18:16 -0700
-IronPort-SDR: uURWCD8DH4znlXXNZiR90hDAbHypj8LXyyVXfkclV9hisa5mTBTLY6JiWG8P1PJ3vpT185JDkV
- gbiuprYQlSow==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,395,1596524400"; 
-   d="scan'208";a="320348640"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga006.jf.intel.com with ESMTP; 19 Oct 2020 10:18:16 -0700
-Received: from [10.249.225.38] (abudanko-mobl.ccr.corp.intel.com [10.249.225.38])
-        by linux.intel.com (Postfix) with ESMTP id 9CC27580127;
-        Mon, 19 Oct 2020 10:18:13 -0700 (PDT)
-Subject: [PATCH v1 2/2] doc/admin-guide: document creation of CAP_PERFMON
- privileged shell
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-References: <161a51d3-7cdf-f9ee-c438-42bb7404693e@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <0abda956-de6c-95b1-61e8-49e146501079@linux.intel.com>
-Date:   Mon, 19 Oct 2020 20:18:12 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
-MIME-Version: 1.0
-In-Reply-To: <161a51d3-7cdf-f9ee-c438-42bb7404693e@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 19 Oct 2020 13:37:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603129021;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:content-type:content-type;
+        bh=lYvd6Kc5MQZgVAzrvYKcsZrecx2ck/hDIb16nUNa8SU=;
+        b=aeJyWmqEbs4Cr/DoR5Q0kYaTGdPVeQLvZ9wn+rR3VRj9lF2OqNqPoXnd/Lw7vDSOT3er3b
+        wAvlJJ3Zr4XJIqKz1Dz6k4G0YUc6IFdOEPRQUcyB6mOVIfsqj/hXD0jLN40vJWamj+HqX+
+        BLdtdhlIMFvqxjMpLUirO6QFDOFNK+g=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-339-EktnL2V3O0SoM-apcdrc2Q-1; Mon, 19 Oct 2020 13:36:59 -0400
+X-MC-Unique: EktnL2V3O0SoM-apcdrc2Q-1
+Received: by mail-qk1-f197.google.com with SMTP id q15so134146qkq.23
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2020 10:36:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lYvd6Kc5MQZgVAzrvYKcsZrecx2ck/hDIb16nUNa8SU=;
+        b=dt61uoh0Wck4yF+iVJoyigc29Bwyj9KhCI8W1525ujJHJ9FJ30hVEgTKnnFdyeay9W
+         b02Vs21uUOprXEySldfpKH0a1h2UxTBpY6bHCC5T5lgK/AWYM6im2nTWVwmfJKZ1cGvY
+         jS/t1vebKyRqZC23F54pepwjNqrztAGKVEYDFGCOtuEK8oLHpUtTlEpDpPnTqF0wmBVK
+         3mvxNKlximJD1oIQgM5AWLgVCiO06+hKV+N5/og9d//1uPA59CYxDGn9C983drIsgcVU
+         5HNNtIjvqPyT6I5Vvl9xx4mVIDBh2+zJs0M1VVVLHhyi1pRmU27Qjbyo85uk3y4UC/Ga
+         5jGw==
+X-Gm-Message-State: AOAM531WX3AJ5gd18UHPjWPe3fAOKfE57C4YSxKYabkbkvXP+Ar270OV
+        mctaRNts0Ty4shVfcLM3zdp6/9b7B2+cIpVrK4+/gm68g/KCKYRv5PLGQ29jCW/k6L0f+E3sRO5
+        7F7FLZiGLYZabzuAxP99NTexOc6vC2Fhdplca
+X-Received: by 2002:ac8:5389:: with SMTP id x9mr575077qtp.106.1603129019008;
+        Mon, 19 Oct 2020 10:36:59 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx3+ziEhGgg3i43z5XMnTEnwSx2vwI9vWybcMni3mq3qdw3hxI6nEAg4xK1Cv/MhfSLFqhHkg==
+X-Received: by 2002:ac8:5389:: with SMTP id x9mr575060qtp.106.1603129018778;
+        Mon, 19 Oct 2020 10:36:58 -0700 (PDT)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id b8sm271101qkn.133.2020.10.19.10.36.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2020 10:36:58 -0700 (PDT)
+From:   trix@redhat.com
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, jejb@linux.ibm.com,
+        jarkko.sakkinen@linux.intel.com, dhowells@redhat.com,
+        mortonm@chromium.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+        Tom Rix <trix@redhat.com>
+Subject: [PATCH] security: remove unneeded break
+Date:   Mon, 19 Oct 2020 10:36:53 -0700
+Message-Id: <20201019173653.527-1-trix@redhat.com>
+X-Mailer: git-send-email 2.18.1
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Tom Rix <trix@redhat.com>
 
-Document steps to create CAP_PERFMON privileged shell to unblock
-Perf tool usage in cases when capabilities can't be assigned to
-an executable due to limitations of used file system.
+A break is not needed if it is preceded by a return
 
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Signed-off-by: Tom Rix <trix@redhat.com>
 ---
- Documentation/admin-guide/perf-security.rst | 68 +++++++++++++++++++--
- 1 file changed, 62 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima_appraise.c     | 1 -
+ security/keys/trusted-keys/trusted_tpm1.c | 1 -
+ security/safesetid/lsm.c                  | 3 ---
+ 3 files changed, 5 deletions(-)
 
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-index 57a65e27eeb9..904e4eb37f99 100644
---- a/Documentation/admin-guide/perf-security.rst
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -102,11 +102,11 @@ CAP_SYSLOG capability permits reading kernel space memory addresses from
- Privileged Perf users groups
- ---------------------------------
- 
--Mechanisms of capabilities, privileged capability-dumb files [6]_ and
--file system ACLs [10]_ can be used to create dedicated groups of
--privileged Perf users who are permitted to execute performance monitoring
--and observability without scope limits. The following steps can be
--taken to create such groups of privileged Perf users.
-+Mechanisms of capabilities, privileged capability-dumb files [6]_,
-+file system ACLs [10]_ and sudo [15]_ utility can be used to create
-+dedicated groups of privileged Perf users who are permitted to execute
-+performance monitoring and observability without limits. The following
-+steps can be taken to create such groups of privileged Perf users.
- 
- 1. Create perf_users group of privileged Perf users, assign perf_users
-    group to Perf tool executable and limit access to the executable for
-@@ -136,7 +136,7 @@ taken to create such groups of privileged Perf users.
-    # getcap perf
-    perf = cap_sys_ptrace,cap_syslog,cap_perfmon+ep
- 
--If the libcap installed doesn't yet support "cap_perfmon", use "38" instead,
-+If the libcap [16]_ installed doesn't yet support "cap_perfmon", use "38" instead,
- i.e.:
- 
- ::
-@@ -162,6 +162,60 @@ performance monitoring and observability by using functionality of the
- configured Perf tool executable that, when executes, passes perf_events
- subsystem scope checks.
- 
-+In case Perf tool executable can't be assigned required capabilities (e.g.
-+file system is mounted with nosuid option or extended attributes are
-+not supported by the file system) then creation of the capabilities
-+privileged environment, naturally shell, is possible. The shell provides
-+inherent processes with CAP_PERFMON and other required capabilities so that
-+performance monitoring and observability operations are available in the
-+environment without limits. Access to the environment can be open via sudo
-+utility for members of perf_users group only. In order to create such
-+environment:
-+
-+1. Create shell script that uses capsh utility [16]_ to assign CAP_PERFMON
-+   and other required capabilities into ambient capability set of the shell
-+   process, lock the process security bits after enabling SECBIT_NO_SETUID_FIXUP,
-+   SECBIT_NOROOT and SECBIT_NO_CAP_AMBIENT_RAISE bits and then change
-+   the process identity to sudo caller of the script who should essentially
-+   be a member of perf_users group:
-+
-+::
-+
-+   # ls -alh /usr/local/bin/perf.shell
-+   -rwxr-xr-x. 1 root root 83 Oct 13 23:57 /usr/local/bin/perf.shell
-+   # cat /usr/local/bin/perf.shell
-+   exec /usr/sbin/capsh --iab=^cap_perfmon --secbits=239 --user=$SUDO_USER -- -l
-+
-+2. Extend sudo policy at /etc/sudoers file with a rule for perf_users group:
-+
-+::
-+
-+   # grep perf_users /etc/sudoers
-+   %perf_users    ALL=/usr/local/bin/perf.shell
-+
-+3. Check that members of perf_users group have access to the privileged
-+   shell and have CAP_PERFMON and other required capabilities enabled
-+   in permitted, effective and ambient capability sets of an inherent process:
-+
-+::
-+
-+  $ id
-+  uid=1003(capsh_test) gid=1004(capsh_test) groups=1004(capsh_test),1000(perf_users) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-+  $ sudo perf.shell
-+  [sudo] password for capsh_test:
-+  $ grep Cap /proc/self/status
-+  CapInh:        0000004000000000
-+  CapPrm:        0000004000000000
-+  CapEff:        0000004000000000
-+  CapBnd:        000000ffffffffff
-+  CapAmb:        0000004000000000
-+  $ capsh --decode=0000004000000000
-+  0x0000004000000000=cap_perfmon
-+
-+As a result, members of perf_users group have access to the privileged
-+environment where they can use tools employing performance monitoring APIs
-+governed by CAP_PERFMON Linux capability.
-+
- This specific access control management is only available to superuser
- or root running processes with CAP_SETPCAP, CAP_SETFCAP [6]_
- capabilities.
-@@ -267,3 +321,5 @@ Bibliography
- .. [12] `<http://man7.org/linux/man-pages/man5/limits.conf.5.html>`_
- .. [13] `<https://sites.google.com/site/fullycapable>`_
- .. [14] `<http://man7.org/linux/man-pages/man8/auditd.8.html>`_
-+.. [15] `<https://man7.org/linux/man-pages/man8/sudo.8.html>`_
-+.. [16] `<https://git.kernel.org/pub/scm/libs/libcap/libcap.git/>`_
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 3dd8c2e4314e..f400a6122b3c 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -181,7 +181,6 @@ enum hash_algo ima_get_hash_algo(struct evm_ima_xattr_data *xattr_value,
+ 		if (sig->version != 2 || xattr_len <= sizeof(*sig))
+ 			return ima_hash_algo;
+ 		return sig->hash_algo;
+-		break;
+ 	case IMA_XATTR_DIGEST_NG:
+ 		/* first byte contains algorithm id */
+ 		ret = xattr_value->data[0];
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index b9fe02e5f84f..eddc9477d42a 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -901,7 +901,6 @@ static int datablob_parse(char *datablob, struct trusted_key_payload *p,
+ 		break;
+ 	case Opt_err:
+ 		return -EINVAL;
+-		break;
+ 	}
+ 	return ret;
+ }
+diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+index 8a176b6adbe5..1079c6d54784 100644
+--- a/security/safesetid/lsm.c
++++ b/security/safesetid/lsm.c
+@@ -125,7 +125,6 @@ static int safesetid_security_capable(const struct cred *cred,
+ 		pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
+ 			__kuid_val(cred->uid));
+ 		return -EPERM;
+-		break;
+ 	case CAP_SETGID:
+ 		/*
+ 		* If no policy applies to this task, allow the use of CAP_SETGID for
+@@ -140,11 +139,9 @@ static int safesetid_security_capable(const struct cred *cred,
+ 		pr_warn("Operation requires CAP_SETGID, which is not available to GID %u for operations besides approved set*gid transitions\n",
+ 			__kuid_val(cred->uid));
+ 		return -EPERM;
+-		break;
+ 	default:
+ 		/* Error, the only capabilities were checking for is CAP_SETUID/GID */
+ 		return 0;
+-		break;
+ 	}
+ 	return 0;
+ }
 -- 
-2.24.1
+2.18.1
 
