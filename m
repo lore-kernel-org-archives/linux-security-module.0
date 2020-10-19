@@ -2,125 +2,255 @@ Return-Path: <SRS0=+Ebz=D2=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B73C43467
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 09:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 801EBC433E7
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 11:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7E07C22200
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 09:30:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14145221FC
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Oct 2020 11:53:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="k5COJ/7G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbgJSJab convert rfc822-to-8bit (ORCPT
+        id S1727163AbgJSLxK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Oct 2020 05:30:31 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:2985 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726015AbgJSJab (ORCPT
+        Mon, 19 Oct 2020 07:53:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45358 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726588AbgJSLxJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Oct 2020 05:30:31 -0400
-Received: from lhreml717-chm.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 4877FC634ACB4260299F;
-        Mon, 19 Oct 2020 10:30:29 +0100 (IST)
-Received: from fraeml703-chm.china.huawei.com (10.206.15.52) by
- lhreml717-chm.china.huawei.com (10.201.108.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.1913.5; Mon, 19 Oct 2020 10:30:29 +0100
-Received: from lhreml722-chm.china.huawei.com (10.201.108.73) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Mon, 19 Oct 2020 11:30:28 +0200
-Received: from lhreml722-chm.china.huawei.com ([10.201.108.73]) by
- lhreml722-chm.china.huawei.com ([10.201.108.73]) with mapi id 15.01.1913.007;
- Mon, 19 Oct 2020 10:30:27 +0100
-From:   Krzysztof Struczynski <krzysztof.struczynski@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-CC:     Christian Brauner <christian.brauner@ubuntu.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stefanb@linux.vnet.ibm.com" <stefanb@linux.vnet.ibm.com>,
-        "sunyuqiong1988@gmail.com" <sunyuqiong1988@gmail.com>,
-        "mkayaalp@cs.binghamton.edu" <mkayaalp@cs.binghamton.edu>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "James Morris" <jmorris@namei.org>,
-        "christian@brauner.io" <christian@brauner.io>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "luto@amacapital.net" <luto@amacapital.net>,
-        "jannh@google.com" <jannh@google.com>,
-        "nick.dusek@gmail.com" <nick.dusek@gmail.com>,
-        "Dr. Greg" <greg@enjellic.com>, Luke Hinds <lhinds@redhat.com>
-Subject: RE: [RFC PATCH 00/30] ima: Introduce IMA namespace
-Thread-Topic: [RFC PATCH 00/30] ima: Introduce IMA namespace
-Thread-Index: AQHWdXPBkpeRDLdh20+fyp1BiEOjYak+A3mAgBfGuwCABhxpgIABN8iAgAG3kgCACVyMsIA21JGg
-Date:   Mon, 19 Oct 2020 09:30:27 +0000
-Message-ID: <a75a6541991d4f8dbaa30e0af517b829@huawei.com>
-References: <20200818152037.11869-1-krzysztof.struczynski@huawei.com>
-         <20200818164943.va3um7toztazcfud@wittgenstein>
-         <d77a6cd783319702fddd06783cb84fdeb86210a6.camel@linux.ibm.com>
-         <20200906171413.GA8305@wind.enjellic.com>
-         <CAKrSGQR3Pw=Rad2RgUuCHqr0r2Nc6x2nLoo2cVAkD+_8Vbmd7A@mail.gmail.com>
- <d405bab0d262b32fd16e85444791b6c49d820aa2.camel@linux.ibm.com> 
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.222.63]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 19 Oct 2020 07:53:09 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01D4BC0613D0
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2020 04:53:08 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id w11so4851854pll.8
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Oct 2020 04:53:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cd0IbTkhiLHMnOo5qjbBSQNOqKZEtNi0Z2jN3s0JZ68=;
+        b=k5COJ/7GIPiX2Bm3xsv3BHBknU06Ek53XKH5bqWcovWXBagETrw+FGun9O5l8KxyF3
+         p/+N9AUAxZ5Nx3ng6GbEqs/gr7QqAi2ONjeBRAyLuUzttkbibtSQStSd1LwlPsJBw9cW
+         nYcZQ0ll36s80jmryDMxWBWWpdMoLbKRUQunB39/McmKqdhJY8Y1gS9H4sPik6nPW4Pt
+         v8a1GyteLqq7KN1vY8CRvSpm/f2MM4X6AkyWcZm1siLipxzhkInr2VmwIwy9H5gND44K
+         0TDn77i6LZVIpIeowPqsAlp6tC7gf45m3/7Vq3qSASM2YwasvNYNC8yZ+a67wMwKNPu0
+         ls/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=cd0IbTkhiLHMnOo5qjbBSQNOqKZEtNi0Z2jN3s0JZ68=;
+        b=MEA4DInE3lFGYYv5fZrdA6Um3DvNeQxR99gARGgXZ3tjO9eNBdpvdCDI1HAlAwnDAa
+         1jFZ3+Jk2dGnqWIrA29okD24/uEwl59ioPJk7PzKPGMvShwhA5KyYqOmKmpCJoCDegi6
+         YI55+vkExeWT0kTXinXrXx9mUXnLTm82GZIFjj1A6mG22EZMQU6gfz400w/jFB1MklA6
+         EqOpq7xAfZDdxX4rMgmuJwCZxbXKThU7AWgfHfCJdZL5uUaBrT3xoTA1uo0sqPDIAvA1
+         PjKSOIZc3vUfhY+Bd+C5p0Hbq8j+hsx44MaAwC4FU0c3iFaGBHi1jlLmv+jJPp7reEeG
+         ViOw==
+X-Gm-Message-State: AOAM533QvbqE9WG4xJhpXV9BOtkfMWJpkyRGU3X5Hf7jP/xcLwxOLUfn
+        TM2MXKRFCOHxZA8ujcnDdwzifg==
+X-Google-Smtp-Source: ABdhPJwVTBnbUb5J6jLEfI/u7ZOZbeWRazgv5iGiVryaPhmMtZ2Hn3uWu6mNLAKjpLwG8Cc//WRVgg==
+X-Received: by 2002:a17:90b:4910:: with SMTP id kr16mr13164681pjb.227.1603108388434;
+        Mon, 19 Oct 2020 04:53:08 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
+        by smtp.gmail.com with ESMTPSA id w68sm12128099pfb.108.2020.10.19.04.53.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Oct 2020 04:53:07 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v15 0/4] overlayfs override_creds=off & nested get xattr fix
+Date:   Mon, 19 Oct 2020 04:52:35 -0700
+Message-Id: <20201019115239.2732422-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Krzysztof Struczynski
-> Sent: Monday, September 14, 2020 2:08 PM
-> > When Roberto Sassu and Krzysztof Struczynski contacted me about the
-> > status of Stefan Berger's patch set, based on Yuqiong Sun's work, I was
-> > under the impression that they would be rebasing it on the latest
-> > kernel and going forward from there.   Obviously things changed.  I
-> > pointed out to them resolving the "IMA namespacing" issue would be the
-> > first thing that needs to be addressed.  So here we are.
-> >
-> 
-> The concept of the IMA namespace as a separate namespace, not attached to
-> the user or mount namespace, remains the same as in the last set of
-> Stefan's patches. The creation and configuration mechanism changed,
-> partially because of the changes in the upstream kernel like extension of
-> the CLONE_ flags, that facilitated other solutions. The main inspiration
-> in this regard was the new time namespace.
-> 
-> The implemented mechanism is intended to make the configuration of the
-> IMA
-> namespace as similar as possible to the upstream IMA implementation and
-> allows to configure the new IMA namespace before any process enters that
-> namespace, so the very first actions can be measured/appraised/audited.
-> 
-> In this implementation many design points formulated by Stefan still stand.
-> The significant difference in the presented design is the threat model.
-> The actions of the host's root and any other user within the container are
-> measured/appraised/audited according to the container's policy. However,
-> every action that affects objects in the root namespace, is detected when
-> processes from the root namespace access them.
+Mark Salyzyn (3):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
 
-Do you think that the above proposal addresses the aforementioned "IMA
-namespacing" issue? If it doesn't, would you please clarify what are the
-main, outstanding problems?
- 
-> > Definitely, let's have this discussion.
+Mark Salyzyn + John Stultz (1):
+  overlayfs: inode_owner_or_capable called during execv
 
-Shall we continue the discussion here, or in addition use a format similar
-to the Stefan's "drawing board":
-https://kernsec.org/wiki/index.php/IMA_Namespacing_design_considerations
+The first three patches address fundamental security issues that should
+be solved regardless of the override_creds=off feature.
 
-Best regards,
-Krzysztof Struczynski
+The fourth adds the feature depends on these other fixes.
+
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
+
+If the principles of least privilege are applied for sepolicy, the
+mounter's credentials might not overlap the credentials of the caller's
+when accessing the overlayfs filesystem.  For example, a file that a
+lower DAC privileged caller can execute, is MAC denied to the
+generally higher DAC privileged mounter, to prevent an attack vector.
+
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/overlay_creds
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+To: linux-unionfs@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+
+---
+
+v16
+- rebase and merge of two patches.
+- add adjustment to deal with execv when overrides is off.
+
+v15
+- Revert back to v4 with fixes from on the way from v5-v14. The single
+  structure argument passing to address the complaints about too many
+  arguments was rejected by the community.
+- Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
+  check. Can address that independently.
+- ToDo: upstream test frame for thes security fixes (currently testing
+  is all in Android).
+
+v14:
+- Rejoin, rebase and a few adjustments.
+
+v13:
+- Pull out first patch and try to get it in alone feedback, some
+  Acks, and then <crickets> because people forgot why we were doing i.
+
+v12:
+- Restore squished out patch 2 and 3 in the series,
+  then change algorithm to add flags argument.
+  Per-thread flag is a large security surface.
+
+v11:
+- Squish out v10 introduced patch 2 and 3 in the series,
+  then and use per-thread flag instead for nesting.
+- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+- Add sb argument to ovl_revert_creds to match future work.
+
+v10:
+- Return NULL on CAP_DAC_READ_SEARCH
+- Add __get xattr method to solve sepolicy logging issue
+- Drop unnecessary sys_admin sepolicy checking for administrative
+  driver internal xattr functions.
+
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation, drop rationalizations.
+- pr_warn message adjusted to report consequences.
+
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
+
+ Documentation/filesystems/locking.rst   |  2 +-
+ Documentation/filesystems/overlayfs.rst | 23 ++++++++++++++++
+ fs/9p/acl.c                             |  3 ++-
+ fs/9p/xattr.c                           |  3 ++-
+ fs/afs/xattr.c                          | 10 +++----
+ fs/btrfs/xattr.c                        |  3 ++-
+ fs/ceph/xattr.c                         |  3 ++-
+ fs/cifs/xattr.c                         |  2 +-
+ fs/ecryptfs/inode.c                     |  6 +++--
+ fs/ecryptfs/mmap.c                      |  2 +-
+ fs/erofs/xattr.c                        |  3 ++-
+ fs/ext2/xattr_security.c                |  2 +-
+ fs/ext2/xattr_trusted.c                 |  2 +-
+ fs/ext2/xattr_user.c                    |  2 +-
+ fs/ext4/xattr_security.c                |  2 +-
+ fs/ext4/xattr_trusted.c                 |  2 +-
+ fs/ext4/xattr_user.c                    |  2 +-
+ fs/f2fs/xattr.c                         |  4 +--
+ fs/fuse/xattr.c                         |  4 +--
+ fs/gfs2/xattr.c                         |  3 ++-
+ fs/hfs/attr.c                           |  2 +-
+ fs/hfsplus/xattr.c                      |  3 ++-
+ fs/hfsplus/xattr_security.c             |  3 ++-
+ fs/hfsplus/xattr_trusted.c              |  3 ++-
+ fs/hfsplus/xattr_user.c                 |  3 ++-
+ fs/jffs2/security.c                     |  3 ++-
+ fs/jffs2/xattr_trusted.c                |  3 ++-
+ fs/jffs2/xattr_user.c                   |  3 ++-
+ fs/jfs/xattr.c                          |  5 ++--
+ fs/kernfs/inode.c                       |  3 ++-
+ fs/nfs/nfs4proc.c                       |  9 ++++---
+ fs/ocfs2/xattr.c                        |  9 ++++---
+ fs/orangefs/xattr.c                     |  3 ++-
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/dir.c                      | 17 +++++++-----
+ fs/overlayfs/file.c                     | 26 +++++++++---------
+ fs/overlayfs/inode.c                    | 23 ++++++++--------
+ fs/overlayfs/namei.c                    |  6 ++---
+ fs/overlayfs/overlayfs.h                |  5 ++--
+ fs/overlayfs/ovl_entry.h                |  1 +
+ fs/overlayfs/readdir.c                  |  8 +++---
+ fs/overlayfs/super.c                    | 34 ++++++++++++++++++-----
+ fs/overlayfs/util.c                     | 13 +++++++--
+ fs/posix_acl.c                          |  2 +-
+ fs/reiserfs/xattr_security.c            |  3 ++-
+ fs/reiserfs/xattr_trusted.c             |  3 ++-
+ fs/reiserfs/xattr_user.c                |  3 ++-
+ fs/squashfs/xattr.c                     |  2 +-
+ fs/ubifs/xattr.c                        |  3 ++-
+ fs/xattr.c                              | 36 ++++++++++++-------------
+ fs/xfs/xfs_xattr.c                      |  3 ++-
+ include/linux/xattr.h                   |  9 ++++---
+ include/uapi/linux/xattr.h              |  7 +++--
+ mm/shmem.c                              |  3 ++-
+ net/socket.c                            |  3 ++-
+ security/commoncap.c                    |  6 +++--
+ security/integrity/evm/evm_main.c       |  3 ++-
+ security/selinux/hooks.c                | 11 +++++---
+ security/smack/smack_lsm.c              |  5 ++--
+ 59 files changed, 237 insertions(+), 135 deletions(-)
+
+-- 
+2.29.0.rc1.297.gfa9743e501-goog
+
