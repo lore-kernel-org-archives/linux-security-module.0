@@ -2,136 +2,260 @@ Return-Path: <SRS0=DeF5=D3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 527A6C54FB2
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 18:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31B2C388F2
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 19:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDB5422244
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 18:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88E1320704
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 19:17:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="fpmWyaUC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437587AbgJTSm4 (ORCPT
+        id S2390862AbgJTTRq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Oct 2020 14:42:56 -0400
-Received: from smtprelay0130.hostedemail.com ([216.40.44.130]:38858 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2437566AbgJTSmy (ORCPT
+        Tue, 20 Oct 2020 15:17:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56734 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390847AbgJTTRq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Oct 2020 14:42:54 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 43FA51260;
-        Tue, 20 Oct 2020 18:42:51 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: humor84_3a06a8527241
-X-Filterd-Recvd-Size: 4943
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf17.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 20 Oct 2020 18:42:43 +0000 (UTC)
-Message-ID: <3bc5c2e3b3edc22a4d167ec807ecdaaf8dcda76d.camel@perches.com>
-Subject: Re: [RFC] treewide: cleanup unreachable breaks
-From:   Joe Perches <joe@perches.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Tom Rix <trix@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-power@fi.rohmeurope.com, linux-gpio@vger.kernel.org,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        nouveau@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        spice-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        industrypack-devel@lists.sourceforge.net,
-        linux-media@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com,
-        linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-can@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        intel-wired-lan@lists.osuosl.org, ath10k@lists.infradead.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com, linux-nfc@lists.01.org,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org, patches@opensource.cirrus.com,
-        storagedev@microchip.com, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net,
-        linux-watchdog@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        bpf <bpf@vger.kernel.org>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        alsa-devel@alsa-project.org,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        George Burgess <gbiv@google.com>
-Date:   Tue, 20 Oct 2020 11:42:42 -0700
-In-Reply-To: <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
-References: <20201017160928.12698-1-trix@redhat.com>
-         <20201018054332.GB593954@kroah.com>
-         <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.4-0ubuntu1 
+        Tue, 20 Oct 2020 15:17:46 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91483C0613CE
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2020 12:17:46 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id hk7so1465511pjb.2
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2020 12:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=40suxBClyF8Di6DQt+UKjev7N9m+bLbT6C7IbLRaEmQ=;
+        b=fpmWyaUCWWlb0Awn430c7GHDpZ4SNJ6+4xMApF0LtG5+rMmk6wV4PJR3pKTF3HhdvP
+         /sRGVLnLXB54irACy7tkB1KrtKROemnUVp5kSRGLfS/vJTebcTp0ygQolXx/wUu7z9do
+         zNOS9LmbOWmQEt+GXUE+Zp7qNGGDwU1LFzOWbLtyA9BZl5xeayTWp62ZajOQxZtjZl40
+         sNbZ5yenLsRqO+4fymtQq1u3vh+NUShe7xqrL7OoRzd3jVzsUDvmffwhMbutRatu8rhz
+         1+Ondnllvy/J2F8MyZUL8D61nERasqAOfalUXz5KqvmUfhqYFe0tnrVXkl1EIUizfed8
+         ax/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=40suxBClyF8Di6DQt+UKjev7N9m+bLbT6C7IbLRaEmQ=;
+        b=bWuQ46N4Zdv1JJ4lzvDnsatOQFPYnxJ/TekWcjbsyHZwm2fVamFfS1txdzuxv9DXPl
+         tH1gs/yrx7hWuOpstpXbA6RGEvOkFDdPc0nEa6pqLPwIDKF6vgVh4YIOw5q3AMRoNnZW
+         An4iTsN5Mu9ON8rfzrgCUqXoANuhGF/qTL87jXCExibg8sH4S6jB5aULzsk6lYfdb7Z5
+         pfpn3GmYRVa4rUVXl0iWkZZkh1uRrWMEPR1IrR3EG606Gwo792qrI5ZZBY0b67vKP1Rw
+         EeRHNwUNZWUQClbubYeI5EsB03S8JCcqY/xctS5JQnXimscSNRmbDeS2NXRJRAOFw/gJ
+         mJUg==
+X-Gm-Message-State: AOAM530Nzvw7VRzXg4V0cJGv11GIXtzA/KncoR+gkEy9zQP9cdXFRj4D
+        0vbr/zRilsjnjOwqsnggSrgJ1A==
+X-Google-Smtp-Source: ABdhPJxg5AorFZDEX2PO5hFP6wSClbNCP4PmDEf/+3eJEf6fMVYfJ3vnc3tqPvcJC9nrkJOuFfhZLA==
+X-Received: by 2002:a17:90a:ce8b:: with SMTP id g11mr4048979pju.94.1603221465962;
+        Tue, 20 Oct 2020 12:17:45 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
+        by smtp.gmail.com with ESMTPSA id 204sm2855995pfz.74.2020.10.20.12.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Oct 2020 12:17:45 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v17 0/4] overlayfs override_creds=off & nested get xattr fix
+Date:   Tue, 20 Oct 2020 12:17:28 -0700
+Message-Id: <20201020191732.4049987-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-10-19 at 12:42 -0700, Nick Desaulniers wrote:
-> On Sat, Oct 17, 2020 at 10:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > On Sat, Oct 17, 2020 at 09:09:28AM -0700, trix@redhat.com wrote:
-> > > From: Tom Rix <trix@redhat.com>
-> > > 
-> > > This is a upcoming change to clean up a new warning treewide.
-> > > I am wondering if the change could be one mega patch (see below) or
-> > > normal patch per file about 100 patches or somewhere half way by collecting
-> > > early acks.
-> > 
-> > Please break it up into one-patch-per-subsystem, like normal, and get it
-> > merged that way.
-> > 
-> > Sending us a patch, without even a diffstat to review, isn't going to
-> > get you very far...
-> 
-> Tom,
-> If you're able to automate this cleanup, I suggest checking in a
-> script that can be run on a directory.  Then for each subsystem you
-> can say in your commit "I ran scripts/fix_whatever.py on this subdir."
->  Then others can help you drive the tree wide cleanup.  Then we can
-> enable -Wunreachable-code-break either by default, or W=2 right now
-> might be a good idea.
-> 
-> Ah, George (gbiv@, cc'ed), did an analysis recently of
-> `-Wunreachable-code-loop-increment`, `-Wunreachable-code-break`, and
-> `-Wunreachable-code-return` for Android userspace.  From the review:
-> ```
-> Spoilers: of these, it seems useful to turn on
-> -Wunreachable-code-loop-increment and -Wunreachable-code-return by
-> default for Android
-> ...
-> While these conventions about always having break arguably became
-> obsolete when we enabled -Wfallthrough, my sample turned up zero
-> potential bugs caught by this warning, and we'd need to put a lot of
-> effort into getting a clean tree. So this warning doesn't seem to be
-> worth it.
-> ```
-> Looks like there's an order of magnitude of `-Wunreachable-code-break`
-> than the other two.
-> 
-> We probably should add all 3 to W=2 builds (wrapped in cc-option).
-> I've filed https://github.com/ClangBuiltLinux/linux/issues/1180 to
-> follow up on.
+Mark Salyzyn (3):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
 
-I suggest using W=1 as people that are doing cleanups
-generally use that and not W=123 or any other style.
+Mark Salyzyn + John Stultz (1):
+  overlayfs: inode_owner_or_capable called during execv
 
-Every other use of W= is still quite noisy and these
-code warnings are relatively trivially to fix up.
+The first three patches address fundamental security issues that should
+be solved regardless of the override_creds=off feature.
 
+The fourth adds the feature depends on these other fixes.
+
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
+
+If the principles of least privilege are applied for sepolicy, the
+mounter's credentials might not overlap the credentials of the caller's
+when accessing the overlayfs filesystem.  For example, a file that a
+lower DAC privileged caller can execute, is MAC denied to the
+generally higher DAC privileged mounter, to prevent an attack vector.
+
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/overlay_creds
+
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+To: linux-unionfs@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+
+---
+
+v17
+- correct some zero-day build failrues
+- fix up documentation
+
+v16
+- rebase and merge of two patches.
+- add adjustment to deal with execv when overrides is off.
+
+v15
+- Revert back to v4 with fixes from on the way from v5-v14. The single
+  structure argument passing to address the complaints about too many
+  arguments was rejected by the community.
+- Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
+  check. Can address that independently.
+- ToDo: upstream test frame for thes security fixes (currently testing
+  is all in Android).
+
+v14:
+- Rejoin, rebase and a few adjustments.
+
+v13:
+- Pull out first patch and try to get it in alone feedback, some
+  Acks, and then <crickets> because people forgot why we were doing i.
+
+v12:
+- Restore squished out patch 2 and 3 in the series,
+  then change algorithm to add flags argument.
+  Per-thread flag is a large security surface.
+
+v11:
+- Squish out v10 introduced patch 2 and 3 in the series,
+  then and use per-thread flag instead for nesting.
+- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+- Add sb argument to ovl_revert_creds to match future work.
+
+v10:
+- Return NULL on CAP_DAC_READ_SEARCH
+- Add __get xattr method to solve sepolicy logging issue
+- Drop unnecessary sys_admin sepolicy checking for administrative
+  driver internal xattr functions.
+
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation, drop rationalizations.
+- pr_warn message adjusted to report consequences.
+
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
+
+ Documentation/filesystems/locking.rst   |  2 +-
+ Documentation/filesystems/overlayfs.rst | 26 +++++++++++++++++-
+ fs/9p/acl.c                             |  3 ++-
+ fs/9p/xattr.c                           |  3 ++-
+ fs/afs/xattr.c                          | 10 +++----
+ fs/btrfs/xattr.c                        |  3 ++-
+ fs/ceph/xattr.c                         |  3 ++-
+ fs/cifs/xattr.c                         |  2 +-
+ fs/ecryptfs/inode.c                     |  6 +++--
+ fs/ecryptfs/mmap.c                      |  2 +-
+ fs/erofs/xattr.c                        |  3 ++-
+ fs/ext2/xattr_security.c                |  2 +-
+ fs/ext2/xattr_trusted.c                 |  2 +-
+ fs/ext2/xattr_user.c                    |  2 +-
+ fs/ext4/xattr_hurd.c                    |  2 +-
+ fs/ext4/xattr_security.c                |  2 +-
+ fs/ext4/xattr_trusted.c                 |  2 +-
+ fs/ext4/xattr_user.c                    |  2 +-
+ fs/f2fs/xattr.c                         |  4 +--
+ fs/fuse/xattr.c                         |  4 +--
+ fs/gfs2/xattr.c                         |  3 ++-
+ fs/hfs/attr.c                           |  2 +-
+ fs/hfsplus/xattr.c                      |  3 ++-
+ fs/hfsplus/xattr_security.c             |  3 ++-
+ fs/hfsplus/xattr_trusted.c              |  3 ++-
+ fs/hfsplus/xattr_user.c                 |  3 ++-
+ fs/jffs2/security.c                     |  3 ++-
+ fs/jffs2/xattr_trusted.c                |  3 ++-
+ fs/jffs2/xattr_user.c                   |  3 ++-
+ fs/jfs/xattr.c                          |  5 ++--
+ fs/kernfs/inode.c                       |  3 ++-
+ fs/nfs/nfs4proc.c                       |  9 ++++---
+ fs/ocfs2/xattr.c                        |  9 ++++---
+ fs/orangefs/xattr.c                     |  3 ++-
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/dir.c                      | 17 +++++++-----
+ fs/overlayfs/file.c                     | 26 +++++++++---------
+ fs/overlayfs/inode.c                    | 23 ++++++++--------
+ fs/overlayfs/namei.c                    |  6 ++---
+ fs/overlayfs/overlayfs.h                |  7 +++--
+ fs/overlayfs/ovl_entry.h                |  1 +
+ fs/overlayfs/readdir.c                  |  8 +++---
+ fs/overlayfs/super.c                    | 34 ++++++++++++++++++-----
+ fs/overlayfs/util.c                     | 13 +++++++--
+ fs/posix_acl.c                          |  2 +-
+ fs/reiserfs/xattr_security.c            |  3 ++-
+ fs/reiserfs/xattr_trusted.c             |  3 ++-
+ fs/reiserfs/xattr_user.c                |  3 ++-
+ fs/squashfs/xattr.c                     |  2 +-
+ fs/ubifs/xattr.c                        |  3 ++-
+ fs/xattr.c                              | 36 ++++++++++++-------------
+ fs/xfs/xfs_xattr.c                      |  3 ++-
+ include/linux/xattr.h                   |  9 ++++---
+ include/uapi/linux/xattr.h              |  7 +++--
+ mm/shmem.c                              |  3 ++-
+ net/socket.c                            |  3 ++-
+ security/commoncap.c                    |  6 +++--
+ security/integrity/evm/evm_main.c       |  3 ++-
+ security/selinux/hooks.c                | 11 +++++---
+ security/smack/smack_lsm.c              |  5 ++--
+ 60 files changed, 242 insertions(+), 137 deletions(-)
+
+-- 
+2.29.0.rc1.297.gfa9743e501-goog
 
