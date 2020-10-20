@@ -2,153 +2,184 @@ Return-Path: <SRS0=DeF5=D3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F85C388F7
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 13:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA05C5517F
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 13:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4610022247
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 13:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E3822249
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 13:56:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="es7y5xiS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QUp+Tm/4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407504AbgJTNg3 (ORCPT
+        id S2407732AbgJTN4P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Oct 2020 09:36:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40642 "EHLO
+        Tue, 20 Oct 2020 09:56:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30278 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2407478AbgJTNg3 (ORCPT
+        by vger.kernel.org with ESMTP id S2407730AbgJTN4F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Oct 2020 09:36:29 -0400
+        Tue, 20 Oct 2020 09:56:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603200988;
+        s=mimecast20190719; t=1603202163;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mVZ6m+Cc7jrX2IFIwFlzD2+/koe+xRGn+71fVIH3ijg=;
-        b=es7y5xiSYWisjlimGD3lF79NSH9D/Y8gb/NQJRuDn/a/Cme8zhN9GYiTDfcroXuWy295UR
-        /1U+0Y39s1YE3/K9xfUPKzvOQCQ5ZElwn8lbQJuVhHf75y8nfiCu2O/q91jNT1HlFOow8G
-        zAQjtYPIUYp6hAeTc+Tl/GhP3q1vwoE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-164-c2HPV8IgM6u76NXYrFQqkQ-1; Tue, 20 Oct 2020 09:36:23 -0400
-X-MC-Unique: c2HPV8IgM6u76NXYrFQqkQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3E56802B7C;
-        Tue, 20 Oct 2020 13:36:21 +0000 (UTC)
-Received: from [10.36.114.141] (ovpn-114-141.ams2.redhat.com [10.36.114.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A9C36EF40;
-        Tue, 20 Oct 2020 13:36:19 +0000 (UTC)
-Subject: Re: [PATCH] mm, hugetlb: Avoid double clearing for hugetlb pages
-To:     Michal Hocko <mhocko@suse.com>,
-        "Guilherme G. Piccoli" <gpiccoli@canonical.com>
-Cc:     linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
-        linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel@gpiccoli.net,
-        cascardo@canonical.com, Alexander Potapenko <glider@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-References: <20201019182853.7467-1-gpiccoli@canonical.com>
- <20201020082022.GL27114@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <485e9fca-e6f8-7700-1ec9-381eae1367a9@redhat.com>
-Date:   Tue, 20 Oct 2020 15:36:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        bh=HyQ28xr5/lapv6azTtFCvHFT5XQ1+OzeHk+84iEm66Y=;
+        b=QUp+Tm/49C2D2ArfwdGiXcYEZLmxY3ITF9bXZyS+HEfcJJoqaGxmch+2EHiNHeADDWpHNz
+        Ouzap4oFcZixuWmorb4Ub+lRVmWRZDipZO+0tL8W1vnU06zVM/xfLz81/8VfcBPp80A1RW
+        EdBHqnK2mgm1gY9dzcmZeB2rW1Al8Fc=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-489-AfFlbMVoPs2FT4xqGOd2oQ-1; Tue, 20 Oct 2020 09:56:01 -0400
+X-MC-Unique: AfFlbMVoPs2FT4xqGOd2oQ-1
+Received: by mail-qv1-f72.google.com with SMTP id es11so1385172qvb.10
+        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2020 06:56:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=HyQ28xr5/lapv6azTtFCvHFT5XQ1+OzeHk+84iEm66Y=;
+        b=h8c6x/VydBmzTVjgnCtnAKlQk8WPPpMqwWzGnmUdCgzR8r6TPGJiDdQ6LHyGpYHHu9
+         5o4v5gz+spCjgsXjQc8FZigOQ8cFD7qmkbiEnM4SSnW5W6afwu3pjwUf55WwYDLxp7R5
+         TZH9tFQspybK8a8YRTxepef+CSkdWZK+OGo0OgU4PnAvNSEFaej9Rnbl/cWeX8e71ODu
+         OuIUF3k6vd03STzGDcMKHoHzFxnJkloBtXXvfUbO13P88ayP9bX8K2cWlzBngw4u4Q28
+         jE6oFf51G0qlY39lPRuj86AEb+D3qzzYXn/yH90s8yzK8DhfdOwZupsD40tWQE+4nYnr
+         IgvA==
+X-Gm-Message-State: AOAM530Txz8z81i3GCaTS0B+cXdsYAiM+SLFL25Q6SSM89kkB11+xSKO
+        najQsaQUaGqXT/7IU2/Xiwd7wfMsLcb/B3sHuVebmINgwLi1J1YAn0f1Gf08613s62OxTfrBbLQ
+        xNvt7k2MpOFkWti7Xx4XO3aQ7Q0QszUDmLdV/
+X-Received: by 2002:a05:6214:174f:: with SMTP id dc15mr3370430qvb.25.1603202160688;
+        Tue, 20 Oct 2020 06:56:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyLUAfqrAOJzxwKF3+voCBF5yQYNbMOvfOkDZhumkJj3bEnT15V4x8vUJ5iQ5pWt9KusIZtsQ==
+X-Received: by 2002:a05:6214:174f:: with SMTP id dc15mr3370377qvb.25.1603202160139;
+        Tue, 20 Oct 2020 06:56:00 -0700 (PDT)
+Received: from trix.remote.csb (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id b8sm775938qkn.133.2020.10.20.06.55.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Oct 2020 06:55:59 -0700 (PDT)
+Subject: Re: [RFC] treewide: cleanup unreachable breaks
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-edac@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-power@fi.rohmeurope.com, linux-gpio@vger.kernel.org,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org, linux-iio@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        industrypack-devel@lists.sourceforge.net,
+        linux-media@vger.kernel.org, MPT-FusionLinux.pdl@broadcom.com,
+        linux-scsi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-can@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        intel-wired-lan@lists.osuosl.org, ath10k@lists.infradead.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com, linux-nfc@lists.01.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, patches@opensource.cirrus.com,
+        storagedev@microchip.com, devel@driverdev.osuosl.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
+        usb-storage@lists.one-eyed-alien.net,
+        linux-watchdog@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        bpf <bpf@vger.kernel.org>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        alsa-devel@alsa-project.org,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        George Burgess <gbiv@google.com>, Joe Perches <joe@perches.com>
+References: <20201017160928.12698-1-trix@redhat.com>
+ <20201018054332.GB593954@kroah.com>
+ <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <ca1f50d6-1005-8e3d-8d5c-98c82a704338@redhat.com>
+Date:   Tue, 20 Oct 2020 06:55:52 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-In-Reply-To: <20201020082022.GL27114@dhcp22.suse.cz>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+In-Reply-To: <CAKwvOdkR_Ttfo7_JKUiZFVqr=Uh=4b05KCPCSuzwk=zaWtA2_Q@mail.gmail.com>
 Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=david@redhat.com
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 20.10.20 10:20, Michal Hocko wrote:
-> On Mon 19-10-20 15:28:53, Guilherme G. Piccoli wrote:
-> [...]
->> $ time echo 32768 > /proc/sys/vm/nr_hugepages
->> real    0m24.189s
->> user    0m0.000s
->> sys     0m24.184s
->>
->> $ cat /proc/meminfo |grep "MemA\|Hugetlb"
->> MemAvailable:   30784732 kB
->> Hugetlb:        67108864 kB
->>
->> * Without this patch, init_on_alloc=0
->> $ cat /proc/meminfo |grep "MemA\|Hugetlb"
->> MemAvailable:   97892752 kB
->> Hugetlb:               0 kB
->>
->> $ time echo 32768 > /proc/sys/vm/nr_hugepages
->> real    0m0.316s
->> user    0m0.000s
->> sys     0m0.316s
-> 
-> Yes zeroying is quite costly and that is to be expected when the feature
-> is enabled. Hugetlb like other allocator users perform their own
-> initialization rather than go through __GFP_ZERO path. More on that
-> below.
-> 
-> Could you be more specific about why this is a problem. Hugetlb pool is
-> usualy preallocatd once during early boot. 24s for 65GB of 2MB pages
-> is non trivial amount of time but it doens't look like a major disaster
-> either. If the pool is allocated later it can take much more time due to
-> memory fragmentation.
-> 
-> I definitely do not want to downplay this but I would like to hear about
-> the real life examples of the problem.
-> 
-> [...]
->>
->> Hi everybody, thanks in advance for the review/comments. I'd like to
->> point 2 things related to the implementation:
->>
->> 1) I understand that adding GFP flags is not really welcome by the
->> mm community; I've considered passing that as function parameter but
->> that would be a hacky mess, so I decided to add the flag since it seems
->> this is a fair use of the flag mechanism (to control actions on pages).
->> If anybody has a better/simpler suggestion to implement this, I'm all
->> ears - thanks!
-> 
-> This has been discussed already (http://lkml.kernel.org/r/20190514143537.10435-4-glider@google.com.
-> Previously it has been brought up in SLUB context AFAIR. Your numbers
-> are quite clear here but do we really need a gfp flag with all the
-> problems we tend to grow in with them?
-> 
-> One potential way around this specifically for hugetlb would be to use
-> __GFP_ZERO when allocating from the allocator and marking the fact in
-> the struct page while it is sitting in the pool. Page fault handler
-> could then skip the zeroying phase. Not an act of beauty TBH but it
-> fits into the existing model of the full control over initialization.
-> Btw. it would allow to implement init_on_free semantic as well. I
-> haven't implemented the actual two main methods
-> hugetlb_test_clear_pre_init_page and hugetlb_mark_pre_init_page because
-> I am not entirely sure about the current state of hugetlb struct page in
-> the pool. But there should be a lot of room in there (or in tail pages).
-> Mike will certainly know much better. But the skeleton of the patch
-> would look like something like this (not even compile tested).
 
-Something like that is certainly nicer than proposed gfp flags.
-(__GFP_NOINIT_ON_ALLOC is just ugly, especially, to optimize such
-corner-case features)
+On 10/19/20 12:42 PM, Nick Desaulniers wrote:
+> On Sat, Oct 17, 2020 at 10:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>> On Sat, Oct 17, 2020 at 09:09:28AM -0700, trix@redhat.com wrote:
+>>> From: Tom Rix <trix@redhat.com>
+>>>
+>>> This is a upcoming change to clean up a new warning treewide.
+>>> I am wondering if the change could be one mega patch (see below) or
+>>> normal patch per file about 100 patches or somewhere half way by collecting
+>>> early acks.
+>> Please break it up into one-patch-per-subsystem, like normal, and get it
+>> merged that way.
+>>
+>> Sending us a patch, without even a diffstat to review, isn't going to
+>> get you very far...
+> Tom,
+> If you're able to automate this cleanup, I suggest checking in a
+> script that can be run on a directory.  Then for each subsystem you
+> can say in your commit "I ran scripts/fix_whatever.py on this subdir."
+>  Then others can help you drive the tree wide cleanup.  Then we can
+> enable -Wunreachable-code-break either by default, or W=2 right now
+> might be a good idea.
 
+I should have waited for Joe Perches's fixer addition to checkpatch :)
 
--- 
-Thanks,
+The easy fixes I did only cover about 1/2 of the problems.
 
-David / dhildenb
+Remaining are mostly nested switches, which from a complexity standpoint is bad.
+
+>
+> Ah, George (gbiv@, cc'ed), did an analysis recently of
+> `-Wunreachable-code-loop-increment`, `-Wunreachable-code-break`, and
+> `-Wunreachable-code-return` for Android userspace.  From the review:
+> ```
+> Spoilers: of these, it seems useful to turn on
+> -Wunreachable-code-loop-increment and -Wunreachable-code-return by
+> default for Android
+
+In my simple add-a-cflag bot, i see there are about 250
+
+issues for -Wunreachable-code-return.
+
+I'll see about doing this one next.
+
+> ...
+> While these conventions about always having break arguably became
+> obsolete when we enabled -Wfallthrough, my sample turned up zero
+> potential bugs caught by this warning, and we'd need to put a lot of
+> effort into getting a clean tree. So this warning doesn't seem to be
+> worth it.
+> ```
+> Looks like there's an order of magnitude of `-Wunreachable-code-break`
+> than the other two.
+>
+> We probably should add all 3 to W=2 builds (wrapped in cc-option).
+> I've filed https://github.com/ClangBuiltLinux/linux/issues/1180 to
+> follow up on.
+
+Yes, i think think these should be added.
+
+Tom
 
