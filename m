@@ -2,109 +2,153 @@ Return-Path: <SRS0=DeF5=D3=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EACC433E7
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 12:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F85C388F7
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 13:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD1922244
-	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 12:01:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603195299;
-	bh=m7yUJ4DTsqo4MdAimqotlN8nOUy7Gs4YTVuOGM8kZiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=o6ZqVkk9BlWmAsjpaRgsHtNfW7BeaA3YtlcosnoKxXFH0enCKsROsfDwejPp1S5jM
-	 8/D5QAETGn9OYPP8EMXKVWQ+IRIEuT7/MYOeH+hl84/RgORAwdN3iJ5MtcVpJ873HF
-	 jOu53gMKrBYHITyYBx0wGkuBvHXSmxgyBW2ZTh8s=
+	by mail.kernel.org (Postfix) with ESMTP id 4610022247
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Oct 2020 13:36:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="es7y5xiS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404729AbgJTMBa (ORCPT
+        id S2407504AbgJTNg3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 20 Oct 2020 08:01:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404556AbgJTMB0 (ORCPT
+        Tue, 20 Oct 2020 09:36:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40642 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2407478AbgJTNg3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 20 Oct 2020 08:01:26 -0400
-Received: from quaco.ghostprotocols.net (unknown [179.97.37.151])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 20 Oct 2020 09:36:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1603200988;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=mVZ6m+Cc7jrX2IFIwFlzD2+/koe+xRGn+71fVIH3ijg=;
+        b=es7y5xiSYWisjlimGD3lF79NSH9D/Y8gb/NQJRuDn/a/Cme8zhN9GYiTDfcroXuWy295UR
+        /1U+0Y39s1YE3/K9xfUPKzvOQCQ5ZElwn8lbQJuVhHf75y8nfiCu2O/q91jNT1HlFOow8G
+        zAQjtYPIUYp6hAeTc+Tl/GhP3q1vwoE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-164-c2HPV8IgM6u76NXYrFQqkQ-1; Tue, 20 Oct 2020 09:36:23 -0400
+X-MC-Unique: c2HPV8IgM6u76NXYrFQqkQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E50C122253;
-        Tue, 20 Oct 2020 12:01:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603195285;
-        bh=m7yUJ4DTsqo4MdAimqotlN8nOUy7Gs4YTVuOGM8kZiA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1kmtiETRMzb0fCEzw5xb94YaAzS1vWwA/PFj3lczwhAw5css3pS1lFgfimClzB9vi
-         jibZrVEMcZT+yiGGWtCnJt6f5iWVshNcA8FO7+mBlPK+wuwhJx3GNpiLK8UaT8guJL
-         zPS4TtNGVDwCP78APV3HDguXkPZZkF1MWmLk+3tg=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B0E88403C2; Tue, 20 Oct 2020 09:01:20 -0300 (-03)
-Date:   Tue, 20 Oct 2020 09:01:20 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-man@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] doc/admin-guide: update perf-security.rst with
- CAP_PERFMON usage flows
-Message-ID: <20201020120120.GA2294271@kernel.org>
-References: <161a51d3-7cdf-f9ee-c438-42bb7404693e@linux.intel.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3E56802B7C;
+        Tue, 20 Oct 2020 13:36:21 +0000 (UTC)
+Received: from [10.36.114.141] (ovpn-114-141.ams2.redhat.com [10.36.114.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A9C36EF40;
+        Tue, 20 Oct 2020 13:36:19 +0000 (UTC)
+Subject: Re: [PATCH] mm, hugetlb: Avoid double clearing for hugetlb pages
+To:     Michal Hocko <mhocko@suse.com>,
+        "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Cc:     linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
+        linux-hardening@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel@gpiccoli.net,
+        cascardo@canonical.com, Alexander Potapenko <glider@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+References: <20201019182853.7467-1-gpiccoli@canonical.com>
+ <20201020082022.GL27114@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat GmbH
+Message-ID: <485e9fca-e6f8-7700-1ec9-381eae1367a9@redhat.com>
+Date:   Tue, 20 Oct 2020 15:36:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161a51d3-7cdf-f9ee-c438-42bb7404693e@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20201020082022.GL27114@dhcp22.suse.cz>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=david@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Em Mon, Oct 19, 2020 at 08:15:14PM +0300, Alexey Budankov escreveu:
+On 20.10.20 10:20, Michal Hocko wrote:
+> On Mon 19-10-20 15:28:53, Guilherme G. Piccoli wrote:
+> [...]
+>> $ time echo 32768 > /proc/sys/vm/nr_hugepages
+>> real    0m24.189s
+>> user    0m0.000s
+>> sys     0m24.184s
+>>
+>> $ cat /proc/meminfo |grep "MemA\|Hugetlb"
+>> MemAvailable:   30784732 kB
+>> Hugetlb:        67108864 kB
+>>
+>> * Without this patch, init_on_alloc=0
+>> $ cat /proc/meminfo |grep "MemA\|Hugetlb"
+>> MemAvailable:   97892752 kB
+>> Hugetlb:               0 kB
+>>
+>> $ time echo 32768 > /proc/sys/vm/nr_hugepages
+>> real    0m0.316s
+>> user    0m0.000s
+>> sys     0m0.316s
 > 
-> Assignment of CAP_PERFMON [1] Linux capability to an executable located
-> on a file system requires extended attributes (xattrs) [2] to be supported
-> by the file system. Even if the file system supports xattrs an fs device
-> should be mounted with permission to use xattrs for files located on the
-> device (e.g. without nosuid option [3]). No xattrs support and nosuid
-> mounts are quite common in HPC and Cloud multiuser environments thus
-> applicability of privileged Perf user groups based on file capabilities
-> [4] is limited in that environments. Alternative method to confer Linux
-> capabilities into a process does still exist and it is thru creation of
-> capabilities-enabled-semi-privileged shell environment. Usage of this
-> method to extend privileged Perf user groups approach is documented in
-> this patch set as an extension to perf-security.rst admin guide file.
+> Yes zeroying is quite costly and that is to be expected when the feature
+> is enabled. Hugetlb like other allocator users perform their own
+> initialization rather than go through __GFP_ZERO path. More on that
+> below.
 > 
-> [1] https://man7.org/linux/man-pages/man7/capabilities.7.html
-> [2] https://man7.org/linux/man-pages/man7/xattr.7.html
-> [3] https://man7.org/linux/man-pages/man8/mount.8.html
-> [4] https://www.kernel.org/doc/html/latest/admin-guide/perf-security.html#privileged-perf-users-groups
-
-
-
-Thanks, applied.
-
-- Arnaldo
-
- 
-> ---
-> Alexey Budankov (2):
->   doc/admin-guide: note credentials consolidation under CAP_PERFMON
->   doc/admin-guide: document creation of CAP_PERFMON privileged shell
+> Could you be more specific about why this is a problem. Hugetlb pool is
+> usualy preallocatd once during early boot. 24s for 65GB of 2MB pages
+> is non trivial amount of time but it doens't look like a major disaster
+> either. If the pool is allocated later it can take much more time due to
+> memory fragmentation.
 > 
->  Documentation/admin-guide/perf-security.rst | 81 ++++++++++++++++++---
->  1 file changed, 70 insertions(+), 11 deletions(-)
+> I definitely do not want to downplay this but I would like to hear about
+> the real life examples of the problem.
 > 
-> -- 
-> 2.24.1
+> [...]
+>>
+>> Hi everybody, thanks in advance for the review/comments. I'd like to
+>> point 2 things related to the implementation:
+>>
+>> 1) I understand that adding GFP flags is not really welcome by the
+>> mm community; I've considered passing that as function parameter but
+>> that would be a hacky mess, so I decided to add the flag since it seems
+>> this is a fair use of the flag mechanism (to control actions on pages).
+>> If anybody has a better/simpler suggestion to implement this, I'm all
+>> ears - thanks!
 > 
+> This has been discussed already (http://lkml.kernel.org/r/20190514143537.10435-4-glider@google.com.
+> Previously it has been brought up in SLUB context AFAIR. Your numbers
+> are quite clear here but do we really need a gfp flag with all the
+> problems we tend to grow in with them?
+> 
+> One potential way around this specifically for hugetlb would be to use
+> __GFP_ZERO when allocating from the allocator and marking the fact in
+> the struct page while it is sitting in the pool. Page fault handler
+> could then skip the zeroying phase. Not an act of beauty TBH but it
+> fits into the existing model of the full control over initialization.
+> Btw. it would allow to implement init_on_free semantic as well. I
+> haven't implemented the actual two main methods
+> hugetlb_test_clear_pre_init_page and hugetlb_mark_pre_init_page because
+> I am not entirely sure about the current state of hugetlb struct page in
+> the pool. But there should be a lot of room in there (or in tail pages).
+> Mike will certainly know much better. But the skeleton of the patch
+> would look like something like this (not even compile tested).
+
+Something like that is certainly nicer than proposed gfp flags.
+(__GFP_NOINIT_ON_ALLOC is just ugly, especially, to optimize such
+corner-case features)
+
 
 -- 
+Thanks,
 
-- Arnaldo
+David / dhildenb
+
