@@ -6,83 +6,122 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E62C55179
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 16:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F16DC388F9
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 20:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B478522249
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 16:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F025924182
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 20:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2444249AbgJUQiX (ORCPT
+        id S2505693AbgJUU7v convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Oct 2020 12:38:23 -0400
-Received: from out03.mta.xmission.com ([166.70.13.233]:60070 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391406AbgJUQiW (ORCPT
+        Wed, 21 Oct 2020 16:59:51 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:38498 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2505678AbgJUU7t (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Oct 2020 12:38:22 -0400
-X-Greylist: delayed 6072 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Oct 2020 12:38:22 EDT
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kVFY2-00C1oh-KT; Wed, 21 Oct 2020 08:57:06 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1kVFXy-0003Sy-G0; Wed, 21 Oct 2020 08:57:06 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Mark Salyzyn <salyzyn@android.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-References: <20201021143533.115895-1-salyzyn@android.com>
-Date:   Wed, 21 Oct 2020 09:57:14 -0500
-In-Reply-To: <20201021143533.115895-1-salyzyn@android.com> (Mark Salyzyn's
-        message of "Wed, 21 Oct 2020 07:35:29 -0700")
-Message-ID: <87wnzj6305.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 21 Oct 2020 16:59:49 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-133-TE6JN5gZMAinUsbykq2bUQ-1; Wed, 21 Oct 2020 21:59:44 +0100
+X-MC-Unique: TE6JN5gZMAinUsbykq2bUQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 21 Oct 2020 21:59:43 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 21 Oct 2020 21:59:43 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Greg KH' <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWp8T3NDfnH4y9nkGWtfqJueR1KKmiiApA
+Date:   Wed, 21 Oct 2020 20:59:43 +0000
+Message-ID: <b416290b76684ac392e8c43d764645f8@AcuMS.aculab.com>
+References: <20200925045146.1283714-1-hch@lst.de>
+ <20200925045146.1283714-3-hch@lst.de> <20201021161301.GA1196312@kroah.com>
+In-Reply-To: <20201021161301.GA1196312@kroah.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1kVFXy-0003Sy-G0;;;mid=<87wnzj6305.fsf@x220.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX199I58QG2refBpWT2h/3qg84rj5WxpAjCg=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v18 0/4] overlayfs override_creds=off & nested get xattr fix
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Greg KH
+> Sent: 21 October 2020 17:13
+> 
+> On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
+> > From: David Laight <David.Laight@ACULAB.COM>
+> >
+> > This lets the compiler inline it into import_iovec() generating
+> > much better code.
+> >
+> > Signed-off-by: David Laight <david.laight@aculab.com>
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  fs/read_write.c | 179 ------------------------------------------------
+> >  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 176 insertions(+), 179 deletions(-)
+> 
+> Strangely, this commit causes a regression in Linus's tree right now.
+> 
+> I can't really figure out what the regression is, only that this commit
+> triggers a "large Android system binary" from working properly.  There's
+> no kernel log messages anywhere, and I don't have any way to strace the
+> thing in the testing framework, so any hints that people can provide
+> would be most appreciated.
 
-Is there any reason why the cc list from the body of the email does not
-match the people who have been cc'd on the email.  Skipping the
-linux-unionfs list (which seems to be the mail list for overlayfs)
-seems like a pretty big oversight.
+My original commit just moved the function source from one file to another.
+So it is odd that it makes any difference.
+I don't even know if it gets inlined by Christoph's actual patch.
+(I have another patch that depended on it that I need to resubmit.)
 
-> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Stephen Smalley <sds@tycho.nsa.gov>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> To: linux-fsdevel@vger.kernel.org
-> To: linux-unionfs@vger.kernel.org
-> Cc: linux-security-module@vger.kernel.org
-> Cc: kernel-team@android.com
-> Cc: selinux@vger.kernel.org
+Some of the other changes from Christoph's same patch set might
+make a difference though.
 
-Eric
+Might be worth forcing it to be not inlined - so it is no change.
+Or try adding a kernel log to import_iovec() or the associated
+copy failing.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
