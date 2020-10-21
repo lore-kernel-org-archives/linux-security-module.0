@@ -2,183 +2,164 @@ Return-Path: <SRS0=8N7l=D4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,WEIRD_QUOTING autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E5FC56203
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 05:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90038C561F8
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 06:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20EEC22242
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 05:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C845A2227E
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 06:15:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pz25AI/Z"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="i2QWh7wv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440633AbgJUFqs (ORCPT
+        id S2408608AbgJUGPl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Oct 2020 01:46:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40510 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440631AbgJUFqr (ORCPT
+        Wed, 21 Oct 2020 02:15:41 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57010 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2408591AbgJUGPl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Oct 2020 01:46:47 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEDADC0613D5
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2020 22:46:45 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id b1so1377061lfp.11
-        for <linux-security-module@vger.kernel.org>; Tue, 20 Oct 2020 22:46:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WerPUVIarQXcsPG2PPEIuIxUpZ3fOzaM0sErZC8Uvj8=;
-        b=Pz25AI/ZgGEoYZmJG/KQ/6e9wJOYkEcM3fU4cxTMhwpnGFVW//s2gikrdXVqqErNVr
-         zD9FmFDCaFYR1Obikt6RE99ezJMB6Nf8WZgVS2L2VJfcQ+DQcdEkh+xmbFetH/l0FvsM
-         U7csmAljt5FECfKyfs0iXyZp5gz0E4Gl1MqBsnXQq7EPBjlYFF96SpG686vJfM76aMOC
-         IM/v4hslOheQCHYYkKLp7gccz1LORYE0fflkTU13vk8YRqO5L4O8erpR/qT0z5qdVZ5y
-         CiXeRKaOlNFZdzO15SN513O8dfYcldrkbSWYA0g+QDU26HzaJ6g+8Wyjb03fiR22qpap
-         vwHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WerPUVIarQXcsPG2PPEIuIxUpZ3fOzaM0sErZC8Uvj8=;
-        b=OgMMNx8U0+Xm9zSNCGzO4DZrnkCI01AtJ4gcPUBiLDOicFVTWYw4zIgsW7Fl6dreCJ
-         3EOJhpYImpoh+1EEQp/U/tbmHrW5Jg9gm33xvv9tSosnGLALGbQ/QIA5HRAxBWH/vWxZ
-         s5TuBsiBF5qxEn31ldKBiVjNNDC3dkkegNq1+fs7DtbSywtc+mlgAH1LBQJYN72lTY29
-         wQcvhAsXnUlHvxVA5uZkiybfbj0tcsZOnxxMmnX8ymEyHd+jmI2aWL7bHOtqFH7lqnlZ
-         09ejKPJXa6dKrgP7Vk0GwN7DLEbkT2H+qza664AZbb+dJA0z6qAFdNyskBotA0WjCwkI
-         9bTg==
-X-Gm-Message-State: AOAM530jZhDWLFlyMj9Iq7s5xDma3dTBViKEAZ2e76pPMEJp5BfxVyz6
-        HNBNYrepl8HqM5IW3Ag4tU6qVmImqXNLGlJiMcuJKA==
-X-Google-Smtp-Source: ABdhPJwDV2L1MFODb6ucOjs+0es8WlLMWrbz8e2HdBKFq1wq79tkl40AoAJdlcTyrjoren7MlXPnsTlS6MAnVD3VB0s=
-X-Received: by 2002:a19:c88c:: with SMTP id y134mr497757lff.283.1603259204205;
- Tue, 20 Oct 2020 22:46:44 -0700 (PDT)
+        Wed, 21 Oct 2020 02:15:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1603260939;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mnNv50uuLZezOPCc/pCo9vpUPBcoeAYkVhwzzQs6a1Q=;
+        b=i2QWh7wvb6Q7zuMyhwI9RL5MNOAIpuRZtB2s/DAWtqIQtTRjPfxfNok0IC+JyQPmdM/cKl
+        6Fw6lPNf7MICyJqiOd30R3d3BZy5VyW9YCDhKiOnhxOG/7aG8rEkK1MMJER0XLSgHJrOVE
+        XySrLlqWaVzcsGQFOIZQOX1cAEKaH8U=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 4EE98AC48;
+        Wed, 21 Oct 2020 06:15:39 +0000 (UTC)
+Date:   Wed, 21 Oct 2020 08:15:38 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>, david@redhat.com,
+        linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
+        linux-hardening@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel@gpiccoli.net,
+        cascardo@canonical.com, Alexander Potapenko <glider@google.com>,
+        James Morris <jamorris@linux.microsoft.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] mm, hugetlb: Avoid double clearing for hugetlb pages
+Message-ID: <20201021061538.GA23790@dhcp22.suse.cz>
+References: <20201019182853.7467-1-gpiccoli@canonical.com>
+ <20201020082022.GL27114@dhcp22.suse.cz>
+ <9cecd9d9-e25c-4495-50e2-8f7cb7497429@canonical.com>
 MIME-Version: 1.0
-References: <1602065268-26017-1-git-send-email-sumit.garg@linaro.org>
- <1602065268-26017-2-git-send-email-sumit.garg@linaro.org> <8e07f9401c9f7e18fb1453b7b290472c0049c6e6.camel@linux.ibm.com>
-In-Reply-To: <8e07f9401c9f7e18fb1453b7b290472c0049c6e6.camel@linux.ibm.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Wed, 21 Oct 2020 11:16:33 +0530
-Message-ID: <CAFA6WYM7aJwP9j_ayGvbJPu-cyv87rsm9N4Wj2OCOMnmfDx+Rw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] KEYS: trusted: Add generic trusted keys framework
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9cecd9d9-e25c-4495-50e2-8f7cb7497429@canonical.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thanks Mimi for your comments.
+On Tue 20-10-20 16:19:06, Guilherme G. Piccoli wrote:
+> On 20/10/2020 05:20, Michal Hocko wrote:
+> > 
+> > Yes zeroying is quite costly and that is to be expected when the feature
+> > is enabled. Hugetlb like other allocator users perform their own
+> > initialization rather than go through __GFP_ZERO path. More on that
+> > below.
+> > 
+> > Could you be more specific about why this is a problem. Hugetlb pool is
+> > usualy preallocatd once during early boot. 24s for 65GB of 2MB pages
+> > is non trivial amount of time but it doens't look like a major disaster
+> > either. If the pool is allocated later it can take much more time due to
+> > memory fragmentation.
+> > 
+> > I definitely do not want to downplay this but I would like to hear about
+> > the real life examples of the problem.
+> 
+> Indeed, 24s of delay (!) is not so harmful for boot time, but...64G was
+> just my simple test in a guest, the real case is much worse! It aligns
+> with Mike's comment, we have complains of minute-like delays, due to a
+> very big pool of hugepages being allocated.
 
-On Wed, 21 Oct 2020 at 08:51, Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Wed, 2020-10-07 at 15:37 +0530, Sumit Garg wrote:
->
-> > +/*
-> > + * trusted_destroy - clear and free the key's payload
-> > + */
-> > +static void trusted_destroy(struct key *key)
-> > +{
-> > +     kfree_sensitive(key->payload.data[0]);
-> > +}
-> > +
-> > +struct key_type key_type_trusted = {
-> > +     .name = "trusted",
-> > +     .instantiate = trusted_instantiate,
-> > +     .update = trusted_update,
-> > +     .destroy = trusted_destroy,
-> > +     .describe = user_describe,
-> > +     .read = trusted_read,
-> > +};
-> > +EXPORT_SYMBOL_GPL(key_type_trusted);
-> > +
-> > +static int __init init_trusted(void)
-> > +{
-> > +     int i, ret = 0;
-> > +
-> > +     for (i = 0; i < ARRAY_SIZE(trusted_key_sources); i++) {
-> > +             if (trusted_key_source &&
-> > +                 strncmp(trusted_key_source, trusted_key_sources[i].name,
-> > +                         strlen(trusted_key_sources[i].name)))
-> > +                     continue;
-> > +
-> > +             trusted_key_ops = trusted_key_sources[i].ops;
-> > +
-> > +             ret = trusted_key_ops->init();
-> > +             if (!ret)
-> > +                     break;
-> > +     }
->
-> In the case when the module paramater isn't specified and both TPM and
-> TEE are enabled, trusted_key_ops is set to the last source initialized.
+The cost of page clearing is mostly a constant overhead so it is quite
+natural to see the time scaling with the number of pages. That overhead
+has to happen at some point of time. Sure it is more visible when
+allocating during boot time resp. when doing pre-allocation during
+runtime. The page fault path would be then faster. The overhead just
+moves to a different place. So I am not sure this is really a strong
+argument to hold.
 
-I guess there is some misunderstanding. Here it's only a single trust
-source (TPM *or* TEE) is initialized and only that trust source would
-be active at runtime. And trusted_key_ops would be initialized to the
-first trust source whose initialization is successful (see check: "if
-(!ret)").
+[...]
 
-> After patch 2/4, the last trusted source initialized is TEE.  If the
-> intention is to limit it to either TPM or TEE, then trusted_key_ops
-> should have a default value, which could be overwritten at runtime.
-> That would address Luke Hind's concerns of making the decision at
-> compile time.
+> Now, you'll ask why in the heck they are using init_on_alloc then -
+> right? So, the Kconfig option "CONFIG_INIT_ON_ALLOC_DEFAULT_ON" is set
+> by default in Ubuntu, for hardening reasons.
 
-I think traversing the trust source list with the initial value being
-TPM would be default value.
+This is not really that important as long as you properly explain your
+users what to expect from the default configuration. The hardening
+aspect of this default might be really valuable but it comes with a
+price. A non trivial one. The example you have highlighted is just one
+from many. The one we can actually workaround although the more I think
+about it the less I am convinced this is a good idea.
 
->
-> trusted_key_ops should be defined as __ro_after_init, like is currently
-> done for other LSM structures.
+Effectively _any_ !__GFP_ZERO allocation suffers from double
+initialization in one form or another. In the worst case the whole
+content of the page gets overwritten. Consider any page cache allocation
+for read for example.  This is GFP_*USER* request that gets overwritten
+by the file content. Is this visible? Not really on a single page
+but consider how many pages you read from disk and you will get a
+considerable overhead. Should we exempt these allocations as well to
+reduce the overhead? I dot think so. This directly undermines the
+objective of the hardening. AFAIU the whole point of init_on_alloc is to
+prevent from previous content leaking to a new user without relying the
+new user is going to do right thing and initialize everything properly.
 
-Sure, will do.
+Hugetlb is no different here. It just doesn't bother to implement what
+init_on_{alloc,free} promises. If there is a bug in hugetlb fault
+handler then you can still leak data from one user to another
+potentially. GFP_I_WANT_TO_OPT_OUT is actually allowing to increase the
+number of users who would like to reduce overhead and risk data leak.
+The power of unconditional initialization is in the fact that this is
+clearly trivial to check that nothing gets missed.
 
->
-> > +
-> > +     /*
-> > +      * encrypted_keys.ko depends on successful load of this module even if
-> > +      * trusted key implementation is not found.
-> > +      */
-> > +     if (ret == -ENODEV)
-> > +             return 0;
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static void __exit cleanup_trusted(void)
-> > +{
-> > +     trusted_key_ops->exit();
->
-> If the intention is really to support both TPM and TEE trusted keys at
-> the same time, as James suggested, then the same "for" loop as in
-> init_trusted() is needed here and probably elsewhere.
+> So, the workaround for the
+> users complaining of delays in allocating hugetlb pages currently is to
+> set "init_on_alloc" to 0. It's a bit lame to ask users to disable such
+> hardening thing just because we have a double initialization in hugetlb...
 
-Current intention is to only support a single trust source (TPM or
-TEE) at runtime. But in future if there are use-cases then framework
-can be extended to support multiple trust sources at runtime as well.
+It is not lame. It is expressing that people do not want to pay
+additional price for the hardening or they are not aware of the cost
+benefit here.
+ 
+> Your approach seems interesting, but as per Mike's response (which seems
+> to have anticipated all my arguments heheh) your approach is a bit
+> reversed, solving a ""non-existent"" problem (of zeroing hugetlb pages
+> in fault time), whereas the big problem hereby tentatively fixed is the
+> massive delay on allocation time of the hugetlb pages.
 
--Sumit
+Yes, my approach is not great either because it breaks the core
+assumption of init_on_alloc and that is that the initialization is done
+at a well defined spot. It had to go to all callers of the hugetlb
+allocator (alloc_buddy_huge_page) and fix them up. The proper thing to
+do would be to do the initialization (or opt out if the page is
+pre-zeroed either from the page allocator or from init_on_free) in
+alloc_buddy_huge_page.
 
->
-> thanks,
->
-> Mimi
->
+[...]
+
+> About misuse of a GFP flag, this is a risk for every "API" on kernel,
+> and we rely in the (knowingly great) kernel review process to block
+> that.
+
+Been there done that. There were and still are many examples. I have
+spent non-trivial time on clean ups. My experience is that the review
+process simply doesn't stop random drivers or subsystems to do what they
+think is right.
+
+> We could even have a more "terrifying" comment there around the
+> flag, asking new users to CC all relevant involved people in the patch
+> submission before using that...
+
+Been there done that. There is always room to improve though.
+-- 
+Michal Hocko
+SUSE Labs
