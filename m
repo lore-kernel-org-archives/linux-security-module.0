@@ -2,266 +2,94 @@ Return-Path: <SRS0=8N7l=D4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF73C55179
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 15:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DDFC56202
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 16:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 47C272224E
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 15:20:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="JCuL8M1S"
+	by mail.kernel.org (Postfix) with ESMTP id 3A83F21D7B
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 16:12:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603296745;
+	bh=Skv4VHOsxkbjExqgUALTljS6pv/j0ztelpvS9+0CtRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IS6vTtEiB3cfED/fCrFyJm7pLMrswOwG73hyCJyvQQ8y2K5nE9Qb3Aqr6DWMkFEUn
+	 8pJMh8vo6KEW7qrAeaeejCOxFihqgwr7XqbgH/iqIwiD/kiZZCSkg0h+xvG7AHbX+T
+	 mo+1To+IuieWyIJWnlRp3bfZlK2FBCiDCDdUULWQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502287AbgJUPTw (ORCPT
+        id S2502887AbgJUQMY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Oct 2020 11:19:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44782 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502243AbgJUPTv (ORCPT
+        Wed, 21 Oct 2020 12:12:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2502871AbgJUQMX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Oct 2020 11:19:51 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFCCC0613D4
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 08:19:51 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id lw2so1296291pjb.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 08:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=efq4G8MqGdBF/eY8lwSaqYhaY/yYy7fduOLlye2ztqI=;
-        b=JCuL8M1SY76JdKQFfPglFobKXgulr4MFQSJHl5cSYe8zg0KaOO1AUyohw9tdF5ssfB
-         aCyhngkrMy6/zyBPuKNnexEWoLO4RtZyH0R5kscE91PXDQ24GT6p3BcMiTiOl86qwFn2
-         hnAiir27rsOi3nGvkoBOPgMosU27ekrBlEmena8B8aLpVmhJStBmMAXpcW0PmjAYOB+S
-         dpkmpMAkLkTTyljOcyeWcxlrgzSYWz3VACJt3RdYnHeMG7Hsao2wB/0fGQGWWnWaOrqb
-         NJJGtOvDbj5oinn6dImDnlDAuRoVPqHhaCNjY9G7NbuJj9X5kvH/9Ffv5UgE4G948Evc
-         vBZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=efq4G8MqGdBF/eY8lwSaqYhaY/yYy7fduOLlye2ztqI=;
-        b=jLkbbCtJ9l2gtoVO8xHOk5Q848PqVdykybxUWoY5376BKkVhg6vxONt3q4kpXSU6G6
-         kbz2BHl9DZ/0sc2l9xetMnRorkpQzysYOWxnZ972EBKyaUb6ALypfH1pk4bc3wzzBDxX
-         eoFbiIG/KMlYWfNY98BPVEKZe4ZfByXowlympwNbHGJRu52ciChEg3x8G1P5/+WCOrgf
-         Qt0tvA7MHxw7WBRUrkGi02pcBfrtVYhEe2WdPJwcS6fxvD9i5XTqiwt9EjnYHPzX3+LQ
-         LtP6Oaz6GmdCKGQG04zFy5udq7qtamDNbzA8WF3mhml9NAiW90PGFV2Nq4v313CsuxtD
-         3tCA==
-X-Gm-Message-State: AOAM530PGgACZx8aO6IcJpMcIWkUOxhhOrJEMbrQYXvsnvLyhUnBds7p
-        bd4QHTZD/PhsfQ1wSyBz8+0+RQ==
-X-Google-Smtp-Source: ABdhPJxfMVD9YEUmc+ppJnR6AZM+8MUUOlOXjdXkSu1InWTdCxTZtkxxJTMXj58NO5yEEeMcN02blg==
-X-Received: by 2002:a17:902:8bca:b029:d2:42fe:21da with SMTP id r10-20020a1709028bcab02900d242fe21damr4146559plo.31.1603293591068;
-        Wed, 21 Oct 2020 08:19:51 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
-        by smtp.gmail.com with ESMTPSA id s10sm2409646pji.7.2020.10.21.08.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Oct 2020 08:19:50 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: [RESEND PATCH v18 0/4] overlayfs override_creds=off & nested get xattr fix
-Date:   Wed, 21 Oct 2020 08:18:59 -0700
-Message-Id: <20201021151903.652827-1-salyzyn@android.com>
-X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
+        Wed, 21 Oct 2020 12:12:23 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77C932087D;
+        Wed, 21 Oct 2020 16:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603296742;
+        bh=Skv4VHOsxkbjExqgUALTljS6pv/j0ztelpvS9+0CtRw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SY2cnni/yKiqNX2D+MolwtBJkJZ25el2hwQIqa11SFtDmBTq22ksfzgjhnYpbguzD
+         uBJI7QL3KluS3eIdXrPW4GsEYXfXh8wZGwW2M5LAz2S2HyPezXFwhGB9FXwsuwf6Qg
+         XKD6E/hfwsCovIhfz5qaKfu2Q5NHx6cNpzquq6Po=
+Date:   Wed, 21 Oct 2020 18:13:01 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201021161301.GA1196312@kroah.com>
+References: <20200925045146.1283714-1-hch@lst.de>
+ <20200925045146.1283714-3-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200925045146.1283714-3-hch@lst.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Mark Salyzyn (3):
-  Add flags option to get xattr method paired to __vfs_getxattr
-  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
-  overlayfs: override_creds=off option bypass creator_cred
+On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
+> From: David Laight <David.Laight@ACULAB.COM>
+> 
+> This lets the compiler inline it into import_iovec() generating
+> much better code.
+> 
+> Signed-off-by: David Laight <david.laight@aculab.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/read_write.c | 179 ------------------------------------------------
+>  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 176 insertions(+), 179 deletions(-)
 
-Mark Salyzyn + John Stultz (1):
-  overlayfs: inode_owner_or_capable called during execv
+Strangely, this commit causes a regression in Linus's tree right now.
 
-The first three patches address fundamental security issues that should
-be solved regardless of the override_creds=off feature.
+I can't really figure out what the regression is, only that this commit
+triggers a "large Android system binary" from working properly.  There's
+no kernel log messages anywhere, and I don't have any way to strace the
+thing in the testing framework, so any hints that people can provide
+would be most appreciated.
 
-The fourth adds the feature depends on these other fixes.
+thanks,
 
-By default, all access to the upper, lower and work directories is the
-recorded mounter's MAC and DAC credentials.  The incoming accesses are
-checked against the caller's credentials.
-
-If the principles of least privilege are applied for sepolicy, the
-mounter's credentials might not overlap the credentials of the caller's
-when accessing the overlayfs filesystem.  For example, a file that a
-lower DAC privileged caller can execute, is MAC denied to the
-generally higher DAC privileged mounter, to prevent an attack vector.
-
-We add the option to turn off override_creds in the mount options; all
-subsequent operations after mount on the filesystem will be only the
-caller's credentials.  The module boolean parameter and mount option
-override_creds is also added as a presence check for this "feature",
-existence of /sys/module/overlay/parameters/overlay_creds
-
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Smalley <sds@tycho.nsa.gov>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-unionfs@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: kernel-team@android.com
-Cc: selinux@vger.kernel.org
-
----
-
-v18
-- rebase + fix minor cut and paste error for inode argument in __vfs_getxattr
-
-v17
-- correct some zero-day build failures.
-- fix up documentation
-
-v16
-- rebase and merge of two patches.
-- add adjustment to deal with execv when overrides is off.
-
-v15
-- Revert back to v4 with fixes from on the way from v5-v14. The single
-  structure argument passing to address the complaints about too many
-  arguments was rejected by the community.
-- Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
-  check. Can address that independently.
-- ToDo: upstream test frame for thes security fixes (currently testing
-  is all in Android).
-
-v14:
-- Rejoin, rebase and a few adjustments.
-
-v13:
-- Pull out first patch and try to get it in alone feedback, some
-  Acks, and then <crickets> because people forgot why we were doing i.
-
-v12:
-- Restore squished out patch 2 and 3 in the series,
-  then change algorithm to add flags argument.
-  Per-thread flag is a large security surface.
-
-v11:
-- Squish out v10 introduced patch 2 and 3 in the series,
-  then and use per-thread flag instead for nesting.
-- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
-- Add sb argument to ovl_revert_creds to match future work.
-
-v10:
-- Return NULL on CAP_DAC_READ_SEARCH
-- Add __get xattr method to solve sepolicy logging issue
-- Drop unnecessary sys_admin sepolicy checking for administrative
-  driver internal xattr functions.
-
-v6:
-- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
-- Do better with the documentation, drop rationalizations.
-- pr_warn message adjusted to report consequences.
-
-v5:
-- beefed up the caveats in the Documentation
-- Is dependent on
-  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
-  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
-- Added prwarn when override_creds=off
-
-v4:
-- spelling and grammar errors in text
-
-v3:
-- Change name from caller_credentials / creator_credentials to the
-  boolean override_creds.
-- Changed from creator to mounter credentials.
-- Updated and fortified the documentation.
-- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
-
-v2:
-- Forward port changed attr to stat, resulting in a build error.
-- altered commit message.
-
- Documentation/filesystems/locking.rst   |  2 +-
- Documentation/filesystems/overlayfs.rst | 26 +++++++++++++++++-
- fs/9p/acl.c                             |  3 ++-
- fs/9p/xattr.c                           |  3 ++-
- fs/afs/xattr.c                          | 10 +++----
- fs/btrfs/xattr.c                        |  3 ++-
- fs/ceph/xattr.c                         |  3 ++-
- fs/cifs/xattr.c                         |  2 +-
- fs/ecryptfs/inode.c                     |  6 +++--
- fs/ecryptfs/mmap.c                      |  2 +-
- fs/erofs/xattr.c                        |  3 ++-
- fs/ext2/xattr_security.c                |  2 +-
- fs/ext2/xattr_trusted.c                 |  2 +-
- fs/ext2/xattr_user.c                    |  2 +-
- fs/ext4/xattr_hurd.c                    |  2 +-
- fs/ext4/xattr_security.c                |  2 +-
- fs/ext4/xattr_trusted.c                 |  2 +-
- fs/ext4/xattr_user.c                    |  2 +-
- fs/f2fs/xattr.c                         |  4 +--
- fs/fuse/xattr.c                         |  4 +--
- fs/gfs2/xattr.c                         |  3 ++-
- fs/hfs/attr.c                           |  2 +-
- fs/hfsplus/xattr.c                      |  3 ++-
- fs/hfsplus/xattr_security.c             |  3 ++-
- fs/hfsplus/xattr_trusted.c              |  3 ++-
- fs/hfsplus/xattr_user.c                 |  3 ++-
- fs/jffs2/security.c                     |  3 ++-
- fs/jffs2/xattr_trusted.c                |  3 ++-
- fs/jffs2/xattr_user.c                   |  3 ++-
- fs/jfs/xattr.c                          |  5 ++--
- fs/kernfs/inode.c                       |  3 ++-
- fs/nfs/nfs4proc.c                       |  9 ++++---
- fs/ocfs2/xattr.c                        |  9 ++++---
- fs/orangefs/xattr.c                     |  3 ++-
- fs/overlayfs/copy_up.c                  |  2 +-
- fs/overlayfs/dir.c                      | 17 +++++++-----
- fs/overlayfs/file.c                     | 26 +++++++++---------
- fs/overlayfs/inode.c                    | 23 ++++++++--------
- fs/overlayfs/namei.c                    |  6 ++---
- fs/overlayfs/overlayfs.h                |  7 +++--
- fs/overlayfs/ovl_entry.h                |  1 +
- fs/overlayfs/readdir.c                  |  8 +++---
- fs/overlayfs/super.c                    | 34 ++++++++++++++++++-----
- fs/overlayfs/util.c                     | 13 +++++++--
- fs/posix_acl.c                          |  2 +-
- fs/reiserfs/xattr_security.c            |  3 ++-
- fs/reiserfs/xattr_trusted.c             |  3 ++-
- fs/reiserfs/xattr_user.c                |  3 ++-
- fs/squashfs/xattr.c                     |  2 +-
- fs/ubifs/xattr.c                        |  3 ++-
- fs/xattr.c                              | 36 ++++++++++++-------------
- fs/xfs/xfs_xattr.c                      |  3 ++-
- include/linux/xattr.h                   |  9 ++++---
- include/uapi/linux/xattr.h              |  7 +++--
- mm/shmem.c                              |  3 ++-
- net/socket.c                            |  3 ++-
- security/commoncap.c                    |  6 +++--
- security/integrity/evm/evm_main.c       |  3 ++-
- security/selinux/hooks.c                | 11 +++++---
- security/smack/smack_lsm.c              |  5 ++--
- 60 files changed, 242 insertions(+), 137 deletions(-)
-
--- 
-2.29.0.rc1.297.gfa9743e501-goog
-
+greg k-h
