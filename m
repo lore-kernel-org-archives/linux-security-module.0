@@ -2,123 +2,120 @@ Return-Path: <SRS0=8N7l=D4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95E4C55178
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 15:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D633BC55178
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 15:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F79C2224E
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 15:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 734042224E
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 15:20:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="cqRcwWSD"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Lg4SyFJr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501934AbgJUPPX (ORCPT
+        id S2502349AbgJUPT7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Oct 2020 11:15:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44088 "EHLO
+        Wed, 21 Oct 2020 11:19:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502058AbgJUPPX (ORCPT
+        with ESMTP id S2502344AbgJUPT6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Oct 2020 11:15:23 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EF9C0613CE
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 08:15:22 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id r10so1376290plx.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 08:15:22 -0700 (PDT)
+        Wed, 21 Oct 2020 11:19:58 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D3B9C0613CE
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 08:19:58 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id l2so1289959pjt.5
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 08:19:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=zttj1zOgAeqHtbpowWFcTKsPI3yWy0/E6Ffy28P8rgY=;
-        b=cqRcwWSDCV94TH7wsbd/I3JRZP5thpF4OqYwCQbYH4w8hHYpGk2mtbyf+csTKB8PcF
-         C3KuSDSSBnfjBKQS205o3FYaelrym19tcJLpre4+ntQ2hHO+/eRZvQ8IqwkNhq0fd2wE
-         ILY0NuYIH985IlIDBEW11aPNVnFLj/W+REhui78sgPe0X9psm4kiUjaD595h5pzE53pq
-         SKHhRmXj+xpuB5yXYVEYsFUrP13gnusj6fiH+Wnf/0pMIWfpJLf1Z1NUzkV9oDkCzCdK
-         jngwPokG5VijdCl187JxGtwXlnywZoyk3CWPq7EUS3Ff85tRR1j99RPzbA8IwQOnndMC
-         dWmw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5hmO+mhbzoYH/GVwbytgH/sAwdgqzz47G17aTAhhRQ8=;
+        b=Lg4SyFJrAGKmMg6tKEON5sq5UQvRWRT9njDtU86HrhpkL0D0RdFN95O/iD+u7kC/4r
+         ahEy6DJB22RvhcXOWtpd4G1oxyqNVqToJqGqqUs1YqCpH2pXiY1c5d/0pzhbzSnYT69M
+         nqknNaLQF80VCLDCS9BeJ3heSe/9QtMbQljDx+DCvH0VNLMd/6p9Qqsw79r2qTLa69LX
+         R/bAIsTRcvhLiUbCjOhNRPhWsBrblxRy6nLLJDIlIAzaR7RQCmbvWYcaM06CO7pnHIQI
+         4XcufkDp9mMo7ZlREAiInwPH2LB+50E15mLIPFIh/Q71X2Y7y1PHShJVIl54u4zodyis
+         BSGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=zttj1zOgAeqHtbpowWFcTKsPI3yWy0/E6Ffy28P8rgY=;
-        b=GE18hPxW4Zd75KQCI4cfPDM3NNMnMKGGS89h1S3vb9BB4JZUF60HlvHs1vFe5dhxgg
-         duSLwcWXpO/wmTe1V5wLpLWnxIpxGXGop289z1nKdYAwtYhl/CMoqoF1P+iKVkcoNcVJ
-         AZk7o33onl2sbMwwgA7kygX/vKNlLoNoAcYHBJITHYVmLd8NGVNuHihS41zojfkFKTB8
-         MtemmTCPsVVZfALCpnh/zdNhyFFp9dbGdFllN0T30cs40YwO+6xRRXL0eJ26bYilYEp/
-         IWVzPlsex+bSZw+PIA8zhwWqhfTdzgXYEYIzDzKvsVi2gks2ilQ3AoqQsPROGKuum/5g
-         aFDQ==
-X-Gm-Message-State: AOAM531aakW0n5QkyUO3W/lOVUtvLtGY4tcdFY9lEhYPUq6SDRF7m5Ki
-        OKFmytZnVMDMemvzOL6zLnfnbA==
-X-Google-Smtp-Source: ABdhPJwmR/mHGuXuR8nUMxAsudxKjKgx1xONcweM/atqFJKzEp/H+FaQjRw2jwBq+oKd2WL2y34/Tg==
-X-Received: by 2002:a17:902:9347:b029:d3:7c08:86c6 with SMTP id g7-20020a1709029347b02900d37c0886c6mr4034273plp.84.1603293321958;
-        Wed, 21 Oct 2020 08:15:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=5hmO+mhbzoYH/GVwbytgH/sAwdgqzz47G17aTAhhRQ8=;
+        b=UjDc333GCJZZ7DQ7LSfjJuE8AStR6BNd8wGoIAxklNfUPtQSoObkSn1g1THpiX/pGP
+         1aQHcnGUTZkk7syRjoKT+EAMJAUQLgfZg1corgOAzEz99lbOjjPBzJwnAYw/2b5Cg1ee
+         C53jYOgrWH2smGE+lpPQ6bf4TTjeBHnV+F+dAJXrBNIH/+GkgKz8cPYUm2KXUhYQ79+K
+         AGrObdpNo8q19F/jyE4ObwnilPJ9bn/MpqAeNgHrCPFJLu12cnYfZgtoyyCTz9D/eDhu
+         Epla/0y5mjEwTKG+yPDNGRI6dk5fNF/fseRP9oXQL8DnFSP1vqSE1r18x8/b2H8sG0eP
+         Gc6w==
+X-Gm-Message-State: AOAM532wCLcd9c/5HoQU6ao5+OroJImEeyCb6xi4eV8JboWRPwkTexID
+        hR7vTDtrNWv9idSP/TPNNI0SsA==
+X-Google-Smtp-Source: ABdhPJz/qcBUTmMYFz604l9m4rFbwcPGK6tFrbID3W5xqQgE0s1q2+B4QDvOzg5odG59Fj+FHRoowg==
+X-Received: by 2002:a17:902:c24b:b029:d3:f3e6:1915 with SMTP id 11-20020a170902c24bb02900d3f3e61915mr4132119plg.56.1603293598087;
+        Wed, 21 Oct 2020 08:19:58 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
-        by smtp.googlemail.com with ESMTPSA id f15sm2714562pfk.21.2020.10.21.08.15.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Oct 2020 08:15:21 -0700 (PDT)
-Subject: Re: [PATCH v18 0/4] overlayfs override_creds=off & nested get xattr
- fix
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-References: <20201021143533.115895-1-salyzyn@android.com>
- <87wnzj6305.fsf@x220.int.ebiederm.org>
+        by smtp.gmail.com with ESMTPSA id s10sm2409646pji.7.2020.10.21.08.19.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2020 08:19:57 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
-Message-ID: <c6ca6eea-2fb2-2278-bc4a-39c43e984657@android.com>
-Date:   Wed, 21 Oct 2020 08:15:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, John Stultz <john.stultz@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [RESEND PATCH v18 4/4] overlayfs: inode_owner_or_capable called during execv
+Date:   Wed, 21 Oct 2020 08:19:03 -0700
+Message-Id: <20201021151903.652827-5-salyzyn@android.com>
+X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
+In-Reply-To: <20201021151903.652827-1-salyzyn@android.com>
+References: <20201021151903.652827-1-salyzyn@android.com>
 MIME-Version: 1.0
-In-Reply-To: <87wnzj6305.fsf@x220.int.ebiederm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/21/20 7:57 AM, Eric W. Biederman wrote:
-> Is there any reason why the cc list from the body of the email does not
-> match the people who have been cc'd on the email.  Skipping the
-> linux-unionfs list (which seems to be the mail list for overlayfs)
-> seems like a pretty big oversight.
->
->> Signed-off-by: Mark Salyzyn <salyzyn@android.com>
->> Cc: Miklos Szeredi <miklos@szeredi.hu>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Vivek Goyal <vgoyal@redhat.com>
->> Cc: Eric W. Biederman <ebiederm@xmission.com>
->> Cc: Amir Goldstein <amir73il@gmail.com>
->> Cc: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Stephen Smalley <sds@tycho.nsa.gov>
->> Cc: John Stultz <john.stultz@linaro.org>
->> Cc: linux-doc@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> To: linux-fsdevel@vger.kernel.org
->> To: linux-unionfs@vger.kernel.org
->> Cc: linux-security-module@vger.kernel.org
->> Cc: kernel-team@android.com
->> Cc: selinux@vger.kernel.org
-> Eric
->
-I used git send-email to do the heavy lifting of sending the submission, 
-minus the obligatory maintainers script because it adds 100s of 
-recipients and breaks entry into several of the lists. AFAICT send-email 
-appears to not add To: entries found in the body, only Cc: entries :-(.
+From: John Stultz <john.stultz@linaro.org>
 
-I will resend with everything as Cc: entries shortly.
+Using old_creds as an indication that we are not overriding the
+credentials, bypass call to inode_owner_or_capable.  This solves
+a problem with all execv calls being blocked when using the caller's
+credentials.
 
-Sincerely -- Mark Salyzyn
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Fixes: 05acefb4872da ("ovl: check permission to open real file")
+C: linux-fsdevel@vger.kernel.org
+C: linux-unionfs@vger.kernel.org
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: selinux@vger.kernel.org
+
+v18 - rebase
+
+v17 - rebase
+
+v16 - introduced fix over rebased series
+---
+ fs/overlayfs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index b1357bb067d9..9ab9663b02d8 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -53,7 +53,7 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 	err = inode_permission(realinode, MAY_OPEN | acc_mode);
+ 	if (err) {
+ 		realfile = ERR_PTR(err);
+-	} else if (!inode_owner_or_capable(realinode)) {
++	} else if (old_cred && !inode_owner_or_capable(realinode)) {
+ 		realfile = ERR_PTR(-EPERM);
+ 	} else {
+ 		realfile = open_with_fake_path(&file->f_path, flags, realinode,
+-- 
+2.29.0.rc1.297.gfa9743e501-goog
 
