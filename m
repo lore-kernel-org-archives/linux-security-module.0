@@ -2,222 +2,265 @@ Return-Path: <SRS0=8N7l=D4=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4593FC5DF9F
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 12:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDFBC55179
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 14:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1E9822249
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 12:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76CE1222C8
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 14:35:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jDOgf0Qi"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="j8ujX0Re"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440138AbgJUM0F (ORCPT
+        id S2443618AbgJUOfw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Oct 2020 08:26:05 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8858 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725791AbgJUM0E (ORCPT
+        Wed, 21 Oct 2020 10:35:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37878 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2443612AbgJUOfv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Oct 2020 08:26:04 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09LC3ZMk115791;
-        Wed, 21 Oct 2020 08:25:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=bvSsPq3wOmmtOX1az4xCyTfWApYvcQkBAvmNyM4Gu/k=;
- b=jDOgf0Qi/Sfe+6zHOdryNDHp6PEAoQIUv6TAVYN7AN285iFKam5UdOLQ1rLc2u59HXdO
- qg8wMwH6KEvRao0u/p/Gn5/JnkCxOqU8bYpsMJib1LZPjfxzMgCH8UdqmvZI6mrDFZBJ
- psJuJMBJVwMkuDPePGZnuPboeSizU2G648FNjJV/aUsVynXGY/J8gsWJB9rRtcnkOudB
- NhUXSzPevHWifnim3vTckQy27ecypWvuQoaL11zQ2F7SyapPGwvu/L47c5PM2csZx65T
- NtHUILzQEqxFqIa+MrnDnoOedaMn021bLHv2yhV4lH9haaHUK4iS0rdULyz4gv5i2PxX dA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34ak37krm8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Oct 2020 08:25:41 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09LC5592123886;
-        Wed, 21 Oct 2020 08:25:41 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34ak37krkj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Oct 2020 08:25:41 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09LCCH5h010636;
-        Wed, 21 Oct 2020 12:25:39 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 347qvhca8x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Oct 2020 12:25:38 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09LCPa9t28901750
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Oct 2020 12:25:36 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 883C04C050;
-        Wed, 21 Oct 2020 12:25:36 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 709A94C040;
-        Wed, 21 Oct 2020 12:25:32 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.92.86])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 21 Oct 2020 12:25:32 +0000 (GMT)
-Message-ID: <7b2ccd620a9de5c2fd57b8e8aeb41d5476f83b28.camel@linux.ibm.com>
-Subject: Re: [PATCH v7 1/4] KEYS: trusted: Add generic trusted keys framework
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
+        Wed, 21 Oct 2020 10:35:51 -0400
+Received: from mail-pg1-x543.google.com (mail-pg1-x543.google.com [IPv6:2607:f8b0:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA266C0613CF
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 07:35:51 -0700 (PDT)
+Received: by mail-pg1-x543.google.com with SMTP id j7so1590629pgk.5
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Oct 2020 07:35:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vsTAv9MeQX58buj5/uOMOXBtflhGl3uZeDmueOV7aKU=;
+        b=j8ujX0ReqPb2MthwTwUNxoiqCnXYOQpLmiTeXCSCms0esPMvMnjydtb9t7vbxqmb6z
+         FC1vnccc9he69JMzUyTgHw4LQ+ircEkDEQvUR2TaG/Sb+pV6nWtTcWNeO4UcfittZQl9
+         /MiIcfZQHadtimJiflBhJbXGL5615sA8g6CKik6ZnsyZNFVGKpM1zMO/T5cu6FWyR3tJ
+         0MODNKEF2EpwMlovysq6CDlNoeyMH9D/a5ZNnYnhiac0D4ap/L5EN7th9D+9+a1zbP5q
+         SmJuVsq87Pxy/7quz87h11HdjyD2jENkF8CEjDs6AFQOGZx/PoX7ShStFCD6HfVDEJXZ
+         HKfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vsTAv9MeQX58buj5/uOMOXBtflhGl3uZeDmueOV7aKU=;
+        b=JH9xB+OPBQid7c01+Kq4DgdOnQxYIXJ+MfGgl5uok3whBp0StE9x16besqjlXZOTCg
+         eFKtrNOk/Pn7+GL0p8CPJKA/ymIeiN9/C7vwHhAcEkFMI/xu+I1NVvfgVuRrY0R0SyDv
+         ODq+iONaqKx7HGewbHAcia0XuBYUtxyuyrYD0LCFQ0mXHJwvDSNmITcbsCNnB08MML0S
+         XulVARruKCnxjo6MpSCZfeqEXatylEJ19OWAJn6CmAKBw72yu5gH4icvKImgzGtvD5Mp
+         vCff9NKlA2aveY+kw5yY8tWezTX+TivEGRTGIgYf/aikyikHSnKejt6DkkFUJdBoZYRi
+         Z+Ew==
+X-Gm-Message-State: AOAM533vUX7vdPWTOrzo/AFzxSTNp53RONc0ttMTBRgEXpGIQbKLeUFP
+        aE+b7yQ95lVUELa/LkQDueOvag==
+X-Google-Smtp-Source: ABdhPJyKcuy5kJvC8w2QG9GpenSV9a66Ls3vAKwj2oo9HTrjKdI0mZflT1f6f/V3kEcFxUIRpWi5qQ==
+X-Received: by 2002:a62:6496:0:b029:155:b152:f0cf with SMTP id y144-20020a6264960000b0290155b152f0cfmr3838765pfb.75.1603290951175;
+        Wed, 21 Oct 2020 07:35:51 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
+        by smtp.gmail.com with ESMTPSA id y5sm2759196pgo.5.2020.10.21.07.35.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Oct 2020 07:35:50 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
         Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Date:   Wed, 21 Oct 2020 08:25:31 -0400
-In-Reply-To: <CAFA6WYM7aJwP9j_ayGvbJPu-cyv87rsm9N4Wj2OCOMnmfDx+Rw@mail.gmail.com>
-References: <1602065268-26017-1-git-send-email-sumit.garg@linaro.org>
-         <1602065268-26017-2-git-send-email-sumit.garg@linaro.org>
-         <8e07f9401c9f7e18fb1453b7b290472c0049c6e6.camel@linux.ibm.com>
-         <CAFA6WYM7aJwP9j_ayGvbJPu-cyv87rsm9N4Wj2OCOMnmfDx+Rw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.737
- definitions=2020-10-21_05:2020-10-20,2020-10-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0
- phishscore=0 adultscore=0 suspectscore=2 bulkscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010210096
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: [PATCH v18 0/4] overlayfs override_creds=off & nested get xattr fix
+Date:   Wed, 21 Oct 2020 07:35:29 -0700
+Message-Id: <20201021143533.115895-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-10-21 at 11:16 +0530, Sumit Garg wrote:
-> Thanks Mimi for your comments.
-> 
-> On Wed, 21 Oct 2020 at 08:51, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Wed, 2020-10-07 at 15:37 +0530, Sumit Garg wrote:
-> >
-> > > +/*
-> > > + * trusted_destroy - clear and free the key's payload
-> > > + */
-> > > +static void trusted_destroy(struct key *key)
-> > > +{
-> > > +     kfree_sensitive(key->payload.data[0]);
-> > > +}
-> > > +
-> > > +struct key_type key_type_trusted = {
-> > > +     .name = "trusted",
-> > > +     .instantiate = trusted_instantiate,
-> > > +     .update = trusted_update,
-> > > +     .destroy = trusted_destroy,
-> > > +     .describe = user_describe,
-> > > +     .read = trusted_read,
-> > > +};
-> > > +EXPORT_SYMBOL_GPL(key_type_trusted);
-> > > +
-> > > +static int __init init_trusted(void)
-> > > +{
-> > > +     int i, ret = 0;
-> > > +
-> > > +     for (i = 0; i < ARRAY_SIZE(trusted_key_sources); i++) {
-> > > +             if (trusted_key_source &&
-> > > +                 strncmp(trusted_key_source, trusted_key_sources[i].name,
-> > > +                         strlen(trusted_key_sources[i].name)))
-> > > +                     continue;
-> > > +
-> > > +             trusted_key_ops = trusted_key_sources[i].ops;
-> > > +
-> > > +             ret = trusted_key_ops->init();
-> > > +             if (!ret)
-> > > +                     break;
-> > > +     }
-> >
-> > In the case when the module paramater isn't specified and both TPM and
-> > TEE are enabled, trusted_key_ops is set to the last source initialized.
-> 
-> I guess there is some misunderstanding. Here it's only a single trust
-> source (TPM *or* TEE) is initialized and only that trust source would
-> be active at runtime. And trusted_key_ops would be initialized to the
-> first trust source whose initialization is successful (see check: "if
-> (!ret)").
+Mark Salyzyn (3):
+  Add flags option to get xattr method paired to __vfs_getxattr
+  overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+  overlayfs: override_creds=off option bypass creator_cred
 
-My mistake.
+Mark Salyzyn + John Stultz (1):
+  overlayfs: inode_owner_or_capable called during execv
 
-> 
-> > After patch 2/4, the last trusted source initialized is TEE.  If the
-> > intention is to limit it to either TPM or TEE, then trusted_key_ops
-> > should have a default value, which could be overwritten at runtime.
-> > That would address Luke Hind's concerns of making the decision at
-> > compile time.
-> 
-> I think traversing the trust source list with the initial value being
-> TPM would be default value.
+The first three patches address fundamental security issues that should
+be solved regardless of the override_creds=off feature.
 
-Agreed
-> 
-> >
-> > trusted_key_ops should be defined as __ro_after_init, like is currently
-> > done for other LSM structures.
-> 
-> Sure, will do.
+The fourth adds the feature depends on these other fixes.
 
-Thanks
-> 
-> >
-> > > +
-> > > +     /*
-> > > +      * encrypted_keys.ko depends on successful load of this module even if
-> > > +      * trusted key implementation is not found.
-> > > +      */
-> > > +     if (ret == -ENODEV)
-> > > +             return 0;
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > > +static void __exit cleanup_trusted(void)
-> > > +{
-> > > +     trusted_key_ops->exit();
-> >
-> > If the intention is really to support both TPM and TEE trusted keys at
-> > the same time, as James suggested, then the same "for" loop as in
-> > init_trusted() is needed here and probably elsewhere.
-> 
-> Current intention is to only support a single trust source (TPM or
-> TEE) at runtime. But in future if there are use-cases then framework
-> can be extended to support multiple trust sources at runtime as well.
+By default, all access to the upper, lower and work directories is the
+recorded mounter's MAC and DAC credentials.  The incoming accesses are
+checked against the caller's credentials.
 
-Ok, the last sentence of the patch description, "Also, add a module
-parameter in order to select a particular trust source in case a
-platform support multiple trust sources.", needs to be expanded to:
-- indicate only one trust source at a time is supported
-- indicate the default, if the module_param is not specified
+If the principles of least privilege are applied for sepolicy, the
+mounter's credentials might not overlap the credentials of the caller's
+when accessing the overlayfs filesystem.  For example, a file that a
+lower DAC privileged caller can execute, is MAC denied to the
+generally higher DAC privileged mounter, to prevent an attack vector.
 
-I would also change the word from "add" to "define".   The new "source"
-module parameter needs to be added to the admin-guide/kernel-parameters 
-documentation.
+We add the option to turn off override_creds in the mount options; all
+subsequent operations after mount on the filesystem will be only the
+caller's credentials.  The module boolean parameter and mount option
+override_creds is also added as a presence check for this "feature",
+existence of /sys/module/overlay/parameters/overlay_creds
 
-thanks,
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Vivek Goyal <vgoyal@redhat.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+To: linux-fsdevel@vger.kernel.org
+To: linux-unionfs@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: selinux@vger.kernel.org
 
-Mimi   
+---
 
+v18
+- rebase + fix minor cut and paste error for inode argument in __vfs_getxattr
+
+v17
+- correct some zero-day build failures.
+- fix up documentation
+
+v16
+- rebase and merge of two patches.
+- add adjustment to deal with execv when overrides is off.
+
+v15
+- Revert back to v4 with fixes from on the way from v5-v14. The single
+  structure argument passing to address the complaints about too many
+  arguments was rejected by the community.
+- Drop the udner discussion fix for an additional CAP_DAC_READ_SEARCH
+  check. Can address that independently.
+- ToDo: upstream test frame for thes security fixes (currently testing
+  is all in Android).
+
+v14:
+- Rejoin, rebase and a few adjustments.
+
+v13:
+- Pull out first patch and try to get it in alone feedback, some
+  Acks, and then <crickets> because people forgot why we were doing i.
+
+v12:
+- Restore squished out patch 2 and 3 in the series,
+  then change algorithm to add flags argument.
+  Per-thread flag is a large security surface.
+
+v11:
+- Squish out v10 introduced patch 2 and 3 in the series,
+  then and use per-thread flag instead for nesting.
+- Switch name to ovl_do_vds_getxattr for __vds_getxattr wrapper.
+- Add sb argument to ovl_revert_creds to match future work.
+
+v10:
+- Return NULL on CAP_DAC_READ_SEARCH
+- Add __get xattr method to solve sepolicy logging issue
+- Drop unnecessary sys_admin sepolicy checking for administrative
+  driver internal xattr functions.
+
+v6:
+- Drop CONFIG_OVERLAY_FS_OVERRIDE_CREDS.
+- Do better with the documentation, drop rationalizations.
+- pr_warn message adjusted to report consequences.
+
+v5:
+- beefed up the caveats in the Documentation
+- Is dependent on
+  "overlayfs: check CAP_DAC_READ_SEARCH before issuing exportfs_decode_fh"
+  "overlayfs: check CAP_MKNOD before issuing vfs_whiteout"
+- Added prwarn when override_creds=off
+
+v4:
+- spelling and grammar errors in text
+
+v3:
+- Change name from caller_credentials / creator_credentials to the
+  boolean override_creds.
+- Changed from creator to mounter credentials.
+- Updated and fortified the documentation.
+- Added CONFIG_OVERLAY_FS_OVERRIDE_CREDS
+
+v2:
+- Forward port changed attr to stat, resulting in a build error.
+- altered commit message.
+
+ Documentation/filesystems/locking.rst   |  2 +-
+ Documentation/filesystems/overlayfs.rst | 26 +++++++++++++++++-
+ fs/9p/acl.c                             |  3 ++-
+ fs/9p/xattr.c                           |  3 ++-
+ fs/afs/xattr.c                          | 10 +++----
+ fs/btrfs/xattr.c                        |  3 ++-
+ fs/ceph/xattr.c                         |  3 ++-
+ fs/cifs/xattr.c                         |  2 +-
+ fs/ecryptfs/inode.c                     |  6 +++--
+ fs/ecryptfs/mmap.c                      |  2 +-
+ fs/erofs/xattr.c                        |  3 ++-
+ fs/ext2/xattr_security.c                |  2 +-
+ fs/ext2/xattr_trusted.c                 |  2 +-
+ fs/ext2/xattr_user.c                    |  2 +-
+ fs/ext4/xattr_hurd.c                    |  2 +-
+ fs/ext4/xattr_security.c                |  2 +-
+ fs/ext4/xattr_trusted.c                 |  2 +-
+ fs/ext4/xattr_user.c                    |  2 +-
+ fs/f2fs/xattr.c                         |  4 +--
+ fs/fuse/xattr.c                         |  4 +--
+ fs/gfs2/xattr.c                         |  3 ++-
+ fs/hfs/attr.c                           |  2 +-
+ fs/hfsplus/xattr.c                      |  3 ++-
+ fs/hfsplus/xattr_security.c             |  3 ++-
+ fs/hfsplus/xattr_trusted.c              |  3 ++-
+ fs/hfsplus/xattr_user.c                 |  3 ++-
+ fs/jffs2/security.c                     |  3 ++-
+ fs/jffs2/xattr_trusted.c                |  3 ++-
+ fs/jffs2/xattr_user.c                   |  3 ++-
+ fs/jfs/xattr.c                          |  5 ++--
+ fs/kernfs/inode.c                       |  3 ++-
+ fs/nfs/nfs4proc.c                       |  9 ++++---
+ fs/ocfs2/xattr.c                        |  9 ++++---
+ fs/orangefs/xattr.c                     |  3 ++-
+ fs/overlayfs/copy_up.c                  |  2 +-
+ fs/overlayfs/dir.c                      | 17 +++++++-----
+ fs/overlayfs/file.c                     | 26 +++++++++---------
+ fs/overlayfs/inode.c                    | 23 ++++++++--------
+ fs/overlayfs/namei.c                    |  6 ++---
+ fs/overlayfs/overlayfs.h                |  7 +++--
+ fs/overlayfs/ovl_entry.h                |  1 +
+ fs/overlayfs/readdir.c                  |  8 +++---
+ fs/overlayfs/super.c                    | 34 ++++++++++++++++++-----
+ fs/overlayfs/util.c                     | 13 +++++++--
+ fs/posix_acl.c                          |  2 +-
+ fs/reiserfs/xattr_security.c            |  3 ++-
+ fs/reiserfs/xattr_trusted.c             |  3 ++-
+ fs/reiserfs/xattr_user.c                |  3 ++-
+ fs/squashfs/xattr.c                     |  2 +-
+ fs/ubifs/xattr.c                        |  3 ++-
+ fs/xattr.c                              | 36 ++++++++++++-------------
+ fs/xfs/xfs_xattr.c                      |  3 ++-
+ include/linux/xattr.h                   |  9 ++++---
+ include/uapi/linux/xattr.h              |  7 +++--
+ mm/shmem.c                              |  3 ++-
+ net/socket.c                            |  3 ++-
+ security/commoncap.c                    |  6 +++--
+ security/integrity/evm/evm_main.c       |  3 ++-
+ security/selinux/hooks.c                | 11 +++++---
+ security/smack/smack_lsm.c              |  5 ++--
+ 60 files changed, 242 insertions(+), 137 deletions(-)
+
+-- 
+2.29.0.rc1.297.gfa9743e501-goog
 
