@@ -2,226 +2,120 @@ Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD51C56202
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 12:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FF9C56201
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 13:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4DB22267
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 12:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603371458;
-	bh=aP+99Nh+BRAsFdknehVump7Dnbp6eN+zcx5V+4BbA0E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eeONWzTkSe/QdPcGQyYNfyPG5Uj873LCIapuC6ObyEQsA3+AaM4ZtSZBwfG3ikXOE
-	 jl1o5WqhUPwC9qNf+p0pTRB2oWfBrhizhQCFNGImbv67pQo5QrtoR50JwGGQHCRNCY
-	 SWJ7FVzBlqhb6TgTtECDkh+N+h0cK5qMFjO+V+Nk=
+	by mail.kernel.org (Postfix) with ESMTP id C9133221FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 13:17:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="JLICfTM8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2899163AbgJVM52 (ORCPT
+        id S2899449AbgJVNR3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Oct 2020 08:57:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36914 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2899151AbgJVM5Y (ORCPT
+        Thu, 22 Oct 2020 09:17:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2899444AbgJVNR3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Oct 2020 08:57:24 -0400
-Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF99D22267;
-        Thu, 22 Oct 2020 12:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603371442;
-        bh=aP+99Nh+BRAsFdknehVump7Dnbp6eN+zcx5V+4BbA0E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fIaSxf2OzfuRDt9HRSB5jx2WnD0dkshqSo4UeqIgPYa45rKrwXIs58U7+v7UmIDq8
-         VdeDtFYZh+q+x5LOfVH9Dz5S9VDIzgq1Hssopq/iGP5ZHij+g9xcwMhP49CvYuc+R0
-         wthjzWEP+gGv+cNtg3iSfdCzPHliU+Onc93YvIyE=
-Date:   Thu, 22 Oct 2020 14:57:59 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     David Laight <David.Laight@aculab.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201022125759.GA1685526@kroah.com>
-References: <5d2ecb24db1e415b8ff88261435386ec@AcuMS.aculab.com>
- <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
- <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com>
- <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+        Thu, 22 Oct 2020 09:17:29 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DE38C0613CF
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2020 06:17:29 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id b23so923384pgb.3
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2020 06:17:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=95EtoPtq6IhF7jVfCLm2ubW0zmAlnuViyd/yfLI6I2Q=;
+        b=JLICfTM8wkAkoeu/9wJXsAVQVwcIq/0L2dvY2w5FMuiWxtn/7vLcfJGTDShfA/20bI
+         HqHj4WAUsBH6VEzGO2V/cXYVgMk8OYYYJw/fsqivUasRB9On2wnATVnNPC4enZQc0vcx
+         56l3i0xS7vzwIjdVptJkXjzGRpPJRU2bWXOUbhVUmXx/3rhaEeGFmyGuNdQZwsHU45LI
+         yYNh8DHBYn29Iy07IOgOfSb1j9JEGjBM9RlqNRmt/tp8/Fze+shK8j+6Fq5D6VbfVZyX
+         JoZaXMFo5GhVxRg6/yC3wEbfB5MkMMYioHv2WfCLSgzd1kHCZdLrZIsoe7uBgj3BLsYG
+         5ZNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=95EtoPtq6IhF7jVfCLm2ubW0zmAlnuViyd/yfLI6I2Q=;
+        b=UneFTwA89NSvwCORUbflFp7RqD+jWRCAFJt2ELEpDX/m2R/RGp18u82jNscDMJXurq
+         1nLbLnJeCLPPKObY04nXoEEwoDjFwBNsf6PIijY95rrROn6fDJA7dPYVDVIeLxOzCjH6
+         dCv36jrajmyBVi4SjvsYq8n3VjNERKpPykmQibB/zz9CD71rUikDhtEyvdCpeVWNrNUI
+         PVwP8GRXgbc6P2gK3aLb/Uxjnphq1LWOl4nHn+OzcRdh2yBX+675p37ELUxwn3K64hg/
+         d09hcGpydWhJqZl5ENQ52F3+zRDccbW1HC7dNr+DjhtWNNUbmC+T7OIkwh+SLZ9jCtuF
+         s8eQ==
+X-Gm-Message-State: AOAM531lR4rkC+fZXaZfyPU4mkokCGiOWcW8gX7lT9lXrE8j+tks75se
+        Y+gol18K8uUbtvnGg4XSydTWYg==
+X-Google-Smtp-Source: ABdhPJyHdppZW0RFvvl0AaAOkc4OPMxfBBSE8nQVLbXo+W5/x+U7rzJWGVU+dyLXQv0nbYMASfK12A==
+X-Received: by 2002:a63:4d45:: with SMTP id n5mr2073942pgl.389.1603372648926;
+        Thu, 22 Oct 2020 06:17:28 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:15c:211:200:4a0f:cfff:fe35:d61b])
+        by smtp.gmail.com with ESMTPSA id e2sm1400401pgd.27.2020.10.22.06.17.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Oct 2020 06:17:27 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel-team@android.com, John Stultz <john.stultz@linaro.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [RESEND PATCH v18 4/4] overlayfs: inode_owner_or_capable called during execv
+Date:   Thu, 22 Oct 2020 06:16:52 -0700
+Message-Id: <20201022131652.2784152-1-salyzyn@android.com>
+X-Mailer: git-send-email 2.29.0.rc1.297.gfa9743e501-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 22, 2020 at 02:42:24PM +0200, David Hildenbrand wrote:
-> On 22.10.20 14:18, Greg KH wrote:
-> > On Thu, Oct 22, 2020 at 12:48:05PM +0200, Greg KH wrote:
-> >> On Thu, Oct 22, 2020 at 11:36:40AM +0200, David Hildenbrand wrote:
-> >>> On 22.10.20 11:32, David Laight wrote:
-> >>>> From: David Hildenbrand
-> >>>>> Sent: 22 October 2020 10:25
-> >>>> ...
-> >>>>> ... especially because I recall that clang and gcc behave slightly
-> >>>>> differently:
-> >>>>>
-> >>>>> https://github.com/hjl-tools/x86-psABI/issues/2
-> >>>>>
-> >>>>> "Function args are different: narrow types are sign or zero extended to
-> >>>>> 32 bits, depending on their type. clang depends on this for incoming
-> >>>>> args, but gcc doesn't make that assumption. But both compilers do it
-> >>>>> when calling, so gcc code can call clang code.
-> >>>>
-> >>>> It really is best to use 'int' (or even 'long') for all numeric
-> >>>> arguments (and results) regardless of the domain of the value.
-> >>>>
-> >>>> Related, I've always worried about 'bool'....
-> >>>>
-> >>>>> The upper 32 bits of registers are always undefined garbage for types
-> >>>>> smaller than 64 bits."
-> >>>>
-> >>>> On x86-64 the high bits are zeroed by all 32bit loads.
-> >>>
-> >>> Yeah, but does not help here.
-> >>>
-> >>>
-> >>> My thinking: if the compiler that calls import_iovec() has garbage in
-> >>> the upper 32 bit
-> >>>
-> >>> a) gcc will zero it out and not rely on it being zero.
-> >>> b) clang will not zero it out, assuming it is zero.
-> >>>
-> >>> But
-> >>>
-> >>> a) will zero it out when calling the !inlined variant
-> >>> b) clang will zero it out when calling the !inlined variant
-> >>>
-> >>> When inlining, b) strikes. We access garbage. That would mean that we
-> >>> have calling code that's not generated by clang/gcc IIUC.
-> >>>
-> >>> We can test easily by changing the parameters instead of adding an "inline".
-> >>
-> >> Let me try that as well, as I seem to have a good reproducer, but it
-> >> takes a while to run...
-> > 
-> > Ok, that didn't work.
-> > 
-> > And I can't seem to "fix" this by adding noinline to patches further
-> > along in the patch series (because this commit's function is no longer
-> > present due to later patches.)
-> 
-> We might have the same issues with iovec_from_user() and friends now.
-> 
-> > 
-> > Will keep digging...
-> > 
-> > greg k-h
-> > 
-> 
-> 
-> Might be worth to give this a try, just to see if it's related to
-> garbage in upper 32 bit and the way clang is handling it (might be a BUG
-> in clang, though):
-> 
-> 
-> diff --git a/include/linux/uio.h b/include/linux/uio.h
-> index 72d88566694e..7527298c6b56 100644
-> --- a/include/linux/uio.h
-> +++ b/include/linux/uio.h
-> @@ -267,7 +267,7 @@ size_t hash_and_copy_to_iter(const void *addr,
-> size_t bytes, void *hashp,
->                 struct iov_iter *i);
-> 
->  struct iovec *iovec_from_user(const struct iovec __user *uvector,
-> -               unsigned long nr_segs, unsigned long fast_segs,
-> +               unsigned nr_segs, unsigned fast_segs,
->                 struct iovec *fast_iov, bool compat);
->  ssize_t import_iovec(int type, const struct iovec __user *uvec,
->                  unsigned nr_segs, unsigned fast_segs, struct iovec **iovp,
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 1635111c5bd2..58417f1916dc 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1652,7 +1652,7 @@ const void *dup_iter(struct iov_iter *new, struct
-> iov_iter *old, gfp_t flags)
->  EXPORT_SYMBOL(dup_iter);
-> 
->  static int copy_compat_iovec_from_user(struct iovec *iov,
-> -               const struct iovec __user *uvec, unsigned long nr_segs)
-> +               const struct iovec __user *uvec, unsigned nr_segs)
->  {
->         const struct compat_iovec __user *uiov =
->                 (const struct compat_iovec __user *)uvec;
-> @@ -1684,7 +1684,7 @@ static int copy_compat_iovec_from_user(struct
-> iovec *iov,
->  }
-> 
->  static int copy_iovec_from_user(struct iovec *iov,
-> -               const struct iovec __user *uvec, unsigned long nr_segs)
-> +               const struct iovec __user *uvec, unsigned nr_segs)
->  {
->         unsigned long seg;
-> 
-> @@ -1699,7 +1699,7 @@ static int copy_iovec_from_user(struct iovec *iov,
->  }
-> 
->  struct iovec *iovec_from_user(const struct iovec __user *uvec,
-> -               unsigned long nr_segs, unsigned long fast_segs,
-> +               unsigned nr_segs, unsigned fast_segs,
->                 struct iovec *fast_iov, bool compat)
->  {
->         struct iovec *iov = fast_iov;
-> @@ -1738,7 +1738,7 @@ ssize_t __import_iovec(int type, const struct
-> iovec __user *uvec,
->                  struct iov_iter *i, bool compat)
->  {
->         ssize_t total_len = 0;
-> -       unsigned long seg;
-> +       unsigned seg;
->         struct iovec *iov;
-> 
->         iov = iovec_from_user(uvec, nr_segs, fast_segs, *iovp, compat);
-> 
+From: John Stultz <john.stultz@linaro.org>
 
-Ah, I tested the other way around, making everything "unsigned long"
-instead.  Will go try this too, as other tests are still running...
+Using old_creds as an indication that we are not overriding the
+credentials, bypass call to inode_owner_or_capable.  This solves
+a problem with all execv calls being blocked when using the caller's
+credentials.
 
-thanks,
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Fixes: 05acefb4872da ("ovl: check permission to open real file")
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: kernel-team@android.com
+Cc: selinux@vger.kernel.org
 
-greg k-h
+v18 - rebase
+
+v17 - rebase
+
+v16 - introduced fix over rebased series
+---
+ fs/overlayfs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index b1357bb067d9..9ab9663b02d8 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -53,7 +53,7 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 	err = inode_permission(realinode, MAY_OPEN | acc_mode);
+ 	if (err) {
+ 		realfile = ERR_PTR(err);
+-	} else if (!inode_owner_or_capable(realinode)) {
++	} else if (old_cred && !inode_owner_or_capable(realinode)) {
+ 		realfile = ERR_PTR(-EPERM);
+ 	} else {
+ 		realfile = open_with_fake_path(&file->f_path, flags, realinode,
+-- 
+2.29.0.rc1.297.gfa9743e501-goog
+
