@@ -2,118 +2,179 @@ Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE96C5517A
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:39:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4CBC56202
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39BC224654
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:39:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TjRSM/KC"
+	by mail.kernel.org (Postfix) with ESMTP id 96086223C7
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603400383;
+	bh=Xexx6LzGU5CEQ5pUb/Rnl3sbc1IKJSCv776XJ3IiUZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eO3zWDQyf0fMu9KhIR3p4uU9eQyzVGI03TCPtzpjVg4TMeUOqVzBlmknq0FDg98Zw
+	 UIFJ4cXUd9aMYyE4HX2FFzduCgbQjNZ7Tm+pf/g65NBGwMytSAH7qJFxvStQlTlkqo
+	 3EExbFD4n51yw48FPuYF7lTFmuVpOvoheBNlZN0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S371804AbgJVUjO (ORCPT
+        id S372085AbgJVU7i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Oct 2020 16:39:14 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58962 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S371802AbgJVUjN (ORCPT
+        Thu, 22 Oct 2020 16:59:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2897292AbgJVU7h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Oct 2020 16:39:13 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09MKW2Cm111815;
-        Thu, 22 Oct 2020 16:39:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=IFuZQiHZ5zXbarGP2kD9hqxg+2/2m9MRsUj82P5IF+o=;
- b=TjRSM/KCvMWOk4tPQl5BBK77cOPKCTwTm8VHXO55enbCUNuxNZAM6+hMueFsxH/LEQiO
- 6NgzU+I5tHykIvsRK2k7C5YFBNxUBIJFhbiZeO7POyo1Zk3ChKOlZ8iBF+yobkDMm/cN
- zXFFkvM5M/79F/HoVRD79Yjs5P0bUlYr7MibUBHub2RQn0j+qeL8vDgTkxkGG+WpmnbW
- N0zpGGNXY89pnnSMajLQVMZjVfRjpja45RiIMXnlIT71aM523+JytmPeDyWLuDq9I79z
- VUeMT7BicNxKknQ9pHnPGnDi5Appq94f3pc5glNR1mc0Fxik11zpGVQe0nf+vj/bquB3 NA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34bh7085au-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Oct 2020 16:39:07 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09MKW5Cv111907;
-        Thu, 22 Oct 2020 16:39:06 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34bh7085a5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Oct 2020 16:39:06 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09MK7Dla011995;
-        Thu, 22 Oct 2020 20:39:04 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 348d5qw1d8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Oct 2020 20:39:04 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09MKd2oa18874790
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Oct 2020 20:39:02 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 87ECAA405F;
-        Thu, 22 Oct 2020 20:39:02 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 75903A4060;
-        Thu, 22 Oct 2020 20:38:59 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.54.44])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Oct 2020 20:38:59 +0000 (GMT)
-Message-ID: <7d9822da396a92645482e37a8c8590902323c5ef.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 2/6] IMA: conditionally allow empty rule data
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Thu, 22 Oct 2020 16:38:58 -0400
-In-Reply-To: <20200923192011.5293-3-tusharsu@linux.microsoft.com>
-References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
-         <20200923192011.5293-3-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.737
- definitions=2020-10-22_15:2020-10-20,2020-10-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 spamscore=0 malwarescore=0 priorityscore=1501
- impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0 phishscore=0
- adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010220130
+        Thu, 22 Oct 2020 16:59:37 -0400
+Received: from gmail.com (unknown [104.132.1.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D47120874;
+        Thu, 22 Oct 2020 20:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603400375;
+        bh=Xexx6LzGU5CEQ5pUb/Rnl3sbc1IKJSCv776XJ3IiUZY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zdUyA37A1L47KHgoyE+FT2EuXbQ76eLgYxDhD0pRsQ/vZP9VSxvex63p/S7m2wh2S
+         LPo1qkQ3neXSHmpGEcAArmow8IRVH9ABGEBSoWdWkIGldhGddb2MyLlCZgza1+BxJr
+         XSVfJ1lZvRBFbHtiVn91WdB+7mhw78zhWJSY/86E=
+Date:   Thu, 22 Oct 2020 13:59:32 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201022205932.GB3613750@gmail.com>
+References: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
+ <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+ <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022132342.GB8781@lst.de>
+ <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+ <20201022164040.GV20115@casper.infradead.org>
+ <CAKwvOdnq-yYLcF_coo=jMV-RH-SkuNp_kMB+KCBF5cz3PwiB8g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdnq-yYLcF_coo=jMV-RH-SkuNp_kMB+KCBF5cz3PwiB8g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Tushar,
-
-On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
-> ima_match_rule_data() permits the func to pass empty func_data.
-> For instance, for the following func, the func_data keyrings= is
-> optional.
->     measure func=KEY_CHECK keyrings=.ima
+On Thu, Oct 22, 2020 at 10:00:44AM -0700, Nick Desaulniers wrote:
+> On Thu, Oct 22, 2020 at 9:40 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Oct 22, 2020 at 04:35:17PM +0000, David Laight wrote:
+> > > Wait...
+> > > readv(2) defines:
+> > >       ssize_t readv(int fd, const struct iovec *iov, int iovcnt);
+> >
+> > It doesn't really matter what the manpage says.  What does the AOSP
+> > libc header say?
 > 
-> But a new func in future may want to constrain the func_data to
-> be non-empty.  ima_match_rule_data() should support this constraint
-> and it shouldn't be hard-coded in ima_match_rule_data().
+> Same: https://android.googlesource.com/platform/bionic/+/refs/heads/master/libc/include/sys/uio.h#38
 > 
-> Update ima_match_rule_data() to conditionally allow empty func_data
-> for the func that needs it.
+> Theoretically someone could bypass libc to make a system call, right?
 > 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> >
+> > > But the syscall is defined as:
+> > >
+> > > SYSCALL_DEFINE3(readv, unsigned long, fd, const struct iovec __user *, vec,
+> > >                 unsigned long, vlen)
+> > > {
+> > >         return do_readv(fd, vec, vlen, 0);
+> > > }
+> >
+> 
 
-Policy rules may constrain what is measured, but that decision should
-be left to the system owner or admin.
+FWIW, glibc makes the readv() syscall assuming that fd and vlen are 'int' as
+well.  So this problem isn't specific to Android's libc.
 
-Mimi
+From objdump -d /lib/x86_64-linux-gnu/libc.so.6:
 
+	00000000000f4db0 <readv@@GLIBC_2.2.5>:
+	   f4db0:       64 8b 04 25 18 00 00    mov    %fs:0x18,%eax
+	   f4db7:       00
+	   f4db8:       85 c0                   test   %eax,%eax
+	   f4dba:       75 14                   jne    f4dd0 <readv@@GLIBC_2.2.5+0x20>
+	   f4dbc:       b8 13 00 00 00          mov    $0x13,%eax
+	   f4dc1:       0f 05                   syscall
+	   ...
+
+There's some code for pthread cancellation, but no zeroing of the upper half of
+the fd and vlen arguments, which are in %edi and %edx respectively.  But the
+glibc function prototype uses 'int' for them, not 'unsigned long'
+'ssize_t readv(int fd, const struct iovec *iov, int iovcnt);'.
+
+So the high halves of the fd and iovcnt registers can contain garbage.  Or at
+least that's what gcc (9.3.0) and clang (9.0.1) assume; they both compile the
+following
+
+void g(unsigned int x);
+
+void f(unsigned long x)
+{
+        g(x);
+}
+
+into f() making a tail call to g(), without zeroing the top half of %rdi.
+
+Also note the following program succeeds on Linux 5.9 on x86_64.  On kernels
+that have this bug, it should fail.  (I couldn't get it to actually fail, so it
+must depend on the compiler and/or the kernel config...)
+
+	#include <fcntl.h>
+	#include <stdio.h>
+	#include <sys/syscall.h>
+	#include <sys/uio.h>
+	#include <unistd.h>
+
+	int main()
+	{
+		int fd = open("/dev/zero", O_RDONLY);
+		char buf[1000];
+		struct iovec iov = { .iov_base = buf, .iov_len = sizeof(buf) };
+		long ret;
+
+		ret = syscall(__NR_readv, fd, &iov, 0x100000001);
+		if (ret < 0)
+			perror("readv failed");
+		else
+			printf("read %ld bytes\n", ret);
+	}
+
+I think the right fix is to change the readv() (and writev(), etc.) syscalls to
+take 'unsigned int' rather than 'unsigned long', as that is what the users are
+assuming...
+
+- Eric
