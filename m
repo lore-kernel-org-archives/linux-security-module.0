@@ -2,148 +2,199 @@ Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A51B1C388F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 22:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46889C388F7
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 22:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A09424630
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 22:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A84F624658
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 22:36:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="og1B0xcg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S370053AbgJVWHK convert rfc822-to-8bit (ORCPT
+        id S372944AbgJVWgO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Oct 2020 18:07:10 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20285 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2509912AbgJVWHI (ORCPT
+        Thu, 22 Oct 2020 18:36:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S372941AbgJVWf2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Oct 2020 18:07:08 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-164-7-H9NMQeNwGwZfcU7aRApw-1; Thu, 22 Oct 2020 23:07:03 +0100
-X-MC-Unique: 7-H9NMQeNwGwZfcU7aRApw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Thu, 22 Oct 2020 23:07:02 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 22 Oct 2020 23:07:02 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Al Viro' <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>
-CC:     Arnd Bergmann <arnd@arndb.de>, Christoph Hellwig <hch@lst.de>,
-        "David Hildenbrand" <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAAQY5tgAAwVkCAADSfg4AALKrQ
-Date:   Thu, 22 Oct 2020 22:07:02 +0000
-Message-ID: <f35a74d034054d7fa8ce8835afb1ca6c@AcuMS.aculab.com>
-References: <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
- <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
- <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
- <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com>
- <20201022192458.GV3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Thu, 22 Oct 2020 18:35:28 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09MMVZuh058551;
+        Thu, 22 Oct 2020 18:35:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=j9XsJrYwmd69hAlmharqLVM7LiBlchSRoT0dWPuOUlA=;
+ b=og1B0xcg7eiRllSH+fQlz7FRLmTvsR3+RTaUzVPIG7zwDNtFSGFqHJvOH/kp3ALYUChr
+ hB5DIZfGntE4RXmWNMZXVYQaaChMGXshlLseCyz+F9RP42bfrkInMMAePFeZRDbAfYrh
+ XFIP9hmPzOudTJQ36++bKo4tukXizOmb+YYAXwv8m6ac/uAFMUpjs6Zt2PhXTkr3Alp/
+ 96hGlrLGqEY41tpWpEoR1sWThthEbsdlDXfMRnMj9/BRiqLftvC+WR5kYurVVTXNZ9fi
+ IGC7BqUfn0DdlPKLjmDCHp9RczLlaP6flpY0VqKwhUUeSj+rnzuMXxGGoyfnJ115sKjx 8A== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34be0u1n33-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Oct 2020 18:35:22 -0400
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09MMZ8I2071182;
+        Thu, 22 Oct 2020 18:35:21 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34be0u1n29-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Oct 2020 18:35:21 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09MMWw6H011289;
+        Thu, 22 Oct 2020 22:35:19 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 347qvhdxw5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Oct 2020 22:35:19 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09MMZHDD32571854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Oct 2020 22:35:17 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 231B111C081;
+        Thu, 22 Oct 2020 22:35:17 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5619311C080;
+        Thu, 22 Oct 2020 22:35:13 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.54.44])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Oct 2020 22:35:13 +0000 (GMT)
+Message-ID: <dc22359475f0c233abdb9257d1ca745d4be3f9af.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 5/6] IMA: add hook to measure critical data from
+ kernel components
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Date:   Thu, 22 Oct 2020 18:35:11 -0400
+In-Reply-To: <20200923192011.5293-6-tusharsu@linux.microsoft.com>
+References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
+         <20200923192011.5293-6-tusharsu@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.737
+ definitions=2020-10-22_17:2020-10-20,2020-10-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 suspectscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2010220140
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Al Viro
-> Sent: 22 October 2020 20:25
-> 
-> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
-> 
-> > Passing an `unsigned long` as an `unsigned int` does no such
-> > narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-> > calls, no masking instructions).
-> > So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-> > at the mainline@1028ae406999), then children calls of
-> > `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-> > unmodified, ie. garbage in the upper 32b.
-> 
-> FWIW,
-> 
-> void f(unsinged long v)
-> {
-> 	if (v != 1)
-> 		printf("failed\n");
-> }
-> 
-> void g(unsigned int v)
-> {
-> 	f(v);
-> }
-> 
-> void h(unsigned long v)
-> {
-> 	g(v);
-> }
-> 
-> main()
-> {
-> 	h(0x100000001);
-> }
-> 
-> must not produce any output on a host with 32bit int and 64bit long, regardless of
-> the inlining, having functions live in different compilation units, etc.
-> 
-> Depending upon the calling conventions, compiler might do truncation in caller or
-> in a callee, but it must be done _somewhere_.
+Hi Tushar,
 
-Put g() in a separate compilation unit and use the 'wrong' type
-in the prototypes t() used to call g() and g() uses to call f().
+On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
+> Currently, IMA does not provide a generic function for kernel components
+> to measure their data. A generic function provided by IMA would
+> enable various parts of the kernel with easier and faster on-boarding to
+> use IMA infrastructure, would avoid code duplication, and consistent
+> usage of IMA policy option "data_sources:=" across the kernel.
+> 
+> Add a new IMA func CRITICAL_DATA and a corresponding IMA hook
+> ima_measure_critical_data() to support measuring various critical kernel
+> components. Limit the measurement to the components that are specified
+> in the IMA policy - CRITICAL_DATA+data_sources.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 
-Then you might see where and masking does (or does not) happen.
+Normally the new LSM or IMA hook is defined before defining a method of
+constraining that hook.  Please drop 2/6 (IMA: conditionally allow
+empty rule data) and reverse the order of 4/6 and 5/6.   That will
+allow each patch to update the Documentation appropriately, making the
+change self contained.
 
-	David
+> ---
+>  Documentation/ABI/testing/ima_policy |  8 ++++++-
+>  include/linux/ima.h                  |  8 +++++++
+>  security/integrity/ima/ima.h         |  1 +
+>  security/integrity/ima/ima_api.c     |  2 +-
+>  security/integrity/ima/ima_main.c    | 26 +++++++++++++++++++++
+>  security/integrity/ima/ima_policy.c  | 34 ++++++++++++++++++++++++----
+>  6 files changed, 72 insertions(+), 7 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+> index a81cf79fb255..d33bb51309fc 100644
+> --- a/Documentation/ABI/testing/ima_policy
+> +++ b/Documentation/ABI/testing/ima_policy
+> @@ -29,7 +29,7 @@ Description:
+>  		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
+>  				[FIRMWARE_CHECK]
+>  				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
+> -				[KEXEC_CMDLINE] [KEY_CHECK]
+> +				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
+>  			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
+>  			       [[^]MAY_EXEC]
+>  			fsmagic:= hex value
+> @@ -51,6 +51,8 @@ Description:
+>  			data_sources:= list of kernel components
+>  			(eg, selinux|apparmor|dm-crypt) that contain data critical
+>  			to the security of the kernel.
+> +			Only valid when action is "measure" and func is
+> +			CRITICAL_DATA.
+>  
+>  		default policy:
+>  			# PROC_SUPER_MAGIC
+> @@ -128,3 +130,7 @@ Description:
+>  		keys added to .builtin_trusted_keys or .ima keyring:
+>  
+>  			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
+> +
+> +		Example of measure rule using CRITICAL_DATA to measure critical data
+> +
+> +			measure func=CRITICAL_DATA data_sources=selinux|apparmor|dm-crypt
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+
+As data sources are added, the documentation example should be updated
+to reflect the new source.  Please do not include examples that don't
+yet exist.
+
+
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 6888fc372abf..d55896f28790 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -867,6 +867,32 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+>  	fdput(f);
+>  }
+>  
+> +/**
+> + * ima_measure_critical_data - measure critical data
+> + * @event_name: name for the given data
+> + * @event_data_source: name of the event data source
+> + * @buf: pointer to buffer containing data to measure
+> + * @buf_len: length of buffer(in bytes)
+> + * @measure_buf_hash: if set to true - will measure hash of the buf,
+> + *                    instead of buf
+> + *
+> + * Buffers can only be measured, not appraised.
+> + */
+
+Perhaps the reason for defining both the event_name and
+event_data_source will become clearer with an example.  At this point I
+can only guess as to why both are needed (e.g. perhaps a data source
+defines multiple events).
+
+While "Buffers can only be measured, not appraised" is true, it was cut
+& pasted from ima_kexec_cmdline.  Measuring the kexec boot cmdline is
+self describing.  Here, a larger, more detailed IMA hook description
+would be appropriate.
+
+thanks,
+
+Mimi
 
