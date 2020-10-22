@@ -2,170 +2,122 @@ Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8884C388F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 21:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8D0C56201
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 21:28:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5359022248
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 21:16:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HY6m9Y1a"
+	by mail.kernel.org (Postfix) with ESMTP id ECA7024630
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 21:28:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S372209AbgJVVP6 (ORCPT
+        id S2898398AbgJVV2r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Oct 2020 17:15:58 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21302 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S372206AbgJVVP5 (ORCPT
+        Thu, 22 Oct 2020 17:28:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2507136AbgJVV2q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Oct 2020 17:15:57 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09ML23pa103440;
-        Thu, 22 Oct 2020 17:15:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=xtaHrcJEIXJvJm8YVTTt46wQwrlM3pZFE5RPQ95qv+c=;
- b=HY6m9Y1aq0Az7+R59tDshjeSqD0fjMGQ2DRaCv/Du7wnaq1/kNtZq6vOqXvaHj88j5Un
- +d++E2Gbaom3p75nFCbCT+Fe/oCkjulZoEEcME78eefs5LesG7batW2lXUgHKkK1o0RP
- 5wM6t7O7pedfjwkwwvMlGgpu2PB+vZQQifbYxcJR+5JRiYSchlB+i2iagOxScnYtpDtC
- cBGKhdNKVMBc79R4SbJ0k7z2RWoCtht9lSAnjtHj9iVtn8/85X4PmDRVz91DAxzhkb8y
- N6RILwHUCEzXWf1PknWV+p+aVcBeHSsM7cq1dziGD3/0aH28BI3upz2fe+402HPEbmco eg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34b0nag2gd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Oct 2020 17:15:51 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09ML22E5103346;
-        Thu, 22 Oct 2020 17:15:51 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34b0nag2fr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Oct 2020 17:15:50 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09MLDL8e032562;
-        Thu, 22 Oct 2020 21:15:48 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma03ams.nl.ibm.com with ESMTP id 348d5qw29a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Oct 2020 21:15:48 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09MLFkXZ31654314
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Oct 2020 21:15:46 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 976F311C04C;
-        Thu, 22 Oct 2020 21:15:46 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 537DF11C050;
-        Thu, 22 Oct 2020 21:15:43 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.54.44])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Oct 2020 21:15:43 +0000 (GMT)
-Message-ID: <37aa4e6f5db6c53f4021f829ec09388d55d28208.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 4/6] IMA: add policy to measure critical data from
- kernel components
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Thu, 22 Oct 2020 17:15:42 -0400
-In-Reply-To: <20200923192011.5293-5-tusharsu@linux.microsoft.com>
-References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
-         <20200923192011.5293-5-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.737
- definitions=2020-10-22_15:2020-10-20,2020-10-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- spamscore=0 malwarescore=0 impostorscore=0 priorityscore=1501 adultscore=0
- bulkscore=0 suspectscore=0 mlxscore=0 clxscore=1015 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2010220131
+        Thu, 22 Oct 2020 17:28:46 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB0E9C0613CE;
+        Thu, 22 Oct 2020 14:28:45 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kVi8K-006V84-LA; Thu, 22 Oct 2020 21:28:28 +0000
+Date:   Thu, 22 Oct 2020 22:28:28 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        David Laight <David.Laight@aculab.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Hildenbrand <david@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201022212828.GZ3576660@ZenIV.linux.org.uk>
+References: <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+ <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022132342.GB8781@lst.de>
+ <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com>
+ <20201022164040.GV20115@casper.infradead.org>
+ <CAKwvOdnq-yYLcF_coo=jMV-RH-SkuNp_kMB+KCBF5cz3PwiB8g@mail.gmail.com>
+ <20201022205932.GB3613750@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201022205932.GB3613750@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Tushar,
+On Thu, Oct 22, 2020 at 01:59:32PM -0700, Eric Biggers wrote:
 
-The above Subject line should be truncated to "IMA: add policy to
-measure critical data".    
+> Also note the following program succeeds on Linux 5.9 on x86_64.  On kernels
+> that have this bug, it should fail.  (I couldn't get it to actually fail, so it
+> must depend on the compiler and/or the kernel config...)
 
-On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
-> There would be several candidate kernel components suitable for IMA
-> measurement. Not all of them would have support for IMA measurement.
+It doesn't.  See https://www.spinics.net/lists/linux-scsi/msg147836.html for
+discussion of that mess.
 
-This intro is besides the point.  The patch description should describe
-what is meant by "critical data".
+ssize_t vfs_readv(struct file *file, const struct iovec __user *vec,
+                  unsigned long vlen, loff_t *pos, rwf_t flags)
+{
+        struct iovec iovstack[UIO_FASTIOV];
+        struct iovec *iov = iovstack;
+        struct iov_iter iter;
+        ssize_t ret;
 
-> Also, system administrators may not want to measure data for all of
-> them, even when they support IMA measurement.
-> An IMA policy option 
-> specific to various kernel components is needed to measure their
-> respective critical data.
-> 
-> This policy option needs to be constrained to measure data for
-> specific kernel components that are specified as input values to the
-> policy option.
-> 
-> Add a new IMA policy option - "data_sources:=" to allow measuring
-> various critical kernel components. This policy option would enable the
-> system administrators to limit the measurement to the components
-> listed in "data_sources:=", if the components support IMA measurement.
-> 
-> The new policy option "data_sources:=" is different from the existing
-> policy option "keyrings:=". 
-> 
-> In case of "keyrings:=", a policy may measure all keyrings (when
-> "keyrings:=" option is not provided for func KEY_CHECK), or may
-> constrain which keyrings need to be measured (when "keyrings:=" option
-> is provided for func KEY_CHECK).
-> 
-> But unlike "keyrings:=", the entries in "data_sources:=" would have
-> different data format. Further, the components listed in
-> "data_sources:=" need to be modified to call IMA to measure their
-> data. Therefore, unlike "keyrings:=", IMA shouldn't measure all of the
-> components by default, when "data_sources:=" is not specified. Because
-> measuring non-vetted components just by specifying them as a policy
-> option value may impact the overall reliability of the system.
-> 
-> To address this, "data_sources:=" should be a mandatory policy option
-> for func=CRITICAL_DATA. This func is introduced in the 5th patch in this
-> series). And the compile-time vetting functionality described above is
-> introduced in the 6th patch in this series.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+        ret = import_iovec(READ, vec, vlen, ARRAY_SIZE(iovstack), &iov, &iter);
+        if (ret >= 0) {
+                ret = do_iter_read(file, &iter, pos, flags);
+                kfree(iov);
+        }
 
-I don't understand what you mean by "non-vetted" components, nor how
-measuring critical data may impact the overall reliability of the
-system.
+        return ret;
+}
 
-The system owner or adminstrator defines what they want to measure,
-including "critical data", based on the policy rules.  They might
-decide that they want to constrain which "critical data" is measured by
-specifying "data_sources:=", but that decision is their perogative.  
-The default should allow measuring all critical data.
+and import_iovec() takes unsigned int as the third argument, so it *will*
+truncate to 32 bits, no matter what.  Has done so since 0504c074b546
+"switch {compat_,}do_readv_writev() to {compat_,}import_iovec()" back in
+March 2015.  Yes, it was an incompatible userland ABI change, even though
+nothing that used glibc/uclibc/dietlibc would've noticed.
 
- A simple example of "critical data" could be some in memory structure,
-along the lines of __ro_after_init, or hash of the memory structure. 
-Once the data structure is initialized, the "critical data" measurement
-shouldn't change.    From the attestation server perspective, the IMA
-measurement list would contain a single record unless the critical data
-changes.  The attestation server doesn't need to know anything about
-the initial value, just that it has changed in order to trigger some
-sort alert.
+Better yet, up until 2.1.90pre1 passing a 64bit value as the _first_ argument
+of readv(2) used to fail with -EBADF if it was too large; at that point it
+started to get quietly truncated to 32bit first.  And again, no libc users
+would've noticed (neither would anything except deliberate regression test
+looking for that specific behaviour).
 
-thanks,
-
-Mimi
-
+Note that we also have process_madvise(2) with size_t for vlen (huh?  It's
+a number of array elements, not an object size) and process_vm_{read,write}v(2),
+that have unsigned long for the same thing.  And the last two *are* using
+the same unsigned long from glibc POV.
