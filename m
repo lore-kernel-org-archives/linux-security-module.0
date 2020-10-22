@@ -2,157 +2,118 @@ Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78907C5517A
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE96C5517A
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 283002465A
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39BC224654
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 20:39:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vObNVdN2"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TjRSM/KC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2898467AbgJVULa (ORCPT
+        id S371804AbgJVUjO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Oct 2020 16:11:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58228 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2898020AbgJVUL3 (ORCPT
+        Thu, 22 Oct 2020 16:39:14 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58962 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S371802AbgJVUjN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Oct 2020 16:11:29 -0400
-Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB33C0613DB
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2020 13:11:27 -0700 (PDT)
-Received: by mail-pf1-x443.google.com with SMTP id f19so1883666pfj.11
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Oct 2020 13:11:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GumHU2X+g85YksdsSI4rtK9zksU56rVy/CgxVuW0jEM=;
-        b=vObNVdN2VFhAojESuCXkrxhn1YIwWVv+1XhIW4tZBL+fxMiFOMf/wpbwdQdbTEuqzU
-         didUUL5vkJxiQnySAkNm5bA5dzi4HDPRY/b2q9PCHYr38o1QdWg4eoCCMy0LZ69odEBE
-         EeVL+yKYldv1+Aa2ZS3w6i1XFzR6cyTrr6WpyCHfwh/bI39Aml+4GPRR3PK53sN4m6b3
-         rUVDazS3OFa6481GJ9+htMab1H1YbLsr5SViapf30nhQCEj8D6AxmtXaycQnaAAFnPK+
-         ve/0E2puLZtKaH/rY1wRoNU3uLbs1Hp/JNHjorNUJ0gL9lCRxpciXdv4OO2qkM+X3ZVh
-         gy/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GumHU2X+g85YksdsSI4rtK9zksU56rVy/CgxVuW0jEM=;
-        b=eTpPJDk/sddH9tUTdTbbAlP971vy6VaX88UyEvj8OamDtpOrtlFk6cnmGsH8Aa0gEp
-         QrJGlGF1veonHBdUsrx+ibb+GPIKKQazv/Sw1aUMSkJoZvYp4SvGTwDCeEiTHurlZKek
-         WxTb+49UHKoUS1Xxs4qUXFwly48/WeNDEe9pFjaav4KeCDwMH2biaVPYcCpVE44LJ1jx
-         6IICgOrG+kduhb+PmkZYZLQmnyggj3anOgo0vlmISJi1AzY2Z6Sfv0mG7zhf1rosgDqP
-         Y1apd3Or2OPeW2iU480MVcU4ypS1CRGywSn/WKZIGjrntNnbnPrjoFTZiBXh8CGvJedo
-         6dEQ==
-X-Gm-Message-State: AOAM533VcV9t5jB1Ylgfsdu8ySWilZ//7PJ1/oD7FabA+j0Ub5B8YNpP
-        ZxKzUyLYPjxDW71zinlLSJWuqvldQoCII1oCjvQA5g==
-X-Google-Smtp-Source: ABdhPJzJwPfOlPnqmI7/5P7ibjxaxjQ3K/49C5Uiz6yY7FpMEBFECdyjYA4Y8meqnBbTveKDbTZgpESx4RovmeoudXg=
-X-Received: by 2002:a17:90a:740a:: with SMTP id a10mr3865197pjg.32.1603397486718;
- Thu, 22 Oct 2020 13:11:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201022090155.GA1483166@kroah.com> <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com> <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com> <20201022132342.GB8781@lst.de>
- <8f1fff0c358b4b669d51cc80098dbba1@AcuMS.aculab.com> <CAKwvOdnix6YGFhsmT_mY8ORNPTOsN3HwS33Dr0Ykn-pyJ6e-Bw@mail.gmail.com>
- <CAK8P3a3LjG+ZvmQrkb9zpgov8xBkQQWrkHBPgjfYSqBKGrwT4w@mail.gmail.com>
- <CAKwvOdnhONvrHLAuz_BrAuEpnF5mD9p0YPGJs=NZZ0EZNo7dFQ@mail.gmail.com> <20201022192458.GV3576660@ZenIV.linux.org.uk>
-In-Reply-To: <20201022192458.GV3576660@ZenIV.linux.org.uk>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 22 Oct 2020 13:11:14 -0700
-Message-ID: <CAKwvOdkLHozVUs85Wx-_qo2OfbdkKwtmaJfQFJfvxi_vpEYxWQ@mail.gmail.com>
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        David Laight <David.Laight@aculab.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Hildenbrand <david@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 22 Oct 2020 16:39:13 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09MKW2Cm111815;
+        Thu, 22 Oct 2020 16:39:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=IFuZQiHZ5zXbarGP2kD9hqxg+2/2m9MRsUj82P5IF+o=;
+ b=TjRSM/KCvMWOk4tPQl5BBK77cOPKCTwTm8VHXO55enbCUNuxNZAM6+hMueFsxH/LEQiO
+ 6NgzU+I5tHykIvsRK2k7C5YFBNxUBIJFhbiZeO7POyo1Zk3ChKOlZ8iBF+yobkDMm/cN
+ zXFFkvM5M/79F/HoVRD79Yjs5P0bUlYr7MibUBHub2RQn0j+qeL8vDgTkxkGG+WpmnbW
+ N0zpGGNXY89pnnSMajLQVMZjVfRjpja45RiIMXnlIT71aM523+JytmPeDyWLuDq9I79z
+ VUeMT7BicNxKknQ9pHnPGnDi5Appq94f3pc5glNR1mc0Fxik11zpGVQe0nf+vj/bquB3 NA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34bh7085au-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Oct 2020 16:39:07 -0400
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09MKW5Cv111907;
+        Thu, 22 Oct 2020 16:39:06 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34bh7085a5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Oct 2020 16:39:06 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09MK7Dla011995;
+        Thu, 22 Oct 2020 20:39:04 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 348d5qw1d8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Oct 2020 20:39:04 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09MKd2oa18874790
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Oct 2020 20:39:02 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 87ECAA405F;
+        Thu, 22 Oct 2020 20:39:02 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 75903A4060;
+        Thu, 22 Oct 2020 20:38:59 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.54.44])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Oct 2020 20:38:59 +0000 (GMT)
+Message-ID: <7d9822da396a92645482e37a8c8590902323c5ef.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 2/6] IMA: conditionally allow empty rule data
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Date:   Thu, 22 Oct 2020 16:38:58 -0400
+In-Reply-To: <20200923192011.5293-3-tusharsu@linux.microsoft.com>
+References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
+         <20200923192011.5293-3-tusharsu@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.737
+ definitions=2020-10-22_15:2020-10-20,2020-10-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 spamscore=0 malwarescore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0 phishscore=0
+ adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2010220130
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 22, 2020 at 12:25 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> On Thu, Oct 22, 2020 at 12:04:52PM -0700, Nick Desaulniers wrote:
->
-> > Passing an `unsigned long` as an `unsigned int` does no such
-> > narrowing: https://godbolt.org/z/TvfMxe (same vice-versa, just tail
-> > calls, no masking instructions).
-> > So if rw_copy_check_uvector() is inlined into import_iovec() (looking
-> > at the mainline@1028ae406999), then children calls of
-> > `rw_copy_check_uvector()` will be interpreting the `nr_segs` register
-> > unmodified, ie. garbage in the upper 32b.
->
-> FWIW,
->
-> void f(unsinged long v)
-> {
->         if (v != 1)
->                 printf("failed\n");
-> }
->
-> void g(unsigned int v)
-> {
->         f(v);
-> }
->
-> void h(unsigned long v)
-> {
->         g(v);
-> }
->
-> main()
-> {
->         h(0x100000001);
-> }
+Hi Tushar,
 
-A good/analogous example, but things get weird when the leaf node in
-the call chain is inline asm: https://godbolt.org/z/s19TY5
+On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
+> ima_match_rule_data() permits the func to pass empty func_data.
+> For instance, for the following func, the func_data keyrings= is
+> optional.
+>     measure func=KEY_CHECK keyrings=.ima
+> 
+> But a new func in future may want to constrain the func_data to
+> be non-empty.  ima_match_rule_data() should support this constraint
+> and it shouldn't be hard-coded in ima_match_rule_data().
+> 
+> Update ima_match_rule_data() to conditionally allow empty func_data
+> for the func that needs it.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 
-(I'm not sure that's precisely what's going on here; I'll need to dive
-more into the calls rw_copy_check_uvector() makes to see if there's
-inline asm somewhere, pretty sure calls to get_user with `nr_regs`
-exist).
+Policy rules may constrain what is measured, but that decision should
+be left to the system owner or admin.
 
->
-> must not produce any output on a host with 32bit int and 64bit long, regardless of
-> the inlining, having functions live in different compilation units, etc.
->
-> Depending upon the calling conventions, compiler might do truncation in caller or
-> in a callee, but it must be done _somewhere_.
+Mimi
 
-
-
--- 
-Thanks,
-~Nick Desaulniers
