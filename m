@@ -2,174 +2,119 @@ Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A6FC388F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 08:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50838C5DF9D
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 08:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 944A9223BF
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 08:08:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hyGBvCMF"
+	by mail.kernel.org (Postfix) with ESMTP id 007312419B
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 08:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603355187;
+	bh=dmCNgDGTpNmF+8O2fjJO2XplnMkrwwsAXNmOMHG4kDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=IrQwxBlHbCVXUzMoX1S+W0nNaDiz3WaxYDhP/5AOWrHHcbLhBznzFk/sSpGPgq+Pw
+	 8JFQYq7bZ62ahVIXr35NtmKSm9c80wN2skawd8oRNT7eGBXgXLNdmVjAy7W+aT7Rpy
+	 D1KcmBVcye4mZbM9IHpt+kwCh27wCzDfyLhVNGwY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2442839AbgJVIIG (ORCPT
+        id S2507669AbgJVI0V (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Oct 2020 04:08:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:30365 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2894367AbgJVIFC (ORCPT
+        Thu, 22 Oct 2020 04:26:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56800 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2444122AbgJVI0S (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Oct 2020 04:05:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603353900;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZGO0QiRe3SK8XbObfJueMNzuBhBLo865IU+xMLvpc0g=;
-        b=hyGBvCMFD4WmO4MEaMDGErrS0bU/NSWbMB/yS82QmYmCOClZRKRaEvrT2c9hVmcBIMQ4Go
-        LQ85jGdmSnuEJDWMrh6dsABkeeaBHKUx/sPyHR/yQs+s2avE2Lsh/BA9v2oH8WaUqhIYto
-        mhH2M5vfkSMi4UC0ePmEf9idKc3OSVw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-74-DsQE5tZ4MHukRExVt5o6Lw-1; Thu, 22 Oct 2020 04:04:56 -0400
-X-MC-Unique: DsQE5tZ4MHukRExVt5o6Lw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 22 Oct 2020 04:26:18 -0400
+Received: from localhost (83-86-74-64.cable.dynamic.v4.ziggo.nl [83.86.74.64])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DD17664095;
-        Thu, 22 Oct 2020 08:04:54 +0000 (UTC)
-Received: from [10.36.113.152] (ovpn-113-152.ams2.redhat.com [10.36.113.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AE7CB60BFA;
-        Thu, 22 Oct 2020 08:04:51 +0000 (UTC)
-Subject: Re: [PATCH] mm, hugetlb: Avoid double clearing for hugetlb pages
-To:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>
-Cc:     "Guilherme G. Piccoli" <gpiccoli@canonical.com>,
-        linux-mm@kvack.org, kernel-hardening@lists.openwall.com,
-        linux-hardening@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel@gpiccoli.net,
-        cascardo@canonical.com, Alexander Potapenko <glider@google.com>,
-        James Morris <jamorris@linux.microsoft.com>,
-        Kees Cook <keescook@chromium.org>
-References: <20201019182853.7467-1-gpiccoli@canonical.com>
- <20201020082022.GL27114@dhcp22.suse.cz>
- <9cecd9d9-e25c-4495-50e2-8f7cb7497429@canonical.com>
- <20201021061538.GA23790@dhcp22.suse.cz>
- <0ad2f879-7c72-3eef-5cb6-dee44265eb82@redhat.com>
- <20201021113114.GC23790@dhcp22.suse.cz>
- <7c47c5f1-2d7e-eb7a-b8ce-185d715f5cfe@oracle.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <dc49a38c-7be6-5f32-94f5-0de82ed77b53@redhat.com>
-Date:   Thu, 22 Oct 2020 10:04:50 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ABFB2065D;
+        Thu, 22 Oct 2020 08:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603355177;
+        bh=dmCNgDGTpNmF+8O2fjJO2XplnMkrwwsAXNmOMHG4kDE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zDx/QVbNU8SimNSxRnLGamZjzaL0aYk8447/KE6GRihUCtWhJ6Z86tE/3/Weg2vwC
+         GiWZsECpqwLisbFLZe5yubGxrkvnswusVy8o3gK7vn/eUfbf4ADoW/+TTZixBrP7Y/
+         ZuwgVCa1BoOMrly/6gJ13uZ1QxD/B6i974xOGQS0=
+Date:   Thu, 22 Oct 2020 10:26:54 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        David Laight <David.Laight@aculab.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-aio@kvack.org, io-uring@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        netdev@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201022082654.GA1477657@kroah.com>
+References: <20200925045146.1283714-1-hch@lst.de>
+ <20200925045146.1283714-3-hch@lst.de>
+ <20201021161301.GA1196312@kroah.com>
+ <20201021233914.GR3576660@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <7c47c5f1-2d7e-eb7a-b8ce-185d715f5cfe@oracle.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=david@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201021233914.GR3576660@ZenIV.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 22.10.20 01:32, Mike Kravetz wrote:
-> On 10/21/20 4:31 AM, Michal Hocko wrote:
->> On Wed 21-10-20 11:50:48, David Hildenbrand wrote:
->>> On 21.10.20 08:15, Michal Hocko wrote:
->>>> On Tue 20-10-20 16:19:06, Guilherme G. Piccoli wrote:
->>>>> On 20/10/2020 05:20, Michal Hocko wrote:
->>>>>>
->>>>>> Yes zeroying is quite costly and that is to be expected when the feature
->>>>>> is enabled. Hugetlb like other allocator users perform their own
->>>>>> initialization rather than go through __GFP_ZERO path. More on that
->>>>>> below.
->>>>>>
->>>>>> Could you be more specific about why this is a problem. Hugetlb pool is
->>>>>> usualy preallocatd once during early boot. 24s for 65GB of 2MB pages
->>>>>> is non trivial amount of time but it doens't look like a major disaster
->>>>>> either. If the pool is allocated later it can take much more time due to
->>>>>> memory fragmentation.
->>>>>>
->>>>>> I definitely do not want to downplay this but I would like to hear about
->>>>>> the real life examples of the problem.
->>>>>
->>>>> Indeed, 24s of delay (!) is not so harmful for boot time, but...64G was
->>>>> just my simple test in a guest, the real case is much worse! It aligns
->>>>> with Mike's comment, we have complains of minute-like delays, due to a
->>>>> very big pool of hugepages being allocated.
->>>>
->>>> The cost of page clearing is mostly a constant overhead so it is quite
->>>> natural to see the time scaling with the number of pages. That overhead
->>>> has to happen at some point of time. Sure it is more visible when
->>>> allocating during boot time resp. when doing pre-allocation during
->>>> runtime. The page fault path would be then faster. The overhead just
->>>> moves to a different place. So I am not sure this is really a strong
->>>> argument to hold.
->>>
->>> We have people complaining that starting VMs backed by hugetlbfs takes
->>> too long, they would much rather have that initialization be done when
->>> booting the hypervisor ...
->>
->> I can imagine. Everybody would love to have a free lunch ;) But more
->> seriously, the overhead of the initialization is unavoidable. The memory
->> has to be zeroed out by definition and somebody has to pay for that.
->> Sure one can think of a deferred context to do that but this just
->> spreads  the overhead out to the overall system overhead.
->>
->> Even if the zeroying is done during the allocation time then it is the
->> first user who can benefit from that. Any reuse of the hugetlb pool has
->> to reinitialize again.
+On Thu, Oct 22, 2020 at 12:39:14AM +0100, Al Viro wrote:
+> On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
+> > On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
+> > > From: David Laight <David.Laight@ACULAB.COM>
+> > > 
+> > > This lets the compiler inline it into import_iovec() generating
+> > > much better code.
+> > > 
+> > > Signed-off-by: David Laight <david.laight@aculab.com>
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > > ---
+> > >  fs/read_write.c | 179 ------------------------------------------------
+> > >  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
+> > >  2 files changed, 176 insertions(+), 179 deletions(-)
+> > 
+> > Strangely, this commit causes a regression in Linus's tree right now.
+> > 
+> > I can't really figure out what the regression is, only that this commit
+> > triggers a "large Android system binary" from working properly.  There's
+> > no kernel log messages anywhere, and I don't have any way to strace the
+> > thing in the testing framework, so any hints that people can provide
+> > would be most appreciated.
 > 
-> I remember a conversation with some of our database people who thought
-> it best for their model if hugetlb pages in the pool were already clear
-> so that no initialization was done at fault time.  Of course, this requires
-> clearing at page free time.  In their model, they thought it better to pay
-> the price at allocation (pool creation) time and free time so that faults
-> would be as fast as possible.
+> It's a pure move - modulo changed line breaks in the argument lists
+> the functions involved are identical before and after that (just checked
+> that directly, by checking out the trees before and after, extracting two
+> functions in question from fs/read_write.c and lib/iov_iter.c (before and
+> after, resp.) and checking the diff between those.
 > 
-> I wonder if the VMs backed by hugetlbfs pages would benefit from this
-> behavior as well?
+> How certain is your bisection?
 
-So what VMMs like qemu already do is prealloc/prefault all hugetlbfs
-memory (if told to, because it's not desired when overcommitting memory)
-- relevant for low-latency applications and similar.
+The bisection is very reproducable.
 
-https://github.com/qemu/qemu/blob/67e8498937866b49b513e3acadef985c15f44fb5/util/oslib-posix.c#L561
+But, this looks now to be a compiler bug.  I'm using the latest version
+of clang and if I put "noinline" at the front of the function,
+everything works.
 
-That's why starting a VM backed by a lot of huge pages is slow when
-prefaulting: you wait until everything was zeroed before booting the VM.
+Nick, any ideas here as to who I should report this to?
 
-> 
-> If we track the initialized state (clean or not) of huge pages in the
-> pool as suggested in Michal's skeleton of a patch, we 'could' then allow
-> users to choose when hugetlb page clearing is done.
+I'll work on a fixup patch for the Android kernel tree to see if I can
+work around it there, but others will hit this in Linus's tree sooner or
+later...
 
-Right, in case of QEMU if there are zeroed pages
-a) prealloc would be faster
-b) page faults would be faster
+thanks,
 
-Also we could do hugetlb page clearing from a background thread/process,
-as also mentioned by Michal.
-
-> 
-> None of that would address the original point of this thread, the global
-> init_on_alloc parameter.
-
-Yes, but I guess we're past that: whatever leaves the buddy shall be
-zeroed out. That's the whole point of that security hardening mechanism.
-
-
--- 
-Thanks,
-
-David / dhildenb
-
+greg k-h
