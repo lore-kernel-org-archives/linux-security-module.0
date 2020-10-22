@@ -1,87 +1,85 @@
-Return-Path: <SRS0=8N7l=D4=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=vovI=D5=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C5BC55178
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 23:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C61BDC388F7
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 05:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6732C2415A
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Oct 2020 23:39:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 779912245D
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Oct 2020 05:19:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603343961;
+	bh=AzJmVMo5bUTZn0rWFhmYbe4LLj90dDUn7CorUzcxEE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=h07A68UHXTMcmRGWYbEe7TwXIhur9Wcz5fhs9k21iTPFsEf6Ia+mEMAT6FaLPjn9k
+	 BzUy1C2Tc8rWkVIS/BKyJ3fR3UQMb8Byy3iNCwTLvc7vTecAJYsLl86S1NAgkBGoj3
+	 bofbR3cmMVU/fpwNk2zEBLbCLRrgK+c8TKOapOCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2507154AbgJUXjc (ORCPT
+        id S2507867AbgJVFTR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Oct 2020 19:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439511AbgJUXjc (ORCPT
+        Thu, 22 Oct 2020 01:19:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36076 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437018AbgJVFTR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Oct 2020 19:39:32 -0400
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86217C0613CE;
-        Wed, 21 Oct 2020 16:39:31 -0700 (PDT)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kVNhK-005pSF-DC; Wed, 21 Oct 2020 23:39:14 +0000
-Date:   Thu, 22 Oct 2020 00:39:14 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, kernel-team@android.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        David Laight <David.Laight@aculab.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-aio@kvack.org, io-uring@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-mm@kvack.org,
-        netdev@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Message-ID: <20201021233914.GR3576660@ZenIV.linux.org.uk>
-References: <20200925045146.1283714-1-hch@lst.de>
- <20200925045146.1283714-3-hch@lst.de>
- <20201021161301.GA1196312@kroah.com>
+        Thu, 22 Oct 2020 01:19:17 -0400
+Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA3542145D;
+        Thu, 22 Oct 2020 05:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603343956;
+        bh=AzJmVMo5bUTZn0rWFhmYbe4LLj90dDUn7CorUzcxEE0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=A45eiXQDEQHZSU3qpky+Lib6UIb+r/i7Io8YwYs0B0N0wtY8+fW9CC7zasD5z/b2U
+         hLnwSi4FiSS8IbbXeQQOlDtvQeaIQag0rD+cH27MlkejR2+1g9Ba37jC/kDL51fLnx
+         sVHVYhNITgwH/G+25LRO9jR5TzzqWxN4Xdz4bb2M=
+Date:   Wed, 21 Oct 2020 22:19:14 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Mark Salyzyn <salyzyn@android.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [RESEND PATCH v18 0/4] overlayfs override_creds=off & nested get
+ xattr fix
+Message-ID: <20201022051914.GI857@sol.localdomain>
+References: <20201021151903.652827-1-salyzyn@android.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201021161301.GA1196312@kroah.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20201021151903.652827-1-salyzyn@android.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Oct 21, 2020 at 06:13:01PM +0200, Greg KH wrote:
-> On Fri, Sep 25, 2020 at 06:51:39AM +0200, Christoph Hellwig wrote:
-> > From: David Laight <David.Laight@ACULAB.COM>
-> > 
-> > This lets the compiler inline it into import_iovec() generating
-> > much better code.
-> > 
-> > Signed-off-by: David Laight <david.laight@aculab.com>
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  fs/read_write.c | 179 ------------------------------------------------
-> >  lib/iov_iter.c  | 176 +++++++++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 176 insertions(+), 179 deletions(-)
+On Wed, Oct 21, 2020 at 08:18:59AM -0700, Mark Salyzyn wrote:
+> Mark Salyzyn (3):
+>   Add flags option to get xattr method paired to __vfs_getxattr
+>   overlayfs: handle XATTR_NOSECURITY flag for get xattr method
+>   overlayfs: override_creds=off option bypass creator_cred
 > 
-> Strangely, this commit causes a regression in Linus's tree right now.
+> Mark Salyzyn + John Stultz (1):
+>   overlayfs: inode_owner_or_capable called during execv
 > 
-> I can't really figure out what the regression is, only that this commit
-> triggers a "large Android system binary" from working properly.  There's
-> no kernel log messages anywhere, and I don't have any way to strace the
-> thing in the testing framework, so any hints that people can provide
-> would be most appreciated.
+> The first three patches address fundamental security issues that should
+> be solved regardless of the override_creds=off feature.
+> 
+> The fourth adds the feature depends on these other fixes.
 
-It's a pure move - modulo changed line breaks in the argument lists
-the functions involved are identical before and after that (just checked
-that directly, by checking out the trees before and after, extracting two
-functions in question from fs/read_write.c and lib/iov_iter.c (before and
-after, resp.) and checking the diff between those.
+FYI, I didn't receive patch 4, and neither https://lkml.kernel.org/linux-fsdevel
+nor https://lkml.kernel.org/linux-unionfs have it either.
 
-How certain is your bisection?
+- Eric
