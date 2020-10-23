@@ -2,101 +2,101 @@ Return-Path: <SRS0=sNlH=D6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A189CC388F9
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 17:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CC6C5DF9E
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 17:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 499F92192A
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 17:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603475883;
-	bh=SyoSo3J4ke+4ThtJXuRUjaWCwMN0NTnuNJkXWI/AUVQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=W2wMQWH3CjB/iUJuFsi4nxXUVvEjP9wv9oCwrG0ogN894HtIQNHo5DGeJpoha52e7
-	 dmMn6qyGKODxepdzwZ3oBpNoEjhEY8mPlukj6V/N0YLK9M5RuSKxWG6NHq0TZlO+jm
-	 RIOrOi4kZF31uO6lX4OLfwTMgbhZVO4ypMg2Dq0I=
+	by mail.kernel.org (Postfix) with ESMTP id 21080241A3
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 17:59:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754047AbgJWR6C (ORCPT
+        id S1754059AbgJWR7P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Oct 2020 13:58:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
+        Fri, 23 Oct 2020 13:59:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S370201AbgJWR6B (ORCPT
+        with ESMTP id S463587AbgJWR7O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Oct 2020 13:58:01 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F01C0613CE
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 10:58:00 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id 77so3130403lfl.2
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 10:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7OND/0ZMqlDSvX9CBDIIXY1Bnl1QNzB/WvdK3N8e5bc=;
-        b=J4OytyOSN6yYKcMTq6lD3LKXaUzglar8AQOy3mU8H66JZTZN9U/2mpy/SLnt6doik/
-         OBBnUArLrtHD5UVK7Aq9EI4ZihGemkOPAtCAA0wsOWpEjFbOkmALpCir2KcmOiIHOIDE
-         FR9LBu9ye+FNEYsajxe2d7pKLF6/61uC+2tz4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7OND/0ZMqlDSvX9CBDIIXY1Bnl1QNzB/WvdK3N8e5bc=;
-        b=haHySZUyZ1IZ4qctDhkgw7TIzXYnDnblXxQ0oOcrwiz9/m6OAgChRazlUTZMCclUm0
-         Iv68giQ7mUm5xiJYwMWVA/+KCIsyud8oV51RNySmxlK6tJYzuEJqRFpPtJ/hGhbCryrE
-         VG84aSvoR2XZM2eySCO2yNoW8E1mCQ0JZ8D9nOR/ShJrvAN1l05p8vqDbGWX5LOkG5kf
-         wbjAomes+Fqf0gJ4YjiWT0ypznoye9bpPlUDPWqBhdTW6Ojo9syOiELyTY/Ve2aBZMBO
-         h8ASFqCFNvy+38+CXjrlLZlulPWgkuj63gZKacgaBzUmRzt03KqRWAB2KidgMB0/D2EX
-         yzwg==
-X-Gm-Message-State: AOAM531SU4gUD9kPIdO/QI4CBACdK6dfz5Z6ZuulVCDv6GazxA2V615j
-        kZjpFGpsuRgEDH90A7VKpGalowPVefIhgg==
-X-Google-Smtp-Source: ABdhPJwsrJTZUk5f1S49ifWfcwnf07c22+kn1RUhzPORsBNUviSS1+sgRbGfa3XKcq+VsqwVCCfPvQ==
-X-Received: by 2002:a19:2408:: with SMTP id k8mr1237581lfk.80.1603475878261;
-        Fri, 23 Oct 2020 10:57:58 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id 184sm199981lfh.232.2020.10.23.10.57.56
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Oct 2020 10:57:57 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id y16so2491124ljk.1
-        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 10:57:56 -0700 (PDT)
-X-Received: by 2002:a2e:87d2:: with SMTP id v18mr1269612ljj.371.1603475876643;
- Fri, 23 Oct 2020 10:57:56 -0700 (PDT)
+        Fri, 23 Oct 2020 13:59:14 -0400
+Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6B0DC0613CE;
+        Fri, 23 Oct 2020 10:59:13 -0700 (PDT)
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kW1L7-00749v-U5; Fri, 23 Oct 2020 17:58:58 +0000
+Date:   Fri, 23 Oct 2020 18:58:57 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     David Laight <David.Laight@aculab.com>,
+        'Greg KH' <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201023175857.GA3576660@ZenIV.linux.org.uk>
+References: <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022104805.GA1503673@kroah.com>
+ <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com>
+ <20201022135036.GA1787470@kroah.com>
+ <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
 MIME-Version: 1.0
-References: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
- <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com> <CAJ-EccPLAD5TGg=KQ-m54ymrVdd++Dg7A_UR+v535iOVRsDe4w@mail.gmail.com>
-In-Reply-To: <CAJ-EccPLAD5TGg=KQ-m54ymrVdd++Dg7A_UR+v535iOVRsDe4w@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 23 Oct 2020 10:57:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi_BD0OVHgj09kKgiuwyrth3ora_ZgLznW_q-+z-BR=3w@mail.gmail.com>
-Message-ID: <CAHk-=wi_BD0OVHgj09kKgiuwyrth3ora_ZgLznW_q-+z-BR=3w@mail.gmail.com>
-Subject: Re: [GIT PULL] SafeSetID changes for v5.10
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 15, 2020 at 5:01 PM Micah Morton <mortonm@chromium.org> wrote:
->
-> I just rebased to v5.9 to make sure the 1-line changes that touch
-> kernel/capability.c, kernel/groups.c and kernel/sys.c still applied
-> cleanly without conflicts. Should I have rebased onto one of the -rc's
-> for v5.9 instead?
+On Fri, Oct 23, 2020 at 03:09:30PM +0200, David Hildenbrand wrote:
 
-No. You shouldn't have rebased at all.
+> Now, I am not a compiler expert, but as I already cited, at least on
+> x86-64 clang expects that the high bits were cleared by the caller - in
+> contrast to gcc. I suspect it's the same on arm64, but again, I am no
+> compiler expert.
+> 
+> If what I said and cites for x86-64 is correct, if the function expects
+> an "unsigned int", it will happily use 64bit operations without further
+> checks where valid when assuming high bits are zero. That's why even
+> converting everything to "unsigned int" as proposed by me won't work on
+> clang - it assumes high bits are zero (as indicated by Nick).
+> 
+> As I am neither a compiler experts (did I mention that already? ;) ) nor
+> an arm64 experts, I can't tell if this is a compiler BUG or not.
 
-Making sure something applies cleanly is simply not a reason to rebase.
-
-See
-
-  Documentation/maintainer/rebasing-and-merging.rst
-
-for some common rules.
-
-             Linus
+On arm64 when callee expects a 32bit argument, the caller is *not* responsible
+for clearing the upper half of 64bit register used to pass the value - it only
+needs to store the actual value into the lower half.  The callee must consider
+the contents of the upper half of that register as undefined.  See AAPCS64 (e.g.
+https://github.com/ARM-software/abi-aa/blob/master/aapcs64/aapcs64.rst#parameter-passing-rules
+); AFAICS, the relevant bit is
+	"Unlike in the 32-bit AAPCS, named integral values must be narrowed by
+the callee rather than the caller."
