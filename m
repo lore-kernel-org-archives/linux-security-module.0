@@ -2,148 +2,101 @@ Return-Path: <SRS0=sNlH=D6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DECC56201
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 16:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A189CC388F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 17:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A356241A4
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 16:33:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jCYqKvBk"
+	by mail.kernel.org (Postfix) with ESMTP id 499F92192A
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 17:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603475883;
+	bh=SyoSo3J4ke+4ThtJXuRUjaWCwMN0NTnuNJkXWI/AUVQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=W2wMQWH3CjB/iUJuFsi4nxXUVvEjP9wv9oCwrG0ogN894HtIQNHo5DGeJpoha52e7
+	 dmMn6qyGKODxepdzwZ3oBpNoEjhEY8mPlukj6V/N0YLK9M5RuSKxWG6NHq0TZlO+jm
+	 RIOrOi4kZF31uO6lX4OLfwTMgbhZVO4ypMg2Dq0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S465822AbgJWQdY (ORCPT
+        id S1754047AbgJWR6C (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Oct 2020 12:33:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41438 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751788AbgJWQdQ (ORCPT
+        Fri, 23 Oct 2020 13:58:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34046 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S370201AbgJWR6B (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Oct 2020 12:33:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603470795;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qFpT9rw9kU+fUUj5fb7jig81eZVzobxvui7gAjawuH0=;
-        b=jCYqKvBkG2GdjY1DUZF5NWtsiGLJ9YC9z4syTQqWdOsQP24r17aal+fMLECtc6M16OeA+H
-        sJO1g/XAwINGnDOdywtyqoFs750it4J40vpWJkXU1aCWX1qtF/ZzR2f9esOsXxjH+N2ZKl
-        6mB4s7bi6imBga23sFFsjcyTuCrAh2s=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-42-mE4iRpoaPm6zGEfodl9TZg-1; Fri, 23 Oct 2020 12:33:11 -0400
-X-MC-Unique: mE4iRpoaPm6zGEfodl9TZg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 47449108E1B2;
-        Fri, 23 Oct 2020 16:33:07 +0000 (UTC)
-Received: from [10.36.114.18] (ovpn-114-18.ams2.redhat.com [10.36.114.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 139D160BFA;
-        Fri, 23 Oct 2020 16:33:00 +0000 (UTC)
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-To:     'Greg KH' <gregkh@linuxfoundation.org>,
-        David Laight <David.Laight@aculab.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
- <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
- <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
- <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
- <20201023144718.GA2525489@kroah.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <52fe0398-02be-33fb-3a64-e394cc819b60@redhat.com>
-Date:   Fri, 23 Oct 2020 18:33:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
+        Fri, 23 Oct 2020 13:58:01 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F01C0613CE
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 10:58:00 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id 77so3130403lfl.2
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 10:57:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7OND/0ZMqlDSvX9CBDIIXY1Bnl1QNzB/WvdK3N8e5bc=;
+        b=J4OytyOSN6yYKcMTq6lD3LKXaUzglar8AQOy3mU8H66JZTZN9U/2mpy/SLnt6doik/
+         OBBnUArLrtHD5UVK7Aq9EI4ZihGemkOPAtCAA0wsOWpEjFbOkmALpCir2KcmOiIHOIDE
+         FR9LBu9ye+FNEYsajxe2d7pKLF6/61uC+2tz4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7OND/0ZMqlDSvX9CBDIIXY1Bnl1QNzB/WvdK3N8e5bc=;
+        b=haHySZUyZ1IZ4qctDhkgw7TIzXYnDnblXxQ0oOcrwiz9/m6OAgChRazlUTZMCclUm0
+         Iv68giQ7mUm5xiJYwMWVA/+KCIsyud8oV51RNySmxlK6tJYzuEJqRFpPtJ/hGhbCryrE
+         VG84aSvoR2XZM2eySCO2yNoW8E1mCQ0JZ8D9nOR/ShJrvAN1l05p8vqDbGWX5LOkG5kf
+         wbjAomes+Fqf0gJ4YjiWT0ypznoye9bpPlUDPWqBhdTW6Ojo9syOiELyTY/Ve2aBZMBO
+         h8ASFqCFNvy+38+CXjrlLZlulPWgkuj63gZKacgaBzUmRzt03KqRWAB2KidgMB0/D2EX
+         yzwg==
+X-Gm-Message-State: AOAM531SU4gUD9kPIdO/QI4CBACdK6dfz5Z6ZuulVCDv6GazxA2V615j
+        kZjpFGpsuRgEDH90A7VKpGalowPVefIhgg==
+X-Google-Smtp-Source: ABdhPJwsrJTZUk5f1S49ifWfcwnf07c22+kn1RUhzPORsBNUviSS1+sgRbGfa3XKcq+VsqwVCCfPvQ==
+X-Received: by 2002:a19:2408:: with SMTP id k8mr1237581lfk.80.1603475878261;
+        Fri, 23 Oct 2020 10:57:58 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 184sm199981lfh.232.2020.10.23.10.57.56
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Oct 2020 10:57:57 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id y16so2491124ljk.1
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 10:57:56 -0700 (PDT)
+X-Received: by 2002:a2e:87d2:: with SMTP id v18mr1269612ljj.371.1603475876643;
+ Fri, 23 Oct 2020 10:57:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201023144718.GA2525489@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+References: <CAJ-EccOQxDjSgUL0AsCywoKDbOUNWDyxCKHQc+s6+ZemUh9Uzw@mail.gmail.com>
+ <CAHk-=wg3kHxMP67XmQyCg7J+KfFgAsQqj1goUa3dKR-A812ZbA@mail.gmail.com> <CAJ-EccPLAD5TGg=KQ-m54ymrVdd++Dg7A_UR+v535iOVRsDe4w@mail.gmail.com>
+In-Reply-To: <CAJ-EccPLAD5TGg=KQ-m54ymrVdd++Dg7A_UR+v535iOVRsDe4w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 23 Oct 2020 10:57:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi_BD0OVHgj09kKgiuwyrth3ora_ZgLznW_q-+z-BR=3w@mail.gmail.com>
+Message-ID: <CAHk-=wi_BD0OVHgj09kKgiuwyrth3ora_ZgLznW_q-+z-BR=3w@mail.gmail.com>
+Subject: Re: [GIT PULL] SafeSetID changes for v5.10
+To:     Micah Morton <mortonm@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 23.10.20 16:47, 'Greg KH' wrote:
-> On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
->> From: David Hildenbrand
->>> Sent: 23 October 2020 15:33
->> ...
->>> I just checked against upstream code generated by clang 10 and it
->>> properly discards the upper 32bit via a mov w23 w2.
->>>
->>> So at least clang 10 indeed properly assumes we could have garbage and
->>> masks it off.
->>>
->>> Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
->>> behaves differently.
->>
->> We'll need the disassembly from a failing kernel image.
->> It isn't that big to hand annotate.
-> 
-> I've worked around the merge at the moment in the android tree, but it
-> is still quite reproducable, and will try to get a .o file to
-> disassemble on Monday or so...
+On Thu, Oct 15, 2020 at 5:01 PM Micah Morton <mortonm@chromium.org> wrote:
+>
+> I just rebased to v5.9 to make sure the 1-line changes that touch
+> kernel/capability.c, kernel/groups.c and kernel/sys.c still applied
+> cleanly without conflicts. Should I have rebased onto one of the -rc's
+> for v5.9 instead?
 
-I just compiled pre and post fb041b598997d63c0f7d7305dfae70046bf66fe1 with
+No. You shouldn't have rebased at all.
 
-clang version 11.0.0 (Fedora 11.0.0-0.2.rc1.fc33)
+Making sure something applies cleanly is simply not a reason to rebase.
 
-for aarch64 with defconfig and extracted import_iovec and
-rw_copy_check_uvector (skipping the compat things)
+See
 
-Pre fb041b598997d63c0f7d7305dfae70046bf66fe1 import_iovec
--> https://pastebin.com/LtnYMLJt
-Post fb041b598997d63c0f7d7305dfae70046bf66fe1 import_iovec
--> https://pastebin.com/BWPmXrAf
-Pre fb041b598997d63c0f7d7305dfae70046bf66fe1 rw_copy_check_uvector
--> https://pastebin.com/4nSBYRbf
-Post fb041b598997d63c0f7d7305dfae70046bf66fe1 rw_copy_check_uvector
--> https://pastebin.com/hPtEgaEW
+  Documentation/maintainer/rebasing-and-merging.rst
 
-I'm only able to spot minor differences ... less gets inlined than I
-would have expected. But there are some smaller differences.
+for some common rules.
 
-Maybe someone wants to have a look before we have object files as used
-by Greg ...
-
--- 
-Thanks,
-
-David / dhildenb
-
+             Linus
