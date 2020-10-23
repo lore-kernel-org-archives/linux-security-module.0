@@ -2,88 +2,117 @@ Return-Path: <SRS0=sNlH=D6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AB0C388F9
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 10:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BF3C388F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 12:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E52E524248
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 10:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE057221F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 12:46:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S462010AbgJWKRu (ORCPT
+        id S464015AbgJWMqq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Oct 2020 06:17:50 -0400
-Received: from mga01.intel.com ([192.55.52.88]:25468 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S461988AbgJWKRu (ORCPT
+        Fri, 23 Oct 2020 08:46:46 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:37259 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S464011AbgJWMqm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Oct 2020 06:17:50 -0400
-IronPort-SDR: A8IA4UzmUDifyKHjT85CA9A59uVoaWk+N+/+FxmIknTZTDFN1QNAijcF0Dqdv+7IP64eEHPYX0
- 4GE5UbZXcbBQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9782"; a="185352567"
-X-IronPort-AV: E=Sophos;i="5.77,407,1596524400"; 
-   d="scan'208";a="185352567"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 03:17:47 -0700
-IronPort-SDR: 8R2W1v3NGVDW9ZLWYANyBw7bz22goQZILHJf34zh6h07eJo3OMc2zb6OFpHq7BgJQerIu0fPAg
- BfizRXJhv4OA==
-X-IronPort-AV: E=Sophos;i="5.77,407,1596524400"; 
-   d="scan'208";a="302629463"
-Received: from spiccard-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.41.38])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2020 03:17:35 -0700
-Date:   Fri, 23 Oct 2020 13:17:36 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-Message-ID: <20201023101736.GG168477@linux.intel.com>
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
- <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com>
+        Fri, 23 Oct 2020 08:46:42 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-256-SaM_0Qo5N_as2A7LuQL-Wg-1; Fri, 23 Oct 2020 13:46:37 +0100
+X-MC-Unique: SaM_0Qo5N_as2A7LuQL-Wg-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 23 Oct 2020 13:46:36 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 23 Oct 2020 13:46:36 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Greg KH' <gregkh@linuxfoundation.org>,
+        David Hildenbrand <david@redhat.com>
+CC:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12A=
+Date:   Fri, 23 Oct 2020 12:46:36 +0000
+Message-ID: <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+References: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
+ <20201022090155.GA1483166@kroah.com>
+ <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
+ <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
+ <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
+ <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
+ <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
+In-Reply-To: <20201022135036.GA1787470@kroah.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
-> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
-> > + * Failure to explicitly request access to a restricted attribute will cause
-> > + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> > + * is access to the PROVISION_KEY.
-> 
-> Could we also justify why access is restricted, please?  Maybe:
-> 
-> 	Access is restricted because PROVISION_KEY is burned uniquely
-> 	into each each processor, making it a perfect unique identifier
-> 	with privacy and fingerprinting implications.
-> 
-> Are there any other reasons for doing it this way?
+From: Greg KH <gregkh@linuxfoundation.org>
+> Sent: 22 October 2020 14:51
 
-AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
-PROVISION_SEALING_KEY also have random salt added, i.e. they change
-every boot cycle.
+I've rammed the code into godbolt.
 
-There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
-3D :-)
+https://godbolt.org/z/9v5PPW
 
-/Jarkko
+Definitely a clang bug.
+
+Search for [wx]24 in the clang output.
+nr_segs comes in as w2 and the initial bound checks are done on w2.
+w24 is loaded from w2 - I don't believe this changes the high bits.
+There are no references to w24, just x24.
+So the kmalloc_array() is passed 'huge' and will fail.
+The iov_iter_init also gets the 64bit value.
+
+Note that the gcc code has a sign-extend copy of w2.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
