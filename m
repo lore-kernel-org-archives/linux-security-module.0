@@ -2,154 +2,107 @@ Return-Path: <SRS0=sNlH=D6=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DDEC388F9
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 14:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367A5C4363A
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 14:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6C6C21D47
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 14:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E09C521527
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 14:38:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RgZTviaS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c7XREw+q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1750629AbgJWOdZ (ORCPT
+        id S1750670AbgJWOiG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Oct 2020 10:33:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:36353 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S371408AbgJWOdT (ORCPT
+        Fri, 23 Oct 2020 10:38:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750669AbgJWOiG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Oct 2020 10:33:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1603463597;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CNcKkabSWjxdlB9if9c65y0HaLkS2aARxhdVq9CbB84=;
-        b=RgZTviaSdR7S1v4WSyKdNXpiKR0I4cepr4PlzBtm5onpd8D7rJQRtG2Kp+M+5C3QH071E2
-        7TdyG7+xrdM3VPZ/s0rd0RzlvJXgV5gVAdxhqJrdLC4Fz40jeglMuAEkWekJR4eVPuIISS
-        WKns5e8z61xA4dR83ldxpS/D5/c9cbI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-106-GwdqF8yrPV2_n9bqFnB1rQ-1; Fri, 23 Oct 2020 10:33:12 -0400
-X-MC-Unique: GwdqF8yrPV2_n9bqFnB1rQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8331C804B6A;
-        Fri, 23 Oct 2020 14:33:09 +0000 (UTC)
-Received: from [10.36.114.18] (ovpn-114-18.ams2.redhat.com [10.36.114.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 44FD05D9CC;
-        Fri, 23 Oct 2020 14:33:04 +0000 (UTC)
-Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-From:   David Hildenbrand <david@redhat.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        'Greg KH' <gregkh@linuxfoundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <df2e0758-b8ed-5aec-6adc-a18f499c0179@redhat.com>
- <20201022090155.GA1483166@kroah.com>
- <e04d0c5d-e834-a15b-7844-44dcc82785cc@redhat.com>
- <a1533569-948a-1d5b-e231-5531aa988047@redhat.com>
- <bc0a091865f34700b9df332c6e9dcdfd@AcuMS.aculab.com>
- <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
- <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
-Organization: Red Hat GmbH
-Message-ID: <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
-Date:   Fri, 23 Oct 2020 16:33:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.1
-MIME-Version: 1.0
-In-Reply-To: <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Fri, 23 Oct 2020 10:38:06 -0400
+Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD50C0613CE
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 07:38:04 -0700 (PDT)
+Received: by mail-ej1-x64a.google.com with SMTP id u6so689208eju.4
+        for <linux-security-module@vger.kernel.org>; Fri, 23 Oct 2020 07:38:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=lkEB5UgnL0/uPcgIYsa2/tgtKu7y0Eqzyava6I7oLiI=;
+        b=c7XREw+qDm952frBEd1Y9tIboC4bfaP4Zgp7XLkn0yoy4EkmBwBjwP2z/9DdYzkwT3
+         zHtkNpQUd+hmLIetiomEJd7WV/bp7Ji16StKNtTp55rgmhb2terYQFgi9fZUUBQ1cwTo
+         spM7VCPZ8MUYQ4L4LvHG2kMYdfhcGdbkaqYIhXiEUuQxW2kjgyVtJ9OV+17z8DHadKDj
+         or4txTajI+dWJp+AxaifAPlVXhP/0LSKoY0E5lHDcSZ54q+ToYC2cMeutanF4hi3cguj
+         J1inMrFMJniOIDSpgOiBDMmylpYGYsFjG+TQpuphDPcqk9adr75UtP88tU9DkvhZSxOj
+         Z8Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=lkEB5UgnL0/uPcgIYsa2/tgtKu7y0Eqzyava6I7oLiI=;
+        b=OfjtUmCmVtdICkcnBxTAm64Gb+hu6lHauI6Un872oWOV7cE3clZVgiPkewnb/edarZ
+         JJrAjpmMnss6xvrw6J+zikWoN6OKoKW6oWecTdpNTi/v6pTZBY1G/I0nkaYXM43wuPmp
+         JW1IQvCzxJgMYUfElZHu/2qTeR+nLeXYvAQUS/gggHshzw1KgZL6/aAMJA/BhAMDt04c
+         psTj/ZJc5lnlzTFvv+c/e1yy6oQuQOktHFISqNEaf0Fcxwvx8LytTvo3sNZoJf8GVxYg
+         ujBZZIo/QftwxXumXb6faBiq59m5V31lfZLCzvWXUAuMdgT3sg4pdCCgH26yt3gsAOwz
+         82pw==
+X-Gm-Message-State: AOAM531KVrlV71j12sR9sECUYSsWxwqj7SqZIv9kxiTB7E0Y3ZlOibzD
+        d/FtZZ+SvDUvEC4MG/Dd29mKGxt4BQ==
+X-Google-Smtp-Source: ABdhPJxi7fxPgwdq8S9rEeUOz5dR2CdJ3XjVEKldqIhMVLe36M+aTiYHGWQq18i6VY1NPQK5+trkypnA5Q==
+Sender: "jeffv via sendgmr" <jeffv@jeffv-p920.zrh.corp.google.com>
+X-Received: from jeffv-p920.zrh.corp.google.com ([2a00:79e0:61:100:f693:9fff:fef4:a4e3])
+ (user=jeffv job=sendgmr) by 2002:a17:906:5488:: with SMTP id
+ r8mr2181106ejo.483.1603463881866; Fri, 23 Oct 2020 07:38:01 -0700 (PDT)
+Date:   Fri, 23 Oct 2020 16:37:57 +0200
+Message-Id: <20201023143757.377574-1-jeffv@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.0.rc2.309.g374f81d7ae-goog
+Subject: [PATCH] vsock: use ns_capable_noaudit() on socket create
+From:   Jeff Vander Stoep <jeffv@google.com>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     linux-security-module@vger.kernel.org,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Roman Kiryanov <rkir@google.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 23.10.20 15:09, David Hildenbrand wrote:
-> On 23.10.20 14:46, David Laight wrote:
->> From: Greg KH <gregkh@linuxfoundation.org>
->>> Sent: 22 October 2020 14:51
->>
->> I've rammed the code into godbolt.
->>
->> https://godbolt.org/z/9v5PPW
->>
->> Definitely a clang bug.
->>
->> Search for [wx]24 in the clang output.
->> nr_segs comes in as w2 and the initial bound checks are done on w2.
->> w24 is loaded from w2 - I don't believe this changes the high bits.
->> There are no references to w24, just x24.
->> So the kmalloc_array() is passed 'huge' and will fail.
->> The iov_iter_init also gets the 64bit value.
->>
->> Note that the gcc code has a sign-extend copy of w2.
-> 
-> Do we have a result from using "unsigned long" in the base function and
-> explicitly masking of the high bits? That should definitely work.
-> 
-> Now, I am not a compiler expert, but as I already cited, at least on
-> x86-64 clang expects that the high bits were cleared by the caller - in
-> contrast to gcc. I suspect it's the same on arm64, but again, I am no
-> compiler expert.
-> 
-> If what I said and cites for x86-64 is correct, if the function expects
-> an "unsigned int", it will happily use 64bit operations without further
-> checks where valid when assuming high bits are zero. That's why even
-> converting everything to "unsigned int" as proposed by me won't work on
-> clang - it assumes high bits are zero (as indicated by Nick).
-> 
-> As I am neither a compiler experts (did I mention that already? ;) ) nor
-> an arm64 experts, I can't tell if this is a compiler BUG or not.
-> 
+During __vsock_create() CAP_NET_ADMIN is used to determine if the
+vsock_sock->trusted should be set to true. This value is used later
+for determing if a remote connection should be allowed to connect
+to a restricted VM. Unfortunately, if the caller doesn't have
+CAP_NET_ADMIN, an audit message such as an selinux denial is
+generated even if the caller does not want a trusted socket.
 
-I just checked against upstream code generated by clang 10 and it
-properly discards the upper 32bit via a mov w23 w2.
+Logging errors on success is confusing. To avoid this, switch the
+capable(CAP_NET_ADMIN) check to the noaudit version.
 
-So at least clang 10 indeed properly assumes we could have garbage and
-masks it off.
+Reported-by: Roman Kiryanov <rkir@google.com>
+https://android-review.googlesource.com/c/device/generic/goldfish/+/1468545/
+Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
+---
+ net/vmw_vsock/af_vsock.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
-behaves differently.
-
+diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+index 9e93bc201cc0..b4d7b8aba003 100644
+--- a/net/vmw_vsock/af_vsock.c
++++ b/net/vmw_vsock/af_vsock.c
+@@ -739,7 +739,7 @@ static struct sock *__vsock_create(struct net *net,
+ 		vsk->buffer_min_size = psk->buffer_min_size;
+ 		vsk->buffer_max_size = psk->buffer_max_size;
+ 	} else {
+-		vsk->trusted = capable(CAP_NET_ADMIN);
++		vsk->trusted = ns_capable_noaudit(&init_user_ns, CAP_NET_ADMIN);
+ 		vsk->owner = get_current_cred();
+ 		vsk->connect_timeout = VSOCK_DEFAULT_CONNECT_TIMEOUT;
+ 		vsk->buffer_size = VSOCK_DEFAULT_BUFFER_SIZE;
 -- 
-Thanks,
-
-David / dhildenb
+2.29.0.rc2.309.g374f81d7ae-goog
 
