@@ -2,147 +2,117 @@ Return-Path: <SRS0=e8ja=D7=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A1DC55178
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A06E7C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 17:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BBF822272
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 15:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603554463;
-	bh=WmBbNWhHP6TeR2O/n2ZYBhpmL2kj6x0530LgA41pBKw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=HLd9Fdl71fjr0QG4dfqj342ix3vMIijk3By0NViD+Eh9XXLxdXTyeIyVAEzwnon1U
-	 HBFRlJe9PI0VQYVTm9ZxBkmN1YBqjVAtXYVOjev2imCANrKg9uNw0uJ6gHI0Wn8sE8
-	 0/7dRIY03+i9DWSb6xhonHEqYutageyU+Bnj0Lww=
+	by mail.kernel.org (Postfix) with ESMTP id 7831F21D81
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 17:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1760499AbgJXPrn (ORCPT
+        id S1762625AbgJXRgr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Oct 2020 11:47:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39380 "EHLO mail.kernel.org"
+        Sat, 24 Oct 2020 13:36:47 -0400
+Received: from gate.crashing.org ([63.228.1.57]:45310 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1760496AbgJXPrm (ORCPT
+        id S1762594AbgJXRgo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Oct 2020 11:47:42 -0400
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9B302465B
-        for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2020 15:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603554461;
-        bh=WmBbNWhHP6TeR2O/n2ZYBhpmL2kj6x0530LgA41pBKw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=keAX3JyrVGeWCh4O0UK3bqb/02ZgWb21rzgkBm430SkpsQ2O8zl4wdJdGLIR3HEaH
-         1XgNNgR+6gyngZnwg0bsYTUwUpaGInHS4aCdKwQxElrqVeSf9fT/F9+zZXIuAg8RrA
-         1ozsKiWmezEyo6wt30lhB9MF8yTV9oJuVHxiNT0o=
-Received: by mail-wm1-f47.google.com with SMTP id d78so5564719wmd.3
-        for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2020 08:47:41 -0700 (PDT)
-X-Gm-Message-State: AOAM531Snk0oEHNRxcvwAGRQ7vjlONrspdPzNczdSipbQ6lkcD/0/pCb
-        vmZUDx3G2avcQoyW9HQwrNhro9BE4OjqKl/ePNGnLQ==
-X-Google-Smtp-Source: ABdhPJx3gfZuk8J+485eHiKQKMeyXKMTChdcl4yaJniTwMIJ9YG/WwrAwXc3p7BhtWAh9QyxeWRFcpmCPDNx/HpgFWQ=
-X-Received: by 2002:a05:600c:2241:: with SMTP id a1mr7968642wmm.49.1603554460057;
- Sat, 24 Oct 2020 08:47:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
- <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
- <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com> <20201023101736.GG168477@linux.intel.com>
- <f2ff64e6-8fe1-55ee-ae7c-f19d7907d60e@intel.com> <20201024113403.GA29427@kernel.org>
-In-Reply-To: <20201024113403.GA29427@kernel.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 24 Oct 2020 08:47:28 -0700
-X-Gmail-Original-Message-ID: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
-Message-ID: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
-Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-To:     Jarkko Sakkinen <kernel.org@kernel.org>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
+        Sat, 24 Oct 2020 13:36:44 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 09OHTAUE029400;
+        Sat, 24 Oct 2020 12:29:10 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id 09OHT4g2029397;
+        Sat, 24 Oct 2020 12:29:04 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Sat, 24 Oct 2020 12:29:03 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        David Hildenbrand <david@redhat.com>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "'Greg KH'" <gregkh@linuxfoundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        asapek@google.com, Borislav Petkov <bp@alien8.de>,
-        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
-        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
-        "Huang, Haitao" <haitao.huang@intel.com>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
-        Christian Ludloff <ludloff@google.com>,
-        Neil Horman <nhorman@redhat.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Patrick Uiterwijk <puiterwijk@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
-        Mikko Ylinen <mikko.ylinen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move rw_copy_check_uvector() into lib/iov_iter.c"
+Message-ID: <20201024172903.GK2672@gate.crashing.org>
+References: <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com> <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com> <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com> <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com> <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com> <20201023175857.GA3576660@ZenIV.linux.org.uk> <20201023182713.GG2672@gate.crashing.org> <e9a3136ead214186877804aabde74b38@AcuMS.aculab.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9a3136ead214186877804aabde74b38@AcuMS.aculab.com>
+User-Agent: Mutt/1.4.2.3i
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Oct 24, 2020 at 4:34 AM Jarkko Sakkinen <kernel.org@kernel.org> wrote:
->
-> On Fri, Oct 23, 2020 at 07:19:05AM -0700, Dave Hansen wrote:
-> > On 10/23/20 3:17 AM, Jarkko Sakkinen wrote:
-> > > On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
-> > >> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
-> > >>> + * Failure to explicitly request access to a restricted attribute will cause
-> > >>> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> > >>> + * is access to the PROVISION_KEY.
-> > >> Could we also justify why access is restricted, please?  Maybe:
-> > >>
-> > >>    Access is restricted because PROVISION_KEY is burned uniquely
-> > >>    into each each processor, making it a perfect unique identifier
-> > >>    with privacy and fingerprinting implications.
-> > >>
-> > >> Are there any other reasons for doing it this way?
-> > > AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
-> > > PROVISION_SEALING_KEY also have random salt added, i.e. they change
-> > > every boot cycle.
-> > >
-> > > There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
-> > > 3D :-)
-> >
-> > Does that mean there are no privacy implications from access to the
-> > provisioning keys?  If that's true, why do we need a separate permission
-> > framework for creating provisioning enclaves?
->
-> As I've understood it, the key material for those keys is not even
-> required in the current SGX architecture, it was used in the legacy EPID
-> scheme, but the attribute itself is useful.
->
-> Let's assume that we have some sort of quoting enclave Q, which guards a
-> public key pair, which signs quotes of other enclaves. Let's assume we
-> have an attestation server A, which will enable some capabilities [*],
-> if it receives a quote signed with that public key pair.
->
-> 1. E gets the report key with EGETKEY.
-> 2. E constructs REPORTDATA (37.16) and TARGETINFO (37.17) structures.
->    The former describes the enclaves contents and attributes and latter
->    the target, i.e. Q in this artitificial example.
-> 3. E calls EREPORT to generate a structure called REPORT MAC'd with the
->    *targets* report key. It knows, which key to usue from REPORTDATA.
-> 4. The runtime will then pass this to Q.
-> 5. Q will check if ATTRIBUTE.PROVISION_KEY is set. If it is, Q will
->    know that the enclave is allowed to get attested. Then it will
->    sign the report with the guarded public key pair and send it to
->    the attestation server.
+On Fri, Oct 23, 2020 at 09:28:59PM +0000, David Laight wrote:
+> From: Segher Boessenkool
+> > Sent: 23 October 2020 19:27
+> > On Fri, Oct 23, 2020 at 06:58:57PM +0100, Al Viro wrote:
+> > > On Fri, Oct 23, 2020 at 03:09:30PM +0200, David Hildenbrand wrote:
+> > > On arm64 when callee expects a 32bit argument, the caller is *not* responsible
+> > > for clearing the upper half of 64bit register used to pass the value - it only
+> > > needs to store the actual value into the lower half.  The callee must consider
+> > > the contents of the upper half of that register as undefined.  See AAPCS64 (e.g.
+> > > https://github.com/ARM-software/abi-aa/blob/master/aapcs64/aapcs64.rst#parameter-passing-rules
+> > > ); AFAICS, the relevant bit is
+> > > 	"Unlike in the 32-bit AAPCS, named integral values must be narrowed by
+> > > the callee rather than the caller."
+> > 
+> > Or the formal rule:
+> > 
+> > C.9 	If the argument is an Integral or Pointer Type, the size of the
+> > 	argument is less than or equal to 8 bytes and the NGRN is less
+> > 	than 8, the argument is copied to the least significant bits in
+> > 	x[NGRN]. The NGRN is incremented by one. The argument has now
+> > 	been allocated.
+> 
+> So, in essence, if the value is in a 64bit register the calling
+> code is independent of the actual type of the formal parameter.
+> Clearly a value might need explicit widening.
 
-I think you have this a little bit off.  AIUI E won't have
-ATTRIBUTE.PROVISION_KEY set -- Q will.  Q uses the provisioning key to
-convince an Intel server that it's running on a genuine Intel CPU, and
-the Intel server will return a signed certificate that Q can chain off
-of to generate attestations for E.
+No, this says that if you pass a 32-bit integer in a 64-bit register,
+then the top 32 bits of that register hold an undefined value.
 
-Dave, I would rephrase what you're saying a bit.  The PROVISION_KEY
-attribute allows enclaves to access keys that are unique to a
-processor and unchangeable.  Unlike other SGX keys, these keys are not
-affected by OWNER_EPOCH changes and therefore cannot be reset.
+> I've found a copy of the 64 bit arm instruction set.
+> Unfortunately it is alpha sorted and repetitive so shows none
+> of the symmetry and makes things difficult to find.
 
---Andy
+All of this is ABI, not ISA.  Look at the AAPCS64 pointed to above.
+
+> But, contrary to what someone suggested most register writes
+> (eg from arithmetic) seem to zero/extend the high bits.
+
+Everything that writes a "w" does, yes.  But that has nothing to do with
+the parameter passing rules, that is ABI.  It just means that very often
+a 32-bit integer will be passed zero-extended in a 64-bit register, but
+that is just luck (or not, it makes finding bugs harder ;-) )
+
+
+Segher
