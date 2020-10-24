@@ -1,174 +1,137 @@
-Return-Path: <SRS0=sNlH=D6=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=e8ja=D7=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51445C5517A
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 22:55:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E7FC55178
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 11:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F116A2168B
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Oct 2020 22:54:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="s6tiEEKr"
+	by mail.kernel.org (Postfix) with ESMTP id 2286D21D43
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 11:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603539267;
+	bh=XcY43TO8JIN6qUlVWfp1iywrAryA5i0/PjucueLtTN0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=l1+Or4uHPoo9e6UnczoO2vilPPDA/TcQa7Qh0bIe/T75orEaXNP2ZJiFgX6/izzif
+	 SzRGZHBsnwpfuUgP6av6GiPt+MtuFsExXbfbz72le33xBIJv7s19mlSv/BfCt4l7cn
+	 k0NsiMldAi2Yw8wEflJwcT98UZ1JlUzUmyCfO7NU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1758400AbgJWWy5 (ORCPT
+        id S1759725AbgJXLeY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Oct 2020 18:54:57 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:35832 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758396AbgJWWy4 (ORCPT
+        Sat, 24 Oct 2020 07:34:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54934 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759684AbgJXLeY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Oct 2020 18:54:56 -0400
-Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1DA2020B4905;
-        Fri, 23 Oct 2020 15:54:55 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1DA2020B4905
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1603493695;
-        bh=YGbAk5ZPXKS3MwP2MCJgwylXpPWtw4VBI3P7eYMsasE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=s6tiEEKrsgrcNdDHkHFy1PWBspDVW/Y/1tk/hV4xn8q1r2paxanTHW5GdrRUAhYri
-         YE8qrkSUe2ntdDnjt/3egpgUPwmyVtdcNSLTmaUskpAyc41w7fnauhNrq1INwTZ/ey
-         Rl+Dh3T26UOBLDK3UQYnKavKO+J8KBFeOShs02I0=
-Subject: Re: [PATCH v4 5/6] IMA: add hook to measure critical data from kernel
- components
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
- <20200923192011.5293-6-tusharsu@linux.microsoft.com>
- <dc22359475f0c233abdb9257d1ca745d4be3f9af.camel@linux.ibm.com>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <016d20e1-bb8f-f1f5-c69b-6fd811126e0c@linux.microsoft.com>
-Date:   Fri, 23 Oct 2020 15:54:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Sat, 24 Oct 2020 07:34:24 -0400
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07FFCC0613CE;
+        Sat, 24 Oct 2020 04:34:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=fZ8bj6A3iDt5ahbAYnewSKmCG4NGnBSbfCNkigTIWGo=; b=Uwf6/V6TPWMW6u1n4LU6NM9mCQ
+        2Vpb9FvM/Xr8S3prSaFOUExp6Zf1wce/Pcr8SJ/0A8oijJVAZxLkb+WtmXyAehy8Ju8/VuCjc+1rh
+        C2xc1/JkqgEj5JG9PGJGn1AsxG2rzxsBMmD5J13rDXLFrgn5InxRqpsz4MbG9ak+TGgdvhFAafRJN
+        6mAmkPk746usYyRdEfR+Fxyq5avD2ToUqlJUUmgiwCdwzg+2kMxWSXdyCjG0eo8ClsOk7HLNovbKb
+        q1iAbUc5l2rUCBSJmAkYlrKxDDT443GinqZ8HF5204B9mrqVFt13L9iAw6plxJy8vie2x1Kktem19
+        APfXLqdA==;
+Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <kernel.org@kernel.org>)
+        id 1kWHoC-0006JU-3z; Sat, 24 Oct 2020 14:34:04 +0300
+Date:   Sat, 24 Oct 2020 14:34:03 +0300
+From:   Jarkko Sakkinen <kernel.org@kernel.org>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
+        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
+        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
+        sean.j.christopherson@intel.com, tglx@linutronix.de,
+        yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
+Message-ID: <20201024113403.GA29427@kernel.org>
+References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
+ <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
+ <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com>
+ <20201023101736.GG168477@linux.intel.com>
+ <f2ff64e6-8fe1-55ee-ae7c-f19d7907d60e@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <dc22359475f0c233abdb9257d1ca745d4be3f9af.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2ff64e6-8fe1-55ee-ae7c-f19d7907d60e@intel.com>
+X-SA-Exim-Connect-IP: 83.245.197.237
+X-SA-Exim-Mail-From: kernel.org@kernel.org
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Oct 23, 2020 at 07:19:05AM -0700, Dave Hansen wrote:
+> On 10/23/20 3:17 AM, Jarkko Sakkinen wrote:
+> > On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
+> >> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
+> >>> + * Failure to explicitly request access to a restricted attribute will cause
+> >>> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
+> >>> + * is access to the PROVISION_KEY.
+> >> Could we also justify why access is restricted, please?  Maybe:
+> >>
+> >> 	Access is restricted because PROVISION_KEY is burned uniquely
+> >> 	into each each processor, making it a perfect unique identifier
+> >> 	with privacy and fingerprinting implications.
+> >>
+> >> Are there any other reasons for doing it this way?
+> > AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
+> > PROVISION_SEALING_KEY also have random salt added, i.e. they change
+> > every boot cycle.
+> > 
+> > There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
+> > 3D :-)
+> 
+> Does that mean there are no privacy implications from access to the
+> provisioning keys?  If that's true, why do we need a separate permission
+> framework for creating provisioning enclaves?
 
+As I've understood it, the key material for those keys is not even
+required in the current SGX architecture, it was used in the legacy EPID
+scheme, but the attribute itself is useful.
 
-On 2020-10-22 3:35 p.m., Mimi Zohar wrote:
-> Hi Tushar,
-> 
-> On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
->> Currently, IMA does not provide a generic function for kernel components
->> to measure their data. A generic function provided by IMA would
->> enable various parts of the kernel with easier and faster on-boarding to
->> use IMA infrastructure, would avoid code duplication, and consistent
->> usage of IMA policy option "data_sources:=" across the kernel.
->>
->> Add a new IMA func CRITICAL_DATA and a corresponding IMA hook
->> ima_measure_critical_data() to support measuring various critical kernel
->> components. Limit the measurement to the components that are specified
->> in the IMA policy - CRITICAL_DATA+data_sources.
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> 
-> Normally the new LSM or IMA hook is defined before defining a method of
-> constraining that hook.  Please drop 2/6 (IMA: conditionally allow
-> empty rule data) and reverse the order of 4/6 and 5/6.   That will
-> allow each patch to update the Documentation appropriately, making the
-> change self contained.
-> 
-Sure. I will drop 2/6, and reverse the order of 4/6 and 5/6.
->> ---
->>   Documentation/ABI/testing/ima_policy |  8 ++++++-
->>   include/linux/ima.h                  |  8 +++++++
->>   security/integrity/ima/ima.h         |  1 +
->>   security/integrity/ima/ima_api.c     |  2 +-
->>   security/integrity/ima/ima_main.c    | 26 +++++++++++++++++++++
->>   security/integrity/ima/ima_policy.c  | 34 ++++++++++++++++++++++++----
->>   6 files changed, 72 insertions(+), 7 deletions(-)
->>
->> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
->> index a81cf79fb255..d33bb51309fc 100644
->> --- a/Documentation/ABI/testing/ima_policy
->> +++ b/Documentation/ABI/testing/ima_policy
->> @@ -29,7 +29,7 @@ Description:
->>   		base: 	func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK][MODULE_CHECK]
->>   				[FIRMWARE_CHECK]
->>   				[KEXEC_KERNEL_CHECK] [KEXEC_INITRAMFS_CHECK]
->> -				[KEXEC_CMDLINE] [KEY_CHECK]
->> +				[KEXEC_CMDLINE] [KEY_CHECK] [CRITICAL_DATA]
->>   			mask:= [[^]MAY_READ] [[^]MAY_WRITE] [[^]MAY_APPEND]
->>   			       [[^]MAY_EXEC]
->>   			fsmagic:= hex value
->> @@ -51,6 +51,8 @@ Description:
->>   			data_sources:= list of kernel components
->>   			(eg, selinux|apparmor|dm-crypt) that contain data critical
->>   			to the security of the kernel.
->> +			Only valid when action is "measure" and func is
->> +			CRITICAL_DATA.
->>   
->>   		default policy:
->>   			# PROC_SUPER_MAGIC
->> @@ -128,3 +130,7 @@ Description:
->>   		keys added to .builtin_trusted_keys or .ima keyring:
->>   
->>   			measure func=KEY_CHECK keyrings=.builtin_trusted_keys|.ima
->> +
->> +		Example of measure rule using CRITICAL_DATA to measure critical data
->> +
->> +			measure func=CRITICAL_DATA data_sources=selinux|apparmor|dm-crypt
-> 
-> 
-> As data sources are added, the documentation example should be updated
-> to reflect the new source.  Please do not include examples that don't
-> yet exist.
-> 
-Makes sense. Will do.
-> 
->> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
->> index 6888fc372abf..d55896f28790 100644
->> --- a/security/integrity/ima/ima_main.c
->> +++ b/security/integrity/ima/ima_main.c
->> @@ -867,6 +867,32 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
->>   	fdput(f);
->>   }
->>   
->> +/**
->> + * ima_measure_critical_data - measure critical data
->> + * @event_name: name for the given data
->> + * @event_data_source: name of the event data source
->> + * @buf: pointer to buffer containing data to measure
->> + * @buf_len: length of buffer(in bytes)
->> + * @measure_buf_hash: if set to true - will measure hash of the buf,
->> + *                    instead of buf
->> + *
->> + * Buffers can only be measured, not appraised.
->> + */
-> 
-> Perhaps the reason for defining both the event_name and
-> event_data_source will become clearer with an example.  At this point I
-> can only guess as to why both are needed (e.g. perhaps a data source
-> defines multiple events).
-> 
-Yes. Precisely. For example, in “dm-crypt” case: the data source is
-“dm-crypt” and possible events are “add_target”, “post_suspend”,
-"resume" etc. I will add a more detailed hook description as you
-suggested below, and explain this point in it.
-> While "Buffers can only be measured, not appraised" is true, it was cut
-> & pasted from ima_kexec_cmdline.  Measuring the kexec boot cmdline is
-> self describing.  Here, a larger, more detailed IMA hook description
-> would be appropriate.
-Will add. Thanks Mimi.
-> 
-> thanks,
-> 
-> Mimi
-> 
+Let's assume that we have some sort of quoting enclave Q, which guards a
+public key pair, which signs quotes of other enclaves. Let's assume we
+have an attestation server A, which will enable some capabilities [*],
+if it receives a quote signed with that public key pair.
+
+1. E gets the report key with EGETKEY.
+2. E constructs REPORTDATA (37.16) and TARGETINFO (37.17) structures.
+   The former describes the enclaves contents and attributes and latter
+   the target, i.e. Q in this artitificial example.
+3. E calls EREPORT to generate a structure called REPORT MAC'd with the
+   *targets* report key. It knows, which key to usue from REPORTDATA.
+4. The runtime will then pass this to Q.
+5. Q will check if ATTRIBUTE.PROVISION_KEY is set. If it is, Q will
+   know that the enclave is allowed to get attested. Then it will
+   sign the report with the guarded public key pair and send it to
+   the attestation server.
+
+The example is artificial, e.g. there could be something more complex,
+but the idea is essentially this.
+
+[*] With TPM and measured boot this could be to open network for a data
+    center node. Quote is just the term used for a signed measurement in
+    remote attestation schemes generally.
+
+/Jarkko
