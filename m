@@ -6,115 +6,143 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DCCC55178
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 11:40:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A1DC55178
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 15:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E73912225F
-	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 11:40:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BBF822272
+	for <linux-security-module@archiver.kernel.org>; Sat, 24 Oct 2020 15:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603539617;
-	bh=tUkmLVWqS2HVA2spPjKU/aqVSlPgk5/0Geim/RIQddA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Sl9ro/TEpbFU5p4aeNxCXb6LYfM2xzCc6k1O7S68CKvtavCWh9vNjlqiiSkQsQRSi
-	 qiY9I60xqZwUBWQI5RoFGLuT3M78t4gcXV7ada20OKPQZhYk4mb1yv5yolrMoFriHX
-	 41SKj9jfIF6roFHefvcSsxm3ALy4o2izl3zs0qbs=
+	s=default; t=1603554463;
+	bh=WmBbNWhHP6TeR2O/n2ZYBhpmL2kj6x0530LgA41pBKw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=HLd9Fdl71fjr0QG4dfqj342ix3vMIijk3By0NViD+Eh9XXLxdXTyeIyVAEzwnon1U
+	 HBFRlJe9PI0VQYVTm9ZxBkmN1YBqjVAtXYVOjev2imCANrKg9uNw0uJ6gHI0Wn8sE8
+	 0/7dRIY03+i9DWSb6xhonHEqYutageyU+Bnj0Lww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1759883AbgJXLkQ (ORCPT
+        id S1760499AbgJXPrn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Oct 2020 07:40:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55824 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759759AbgJXLkQ (ORCPT
+        Sat, 24 Oct 2020 11:47:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1760496AbgJXPrm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Oct 2020 07:40:16 -0400
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79452C0613CE;
-        Sat, 24 Oct 2020 04:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=cEaW0P/Q37QkXw0l0MiflWs0S8KrBx1DeB/TsJB3hSI=; b=HCKITNGbekOeJfVv+ZqdunnAjy
-        yfjdmn6leqM5SwZMuM9XyI2TLh4la3rzvdcqIA2YwFsVvIxgW0K8mc5Jgl85qxDMQgfTI9Y110YVL
-        CVs6YDEYWT/utQgBD3NOJtrAv6mQL5YL8Rr7uMkanVXHEOM+etjCloc8zMM9+XI7SVSXejz9sodNM
-        QBqOGYCqerqfkyjoiFyBdf/hdHA/YOUM+laQ6aiSmSmS96gOO1pstWxIiZq7JhUFwwryv2NSN3Chy
-        RufnStj9HcWZCGlV2dPByL9cfpzUoWpZSzeX//C1V2CqH8sv5kOuoARHHOtydaRY8gZGa95T6fI5i
-        L1vHRkoA==;
-Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=localhost)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <kernel.org@kernel.org>)
-        id 1kWHu1-0007fm-Bv; Sat, 24 Oct 2020 14:40:05 +0300
-Date:   Sat, 24 Oct 2020 14:40:04 +0300
-From:   Jarkko Sakkinen <kernel.org@kernel.org>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        haitao.huang@intel.com, kai.huang@intel.com, kai.svahn@intel.com,
-        kmoy@google.com, ludloff@google.com, nhorman@redhat.com,
-        npmccallum@redhat.com, puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-Message-ID: <20201024114004.GB29427@kernel.org>
+        Sat, 24 Oct 2020 11:47:42 -0400
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9B302465B
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2020 15:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603554461;
+        bh=WmBbNWhHP6TeR2O/n2ZYBhpmL2kj6x0530LgA41pBKw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=keAX3JyrVGeWCh4O0UK3bqb/02ZgWb21rzgkBm430SkpsQ2O8zl4wdJdGLIR3HEaH
+         1XgNNgR+6gyngZnwg0bsYTUwUpaGInHS4aCdKwQxElrqVeSf9fT/F9+zZXIuAg8RrA
+         1ozsKiWmezEyo6wt30lhB9MF8yTV9oJuVHxiNT0o=
+Received: by mail-wm1-f47.google.com with SMTP id d78so5564719wmd.3
+        for <linux-security-module@vger.kernel.org>; Sat, 24 Oct 2020 08:47:41 -0700 (PDT)
+X-Gm-Message-State: AOAM531Snk0oEHNRxcvwAGRQ7vjlONrspdPzNczdSipbQ6lkcD/0/pCb
+        vmZUDx3G2avcQoyW9HQwrNhro9BE4OjqKl/ePNGnLQ==
+X-Google-Smtp-Source: ABdhPJx3gfZuk8J+485eHiKQKMeyXKMTChdcl4yaJniTwMIJ9YG/WwrAwXc3p7BhtWAh9QyxeWRFcpmCPDNx/HpgFWQ=
+X-Received: by 2002:a05:600c:2241:: with SMTP id a1mr7968642wmm.49.1603554460057;
+ Sat, 24 Oct 2020 08:47:40 -0700 (PDT)
+MIME-Version: 1.0
 References: <20201003045059.665934-1-jarkko.sakkinen@linux.intel.com>
  <20201003045059.665934-16-jarkko.sakkinen@linux.intel.com>
- <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com>
- <20201023101736.GG168477@linux.intel.com>
- <5dc74a43-d738-3711-6967-59d8264a5ee4@fortanix.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dc74a43-d738-3711-6967-59d8264a5ee4@fortanix.com>
-X-SA-Exim-Connect-IP: 83.245.197.237
-X-SA-Exim-Mail-From: kernel.org@kernel.org
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+ <7bb4ff7b-0778-ad70-1fe0-6e1db284d45a@intel.com> <20201023101736.GG168477@linux.intel.com>
+ <f2ff64e6-8fe1-55ee-ae7c-f19d7907d60e@intel.com> <20201024113403.GA29427@kernel.org>
+In-Reply-To: <20201024113403.GA29427@kernel.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 24 Oct 2020 08:47:28 -0700
+X-Gmail-Original-Message-ID: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
+Message-ID: <CALCETrWxA6AgU8zg=npS=4NaA1_Pu9UwScEnr_Gk0wF-BOmqqQ@mail.gmail.com>
+Subject: Re: [PATCH v39 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
+To:     Jarkko Sakkinen <kernel.org@kernel.org>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        X86 ML <x86@kernel.org>, linux-sgx@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        asapek@google.com, Borislav Petkov <bp@alien8.de>,
+        "Xing, Cedric" <cedric.xing@intel.com>, chenalexchen@google.com,
+        Conrad Parker <conradparker@google.com>, cyhanish@google.com,
+        "Huang, Haitao" <haitao.huang@intel.com>,
+        "Huang, Kai" <kai.huang@intel.com>,
+        "Svahn, Kai" <kai.svahn@intel.com>, Keith Moyer <kmoy@google.com>,
+        Christian Ludloff <ludloff@google.com>,
+        Neil Horman <nhorman@redhat.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Patrick Uiterwijk <puiterwijk@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, yaozhangx@google.com,
+        Mikko Ylinen <mikko.ylinen@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Oct 23, 2020 at 04:23:55PM +0200, Jethro Beekman wrote:
-> On 2020-10-23 12:17, Jarkko Sakkinen wrote:
-> > On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
-> >> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
-> >>> + * Failure to explicitly request access to a restricted attribute will cause
-> >>> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
-> >>> + * is access to the PROVISION_KEY.
-> >>
-> >> Could we also justify why access is restricted, please?  Maybe:
-> >>
-> >> 	Access is restricted because PROVISION_KEY is burned uniquely
-> >> 	into each each processor, making it a perfect unique identifier
-> >> 	with privacy and fingerprinting implications.
-> >>
-> >> Are there any other reasons for doing it this way?
-> > 
-> > AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
-> > PROVISION_SEALING_KEY also have random salt added, i.e. they change
-> > every boot cycle.
-> > 
-> > There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
-> > 3D :-)
-> > 
-> 
-> This is nonsense. The whole point of sealing keys is that they don't
-> change every boot. If did they they'd have no value over enclave
-> memory. RAND means that the KEYID field from the KEYREQUEST is
-> included in the derivation (as noted in the source row of the table
-> you looked at).
+On Sat, Oct 24, 2020 at 4:34 AM Jarkko Sakkinen <kernel.org@kernel.org> wrote:
+>
+> On Fri, Oct 23, 2020 at 07:19:05AM -0700, Dave Hansen wrote:
+> > On 10/23/20 3:17 AM, Jarkko Sakkinen wrote:
+> > > On Tue, Oct 20, 2020 at 02:19:26PM -0700, Dave Hansen wrote:
+> > >> On 10/2/20 9:50 PM, Jarkko Sakkinen wrote:
+> > >>> + * Failure to explicitly request access to a restricted attribute will cause
+> > >>> + * sgx_ioc_enclave_init() to fail.  Currently, the only restricted attribute
+> > >>> + * is access to the PROVISION_KEY.
+> > >> Could we also justify why access is restricted, please?  Maybe:
+> > >>
+> > >>    Access is restricted because PROVISION_KEY is burned uniquely
+> > >>    into each each processor, making it a perfect unique identifier
+> > >>    with privacy and fingerprinting implications.
+> > >>
+> > >> Are there any other reasons for doing it this way?
+> > > AFAIK, if I interperet the SDM correctl, PROVISION_KEY and
+> > > PROVISION_SEALING_KEY also have random salt added, i.e. they change
+> > > every boot cycle.
+> > >
+> > > There is "RAND = yes" on those keys in Table 40-64 of Intel SDM volume
+> > > 3D :-)
+> >
+> > Does that mean there are no privacy implications from access to the
+> > provisioning keys?  If that's true, why do we need a separate permission
+> > framework for creating provisioning enclaves?
+>
+> As I've understood it, the key material for those keys is not even
+> required in the current SGX architecture, it was used in the legacy EPID
+> scheme, but the attribute itself is useful.
+>
+> Let's assume that we have some sort of quoting enclave Q, which guards a
+> public key pair, which signs quotes of other enclaves. Let's assume we
+> have an attestation server A, which will enable some capabilities [*],
+> if it receives a quote signed with that public key pair.
+>
+> 1. E gets the report key with EGETKEY.
+> 2. E constructs REPORTDATA (37.16) and TARGETINFO (37.17) structures.
+>    The former describes the enclaves contents and attributes and latter
+>    the target, i.e. Q in this artitificial example.
+> 3. E calls EREPORT to generate a structure called REPORT MAC'd with the
+>    *targets* report key. It knows, which key to usue from REPORTDATA.
+> 4. The runtime will then pass this to Q.
+> 5. Q will check if ATTRIBUTE.PROVISION_KEY is set. If it is, Q will
+>    know that the enclave is allowed to get attested. Then it will
+>    sign the report with the guarded public key pair and send it to
+>    the attestation server.
 
-I just looked that the column name is RAND, the row is called "Provision
-key" and the cell has "Yes" in it.
+I think you have this a little bit off.  AIUI E won't have
+ATTRIBUTE.PROVISION_KEY set -- Q will.  Q uses the provisioning key to
+convince an Intel server that it's running on a genuine Intel CPU, and
+the Intel server will return a signed certificate that Q can chain off
+of to generate attestations for E.
 
-> --
-> Jethro Beekman | Fortanix
+Dave, I would rephrase what you're saying a bit.  The PROVISION_KEY
+attribute allows enclaves to access keys that are unique to a
+processor and unchangeable.  Unlike other SGX keys, these keys are not
+affected by OWNER_EPOCH changes and therefore cannot be reset.
 
-/Jarkko
+--Andy
