@@ -2,151 +2,258 @@ Return-Path: <SRS0=STr0=EA=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EB4C4363A
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Oct 2020 03:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4450C388F7
+	for <linux-security-module@archiver.kernel.org>; Sun, 25 Oct 2020 13:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E056E20770
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Oct 2020 03:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64A112225E
+	for <linux-security-module@archiver.kernel.org>; Sun, 25 Oct 2020 13:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ifGNjgOf"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="KgGaiq/A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1766936AbgJYDgI (ORCPT
+        id S1416407AbgJYNq6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 24 Oct 2020 23:36:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46686 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1762952AbgJYDgI (ORCPT
+        Sun, 25 Oct 2020 09:46:58 -0400
+Received: from mout.gmx.net ([212.227.15.18]:42737 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1416405AbgJYNq6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 24 Oct 2020 23:36:08 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 09P3Vfpa048417;
-        Sat, 24 Oct 2020 23:36:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=f6c5YRP6wKJcOYJ6F1ufzms6nMkKE3xLN5sdbD90VrM=;
- b=ifGNjgOfwjK1lmoqls57eVdLtj/Yf467Q0wCDEkYt1lhwjQmoGtW5Y4U6Wqhk9BgHybN
- 7l4P4rkWHWQ/GWthPn+0d+1LfExETAE/tvj+FRIuMp+Gd7/gj1wPRjungRpEwgO5/6DX
- hkBexZu3pvdOl87pLN1I4GziQC/M1WJIyGC7++M3LgDCQo+I9zdLadMsVRQkefsJk0Nk
- ElWlEHZUMZeS5LuYUejdm2Z0N64h0VcDQTgeIiiTMWWgFduAkFDZvNOKsJRqMDaF2mXX
- gKFm4s63cTNeUgYcBRgI7Y4+5F6d5//Ln4DsD+jFwSteTH63QLj2J4TCSJu419KD98wM EQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34d0xs8qmy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 24 Oct 2020 23:36:02 -0400
-Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 09P3a2NB060532;
-        Sat, 24 Oct 2020 23:36:02 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34d0xs8qmj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 24 Oct 2020 23:36:02 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 09P3UBRi027808;
-        Sun, 25 Oct 2020 03:35:59 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma05fra.de.ibm.com with ESMTP id 34cbw88e5h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 25 Oct 2020 03:35:59 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 09P3ZvoH37159234
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 25 Oct 2020 03:35:57 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86DDAA4065;
-        Sun, 25 Oct 2020 03:35:57 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 23FCEA405B;
-        Sun, 25 Oct 2020 03:35:54 +0000 (GMT)
-Received: from sig-9-65-192-162.ibm.com (unknown [9.65.192.162])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 25 Oct 2020 03:35:53 +0000 (GMT)
-Message-ID: <2c7da61fbeb17c577253b117829b3bd544d8cf44.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 0/6] IMA: Infrastructure for measurement of critical
- kernel data
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Sat, 24 Oct 2020 23:35:53 -0400
-In-Reply-To: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
-References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.737
- definitions=2020-10-25_01:2020-10-23,2020-10-25 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- adultscore=0 suspectscore=3 impostorscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2010250022
+        Sun, 25 Oct 2020 09:46:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1603633591;
+        bh=JrGm1wF1k+vuYjU+ydHvebWusyZNCIY3jwUYaN/WjbM=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=KgGaiq/ArcYLp/0WMWClI/Gb2FikP3xypikJV9avt8L4sIsY84hmfseob3wtkvdkl
+         ZNmDfNOwp2aKhTfMC/wkBU36lnKno8sSMl0OEe09231s0CaJOPFYzKNn6ASq4TrxoL
+         Jl292ate8uJHrZDodOOJZkou2JA1O03LYbNN/x/I=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([83.52.231.59]) by mail.gmx.com
+ (mrgmx005 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 1M59GA-1kVaQF2ZIi-001D3K; Sun, 25 Oct 2020 14:46:31 +0100
+From:   John Wood <john.wood@gmx.com>
+To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Cc:     John Wood <john.wood@gmx.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH v2 0/8] Fork brute force attack mitigation
+Date:   Sun, 25 Oct 2020 14:45:32 +0100
+Message-Id: <20201025134540.3770-1-john.wood@gmx.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hEzp76Q+KEFfGVP4vNspP5jFakx1Js4QivuR+o6uUwr9wu09z8Q
+ tz98LL1d9unta8it5qbwAKNt7C+hOpOsA2kvCE3lLY3mp2H44wTlTuRWzSJf/b3AL3WLdtT
+ j70oL7JVkFsOKMUoqSdbJ4LDteiKJXDpLpXwG9bNC8YfCkhMMcXuFQUtwhLuaHYS3yBbh/K
+ o4A7QMmo39c20xaC/K10g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kzlZC/xxXng=:1r6hgD56eUFw5BLisPGNR6
+ FkqA5cq9zOz1R61OuxOIB1ZcY6j5MqI5zO6kZi2/zPLwpQM/lrdwDTAKll15z3EdR+YxsUsLg
+ zSAqcmhAe4rJzDBtIVsuRK6NZaOC+cQItJYNxia/kN5C8T05zSukJVsab/R3fdGbFHZtn/Vgf
+ 9tt4NCHhZDboqupnb1fAoqHTUoSNlxNGX4MifwMIfYjOy+E/Ad53hRbrpuM2mLPn2+NU2S7J6
+ 3Irb7MP5lrXznFe9hPizURJfStd4AbMUAzxc1OX32FNVZMya2SgrrA1zCqbvBF6zrC2pEUBqD
+ EW+Uirn96Sd5eP2cK0SIhmFDs/65a7l/ZNKa9bH3deEwsyD5z6hNr/fr9uJKumekqPodEef21
+ C1F254k8TZIulTIfHzWcYCm5aygubc9e2Af9Ko5GVWeJinVrCs2wrPHXA9C/d6oChE3yOLw/n
+ V76q81f5PCkJcLIKz7H8608vAM1ynTNZOJU4GxIotiOo77mKCmSd55Lm0iGF04z3Su1qPFF+G
+ crOkqpLN+O6BAgJbHmIe98FhP5HYIKEk5/tFFUBlPkKKcj3OI7zW2Fmmg39t8BnJ/UXme2TRd
+ w9MDU9WmdLXDc4Yq+PpXGFkv6lgPAfRT78p+LrDgCccZikgLvbumzuFBNx7UpwlraXmTrU6TJ
+ fQwza6dKl5VPUwYtumBwrLb6WP2ej+9cbW0rLVuZj8yTB+2ESXBiM/FFKwlkCDKl+vRUqAr11
+ BhJ/ZHQybUQu+SO8lCiEmsvjFrKY2vuAvuzNmRAPRuR5nIzWrDVNiLyS0dtIiGQcawr1NU8tc
+ 2JRyrYT/kwVPksHSOgLrp25chbcMOmLy8YWVtxUXMU8foBM7IUMsvIqKv1JscPqVegJOkv4Vg
+ L9hw+c14ZeWTa1+BA/2w==
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Tushar,
+Attacks against vulnerable userspace applications with the purpose to brea=
+k
+ASLR or bypass canaries traditionaly use some level of brute force with th=
+e
+help of the fork system call. This is possible since when creating a new
+process using fork its memory contents are the same as those of the parent
+process (the process that called the fork system call). So, the attacker
+can test the memory infinite times to find the correct memory values or th=
+e
+correct memory addresses without worrying about crashing the application.
 
-On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
-> There are several kernel components that contain critical data which if
-> accidentally or maliciously altered, can compromise the security of the
-> kernel. Example of such components would include LSMs like SELinux, or
-> AppArmor; or device-mapper targets like dm-crypt, dm-verity etc.
+Based on the above scenario it would be nice to have this detected and
+mitigated, and this is the goal of this patch serie.
 
-^"the integrity of the system."
+Other implementations
+=2D--------------------
 
-This cover letter needs to be re-written from a higher perspective,
-explaining what is meant by "critical data" (e.g. kernel subsystem
-specific information only stored in kernel memory).
+The public version of grsecurity, as a summary, is based on the idea of
+delay the fork system call if a child died due to a fatal error. This has
+some issues:
 
-> 
-> Many of these components do not use the capabilities provided by kernel
-> integrity subsystem (IMA), and thus they don't use the benefits of
-> extended TPM PCR quotes and ultimately the benefits of remote attestation.
+1.- Bad practices: Add delays to the kernel is, in general, a bad idea.
 
-True, up until recently IMA only measured files, nothing else.  Why is
-this paragraph needed?  What new information is provided?
+2.- Weak points: This protection can be bypassed using two different
+    methods since it acts only when the fork is called after a child has
+    crashed.
 
-> This series bridges this gap, so that potential kernel components that
-> contain data critical to the security of the kernel could take advantage
-> of IMA's measuring and quoting abilities - thus ultimately enabling
-> remote attestation for their specific data.
+    2.1.- Bypass 1: So, it would still be possible for an attacker to fork
+          a big amount of children (in the order of thousands), then probe
+          all of them, and finally wait the protection time before repeat
+          the steps.
 
-Perhaps, something more along the lines, "This patch set defines a new
-IMA hook named ... to measure critical data."
+    2.2.- Bypass 2: This method is based on the idea that the protection
+          doesn't act if the parent crashes. So, it would still be possibl=
+e
+          for an attacker to fork a process and probe itself. Then, fork
+          the child process and probe itself again. This way, these steps
+          can be repeated infinite times without any mitigation.
 
-> 
-> System administrators may want to pick and choose which kernel
-> components they would want to enable for measurements, quoting, and
-> remote attestation. To enable that, a new IMA policy is introduced.
+This implementation
+=2D------------------
 
-Reverse the order of this paragraph and the following one, describing
-the new feature and only afterwards explaining how it may be
-constrained.
+The main idea behind this implementation is to improve the existing ones
+focusing on the weak points annotated before. The solution for the first
+bypass method is to detect a fast crash rate instead of only one simple
+crash. For the second bypass method the solution is to detect both the
+crash of parent and child processes. Moreover, as a mitigation method it i=
+s
+better to kill all the offending tasks involve in the attack instead of us=
+e
+delays.
 
-> 
-> And lastly, the functionality is exposed through a function
-> ima_measure_critical_data(). The functionality is generic enough to
-> measure the data of any kernel component at run-time. To ensure that
-> only data from supported sources are measured, the kernel component
-> needs to be added to a compile-time list of supported sources (an
-> "allowed list of components"). IMA validates the source passed to
-> ima_measure_critical_data() against this allowed list at run-time.
+So, the solution to the two bypass methods previously commented is to use
+some statistical data shared across all the processes that can have the
+same memory contents. Or in other words, a statistical data shared between
+all the fork hierarchy processes after an execve system call.
 
-This patch set must include at least one example of measuring critical
-data, before it can be upstreamed.  Tushar, please coordinate with
-Lakshmi and Raphael.
+The purpose of these statistics is to compute the application crash period
+in order to detect an attack. This crash period is the time between the
+execve system call and the first fault or the time between two consecutive=
+s
+faults, but this has a drawback. If an application crashes once quickly
+from the execve system call or crashes twice in a short period of time for
+some reason, a false positive attack will be triggered. To avoid this
+scenario the shared statistical data holds a list of the i last crashes
+timestamps and the application crash period is computed as follows:
 
-thanks,
+crash_period =3D (n_last_timestamp - n_minus_i_timestamp) / i;
 
-Mimi
+This ways, the size of the last crashes timestamps list allows to fine
+tuning the detection sensibility.
+
+When this crash period falls under a certain threshold there is a clear
+signal that something malicious is happening. Once detected, the mitigatio=
+n
+only kills the processes that share the same statistical data and so, all
+the tasks that can have the same memory contents. This way, an attack is
+rejected.
+
+1.- Per system enabling: This feature can be enabled at build time using
+    the CONFIG_SECURITY_FORK_BRUTE option or using the visual config
+    application under the following menu:
+
+    Security options ---> Fork brute force attack detection and mitigation
+
+2.- Per process enabling/disabling: To allow that specific applications ca=
+n
+    turn off or turn on the detection and mitigation of a fork brute force
+    attack when required, there are two new prctls.
+
+    prctl(PR_SECURITY_FORK_BRUTE_ENABLE, 0, 0, 0, 0)
+    prctl(PR_SECURITY_FORK_BRUTE_DISABLE, 0, 0, 0, 0)
+
+3.- Fine tuning: To customize the detection's sensibility there are two ne=
+w
+    sysctl attributes that allow to set the last crashes timestamps list
+    size and the application crash period threshold (in milliseconds). Bot=
+h
+    are accessible through the following files respectively.
+
+    /proc/sys/kernel/brute/timestamps_list_size
+    /proc/sys/kernel/brute/crash_period_threshold
+
+    The list size allows to avoid false positives due to crashes unrelated
+    with a real attack. The period threshold sets the time limit to detect
+    an attack. And, since a fork brute force attack will be detected if th=
+e
+    application crash period falls under this threshold, the higher this
+    value, the more sensitive the detection will be.
+
+So, knowing all this information I will explain now the different patches:
+
+The 1/8 patch defines a new LSM hook to get the fatal signal of a task.
+This will be useful during the attack detection phase.
+
+The 2/8 patch defines a new LSM and manages the statistical data shared by
+all the fork hierarchy processes.
+
+The 3/8 patch adds the sysctl attributes to fine tuning the detection.
+
+Patchs 4/8 and 5/8 detect and mitigate a fork brute force attack.
+
+Patch 6/8 adds the prctls to allow per process enabling/disabling.
+
+Patch 7/8 adds the documentation to explain this implementation.
+
+Patch 8/8 updates the maintainers file.
+
+This patch series is a task of the KSPP [1] and can also be accessed from
+my github tree [2] in the "brute_v2" branch.
+
+[1] https://github.com/KSPP/linux/issues/39
+[2] https://github.com/johwood/linux/
+
+The first version can be found in:
+
+https://lore.kernel.org/kernel-hardening/20200910202107.3799376-1-keescook=
+@chromium.org/
+
+Changelog RFC -> v2
+=2D------------------
+- Rename this feature with a more appropiate name (Jann Horn, Kees Cook).
+- Convert the code to an LSM (Kees Cook).
+- Add locking  to avoid data races (Jann Horn).
+- Add a new LSM hook to get the fatal signal of a task (Jann Horn, Kees
+  Cook).
+- Add the last crashes timestamps list to avoid false positives in the
+  attack detection (Jann Horn).
+- Use "period" instead of "rate" (Jann Horn).
+- Other minor changes suggested (Jann Horn, Kees Cook).
+
+John Wood (8):
+  security: Add LSM hook at the point where a task gets a fatal signal
+  security/brute: Define a LSM and manage statistical data
+  security/brute: Add sysctl attributes to allow detection fine tuning
+  security/brute: Detect a fork brute force attack
+  security/brute: Mitigate a fork brute force attack
+  security/brute: Add prctls to enable/disable the fork attack detection
+  Documentation: Add documentation for the Brute LSM
+  MAINTAINERS: Add a new entry for the Brute LSM
+
+ Documentation/admin-guide/LSM/Brute.rst | 118 ++++
+ Documentation/admin-guide/LSM/index.rst |   1 +
+ MAINTAINERS                             |   7 +
+ include/brute/brute.h                   |  16 +
+ include/linux/lsm_hook_defs.h           |   1 +
+ include/linux/lsm_hooks.h               |   4 +
+ include/linux/security.h                |   4 +
+ include/uapi/linux/prctl.h              |   4 +
+ kernel/signal.c                         |   1 +
+ kernel/sys.c                            |   8 +
+ security/Kconfig                        |  11 +-
+ security/Makefile                       |   4 +
+ security/brute/Kconfig                  |  13 +
+ security/brute/Makefile                 |   2 +
+ security/brute/brute.c                  | 749 ++++++++++++++++++++++++
+ security/security.c                     |   5 +
+ 16 files changed, 943 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/Brute.rst
+ create mode 100644 include/brute/brute.h
+ create mode 100644 security/brute/Kconfig
+ create mode 100644 security/brute/Makefile
+ create mode 100644 security/brute/brute.c
+
+=2D-
+2.25.1
 
