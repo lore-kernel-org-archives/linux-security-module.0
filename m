@@ -2,238 +2,237 @@ Return-Path: <SRS0=mR5W=EB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2DCC4363A
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 16:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D141C4363A
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 16:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2319E24650
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 16:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43EEE24640
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 16:58:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Zfsez78r"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GBa7YXID"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1785715AbgJZQUo (ORCPT
+        id S1786854AbgJZQ6t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Oct 2020 12:20:44 -0400
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:41528
-        "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1775580AbgJZQUn (ORCPT
+        Mon, 26 Oct 2020 12:58:49 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:41145 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1786636AbgJZQ5X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Oct 2020 12:20:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1603729241; bh=JXz4y1SmwDW62HLmbboK5HMHkwIdbZK66iokQuERO68=; h=To:Cc:References:From:Subject:Date:In-Reply-To:From:Subject; b=Zfsez78rMRtzUkjmH/3jHVOf2J6LUL5OhnfwNVZjLjGxT+8AGyRfXsNyvsLehvpdxyRU5xmsMW4zt/VNrxEXrRMYBy9pkwbLnadsk3yVYE/WVVl9kw+wLS3f9de+ft4k8QM49RRvdHaBJZkxhESBZ7x7/X/H+uO1EmYwAnpvGLEuvVSXo74uGCCQJ+PM5hTVhnR0g3gnR5/LnTqq8ZjaLoZhMTRVaYPbKVp8CvijTsenLHofvZ6V5DH/6KmCBwh8frjDqSJMXL+ZcUinHPMIh5sZKz+n41AAyh7T9rkMxYfFttjqRkvSnJQIZmcYqC0gUsKgOqpFuBXjDje5TGRRLg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1603729241; bh=8nVBPpFtNgL7TZSiT7uqtycEEMoSXXwzH8vuL46Ebpq=; h=To:From:Subject:Date; b=bjbyO4Vvggu7B586L91KTFNy01a6SgbJC6htamR4N/ALoHqFRqEvEDGm4XbMqA0er4RpNxyve9gEDZ/sqiPSHmUlow/Msp+H5gKNnYBZAsM+hW/H7p/rtpr7hMd/oOAOS8uyinLYq29Bpl0/SSNx2AO0LbXY3WlPHqW+AkskgxhFSQXV4IXQ19pVhajZ/c3Ws6HZvWj1xFene6+Bgjua+NaFoqirxH227I7lY9HksePjCZ1V8UB/f+wi4xz3SRexQOFZgzlJvPLfj7NIlw15favuGYSRr4IWVBc/r+qZAW0mleD/RzjmVpK7hd3HdCxFFVjo+t8IkVit03FTNT4iqA==
-X-YMail-OSG: 60uzVJoVM1mN7OxrAeku5tfzNDsW5qIPIlVd8Ymjjnt33_nkp_UJJg3mEfVXeel
- ReR2RP29pHvaDKljZHig7xPXBmUl8GAangYTOUKKShXlUlawrpBMOw5qqZkzOwuuycIltySQD.np
- BPbxSVB.3ZvESFRFD58okkm3OElH.bAjJ9bIorpq6zGXFpsQkNZeuW7EULcagGMdA39ndMQ3v5Gd
- sJbPal2Mk4fg.87AxezzE55LSyRK6d5h79IHAbf0Co9Tb14WRscoK4G6Z1Mx3yzmk3cWEE9qJtDn
- Ym8x4vlXuawHL4ZKJ.338J_p9iopxklT1oUqp.06Amm_IhGfuQW6lvPJWkGSFV_7NbAOZSDjxb5m
- cnmakABaSCnGqk6t7d.MFdo331fuUZLaBBUv1KEqVDlHaoAMcL7RDmh0c1Tg57FRPmvShlx6_qdc
- cnhCM3OHBafCTDROI8d5AMas7Epuq6x9YqyEQOgRZ1nrDOgEGx2MKEWT8fwR4YwFdtuscXMyIuOY
- ZhykLcrppg0yJDWCsV3rmuF_lMcZjQUxirroHFZqMvDJyAiPItsHFuHrcB8eIphZF92MH9oqJUwF
- 60n2TiVyS.JIcZM3Pt74t3Q2rZ85Zktqy2DCTt5Jiwp4S9r7Bon5mpS30DJ99Y066.GO1bfPhs0p
- VLuIm0JY58Q..vOL5mdoVd9AgiSnKypg6NU7ZHI1f2boQB8aIOPJEZZhI6i7OO181C2dtgMizdFR
- cvXE8oWP3sjp5uFkM4n.MYQLRd2JKS3CMB3x5ljGznreWpgDuw_38l.kO5I0KGyWqyYzpSvEzuRG
- ayCa6RpAxbWihfyymujRJuZ064zA9p1A72HWMHJj_wu3rzQM_fLxGddyxVtFmFyGprTLBkS1cPSy
- RkKcVj4hKV3pAdGtwHyJSItN3S5tHeJD3OpRBfoXhGg9OHTcvzCJ3Zgh6BB.ZQYO5E3S5E9IjEGs
- TZwu7n0_CpLdz.OY5EU0vhPNlgpYAbgAJwS6ccDf7rSYh_QiGFp6zWOWu.A4QUnaUIwVmBS2x4b_
- Q6ghHBdxitPWGaXIrwWx27AG98LYlpVg.V_QFOp_embZYDMuwVWs0NCYVkmxIj0wbkT.Bj31sLku
- vvn7qof1.Cn3bfnGhGP5Nh79ushAyYGlK32x.30xgu2QcS3mqr.FPNmM5wXXXDw1EQtCy12tVdPB
- zmjq6.KCSDiN4_V16Q8mxW8BmzVu1nmnHNeqTFz.xS7VcqF7KHdLkjBhNIQcWG0zaTNJQW8BAuu6
- IkgTmH_29LL1X07OGWsnx4YAYUM5aXt03zFVNBjblxhZMh35LRdXnsylmO9I730R3N5E41iqE2iM
- zZ9aiD.9f5xiNLbTgQCv52nARtRf4qlG7vCaq.0oeeT4rmhApS099ZxzB1MVDJaCpc3ukZ9vm58y
- LTiofpqo3SmASL1UyvyUmu0LGDzx8g8KyRXOtZJSuhAuzojNvrVN_wg3W5qCfsHvC0.7VJp8tfh0
- cB59XY7v_ntgciLzG4bKf.irvudFbxt.J.XUlcYxrjrEFM6eCYpfgtg_RLvFV8mi9q1oCXG3jf1s
- MjHY6nqACTXyp3nC8Fr9QFSgKCf7tdq3l8iUyCjP8f8DFgvbODFo2UiA7SGWsM.YabPojYX9djPO
- DN_KKQByj1bPEnb1QZX06HahkNjMhPE9bahtcL9TpA5kMmphpD4XRj8rXqa6BMHtn3ifll.1hEE5
- S6YdbA2e2GggNmQJ2iqXXG0EUx.qCLEcfr7DehyV67qGLaxumzChvqQHzw8fvsTVbQgD24HxYClI
- C0Lu07b9dfwAgWXfIEJX5i4iF6vPwrfB8TaBna6rNXudXw7qISQL4P2BasSg.iV3tu5SaqJOgHLo
- 1TMJuAXZAN.dzFx48Vqjh2xkUVdJ65bMp.tjdzfpBnoib5Deq79qaKCSVNhYF6b5stHM_98VCdhI
- _19_lgijtEwkpVSzamxDJCa9F_Lxf06aYsTJ3bLvgGPdAeq00dH6agLpTygDUZAe1xloxHkz4RJA
- .YTXIG56m6Dyd7moqiEl5eVerESIDhj1tvoqxsnuawiJE4TXOkHS3__qqSM.82TB_h.siPJ25ADM
- fKuHi.A7.7O0gUD7visAT4te6gBhrPEfIMze7rSJZsqoXVM90KjDpy4Y5B.TDSh4XSevRXkXxeVV
- yiaawf5JzlaqIi1gdCQBwi2KP.SLqmQFvPCF0NY0h_CXeWKJ4Rs2tGZc6Nx_Opvy0rJ.svTgssrX
- Zgqrw9ZHMO1yf0oOsuvdi3ybzJoUVKIn8d2dg8wEX62OERUo8GcVCfXXMMjsqRVr_Y1YKgKE.y1b
- TzYVPZc.TjMkWtxKSCwjj_o3tlmwdpiqWuVBPWZEthhGhOnOgTtvGKJ_rlN8Zs8oSmjpCHhf1pDp
- .MIC5bvxsmQM8muPfGMLhkRwD27qvQ.HfuGhsDO_lNzF7iUjaaxLfO0e_gTTbzLKaloMw65ditUT
- J1AAMKroMVOf4eacynfHYqsJ5NN3_5ZZ462_CTWyrcnReVJvF6.pBavoA6sHqj8O_29zpcJ1bGtz
- QvJdyWGEXmtECHCMqPDBE_im.neJapnYSdwwEGgXAb2kuFI3zQ9BBg7IyfOBk7VrTZTUOuiJKyop
- 8dAvWQ.n2AtTcK.QDwRXDWP.3B1W6ijHIZY2eVBGVPuKma0urKxacKnSSB6TlhD4ieMF1d.kkM2m
- yWfJ2DVhs7b4hUW8qTGqmYVKDFCG5oKxpPIcpvvyxju1fTL0t5HJKrIL3P83JKPHzEesA0qdEAJj
- I1IZCbCywMyRwpwpvzolG1d50tRJQHM4NJbNEFa.O0EnXLmOCvoUVwKbvPEM4vBzrbHnpWRK18_C
- _qHNsMxqLJA46znnRhKP.I8CLxTKsa0x0Xqobqt4oJgRa3eVyYotXlR8gvBdtNbW_bDmfv6iwOzU
- lvB6ge_5KwaoZ5FeaTMvoHIYYl3RUL8tU9MMCEkuHW_aF7p5Qkitj4pp.Ht_NcgmmbRlm7PO7k.b
- Zw2olnCLkGpsWMIqrnYejJp5RF_GbY7RPLWPolN3Sw5nUyCLH5mD8paluvl5gRs5an0qu1_eSi4W
- k.A_WQZEsezD3CAoGjaG1mSXKpYZZSsx9nOIxllY1cuP3hcZNDEy6S_z6rkDQpb.qUiwtMKa1B5K
- 5Ai.nf408h3z1qkdrjyfQ4JGh736JX0ceufis4lepVDcCQtWps77nOuoTLyJNabPwlET2EJq1eAN
- QYDQmfGjjAmpoosHeQ0CEWNmTant4oM.cDDHoXVlEBlOARqI9UWssAjXY5jzVyycCG_jDvCuyLk9
- aS_prbPjPyqIMkoN3QrN8eYHKJu_AGxaqMJ..xZpisqCLfHLl483DXY5_DMoM
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Oct 2020 16:20:41 +0000
-Received: by smtp409.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 946c72bd1e01ade9952e8b88774b787c;
-          Mon, 26 Oct 2020 16:20:39 +0000 (UTC)
-To:     Aleksandr Nogikh <a.nogikh@gmail.com>, jmorris@namei.org,
-        serge@hallyn.com, akinobu.mita@gmail.com
-Cc:     andreyknvl@google.com, dvyukov@google.com, elver@google.com,
-        glider@google.com, keescook@google.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Aleksandr Nogikh <nogikh@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20201026125227.54520-1-a.nogikh@gmail.com>
- <20201026125227.54520-2-a.nogikh@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [RFC PATCH v2 1/2] security: add fault injection capability
-Message-ID: <c768f42a-1370-5b38-4f89-357744fd9d5a@schaufler-ca.com>
-Date:   Mon, 26 Oct 2020 09:20:38 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.3.3
+        Mon, 26 Oct 2020 12:57:23 -0400
+Received: by mail-il1-f194.google.com with SMTP id x20so3624884ilj.8
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2020 09:57:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o0HlbzC/PMbUoOBDvB5+gaRsmOaPMHvpgw6up7a4aZQ=;
+        b=GBa7YXIDiGtb+Nlv2bI3d/omOSevIhtZXCE3FrV/+H8FYa94InqigxYjoxTL2ZkQSC
+         30B9g1Y/K8gbpjEsnYDLrRSvP2PbZ221Oeh6zctLkDuFktZhGrZEdNrro6ytt7+vVe7v
+         hkaP6yok+KgFS6aM2skIqVY1ViUnWxzvzAqktv7WjGtMyAffAyOzyqWSkfJwF6UjqWHQ
+         vxvNxJX4FL67jsXfY2luZnUMO+Hs/wFz8yOUnYkn3LuZk48bpKPgE9Ji3Y+w+tqo/XFy
+         h1sr8HK+oSOHprrb3QzJsRIFqserIdqxFIUC5Mn6sYhwferk3qADftvOvr73s6ubj9Js
+         Zdlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o0HlbzC/PMbUoOBDvB5+gaRsmOaPMHvpgw6up7a4aZQ=;
+        b=lYzXOfJNo2oiyXs68FjUTvpcH8L3cr9qvd0/R5O6/qBKP1haRJvtAciS1X7Ax4LeZ1
+         j29PnOp+oSQuxOg6r3X25KvTeaJoklVCf+nlrxEYys7BSvNPdy/KNGXyR7Up+YLOu6oA
+         zmRFtJwBz3PNM+JTdkxk6N18ypqgD8YIGBjHshShZHRj7pscndivq0HCbGcNK23McrQz
+         ZXQq5fG6wAMMVvC2ZwZQXz7fxqqxbhljoEeaa8vqwvBvZbj5bCYb0Q6lSPMeEZa9fW+i
+         7TLu+LGiPM/0MU8T3v0yGdIjrt1GwI5EeQxdeOjCIyphVdITkPh5xfwqCCG7oBBtdSNn
+         A7tA==
+X-Gm-Message-State: AOAM530PResEUXVyx3KQOvqiVhBBPQnGVPwjfQFdq9awtrgFgKtZwc15
+        nwNugUzMAvZT879Ea7tHkfCZ2J9EA1JnEcBnIo7o6w==
+X-Google-Smtp-Source: ABdhPJzTcCzQFsCUeEWDLmb9ob+imX6d8YOW4nsHVzM7OxlhxTHymdjAvsixI9JQvx60k+H/WSh9cH0RCCc03v8JWw4=
+X-Received: by 2002:a05:6e02:5c7:: with SMTP id l7mr11810940ils.43.1603731440940;
+ Mon, 26 Oct 2020 09:57:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201026125227.54520-2-a.nogikh@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.16868 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.7)
+References: <20201011082936.4131726-1-lokeshgidra@google.com>
+In-Reply-To: <20201011082936.4131726-1-lokeshgidra@google.com>
+From:   Lokesh Gidra <lokeshgidra@google.com>
+Date:   Mon, 26 Oct 2020 09:57:09 -0700
+Message-ID: <CA+EESO6YRQKsU21_3hcRi7V30CXbxThfxCu8KEG4hac+DsFCSg@mail.gmail.com>
+Subject: Re: [PATCH v10 0/3] SELinux support for anonymous inodes and UFFD
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/26/2020 5:52 AM, Aleksandr Nogikh wrote:
-> From: Aleksandr Nogikh <nogikh@google.com>
+On Sun, Oct 11, 2020 at 1:29 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
 >
-> Add a fault injection capability to call_int_hook macro. This will
-> facilitate testing of fault tolerance of the code that invokes
-> security hooks as well as the fault tolerance of the LSM
-> implementations themselves.
+> Userfaultfd in unprivileged contexts could be potentially very
+> useful. We'd like to harden userfaultfd to make such unprivileged use
+> less risky. This patch series allows SELinux to manage userfaultfd
+> file descriptors and in the future, other kinds of
+> anonymous-inode-based file descriptor.  SELinux policy authors can
+> apply policy types to anonymous inodes by providing name-based
+> transition rules keyed off the anonymous inode internal name (
+> "[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+> applying policy to the new SIDs thus produced.
 >
-> Add a KConfig option (CONFIG_FAIL_LSM_HOOKS) that controls whether the
-> capability is enabled. In order to enable configuration from the user
-> space, add the standard debugfs entries for fault injection (if
-> CONFIG_FAULT_INJECTION_DEBUG_FS is enabled).
+> With SELinux managed userfaultfd, an admin can control creation and
+> movement of the file descriptors. In particular, handling of
+> a userfaultfd descriptor by a different process is essentially a
+> ptrace access into the process, without any of the corresponding
+> security_ptrace_access_check() checks. For privacy, the admin may
+> want to deny such accesses, which is possible with SELinux support.
 >
-> Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
-> ---
-> v2:
-> - Renamed should_fail_lsm_hook() to should_fail_lsm_hook().
-> ---
->  lib/Kconfig.debug   |  6 +++++
->  security/security.c | 53 ++++++++++++++++++++++++++++++++++++++++++---=
-
->  2 files changed, 56 insertions(+), 3 deletions(-)
+> Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+> allows callers to opt into this SELinux management. In this new "secure"
+> mode, anon_inodes create new ephemeral inodes for anonymous file objects
+> instead of reusing the normal anon_inodes singleton dummy inode. A new
+> LSM hook gives security modules an opportunity to configure and veto
+> these ephemeral inodes.
 >
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 537cf3c2937d..80d289591e29 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1803,6 +1803,12 @@ config FAIL_MAKE_REQUEST
->  	help
->  	  Provide fault-injection capability for disk IO.
-> =20
-> +config FAIL_LSM_HOOKS
-> +	bool "Fault-injection capability for LSM hooks"
-> +	depends on FAULT_INJECTION
-> +	help
-> +	  Provide fault-injection capability for LSM hooks.
-> +
->  config FAIL_IO_TIMEOUT
->  	bool "Fault-injection capability for faking disk interrupts"
->  	depends on FAULT_INJECTION && BLOCK
-> diff --git a/security/security.c b/security/security.c
-> index 69ff6e2e2cd4..1105ad0f6891 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -28,6 +28,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/string.h>
->  #include <linux/msg.h>
-> +#include <linux/fault-inject.h>
->  #include <net/flow.h>
-> =20
->  #define MAX_LSM_EVM_XATTR	2
-> @@ -669,6 +670,51 @@ static void __init lsm_early_task(struct task_stru=
-ct *task)
->  		panic("%s: Early task alloc failed.\n", __func__);
->  }
-> =20
-> +
-> +#ifdef CONFIG_FAIL_LSM_HOOKS
-> +
-> +static struct {
-> +	struct fault_attr attr;
-> +	int retval;
-> +} fail_lsm_hooks =3D {
-> +	.attr =3D FAULT_ATTR_INITIALIZER,
-> +	.retval =3D -EACCES
-> +};
-> +
-> +static int __init setup_fail_lsm_hooks(char *str)
-> +{
-> +	return setup_fault_attr(&fail_lsm_hooks.attr, str);
-> +}
-> +__setup("fail_lsm_hooks=3D", setup_fail_lsm_hooks);
-> +
-> +static int lsm_hooks_inject_fail(void)
-> +{
-> +	return should_fail(&fail_lsm_hooks.attr, 1) ? fail_lsm_hooks.retval :=
- 0;
-> +}
-> +
-> +#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-> +
-> +static int __init fail_lsm_hooks_debugfs(void)
-> +{
-> +	umode_t mode =3D S_IFREG | 0600;
-> +	struct dentry *dir;
-> +
-> +	dir =3D fault_create_debugfs_attr("fail_lsm_hooks", NULL,
-> +					&fail_lsm_hooks.attr);
-> +	debugfs_create_u32("retval", mode, dir, &fail_lsm_hooks.retval);
-> +	return 0;
-> +}
-> +
-> +late_initcall(fail_lsm_hooks_debugfs);
-> +
-> +#endif /* CONFIG_FAULT_INJECTION_DEBUG_FS */
-> +
-> +#else
-> +
-> +static inline int lsm_hooks_inject_fail(void) { return 0; }
-> +
-> +#endif /* CONFIG_FAIL_LSM_HOOKS */
-> +
->  /*
->   * The default value of the LSM hook is defined in linux/lsm_hook_defs=
-=2Eh and
->   * can be accessed with:
-> @@ -707,16 +753,17 @@ static void __init lsm_early_task(struct task_str=
-uct *task)
->  	} while (0)
-> =20
->  #define call_int_hook(FUNC, IRC, ...) ({			\
-> -	int RC =3D IRC;						\
-> -	do {							\
-> +	int RC =3D lsm_hooks_inject_fail();			\
-> +	if (RC =3D=3D 0) {								\
+> This patch series is one of two fork of [1] and is an
+> alternative to [2].
+>
+> The primary difference between the two patch series is that this
+> partch series creates a unique inode for each "secure" anonymous
+> inode, while the other patch series ([2]) continues using the
+> singleton dummy anonymous inode and adds a way to attach SELinux
+> security information directly to file objects.
+>
+> I prefer the approach in this patch series because 1) it's a smaller
+> patch than [2], and 2) it produces a more regular security
+> architecture: in this patch series, secure anonymous inodes aren't
+> S_PRIVATE and they maintain the SELinux property that the label for a
+> file is in its inode. We do need an additional inode per anonymous
+> file, but per-struct-file inode creation doesn't seem to be a problem
+> for pipes and sockets.
+>
+> The previous version of this feature ([1]) created a new SELinux
+> security class for userfaultfd file descriptors. This version adopts
+> the generic transition-based approach of [2].
+>
+> This patch series also differs from [2] in that it doesn't affect all
+> anonymous inodes right away --- instead requiring anon_inodes callers
+> to opt in --- but this difference isn't one of basic approach. The
+> important question to resolve is whether we should be creating new
+> inodes or enhancing per-file data.
+>
+> Changes from the first version of the patch:
+>
+>   - Removed some error checks
+>   - Defined a new anon_inode SELinux class to resolve the
+>     ambiguity in [3]
+>   - Inherit sclass as well as descriptor from context inode
+>
+> Changes from the second version of the patch:
+>
+>   - Fixed example policy in the commit message to reflect the use of
+>     the new anon_inode class.
+>
+> Changes from the third version of the patch:
+>
+>   - Dropped the fops parameter to the LSM hook
+>   - Documented hook parameters
+>   - Fixed incorrect class used for SELinux transition
+>   - Removed stray UFFD changed early in the series
+>   - Removed a redundant ERR_PTR(PTR_ERR())
+>
+> Changes from the fourth version of the patch:
+>
+>   - Removed an unused parameter from an internal function
+>   - Fixed function documentation
+>
+> Changes from the fifth version of the patch:
+>
+>   - Fixed function documentation in fs/anon_inodes.c and
+>     include/linux/lsm_hooks.h
+>   - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+>     owner from userfaultfd_ctx.
+>
+> Changes from the sixth version of the patch:
+>
+>   - Removed definition of anon_inode_getfile_secure() as there are no
+>     callers.
+>   - Simplified function description of anon_inode_getfd_secure().
+>   - Elaborated more on the purpose of 'context_inode' in commit message.
+>
+> Changes from the seventh version of the patch:
+>
+>   - Fixed error handling in _anon_inode_getfile().
+>   - Fixed minor comment and indentation related issues.
+>
+> Changes from the eighth version of the patch:
+>
+>   - Replaced selinux_state.initialized with selinux_state.initialized
+>
+> Changes from the ninth version of the patch:
+>
+>   - Fixed function names in fs/anon_inodes.c
+>   - Fixed comment of anon_inode_getfd_secure()
+>   - Fixed name of the patch wherein userfaultfd code uses
+>     anon_inode_getfd_secure()
+>
+> [1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+> [2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+> [3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+>
+> Daniel Colascione (3):
+>   Add a new LSM-supporting anonymous inode interface
+>   Teach SELinux about anonymous inodes
+>   Use secure anon inodes for userfaultfd
+>
+>  fs/anon_inodes.c                    | 148 ++++++++++++++++++++--------
+>  fs/userfaultfd.c                    |  19 ++--
+>  include/linux/anon_inodes.h         |   8 ++
+>  include/linux/lsm_hook_defs.h       |   2 +
+>  include/linux/lsm_hooks.h           |   9 ++
+>  include/linux/security.h            |  10 ++
+>  security/security.c                 |   8 ++
+>  security/selinux/hooks.c            |  53 ++++++++++
+>  security/selinux/include/classmap.h |   2 +
+>  9 files changed, 210 insertions(+), 49 deletions(-)
+>
+> --
+> 2.28.0.1011.ga647a8990f-goog
+>
 
-Injecting the failure here will prevent the loaded LSM hooks from
-being called.
+Any suggestions on how to get VFS folks' (already CC'ed) attention on
+this patch series?
 
->  		struct security_hook_list *P;			\
-> +		RC =3D IRC;								\
->  								\
->  		hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
->  			RC =3D P->hook.FUNC(__VA_ARGS__);		\
->  			if (RC !=3D 0)				\
->  				break;				\
->  		}						\
-> -	} while (0);						\
-> +	}							\
-
-Injecting the failure here would allow the loaded LSM hooks to
-be called. It shouldn't make a difference, but hooks with side-effects
-are always possible. I don't have an issue either way.
-
->  	RC;							\
->  })
-> =20
-
+In the meantime, I humbly request the SELinux/LSM/UFFD
+reviewers/maintainers to provide their reviews.
