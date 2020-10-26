@@ -2,93 +2,80 @@ Return-Path: <SRS0=mR5W=EB=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D958DC56202
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 22:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FD0C4363A
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 23:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A789A216FD
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 22:55:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="JQw5fA5c"
+	by mail.kernel.org (Postfix) with ESMTP id ECB3320719
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Oct 2020 23:22:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603754551;
+	bh=t/6ry6r9TRhPIvmyqAN3lGK2MIUZVfhoMorMvGFcAD4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=kUmw0ArwDJmMUwWMqH2LnyHD0A5cHOdC4hsSfO8BuLwsVvR6VwiJN7PMbqyAgMd32
+	 XJJKpNNpDs+O/iBsGyFpfx0vAxbNEzmMwQByVBjh6gtVLaUrA4XOw8bYdR+gyBmjX9
+	 H7FtlwilTPvWbQYJGMrKjQJDv5YvgMv2Idn45Ol8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394911AbgJZWz1 (ORCPT
+        id S2404524AbgJZXWa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Oct 2020 18:55:27 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45375 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394899AbgJZWz0 (ORCPT
+        Mon, 26 Oct 2020 19:22:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404241AbgJZXWa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Oct 2020 18:55:26 -0400
-Received: by mail-ed1-f68.google.com with SMTP id dg9so11423946edb.12
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2020 15:55:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kylehuey.com; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=J/+n1x0TPOHJCTfSVoXlG/q+OLrGnnNxrysZ0ZyIy+Y=;
-        b=JQw5fA5cqXZCTLCd2xkURV07bnYrA8gTT/8l9H7r6P+PgM37GQ7tblZcETghImepsU
-         AcI0oUILLNpw7+Lob5wOxm8oxXKZgdxlvk1iOdkoLk31eLVc1crb3sEhxCSb6bD2V31l
-         b7OGa6zHv0zDl28Z8OMcIxY0WvmVK7pWJSrW3Zs4sWifuxNiQ2iEW7pkdOAgHIEek3Fp
-         L3yESbOX+0gb8ueK46K6rtDj34b55Vtmz8U4fPoQ/Dv2vqBsFOJNMTpbG7mznOfR5TaL
-         kpOlREDICaBo0Xi3+x/a4pHYfGgO73EI5dQFmBZNKgKh2ry9/Y+FL54IAgbsbpnA0Xzm
-         BeOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=J/+n1x0TPOHJCTfSVoXlG/q+OLrGnnNxrysZ0ZyIy+Y=;
-        b=rqibVo3X5zA8HxzteetnIg3Tdt2yoH+d0xy/Wwe3T27d0vv4bx+EWC4JEYClrS6cGx
-         XchxvcY037cFokYWPwY4sJNlKDHkQ8NGZOdWqkTHh3YES2PLGZ2OfP6xWD0GV+nwAPYG
-         kn84aEa9XckVrKEAjNQuZF2ZND9zZ08GOwuUXUWtP0XezgT/5MFKSwRovlqz7jc+kV4K
-         ZMxDA8lrz7mxiHGScatZgNxuvtKdT/+c630ZPlW5ol5RKM8KUVrF0fjQqNbOrD5YOHXd
-         qVO8mxRWjBNlxSc8UT6NPqUh8z5xnVApwKAOUnixVMRQ+eI8RJGGnaRh4OecHTdgKguJ
-         vDJg==
-X-Gm-Message-State: AOAM530PFy7NKXnrazdSW024e/T8eXl+cKywYw62g26U6VtsF5jxFQZc
-        5i/UTZD6l5Gm4JkFgV/V3jB7H/2BfWbUiVmXvqmkAg==
-X-Google-Smtp-Source: ABdhPJyAci+5cM2zXs7C2dh5O8VDIKXSp+LVa6rVM/MPlgy6tZLvyXi43c6iWM9w5BW9l3CIsdr5O5Od75OK4rN9ByQ=
-X-Received: by 2002:aa7:d9ce:: with SMTP id v14mr12828586eds.203.1603752924617;
- Mon, 26 Oct 2020 15:55:24 -0700 (PDT)
+        Mon, 26 Oct 2020 19:22:30 -0400
+Received: from kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net (unknown [163.114.132.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A995B20715;
+        Mon, 26 Oct 2020 23:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603754549;
+        bh=t/6ry6r9TRhPIvmyqAN3lGK2MIUZVfhoMorMvGFcAD4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=p3nUSijL1pkTMvo3npSfI2Sa5oscMaY3FI9qVRywR57kMJ7I3SUWsqoJld4K0vC5i
+         dIRbyK41LYAoXUo0jwrbEsax8CVM57G4UvBa7Yu/ziJFKxQBnK6eV+993uxmjb2VRJ
+         i9TIIdGy2OEFvYZHHSMMPmHcCuP3KjEV2X03655U=
+Date:   Mon, 26 Oct 2020 16:22:28 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Jeff Vander Stoep <jeffv@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-security-module@vger.kernel.org,
+        Roman Kiryanov <rkir@google.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vsock: use ns_capable_noaudit() on socket create
+Message-ID: <20201026162228.7f2d16a0@kicinski-fedora-PC1C0HJN.hsd1.ca.comcast.net>
+In-Reply-To: <alpine.LRH.2.21.2010270737290.9603@namei.org>
+References: <20201023143757.377574-1-jeffv@google.com>
+        <alpine.LRH.2.21.2010270737290.9603@namei.org>
 MIME-Version: 1.0
-From:   Kyle Huey <me@kylehuey.com>
-Date:   Mon, 26 Oct 2020 15:55:13 -0700
-Message-ID: <CAP045Aqrsb=CXHDHx4nS-pgg+MUDj14r-kN8_Jcbn-NAUziVag@mail.gmail.com>
-Subject: [REGRESSION] mm: process_vm_readv testcase no longer works after
- compat_prcoess_vm_readv removed
-To:     open list <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     "Robert O'Callahan" <robert@ocallahan.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org,
-        "open list:FILESYSTEMS (VFS and infrastructure)" 
-        <linux-fsdevel@vger.kernel.org>, linux-aio@kvack.org,
-        io-uring@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A test program from the rr[0] test suite, vm_readv_writev[1], no
-longer works on 5.10-rc1 when compiled as a 32 bit binary and executed
-on a 64 bit kernel. The first process_vm_readv call (on line 35) now
-fails with EFAULT. I have bisected this to
-c3973b401ef2b0b8005f8074a10e96e3ea093823.
+On Tue, 27 Oct 2020 07:37:37 +1100 (AEDT) James Morris wrote:
+> On Fri, 23 Oct 2020, Jeff Vander Stoep wrote:
+> 
+> > During __vsock_create() CAP_NET_ADMIN is used to determine if the
+> > vsock_sock->trusted should be set to true. This value is used later
+> > for determing if a remote connection should be allowed to connect
+> > to a restricted VM. Unfortunately, if the caller doesn't have
+> > CAP_NET_ADMIN, an audit message such as an selinux denial is
+> > generated even if the caller does not want a trusted socket.
+> > 
+> > Logging errors on success is confusing. To avoid this, switch the
+> > capable(CAP_NET_ADMIN) check to the noaudit version.
+> > 
+> > Reported-by: Roman Kiryanov <rkir@google.com>
+> > https://android-review.googlesource.com/c/device/generic/goldfish/+/1468545/
+> > Signed-off-by: Jeff Vander Stoep <jeffv@google.com>  
+> 
+> Reviewed-by: James Morris <jamorris@linux.microsoft.com>
 
-It should be fairly straightforward to extract the test case from our
-repository into a standalone program.
-
-- Kyle
-
-[0] https://rr-project.org/
-[1] https://github.com/mozilla/rr/blob/master/src/test/vm_readv_writev.c
+Applied to net, thanks!
