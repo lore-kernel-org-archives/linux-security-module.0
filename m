@@ -2,120 +2,113 @@ Return-Path: <SRS0=YDB1=EC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 077A6C4363A
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 18:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E6D7C4363A
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 18:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99CF1207BB
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 18:15:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XkcWS4YW"
+	by mail.kernel.org (Postfix) with ESMTP id 0D2F02068E
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 18:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1826005AbgJ0SPH (ORCPT
+        id S1827439AbgJ0SYG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Oct 2020 14:15:07 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:41087 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1825966AbgJ0SO5 (ORCPT
+        Tue, 27 Oct 2020 14:24:06 -0400
+Received: from relay.sw.ru ([185.231.240.75]:56312 "EHLO relay3.sw.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1827434AbgJ0SYF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Oct 2020 14:14:57 -0400
-Received: by mail-oo1-f67.google.com with SMTP id n2so551687ooo.8;
-        Tue, 27 Oct 2020 11:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yMJ8Y1/qT3nPE/qUQDD1UxaPPEXuSovGtgYNPCUSSwM=;
-        b=XkcWS4YWNm9Q4KpE5ShotbOLiXVfteFBmuCYv0GBmd6KFKdVwLVzeg8yyU+LSGQQSp
-         qL3NpEinnWWbFnTkdLX43q59sP28hp9AVKuSH0rWje9zzbL2jo8BUUzDJGdpnsktPfR+
-         4gACda/JrvqXaWDzlh4YfANdM/G+XckORgjZoLXfrw1RM/wab/kGYVTuSJv2FDptCju+
-         2UInxX/NNX3iLLiyRjWcXmPQf7ZkvESydMf0e49ysAjaRzgBl9N7luhxVSmS6cxDWJSP
-         o0SHVndQQDwEVuKaykbQrxTPGJ2BVudTq5Csl1n2oWb155hw1J9hTEca+jIxWOIaE06h
-         bogQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yMJ8Y1/qT3nPE/qUQDD1UxaPPEXuSovGtgYNPCUSSwM=;
-        b=kpt70y3GHVKFkIz/KFwHUeryXeV5rOXdQvyMOPCaOc269GCzSZIV/eaMWV2jfrLyDr
-         +/auEJZ3Z0ceaI6jDWVbHZMC8mIxhwfiyTDbmj/n+YTjyigCDqkuPfcqPbb2RAMbkkiY
-         MtjB/iC9OKdJSLLHs2K96xWygUbW+hNa/Hk/i2UBFK/v/wpWYQVA05OGBCL8dGa27LwF
-         nNkF4HuvVaJLs2+EWzrweHTGoHuc4CP9kTxysCAJO2I12q5mkGCSLYy01TlFs/KJVfDY
-         3PQ2thCuT5awEl9n1LTIGgTaczaaFrVa/FvcPohx83cjFAITxBj6NP+qHoqicSm29SX7
-         sGKQ==
-X-Gm-Message-State: AOAM531mwvQwNqZmUWuiceBbiUQO/HFSJBOT4I6MI5yjVKPYHpjayu6F
-        AKIeN4Om2vLL49i0aFb50jHltsGfSw8inSZJcTgjHMUXTwM=
-X-Google-Smtp-Source: ABdhPJwvO6DHnUVTV1Fm+Pi62zWuspDXcYpgHcTw80dT0DZdafDAVACytkN6V8bY9IVXDjBupAuSIeXlL7BF2EEkFAc=
-X-Received: by 2002:a4a:a447:: with SMTP id w7mr2749245ool.42.1603822496311;
- Tue, 27 Oct 2020 11:14:56 -0700 (PDT)
+        Tue, 27 Oct 2020 14:24:05 -0400
+X-Greylist: delayed 3703 seconds by postgrey-1.27 at vger.kernel.org; Tue, 27 Oct 2020 14:24:03 EDT
+Received: from [192.168.15.231]
+        by relay3.sw.ru with esmtp (Exim 4.94)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1kXSfa-006OBT-Fl; Tue, 27 Oct 2020 20:22:02 +0300
+Subject: Re: Inconsistent capability requirements for prctl_set_mm_exe_file()
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Nicolas Viennot <Nicolas.Viennot@twosigma.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Adrian Reber <areber@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <ovzxemul@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, Andrei Vagin <avagin@gmail.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>
+References: <7655a573-544f-05a4-36dc-0c84c73ac9ee@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <2b66ac32-adfd-de1b-499b-8ba4f7b9bea4@virtuozzo.com>
+Date:   Tue, 27 Oct 2020 20:22:11 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
 MIME-Version: 1.0
-References: <CAFqZXNuy+Q1F9rT8NJKX+Wgnp2JEROHwCdzu0pmOuWdeRe1iDg@mail.gmail.com>
-In-Reply-To: <CAFqZXNuy+Q1F9rT8NJKX+Wgnp2JEROHwCdzu0pmOuWdeRe1iDg@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Tue, 27 Oct 2020 14:14:45 -0400
-Message-ID: <CAEjxPJ4jJDwBiDS0Sv_3e2N3kFBP=oH3-mkry0PFsphhtZw9AA@mail.gmail.com>
-Subject: Re: selinux_file_permission() on pipes/pseudo-files - performance issue
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7655a573-544f-05a4-36dc-0c84c73ac9ee@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 27, 2020 at 11:02 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> Hello,
->
-> It has been reported to me that read/write syscalls on a pipe created
-> via the pipe(2) family of syscalls spend a large percentage of time in
-> avc_lookup() via selinux_file_permission(). This is specific to pipes
-> (and also accept(2)'d sockets, I think) because these pipe fds are
-> created using alloc_file_pseudo() as opposed to do_dentry_open(),
-> which means that the security_file_open() hook is never called on
-> them.
->
-> In SELinux, this means that in selinux_file_permission() the
-> read/write permission is always revalidated, leading to suboptimal
-> performance, because SELinux re-checks the read/write perms of an open
-> file only if the subject/target label or policy is different from when
-> these permissions were checked during selinux_file_open().
->
-> So I decided to try and see what would happen if I add a
-> security_file_open() call to alloc_file(). This worked well for pipes
-> - all domains that call pipe(2) seem to already have the necessary
-> permissions to pass the open check, at least in Fedora policy - but I
-> got lots of denials from accept(2), which also calls alloc_file()
-> under the hood to create the new socket fd. The problem there is that
-> programs usually call only recvmsg(2)/sendmsg(2) on fds returned by
-> accept(2), thereby avoiding read/write checks on sock_file, which
-> means that the domains don't normally have such permissions. Only
-> programs that open actual socket files on the filesystem would
-> unavoidably need read/write (or so I think), yet they wouldn't need
-> them for the subsequent recvmsg(2)/sendmsg(2) calls.
->
-> So I'm wondering if anyone has any idea how this could be fixed
-> (optimized) without introducing regressions or awkward exceptions in
-> the code. At this point, I don't see any way to do it regression-free
-> without either adding a new hook or changing security_file_open() to
-> distinguish between do_dentry_open() and alloc_file() + calling it
-> from both places...
+On 27.10.2020 15:11, Michael Kerrisk (man-pages) wrote:
+> Hello Nicolas, Cyrill, and others,
+> 
+> @Nicolas, your commit ebd6de6812387a changed the capability 
+> requirements for the prctl_set_mm_exe_file() operation from
+> 
+>     ns_capable(CAP_SYS_ADMIN)
+> 
+> to
+> 
+>     ns_capable(CAP_SYS_ADMIN) || ns_capable(CAP_CHECKPOINT_RESTORE).
+> 
+> That's fine I guess, but while looking at that change, I found
+> an anomaly.
+> 
+> The same prctl_set_mm_exe_file() functionality is also available
+> via the prctl() PR_SET_MM_EXE_FILE operation, which was added
+> by Cyrill's commit b32dfe377102ce668. However, there the 
+> prctl_set_mm_exe_file() operation is guarded by a check
+> 
+>     capable(CAP_SYS_RESOURCE).
+> 
+> There are two things I note:
+> 
+> * The capability requirements are different in the two cases.
+> * In one case the checks are with ns_capable(), while in the 
+>   other case the check is with capable().
+> 
+> In both cases, the inconsistencies predate Nicolas's patch,
+> and appear to have been introduced in Kirill Tkhai's commit
+> 4d28df6152aa3ff.
 
-I don't think you want to reuse security_file_open() here.
-There is an existing security_file_alloc() hook called on
-__alloc_file(), but we have no inode information there so it cannot
-cache the inode SID or perform any check on it.  You could potentially
-lift that hook to all of the callers after the file has been
-populated, or introduce a new hook in alloc_file() as you said.
-Wondering though why this has never come up before if it is a
-significant overhead in real workloads.  Earlier concerns about the
-overhead on open files led to commit
-788e7dd4c22e6f41b3a118fd8c291f831f6fddbb which introduced what later
-became security_file_open().  But seemingly pipes/sockets weren't a
-concern there.
+1)Before my commit there also were different checks
+
+        !capable(CAP_SYS_RESOURCE))
+and
+	uid_eq(cred->uid, make_kuid(ns, 0)) && gid_eq(cred->gid, make_kgid(ns, 0))
+
+so it is not the initial reason. The commit even decreased the checks difference
+and it made both the checks are about capability().
+
+
+2)As I understand new PR_SET_MM_MAP interface differs in the way, that it allows to batch
+a setup of prctl_mm_map parameters. So, instead of 14 prlctl calls with different arguments:
+PR_SET_MM_START_CODE, PR_SET_MM_END_CODE, PR_SET_MM_START_DATA, .., PR_SET_MM_ENV_END,
+we set then all at once and the performance is better.
+
+The second advantage is that the new interface is more comfortable in case of we set all
+of 14 parameters. Old interface requires special order of calls: sometimes you have to
+set PR_SET_MM_START_CODE first and then PR_SET_MM_END_CODE second, some times it is vice
+versa. Otherwise __prctl_check_order() in validate_prctl_map() will fail.
+
+3)For me it looks like any combinations of parameters acceptable to be set by both interfaces
+are the same (in case of we don't see on permissions checks). In case of we can assign a set of
+parameters {A} using old interface, we can assign it from new interface and vice versa.
+Isn't this so?! If so, we should use the same permissions check.
+
+Kirill
