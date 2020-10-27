@@ -2,106 +2,166 @@ Return-Path: <SRS0=YDB1=EC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2931C6379D
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE91C5517A
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 271E5218AC
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:36:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GojwaP5Z"
+	by mail.kernel.org (Postfix) with ESMTP id 90DE522258
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1801850AbgJ0Pob (ORCPT
+        id S1813578AbgJ0QwF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Oct 2020 11:44:31 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:40380 "EHLO mail.skyhub.de"
+        Tue, 27 Oct 2020 12:52:05 -0400
+Received: from mga02.intel.com ([134.134.136.20]:31195 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1801045AbgJ0Phf (ORCPT
+        id S1813141AbgJ0Qsb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Oct 2020 11:37:35 -0400
-Received: from zn.tnic (p200300ec2f0dae00b4f0c54a66f17858.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:ae00:b4f0:c54a:66f1:7858])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2E3CB1EC0286;
-        Tue, 27 Oct 2020 16:37:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1603813054;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=+Mz0khoA2HDePr5jB3u1RCURzzcXAN9GwneqwZvpIVA=;
-        b=GojwaP5ZPBTydw3a4oSNELmObKrhpqRECU+wksLpzDBfLu0Qncr/mQpm+UOzl1dcRjZjkV
-        wTxVxQidE7ch4fDDDfr7SvC/rfX6G2PNuXWSy4KX/Fy4SeUfi7GR6i0Id4DmceeOwp3Xfa
-        eLepTFKo0HwnDXVOKd0oUGFPQPFL2Ek=
-Date:   Tue, 27 Oct 2020 16:37:27 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
-        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        haitao.huang@intel.com, josh@joshtriplett.org, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
-Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
-Message-ID: <20201027153727.GI15580@zn.tnic>
-References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
- <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
- <20200626153400.GE27151@zn.tnic>
- <1ada871a-2350-1007-c625-a00bdb0d439b@intel.com>
- <20201027100515.GA15580@zn.tnic>
- <d7bee9a1-256b-d4ea-c146-ad353a913ae0@intel.com>
+        Tue, 27 Oct 2020 12:48:31 -0400
+IronPort-SDR: SG5A0/jqaTpytBk1TEhFegUwplx6AGZzEuGDtNpw8d1jSZz8F3wbDr8SJ8dHGAUUTOkT6Zv5ZT
+ RbBzUzlhIr3w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9787"; a="155087877"
+X-IronPort-AV: E=Sophos;i="5.77,424,1596524400"; 
+   d="scan'208";a="155087877"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2020 09:48:30 -0700
+IronPort-SDR: 999f4SZCkQh4jt4PoWuERWmMbxj0LbOq6PYtsIXn9iP9rfHIhf5z3uX5jG8jw6R2AC4MZxTSGp
+ WgV7OHpJgAqg==
+X-IronPort-AV: E=Sophos;i="5.77,424,1596524400"; 
+   d="scan'208";a="535869569"
+Received: from abudanko-mobl.ccr.corp.intel.com (HELO [10.249.227.94]) ([10.249.227.94])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2020 09:48:27 -0700
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v2] perf_event_open.2: update the man page with CAP_PERFMON
+ related information
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Organization: Intel Corp.
+Message-ID: <33c10554-c0ee-9e46-2946-67a9deac6752@linux.intel.com>
+Date:   Tue, 27 Oct 2020 19:48:25 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <d7bee9a1-256b-d4ea-c146-ad353a913ae0@intel.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Oct 27, 2020 at 08:20:00AM -0700, Dave Hansen wrote:
-> I can't think of a *lot* of spots where we have sanity checks like this
-> for memory.  We have cgroups and the overcommit limits.  But, in
-> general, folks can allocate as much memory as they want until
-> allocations start to fail.
->
-> Should SGX be any different?
-> 
-> If we had a sanity check that said, "you can only allocate 1/2 of
-> enclave memory", wouldn't that just make somebody mad because they want
-> one big enclave?
->
-> Or, do you just want a sanity check to see if, up front, the user is
-> asking for more enclave memory than there is on the *whole* system?
-> That's also sane, but it doesn't take overcommit into account.  That's
-> why, for instance, we have vm.overcommit_ratio for normal memory.
 
-Yeah, you're making sense and there's really no need for SGX to be any
-different. Especially since users are already familiar the "policy" of
-failing allocations when too much memory requested. :-)
+Extend perf_event_open 2 man page with the information about
+CAP_PERFMON capability designed to secure performance monitoring
+and observability operation in a system according to the principle
+of least privilege [1] (POSIX IEEE 1003.1e, 2.2.2.39).
 
-> BTW, I think we all agree that a cgroup controller for enclave memory is
-> going to be needed eventually.
+[1] https://sites.google.com/site/fullycapable/, posix_1003.1e-990310.pdf
 
-Right.
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ man2/perf_event_open.2 | 32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
-Thx.
-
+diff --git a/man2/perf_event_open.2 b/man2/perf_event_open.2
+index 4827a359d..9810bc554 100644
+--- a/man2/perf_event_open.2
++++ b/man2/perf_event_open.2
+@@ -97,6 +97,8 @@ when running on the specified CPU.
+ .BR "pid == \-1" " and " "cpu >= 0"
+ This measures all processes/threads on the specified CPU.
+ This requires
++.B CAP_PERFMON
++(since Linux 5.8) or
+ .B CAP_SYS_ADMIN
+ capability or a
+ .I /proc/sys/kernel/perf_event_paranoid
+@@ -108,9 +110,11 @@ This setting is invalid and will return an error.
+ When
+ .I pid
+ is greater than zero, permission to perform this system call
+-is governed by a ptrace access mode
++is governed by
++.B CAP_PERFMON
++(since Linux 5.9) and a ptrace access mode
+ .B PTRACE_MODE_READ_REALCREDS
+-check; see
++check on older Linux versions; see
+ .BR ptrace (2).
+ .PP
+ The
+@@ -2925,6 +2929,8 @@ to hold the result.
+ This allows attaching a Berkeley Packet Filter (BPF)
+ program to an existing kprobe tracepoint event.
+ You need
++.B CAP_PERFMON
++(since Linux 5.8) or
+ .B CAP_SYS_ADMIN
+ privileges to use this ioctl.
+ .IP
+@@ -2967,6 +2973,8 @@ have multiple events attached to a tracepoint.
+ Querying this value on one tracepoint event returns the id
+ of all BPF programs in all events attached to the tracepoint.
+ You need
++.B CAP_PERFMON
++(since Linux 5.8) or
+ .B CAP_SYS_ADMIN
+ privileges to use this ioctl.
+ .IP
+@@ -3175,6 +3183,8 @@ it was expecting.
+ .TP
+ .B EACCES
+ Returned when the requested event requires
++.B CAP_PERFMON
++(since Linux 5.8) or
+ .B CAP_SYS_ADMIN
+ permissions (or a more permissive perf_event paranoid setting).
+ Some common cases where an unprivileged process
+@@ -3296,6 +3306,8 @@ setting is specified.
+ It can also happen, as with
+ .BR EACCES ,
+ when the requested event requires
++.B CAP_PERFMON
++(since Linux 5.8) or
+ .B CAP_SYS_ADMIN
+ permissions (or a more permissive perf_event paranoid setting).
+ This includes setting a breakpoint on a kernel address,
+@@ -3326,6 +3338,22 @@ The official way of knowing if
+ support is enabled is checking
+ for the existence of the file
+ .IR /proc/sys/kernel/perf_event_paranoid .
++.PP
++.B CAP_PERFMON
++capability (since Linux 5.8) provides secure approach to
++performance monitoring and observability operations in a system
++according to the principal of least privilege (POSIX IEEE 1003.1e).
++Accessing system performance monitoring and observability operations
++using
++.B CAP_PERFMON
++rather than the much more powerful
++.B CAP_SYS_ADMIN
++excludes chances to misuse credentials and makes operations more secure.
++.B CAP_SYS_ADMIN
++usage for secure system performance monitoring and observability
++is discouraged with respect to
++.B CAP_PERFMON
++capability.
+ .SH BUGS
+ The
+ .B F_SETOWN_EX
 -- 
-Regards/Gruss,
-    Boris.
+2.24.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
