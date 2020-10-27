@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A15A3C2D0A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 00:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC24C55178
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 00:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7245B20674
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 00:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C26C2087C
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 00:09:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ZWDgA8+y"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="DV6OWsJ8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbgJ0ACo (ORCPT
+        id S2394653AbgJ0AJR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Oct 2020 20:02:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43151 "EHLO
+        Mon, 26 Oct 2020 20:09:17 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35042 "EHLO
         mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2411076AbgJZX4P (ORCPT
+        with ESMTP id S2394299AbgJ0AJJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:56:15 -0400
-Received: by mail-pg1-f193.google.com with SMTP id r10so6965294pgb.10
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2020 16:56:15 -0700 (PDT)
+        Mon, 26 Oct 2020 20:09:09 -0400
+Received: by mail-pg1-f193.google.com with SMTP id f38so7003079pgm.2
+        for <linux-security-module@vger.kernel.org>; Mon, 26 Oct 2020 17:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wqqvkA3oKUwkO5eXRPOBy8lXyQg0CiUtokie2wwagwI=;
-        b=ZWDgA8+yUlKx2dZgiyZDe66Bv6aQYo4o4sBrgULvsJ7L1mqryuSoN/tRsTLtRNf5gl
-         QA5GzgrsJ4IIXk6KefYiWNloPp5dTgRya5PAi5H2X1Ck5liCNMZ9plZFbXAFJkRhGENX
-         zRADl3Fzwzqt5UTeMExAEl9+J6C00UJYGVeM9r+kQpMj10I4tNzbDp+KUhpG26z8ohQ5
-         u9LGW1VxEtuEY5uYo6W0qmYrYYX9WPLdyfh3K/l7hHXtbXds+UPAtJe/6QdzpKUrKNEa
-         IHnev7OPcOoKpcEMuZBXfSj3e5H/bPp0SHxbMGuGbkkGN2ORlWbNlGQCKJOUg6Ub1kcx
-         WOrg==
+        bh=LsJlRjdqhDVAHhw47g/atIos95r5K18qubNura+3fzc=;
+        b=DV6OWsJ8YTis4RWe74HnMoSPHx2wnbbnih3F0P+HiF57IXnyKrAIcBplDa0TuQW0fe
+         aii8O67y5CuNtSNcN0q+CPIFocqT+ma+us4RoqX4TC6tMgaGBGUnwVHQJ/N6qPZoUIZl
+         N8PZQaTFtDJvhHp2KmiMn99XHribiQTVBqggOOByg6ZsC+AIdPeSZ7IIhzJWtbXj8peQ
+         vUIkbSwJfbOC01KBcysHUuhejsj0lkLWHowENLgMtxCKJmsxzr5jKuNTtJsywdn514eT
+         kI7wIhvyoH92wMz2QHWzCBEBrmMggfxor976qEm1YW1xHPKbqwPNkX7lWR3OAQC8rWrk
+         OKFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=wqqvkA3oKUwkO5eXRPOBy8lXyQg0CiUtokie2wwagwI=;
-        b=aDyZqVQzuGrulzARKlhr2jCe2RQLRH75eBSdJrZnnaGD0VfGI2/eTsBb6Ej/PoVQ/F
-         W7pRALZZztiW5U2KXpthBZnhBCrBaeCMexVNpVvYoXhD9mjAIMVun3DhY5plt1EyBQVQ
-         XwaFgpZ9sOKBuz0p9PukJ8RqRQRvxCdCA6psvBY3gQK80sfvd4SLd+FebXhl1UwuKz7w
-         TfuUxY9wdHQmiuBhCfh/WB/2iewiH9Lf3mAqUDujq6DqWSLFLrKL1ka+uUVnwDfVLkj7
-         TKp5HemmEYUpuU5XTHS/AKUXlI2KcUuREWlTXmQ+brGXEag9V+GxtM7NhZ/PH/g1oHV/
-         egzw==
-X-Gm-Message-State: AOAM533Yu3aQ58LRuNoCvuJwQTZGjDPz0sRQAOYjVm2PRGHF5oKS8zH4
-        phdbAARFHzfzz2qFHmpGGm4Dwg==
-X-Google-Smtp-Source: ABdhPJzXWytxnG400Dp//klgHvFRu6jftuSrTTs7sW7oWyETnW8LM2mlLlQ2a53Jfzf5mLG9B/rX/w==
-X-Received: by 2002:a63:5f42:: with SMTP id t63mr569296pgb.0.1603756574857;
-        Mon, 26 Oct 2020 16:56:14 -0700 (PDT)
+        bh=LsJlRjdqhDVAHhw47g/atIos95r5K18qubNura+3fzc=;
+        b=TLOU9dlM1K+Hoh6H8hvWaVuONLRNyIFTysztjAqUzlo/9SkvufTup+N55dq8inbpzZ
+         /R8W1MTpIADjDxqigVh71uMmtCixehWdMSUJdDmXdVFpQR56m9t4nEXP4VgZN6ro2m1e
+         39/G5sVXL1WeuAOdfdabwn8RI/53s3ksBbKhO6uhxrl+PKHYjbs/UzV9gnqvw29vy7SG
+         Iv6LSmUXC8V53P5fFQxQqYTt1UqNYqaD2CkMxRC19Q6rw6UAY96HtEqEZf+hExkobaFW
+         wXycSvm+WlB6AQQkAqMAd7bDRcV5tCHnQAWa5RTMvvcidCTzzZhv/leWDRLJ5s4o+grz
+         wSDA==
+X-Gm-Message-State: AOAM530HAwZHIdXAQ5/pWaleaDmfIgNSmsnuD505bFjIHDjuS3w8r8X2
+        50w90cC54rVj3WUMmeMhZsh4qQ==
+X-Google-Smtp-Source: ABdhPJzyk1CokDb3PmPO6AYN5WbyxmkTO2goVocCEnl70vwlgJZot7evNIwwh9o3S+Q92QVwXSE2HA==
+X-Received: by 2002:a65:5c02:: with SMTP id u2mr18125891pgr.173.1603757348944;
+        Mon, 26 Oct 2020 17:09:08 -0700 (PDT)
 Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id s38sm3637009pgm.62.2020.10.26.16.56.12
+        by smtp.gmail.com with ESMTPSA id e16sm13676837pfh.45.2020.10.26.17.09.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Oct 2020 16:56:14 -0700 (PDT)
+        Mon, 26 Oct 2020 17:09:08 -0700 (PDT)
 Subject: Re: [REGRESSION] mm: process_vm_readv testcase no longer works after
  compat_prcoess_vm_readv removed
-To:     Kyle Huey <me@kylehuey.com>,
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Kyle Huey <me@kylehuey.com>,
         open list <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Robert O'Callahan <robert@ocallahan.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Robert O'Callahan <robert@ocallahan.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
@@ -80,45 +80,56 @@ Cc:     Robert O'Callahan <robert@ocallahan.org>,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>
 References: <CAP045Aqrsb=CXHDHx4nS-pgg+MUDj14r-kN8_Jcbn-NAUziVag@mail.gmail.com>
+ <70d5569e-4ad6-988a-e047-5d12d298684c@kernel.dk>
+ <20201027000521.GD3576660@ZenIV.linux.org.uk>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <70d5569e-4ad6-988a-e047-5d12d298684c@kernel.dk>
-Date:   Mon, 26 Oct 2020 17:56:11 -0600
+Message-ID: <0127a542-3f93-7bd0-e00d-4a0e49846c8f@kernel.dk>
+Date:   Mon, 26 Oct 2020 18:09:06 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <CAP045Aqrsb=CXHDHx4nS-pgg+MUDj14r-kN8_Jcbn-NAUziVag@mail.gmail.com>
+In-Reply-To: <20201027000521.GD3576660@ZenIV.linux.org.uk>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 10/26/20 4:55 PM, Kyle Huey wrote:
-> A test program from the rr[0] test suite, vm_readv_writev[1], no
-> longer works on 5.10-rc1 when compiled as a 32 bit binary and executed
-> on a 64 bit kernel. The first process_vm_readv call (on line 35) now
-> fails with EFAULT. I have bisected this to
-> c3973b401ef2b0b8005f8074a10e96e3ea093823.
+On 10/26/20 6:05 PM, Al Viro wrote:
+> On Mon, Oct 26, 2020 at 05:56:11PM -0600, Jens Axboe wrote:
+>> On 10/26/20 4:55 PM, Kyle Huey wrote:
+>>> A test program from the rr[0] test suite, vm_readv_writev[1], no
+>>> longer works on 5.10-rc1 when compiled as a 32 bit binary and executed
+>>> on a 64 bit kernel. The first process_vm_readv call (on line 35) now
+>>> fails with EFAULT. I have bisected this to
+>>> c3973b401ef2b0b8005f8074a10e96e3ea093823.
+>>>
+>>> It should be fairly straightforward to extract the test case from our
+>>> repository into a standalone program.
+>>
+>> Can you check with this applied?
+>>
+>> diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
+>> index fd12da80b6f2..05676722d9cd 100644
+>> --- a/mm/process_vm_access.c
+>> +++ b/mm/process_vm_access.c
+>> @@ -273,7 +273,8 @@ static ssize_t process_vm_rw(pid_t pid,
+>>  		return rc;
+>>  	if (!iov_iter_count(&iter))
+>>  		goto free_iov_l;
+>> -	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r, false);
+>> +	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r,
+>> +				in_compat_syscall());
 > 
-> It should be fairly straightforward to extract the test case from our
-> repository into a standalone program.
+> _ouch_
+> 
+> There's a bug, all right, but I'm not sure that this is all there is
+> to it. For now it's probably the right fix, but...  Consider the fun
+> trying to use that from 32bit process to access the memory of 64bit
+> one.  IOW, we might want to add an explicit flag for "force 64bit
+> addresses/sizes in rvec".
 
-Can you check with this applied?
-
-diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
-index fd12da80b6f2..05676722d9cd 100644
---- a/mm/process_vm_access.c
-+++ b/mm/process_vm_access.c
-@@ -273,7 +273,8 @@ static ssize_t process_vm_rw(pid_t pid,
- 		return rc;
- 	if (!iov_iter_count(&iter))
- 		goto free_iov_l;
--	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r, false);
-+	iov_r = iovec_from_user(rvec, riovcnt, UIO_FASTIOV, iovstack_r,
-+				in_compat_syscall());
- 	if (IS_ERR(iov_r)) {
- 		rc = PTR_ERR(iov_r);
- 		goto free_iov_l;
+Ouch yes good point, nice catch.
 
 -- 
 Jens Axboe
