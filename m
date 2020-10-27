@@ -2,114 +2,106 @@ Return-Path: <SRS0=YDB1=EC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D160C6369E
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2931C6379D
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C33D322264
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 271E5218AC
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 16:36:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FrFeVRKY"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GojwaP5Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1801810AbgJ0PoZ (ORCPT
+        id S1801850AbgJ0Pob (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Oct 2020 11:44:25 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43618 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1799418AbgJ0PbZ (ORCPT
+        Tue, 27 Oct 2020 11:44:31 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:40380 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1801045AbgJ0Phf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Oct 2020 11:31:25 -0400
-Received: by mail-lf1-f66.google.com with SMTP id l28so2838520lfp.10;
-        Tue, 27 Oct 2020 08:31:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fHBOxQ4ds2L5zAe+IuVRpnyZ/0NNh1Z4K/iPh0DplL0=;
-        b=FrFeVRKYfjR60SUSEWYarWyVfbowL0Ud1Eji9GIT0h5PaTT8VDCPnslo8AaFuNtyTd
-         jWYa1PiIUnDfYqal6c8SXQEGtn35Dx21FF1vpSXT/Btm2N9+/PYsVDp7eH9bU0f59QPY
-         HXARwhnWZ8mHG6Me8oDKdLMsoWrWhpCPn802tusd2n260z0+Ji2TSVsZbPB3dojZQcre
-         FMzxlua8ApZGgx/pHHhBci76Np9dDQWX7/3v8iziLolh76ZICVvcLICkNuqidccCVUJ8
-         kIBYt1gFcoDUs80eLG3Kpj0NEfPuZB7bqQtufpYzTE2XOQepKo+kxYGjR6bCRzFbtDm/
-         Lx4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fHBOxQ4ds2L5zAe+IuVRpnyZ/0NNh1Z4K/iPh0DplL0=;
-        b=dYOmeYo2MQqLAiD6bHUSem9hN3ZDOnXnGdPHkL167i9owALV3wqjWBIxzGikS9Idon
-         Co1exfnMC15jTnokCHej5ZYVlyZM4jXz/r1Boj/ckaK0zRjxyXBcZaM6GFgzC4S48UB6
-         CKv0WBYwEbPfetAOK86lj6ekd0nnnjfl+0qRhe0zZVq9OttPiSzvg4jzdTqZlf+SgXep
-         ABmdOxSOjxUTWMOglM5Uf80hPlTNILLxbS7e4a3kg4/tDLfS5pt0Vi23HY8Zx03nJoj+
-         6zNE5XCbG42bciGKcK8QZxCDy0baSd2hexddyxS9OcS1tfkOAw3oQh5Fcicc9ObB/5Si
-         /jxg==
-X-Gm-Message-State: AOAM531E0I6e0oqsSkiOXCwRNhgIZS9a9mO6wA52wbWrFn0lsbIAa33k
-        yVBA8S6bVGED0Xjr7Db/6acFCFiuXkEZPIzzx1lOZnKMrDY=
-X-Google-Smtp-Source: ABdhPJyNHgiM1WZV6kimlOxnv8sy1Xt8EYt2qlI4JysJ/j1JiAgXlQLt4MJyxmzzEcCrEQ+POBbOR25Kj72oKnNqHiE=
-X-Received: by 2002:a19:7fc2:: with SMTP id a185mr970412lfd.84.1603812683068;
- Tue, 27 Oct 2020 08:31:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201026125227.54520-1-a.nogikh@gmail.com> <20201026125227.54520-3-a.nogikh@gmail.com>
-In-Reply-To: <20201026125227.54520-3-a.nogikh@gmail.com>
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-Date:   Wed, 28 Oct 2020 00:31:11 +0900
-Message-ID: <CAC5umyjZn+gtO=u8GhptVggzodbY-vnk9NNTOqyZyUW2up2ASQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/2] docs: add fail_lsm_hooks info to fault-injection.rst
-To:     Aleksandr Nogikh <a.nogikh@gmail.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Marco Elver <elver@google.com>,
-        Alexander Potapenko <glider@google.com>, keescook@google.com,
-        LKML <linux-kernel@vger.kernel.org>,
+        Tue, 27 Oct 2020 11:37:35 -0400
+Received: from zn.tnic (p200300ec2f0dae00b4f0c54a66f17858.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:ae00:b4f0:c54a:66f1:7858])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2E3CB1EC0286;
+        Tue, 27 Oct 2020 16:37:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1603813054;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=+Mz0khoA2HDePr5jB3u1RCURzzcXAN9GwneqwZvpIVA=;
+        b=GojwaP5ZPBTydw3a4oSNELmObKrhpqRECU+wksLpzDBfLu0Qncr/mQpm+UOzl1dcRjZjkV
+        wTxVxQidE7ch4fDDDfr7SvC/rfX6G2PNuXWSy4KX/Fy4SeUfi7GR6i0Id4DmceeOwp3Xfa
+        eLepTFKo0HwnDXVOKd0oUGFPQPFL2Ek=
+Date:   Tue, 27 Oct 2020 16:37:27 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Aleksandr Nogikh <nogikh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        akpm@linux-foundation.org, andriy.shevchenko@linux.intel.com,
+        asapek@google.com, cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        haitao.huang@intel.com, josh@joshtriplett.org, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com
+Subject: Re: [PATCH v33 11/21] x86/sgx: Linux Enclave Driver
+Message-ID: <20201027153727.GI15580@zn.tnic>
+References: <20200617220844.57423-1-jarkko.sakkinen@linux.intel.com>
+ <20200617220844.57423-12-jarkko.sakkinen@linux.intel.com>
+ <20200626153400.GE27151@zn.tnic>
+ <1ada871a-2350-1007-c625-a00bdb0d439b@intel.com>
+ <20201027100515.GA15580@zn.tnic>
+ <d7bee9a1-256b-d4ea-c146-ad353a913ae0@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d7bee9a1-256b-d4ea-c146-ad353a913ae0@intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-2020=E5=B9=B410=E6=9C=8826=E6=97=A5(=E6=9C=88) 21:52 Aleksandr Nogikh <a.no=
-gikh@gmail.com>:
+On Tue, Oct 27, 2020 at 08:20:00AM -0700, Dave Hansen wrote:
+> I can't think of a *lot* of spots where we have sanity checks like this
+> for memory.  We have cgroups and the overcommit limits.  But, in
+> general, folks can allocate as much memory as they want until
+> allocations start to fail.
 >
-> From: Aleksandr Nogikh <nogikh@google.com>
+> Should SGX be any different?
+> 
+> If we had a sanity check that said, "you can only allocate 1/2 of
+> enclave memory", wouldn't that just make somebody mad because they want
+> one big enclave?
 >
-> Describe fail_lsm_hooks fault injection capability.
->
-> Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
-> ---
-> v2:
-> - Added this commit.
-> ---
->  Documentation/fault-injection/fault-injection.rst | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/Documentation/fault-injection/fault-injection.rst b/Document=
-ation/fault-injection/fault-injection.rst
-> index 31ecfe44e5b4..48705adfbc18 100644
-> --- a/Documentation/fault-injection/fault-injection.rst
-> +++ b/Documentation/fault-injection/fault-injection.rst
-> @@ -48,6 +48,12 @@ Available fault injection capabilities
->    status code is NVME_SC_INVALID_OPCODE with no retry. The status code a=
-nd
->    retry flag can be set via the debugfs.
->
-> +- fail_lsm_hooks
-> +
-> +  injects failures into LSM hooks. When a fault is injected, actual hook=
-s
-> +  are not executed and a code from /sys/kernel/debug/fail_lsm_hooks/retv=
-al
-> +  is returned (the default value is -EACCES).
+> Or, do you just want a sanity check to see if, up front, the user is
+> asking for more enclave memory than there is on the *whole* system?
+> That's also sane, but it doesn't take overcommit into account.  That's
+> why, for instance, we have vm.overcommit_ratio for normal memory.
 
-In addition to this global one, what do you think about per-hook fault
-injection,
-i.e. /sys/kernel/debug/fail_lsm_hooks/<FUNC>/retval ?
+Yeah, you're making sense and there's really no need for SGX to be any
+different. Especially since users are already familiar the "policy" of
+failing allocations when too much memory requested. :-)
 
-In this case, we need a fault_attr for each hook. (Maybe, we can use the sa=
-me
-technique that is used to define security_hook_heads).
+> BTW, I think we all agree that a cgroup controller for enclave memory is
+> going to be needed eventually.
+
+Right.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
