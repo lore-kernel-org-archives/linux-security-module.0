@@ -2,120 +2,144 @@ Return-Path: <SRS0=YDB1=EC=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-15.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534F1C64E8A
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 17:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6847EC5DF9E
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 17:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 039A820878
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 17:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ECD420878
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Oct 2020 17:31:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K3nDBG4o"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="UdECIVnj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1819938AbgJ0RbX (ORCPT
+        id S1813636AbgJ0Rb0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Oct 2020 13:31:23 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36774 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1819356AbgJ0R3r (ORCPT
+        Tue, 27 Oct 2020 13:31:26 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:48920 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1819552AbgJ0Raa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Oct 2020 13:29:47 -0400
-Received: by mail-il1-f194.google.com with SMTP id p10so2252773ile.3
-        for <linux-security-module@vger.kernel.org>; Tue, 27 Oct 2020 10:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U2duayH/emf1tIZ74YFLBA63A8FXzNhJlBfTaLBsHZo=;
-        b=K3nDBG4oCwwGW5/t4RIjBwtwr28aC4oWCgPQOvlYCTrls84QzbizjcpmFGDjTvGm1b
-         648Dnapx6vrV+5Q6R2aobyj7kXse9gDY9ACwIqSjGP/qmfkx7cSlEOxr7JFythxw9n/R
-         nXM5oDLad75erNfqVh1J5mOwso8TZjLSR3FCRjZoh58lIUHjOMeg9RzeLJYEoh6sPbtZ
-         wtR3zRjyAUF/VXL7/tdhCpQdnjwaOi+Bmp+X3dyZJOu9jfM0tAbu+6bH8DyxadzASKi0
-         SJmJSBRSpH0GKkYm+jVCXDCi3HEm4YDqQ+JLN5rqsDcMcpZrtahU4VG1O/KSC9yP8Ncr
-         piZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U2duayH/emf1tIZ74YFLBA63A8FXzNhJlBfTaLBsHZo=;
-        b=mvwqq1wC7qpZBAn3i8xdb6gRNbEtP2GsCIIpJhPXA7BFpDb3lq+M7kdvQSGfeNUXUH
-         B6Yw7C4Iq7B3acnBblhWSPxhcCLfx/7eve6Tquq28GDQCwpr5Ac/JJn7pYwW0JlnmDRT
-         ISzVjM5daWp8sfv4o1gHSCHTU0Kegahyjihzg7ZF3sF+kDJNaLIfnxsY3nFzAV2FX7wJ
-         VYQXW0BrlcUA6K4HNQpQaon6YsaYuaOirW91yJZ24Gzo640+SQgnBFJozpEeTvgfZvnr
-         z5E1dzerSCbN3ZOeHopu+bNF31MFB6WTMyWJsZFwFJGYqq/s3k8/PJgWUwvI9PzUQSl1
-         Y2RQ==
-X-Gm-Message-State: AOAM530i5AipdFrLEc8JifJQcJrox2lhFW4t4OtKItNPbqiENCkkHWF/
-        FJxkB5JCm/VDL8iW7Q1QbqemZRogQe+FktlGcPUb0Q==
-X-Google-Smtp-Source: ABdhPJx7ImpvHdJUKZ7vKScRwzDbzZ73EemxCHPT7yJhPL/b5KiR+dl+5hggsFyOrAiOomRmRVdeFvckjjRN5x0nTl8=
-X-Received: by 2002:a92:7f10:: with SMTP id a16mr3008325ild.134.1603819786646;
- Tue, 27 Oct 2020 10:29:46 -0700 (PDT)
+        Tue, 27 Oct 2020 13:30:30 -0400
+Received: from [192.168.86.21] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id EF0D620B4905;
+        Tue, 27 Oct 2020 10:30:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EF0D620B4905
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1603819829;
+        bh=kaVk3QXkAqH4EzFU6UPEbSCWTIeXicsOu6YZLtOukDY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UdECIVnjzFOphs0SutlHP0BOxuHYrjur3X5CnjWGPC3oxMamfcFIwkj1ZQweyrywQ
+         jXvBHD1UMnzCvinMoI7WeFxJQJpXqQGUeSPgH9ZBUnvOnJ6GpvCuiuSaY/Hrgpazs1
+         xzcZy2vebL4N+Ix7IaJU1+VRguBJICESG1e1sAWg=
+Subject: Re: [PATCH v4 0/6] IMA: Infrastructure for measurement of critical
+ kernel data
+To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20200923192011.5293-1-tusharsu@linux.microsoft.com>
+ <2c7da61fbeb17c577253b117829b3bd544d8cf44.camel@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <d3bfb2ec-357a-411d-956c-0e305245f6ec@linux.microsoft.com>
+Date:   Tue, 27 Oct 2020 10:30:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20201026125227.54520-1-a.nogikh@gmail.com> <20201026125227.54520-2-a.nogikh@gmail.com>
- <c768f42a-1370-5b38-4f89-357744fd9d5a@schaufler-ca.com>
-In-Reply-To: <c768f42a-1370-5b38-4f89-357744fd9d5a@schaufler-ca.com>
-From:   Aleksandr Nogikh <nogikh@google.com>
-Date:   Tue, 27 Oct 2020 20:29:35 +0300
-Message-ID: <CANp29Y5w1ZxDShGQHvJ-F0bM_P4WSrvPoDQtPNnBCG38Ee-x-A@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/2] security: add fault injection capability
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Aleksandr Nogikh <a.nogikh@gmail.com>, jmorris@namei.org,
-        serge@hallyn.com, akinobu.mita@gmail.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Marco Elver <elver@google.com>, glider@google.com,
-        keescook@google.com, LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2c7da61fbeb17c577253b117829b3bd544d8cf44.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-(resending the previous message in a plain/text mode)
+Hi Mimi,
+Thanks a lot for your continual engagement and
+providing us valuable feedback on this work.
 
-On Mon, Oct 26, 2020 at 7:20 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-[...]
-> > -     int RC = IRC;                                           \
-> > -     do {                                                    \
-> > +     int RC = lsm_hooks_inject_fail();                       \
-> > +     if (RC == 0) {                                                          \
->
-> Injecting the failure here will prevent the loaded LSM hooks from
-> being called.
-In this RFC, fault injection was intentionally placed before the code that
-invokes LSM hooks. The reasoning was that it would simultaneously check
-how the kernel code reacts to LSM denials and the effect of fault injections
-on LSM modules.
+On 2020-10-24 8:35 p.m., Mimi Zohar wrote:
+> Hi Tushar,
+> 
+> On Wed, 2020-09-23 at 12:20 -0700, Tushar Sugandhi wrote:
+>> There are several kernel components that contain critical data which if
+>> accidentally or maliciously altered, can compromise the security of the
+>> kernel. Example of such components would include LSMs like SELinux, or
+>> AppArmor; or device-mapper targets like dm-crypt, dm-verity etc.
+> 
+> ^"the integrity of the system."
+> 
+Ok. I will revisit this cover letter again, when we post the next
+version of the series. We also need to update the cover letter to
+include the description for new patches to be added in this series, as
+per your suggestion below. {built-in policy patch (by Lakshmi) and an
+example measurement patch (SeLinux by Lakshmi)}
 
->
-> >               struct security_hook_list *P;                   \
-> > +             RC = IRC;                                                               \
-> >                                                               \
-> >               hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
-> >                       RC = P->hook.FUNC(__VA_ARGS__);         \
-> >                       if (RC != 0)                            \
-> >                               break;                          \
-> >               }                                               \
-> > -     } while (0);                                            \
-> > +     }                                                       \
->
-> Injecting the failure here would allow the loaded LSM hooks to
-> be called. It shouldn't make a difference, but hooks with side-effects
-> are always possible. I don't have an issue either way.
->
-> >       RC;                                                     \
-> >  })
-> >
->
-Should we expect LSM modules to properly handle the cases when their
-hooks with side effects were not invoked (unlike the selinux crash that
-is described in the cover letter)? From the source code it seems that a
-failure/denial from one module prevents the execution of the subsequent
-hooks, so this looks like a realistic scenario.
+> This cover letter needs to be re-written from a higher perspective,
+> explaining what is meant by "critical data" (e.g. kernel subsystem
+> specific information only stored in kernel memory).
+> 
+>>
+>> Many of these components do not use the capabilities provided by kernel
+>> integrity subsystem (IMA), and thus they don't use the benefits of
+>> extended TPM PCR quotes and ultimately the benefits of remote attestation.
+> 
+> True, up until recently IMA only measured files, nothing else.  Why is
+> this paragraph needed?  What new information is provided?
+> 
+Here, I was attempting to describe the problem (what needs to be
+solved), before proposing a solution below. But maybe it is not adding
+value. I will get rid of the above paragraph in the next iteration.
 
-If that is not true in general and depends on the specific active modules,
-then it probably makes sense to introduce an option to control whether to
-inject faults at the beginning of call_int_hook() or after the hooks have
-been invoked.
+>> This series bridges this gap, so that potential kernel components that
+>> contain data critical to the security of the kernel could take advantage
+>> of IMA's measuring and quoting abilities - thus ultimately enabling
+>> remote attestation for their specific data.
+> 
+> Perhaps, something more along the lines, "This patch set defines a new
+> IMA hook named ... to measure critical data."
+> 
+Will do.
+>>
+>> System administrators may want to pick and choose which kernel
+>> components they would want to enable for measurements, quoting, and
+>> remote attestation. To enable that, a new IMA policy is introduced.
+> 
+> Reverse the order of this paragraph and the following one, describing
+> the new feature and only afterwards explaining how it may be
+> constrained.
+> 
+Makes total sense. Will do.
+>>
+>> And lastly, the functionality is exposed through a function
+>> ima_measure_critical_data(). The functionality is generic enough to
+>> measure the data of any kernel component at run-time. To ensure that
+>> only data from supported sources are measured, the kernel component
+>> needs to be added to a compile-time list of supported sources (an
+>> "allowed list of components"). IMA validates the source passed to
+>> ima_measure_critical_data() against this allowed list at run-time.
+> 
+> This patch set must include at least one example of measuring critical
+> data, before it can be upstreamed.  Tushar, please coordinate with
+> Lakshmi and Raphael.
+> 
+Yes. I am coordinating with Lakshmi/Raphael on including one of the
+examples. (SeLinux as per your feedback)
+
+BTW, we also have one more data source (dm-crypt) currently in review,
+that uses critical data measurement infrastructure to measure its kernel
+in-memory data.
+https://patchwork.kernel.org/patch/11844817/
+
+Thanks again for all the help and support with the patches.
+
+~Tushar
+
+> thanks,
+> 
+> Mimi
+> 
