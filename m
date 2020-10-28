@@ -7,101 +7,92 @@ X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4D2C4363A
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 507C9C56201
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:24:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FEF520759
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6A3207E8
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Y47tug5b"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="v4M1qF5m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387759AbgJ1XOw (ORCPT
+        id S1728256AbgJ1XX7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34684 "EHLO
+        Wed, 28 Oct 2020 19:23:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389509AbgJ1XNB (ORCPT
+        with ESMTP id S1729383AbgJ1XLA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Oct 2020 19:13:01 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCFBC0613CF
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 16:13:01 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id y12so808108wrp.6
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 16:13:01 -0700 (PDT)
+        Wed, 28 Oct 2020 19:11:00 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F2AC0613CF
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 16:10:59 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id t13so1012646ljk.12
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 16:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0jVxeGv6lE9HxG3ioZ1jNMfiO7oQfXoYg0ePUwTMDgQ=;
-        b=Y47tug5b8PS5GVPWZ5arNveYafl4JnStVgSr/qZmy4WMW6wLuDTGfKhQt582GpTP9n
-         VaX4J1iOOfcC9cqURSGuBTpjB5MHJyq1mNBcQTvCskhYUqF6bkLCy5AQk3k1tAi11Zlj
-         InKArBY6f0SHcVV6CdqF5hqhWXzbBTzIbMK8EO/b0Trpp/V1bwmsJ5iTQXadbQUpXO93
-         gVT6KwN/yGKCVG9w8JM2XKakHZ2v7HUoGkEUjlIlnzZp8L9L71mAsvpQuk9v+oa7XOAs
-         tqHKWRGPBACtP/01HsIquOdIS4+cs+Ld2MZqc5GHCGyGS6uhT0AJb9uwlt6FqK25Kryw
-         iFnA==
+        bh=nzLz4C8/7x6rzuhgwBujVtBwU24k/ip+cGwa/LEOhsg=;
+        b=v4M1qF5mDiC5N28sULoJTYGg1WgaQQ/emZkfbpqBiOCzkX+SSPW5W1uM0NbvfAh6YO
+         9E9NFQnet8PJcyRMTHhYtgpYE7bVrUSfAQVf3wXDtig0GDDzclpTy6RCpO/CDkSwzFSw
+         1IjiOdkAOxxHfDbnNC4X71Ioj0EI2UIuG/QuQyhFg+gO9e1vtVjLNnMKoPxMtar9kcu4
+         Y7/Mos6ATXV6NyOub+XMEgoIiLmTrlSZF1qa9xGdnBAtX4ze+iq63skPQoPnYCEQ+QDJ
+         DG4aO1r32cPLM7r5DjYDFQtGKkXmijlPbjhfYhJ0O+jXMH3CNTs00phfFjMeNylPtiEr
+         LRNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0jVxeGv6lE9HxG3ioZ1jNMfiO7oQfXoYg0ePUwTMDgQ=;
-        b=rO24zkxG3iBsNdwowXYRm08zxj/+IvfW8ZZKKiek8d2g+9tS4Rayfoxe2wHKWCXVyN
-         qSTxFV9Ofl77DrH5O6Yk9w3zmZnvpc7JQyUv3IHNFn8AHKiD4TMRbWuMT8OP3XOlapm1
-         IJxLwwH6huSUys0Gh91JywJPh6XprHR+wU+mHc7MLwRp5BoBE2O714IRcz4ye/Q1ZSKb
-         xvO80ymd+yBtaSpvPmuYVvf8UiVym446BQtLs60S8KkbB5LY+vJuD3gRr0eGjERDg6lP
-         Mxld+qNmKlxwJBDPSctEBxfE4nEkgGkkTPV2t7R9PF/BTTn0OBqXwRvMRqMWn9N1RlSQ
-         XsMQ==
-X-Gm-Message-State: AOAM531NqhGwPIux+Wp2CpBOu3qfyuxaZtS1I1DIJ94FY88GhXgsuH5K
-        Cniq4WL31VGqUz1grA2fiJEtouUlpTHGfap/Onh0Pw+oXQ==
-X-Google-Smtp-Source: ABdhPJwEzZ6iuiYaqP3D8WgJUCMcZ88Ip3ZyPs/mRAVgBH9lthbImUjuYFxHiRFl7WkTjg/dMh67mJNU6KVwr/0CDdc=
-X-Received: by 2002:a17:906:af87:: with SMTP id mj7mr5178601ejb.178.1603848385218;
- Tue, 27 Oct 2020 18:26:25 -0700 (PDT)
+        bh=nzLz4C8/7x6rzuhgwBujVtBwU24k/ip+cGwa/LEOhsg=;
+        b=YlrdJT07VwhnTtATjx5I2eyU14TuKuQSvsu9ljJXRYte2AaPQOapbeDTh5JBj0/R9x
+         8wRf6HcctsOLhs8ZFl1/krseuTkOYJey8xpW7LYOiaAkTUhfxj6S/Jg6dYQ/WVwAsEDq
+         X3LVpBqiESEI0rHvehvVJI98hptGap75uumoawjwDEXCMTFh769Ngqc1DIP26I70iqWs
+         8RvazFj2fzwNHO0pBFN7owNURjfVy6gm3nU9kPRtrRN9wYq35GwY1OGJNrLJ944iAo8e
+         8SH5+mAidioM+Ikd7NJbDlTEEZT3J37IYNr9lafomZO96aAWXgFV0XXTnH8Fb5xzaDGa
+         1jtw==
+X-Gm-Message-State: AOAM532cGCVo8wmYyfxwZ9meKYfFDvOs4ybER4vrg/ZylWComQV3yqJx
+        WRzeXYFymnAZ94O9apbxkOqn2HGujZ9iOnfvuKnP5pCAEw==
+X-Google-Smtp-Source: ABdhPJyR411+6APaMeMHKRFz3XusXo7hZQPgNstyy+j9Bir1XmDNqruBwrAK8ySh4BzJWo1Qsqgz2KolL3IjMPV55EU=
+X-Received: by 2002:a17:906:c1d4:: with SMTP id bw20mr5195940ejb.91.1603851000899;
+ Tue, 27 Oct 2020 19:10:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <7081a5b9c7d2e8085c49cec2fa72fcbb0b25e0d7.1600778472.git.rgb@redhat.com>
- <CAHC9VhSPk2RiMsnjTKw02_+_1Kagm06m+-r=ooNruT+fuuixYQ@mail.gmail.com>
- <20200923144852.GK822320@madcap2.tricolour.ca> <CAHC9VhRu4KEyp+e0tbSbObL1y0+90z_Znp+0z-hmnj5V68bh0w@mail.gmail.com>
-In-Reply-To: <CAHC9VhRu4KEyp+e0tbSbObL1y0+90z_Znp+0z-hmnj5V68bh0w@mail.gmail.com>
+References: <160141647786.7997.5490924406329369782.stgit@sifl>
+ <alpine.LRH.2.21.2009300909150.6592@namei.org> <CAHC9VhTM_a+L8nY8QLVdA1FcL8hjdV1ZNLJcr6G_Q27qPD_5EQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhTM_a+L8nY8QLVdA1FcL8hjdV1ZNLJcr6G_Q27qPD_5EQ@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 27 Oct 2020 21:26:14 -0400
-Message-ID: <CAHC9VhTBxdtC8YF_Vze54WQgfhf3kH+2RAGnsjzf2whwJw8SOA@mail.gmail.com>
-Subject: Re: [PATCH ghak120 V5] audit: trigger accompanying records when no
- rules present
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Eric Paris <eparis@redhat.com>
+Date:   Tue, 27 Oct 2020 22:09:49 -0400
+Message-ID: <CAHC9VhSq6stUdMSS5MXKDas5RHnrJiKSDU60CbKYe04x2DvymQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] lsm,selinux: pass the family information along with
+ xfrm flow
+To:     linux-security-module@vger.kernel.org
+Cc:     selinux@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        netdev@vger.kernel.org, James Morris <jmorris@namei.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Sep 23, 2020 at 1:47 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Wed, Sep 23, 2020 at 10:49 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2020-09-23 10:29, Paul Moore wrote:
-> > > I've gone over this revision a couple of times now and it looks okay,
-> > > but past experience is whispering in my ear that perhaps this is
-> > > better to wait on this for the next cycle so it gets a full set of
-> > > -rcX releases.  Thoughts?
-> >
-> > I thought I had lots of time since we were just at the end of the
-> > previous cycle when this failed the previous time...  Ran out yet
-> > again...  (there were two weeks of PTO and a devel system rebuild in
-> > there somewhere...)
+On Wed, Sep 30, 2020 at 9:44 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Tue, Sep 29, 2020 at 7:09 PM James Morris <jmorris@namei.org> wrote:
+> > I'm not keen on adding a parameter which nobody is using. Perhaps a note
+> > in the header instead?
 >
-> We are at -rc6 and assuming v5.9 is released after -rc7 that would
-> give this roughly a week and a half in v5.9-rcX; considering the
-> history of this patch (reverted, obvious problems in development) I'm
-> not confident -rc6 provides enough soak time (even if we go to -rc8 I
-> remain skeptical).  In addition, we've got a history of not taking new
-> work that isn't a bug-fix past the -rc5/-rc6 timeframe.  This is why
-> I'm debating holding this until after the merge window.
+> On Wed, Sep 30, 2020 at 6:14 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > Please at least change to the struct flowi to flowi_common if we're
+> > not adding a family field.
 >
-> > It isn't my call.
->
-> I asked for your thoughts on the matter, surely you have the liberty
-> to comment on your own opinion :)
+> It did feel a bit weird adding a (currently) unused parameter, so I
+> can understand the concern, I just worry that a comment in the code
+> will be easily overlooked.  I also thought about passing a pointer to
+> the nested flowi_common struct, but it doesn't appear that this is
+> done anywhere else in the stack so it felt wrong to do it here.
 
-I never heard back on this, but the patch is in audit/next now.
+With the merge window behind us, where do stand on this?  I see the
+ACK from Casey and some grumbling about adding an unused parameter
+(which is a valid argument, I just feel the alternative is worse), but
+I haven't seen any serious NACKs.
+
+Any objections or other strong feelings to me merging this via the
+selinux/next branch?
 
 -- 
 paul moore
