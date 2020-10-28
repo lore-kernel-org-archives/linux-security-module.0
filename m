@@ -2,187 +2,105 @@ Return-Path: <SRS0=Tuew=EE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75148C5DF9D
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8707CC56201
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29302207DE
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3771720790
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1603933011;
+	bh=+ZdDzdBNKbaHfui4MuF5O6NTQjMZGthQqlXfYWR4DRQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=oBtBLYl9x19ytN1iT69FqotvnFrBO5QXFrzHcCEya2sv0MwMBicgeHJ/tfWRgvok/
+	 d+BZKS5JsSTeIndxg6QoAd7HlS/8XzZH9L+UDT3h5Fwxc7n0fv1NgX2Bxf4a6FxszB
+	 PGlQE1GiopCsrh8U1VBL/iiZC+I1vPHt8TMlhdWY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390740AbgJ2Axh (ORCPT
+        id S1727934AbgJ2A4u (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Oct 2020 20:53:37 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60626 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727944AbgJ2Af2 (ORCPT
+        Wed, 28 Oct 2020 20:56:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731627AbgJ1WRg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Oct 2020 20:35:28 -0400
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kXvuU-0008Ep-1v; Thu, 29 Oct 2020 00:35:22 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 06/34] fs: add id translation helpers
-Date:   Thu, 29 Oct 2020 01:32:24 +0100
-Message-Id: <20201029003252.2128653-7-christian.brauner@ubuntu.com>
-X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+        Wed, 28 Oct 2020 18:17:36 -0400
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FDBF2474C
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 13:57:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1603893460;
+        bh=+ZdDzdBNKbaHfui4MuF5O6NTQjMZGthQqlXfYWR4DRQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wdnXqCAbX7zR57S749UE30A8dxHypmCw4XE+OuWGovBeUDLiWy0rm+1lEVWzJT2zx
+         b2Fi/aWJYJSVWPXn8432nKy8Kt//Z17OulKjp9112UoaEgi/LYYgcazYcq2z2hPiMM
+         xMy89iHMWLOW4A1DpiIp0+dvQ6MuRXLxAQmYpl4o=
+Received: by mail-lf1-f49.google.com with SMTP id i6so2415558lfd.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 06:57:40 -0700 (PDT)
+X-Gm-Message-State: AOAM5310yvNV+TzeaWDMQhWHIn6R0JYJqauD86YucqNwC0WgpKPp3Vkj
+        a/En5yokBUNnTetqkeH9fplPUB5yD+7DJId7YsU=
+X-Google-Smtp-Source: ABdhPJyvfULNd0KJ+iC88tvCmHLYU3hvDB4IoOkcvqBjEqXu5oPDU9JBhOHo+u9AfQvAXWM7FKZxbkRDYbXqQces/sk=
+X-Received: by 2002:a19:4006:: with SMTP id n6mr2688309lfa.28.1603893458043;
+ Wed, 28 Oct 2020 06:57:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201026215236.3894200-1-arnd@kernel.org> <7bb56fd2-ffe2-2985-19d0-31b42bc9e7e8@i-love.sakura.ne.jp>
+In-Reply-To: <7bb56fd2-ffe2-2985-19d0-31b42bc9e7e8@i-love.sakura.ne.jp>
+From:   Arnd Bergmann <arnd@kernel.org>
+Date:   Wed, 28 Oct 2020 14:57:21 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a3id-zGLfdvo1m=ct_E=EKkf6Xwkrz5LQdgNsvfgbMcZw@mail.gmail.com>
+Message-ID: <CAK8P3a3id-zGLfdvo1m=ct_E=EKkf6Xwkrz5LQdgNsvfgbMcZw@mail.gmail.com>
+Subject: Re: [PATCH] tomoyo: fix clang pointer arithmetic warning
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add simple helpers to make it easy to map kuids into and from idmapped
-mounts. We provide simple wrappers that filesystems can use to
-e.g. initialize inodes similar to i_{uid,gid}_read() and
-i_{uid,gid}_write(). Accessing an inode through an idmapped mount will
-require the inode to be mapped according to the mount's user namespace.
-If the fsids are used to compare against inodes or to initialize inodes
-they are required to be shifted from the mount's user namespace. Passing
-the initial user namespace to these helpers makes them a nop and so any
-non-idmapped paths will not be impacted.
+On Wed, Oct 28, 2020 at 2:22 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Thank you for a patch. I have two questions.
+>
+> On 2020/10/27 6:52, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > clang warns about additions on NULL pointers being undefined in C:
+> >
+> > security/tomoyo/securityfs_if.c:226:59: warning: arithmetic on a null pointer treated as a cast from integer to pointer is a GNU extension [-Wnull-pointer-arithmetic]
+> >         securityfs_create_file(name, mode, parent, ((u8 *) NULL) + key,
+> >
+> > Change the code to instead use a cast through uintptr_t to avoid
+> > the warning.
+> >
+>
+> > -     securityfs_create_file(name, mode, parent, ((u8 *) NULL) + key,
+> > +     securityfs_create_file(name, mode, parent, (u8 *)(uintptr_t)key,
+> >                              &tomoyo_operations);
+>
+> (1) Does clang warn if "(void *)key" is used instead of "(u8 *)(uintptr_t)key" ?
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- include/linux/fs.h | 75 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+Yes, both clang and gcc warn when you cast between a pointer and
+an integer of a different size.
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8314cd351673..8a891b80d0b4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -39,6 +39,7 @@
- #include <linux/fs_types.h>
- #include <linux/build_bug.h>
- #include <linux/stddef.h>
-+#include <linux/cred.h>
- 
- #include <asm/byteorder.h>
- #include <uapi/linux/fs.h>
-@@ -1574,6 +1575,80 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
- 	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
- }
- 
-+static inline kuid_t kuid_into_mnt(struct user_namespace *to, kuid_t kuid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return make_kuid(to, __kuid_val(kuid));
-+#else
-+	return kuid;
-+#endif
-+}
-+
-+static inline kgid_t kgid_into_mnt(struct user_namespace *to, kgid_t kgid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return make_kgid(to, __kgid_val(kgid));
-+#else
-+	return kgid;
-+#endif
-+}
-+
-+static inline kuid_t i_uid_into_mnt(struct user_namespace *to,
-+				    const struct inode *inode)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kuid_into_mnt(to, inode->i_uid);
-+#else
-+	return inode->i_uid;
-+#endif
-+}
-+
-+static inline kgid_t i_gid_into_mnt(struct user_namespace *to,
-+				    const struct inode *inode)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kgid_into_mnt(to, inode->i_gid);
-+#else
-+	return inode->i_gid;
-+#endif
-+}
-+
-+static inline kuid_t kuid_from_mnt(struct user_namespace *to, kuid_t kuid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return KUIDT_INIT(from_kuid(to, kuid));
-+#else
-+	return kuid;
-+#endif
-+}
-+
-+static inline kgid_t kgid_from_mnt(struct user_namespace *to, kgid_t kgid)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return KGIDT_INIT(from_kgid(to, kgid));
-+#else
-+	return kgid;
-+#endif
-+}
-+
-+static inline kuid_t fsuid_into_mnt(struct user_namespace *to)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kuid_from_mnt(to, current_fsuid());
-+#else
-+	return current_fsuid();
-+#endif
-+}
-+
-+static inline kgid_t fsgid_into_mnt(struct user_namespace *to)
-+{
-+#ifdef CONFIG_IDMAP_MOUNTS
-+	return kgid_from_mnt(to, current_fsgid());
-+#else
-+	return current_fsgid();
-+#endif
-+}
-+
- extern struct timespec64 current_time(struct inode *inode);
- 
- /*
--- 
-2.29.0
+> (2) tomoyo_open() has
+>
+>         const int key = ((u8 *) file_inode(file)->i_private) - ((u8 *) NULL);
+>
+>     which decodes the "u8 key" passed to tomoyo_create_entry(). For symmetry,
+>     I'd like to remove NULL from tomoyo_open() as well. Does clang warn if
+>
+>         const int key = (u8) (file_inode(file)->i_private);
+>
+>     is used?
 
+Yes, same thing, but
+
+   const int key = (uintptr_t)file_inode(file)->i_private;
+
+works without warnings and seems clearer.
+
+       Arnd
