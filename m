@@ -2,85 +2,107 @@ Return-Path: <SRS0=ebHT=ED=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_12_24,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 807A4C56201
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E4D2C4363A
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:15:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32CED20782
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:05:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FEF520759
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Oct 2020 23:15:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Y47tug5b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731811AbgJ1XFD (ORCPT
+        id S2387759AbgJ1XOw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Oct 2020 19:05:03 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63744 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390003AbgJ1XE6 (ORCPT
+        Wed, 28 Oct 2020 19:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34684 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389509AbgJ1XNB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Oct 2020 19:04:58 -0400
-X-Greylist: delayed 3601 seconds by postgrey-1.27 at vger.kernel.org; Wed, 28 Oct 2020 19:04:57 EDT
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 09SDMwnF001101;
-        Wed, 28 Oct 2020 22:22:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp);
- Wed, 28 Oct 2020 22:22:58 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 09SDMwwV001095
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 28 Oct 2020 22:22:58 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] tomoyo: fix clang pointer arithmetic warning
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        linux-security-module@vger.kernel.org
-References: <20201026215236.3894200-1-arnd@kernel.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <7bb56fd2-ffe2-2985-19d0-31b42bc9e7e8@i-love.sakura.ne.jp>
-Date:   Wed, 28 Oct 2020 22:22:59 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        Wed, 28 Oct 2020 19:13:01 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FCFBC0613CF
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 16:13:01 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id y12so808108wrp.6
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 16:13:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0jVxeGv6lE9HxG3ioZ1jNMfiO7oQfXoYg0ePUwTMDgQ=;
+        b=Y47tug5b8PS5GVPWZ5arNveYafl4JnStVgSr/qZmy4WMW6wLuDTGfKhQt582GpTP9n
+         VaX4J1iOOfcC9cqURSGuBTpjB5MHJyq1mNBcQTvCskhYUqF6bkLCy5AQk3k1tAi11Zlj
+         InKArBY6f0SHcVV6CdqF5hqhWXzbBTzIbMK8EO/b0Trpp/V1bwmsJ5iTQXadbQUpXO93
+         gVT6KwN/yGKCVG9w8JM2XKakHZ2v7HUoGkEUjlIlnzZp8L9L71mAsvpQuk9v+oa7XOAs
+         tqHKWRGPBACtP/01HsIquOdIS4+cs+Ld2MZqc5GHCGyGS6uhT0AJb9uwlt6FqK25Kryw
+         iFnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0jVxeGv6lE9HxG3ioZ1jNMfiO7oQfXoYg0ePUwTMDgQ=;
+        b=rO24zkxG3iBsNdwowXYRm08zxj/+IvfW8ZZKKiek8d2g+9tS4Rayfoxe2wHKWCXVyN
+         qSTxFV9Ofl77DrH5O6Yk9w3zmZnvpc7JQyUv3IHNFn8AHKiD4TMRbWuMT8OP3XOlapm1
+         IJxLwwH6huSUys0Gh91JywJPh6XprHR+wU+mHc7MLwRp5BoBE2O714IRcz4ye/Q1ZSKb
+         xvO80ymd+yBtaSpvPmuYVvf8UiVym446BQtLs60S8KkbB5LY+vJuD3gRr0eGjERDg6lP
+         Mxld+qNmKlxwJBDPSctEBxfE4nEkgGkkTPV2t7R9PF/BTTn0OBqXwRvMRqMWn9N1RlSQ
+         XsMQ==
+X-Gm-Message-State: AOAM531NqhGwPIux+Wp2CpBOu3qfyuxaZtS1I1DIJ94FY88GhXgsuH5K
+        Cniq4WL31VGqUz1grA2fiJEtouUlpTHGfap/Onh0Pw+oXQ==
+X-Google-Smtp-Source: ABdhPJwEzZ6iuiYaqP3D8WgJUCMcZ88Ip3ZyPs/mRAVgBH9lthbImUjuYFxHiRFl7WkTjg/dMh67mJNU6KVwr/0CDdc=
+X-Received: by 2002:a17:906:af87:: with SMTP id mj7mr5178601ejb.178.1603848385218;
+ Tue, 27 Oct 2020 18:26:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201026215236.3894200-1-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <7081a5b9c7d2e8085c49cec2fa72fcbb0b25e0d7.1600778472.git.rgb@redhat.com>
+ <CAHC9VhSPk2RiMsnjTKw02_+_1Kagm06m+-r=ooNruT+fuuixYQ@mail.gmail.com>
+ <20200923144852.GK822320@madcap2.tricolour.ca> <CAHC9VhRu4KEyp+e0tbSbObL1y0+90z_Znp+0z-hmnj5V68bh0w@mail.gmail.com>
+In-Reply-To: <CAHC9VhRu4KEyp+e0tbSbObL1y0+90z_Znp+0z-hmnj5V68bh0w@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 27 Oct 2020 21:26:14 -0400
+Message-ID: <CAHC9VhTBxdtC8YF_Vze54WQgfhf3kH+2RAGnsjzf2whwJw8SOA@mail.gmail.com>
+Subject: Re: [PATCH ghak120 V5] audit: trigger accompanying records when no
+ rules present
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Eric Paris <eparis@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thank you for a patch. I have two questions.
+On Wed, Sep 23, 2020 at 1:47 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Sep 23, 2020 at 10:49 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2020-09-23 10:29, Paul Moore wrote:
+> > > I've gone over this revision a couple of times now and it looks okay,
+> > > but past experience is whispering in my ear that perhaps this is
+> > > better to wait on this for the next cycle so it gets a full set of
+> > > -rcX releases.  Thoughts?
+> >
+> > I thought I had lots of time since we were just at the end of the
+> > previous cycle when this failed the previous time...  Ran out yet
+> > again...  (there were two weeks of PTO and a devel system rebuild in
+> > there somewhere...)
+>
+> We are at -rc6 and assuming v5.9 is released after -rc7 that would
+> give this roughly a week and a half in v5.9-rcX; considering the
+> history of this patch (reverted, obvious problems in development) I'm
+> not confident -rc6 provides enough soak time (even if we go to -rc8 I
+> remain skeptical).  In addition, we've got a history of not taking new
+> work that isn't a bug-fix past the -rc5/-rc6 timeframe.  This is why
+> I'm debating holding this until after the merge window.
+>
+> > It isn't my call.
+>
+> I asked for your thoughts on the matter, surely you have the liberty
+> to comment on your own opinion :)
 
-On 2020/10/27 6:52, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> clang warns about additions on NULL pointers being undefined in C:
-> 
-> security/tomoyo/securityfs_if.c:226:59: warning: arithmetic on a null pointer treated as a cast from integer to pointer is a GNU extension [-Wnull-pointer-arithmetic]
->         securityfs_create_file(name, mode, parent, ((u8 *) NULL) + key,
-> 
-> Change the code to instead use a cast through uintptr_t to avoid
-> the warning.
-> 
+I never heard back on this, but the patch is in audit/next now.
 
-> -	securityfs_create_file(name, mode, parent, ((u8 *) NULL) + key,
-> +	securityfs_create_file(name, mode, parent, (u8 *)(uintptr_t)key,
->  			       &tomoyo_operations);
-
-(1) Does clang warn if "(void *)key" is used instead of "(u8 *)(uintptr_t)key" ?
-
-(2) tomoyo_open() has
-
-	const int key = ((u8 *) file_inode(file)->i_private) - ((u8 *) NULL);
-
-    which decodes the "u8 key" passed to tomoyo_create_entry(). For symmetry,
-    I'd like to remove NULL from tomoyo_open() as well. Does clang warn if
-
-	const int key = (u8) (file_inode(file)->i_private);
-
-    is used?
+-- 
+paul moore
+www.paul-moore.com
