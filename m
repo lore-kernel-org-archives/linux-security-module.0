@@ -2,197 +2,157 @@ Return-Path: <SRS0=Tuew=EE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4D8C4363A
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 18:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 766C9C4363A
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 18:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FBB520825
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 18:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B6FB20838
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 18:35:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bP9CvNXO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725788AbgJ2SIN convert rfc822-to-8bit (ORCPT
+        id S1725888AbgJ2Sfp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Oct 2020 14:08:13 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38077 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbgJ2SGh (ORCPT
+        Thu, 29 Oct 2020 14:35:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47438 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgJ2Sfo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Oct 2020 14:06:37 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <stgraber@ubuntu.com>)
-        id 1kYCI0-0003yx-At
-        for linux-security-module@vger.kernel.org; Thu, 29 Oct 2020 18:04:44 +0000
-Received: by mail-wr1-f47.google.com with SMTP id a9so3751725wrg.12
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2020 11:04:44 -0700 (PDT)
-X-Gm-Message-State: AOAM530BLbGjIde9b1dLK7clz4OmBzwJpVATtHIBWZ3xD1rkdtpnjHro
-        AbUJiWVyN5NbCt4i2AV42tjh/2CT7+ZyW++7k7LSXw==
-X-Google-Smtp-Source: ABdhPJzOR+GvYdcxThjeYM4q+BnWieqIoL3kVTr7F9zyXSA8NyVuuYCL1zVggZkDC4pHflRK6EVUPiYtBnL0ZVxrdaQ=
-X-Received: by 2002:ac2:5c49:: with SMTP id s9mr1955451lfp.14.1603994683268;
- Thu, 29 Oct 2020 11:04:43 -0700 (PDT)
+        Thu, 29 Oct 2020 14:35:44 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AF2C0613CF;
+        Thu, 29 Oct 2020 11:35:44 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id n15so3904361wrq.2;
+        Thu, 29 Oct 2020 11:35:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xhMMctdfvKPyqyYyPaG2fiUHUah7QBaQjVcecZR6Lv8=;
+        b=bP9CvNXOQNkc0rw3nQ8m6aeeRzOwh/zxRNwQbbcXhnzuORsBy6Z/mQ0eJD2KFX50T4
+         N05aTRwXvW8lS3VplG30F2MBYV8vdYfjzv2lcj67idlSK+uiJDffECfWD2dASvbI6xiE
+         IdxQr8jEdojAsF0fVsWjXczNEcofllcA3Flu2pKE/6bjcTDuEKlzs+zqqhfkK8olECjL
+         FMHX2MvyJ2x+88tVRaDlgFO/9mRljm5wnn54VlAtpcQWaJX1ko9hXNvvwMUVdaUrU/To
+         Vl/twJELDEm59qiPJ45uKzAkQqIvYqfSo+atYZ8NKrDvsMas46neKOBfTuhOHWMQkzKz
+         hNJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xhMMctdfvKPyqyYyPaG2fiUHUah7QBaQjVcecZR6Lv8=;
+        b=HQax3qS0Sc08JPSauaiqZy3XzzDtkbU9KsNmwLYR1MXfkGV9f89UZ3lBNfcBUBydGn
+         7ruju0IW7E5AHo8MErGc1qANDz+Mo9frYBNijHp8yIZMPQEDgHhyP28owmJglVpuKUrj
+         /LPfdUYslxgDSbNsz3fqMzDxoX4IfGOLINu2dVZMpZrR8qQtXCOJQR9CiJ/FI7pBSSMV
+         SqO/2uv2Tr6UcaoO8m6Km7jabcpWmacf9QNhtZotXDF7oAcWeVnUmqoW6WWINm4Oq0ii
+         z/nUpzw+8UnLl/iyvJR5MjYC8Teot1ATA1NdEdm1fR0d3Cj434f/PPTzk+aen9M42YhO
+         P+qQ==
+X-Gm-Message-State: AOAM533ZeMNWnO6QiCo7ZTxhIXuwEE09mSxZVvgS5YkhPrHA2qPawR23
+        TSOyT5BF5Zyjwwz9vwL+lTiiwOx9rC0H3w==
+X-Google-Smtp-Source: ABdhPJzWXWekVLvb5lwbB79JujGUDMVYblDoz9+79Q06Xw2v1Ii3rTJivGupKie7M9sBDQJWmi8baQ==
+X-Received: by 2002:adf:dd0b:: with SMTP id a11mr7761460wrm.41.1603996543054;
+        Thu, 29 Oct 2020 11:35:43 -0700 (PDT)
+Received: from nogikh.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id f4sm5800982wrq.54.2020.10.29.11.35.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Oct 2020 11:35:42 -0700 (PDT)
+From:   Aleksandr Nogikh <aleksandrnogikh@gmail.com>
+To:     jmorris@namei.org, serge@hallyn.com, akinobu.mita@gmail.com
+Cc:     andreyknvl@google.com, dvyukov@google.com, elver@google.com,
+        glider@google.com, keescook@google.com, casey@schaufler-ca.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Aleksandr Nogikh <nogikh@google.com>
+Subject: [PATCH v3 0/2] security: add fault injection to LSM hooks
+Date:   Thu, 29 Oct 2020 18:35:24 +0000
+Message-Id: <20201029183526.2131776-1-aleksandrnogikh@gmail.com>
+X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
 MIME-Version: 1.0
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <87pn51ghju.fsf@x220.int.ebiederm.org> <20201029161231.GA108315@cisco> <87blglc77y.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87blglc77y.fsf@x220.int.ebiederm.org>
-From:   =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>
-Date:   Thu, 29 Oct 2020 14:04:31 -0400
-X-Gmail-Original-Message-ID: <CA+enf=vn1TgdLx9TR3m=wdBzbZxRbxK4NFY4NdYn0v5gzewCyw@mail.gmail.com>
-Message-ID: <CA+enf=vn1TgdLx9TR3m=wdBzbZxRbxK4NFY4NdYn0v5gzewCyw@mail.gmail.com>
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Tycho Andersen <tycho@tycho.pizza>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stephen Barber <smbarber@chromium.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 29, 2020 at 12:45 PM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> Tycho Andersen <tycho@tycho.pizza> writes:
->
-> > Hi Eric,
-> >
-> > On Thu, Oct 29, 2020 at 10:47:49AM -0500, Eric W. Biederman wrote:
-> >> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> >>
-> >> > Hey everyone,
-> >> >
-> >> > I vanished for a little while to focus on this work here so sorry for
-> >> > not being available by mail for a while.
-> >> >
-> >> > Since quite a long time we have issues with sharing mounts between
-> >> > multiple unprivileged containers with different id mappings, sharing a
-> >> > rootfs between multiple containers with different id mappings, and also
-> >> > sharing regular directories and filesystems between users with different
-> >> > uids and gids. The latter use-cases have become even more important with
-> >> > the availability and adoption of systemd-homed (cf. [1]) to implement
-> >> > portable home directories.
-> >>
-> >> Can you walk us through the motivating use case?
-> >>
-> >> As of this year's LPC I had the distinct impression that the primary use
-> >> case for such a feature was due to the RLIMIT_NPROC problem where two
-> >> containers with the same users still wanted different uid mappings to
-> >> the disk because the users were conflicting with each other because of
-> >> the per user rlimits.
-> >>
-> >> Fixing rlimits is straight forward to implement, and easier to manage
-> >> for implementations and administrators.
-> >
-> > Our use case is to have the same directory exposed to several
-> > different containers which each have disjoint ID mappings.
->
-> Why do the you have disjoint ID mappings for the users that are writing
-> to disk with the same ID?
->
-> >> Reading up on systemd-homed it appears to be a way to have encrypted
-> >> home directories.  Those home directories can either be encrypted at the
-> >> fs or at the block level.  Those home directories appear to have the
-> >> goal of being luggable between systems.  If the systems in question
-> >> don't have common administration of uids and gids after lugging your
-> >> encrypted home directory to another system chowning the files is
-> >> required.
-> >>
-> >> Is that the use case you are looking at removing the need for
-> >> systemd-homed to avoid chowning after lugging encrypted home directories
-> >> from one system to another?  Why would it be desirable to avoid the
-> >> chown?
-> >
-> > Not just systemd-homed, but LXD has to do this,
->
-> I asked why the same disk users are assigned different kuids and the
-> only reason I have heard that LXD does this is the RLIMIT_NPROC problem.
->
-> Perhaps there is another reason.
->
-> In part this is why I am eager to hear peoples use case, and why I was
-> trying very hard to make certain we get the requirements.
->
-> I want the real requirements though and some thought, not just we did
-> this and it hurts.  Changning the uids on write is a very hard problem,
-> and not just in implementating it but also in maintaining and
-> understanding what is going on.
+From: Aleksandr Nogikh <nogikh@google.com>
 
-The most common cases where shiftfs is used or where folks would like
-to use it today are (by importance):
- - Fast container creation (by not having to uid/gid shift all files
-in the downloaded image)
- - Sharing data between the host system and a container (some paths
-under /home being the most common)
- - Sharing data between unprivileged containers with a disjointed map
- - Sharing data between multiple containers, some privileged, some unprivileged
+Fault injection capabilities[Documentation/fault-injection/fault-injection.rst]
+facilitate testing of the stability of the Linux kernel by providing
+means to force a number of kernel interfaces to return error
+codes. This patch series proposes adding such fault injection
+capability into LSM hooks.
 
-Fixing the ulimit issue only takes care of one of those (3rd item), it
-does not solve any of the other cases.
+The intent is to make it possible to test whether the existing kernel
+code properly handles negative return values of LSM hooks. Syzbot
+[https://github.com/google/syzkaller/blob/master/docs/syzbot.md] will
+automatically do that with the aid of instrumentation tools once these
+changes are merged.
 
-The first item on there alone can be quite significant. Creation and
-startup of a regular Debian container on my system takes around 500ms
-when shiftfs is used (btrfs/lvm/zfs copy-on-write clone of the image,
-setup shiftfs, start container) compared to 2-3s when running without
-it (same clone, followed by rewrite of all uid/gid present on the fs,
-including acls and capabilities, then start container). And that's on
-a fast system with an NVME SSD and a small rootfs. We have had reports
-of a few users running on slow spinning rust with large containers
-where shifting can take several minutes.
+Local fuzzing of a Linux kernel with this patch has almost instantly
+led to two crashes. I'm not sure whether they correspond to actual
+issues as this LSM fault injection implementation (and the concept
+itself) can be wrong. Here they are:
 
-The second item can technically be worked around without shifted
-bind-mounts by doing userns map hole punching, mapping the user's
-uid/gid from the host straight into the container. The downside to
-this is that another shifting pass becomes needed for any file outside
-of the bind-mounted path (or it would become owned by -1/-1) and it's
-very much not dynamic, requiring the container be stopped, config
-updated by the user, /etc/subuid and subgid maps being updated and
-container started back up. If you need another user/group be exposed,
-start all over again...
-This is far more complex, slow and disruptive than the shifted
-approach where we just need to do:
-   lxc config device add MY-CONTAINER home disk source=/home
-path=/home shift=true
-To inject a new mount of /home from the host into the container with a
-shifting layer in place, no need to reconfig subuid/subgid, no need to
-re-create the userns to update the mapping and no need to go through
-the container's rootfs for any file which may now need remapping
-because of the map change.
+1. "general protection fault in selinux_inode_free_security". This is
+caused by executing security_inode_free() when a fault was injected to
+inode_alloc_security() and therefore selinux_inode_alloc_security()
+was not executed. In this case, the subsequent inode_free_security()
+call executes list_del_init() on an uninitialized list. Theoretically,
+this may happen if some other LSM precedes selinux in the hooks list
+and its inode_alloc_security hook fails.
 
-Stéphane
+A fault was injected to this call_int_hook():
+https://elixir.bootlin.com/linux/v5.9/source/security/security.c#L975
 
-> Eric
-> _______________________________________________
-> Containers mailing list
-> Containers@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/containers
+Below you can find a call trace for the subsequent crash.
+__list_del_entry include/linux/list.h:132 [inline]
+list_del_init include/linux/list.h:204 [inline]
+inode_free_security security/selinux/hooks.c:337 [inline]
+selinux_inode_free_security+0xf0/0x290 security/selinux/hooks.c:2839
+security_inode_free+0x46/0xc0 security/security.c:1042
+security_inode_alloc+0x161/0x1a0 security/security.c:1027
+inode_init_always+0x5a7/0xd10 fs/inode.c:171
+alloc_inode+0x82/0x230 fs/inode.c:239
+new_inode_pseudo+0x14/0xe0 fs/inode.c:928
+sock_alloc+0x3c/0x260 net/socket.c:573
+__sock_create+0xb9/0x780 net/socket.c:1391
+sock_create net/socket.c:1478 [inline]
+__sys_socket+0xef/0x200 net/socket.c:1520
+__do_sys_socket net/socket.c:1529 [inline]
+__se_sys_socket net/socket.c:1527 [inline]
+__x64_sys_socket+0x6f/0xb0 net/socket.c:1527
+do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+2. BUG_ON inside security_skb_classify_flow(). Why is it needed there?
+https://elixir.bootlin.com/linux/v5.9/source/security/security.c#L2426
+
+---
+v3:
+* Submitting this series without an "RFC" tag.
+* Updated the cover letter.
+
+v2:
+https://lkml.kernel.org/r/20201026125227.54520-1-a.nogikh@gmail.com
+* Renamed should_fail_lsm_hook() to lsm_hooks_inject_fail().
+* Extended the documentation.
+
+v1:
+https://lkml.kernel.org/r/20201015104649.2104432-1-a.nogikh@gmail.com
+
+Aleksandr Nogikh (2):
+  security: add fault injection capability
+  docs: add fail_lsm_hooks info to fault-injection.rst
+
+ .../fault-injection/fault-injection.rst       |  6 +++
+ lib/Kconfig.debug                             |  6 +++
+ security/security.c                           | 53 +++++++++++++++++--
+ 3 files changed, 62 insertions(+), 3 deletions(-)
+
+
+base-commit: 3f267ec60b922eff2a5c90d532357a39f155b730
+-- 
+2.29.1.341.ge80a0c044ae-goog
+
