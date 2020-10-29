@@ -6,82 +6,133 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F55C56202
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 11:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510ACC4363A
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 15:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D00B207BC
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 11:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1B1520796
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 15:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725827AbgJ2LkG (ORCPT
+        id S1728172AbgJ2PsY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Oct 2020 07:40:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38990 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbgJ2LkF (ORCPT
+        Thu, 29 Oct 2020 11:48:24 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:49260 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728146AbgJ2PsX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Oct 2020 07:40:05 -0400
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fa9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76C9CC0613CF
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2020 04:40:05 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CMNll5T2bzljbGk;
-        Thu, 29 Oct 2020 12:40:03 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4CMNlk5d69zlh8TD;
-        Thu, 29 Oct 2020 12:40:02 +0100 (CET)
-Subject: Re: [PATCH v22 00/12] Landlock LSM
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Thu, 29 Oct 2020 11:48:23 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kYA9W-008Etr-HE; Thu, 29 Oct 2020 09:47:50 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kYA9V-00AHk1-Ei; Thu, 29 Oct 2020 09:47:50 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?Q?St=C3=A9phane?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20201027200358.557003-1-mic@digikod.net>
- <CAG48ez31oct9c8fkgFHQVb5u-o5cmwdNe2pJnmitnKcidNgfzw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <25f5ec87-5462-9d47-d265-ec442eb50046@digikod.net>
-Date:   Thu, 29 Oct 2020 12:40:02 +0100
-User-Agent: 
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+Date:   Thu, 29 Oct 2020 10:47:49 -0500
+In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+        (Christian Brauner's message of "Thu, 29 Oct 2020 01:32:18 +0100")
+Message-ID: <87pn51ghju.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez31oct9c8fkgFHQVb5u-o5cmwdNe2pJnmitnKcidNgfzw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1kYA9V-00AHk1-Ei;;;mid=<87pn51ghju.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/KO2990XPv4odhdV8LRkhzi7akeV9MiV4=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 00/34] fs: idmapped mounts
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Christian Brauner <christian.brauner@ubuntu.com> writes:
 
-On 29/10/2020 02:05, Jann Horn wrote:
-> On Tue, Oct 27, 2020 at 9:04 PM Mickaël Salaün <mic@digikod.net> wrote:
->> This new patch series improves documentation, cleans up comments,
->> renames ARCH_EPHEMERAL_STATES to ARCH_EPHEMERAL_INODES and removes
->> LANDLOCK_ACCESS_FS_CHROOT.
-> 
-> Thanks for continuing to work on this! This is going to be really
-> valuable for sandboxing.
-> 
-> I hadn't looked at this series for a while; but I've now read through
-> it, and I don't see any major problems left. :) That said, there still
-> are a couple small things...
-> 
+> Hey everyone,
+>
+> I vanished for a little while to focus on this work here so sorry for
+> not being available by mail for a while.
+>
+> Since quite a long time we have issues with sharing mounts between
+> multiple unprivileged containers with different id mappings, sharing a
+> rootfs between multiple containers with different id mappings, and also
+> sharing regular directories and filesystems between users with different
+> uids and gids. The latter use-cases have become even more important with
+> the availability and adoption of systemd-homed (cf. [1]) to implement
+> portable home directories.
 
-Thanks Jann, I really appreciate your reviews!
+Can you walk us through the motivating use case?
+
+As of this year's LPC I had the distinct impression that the primary use
+case for such a feature was due to the RLIMIT_NPROC problem where two
+containers with the same users still wanted different uid mappings to
+the disk because the users were conflicting with each other because of
+the per user rlimits.
+
+Fixing rlimits is straight forward to implement, and easier to manage
+for implementations and administrators.
+
+
+
+Reading up on systemd-homed it appears to be a way to have encrypted
+home directories.  Those home directories can either be encrypted at the
+fs or at the block level.  Those home directories appear to have the
+goal of being luggable between systems.  If the systems in question
+don't have common administration of uids and gids after lugging your
+encrypted home directory to another system chowning the files is
+required.
+
+Is that the use case you are looking at removing the need for
+systemd-homed to avoid chowning after lugging encrypted home directories
+from one system to another?  Why would it be desirable to avoid the
+chown?
+
+
+If the goal is to solve fragmented administration of uid assignment I
+suggest that it might be better to solve the administration problem so
+that all of the uids of interest get assigned the same way on all of the
+systems of interest.  To the extent it is possible to solve the uid
+assignment problem that would seem to have fewer long term
+administrative problems.
+
+Eric
