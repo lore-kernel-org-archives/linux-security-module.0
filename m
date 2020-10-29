@@ -2,111 +2,208 @@ Return-Path: <SRS0=Tuew=EE=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBB9C4363A
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 18:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 730E2C4742C
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 21:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 192292087E
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 18:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1188620FC3
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 21:59:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pn0Q8NqB"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="ovnhX+qI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725963AbgJ2Sf4 (ORCPT
+        id S1725372AbgJ2V7R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Oct 2020 14:35:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47464 "EHLO
+        Thu, 29 Oct 2020 17:59:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbgJ2Sfy (ORCPT
+        with ESMTP id S1725782AbgJ2V7Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Oct 2020 14:35:54 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B836C0613CF;
-        Thu, 29 Oct 2020 11:35:53 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id b8so3918156wrn.0;
-        Thu, 29 Oct 2020 11:35:53 -0700 (PDT)
+        Thu, 29 Oct 2020 17:59:16 -0400
+Received: from mail-pf1-x441.google.com (mail-pf1-x441.google.com [IPv6:2607:f8b0:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F54AC0613D4
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2020 14:59:16 -0700 (PDT)
+Received: by mail-pf1-x441.google.com with SMTP id a200so3504362pfa.10
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2020 14:59:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XBVdT16KbfHWRwy5uoPg+dPDIbhzWcWjtjwaDApZzko=;
-        b=pn0Q8NqBI7hhMfQ4mVkAJUHqR2bomvUWrQS9SNsqmE5BwK8gkSJwO24vTTm+PXUwNi
-         4IaAC0lhwWqcRMl2D4VSxcU3Co+K5exvzGKsZVAuttifjaw6uyIYjY+eAyGXx/pi97No
-         zIyqGtxL91Wxyg0Zw8sCVMW8YaCs05yFUg4VjxZ5Vy7AXHVLTgIPTqmICpHMBXZF6wVh
-         CXUV9CCjZC9r5oUYnNDF8cGVERDdqtRsKLExJH8mxGpYXkqt1OZEa6GkzQuaUvFgx+C6
-         nyUZEiuFWzRWhgmFeiBjpGOnskGbe5lJMP6HXz8ar5l8vjhKrfnwAIwOIWZfID8WXiAN
-         95PA==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=7mpKGmhk7KbAdNRg8CrtKSJUwgz+Qb8kytsY0ITcAGk=;
+        b=ovnhX+qIKiPabZOH4hn59CbnR86mckuEhcSQzDfD4ogDnQOeqgaiDVK+ftwlz4GjBw
+         IF1LruixH+2U6xBdFKzvJSsEFdLRlm7NDiQJeYH8lEDgRegvi09Eyiiv8FzMP+YkBG7h
+         ErfC2CZ5UKzIDsJHnHHf2T8LL8QH3qahSBYYYcM+SOXYKIjkpy79Ly9naIJkDg8sGB2z
+         5bXFt7H0PEyXuS99nQGXBuMc9J66121arDOCzaie84/i+VyFUCX/8Q4tK2WqqJo5rtL0
+         KrmO0EobGfrkMQOJZUGWcNnsaI2FFqZ7n7t71N7ySdNYlzkPHlmVRfWSzIMDotoXHJrg
+         nPig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XBVdT16KbfHWRwy5uoPg+dPDIbhzWcWjtjwaDApZzko=;
-        b=dFtuFni8PLHxHHdjtl5cnykq9BrPBf0RbYSOjWyf5K1fVkxTY8pSBvThAXYggyplKU
-         5Ddm2kYc5iEoeWny6llzwmNZK+ALIwEXqonSm76zcYFycuSH2cZ3rFs++AxLgqcUw49u
-         ALcZ2WCKLUaqNcJl8xEbzwVChwhwHFekm5Qs3T8Uph8EHGfwkWilSsOZJ4kR6qSBMlOC
-         vopVv3vx8l6Xl8oW1thuIgYM2FAqOqqV1Q0H6AH6mSDD/kA5NbiaRQYa9XKgsw0ivETp
-         0nbiAA7uTHMHlfEyi6gS153396gJkehpudacEFe1uRexzXtnXwcpxamPBH5kHWuVjv/7
-         8Adg==
-X-Gm-Message-State: AOAM531eaB3YpykdoApQ0V11oMap5/1D3+fLvrDwUOnq+5BWWTARQKZi
-        5Z67ojwnjZnSEvyR3PxoL/g=
-X-Google-Smtp-Source: ABdhPJw7U+G+XB3uj5ELnYxxOhtaDScAY18U9fxXxB6cO33we7FfsB3z8aeSRt4gPDvdjpeU32sSxQ==
-X-Received: by 2002:adf:ed92:: with SMTP id c18mr3518748wro.363.1603996552070;
-        Thu, 29 Oct 2020 11:35:52 -0700 (PDT)
-Received: from nogikh.c.googlers.com.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id f4sm5800982wrq.54.2020.10.29.11.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Oct 2020 11:35:51 -0700 (PDT)
-From:   Aleksandr Nogikh <aleksandrnogikh@gmail.com>
-To:     jmorris@namei.org, serge@hallyn.com, akinobu.mita@gmail.com
-Cc:     andreyknvl@google.com, dvyukov@google.com, elver@google.com,
-        glider@google.com, keescook@google.com, casey@schaufler-ca.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Aleksandr Nogikh <nogikh@google.com>
-Subject: [PATCH v3 2/2] docs: add fail_lsm_hooks info to fault-injection.rst
-Date:   Thu, 29 Oct 2020 18:35:26 +0000
-Message-Id: <20201029183526.2131776-3-aleksandrnogikh@gmail.com>
-X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
-In-Reply-To: <20201029183526.2131776-1-aleksandrnogikh@gmail.com>
-References: <20201029183526.2131776-1-aleksandrnogikh@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=7mpKGmhk7KbAdNRg8CrtKSJUwgz+Qb8kytsY0ITcAGk=;
+        b=rpYV65ixG70+iFqkA/PgL3wBK66RvQBcv+H7GNLUP3LQOTF97QssGmIIpmGvW8H664
+         2dhpL/EtWCs03RA2UCwaG5xK0QSecgnQ9mGYiljPHz2BfaH3N7dhcQ3sk7XfaB3cwKcC
+         wQ4DoZxat4NN87QikXTcVTNAlzcE0f/jMq0S68YdqHUl/UEOg0S32aF1X+B2JLxdJU5S
+         PDnW1beEqxFyw5kdnk10qCxseVszZAPDEwg5soqanlXTAdumyp1ZdFg40u99WNpeNjB7
+         UU6lAIcRO/eET3x9juiOgIBEg4q3Iwbe5DAIIVQo+OLhJFud5l8oxipLkx85hlsZznxf
+         /sIA==
+X-Gm-Message-State: AOAM532MtPPg3Wt1dQ054MMYIN8Ckot1pbRYrwtkmmWbHcWnZHNv709Z
+        LIyIBd1YHFZWndhFf6QELmxdSA==
+X-Google-Smtp-Source: ABdhPJxSWOh4ftHI47KiCrZ0illEdrC1OP4fiqquB1QRs+VL+ywYh7woPj1uc9hDTpndfsW71KZ7Hw==
+X-Received: by 2002:a63:1d12:: with SMTP id d18mr5911604pgd.314.1604008755871;
+        Thu, 29 Oct 2020 14:59:15 -0700 (PDT)
+Received: from ?IPv6:2600:1012:b011:6d49:b5a8:d1fb:e286:b4a2? ([2600:1012:b011:6d49:b5a8:d1fb:e286:b4a2])
+        by smtp.gmail.com with ESMTPSA id mp13sm814127pjb.36.2020.10.29.14.59.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Oct 2020 14:59:15 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 00/34] fs: idmapped mounts
+Date:   Thu, 29 Oct 2020 14:58:55 -0700
+Message-Id: <8E455D54-FED4-4D06-8CB7-FC6291C64259@amacapital.net>
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <james.bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-audit@redhat.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org
+In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+X-Mailer: iPhone Mail (18A393)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Aleksandr Nogikh <nogikh@google.com>
 
-Describe fail_lsm_hooks fault injection capability.
 
-Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
----
-v2:
-- Added this commit.
----
- Documentation/fault-injection/fault-injection.rst | 6 ++++++
- 1 file changed, 6 insertions(+)
+> On Oct 28, 2020, at 5:35 PM, Christian Brauner <christian.brauner@ubuntu.c=
+om> wrote:
+>=20
+> =EF=BB=BFHey everyone,
+>=20
+> I vanished for a little while to focus on this work here so sorry for
+> not being available by mail for a while.
+>=20
+> Since quite a long time we have issues with sharing mounts between
+> multiple unprivileged containers with different id mappings, sharing a
+> rootfs between multiple containers with different id mappings, and also
+> sharing regular directories and filesystems between users with different
+> uids and gids. The latter use-cases have become even more important with
+> the availability and adoption of systemd-homed (cf. [1]) to implement
+> portable home directories.
+>=20
+> The solutions we have tried and proposed so far include the introduction
+> of fsid mappings, a tiny overlay based filesystem, and an approach to
+> call override creds in the vfs. None of these solutions have covered all
+> of the above use-cases.
+>=20
+> The solution proposed here has it's origins in multiple discussions
+> during Linux Plumbers 2017 during and after the end of the containers
+> microconference.
+> To the best of my knowledge this involved Aleksa, St=C3=A9phane, Eric, Dav=
+id,
+> James, and myself. A variant of the solution proposed here has also been
+> discussed, again to the best of my knowledge, after a Linux conference
+> in St. Petersburg in Russia between Christoph, Tycho, and myself in 2017
+> after Linux Plumbers.
+> I've taken the time to finally implement a working version of this
+> solution over the last weeks to the best of my abilities. Tycho has
+> signed up for this sligthly crazy endeavour as well and he has helped
+> with the conversion of the xattr codepaths.
+>=20
+> The core idea is to make idmappings a property of struct vfsmount
+> instead of tying it to a process being inside of a user namespace which
+> has been the case for all other proposed approaches.
+> It means that idmappings become a property of bind-mounts, i.e. each
+> bind-mount can have a separate idmapping. This has the obvious advantage
+> that idmapped mounts can be created inside of the initial user
+> namespace, i.e. on the host itself instead of requiring the caller to be
+> located inside of a user namespace. This enables such use-cases as e.g.
+> making a usb stick available in multiple locations with different
+> idmappings (see the vfat port that is part of this patch series).
+>=20
+> The vfsmount struct gains a new struct user_namespace member. The
+> idmapping of the user namespace becomes the idmapping of the mount. A
+> caller that is either privileged with respect to the user namespace of
+> the superblock of the underlying filesystem or a caller that is
+> privileged with respect to the user namespace a mount has been idmapped
+> with can create a new bind-mount and mark it with a user namespace.
 
-diff --git a/Documentation/fault-injection/fault-injection.rst b/Documentation/fault-injection/fault-injection.rst
-index 31ecfe44e5b4..48705adfbc18 100644
---- a/Documentation/fault-injection/fault-injection.rst
-+++ b/Documentation/fault-injection/fault-injection.rst
-@@ -48,6 +48,12 @@ Available fault injection capabilities
-   status code is NVME_SC_INVALID_OPCODE with no retry. The status code and
-   retry flag can be set via the debugfs.
- 
-+- fail_lsm_hooks
-+
-+  injects failures into LSM hooks. When a fault is injected, actual hooks
-+  are not executed and a code from /sys/kernel/debug/fail_lsm_hooks/retval
-+  is returned (the default value is -EACCES).
-+
- 
- Configure fault-injection capabilities behavior
- -----------------------------------------------
--- 
-2.29.1.341.ge80a0c044ae-goog
+So one way of thinking about this is that a user namespace that has an idmap=
+ped mount can, effectively, create or chown files with *any* on-disk uid or g=
+id by doing it directly (if that uid exists in-namespace, which is likely fo=
+r interesting ids like 0) or by creating a new userns with that id inside.
+
+For a file system that is private to a container, this seems moderately safe=
+, although this may depend on what exactly =E2=80=9Cprivate=E2=80=9D means. W=
+e probably want a mechanism such that, if you are outside the namespace, a r=
+eference to a file with the namespace=E2=80=99s vfsmnt does not confer suid p=
+rivilege.
+
+Imagine the following attack: user creates a namespace with a root user and a=
+rranges to get an idmapped fs, e.g. by inserting an ext4 usb stick or using w=
+hatever container management tool does this.  Inside the namespace, the user=
+ creates a suid-root file.
+
+Now, outside the namespace, the user has privilege over the namespace.  (I=E2=
+=80=99m assuming there is some tool that will idmap things in a namespace ow=
+ned by an unprivileged user, which seems likely.). So the user makes a new b=
+ind mount and if maps it to the init namespace. Game over.
+
+So I think we need to have some control to mitigate this in a comprehensible=
+ way. A big hammer would be to require nosuid. A smaller hammer might be to s=
+ay that you can=E2=80=99t create a new idmapped mount unless you have privil=
+ege over the userns that you want to use for the idmap and to say that a vfs=
+mnt=E2=80=99s paths don=E2=80=99t do suid outside the idmap namespace.  We a=
+lready do the latter for the vfsmnt=E2=80=99s mntns=E2=80=99s userns.
+
+Hmm.  What happens if we require that an idmap userns equal the vfsmnt=E2=80=
+=99s mntns=E2=80=99s userns?  Is that too limiting?
+
+I hope that whatever solution gets used is straightforward enough to wrap on=
+e=E2=80=99s head around.
+
+> When a file/inode is accessed through an idmapped mount the i_uid and
+> i_gid of the inode will be remapped according to the user namespace the
+> mount has been marked with. When a new object is created based on the
+> fsuid and fsgid of the caller they will similarly be remapped according
+> to the user namespace of the mount they care created from.
+
+By =E2=80=9Cmapped according to=E2=80=9D, I presume you mean that the on-dis=
+k uid/gid is the gid as seen in the user namespace in question.
+
 
