@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08FBAC4363A
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C28BC4363A
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CAE320790
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D771920790
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 00:44:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387427AbgJ2Afq (ORCPT
+        id S1733151AbgJ2Afq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Wed, 28 Oct 2020 20:35:46 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:60742 "EHLO
+Received: from youngberry.canonical.com ([91.189.89.112]:60665 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732201AbgJ2Afk (ORCPT
+        with ESMTP id S1731918AbgJ2Afh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Oct 2020 20:35:40 -0400
+        Wed, 28 Oct 2020 20:35:37 -0400
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kXvug-0008Ep-5s; Thu, 29 Oct 2020 00:35:34 +0000
+        id 1kXvua-0008Ep-Vy; Thu, 29 Oct 2020 00:35:29 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -62,11 +62,11 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-audit@redhat.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>,
+        selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 13/34] selftests: add idmapped mounts xattr selftest
-Date:   Thu, 29 Oct 2020 01:32:31 +0100
-Message-Id: <20201029003252.2128653-14-christian.brauner@ubuntu.com>
+Subject: [PATCH 10/34] attr: handle idmapped mounts
+Date:   Thu, 29 Oct 2020 01:32:28 +0100
+Message-Id: <20201029003252.2128653-11-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.0
 In-Reply-To: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
 References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
@@ -75,446 +75,323 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tycho Andersen <tycho@tycho.pizza>
+When file attributes are changed filesystems mostly rely on the
+setattr_prepare(), setattr_copy(), and notify_change() helpers for
+initialization and permission checking. Add the
+setattr_mapped_prepare(), setattr_mapped_copy(), and
+notify_mapped_change() helpers to handle idmapped mounts. If the inode
+is accessed through an idmapped mount we need to map it according to the
+mount's user namespace. Afterwards the checks are identical to
+non-idmapped mounts. If the initial user namespace is passed all
+operations are a nop so non-idmapped mounts will not see a change in
+behavior and will also not see any performance impact. It also means
+that the inode_owner_or_capable() helper can be implemented on top of
+mapped_inode_owner_or_capable() by passing in the initial user
+namespace. Helpers that perform checks on the ia_uid and ia_gid fields
+in struct iattr assume that ia_uid and ia_gid are intended values and so
+they won't be mapped according to the mount's user namespace. This is
+more transparent to the caller and further aligns the permission for
+notify_change() and notify_mapped_change().
 
-Add some tests for setting extended attributes on idmapped mounts.
+If the initial user namespace is passed all operations are a nop so
+non-idmapped mounts will not see a change in behavior and will also not
+see any performance impact. It also means that the
+setattr_prepare(), setattr_copy(), and notify_change() helpers can
+simply be implemented on top of setattr_mapped_prepare(),
+setattr_mapped_copy(), and notify_mapped_change() by passing in the
+initial user namespace.
 
-Signed-off-by: Tycho Andersen <tycho@tycho.pizza>
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- .../testing/selftests/idmap_mounts/.gitignore |   1 +
- tools/testing/selftests/idmap_mounts/Makefile |   8 +
- tools/testing/selftests/idmap_mounts/config   |   1 +
- tools/testing/selftests/idmap_mounts/xattr.c  | 389 ++++++++++++++++++
- 4 files changed, 399 insertions(+)
- create mode 100644 tools/testing/selftests/idmap_mounts/.gitignore
- create mode 100644 tools/testing/selftests/idmap_mounts/Makefile
- create mode 100644 tools/testing/selftests/idmap_mounts/config
- create mode 100644 tools/testing/selftests/idmap_mounts/xattr.c
+ fs/attr.c          | 136 ++++++++++++++++++++++++++++++++++-----------
+ include/linux/fs.h |   6 ++
+ 2 files changed, 110 insertions(+), 32 deletions(-)
 
-diff --git a/tools/testing/selftests/idmap_mounts/.gitignore b/tools/testing/selftests/idmap_mounts/.gitignore
-new file mode 100644
-index 000000000000..18c5e90522ad
---- /dev/null
-+++ b/tools/testing/selftests/idmap_mounts/.gitignore
-@@ -0,0 +1 @@
-+xattr
-diff --git a/tools/testing/selftests/idmap_mounts/Makefile b/tools/testing/selftests/idmap_mounts/Makefile
-new file mode 100644
-index 000000000000..ce0549b09b2a
---- /dev/null
-+++ b/tools/testing/selftests/idmap_mounts/Makefile
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Makefile for mount selftests.
-+CFLAGS = -g -I../../../../usr/include/ -Wall -O2 -pthread
+diff --git a/fs/attr.c b/fs/attr.c
+index b4bbdbd4c8ca..f39c03ac85e0 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -18,34 +18,39 @@
+ #include <linux/evm.h>
+ #include <linux/ima.h>
+ 
+-static bool chown_ok(const struct inode *inode, kuid_t uid)
++static bool chown_ok(struct user_namespace *user_ns,
++		     const struct inode *inode,
++		     kuid_t uid)
+ {
+-	if (uid_eq(current_fsuid(), inode->i_uid) &&
+-	    uid_eq(uid, inode->i_uid))
++	kuid_t kuid = i_uid_into_mnt(user_ns, inode);
++	if (uid_eq(current_fsuid(), kuid) && uid_eq(uid, kuid))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_mapped_inode_uidgid(user_ns, inode, CAP_CHOWN))
+ 		return true;
+-	if (uid_eq(inode->i_uid, INVALID_UID) &&
++	if (uid_eq(kuid, INVALID_UID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+ 		return true;
+ 	return false;
+ }
+ 
+-static bool chgrp_ok(const struct inode *inode, kgid_t gid)
++static bool chgrp_ok(struct user_namespace *user_ns,
++		     const struct inode *inode, kgid_t gid)
+ {
+-	if (uid_eq(current_fsuid(), inode->i_uid) &&
+-	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
++	kgid_t kgid = i_gid_into_mnt(user_ns, inode);
++	if (uid_eq(current_fsuid(), i_uid_into_mnt(user_ns, inode)) &&
++	    (in_group_p(gid) || gid_eq(gid, kgid)))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_mapped_inode_uidgid(user_ns, inode, CAP_CHOWN))
+ 		return true;
+-	if (gid_eq(inode->i_gid, INVALID_GID) &&
++	if (gid_eq(kgid, INVALID_GID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+ 		return true;
+ 	return false;
+ }
+ 
+ /**
+- * setattr_prepare - check if attribute changes to a dentry are allowed
++ * setattr_mapped_prepare - check if attribute changes to a dentry are allowed
++ * @user_ns:	user namespace of the mount
+  * @dentry:	dentry to check
+  * @attr:	attributes to change
+  *
+@@ -58,7 +63,8 @@ static bool chgrp_ok(const struct inode *inode, kgid_t gid)
+  * Should be called as the first thing in ->setattr implementations,
+  * possibly after taking additional locks.
+  */
+-int setattr_prepare(struct dentry *dentry, struct iattr *attr)
++int setattr_mapped_prepare(struct user_namespace *user_ns,
++			   struct dentry *dentry, struct iattr *attr)
+ {
+ 	struct inode *inode = d_inode(dentry);
+ 	unsigned int ia_valid = attr->ia_valid;
+@@ -78,27 +84,27 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 		goto kill_priv;
+ 
+ 	/* Make sure a caller can chown. */
+-	if ((ia_valid & ATTR_UID) && !chown_ok(inode, attr->ia_uid))
++	if ((ia_valid & ATTR_UID) && !chown_ok(user_ns, inode, attr->ia_uid))
+ 		return -EPERM;
+ 
+ 	/* Make sure caller can chgrp. */
+-	if ((ia_valid & ATTR_GID) && !chgrp_ok(inode, attr->ia_gid))
++	if ((ia_valid & ATTR_GID) && !chgrp_ok(user_ns, inode, attr->ia_gid))
+ 		return -EPERM;
+ 
+ 	/* Make sure a caller can chmod. */
+ 	if (ia_valid & ATTR_MODE) {
+-		if (!inode_owner_or_capable(inode))
++		if (!mapped_inode_owner_or_capable(user_ns, inode))
+ 			return -EPERM;
+ 		/* Also check the setgid bit! */
+-		if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
+-				inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++               if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
++                                i_gid_into_mnt(user_ns, inode)) &&
++                    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
+ 			attr->ia_mode &= ~S_ISGID;
+ 	}
+ 
+ 	/* Check for setting the inode time. */
+ 	if (ia_valid & (ATTR_MTIME_SET | ATTR_ATIME_SET | ATTR_TIMES_SET)) {
+-		if (!inode_owner_or_capable(inode))
++		if (!mapped_inode_owner_or_capable(user_ns, inode))
+ 			return -EPERM;
+ 	}
+ 
+@@ -114,6 +120,12 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(setattr_mapped_prepare);
 +
-+TEST_GEN_FILES += xattr
-+
-+include ../lib.mk
-+
-diff --git a/tools/testing/selftests/idmap_mounts/config b/tools/testing/selftests/idmap_mounts/config
-new file mode 100644
-index 000000000000..80730abc534b
---- /dev/null
-+++ b/tools/testing/selftests/idmap_mounts/config
-@@ -0,0 +1 @@
-+CONFIG_IDMAP_MOUNTS=y
-diff --git a/tools/testing/selftests/idmap_mounts/xattr.c b/tools/testing/selftests/idmap_mounts/xattr.c
-new file mode 100644
-index 000000000000..a3d70294ce43
---- /dev/null
-+++ b/tools/testing/selftests/idmap_mounts/xattr.c
-@@ -0,0 +1,389 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <fcntl.h>
-+#include <sched.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+#include <linux/limits.h>
-+
-+#include "../kselftest_harness.h"
-+
-+#ifndef __NR_mount_setattr
-+	#if defined __alpha__
-+		#define __NR_mount_setattr 551
-+	#elif defined _MIPS_SIM
-+		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
-+			#define __NR_mount_setattr 4441
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
-+			#define __NR_mount_setattr 6441
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
-+			#define __NR_mount_setattr 5441
-+		#endif
-+	#elif defined __ia64__
-+		#define __NR_mount_setattr (441 + 1024)
-+	#else
-+		#define __NR_mount_setattr 441
-+	#endif
-+
-+#ifndef __NR_open_tree
-+	#if defined __alpha__
-+		#define __NR_open_tree 538
-+	#elif defined _MIPS_SIM
-+		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
-+			#define __NR_open_tree 4428
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
-+			#define __NR_open_tree 6428
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
-+			#define __NR_open_tree 5428
-+		#endif
-+	#elif defined __ia64__
-+		#define __NR_open_tree (428 + 1024)
-+	#else
-+		#define __NR_open_tree 428
-+	#endif
-+#endif
-+
-+#ifndef __NR_move_mount
-+	#if defined __alpha__
-+		#define __NR_move_mount 539
-+	#elif defined _MIPS_SIM
-+		#if _MIPS_SIM == _MIPS_SIM_ABI32	/* o32 */
-+			#define __NR_move_mount 4429
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_NABI32	/* n32 */
-+			#define __NR_move_mount 6429
-+		#endif
-+		#if _MIPS_SIM == _MIPS_SIM_ABI64	/* n64 */
-+			#define __NR_move_mount 5429
-+		#endif
-+	#elif defined __ia64__
-+		#define __NR_move_mount (428 + 1024)
-+	#else
-+		#define __NR_move_mount 429
-+	#endif
-+#endif
-+
-+
-+struct mount_attr {
-+	__u64 attr_set;
-+	__u64 attr_clr;
-+	__u64 propagation;
-+	__u32 userns;
-+};
-+#endif
-+
-+#ifndef MOVE_MOUNT_F_EMPTY_PATH
-+#define MOVE_MOUNT_F_EMPTY_PATH 0x00000004 /* Empty from path permitted */
-+#endif
-+
-+#ifndef MOUNT_ATTR_SHIFT
-+#define MOUNT_ATTR_SHIFT 0x00100000
-+#endif
-+
-+#ifndef OPEN_TREE_CLONE
-+#define OPEN_TREE_CLONE 1
-+#endif
-+
-+#ifndef OPEN_TREE_CLOEXEC
-+#define OPEN_TREE_CLOEXEC O_CLOEXEC
-+#endif
-+
-+#ifndef AT_RECURSIVE
-+#define AT_RECURSIVE 0x8000 /* Apply to the entire subtree */
-+#endif
-+
-+static inline int sys_mount_setattr(int dfd, const char *path, unsigned int flags,
-+				    struct mount_attr *attr, size_t size)
++int setattr_prepare(struct dentry *dentry, struct iattr *attr)
 +{
-+	return syscall(__NR_mount_setattr, dfd, path, flags, attr, size);
++	return setattr_mapped_prepare(&init_user_ns, dentry, attr);
 +}
+ EXPORT_SYMBOL(setattr_prepare);
+ 
+ /**
+@@ -161,21 +173,28 @@ int inode_newsize_ok(const struct inode *inode, loff_t offset)
+ EXPORT_SYMBOL(inode_newsize_ok);
+ 
+ /**
+- * setattr_copy - copy simple metadata updates into the generic inode
++ * setattr_mappedcopy - copy simple metadata updates into the generic inode on idmapped mounts
++ * @user_ns:	the user namespace the inode is accessed from
+  * @inode:	the inode to be updated
+  * @attr:	the new attributes
+  *
+- * setattr_copy must be called with i_mutex held.
++ * setattr_mapped_copy must be called with i_mutex held.
+  *
+- * setattr_copy updates the inode's metadata with that specified
+- * in attr. Noticeably missing is inode size update, which is more complex
++ * setattr_mapped_copy updates the inode's metadata with that specified
++ * in attr on idmapped mounts. If file ownership is changed setattr_mapped_copy
++ * doesn't map ia_uid and ia_gid. It will asssume the caller has already
++ * provided the intended values. Necessary permission checks to determine
++ * whether or not the S_ISGID property needs to be removed are performed with
++ * the correct idmapped mount permission helpers.
++ * Noticeably missing is inode size update, which is more complex
+  * as it requires pagecache updates.
+  *
+  * The inode is not marked as dirty after this operation. The rationale is
+  * that for "simple" filesystems, the struct inode is the inode storage.
+  * The caller is free to mark the inode dirty afterwards if needed.
+  */
+-void setattr_copy(struct inode *inode, const struct iattr *attr)
++void setattr_mapped_copy(struct user_namespace *user_ns, struct inode *inode,
++			 const struct iattr *attr)
+ {
+ 	unsigned int ia_valid = attr->ia_valid;
+ 
+@@ -191,36 +210,62 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
+ 		inode->i_ctime = attr->ia_ctime;
+ 	if (ia_valid & ATTR_MODE) {
+ 		umode_t mode = attr->ia_mode;
+-
+-		if (!in_group_p(inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		kgid_t kgid = i_gid_into_mnt(user_ns, inode);
++		if (!in_group_p(kgid) &&
++		    !capable_wrt_mapped_inode_uidgid(user_ns, inode, CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
+ 	}
+ }
++EXPORT_SYMBOL(setattr_mapped_copy);
 +
-+static inline int sys_open_tree(int dfd, const char *filename, unsigned int flags)
++/**
++ * setattr_copy - copy simple metadata updates into the generic inode
++ * @inode:	the inode to be updated
++ * @attr:	the new attributes
++ *
++ * setattr_copy must be called with i_mutex held.
++ *
++ * setattr_copy updates the inode's metadata with that specified
++ * in attr. Noticeably missing is inode size update, which is more complex
++ * as it requires pagecache updates.
++ *
++ * The inode is not marked as dirty after this operation. The rationale is
++ * that for "simple" filesystems, the struct inode is the inode storage.
++ * The caller is free to mark the inode dirty afterwards if needed.
++ */
++void setattr_copy(struct inode *inode, const struct iattr *attr)
 +{
-+	return syscall(__NR_open_tree, dfd, filename, flags);
++	return setattr_mapped_copy(&init_user_ns, inode, attr);
 +}
+ EXPORT_SYMBOL(setattr_copy);
+ 
+ /**
+- * notify_change - modify attributes of a filesytem object
++ * notify_mapped_change - modify attributes of a filesytem object on idmapped mounts
++ * @user_ns:	the user namespace of the mount
+  * @dentry:	object affected
+  * @attr:	new attributes
+  * @delegated_inode: returns inode, if the inode is delegated
+  *
+  * The caller must hold the i_mutex on the affected object.
+  *
+- * If notify_change discovers a delegation in need of breaking,
++ * If notify_mapped_change discovers a delegation in need of breaking,
+  * it will return -EWOULDBLOCK and return a reference to the inode in
+  * delegated_inode.  The caller should then break the delegation and
+  * retry.  Because breaking a delegation may take a long time, the
+  * caller should drop the i_mutex before doing so.
+  *
++ * If file ownership is changed notify_mapped_change() doesn't map ia_uid and
++ * ia_gid. It will asssume the caller has already provided the intended values.
++ *
+  * Alternatively, a caller may pass NULL for delegated_inode.  This may
+  * be appropriate for callers that expect the underlying filesystem not
+  * to be NFS exported.  Also, passing NULL is fine for callers holding
+  * the file open for write, as there can be no conflicting delegation in
+  * that case.
+  */
+-int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **delegated_inode)
++int notify_mapped_change(struct user_namespace *user_ns, struct dentry *dentry,
++			 struct iattr *attr, struct inode **delegated_inode)
+ {
+ 	struct inode *inode = dentry->d_inode;
+ 	umode_t mode = inode->i_mode;
+@@ -243,8 +288,8 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ 		if (IS_IMMUTABLE(inode))
+ 			return -EPERM;
+ 
+-		if (!inode_owner_or_capable(inode)) {
+-			error = inode_permission(inode, MAY_WRITE);
++		if (!mapped_inode_owner_or_capable(user_ns, inode)) {
++			error = mapped_inode_permission(user_ns, inode, MAY_WRITE);
+ 			if (error)
+ 				return error;
+ 		}
+@@ -345,4 +390,31 @@ int notify_change(struct dentry * dentry, struct iattr * attr, struct inode **de
+ 
+ 	return error;
+ }
++EXPORT_SYMBOL(notify_mapped_change);
 +
-+static inline int sys_move_mount(int from_dfd, const char *from_pathname, int to_dfd,
-+				 const char *to_pathname, unsigned int flags)
++/**
++ * notify_change - modify attributes of a filesytem object
++ * @dentry:	object affected
++ * @attr:	new attributes
++ * @delegated_inode: returns inode, if the inode is delegated
++ *
++ * The caller must hold the i_mutex on the affected object.
++ *
++ * If notify_change discovers a delegation in need of breaking,
++ * it will return -EWOULDBLOCK and return a reference to the inode in
++ * delegated_inode.  The caller should then break the delegation and
++ * retry.  Because breaking a delegation may take a long time, the
++ * caller should drop the i_mutex before doing so.
++ *
++ * Alternatively, a caller may pass NULL for delegated_inode.  This may
++ * be appropriate for callers that expect the underlying filesystem not
++ * to be NFS exported.  Also, passing NULL is fine for callers holding
++ * the file open for write, as there can be no conflicting delegation in
++ * that case.
++ */
++int notify_change(struct dentry *dentry, struct iattr *attr,
++		  struct inode **delegated_inode)
 +{
-+	return syscall(__NR_move_mount, from_dfd, from_pathname, to_dfd, to_pathname, flags);
++	return notify_mapped_change(&init_user_ns, dentry, attr, delegated_inode);
 +}
-+
-+
-+static ssize_t write_nointr(int fd, const void *buf, size_t count)
-+{
-+	ssize_t ret;
-+
-+	do {
-+		ret = write(fd, buf, count);
-+	} while (ret < 0 && errno == EINTR);
-+
-+	return ret;
-+}
-+
-+static int write_file(const char *path, const void *buf, size_t count)
-+{
-+	int fd;
-+	ssize_t ret;
-+
-+	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY | O_NOFOLLOW);
-+	if (fd < 0)
-+		return -1;
-+
-+	ret = write_nointr(fd, buf, count);
-+	close(fd);
-+	if (ret < 0 || (size_t)ret != count)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static int map_ids(pid_t pid, unsigned long nsid, unsigned long hostid,
-+		   unsigned long range)
-+{
-+	char map[100], procfile[256];
-+
-+	snprintf(procfile, sizeof(procfile), "/proc/%d/setgroups", pid);
-+	if (write_file(procfile, "deny", sizeof("deny") - 1) &&
-+	    errno != ENOENT)
-+		return -1;
-+
-+	snprintf(procfile, sizeof(procfile), "/proc/%d/uid_map", pid);
-+	snprintf(map, sizeof(map), "%lu %lu %lu", nsid, hostid, range);
-+	if (write_file(procfile, map, strlen(map)))
-+		return -1;
-+
-+
-+	snprintf(procfile, sizeof(procfile), "/proc/%d/gid_map", pid);
-+	snprintf(map, sizeof(map), "%lu %lu %lu", nsid, hostid, range);
-+	if (write_file(procfile, map, strlen(map)))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+#define __STACK_SIZE (8 * 1024 * 1024)
-+static pid_t do_clone(int (*fn)(void *), void *arg, int flags)
-+{
-+	void *stack;
-+
-+	stack = malloc(__STACK_SIZE);
-+	if (!stack)
-+		return -ENOMEM;
-+
-+#ifdef __ia64__
-+	return __clone2(fn, stack, __STACK_SIZE, flags | SIGCHLD, arg, NULL);
-+#else
-+	return clone(fn, stack + __STACK_SIZE, flags | SIGCHLD, arg, NULL);
-+#endif
-+}
-+
-+static int get_userns_fd_cb(void *data)
-+{
-+	return kill(getpid(), SIGSTOP);
-+}
-+
-+static int get_userns_fd(unsigned long nsid, unsigned long hostid,
-+			 unsigned long range)
-+{
-+	int ret;
-+	pid_t pid;
-+	char path[256];
-+
-+	pid = do_clone(get_userns_fd_cb, NULL, CLONE_NEWUSER | CLONE_NEWNS);
-+	if (pid < 0)
-+		return -errno;
-+
-+	ret = map_ids(pid, nsid, hostid, range);
-+	if (ret < 0)
-+		return ret;
-+
-+	snprintf(path, sizeof(path), "/proc/%d/ns/user", pid);
-+	ret = open(path, O_RDONLY | O_CLOEXEC);
-+	kill(pid, SIGKILL);
-+	return ret;
-+}
-+
-+struct run_as_data {
-+	int userns;
-+	int (*f)(void *data);
-+	void *data;
-+};
-+
-+static int run_in_cb(void *data)
-+{
-+	struct run_as_data *rad = data;
-+
-+	if (setns(rad->userns, CLONE_NEWUSER) < 0) {
-+		perror("setns");
-+		return 1;
-+	}
-+
-+	if (setuid(100010)) {
-+		perror("setuid");
-+		return 1;
-+	}
-+
-+	if (setgid(100010)) {
-+		perror("setgid");
-+		return 1;
-+	}
-+
-+	return rad->f(rad->data);
-+}
-+
-+static int wait_for_pid(pid_t pid)
-+{
-+	int status, ret;
-+
-+again:
-+	ret = waitpid(pid, &status, 0);
-+	if (ret == -1) {
-+		if (errno == EINTR)
-+			goto again;
-+
-+		return -1;
-+	}
-+
-+	if (!WIFEXITED(status))
-+		return -1;
-+
-+	return WEXITSTATUS(status);
-+}
-+
-+static int run_in(int userns, int (*f)(void *), void *f_data)
-+{
-+	pid_t pid;
-+	struct run_as_data data;
-+
-+	data.userns = userns;
-+	data.f = f;
-+	data.data = f_data;
-+	pid = do_clone(run_in_cb, &data, 0);
-+	if (pid < 0)
-+		return -errno;
-+
-+	return wait_for_pid(pid);
-+}
-+
-+FIXTURE(ext4_xattr) {};
-+
-+FIXTURE_SETUP(ext4_xattr)
-+{
-+	int fd;
-+
-+	fd = open("/tmp/idmap_mounts.ext4", O_CREAT | O_WRONLY, 0600);
-+	ASSERT_GE(fd, 0);
-+	ASSERT_EQ(ftruncate(fd, 640 * 1024), 0);
-+	ASSERT_EQ(close(fd), 0);
-+	ASSERT_EQ(system("mkfs.ext4 /tmp/idmap_mounts.ext4"), 0);
-+	ASSERT_EQ(mkdir("/tmp/ext4", 0777), 0);
-+	ASSERT_EQ(system("mount -o loop -t ext4 /tmp/idmap_mounts.ext4 /tmp/ext4"), 0);
-+}
-+
-+FIXTURE_TEARDOWN(ext4_xattr)
-+{
-+	umount("/tmp/ext4/dest");
-+	umount("/tmp/ext4");
-+	rmdir("/tmp/ext4");
-+	unlink("/tmp/idmap_mounts.ext4");
-+}
-+
-+struct getacl_should_be_data {
-+	char path[256];
-+	uid_t uid;
-+};
-+
-+static int getacl_should_be_uid(void *data)
-+{
-+	struct getacl_should_be_data *ssb = data;
-+	char cmd[512];
-+	int ret;
-+
-+	snprintf(cmd, sizeof(cmd), "getfacl %s | grep user:%u:rwx", ssb->path, ssb->uid);
-+	ret = system(cmd);
-+	if (ret < 0) {
-+		perror("system");
-+		return -1;
-+	}
-+	if (!WIFEXITED(ret))
-+		return -1;
-+	return WEXITSTATUS(ret);
-+}
-+
-+static int ls_path(void *data)
-+{
-+	char cmd[PATH_MAX];
-+	char *path = data;
-+	int ret;
-+
-+	snprintf(cmd, sizeof(cmd), "ls %s", path);
-+	ret = system(cmd);
-+	if (ret < 0) {
-+		perror("system");
-+		return -1;
-+	}
-+	if (!WIFEXITED(ret))
-+		return -1;
-+	return WEXITSTATUS(ret);
-+}
-+
-+TEST_F(ext4_xattr, setattr_didnt_work)
-+{
-+	int mount_fd, ret;
-+	struct mount_attr attr = {};
-+	struct getacl_should_be_data ssb;
-+
-+	ASSERT_EQ(mkdir("/tmp/ext4/source", 0777), 0);
-+	ASSERT_EQ(mkdir("/tmp/ext4/dest", 0777), 0);
-+
-+	mount_fd = sys_open_tree(-EBADF, "/tmp/ext4/source",
-+				 OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC | AT_EMPTY_PATH);
-+	ASSERT_GE(mount_fd, 0);
-+
-+	ASSERT_EQ(sys_move_mount(mount_fd, "", -EBADF, "/tmp/ext4/dest",
-+				 MOVE_MOUNT_F_EMPTY_PATH), 0);
-+
-+	attr.attr_set = MOUNT_ATTR_SHIFT;
-+	attr.userns = get_userns_fd(100010, 100020, 5);
-+	ASSERT_GE(attr.userns, 0);
-+	ret = sys_mount_setattr(mount_fd, "", AT_EMPTY_PATH | AT_RECURSIVE,
-+				    &attr, sizeof(attr));
-+	ASSERT_EQ(close(mount_fd), 0);
-+	ASSERT_EQ(ret, 0);
-+
-+	ASSERT_EQ(mkdir("/tmp/ext4/source/foo", 0700), 0);
-+	ASSERT_EQ(chown("/tmp/ext4/source/foo", 100010, 100010), 0);
-+
-+	ASSERT_EQ(system("setfacl -m u:100010:rwx /tmp/ext4/source/foo"), 0);
-+	EXPECT_EQ(system("getfacl /tmp/ext4/source/foo | grep user:100010:rwx"), 0);
-+	EXPECT_EQ(system("getfacl /tmp/ext4/dest/foo | grep user:100020:rwx"), 0);
-+
-+	snprintf(ssb.path, sizeof(ssb.path), "/tmp/ext4/source/foo");
-+	ssb.uid = 4294967295;
-+	EXPECT_EQ(run_in(attr.userns, getacl_should_be_uid, &ssb), 0);
-+
-+	snprintf(ssb.path, sizeof(ssb.path), "/tmp/ext4/dest/foo");
-+	ssb.uid = 100010;
-+	EXPECT_EQ(run_in(attr.userns, getacl_should_be_uid, &ssb), 0);
-+
-+	/*
-+	 * now, dir is owned by someone else in the user namespace, but we can
-+	 * still read it because of acls
-+	 */
-+	ASSERT_EQ(chown("/tmp/ext4/source/foo", 100012, 100012), 0);
-+	EXPECT_EQ(run_in(attr.userns, ls_path, "/tmp/ext4/dest/foo"), 0);
-+
-+	/*
-+	 * if we delete the acls, the ls should fail because it's 700.
-+	 */
-+	ASSERT_EQ(system("setfacl --remove-all /tmp/ext4/source/foo"), 0);
-+	EXPECT_NE(run_in(attr.userns, ls_path, "/tmp/ext4/dest/foo"), 0);
-+}
-+
-+TEST_HARNESS_MAIN
+ EXPORT_SYMBOL(notify_change);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f9e2d292b7b6..f41d93b0e6d7 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2823,6 +2823,8 @@ static inline int bmap(struct inode *inode,  sector_t *block)
+ #endif
+ 
+ extern int notify_change(struct dentry *, struct iattr *, struct inode **);
++extern int notify_mapped_change(struct user_namespace *, struct dentry *,
++			    struct iattr *, struct inode **);
+ extern int inode_permission(struct inode *, int);
+ extern int mapped_inode_permission(struct user_namespace *, struct inode *, int);
+ extern int generic_permission(struct inode *, int);
+@@ -3282,8 +3284,12 @@ extern int buffer_migrate_page_norefs(struct address_space *,
+ #endif
+ 
+ extern int setattr_prepare(struct dentry *, struct iattr *);
++extern int setattr_mapped_prepare(struct user_namespace *, struct dentry *,
++			      struct iattr *);
+ extern int inode_newsize_ok(const struct inode *, loff_t offset);
+ extern void setattr_copy(struct inode *inode, const struct iattr *attr);
++extern void setattr_mapped_copy(struct user_namespace *user_ns, struct inode *inode,
++			    const struct iattr *attr);
+ 
+ extern int file_update_time(struct file *file);
+ 
 -- 
 2.29.0
 
