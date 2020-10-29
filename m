@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89158C388F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 01:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E5CC388F7
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 01:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3320020796
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 01:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F95420791
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Oct 2020 01:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UDRPLu9m"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CQS/TTCS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404176AbgJ2BHB (ORCPT
+        id S2404161AbgJ2BHJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Oct 2020 21:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52956 "EHLO
+        Wed, 28 Oct 2020 21:07:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404166AbgJ2BGv (ORCPT
+        with ESMTP id S2404159AbgJ2BGg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Oct 2020 21:06:51 -0400
+        Wed, 28 Oct 2020 21:06:36 -0400
 Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDE0DC0613D5
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 18:06:49 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id i6so1227083lfd.1
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 18:06:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9988DC0613D4
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 18:06:35 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id a7so1165246lfk.9
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Oct 2020 18:06:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=bPMDf0qf5u7i+D1hct4Y8ywTPSNEiqZnANVXp2csHmo=;
-        b=UDRPLu9msJZF3jU3f0cfRMmMUjv4al6mEdH+doXP3CJs1E+meQHwswUn6FfxeU4M7Y
-         mdjF6dlxs/r9X+nsG+jvBBpuJoeemwz7oZzHEH8cu2FuE4WoJMkmPz/Ji0yhM4+WiFtB
-         rhpBehRSmY/cTeZk76/aJgyzXOLL3NJE1/q4NlCTkpqRI97pcMZ+gNtjS3uoF4nuh7W1
-         yw24PiXpzrFEiT3OI82ePRsw7PnnCJjT7Cw+g66nh4wZX1yx+HybJu5UCEhtHD658mi+
-         886WmiZsQzGj6z4/CpD39D+FU4YLDTEf8HsVVyfPaptpyJrsYS5a5QKE4zded/CZpn7z
-         MwYg==
+        bh=pn1ECaKgjWXcAj9IGY9xa/P/urhrG9XYha2Ze81haPI=;
+        b=CQS/TTCSV/PXnE8RKTiVdoB9MOH5R7RwtttysBDMDTrgm/gdARB43BDZ0IDwXRbttP
+         ztHZD+0ZqXCLCfwhTBFjTJ/tiDFdE5MfzqiqiGCR+7qo4iT6gbpszW4gnmqQCqcjiJpS
+         2TE6AWWOiPiIHtCacy+jotlH1GyWUK1IMX8yXc8Mz7No8vs/C8JnIaRhweaK8oe5/GL8
+         Jfgwtgs4gp/wo+Iw7O3nmUyVGt/oQ9DoZH/ghQZ47kjp3G1BZkOXJfz4E7+ioxLBPKqf
+         wNABOnStf+0wcuigg1mHsL0KxMLpB2iVoTZoknuLmehB39wLMOwYtSz1o0w4ntAQ9dSd
+         hmXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=bPMDf0qf5u7i+D1hct4Y8ywTPSNEiqZnANVXp2csHmo=;
-        b=jCHM2VdUfcMUoj8Dw5jvNoDW1cC3Cky1P38fA7351jpWYu9ffTaHNSbofLlQicjaxy
-         OoqjoZi53IFoBrQkHeIXmln1hN7JH6SQa2zcoxVeKwYMbxXt3HeQCIdpuioYD5S7jzGm
-         zVbUenrd9475hs3lkPr0WJIM6JiWKZEgbmfwJf95Ygf7ujxYz8EZqt6EWnMozhFdLQuP
-         mb1J2YM7eEK1BWekcKff02fls1Wxp81Z4CqnWc9Yt2t1SBg9aDZKBVQu2L37c1I3ktr1
-         WDDoEWR/rB7+jJHdQmrft8OpM/P+lJcU6dq/UnZJr4UZdMfwnyUYaHj3cT2wjtyqztvY
-         1raQ==
-X-Gm-Message-State: AOAM532zC95n3iYUOB9wKz7KbxJV7q+j3WPGTlkghdPgVkiQ9l1t9YLH
-        xxq8lIZQRaBFTshd2Bhj2/oEL69XNDZ45hxen0YYgQ==
-X-Google-Smtp-Source: ABdhPJzDdFVnRlhR1ZLyXcR/6gy+QFM2Be7EL54Ws7cTI4I+QtUU5EktO2FmKhpKLEYWon1ieCyZ/uOiqgKG+1NYZAk=
-X-Received: by 2002:a05:6512:1182:: with SMTP id g2mr584148lfr.198.1603933608096;
- Wed, 28 Oct 2020 18:06:48 -0700 (PDT)
+        bh=pn1ECaKgjWXcAj9IGY9xa/P/urhrG9XYha2Ze81haPI=;
+        b=ccCqAWOQNIxQ1LVImc2PHY5HSRESOq2hDk1IAECfJFKA7z6NmF9EugqtVzTLMYGUgl
+         wUr7ZeJgsYsCzIog/8W2xaVoLnvVEKg7/DItvcvbw3qzBG0FiNRZFPL/EPamh+N6dhov
+         Y6Smbg+IaEb1Umge2XxJ//2rY7zu0tFdKDC3Dp9CcIibFb5lOqEeKs2UpzDrBZKPnREP
+         2cgi83QblYOtWuq/sJrS3qw2ztATT11l45Bml5oYiLXsasvUN0ap9l3LTzOjbWjeXS00
+         Or3WSX1fYZLHyVH2SYlEfyx9wCh0mwIArGu4do25Lzuy4KE+nu0XHw88r93OF1HoLFbF
+         y3Aw==
+X-Gm-Message-State: AOAM531ZaSr+di+XNbDQ8IVIgzacxWIn+V7aJtI5yVH/yRwwTWzVXokf
+        77KKnEjGiT6/mDZdf27OkE0bJVJdRI+axF2fMywxeg==
+X-Google-Smtp-Source: ABdhPJxixA+XOTBfZ3BYWY3Zb24muHdDJFJXA6IB2XijLR/mZHkSGkBIOx58SM+pLP1LMZ2g2O7vRP785516kejacuI=
+X-Received: by 2002:a19:e308:: with SMTP id a8mr562788lfh.573.1603933593718;
+ Wed, 28 Oct 2020 18:06:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201027200358.557003-1-mic@digikod.net> <20201027200358.557003-7-mic@digikod.net>
-In-Reply-To: <20201027200358.557003-7-mic@digikod.net>
+References: <20201027200358.557003-1-mic@digikod.net> <20201027200358.557003-5-mic@digikod.net>
+In-Reply-To: <20201027200358.557003-5-mic@digikod.net>
 From:   Jann Horn <jannh@google.com>
-Date:   Thu, 29 Oct 2020 02:06:21 +0100
-Message-ID: <CAG48ez0venF9OnBG82yc8U+px1LUfUU498f1kJxYMu0hcU0+-A@mail.gmail.com>
-Subject: Re: [PATCH v22 06/12] fs,security: Add sb_delete hook
+Date:   Thu, 29 Oct 2020 02:06:06 +0100
+Message-ID: <CAG48ez1W2sHBeL4pV4QqUonUJc-snNnxE_jh8FVP=pyhhm0fdg@mail.gmail.com>
+Subject: Re: [PATCH v22 04/12] landlock: Add ptrace restrictions
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -95,15 +95,18 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 On Tue, Oct 27, 2020 at 9:04 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
 wrote:
-> The sb_delete security hook is called when shutting down a superblock,
-> which may be useful to release kernel objects tied to the superblock's
-> lifetime (e.g. inodes).
+> Using ptrace(2) and related debug features on a target process can lead
+> to a privilege escalation.  Indeed, ptrace(2) can be used by an attacker
+> to impersonate another task and to remain undetected while performing
+> malicious activities.  Thanks to  ptrace_may_access(), various part of
+> the kernel can check if a tracer is more privileged than a tracee.
 >
-> This new hook is needed by Landlock to release (ephemerally) tagged
-> struct inodes.  This comes from the unprivileged nature of Landlock
-> described in the next commit.
+> A landlocked process has fewer privileges than a non-landlocked process
+> and must then be subject to additional restrictions when manipulating
+> processes. To be allowed to use ptrace(2) and related syscalls on a
+> target process, a landlocked process must have a subset of the target
+> process's rules (i.e. the tracee must be in a sub-domain of the tracer).
 >
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
 > Cc: James Morris <jmorris@namei.org>
 > Cc: Jann Horn <jannh@google.com>
 > Cc: Kees Cook <keescook@chromium.org>
