@@ -2,142 +2,132 @@ Return-Path: <SRS0=b0TY=EF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984B4C4741F
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 08:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AF4C63699
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 09:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF5822258
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 08:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35DAA2076E
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 09:57:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRHC3d3u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbgJ3IxA (ORCPT
+        id S1726233AbgJ3J5g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Oct 2020 04:53:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725808AbgJ3Iwx (ORCPT
+        Fri, 30 Oct 2020 05:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbgJ3J5f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Oct 2020 04:52:53 -0400
-Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B47520578;
-        Fri, 30 Oct 2020 08:52:10 +0000 (UTC)
-Date:   Fri, 30 Oct 2020 10:52:06 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Kent Yoder <key@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        David Safford <safford@linux.vnet.ibm.com>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 1/3,RESEND] KEYS: trusted: Fix incorrect handling of
- tpm_get_random()
-Message-ID: <20201030085206.GB52376@kernel.org>
-References: <20201013025156.111305-1-jarkko.sakkinen@linux.intel.com>
+        Fri, 30 Oct 2020 05:57:35 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC7D9C0613CF;
+        Fri, 30 Oct 2020 02:57:35 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id q1so5977144ilt.6;
+        Fri, 30 Oct 2020 02:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/KHmwpEf5KO59HQ9FXioTrkHMQnSCZyA82voNpwNnxU=;
+        b=GRHC3d3uHyqgAX2bNvYF5h8/iEP8by/R6OwvXZSq+WCITM51vMsZn4GtwUmgPBcPTE
+         JIFj14HuPPgbTZQIawYp/WdHFcCfbmwDz6AQau0lHfSWxoyRMIQGFCa6mC/lT/vC48Fh
+         wYTYSi05HENiGIZrygUitWfPOvtbzSnv0hw2foQqpN3bXy/biCRwd2YEEEo1sCaotdD+
+         hA6wLP2AV/oTN011TL9T9aeU4s8MfJlR9YyL3VBEDUL1hZNcVpgED15piK/dbU9mR+9J
+         OBeYqC0iHVutFieBZGl23BYx95gCrsOrOmHBWMlmgoUyWbvcB9q8hEMkjqBqpL+HaXhc
+         2LDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/KHmwpEf5KO59HQ9FXioTrkHMQnSCZyA82voNpwNnxU=;
+        b=MPYeG5L3Q4s2ik9jeEeYMYcCvIkcSlUffhLZDzg3IhIpsmJdcbB1SBeSO2uNQxTqw6
+         AdR+Pk4NZ/jPEFHAubpei1Lk6cyB2FbMwEavNR7cKlLJGYlVYT2qatKXixSlEELIN6Fo
+         5+M32rGJFEEO1lDM7BRnoVF9UjdsBE+YJ4bPZjoiVmCIzsm2E7+W5+xQcTCTCgJT6das
+         VTNDavB6lE6NSKHKs7lVE/DlnCGwdZH+zc4d4GtIY5Hwn+jlMdt8xyZ7pggI+BXxJuR9
+         4t7SujPC3ui0ImpSRlo4Pm2azPK0Sgy/H6nCKSCZTTxmJtsRtcaxlkBZGeDLtqIhYk9K
+         zVuA==
+X-Gm-Message-State: AOAM531nz1pG6hSWVBeyE2EIT9gmzLLCNiMKVZaVDQGYk/mK0KiJ60Fm
+        o3TfoJSCwm+3Ot7l60Hd68aIzznNHz9v1XbmCBA=
+X-Google-Smtp-Source: ABdhPJxFlt//ACc/IV26fZ1qCGgWOIH/npCA4rcrvS/8aohcRHMILRDfiUHL83JStMqAq2lFcdcahBWGZNVdziI1h1E=
+X-Received: by 2002:a05:6e02:14c9:: with SMTP id o9mr1218968ilk.137.1604051855144;
+ Fri, 30 Oct 2020 02:57:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201013025156.111305-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com> <20201029003252.2128653-34-christian.brauner@ubuntu.com>
+In-Reply-To: <20201029003252.2128653-34-christian.brauner@ubuntu.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 30 Oct 2020 11:57:24 +0200
+Message-ID: <CAOQ4uxjyNB2zE+GE8Wmwjq__C7e4mrWMrS8RDVOOQFLtezjTkg@mail.gmail.com>
+Subject: Re: [PATCH 33/34] overlayfs: handle idmapped merged mounts
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 <linux-ext4@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Linux Audit <linux-audit@redhat.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When tpm_get_random() was introduced, it defined the following API for the
-return value:
+> -int ovl_permission(struct inode *inode, int mask)
+> +int ovl_permission_mapped(struct user_namespace *user_ns,
+> +                         struct inode *inode, int mask)
+>  {
+>         struct inode *upperinode = ovl_inode_upper(inode);
+>         struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
+> -       struct user_namespace *user_ns;
+> +       struct user_namespace *real_user_ns;
+>         const struct cred *old_cred;
+>         int err;
+>
+> @@ -302,15 +313,15 @@ int ovl_permission(struct inode *inode, int mask)
+>         }
+>
+>         if (upperinode)
+> -               user_ns = ovl_upper_mnt_user_ns(OVL_FS(inode->i_sb));
+> +               real_user_ns = ovl_upper_mnt_user_ns(OVL_FS(inode->i_sb));
+>         else
+> -               user_ns = OVL_I(inode)->lower_user_ns;
+> +               real_user_ns = OVL_I(inode)->lower_user_ns;
 
-1. A positive value tells how many bytes of random data was generated.
-2. A negative value on error.
+These changes look strange in this patch. Better use real_user_ns in previous
+patch.
 
-However, in the call sites the API was used incorrectly, i.e. as it would
-only return negative values and otherwise zero. Returning he positive read
-counts to the user space does not make any possible sense.
-
-Fix this by returning -EIO when tpm_get_random() returns a positive value.
-
-Fixes: 41ab999c80f1 ("tpm: Move tpm_get_random api into the TPM device driver")
-Cc: stable@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Kent Yoder <key@linux.vnet.ibm.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- security/keys/trusted-keys/trusted_tpm1.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index b9fe02e5f84f..c7b1701cdac5 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -403,9 +403,12 @@ static int osap(struct tpm_buf *tb, struct osapsess *s,
- 	int ret;
- 
- 	ret = tpm_get_random(chip, ononce, TPM_NONCE_SIZE);
--	if (ret != TPM_NONCE_SIZE)
-+	if (ret < 0)
- 		return ret;
- 
-+	if (ret != TPM_NONCE_SIZE)
-+		return -EIO;
-+
- 	tpm_buf_reset(tb, TPM_TAG_RQU_COMMAND, TPM_ORD_OSAP);
- 	tpm_buf_append_u16(tb, type);
- 	tpm_buf_append_u32(tb, handle);
-@@ -496,8 +499,12 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
- 		goto out;
- 
- 	ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
-+	if (ret < 0)
-+		return ret;
-+
- 	if (ret != TPM_NONCE_SIZE)
--		goto out;
-+		return -EIO;
-+
- 	ordinal = htonl(TPM_ORD_SEAL);
- 	datsize = htonl(datalen);
- 	pcrsize = htonl(pcrinfosize);
-@@ -601,9 +608,12 @@ static int tpm_unseal(struct tpm_buf *tb,
- 
- 	ordinal = htonl(TPM_ORD_UNSEAL);
- 	ret = tpm_get_random(chip, nonceodd, TPM_NONCE_SIZE);
-+	if (ret < 0)
-+		return ret;
-+
- 	if (ret != TPM_NONCE_SIZE) {
- 		pr_info("trusted_key: tpm_get_random failed (%d)\n", ret);
--		return ret;
-+		return -EIO;
- 	}
- 	ret = TSS_authhmac(authdata1, keyauth, TPM_NONCE_SIZE,
- 			   enonce1, nonceodd, cont, sizeof(uint32_t),
-@@ -1013,8 +1023,12 @@ static int trusted_instantiate(struct key *key,
- 	case Opt_new:
- 		key_len = payload->key_len;
- 		ret = tpm_get_random(chip, payload->key, key_len);
-+		if (ret < 0)
-+			goto out;
-+
- 		if (ret != key_len) {
- 			pr_info("trusted_key: key_create failed (%d)\n", ret);
-+			ret = -EIO;
- 			goto out;
- 		}
- 		if (tpm2)
--- 
-2.25.1
-
+Thanks,
+Amir.
