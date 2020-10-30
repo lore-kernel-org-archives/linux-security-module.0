@@ -2,125 +2,156 @@ Return-Path: <SRS0=b0TY=EF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE869C2D0A3
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 03:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031ECC4741F
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 06:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73718214DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 03:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 940CC22202
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 06:09:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q9NaR3BR"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="YQId5QH9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbgJ3DIO (ORCPT
+        id S1725770AbgJ3GJT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Oct 2020 23:08:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42074 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726110AbgJ3DIN (ORCPT
+        Fri, 30 Oct 2020 02:09:19 -0400
+Received: from de-smtp-delivery-102.mimecast.com ([51.163.158.102]:59651 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725773AbgJ3GJT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Oct 2020 23:08:13 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 237D5C0613D4
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2020 20:08:12 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id l28so5979264lfp.10
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Oct 2020 20:08:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=zehjsoI4/E9mlHSzS3GihRUsNzlSRlM3AQ/tc2JFGWU=;
-        b=q9NaR3BRuvTzXjW1tFWJC7ghaDMvWYJV4F/R/sfglQ1Do9mBfL2N70a3GMysG9ufy0
-         u543bRU8Q+xerhl0QLubqtnupkWBP51hSdP6NGnIl1X+ZkNPyDykSBY9poLAPBpDjUaq
-         0s/iVSYcxsg8yKonlY/PJPY/jry+VmI1lRRiHS3TdiNh6LhgQu6AH1HsJODK3KCF2zbN
-         XVJIkv9q1FDLnxGo0lUOJKAN5HFGYiHMifoR0MiKuttOYdJ8iNLqqbr7jNQUtCT2HPv6
-         PpvSh6aIPeBUKzLXaKv3qj2zy2CI2ktJbdFRW/aJd/vL4/1EkohKJVopAvgKPxXjiB09
-         YJRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=zehjsoI4/E9mlHSzS3GihRUsNzlSRlM3AQ/tc2JFGWU=;
-        b=NCnH9uFllbJmIHLHNbeAd0fF9wwgyNSpxmy1T4lfW0OM6a0LyH1ZQ2BR26toZOmoka
-         EFvB/ER3MYC8d1qshEPFeBz9tMJDB+CjxWk7imLziM4nPwE6Z9oXunHWWoDGwyIibes0
-         +7ah+HUikwmunWvJnkwR8ueIO4PgzsZRRDmdbgFaaBBggWyKLM0ONe4e8Gh/GyB5aaK9
-         N4sFmiGKFpxJ6Jb3M8amQjPSUh6BGevqYNHIqFDnsmv5UhO+JKxyG50nP2MuRxP0pIjV
-         /mjfE6AIcvTsP2VenM99u/0P4LcRSeAisAKmGQWX3E+YNX8QzvI6gk6rpRkmCV7+kLO+
-         tuMw==
-X-Gm-Message-State: AOAM532UZ6/GjYLuVSShTkqyRKT5PbZPGYlwY0rFI9vEtcuMGRSEUc9G
-        zwIbfeutZUzASn4MBE4kEXaEI+yIQilq9Sz3ueKP4Q==
-X-Google-Smtp-Source: ABdhPJwFhikEezi6cK75+Nh1jGpDUQvWygSxV/rVzK4JtvxTrHv+oYrN72yFW4FSMWmsrMzt7Jt48+wkeRxq1/Q08TY=
-X-Received: by 2002:a19:e308:: with SMTP id a8mr30300lfh.573.1604027290187;
- Thu, 29 Oct 2020 20:08:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20201027200358.557003-1-mic@digikod.net> <20201027200358.557003-9-mic@digikod.net>
- <CAG48ez1San538w=+He309vHg4pBSCvAf7e5xeHdqeOHA6qwitw@mail.gmail.com> <de287149-ff42-40ca-5bd1-f48969880a06@digikod.net>
-In-Reply-To: <de287149-ff42-40ca-5bd1-f48969880a06@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Fri, 30 Oct 2020 04:07:44 +0100
-Message-ID: <CAG48ez1FQVkt78129WozBwFbVhAPyAr9oJAHFHAbbNxEBr9h1g@mail.gmail.com>
-Subject: Re: [PATCH v22 08/12] landlock: Add syscall implementations
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Oct 2020 02:09:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1604038155;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=EwLM8EdiTeXMlJuIRO4KEYoZHa/GGUM2PW4TelbrMJQ=;
+        b=YQId5QH9KySPb6veHPR6sn1dceuqHzS1PB3FsozW+QE2uZ6VGX7RGThyuqrGPXLFlOtuXb
+        W1T5BUbwxVeIjgf9FNuSSl3rFMBja/txtzkMW1lFbaxFIUDLs78P5mbC0cVHTKC3MYYCE5
+        GgFRmvrF7C/NOX797Z+D/rN1dOC1RJ0=
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com
+ (mail-vi1eur05lp2174.outbound.protection.outlook.com [104.47.17.174])
+ (Using TLS) by relay.mimecast.com with ESMTP id
+ de-mta-21-4MIk-P-wMR6_9lbzTx12Yw-1; Fri, 30 Oct 2020 07:09:13 +0100
+X-MC-Unique: 4MIk-P-wMR6_9lbzTx12Yw-1
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vgh5j3vNLkjhMeMNoorek7lT/dJMaeOEDgmxs1ZOlq9zyU639U9KoHQ8SlIIM9H7dEibmb2W+RruIzkDdHV2V3E7oU2mSuTeFJ4vjVYiBBPOT5QsO4cxDfaYZE0RPCGp8Qmg0JELze05No0aIP2Lqs1Ual8VAtiUhcXliswhTInaSbW+MaU7va6gvf/3+3yu0ForNJKReQOswuom/LsW/rzK1PFiuE4R143iS2KY8DQnG2j0drN8pnd+uz8dAGK/29hP3EcRibv13vfXkK0hLek2Ib0HOc1/fgLIo5737lHte/DYidsCahNyltUzYMV86/Ln+hMDK8XsSNIC6Uwk5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vmNNHcu67n2vdsu1WUtLH5p1UhNHv9xlM+KQkUkoI+k=;
+ b=D9mpbQEIcNrSzx9vvRAlD/Nr12G1YcJ4+Nfg8nGTcJR2zfYBEVZA8atZMfGRaiUOajgth4EoUgEwcAsDk4Yj2LmJtKr8DIIv13fIfhl5+B6MDZg/zfxyj5lFJSOPAC2N75UBxqVwbOE+XJDg3zgdkZxHH2ulC6PDNqovWp72xmfM+S38yZ5FekIp684xZzIH1sWaxUjWngIFN6yfk5B51IU99vfv/7AQRLkcSgYoWHlVXJI5oa+k3fa7ewdZPhql+HF2SCFVAEml61dnFQLMcbbObkwCXNxw6JpHIUjw7traCTRGuRzmhjn1mAGYBT0MxvzvdgLYqqUiHmpDX2Ppnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=suse.com;
+Received: from AM6PR04MB4919.eurprd04.prod.outlook.com (2603:10a6:20b:c::23)
+ by AS8PR04MB7943.eurprd04.prod.outlook.com (2603:10a6:20b:2a1::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.18; Fri, 30 Oct
+ 2020 06:09:11 +0000
+Received: from AM6PR04MB4919.eurprd04.prod.outlook.com
+ ([fe80::f063:76fc:db1a:905b]) by AM6PR04MB4919.eurprd04.prod.outlook.com
+ ([fe80::f063:76fc:db1a:905b%6]) with mapi id 15.20.3477.035; Fri, 30 Oct 2020
+ 06:09:11 +0000
+From:   Chester Lin <clin@suse.com>
+To:     ardb@kernel.org, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, dmitry.kasatkin@gmail.com,
+        catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hpa@zytor.com
+CC:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        jlee@suse.com, clin@suse.com
+Subject: [PATCH v3 0/3] add ima_arch support for ARM64
+Date:   Fri, 30 Oct 2020 14:08:37 +0800
+Message-ID: <20201030060840.1810-1-clin@suse.com>
+X-Mailer: git-send-email 2.28.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [36.225.26.227]
+X-ClientProxiedBy: HK0PR01CA0049.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::13) To AM6PR04MB4919.eurprd04.prod.outlook.com
+ (2603:10a6:20b:c::23)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (36.225.26.227) by HK0PR01CA0049.apcprd01.prod.exchangelabs.com (2603:1096:203:a6::13) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3499.19 via Frontend Transport; Fri, 30 Oct 2020 06:09:05 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fab59ff4-316a-4402-1a08-08d87c9a51ab
+X-MS-TrafficTypeDiagnostic: AS8PR04MB7943:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AS8PR04MB7943E538B07B57A98A636753AD150@AS8PR04MB7943.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8882;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: f0c2Ke/+KB2tDU//XT2Xjh6eKlYecCctsLX/Tv1OllZRfGLxZFdI/YW3mTJkBMAUPhvOTaO10x5OC9LKfKj0RPlwuvLMOBSVVTZPtlcbFSU1tcBwUIWhG0mOnIbGMiMCcXIQP3Xykd7/OzW4UrDdFwAFXxU8YJW52zR8KUIv96Afx3JT07AUnFkWOMsCpqIl3Mcw2TmT7z8UQiF62G67Mcl9YEPuSKrghznv47ZD+L/u4/pm0IQBLaHLtjthHM5sECtr0I9AZOFW/J5Bx5mg5jPFoIPqI3z+2Zp/i3VhajaNoumND2k6Ictl1eCcUnI8Ky11cxXwd2FPVXfysPLvoBFZ79lpYwRkJmAHRFyV46Ez3FQoaigsPWWti3a9HTsfiuOSxGypO8S/DuwvA2hUVzYmRX9ZSr3S4qPL3RgtewN2W3k6XxDIDhfvU0ReW+KmWVIaO4zwesKSZmztLzu2EBZwiL3wDNNkOeWGmmHdRHQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4919.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(39860400002)(346002)(376002)(366004)(396003)(4326008)(186003)(2906002)(7416002)(36756003)(2616005)(16526019)(1076003)(956004)(5660300002)(52116002)(6486002)(8676002)(6512007)(66556008)(66476007)(66946007)(86362001)(6506007)(26005)(966005)(69590400008)(8936002)(316002)(83380400001)(478600001)(107886003)(6666004)(921003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: /tjJi9E+C8+dfN7RLXKN/ZqEcwDt6t/MZahW4WekWhVSB8LxsYBK6ymOAXUwUJC6f4ufJBblRAIWVocmh4IjP4K2eLmNksYiZEe0+KVSZI4GqFXnV+fGOeNchlu98dILt+s3hT8k6JlJMitJaod1JPaul/eHSsuFbqicHTymahUA30ydwPq69cK8YD+W5qYC9MXb12zYk8akfQw1C6Q+nOnLdYpKzMxkDfeHldy59fHH/iTgbxoStxeoL4lkgXwSq2IKXyVdVztFWpKv0UNbFPt6n/ofW+WhvuQNwnjl2tfnFIXP4tJNO7UjAwV2UFMfJZCvTPq4V43r00YBVamgcnZtH05ukAcSAA9ccPK2wq7BoBfwAesmctrcje/wkhas+TlmWs6/J7CHrP4TbkVng2uR8QusZncY9wvbSj6rj/FxUlM1hWD244vF7lD3cVyIKfFC0D27qdw9JsV00+EHCzB+JVsvKrjcBHk4MJ6ZYETxle3hoNp7kn69pAfP1kexZLxiTBT4jgS9pLZkL7wWaE1nsWJDH2n/Ugfm3TbJ9nIYrXbYC/pZSm0+7a7pT/Tkk6PkS1rxzTXaCtWHIhUJjmyaLl/uuuVggc+O2H0RlGtv6yLsyZc8B8zBdnqip3CcwK7tRc9L/ld/RkgB7QVK2g==
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fab59ff4-316a-4402-1a08-08d87c9a51ab
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB4919.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2020 06:09:11.3178
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U7b/WVi+KhTe3nN9mU0H8ooXU6py2gLtwRliBoMVBM4XO3wzr5LYy4FgzK9oKjcV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7943
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 29, 2020 at 12:30 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
-> On 29/10/2020 02:06, Jann Horn wrote:
-> > On Tue, Oct 27, 2020 at 9:04 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> >> These 3 system calls are designed to be used by unprivileged processes
-> >> to sandbox themselves:
-[...]
-> >> +       /*
-> >> +        * Similar checks as for seccomp(2), except that an -EPERM may=
- be
-> >> +        * returned.
-> >> +        */
-> >> +       if (!task_no_new_privs(current)) {
-> >> +               err =3D security_capable(current_cred(), current_user_=
-ns(),
-> >> +                               CAP_SYS_ADMIN, CAP_OPT_NOAUDIT);
-> >
-> > I think this should be ns_capable_noaudit(current_user_ns(), CAP_SYS_AD=
-MIN)?
->
-> Right. The main difference is that ns_capable*() set PF_SUPERPRIV in
-> current->flags. I guess seccomp should use ns_capable_noaudit() as well?
+Add IMA arch dependent support for ARM64. Some IMA functions can check
+arch-specific status before running. For example, the ima_load_data
+function or the boot param "ima_appraise=3D" should not be executed when
+UEFI secure boot is enabled. We want to fill the gap in order to complete
+the IMA support on ARM64.
 
-Yeah. That seccomp code is from commit e2cfabdfd0756, with commit date
-in April 2012, while ns_capable_noaudit() was introduced in commit
-98f368e9e263, with commit date in June 2016; the seccomp code predates
-the availability of that API.
+Changes in v3:
+- Generalize efi_get_secureboot() so both ima_arch and efistub can reuse
+  it.
+- Implement ima_get_efi_secureboot() as the replacement of get_sb_mode()
+  so x86 and arm64 can share the same logic.
 
-Do you want to send a patch to Kees for that, or should I?
+Changes in v2:
+- Separate get_sb_mode() from x86 so all EFI-based architectures can reuse
+  the same function.
+- Refactor arch/arm64/kernel/ima_arch.c based on Ard's patch[1].
+
+Test platforms:
+- ARM64:  QEMU [aarch64-virt] + EDK2/OVMF
+- ARM64:  NXP LX2160A-RDB + EDK2
+- X86_64: Dell Lattitude 7490 + (BIOS 1.14.0 01/22/2020)
+
+[1] https://www.spinics.net/lists/linux-efi/msg20645.html
+
+Chester Lin (3):
+  efi: generalize efi_get_secureboot
+  ima: remove get_sb_mode() and create ima_get_efi_secureboot()
+  arm64/ima: add ima_arch support
+
+ arch/arm64/Kconfig                        |  1 +
+ arch/arm64/kernel/Makefile                |  2 +
+ arch/arm64/kernel/ima_arch.c              | 43 +++++++++++++
+ arch/x86/kernel/ima_arch.c                | 69 +++++---------------
+ drivers/firmware/efi/libstub/Makefile     |  2 +-
+ drivers/firmware/efi/libstub/efi-stub.c   |  2 +-
+ drivers/firmware/efi/libstub/efistub.h    | 22 ++++---
+ drivers/firmware/efi/libstub/secureboot.c | 76 -----------------------
+ drivers/firmware/efi/libstub/x86-stub.c   |  2 +-
+ include/linux/efi.h                       | 41 +++++++++++-
+ include/linux/ima.h                       | 10 +++
+ security/integrity/ima/Makefile           |  1 +
+ security/integrity/ima/ima_efi.c          | 26 ++++++++
+ 13 files changed, 154 insertions(+), 143 deletions(-)
+ create mode 100644 arch/arm64/kernel/ima_arch.c
+ delete mode 100644 drivers/firmware/efi/libstub/secureboot.c
+ create mode 100644 security/integrity/ima/ima_efi.c
+
+--=20
+2.28.0
+
