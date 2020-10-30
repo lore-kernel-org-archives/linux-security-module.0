@@ -2,132 +2,249 @@ Return-Path: <SRS0=b0TY=EF=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AF4C63699
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 09:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B61C388F9
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 11:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35DAA2076E
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 09:57:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GRHC3d3u"
+	by mail.kernel.org (Postfix) with ESMTP id C1BAA20706
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Oct 2020 11:53:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604058783;
+	bh=a2P2yJXerbf+BStG2FxqbjJ8wAhWTITOLQDhr7Hmh3Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ng3jm+N/1jsbj0SD69qMiHFdfIakSjn+QDVBvKte9652/UUZduZpC2HRdw37Sp9Zd
+	 pDS8df5r5H4Gh38NRo6QnAHhEhzRMALNiTac1MaX3TRvEQGqI5//RsmZNDVwd7jAwk
+	 /2DiCRjRcxR/3H1UQVe4RqYF3cG9PBcuFtYlkn24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726233AbgJ3J5g (ORCPT
+        id S1726353AbgJ3Lww (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Oct 2020 05:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48578 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbgJ3J5f (ORCPT
+        Fri, 30 Oct 2020 07:52:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726120AbgJ3Lwv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Oct 2020 05:57:35 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC7D9C0613CF;
-        Fri, 30 Oct 2020 02:57:35 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id q1so5977144ilt.6;
-        Fri, 30 Oct 2020 02:57:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/KHmwpEf5KO59HQ9FXioTrkHMQnSCZyA82voNpwNnxU=;
-        b=GRHC3d3uHyqgAX2bNvYF5h8/iEP8by/R6OwvXZSq+WCITM51vMsZn4GtwUmgPBcPTE
-         JIFj14HuPPgbTZQIawYp/WdHFcCfbmwDz6AQau0lHfSWxoyRMIQGFCa6mC/lT/vC48Fh
-         wYTYSi05HENiGIZrygUitWfPOvtbzSnv0hw2foQqpN3bXy/biCRwd2YEEEo1sCaotdD+
-         hA6wLP2AV/oTN011TL9T9aeU4s8MfJlR9YyL3VBEDUL1hZNcVpgED15piK/dbU9mR+9J
-         OBeYqC0iHVutFieBZGl23BYx95gCrsOrOmHBWMlmgoUyWbvcB9q8hEMkjqBqpL+HaXhc
-         2LDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/KHmwpEf5KO59HQ9FXioTrkHMQnSCZyA82voNpwNnxU=;
-        b=MPYeG5L3Q4s2ik9jeEeYMYcCvIkcSlUffhLZDzg3IhIpsmJdcbB1SBeSO2uNQxTqw6
-         AdR+Pk4NZ/jPEFHAubpei1Lk6cyB2FbMwEavNR7cKlLJGYlVYT2qatKXixSlEELIN6Fo
-         5+M32rGJFEEO1lDM7BRnoVF9UjdsBE+YJ4bPZjoiVmCIzsm2E7+W5+xQcTCTCgJT6das
-         VTNDavB6lE6NSKHKs7lVE/DlnCGwdZH+zc4d4GtIY5Hwn+jlMdt8xyZ7pggI+BXxJuR9
-         4t7SujPC3ui0ImpSRlo4Pm2azPK0Sgy/H6nCKSCZTTxmJtsRtcaxlkBZGeDLtqIhYk9K
-         zVuA==
-X-Gm-Message-State: AOAM531nz1pG6hSWVBeyE2EIT9gmzLLCNiMKVZaVDQGYk/mK0KiJ60Fm
-        o3TfoJSCwm+3Ot7l60Hd68aIzznNHz9v1XbmCBA=
-X-Google-Smtp-Source: ABdhPJxFlt//ACc/IV26fZ1qCGgWOIH/npCA4rcrvS/8aohcRHMILRDfiUHL83JStMqAq2lFcdcahBWGZNVdziI1h1E=
-X-Received: by 2002:a05:6e02:14c9:: with SMTP id o9mr1218968ilk.137.1604051855144;
- Fri, 30 Oct 2020 02:57:35 -0700 (PDT)
+        Fri, 30 Oct 2020 07:52:51 -0400
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DF4B22227;
+        Fri, 30 Oct 2020 11:52:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604058757;
+        bh=a2P2yJXerbf+BStG2FxqbjJ8wAhWTITOLQDhr7Hmh3Y=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=t5aHrghmpzjeM/9/si8n4dGoZIODp982zCoJECUd4xSO0OiO8nS9O2m/Cm0q580h1
+         AfFLCFBWh2XNVxRMn/XClEUBFzYXhx4xu+pT0WdeE/K2NwJFKMvf09T+E4MG3DFFIS
+         foFIM/WU3nNA4hWIdR4Z8MM2ajQGd8F8qUeS0VXQ=
+Received: by mail-oi1-f177.google.com with SMTP id x1so6325620oic.13;
+        Fri, 30 Oct 2020 04:52:37 -0700 (PDT)
+X-Gm-Message-State: AOAM532xzF+KC3v/fdemBq7vSJrvEe5SEw/x3eQOygpIyH72rJHIwbu7
+        v/a1biZYGgYK8h+icPp02uXOI0jicaK14yW96L8=
+X-Google-Smtp-Source: ABdhPJyDqHCtTxdAyD28M//rHLe/L8BOwQ2hQT48DxxewoMsBO92i0mJB3CrDMAPcCrrboNjBna1svpvK0MMmcwrcPg=
+X-Received: by 2002:aca:5c82:: with SMTP id q124mr1314195oib.33.1604058756433;
+ Fri, 30 Oct 2020 04:52:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com> <20201029003252.2128653-34-christian.brauner@ubuntu.com>
-In-Reply-To: <20201029003252.2128653-34-christian.brauner@ubuntu.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 30 Oct 2020 11:57:24 +0200
-Message-ID: <CAOQ4uxjyNB2zE+GE8Wmwjq__C7e4mrWMrS8RDVOOQFLtezjTkg@mail.gmail.com>
-Subject: Re: [PATCH 33/34] overlayfs: handle idmapped merged mounts
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
+References: <20201030060840.1810-1-clin@suse.com> <20201030060840.1810-3-clin@suse.com>
+In-Reply-To: <20201030060840.1810-3-clin@suse.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Fri, 30 Oct 2020 12:52:25 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHtRhD6vuAcnuQkXCfxHduZ8j2vPJFMT6Y5WDQ14OhQ_g@mail.gmail.com>
+Message-ID: <CAMj1kXHtRhD6vuAcnuQkXCfxHduZ8j2vPJFMT6Y5WDQ14OhQ_g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] ima: replace arch-specific get_sb_mode() with a
+ common helper ima_get_efi_secureboot()
+To:     Chester Lin <clin@suse.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ext4 <linux-ext4@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Linux Audit <linux-audit@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
         linux-integrity <linux-integrity@vger.kernel.org>,
-        selinux@vger.kernel.org
+        linux-security-module@vger.kernel.org, X86 ML <x86@kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> -int ovl_permission(struct inode *inode, int mask)
-> +int ovl_permission_mapped(struct user_namespace *user_ns,
-> +                         struct inode *inode, int mask)
->  {
->         struct inode *upperinode = ovl_inode_upper(inode);
->         struct inode *realinode = upperinode ?: ovl_inode_lower(inode);
-> -       struct user_namespace *user_ns;
-> +       struct user_namespace *real_user_ns;
->         const struct cred *old_cred;
->         int err;
+On Fri, 30 Oct 2020 at 07:09, Chester Lin <clin@suse.com> wrote:
 >
-> @@ -302,15 +313,15 @@ int ovl_permission(struct inode *inode, int mask)
+> remove the get_sb_mode() from x86/kernel/ima_arch.c and create a common
+> helper ima_get_efi_secureboot() in IMA so that all EFI-based architectures
+> can refer to the same procedure.
+>
+> Signed-off-by: Chester Lin <clin@suse.com>
+> ---
+>  arch/x86/kernel/ima_arch.c       | 69 +++++++-------------------------
+>  include/linux/ima.h              | 10 +++++
+>  security/integrity/ima/Makefile  |  1 +
+>  security/integrity/ima/ima_efi.c | 26 ++++++++++++
+>  4 files changed, 51 insertions(+), 55 deletions(-)
+>  create mode 100644 security/integrity/ima/ima_efi.c
+>
+> diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+> index 7dfb1e808928..2c773532ff0a 100644
+> --- a/arch/x86/kernel/ima_arch.c
+> +++ b/arch/x86/kernel/ima_arch.c
+> @@ -8,69 +8,28 @@
+>
+>  extern struct boot_params boot_params;
+>
+> -static enum efi_secureboot_mode get_sb_mode(void)
+> -{
+> -       efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
+> -       efi_status_t status;
+> -       unsigned long size;
+> -       u8 secboot, setupmode;
+> -
+> -       size = sizeof(secboot);
+> -
+> -       if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
+> -               pr_info("ima: secureboot mode unknown, no efi\n");
+> -               return efi_secureboot_mode_unknown;
+> -       }
+> -
+> -       /* Get variable contents into buffer */
+> -       status = efi.get_variable(L"SecureBoot", &efi_variable_guid,
+> -                                 NULL, &size, &secboot);
+> -       if (status == EFI_NOT_FOUND) {
+> -               pr_info("ima: secureboot mode disabled\n");
+> -               return efi_secureboot_mode_disabled;
+> -       }
+> -
+> -       if (status != EFI_SUCCESS) {
+> -               pr_info("ima: secureboot mode unknown\n");
+> -               return efi_secureboot_mode_unknown;
+> -       }
+> -
+> -       size = sizeof(setupmode);
+> -       status = efi.get_variable(L"SetupMode", &efi_variable_guid,
+> -                                 NULL, &size, &setupmode);
+> -
+> -       if (status != EFI_SUCCESS)      /* ignore unknown SetupMode */
+> -               setupmode = 0;
+> -
+> -       if (secboot == 0 || setupmode == 1) {
+> -               pr_info("ima: secureboot mode disabled\n");
+> -               return efi_secureboot_mode_disabled;
+> -       }
+> -
+> -       pr_info("ima: secureboot mode enabled\n");
+> -       return efi_secureboot_mode_enabled;
+> -}
+> -
+>  bool arch_ima_get_secureboot(void)
+>  {
+> -       static enum efi_secureboot_mode sb_mode;
+> -       static bool initialized;
+> -
+> -       if (!initialized && efi_enabled(EFI_BOOT)) {
+> -               sb_mode = boot_params.secure_boot;
+> +       static bool sb_enabled, initialized;
+>
+> -               if (sb_mode == efi_secureboot_mode_unset)
+> -                       sb_mode = get_sb_mode();
+> +       if (initialized) {
+> +               return sb_enabled;
+> +       } else if (efi_enabled(EFI_BOOT)) {
+>                 initialized = true;
+> +
+> +               if (boot_params.secure_boot == efi_secureboot_mode_unset) {
+> +                       sb_enabled = ima_get_efi_secureboot();
+> +                       return sb_enabled;
+> +               }
 >         }
 >
->         if (upperinode)
-> -               user_ns = ovl_upper_mnt_user_ns(OVL_FS(inode->i_sb));
-> +               real_user_ns = ovl_upper_mnt_user_ns(OVL_FS(inode->i_sb));
->         else
-> -               user_ns = OVL_I(inode)->lower_user_ns;
-> +               real_user_ns = OVL_I(inode)->lower_user_ns;
+> -       if (sb_mode == efi_secureboot_mode_enabled)
+> -               return true;
+> -       else
+> -               return false;
+> +       if (boot_params.secure_boot == efi_secureboot_mode_enabled)
+> +               sb_enabled = true;
+> +
+> +       return sb_enabled;
+>  }
+>
+> -/* secureboot arch rules */
+> +/* secure and trusted boot arch rules */
+>  static const char * const sb_arch_rules[] = {
+>  #if !IS_ENABLED(CONFIG_KEXEC_SIG)
+>         "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 8fa7bcfb2da2..9f9699f017be 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -50,6 +50,16 @@ static inline const char * const *arch_get_ima_policy(void)
+>  }
+>  #endif
+>
+> +#if defined(CONFIG_EFI) && defined(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT)
+> +extern bool ima_get_efi_secureboot(void);
+> +#else
+> +static inline bool ima_get_efi_secureboot(void)
+> +{
+> +       return false;
+> +}
+> +#endif
+> +
+> +
+>  #else
+>  static inline int ima_bprm_check(struct linux_binprm *bprm)
+>  {
+> diff --git a/security/integrity/ima/Makefile b/security/integrity/ima/Makefile
+> index 67dabca670e2..32076b3fd292 100644
+> --- a/security/integrity/ima/Makefile
+> +++ b/security/integrity/ima/Makefile
+> @@ -14,3 +14,4 @@ ima-$(CONFIG_HAVE_IMA_KEXEC) += ima_kexec.o
+>  ima-$(CONFIG_IMA_BLACKLIST_KEYRING) += ima_mok.o
+>  ima-$(CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS) += ima_asymmetric_keys.o
+>  ima-$(CONFIG_IMA_QUEUE_EARLY_BOOT_KEYS) += ima_queue_keys.o
+> +ima-$(CONFIG_EFI) += ima_efi.o
+> diff --git a/security/integrity/ima/ima_efi.c b/security/integrity/ima/ima_efi.c
+> new file mode 100644
+> index 000000000000..a78f66e19689
+> --- /dev/null
+> +++ b/security/integrity/ima/ima_efi.c
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2020 SUSE LLC
+> + *
+> + * Author:
+> + * Chester Lin <clin@suse.com>
+> + */
+> +
+> +#include <linux/efi.h>
+> +#include <linux/ima.h>
+> +
+> +#ifdef CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT
+> +bool ima_get_efi_secureboot(void)
+> +{
+> +       enum efi_secureboot_mode sb_mode;
+> +
+> +       if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
+> +               pr_info("ima: secureboot mode unknown, no efi\n");
+> +               return false;
+> +       }
+> +
+> +       sb_mode = efi_get_secureboot(efi.get_variable);
+> +
 
-These changes look strange in this patch. Better use real_user_ns in previous
-patch.
+As I mentioned in the other patch, these are not equivalent - you are
+introducing a MokSbState check which doesn't make sense at runtime (or
+at all perhaps)
 
-Thanks,
-Amir.
+> +       return (sb_mode == efi_secureboot_mode_enabled) ? true : false;
+> +}
+> +#endif
+> --
+> 2.28.0
+>
