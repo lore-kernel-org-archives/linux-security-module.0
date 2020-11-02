@@ -2,208 +2,143 @@ Return-Path: <SRS0=0AS6=EI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B345EC388F2
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 14:03:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 262BEC2D0A3
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 18:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D300223C7
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 14:03:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HcFyKdF5"
+	by mail.kernel.org (Postfix) with ESMTP id DB9252224E
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 18:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725836AbgKBODw (ORCPT
+        id S1726020AbgKBSXS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Nov 2020 09:03:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44720 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725616AbgKBODw (ORCPT
+        Mon, 2 Nov 2020 13:23:18 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:29303 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726366AbgKBSXR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Nov 2020 09:03:52 -0500
-Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80A6AC0617A6
-        for <linux-security-module@vger.kernel.org>; Mon,  2 Nov 2020 06:03:52 -0800 (PST)
-Received: by mail-ot1-x344.google.com with SMTP id n15so12647926otl.8
-        for <linux-security-module@vger.kernel.org>; Mon, 02 Nov 2020 06:03:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wX6OTPW5wqdMmU5R1jeye+cO+mS+d0fs6KyBCs/5wsw=;
-        b=HcFyKdF5Oxabqi6Th2rxqSyIRke5RWMH2AmIZyXZQ3TmoBvrbaIseTp5wFkwOrVqPZ
-         tCECpraufZ58ZH9G49SY90oj4Chls/n7eDM4sjD2gr0pwsuHbQdnroAu92Rk0ekyVJaw
-         NJ7Hhs+4aettc58fbaPSasUS6t4t+SlNNuUDqUXNwFpXPATS+Ow/qfEut7RHTVrjlV+6
-         g4aUv/YW6MqK/Lt4ssHvtK1Iq5mZJ5OBS/8ScM//Guh+S8z3qSvRbA3W2bE93LYWpAYE
-         ph1IhLdV0tjJAz/aCOf7JH57RtsOY1aDNXsn/3REL5bvA3UhtsAa3Ltt9/B+PAjjLoS3
-         oOgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wX6OTPW5wqdMmU5R1jeye+cO+mS+d0fs6KyBCs/5wsw=;
-        b=MJNRTonLmjq6A2gKqJES5y9eo24hYWYETc02yTpxqejH2XYubrQM7jPLzsTZpSKfgu
-         ATRuLA3g6XOW1QPAWunCK1VD/XvK1Lji7IbJAwVvqC0SqBEuODB8i9b4aOLxz31gHoPi
-         8Dzh72ssBf+RiNTFPUvTwIWYU+RDKzTkvut3sv1Ao3r72e+MnCW5bO/LRj68lNIXS0wB
-         USJxtzKWn9K95YCdZHeemC0m2wRkaTeFB/DaRPFL5wq1tYllCOJ249N41wMFDoJ7HB2T
-         IWYey7hATfuRFK8oWJi8khHQLcw1IZWNvFhI0wxnwhxStUe3C26T81/boPdiq7mJodla
-         BI+A==
-X-Gm-Message-State: AOAM530R7x2DTH5CNadKhb6JE/m7W0vZjYmOBN93aje7mLPannDrMNMX
-        TEOVYRbK3V/qZvRotjfEC5PfRKGYsBbt7mww0edHpQ==
-X-Google-Smtp-Source: ABdhPJyEOrb8ST/xOmB2FH0kBLmvzaTQt/orQ/byCNraU37B7b7JC4p6EQ1WflES2+m4XQRx1rKiZyoklXvZDJq3UKw=
-X-Received: by 2002:a9d:65d5:: with SMTP id z21mr2744223oth.251.1604325831671;
- Mon, 02 Nov 2020 06:03:51 -0800 (PST)
+        Mon, 2 Nov 2020 13:23:17 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-221-3eybHYmXNVuuSrMONPCpiQ-1; Mon, 02 Nov 2020 18:23:12 +0000
+X-MC-Unique: 3eybHYmXNVuuSrMONPCpiQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 2 Nov 2020 18:23:11 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 2 Nov 2020 18:23:11 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Greg KH' <gregkh@linuxfoundation.org>
+CC:     'David Hildenbrand' <david@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "kernel-team@android.com" <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
+ rw_copy_check_uvector() into lib/iov_iter.c"
+Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12CAAB+UKYAAAQNg///yIQCAD2i/YIAAT+MAgABLYlA=
+Date:   Mon, 2 Nov 2020 18:23:11 +0000
+Message-ID: <c751d3a7796e45a8a2640e2ded59d708@AcuMS.aculab.com>
+References: <20201022121849.GA1664412@kroah.com>
+ <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
+ <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
+ <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
+ <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
+ <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
+ <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
+ <20201023144718.GA2525489@kroah.com>
+ <0ab5ac71f28d459db2f350c2e07b88ca@AcuMS.aculab.com>
+ <20201102135202.GA1016272@kroah.com>
+In-Reply-To: <20201102135202.GA1016272@kroah.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20201029183526.2131776-1-aleksandrnogikh@gmail.com> <20201029183526.2131776-2-aleksandrnogikh@gmail.com>
-In-Reply-To: <20201029183526.2131776-2-aleksandrnogikh@gmail.com>
-From:   Marco Elver <elver@google.com>
-Date:   Mon, 2 Nov 2020 15:03:40 +0100
-Message-ID: <CANpmjNMnKY7v6o-9oDYObU=uGzSM-0Zncf-UUO7aCugS-odkjQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] security: add fault injection capability
-To:     Aleksandr Nogikh <aleksandrnogikh@gmail.com>
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@google.com>, casey@schaufler-ca.com,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Aleksandr Nogikh <nogikh@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 29 Oct 2020 at 19:35, Aleksandr Nogikh
-<aleksandrnogikh@gmail.com> wrote:
-> From: Aleksandr Nogikh <nogikh@google.com>
->
-> Add a fault injection capability to call_int_hook macro. This will
-> facilitate testing of fault tolerance of the code that invokes
-> security hooks as well as the fault tolerance of the LSM
-> implementations themselves.
->
-> Add a KConfig option (CONFIG_FAIL_LSM_HOOKS) that controls whether the
-> capability is enabled. In order to enable configuration from the user
-> space, add the standard debugfs entries for fault injection (if
-> CONFIG_FAULT_INJECTION_DEBUG_FS is enabled).
->
-> Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
+From: 'Greg KH'
+> Sent: 02 November 2020 13:52
+> 
+> On Mon, Nov 02, 2020 at 09:06:38AM +0000, David Laight wrote:
+> > From: 'Greg KH'
+> > > Sent: 23 October 2020 15:47
+> > >
+> > > On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
+> > > > From: David Hildenbrand
+> > > > > Sent: 23 October 2020 15:33
+> > > > ...
+> > > > > I just checked against upstream code generated by clang 10 and it
+> > > > > properly discards the upper 32bit via a mov w23 w2.
+> > > > >
+> > > > > So at least clang 10 indeed properly assumes we could have garbage and
+> > > > > masks it off.
+> > > > >
+> > > > > Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
+> > > > > behaves differently.
+> > > >
+> > > > We'll need the disassembly from a failing kernel image.
+> > > > It isn't that big to hand annotate.
+> > >
+> > > I've worked around the merge at the moment in the android tree, but it
+> > > is still quite reproducable, and will try to get a .o file to
+> > > disassemble on Monday or so...
+> >
+> > Did this get properly resolved?
+> 
+> For some reason, 5.10-rc2 fixed all of this up.  I backed out all of the
+> patches I had to revert to get 5.10-rc1 to work properly, and then did
+> the merge and all is well.
+> 
+> It must have been something to do with the compat changes in this same
+> area that went in after 5.10-rc1, and something got reorganized in the
+> files somehow.  I really do not know, and at the moment, don't have the
+> time to track it down anymore.  So for now, I'd say it's all good, sorry
+> for the noise.
 
-Reviewed-by: Marco Elver <elver@google.com>
+Hopefully it won't appear again.
 
-> ---
-> v2:
-> * Renamed should_fail_lsm_hook() to lsm_hooks_inject_fail().
-> ---
->  lib/Kconfig.debug   |  6 +++++
->  security/security.c | 53 ++++++++++++++++++++++++++++++++++++++++++---
->  2 files changed, 56 insertions(+), 3 deletions(-)
->
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 537cf3c2937d..80d289591e29 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1803,6 +1803,12 @@ config FAIL_MAKE_REQUEST
->         help
->           Provide fault-injection capability for disk IO.
->
-> +config FAIL_LSM_HOOKS
-> +       bool "Fault-injection capability for LSM hooks"
-> +       depends on FAULT_INJECTION
-> +       help
-> +         Provide fault-injection capability for LSM hooks.
-> +
->  config FAIL_IO_TIMEOUT
->         bool "Fault-injection capability for faking disk interrupts"
->         depends on FAULT_INJECTION && BLOCK
-> diff --git a/security/security.c b/security/security.c
-> index 69ff6e2e2cd4..1105ad0f6891 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -28,6 +28,7 @@
->  #include <linux/backing-dev.h>
->  #include <linux/string.h>
->  #include <linux/msg.h>
-> +#include <linux/fault-inject.h>
->  #include <net/flow.h>
->
->  #define MAX_LSM_EVM_XATTR      2
-> @@ -669,6 +670,51 @@ static void __init lsm_early_task(struct task_struct *task)
->                 panic("%s: Early task alloc failed.\n", __func__);
->  }
->
-> +
-> +#ifdef CONFIG_FAIL_LSM_HOOKS
-> +
-> +static struct {
-> +       struct fault_attr attr;
-> +       int retval;
-> +} fail_lsm_hooks = {
-> +       .attr = FAULT_ATTR_INITIALIZER,
-> +       .retval = -EACCES
-> +};
-> +
-> +static int __init setup_fail_lsm_hooks(char *str)
-> +{
-> +       return setup_fault_attr(&fail_lsm_hooks.attr, str);
-> +}
-> +__setup("fail_lsm_hooks=", setup_fail_lsm_hooks);
-> +
-> +static int lsm_hooks_inject_fail(void)
-> +{
-> +       return should_fail(&fail_lsm_hooks.attr, 1) ? fail_lsm_hooks.retval : 0;
-> +}
-> +
-> +#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-> +
-> +static int __init fail_lsm_hooks_debugfs(void)
-> +{
-> +       umode_t mode = S_IFREG | 0600;
-> +       struct dentry *dir;
-> +
-> +       dir = fault_create_debugfs_attr("fail_lsm_hooks", NULL,
-> +                                       &fail_lsm_hooks.attr);
-> +       debugfs_create_u32("retval", mode, dir, &fail_lsm_hooks.retval);
-> +       return 0;
-> +}
-> +
-> +late_initcall(fail_lsm_hooks_debugfs);
-> +
-> +#endif /* CONFIG_FAULT_INJECTION_DEBUG_FS */
-> +
-> +#else
-> +
-> +static inline int lsm_hooks_inject_fail(void) { return 0; }
-> +
-> +#endif /* CONFIG_FAIL_LSM_HOOKS */
-> +
->  /*
->   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
->   * can be accessed with:
-> @@ -707,16 +753,17 @@ static void __init lsm_early_task(struct task_struct *task)
->         } while (0)
->
->  #define call_int_hook(FUNC, IRC, ...) ({                       \
-> -       int RC = IRC;                                           \
-> -       do {                                                    \
-> +       int RC = lsm_hooks_inject_fail();                       \
-> +       if (RC == 0) {                                                          \
->                 struct security_hook_list *P;                   \
-> +               RC = IRC;                                                               \
->                                                                 \
->                 hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
->                         RC = P->hook.FUNC(__VA_ARGS__);         \
->                         if (RC != 0)                            \
->                                 break;                          \
->                 }                                               \
-> -       } while (0);                                            \
-> +       }                                                       \
->         RC;                                                     \
->  })
->
-> --
-> 2.29.1.341.ge80a0c044ae-goog
->
+Saved me spending a day off reading arm64 assembler.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
