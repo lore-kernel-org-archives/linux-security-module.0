@@ -2,124 +2,223 @@ Return-Path: <SRS0=0AS6=EI=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF83C56201
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 09:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6AFC4742C
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 12:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C52E223AB
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 09:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45251206DD
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 12:14:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E9pCxcc/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbgKBJIF convert rfc822-to-8bit (ORCPT
+        id S1728484AbgKBMOO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Nov 2020 04:08:05 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:28422 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728291AbgKBJID (ORCPT
+        Mon, 2 Nov 2020 07:14:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5036 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728423AbgKBMON (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Nov 2020 04:08:03 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id uk-mta-2-3gt7SuvxPWOqa-ZpIA1B2g-1;
- Mon, 02 Nov 2020 09:06:39 +0000
-X-MC-Unique: 3gt7SuvxPWOqa-ZpIA1B2g-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 2 Nov 2020 09:06:38 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 2 Nov 2020 09:06:38 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Greg KH' <gregkh@linuxfoundation.org>
-CC:     'David Hildenbrand' <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12CAAB+UKYAAAQNg///yIQCAD2i/YA==
-Date:   Mon, 2 Nov 2020 09:06:38 +0000
-Message-ID: <0ab5ac71f28d459db2f350c2e07b88ca@AcuMS.aculab.com>
-References: <5fd6003b-55a6-2c3c-9a28-8fd3a575ca78@redhat.com>
- <20201022104805.GA1503673@kroah.com> <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
- <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
- <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
- <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
- <20201023144718.GA2525489@kroah.com>
-In-Reply-To: <20201023144718.GA2525489@kroah.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
-MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        Mon, 2 Nov 2020 07:14:13 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A2C1e1Q116735;
+        Mon, 2 Nov 2020 07:13:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=rJZq2qAlGGU6LQSZi4sVFIMHSz4uQffedOq+S4xFT1E=;
+ b=E9pCxcc/CkyFEQtVpsvqNwfpWnJ+4PHNGaqh2UZBirY9IKjecVs9k/1p2U9bWdRwN3NE
+ pT9yaywy/DoihiB7PMdqgJCAGdVoAHmrEmGjEBSycbBHN0arGN2YnFhChreZaVupEBYo
+ nNqgxSY9DOKKQkpHMnUw+0dY2ROriQrpUArlbUXWEfP+fiedOT2kxfhlnfeXwPx3SLQY
+ j/PHNwgOxeDMA9n9GMrcR4kdclAJbYskigHktA9NnaT17UBknBeQ0fFFY8Fv3go0z0nO
+ T8c3zkImKClNW6LNdFxufNzp8zjMQq7W/n2uvNlwOB6xm3rJJIRQcLngP9VDV7ZQ1v9P 8g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34hn6g4mp8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Nov 2020 07:13:37 -0500
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0A2C1rH2117971;
+        Mon, 2 Nov 2020 07:13:37 -0500
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34hn6g4mn5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Nov 2020 07:13:36 -0500
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0A2CCLN8018604;
+        Mon, 2 Nov 2020 12:13:34 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04ams.nl.ibm.com with ESMTP id 34h01ua24c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 02 Nov 2020 12:13:34 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0A2CDWJq656116
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 2 Nov 2020 12:13:32 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 30ECD42052;
+        Mon,  2 Nov 2020 12:13:32 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 300FA42041;
+        Mon,  2 Nov 2020 12:13:29 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.45.94])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  2 Nov 2020 12:13:29 +0000 (GMT)
+Message-ID: <f6045fd9844f3b14c20bf86e60aa3a81253230cd.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 3/3] arm64/ima: add ima_arch support
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Chester Lin <clin@suse.com>, Ard Biesheuvel <ardb@kernel.org>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module@vger.kernel.org, X86 ML <x86@kernel.org>,
+        "Lee, Chun-Yi" <jlee@suse.com>
+Date:   Mon, 02 Nov 2020 07:13:28 -0500
+In-Reply-To: <20201102072005.GB31148@linux-8mug>
+References: <20201030060840.1810-1-clin@suse.com>
+         <20201030060840.1810-4-clin@suse.com>
+         <CAMj1kXFhZEHP37_tkzzHHhkk-Ej+eRcCinMv-tOdp7vvb1d1mQ@mail.gmail.com>
+         <20201102072005.GB31148@linux-8mug>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-02_07:2020-11-02,2020-11-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ phishscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0
+ malwarescore=0 priorityscore=1501 spamscore=0 adultscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011020093
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: 'Greg KH'
-> Sent: 23 October 2020 15:47
-> 
-> On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
-> > From: David Hildenbrand
-> > > Sent: 23 October 2020 15:33
-> > ...
-> > > I just checked against upstream code generated by clang 10 and it
-> > > properly discards the upper 32bit via a mov w23 w2.
+On Mon, 2020-11-02 at 15:20 +0800, Chester Lin wrote:
+> On Fri, Oct 30, 2020 at 12:53:25PM +0100, Ard Biesheuvel wrote:
+> > On Fri, 30 Oct 2020 at 07:09, Chester Lin <clin@suse.com> wrote:
 > > >
-> > > So at least clang 10 indeed properly assumes we could have garbage and
-> > > masks it off.
+> > > Add arm64 IMA arch support. The code and arch policy is mainly inherited
+> > > from x86.
 > > >
-> > > Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
-> > > behaves differently.
+> > > Signed-off-by: Chester Lin <clin@suse.com>
+> > > ---
+> > >  arch/arm64/Kconfig           |  1 +
+> > >  arch/arm64/kernel/Makefile   |  2 ++
+> > >  arch/arm64/kernel/ima_arch.c | 43 ++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 46 insertions(+)
+> > >  create mode 100644 arch/arm64/kernel/ima_arch.c
+> > >
+> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > > index a42e8d13cc88..496a4a26afc6 100644
+> > > --- a/arch/arm64/Kconfig
+> > > +++ b/arch/arm64/Kconfig
+> > > @@ -201,6 +201,7 @@ config ARM64
+> > >         select SWIOTLB
+> > >         select SYSCTL_EXCEPTION_TRACE
+> > >         select THREAD_INFO_IN_TASK
+> > > +       imply IMA_SECURE_AND_OR_TRUSTED_BOOT if EFI
+> > >         help
+> > >           ARM 64-bit (AArch64) Linux support.
+> > >
+> > > diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+> > > index bbaf0bc4ad60..0f6cbb50668c 100644
+> > > --- a/arch/arm64/kernel/Makefile
+> > > +++ b/arch/arm64/kernel/Makefile
+> > > @@ -69,3 +69,5 @@ extra-y                                       += $(head-y) vmlinux.lds
+> > >  ifeq ($(CONFIG_DEBUG_EFI),y)
+> > >  AFLAGS_head.o += -DVMLINUX_PATH="\"$(realpath $(objtree)/vmlinux)\""
+> > >  endif
+> > > +
+> > > +obj-$(CONFIG_IMA_SECURE_AND_OR_TRUSTED_BOOT)   += ima_arch.o
+> > > diff --git a/arch/arm64/kernel/ima_arch.c b/arch/arm64/kernel/ima_arch.c
+> > > new file mode 100644
+> > > index 000000000000..564236d77adc
+> > > --- /dev/null
+> > > +++ b/arch/arm64/kernel/ima_arch.c
+> > > @@ -0,0 +1,43 @@
+> > > +// SPDX-License-Identifier: GPL-2.0+
+> > > +/*
+> > > + * Copyright (C) 2018 IBM Corporation
+> > > + */
+> > > +#include <linux/efi.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/ima.h>
+> > > +
+> > > +bool arch_ima_get_secureboot(void)
+> > > +{
+> > > +       static bool sb_enabled;
+> > > +       static bool initialized;
+> > > +
+> > > +       if (!initialized & efi_enabled(EFI_BOOT)) {
+> > > +               sb_enabled = ima_get_efi_secureboot();
+> > > +               initialized = true;
+> > > +       }
+> > > +
+> > > +       return sb_enabled;
+> > > +}
+> > > +
+> > > +/* secure and trusted boot arch rules */
+> > > +static const char * const sb_arch_rules[] = {
+> > > +#if !IS_ENABLED(CONFIG_KEXEC_SIG)
+> > > +       "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+> > > +#endif /* CONFIG_KEXEC_SIG */
+> > > +       "measure func=KEXEC_KERNEL_CHECK",
+> > > +#if !IS_ENABLED(CONFIG_MODULE_SIG)
+> > > +       "appraise func=MODULE_CHECK appraise_type=imasig",
+> > > +#endif
+> > > +       "measure func=MODULE_CHECK",
+> > > +       NULL
+> > > +};
+> > > +
+> > > +const char * const *arch_get_ima_policy(void)
+> > > +{
+> > > +       if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+> > > +               if (IS_ENABLED(CONFIG_MODULE_SIG))
+> > > +                       set_module_sig_enforced();
+> > > +               return sb_arch_rules;
+> > > +       }
+> > > +       return NULL;
+> > > +}
+> > > --
+> > > 2.28.0
+> > >
+> > 
+> > Can we move all this stuff into security/integrity/ima/ima_efi.c instead?
 > >
-> > We'll need the disassembly from a failing kernel image.
-> > It isn't that big to hand annotate.
+> Actually I hesitated to move all this stuff into ima_efi.c when coding v3
+> because I haven't figured out a clear picture to achieve it. Since each
+> architecture could still have different details to trigger secure boot detection
+> and define their arch-specific rules [e.g. Having boot_params in x86_64 creates
+> more conditions that need to be determined before calling get_sb_mode()], moving
+> all this stuff seems to decrease the flexibility. Besides, it might also affect
+> the consistency of ima_arch as well, for example, ppc and s390 still use these
+> function prototypes defined in ima.h. Since these functions are already referred
+> by non-EFI architectures, why don't we still reuse these prototypes? For example,
+> we could remain a smaller arch_ima_get_secureboot() and the arch-specific rules
+> but move the major part of arch_get_ima_policy() into ima_efi.c. For example,
+> we could implement an efi_ima_policy() for arch_get_ima_policy() to call so that
+> the arch_get_ima_policy() doesn't have to know some details such as checking
+> conditions or calling set_module_sig_enforced().
 > 
-> I've worked around the merge at the moment in the android tree, but it
-> is still quite reproducable, and will try to get a .o file to
-> disassemble on Monday or so...
+> Please feel free to let me know if any suggestions.
 
-Did this get properly resolved?
+Yes, that is the point and the reason for defining ima_efi.c and
+conditionally including it only for EFI systems.  The existing ppc and
+s390 code should remain unaffected by this change.
 
-	David
+thanks,
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+Mimi
 
