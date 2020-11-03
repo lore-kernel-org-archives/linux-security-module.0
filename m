@@ -1,144 +1,221 @@
-Return-Path: <SRS0=0AS6=EI=vger.kernel.org=linux-security-module-owner@kernel.org>
+Return-Path: <SRS0=HMJF=EJ=vger.kernel.org=linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 262BEC2D0A3
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 18:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43685C5DF9D
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 14:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB9252224E
-	for <linux-security-module@archiver.kernel.org>; Mon,  2 Nov 2020 18:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9D0A22264
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 14:10:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kinvolk.io header.i=@kinvolk.io header.b="jNSrYWNM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbgKBSXS convert rfc822-to-8bit (ORCPT
+        id S1729562AbgKCOK4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 2 Nov 2020 13:23:18 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:29303 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726366AbgKBSXR (ORCPT
+        Tue, 3 Nov 2020 09:10:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44280 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729557AbgKCOKs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 2 Nov 2020 13:23:17 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-221-3eybHYmXNVuuSrMONPCpiQ-1; Mon, 02 Nov 2020 18:23:12 +0000
-X-MC-Unique: 3eybHYmXNVuuSrMONPCpiQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 2 Nov 2020 18:23:11 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 2 Nov 2020 18:23:11 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Greg KH' <gregkh@linuxfoundation.org>
-CC:     'David Hildenbrand' <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
-        David Howells <dhowells@redhat.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-aio@kvack.org" <linux-aio@kvack.org>,
-        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Topic: Buggy commit tracked to: "Re: [PATCH 2/9] iov_iter: move
- rw_copy_check_uvector() into lib/iov_iter.c"
-Thread-Index: AQHWqE5GNDfnH4y9nkGWtfqJueR1KKmjTCJQgAAN4UiAAAD2IIAASOeCgAF+12CAAB+UKYAAAQNg///yIQCAD2i/YIAAT+MAgABLYlA=
-Date:   Mon, 2 Nov 2020 18:23:11 +0000
-Message-ID: <c751d3a7796e45a8a2640e2ded59d708@AcuMS.aculab.com>
-References: <20201022121849.GA1664412@kroah.com>
- <98d9df88-b7ef-fdfb-7d90-2fa7a9d7bab5@redhat.com>
- <20201022125759.GA1685526@kroah.com> <20201022135036.GA1787470@kroah.com>
- <134f162d711d466ebbd88906fae35b33@AcuMS.aculab.com>
- <935f7168-c2f5-dd14-7124-412b284693a2@redhat.com>
- <999e2926-9a75-72fd-007a-1de0af341292@redhat.com>
- <35d0ec90ef4f4a35a75b9df7d791f719@AcuMS.aculab.com>
- <20201023144718.GA2525489@kroah.com>
- <0ab5ac71f28d459db2f350c2e07b88ca@AcuMS.aculab.com>
- <20201102135202.GA1016272@kroah.com>
-In-Reply-To: <20201102135202.GA1016272@kroah.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 3 Nov 2020 09:10:48 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 826E4C0613D1
+        for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2020 06:10:48 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id e18so7235827edy.6
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Nov 2020 06:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kinvolk.io; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=y8WQjpT9rqVrgeh99s8m7L7lW+jgLfIjyGz2M8+krP0=;
+        b=jNSrYWNMri4UzTfQTwvUoeI3d9PbxAntszBtbkOHWPbsmFNLXoekIJ8TcfDFJbJf7v
+         6+eYLKBEUBAXwADA9DJI10J7imuIzSuwLQhtXLJY1nc7fmB3dMavlYA1Xmy9wmU6aG0F
+         m9nefJssTHLgeDNMLEKBtF2hV/CbFCCq5QOzc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=y8WQjpT9rqVrgeh99s8m7L7lW+jgLfIjyGz2M8+krP0=;
+        b=V4ExP9EbP/CeNXNEtcKHrldsPSsxcwUCpnhONl2pr2/FVqTOUGTRTbc3lo1svHoOZP
+         LSTUICH6xnYbPX+QYjn6tPD4Pth9rs27E3Dfy247XDDzdffyG+1eAbGf/Yerm7G/Z/gA
+         3kQnTbdwi++tcGBD0QToA+lH5S9fJEs/xwJw9L7GULgwmFYeRVqi0k+0RdWlT92ZQbvD
+         o7SbPE4tWdJFlEhm9d8Ev/lQph2DSm1uMdfPzA7k0CDlibycpkCJYsD/w9QitTTBHGaO
+         TbcJNEqsPtcJ+WpEv+VSZeQp4phu9onxEIyFB8nNlXzu0qrJrLyd836zvx8Ywhl1JO27
+         4zzA==
+X-Gm-Message-State: AOAM530v5LOXyDo8jESj3xIHr7np7uh9nwecySivw/Ook9j83Yj/zXrP
+        OG1etvf8aQaSnz/KUALhmwZcUJWMhyeVjc0lKd7PRA==
+X-Google-Smtp-Source: ABdhPJwp4QL8RwmQmcT2CoPcUplHSU9HiByLsXAEntwM01IPEN+3MiJMYkcJQ6Od81V70aDSuFwsTxILAnA/OMfjXrI=
+X-Received: by 2002:a05:6402:a57:: with SMTP id bt23mr10741907edb.62.1604412647178;
+ Tue, 03 Nov 2020 06:10:47 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
+ <87pn51ghju.fsf@x220.int.ebiederm.org> <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com>
+ <87361xdm4c.fsf@x220.int.ebiederm.org>
+In-Reply-To: <87361xdm4c.fsf@x220.int.ebiederm.org>
+From:   Alban Crequy <alban@kinvolk.io>
+Date:   Tue, 3 Nov 2020 15:10:35 +0100
+Message-ID: <CADZs7q4abuN6n8HMrpe2R2kRBUDVPoYRNpezKk4cvXRk7CVHng@mail.gmail.com>
+Subject: Re: [PATCH 00/34] fs: idmapped mounts
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Theodore Tso <tytso@mit.edu>, Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Jann Horn <jannh@google.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-audit@redhat.com,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: 'Greg KH'
-> Sent: 02 November 2020 13:52
-> 
-> On Mon, Nov 02, 2020 at 09:06:38AM +0000, David Laight wrote:
-> > From: 'Greg KH'
-> > > Sent: 23 October 2020 15:47
-> > >
-> > > On Fri, Oct 23, 2020 at 02:39:24PM +0000, David Laight wrote:
-> > > > From: David Hildenbrand
-> > > > > Sent: 23 October 2020 15:33
-> > > > ...
-> > > > > I just checked against upstream code generated by clang 10 and it
-> > > > > properly discards the upper 32bit via a mov w23 w2.
-> > > > >
-> > > > > So at least clang 10 indeed properly assumes we could have garbage and
-> > > > > masks it off.
-> > > > >
-> > > > > Maybe the issue is somewhere else, unrelated to nr_pages ... or clang 11
-> > > > > behaves differently.
-> > > >
-> > > > We'll need the disassembly from a failing kernel image.
-> > > > It isn't that big to hand annotate.
-> > >
-> > > I've worked around the merge at the moment in the android tree, but it
-> > > is still quite reproducable, and will try to get a .o file to
-> > > disassemble on Monday or so...
+On Thu, Oct 29, 2020 at 5:37 PM Eric W. Biederman <ebiederm@xmission.com> w=
+rote:
+>
+> Aleksa Sarai <cyphar@cyphar.com> writes:
+>
+> > On 2020-10-29, Eric W. Biederman <ebiederm@xmission.com> wrote:
+> >> Christian Brauner <christian.brauner@ubuntu.com> writes:
+> >>
+> >> > Hey everyone,
+> >> >
+> >> > I vanished for a little while to focus on this work here so sorry fo=
+r
+> >> > not being available by mail for a while.
+> >> >
+> >> > Since quite a long time we have issues with sharing mounts between
+> >> > multiple unprivileged containers with different id mappings, sharing=
+ a
+> >> > rootfs between multiple containers with different id mappings, and a=
+lso
+> >> > sharing regular directories and filesystems between users with diffe=
+rent
+> >> > uids and gids. The latter use-cases have become even more important =
+with
+> >> > the availability and adoption of systemd-homed (cf. [1]) to implemen=
+t
+> >> > portable home directories.
+> >>
+> >> Can you walk us through the motivating use case?
+> >>
+> >> As of this year's LPC I had the distinct impression that the primary u=
+se
+> >> case for such a feature was due to the RLIMIT_NPROC problem where two
+> >> containers with the same users still wanted different uid mappings to
+> >> the disk because the users were conflicting with each other because of
+> >> the per user rlimits.
+> >>
+> >> Fixing rlimits is straight forward to implement, and easier to manage
+> >> for implementations and administrators.
 > >
-> > Did this get properly resolved?
-> 
-> For some reason, 5.10-rc2 fixed all of this up.  I backed out all of the
-> patches I had to revert to get 5.10-rc1 to work properly, and then did
-> the merge and all is well.
-> 
-> It must have been something to do with the compat changes in this same
-> area that went in after 5.10-rc1, and something got reorganized in the
-> files somehow.  I really do not know, and at the moment, don't have the
-> time to track it down anymore.  So for now, I'd say it's all good, sorry
-> for the noise.
+> > This is separate to the question of "isolated user namespaces" and
+> > managing different mappings between containers. This patchset is solvin=
+g
+> > the same problem that shiftfs solved -- sharing a single directory tree
+> > between containers that have different ID mappings. rlimits (nor any of
+> > the other proposals we discussed at LPC) will help with this problem.
+>
+> First and foremost: A uid shift on write to a filesystem is a security
+> bug waiting to happen.  This is especially in the context of facilities
+> like iouring, that play very agressive games with how process context
+> makes it to  system calls.
+>
+> The only reason containers were not immediately exploitable when iouring
+> was introduced is because the mechanisms are built so that even if
+> something escapes containment the security properties still apply.
+> Changes to the uid when writing to the filesystem does not have that
+> property.  The tiniest slip in containment will be a security issue.
+>
+> This is not even the least bit theoretical.  I have seem reports of how
+> shitfs+overlayfs created a situation where anyone could read
+> /etc/shadow.
+>
+> If you are going to write using the same uid to disk from different
+> containers the question becomes why can't those containers configure
+> those users to use the same kuid?
+>
+> What fixing rlimits does is it fixes one of the reasons that different
+> containers could not share the same kuid for users that want to write to
+> disk with the same uid.
+>
+>
+> I humbly suggest that it will be more secure, and easier to maintain for
+> both developers and users if we fix the reasons people want different
+> containers to have the same user running with different kuids.
+>
+> If not what are the reasons we fundamentally need the same on-disk user
+> using multiple kuids in the kernel?
 
-Hopefully it won't appear again.
+I would like to use this patch set in the context of Kubernetes. I
+described my two possible setups in
+https://www.spinics.net/lists/linux-containers/msg36537.html:
 
-Saved me spending a day off reading arm64 assembler.
+1. Each Kubernetes pod has its own userns but with the same user id mapping
+2. Each Kubernetes pod has its own userns with non-overlapping user id
+mapping (providing additional isolation between pods)
 
-	David
+But even in the setup where all pods run with the same id mappings,
+this patch set is still useful to me for 2 reasons:
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+1. To avoid the expensive recursive chown of the rootfs. We cannot
+necessarily extract the tarball directly with the right uids because
+we might use the same container image for privileged containers (with
+the host userns) and unprivileged containers (with a new userns), so
+we have at least 2 =E2=80=9Cmappings=E2=80=9D (taking more time and resulti=
+ng in more
+storage space). Although the =E2=80=9Cmetacopy=E2=80=9D mount option in ove=
+rlayfs
+helps to make the recursive chown faster, it can still take time with
+large container images with lots of files. I=E2=80=99d like to use this pat=
+ch
+set to set up the root fs in constant time.
 
+2. To manage large external volumes (NFS or other filesystems). Even
+if admins can decide to use the same kuid on all the nodes of the
+Kubernetes cluster, this is impractical for migration. People can have
+existing Kubernetes clusters (currently without using user namespaces)
+and large NFS volumes. If they want to switch to a new version of
+Kubernetes with the user namespace feature enabled, they would need to
+recursively chown all the files on the NFS shares. This could take
+time on large filesystems and realistically, we want to support
+rolling updates where some nodes use the previous version without user
+namespaces and new nodes are progressively migrated to the new userns
+with the new id mapping. If both sets of nodes use the same NFS share,
+that can=E2=80=99t work.
+
+Alban
