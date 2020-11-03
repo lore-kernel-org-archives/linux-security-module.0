@@ -2,220 +2,153 @@ Return-Path: <SRS0=HMJF=EJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43685C5DF9D
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 14:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1567EC55178
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 16:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9D0A22264
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 14:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9480F22264
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 16:02:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kinvolk.io header.i=@kinvolk.io header.b="jNSrYWNM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WUvK9hiB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbgKCOK4 (ORCPT
+        id S1727109AbgKCQCY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Nov 2020 09:10:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44280 "EHLO
+        Tue, 3 Nov 2020 11:02:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729557AbgKCOKs (ORCPT
+        with ESMTP id S1727389AbgKCQCY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Nov 2020 09:10:48 -0500
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 826E4C0613D1
-        for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2020 06:10:48 -0800 (PST)
-Received: by mail-ed1-x542.google.com with SMTP id e18so7235827edy.6
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Nov 2020 06:10:48 -0800 (PST)
+        Tue, 3 Nov 2020 11:02:24 -0500
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F0FC061A47
+        for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2020 08:02:24 -0800 (PST)
+Received: by mail-pg1-x541.google.com with SMTP id r10so13999157pgb.10
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Nov 2020 08:02:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kinvolk.io; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=y8WQjpT9rqVrgeh99s8m7L7lW+jgLfIjyGz2M8+krP0=;
-        b=jNSrYWNMri4UzTfQTwvUoeI3d9PbxAntszBtbkOHWPbsmFNLXoekIJ8TcfDFJbJf7v
-         6+eYLKBEUBAXwADA9DJI10J7imuIzSuwLQhtXLJY1nc7fmB3dMavlYA1Xmy9wmU6aG0F
-         m9nefJssTHLgeDNMLEKBtF2hV/CbFCCq5QOzc=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8p0zAqijMFY2LZHySc9B1ski8j200B9xN63VufhvfZE=;
+        b=WUvK9hiBfaewCF9lu/rnHA/ky1TO9SLKq5ubWrc5NfyBQalP1EDJFCgB620q5hzm8P
+         w7RqbA90o7pWxpiD+JQTGkZj/vELhrwHlo53vmxaXkdrHs56KSdUT8cmWchK9SdOLPsb
+         MIyRS6VCBLK3GkPdVZpsjiuVJ8eZo29MM7dRDd/oC3PF2hJu9WHHNg8Q3/eeqDnEVe8M
+         u5s/UYCObUpv8BdQ2ssY0JMUat1++qs66Y2pTlhfDXutXg95e2WmlZ0amNC2BUaQsQfu
+         T+70gsyMITdKOD5SRY5wpAN6KRH2geAbi9LnGmLunPGcay45ZutIZULvHh8iF/s+a1Js
+         Z2xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=y8WQjpT9rqVrgeh99s8m7L7lW+jgLfIjyGz2M8+krP0=;
-        b=V4ExP9EbP/CeNXNEtcKHrldsPSsxcwUCpnhONl2pr2/FVqTOUGTRTbc3lo1svHoOZP
-         LSTUICH6xnYbPX+QYjn6tPD4Pth9rs27E3Dfy247XDDzdffyG+1eAbGf/Yerm7G/Z/gA
-         3kQnTbdwi++tcGBD0QToA+lH5S9fJEs/xwJw9L7GULgwmFYeRVqi0k+0RdWlT92ZQbvD
-         o7SbPE4tWdJFlEhm9d8Ev/lQph2DSm1uMdfPzA7k0CDlibycpkCJYsD/w9QitTTBHGaO
-         TbcJNEqsPtcJ+WpEv+VSZeQp4phu9onxEIyFB8nNlXzu0qrJrLyd836zvx8Ywhl1JO27
-         4zzA==
-X-Gm-Message-State: AOAM530v5LOXyDo8jESj3xIHr7np7uh9nwecySivw/Ook9j83Yj/zXrP
-        OG1etvf8aQaSnz/KUALhmwZcUJWMhyeVjc0lKd7PRA==
-X-Google-Smtp-Source: ABdhPJwp4QL8RwmQmcT2CoPcUplHSU9HiByLsXAEntwM01IPEN+3MiJMYkcJQ6Od81V70aDSuFwsTxILAnA/OMfjXrI=
-X-Received: by 2002:a05:6402:a57:: with SMTP id bt23mr10741907edb.62.1604412647178;
- Tue, 03 Nov 2020 06:10:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20201029003252.2128653-1-christian.brauner@ubuntu.com>
- <87pn51ghju.fsf@x220.int.ebiederm.org> <20201029155148.5odu4j2kt62ahcxq@yavin.dot.cyphar.com>
- <87361xdm4c.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87361xdm4c.fsf@x220.int.ebiederm.org>
-From:   Alban Crequy <alban@kinvolk.io>
-Date:   Tue, 3 Nov 2020 15:10:35 +0100
-Message-ID: <CADZs7q4abuN6n8HMrpe2R2kRBUDVPoYRNpezKk4cvXRk7CVHng@mail.gmail.com>
-Subject: Re: [PATCH 00/34] fs: idmapped mounts
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Theodore Tso <tytso@mit.edu>, Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
-        Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-api@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-audit@redhat.com,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8p0zAqijMFY2LZHySc9B1ski8j200B9xN63VufhvfZE=;
+        b=Yw8GFRCdKe9Ditbc/9XA1UntlZEDc/QJw7K5Rg06u1QzR5DXFErdlQreYaIIXwvrB4
+         OIVT7nzHmZ6AMFxNNcoiWsN9mI7sXSc6JPMtU+RlW1bW4Lc7MyPrEg4v7UWo9uJBUCKs
+         V0YED9oGEq6r2Tqa+Rt1UpdpNww6BfQg8AG4r/EZdCvRJv3HRMg64hh9g1ELgiYdnmj/
+         wIoqSGO1zMDDGWqHqNwiMUnWVlaHxpLFCnsjuI04bgiq94eg4w7+poA2xR5mvx4XgAOm
+         Iv3CFAX4mRZBK4T/KTTtQhjHBwp1mj7N761etk87jkTAp9mWOKguNAg2JSDdKCnE1GaC
+         nndg==
+X-Gm-Message-State: AOAM532FrMKsBwENCa3/yK5ZOz3RODOJFEr8xTIdNhhxRvfoZ8GbhE8E
+        QLbYTRjiuHW5wzwS+t4W1607VQ==
+X-Google-Smtp-Source: ABdhPJzP+u5vyjCsNCaso/eSJbT/0D07SqbTdgo7fO1H1p7jSMwcJ3JjzNbr2nmtIaOIuGQqaoxE5Q==
+X-Received: by 2002:a63:5466:: with SMTP id e38mr17855102pgm.23.1604419343676;
+        Tue, 03 Nov 2020 08:02:23 -0800 (PST)
+Received: from localhost.localdomain ([122.173.169.225])
+        by smtp.gmail.com with ESMTPSA id j140sm8471006pfd.216.2020.11.03.08.02.14
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Nov 2020 08:02:22 -0800 (PST)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com
+Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
+        Markus.Wamser@mixed-mode.de, lhinds@redhat.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
+Date:   Tue,  3 Nov 2020 21:31:42 +0530
+Message-Id: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 29, 2020 at 5:37 PM Eric W. Biederman <ebiederm@xmission.com> w=
-rote:
->
-> Aleksa Sarai <cyphar@cyphar.com> writes:
->
-> > On 2020-10-29, Eric W. Biederman <ebiederm@xmission.com> wrote:
-> >> Christian Brauner <christian.brauner@ubuntu.com> writes:
-> >>
-> >> > Hey everyone,
-> >> >
-> >> > I vanished for a little while to focus on this work here so sorry fo=
-r
-> >> > not being available by mail for a while.
-> >> >
-> >> > Since quite a long time we have issues with sharing mounts between
-> >> > multiple unprivileged containers with different id mappings, sharing=
- a
-> >> > rootfs between multiple containers with different id mappings, and a=
-lso
-> >> > sharing regular directories and filesystems between users with diffe=
-rent
-> >> > uids and gids. The latter use-cases have become even more important =
-with
-> >> > the availability and adoption of systemd-homed (cf. [1]) to implemen=
-t
-> >> > portable home directories.
-> >>
-> >> Can you walk us through the motivating use case?
-> >>
-> >> As of this year's LPC I had the distinct impression that the primary u=
-se
-> >> case for such a feature was due to the RLIMIT_NPROC problem where two
-> >> containers with the same users still wanted different uid mappings to
-> >> the disk because the users were conflicting with each other because of
-> >> the per user rlimits.
-> >>
-> >> Fixing rlimits is straight forward to implement, and easier to manage
-> >> for implementations and administrators.
-> >
-> > This is separate to the question of "isolated user namespaces" and
-> > managing different mappings between containers. This patchset is solvin=
-g
-> > the same problem that shiftfs solved -- sharing a single directory tree
-> > between containers that have different ID mappings. rlimits (nor any of
-> > the other proposals we discussed at LPC) will help with this problem.
->
-> First and foremost: A uid shift on write to a filesystem is a security
-> bug waiting to happen.  This is especially in the context of facilities
-> like iouring, that play very agressive games with how process context
-> makes it to  system calls.
->
-> The only reason containers were not immediately exploitable when iouring
-> was introduced is because the mechanisms are built so that even if
-> something escapes containment the security properties still apply.
-> Changes to the uid when writing to the filesystem does not have that
-> property.  The tiniest slip in containment will be a security issue.
->
-> This is not even the least bit theoretical.  I have seem reports of how
-> shitfs+overlayfs created a situation where anyone could read
-> /etc/shadow.
->
-> If you are going to write using the same uid to disk from different
-> containers the question becomes why can't those containers configure
-> those users to use the same kuid?
->
-> What fixing rlimits does is it fixes one of the reasons that different
-> containers could not share the same kuid for users that want to write to
-> disk with the same uid.
->
->
-> I humbly suggest that it will be more secure, and easier to maintain for
-> both developers and users if we fix the reasons people want different
-> containers to have the same user running with different kuids.
->
-> If not what are the reasons we fundamentally need the same on-disk user
-> using multiple kuids in the kernel?
+Add support for TEE based trusted keys where TEE provides the functionality
+to seal and unseal trusted keys using hardware unique key. Also, this is
+an alternative in case platform doesn't possess a TPM device.
 
-I would like to use this patch set in the context of Kubernetes. I
-described my two possible setups in
-https://www.spinics.net/lists/linux-containers/msg36537.html:
+This patch-set has been tested with OP-TEE based early TA which is already
+merged in upstream [1].
 
-1. Each Kubernetes pod has its own userns but with the same user id mapping
-2. Each Kubernetes pod has its own userns with non-overlapping user id
-mapping (providing additional isolation between pods)
+[1] https://github.com/OP-TEE/optee_os/commit/f86ab8e7e0de869dfa25ca05a37ee070d7e5b86b
 
-But even in the setup where all pods run with the same id mappings,
-this patch set is still useful to me for 2 reasons:
+Changes in v8:
+1. Added static calls support instead of indirect calls.
+2. Documented trusted keys source module parameter.
+3. Refined patch #1 commit message discription.
+4. Addressed misc. comments on patch #2.
+5. Added myself as Trusted Keys co-maintainer instead.
+6. Rebased to latest tpmdd master.
 
-1. To avoid the expensive recursive chown of the rootfs. We cannot
-necessarily extract the tarball directly with the right uids because
-we might use the same container image for privileged containers (with
-the host userns) and unprivileged containers (with a new userns), so
-we have at least 2 =E2=80=9Cmappings=E2=80=9D (taking more time and resulti=
-ng in more
-storage space). Although the =E2=80=9Cmetacopy=E2=80=9D mount option in ove=
-rlayfs
-helps to make the recursive chown faster, it can still take time with
-large container images with lots of files. I=E2=80=99d like to use this pat=
-ch
-set to set up the root fs in constant time.
+Changes in v7:
+1. Added a trusted.source module parameter in order to enforce user's
+   choice in case a particular platform posses both TPM and TEE.
+2. Refine commit description for patch #1.
 
-2. To manage large external volumes (NFS or other filesystems). Even
-if admins can decide to use the same kuid on all the nodes of the
-Kubernetes cluster, this is impractical for migration. People can have
-existing Kubernetes clusters (currently without using user namespaces)
-and large NFS volumes. If they want to switch to a new version of
-Kubernetes with the user namespace feature enabled, they would need to
-recursively chown all the files on the NFS shares. This could take
-time on large filesystems and realistically, we want to support
-rolling updates where some nodes use the previous version without user
-namespaces and new nodes are progressively migrated to the new userns
-with the new id mapping. If both sets of nodes use the same NFS share,
-that can=E2=80=99t work.
+Changes in v6:
+1. Revert back to dynamic detection of trust source.
+2. Drop author mention from trusted_core.c and trusted_tpm1.c files.
+3. Rebased to latest tpmdd/master.
 
-Alban
+Changes in v5:
+1. Drop dynamic detection of trust source and use compile time flags
+   instead.
+2. Rename trusted_common.c -> trusted_core.c.
+3. Rename callback: cleanup() -> exit().
+4. Drop "tk" acronym.
+5. Other misc. comments.
+6. Added review tags for patch #3 and #4.
+
+Changes in v4:
+1. Pushed independent TEE features separately:
+  - Part of recent TEE PR: https://lkml.org/lkml/2020/5/4/1062
+2. Updated trusted-encrypted doc with TEE as a new trust source.
+3. Rebased onto latest tpmdd/master.
+
+Changes in v3:
+1. Update patch #2 to support registration of multiple kernel pages.
+2. Incoporate dependency patch #4 in this patch-set:
+   https://patchwork.kernel.org/patch/11091435/
+
+Changes in v2:
+1. Add reviewed-by tags for patch #1 and #2.
+2. Incorporate comments from Jens for patch #3.
+3. Switch to use generic trusted keys framework.
+
+Sumit Garg (4):
+  KEYS: trusted: Add generic trusted keys framework
+  KEYS: trusted: Introduce TEE based Trusted Keys
+  doc: trusted-encrypted: updates with TEE as a new trust source
+  MAINTAINERS: Add myself as Trusted Keys co-maintainer
+
+ Documentation/admin-guide/kernel-parameters.txt   |  12 +
+ Documentation/security/keys/trusted-encrypted.rst | 203 +++++++++++--
+ MAINTAINERS                                       |   2 +
+ include/keys/trusted-type.h                       |  47 +++
+ include/keys/trusted_tee.h                        |  55 ++++
+ include/keys/trusted_tpm.h                        |  17 +-
+ security/keys/trusted-keys/Makefile               |   2 +
+ security/keys/trusted-keys/trusted_core.c         | 354 ++++++++++++++++++++++
+ security/keys/trusted-keys/trusted_tee.c          | 278 +++++++++++++++++
+ security/keys/trusted-keys/trusted_tpm1.c         | 336 ++++----------------
+ 10 files changed, 979 insertions(+), 327 deletions(-)
+ create mode 100644 include/keys/trusted_tee.h
+ create mode 100644 security/keys/trusted-keys/trusted_core.c
+ create mode 100644 security/keys/trusted-keys/trusted_tee.c
+
+-- 
+2.7.4
+
