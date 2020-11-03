@@ -2,720 +2,454 @@ Return-Path: <SRS0=HMJF=EJ=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7783C6379F
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 18:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E23C55178
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 22:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97E132071A
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 18:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2AA922403
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Nov 2020 22:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SWydcW4f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729162AbgKCSWx (ORCPT
+        id S1730492AbgKCWAw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Nov 2020 13:22:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55570 "EHLO
+        Tue, 3 Nov 2020 17:00:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729337AbgKCSVT (ORCPT
+        with ESMTP id S1730406AbgKCWAs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Nov 2020 13:21:19 -0500
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8444C0617A6
-        for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2020 10:21:18 -0800 (PST)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4CQdQP4QvrzlhTgm;
-        Tue,  3 Nov 2020 19:21:17 +0100 (CET)
-Received: from localhost (unknown [94.23.54.103])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4CQdQN3HLHzlh8TK;
-        Tue,  3 Nov 2020 19:21:15 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Tue, 3 Nov 2020 17:00:48 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B2FC061A48
+        for <linux-security-module@vger.kernel.org>; Tue,  3 Nov 2020 14:00:47 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id b189so19589424ybh.5
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Nov 2020 14:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=3XBsUbGDo1OR/q9g0ZauJ6lbqskxCel9Wx4PuO8x8CQ=;
+        b=SWydcW4formTd8bGKLoWqrJqowWodTZaRmx5Ipk+yZyKdgwtgAdK6WvkoEC58rysOM
+         IOCZzryxm3glANniiHntcfe45dWxlIxm2HMxMBT8URja1o7BARa5gSPll2SPKI2N+AZG
+         ZLbe+PzNBho6+p1ZVP3rxLZy1IOR/0TrL6CRFXvfPwI+dXtcH2lbpb7W/gGnj8SZnKa/
+         DAcKU34t7Edc3Vbce7DIAAP+VkxiCeBf7e9hYn4NHEG9nksRT5rjniorQbq+pHQbfCD/
+         M8ABMYRK94bsHchtYBwwr5FlaJI4FloUP0/FhPcBdHz6segdpaUvE+4AdmuvsOnfk3LG
+         f3Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=3XBsUbGDo1OR/q9g0ZauJ6lbqskxCel9Wx4PuO8x8CQ=;
+        b=LVzMjqOht6UkYN5w/xtkrxcOeipvIidpplYm8Qsf42EDbCWghJv6JusfBHP05x1v/i
+         n8uDD6xDuuvTEwHPE63DpWnBKcimu9IczxIKt2QW61coLJgQh2wSrMfXmCYkEg4FIqO3
+         52HHBew6lUexgvqs4eeaTsNAUNjkRECTzac7QgAlqmeYoXCp7AiPKx6/GvRziqeN1Q3H
+         f8uDgRXaMd33NBVV2R9y1EJuoie1olQwQZ23CpSa4mR8eb7af4nQN4o5NZZSMGYP0Lfn
+         XndT7nWUgcsI71b5nesjtbGG4SR600PMkBSVtgi2OMLeprMBc+dcuQX7rXHZpbRDaZ+U
+         PloA==
+X-Gm-Message-State: AOAM532QiYVTB61YBfGaYKoQlw3WTkMbsk3KTKBzV4Gojz3XVoKdXq9K
+        fpizaY26KxFCa2Zl8sTyEtMhHS44/W+5nMxNPA==
+X-Google-Smtp-Source: ABdhPJynbczW6i0kPxTISwqT1ignplNOTgXAmPr9HrHPzI82/1SGkS5+RDxMbqNWX3Q382NsaK1vjV++Tj040DITuQ==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a25:26c5:: with SMTP id
+ m188mr31410047ybm.408.1604440846472; Tue, 03 Nov 2020 14:00:46 -0800 (PST)
+Date:   Tue,  3 Nov 2020 14:00:18 -0800
+In-Reply-To: <20201103220020.2399003-1-lokeshgidra@google.com>
+Message-Id: <20201103220020.2399003-2-lokeshgidra@google.com>
+Mime-Version: 1.0
+References: <20201103220020.2399003-1-lokeshgidra@google.com>
+X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
+Subject: [PATCH v10 1/3] Add a new LSM-supporting anonymous inode interface
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
         Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v23 02/12] landlock: Add ruleset and domain management
-Date:   Tue,  3 Nov 2020 19:20:59 +0100
-Message-Id: <20201103182109.1014179-3-mic@digikod.net>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201103182109.1014179-1-mic@digikod.net>
-References: <20201103182109.1014179-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+From: Daniel Colascione <dancol@google.com>
 
-A Landlock ruleset is mainly a red-black tree with Landlock rules as
-nodes.  This enables quick update and lookup to match a requested
-access, e.g. to a file.  A ruleset is usable through a dedicated file
-descriptor (cf. following commit implementing syscalls) which enables a
-process to create and populate a ruleset with new rules.
+This change adds a new function, anon_inode_getfd_secure, that creates
+anonymous-node file with individual non-S_PRIVATE inode to which security
+modules can apply policy. Existing callers continue using the original
+singleton-inode kind of anonymous-inode file. We can transition anonymous
+inode users to the new kind of anonymous inode in individual patches for
+the sake of bisection and review.
 
-A domain is a ruleset tied to a set of processes.  This group of rules
-defines the security policy enforced on these processes and their future
-children.  A domain can transition to a new domain which is the
-intersection of all its constraints and those of a ruleset provided by
-the current process.  This modification only impact the current process.
-This means that a process can only gain more constraints (i.e. lose
-accesses) over time.
+The new function accepts an optional context_inode parameter that
+callers can use to provide additional contextual information to
+security modules for granting/denying permission to create an anon inode
+of the same type.
 
-Cc: James Morris <jmorris@namei.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Reviewed-by: Jann Horn <jannh@google.com>
+For example, in case of userfaultfd, the created inode is a
+'logical child' of the context_inode (userfaultfd inode of the
+parent process) in the sense that it provides the security context
+required during creation of the child process' userfaultfd inode.
+
+Signed-off-by: Daniel Colascione <dancol@google.com>
+
+[Fix comment documenting return values of inode_init_security_anon()]
+[Add context_inode description in comments to anon_inode_getfd_secure()]
+[Remove definition of anon_inode_getfile_secure() as there are no callers]
+[Make __anon_inode_getfile() static]
+[Use correct error cast in __anon_inode_getfile()]
+[Fix error handling in __anon_inode_getfile()]
+
+Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
 ---
+ fs/anon_inodes.c              | 148 +++++++++++++++++++++++++---------
+ include/linux/anon_inodes.h   |   8 ++
+ include/linux/lsm_hook_defs.h |   2 +
+ include/linux/lsm_hooks.h     |   9 +++
+ include/linux/security.h      |  10 +++
+ security/security.c           |   8 ++
+ 6 files changed, 145 insertions(+), 40 deletions(-)
 
-Changes since v22:
-* Explicitely use RB_ROOT and SINGLE_DEPTH_NESTING (suggested by Jann
-  Horn).
-* Improve comments and fix spelling (suggested by Jann Horn).
-
-Changes since v21:
-* Add and clean up comments.
-
-Changes since v18:
-* Account rulesets to kmemcg.
-* Remove struct holes.
-* Cosmetic changes.
-
-Changes since v17:
-* Move include/uapi/linux/landlock.h and _LANDLOCK_ACCESS_FS_* to a
-  following patch.
-
-Changes since v16:
-* Allow enforcement of empty ruleset, which enables deny-all policies.
-
-Changes since v15:
-* Replace layer_levels and layer_depth with a bitfield of layers, cf.
-  filesystem commit.
-* Rename the LANDLOCK_ACCESS_FS_{UNLINK,RMDIR} with
-  LANDLOCK_ACCESS_FS_REMOVE_{FILE,DIR} because it makes sense to use
-  them for the action of renaming a file or a directory, which may lead
-  to the removal of the source file or directory.  Removes the
-  LANDLOCK_ACCESS_FS_{LINK_TO,RENAME_FROM,RENAME_TO} which are now
-  replaced with LANDLOCK_ACCESS_FS_REMOVE_{FILE,DIR} and
-  LANDLOCK_ACCESS_FS_MAKE_* .
-* Update the documentation accordingly and highlight how the access
-  rights are taken into account.
-* Change nb_rules from atomic_t to u32 because it is not use anymore by
-  show_fdinfo().
-* Add safeguard for level variables types.
-* Check max number of rules.
-* Replace struct landlock_access (self and beneath bitfields) with one
-  bitfield.
-* Remove useless variable.
-* Add comments.
-
-Changes since v14:
-* Simplify the object, rule and ruleset management at the expense of a
-  less aggressive memory freeing (contributed by Jann Horn, with
-  additional modifications):
-  - Make a domain immutable (remove the opportunistic cleaning).
-  - Remove RCU pointers.
-  - Merge struct landlock_ref and struct landlock_ruleset_elem into
-    landlock_rule: get ride of rule's RCU.
-  - Adjust union.
-  - Remove the landlock_insert_rule() check about a new object with the
-    same address as a previously disabled one, because it is not
-    possible to disable a rule anymore.
-  Cf. https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
-* Fix nested domains by implementing a notion of layer level and depth:
-  - Update landlock_insert_rule() to manage such layers.
-  - Add an inherit_ruleset() helper to properly create a new domain.
-  - Rename landlock_find_access() to landlock_find_rule() and return a
-    full rule reference.
-  - Add a layer_level and a layer_depth fields to struct landlock_rule.
-  - Add a top_layer_level field to struct landlock_ruleset.
-* Remove access rights that may be required for FD-only requests:
-  truncate, getattr, lock, chmod, chown, chgrp, ioctl.  This will be
-  handle in a future evolution of Landlock, but right now the goal is to
-  lighten the code to ease review.
-* Remove LANDLOCK_ACCESS_FS_OPEN and rename
-  LANDLOCK_ACCESS_FS_{READ,WRITE} with a FILE suffix.
-* Rename LANDLOCK_ACCESS_FS_READDIR to match the *_FILE pattern.
-* Remove LANDLOCK_ACCESS_FS_MAP which was useless.
-* Fix memory leak in put_hierarchy() (reported by Jann Horn).
-* Fix user-after-free and rename free_ruleset() (reported by Jann Horn).
-* Replace the for loops with rbtree_postorder_for_each_entry_safe().
-* Constify variables.
-* Only use refcount_inc() through getter helpers.
-* Change Landlock_insert_ruleset_access() to
-  Landlock_insert_ruleset_rule().
-* Rename landlock_put_ruleset_enqueue() to landlock_put_ruleset_deferred().
-* Improve kernel documentation and add a warning about the unhandled
-  access/syscall families.
-* Move ABI check to syscall.c .
-
-Changes since v13:
-* New implementation, inspired by the previous inode eBPF map, but
-  agnostic to the underlying kernel object.
-
-Previous changes:
-https://lore.kernel.org/lkml/20190721213116.23476-7-mic@digikod.net/
----
- security/landlock/Makefile  |   2 +-
- security/landlock/ruleset.c | 355 ++++++++++++++++++++++++++++++++++++
- security/landlock/ruleset.h | 158 ++++++++++++++++
- 3 files changed, 514 insertions(+), 1 deletion(-)
- create mode 100644 security/landlock/ruleset.c
- create mode 100644 security/landlock/ruleset.h
-
-diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-index cb6deefbf4c0..d846eba445bb 100644
---- a/security/landlock/Makefile
-+++ b/security/landlock/Makefile
-@@ -1,3 +1,3 @@
- obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 89714308c25b..a3fe08fcaa52 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -55,61 +55,79 @@ static struct file_system_type anon_inode_fs_type = {
+ 	.kill_sb	= kill_anon_super,
+ };
  
--landlock-y := object.o
-+landlock-y := object.o ruleset.o
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-new file mode 100644
-index 000000000000..9fe92b2f5fbd
---- /dev/null
-+++ b/security/landlock/ruleset.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Landlock LSM - Ruleset management
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
+-/**
+- * anon_inode_getfile - creates a new file instance by hooking it up to an
+- *                      anonymous inode, and a dentry that describe the "class"
+- *                      of the file
+- *
+- * @name:    [in]    name of the "class" of the new file
+- * @fops:    [in]    file operations for the new file
+- * @priv:    [in]    private data for the new file (will be file's private_data)
+- * @flags:   [in]    flags
+- *
+- * Creates a new file by hooking it on a single inode. This is useful for files
+- * that do not need to have a full-fledged inode in order to operate correctly.
+- * All the files created with anon_inode_getfile() will share a single inode,
+- * hence saving memory and avoiding code duplication for the file/inode/dentry
+- * setup.  Returns the newly created file* or an error pointer.
+- */
+-struct file *anon_inode_getfile(const char *name,
+-				const struct file_operations *fops,
+-				void *priv, int flags)
++static struct inode *anon_inode_make_secure_inode(
++	const char *name,
++	const struct inode *context_inode)
+ {
+-	struct file *file;
++	struct inode *inode;
++	const struct qstr qname = QSTR_INIT(name, strlen(name));
++	int error;
 +
-+#include <linux/bits.h>
-+#include <linux/bug.h>
-+#include <linux/compiler_types.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/kernel.h>
-+#include <linux/limits.h>
-+#include <linux/lockdep.h>
-+#include <linux/rbtree.h>
-+#include <linux/refcount.h>
-+#include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/workqueue.h>
-+
-+#include "object.h"
-+#include "ruleset.h"
-+
-+static struct landlock_ruleset *create_ruleset(void)
-+{
-+	struct landlock_ruleset *new_ruleset;
-+
-+	new_ruleset = kzalloc(sizeof(*new_ruleset), GFP_KERNEL_ACCOUNT);
-+	if (!new_ruleset)
-+		return ERR_PTR(-ENOMEM);
-+	refcount_set(&new_ruleset->usage, 1);
-+	mutex_init(&new_ruleset->lock);
-+	new_ruleset->root = RB_ROOT;
-+	/*
-+	 * hierarchy = NULL
-+	 * nb_rules = 0
-+	 * nb_layers = 0
-+	 * fs_access_mask = 0
-+	 */
-+	return new_ruleset;
++	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
++	if (IS_ERR(inode))
++		return inode;
++	inode->i_flags &= ~S_PRIVATE;
++	error =	security_inode_init_security_anon(inode, &qname, context_inode);
++	if (error) {
++		iput(inode);
++		return ERR_PTR(error);
++	}
++	return inode;
 +}
-+
-+struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask)
+ 
+-	if (IS_ERR(anon_inode_inode))
+-		return ERR_PTR(-ENODEV);
++static struct file *__anon_inode_getfile(const char *name,
++					 const struct file_operations *fops,
++					 void *priv, int flags,
++					 const struct inode *context_inode,
++					 bool secure)
 +{
-+	struct landlock_ruleset *new_ruleset;
-+
-+	/* Informs about useless ruleset. */
-+	if (!fs_access_mask)
-+		return ERR_PTR(-ENOMSG);
-+	new_ruleset = create_ruleset();
-+	if (!IS_ERR(new_ruleset))
-+		new_ruleset->fs_access_mask = fs_access_mask;
-+	return new_ruleset;
-+}
-+
-+static struct landlock_rule *duplicate_rule(struct landlock_rule *const src)
-+{
-+	struct landlock_rule *new_rule;
-+
-+	new_rule = kzalloc(sizeof(*new_rule), GFP_KERNEL_ACCOUNT);
-+	if (!new_rule)
-+		return ERR_PTR(-ENOMEM);
-+	RB_CLEAR_NODE(&new_rule->node);
-+	landlock_get_object(src->object);
-+	new_rule->object = src->object;
-+	new_rule->access = src->access;
-+	new_rule->layers = src->layers;
-+	return new_rule;
-+}
-+
-+static void put_rule(struct landlock_rule *const rule)
-+{
-+	might_sleep();
-+	if (!rule)
-+		return;
-+	landlock_put_object(rule->object);
-+	kfree(rule);
-+}
-+
-+/**
-+ * landlock_insert_rule - Insert a rule in a ruleset
-+ *
-+ * @ruleset: The ruleset to be updated.
-+ * @rule: Read-only payload to be inserted (not owned by this function).
-+ * @is_merge: If true, intersects access rights and updates the rule's layers
-+ *            (e.g. merge two rulesets), else do a union of access rights and
-+ *            keep the rule's layers (e.g. extend a ruleset)
-+ *
-+ * Assumptions:
-+ *
-+ * - An inserted rule cannot be removed.
-+ * - The underlying kernel object must be held by the caller.
-+ */
-+int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-+		struct landlock_rule *const rule, const bool is_merge)
-+{
-+	struct rb_node **walker_node;
-+	struct rb_node *parent_node = NULL;
-+	struct landlock_rule *new_rule;
-+
-+	might_sleep();
-+	lockdep_assert_held(&ruleset->lock);
-+	walker_node = &(ruleset->root.rb_node);
-+	while (*walker_node) {
-+		struct landlock_rule *const this = rb_entry(*walker_node,
-+				struct landlock_rule, node);
-+
-+		if (this->object != rule->object) {
-+			parent_node = *walker_node;
-+			if (this->object < rule->object)
-+				walker_node = &((*walker_node)->rb_right);
-+			else
-+				walker_node = &((*walker_node)->rb_left);
-+			continue;
++	struct inode *inode;
++	struct file *file;
+ 
+ 	if (fops->owner && !try_module_get(fops->owner))
+ 		return ERR_PTR(-ENOENT);
+ 
+-	/*
+-	 * We know the anon_inode inode count is always greater than zero,
+-	 * so ihold() is safe.
+-	 */
+-	ihold(anon_inode_inode);
+-	file = alloc_file_pseudo(anon_inode_inode, anon_inode_mnt, name,
++	if (secure) {
++		inode =	anon_inode_make_secure_inode(name, context_inode);
++		if (IS_ERR(inode)) {
++			file = ERR_CAST(inode);
++			goto err;
 +		}
-+
-+		/* If there is a matching rule, updates it. */
-+		if (is_merge) {
-+			/* Intersects access rights. */
-+			this->access &= rule->access;
-+
-+			/* Updates the rule layers with the next one. */
-+			this->layers |= BIT_ULL(ruleset->nb_layers);
-+		} else {
-+			/* Extends access rights. */
-+			this->access |= rule->access;
++	} else {
++		inode =	anon_inode_inode;
++		if (IS_ERR(inode)) {
++			file = ERR_PTR(-ENODEV);
++			goto err;
 +		}
-+		return 0;
++		/*
++		 * We know the anon_inode inode count is always
++		 * greater than zero, so ihold() is safe.
++		 */
++		ihold(inode);
 +	}
 +
-+	/* There is no match for @rule->object. */
-+	if (ruleset->nb_rules == U32_MAX)
-+		return -E2BIG;
-+	new_rule = duplicate_rule(rule);
-+	if (IS_ERR(new_rule))
-+		return PTR_ERR(new_rule);
-+	if (is_merge)
-+		/* Sets the rule layer to the next one. */
-+		new_rule->layers = BIT_ULL(ruleset->nb_layers);
-+	rb_link_node(&new_rule->node, parent_node, walker_node);
-+	rb_insert_color(&new_rule->node, &ruleset->root);
-+	ruleset->nb_rules++;
++	file = alloc_file_pseudo(inode, anon_inode_mnt, name,
+ 				 flags & (O_ACCMODE | O_NONBLOCK), fops);
+ 	if (IS_ERR(file))
+-		goto err;
++		goto err_iput;
+ 
+-	file->f_mapping = anon_inode_inode->i_mapping;
++	file->f_mapping = inode->i_mapping;
+ 
+ 	file->private_data = priv;
+ 
+ 	return file;
+ 
++err_iput:
++	iput(inode);
+ err:
+-	iput(anon_inode_inode);
+ 	module_put(fops->owner);
+ 	return file;
+ }
+-EXPORT_SYMBOL_GPL(anon_inode_getfile);
+ 
+ /**
+- * anon_inode_getfd - creates a new file instance by hooking it up to an
+- *                    anonymous inode, and a dentry that describe the "class"
+- *                    of the file
++ * anon_inode_getfile - creates a new file instance by hooking it up to an
++ *                      anonymous inode, and a dentry that describe the "class"
++ *                      of the file
+  *
+  * @name:    [in]    name of the "class" of the new file
+  * @fops:    [in]    file operations for the new file
+@@ -118,12 +136,23 @@ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+  *
+  * Creates a new file by hooking it on a single inode. This is useful for files
+  * that do not need to have a full-fledged inode in order to operate correctly.
+- * All the files created with anon_inode_getfd() will share a single inode,
++ * All the files created with anon_inode_getfile() will share a single inode,
+  * hence saving memory and avoiding code duplication for the file/inode/dentry
+- * setup.  Returns new descriptor or an error code.
++ * setup.  Returns the newly created file* or an error pointer.
+  */
+-int anon_inode_getfd(const char *name, const struct file_operations *fops,
+-		     void *priv, int flags)
++struct file *anon_inode_getfile(const char *name,
++				const struct file_operations *fops,
++				void *priv, int flags)
++{
++	return __anon_inode_getfile(name, fops, priv, flags, NULL, false);
++}
++EXPORT_SYMBOL_GPL(anon_inode_getfile);
++
++static int __anon_inode_getfd(const char *name,
++			      const struct file_operations *fops,
++			      void *priv, int flags,
++			      const struct inode *context_inode,
++			      bool secure)
+ {
+ 	int error, fd;
+ 	struct file *file;
+@@ -133,7 +162,8 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		return error;
+ 	fd = error;
+ 
+-	file = anon_inode_getfile(name, fops, priv, flags);
++	file = __anon_inode_getfile(name, fops, priv, flags, context_inode,
++				    secure);
+ 	if (IS_ERR(file)) {
+ 		error = PTR_ERR(file);
+ 		goto err_put_unused_fd;
+@@ -146,8 +176,46 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 	put_unused_fd(fd);
+ 	return error;
+ }
++
++/**
++ * anon_inode_getfd - creates a new file instance by hooking it up to
++ *                    an anonymous inode and a dentry that describe
++ *                    the "class" of the file
++ *
++ * @name:    [in]    name of the "class" of the new file
++ * @fops:    [in]    file operations for the new file
++ * @priv:    [in]    private data for the new file (will be file's private_data)
++ * @flags:   [in]    flags
++ *
++ * Creates a new file by hooking it on a single inode. This is
++ * useful for files that do not need to have a full-fledged inode in
++ * order to operate correctly.  All the files created with
++ * anon_inode_getfd() will use the same singleton inode, reducing
++ * memory use and avoiding code duplication for the file/inode/dentry
++ * setup.  Returns a newly created file descriptor or an error code.
++ */
++int anon_inode_getfd(const char *name, const struct file_operations *fops,
++		     void *priv, int flags)
++{
++	return __anon_inode_getfd(name, fops, priv, flags, NULL, false);
++}
+ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+ 
++/**
++ * Like anon_inode_getfd() creates a new file, but by hooking it to a new anon
++ * inode, rather than to the same singleton inode. Also adds the @context_inode
++ * argument to allow security modules to control creation of the new file. Once
++ * the security module makes the decision, the context_inode is no longer needed
++ * and hence reference to it is not held.
++ */
++int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
++			    void *priv, int flags,
++			    const struct inode *context_inode)
++{
++	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
++}
++EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
++
+ static int __init anon_inode_init(void)
+ {
+ 	anon_inode_mnt = kern_mount(&anon_inode_fs_type);
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index d0d7d96261ad..6ab840ee93bc 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -10,12 +10,20 @@
+ #define _LINUX_ANON_INODES_H
+ 
+ struct file_operations;
++struct inode;
+ 
+ struct file *anon_inode_getfile(const char *name,
+ 				const struct file_operations *fops,
+ 				void *priv, int flags);
++
++int anon_inode_getfd_secure(const char *name,
++			    const struct file_operations *fops,
++			    void *priv, int flags,
++			    const struct inode *context_inode);
++
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags);
+ 
++
+ #endif /* _LINUX_ANON_INODES_H */
+ 
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 2a8c74d99015..35ff75c43de4 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -113,6 +113,8 @@ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+ LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+ 	 struct inode *dir, const struct qstr *qstr, const char **name,
+ 	 void **value, size_t *len)
++LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
++	 const struct qstr *name, const struct inode *context_inode)
+ LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+ 	 umode_t mode)
+ LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 9e2e3e63719d..586186f1184b 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -233,6 +233,15 @@
+  *	Returns 0 if @name and @value have been successfully set,
+  *	-EOPNOTSUPP if no security attribute is needed, or
+  *	-ENOMEM on memory allocation failure.
++ * @inode_init_security_anon:
++ *      Set up the incore security field for the new anonymous inode
++ *      and return whether the inode creation is permitted by the security
++ *      module or not.
++ *      @inode contains the inode structure
++ *      @name name of the anonymous inode class
++ *      @context_inode optional related inode
++ *	Returns 0 on success, -EACCESS if the security module denies the
++ *	creation of this inode, or another -errno upon other errors.
+  * @inode_create:
+  *	Check permission to create a regular file.
+  *	@dir contains inode structure of the parent of the new file.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 0a0a03b36a3b..7c6b3dcf4721 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -322,6 +322,9 @@ void security_inode_free(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
++int security_inode_init_security_anon(struct inode *inode,
++				      const struct qstr *name,
++				      const struct inode *context_inode);
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len);
+@@ -732,6 +735,13 @@ static inline int security_inode_init_security(struct inode *inode,
+ 	return 0;
+ }
+ 
++static inline int security_inode_init_security_anon(struct inode *inode,
++						    const struct qstr *name,
++						    const struct inode *context_inode)
++{
 +	return 0;
 +}
 +
-+static inline void get_hierarchy(struct landlock_hierarchy *const hierarchy)
+ static inline int security_old_inode_init_security(struct inode *inode,
+ 						   struct inode *dir,
+ 						   const struct qstr *qstr,
+diff --git a/security/security.c b/security/security.c
+index 70a7ad357bc6..2c4b121a01b9 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1057,6 +1057,14 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ }
+ EXPORT_SYMBOL(security_inode_init_security);
+ 
++int security_inode_init_security_anon(struct inode *inode,
++				      const struct qstr *name,
++				      const struct inode *context_inode)
 +{
-+	if (hierarchy)
-+		refcount_inc(&hierarchy->usage);
++	return call_int_hook(inode_init_security_anon, 0, inode, name,
++			     context_inode);
 +}
 +
-+static void put_hierarchy(struct landlock_hierarchy *hierarchy)
-+{
-+	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
-+		const struct landlock_hierarchy *const freeme = hierarchy;
-+
-+		hierarchy = hierarchy->parent;
-+		kfree(freeme);
-+	}
-+}
-+
-+static int merge_ruleset(struct landlock_ruleset *const dst,
-+		struct landlock_ruleset *const src)
-+{
-+	struct landlock_rule *walker_rule, *next_rule;
-+	int err = 0;
-+
-+	might_sleep();
-+	if (!src)
-+		return 0;
-+	/* Only merge into a domain. */
-+	if (WARN_ON_ONCE(!dst || !dst->hierarchy))
-+		return -EFAULT;
-+
-+	/*
-+	 * The ruleset being modified (@dst) is locked first, then the ruleset
-+	 * being copied (@src).
-+	 */
-+	mutex_lock(&dst->lock);
-+	mutex_lock_nested(&src->lock, SINGLE_DEPTH_NESTING);
-+	/*
-+	 * Makes a new layer, but only increments the number of layers after
-+	 * the rules are inserted.
-+	 */
-+	if (dst->nb_layers == (sizeof(walker_rule->layers) * BITS_PER_BYTE)) {
-+		err = -E2BIG;
-+		goto out_unlock;
-+	}
-+	dst->fs_access_mask |= src->fs_access_mask;
-+
-+	/* Merges the @src tree. */
-+	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
-+			&src->root, node) {
-+		err = landlock_insert_rule(dst, walker_rule, true);
-+		if (err)
-+			goto out_unlock;
-+	}
-+	dst->nb_layers++;
-+
-+out_unlock:
-+	mutex_unlock(&src->lock);
-+	mutex_unlock(&dst->lock);
-+	return err;
-+}
-+
-+static struct landlock_ruleset *inherit_ruleset(
-+		struct landlock_ruleset *const parent)
-+{
-+	struct landlock_rule *walker_rule, *next_rule;
-+	struct landlock_ruleset *new_ruleset;
-+	int err = 0;
-+
-+	might_sleep();
-+	new_ruleset = create_ruleset();
-+	if (IS_ERR(new_ruleset))
-+		return new_ruleset;
-+
-+	new_ruleset->hierarchy = kzalloc(sizeof(*new_ruleset->hierarchy),
-+			GFP_KERNEL_ACCOUNT);
-+	if (!new_ruleset->hierarchy) {
-+		err = -ENOMEM;
-+		goto out_put_ruleset;
-+	}
-+	refcount_set(&new_ruleset->hierarchy->usage, 1);
-+	if (!parent)
-+		return new_ruleset;
-+
-+	mutex_lock(&new_ruleset->lock);
-+	mutex_lock_nested(&parent->lock, 1);
-+	new_ruleset->nb_layers = parent->nb_layers;
-+	new_ruleset->fs_access_mask = parent->fs_access_mask;
-+	WARN_ON_ONCE(!parent->hierarchy);
-+	get_hierarchy(parent->hierarchy);
-+	new_ruleset->hierarchy->parent = parent->hierarchy;
-+
-+	/* Copies the @parent tree. */
-+	rbtree_postorder_for_each_entry_safe(walker_rule, next_rule,
-+			&parent->root, node) {
-+		err = landlock_insert_rule(new_ruleset, walker_rule, false);
-+		if (err)
-+			goto out_unlock;
-+	}
-+	mutex_unlock(&parent->lock);
-+	mutex_unlock(&new_ruleset->lock);
-+	return new_ruleset;
-+
-+out_unlock:
-+	mutex_unlock(&parent->lock);
-+	mutex_unlock(&new_ruleset->lock);
-+
-+out_put_ruleset:
-+	landlock_put_ruleset(new_ruleset);
-+	return ERR_PTR(err);
-+}
-+
-+static void free_ruleset(struct landlock_ruleset *const ruleset)
-+{
-+	struct landlock_rule *freeme, *next;
-+
-+	might_sleep();
-+	rbtree_postorder_for_each_entry_safe(freeme, next, &ruleset->root,
-+			node)
-+		put_rule(freeme);
-+	put_hierarchy(ruleset->hierarchy);
-+	kfree(ruleset);
-+}
-+
-+void landlock_put_ruleset(struct landlock_ruleset *const ruleset)
-+{
-+	might_sleep();
-+	if (ruleset && refcount_dec_and_test(&ruleset->usage))
-+		free_ruleset(ruleset);
-+}
-+
-+static void free_ruleset_work(struct work_struct *const work)
-+{
-+	struct landlock_ruleset *ruleset;
-+
-+	ruleset = container_of(work, struct landlock_ruleset, work_free);
-+	free_ruleset(ruleset);
-+}
-+
-+void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset)
-+{
-+	if (ruleset && refcount_dec_and_test(&ruleset->usage)) {
-+		INIT_WORK(&ruleset->work_free, free_ruleset_work);
-+		schedule_work(&ruleset->work_free);
-+	}
-+}
-+
-+/**
-+ * landlock_merge_ruleset - Merge a ruleset with a domain
-+ *
-+ * @parent: Parent domain.
-+ * @ruleset: New ruleset to be merged.
-+ *
-+ * Returns the intersection of @parent and @ruleset, or returns @parent if
-+ * @ruleset is empty, or returns a duplicate of @ruleset if @parent is empty.
-+ */
-+struct landlock_ruleset *landlock_merge_ruleset(
-+		struct landlock_ruleset *const parent,
-+		struct landlock_ruleset *const ruleset)
-+{
-+	struct landlock_ruleset *new_dom;
-+	int err;
-+
-+	might_sleep();
-+	/*
-+	 * Merging duplicates a ruleset, so a new ruleset cannot be
-+	 * the same as the parent, but they can have similar content.
-+	 */
-+	if (WARN_ON_ONCE(!ruleset || parent == ruleset)) {
-+		landlock_get_ruleset(parent);
-+		return parent;
-+	}
-+
-+	new_dom = inherit_ruleset(parent);
-+	if (IS_ERR(new_dom))
-+		return new_dom;
-+
-+	err = merge_ruleset(new_dom, ruleset);
-+	if (err) {
-+		landlock_put_ruleset(new_dom);
-+		return ERR_PTR(err);
-+	}
-+	return new_dom;
-+}
-+
-+/*
-+ * The returned access has the same lifetime as @ruleset.
-+ */
-+const struct landlock_rule *landlock_find_rule(
-+		const struct landlock_ruleset *const ruleset,
-+		const struct landlock_object *const object)
-+{
-+	const struct rb_node *node;
-+
-+	if (!object)
-+		return NULL;
-+	node = ruleset->root.rb_node;
-+	while (node) {
-+		struct landlock_rule *this = rb_entry(node,
-+				struct landlock_rule, node);
-+
-+		if (this->object == object)
-+			return this;
-+		if (this->object < object)
-+			node = node->rb_right;
-+		else
-+			node = node->rb_left;
-+	}
-+	return NULL;
-+}
-diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-new file mode 100644
-index 000000000000..2d2c860fbb6e
---- /dev/null
-+++ b/security/landlock/ruleset.h
-@@ -0,0 +1,158 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Landlock LSM - Ruleset management
-+ *
-+ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-+ * Copyright © 2018-2020 ANSSI
-+ */
-+
-+#ifndef _SECURITY_LANDLOCK_RULESET_H
-+#define _SECURITY_LANDLOCK_RULESET_H
-+
-+#include <linux/mutex.h>
-+#include <linux/rbtree.h>
-+#include <linux/refcount.h>
-+#include <linux/workqueue.h>
-+
-+#include "object.h"
-+
-+/**
-+ * struct landlock_rule - Access rights tied to an object
-+ *
-+ * When enforcing a ruleset (i.e. merging a ruleset into the current domain),
-+ * the layer level of a new rule is the incremented top layer level (cf.
-+ * &struct landlock_ruleset).  If there is no rule (from this domain) tied to
-+ * the same object, then the depth of the new rule is 1. However, if there is
-+ * already a rule tied to the same object and if this rule's layer level is the
-+ * previous top layer level, then the depth and the layer level are both
-+ * incremented and the rule is updated with the new access rights (boolean
-+ * AND).
-+ */
-+struct landlock_rule {
-+	/**
-+	 * @node: Node in the ruleset's red-black tree.
-+	 */
-+	struct rb_node node;
-+	/**
-+	 * @object: Pointer to identify a kernel object (e.g. an inode).  This
-+	 * is used as a key for this ruleset element.  This pointer is set once
-+	 * and never modified.  It always points to an allocated object because
-+	 * each rule increments the refcount of its object.
-+	 */
-+	struct landlock_object *object;
-+	/**
-+	 * @layers: Bitfield to identify the layers which resulted to @access
-+	 * from different consecutive intersections.
-+	 */
-+	u64 layers;
-+	/**
-+	 * @access: Bitfield of allowed actions on the kernel object.  They are
-+	 * relative to the object type (e.g. %LANDLOCK_ACTION_FS_READ).  This
-+	 * may be the result of the merged access rights (boolean AND) from
-+	 * multiple layers referring to the same object.
-+	 */
-+	u32 access;
-+};
-+
-+/**
-+ * struct landlock_hierarchy - Node in a ruleset hierarchy
-+ */
-+struct landlock_hierarchy {
-+	/**
-+	 * @parent: Pointer to the parent node, or NULL if it is a root
-+	 * Landlock domain.
-+	 */
-+	struct landlock_hierarchy *parent;
-+	/**
-+	 * @usage: Number of potential children domains plus their parent
-+	 * domain.
-+	 */
-+	refcount_t usage;
-+};
-+
-+/**
-+ * struct landlock_ruleset - Landlock ruleset
-+ *
-+ * This data structure must contain unique entries, be updatable, and quick to
-+ * match an object.
-+ */
-+struct landlock_ruleset {
-+	/**
-+	 * @root: Root of a red-black tree containing &struct landlock_rule
-+	 * nodes.  Once a ruleset is tied to a process (i.e. as a domain), this
-+	 * tree is immutable until @usage reaches zero.
-+	 */
-+	struct rb_root root;
-+	/**
-+	 * @hierarchy: Enables hierarchy identification even when a parent
-+	 * domain vanishes.  This is needed for the ptrace protection.
-+	 */
-+	struct landlock_hierarchy *hierarchy;
-+	union {
-+		/**
-+		 * @work_free: Enables to free a ruleset within a lockless
-+		 * section.  This is only used by
-+		 * landlock_put_ruleset_deferred() when @usage reaches zero.
-+		 * The fields @lock, @usage, @nb_layers, @nb_rules and
-+		 * @fs_access_mask are then unused.
-+		 */
-+		struct work_struct work_free;
-+		struct {
-+			/**
-+			 * @lock: Guards against concurrent modifications of
-+			 * @root, if @usage is greater than zero.
-+			 */
-+			struct mutex lock;
-+			/**
-+			 * @usage: Number of processes (i.e. domains) or file
-+			 * descriptors referencing this ruleset.
-+			 */
-+			refcount_t usage;
-+			/**
-+			 * @nb_rules: Number of non-overlapping (i.e. not for
-+			 * the same object) rules in this ruleset.
-+			 */
-+			u32 nb_rules;
-+			/**
-+			 * @nb_layers: Number of layers which are used in this
-+			 * ruleset.  This enables to check that all the layers
-+			 * allow an access request.  A value of 0 identifies a
-+			 * non-merged ruleset (i.e. not a domain).
-+			 */
-+			u32 nb_layers;
-+			/**
-+			 * @fs_access_mask: Contains the subset of filesystem
-+			 * actions which are restricted by a ruleset.  This is
-+			 * used when merging rulesets and for user space
-+			 * backward compatibility (i.e. future-proof).  Set
-+			 * once and never changed for the lifetime of the
-+			 * ruleset.
-+			 */
-+			u32 fs_access_mask;
-+		};
-+	};
-+};
-+
-+struct landlock_ruleset *landlock_create_ruleset(const u32 fs_access_mask);
-+
-+void landlock_put_ruleset(struct landlock_ruleset *const ruleset);
-+void landlock_put_ruleset_deferred(struct landlock_ruleset *const ruleset);
-+
-+int landlock_insert_rule(struct landlock_ruleset *const ruleset,
-+		struct landlock_rule *const rule, const bool is_merge);
-+
-+struct landlock_ruleset *landlock_merge_ruleset(
-+		struct landlock_ruleset *const parent,
-+		struct landlock_ruleset *const ruleset);
-+
-+const struct landlock_rule *landlock_find_rule(
-+		const struct landlock_ruleset *const ruleset,
-+		const struct landlock_object *const object);
-+
-+static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
-+{
-+	if (ruleset)
-+		refcount_inc(&ruleset->usage);
-+}
-+
-+#endif /* _SECURITY_LANDLOCK_RULESET_H */
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len)
 -- 
-2.28.0
+2.28.0.1011.ga647a8990f-goog
 
