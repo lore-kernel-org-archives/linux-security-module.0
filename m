@@ -2,258 +2,153 @@ Return-Path: <SRS0=8ECw=EK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D93BC388F9
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 14:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4111C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 17:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C59762220B
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 14:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63A142074B
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 17:02:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="M7sTa4A3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbgKDO4R (ORCPT
+        id S1731426AbgKDRC5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Nov 2020 09:56:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730510AbgKDO4Q (ORCPT
+        Wed, 4 Nov 2020 12:02:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41910 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731283AbgKDRC4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Nov 2020 09:56:16 -0500
-Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D490C223AB;
-        Wed,  4 Nov 2020 14:56:08 +0000 (UTC)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     x86@kernel.org, linux-sgx@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-security-module@vger.kernel.org,
-        Jethro Beekman <jethro@fortanix.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, sean.j.christopherson@intel.com,
-        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v40 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
-Date:   Wed,  4 Nov 2020 16:54:21 +0200
-Message-Id: <20201104145430.300542-16-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+        Wed, 4 Nov 2020 12:02:56 -0500
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FAA3C0613D3
+        for <linux-security-module@vger.kernel.org>; Wed,  4 Nov 2020 09:02:55 -0800 (PST)
+Received: by mail-ej1-x642.google.com with SMTP id o9so28686969ejg.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Nov 2020 09:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=x2M/mARoDzrcfFFiwEe2r6gawenXxInWJUsbPLXI4aU=;
+        b=M7sTa4A3JZbX13eK8mgywZ5kdDjq33XlU/mpL1bHzx7FoLS3ztmx9M9jWTjyj1wfCe
+         s4N1kwTO9+A0wg+7pPU5k95P7JqFWQN1hHzwrzWO+IpYNzYRFmYpzZAv5Kc5wjJia+wl
+         65vkjtjKE6b52MBX9xVcDRMRdlWj1Rw1clG+312fBrHk5k1tlLpWaibkbe2Z5Kqpq9+U
+         1EZn6bUY51uaVkjJtrchPAq6GJ7mOhY5N4M7DLhxQhxcPoiQ2VEJ6rrKF/Pj/PyAOW/z
+         lhhpy5AWmnZvME8LvXYIzSHyoaFgMnW45UfjiBWxz0X/tpkmusE8zKDNuh8d4jjde4Bg
+         v8Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x2M/mARoDzrcfFFiwEe2r6gawenXxInWJUsbPLXI4aU=;
+        b=jRyVlhLvJk9xrdw9UWmmgWhD8VkPA+Dqg7U5TLSocpt5Qfb0AKMf5Ccd3a20qtz6my
+         7FoxVf5M+m/fNJey6ZZyQllMiIY2ETZQqOZWp56FBFCP7boeP5RdJDkZyWhZQTusifRl
+         yHW1fLnT5iIvd2IWBbROWSowNrw0RgegzGrcomxU/Mgkr2dkRnOC04hybfDGjUkKB/2k
+         gEVXO0L5Nxx20VQpI9Xa3trZKRe3HdJUS4ufMkyIQKTP6G1WjZoRfiHSzzkXtNnnT8Bi
+         q+LYNeqjXuh2mBopXsNpoLQ4IkmKXytQAZY/bnCLpdJYNo/8dbg4R8fnqZx65s4iopve
+         Nn3g==
+X-Gm-Message-State: AOAM530bQL+Y1FinpVpd8zdZBglQeqDwi3eqWwWxLiDChbIyDTuRzQs/
+        yJJe2hZW4jIC97uVAvmwgHhOKAAWr3X8fuJiisnn
+X-Google-Smtp-Source: ABdhPJwnz1UtFa7ZfNIrVWs1o+Tvv5+b2V30m/yWN9QZtdmkerlPloaXcjzTHxCBxaQbBdQJ58kX093S2c9nCvxtPDo=
+X-Received: by 2002:a17:906:1159:: with SMTP id i25mr5847474eja.398.1604509374270;
+ Wed, 04 Nov 2020 09:02:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
+ <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+ <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com>
+ <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
+ <CAN-5tyGJxUZb5QdJ=fh+L-6rc2B-MhQbDcDkTZNAZAAJm9Q8YQ@mail.gmail.com>
+ <FB6C74CE-5D9F-4469-A49B-93CC8A51D7D5@gmail.com> <CAN-5tyFQbfkiuno07C6Azc7RcF3z3qF3PP0FutFMD3raBgnQmA@mail.gmail.com>
+ <CAEjxPJ7PoAG6f+gVdodx=6X8+_Z_WCFXAuxnpB8WmC1gTF4iQQ@mail.gmail.com>
+ <CAN-5tyEy57xoqEbZAThZKHriJywx-5DMKBD5tsXwo5ccGwuctw@mail.gmail.com>
+ <CAHC9VhQpCXFySZY42==KR57hfAkVLdS6mSAcp2UHn-GWjEfVLg@mail.gmail.com>
+ <bc766b2b-d1f1-d767-579c-02e10ae32a9a@schaufler-ca.com> <CAHC9VhS7UeCX9BXPrHNH90_sLHKGxTbbtjdm6GBOgDM9=T05FA@mail.gmail.com>
+ <CAN-5tyF_JTMr4+05_YH2VQGft4aXXon3ZjuiVuOn-Z-DLVvTQg@mail.gmail.com>
+In-Reply-To: <CAN-5tyF_JTMr4+05_YH2VQGft4aXXon3ZjuiVuOn-Z-DLVvTQg@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 4 Nov 2020 12:02:41 -0500
+Message-ID: <CAHC9VhQgJ93LrEFBBJ-kz8C9b4RukODzRRRJVKgwGEL8jPVZaQ@mail.gmail.com>
+Subject: Re: selinux: how to query if selinux is enabled
+To:     Olga Kornievskaia <aglo@umich.edu>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Chuck Lever <chucklever@gmail.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The whole point of SGX is to create a hardware protected place to do
-“stuff”.  But, before someone is willing to hand the keys to the castle
-over, an enclave must often prove that it is running on an SGX-protected
-processor.  Provisioning enclaves play a key role in providing proof.
+On Wed, Nov 4, 2020 at 9:21 AM Olga Kornievskaia <aglo@umich.edu> wrote:
+> On Wed, Oct 14, 2020 at 8:11 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Wed, Oct 14, 2020 at 12:31 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > On 10/14/2020 8:57 AM, Paul Moore wrote:
+> > > > On Wed, Oct 14, 2020 at 10:37 AM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > > >> On Tue, Oct 13, 2020 at 7:51 PM Stephen Smalley wrote:
 
-There are actually three different enclaves in play in order to make this
-happen:
+...
 
-1. The application enclave.  The familiar one we know and love that runs
-   the actual code that’s doing real work.  There can be many of these on
-   a single system, or even in a single application.
-2. The quoting enclave  (QE).  The QE is mentioned in lots of silly
-   whitepapers, but, for the purposes of kernel enabling, just pretend they
-   do not exist.
-3. The provisioning enclave.  There is typically only one of these
-   enclaves per system.  Provisioning enclaves have access to a special
-   hardware key.
+> > > > To start the discussion I might suggest the following:
+> > > >
+> > > > #define LSM_FQUERY_VFS_NONE     0x00000000
+> > > > #define LSM_FQUERY_VFS_XATTRS   0x00000001
+> > > > int security_func_query_vfs(unsigned int flags);
+> > > >
+> > > > ... with an example SELinux implementation looks like this:
+> > > >
+> > > > int selinux_func_query_vfs(unsigned int flags)
+> > > > {
+> > > >     return !!(flags & LSM_FQUERY_VFS_XATTRS);
+> > > > }
+> > >
+> > > Not a bad start, but I see optimizations and issues.
+> > >
+> > > It would be really easy to collect the LSM features at module
+> > > initialization by adding the feature flags to struct lsm_info.
+> > > We could maintain a variable lsm_features in security.c that
+> > > has the cumulative feature set. Rather than have an LSM hook for
+> > > func_query_vfs we'd get
+> > >
+> > > int security_func_query_vfs(void)
+> > > {
+> > >         return !!(lsm_features & LSM_FQUERY_VFS_XATTRS);
+> > > }
+> >
+> > Works for me.
+> >
+> > > In either case there could be confusion in the case where more
+> > > than one security module provides the feature. NFS, for example,
+> > > cares about the SELinux "selinux" attribute, but probably not
+> > > about the Smack "SMACK64EXEC" attribute. It's entirely possible
+> > > that a bit isn't enough information to check about a "feature".
+> >
+> > In the LSM stacking world that shouldn't matter to callers, right?  Or
+> > perhaps more correctly, if it matters to the caller which individual
+> > LSM supports what feature then the caller is doing it wrong, right?
+>
+> Hi folks,
+>
+> I would like to resurrect this discussion and sorry for a delayed
+> response. I'm a little bit unsure about the suggested approach of
+> adding something like selinux_func_query_vfs() call where selinux has
+> such a function. What happens when selinux is configured to be
+> "disabled" wouldn't this call still return the same value as when it
+> is configured as "permissive or enforcing"?
 
-   They can use this key to help to generate certificates which serve as
-   proof that enclaves are running on trusted SGX hardware.  These
-   certificates can be passed around without revealing the special key.
+Hello again.
 
-Any user which can create a provisioning enclave can access the
-processor-unique Provisioning Certificate Key which has privacy and
-fingerprinting implications.  Even if a user is permitted to create normal
-application enclaves (via /dev/sgx_enclave), they should not be able to
-create provisioning enclaves.  That means a separate permissions scheme is
-needed to control provisioning enclave privileges.
+To start, the non-LSM portion of the kernel shouldn't be calling
+selinux_func_query_vfs() directly, it should call
+security_func_query_vfs(); it would be up to the individual LSMs to
+indicate to the LSM hooks layer what is required.  If SELinux wasn't
+built into the kernel, or was disabled at boot, I would expect that
+the security_func_query_vfs() function would adjust to exclude the
+SELinux requirements.
 
-Implement a separate device file (/dev/sgx_provision) which permits
-creating provisioning enclaves.  This device will typically have more
-strict permissions than the plain enclave device.
-
-The actual device “driver” is an empty stub.  Open file descriptors for
-this device will represent a token which allows provisioning enclave duty.
-This file descriptor can be passed around and ultimately given as an
-argument to the /dev/sgx_enclave driver ioctl().
-
-Cc: linux-security-module@vger.kernel.org
-Acked-by: Jethro Beekman <jethro@fortanix.com>
-Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-Changes from v39:
-* Rename /dev/sgx/provision as /dev/sgx_provision.
-
- arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++++
- arch/x86/kernel/cpu/sgx/driver.c | 24 ++++++++++++++++++++-
- arch/x86/kernel/cpu/sgx/driver.h |  2 ++
- arch/x86/kernel/cpu/sgx/ioctl.c  | 37 ++++++++++++++++++++++++++++++++
- 4 files changed, 73 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-index 66f2d32cb4d7..c32210235bf5 100644
---- a/arch/x86/include/uapi/asm/sgx.h
-+++ b/arch/x86/include/uapi/asm/sgx.h
-@@ -25,6 +25,8 @@ enum sgx_page_flags {
- 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
- #define SGX_IOC_ENCLAVE_INIT \
- 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-+#define SGX_IOC_ENCLAVE_PROVISION \
-+	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
- 
- /**
-  * struct sgx_enclave_create - parameter structure for the
-@@ -63,4 +65,13 @@ struct sgx_enclave_init {
- 	__u64 sigstruct;
- };
- 
-+/**
-+ * struct sgx_enclave_provision - parameter structure for the
-+ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
-+ * @fd:		file handle of /dev/sgx_provision
-+ */
-+struct sgx_enclave_provision {
-+	__u64 fd;
-+};
-+
- #endif /* _UAPI_ASM_X86_SGX_H */
-diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-index ef14abbb67e1..f618a04c4224 100644
---- a/arch/x86/kernel/cpu/sgx/driver.c
-+++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -112,6 +112,10 @@ static const struct file_operations sgx_encl_fops = {
- 	.get_unmapped_area	= sgx_get_unmapped_area,
- };
- 
-+const struct file_operations sgx_provision_fops = {
-+	.owner			= THIS_MODULE,
-+};
-+
- static struct miscdevice sgx_dev_enclave = {
- 	.minor = MISC_DYNAMIC_MINOR,
- 	.name = "sgx_enclave",
-@@ -119,11 +123,19 @@ static struct miscdevice sgx_dev_enclave = {
- 	.fops = &sgx_encl_fops,
- };
- 
-+static struct miscdevice sgx_dev_provision = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "sgx_provision",
-+	.nodename = "sgx_provision",
-+	.fops = &sgx_provision_fops,
-+};
-+
- int __init sgx_drv_init(void)
- {
- 	unsigned int eax, ebx, ecx, edx;
- 	u64 attr_mask;
- 	u64 xfrm_mask;
-+	int ret;
- 
- 	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
- 		return -ENODEV;
-@@ -147,5 +159,15 @@ int __init sgx_drv_init(void)
- 		sgx_xfrm_reserved_mask = ~xfrm_mask;
- 	}
- 
--	return misc_register(&sgx_dev_enclave);
-+	ret = misc_register(&sgx_dev_enclave);
-+	if (ret)
-+		return ret;
-+
-+	ret = misc_register(&sgx_dev_provision);
-+	if (ret) {
-+		misc_deregister(&sgx_dev_enclave);
-+		return ret;
-+	}
-+
-+	return 0;
- }
-diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-index 6b0063221659..4eddb4d571ef 100644
---- a/arch/x86/kernel/cpu/sgx/driver.h
-+++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -20,6 +20,8 @@ extern u64 sgx_attributes_reserved_mask;
- extern u64 sgx_xfrm_reserved_mask;
- extern u32 sgx_misc_reserved_mask;
- 
-+extern const struct file_operations sgx_provision_fops;
-+
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- 
- int sgx_drv_init(void);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index e036819ea5c1..0ba0e670e2f0 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -569,6 +569,40 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
- 
-+/**
-+ * sgx_ioc_enclave_provision() - handler for %SGX_IOC_ENCLAVE_PROVISION
-+ * @enclave:	an enclave pointer
-+ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
-+ *
-+ * Allow ATTRIBUTE.PROVISION_KEY for an enclave by providing a file handle to
-+ * /dev/sgx_provision.
-+ *
-+ * Return:
-+ * - 0:		Success.
-+ * - -errno:	Otherwise.
-+ */
-+static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
-+{
-+	struct sgx_enclave_provision params;
-+	struct file *file;
-+
-+	if (copy_from_user(&params, arg, sizeof(params)))
-+		return -EFAULT;
-+
-+	file = fget(params.fd);
-+	if (!file)
-+		return -EINVAL;
-+
-+	if (file->f_op != &sgx_provision_fops) {
-+		fput(file);
-+		return -EINVAL;
-+	}
-+
-+	encl->attributes_mask |= SGX_ATTR_PROVISIONKEY;
-+
-+	fput(file);
-+	return 0;
-+}
- 
- long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- {
-@@ -588,6 +622,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	case SGX_IOC_ENCLAVE_INIT:
- 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
- 		break;
-+	case SGX_IOC_ENCLAVE_PROVISION:
-+		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
-+		break;
- 	default:
- 		ret = -ENOIOCTLCMD;
- 		break;
 -- 
-2.27.0
-
+paul moore
+www.paul-moore.com
