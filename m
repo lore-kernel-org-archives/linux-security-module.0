@@ -2,241 +2,171 @@ Return-Path: <SRS0=8ECw=EK=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C77C4741F
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 10:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CD7C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 14:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE379223BD
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 10:33:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604486034;
-	bh=vaTAJ+KRAIqHz1ou+QzSlMna3gBJehiynYrA50L6O7I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=otM/rbY8iJBnDJjO36Bb/Vn6TCNrHgUFnj14mgo5uGfTFDyWyP1pR98K/zsDQe2ki
-	 6y2RQQ4lPvl3NTnfaBPz3+oTkih77fdzjBSDCY/rfbHcGwfm3eoEzlpgx1b700Ts9c
-	 HiYDTW0fQh7SV1NpYobcp51TGuBZU7XftpWGSvuY=
+	by mail.kernel.org (Postfix) with ESMTP id 7ECBB221E2
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Nov 2020 14:21:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="RYrzdi56"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbgKDKdx (ORCPT
+        id S1726847AbgKDOV0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Nov 2020 05:33:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36156 "EHLO
+        Wed, 4 Nov 2020 09:21:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728700AbgKDKcP (ORCPT
+        with ESMTP id S1726626AbgKDOV0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Nov 2020 05:32:15 -0500
-Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46947C0613D3;
-        Wed,  4 Nov 2020 02:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=rthagGeZr7BxtDl07Y9pYWCb/NLD6LNBksbUBb8wPnc=; b=rFnTYaktBfTd80yqUZq0DJTtQz
-        MqdGxzv6Ck0RSiaUAAzrF3B9DuVOP8wZaVO4A42Bf38vl35emnmIZJsVPasGqcjHP9iEKaTBubIdu
-        HoEv5qlZaXPlraYVML5pOW7nr1ZcKlOgHhERUqIMhz1jLMeWBvEy+r4nBP6E6mRRUV4vltiZz/Gsr
-        2cGkDBlgq0v4hhZSWl1jcMEY3WqL6SwNG4NUwQaq0BCXemQvScnpin5rSAQvXH2VpIdJasP5Fvhgk
-        H8i/oVjksrss9yPz8nsl2viGZTknHU3/v810WH6XokCkgfFoEIGz6ICMDX4eCcgSf2KdRYxRT4GkB
-        8kyETbxg==;
-Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=kapsi.fi)
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <jarkko@kernel.org>)
-        id 1kaG5D-0005aU-3O; Wed, 04 Nov 2020 12:32:03 +0200
-Date:   Wed, 4 Nov 2020 12:32:00 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-integrity@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-        stable <stable@vger.kernel.org>,
-        kernel test robot <lkp@intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Alexey Klimov <aklimov@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v4 3/3,RESEND 2] KEYS: trusted: Reserve TPM for seal and
- unseal operations
-Message-ID: <20201104103200.GA203745@kapsi.fi>
-References: <20201013025156.111305-1-jarkko.sakkinen@linux.intel.com>
- <20201104011909.GD20387@kernel.org>
- <CAFA6WYO4HJThYHhBxbx0Tr97sF_JFvTBur9uTGSQTtyQaOKpig@mail.gmail.com>
+        Wed, 4 Nov 2020 09:21:26 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48B07C0613D3;
+        Wed,  4 Nov 2020 06:21:26 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id za3so29984837ejb.5;
+        Wed, 04 Nov 2020 06:21:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DCfTmW4aQ62j6jmdezgBr0zOm5Qd+OLVYInBG1WvUE8=;
+        b=RYrzdi56fiG5T+Z4pLBAbdoEFVS9a018tvCaPSKaRdaiuPp+/Tz5xU8mcqjcyUfXxD
+         ZeXROBIDOWEouOJ91hOa9daYvjKaDy9uSKR0R/vVg658OfPtDRzq35nyIfkr2x0/Pmyu
+         hlwyM+y6TKApP+iLaQOU2ME8MZiZXJI52pVhXQNCBRCjVOTvVyJ/xSRw+ihS/A+yVOye
+         MkX3z8dMKn/1gbn9bGxfxU8TUTGzkNkkt+CW5IQN/Gp9aDeUtZrzkpi+2ZW1xUMq36Ng
+         bG5BWt097lYEVgHEuZDL79KyPyZot1wxqkTe1DwkYW4i+HVan4RGU+eWlV8ByyF/ApVs
+         Kj9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DCfTmW4aQ62j6jmdezgBr0zOm5Qd+OLVYInBG1WvUE8=;
+        b=DDiu1Jbc/bH/kzYv1IPQzUQ67o4V7WN0dvv+bXocynY++hMVjCy0yplIbIZyscyF4F
+         /Ci697oowzV/fbwlRkzCuyUDpFbSTc0BV5JOj9wX6Wzm6I43UOaK57q73Z1Lmw17iWUu
+         4rNZV6ceVSXuytppOxLv3LJaLyUk0RUqhq/FXVHz+/pVL7q3UexDeDeW8ViyoTYEFQqZ
+         H4ajngzJIYimxmcNrdKzRxS4yS03IEUTcvhXo8edZ7RMHLwNw7tTXDO24OOQUhIXhd3l
+         btsRx2gA7j9WgzK6jkisswP1uaYd9fPPpamR/SmC4HNj/ghRvrPGyF9KOp1yHS/yotpN
+         0qaQ==
+X-Gm-Message-State: AOAM531+pU4IPga/Hebx+H1FnulvixGmaCeo9KoGvdBLIWgmJNFtOZ0E
+        M4dnuq1G1qtbzqyOTaFUhRF+NCJjFLp02o7qTjg=
+X-Google-Smtp-Source: ABdhPJyfBRKxhJ+WxtwZ9BbdFZ9+T5PIgznvtRyZZd5h/KEtHcIk8J5qA1Cu8KvKEfbwWPC2+dpvrIk0wD8eon6G+tw=
+X-Received: by 2002:a17:906:ccc5:: with SMTP id ot5mr12307694ejb.248.1604499684911;
+ Wed, 04 Nov 2020 06:21:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYO4HJThYHhBxbx0Tr97sF_JFvTBur9uTGSQTtyQaOKpig@mail.gmail.com>
-X-SA-Exim-Connect-IP: 83.245.197.237
-X-SA-Exim-Mail-From: jarkko@kernel.org
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+References: <CAN-5tyETQWVphrgqWjcPrtTzHHyz5DGrRz741yPYRS9Byyd=3Q@mail.gmail.com>
+ <CAHC9VhRP2iJqLWiBg46zPKUqxzZoUOuaA6FPigxOw7qubophdw@mail.gmail.com>
+ <CAN-5tyFq775PeOOzqskFexdbCgK3Gk_XB2Yy80SRYSc7Pdj=CA@mail.gmail.com>
+ <CAHC9VhTzO1z6NmYz6cOLg5OvJiyQXdH_VmLh4=+h1MrGXx36JQ@mail.gmail.com>
+ <CAN-5tyGJxUZb5QdJ=fh+L-6rc2B-MhQbDcDkTZNAZAAJm9Q8YQ@mail.gmail.com>
+ <FB6C74CE-5D9F-4469-A49B-93CC8A51D7D5@gmail.com> <CAN-5tyFQbfkiuno07C6Azc7RcF3z3qF3PP0FutFMD3raBgnQmA@mail.gmail.com>
+ <CAEjxPJ7PoAG6f+gVdodx=6X8+_Z_WCFXAuxnpB8WmC1gTF4iQQ@mail.gmail.com>
+ <CAN-5tyEy57xoqEbZAThZKHriJywx-5DMKBD5tsXwo5ccGwuctw@mail.gmail.com>
+ <CAHC9VhQpCXFySZY42==KR57hfAkVLdS6mSAcp2UHn-GWjEfVLg@mail.gmail.com>
+ <bc766b2b-d1f1-d767-579c-02e10ae32a9a@schaufler-ca.com> <CAHC9VhS7UeCX9BXPrHNH90_sLHKGxTbbtjdm6GBOgDM9=T05FA@mail.gmail.com>
+In-Reply-To: <CAHC9VhS7UeCX9BXPrHNH90_sLHKGxTbbtjdm6GBOgDM9=T05FA@mail.gmail.com>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Wed, 4 Nov 2020 09:21:14 -0500
+Message-ID: <CAN-5tyF_JTMr4+05_YH2VQGft4aXXon3ZjuiVuOn-Z-DLVvTQg@mail.gmail.com>
+Subject: Re: selinux: how to query if selinux is enabled
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Chuck Lever <chucklever@gmail.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 04, 2020 at 01:00:09PM +0530, Sumit Garg wrote:
-> Hi Jarkko,
-> 
-> On Wed, 4 Nov 2020 at 06:49, Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
+On Wed, Oct 14, 2020 at 8:11 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Oct 14, 2020 at 12:31 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > On 10/14/2020 8:57 AM, Paul Moore wrote:
+> > > On Wed, Oct 14, 2020 at 10:37 AM Olga Kornievskaia <aglo@umich.edu> wrote:
+> > >> On Tue, Oct 13, 2020 at 7:51 PM Stephen Smalley wrote:
+> > >>> I would suggest either introducing a new hook for your purpose, or
+> > >>> altering the existing one to support a form of query that isn't based
+> > >>> on a particular xattr name but rather just checking whether the module
+> > >>> supports/uses MAC labels at all.  Options: 1) NULL argument to the
+> > >>> existing hook indicates a general query (could hide a bug in the
+> > >>> caller, so not optimal), 2) Add a new bool argument to the existing
+> > >>> hook to indicate whether the name should be used, or 3) Add a new hook
+> > >>> that doesn't take any arguments.
+> > >> Hi Stephen,
+> > >>
+> > >> Yes it seems like current api lacks the needed functionality and what
+> > >> you are suggesting is needed. Thank you for confirming it.
+> > > To add my two cents at this point, I would be in favor of a new LSM
+> > > hook rather than hijacking security_ismaclabel().  It seems that every
+> > > few years someone comes along and asks for a way to detect various LSM
+> > > capabilities, this might be the right time to introduce a LSM API for
+> > > this.
+> > >
+> > > My only concern about adding such an API is it could get complicated
+> > > very quickly.  One nice thing we have going for us is that this is a
+> > > kernel internal API so we don't have to worry about kernel/userspace
+> > > ABI promises, if we decide we need to change the API at some point in
+> > > the future we can do so without problem.  For that reason I'm going to
+> > > suggest we do something relatively simple with the understanding that
+> > > we can change it if/when the number of users grow.
+> > >
+> > > To start the discussion I might suggest the following:
+> > >
+> > > #define LSM_FQUERY_VFS_NONE     0x00000000
+> > > #define LSM_FQUERY_VFS_XATTRS   0x00000001
+> > > int security_func_query_vfs(unsigned int flags);
+> > >
+> > > ... with an example SELinux implementation looks like this:
+> > >
+> > > int selinux_func_query_vfs(unsigned int flags)
+> > > {
+> > >     return !!(flags & LSM_FQUERY_VFS_XATTRS);
+> > > }
 > >
-> > When TPM 2.0 trusted keys code was moved to the trusted keys subsystem,
-> > the operations were unwrapped from tpm_try_get_ops() and tpm_put_ops(),
-> > which are used to take temporarily the ownership of the TPM chip. The
-> > ownership is only taken inside tpm_send(), but this is not sufficient,
-> > as in the key load TPM2_CC_LOAD, TPM2_CC_UNSEAL and TPM2_FLUSH_CONTEXT
-> > need to be done as a one single atom.
+> > Not a bad start, but I see optimizations and issues.
 > >
-> > Fix this issue by introducting trusted_tpm_load() and trusted_tpm_new(),
-> > which wrap these operations, and take the TPM chip ownership before
-> > sending anything.
-> 
-> I am not sure if we really need these new APIs in order to fix this
-> issue, see below.
+> > It would be really easy to collect the LSM features at module
+> > initialization by adding the feature flags to struct lsm_info.
+> > We could maintain a variable lsm_features in security.c that
+> > has the cumulative feature set. Rather than have an LSM hook for
+> > func_query_vfs we'd get
+> >
+> > int security_func_query_vfs(void)
+> > {
+> >         return !!(lsm_features & LSM_FQUERY_VFS_XATTRS);
+> > }
+>
+> Works for me.
+>
+> > In either case there could be confusion in the case where more
+> > than one security module provides the feature. NFS, for example,
+> > cares about the SELinux "selinux" attribute, but probably not
+> > about the Smack "SMACK64EXEC" attribute. It's entirely possible
+> > that a bit isn't enough information to check about a "feature".
+>
+> In the LSM stacking world that shouldn't matter to callers, right?  Or
+> perhaps more correctly, if it matters to the caller which individual
+> LSM supports what feature then the caller is doing it wrong, right?
 
-They are not API, as they are static functions. Not necessarily
-disregarding the argument, just remarking a technical detail.
+Hi folks,
 
-> > Use tpm_transmit_cmd() to send TPM commands instead
-> > of tpm_send(), reverting back to the old behaviour.
-> >
-> > Fixes: 2e19e10131a0 ("KEYS: trusted: Move TPM2 trusted keys code")
-> > Reported-by: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-> > Cc: stable@vger.kernel.org
-> > Cc: David Howells <dhowells@redhat.com>
-> > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > Cc: Sumit Garg <sumit.garg@linaro.org>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > ---
-> >  drivers/char/tpm/tpm.h                    |  4 --
-> >  include/linux/tpm.h                       |  5 +-
-> >  security/keys/trusted-keys/trusted_tpm1.c | 78 +++++++++++++++--------
-> >  security/keys/trusted-keys/trusted_tpm2.c |  6 +-
-> >  4 files changed, 60 insertions(+), 33 deletions(-)
-> >
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-> > index 947d1db0a5cc..283f78211c3a 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -164,8 +164,6 @@ extern const struct file_operations tpmrm_fops;
-> >  extern struct idr dev_nums_idr;
-> >
-> >  ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
-> > -ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
-> > -                        size_t min_rsp_body_length, const char *desc);
-> >  int tpm_get_timeouts(struct tpm_chip *);
-> >  int tpm_auto_startup(struct tpm_chip *chip);
-> >
-> > @@ -194,8 +192,6 @@ static inline void tpm_msleep(unsigned int delay_msec)
-> >  int tpm_chip_start(struct tpm_chip *chip);
-> >  void tpm_chip_stop(struct tpm_chip *chip);
-> >  struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
-> > -__must_check int tpm_try_get_ops(struct tpm_chip *chip);
-> > -void tpm_put_ops(struct tpm_chip *chip);
-> >
-> >  struct tpm_chip *tpm_chip_alloc(struct device *dev,
-> >                                 const struct tpm_class_ops *ops);
-> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> > index 8f4ff39f51e7..804a3f69bbd9 100644
-> > --- a/include/linux/tpm.h
-> > +++ b/include/linux/tpm.h
-> > @@ -397,6 +397,10 @@ static inline u32 tpm2_rc_value(u32 rc)
-> >  #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
-> >
-> >  extern int tpm_is_tpm2(struct tpm_chip *chip);
-> > +extern __must_check int tpm_try_get_ops(struct tpm_chip *chip);
-> > +extern void tpm_put_ops(struct tpm_chip *chip);
-> > +extern ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
-> > +                               size_t min_rsp_body_length, const char *desc);
-> >  extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-> >                         struct tpm_digest *digest);
-> >  extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
-> > @@ -410,7 +414,6 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip)
-> >  {
-> >         return -ENODEV;
-> >  }
-> > -
-> >  static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
-> >                                struct tpm_digest *digest)
-> >  {
-> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > index 7a937c3c5283..20ca18e17437 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > @@ -950,6 +950,51 @@ static struct trusted_key_payload *trusted_payload_alloc(struct key *key)
-> >         return p;
-> >  }
-> >
-> > +static int trusted_tpm_load(struct tpm_chip *chip,
-> > +                           struct trusted_key_payload *payload,
-> > +                           struct trusted_key_options *options)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (tpm_is_tpm2(chip)) {
-> > +               ret = tpm_try_get_ops(chip);
-> 
-> Can't we move this TPM 2.0 specific operation within
-> tpm2_unseal_trusted() instead?
-> 
-> > +               if (!ret) {
-> > +                       ret = tpm2_unseal_trusted(chip, payload, options);
-> > +                       tpm_put_ops(chip);
-> 
-> Ditto.
-> 
-> > +               }
-> > +       } else {
-> > +               ret = key_unseal(payload, options);
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int trusted_tpm_new(struct tpm_chip *chip,
-> > +                          struct trusted_key_payload *payload,
-> > +                          struct trusted_key_options *options)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret = tpm_get_random(chip, payload->key, payload->key_len);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       if (ret != payload->key_len)
-> > +               return -EIO;
-> > +
-> > +       if (tpm_is_tpm2(chip)) {
-> > +               ret = tpm_try_get_ops(chip);
-> 
-> Same here, to move this within tpm2_seal_trusted() instead?
-> 
-> > +               if (!ret) {
-> > +                       ret = tpm2_seal_trusted(chip, payload, options);
-> > +                       tpm_put_ops(chip);
-> 
-> Ditto.
+I would like to resurrect this discussion and sorry for a delayed
+response. I'm a little bit unsure about the suggested approach of
+adding something like selinux_func_query_vfs() call where selinux has
+such a function. What happens when selinux is configured to be
+"disabled" wouldn't this call still return the same value as when it
+is configured as "permissive or enforcing"?
 
-I think that would make sense anyhow, as not introducing new static
-functions means less potential merge conflicts when backporting. And
-yeah, also probably makes your life easier with the feature patch set
-under review.
+Thank you.
 
-I can refine this.
 
-> -Sumit
 
-/Jarkko
+>
+> --
+> paul moore
+> www.paul-moore.com
