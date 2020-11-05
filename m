@@ -2,227 +2,150 @@ Return-Path: <SRS0=docv=EL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A831C2D0A3
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554B0C5517A
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 05:07:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCBFB206ED
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF59621D7F
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 05:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604538987;
-	bh=dcUaxl/PETJGyY/2HL0+/kywBDNn5Xp5qgEXmaRjQ1s=;
+	s=default; t=1604552869;
+	bh=nk1WdBkWqE96DNUgpPnEgglR9AlimFCtq6FRxMGc7xE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AiMYhob+F7yloqX6FLhgMSAThr5VP1705yV8DtImLUgQzcTIE9RH/ZxV7Yjzkb4f6
-	 TdavFVQ4bUkx266iQLlFezl4k6cSkaO7DBiY/7Wz4K5fm3tJFS8QaRnjkWdjafX25d
-	 HO30R0WYSjDpBUXtZXt7wmTwqXkCqYZIhjrTM3QQ=
+	b=W3XkUzem8vRf1pSDRK5GSl2kN6ei62QxoJP9S4qDS0uxlXLu20r5H0ojUTAO3Cwc5
+	 ofPzPVndjsv3HFVII2gnJAwxuxQGKeAj3Bd6altiV+1HY5DbkWDh77UWHopWUZfyg/
+	 oF4K1UbhHMJqvUMYsABi10MBGDDRIbAm5Rpss8gw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388284AbgKEBQ1 (ORCPT
+        id S1729867AbgKEFHq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Nov 2020 20:16:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58208 "EHLO mail.kernel.org"
+        Thu, 5 Nov 2020 00:07:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388259AbgKEBQ1 (ORCPT
+        id S1725275AbgKEFHp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Nov 2020 20:16:27 -0500
+        Thu, 5 Nov 2020 00:07:45 -0500
 Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B234206F4;
-        Thu,  5 Nov 2020 01:16:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B0532151B;
+        Thu,  5 Nov 2020 05:07:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604538986;
-        bh=dcUaxl/PETJGyY/2HL0+/kywBDNn5Xp5qgEXmaRjQ1s=;
+        s=default; t=1604552864;
+        bh=nk1WdBkWqE96DNUgpPnEgglR9AlimFCtq6FRxMGc7xE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Wu8L6gANqkAPXgBak4nnS1p46y/+niMg0TmC1plwPSWTqP12bawuNURHpu/+bPRK1
-         ZkG+1C06ybKJYYTun8FSQJOZE7bWNrVnWVJlJlLG/0EizSKHGI1f2qAuYx+g4ToP5b
-         TaKvN01qJxT2R2o5xP72Rnq+cOnbQXRVLsF2cSao=
-Date:   Thu, 5 Nov 2020 03:16:15 +0200
+        b=MycmoIqlkHNfLdg/4eGDLGTmTVseEVmjDsa9Y+lDCzshvrSFnTMbODg/YOsr8jpvp
+         bt3wEVqbRwnfEdZ1sVqbgB2ur0kJqMOeax8TzItcBA907CqmsfE2TIGpctankw3exh
+         yiE528psxV5h9SfQ3XD2GJfPmeipD8HjJcN770T4=
+Date:   Thu, 5 Nov 2020 07:07:36 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
-        mikko.ylinen@intel.com
-Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
-Message-ID: <20201105011615.GA701257@kernel.org>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
- <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
- <20201105011043.GA700495@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com, dhowells@redhat.com, jens.wiklander@linaro.org,
+        corbet@lwn.net, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, janne.karhunen@gmail.com,
+        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
+Message-ID: <20201105050736.GA702944@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201105011043.GA700495@kernel.org>
+In-Reply-To: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 05, 2020 at 03:10:54AM +0200, Jarkko Sakkinen wrote:
-> Noticed couple of minor glitches.
+On Tue, Nov 03, 2020 at 09:31:42PM +0530, Sumit Garg wrote:
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key. Also, this is
+> an alternative in case platform doesn't possess a TPM device.
 > 
-> On Wed, Nov 04, 2020 at 04:54:17PM +0200, Jarkko Sakkinen wrote:
-> > +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-> > +		     unsigned long end, unsigned long vm_flags)
-> > +{
-> > +	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
-> > +	struct sgx_encl_page *page;
-> > +	unsigned long count = 0;
-> > +	int ret = 0;
-> > +
-> > +	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
-> > +
-> > +	/*
-> > +	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
-> > +	 * conflict with the enclave page permissions.
-> > +	 */
-> > +	if (current->personality & READ_IMPLIES_EXEC)
-> > +		return -EACCES;
-> > +
-> > +	mutex_lock(&encl->lock);
-> > +	xas_lock(&xas);
-> > +	xas_for_each(&xas, page, PFN_DOWN(end - 1)) {
-> > +		if (!page)
-> > +			break;
-> 
-> A redundant check, can be removed.
-> 
-> > +
-> > +		if (~page->vm_max_prot_bits & vm_prot_bits) {
-> > +			ret = -EACCES;
-> > +			break;
-> > +		}
-> > +
-> > +		/* Reschedule on every XA_CHECK_SCHED iteration. */
-> > +		if (!(++count % XA_CHECK_SCHED)) {
-> > +			xas_pause(&xas);
-> > +			xas_unlock(&xas);
-> > +			mutex_unlock(&encl->lock);
-> > +
-> > +			cond_resched();
-> > +
-> > +			mutex_lock(&encl->lock);
-> > +			xas_lock(&xas);
-> > +		}
-> > +	}
-> > +	xas_unlock(&xas);
-> > +	mutex_unlock(&encl->lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int sgx_vma_mprotect(struct vm_area_struct *vma,
-> > +			    struct vm_area_struct **pprev, unsigned long start,
-> > +			    unsigned long end, unsigned long newflags)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return mprotect_fixup(vma, pprev, start, end, newflags);
-> > +}
-> > +
-> > +const struct vm_operations_struct sgx_vm_ops = {
-> > +	.fault = sgx_vma_fault,
-> > +	.mprotect = sgx_vma_mprotect,
-> > +};
-> > +
-> > +/**
-> > + * sgx_encl_find - find an enclave
-> > + * @mm:		mm struct of the current process
-> > + * @addr:	address in the ELRANGE
-> > + * @vma:	the resulting VMA
-> > + *
-> > + * Find an enclave identified by the given address. Give back a VMA that is
-> > + * part of the enclave and located in that address. The VMA is given back if it
-> > + * is a proper enclave VMA even if an &sgx_encl instance does not exist yet
-> > + * (enclave creation has not been performed).
-> > + *
-> > + * Return:
-> > + *   0 on success,
-> > + *   -EINVAL if an enclave was not found,
-> > + *   -ENOENT if the enclave has not been created yet
-> > + */
-> > +int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
-> > +		  struct vm_area_struct **vma)
-> > +{
-> > +	struct vm_area_struct *result;
-> > +	struct sgx_encl *encl;
-> > +
-> > +	result = find_vma(mm, addr);
-> > +	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
-> > +		return -EINVAL;
-> > +
-> > +	encl = result->vm_private_data;
-> > +	*vma = result;
-> > +
-> > +	return encl ? 0 : -ENOENT;
-> > +}
-> 
-> Since v20 there has been 1:1 assocition between enclaves and files.
-> In other words, this can never return -ENOENT.
-> 
-> With this reduction the function turns into:
-> 
-> int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
-> 		  struct vm_area_struct **vma)
-> {
-> 	struct vm_area_struct *result;
-> 
-> 	result = find_vma(mm, addr);
-> 	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
-> 		return -EINVAL;
-> 
-> 	*vma = result;
-> 
-> 	return 0;
-> }
-> 
-> There are only two call sites:
-> 
-> 1. sgx_encl_test_and_clear_young()
-> 2. sgx_reclaimer_block()
-> 
-> I.e. would not be a big trouble to tune the signature a bit:
-> 
-> struct vm_area_struct *sgx_encl_find_vma(struct mm_struct *mm, unsigned long addr)
-> {
-> 	struct vm_area_struct *result;
-> 
-> 	result = find_vma(mm, addr);
-> 	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
-> 		return NULL;
-> 
-> 	return result;
-> }
+> This patch-set has been tested with OP-TEE based early TA which is already
+> merged in upstream [1].
 
-Further, I'd declare this as an inline function given how trivial it
-turn into.
-
-> There is a function called sgx_encl_find_mm(), which is *unrelated* to
-> this function and has only one call sites. Its flow is very linear. In
-> order to avoid confusion, I'd open code that into sgx_encl_mm_add().
-> 
-> /Jarkko
+Is the new RPI400 computer a platform that can be used for testing
+patch sets like this? I've been looking for a while something ARM64
+based with similar convenience as Intel NUC's, and on the surface
+this new RPI product looks great for kernel testing purposes.
 
 /Jarkko
+
+> 
+> [1] https://github.com/OP-TEE/optee_os/commit/f86ab8e7e0de869dfa25ca05a37ee070d7e5b86b
+> 
+> Changes in v8:
+> 1. Added static calls support instead of indirect calls.
+> 2. Documented trusted keys source module parameter.
+> 3. Refined patch #1 commit message discription.
+> 4. Addressed misc. comments on patch #2.
+> 5. Added myself as Trusted Keys co-maintainer instead.
+> 6. Rebased to latest tpmdd master.
+> 
+> Changes in v7:
+> 1. Added a trusted.source module parameter in order to enforce user's
+>    choice in case a particular platform posses both TPM and TEE.
+> 2. Refine commit description for patch #1.
+> 
+> Changes in v6:
+> 1. Revert back to dynamic detection of trust source.
+> 2. Drop author mention from trusted_core.c and trusted_tpm1.c files.
+> 3. Rebased to latest tpmdd/master.
+> 
+> Changes in v5:
+> 1. Drop dynamic detection of trust source and use compile time flags
+>    instead.
+> 2. Rename trusted_common.c -> trusted_core.c.
+> 3. Rename callback: cleanup() -> exit().
+> 4. Drop "tk" acronym.
+> 5. Other misc. comments.
+> 6. Added review tags for patch #3 and #4.
+> 
+> Changes in v4:
+> 1. Pushed independent TEE features separately:
+>   - Part of recent TEE PR: https://lkml.org/lkml/2020/5/4/1062
+> 2. Updated trusted-encrypted doc with TEE as a new trust source.
+> 3. Rebased onto latest tpmdd/master.
+> 
+> Changes in v3:
+> 1. Update patch #2 to support registration of multiple kernel pages.
+> 2. Incoporate dependency patch #4 in this patch-set:
+>    https://patchwork.kernel.org/patch/11091435/
+> 
+> Changes in v2:
+> 1. Add reviewed-by tags for patch #1 and #2.
+> 2. Incorporate comments from Jens for patch #3.
+> 3. Switch to use generic trusted keys framework.
+> 
+> Sumit Garg (4):
+>   KEYS: trusted: Add generic trusted keys framework
+>   KEYS: trusted: Introduce TEE based Trusted Keys
+>   doc: trusted-encrypted: updates with TEE as a new trust source
+>   MAINTAINERS: Add myself as Trusted Keys co-maintainer
+> 
+>  Documentation/admin-guide/kernel-parameters.txt   |  12 +
+>  Documentation/security/keys/trusted-encrypted.rst | 203 +++++++++++--
+>  MAINTAINERS                                       |   2 +
+>  include/keys/trusted-type.h                       |  47 +++
+>  include/keys/trusted_tee.h                        |  55 ++++
+>  include/keys/trusted_tpm.h                        |  17 +-
+>  security/keys/trusted-keys/Makefile               |   2 +
+>  security/keys/trusted-keys/trusted_core.c         | 354 ++++++++++++++++++++++
+>  security/keys/trusted-keys/trusted_tee.c          | 278 +++++++++++++++++
+>  security/keys/trusted-keys/trusted_tpm1.c         | 336 ++++----------------
+>  10 files changed, 979 insertions(+), 327 deletions(-)
+>  create mode 100644 include/keys/trusted_tee.h
+>  create mode 100644 security/keys/trusted-keys/trusted_core.c
+>  create mode 100644 security/keys/trusted-keys/trusted_tee.c
+> 
+> -- 
+> 2.7.4
+> 
+> 
