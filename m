@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAFCC4742C
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 21:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82CEC5517A
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 21:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0F920756
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 21:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 499A920735
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 21:33:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iBnclI64"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tOJog2bw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732409AbgKEVdf (ORCPT
+        id S1732493AbgKEVdm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Nov 2020 16:33:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
+        Thu, 5 Nov 2020 16:33:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732376AbgKEVdd (ORCPT
+        with ESMTP id S1732483AbgKEVdi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Nov 2020 16:33:33 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6820CC0613D4
-        for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2020 13:33:31 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id k7so3139499ybm.13
-        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2020 13:33:31 -0800 (PST)
+        Thu, 5 Nov 2020 16:33:38 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AB92C0613D4
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Nov 2020 13:33:37 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id j2so3175966ybb.12
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Nov 2020 13:33:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:to:cc;
-        bh=JxEU6nxtnscWTRV4NP6TUtkxst/drXUYmjzv3EN+9u0=;
-        b=iBnclI64wiVtr6uywUdrU0+21va32D2OtQfGCmrfMewTcS5cWDULSljgoALK2XhnN0
-         6Tsl1vvqRrGGoJPXOloUQWGSig/XtkZVYtJ1Sx9i7zobZOpoJx6sMo7t2D7cMbPFkFeA
-         BN8z8JH4wdIejzySSmx0Y87eeE1zagxbjWu410f9jojLgU+MAooGkpCWO+JIIi+uScyN
-         wzWXjOHcPijU6EKI2V8sQXsBuqmMvGJFmg32m8dO7wlfowA5Bv4YJZE69k3AJRKBRKV1
-         c3ZxhjApPOlpWYOO4GK50khT6vtl+8LbkBosKd/UoZ3RismUD5rO62F6GWpeuBDHB5rk
-         /1Tg==
+        bh=L4KGFFWDHlU66vPQG585OdMG0AUk6bVr7qLzNQZAqk0=;
+        b=tOJog2bwHs9WJ42YS4aBTCYXmTMKMSEdzQ9050j8gIcmImjdpUX/qNQgZfYvn3lZQQ
+         yOgrRm2SKh3QYVXP1mjPLQ3m9TfYPfLa3tb5y9dg5XyFOSKWX6gnpgTDgOPDY1tdmqtd
+         pvpU1h3d275nogGmjELLKdD8XvRcvwb61b4SnPnPotZ5o0JbEwPI+YVVlbCwzxyVQXR0
+         rd+hnd9zw3PYlCNG2l6Bzp+bOJp3AjLmK7iToxJFzs8nCkosCnpnRosTeMOBiZutUdL/
+         BDkZGGuhmHMMiTOVP8O1JGNDuGoemDbwgsWMf+AnUfnkGW3zaERO19iLR9qxtT290Q72
+         sdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=JxEU6nxtnscWTRV4NP6TUtkxst/drXUYmjzv3EN+9u0=;
-        b=D+neAb2CIMkdQ+n9IN04fGvRCDEN3e0agaivMBAaASwJZF9e8yzdbzsl3CC+hpe1pu
-         SPB3Efl7BB+c92sbePLjMmeOUjhmcxu9uFQsZMhS/gX/Nysbu016vWFgAqoRrnVNsgU5
-         U0Tn+kdLrt9Vt02ZNpyehhERuoQl6Fm9fZbWYQ0lTioOPqZYiAGzRpvA9wzaNXkHUzjH
-         4JjL9aLTewhcGTZ7QHK+CzcxsiCDRROz0rF3UlAun2JCFLLGCT747SZ+NHHx1oZTlUz1
-         ZA0DmeDzZoZAdEwqo4WcVtpDNWVr4OY/DuCQhtu+DQgWW32NQ2eqvleSoaBLETSZQm1V
-         R/og==
-X-Gm-Message-State: AOAM5332RQdtjTwRp6jzm6jjAhzITvIpTDQh5o1/3km2R4CdCKoiUCMx
-        Kq5WAEQIquZjSm4Bm75nUFhIjm34K+kMwPEQuw==
-X-Google-Smtp-Source: ABdhPJxp4ud9F0XXGnk+/NPkc07vMWY3+QWHWoqCKr56ocLP9D9oQC4SU34vx5k14AEBaTpFOkEx5r7EVhkJwmj6Rg==
+        bh=L4KGFFWDHlU66vPQG585OdMG0AUk6bVr7qLzNQZAqk0=;
+        b=XXC4vGzzpUTfGkwwvQOmN83hZqyoJhgZsuuHMcDdz2WGvHX63IbhztsV1gPKHleVUe
+         qWWQJtrX1FGwjG0mBx/S6++zxU4zjpSIc/OC8OfP7JDK3RnLSBTBLJQPD0w6FK/efFui
+         VtNQurqxda5xEwjROp3w+nqdYsNBkJ4a8/fjhTOrKNgM48nIrxwtbLvb/sOJ/o04EW+M
+         wVAK9mzwyFnKvt4iWnssOa2Q5Xn1/cPuscF1O6TUJn1vg+c7gxTDlJ+QZ+9pQI/y5Y+E
+         45jUEjh9f87mCCb27vgXK/VAaTt+BK1liiOQUCHkky1AyXQ2LNIkFwYrELdgrZcZhLAn
+         yHuQ==
+X-Gm-Message-State: AOAM530vPl9UjPoKE7wxtEaxzI6OLd9aPZbjEkTNiicQB57RxMADDa7k
+        ou287yYHF6PZDiD2rY0PPMBbk/vFqZwoe1aFQg==
+X-Google-Smtp-Source: ABdhPJz5uB82DFbGCEjbZuok3KmmDSwQU271wqlzWfcXyitAJr0CBCkAWpoTQfsr+q5AnQWi/NWA6MLsQlYvHTIJng==
 Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
 X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a25:9c02:: with SMTP id
- c2mr6112707ybo.228.1604612010473; Thu, 05 Nov 2020 13:33:30 -0800 (PST)
-Date:   Thu,  5 Nov 2020 13:33:21 -0800
+ (user=lokeshgidra job=sendgmr) by 2002:a25:7385:: with SMTP id
+ o127mr4747089ybc.202.1604612016375; Thu, 05 Nov 2020 13:33:36 -0800 (PST)
+Date:   Thu,  5 Nov 2020 13:33:23 -0800
 In-Reply-To: <20201105213324.3111570-1-lokeshgidra@google.com>
-Message-Id: <20201105213324.3111570-2-lokeshgidra@google.com>
+Message-Id: <20201105213324.3111570-4-lokeshgidra@google.com>
 Mime-Version: 1.0
 References: <20201105213324.3111570-1-lokeshgidra@google.com>
 X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
-Subject: [PATCH v11 1/4] security: add inode_init_security_anon() LSM hook
+Subject: [PATCH v11 3/4] selinux: teach SELinux about anonymous inodes
 From:   Lokesh Gidra <lokeshgidra@google.com>
 To:     Andrea Arcangeli <aarcange@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -99,107 +99,126 @@ Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
         kaleshsingh@google.com, calin@google.com, surenb@google.com,
         nnk@google.com, jeffv@google.com, kernel-team@android.com,
         linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        hch@infradead.org
+        hch@infradead.org, Daniel Colascione <dancol@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This change adds a new LSM hook, inode_init_security_anon(), that
-will be used while creating secure anonymous inodes.
+From: Daniel Colascione <dancol@google.com>
 
-The new hook accepts an optional context_inode parameter that
-callers can use to provide additional contextual information to
-security modules for granting/denying permission to create an anon-
-inode of the same type.
+This change uses the anon_inodes and LSM infrastructure introduced in
+the previous patches to give SELinux the ability to control
+anonymous-inode files that are created using the new
+anon_inode_getfd_secure() function.
 
+A SELinux policy author detects and controls these anonymous inodes by
+adding a name-based type_transition rule that assigns a new security
+type to anonymous-inode files created in some domain. The name used
+for the name-based transition is the name associated with the
+anonymous inode for file listings --- e.g., "[userfaultfd]" or
+"[perf_event]".
+
+Example:
+
+type uffd_t;
+type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+allow sysadm_t uffd_t:anon_inode { create };
+
+(The next patch in this series is necessary for making userfaultfd
+support this new interface.  The example above is just
+for exposition.)
+
+Signed-off-by: Daniel Colascione <dancol@google.com>
 Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
 ---
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/lsm_hooks.h     |  9 +++++++++
- include/linux/security.h      | 10 ++++++++++
- security/security.c           |  8 ++++++++
- 4 files changed, 29 insertions(+)
+ security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
+ security/selinux/include/classmap.h |  2 ++
+ 2 files changed, 55 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 32a940117e7a..435a2e22ff95 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -113,6 +113,8 @@ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
- LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
- 	 struct inode *dir, const struct qstr *qstr, const char **name,
- 	 void **value, size_t *len)
-+LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
-+	 const struct qstr *name, const struct inode *context_inode)
- LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
- 	 umode_t mode)
- LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index c503f7ab8afb..3af055b7ee1f 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -233,6 +233,15 @@
-  *	Returns 0 if @name and @value have been successfully set,
-  *	-EOPNOTSUPP if no security attribute is needed, or
-  *	-ENOMEM on memory allocation failure.
-+ * @inode_init_security_anon:
-+ *      Set up the incore security field for the new anonymous inode
-+ *      and return whether the inode creation is permitted by the security
-+ *      module or not.
-+ *      @inode contains the inode structure
-+ *      @name name of the anonymous inode class
-+ *      @context_inode optional related inode
-+ *	Returns 0 on success, -EACCES if the security module denies the
-+ *	creation of this inode, or another -errno upon other errors.
-  * @inode_create:
-  *	Check permission to create a regular file.
-  *	@dir contains inode structure of the parent of the new file.
-diff --git a/include/linux/security.h b/include/linux/security.h
-index bc2725491560..7494a93b9ed9 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -323,6 +323,9 @@ void security_inode_free(struct inode *inode);
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 initxattrs initxattrs, void *fs_data);
-+int security_inode_init_security_anon(struct inode *inode,
-+				      const struct qstr *name,
-+				      const struct inode *context_inode);
- int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- 				     const struct qstr *qstr, const char **name,
- 				     void **value, size_t *len);
-@@ -737,6 +740,13 @@ static inline int security_inode_init_security(struct inode *inode,
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 6b1826fc3658..1c0adcdce7a8 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
  	return 0;
  }
  
-+static inline int security_inode_init_security_anon(struct inode *inode,
-+						    const struct qstr *name,
-+						    const struct inode *context_inode)
++static int selinux_inode_init_security_anon(struct inode *inode,
++					    const struct qstr *name,
++					    const struct inode *context_inode)
 +{
-+	return 0;
++	const struct task_security_struct *tsec = selinux_cred(current_cred());
++	struct common_audit_data ad;
++	struct inode_security_struct *isec;
++	int rc;
++
++	if (unlikely(!selinux_initialized(&selinux_state)))
++		return 0;
++
++	isec = selinux_inode(inode);
++
++	/*
++	 * We only get here once per ephemeral inode.  The inode has
++	 * been initialized via inode_alloc_security but is otherwise
++	 * untouched.
++	 */
++
++	if (context_inode) {
++		struct inode_security_struct *context_isec =
++			selinux_inode(context_inode);
++		isec->sclass = context_isec->sclass;
++		isec->sid = context_isec->sid;
++	} else {
++		isec->sclass = SECCLASS_ANON_INODE;
++		rc = security_transition_sid(
++			&selinux_state, tsec->sid, tsec->sid,
++			isec->sclass, name, &isec->sid);
++		if (rc)
++			return rc;
++	}
++
++	isec->initialized = LABEL_INITIALIZED;
++
++	/*
++	 * Now that we've initialized security, check whether we're
++	 * allowed to actually create this type of anonymous inode.
++	 */
++
++	ad.type = LSM_AUDIT_DATA_INODE;
++	ad.u.inode = inode;
++
++	return avc_has_perm(&selinux_state,
++			    tsec->sid,
++			    isec->sid,
++			    isec->sclass,
++			    FILE__CREATE,
++			    &ad);
 +}
 +
- static inline int security_old_inode_init_security(struct inode *inode,
- 						   struct inode *dir,
- 						   const struct qstr *qstr,
-diff --git a/security/security.c b/security/security.c
-index a28045dc9e7f..8989ba6af4f6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1058,6 +1058,14 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
- }
- EXPORT_SYMBOL(security_inode_init_security);
+ static int selinux_inode_create(struct inode *dir, struct dentry *dentry, umode_t mode)
+ {
+ 	return may_create(dir, dentry, SECCLASS_FILE);
+@@ -6992,6 +7044,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
  
-+int security_inode_init_security_anon(struct inode *inode,
-+				      const struct qstr *name,
-+				      const struct inode *context_inode)
-+{
-+	return call_int_hook(inode_init_security_anon, 0, inode, name,
-+			     context_inode);
-+}
-+
- int security_old_inode_init_security(struct inode *inode, struct inode *dir,
- 				     const struct qstr *qstr, const char **name,
- 				     void **value, size_t *len)
+ 	LSM_HOOK_INIT(inode_free_security, selinux_inode_free_security),
+ 	LSM_HOOK_INIT(inode_init_security, selinux_inode_init_security),
++	LSM_HOOK_INIT(inode_init_security_anon, selinux_inode_init_security_anon),
+ 	LSM_HOOK_INIT(inode_create, selinux_inode_create),
+ 	LSM_HOOK_INIT(inode_link, selinux_inode_link),
+ 	LSM_HOOK_INIT(inode_unlink, selinux_inode_unlink),
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 40cebde62856..ba2e01a6955c 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -249,6 +249,8 @@ struct security_class_mapping secclass_map[] = {
+ 	  {"open", "cpu", "kernel", "tracepoint", "read", "write"} },
+ 	{ "lockdown",
+ 	  { "integrity", "confidentiality", NULL } },
++	{ "anon_inode",
++	  { COMMON_FILE_PERMS, NULL } },
+ 	{ NULL }
+   };
+ 
 -- 
 2.29.1.341.ge80a0c044ae-goog
 
