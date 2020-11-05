@@ -2,152 +2,220 @@ Return-Path: <SRS0=docv=EL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E90C4C4741F
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901D8C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 933BD20BED
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:10:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BbjA3W4S"
+	by mail.kernel.org (Postfix) with ESMTP id 39BEE221FA
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604538656;
+	bh=lMfw07YaIe+dh+7s9oBPV38psJTZ7p1esC3tPIo+his=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OfHEh26VB7m1r7eNNyBnl2du8I2NeE/ZCpxTo7jmuwj4T1CwsNEHuSUV5uPWoI/HI
+	 5lzGSIIykYqzDIIEUmNaXFMUpTSWzQv0EoUZYd7McVbFOjREoxENga9EEKyqvjDomb
+	 7hv0qUIBMT/J7jta5pcIUzKwUw2Sx5ewomG9gV1o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbgKEBK1 (ORCPT
+        id S1729731AbgKEBKz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Nov 2020 20:10:27 -0500
-Received: from sonic313-16.consmr.mail.ne1.yahoo.com ([66.163.185.39]:45210
-        "EHLO sonic313-16.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726018AbgKEBK0 (ORCPT
+        Wed, 4 Nov 2020 20:10:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727698AbgKEBKz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Nov 2020 20:10:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1604538625; bh=4i+kcv8akOTQUE9hmm6XfDFksnqK9So86R8nxAIOwmo=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=BbjA3W4SGTn3jCTgWo7aA5ib7bVfoxLRcDuO6BzNAl/iK4W335lmqcI7IgbV7NFXKLH25N4I4TTvtpoGDcUuMuAap55wm4SsvkMISQ4lXxNkmasVqigJ8n0VAHAo91x5FmhRFHY3LROrHQUNrIUnqZ2YAxJjtH9yiiFPykjlRRHgKLHYAlylg7rZzwG1cxGVjkq7A1POROi9R/62agoZ72miL0Dlg5yk1UYvpP9tyCARR8o+cfKD1tEbuSW7ox5d5o0VnpUn8maYh4C9tZILcRWY3xqdzRZV1LTS/hxaaw9B/VvSb2XtphRz/rfis6XrDNzMnk8TjNIQ0TaWO4BfYg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1604538625; bh=rj7z0LJRoXFE0SUhho0f7Ghxg/nDRpm8ZPm/PLzu42T=; h=From:To:Subject:Date; b=k1k133Glcg7trLYLN8cAlQSrVThx1hzjwvtlFP/UV8QinqfcMKD+WxzXOlAwRulciPvpdZJd8YB9BRKgibI8ZaO9flte2hgl044bt44SmiiYfLenjYdf/ntDZvpYUiucZMW0ajGa5sl/oTGLY7ukMJcsmURabTdz+uXB5zwF4btE4kOyddSnXP2zxDJKldTd/4CCVU+1GOMom/pvW/Z1lGRL+1x74+1rymlbtxlGvD2XMc8dcxCvNdxbPCqkotF74mApQVNkUKKZf+GzO1rTFrOSrtz7UexGKx4GwFYB4dft3rguf7MnH6XtkS858+HrN9USDKHnvjp44M72ufaAVg==
-X-YMail-OSG: IECdtoAVM1kw_pORLL3D9Lo6xYsaZz9JhKJiMsSwZ0DslY2Rl8NxsvWPUucCe3i
- _QFXUBRvQUSfKYGjWrW53s6U7eURxPXJg1QlpWjL0Hanwb_jo.5a7_keWlVMknOyV8IT5Vc3Rd_I
- rWbtMDhqtsZ2NKQY4x77Zt2drlFZ29ICQDGICut13Ot.Spzxu9RaJoie6Ut.hCHVVFHYzaJ6L0gR
- XtJn_GLn4Ex0aivsoFBsj86a_SV8E5fLzETxqSOlT5kMuaQmGgstR7qYVtg7zvHEZWzmlEv8FzO9
- 7rcs2x9PxOCTcMn7EfHlHuo8JZ1Wyu1fyEv80Qwd_hNggR3W5BMXcZKRdAFUT2F65kySc_gtD39T
- jMn_ec2yvtPjuPnr7V.Zd3Dfp3nU6lUKbSgRi2GxZ.JcrN1uSTgjMHh_3ufInC67Jy_nFm36382j
- yBm1q18IydqtrHNPWpo0UVF8GY_lw1NQXHZd6bNWnL04wmD8I4_kuqdc2fn9N536CUp99t3NK6r4
- C3f.8W_VkHN1PyR4P3t1FunqAoPPwG0yUWMHrLd8WErsdfGaXT5V0sGAAzvtEu633TFVZYLWhqg7
- ODwxLWiZRI2TK7AJ0Z3QZ9clvWp7WHyD7ZyZxgpGzrS6DVEHo6TCPmI8RMB.wlts_KAVCGiBExIo
- 27k7Lc8yxIpLSDI2nre7sMXQs9MY9y1zwyAtN67yeiT0BZBUAqTGjO.jcCQ1U3cS0VbDOKfwLyzd
- NcZA.sDRQYHfSD9Mf9VGLHYe0itSoWyfKOecKLKqgl1WAwNjzcrcol5nlup1d7NjdYyvw3uh5HDb
- Tz_pOBj5TrRuTsJXh1jNiB1n0qXs8JGsixSDaSqKipO1Y6Y9mLPEOp8CwhN3ZUUUSgDrR8xmbWo4
- ArAn3IoN5xLnWodkBGwG2hKI9r.Th9yX0yrjY.3bUvj0qmvseNCXZuXQJLb.n0vLUi1zk7SWsTje
- GfQZvF0ROP41idpq7A2eLQncNxYL98vPYaCTIVjEw6WlTqp02Tf9FY0vh1SD_Y5V5cx1GCdD9eAx
- d08jg.ymKoFs48s65THf01m95Ne88tymjNwHFO0bSmBqcNJlR5TVpOtzgGyu1pVY0FoVPiTOzc61
- AjLmxv92MkVr0g_J8tnKPerykpGg.hpVXTGIao9NJToYliTMO4TtyGfYLm__mkF1Tp0kO2yRAlQY
- 8pTr1su6Xtpb1okG2i1bTxbB2R.CbsJhgcok2vCxA6HZoZahEmPP1rtIxfTVT8mxHzS_flBEKOjU
- pWRhlo0o_C6X0zQ2wcZ3ybaEbL9ZpHsUciAQH5DBFArEEC2zX1ekF7Dqdqi5YAXhgxmV4dI7smV2
- vbRK2atExV9mqSHlShxv6sOwMQfzZG6MZFvo1gsxQnzRtI_HX8NmFdNMwx1DJD3jSkurFJ_EsLKK
- OGrnsHRg6esQyvI8yX_OD4gSaPv3LioSiKLOJy3JffURhD3xw7j0Gv.ohNinpYLSpLxhx14L_k5m
- 2TNQIrkOM4esFmjZz86pkq8c4JVgaX0ojGsAhqUGaHVAp_lHH8gBzIwPlfIA0nJ2NmqLYCngqWlM
- Op0ooOVUmljiFKJegFViX3Jwa5RpkYZ9PeR0.vejrx9R56M7ewTQYxXBv0EmcQzXK4ZVDpysLTpS
- W1Xmff9J155xkEKDtow6MNDjMdSxUiq6T.rUpRcqhHLJRYC6xjVEzJZjBzW6T.bu5y.GJampXK3H
- 9xWhz1ShW2VxvsGwuOaN_LJpZViVRaIicXNHdShEyK68U_f2dWv__MoRVlHiliEeQPqlZVGaWjXm
- e.mnB6_vtJndHTHbOufP0tKCEnnFbKmwp53312xx72nWEN1HTdRJhZ5WqCppHvBeTvfbHsyCKoxS
- BAyd9SQKTPUgKU_XxRe3cX1x7M21oEGhJ4F7miCwUzUasUJVkLMeZAs9IQfKh2KVmUdEYrZs_QEE
- 2KFPmTzQZ4RYu.mgmN0yurPZ4H_XL6rVmZRHI4sb9XOorifKAMgQpmtyn4Sk0BOWPnAc9TAqGuRV
- y6aDC8GNi6gu2FRsvjKFgDxBeQ1l.A_MjwgDvoqLaKPkLPVugFdfOcXGQMdjjq3VScqgE7dpAt1t
- RZWucUTRIVoVKLmRNWjt0yK8NFJcipFxDIMKcdwh1qlYMm0ycfk.bjVIpGX4gEhaRkJDLX92kdyF
- _d4V3AprtKU8stKhp7Yap6ZplOaCrr_yLcT0IvzNTrnp8nOr3HhVf99wG7y2x3To5DVGjjHRf7hs
- uLrmGSohr4EqYOqLRNv1rbMwWLBelEbmOrYEzvQa7qEW1L57KzUzpADgbhP7Tu0aa2OhkuryfbgJ
- TQjIY8hkwVG2.Idg03VMH548zG8Trmp4E_CJjlrO16zSOcqKlyWZN8YwIxOqfHl4H_QvFjI2gCvE
- KJj0uSZqlfPoIk4vYkQNSFdQzro8j83Q159K1R4ddLaygYt7w5F0yRORmjXFyVLi3DvXxrzU4AyS
- ZTSAMXVFAycGuibvXgf1bkOmTMkP0YXslzoOFuVyMxZjTD4q0Ob5TYkIRyGUzaHme_8d0qb6B.tv
- S_NzJgQtJG_pFUIBZxND5iGviH.zbNfVhQjExFXUIdmQqDKoaGxqS6bXb3EoaBCyVlswwsT81pRs
- cSgof3NFw4mLD4rpwZCniwxNMIcs2W_SppWAscTMPqZglq1Zly3LA8QMS3X5U98tVCB0LTlF.AF1
- FmTQcVrnh3.U.IKqFoCHgD5loees5jR7_of6BFb3nKYFLOQu6U9Cjixw9XZeYxauEnZfNqc2tOEB
- okvDQCrUhQuhw3WPfulnprfE6G0jiozbjy3HdgNjImImedE9xVJwCIqftqRvKBs28sm_fUSmkRKP
- Fn8BSsgAT2cNMg75gW46bjW8Q1I6C3Ng3VkpNnnK49BFaUiNL6lkgiH9mOuwwdk1XTZ.ZTjqiTgs
- rjeR77HqtP7T_EhSD65BtDDCJQrIZpWJ2p9cxngMgsri58VQLDMbxFjnWWJ0rRaJRBwyGiURu.OP
- FHwhQjPbUzCQ2PpKy2DG20KT.VhcCST8TvPwfh26aNEXuUGxQNtHVyCB1cl7304I7tMhcYOZjjZz
- rIOD06NPlsZ8xizsgUQmIy1IpejEQxYzuytZAXk36BA.IXmLdUb2d0KNzRfUTtdorA0SZG80dQw2
- ktjGamk8qQFtWyLvY.9jwxgE6.Lh4fgpzN9mkIF33jUMY6XDII8.o0hZvsZOJx4ns5DxUPx93.FR
- MoZ0l0Cj7jNfu9p.1RreX6Gke6C0gWz7ZkxFElr9hQiuXag5ayddW7EN1hWkKnAAK6Yy3Cegjp9U
- FDwRssgzwHeLufHMEy88NM8SpRhQd5n3AIWsuAHUAWR7p7OR7tBVcOqx347tYWjrlzlchz5sCz3h
- jSifp410-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Nov 2020 01:10:25 +0000
-Received: by smtp422.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 4b27f7017aa0de7d88a033876570fde1;
-          Thu, 05 Nov 2020 01:10:22 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: [PATCH v22 18/23] LSM: Verify LSM display sanity in binder
-Date:   Wed,  4 Nov 2020 16:49:19 -0800
-Message-Id: <20201105004924.11651-19-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20201105004924.11651-1-casey@schaufler-ca.com>
-References: <20201105004924.11651-1-casey@schaufler-ca.com>
+        Wed, 4 Nov 2020 20:10:55 -0500
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 489FE20867;
+        Thu,  5 Nov 2020 01:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604538654;
+        bh=lMfw07YaIe+dh+7s9oBPV38psJTZ7p1esC3tPIo+his=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SSTA37CZVbn50FW+3/ykeNCf3SmnWE56MkAT56GFu+v0j5I/Z70UC9BbsWpAKnrRp
+         vi+NNtXzjLVqCVzn4Gepo92C6mR3QuH1/Y8VsXZP3hLhfsBsXHt7hlJSzltlyBYaz5
+         EM+sq8esZVtIfQWwrjciOKzJtqwCOT8yAwBUiuDY=
+Date:   Thu, 5 Nov 2020 03:10:43 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
+Message-ID: <20201105011043.GA700495@kernel.org>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+ <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Verify that the tasks on the ends of a binder transaction
-use the same "display" security module. This prevents confusion
-of security "contexts".
+Noticed couple of minor glitches.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/security.c | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+On Wed, Nov 04, 2020 at 04:54:17PM +0200, Jarkko Sakkinen wrote:
+> +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> +		     unsigned long end, unsigned long vm_flags)
+> +{
+> +	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
+> +	struct sgx_encl_page *page;
+> +	unsigned long count = 0;
+> +	int ret = 0;
+> +
+> +	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
+> +
+> +	/*
+> +	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
+> +	 * conflict with the enclave page permissions.
+> +	 */
+> +	if (current->personality & READ_IMPLIES_EXEC)
+> +		return -EACCES;
+> +
+> +	mutex_lock(&encl->lock);
+> +	xas_lock(&xas);
+> +	xas_for_each(&xas, page, PFN_DOWN(end - 1)) {
+> +		if (!page)
+> +			break;
 
-diff --git a/security/security.c b/security/security.c
-index 6c8debdfd629..c6b0f854c4a3 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -791,9 +791,38 @@ int security_binder_set_context_mgr(struct task_struct *mgr)
- 	return call_int_hook(binder_set_context_mgr, 0, mgr);
- }
- 
-+/**
-+ * security_binder_transaction - Binder driver transaction check
-+ * @from: source of the transaction
-+ * @to: destination of the transaction
-+ *
-+ * Verify that the tasks have the same LSM "display", then
-+ * call the security module hooks.
-+ *
-+ * Returns -EINVAL if the displays don't match, or the
-+ * result of the security module checks.
-+ */
- int security_binder_transaction(struct task_struct *from,
- 				struct task_struct *to)
- {
-+	int from_display = lsm_task_display(from);
-+	int to_display = lsm_task_display(to);
-+
-+	/*
-+	 * If the display is LSMBLOB_INVALID the first module that has
-+	 * an entry is used. This will be in the 0 slot.
-+	 *
-+	 * This is currently only required if the server has requested
-+	 * peer contexts, but it would be unwieldly to have too much of
-+	 * the binder driver detail here.
-+	 */
-+	if (from_display == LSMBLOB_INVALID)
-+		from_display = 0;
-+	if (to_display == LSMBLOB_INVALID)
-+		to_display = 0;
-+	if (from_display != to_display)
-+		return -EINVAL;
-+
- 	return call_int_hook(binder_transaction, 0, from, to);
- }
- 
--- 
-2.24.1
+A redundant check, can be removed.
 
+> +
+> +		if (~page->vm_max_prot_bits & vm_prot_bits) {
+> +			ret = -EACCES;
+> +			break;
+> +		}
+> +
+> +		/* Reschedule on every XA_CHECK_SCHED iteration. */
+> +		if (!(++count % XA_CHECK_SCHED)) {
+> +			xas_pause(&xas);
+> +			xas_unlock(&xas);
+> +			mutex_unlock(&encl->lock);
+> +
+> +			cond_resched();
+> +
+> +			mutex_lock(&encl->lock);
+> +			xas_lock(&xas);
+> +		}
+> +	}
+> +	xas_unlock(&xas);
+> +	mutex_unlock(&encl->lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int sgx_vma_mprotect(struct vm_area_struct *vma,
+> +			    struct vm_area_struct **pprev, unsigned long start,
+> +			    unsigned long end, unsigned long newflags)
+> +{
+> +	int ret;
+> +
+> +	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return mprotect_fixup(vma, pprev, start, end, newflags);
+> +}
+> +
+> +const struct vm_operations_struct sgx_vm_ops = {
+> +	.fault = sgx_vma_fault,
+> +	.mprotect = sgx_vma_mprotect,
+> +};
+> +
+> +/**
+> + * sgx_encl_find - find an enclave
+> + * @mm:		mm struct of the current process
+> + * @addr:	address in the ELRANGE
+> + * @vma:	the resulting VMA
+> + *
+> + * Find an enclave identified by the given address. Give back a VMA that is
+> + * part of the enclave and located in that address. The VMA is given back if it
+> + * is a proper enclave VMA even if an &sgx_encl instance does not exist yet
+> + * (enclave creation has not been performed).
+> + *
+> + * Return:
+> + *   0 on success,
+> + *   -EINVAL if an enclave was not found,
+> + *   -ENOENT if the enclave has not been created yet
+> + */
+> +int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+> +		  struct vm_area_struct **vma)
+> +{
+> +	struct vm_area_struct *result;
+> +	struct sgx_encl *encl;
+> +
+> +	result = find_vma(mm, addr);
+> +	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+> +		return -EINVAL;
+> +
+> +	encl = result->vm_private_data;
+> +	*vma = result;
+> +
+> +	return encl ? 0 : -ENOENT;
+> +}
+
+Since v20 there has been 1:1 assocition between enclaves and files.
+In other words, this can never return -ENOENT.
+
+With this reduction the function turns into:
+
+int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+		  struct vm_area_struct **vma)
+{
+	struct vm_area_struct *result;
+
+	result = find_vma(mm, addr);
+	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+		return -EINVAL;
+
+	*vma = result;
+
+	return 0;
+}
+
+There are only two call sites:
+
+1. sgx_encl_test_and_clear_young()
+2. sgx_reclaimer_block()
+
+I.e. would not be a big trouble to tune the signature a bit:
+
+struct vm_area_struct *sgx_encl_find_vma(struct mm_struct *mm, unsigned long addr)
+{
+	struct vm_area_struct *result;
+
+	result = find_vma(mm, addr);
+	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+		return NULL;
+
+	return result;
+}
+
+There is a function called sgx_encl_find_mm(), which is *unrelated* to
+this function and has only one call sites. Its flow is very linear. In
+order to avoid confusion, I'd open code that into sgx_encl_mm_add().
+
+/Jarkko
