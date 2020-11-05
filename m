@@ -2,149 +2,89 @@ Return-Path: <SRS0=docv=EL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C08AFC4741F
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 14:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B216C55ABD
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 16:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 612F020786
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 14:30:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE1DF221FA
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 16:06:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nUZHSYOp"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="MgIWWTeG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731146AbgKEOap (ORCPT
+        id S1730466AbgKEQGK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Nov 2020 09:30:45 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:31606 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727275AbgKEOao (ORCPT
+        Thu, 5 Nov 2020 11:06:10 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:34110 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725998AbgKEQGK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Nov 2020 09:30:44 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A5E2RHA069793;
-        Thu, 5 Nov 2020 09:30:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=S9CJWToNLpkKaCorY29bqvxp8f7JEx0XR/Lr9uF/huY=;
- b=nUZHSYOpknxeIn3PzQzenFH35XSGFkI39rU2Iv/FbkbzQKU4PyJBQBCc5ebWOOpgv7nm
- GvMaW6E2y7rAoZgQ+9LmLfid0iogBBCYJpO85IOgCyKOTTieE6h97jSh0yIMQ2Mno6kr
- Fge88ybimz4piCdf50sota/VMyqPJT38x/f7zk/QRbwpy/CDw/qmfvdlVmVjl0Wr+lFB
- eblyoiYRL/yCaz98cDyG3IiXAYStSHkcMsnp8903KUiP1vz2eDZnreD+0pFhkPyxPUKj
- EjDb6mBkysNonJg0PWxc4TPhzaZYDfmACcArF+1H4ShbhiYcOG2zOYiZE6PtbYQoYkc1 vQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34m5ftg0w3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Nov 2020 09:30:36 -0500
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0A5E3Bwc077583;
-        Thu, 5 Nov 2020 09:30:35 -0500
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34m5ftg0ug-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Nov 2020 09:30:35 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0A5ER9Dg016507;
-        Thu, 5 Nov 2020 14:30:32 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 34h0fcwh52-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 05 Nov 2020 14:30:32 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0A5EUUee56426984
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Nov 2020 14:30:30 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8FDD6AE051;
-        Thu,  5 Nov 2020 14:30:30 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 47954AE04D;
-        Thu,  5 Nov 2020 14:30:27 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.97.46])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Nov 2020 14:30:27 +0000 (GMT)
-Message-ID: <d0e96ccc49590c5ff11675661592b70b0f021636.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/7] IMA: update process_buffer_measurement to
- measure buffer hash
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
-        paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Thu, 05 Nov 2020 09:30:26 -0500
-In-Reply-To: <20201101222626.6111-3-tusharsu@linux.microsoft.com>
-References: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
-         <20201101222626.6111-3-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-05_07:2020-11-05,2020-11-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
- mlxscore=0 phishscore=0 suspectscore=0 clxscore=1015 bulkscore=0
- priorityscore=1501 mlxlogscore=999 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011050092
+        Thu, 5 Nov 2020 11:06:10 -0500
+Received: from zn.tnic (p200300ec2f0ee5006c78cd15f1739a31.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:e500:6c78:cd15:f173:9a31])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ABBEB1EC03A0;
+        Thu,  5 Nov 2020 17:06:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1604592367;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=S5boF4B6TAHFPlvlgDFEEapIEvWayFlRDB/oT9Qr6eY=;
+        b=MgIWWTeGmdGbWivhsxWZDTo5EI6CY70hB1Bn0ZQ3R8NToCxQEr4NRSgbPZf4eQa9qkVR0k
+        TEMGRxDApvtqS+glbggqJ3hz5H3xcSvCpFf+bffafn89ZZgjDoSqUcO4JPlIdb/wmUCwXr
+        aIez9StDLSstQ2wsnG9IPtMPnwmaDxc=
+Date:   Thu, 5 Nov 2020 17:05:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
+Message-ID: <20201105160559.GD25636@zn.tnic>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+ <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
+ <20201105011043.GA700495@kernel.org>
+ <20201105011615.GA701257@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201105011615.GA701257@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Tushar,
-
-Please don't include the filename in the Subject line[1].   The Subject
-line should be a summary phrase describing the patch.   In this case,
-it is adding support for measuring the buffer data hash.
-
-On Sun, 2020-11-01 at 14:26 -0800, Tushar Sugandhi wrote:
-> process_buffer_measurement() currently only measures the input buffer.
-> In case of SeLinux policy measurement, the policy being measured could
-> be large (several MB). This may result in a large entry in IMA
-> measurement log.
-
-SELinux is an example of measuring large buffer data.  Please rewrite
-this patch description (and the other patch descriptions in this patch
-set) without using the example to describe its purpose [1].
-
-In this case, you might say,
-
-The original IMA buffer data measurement sizes were small (e.g. boot
-command line), but new buffer data measurement use cases are a lot
-larger.  Just as IMA measures the file data hash, not the file data,
-IMA should similarly support measuring the buffer data hash.
-
+On Thu, Nov 05, 2020 at 03:16:15AM +0200, Jarkko Sakkinen wrote:
+> Further, I'd declare this as an inline function given how trivial it
+> turn into.
 > 
-> Introduce a boolean parameter measure_buf_hash to support measuring
-> hash of a buffer, which would be much smaller, instead of the buffer
-> itself.
+...
 
-> To use the functionality introduced in this patch, the attestation
-> client and the server changes need to go hand in hand. The
-> client/kernel would know what data is being measured as-is
-> (e.g. KEXEC_CMDLINE), and what data has it’s hash measured (e.g. SeLinux
-> Policy). And the attestation server should verify data/hash accordingly.
-> 
-> Just like the data being measured in other cases, the attestation server
-> will know what are possible values of the large buffers being measured.
-> e.g. the possible valid SeLinux policy values that are being pushed to
-> the client. The attestation server will have to maintain the hash of
-> those buffer values.
+So are you sending a new version of only this patch as a reply to this
+subthread?
 
-Each patch in the patch set builds upon the previous one.   (Think of
-it as a story, where each chapter builds upon the previous ones.)  
-With rare exceptions, should patches reference subsequent patches. [2]
+-- 
+Regards/Gruss,
+    Boris.
 
-[1] Refer to Documentation/process/submitting-patches.rst
-[2] Refer to the section "8) Commenting" in
-Documentation/process/coding-style.rst
-
-thanks,
-
-Mimi
-
+https://people.kernel.org/tglx/notes-about-netiquette
