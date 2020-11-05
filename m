@@ -2,89 +2,170 @@ Return-Path: <SRS0=docv=EL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B216C55ABD
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 16:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D27C4741F
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 17:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE1DF221FA
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 16:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95AFD2083B
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 17:33:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="MgIWWTeG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jz4PrMo5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbgKEQGK (ORCPT
+        id S1730898AbgKERdd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Nov 2020 11:06:10 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34110 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725998AbgKEQGK (ORCPT
+        Thu, 5 Nov 2020 12:33:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbgKERdd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Nov 2020 11:06:10 -0500
-Received: from zn.tnic (p200300ec2f0ee5006c78cd15f1739a31.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:e500:6c78:cd15:f173:9a31])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ABBEB1EC03A0;
-        Thu,  5 Nov 2020 17:06:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1604592367;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=S5boF4B6TAHFPlvlgDFEEapIEvWayFlRDB/oT9Qr6eY=;
-        b=MgIWWTeGmdGbWivhsxWZDTo5EI6CY70hB1Bn0ZQ3R8NToCxQEr4NRSgbPZf4eQa9qkVR0k
-        TEMGRxDApvtqS+glbggqJ3hz5H3xcSvCpFf+bffafn89ZZgjDoSqUcO4JPlIdb/wmUCwXr
-        aIez9StDLSstQ2wsnG9IPtMPnwmaDxc=
-Date:   Thu, 5 Nov 2020 17:05:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Chunyang Hui <sanqian.hcy@antfin.com>,
-        Jordan Hand <jorhand@linux.microsoft.com>,
-        Nathaniel McCallum <npmccallum@redhat.com>,
-        Seth Moore <sethmo@google.com>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        andriy.shevchenko@linux.intel.com, asapek@google.com,
-        cedric.xing@intel.com, chenalexchen@google.com,
-        conradparker@google.com, cyhanish@google.com,
-        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
-        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
-        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
-        mikko.ylinen@intel.com
-Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
-Message-ID: <20201105160559.GD25636@zn.tnic>
-References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
- <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
- <20201105011043.GA700495@kernel.org>
- <20201105011615.GA701257@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201105011615.GA701257@kernel.org>
+        Thu, 5 Nov 2020 12:33:33 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D89B7C0613CF;
+        Thu,  5 Nov 2020 09:33:31 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id u21so2592713iol.12;
+        Thu, 05 Nov 2020 09:33:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=XOyznZTEsXdH/0R24390C+1ujg7ZJGqVqGTwGLt4RDg=;
+        b=jz4PrMo5rH3esQZ2RZqtP0qBLkPQ+53YYYQB9cQsm1c4YPxBmNzOS4YM0pFwrjz+KO
+         +Lie/PHY0SMU/qtHl2UpAUq7UbhjHeGQ7yECd8zOopABh8W/zSqDnZilR2feKoBUlJ/t
+         iXwL/JHqoKKShpqYlQHlK/I5SLnHXGYcfzMXyv72CaUiEP2SAiI5bbFDJBRH9Cr4bce5
+         48vs56mGJ9sug5msRMNvaFxB+auBDRhcQkuhcpaJjGqvP7Ys9XH482qXLM9Mmodr6woR
+         GreogOdKlZd2R7XZ5t0XkcIKVWy1qIyk6bJ1VOy1I9jAU7fYeuataV3YUy7uMhoPoN4A
+         T3Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XOyznZTEsXdH/0R24390C+1ujg7ZJGqVqGTwGLt4RDg=;
+        b=d5qf1D01s4oXpNmxIBG29zQrqCh8xqgYRsPUsyzl6r3Ugykfcgfs4KkSuDMBGzcBLh
+         UOOzaOGRoh1MVOCZgCSutxtFDTF2K3ueHxGh1lVBU2QLu2V90lB0aNBiQAE1ym202g4V
+         IFQOQU1+vKwvzO51hrGKmdjrh+QcwI80AbiveE31wBVlyT2TTjXchDDlrnTr/kALWJz+
+         w4plxj2/eVe0VjqjwRNFTGcQMekPxjbsAxouNUC4xQ7llhlTAn6od1qSaIqInTtNokem
+         9nOHQBoRzjmj97BBmTfRsBn348jPpke6azsKKJhDB5Mr8puxGZEOcBrhSU4O6+5OAXqV
+         bCWg==
+X-Gm-Message-State: AOAM533dYTOD38NYyY3kmFY5IRftI3fWwn+Js+8kIh4k0IDoJonXseMA
+        Nh1L23FLsGlHwLRuRJ34wSY=
+X-Google-Smtp-Source: ABdhPJy9C1m7FXB2RvyTBYBW5bQAsEKNGlNIDhVy8U4SDVe/PtGtYlXYWgSbchAV3DXhFz42dRTv4w==
+X-Received: by 2002:a05:6638:124d:: with SMTP id o13mr2878069jas.98.1604597611139;
+        Thu, 05 Nov 2020 09:33:31 -0800 (PST)
+Received: from Olgas-MBP-377.attlocal.net (172-10-226-31.lightspeed.livnmi.sbcglobal.net. [172.10.226.31])
+        by smtp.gmail.com with ESMTPSA id x20sm1413888ioh.17.2020.11.05.09.33.29
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Thu, 05 Nov 2020 09:33:30 -0800 (PST)
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com
+Cc:     linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: [PATCH 1/2] [lsm] introduce a new hook to query LSM for functionality
+Date:   Thu,  5 Nov 2020 12:33:27 -0500
+Message-Id: <20201105173328.2539-1-olga.kornievskaia@gmail.com>
+X-Mailer: git-send-email 2.10.1 (Apple Git-78)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 05, 2020 at 03:16:15AM +0200, Jarkko Sakkinen wrote:
-> Further, I'd declare this as an inline function given how trivial it
-> turn into.
-> 
-...
+From: Olga Kornievskaia <kolga@netapp.com>
 
-So are you sending a new version of only this patch as a reply to this
-subthread?
+Add a new hook func_query_vfs to query an LSM module (such as
+SELinux) with the intention of finding whether or not it is enabled
+or perhaps supports some functionality.
 
+NFS stores security labels for file system objects and SElinux
+or any other LSM module can query those objects. But it's
+wasteful to do so when no security enforcement is taking place.
+Using a new API call of security_func_query_vfs() and asking if
+
+Suggested-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+---
+ include/linux/lsm_hook_defs.h | 1 +
+ include/linux/security.h      | 4 ++++
+ security/security.c           | 6 ++++++
+ security/selinux/hooks.c      | 7 +++++++
+ 4 files changed, 18 insertions(+)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 32a940117e7a..df3454a1fcac 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -257,6 +257,7 @@ LSM_HOOK(int, 0, inode_notifysecctx, struct inode *inode, void *ctx, u32 ctxlen)
+ LSM_HOOK(int, 0, inode_setsecctx, struct dentry *dentry, void *ctx, u32 ctxlen)
+ LSM_HOOK(int, 0, inode_getsecctx, struct inode *inode, void **ctx,
+ 	 u32 *ctxlen)
++LSM_HOOK(int, 0, func_query_vfs, unsigned int)
+ 
+ #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
+ LSM_HOOK(int, 0, post_notification, const struct cred *w_cred,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index bc2725491560..e15964059fa4 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -456,6 +456,10 @@ int security_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen);
+ int security_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen);
+ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen);
+ int security_locked_down(enum lockdown_reason what);
++#define LSM_FQUERY_VFS_NONE     0x00000000
++#define LSM_FQUERY_VFS_XATTRS   0x00000001
++int security_func_query_vfs(unsigned int flags);
++
+ #else /* CONFIG_SECURITY */
+ 
+ static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+diff --git a/security/security.c b/security/security.c
+index a28045dc9e7f..502b33865238 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2067,6 +2067,12 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+ }
+ EXPORT_SYMBOL(security_inode_getsecctx);
+ 
++int security_func_query_vfs(unsigned int flags)
++{
++	return call_int_hook(func_query_vfs, 0, flags);
++}
++EXPORT_SYMBOL(security_func_query_vfs);
++
+ #ifdef CONFIG_WATCH_QUEUE
+ int security_post_notification(const struct cred *w_cred,
+ 			       const struct cred *cred,
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 6b1826fc3658..38f47570e214 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -92,6 +92,7 @@
+ #include <uapi/linux/mount.h>
+ #include <linux/fsnotify.h>
+ #include <linux/fanotify.h>
++#include <linux/security.h>
+ 
+ #include "avc.h"
+ #include "objsec.h"
+@@ -6502,6 +6503,11 @@ static void selinux_inode_invalidate_secctx(struct inode *inode)
+ 	spin_unlock(&isec->lock);
+ }
+ 
++static int selinux_func_query_vfs(unsigned int flags)
++{
++	return !!(flags & LSM_FQUERY_VFS_XATTRS);
++}
++
+ /*
+  *	called with inode->i_mutex locked
+  */
+@@ -7085,6 +7091,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_invalidate_secctx, selinux_inode_invalidate_secctx),
+ 	LSM_HOOK_INIT(inode_notifysecctx, selinux_inode_notifysecctx),
+ 	LSM_HOOK_INIT(inode_setsecctx, selinux_inode_setsecctx),
++	LSM_HOOK_INIT(func_query_vfs, selinux_func_query_vfs),
+ 
+ 	LSM_HOOK_INIT(unix_stream_connect, selinux_socket_unix_stream_connect),
+ 	LSM_HOOK_INIT(unix_may_send, selinux_socket_unix_may_send),
 -- 
-Regards/Gruss,
-    Boris.
+2.18.2
 
-https://people.kernel.org/tglx/notes-about-netiquette
