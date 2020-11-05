@@ -2,156 +2,227 @@ Return-Path: <SRS0=docv=EL=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09888C4741F
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A831C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3F60208C7
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:16:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lXnwSleP"
+	by mail.kernel.org (Postfix) with ESMTP id DCBFB206ED
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Nov 2020 01:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1604538987;
+	bh=dcUaxl/PETJGyY/2HL0+/kywBDNn5Xp5qgEXmaRjQ1s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AiMYhob+F7yloqX6FLhgMSAThr5VP1705yV8DtImLUgQzcTIE9RH/ZxV7Yjzkb4f6
+	 TdavFVQ4bUkx266iQLlFezl4k6cSkaO7DBiY/7Wz4K5fm3tJFS8QaRnjkWdjafX25d
+	 HO30R0WYSjDpBUXtZXt7wmTwqXkCqYZIhjrTM3QQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388263AbgKEBQO (ORCPT
+        id S2388284AbgKEBQ1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Nov 2020 20:16:14 -0500
-Received: from sonic301-36.consmr.mail.ne1.yahoo.com ([66.163.184.205]:42974
-        "EHLO sonic301-36.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388261AbgKEBQN (ORCPT
+        Wed, 4 Nov 2020 20:16:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388259AbgKEBQ1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Nov 2020 20:16:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1604538972; bh=yY/yFVl1emb2zJDw1hk6NF/KbSJkukEm4lylfgSZeVc=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject; b=lXnwSlePCq8EyA4T1vcN2vOrDNlPAcl2buH7ckrYgpmlxHXAIit12mmW8sUU9SY/aX9Gg/8aCHfEYI6kB9J2VSa3SUxKNz0kS4HPxHTPuxIQplmoJCkooygolNfEx63M/8VhPKK4KVKBETH3UY+ro2uRNzeyLiE5M52fVVALfJg0WY5cDLqGPbzxqBKOdrLBHtCpJiJZDJK1irfBz5kkPgCjB+lhrXDAoLSEdBsGcB7bMdb0Vpu7jbevaOMPnD2iP6GQjhDkmu6ZSqKiZgX/LYxg6fiGgSrIsdJ2EgYOO2M0DdaZ+wKUBHcBmLvn9eqd+rwgVPMapcmC0C4yuQ2kFA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1604538972; bh=ZAFMtpEOnazVgELbNLnWZ7misYOeJpXC6zIg5jypNKI=; h=From:To:Subject:Date; b=NMUHFfokFLRYl6F4JhHwSuPQJBTwDpCERNHKVSFKVb5YcUDYp6+BnHzoWYrLEtk1FCN6VTCe0xDCUqXKl6ssb15OJP9tJreJ1Tdt4Hq3an9eQ3BXWhfUztZwmNhMv4tcRFWjlupv9Y4OxP0G5md/us6EXDySHYAoCuz2Wyqiun99R3x95b5tE8hHlrNihwwUGzKk9xtFNqKxne+onppOBt2Z1MBOQQxOgorcq0mXYJJmUA9hNShQnEqTbMMyPRk2lxXFhzXDghMLbmtwwF24pfYsHRNwMy1/WBUqsw3eBYhdaUgWTFt9Gry+mNIM/Wc9CHsr8fI3V+/nOjTu5yPG2Q==
-X-YMail-OSG: uz66ApoVM1l9Q3PPl5hgCxQ_1ZcZlcX3DZQgALm1T.elz3Jajx7r1MfjZV4eHLX
- BojODkcHJx1YIWXdAxA1RBTkclb2Bj3wuZz4IgNRe5KES._QrcQcu.3owhzxbb.hQNe_3bzQ..3K
- Z43gJ8RHG80OVbKEB7x5TEYpCXiZ_v7H_v6Du_eXCp8Q1mR.8l_S1Xkj2zDQIpTZz6tiKRwZbGQl
- bW5GibYbaEJCHIR0wj69mxRDPO76eNDu37RUOPX.tG5djHHuHAAExjd_qEvogBgh9N3nXajzOnZh
- 9SWsgE0Q62MtoELIKspRscYTvY7ZTv031zYATaxzRa.qWRGCD.IWCPpQW7H14IaF546voMx6XxNK
- RMJiVWp25xXlRGOAJtmiUYgUsLQweC0CTrap6EcqiLzWKW0XPalGR656uMWi5b.Z30omTWysR4kO
- _0ziEM9ec0dqYC83BohF_BKbSuut6UQC_83FtVprPF1ixFRwDt9V0gwsf5cWvANtb3TuQhK913gi
- O1.nqhMSxS8f0lGcssn50OsEO1TDr1knIyU3H5rhHWM.DtBQrk6BUVGfs2d4yoOaPwE726hvzN3w
- fMHX5TivDxd1xpRFza6gsCY9R7HWT7NYCdRwBGoXAu54Kdr5Mmh1jgMDsuMJGYHysHhxSop63GLC
- XuPngwsbcA9BeAmR6_Ywg5sW.HvYpJgUz5NDJSLMwCnlx3JdiGAkj4eTkgWby7rgHpIyOG8X8zoF
- .dfYLaypTiESp574K0zI0I1pgGT6Z8SMQdv2tIa.LutsUyC.m8W0C4wKwY.RuVLo8VkUmdrG.ynm
- qE6bHFQRewQcK4b5criXYy16_rWQOJev7TwfAjAGe77e_lsI93J46f1K53oy.W2ImKVhzu6LnsBo
- 4evp_56Q.qMD3zEEBiCDqavl4vS8sglctFYHzfk8e37YHqXFY__7WGfkYZET3MVV5ik5xAk.sxUJ
- LexEFNPJk_pbkYjvL2.iNoUFcTU8rqkbLDKN9HnLbVJU4UWTkeOeI0d4jjVXyQ0EcD.R6hZW.DT7
- qvF_4yHOGDopw4N3t7Gt3SSG5vDspFbpxOitmEdjwzdJBMHIYsR3rDsWvJesDo.7KiUtYCwqCj2K
- xYHkcZGU6AZG_zwSgY1YSwl3AFsn6j0ZzHQW0ADzVQCH.JxkCcTYuzNl8w.u_2hKyMIZb3o9XZR9
- lT4PQ2F3.dpgYqZufDjPo75Iy9Dr0J2Eh2ep4suA0IHMeEH2RHZ7FbotiVtv1IJSseM6LfjgW13I
- tNOHg.SdO_DF7gEOYXDF2EmD4G9V.6.jveEZhKBwo6zIKyT2o3oZ4rGsYfZNnlt_ePjVDCLTZn0N
- 49X9cSJxP_ZxdmZl385.aGTIslovkrqZcPGLs2Z2q.L1MMD5rCD.SDni8u2bFM8SJpUWPssSzIQv
- nvWW77jM1ijipPKUaJAwA5iJ3AXpSsdugyiVCHU9EjPFoh5NZHLR_LLphkazGbCMBTAgXwXWRD99
- DD2Bmkk4f9KdDNzUpvS3qckuxzQ9LwUijS2L9oq7eGyjS9rqiaQPT_wnkvCicXGrFTmGU7ZC3jwl
- SBUvV8tnMiEc19B_ZCjlJlgGhIOooNKu5o6ieVFWDFeZfqEuNJAykF_I.t1GVofipSemcLHxRdSa
- 7zxAFWJTBquKdQs9S_cVUMPkYmlk9YRe1QT2Hr1k93.ebA9aY484YDBHVZ2xNwHa2N5QO0sKxcxr
- XGJhPpwnOgL2hrchj6LPoo4OS1Wcr6CxXeIT5BTn6UvrF4g7awp.9H1h2EqiWQewy8fB9kwJr7.A
- 3ko6aW_0.3rLzaERp2zPG6wySnz49BNTT8b.6g8Unq93ECZJYZ2aLMxOqVtHsIEqcSW8n7PMU1UO
- 5r5AXjG7l5qHz_9c9k85Xa4EUpG0WUx0yecUYNDXTfmYuSqpE8U9NcYm_qpkVKZL8h1SJEy9p6xz
- 8Nm5Ejkh6boYRUHRIEZF948NM4hXl2yvxwhcM2RisLswq0ZxAFCL8HgXurNqC02TfmvXjqWIOCAf
- VLqYYx3Yu8ktjbHRvl66ncjssthS5DupC.qbi6IyLlPFTg5wUrijfZPThkjcv1siO7vX1gprq79a
- cGC0ClYThZ4boTZ8X7foPG958k78EOi3osvRhxXugkPI5O6I1z_6HllgoXza7Ben0gFmQQs4Htjk
- 6tYCErIhOpM3KjXZC0CKZoMj5eltBMnbvsq3WL80c16KhrM1QJjc7X.1cIIunUntZe.J2CH1qjar
- 5vr6QNke0s6UA3fiV9_KO9MG7qftOwqa0oogCzOFx19yyHfuMSdTCJIkZv6shpT8SdTlfDYwDSfn
- 314U.WqwvD.qRvG1FLtt3bxQfZXa2hCdJ8yCEtVCED1Vk8qwLWyHcNLlbc3nFGofe1Em81prZOTL
- 7X7h5klhXSx4OqEaWAX2XJeryj_NK16ORB6ISSee..nFSBoY4KnUNRflsAjEb8S1_odW1bEvoJzz
- qIsWSrBS4Ifw_zc.ThVOIRlX.QKUuHUV8CBSc7IQcab9WS3rvvtJZFipSGdMrchkg5JyJOkNpKaA
- A_Y8ObHKewMQP_B4DhGs0b_kgZSxMBdcmeLdGJcM21AUnEcKZk0TrhgYV4SvBZdij6Fgt4hhjvAl
- CJj8rzZgFkMACQbjzkMKLA2nzYBP12MDc6p8VTewq7qqC7wuwx2exVamUAFtnF9qAazDOVLTkoE0
- DCtcfAv_16zH4PA97M1gNQsClYZHxyc8gZ4MHLZ1H7otMeMnyabqeX__QJWnjRHFQaZhpcN7j1Qb
- CayDtU6Bp..Nd2NHhmkwmhRsAE3faaxb.lJHCRPVrJWrkIadt9AKOiztDlosWgXpKmLJ_rebs38K
- d1MMYV7PYAZvJbuNFCUZsTB278.zpJDA8SNR6utWfWj3Qw1mw8UmQzbYu3uDeJH57znZjdXbYK6.
- lmppoIVxcWB05EMalUVBCg4JB40BE3tjnRxYiOhYv8LuyL7l8bX05g4_CuMxVk3vGlQzvB5YYdQw
- iF1ktCrWuB5ydr6IFsj5cC7sZZQOEaxNhwGwzBkSzQX12Utr1yA3sR9uB1KKfL_tqVFJ6DS8DO3U
- MipNOIk7nxQUCpkRQJTdz8AXD2Tet5.KIqbkohcOApQQMybkLFWpbHhikeqIyuwaAfnxDMjmYK1b
- 6nw9aOYpBxA_ndCvcWrpA96rFfNkqDN4D.yetx4bBZWhsiV7B3zFCoisH.J.JdSwtacKyueAvfbM
- JXYoyhWcJly4R6KjR0iRH3zw13VcjcoKbZ1rKRaO_zyEfz_8s7eZGmOSPFOszyDaEAVPB2JHJTJq
- eODvgeL.kh0wWxqOSU9a2m_GSNWjPN0IyEqswyeGTjXb4WJQ67ZrR4VWX7JVH2WvFCKxTTL8ZVtr
- OFRg.M5v7gyY-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ne1.yahoo.com with HTTP; Thu, 5 Nov 2020 01:16:12 +0000
-Received: by smtp402.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 9b08706fcc5b5291f7c73cdec733f17c;
-          Thu, 05 Nov 2020 01:16:08 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: [PATCH v22 23/23] AppArmor: Remove the exclusive flag
-Date:   Wed,  4 Nov 2020 16:49:24 -0800
-Message-Id: <20201105004924.11651-24-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20201105004924.11651-1-casey@schaufler-ca.com>
-References: <20201105004924.11651-1-casey@schaufler-ca.com>
+        Wed, 4 Nov 2020 20:16:27 -0500
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B234206F4;
+        Thu,  5 Nov 2020 01:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1604538986;
+        bh=dcUaxl/PETJGyY/2HL0+/kywBDNn5Xp5qgEXmaRjQ1s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wu8L6gANqkAPXgBak4nnS1p46y/+niMg0TmC1plwPSWTqP12bawuNURHpu/+bPRK1
+         ZkG+1C06ybKJYYTun8FSQJOZE7bWNrVnWVJlJlLG/0EizSKHGI1f2qAuYx+g4ToP5b
+         TaKvN01qJxT2R2o5xP72Rnq+cOnbQXRVLsF2cSao=
+Date:   Thu, 5 Nov 2020 03:16:15 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, linux-sgx@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
+Message-ID: <20201105011615.GA701257@kernel.org>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+ <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
+ <20201105011043.GA700495@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201105011043.GA700495@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With the inclusion of the "display" process attribute
-mechanism AppArmor no longer needs to be treated as an
-"exclusive" security module. Remove the flag that indicates
-it is exclusive. Remove the stub getpeersec_dgram AppArmor
-hook as it has no effect in the single LSM case and
-interferes in the multiple LSM case.
+On Thu, Nov 05, 2020 at 03:10:54AM +0200, Jarkko Sakkinen wrote:
+> Noticed couple of minor glitches.
+> 
+> On Wed, Nov 04, 2020 at 04:54:17PM +0200, Jarkko Sakkinen wrote:
+> > +int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
+> > +		     unsigned long end, unsigned long vm_flags)
+> > +{
+> > +	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
+> > +	struct sgx_encl_page *page;
+> > +	unsigned long count = 0;
+> > +	int ret = 0;
+> > +
+> > +	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
+> > +
+> > +	/*
+> > +	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
+> > +	 * conflict with the enclave page permissions.
+> > +	 */
+> > +	if (current->personality & READ_IMPLIES_EXEC)
+> > +		return -EACCES;
+> > +
+> > +	mutex_lock(&encl->lock);
+> > +	xas_lock(&xas);
+> > +	xas_for_each(&xas, page, PFN_DOWN(end - 1)) {
+> > +		if (!page)
+> > +			break;
+> 
+> A redundant check, can be removed.
+> 
+> > +
+> > +		if (~page->vm_max_prot_bits & vm_prot_bits) {
+> > +			ret = -EACCES;
+> > +			break;
+> > +		}
+> > +
+> > +		/* Reschedule on every XA_CHECK_SCHED iteration. */
+> > +		if (!(++count % XA_CHECK_SCHED)) {
+> > +			xas_pause(&xas);
+> > +			xas_unlock(&xas);
+> > +			mutex_unlock(&encl->lock);
+> > +
+> > +			cond_resched();
+> > +
+> > +			mutex_lock(&encl->lock);
+> > +			xas_lock(&xas);
+> > +		}
+> > +	}
+> > +	xas_unlock(&xas);
+> > +	mutex_unlock(&encl->lock);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int sgx_vma_mprotect(struct vm_area_struct *vma,
+> > +			    struct vm_area_struct **pprev, unsigned long start,
+> > +			    unsigned long end, unsigned long newflags)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return mprotect_fixup(vma, pprev, start, end, newflags);
+> > +}
+> > +
+> > +const struct vm_operations_struct sgx_vm_ops = {
+> > +	.fault = sgx_vma_fault,
+> > +	.mprotect = sgx_vma_mprotect,
+> > +};
+> > +
+> > +/**
+> > + * sgx_encl_find - find an enclave
+> > + * @mm:		mm struct of the current process
+> > + * @addr:	address in the ELRANGE
+> > + * @vma:	the resulting VMA
+> > + *
+> > + * Find an enclave identified by the given address. Give back a VMA that is
+> > + * part of the enclave and located in that address. The VMA is given back if it
+> > + * is a proper enclave VMA even if an &sgx_encl instance does not exist yet
+> > + * (enclave creation has not been performed).
+> > + *
+> > + * Return:
+> > + *   0 on success,
+> > + *   -EINVAL if an enclave was not found,
+> > + *   -ENOENT if the enclave has not been created yet
+> > + */
+> > +int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+> > +		  struct vm_area_struct **vma)
+> > +{
+> > +	struct vm_area_struct *result;
+> > +	struct sgx_encl *encl;
+> > +
+> > +	result = find_vma(mm, addr);
+> > +	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+> > +		return -EINVAL;
+> > +
+> > +	encl = result->vm_private_data;
+> > +	*vma = result;
+> > +
+> > +	return encl ? 0 : -ENOENT;
+> > +}
+> 
+> Since v20 there has been 1:1 assocition between enclaves and files.
+> In other words, this can never return -ENOENT.
+> 
+> With this reduction the function turns into:
+> 
+> int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
+> 		  struct vm_area_struct **vma)
+> {
+> 	struct vm_area_struct *result;
+> 
+> 	result = find_vma(mm, addr);
+> 	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+> 		return -EINVAL;
+> 
+> 	*vma = result;
+> 
+> 	return 0;
+> }
+> 
+> There are only two call sites:
+> 
+> 1. sgx_encl_test_and_clear_young()
+> 2. sgx_reclaimer_block()
+> 
+> I.e. would not be a big trouble to tune the signature a bit:
+> 
+> struct vm_area_struct *sgx_encl_find_vma(struct mm_struct *mm, unsigned long addr)
+> {
+> 	struct vm_area_struct *result;
+> 
+> 	result = find_vma(mm, addr);
+> 	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
+> 		return NULL;
+> 
+> 	return result;
+> }
 
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/apparmor/lsm.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
+Further, I'd declare this as an inline function given how trivial it
+turn into.
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 7ce570b0f491..4b7cbe9bb1be 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1129,22 +1129,6 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
- 	return error;
- }
- 
--/**
-- * apparmor_socket_getpeersec_dgram - get security label of packet
-- * @sock: the peer socket
-- * @skb: packet data
-- * @secid: pointer to where to put the secid of the packet
-- *
-- * Sets the netlabel socket state on sk from parent
-- */
--static int apparmor_socket_getpeersec_dgram(struct socket *sock,
--					    struct sk_buff *skb, u32 *secid)
--
--{
--	/* TODO: requires secid support */
--	return -ENOPROTOOPT;
--}
--
- /**
-  * apparmor_sock_graft - Initialize newly created socket
-  * @sk: child sock
-@@ -1248,8 +1232,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- #endif
- 	LSM_HOOK_INIT(socket_getpeersec_stream,
- 		      apparmor_socket_getpeersec_stream),
--	LSM_HOOK_INIT(socket_getpeersec_dgram,
--		      apparmor_socket_getpeersec_dgram),
- 	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
- #ifdef CONFIG_NETWORK_SECMARK
- 	LSM_HOOK_INIT(inet_conn_request, apparmor_inet_conn_request),
-@@ -1918,7 +1900,7 @@ static int __init apparmor_init(void)
- 
- DEFINE_LSM(apparmor) = {
- 	.name = "apparmor",
--	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.enabled = &apparmor_enabled,
- 	.blobs = &apparmor_blob_sizes,
- 	.init = apparmor_init,
--- 
-2.24.1
+> There is a function called sgx_encl_find_mm(), which is *unrelated* to
+> this function and has only one call sites. Its flow is very linear. In
+> order to avoid confusion, I'd open code that into sgx_encl_mm_add().
+> 
+> /Jarkko
 
+/Jarkko
