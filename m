@@ -2,73 +2,72 @@ Return-Path: <SRS0=NEAF=EM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4430CC2D0A3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 12:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADCCC2D0A3
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 13:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D151F20715
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 12:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 849582100A
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 13:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W7yDACQi"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PhsbIFYf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbgKFMLR (ORCPT
+        id S1727395AbgKFNYf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Nov 2020 07:11:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42342 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726317AbgKFMLR (ORCPT
+        Fri, 6 Nov 2020 08:24:35 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12354 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727287AbgKFNYf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Nov 2020 07:11:17 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A6C1tuZ058470;
-        Fri, 6 Nov 2020 07:11:11 -0500
+        Fri, 6 Nov 2020 08:24:35 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A6D3KAc045401;
+        Fri, 6 Nov 2020 08:24:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=bTgdsaXV0EvD4DnZF92Jqq7UrIodW4TVzld1IYi9XPM=;
- b=W7yDACQiXSojO9Q+33wNkbZjJ0eVExiKYww/JHkCR1AmBh7mjfwiFAp34+wb1HRyPJRx
- ntR5HWwFMhMI8SqYKsbntFoe73ees3Cbl7CMQ/asXAn36EUDfanJhss0WKaK9/3jcoGB
- VgL4/s93ER0EVAHpUw8pmDZnDVnoUEiuyCQjb7kkDKIJysYbNvbn4bw8Oo5SRul6rXGW
- Qu8KQLgrpyoWIT9yvbiv26ftsydYAvZhPa4HAATWi9/rGQuPORVJ8Gbg7X7q71bkW1hH
- uumdJb6cZ3HYs+fBqef2F5+iz9kFl5WeIqYIb+siaC00CCrdCXuJVQzgyrO54RjKo1eH EA== 
+ bh=pHx2leChPrzAo4WC2IenghVznIUYtgXXGfVyOhtlw/U=;
+ b=PhsbIFYfRhRbCifMPlvp61ET8lMmQMqn26XRNQyyRN67kOkrOSj78oknde0VDPW7vMAR
+ NWP/WG7uI+cPXkS9QMtMUnjZ4jLYvIerlmNGmN/C7fPB1YL5ak0MW8nem9671aFo/8hJ
+ Orm/UcJo7phBFjVMn0ATnldfVuqxMcZ9rx+rDMqlW7tXOxTV5++eJF2+zKx6bgRnpTEM
+ DTTgzcbcRmYEZE7u7Kajod6apwv1svfVM3q5V8pWm29JVVP68Gg2JWn/9v0qrftr2XgO
+ AsfqaSnPfMhDtrk9PHBxA3FmTgX08xOPWqS2D8FWRmgOHUpa5H8b03EbQm5dNz8NWCgJ PA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34mnucbv2u-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34n3qr7m4p-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Nov 2020 07:11:11 -0500
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0A6C21Yb059071;
-        Fri, 6 Nov 2020 07:11:11 -0500
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34mnucbv1f-1
+        Fri, 06 Nov 2020 08:24:28 -0500
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0A6DFnwV106475;
+        Fri, 6 Nov 2020 08:24:27 -0500
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34n3qr7m3m-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Nov 2020 07:11:10 -0500
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0A6Bx4hM015466;
-        Fri, 6 Nov 2020 12:11:08 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 34h0f6uart-1
+        Fri, 06 Nov 2020 08:24:27 -0500
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0A6DLxKn004773;
+        Fri, 6 Nov 2020 13:24:25 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 34hm6hdskk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Nov 2020 12:11:08 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0A6CB61H59441418
+        Fri, 06 Nov 2020 13:24:25 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0A6DONFB64553234
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Nov 2020 12:11:06 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 05B3642041;
-        Fri,  6 Nov 2020 12:11:06 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 515B142045;
-        Fri,  6 Nov 2020 12:11:02 +0000 (GMT)
+        Fri, 6 Nov 2020 13:24:23 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 36A63AE056;
+        Fri,  6 Nov 2020 13:24:23 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C6192AE051;
+        Fri,  6 Nov 2020 13:24:19 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.77.67])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Nov 2020 12:11:02 +0000 (GMT)
-Message-ID: <811fbc4a6f4bd02c77518bd4196d354071145f3e.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 2/7] IMA: update process_buffer_measurement to
- measure buffer hash
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Nov 2020 13:24:19 +0000 (GMT)
+Message-ID: <1f83ec246cb6356c340b379ab00e43f0b5bba0ae.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 3/7] IMA: add hook to measure critical data
 From:   Mimi Zohar <zohar@linux.ibm.com>
 To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
         stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
@@ -78,103 +77,137 @@ Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
         nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Fri, 06 Nov 2020 07:11:01 -0500
-In-Reply-To: <20201101222626.6111-3-tusharsu@linux.microsoft.com>
+Date:   Fri, 06 Nov 2020 08:24:18 -0500
+In-Reply-To: <20201101222626.6111-4-tusharsu@linux.microsoft.com>
 References: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
-         <20201101222626.6111-3-tusharsu@linux.microsoft.com>
+         <20201101222626.6111-4-tusharsu@linux.microsoft.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-06_03:2020-11-05,2020-11-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 malwarescore=0 spamscore=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 clxscore=1015 bulkscore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2011060085
+ definitions=2020-11-06_04:2020-11-05,2020-11-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011060090
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 Hi Tushar,
 
-Below inline are a few additional comments.
+On Sun, 2020-11-01 at 14:26 -0800, Tushar Sugandhi wrote:
+> Currently, IMA does not provide a generic function for kernel subsystems
+> to measure their critical data. Examples of critical data in this context
+> could be kernel in-memory r/o structures, hash of the memory structures,
+> or data that represents a linux kernel subsystem state change. The 
+> critical data, if accidentally or maliciously altered, can compromise
+> the integrity of the system.
 
+Start out with what IMA does do (e.g. measures files and more recently
+buffer data).  Afterwards continue with kernel integrity critical data
+should also be measured.  Please include a definition of kernel
+integrity critical data here, as well as in the cover letter.
+
+> 
+> A generic function provided by IMA to measure critical data would enable
+> various subsystems with easier and faster on-boarding to use IMA
+> infrastructure and would also avoid code duplication.
+
+By definition LSM and IMA hooks are generic with callers in appropriate
+places in the kernel.   This paragraph is redundant.
+
+> 
+> Add a new IMA func CRITICAL_DATA and a corresponding IMA hook
+> ima_measure_critical_data() to support measuring critical data for 
+> various kernel subsystems. 
+
+Instead of using the word "add", it would be more appropriate to use
+the word "define".   Define a new IMA hook named
+ima_measure_critical_data to measure kernel integrity critical data.  
+Please also update the Subject line as well.  "ima: define an IMA hook
+to measure kernel integrity critical data".
+
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> ---
+> 
 > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index ae5da9f3339d..4485d87c0aa5 100644
+> index 4485d87c0aa5..6e1b11dcba53 100644
 > --- a/security/integrity/ima/ima_main.c
 > +++ b/security/integrity/ima/ima_main.c
-> @@ -787,12 +787,15 @@ int ima_post_load_data(char *buf, loff_t size,
->   * @func: IMA hook
->   * @pcr: pcr to extend the measurement
->   * @func_data: private data specific to @func, can be NULL.
+> @@ -921,6 +921,44 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+>  	fdput(f);
+>  }
+>  
+> +/**
+> + * ima_measure_critical_data - measure kernel subsystem data
+> + * critical to integrity of the kernel
+
+Please change this to "measure kernel integrity critical data".
+
+> + * @event_data_source: name of the data source being measured;
+> + * typically it should be the name of the kernel subsystem that is sending
+> + * the data for measurement
+
+Including "data_source" here isn't quite right.  "data source" should
+only be added in the first patch which uses it, not here.   When adding
+it please shorten the field description to "kernel data source".   The
+longer explanation can be included in the longer function description.
+
+> + * @event_name: name of an event from the kernel subsystem that is sending
+> + * the data for measurement
+
+As this is being passed to process_buffer_measurement(), this should be
+the same or similar to the existing definition.
+
+> + * @buf: pointer to buffer containing data to measure
+> + * @buf_len: length of buffer(in bytes)
 > + * @measure_buf_hash: if set to true - will measure hash of the buf,
 > + *                    instead of buf
->   *
->   * Based on policy, the buffer is measured into the ima log.
 
-Both the brief and longer function descriptions need to be updated, as
-well as the last argument description.  The last argument should be
-limited to "measure buffer hash".  How it is used could be included in
-the longer function description.  The longer function description would
-include adding the buffer data or the buffer data hash to the IMA
-measurement list and extending the PCR.  
+ kernel doc requires a single line.  In this case, please shorten the
+argument definition to "measure buffer data or buffer data hash".   The
+details can be included in the longer function description.
 
-For example, 
-process_buffer_measurement - measure the buffer data or the buffer data
-hash
+> + *
+> + * A given kernel subsystem (event_data_source) may send
+> + * data (buf) to be measured when the data or the subsystem state changes.
+> + * The state/data change can be described by event_name.
+> + * Examples of critical data (buf) could be kernel in-memory r/o structures,
+> + * hash of the memory structures, or data that represents subsystem
+> + * state change.
+> + * measure_buf_hash can be used to save space, if the data being measured
+> + * is too large.
+> + * The data (buf) can only be measured, not appraised.
+> + */
 
-
->   */
->  void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  				const char *eventname, enum ima_hooks func,
-> -				int pcr, const char *func_data)
-> +				int pcr, const char *func_data,
-> +				bool measure_buf_hash)
->  {
->  	int ret = 0;
->  	const char *audit_cause = "ENOMEM";
-> @@ -807,6 +810,8 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  		struct ima_digest_data hdr;
->  		char digest[IMA_MAX_DIGEST_SIZE];
->  	} hash = {};
-> +	char digest_hash[IMA_MAX_DIGEST_SIZE];
-> +	int hash_len = hash_digest_size[ima_hash_algo];
->  	int violation = 0;
->  	int action = 0;
->  	u32 secid;
-> @@ -855,6 +860,21 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  		goto out;
->  	}
->  
-> +	if (measure_buf_hash) {
-> +		memcpy(digest_hash, hash.hdr.digest, hash_len);
-
-Instead of digest_hash and hash_len, consider naming the variables
-buf_hash and buf_hashlen.
-
-> +
-> +		ret = ima_calc_buffer_hash(digest_hash,
-> +					   hash_len,
-> +					   iint.ima_hash);
-
-There's no need for each variable to be on a separate line.
+Please remove this longer function description, replacing it something
+more appropriate.  The subsequent patch that introduces the "data
+source" parameter would expand the description.
 
 thanks,
 
 Mimi
 
-> +		if (ret < 0) {
-> +			audit_cause = "measure_buf_hash_error";
-> +			goto out;
-> +		}
-> +
-> +		event_data.buf = digest_hash;
-> +		event_data.buf_len = hash_len;
+> +void ima_measure_critical_data(const char *event_data_source,
+> +			       const char *event_name,
+> +			       const void *buf, int buf_len,
+> +			       bool measure_buf_hash)
+> +{
+> +	if (!event_name || !event_data_source || !buf || !buf_len) {
+> +		pr_err("Invalid arguments passed to %s().\n", __func__);
+> +		return;
 > +	}
 > +
->  	ret = ima_alloc_init_template(&event_data, &entry, template);
->  	if (ret < 0) {
->  		audit_cause = "alloc_entry";
+> +	process_buffer_measurement(NULL, buf, buf_len, event_name,
+> +				   CRITICAL_DATA, 0, event_data_source,
+> +				   measure_buf_hash);
+> +}
+> +
+>  static int __init init_ima(void)
+>  {
+>  	int error;
 
