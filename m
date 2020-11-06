@@ -4,98 +4,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3209C388F2
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 17:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FF6C55178
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 22:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F21622203
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 17:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7F2D2087E
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 22:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604684811;
-	bh=4o77fqFuBZvPiDYAW30olp6av5R3X4/iv+z7vMt50bA=;
+	s=default; t=1604700114;
+	bh=laNmFX4CdLt/FOLsmbcIZF0mnZLt8LMC0wveAkASVv4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=M6NAu1i58MYQ/GulP25OYTf2EYcJ+D/XC5BoR1JCr14uw6pScff4CMDbuV9J9qcVf
-	 1rCQIEZftUecKV/r0frvxc4XOy4h8Scib1vcJQtF31SANg9HDWk4LLMEOeMrIYRtLw
-	 Y+ZmcxVGbcNjSlCiRiF31Ewywa68mCUxuS8e2XI0=
+	b=AH/TKdFxWAwxHwOEwVaTqFGHKvARdLRGR8GoMEhKSYIXDqmq92CvrVeoOpwLdhvq8
+	 XBR2FkJ9wWf8FZtfP2KljyCvhf0mC0bTSg8jozFC5GPzVYXJ95OSHtd3AZ3PDpELo4
+	 NdGk9y5wT20M76s2972TtN8LAPZ797kg3DCgpfr0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgKFRqv (ORCPT
+        id S1728680AbgKFWBy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Nov 2020 12:46:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54086 "EHLO mail.kernel.org"
+        Fri, 6 Nov 2020 17:01:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbgKFRqu (ORCPT
+        id S1728697AbgKFWBy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Nov 2020 12:46:50 -0500
-Received: from sol.localdomain (172-10-235-113.lightspeed.sntcca.sbcglobal.net [172.10.235.113])
+        Fri, 6 Nov 2020 17:01:54 -0500
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96A4B2151B;
-        Fri,  6 Nov 2020 17:46:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D197F2065D;
+        Fri,  6 Nov 2020 22:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604684810;
-        bh=4o77fqFuBZvPiDYAW30olp6av5R3X4/iv+z7vMt50bA=;
+        s=default; t=1604700113;
+        bh=laNmFX4CdLt/FOLsmbcIZF0mnZLt8LMC0wveAkASVv4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CQIkI1axVORa3PbPPE/4evBmU3xr79YrxNJvILQKc/9EgpD9wzoUDOapCBTSofz8d
-         QTqdPdkByflxlpoDy7egZoLU3F+pdjtbXKtt1GrCGC8o6QSm1KNHnghF5FZ0wdAksW
-         zEtsWWIH2jOZoshKVrojhTsdCy2J+fHU63gXVUz0=
-Date:   Fri, 6 Nov 2020 09:46:47 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        nnk@google.com, jeffv@google.com, kernel-team@android.com,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        hch@infradead.org, Daniel Colascione <dancol@google.com>
-Subject: Re: [PATCH v12 2/4] fs: add LSM-supporting anon-inode interface
-Message-ID: <20201106174647.GC845@sol.localdomain>
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
- <20201106155626.3395468-3-lokeshgidra@google.com>
+        b=LNulqwYRmFPdCtgMjr4BZUbJ39TOXb+0HcXSHjMTJTGt34sf8UtzGBvJtgRh0R5Es
+         OhuPqNTTkVAde8HHtXg54qMpDE+VzS2tcaN2ARasiF9Shn+HgB2P8GeaKgbcfYlVyi
+         QPRyg8ilf/Diq8vPWYZBcrqvHD5h8WY3S6g1hBuI=
+Date:   Sat, 7 Nov 2020 00:01:42 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        Chunyang Hui <sanqian.hcy@antfin.com>,
+        Jordan Hand <jorhand@linux.microsoft.com>,
+        Nathaniel McCallum <npmccallum@redhat.com>,
+        Seth Moore <sethmo@google.com>,
+        Darren Kenny <darren.kenny@oracle.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        andriy.shevchenko@linux.intel.com, asapek@google.com,
+        cedric.xing@intel.com, chenalexchen@google.com,
+        conradparker@google.com, cyhanish@google.com,
+        dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
+        kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
+        luto@kernel.org, nhorman@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, tglx@linutronix.de, yaozhangx@google.com,
+        mikko.ylinen@intel.com
+Subject: Re: [PATCH v40 11/24] x86/sgx: Add SGX misc driver interface
+Message-ID: <20201106220142.GA55146@kernel.org>
+References: <20201104145430.300542-1-jarkko.sakkinen@linux.intel.com>
+ <20201104145430.300542-12-jarkko.sakkinen@linux.intel.com>
+ <20201105011043.GA700495@kernel.org>
+ <20201105011615.GA701257@kernel.org>
+ <20201105160559.GD25636@zn.tnic>
+ <20201105175745.GA15463@kernel.org>
+ <20201105181047.GH25636@zn.tnic>
+ <20201106160742.GA46523@kernel.org>
+ <20201106170920.GF14914@zn.tnic>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201106155626.3395468-3-lokeshgidra@google.com>
+In-Reply-To: <20201106170920.GF14914@zn.tnic>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 06, 2020 at 07:56:24AM -0800, Lokesh Gidra wrote:
-> +/**
-> + * Like anon_inode_getfd(), but creates a new !S_PRIVATE anon inode rather than
-> + * reuse the singleton anon inode, and call the anon_init_security_anon() LSM
-> + * hook. This allows the inode to have its own security context and for a LSM
+On Fri, Nov 06, 2020 at 06:09:20PM +0100, Borislav Petkov wrote:
+> On Fri, Nov 06, 2020 at 06:07:42PM +0200, Jarkko Sakkinen wrote:
+> > On Thu, Nov 05, 2020 at 07:10:47PM +0100, Borislav Petkov wrote:
+> > > On Thu, Nov 05, 2020 at 07:57:45PM +0200, Jarkko Sakkinen wrote:
+> > > > I'll rather send a full patch set if required.
+> > > 
+> > > Why if the changes all belong to this patch and why should I take a
+> > > patch which clearly needs improving?
+> > > 
+> > > Just send the fixed version of this and I can take it now.
+> > > 
+> > > Thx.
+> > 
+> > Here's an update patch. I kept the name as sgx_encl_find() so and output
+> > argument instead of return value, so that the change is localized. I
+> > think this is good enough, i.e. the semantically obsolete stuff has been
+> > wiped off.
+> 
+> Thanks.
+> 
+> > Tested-by: Jethro Beekman <jethro@fortanix.com>
+> > Tested-by: Haitao Huang <haitao.huang@linux.intel.com>
+> > Tested-by: Chunyang Hui <sanqian.hcy@antfin.com>
+> > Tested-by: Jordan Hand <jorhand@linux.microsoft.com>
+> > Tested-by: Nathaniel McCallum <npmccallum@redhat.com>
+> > Tested-by: Seth Moore <sethmo@google.com>
+> > Tested-by: Darren Kenny <darren.kenny@oracle.com>
+> 
+> Btw, you do know that when you change the patch, those tested-by's don't
+> hold true anymore, right?
+> 
+> The Reviewed-by's too, actually.
+> 
+> I'll zap them.
 
-"call the anon_init_security_anon() LSM hook" =>
-"calls the inode_init_security_anon() LSM hook".
+Yes, I know that. That was something that I should have done for this
+version. I was too busy turning every rock to make everything as clean
+as possible, sorry about that. I'll also update my tree accordingly.
 
-Otherwise this patch looks okay.  Feel free to add:
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-
-- Eric
+/Jarkko
