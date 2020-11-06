@@ -2,108 +2,177 @@ Return-Path: <SRS0=NEAF=EM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0122DC55ABD
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 14:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F196C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 15:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B81F721556
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 14:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604674386;
-	bh=EFmjPlOdyLT5ZNZK+D5Ee4aaKlYdMVdLhDBsCsU5sfI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BiZWCe26gpiKy6hiICVQaIixl4pn8qWXsXLKzoDj8QFADk2SXNabXf02A+gfIMG6y
-	 0yRTaNnm5rQijWk92wJkV9qF/uTAo82n/4SY33RfoXxAO4fJiFzUcWtTO3J77wOVPB
-	 Hqm9WbctE3A0+CKSseiZ8e2rcmIiUXXPDnuldPVE=
+	by mail.kernel.org (Postfix) with ESMTP id 12B6E22241
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 15:24:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SeSFoE3Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbgKFOxB (ORCPT
+        id S1727526AbgKFPYh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Nov 2020 09:53:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbgKFOxB (ORCPT
+        Fri, 6 Nov 2020 10:24:37 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40422 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726812AbgKFPYh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Nov 2020 09:53:01 -0500
-Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68C9921556;
-        Fri,  6 Nov 2020 14:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604674380;
-        bh=EFmjPlOdyLT5ZNZK+D5Ee4aaKlYdMVdLhDBsCsU5sfI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K/OUy9MS5Am1Y+Darp4BPkNby574zAigogMyhAp4k8pvYpHAxPOYk4gX4KCmd8ecI
-         Ns7qUatjY6s1MEBfBIW8TWTkmlIs43PQiO60Kf9f1rcPqRnr45bVNb3AR7jD6Ucwlp
-         EqKT0+YVEJPn0xwiDQCx3AXVdCbVYsK1OPdwAWDk=
-Date:   Fri, 6 Nov 2020 16:52:52 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Subject: Re: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
-Message-ID: <20201106145252.GA10434@kernel.org>
-References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
- <20201105050736.GA702944@kernel.org>
- <CAFA6WYPetvod-Wov2n_L5TL771j+-kt+_csyWYT-uM=haEKMZQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYPetvod-Wov2n_L5TL771j+-kt+_csyWYT-uM=haEKMZQ@mail.gmail.com>
+        Fri, 6 Nov 2020 10:24:37 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0A6F3NAP056226;
+        Fri, 6 Nov 2020 10:24:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=KBbdnSiz3EXWnhfRMbhvejhr2vQ9k1ez+Tx9W+nIVrg=;
+ b=SeSFoE3ZLmWoOCeSZKrKTM4Cc/LeywdLW6aPcK/QiWrDmjWo/DqyXxv1jsn6ZmgMnYzY
+ npaIIaL6ZMkaLmAN1cNLCQbysemsixL0OOwfVp5OsyViRGScJIQRYCPOdNPMQWk/v3HC
+ 179cayvgqfqJFX1iEbf3r4rKUAzvJRLucCK5eRMmXvnys1Vi8H/UJdmieH/HUq21SMXi
+ n2jkTHsTe8drlmtrShyz2S9HwYGWO+AGjsQJra4Kt0B1CWmeZfvvYpSGdcKrPCgP6k7V
+ yQ1wjO2bDQJVDByFw3XNj0HRksHP9T7MeaETnOnQ5JCUU1y8twSv2rOpRF7uYlnE8sZV AQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34n0vygnj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 06 Nov 2020 10:24:33 -0500
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0A6F3Sk9056743;
+        Fri, 6 Nov 2020 10:24:32 -0500
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34n0vygngs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 06 Nov 2020 10:24:32 -0500
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0A6FCigg013609;
+        Fri, 6 Nov 2020 15:24:29 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma05fra.de.ibm.com with ESMTP id 34h01quduh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 06 Nov 2020 15:24:29 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0A6FORP05505684
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 6 Nov 2020 15:24:27 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F92DAE051;
+        Fri,  6 Nov 2020 15:24:27 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2B4A4AE045;
+        Fri,  6 Nov 2020 15:24:24 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.77.67])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  6 Nov 2020 15:24:23 +0000 (GMT)
+Message-ID: <7219f4404bc1bed6eb090b94363c283ec3266a17.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 6/7] IMA: add critical_data to the built-in policy
+ rules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
+        paul@paul-moore.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Date:   Fri, 06 Nov 2020 10:24:23 -0500
+In-Reply-To: <20201101222626.6111-7-tusharsu@linux.microsoft.com>
+References: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
+         <20201101222626.6111-7-tusharsu@linux.microsoft.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-06_06:2020-11-05,2020-11-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 malwarescore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011060109
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 06, 2020 at 03:02:41PM +0530, Sumit Garg wrote:
-> On Thu, 5 Nov 2020 at 10:37, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >
-> > On Tue, Nov 03, 2020 at 09:31:42PM +0530, Sumit Garg wrote:
-> > > Add support for TEE based trusted keys where TEE provides the functionality
-> > > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > > an alternative in case platform doesn't possess a TPM device.
-> > >
-> > > This patch-set has been tested with OP-TEE based early TA which is already
-> > > merged in upstream [1].
-> >
-> > Is the new RPI400 computer a platform that can be used for testing
-> > patch sets like this? I've been looking for a while something ARM64
-> > based with similar convenience as Intel NUC's, and on the surface
-> > this new RPI product looks great for kernel testing purposes.
-> 
-> Here [1] is the list of supported versions of Raspberry Pi in OP-TEE.
-> The easiest approach would be to pick up a supported version or else
-> do an OP-TEE port for an unsupported one (which should involve minimal
-> effort).
-> 
-> [1] https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#what-versions-of-raspberry-pi-will-work
-> 
-> -Sumit
+Hi Lakshmi, Tushar,
 
-If porting is doable, then I'll just order RPI 400, and test with QEMU
-up until either I port OP-TEE myself or someone else does it.
+This patch defines a new critical_data builtin policy.  Please update
+the Subject line.
 
-For seldom ARM testing, RPI 400 is really convenient device with its
-boxed form factor.
+On Sun, 2020-11-01 at 14:26 -0800, Tushar Sugandhi wrote:
+> From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> 
+> The IMA hook to measure kernel critical data, namely
+> ima_measure_critical_data(), could be called before a custom IMA policy
+> is loaded. For example, SELinux calls ima_measure_critical_data() to
+> measure its state and policy when they are initialized. This occurs
+> before a custom IMA policy is loaded, and hence IMA hook will not
+> measure the data. A built-in policy is therefore needed to measure
+> critical data provided by callers before a custom IMA policy is loaded.
 
-/Jarkko
+^Define a new critical data builtin policy to allow measuring early
+kernel integrity critical data before a custom IMA policy is loaded.
+
+Either remove the references to SELinux or move this patch after the
+subsequent patch which measures SELinux critical data.
+
+> 
+> Add CRITICAL_DATA to built-in IMA rules if the kernel command line
+> contains "ima_policy=critical_data". Set the IMA template for this rule
+> to "ima-buf" since ima_measure_critical_data() measures a buffer.
+> 
+> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+
+> ---
+>  security/integrity/ima/ima_policy.c | 32 +++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index ec99e0bb6c6f..dc8fe969d3fe 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+
+> @@ -875,6 +884,29 @@ void __init ima_init_policy(void)
+>  			  ARRAY_SIZE(default_appraise_rules),
+>  			  IMA_DEFAULT_POLICY);
+>  
+> +	if (ima_use_critical_data) {
+> +		template = lookup_template_desc("ima-buf");
+> +		if (!template) {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+> +		ret = template_desc_init_fields(template->fmt,
+> +						&(template->fields),
+> +						&(template->num_fields));
+
+The default IMA template when measuring buffer data is "ima_buf".   Is
+there a reason for allocating and initializing it here and not
+deferring it until process_buffer_measurement()?
+
+thanks,
+
+Mimi
+
+> +		if (ret)
+> +			goto out;
+> +
+> +		critical_data_rules[0].template = template;
+> +		add_rules(critical_data_rules,
+> +			  ARRAY_SIZE(critical_data_rules),
+> +			  IMA_DEFAULT_POLICY);
+> +	}
+> +
+> +out:
+> +	if (ret)
+> +		pr_err("%s failed, result: %d\n", __func__, ret);
+> +
+>  	ima_update_policy_flag();
+>  }
+>  
+
+
