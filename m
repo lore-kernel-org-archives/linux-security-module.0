@@ -2,160 +2,187 @@ Return-Path: <SRS0=NEAF=EM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2BAC2D0A3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 08:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BEDC388F2
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 09:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 055A3208B3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 08:48:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D75A20B80
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 09:33:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D5usBeBH"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PCF3l3Ux"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726638AbgKFIsL (ORCPT
+        id S1726701AbgKFJcz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Nov 2020 03:48:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:22320 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726190AbgKFIsK (ORCPT
+        Fri, 6 Nov 2020 04:32:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53616 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbgKFJcy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Nov 2020 03:48:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1604652489;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=akNSdNvLPnnajx6jK7BPQwI/2jOuawxzop+hGDzWRkM=;
-        b=D5usBeBHvw5N/IhQsJI3g/2NSd53tHqFWjU1o58F+UEbOw1ANrIFE9UeKJpfml25D6R22V
-        ukOPZWO+C/shhiZ3/aBbbJQzurV0S7Vd5RTnAUqRM/2gp1AkqS5zR+vkQoI+tb32nLhSKF
-        YVL5EK1ImmOEFWd8Es1ln3yTrLQYa+c=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-126-Ya0683u6PiuAV7qkKuM2Vw-1; Fri, 06 Nov 2020 03:48:05 -0500
-X-MC-Unique: Ya0683u6PiuAV7qkKuM2Vw-1
-Received: by mail-lf1-f69.google.com with SMTP id e3so254102lfd.19
-        for <linux-security-module@vger.kernel.org>; Fri, 06 Nov 2020 00:48:04 -0800 (PST)
+        Fri, 6 Nov 2020 04:32:54 -0500
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C139C0613D4
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2020 01:32:54 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id a25so699180ljn.0
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Nov 2020 01:32:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0O2pgo+UmfykEgd2uLe7m+qSlQ1nNk7dEj4yrwl58uc=;
+        b=PCF3l3Ux3vXSR5kq06buJzj4g2GvzwIdDnPfwEhAliNGMQHb2EJ8ea6CIuUPQqYO0l
+         MH2/8fMTEw5ILQZPz6XCopiBtBYIfavA0rSo2PS/TtPvNoGLbYyg5+8M11pfBw+XRYo8
+         zUwHn4AP/U596zU00e5leiBdAVOoqgMkc1BTnHl1/j5VFjIY8N+HPisMfLKA95pZRKVM
+         xyqolq45WIaB2bOJ21n3+EBkkokbPdX9zHpsVFN64JB8Y5jfk9b8osgV4oyXljOQseTm
+         h2+dW1o2oOgqTv1NjsyLLTEKA6nAd6KAW2L6LZUbJc6kPDgfKAIYXnlDsAJB5dHkh7tX
+         GiIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=akNSdNvLPnnajx6jK7BPQwI/2jOuawxzop+hGDzWRkM=;
-        b=VSH3PAV0M+nXljAfeHEziUeOhVctG13AN0KYz9YMOV/qZ6UYVZ0IOP2fA7I3SDLCl7
-         lLlbreOSBpsPgV9sOui++wLEkmE1QIPYhjjxQGLPU/tYD0nr81/zx093jD5RXpMrPN5+
-         LDWcXHQvxhSrR0mvHlz9dSmBozNXGQOJf/vo1Zm6PJiAgusDKWcLfaa3t4cUTRiWBSyI
-         6ZPFfbvfla0n5PuXZCp6ytpkRHd3b9KMABDBW08spIkf2kSs3CY/9gXbRckeUIDkYQHs
-         THOJoR1yCwdmCEiBIUHvMcX09ftuLx6K/LGBCOY23Lx28xJArIX1AZYgllosDU2/Qi28
-         jtKQ==
-X-Gm-Message-State: AOAM5328WzkvR0oWSPIXXVMKgnc6qNU96H4c0wH52l/qTOglae01T8pc
-        ZddfLmV8y4w14qmhsOmC5OsqoW6KCUFddwViZsJcko1KG+pIo0KWTsMHfw9+pa9weo8n4n7ukOt
-        LaXROKI2p+e8XXneK17z/UCiCYoRjK1wz51980EgrDUF8AZ1Zl0g+
-X-Received: by 2002:a05:6512:6c3:: with SMTP id u3mr507823lff.9.1604652483637;
-        Fri, 06 Nov 2020 00:48:03 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzUGOpMljmh9ttPjJshD7XF2AeyO2HqMimeS7o20BfFzJyAmw5u7Z8/Y7W1f0mR/F+EyQw5J0yQx+O1gryn/Bw=
-X-Received: by 2002:a05:6512:6c3:: with SMTP id u3mr507813lff.9.1604652483406;
- Fri, 06 Nov 2020 00:48:03 -0800 (PST)
+        bh=0O2pgo+UmfykEgd2uLe7m+qSlQ1nNk7dEj4yrwl58uc=;
+        b=hZwHhr4SioLgJeo7HHxSg2KSo9lRcejHQyNIheo2+CCOojxtn6OUNTxaeoOtiMv2rW
+         MAGMeAf0ZKCoBPrnGfyxujRMxD5GrqGG3uyxnhKwDb59cgNFM8L0BugnldvjsKUSI4Uo
+         h6TFTwnYU9t7t1GPdZqMCiO6vuuiJUcZ1BE+/tizNCGIdTJyZ/qTzZLhr9RCrwrC60tN
+         PN5g0nX1NkU19eCVhbHIhrddB7NWVdSGqi7ZG6atFntQtZrvgxooSeWfE0fHI+GUzv5+
+         5AxscNnL787SFWDPqWs3v1G/82pPH6ZHQ7wKZ/FJdOkJXkQGgDsWkJntM3sy6RPqTBYf
+         Dsng==
+X-Gm-Message-State: AOAM5301dGZFW8LuasapWnxvrm9P7Mu1h2Q+gVsTpjAvmEdKxnUb8WO4
+        KLkpaBogKg1L+lEBqcn5DvTr7AXh2tJyptL64Y9ihw==
+X-Google-Smtp-Source: ABdhPJyRRWazWWTTUshMunq0JJz7PYcu9OaGawq4/1rjyTHlsj7AVCjaucCm9rask/L4TdYyqxDT6p+HAgCzzJBgLhs=
+X-Received: by 2002:a2e:9013:: with SMTP id h19mr405821ljg.4.1604655172333;
+ Fri, 06 Nov 2020 01:32:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20201105173328.2539-1-olga.kornievskaia@gmail.com>
- <20201105173328.2539-2-olga.kornievskaia@gmail.com> <CAFqZXNtjMEF0LO4vtEmcgwydbWfUS36d8g24J6C-NDXORYbEJg@mail.gmail.com>
- <CAN-5tyF+cLpmT=rwAYvQQ445tjFKZtGq+Qzf6rDGg8COPpFRwA@mail.gmail.com>
- <a96c14c0f86ec274d5bdc255050ae71238bb43fe.camel@hammerspace.com> <CAN-5tyHc_fjDXwUngqVshB0Z7SzhAqjkXP7E=-k4sAPbfRwMmQ@mail.gmail.com>
-In-Reply-To: <CAN-5tyHc_fjDXwUngqVshB0Z7SzhAqjkXP7E=-k4sAPbfRwMmQ@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 6 Nov 2020 09:47:52 +0100
-Message-ID: <CAFqZXNu2cGC0Ub6E_b7cSY+JDk38hZt2mn7995S-1zA4Am62BA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] NFSv4.2: condition READDIR's mask for security label
- based on LSM state
-To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>
-Cc:     Trond Myklebust <trondmy@hammerspace.com>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org> <20201105050736.GA702944@kernel.org>
+In-Reply-To: <20201105050736.GA702944@kernel.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Fri, 6 Nov 2020 15:02:41 +0530
+Message-ID: <CAFA6WYPetvod-Wov2n_L5TL771j+-kt+_csyWYT-uM=haEKMZQ@mail.gmail.com>
+Subject: Re: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "open list:SECURITY SUBSYSTEM" 
         <linux-security-module@vger.kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Nov 5, 2020 at 10:43 PM Olga Kornievskaia
-<olga.kornievskaia@gmail.com> wrote:
-> On Thu, Nov 5, 2020 at 4:18 PM Trond Myklebust <trondmy@hammerspace.com> wrote:
-> >
-> > On Thu, 2020-11-05 at 14:51 -0500, Olga Kornievskaia wrote:
-> > > On Thu, Nov 5, 2020 at 1:55 PM Ondrej Mosnacek <omosnace@redhat.com>
-> > > wrote:
-> > > >
-> > > > On Thu, Nov 5, 2020 at 6:33 PM Olga Kornievskaia
-> > > > <olga.kornievskaia@gmail.com> wrote:
-> > > > > From: Olga Kornievskaia <kolga@netapp.com>
-> > > > >
-> > > > > Currently, the client will always ask for security_labels if the
-> > > > > server
-> > > > > returns that it supports that feature regardless of any LSM
-> > > > > modules
-> > > > > (such as Selinux) enforcing security policy. This adds
-> > > > > performance
-> > > > > penalty to the READDIR operation.
-> > > > >
-> > > > > Instead, query the LSM module to find if anything is enabled and
-> > > > > if not, then remove FATTR4_WORD2_SECURITY_LABEL from the bitmask.
-> > > >
-> > > > Having spent some time staring at some of the NFS code very
-> > > > recently,
-> > > > I can't help but suggest: Would it perhaps be enough to decide
-> > > > whether
-> > > > to ask for labels based on (NFS_SB(dentry->d_sb)->caps &
-> > > > NFS_CAP_SECURITY_LABEL)? It is set when mounting the FS iff some
-> > > > LSM
-> > > > confirms via the security_sb_*_mnt_opts() hook that it wants the
-> > > > filesystem to give it labels (or at least that's how I interpret
-> > > > the
-> > > > cryptic name) [1]. It's just a shot in the dark, but it seems to
-> > > > fit
-> > > > this use case.
-> > > >
-> > > > [1]
-> > > > https://elixir.bootlin.com/linux/v5.10-rc2/source/fs/nfs/getroot.c#L148
-> > >
-> > > Very interesting. I was not aware of something like that nor was it
-> > > mentioned when I asked on the selinux mailing list. I wonder if this
-> > > is a supported feature that will always stay? In that case, NFS
-> > > wouldn't need the extra hook that was added for this series. I will
-> > > try this out and report back.
-> >
-> > NFS_CAP_SECURITY_LABEL is just the NFS server capability flag. It tells
-> > you whether or not the client believes that the server might support
-> > NFSv4.2 requests for labelled NFS metadata.
-> >
-> > My understanding of Olga's requirement is that she needs to be able to
-> > ignore that flag and simply not query for labelled NFS metadata if the
-> > NFS client is not configured to enforce the LSM policy. The objective
-> > is to avoid unnecessary RPC traffic to the server to query for data
-> > that is unused.
+On Thu, 5 Nov 2020 at 10:37, Jarkko Sakkinen <jarkko@kernel.org> wrote:
 >
-> Actually that seems to be working. I think it's because while the
-> server returns that it supports sec_labels, after calling
-> security_sb_set_mnt_opts() the kflags_out don't have this
-> SECURITY_LSM_NATIVE_LABELS set (assuming this happens because selinux
-> isn't enabled) then we turned server's sec_labl cap off.
+> On Tue, Nov 03, 2020 at 09:31:42PM +0530, Sumit Garg wrote:
+> > Add support for TEE based trusted keys where TEE provides the functionality
+> > to seal and unseal trusted keys using hardware unique key. Also, this is
+> > an alternative in case platform doesn't possess a TPM device.
+> >
+> > This patch-set has been tested with OP-TEE based early TA which is already
+> > merged in upstream [1].
 >
-> I'm about to send v2 without relying on modifications to selinux.
+> Is the new RPI400 computer a platform that can be used for testing
+> patch sets like this? I've been looking for a while something ARM64
+> based with similar convenience as Intel NUC's, and on the surface
+> this new RPI product looks great for kernel testing purposes.
 
-Just to keep the LSM and SELinux lists in the loop: a v2 has been
-posted to linux-nfs that uses NFS_CAP_SECURITY_LABEL instead of adding
-a new hook:
-https://lore.kernel.org/linux-nfs/CAFqZXNtJ2fkae7Xt-+nDR79kVs=yY=9vSoZaS-V-5UKSk22s4A@mail.gmail.com/T/
+Here [1] is the list of supported versions of Raspberry Pi in OP-TEE.
+The easiest approach would be to pick up a supported version or else
+do an OP-TEE port for an unsupported one (which should involve minimal
+effort).
 
--- 
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
+[1] https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#what-versions-of-raspberry-pi-will-work
 
+-Sumit
+
+>
+> /Jarkko
+>
+> >
+> > [1] https://github.com/OP-TEE/optee_os/commit/f86ab8e7e0de869dfa25ca05a37ee070d7e5b86b
+> >
+> > Changes in v8:
+> > 1. Added static calls support instead of indirect calls.
+> > 2. Documented trusted keys source module parameter.
+> > 3. Refined patch #1 commit message discription.
+> > 4. Addressed misc. comments on patch #2.
+> > 5. Added myself as Trusted Keys co-maintainer instead.
+> > 6. Rebased to latest tpmdd master.
+> >
+> > Changes in v7:
+> > 1. Added a trusted.source module parameter in order to enforce user's
+> >    choice in case a particular platform posses both TPM and TEE.
+> > 2. Refine commit description for patch #1.
+> >
+> > Changes in v6:
+> > 1. Revert back to dynamic detection of trust source.
+> > 2. Drop author mention from trusted_core.c and trusted_tpm1.c files.
+> > 3. Rebased to latest tpmdd/master.
+> >
+> > Changes in v5:
+> > 1. Drop dynamic detection of trust source and use compile time flags
+> >    instead.
+> > 2. Rename trusted_common.c -> trusted_core.c.
+> > 3. Rename callback: cleanup() -> exit().
+> > 4. Drop "tk" acronym.
+> > 5. Other misc. comments.
+> > 6. Added review tags for patch #3 and #4.
+> >
+> > Changes in v4:
+> > 1. Pushed independent TEE features separately:
+> >   - Part of recent TEE PR: https://lkml.org/lkml/2020/5/4/1062
+> > 2. Updated trusted-encrypted doc with TEE as a new trust source.
+> > 3. Rebased onto latest tpmdd/master.
+> >
+> > Changes in v3:
+> > 1. Update patch #2 to support registration of multiple kernel pages.
+> > 2. Incoporate dependency patch #4 in this patch-set:
+> >    https://patchwork.kernel.org/patch/11091435/
+> >
+> > Changes in v2:
+> > 1. Add reviewed-by tags for patch #1 and #2.
+> > 2. Incorporate comments from Jens for patch #3.
+> > 3. Switch to use generic trusted keys framework.
+> >
+> > Sumit Garg (4):
+> >   KEYS: trusted: Add generic trusted keys framework
+> >   KEYS: trusted: Introduce TEE based Trusted Keys
+> >   doc: trusted-encrypted: updates with TEE as a new trust source
+> >   MAINTAINERS: Add myself as Trusted Keys co-maintainer
+> >
+> >  Documentation/admin-guide/kernel-parameters.txt   |  12 +
+> >  Documentation/security/keys/trusted-encrypted.rst | 203 +++++++++++--
+> >  MAINTAINERS                                       |   2 +
+> >  include/keys/trusted-type.h                       |  47 +++
+> >  include/keys/trusted_tee.h                        |  55 ++++
+> >  include/keys/trusted_tpm.h                        |  17 +-
+> >  security/keys/trusted-keys/Makefile               |   2 +
+> >  security/keys/trusted-keys/trusted_core.c         | 354 ++++++++++++++++++++++
+> >  security/keys/trusted-keys/trusted_tee.c          | 278 +++++++++++++++++
+> >  security/keys/trusted-keys/trusted_tpm1.c         | 336 ++++----------------
+> >  10 files changed, 979 insertions(+), 327 deletions(-)
+> >  create mode 100644 include/keys/trusted_tee.h
+> >  create mode 100644 security/keys/trusted-keys/trusted_core.c
+> >  create mode 100644 security/keys/trusted-keys/trusted_tee.c
+> >
+> > --
+> > 2.7.4
+> >
+> >
