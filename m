@@ -2,287 +2,245 @@ Return-Path: <SRS0=NEAF=EM=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BFEC2D0A3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 15:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5801C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 15:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 475E422228
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 15:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69CD02072E
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Nov 2020 15:56:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="aLeMnbTU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nN7OaNw4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbgKFPzE (ORCPT
+        id S1727612AbgKFP4e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Nov 2020 10:55:04 -0500
-Received: from mout.gmx.net ([212.227.17.20]:43245 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726422AbgKFPzE (ORCPT
+        Fri, 6 Nov 2020 10:56:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbgKFP4d (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Nov 2020 10:55:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1604678077;
-        bh=bN90BhQTKrUOs+Et5M9q4UcL1zH/Xz1OTeh9A0rIFsg=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=aLeMnbTUAI2MLyrAtYXe6fzif0ZsBgN30Fs2z68NZLot+wIvJifLb5LcNfLJ0/plO
-         jrZAhEwXb2QbmwIg/tdrFDIQBkzG+19MQhb3zvWkWIUislMHgdMZBH4IASfSM1BS2+
-         Dra9BfMKS8QTG0X0w2MD0vPfayH8rsWVePLzN6x8=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.231.59]) by mail.gmx.com (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MlNtF-1ju0TR2sBx-00lkSD; Fri, 06
- Nov 2020 16:54:36 +0100
-Date:   Fri, 6 Nov 2020 16:54:23 +0100
-From:   John Wood <john.wood@gmx.com>
-To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
-Cc:     John Wood <john.wood@gmx.com>, Jonathan Corbet <corbet@lwn.net>,
+        Fri, 6 Nov 2020 10:56:33 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF18BC0613CF
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Nov 2020 07:56:32 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id j10so2078566ybl.19
+        for <linux-security-module@vger.kernel.org>; Fri, 06 Nov 2020 07:56:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=+GYjYf+cbRBNlCgQvT5sit1+MsRwjhaXZtoVVSsYoNQ=;
+        b=nN7OaNw4BTD6wrtBLCim+7os5XDvv8TwYI42eAZ+TWRheEDke3e0f2HeF4kG3sMC9G
+         YNmlMiQG8XXbw9LENkUtoYaDCgKsu1SPBAcpLZrv81DQph3UidWu0GHn+uLaB3f8VsXT
+         upPDsOx1Eq0b4iGYjyFt+I3f2hwTMAm7qA862MMSHCsP24gsr18vZRXhMFGPntPU8N0P
+         tnhFhIp0dJe9rMOGpsA1NJPwaULqyUbrlwtV5X/tHbcSeXodJ1lUdUHjofRBedXb4cJd
+         Lns0lQ2H7b74lN3P+Eem6C6kZbbZLlb0nvP93KL7HiBeLYvNbeEDhol80F4OziVwxLZB
+         6Ohg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=+GYjYf+cbRBNlCgQvT5sit1+MsRwjhaXZtoVVSsYoNQ=;
+        b=DtuNTv2zbCUs4jFs+N3v3PXEToM95eXnbEJm6IbLCzA6pi579xs8z2iyWvVLJzM0La
+         ONGNd+ftTfYS73IQhB82uLQeoEH5sKtHUvzF/C/CQ8S9GddrzxjDvN258FtQ2ATBdjZh
+         WzvTnKuUcQk85HbbXVGnxBH8e/uw0mRtKlDbRbS0Oauq1DeWt8mYBZWSf/dzRs1UoBsJ
+         JtYELSKV1rLasHKCFllZVjXHyO3aZfBBd2ZOyOXyf4uGw6//mfekn/0JrMLkGez1NsCf
+         GOjugQ+3Y6BCHXSScVrF9XlvLizNEiqmPLyFBJy1ljdeGFXvzvwWGxg8jUdULPlWdy6l
+         2bfw==
+X-Gm-Message-State: AOAM533Q7+BE55taX/8hsjOqsICwBlN1/jAauJpBJ44vV1SUC2bICgKn
+        IXwlojGNGNL1g4zQTakrqXLvU/K9mdJPPG/kPw==
+X-Google-Smtp-Source: ABdhPJw9CdnG+IOpgahDn+lKgUr1Y4FYAenUZgj5NCcAVsPIiGRDMC1H6fLbq09USO/ftxMRrQGg9BEI0/MbtbvoAQ==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a5b:a87:: with SMTP id
+ h7mr3604444ybq.484.1604678191823; Fri, 06 Nov 2020 07:56:31 -0800 (PST)
+Date:   Fri,  6 Nov 2020 07:56:22 -0800
+Message-Id: <20201106155626.3395468-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.29.1.341.ge80a0c044ae-goog
+Subject: [PATCH v12 0/4] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v2 0/8] Fork brute force attack mitigation
-Message-ID: <20201106155423.GA4584@ubuntu>
-References: <20201025134540.3770-1-john.wood@gmx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201025134540.3770-1-john.wood@gmx.com>
-X-Provags-ID: V03:K1:/AGVpx+PJCtXIg+BTEXY3fG6H8dE9kTzJunPjsCJWC25ThbMP31
- 5knBPTcwJUBzY+QS4xIeYCSbgsbjbubvWJ1eGMuVaOER59+d25TeK633OOc4bQzfmj2Pwlr
- KPRIt2wDXCNnU93Zqi1KF9R3G1yG76VTMU1lKTupAJ2GVKTQ7D0oJyYdfMR5QGuhYyD30Q+
- Jzvagaq8rJ2rYPJ/qmBLA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:dK6exDfGB1c=:KYqdZLAKIWR56rpLA/AiKp
- pnT8BQfZVOom0Naetb0rijsOTY+TLJdoyn8bw+Yg/Md3VTunwZH+mA0WHwuoriSsGyKH+Ipw2
- 08wqKn3M9/KtTlgC5ji4friyVbUfjxrhGxPK/6xCUXC2kmEQct2yTN7uZU+Vc5+V6GRxyJ1f+
- +l5qa+HlDCxqR55NWq//054XgRIy7RP59fuu5x30+t/qVG6uSoCinpfhRaibkg4WEHxQWGw4Z
- WyLr1mB3O2dHJDwnWOHo8vcQsehyD7Pl6OUo1UUT06pfqRg7ROGlMhNtVZMgrOu72h4fJSqBq
- OUU3VQkQ+a5/NS3aiUt1XOcWwZUlwhoqvCtX0Hf1b2mpGa3WQvl3rFYh1ojR+lIcA3rWk7Wee
- uES1jQ9Op0Tc7F/ESs+2NnTJSCiX5tzMViV0Aq1UXAoYOmoY3CGGwJ3mfL6wEqHwNtarhFpNg
- 90jiFrUlHY01m/sdODshkX00S83qYy6rMqafdwWBt43aNKgUGp9iHJqVrLz8P4MiSByumO8Kj
- HMtLOwIUH8yoqD2Biz94dnPLBATZ+6RETAR9dwocTXdQ52BHacMfKnsNZp4lUbJJqTXTVX6/l
- sdWnpZMdrSKh9mHZZL8a0n4nIO3CAJ/BcAjrCRSXM2jRMTMxPlC2DTOEozS7MOaAeL4Rhigu6
- TWiBEXZXsbFD5glBpV0J6BGAkN0y0Rcbo5YXaes4R6GogdZMlq5yuZFHAkh8oC6G0PWDdVY13
- yyMKaWdgLPisFdSF67AvaQrDaYBO/iPIZtHQzqgmDHCeRRJx8V9WAOG+LQsq27gPM0fdLFah2
- eJqLh+KRHMAjKXFdDipVcmK0SxdfpufElq/wWQSdYMN+Bv49/2yR9w6ERkZ0lT7T1RfEIuYBt
- S/uR4PDsERG6wpWrP2Dw==
-Content-Transfer-Encoding: quoted-printable
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        nnk@google.com, jeffv@google.com, kernel-team@android.com,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-Has anyone had time to review this patch serie? Any comments on this?
+With SELinux managed userfaultfd, an admin can control creation and
+movement of the file descriptors. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the corresponding
+security_ptrace_access_check() checks. For privacy, the admin may
+want to deny such accesses, which is possible with SELinux support.
 
-Regards.
+Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+allows callers to opt into this SELinux management. In this new "secure"
+mode, anon_inodes create new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-On Sun, Oct 25, 2020 at 02:45:32PM +0100, John Wood wrote:
-> Attacks against vulnerable userspace applications with the purpose to br=
-eak
-> ASLR or bypass canaries traditionaly use some level of brute force with =
-the
-> help of the fork system call. This is possible since when creating a new
-> process using fork its memory contents are the same as those of the pare=
-nt
-> process (the process that called the fork system call). So, the attacker
-> can test the memory infinite times to find the correct memory values or =
-the
-> correct memory addresses without worrying about crashing the application=
-.
->
-> Based on the above scenario it would be nice to have this detected and
-> mitigated, and this is the goal of this patch serie.
->
-> Other implementations
-> ---------------------
->
-> The public version of grsecurity, as a summary, is based on the idea of
-> delay the fork system call if a child died due to a fatal error. This ha=
-s
-> some issues:
->
-> 1.- Bad practices: Add delays to the kernel is, in general, a bad idea.
->
-> 2.- Weak points: This protection can be bypassed using two different
->     methods since it acts only when the fork is called after a child has
->     crashed.
->
->     2.1.- Bypass 1: So, it would still be possible for an attacker to fo=
-rk
->           a big amount of children (in the order of thousands), then pro=
-be
->           all of them, and finally wait the protection time before repea=
-t
->           the steps.
->
->     2.2.- Bypass 2: This method is based on the idea that the protection
->           doesn't act if the parent crashes. So, it would still be possi=
-ble
->           for an attacker to fork a process and probe itself. Then, fork
->           the child process and probe itself again. This way, these step=
-s
->           can be repeated infinite times without any mitigation.
->
-> This implementation
-> -------------------
->
-> The main idea behind this implementation is to improve the existing ones
-> focusing on the weak points annotated before. The solution for the first
-> bypass method is to detect a fast crash rate instead of only one simple
-> crash. For the second bypass method the solution is to detect both the
-> crash of parent and child processes. Moreover, as a mitigation method it=
- is
-> better to kill all the offending tasks involve in the attack instead of =
-use
-> delays.
->
-> So, the solution to the two bypass methods previously commented is to us=
-e
-> some statistical data shared across all the processes that can have the
-> same memory contents. Or in other words, a statistical data shared betwe=
-en
-> all the fork hierarchy processes after an execve system call.
->
-> The purpose of these statistics is to compute the application crash peri=
-od
-> in order to detect an attack. This crash period is the time between the
-> execve system call and the first fault or the time between two consecuti=
-ves
-> faults, but this has a drawback. If an application crashes once quickly
-> from the execve system call or crashes twice in a short period of time f=
-or
-> some reason, a false positive attack will be triggered. To avoid this
-> scenario the shared statistical data holds a list of the i last crashes
-> timestamps and the application crash period is computed as follows:
->
-> crash_period =3D (n_last_timestamp - n_minus_i_timestamp) / i;
->
-> This ways, the size of the last crashes timestamps list allows to fine
-> tuning the detection sensibility.
->
-> When this crash period falls under a certain threshold there is a clear
-> signal that something malicious is happening. Once detected, the mitigat=
-ion
-> only kills the processes that share the same statistical data and so, al=
-l
-> the tasks that can have the same memory contents. This way, an attack is
-> rejected.
->
-> 1.- Per system enabling: This feature can be enabled at build time using
->     the CONFIG_SECURITY_FORK_BRUTE option or using the visual config
->     application under the following menu:
->
->     Security options ---> Fork brute force attack detection and mitigati=
-on
->
-> 2.- Per process enabling/disabling: To allow that specific applications =
-can
->     turn off or turn on the detection and mitigation of a fork brute for=
-ce
->     attack when required, there are two new prctls.
->
->     prctl(PR_SECURITY_FORK_BRUTE_ENABLE, 0, 0, 0, 0)
->     prctl(PR_SECURITY_FORK_BRUTE_DISABLE, 0, 0, 0, 0)
->
-> 3.- Fine tuning: To customize the detection's sensibility there are two =
-new
->     sysctl attributes that allow to set the last crashes timestamps list
->     size and the application crash period threshold (in milliseconds). B=
-oth
->     are accessible through the following files respectively.
->
->     /proc/sys/kernel/brute/timestamps_list_size
->     /proc/sys/kernel/brute/crash_period_threshold
->
->     The list size allows to avoid false positives due to crashes unrelat=
-ed
->     with a real attack. The period threshold sets the time limit to dete=
-ct
->     an attack. And, since a fork brute force attack will be detected if =
-the
->     application crash period falls under this threshold, the higher this
->     value, the more sensitive the detection will be.
->
-> So, knowing all this information I will explain now the different patche=
-s:
->
-> The 1/8 patch defines a new LSM hook to get the fatal signal of a task.
-> This will be useful during the attack detection phase.
->
-> The 2/8 patch defines a new LSM and manages the statistical data shared =
-by
-> all the fork hierarchy processes.
->
-> The 3/8 patch adds the sysctl attributes to fine tuning the detection.
->
-> Patchs 4/8 and 5/8 detect and mitigate a fork brute force attack.
->
-> Patch 6/8 adds the prctls to allow per process enabling/disabling.
->
-> Patch 7/8 adds the documentation to explain this implementation.
->
-> Patch 8/8 updates the maintainers file.
->
-> This patch series is a task of the KSPP [1] and can also be accessed fro=
-m
-> my github tree [2] in the "brute_v2" branch.
->
-> [1] https://github.com/KSPP/linux/issues/39
-> [2] https://github.com/johwood/linux/
->
-> The first version can be found in:
->
-> https://lore.kernel.org/kernel-hardening/20200910202107.3799376-1-keesco=
-ok@chromium.org/
->
-> Changelog RFC -> v2
-> -------------------
-> - Rename this feature with a more appropiate name (Jann Horn, Kees Cook)=
-.
-> - Convert the code to an LSM (Kees Cook).
-> - Add locking  to avoid data races (Jann Horn).
-> - Add a new LSM hook to get the fatal signal of a task (Jann Horn, Kees
->   Cook).
-> - Add the last crashes timestamps list to avoid false positives in the
->   attack detection (Jann Horn).
-> - Use "period" instead of "rate" (Jann Horn).
-> - Other minor changes suggested (Jann Horn, Kees Cook).
->
-> John Wood (8):
->   security: Add LSM hook at the point where a task gets a fatal signal
->   security/brute: Define a LSM and manage statistical data
->   security/brute: Add sysctl attributes to allow detection fine tuning
->   security/brute: Detect a fork brute force attack
->   security/brute: Mitigate a fork brute force attack
->   security/brute: Add prctls to enable/disable the fork attack detection
->   Documentation: Add documentation for the Brute LSM
->   MAINTAINERS: Add a new entry for the Brute LSM
->
->  Documentation/admin-guide/LSM/Brute.rst | 118 ++++
->  Documentation/admin-guide/LSM/index.rst |   1 +
->  MAINTAINERS                             |   7 +
->  include/brute/brute.h                   |  16 +
->  include/linux/lsm_hook_defs.h           |   1 +
->  include/linux/lsm_hooks.h               |   4 +
->  include/linux/security.h                |   4 +
->  include/uapi/linux/prctl.h              |   4 +
->  kernel/signal.c                         |   1 +
->  kernel/sys.c                            |   8 +
->  security/Kconfig                        |  11 +-
->  security/Makefile                       |   4 +
->  security/brute/Kconfig                  |  13 +
->  security/brute/Makefile                 |   2 +
->  security/brute/brute.c                  | 749 ++++++++++++++++++++++++
->  security/security.c                     |   5 +
->  16 files changed, 943 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/admin-guide/LSM/Brute.rst
->  create mode 100644 include/brute/brute.h
->  create mode 100644 security/brute/Kconfig
->  create mode 100644 security/brute/Makefile
->  create mode 100644 security/brute/brute.c
->
-> --
-> 2.25.1
->
+This patch series is one of two fork of [1] and is an
+alternative to [2].
+
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
+
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+Changes from the sixth version of the patch:
+
+  - Removed definition of anon_inode_getfile_secure() as there are no
+    callers.
+  - Simplified function description of anon_inode_getfd_secure().
+  - Elaborated more on the purpose of 'context_inode' in commit message.
+
+Changes from the seventh version of the patch:
+
+  - Fixed error handling in _anon_inode_getfile().
+  - Fixed minor comment and indentation related issues.
+
+Changes from the eighth version of the patch:
+
+  - Replaced selinux_state.initialized with selinux_state.initialized
+
+Changes from the ninth version of the patch:
+
+  - Fixed function names in fs/anon_inodes.c
+  - Fixed comment of anon_inode_getfd_secure()
+  - Fixed name of the patch wherein userfaultfd code uses
+    anon_inode_getfd_secure()
+
+Changes from the tenth version of the patch:
+
+  - Split first patch into VFS and LSM specific patches
+  - Fixed comments in fs/anon_inodes.c
+  - Fixed comment of alloc_anon_inode()
+
+Changes from the eleventh version of the patch:
+
+  - Removed comment of alloc_anon_inode() for consistency with the code
+  - Fixed explanation of LSM hook in the commit message
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  fs: add LSM-supporting anon-inode interface
+  selinux: teach SELinux about anonymous inodes
+  userfaultfd: use secure anon inodes for userfaultfd
+
+Lokesh Gidra (1):
+  security: add inode_init_security_anon() LSM hook
+
+ fs/anon_inodes.c                    | 150 ++++++++++++++++++++--------
+ fs/libfs.c                          |   5 -
+ fs/userfaultfd.c                    |  19 ++--
+ include/linux/anon_inodes.h         |   5 +
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   9 ++
+ include/linux/security.h            |  10 ++
+ security/security.c                 |   8 ++
+ security/selinux/hooks.c            |  53 ++++++++++
+ security/selinux/include/classmap.h |   2 +
+ 10 files changed, 209 insertions(+), 54 deletions(-)
+
+-- 
+2.29.1.341.ge80a0c044ae-goog
+
