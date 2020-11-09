@@ -2,112 +2,109 @@ Return-Path: <SRS0=3Yzx=EP=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDD8C388F9
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 03:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C04C2D0A3
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 03:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01DE820853
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 03:38:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA4472065C
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 03:41:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYltIajF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRmS3SW5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbgKIDiZ (ORCPT
+        id S1729265AbgKIDlU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 8 Nov 2020 22:38:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46390 "EHLO
+        Sun, 8 Nov 2020 22:41:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728038AbgKIDiZ (ORCPT
+        with ESMTP id S1729262AbgKIDlU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 8 Nov 2020 22:38:25 -0500
-Received: from mail-vk1-xa42.google.com (mail-vk1-xa42.google.com [IPv6:2607:f8b0:4864:20::a42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED797C0613CF;
-        Sun,  8 Nov 2020 19:38:24 -0800 (PST)
-Received: by mail-vk1-xa42.google.com with SMTP id o73so1593024vka.5;
-        Sun, 08 Nov 2020 19:38:24 -0800 (PST)
+        Sun, 8 Nov 2020 22:41:20 -0500
+Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC3FC0613CF;
+        Sun,  8 Nov 2020 19:41:19 -0800 (PST)
+Received: by mail-vs1-xe44.google.com with SMTP id y73so4196869vsc.5;
+        Sun, 08 Nov 2020 19:41:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=EXvLdoZOLK2vkCmDQBWkezTalz+11c+8ptopOVr4sJo=;
-        b=RYltIajFnXKs/5AMCFp48j07wmtIAEgd/VwxVU65E7v1XdhKDshNGXRVLYxFNOQLUI
-         yFZj5gMaxtYPgHgzzcqjBZtmSmpyYVXixQlNZHfjTmLB9iS/sR+pWHZmwHR77S9W8fqH
-         Ifcfm7aavxZhDWDKW0TJj2ysS44h3StBIB1+R+VcmZjOz9+NRanUpLs6ALizPq66WQ3S
-         jWFUZzv70dGL1OdR5y2e2J1s3oF+D9cQl12YtmZBrfidymaenjtNeXyFuLy6q7n4od/W
-         NMcNhTQGTb5IYKUmpj5KEgPn87QFS5Y/+ApqRycR7UKW6fdNMBDY3Jut+Y4gMUhJRb5/
-         TZkw==
+        bh=4rjchIPIccnAMkbLXmM6Vjxz/RID6wWOZqACQlKGqcU=;
+        b=BRmS3SW5ujjKp38TGWSraUnPGtwiblr5DYFU+87Oay4EFKqRpRuBDJ/yKGajPUpQ5E
+         WsDKAveyl3/BjH1HgZoFdDzWlXuVk5cgQ7s43OnKZ/A77xorGDuY31nGQJf75rESCSUa
+         F2florO/EODLBmg0kCYPnSJsn6cXKAX9aFJhB+Q+vida+moU1E4WpyHzZzXGp8L/wOSa
+         88n6Z4yp/g5t8lolHEeAXQRVF5PzggOME/QY700vzDacCyh/OJnRs2Gx2/Fn9hRAAGZZ
+         xyCvA9hiPvTzf+6JSvdYD0h6FX/dNb01bydu8ZZgTllaDVKLNO3C4+jcYul9dyCdgiLM
+         H3NQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EXvLdoZOLK2vkCmDQBWkezTalz+11c+8ptopOVr4sJo=;
-        b=eq+lQN+QsmWdZI1pFTHxVGuVKIG/MzTRTiAD9wwyaI5R7OH8fpHvlN6QVAlPlORo7r
-         NZFH555bYbW5+HciUXw8CmQVeErf/WlH6eVXeFT8NpWnMqOGNjKiG2UeZi8QMypsG2n+
-         C0Fg3hObCVBFiXgPuQKkv89+acSp+ijCYLXdEumiyV4KpgUl0dSGGWQuX2uTDuW42U0d
-         iX76PnAZPyZcoigox+Q+6UMEWvvEJVJ839qItXzGBgYgYDABhCHyHkOxh9Ag7+snmr13
-         LTLBHKor3ZIJvDCaThYu3StoDG3CdGYIaXNceMzDNa9T6P5GxDyDiuV8HaerEcQbkFOG
-         WePg==
-X-Gm-Message-State: AOAM530npEHltdO0sy5D/B2n14I5sFMYGLv1F9IJ5VBGQbMzqIAUxQKj
-        5lCy4RUf1Y8Leoo1wpBhYfwKbhsdPqFZBJBsUjs=
-X-Google-Smtp-Source: ABdhPJwEEKUtrQCBK0PR0Qi0f0uqtamAFlHl8H1VdcMWJzPkQJ+4+C/plG4cD4dY32hnunRBo21AgvUWRjwRe5UQBMA=
-X-Received: by 2002:a1f:5c4e:: with SMTP id q75mr6010923vkb.6.1604893104103;
- Sun, 08 Nov 2020 19:38:24 -0800 (PST)
+        bh=4rjchIPIccnAMkbLXmM6Vjxz/RID6wWOZqACQlKGqcU=;
+        b=aVA1hwCnSFyuhaw/tc3vKbiVgRYtA2be10pLvxVEBvAM6zTYDiqsUC1Qs9QAb9H/XO
+         uD/aTIEt5RojextNFXAHC1KE+xcxE22Wq02YE3KEh3EkDa/Ld6pRtiGGKYxt4JeScd9i
+         3NE4Tv1JHpC2r7iPY0nNyUj70w4LPYm7DbAujq2SVsjvMPFQuWqMaRAJtcAFbTOCCsBU
+         UW3gU0hgvuv38qcRkQfO5FpCxdSqyN0TMZTyOn562VhG0RF6rpcTLpqsYqUTjAbBO1QH
+         RnEmqxmnLc9ycYP6aQySq8oSAIxGi2U61KQzg8wRmjUFy+gIo2nm6XOC8Zl9UL3vbHsH
+         nb0w==
+X-Gm-Message-State: AOAM533HRNZibzIBEOej7A6jyu8oNN94/Kq1U7fkPX7AhXSTBNGQb7QF
+        2Y8EWGFjHu5GVt5csSguUo+w/UG68mWMco2A0Es=
+X-Google-Smtp-Source: ABdhPJw4r70AChTcdWv7ZuwxvimjdBJIpe/CkSupnH8EEhdRf/iweiXhxrjFrpiZ3TJD9YE5xjXIN9AR2j+SjNPdH4M=
+X-Received: by 2002:a67:2ec1:: with SMTP id u184mr7345478vsu.9.1604893279068;
+ Sun, 08 Nov 2020 19:41:19 -0800 (PST)
 MIME-Version: 1.0
 References: <1604737451-19082-1-git-send-email-jrdr.linux@gmail.com>
- <e5401549-8c31-2c6d-58dd-864232de17af@nvidia.com> <e6859981-bc3c-9513-99e5-a99849786156@nvidia.com>
- <5efeb909-3e02-ba14-7a86-f18562a2fe69@i-love.sakura.ne.jp>
- <8590eb4c-256b-9ab0-5291-de8ec8d75276@nvidia.com> <40bd424d-6c4d-8b03-5d97-c572ca777b77@i-love.sakura.ne.jp>
- <1174ed3e-d33c-6de9-3873-b122013b295a@nvidia.com>
-In-Reply-To: <1174ed3e-d33c-6de9-3873-b122013b295a@nvidia.com>
+ <1604737451-19082-2-git-send-email-jrdr.linux@gmail.com> <f5ed0413-315c-d5d0-e33f-c2b247a28da2@nvidia.com>
+In-Reply-To: <f5ed0413-315c-d5d0-e33f-c2b247a28da2@nvidia.com>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 9 Nov 2020 09:08:12 +0530
-Message-ID: <CAFqt6zbC_-y8FAyGLv_QG2VMSa8HhfR+sd=W-E4eyuWfgSXnDQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] tomoyo: Convert get_user_pages*() to pin_user_pages*()
+Date:   Mon, 9 Nov 2020 09:11:07 +0530
+Message-ID: <CAFqt6zaRP56DPRHTGMNiY3KpdOKPB_SeeuFagUbkmQKQ6mKD2A@mail.gmail.com>
+Subject: Re: [PATCH 2/2] tomoyo: Fixed typo in documentation
 To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
+Cc:     takedakn@nttdata.co.jp,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Nov 8, 2020 at 10:30 AM John Hubbard <jhubbard@nvidia.com> wrote:
+On Sat, Nov 7, 2020 at 2:27 PM John Hubbard <jhubbard@nvidia.com> wrote:
 >
-> On 11/7/20 8:12 PM, Tetsuo Handa wrote:
-> > On 2020/11/08 11:17, John Hubbard wrote:
-> >>> Excuse me, but Documentation/core-api/pin_user_pages.rst says
-> >>> "CASE 5: Pinning in order to _write_ to the data within the page"
-> >>> while tomoyo_dump_page() is for "_read_ the data within the page".
-> >>> Do we want to convert to pin_user_pages_remote() or lock_page() ?
-> >>>
-> >>
-> >> Sorry, I missed the direction here, was too focused on the Case 5
-> >> aspect. Yes. Case 5 (which, again, I think we're about to re-document)
-> >> is only about *writing* to data within the page.
-> >>
-> >> So in this case, where it is just reading from the page, I think it's
-> >> already from a gup vs pup point of view.
-> >>
-> >> btw, it's not clear to me whether the current code is susceptible to any
-> >> sort of problem involving something writing to the page while it
-> >> is being dumped (I am curious). But changing from gup to pup wouldn't
-> >> fix that, if it were a problem. It a separate question from this patch.
+> On 11/7/20 12:24 AM, Souptick Joarder wrote:
+> > Fixed typo s/Poiner/Pointer
 > >
-> > The "struct page" tomoyo_dump_page() accesses is argv/envp arguments passed
-> > to execve() syscall. Therefore, these pages are not visible from threads
-> > except current thread, and thus there is no possibility that these pages
-> > are modified by other threads while current thread is reading.
+> > Fixes: 5b636857fee6 ("TOMOYO: Allow using argv[]/envp[] of execve() as conditions.")
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > Cc: John Hubbard <jhubbard@nvidia.com>
+> > ---
+> >   security/tomoyo/domain.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
 > >
+> > diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
+> > index bd748be..7b2babe 100644
+> > --- a/security/tomoyo/domain.c
+> > +++ b/security/tomoyo/domain.c
+> > @@ -891,7 +891,7 @@ int tomoyo_find_next_domain(struct linux_binprm *bprm)
+> >    *
+> >    * @bprm: Pointer to "struct linux_binprm".
+> >    * @pos:  Location to dump.
+> > - * @dump: Poiner to "struct tomoyo_page_dump".
+> > + * @dump: Pointer to "struct tomoyo_page_dump".
 >
-> Perfect. So since I accidentally left out the word "correct" above (I meant
-> to write, "it's already correct"), let me be extra clear: Souptick, we
-> should just drop this patch.
+> Not worth a separate patch, especially since the original comment is merely
+> copying the C sources, and as such, does not add any value.
+>
+> I'd either a) craft a new documentation line that adds some value, or b) just
+> merge this patch into the previous one, and make a note in the commit
+> description to the effect that you've included a trivial typo fix as long
+> as you're there.
 >
 
-Agreed. I will drop this patch.
+John, as patch[1/2] is dropped, can we take this patch forward with some more
+updates in documentations ?
