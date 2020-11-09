@@ -2,164 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E62C2D0A3
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 17:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8888EC5517A
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 18:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03FE8216C4
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 17:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36FB9206C0
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Nov 2020 18:24:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="e20YFcng"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="XCdtV1bl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731115AbgKIRYG (ORCPT
+        id S1729452AbgKISYg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Nov 2020 12:24:06 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:38056 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730588AbgKIRYG (ORCPT
+        Mon, 9 Nov 2020 13:24:36 -0500
+Received: from mout.gmx.net ([212.227.17.21]:41837 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729119AbgKISYg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Nov 2020 12:24:06 -0500
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 0418D20B4905;
-        Mon,  9 Nov 2020 09:24:04 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0418D20B4905
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1604942645;
-        bh=ta06hzgZzpA5ollIFWxpN65xzXn96qZS7d0S0MEGpnE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=e20YFcngAW2EheTQNcto50vE8IPR7U6bJ1KFsZZSgd8SV7QIB7x1pSLCf8jIuKGz3
-         9osm//coJGoMMv9BUBy4SCs06mVYnb4vDoHn2vf5s3mzq6bkfeRcg5Dwv/QLyS71+O
-         6NzLb842Vpdr3vNJtLvTrpCmn6hGwUiqrL4VPRG8=
-Subject: Re: [PATCH v5 6/7] IMA: add critical_data to the built-in policy
- rules
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
-        paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Mon, 9 Nov 2020 13:24:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1604946242;
+        bh=WqIeflJSIlbYefgQQeWSGrItmuRntyT1T0hegn+ItPU=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=XCdtV1blAQXrTCOSFtrBcv8Mh9UbKawLpFL3nZHFRYfna4OsIJ9yF6C6pAvhAAuDl
+         /4h3bASY0Ivfwp82T9gQSHpralUDDjpWg0kSSlRBYhaMGc+f/wRhDdp/zqyI72fU1v
+         WRudfFToHwR7fyK1w+SIrckkx4kjx/4ePBaPlcDk=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([83.52.231.59]) by mail.gmx.com (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MhU5b-1k7Y371Ht5-00ecTa; Mon, 09
+ Nov 2020 19:24:02 +0100
+Date:   Mon, 9 Nov 2020 19:23:48 +0100
+From:   John Wood <john.wood@gmx.com>
+To:     Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>
+Cc:     John Wood <john.wood@gmx.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20201101222626.6111-1-tusharsu@linux.microsoft.com>
- <20201101222626.6111-7-tusharsu@linux.microsoft.com>
- <7219f4404bc1bed6eb090b94363c283ec3266a17.camel@linux.ibm.com>
- <cdcd63f7-ce1f-4463-f886-c36832d7a706@linux.microsoft.com>
- <d92869b5-7244-e29e-5d30-c0e06cf45be1@linux.microsoft.com>
- <c2c6efe8b2903949fb7118b56991988ba9c4f582.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <4c568853-1e26-0a7b-f83b-022622e46031@linux.microsoft.com>
-Date:   Mon, 9 Nov 2020 09:24:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v2 7/8] Documentation: Add documentation for the Brute LSM
+Message-ID: <20201109182348.GA3110@ubuntu>
+References: <20201025134540.3770-1-john.wood@gmx.com>
+ <20201025134540.3770-8-john.wood@gmx.com>
+ <2ab35578-832a-6b92-ca9b-2f7d42bc0792@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <c2c6efe8b2903949fb7118b56991988ba9c4f582.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2ab35578-832a-6b92-ca9b-2f7d42bc0792@infradead.org>
+X-Provags-ID: V03:K1:WdI92dEESOw+IgoEK7rINKMLkOZRlvr4IU++VYFxIy5Ur0nV16w
+ Sqk+PhsyjhswmvKyBUujNzib3b/wlEFMi39I/2/Bce6C0eAMeXnWS9YK6rlW9reHWAz9Szd
+ ICX7ASR+WHwx4BL2+H8Aeq3GTAh49+HVm+XJdYJvJgA4+9gc3QJYZQFBI08chIEExKq2+yS
+ nAguvprm3r390hvh6TrRQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:98HlGKz9byI=:y9WvS6BYmDogmfNlP3PqZd
+ sWZq3sMViZO0xAzwsWRVGRHjkt5YyU+C1AqB2JSCjSM8i69/rcn4dBDna+E1t83MSnIjZpQvW
+ NeaZmFproIgh57IAwipps3xUj8zq8vmjCGqZten0jYdleE7hRN3Nhn14vdrxjnB/0SS9obIgK
+ hKFu5IIEC7sLEHovDjYww3kv6l9ZR89B229SvWx5jTYSCgkAfZ1xNL5C/Blv9gPDFlzMOAtUV
+ EzrWNW/1W8gfPufebymUZYPomyz2Jf+5LBPugLT+m1ZTLzo1rA9O7lp+AO5GH+uF3/wnMMNkE
+ pCsMl0RqRKJN4L1OoegURKyPmqH7zY/60BThS4RNQ29yB7LGF+usuXQoQneqHgcoWXXBZ4NWM
+ XFNXjfRKoGwgo/VHiNcf+UcyBHpoTEoPTIA0D2LnpyuAZW8YTg5zrf5CSS+j2maMyxiIMLvlw
+ qwdUB8yW7LmJJMdfU75NWEcxLnj4KOi6RhddjfM1q61f9QSPwNjdnbNtDT6wCW9Sb+lefroBS
+ GxNkPOp+8dPaCGGKxJO7iOm5EZPjpusjupOGqBwQb0B7TrK9lJTJmu3YRVBNA4hWjzliTvFzx
+ fkSGuTLCStJJi1Jc9aocu5R4O2TZlWWTYpx2M/w30puxorF4WzvWs5JpsEi3DByYIVRBikAVZ
+ IkW1mGIFY+Nd2/tQDrSQxe+uLBejHR0k0nc2ihQsGOSXotUvJdkW1PtuMOZ4u+ydyoB2wnmAI
+ wCUaD9Bn+3gNcjb7H8+lM9PGYm/jhSY/5rUE6qA3wpgMdNL3JeQmLe3Pdk0JFcVCTjfGxQDNu
+ /I/dZ44v3f2rv4wu0X/LaNajwe5DtUSwdq5gUB6dVKSbaQt8qPUXpgKBabvA2gk9QWKHmwmz5
+ coBqJksRfE5u8uNHeX9Q==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/8/20 7:46 AM, Mimi Zohar wrote:
-> Hi Lakshmi,
-> 
-> On Fri, 2020-11-06 at 15:51 -0800, Lakshmi Ramasubramanian wrote:
->>
->>>>> diff --git a/security/integrity/ima/ima_policy.c
->>>>> b/security/integrity/ima/ima_policy.c
->>>>> index ec99e0bb6c6f..dc8fe969d3fe 100644
->>>>> --- a/security/integrity/ima/ima_policy.c
->>>>> +++ b/security/integrity/ima/ima_policy.c
->>>>
->>>>> @@ -875,6 +884,29 @@ void __init ima_init_policy(void)
->>>>>                  ARRAY_SIZE(default_appraise_rules),
->>>>>                  IMA_DEFAULT_POLICY);
->>>>> +    if (ima_use_critical_data) {
->>>>> +        template = lookup_template_desc("ima-buf");
->>>>> +        if (!template) {
->>>>> +            ret = -EINVAL;
->>>>> +            goto out;
->>>>> +        }
->>>>> +
->>>>> +        ret = template_desc_init_fields(template->fmt,
->>>>> +                        &(template->fields),
->>>>> +                        &(template->num_fields));
->>>>
->>>> The default IMA template when measuring buffer data is "ima_buf".   Is
->>>> there a reason for allocating and initializing it here and not
->>>> deferring it until process_buffer_measurement()?
->>>>
->>>
->>> You are right - good catch.
->>> I will remove the above and validate.
->>>
->>
->> process_buffer_measurement() allocates and initializes "ima-buf"
->> template only when the parameter "func" is NONE. Currently, only
->> ima_check_blacklist() passes NONE for func when calling
->> process_buffer_measurement().
->>
->> If "func" is anything other than NONE, ima_match_policy() picks
->> the default IMA template if the IMA policy rule does not specify a template.
->>
->> We need to add "ima-buf" in the built-in policy for critical_data so
->> that the default template is not used for buffer measurement.
->>
->> Please let me know if I am missing something.
->>
-> 
-> Let's explain a bit further what is happening and why.   As you said
-> ima_get_action() returns the template format, which may be the default
-> IMA template or the specific IMA policy rule template format.  This
-> works properly for both the arch specific and custom policies, but not
-> for builtin policies, because the policy rules may contain a rule
-> specific .template field.   When the rules don't contain a rule
-> specific template field, they default to the IMA default template.  In
-> the case of builtin policies, the policy rules cannot contain the
-> .template field.
-> 
-> The default template field for process_buffer_measurement() should
-> always be "ima-buf", not the default IMA template format.   Let's fix
-> this prior to this patch.
-> 
-> Probably something like this:
-> - In addition to initializing the default IMA template, initialize the
-> "ima-buf" template.  Maybe something similiar to
-> ima_template_desc_current().
-> - Set the default in process_buffer_measurement() to "ima-buf", before
-> calling ima_get_action().
-> - modify ima_match_policy() so that the default policy isn't reset when
-> already specified.
-> 
+Hi,
+Thanks for the typos corrections. Will be corrected in the next patch
+version.
 
-Sure Mimi - I will try this out and update.
+On Sun, Nov 08, 2020 at 08:31:13PM -0800, Randy Dunlap wrote:
+>
+> So an app could read crash_period_threshold and just do a new fork every
+> threshold + 1 time units, right? and not be caught?
 
-thanks,
-  -lakshmi
+Yes, you are right. But we must set a crash_period_threshold that does not
+make an attack feasible. For example, with the default value of 30000 ms,
+an attacker can break the app only once every 30 seconds. So, to guess
+canaries or break ASLR, the attack needs a big amount of time. But it is
+possible.
 
-> 
-> 
->>>>
->>>>> +        if (ret)
->>>>> +            goto out;
->>>>> +
->>>>> +        critical_data_rules[0].template = template;
->>>>> +        add_rules(critical_data_rules,
->>>>> +              ARRAY_SIZE(critical_data_rules),
->>>>> +              IMA_DEFAULT_POLICY);
->>>>> +    }
->>>>> +
->>>>> +out:
->>>>> +    if (ret)
->>>>> +        pr_err("%s failed, result: %d\n", __func__, ret);
->>>>> +
->>>>>        ima_update_policy_flag();
->>>>>    }
->>>>
->>>
->>
+So, I think that to avoid this scenario we can add a maximum number of
+faults per fork hierarchy. Then, the mitigation will be triggered if the
+application crash period falls under the period threshold or if the number
+of faults exceed the maximum commented.
+
+This way, if an attack is of long duration, it will also be detected and
+mitigated.
+
+What do you think?
+
+>
+> thanks for the documentation.
+> --
+> ~Randy
+>
+
+Thanks,
+John Wood
 
