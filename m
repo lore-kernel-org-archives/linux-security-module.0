@@ -2,80 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B89EC2D0A3
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 03:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABA8C388F7
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 04:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11BD82067B
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 03:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3BC2206D8
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 04:43:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbgKJDPR (ORCPT
+        id S1729661AbgKJEnI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Nov 2020 22:15:17 -0500
-Received: from namei.org ([65.99.196.166]:39792 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729243AbgKJDPR (ORCPT
+        Mon, 9 Nov 2020 23:43:08 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52096 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731231AbgKJEnI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Nov 2020 22:15:17 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0AA3Et8b032521;
-        Tue, 10 Nov 2020 03:14:55 GMT
-Date:   Tue, 10 Nov 2020 14:14:55 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Aleksandr Nogikh <aleksandrnogikh@gmail.com>
-cc:     serge@hallyn.com, akinobu.mita@gmail.com,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Marco Elver <elver@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Kees Cook <keescook@google.com>, casey@schaufler-ca.com,
+        Mon, 9 Nov 2020 23:43:08 -0500
+Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 0AA4h6ag067872;
+        Tue, 10 Nov 2020 13:43:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp);
+ Tue, 10 Nov 2020 13:43:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav103.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 0AA4h5rr067869
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 10 Nov 2020 13:43:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v3 1/2] security: add fault injection capability
+To:     Aleksandr Nogikh <aleksandrnogikh@gmail.com>, jmorris@namei.org,
+        serge@hallyn.com, akinobu.mita@gmail.com
+Cc:     andreyknvl@google.com, dvyukov@google.com, elver@google.com,
+        glider@google.com, keescook@google.com, casey@schaufler-ca.com,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Aleksandr Nogikh <nogikh@google.com>, mortonm@chromium.org
-Subject: Re: [PATCH v3 0/2] security: add fault injection to LSM hooks
-In-Reply-To: <CAFSQ=y455bVOGMpRW86Gto+WdL1idxSXM0RPifokEotyg2ccjg@mail.gmail.com>
-Message-ID: <alpine.LRH.2.21.2011101414330.30138@namei.org>
-References: <20201029183526.2131776-1-aleksandrnogikh@gmail.com> <CAFSQ=y455bVOGMpRW86Gto+WdL1idxSXM0RPifokEotyg2ccjg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Aleksandr Nogikh <nogikh@google.com>
+References: <20201029183526.2131776-1-aleksandrnogikh@gmail.com>
+ <20201029183526.2131776-2-aleksandrnogikh@gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <04d8c32a-06cd-d71a-43d9-47b1de6c7684@i-love.sakura.ne.jp>
+Date:   Tue, 10 Nov 2020 13:43:06 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20201029183526.2131776-2-aleksandrnogikh@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 9 Nov 2020, Aleksandr Nogikh wrote:
+On 2020/10/30 3:35, Aleksandr Nogikh wrote:
+> +#ifdef CONFIG_FAIL_LSM_HOOKS
+> +
+> +static struct {
+> +	struct fault_attr attr;
+> +	int retval;
+> +} fail_lsm_hooks = {
+> +	.attr = FAULT_ATTR_INITIALIZER,
+> +	.retval = -EACCES
+> +};
+> +
+> +static int __init setup_fail_lsm_hooks(char *str)
+> +{
+> +	return setup_fault_attr(&fail_lsm_hooks.attr, str);
+> +}
+> +__setup("fail_lsm_hooks=", setup_fail_lsm_hooks);
+> +
+> +static int lsm_hooks_inject_fail(void)
+> +{
+> +	return should_fail(&fail_lsm_hooks.attr, 1) ? fail_lsm_hooks.retval : 0;
+> +}
+> +
+> +#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
+> +
+> +static int __init fail_lsm_hooks_debugfs(void)
+> +{
+> +	umode_t mode = S_IFREG | 0600;
+> +	struct dentry *dir;
+> +
+> +	dir = fault_create_debugfs_attr("fail_lsm_hooks", NULL,
+> +					&fail_lsm_hooks.attr);
+> +	debugfs_create_u32("retval", mode, dir, &fail_lsm_hooks.retval);
 
-> On Thu, 29 Oct 2020 at 21:35, Aleksandr Nogikh
-> <aleksandrnogikh@gmail.com> wrote:
-> >
-> > From: Aleksandr Nogikh <nogikh@google.com>
-> >
-> > Fault injection capabilities[Documentation/fault-injection/fault-injection.rst]
-> > facilitate testing of the stability of the Linux kernel by providing
-> > means to force a number of kernel interfaces to return error
-> > codes. This patch series proposes adding such fault injection
-> > capability into LSM hooks.
-> >
-> > The intent is to make it possible to test whether the existing kernel
-> > code properly handles negative return values of LSM hooks. Syzbot
-> > [https://github.com/google/syzkaller/blob/master/docs/syzbot.md] will
-> > automatically do that with the aid of instrumentation tools once these
-> > changes are merged.
-> > [...]
-> 
-> What tree should these changes go to?
-> 
+Since production kernels will use CONFIG_FAIL_LSM_HOOKS=n, we won't need to worry about userspace ABI.
 
-Mine, but more signoffs/acks are required.
+Reviewed-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-> Is there anyone else who is not on the recipient list but still might
-> be interested in the series?
-> 
+By the way, fail_lsm_hooks.retval is "signed int" but debugfs_create_u32() handles "unsigned int".
+Do we want to allow lsm_hooks_inject_fail() to inject arbitrary !IS_ERR_VALUE() values?
 
--- 
-James Morris
-<jmorris@namei.org>
-
+> +	return 0;
+> +}
