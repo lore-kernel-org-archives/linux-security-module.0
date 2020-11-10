@@ -2,84 +2,71 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E6CC56201
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 06:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EC6C55ABD
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 06:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB8920897
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 06:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF912204EC
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 06:53:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbgKJGsZ (ORCPT
+        id S1728403AbgKJGxk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Nov 2020 01:48:25 -0500
-Received: from namei.org ([65.99.196.166]:39838 "EHLO namei.org"
+        Tue, 10 Nov 2020 01:53:40 -0500
+Received: from namei.org ([65.99.196.166]:39870 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726006AbgKJGsY (ORCPT
+        id S1726467AbgKJGxk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Nov 2020 01:48:24 -0500
+        Tue, 10 Nov 2020 01:53:40 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0AA6lEtx009182;
-        Tue, 10 Nov 2020 06:47:14 GMT
-Date:   Tue, 10 Nov 2020 17:47:14 +1100 (AEDT)
+        by namei.org (8.14.4/8.14.4) with ESMTP id 0AA6rBTi009357;
+        Tue, 10 Nov 2020 06:53:11 GMT
+Date:   Tue, 10 Nov 2020 17:53:11 +1100 (AEDT)
 From:   James Morris <jmorris@namei.org>
-To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-cc:     "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>
+cc:     casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, Audit-ML <linux-audit@redhat.com>,
         Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v23 00/12] Landlock LSM
-In-Reply-To: <20201103182109.1014179-1-mic@digikod.net>
-Message-ID: <alpine.LRH.2.21.2011101745100.9130@namei.org>
-References: <20201103182109.1014179-1-mic@digikod.net>
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH v22 05/23] LSM: Use lsmblob in security_secctx_to_secid
+In-Reply-To: <20201105004924.11651-6-casey@schaufler-ca.com>
+Message-ID: <alpine.LRH.2.21.2011101753060.9130@namei.org>
+References: <20201105004924.11651-1-casey@schaufler-ca.com> <20201105004924.11651-6-casey@schaufler-ca.com>
 User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1397860341-1604990838=:9130"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Wed, 4 Nov 2020, Casey Schaufler wrote:
 
---1665246916-1397860341-1604990838=:9130
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-
-On Tue, 3 Nov 2020, Mickaël Salaün wrote:
-
-> Hi,
+> Change the security_secctx_to_secid interface to use a lsmblob
+> structure in place of the single u32 secid in support of
+> module stacking. Change its callers to do the same.
 > 
-> Can you please consider to merge this into the tree?
+> The security module hook is unchanged, still passing back a secid.
+> The infrastructure passes the correct entry from the lsmblob.
 > 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: netdev@vger.kernel.org
 
-I've added this to my tree:
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git landlock_lsm
+You probably need to include Netfilter maintainers specifically for this 
+(added them + the Netfilter list).
 
-and merged into next-testing (which is pulled into linux-next).
-
-
-Please make any further changes against the branch in my tree.
-
+This also needs signoffs from LSM owners.
 
 -- 
 James Morris
 <jmorris@namei.org>
 
---1665246916-1397860341-1604990838=:9130--
