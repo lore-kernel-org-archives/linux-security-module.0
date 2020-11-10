@@ -2,185 +2,208 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E471C56201
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 17:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5ABC4741F
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 17:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE7E520809
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 17:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25DEE2076E
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Nov 2020 17:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZqYcU4eu"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zh3PDYrA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbgKJR2r (ORCPT
+        id S1730788AbgKJRmY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Nov 2020 12:28:47 -0500
-Received: from sonic306-27.consmr.mail.ne1.yahoo.com ([66.163.189.89]:33822
-        "EHLO sonic306-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727968AbgKJR2q (ORCPT
+        Tue, 10 Nov 2020 12:42:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34406 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgKJRmX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Nov 2020 12:28:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1605029325; bh=77QiCjhR/WkJJBxxl0uVBiHR2j6qU2I5mSEQJBTYfBo=; h=From:To:Cc:Subject:Date:References:From:Subject; b=ZqYcU4euc+CbRx1G0YsYbnJJNddjP5btauKdTRsgS6yqOsHqdK2vhcrqf1NZRGDt4uy2h0iuRfYH4aZPGlz6CqPFmmhKKzc/sxFIDqngH43xUeJTGcaiUWXY1PbW0nU3sFSG5VbTbhffYgyF29N4a+GTDXZ09sR8o490dJrJHqO28Umg5Ee3fW/4v4nyYk6560B7T3br9pYw/deNN5YtApK2fgvAZfia5GvkbrqPlnwFjXXBqmMxfoGYZLUd4m/d0rg+xZODgRNUmyxZJtAuHIrSINV3xYiWn0DeOv271JK0zeKhj9Rs8sOlIX7AmQ2ofsuUqC2zzqBBAVtYnxtVGg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1605029325; bh=+i3EIhZhtIwgiIp3YZzf8NYJlP+FOAsOwvzYcitRDlR=; h=From:To:Subject:Date:From:Subject; b=C0zsSWVkcCb9HLbbFAXH4MOsejYoInMHbX76uYA3vUt+pLfRqTw2E3Jd9zHlHBCdcBRffHit6vigt4MGNpcobhOE1oXukHDifZy1pwZGLoVwLjwPb/PJDEy0SPCltTPMONvxwRWgN5qZTVGTQnp/s88qHY98sfkMGg46LNmYvTlCzuSkFKGSt7/FJyC0Yvc92sY1w/+LWbRgia3To46WwMi9g4XiFxObZ0cnas/rW5lTGZmQJh5GYLJAbMl1QdvO53/EgB5L5hfNFyPnzatL4pyDTjmNPMguCK0p8zEtblQqaqvrDQFaDnHM6hEtRuNY0F18oxrBD9ZnTcjip+RqGw==
-X-YMail-OSG: fzmBBxMVM1nxMenNWS_ejTrab_SoIaupPuqzRy7lHQSHwRFe3v7ZTqZN1yH_zDo
- U17MUTebcKETGXofpXgtKUFiF5W0pjmVMqu6nsb8n0Lb9wSUzr9BPzPkjIHsYdx.WzwqCLK98WSF
- SOJkZGiCJB4kb8L2JOn1WxoQyOjugLxcYvkW.6JkOYZ3w0eXyOGpy0wYn53yf_8e7Lu3ZGMBHR6U
- dNWX._SCdmg1KfEbyUibT4jUj1xcZnYuDQUIIQbVg7yBHBZivK2aC5ueFQ9K5QfRK.XK.G9P3lYD
- Oc8CyeeIZAZ8xsTqR8lh4TFqQC.Z7zkttvn2vhv47rMLqvSyk4KwuQ_hyBWzucu.p.VCl0oCXK2F
- _QqssunH2aiN3lp4rwuD3qUsxkuxPUeoSdp9SBry9StBH9ALVFj.yCopMC3DpR5zLOkoj2gbhc08
- kgIa0QQJAYnq.XHs5okGXsXwMMekJG_AjTcN0aBj5C24SNKXb9SKsLUuLW4BDnD1c.QRGQyQuWn7
- .qWses21f9ZvmWDGqTXJhct483Wi4pWMXe8m28eUWih17nUpudlJMXX8HBHQFQJEH3M2qziI90Bq
- vmeK4c_DTPEfT6_0oqE5cmlaZqFs_6v432EpuMsT6MQId5gm0leWnOTgZfUlXLs_vkKdljt1Iqcb
- FiDT7Bcrs6nYExbq1y19Q0ibt6StffXcIiBbCZ1g4DNyxruGQI6cMIbp01Q5Ljai6V5v896yiOJV
- mtGU78vWu_M_1wbV5PKD7Ivomp2XhV8JMh9W6Xt49zLbmrVuoManFrWjRCNJWu4A8Rl_0efpGxqQ
- UGSAnpGVKWH7SCc9_ml_lOEjHePFeLjLXvbwRR8LhzJrSL.Znj7j_zgEzDILB8xTLR4EklLDIXag
- YD32mxUxfgDwtMEDupdGphw8fV0qztT6alD2Y6vO6TRD5tZpQZK2xeehxuTh_EIO3.5DYi00StR0
- 0l2qx9.5B8_Bo1Fuf90BkYQ_ae9JV.WP.02D_pDkRr5LkNoWG.WRrwMtf_wvUH.AxZfPJbmouHOQ
- eOLOJ8.68Lo86lkJhlzTL_4B8Msgs65BUByGZGVQwamrUo2b4te.A4zzcNWxWrdlb.U5I2lS.ls2
- I9K828c1l9Viq3fuy.weiCn0cUqZurXNTfD90NYa745Kf2LB.lqrNAwW9yn1Vxb11vsp4RTj3I26
- r8wuCPxJzYXNxqSHnsgJA4bu3DUfHTqwPzSq2v8f7wOdVN8GrBGxq02AaF7KlmZZ4iTOAdoKtL3Z
- YGNGVhpwxxp7AXGwGJ4TrPFnb7z40CuIhOftFlAw1diw4EHnEloIxWrgbMeCvHAet3GyX1SAdXgr
- HF4_e9JMu3mvzHXRkGijEiKcvoiWv.zs2SisshDUqDGABqQGsauJFhbGVt5tKpJK1_I7uXrC9w2U
- _d9zVdWZt10EFAF4Gy1i3IHD0HMF_Be1ur0xRgoMsR9lOc9v.6AYwS7lbDh4FAtcMFwYQewYRL2E
- 9uzOaRtjmtVObCX36fEcr_KY.rXFqll4qUkJ_0HyucGztg_6G52kn_.Zex8jbNluZJnM14CY6oF0
- 0ZFhzouEzKY.rX9kOLwLtIGo7M0OVrzhQag3VBVrnpptI5qP9GMWWoqNl_lCt7WBz5QFBHt_E36W
- VtD7w_kUv32.iffcXS2PCNS7MLKiiAdqVerA0urkLOZaZKyRDslzpiBhAnviPHFuFOnMk4qqM0b3
- PW.qNyqTmLBrGEMGftDeEnDR_WutPUUchNNC9n7DEnRKr7bCgcDvqE0E9bqWPvpquDmwlZrB2Dfz
- rWJB2xESNe5YBLuhmtywzfFryaaTgyeMyAGHV_IwyO9hjd3ygtSLKbvx0dwKDZrtfG7bcFQiOnR9
- zji3SwlfZ4yl71QVkFeSD_dgnHAoxPrpeD1bd69ws3giQaiztzhQYcsvVEdWbRy9M0b9L7fOPq_9
- 7rbV2BoisUhDtNZm0ZkqdKZxV_l98z2csHJwb2aD1hU09PB2AOV3nVm.BPTug29wVFFyo2Yncbv0
- w2nvN4glBtByR_vP6WgHLLjGY17RbLGcWGBaKwuN53h8pcPu4dhnzdSx6f9xQ.TARDkvt970j9Ia
- Me8938jpKxw7dfc1OPRb92eN_VDTltExpOlWeI5Lcr7Y1d_hhTDpV4Dg9rHaQ98BNe6_lvZpLL3C
- jHwocD0vxzRqnFm5abQmlpu8BmXH8oycqsABBOoIs0uFSAj5Wz8.B5kDnjMy.NJ6e73eC4.2lKpd
- zWP0BoMsFqfMFORRIOTnkmNRXYSrk73rD3d79aWjKSHQWI.RLziRwIdnd4poIvTqMPdfeEDWGO3w
- bzExOnfRygBp.PDGU45kf3lhe4f0EWJ.Fa65Tq6IDDKD5K_x6TlhgiLZvU399F2CNIubjVB6vGa4
- ET5F68Qb1Du2Tm3l8ivigS.0Bfnb7QAPzqFrUnQDQRXEJJUWvnh5SBTed70D45hVwM.83t6L3lW_
- 0dYsqR7NUwUBiRuq8FHOcKFSFfuoZnHR7njDsBxDLm_iEVEy_HZwXEXAjxiHPwtzodNNHCsnISVA
- tAGk7DNigDrGiBdau1C5GJ0z4__9Yls0sSyByJfsm2eeIK3jU.ZYb_BgpOMgHZReWz8pS9Udytx2
- hO8a_Hz5v4F5aeADazKi.o5SFGkCTDbNxW0Ap9VgZaZdao6yKy9AptQMchYx6yVI0rj9_Wr9O8eh
- T5YifLsL3Soox76ze7MghvHh6UpZQ.XZHsIC_cTOR.HF.sh6j7ZzjIqX2JJ7xSAxMSkuzdqcKHjp
- 3_OeRdJKhF_3WC0W00dggWVovhUdc0MmrXRJsSmsABmCwdS6lcztYb9g.bhGQfZ2gayTVgxSotbm
- pxBMQM3hdzwdp6P_17dQFYmEx7k0TlmqadSbyGPy1N92iUCSGNEB1dy3hpp_DDW5yNvHPquX_Ecv
- j4S77We2FmJktaVYXRU9rFyPIkadUlAZYO.BDVyahqfvD2hPP8FyKIYdcXwL5zrh4Q.KOs9AJ8AI
- _Rc0SkUBtexH0EZfF3JpdtcId4LUhgg--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Tue, 10 Nov 2020 17:28:45 +0000
-Received: by smtp410.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 3b996d132bda857859cdbbdd029f861c;
-          Tue, 10 Nov 2020 17:28:42 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-doc@vger.kernel.org
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SELinux <selinux@vger.kernel.org>
-Subject: [RFC PATCH] docs: ABI: ABI documentation for procfs attribute files
- used by multiple LSMs
-Message-ID: <30c36660-3694-0c0d-d472-8f3b3ca4098e@schaufler-ca.com>
-Date:   Tue, 10 Nov 2020 09:28:41 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
+        Tue, 10 Nov 2020 12:42:23 -0500
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5BC7C0613D1
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 09:42:23 -0800 (PST)
+Received: by mail-pf1-x443.google.com with SMTP id v12so12057145pfm.13
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 09:42:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xF9/tbw9kOE7P0FAYcDx8ImhRA3RlHzojbtxK6nR5qQ=;
+        b=Zh3PDYrAEV+1C0mncbeDX7SS6s2UY5CwYoWMUaL9sFqBdYheZMRcsKmg7v8y1s1cuv
+         Yf4iIwxQ3jrQRk6U/dT5TAi21MtJDvfzx1yAMA2IgRuHcweM/YSocmMpwwvfIdxZmO9U
+         5ABXvV0Vc+llYKajBKq6i2CXQW6ZoLhMNHGgwMLfooBOZp9ANdx8tP2bq4HtUR/2t3Xk
+         MvgX1KAPi+RsI/l4zPszmlypBRHLbApduuI+ejk2dRinY1qtXNOVW2Ju0efaLfSNZ9Qi
+         QrkLAjG1Cyf1VUttFW55xVYGA9Lee2nrr+onFSPr0+NvE4k6w/Saq3KBarsiOHxRGog2
+         vC3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xF9/tbw9kOE7P0FAYcDx8ImhRA3RlHzojbtxK6nR5qQ=;
+        b=X8ceD9tNNEPC4R8A3Mh/n9brOqRxXaMqmKfFi/k/Fql/MW+B6rdnFsNfWXURQMAoUb
+         E7EstuiBu6h8oFadDJ8v8lild/JNmryOECoKVN71oQNabZZtXFfiIc527GI/91jKvQiu
+         2SgrJLlT5yJg9yEgpfAhOjMSzeuGfkqP/aD3j/ucHLrkZuoEg0Wh8yU962E31LVKeOiO
+         UkhecTyW7JJZHREtgze9GYC4Flf3JmtRNNyNhfxAuADT6491r9aF+jBxRq647uo9yzey
+         cUQW20OujvjvpkI0xtUu/xREezPkmTCmUX5BwhjxoydHNNRBrtTuMXTacQ/8lBVmOKjl
+         1j/g==
+X-Gm-Message-State: AOAM533peJ/J6qHnSdSkbF+eJEPFCmL0igrMhYNch8mByQb59PGMzrq7
+        hMa2RrGKke8qWKk1BvZCAyXP+CJo1rFNv/kwuxIM3g==
+X-Google-Smtp-Source: ABdhPJwdsVEbgjYrXxYPWkuixoMrNxfDNyPLQWf0eIjCwDeKr7Z/gL08l2Zaq4MZJZ9hkhkACznYuIg//9t9ZV0QZ+c=
+X-Received: by 2002:a63:1f53:: with SMTP id q19mr18270115pgm.286.1605030142984;
+ Tue, 10 Nov 2020 09:42:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-References: <30c36660-3694-0c0d-d472-8f3b3ca4098e.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.16944 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
+References: <20201029183526.2131776-1-aleksandrnogikh@gmail.com> <20201029183526.2131776-2-aleksandrnogikh@gmail.com>
+In-Reply-To: <20201029183526.2131776-2-aleksandrnogikh@gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 10 Nov 2020 18:42:12 +0100
+Message-ID: <CAAeHK+yqS09Aodtvo-G=V26-HUXQV7KayG_oHgSNivexsm2BUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] security: add fault injection capability
+To:     Aleksandr Nogikh <aleksandrnogikh@gmail.com>
+Cc:     James Morris <jmorris@namei.org>, serge@hallyn.com,
+        akinobu.mita@gmail.com, Dmitry Vyukov <dvyukov@google.com>,
+        Marco Elver <elver@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Kees Cook <keescook@google.com>, casey@schaufler-ca.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Aleksandr Nogikh <nogikh@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Provide basic ABI descriptions for the process attribute entries
-that are shared between multiple Linux security modules.
+On Thu, Oct 29, 2020 at 7:35 PM Aleksandr Nogikh
+<aleksandrnogikh@gmail.com> wrote:
+>
+> From: Aleksandr Nogikh <nogikh@google.com>
+>
+> Add a fault injection capability to call_int_hook macro. This will
+> facilitate testing of fault tolerance of the code that invokes
+> security hooks as well as the fault tolerance of the LSM
+> implementations themselves.
+>
+> Add a KConfig option (CONFIG_FAIL_LSM_HOOKS) that controls whether the
+> capability is enabled. In order to enable configuration from the user
+> space, add the standard debugfs entries for fault injection (if
+> CONFIG_FAULT_INJECTION_DEBUG_FS is enabled).
+>
+> Signed-off-by: Aleksandr Nogikh <nogikh@google.com>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
-=C2=A0Documentation/ABI/testing/procfs-attr-current | 20 ++++++++++++++++=
-++++
- Documentation/ABI/testing/procfs-attr-exec    | 20 ++++++++++++++++++++
- Documentation/ABI/testing/procfs-attr-prev    | 19 +++++++++++++++++++
- 3 files changed, 59 insertions(+)
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
 
-diff --git a/Documentation/ABI/testing/procfs-attr-current b/Documentatio=
-n/ABI/testing/procfs-attr-current
-new file mode 100644
-index 000000000000..198b9fe1c8e8
---- /dev/null
-+++ b/Documentation/ABI/testing/procfs-attr-current
-@@ -0,0 +1,20 @@
-+What:		/proc/*/attr/current
-+Contact:	linux-security-module@vger.kernel.org,
-+		selinux@vger.kernel.org,
-+		apparmor@lists.ubuntu.com
-+Description:	The current security information used by a Linux
-+		security module (LSM) that is active on the system.
-+		The details of permissions required to read from
-+		this interface and hence obtain the security state
-+		of the task identified is LSM dependent.
-+		A process cannot write to this interface unless it
-+		refers to itself.
-+		The other details of permissions required to write to
-+		this interface and hence change the security state of
-+		the task identified are LSM dependent.
-+		The format of the data used by this interface is LSM
-+		dependent.
-+		SELinux, Smack and AppArmor provide this interface.
-+Users:		SELinux user-space
-+		Smack user-space
-+		AppArmor user-space
-diff --git a/Documentation/ABI/testing/procfs-attr-exec b/Documentation/A=
-BI/testing/procfs-attr-exec
-new file mode 100644
-index 000000000000..34593866a7ab
---- /dev/null
-+++ b/Documentation/ABI/testing/procfs-attr-exec
-@@ -0,0 +1,20 @@
-+What:		/proc/*/attr/exec
-+Contact:	linux-security-module@vger.kernel.org,
-+		selinux@vger.kernel.org,
-+		apparmor@lists.ubuntu.com
-+Description:	The security information to be used on the process
-+		by a Linux security module (LSM) active on the system
-+		after a subsequent exec() call.
-+		The details of permissions required to read from
-+		this interface and hence obtain the security state
-+		of the task identified is LSM dependent.
-+		A process cannot write to this interface unless it
-+		refers to itself.
-+		The other details of permissions required to write to
-+		this interface and hence change the security state of
-+		the task identified are LSM dependent.
-+		The format of the data used by this interface is LSM
-+		dependent.
-+		SELinux and AppArmor provide this interface.
-+Users:		SELinux user-space
-+		AppArmor user-space
-diff --git a/Documentation/ABI/testing/procfs-attr-prev b/Documentation/A=
-BI/testing/procfs-attr-prev
-new file mode 100644
-index 000000000000..f990b3595839
---- /dev/null
-+++ b/Documentation/ABI/testing/procfs-attr-prev
-@@ -0,0 +1,19 @@
-+What:		/proc/*/attr/prev
-+Contact:	linux-security-module@vger.kernel.org,
-+		selinux@vger.kernel.org,
-+		apparmor@lists.ubuntu.com
-+Description:	The security information used on the process by
-+		a Linux security module (LSM) active on the system
-+		prior to the most recent exec() call.
-+		The details of permissions required to read from
-+		this interface is LSM dependent.
-+		A process cannot write to this interface unless it
-+		refers to itself.
-+		The other details of permissions required to write to
-+		this interface are LSM dependent.
-+		The format of the data used by this interface is LSM
-+		dependent.
-+		SELinux and AppArmor provide this interface.
-+Users:		SELinux user-space
-+		AppArmor user-space
-+
-
-
+> ---
+> v2:
+> * Renamed should_fail_lsm_hook() to lsm_hooks_inject_fail().
+> ---
+>  lib/Kconfig.debug   |  6 +++++
+>  security/security.c | 53 ++++++++++++++++++++++++++++++++++++++++++---
+>  2 files changed, 56 insertions(+), 3 deletions(-)
+>
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 537cf3c2937d..80d289591e29 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1803,6 +1803,12 @@ config FAIL_MAKE_REQUEST
+>         help
+>           Provide fault-injection capability for disk IO.
+>
+> +config FAIL_LSM_HOOKS
+> +       bool "Fault-injection capability for LSM hooks"
+> +       depends on FAULT_INJECTION
+> +       help
+> +         Provide fault-injection capability for LSM hooks.
+> +
+>  config FAIL_IO_TIMEOUT
+>         bool "Fault-injection capability for faking disk interrupts"
+>         depends on FAULT_INJECTION && BLOCK
+> diff --git a/security/security.c b/security/security.c
+> index 69ff6e2e2cd4..1105ad0f6891 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -28,6 +28,7 @@
+>  #include <linux/backing-dev.h>
+>  #include <linux/string.h>
+>  #include <linux/msg.h>
+> +#include <linux/fault-inject.h>
+>  #include <net/flow.h>
+>
+>  #define MAX_LSM_EVM_XATTR      2
+> @@ -669,6 +670,51 @@ static void __init lsm_early_task(struct task_struct *task)
+>                 panic("%s: Early task alloc failed.\n", __func__);
+>  }
+>
+> +
+> +#ifdef CONFIG_FAIL_LSM_HOOKS
+> +
+> +static struct {
+> +       struct fault_attr attr;
+> +       int retval;
+> +} fail_lsm_hooks = {
+> +       .attr = FAULT_ATTR_INITIALIZER,
+> +       .retval = -EACCES
+> +};
+> +
+> +static int __init setup_fail_lsm_hooks(char *str)
+> +{
+> +       return setup_fault_attr(&fail_lsm_hooks.attr, str);
+> +}
+> +__setup("fail_lsm_hooks=", setup_fail_lsm_hooks);
+> +
+> +static int lsm_hooks_inject_fail(void)
+> +{
+> +       return should_fail(&fail_lsm_hooks.attr, 1) ? fail_lsm_hooks.retval : 0;
+> +}
+> +
+> +#ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
+> +
+> +static int __init fail_lsm_hooks_debugfs(void)
+> +{
+> +       umode_t mode = S_IFREG | 0600;
+> +       struct dentry *dir;
+> +
+> +       dir = fault_create_debugfs_attr("fail_lsm_hooks", NULL,
+> +                                       &fail_lsm_hooks.attr);
+> +       debugfs_create_u32("retval", mode, dir, &fail_lsm_hooks.retval);
+> +       return 0;
+> +}
+> +
+> +late_initcall(fail_lsm_hooks_debugfs);
+> +
+> +#endif /* CONFIG_FAULT_INJECTION_DEBUG_FS */
+> +
+> +#else
+> +
+> +static inline int lsm_hooks_inject_fail(void) { return 0; }
+> +
+> +#endif /* CONFIG_FAIL_LSM_HOOKS */
+> +
+>  /*
+>   * The default value of the LSM hook is defined in linux/lsm_hook_defs.h and
+>   * can be accessed with:
+> @@ -707,16 +753,17 @@ static void __init lsm_early_task(struct task_struct *task)
+>         } while (0)
+>
+>  #define call_int_hook(FUNC, IRC, ...) ({                       \
+> -       int RC = IRC;                                           \
+> -       do {                                                    \
+> +       int RC = lsm_hooks_inject_fail();                       \
+> +       if (RC == 0) {                                                          \
+>                 struct security_hook_list *P;                   \
+> +               RC = IRC;                                                               \
+>                                                                 \
+>                 hlist_for_each_entry(P, &security_hook_heads.FUNC, list) { \
+>                         RC = P->hook.FUNC(__VA_ARGS__);         \
+>                         if (RC != 0)                            \
+>                                 break;                          \
+>                 }                                               \
+> -       } while (0);                                            \
+> +       }                                                       \
+>         RC;                                                     \
+>  })
+>
+> --
+> 2.29.1.341.ge80a0c044ae-goog
+>
