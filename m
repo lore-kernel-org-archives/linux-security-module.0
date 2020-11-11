@@ -2,279 +2,71 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38943C56202
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 03:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B911C6369E
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 04:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C216F221F7
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 03:30:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FFE0221F9
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 04:33:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qPqD9xJ1"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oDeBdofT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbgKKDaY (ORCPT
+        id S1725898AbgKKEde (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Nov 2020 22:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41626 "EHLO
+        Tue, 10 Nov 2020 23:33:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbgKKDaW (ORCPT
+        with ESMTP id S1725828AbgKKEde (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Nov 2020 22:30:22 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1313CC0613D6
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 19:30:22 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id g7so711978ilr.12
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 19:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zoTFRJAIMA31qT21kOie4hLHdFOnrBP6JkMlSYwvnXI=;
-        b=qPqD9xJ15agGALdrbfTaEKsO9t0BJdhVFUe0x+i7ee/umFU4twQYB7dWW8pPh8hIoY
-         Dxwh3C++Z1NVuJzD5KbagTyBNBdcFW5EnhRdvStAUC0PQ0f3/bB6h3YTYRECqLvO676z
-         QQi5TNwiPRsYz0ekahfr0ZOcjJLH/pU3Hcbae5v+YQKiHYoAF+HCDzkHzOZZ0/+94XJb
-         gd6fd8edTbeAJ5n1o8PnO0PRi52I97T3hjuT8ZFjhQo68dZTqgu7j7avR32qPGQ3l1Pz
-         HP+Cs/gv8tr/439GLUoD+Au86pHpxQ4lDLQlCVMEF/QIVX3Tmos2hm0/GIk3l/JEm+5l
-         fplA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zoTFRJAIMA31qT21kOie4hLHdFOnrBP6JkMlSYwvnXI=;
-        b=Op4bTrru/kFfqDg0JfHmoRG2yJuIOMRqCPmxR/Mh8c4fGr1gTp9iGUpyoYU5hsuaL1
-         rHLR3/UNakLjm0mTcAfRiQYbLiurIqTo03R3LFjc99sH0aK5wuCc7N33wMQjN6iL+aHW
-         UHFBnJCCt5JaQfIartbuK6XjxlnrKMSNBsHYcXDe1eI98MftEPN42QWAFGY90HhRX4C+
-         50n3Ek8pr2IElDgNhrAvjNBcULzIbtGZLwq48Nok+K/hRZ8G+KgljtwkiH0/4yVZ4eJY
-         df4+Ktd0zXGOtdGb9lEO0pmRI7P5b1kI1f9tYeL+p3cQreh4oiV55PvPUH0bsg7xfax1
-         ITzA==
-X-Gm-Message-State: AOAM53306J+E74mSDLaVoVy/L26HehuVjtAwenXcbGCxFfMWN1Avmr3K
-        VT0LDgu18BdV8K1OxWrOqw4XnTeBI3x0bhMbEJCFfA==
-X-Google-Smtp-Source: ABdhPJxK2Fi5zChFPjMF2Pn/NLuggjJUhsrqW9BIJNVd99uJhLXv9EktO5IEFPyPZvq0aC8iNVh/WmZqVika8Ky+Ta4=
-X-Received: by 2002:a92:8b4e:: with SMTP id i75mr14330378ild.43.1605065420914;
- Tue, 10 Nov 2020 19:30:20 -0800 (PST)
+        Tue, 10 Nov 2020 23:33:34 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE02FC0613D1;
+        Tue, 10 Nov 2020 20:33:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=gL0OocahXZn8ZQNF8szmGW51uY79EBzlZ34GhrWeBso=; b=oDeBdofTe937SyWQ5KS04zcvqC
+        lgvZ1G91Fpn0+Q6hWzn8iz4pOCTvXSHpD6P1QhX5Qd04Kt1Qw+XpMngVvHfktQNVQ1ulA67YiL7nL
+        tA8aihrql/H2AMkAyYWzWFIN9Ce0745Pa94PaKzEiQEtKHdWkthYtwOI+SQpKIJw6ptG47vbEq7Sm
+        XbhcamxT5yKVkB0cRiWCzjhuX2LfopicPBECLbWzvfoBpL8c7A/pYE1TRlavFekqmDsyuYQ9Lmaqv
+        TacYawpzSIaJXXew8hPtbksnGSLMeAoHskMPJw9V8IhREGECwGEFySLXGWxjJ//+BgXGebA+WR5kI
+        gAImvbZw==;
+Received: from willy by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kchoe-0002CB-P0; Wed, 11 Nov 2020 04:33:04 +0000
+Date:   Wed, 11 Nov 2020 04:33:04 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Shuah Khan <skhan@linuxfoundation.org>
+Cc:     corbet@lwn.net, keescook@chromium.org, gregkh@linuxfoundation.org,
+        peterz@infradead.org, rafael@kernel.org, lenb@kernel.org,
+        james.morse@arm.com, tony.luck@intel.com, bp@alien8.de,
+        minyard@acm.org, arnd@arndb.de, mchehab@kernel.org,
+        rric@kernel.org, valentina.manea.m@gmail.com, shuah@kernel.org,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-acpi@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        linux-edac@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 00/13] Introduce seqnum_ops
+Message-ID: <20201111043304.GS17076@casper.infradead.org>
+References: <cover.1605027593.git.skhan@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
- <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
- <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com> <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
-From:   Lokesh Gidra <lokeshgidra@google.com>
-Date:   Tue, 10 Nov 2020 19:30:09 -0800
-Message-ID: <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Nick Kralevich <nnk@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1605027593.git.skhan@linuxfoundation.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 10, 2020 at 6:13 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Tue, Nov 10, 2020 at 1:24 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > On Mon, Nov 9, 2020 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Fri, Nov 6, 2020 at 10:56 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > >
-> > > > From: Daniel Colascione <dancol@google.com>
-> > > >
-> > > > This change uses the anon_inodes and LSM infrastructure introduced in
-> > > > the previous patches to give SELinux the ability to control
-> > > > anonymous-inode files that are created using the new
-> > > > anon_inode_getfd_secure() function.
-> > > >
-> > > > A SELinux policy author detects and controls these anonymous inodes by
-> > > > adding a name-based type_transition rule that assigns a new security
-> > > > type to anonymous-inode files created in some domain. The name used
-> > > > for the name-based transition is the name associated with the
-> > > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
-> > > > "[perf_event]".
-> > > >
-> > > > Example:
-> > > >
-> > > > type uffd_t;
-> > > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
-> > > > allow sysadm_t uffd_t:anon_inode { create };
-> > > >
-> > > > (The next patch in this series is necessary for making userfaultfd
-> > > > support this new interface.  The example above is just
-> > > > for exposition.)
-> > > >
-> > > > Signed-off-by: Daniel Colascione <dancol@google.com>
-> > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > > > ---
-> > > >  security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
-> > > >  security/selinux/include/classmap.h |  2 ++
-> > > >  2 files changed, 55 insertions(+)
-> > > >
-> > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > > > index 6b1826fc3658..1c0adcdce7a8 100644
-> > > > --- a/security/selinux/hooks.c
-> > > > +++ b/security/selinux/hooks.c
-> > > > @@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
-> > > >         return 0;
-> > > >  }
-> > > >
-> > > > +static int selinux_inode_init_security_anon(struct inode *inode,
-> > > > +                                           const struct qstr *name,
-> > > > +                                           const struct inode *context_inode)
-> > > > +{
-> > > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
-> > > > +       struct common_audit_data ad;
-> > > > +       struct inode_security_struct *isec;
-> > > > +       int rc;
-> > > > +
-> > > > +       if (unlikely(!selinux_initialized(&selinux_state)))
-> > > > +               return 0;
-> > > > +
-> > > > +       isec = selinux_inode(inode);
-> > > > +
-> > > > +       /*
-> > > > +        * We only get here once per ephemeral inode.  The inode has
-> > > > +        * been initialized via inode_alloc_security but is otherwise
-> > > > +        * untouched.
-> > > > +        */
-> > > > +
-> > > > +       if (context_inode) {
-> > > > +               struct inode_security_struct *context_isec =
-> > > > +                       selinux_inode(context_inode);
-> > > > +               isec->sclass = context_isec->sclass;
-> > > > +               isec->sid = context_isec->sid;
-> > >
-> > > I suppose this isn't a major concern given the limited usage at the
-> > > moment, but I wonder if it would be a good idea to make sure the
-> > > context_inode's SELinux label is valid before we assign it to the
-> > > anonymous inode?  If it is invalid, what should we do?  Do we attempt
-> > > to (re)validate it?  Do we simply fallback to the transition approach?
-> >
-> > Frankly, I'm not too familiar with SELinux. Originally this patch
-> > series was developed by Daniel, in consultation with Stephen Smalley.
-> > In my (probably naive) opinion we should fallback to transition
-> > approach. But I'd request you to tell me if this needs to be addressed
-> > now, and if so then what's the right approach.
-> >
-> > If the decision is to address this now, then what's the best way to
-> > check the SELinux label validity?
->
-> You can check to see if an inode's label is valid by looking at the
-> isec->initialized field; if it is LABEL_INITIALIZED then it is all
-> set, if it is any other value then the label isn't entirely correct.
-> It may have not have ever been fully initialized (and has a default
-> value) or it may have live on a remote filesystem where the host has
-> signaled that the label has changed (and the label is now outdated).
->
-> This patchset includes support for userfaultfd, which means we don't
-> really have to worry about the remote fs problem, but the
-> never-fully-initialized problem could be real in this case.  Normally
-> we would revalidate an inode in SELinux by calling
-> __inode_security_revalidate() which requires either a valid dentry or
-> one that can be found via the inode; does d_find_alias() work on
-> userfaultfd inodes?
->
-> If all else fails, it seems like the safest approach would be to
-> simply fail the selinux_inode_init_security_anon() call if a
-> context_inode was supplied and the label wasn't valid.  If we later
-> decide to change it to falling back to the transition approach we can
-> do that, we can't go the other way (from transition to error).
->
-I'm not sure about d_find_alias() on userfaultfd inodes. But it seems
-ok to fail selinux_inode_init_security_anon() to begin with.
+On Tue, Nov 10, 2020 at 12:53:26PM -0700, Shuah Khan wrote:
+> There are a number of atomic_t usages in the kernel where atomic_t api
+> is used strictly for counting sequence numbers and other statistical
+> counters and not for managing object lifetime.
 
-> > > > +       } else {
-> > > > +               isec->sclass = SECCLASS_ANON_INODE;
-> > > > +               rc = security_transition_sid(
-> > > > +                       &selinux_state, tsec->sid, tsec->sid,
-> > > > +                       isec->sclass, name, &isec->sid);
-> > > > +               if (rc)
-> > > > +                       return rc;
-> > > > +       }
-> > > > +
-> > > > +       isec->initialized = LABEL_INITIALIZED;
-> > > > +
-> > > > +       /*
-> > > > +        * Now that we've initialized security, check whether we're
-> > > > +        * allowed to actually create this type of anonymous inode.
-> > > > +        */
-> > > > +
-> > > > +       ad.type = LSM_AUDIT_DATA_INODE;
-> > > > +       ad.u.inode = inode;
-> > > > +
-> > > > +       return avc_has_perm(&selinux_state,
-> > > > +                           tsec->sid,
-> > > > +                           isec->sid,
-> > > > +                           isec->sclass,
-> > > > +                           FILE__CREATE,
-> > >
-> > > I believe you want to use ANON_INODE__CREATE here instead of FILE__CREATE, yes?
-> >
-> > ANON_INODE__CREATE definitely seems more appropriate. I'll change it
-> > in the next revision.
-> >
-> > > This brings up another question, and requirement - what testing are
-> > > you doing for this patchset?  We require that new SELinux kernel
-> > > functionality includes additions to the SELinux test suite to help
-> > > verify the functionality.  I'm also *strongly* encouraging that new
-> > > contributions come with updates to The SELinux Notebook.  If you are
-> > > unsure about what to do for either, let us know and we can help get
-> > > you started.
-> > >
-> > > * https://github.com/SELinuxProject/selinux-testsuite
-> > > * https://github.com/SELinuxProject/selinux-notebook
-> > >
-> > I'd definitely need help with both of these. Kindly guide how to proceed.
->
-> Well, perhaps the best way to start is to explain how you have been
-> testing this so far and then using that information to draft a test
-> for the testsuite.
->
-As I said in my previous reply, Daniel worked on this patch along with
-Stephan Smalley. Here's the conversation regarding testing from back
-then:
-https://lore.kernel.org/lkml/CAEjxPJ4iquFSBfEj+UEFLUFHPsezuQ-Bzv09n+WgOWk38Nyw3w@mail.gmail.com/
-
-There have been only minor changes (fixing comments/coding-style),
-except for addressing a double free issue with userfaultfd_ctx since
-last time it was tested as per the link above.
-
-> --
-> paul moore
-> www.paul-moore.com
+We already have something in Linux called a sequence counter, and it's
+different from this.  ID counter?  instance number?  monotonic_t?  stat_t?
