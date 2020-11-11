@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15662C56202
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 09:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345EDC388F9
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 09:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C184820829
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 09:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9AD20795
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 09:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbgKKJY2 (ORCPT
+        id S1726992AbgKKJZU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Nov 2020 04:24:28 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2083 "EHLO
+        Wed, 11 Nov 2020 04:25:20 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2088 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbgKKJYC (ORCPT
+        with ESMTP id S1726755AbgKKJZQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Nov 2020 04:24:02 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CWK583sbfz67JlR;
-        Wed, 11 Nov 2020 17:22:36 +0800 (CST)
+        Wed, 11 Nov 2020 04:25:16 -0500
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CWK6Z2Dnnz67JlR;
+        Wed, 11 Nov 2020 17:23:50 +0800 (CST)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.161)
  by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1913.5; Wed, 11 Nov 2020 10:23:59 +0100
+ 15.1.1913.5; Wed, 11 Nov 2020 10:25:13 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
@@ -35,9 +35,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v3 02/11] evm: Load EVM key in ima_load_x509() to avoid appraisal
-Date:   Wed, 11 Nov 2020 10:22:53 +0100
-Message-ID: <20201111092302.1589-3-roberto.sassu@huawei.com>
+Subject: [PATCH v3 07/11] evm: Allow xattr/attr operations for portable signatures
+Date:   Wed, 11 Nov 2020 10:22:58 +0100
+Message-ID: <20201111092302.1589-8-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.27.GIT
 In-Reply-To: <20201111092302.1589-1-roberto.sassu@huawei.com>
 References: <20201111092302.1589-1-roberto.sassu@huawei.com>
@@ -51,53 +51,141 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Public keys do not need to be appraised by IMA as the restriction on the
-IMA/EVM keyrings ensures that a key can be loaded only if it is signed with
-a key in the primary or secondary keyring.
+If files with portable signatures are copied from one location to another
+or are extracted from an archive, verification can temporarily fail until
+all xattrs/attrs are set in the destination. Only portable signatures may
+be moved or copied from one file to another, as they don't depend on
+system-specific information such as the inode generation. Instead portable
+signatures must include security.ima.
 
-However, when evm_load_x509() is called, appraisal is already enabled and
-a valid IMA signature must be added to the EVM key to pass verification.
+Unlike other security.evm types, EVM portable signatures are also
+immutable. Thus, it wouldn't be a problem to allow xattr/attr operations
+when verification fails, as portable signatures will never be replaced with
+the HMAC on possibly corrupted xattrs/attrs.
 
-Since the restriction is applied on both IMA and EVM keyrings, it is safe
-to disable appraisal also when the EVM key is loaded. This patch calls
-evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
+This patch first introduces a new integrity status called
+INTEGRITY_FAIL_IMMUTABLE, that allows callers of
+evm_verify_current_integrity() to detect that a portable signature didn't
+pass verification and then adds an exception in evm_protect_xattr() and
+evm_inode_setattr() for this status and returns 0 instead of -EPERM.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/integrity/iint.c         | 2 ++
- security/integrity/ima/ima_init.c | 4 ++++
- 2 files changed, 6 insertions(+)
+ include/linux/integrity.h             |  1 +
+ security/integrity/evm/evm_main.c     | 31 +++++++++++++++++++++------
+ security/integrity/ima/ima_appraise.c |  2 ++
+ 3 files changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 1d20003243c3..7d08c31c612f 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -200,7 +200,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- void __init integrity_load_keys(void)
- {
- 	ima_load_x509();
-+#ifndef CONFIG_IMA_LOAD_X509
- 	evm_load_x509();
-+#endif
- }
+diff --git a/include/linux/integrity.h b/include/linux/integrity.h
+index 2271939c5c31..2ea0f2f65ab6 100644
+--- a/include/linux/integrity.h
++++ b/include/linux/integrity.h
+@@ -13,6 +13,7 @@ enum integrity_status {
+ 	INTEGRITY_PASS = 0,
+ 	INTEGRITY_PASS_IMMUTABLE,
+ 	INTEGRITY_FAIL,
++	INTEGRITY_FAIL_IMMUTABLE,
+ 	INTEGRITY_NOLABEL,
+ 	INTEGRITY_NOXATTRS,
+ 	INTEGRITY_UNKNOWN,
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 4f4404a12bbd..60ab700735ea 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -27,7 +27,8 @@
+ int evm_initialized;
  
- static int __init integrity_fs_init(void)
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 4902fe7bd570..9d29a1680da8 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -106,6 +106,10 @@ void __init ima_load_x509(void)
+ static const char * const integrity_status_msg[] = {
+-	"pass", "pass_immutable", "fail", "no_label", "no_xattrs", "unknown"
++	"pass", "pass_immutable", "fail", "fail_immutable", "no_label",
++	"no_xattrs", "unknown"
+ };
+ int evm_hmac_attrs;
  
- 	ima_policy_flag &= ~unset_flags;
- 	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
+@@ -137,7 +138,7 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 	enum integrity_status evm_status = INTEGRITY_PASS;
+ 	struct evm_digest digest;
+ 	struct inode *inode;
+-	int rc, xattr_len;
++	int rc, xattr_len, evm_immutable = 0;
+ 
+ 	if (iint && (iint->evm_status == INTEGRITY_PASS ||
+ 		     iint->evm_status == INTEGRITY_PASS_IMMUTABLE))
+@@ -182,8 +183,10 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 		if (rc)
+ 			rc = -EINVAL;
+ 		break;
+-	case EVM_IMA_XATTR_DIGSIG:
+ 	case EVM_XATTR_PORTABLE_DIGSIG:
++		evm_immutable = 1;
++		fallthrough;
++	case EVM_IMA_XATTR_DIGSIG:
+ 		/* accept xattr with non-empty signature field */
+ 		if (xattr_len <= sizeof(struct signature_v2_hdr)) {
+ 			evm_status = INTEGRITY_FAIL;
+@@ -220,9 +223,12 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+ 		break;
+ 	}
+ 
+-	if (rc)
+-		evm_status = (rc == -ENODATA) ?
+-				INTEGRITY_NOXATTRS : INTEGRITY_FAIL;
++	if (rc) {
++		evm_status = INTEGRITY_NOXATTRS;
++		if (rc != -ENODATA)
++			evm_status = evm_immutable ?
++				     INTEGRITY_FAIL_IMMUTABLE : INTEGRITY_FAIL;
++	}
+ out:
+ 	if (iint)
+ 		iint->evm_status = evm_status;
+@@ -362,6 +368,14 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 	if (evm_status == INTEGRITY_NOLABEL &&
+ 	    !(evm_initialized & EVM_INIT_HMAC))
+ 		return 0;
 +
-+	/* load also EVM key to avoid appraisal */
-+	evm_load_x509();
++	/*
++	 * Writing other xattrs is safe for portable signatures, as portable
++	 * signatures are immutable and can never be updated.
++	 */
++	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
++		return 0;
 +
- 	ima_policy_flag |= unset_flags;
- }
- #endif
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -526,12 +540,17 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	 * Ignoring INTEGRITY_NOLABEL is safe if no HMAC key is loaded, as
+ 	 * EVM won't calculate the HMAC of metadata that wasn't previously
+ 	 * verified.
++	 *
++	 * Writing attrs is safe for portable signatures, as portable signatures
++	 * are immutable and can never be updated.
+ 	 */
+ 	if ((evm_status == INTEGRITY_PASS) ||
+ 	    (evm_status == INTEGRITY_NOXATTRS) ||
++	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
+ 	    (evm_status == INTEGRITY_NOLABEL &&
+ 	     !(evm_initialized & EVM_INIT_HMAC)))
+ 		return 0;
++
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+ 			    integrity_status_msg[evm_status], -EPERM, 0);
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 7b13ba543873..57a252f8c724 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -415,6 +415,8 @@ int ima_appraise_measurement(enum ima_hooks func,
+ 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
+ 		cause = "missing-HMAC";
+ 		goto out;
++	case INTEGRITY_FAIL_IMMUTABLE:
++		fallthrough;
+ 	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
+ 		cause = "invalid-HMAC";
+ 		goto out;
 -- 
 2.27.GIT
 
