@@ -2,501 +2,264 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CE9C388F7
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 00:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381B3C388F7
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 02:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A575420825
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 00:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A1221D91
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Nov 2020 02:13:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="c/DfvdBQ"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="KTKMv/zO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732033AbgKKAKx (ORCPT
+        id S1726861AbgKKCNS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Nov 2020 19:10:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38752 "EHLO
+        Tue, 10 Nov 2020 21:13:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726706AbgKKAKw (ORCPT
+        with ESMTP id S1732090AbgKKCNR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Nov 2020 19:10:52 -0500
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8614C0613D1
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 16:10:52 -0800 (PST)
-Received: by mail-pf1-x442.google.com with SMTP id a18so400425pfl.3
-        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 16:10:52 -0800 (PST)
+        Tue, 10 Nov 2020 21:13:17 -0500
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D826C0613D6
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 18:13:16 -0800 (PST)
+Received: by mail-ej1-x641.google.com with SMTP id cw8so598867ejb.8
+        for <linux-security-module@vger.kernel.org>; Tue, 10 Nov 2020 18:13:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=6S6LSZiFwfcqGCAPmfa/DXBPMISRp5gpYhUJpZjld+c=;
-        b=c/DfvdBQlcC9l5g/4cJWDrGJF7KgxmW+S3hrraO/wDVnOt/U8B8MOwT1Cmw8HgZD01
-         Gl+ndoc/5FczRR/pQu4898kek0eUB/mNb3KGXOCibqiBKCiAgjuqZUYz9RU3WMWkLT4S
-         3cX+6K6nlWd91UfS5TDtUkLPYMr5iBhui8gzA=
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=41103hI8FWw3JSOY3ZzOk1BVYmgr6In9mKvl3fRAkI8=;
+        b=KTKMv/zOS73xcCukPUb1GuVz+OE9Ty3qAtfJVTZcfPeA5J1bqv+9Va8PAjErGdNHgR
+         1G7xmF84AhTTwwrjua8RpMOwFtR9ro4zL8YLmhIukEv0R6Z+133UOEdMYnBAPrSKFHvi
+         PuW4eVIDPNHKAdBiXiFsRXFRmFZY8LN5BgQ1AHgdeZ3kKv1IfbXgjcNz0WqPDSLI/u0v
+         5PVi1F5qwnMIRgTcOR3w/dAzkSlenHtbdkD9zdvAry9c55ph3lFGK3ecQJ0xIphnaxF3
+         97HeYL7C1OPVMIB3Oc/oTRfFg13kdvzbKeXiMnObS6Z+O3DpYg9NaSQS4OIFzZtFnYx/
+         ZQ0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=6S6LSZiFwfcqGCAPmfa/DXBPMISRp5gpYhUJpZjld+c=;
-        b=juAIIRf7YzYOmVrDI7+4gTnMDH2wr4sztUV/sn6pzt2FMQFMxlYkbjuJb9t/rO1w1z
-         O/6h/VHTOLi8EZwu9xHqBsRJCpGj9hVKWiRNQ1IwXGP8H1ZTLIbEOaJKJQClufDX2fkQ
-         UqOr3tqmZa2JVVBsDIj9zyzPc+ubseuEK3eA7ObulmC+YS24pnXzrY/TE/JNxUigk2BF
-         En3WnZXxSu4jPN6bVauK3qF0e3XqNjRJdxLVIcQlGfYJ5wiMM0xK3pDaU+3TBjGAHzOu
-         hJXYO8bUizuFUoaHrUezQjiQZILb3kOIjwfMr9SWaf408qSZqph8Ls0i1Zo73ian12BI
-         31OQ==
-X-Gm-Message-State: AOAM530y03dzkDWhncYEed21G9Bkg3FoZCyIZO8hCBJZRdvCnwRU0n9J
-        wVhIQdn1tarwH5zzykRcLQdBdCHN70kIGw==
-X-Google-Smtp-Source: ABdhPJx+OuE0OiWhF/pMYmebpHJMo5oS/J3KKadNTvCX+lapOy0QZhJX608cxzwxz4funovaROci5w==
-X-Received: by 2002:a63:381:: with SMTP id 123mr20091728pgd.112.1605053452016;
-        Tue, 10 Nov 2020 16:10:52 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s11sm247834pfh.128.2020.11.10.16.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Nov 2020 16:10:50 -0800 (PST)
-Date:   Tue, 10 Nov 2020 16:10:49 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     John Wood <john.wood@gmx.com>
-Cc:     Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v2 0/8] Fork brute force attack mitigation
-Message-ID: <202011101422.460E046B@keescook>
-References: <20201025134540.3770-1-john.wood@gmx.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=41103hI8FWw3JSOY3ZzOk1BVYmgr6In9mKvl3fRAkI8=;
+        b=CjE+4Wa9SgveH4nhF/5wNHBWGP+oCowo8nsOYfjUR2jaFFJgXq1DUukV58BEmEVf3h
+         3RL6DMG3zYDGQktyhur2NfhjFJTHqbvxzmfVGEK1IYGC34aX3OyaX/nMilI9yWfRKjiK
+         ljoJwdJn6rtV5MOzCgI8aMR6q02pG3zybPO5dmJrRwKOlNUo1+jG24pL1lpld32re+rx
+         0QG+Emjr6/hovafgpa2QkHlaNp+0L+baIeMwGGg93J1QyoRkMj3FNJWfZBVUEDainwVo
+         0OQLg0725mhhEmIKDRyQr3PEolL/hbu0mlqrzpaaBSNZuVpmEwXC2WDWPY22uuikvT6X
+         rucA==
+X-Gm-Message-State: AOAM532J4cwVtN/wQHECzokyqKiSuzULLzyyFUMln5Ja/2rIJuyjIHjz
+        xt+PlKJx/MgVXD/UWD6RgnrjWDkorpla5OsUFEj8
+X-Google-Smtp-Source: ABdhPJwEZiYZ1o+fxF2LyOo2oZ6n+2uOJ6UBAh5FxYnx0Lq0Y2sWzNLVszxxJ8cdzRbRgUWnfc7V2ucCZgqbu304x1U=
+X-Received: by 2002:a17:906:180b:: with SMTP id v11mr22849770eje.466.1605060794521;
+ Tue, 10 Nov 2020 18:13:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201025134540.3770-1-john.wood@gmx.com>
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+In-Reply-To: <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 10 Nov 2020 21:13:03 -0500
+Message-ID: <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Nick Kralevich <nnk@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Daniel Colascione <dancol@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Oct 25, 2020 at 02:45:32PM +0100, John Wood wrote:
-> Attacks against vulnerable userspace applications with the purpose to break
-> ASLR or bypass canaries traditionaly use some level of brute force with the
-> help of the fork system call. This is possible since when creating a new
-> process using fork its memory contents are the same as those of the parent
-> process (the process that called the fork system call). So, the attacker
-> can test the memory infinite times to find the correct memory values or the
-> correct memory addresses without worrying about crashing the application.
-> 
-> Based on the above scenario it would be nice to have this detected and
-> mitigated, and this is the goal of this patch serie.
+On Tue, Nov 10, 2020 at 1:24 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> On Mon, Nov 9, 2020 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Fri, Nov 6, 2020 at 10:56 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > >
+> > > From: Daniel Colascione <dancol@google.com>
+> > >
+> > > This change uses the anon_inodes and LSM infrastructure introduced in
+> > > the previous patches to give SELinux the ability to control
+> > > anonymous-inode files that are created using the new
+> > > anon_inode_getfd_secure() function.
+> > >
+> > > A SELinux policy author detects and controls these anonymous inodes by
+> > > adding a name-based type_transition rule that assigns a new security
+> > > type to anonymous-inode files created in some domain. The name used
+> > > for the name-based transition is the name associated with the
+> > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> > > "[perf_event]".
+> > >
+> > > Example:
+> > >
+> > > type uffd_t;
+> > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+> > > allow sysadm_t uffd_t:anon_inode { create };
+> > >
+> > > (The next patch in this series is necessary for making userfaultfd
+> > > support this new interface.  The example above is just
+> > > for exposition.)
+> > >
+> > > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > ---
+> > >  security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
+> > >  security/selinux/include/classmap.h |  2 ++
+> > >  2 files changed, 55 insertions(+)
+> > >
+> > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > index 6b1826fc3658..1c0adcdce7a8 100644
+> > > --- a/security/selinux/hooks.c
+> > > +++ b/security/selinux/hooks.c
+> > > @@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+> > >         return 0;
+> > >  }
+> > >
+> > > +static int selinux_inode_init_security_anon(struct inode *inode,
+> > > +                                           const struct qstr *name,
+> > > +                                           const struct inode *context_inode)
+> > > +{
+> > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > > +       struct common_audit_data ad;
+> > > +       struct inode_security_struct *isec;
+> > > +       int rc;
+> > > +
+> > > +       if (unlikely(!selinux_initialized(&selinux_state)))
+> > > +               return 0;
+> > > +
+> > > +       isec = selinux_inode(inode);
+> > > +
+> > > +       /*
+> > > +        * We only get here once per ephemeral inode.  The inode has
+> > > +        * been initialized via inode_alloc_security but is otherwise
+> > > +        * untouched.
+> > > +        */
+> > > +
+> > > +       if (context_inode) {
+> > > +               struct inode_security_struct *context_isec =
+> > > +                       selinux_inode(context_inode);
+> > > +               isec->sclass = context_isec->sclass;
+> > > +               isec->sid = context_isec->sid;
+> >
+> > I suppose this isn't a major concern given the limited usage at the
+> > moment, but I wonder if it would be a good idea to make sure the
+> > context_inode's SELinux label is valid before we assign it to the
+> > anonymous inode?  If it is invalid, what should we do?  Do we attempt
+> > to (re)validate it?  Do we simply fallback to the transition approach?
+>
+> Frankly, I'm not too familiar with SELinux. Originally this patch
+> series was developed by Daniel, in consultation with Stephen Smalley.
+> In my (probably naive) opinion we should fallback to transition
+> approach. But I'd request you to tell me if this needs to be addressed
+> now, and if so then what's the right approach.
+>
+> If the decision is to address this now, then what's the best way to
+> check the SELinux label validity?
 
-Thanks for preparing the v2! I spent some time looking at this today,
-and I really like how it has been rearranged into an LSM. This feels
-much more natural.
+You can check to see if an inode's label is valid by looking at the
+isec->initialized field; if it is LABEL_INITIALIZED then it is all
+set, if it is any other value then the label isn't entirely correct.
+It may have not have ever been fully initialized (and has a default
+value) or it may have live on a remote filesystem where the host has
+signaled that the label has changed (and the label is now outdated).
 
-Various notes:
+This patchset includes support for userfaultfd, which means we don't
+really have to worry about the remote fs problem, but the
+never-fully-initialized problem could be real in this case.  Normally
+we would revalidate an inode in SELinux by calling
+__inode_security_revalidate() which requires either a valid dentry or
+one that can be found via the inode; does d_find_alias() work on
+userfaultfd inodes?
 
-The locking isn't right; it'll trip with CONFIG_PROVE_LOCKING=y.
-Here's the giant splat:
+If all else fails, it seems like the safest approach would be to
+simply fail the selinux_inode_init_security_anon() call if a
+context_inode was supplied and the label wasn't valid.  If we later
+decide to change it to falling back to the transition approach we can
+do that, we can't go the other way (from transition to error).
 
+> > > +       } else {
+> > > +               isec->sclass = SECCLASS_ANON_INODE;
+> > > +               rc = security_transition_sid(
+> > > +                       &selinux_state, tsec->sid, tsec->sid,
+> > > +                       isec->sclass, name, &isec->sid);
+> > > +               if (rc)
+> > > +                       return rc;
+> > > +       }
+> > > +
+> > > +       isec->initialized = LABEL_INITIALIZED;
+> > > +
+> > > +       /*
+> > > +        * Now that we've initialized security, check whether we're
+> > > +        * allowed to actually create this type of anonymous inode.
+> > > +        */
+> > > +
+> > > +       ad.type = LSM_AUDIT_DATA_INODE;
+> > > +       ad.u.inode = inode;
+> > > +
+> > > +       return avc_has_perm(&selinux_state,
+> > > +                           tsec->sid,
+> > > +                           isec->sid,
+> > > +                           isec->sclass,
+> > > +                           FILE__CREATE,
+> >
+> > I believe you want to use ANON_INODE__CREATE here instead of FILE__CREATE, yes?
+>
+> ANON_INODE__CREATE definitely seems more appropriate. I'll change it
+> in the next revision.
+>
+> > This brings up another question, and requirement - what testing are
+> > you doing for this patchset?  We require that new SELinux kernel
+> > functionality includes additions to the SELinux test suite to help
+> > verify the functionality.  I'm also *strongly* encouraging that new
+> > contributions come with updates to The SELinux Notebook.  If you are
+> > unsure about what to do for either, let us know and we can help get
+> > you started.
+> >
+> > * https://github.com/SELinuxProject/selinux-testsuite
+> > * https://github.com/SELinuxProject/selinux-notebook
+> >
+> I'd definitely need help with both of these. Kindly guide how to proceed.
 
-[    8.205146] brute: Fork brute force attack detected
-[    8.206821] 
-[    8.207317] =====================================================
-[    8.209392] WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-[    8.211852] 5.10.0-rc3 #2 Not tainted
-[    8.213215] -----------------------------------------------------
-[    8.215213] runc/2505 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-[    8.217387] ffffffff97206098 (tasklist_lock){.+.+}-{2:2}, at: brute_task_fatal_signal.cold+0x49/0xe0
-[    8.219554] 
-[    8.219554] and this task is already holding:
-[    8.220891] ffff9a6a10eb8318 (&stats->lock){+.-.}-{2:2}, at: brute_task_fatal_signal+0x97/0x210
-[    8.222856] which would create a new lock dependency:
-[    8.223943]  (&stats->lock){+.-.}-{2:2} -> (tasklist_lock){.+.+}-{2:2}
-[    8.225360] 
-[    8.225360] but this new dependency connects a SOFTIRQ-irq-safe lock:
-[    8.227081]  (&stats->lock){+.-.}-{2:2}
-[    8.227084] 
-[    8.227084] ... which became SOFTIRQ-irq-safe at:
-[    8.228732]   lock_acquire+0x13f/0x3f0
-[    8.229381]   _raw_spin_lock+0x2c/0x40
-[    8.230024]   brute_task_free+0x22/0x90
-[    8.230619]   security_task_free+0x22/0x50
-[    8.231260]   __put_task_struct+0x58/0x140
-[    8.231924]   rcu_core+0x2bb/0x620
-[    8.232492]   __do_softirq+0x156/0x4d9
-[    8.233080]   asm_call_irq_on_stack+0x12/0x20
-[    8.233759]   do_softirq_own_stack+0x5b/0x70
-[    8.234425]   irq_exit_rcu+0x9f/0xe0
-[    8.235221]   sysvec_apic_timer_interrupt+0x43/0xa0
-[    8.235976]   asm_sysvec_apic_timer_interrupt+0x12/0x20
-[    8.236794]   _raw_write_unlock_irq+0x2c/0x40
-[    8.237465]   copy_process+0x15e6/0x1cb0
-[    8.237966]   kernel_clone+0x9b/0x3f0
-[    8.238413]   kernel_thread+0x55/0x70
-[    8.238861]   call_usermodehelper_exec_work+0x77/0xb0
-[    8.239466]   process_one_work+0x23e/0x580
-[    8.239969]   worker_thread+0x55/0x3c0
-[    8.240425]   kthread+0x141/0x160
-[    8.240833]   ret_from_fork+0x22/0x30
-[    8.241276] 
-[    8.241276] to a SOFTIRQ-irq-unsafe lock:
-[    8.241939]  (tasklist_lock){.+.+}-{2:2}
-[    8.241940] 
-[    8.241940] ... which became SOFTIRQ-irq-unsafe at:
-[    8.243180] ...
-[    8.243182]   lock_acquire+0x13f/0x3f0
-[    8.243853]   _raw_read_lock+0x5d/0x70
-[    8.244307]   do_wait+0xd2/0x2e0
-[    8.244706]   kernel_wait+0x49/0x90
-[    8.245126]   call_usermodehelper_exec_work+0x61/0xb0
-[    8.245748]   process_one_work+0x23e/0x580
-[    8.246238]   worker_thread+0x55/0x3c0
-[    8.246685]   kthread+0x141/0x160
-[    8.247086]   ret_from_fork+0x22/0x30
-[    8.247522] 
-[    8.247522] other info that might help us debug this:
-[    8.247522] 
-[    8.248480]  Possible interrupt unsafe locking scenario:
-[    8.248480] 
-[    8.249289]        CPU0                    CPU1
-[    8.249839]        ----                    ----
-[    8.250386]   lock(tasklist_lock);
-[    8.250811]                                local_irq_disable();
-[    8.251525]                                lock(&stats->lock);
-[    8.252227]                                lock(tasklist_lock);
-[    8.252938]   <Interrupt>
-[    8.253249]     lock(&stats->lock);
-[    8.253663] 
-[    8.253663]  *** DEADLOCK ***
-[    8.253663] 
-[    8.254362] 1 lock held by runc/2505:
-[    8.254800]  #0: ffff9a6a10eb8318 (&stats->lock){+.-.}-{2:2}, at: brute_task_fatal_signal+0x97/0x210
-[    8.255872] 
-[    8.255872] the dependencies between SOFTIRQ-irq-safe lock and the holding lock:
-[    8.256931] -> (&stats->lock){+.-.}-{2:2} {
-[    8.257432]    HARDIRQ-ON-W at:
-[    8.257809]                     lock_acquire+0x13f/0x3f0
-[    8.258442]                     _raw_spin_lock+0x2c/0x40
-[    8.259069]                     brute_task_free+0x22/0x90
-[    8.259710]                     security_task_free+0x22/0x50
-[    8.260384]                     __put_task_struct+0x58/0x140
-[    8.261078]                     rcu_core+0x2bb/0x620
-[    8.261677]                     __do_softirq+0x156/0x4d9
-[    8.262304]                     asm_call_irq_on_stack+0x12/0x20
-[    8.263010]                     do_softirq_own_stack+0x5b/0x70
-[    8.263699]                     irq_exit_rcu+0x9f/0xe0
-[    8.264315]                     sysvec_apic_timer_interrupt+0x43/0xa0
-[    8.265085]                     asm_sysvec_apic_timer_interrupt+0x12/0x20
-[    8.265886]                     _raw_write_unlock_irq+0x2c/0x40
-[    8.266580]                     copy_process+0x15e6/0x1cb0
-[    8.267218]                     kernel_clone+0x9b/0x3f0
-[    8.267832]                     kernel_thread+0x55/0x70
-[    8.268444]                     call_usermodehelper_exec_work+0x77/0xb0
-[    8.269234]                     process_one_work+0x23e/0x580
-[    8.269912]                     worker_thread+0x55/0x3c0
-[    8.270546]                     kthread+0x141/0x160
-[    8.271144]                     ret_from_fork+0x22/0x30
-[    8.271771]    IN-SOFTIRQ-W at:
-[    8.272146]                     lock_acquire+0x13f/0x3f0
-[    8.272780]                     _raw_spin_lock+0x2c/0x40
-[    8.273398]                     brute_task_free+0x22/0x90
-[    8.274022]                     security_task_free+0x22/0x50
-[    8.274690]                     __put_task_struct+0x58/0x140
-[    8.275358]                     rcu_core+0x2bb/0x620
-[    8.275937]                     __do_softirq+0x156/0x4d9
-[    8.276559]                     asm_call_irq_on_stack+0x12/0x20
-[    8.277262]                     do_softirq_own_stack+0x5b/0x70
-[    8.277948]                     irq_exit_rcu+0x9f/0xe0
-[    8.278561]                     sysvec_apic_timer_interrupt+0x43/0xa0
-[    8.279324]                     asm_sysvec_apic_timer_interrupt+0x12/0x20
-[    8.280121]                     _raw_write_unlock_irq+0x2c/0x40
-[    8.280845]                     copy_process+0x15e6/0x1cb0
-[    8.281491]                     kernel_clone+0x9b/0x3f0
-[    8.282117]                     kernel_thread+0x55/0x70
-[    8.282734]                     call_usermodehelper_exec_work+0x77/0xb0
-[    8.283514]                     process_one_work+0x23e/0x580
-[    8.284181]                     worker_thread+0x55/0x3c0
-[    8.284802]                     kthread+0x141/0x160
-[    8.285381]                     ret_from_fork+0x22/0x30
-[    8.285998]    INITIAL USE at:
-[    8.286365]                    lock_acquire+0x13f/0x3f0
-[    8.286975]                    _raw_spin_lock_irqsave+0x3b/0x60
-[    8.287665]                    brute_share_stats+0x17/0x70
-[    8.288311]                    brute_task_alloc+0x65/0x70
-[    8.288948]                    security_task_alloc+0x44/0xd0
-[    8.289605]                    copy_process+0x789/0x1cb0
-[    8.290223]                    kernel_clone+0x9b/0x3f0
-[    8.290819]                    kernel_thread+0x55/0x70
-[    8.291421]                    rest_init+0x21/0x258
-[    8.291995]                    start_kernel+0x566/0x587
-[    8.292611]                    secondary_startup_64_no_verify+0xc2/0xcb
-[    8.293384]  }
-[    8.293586]  ... key      at: [<ffffffff984ce3a0>] __key.0+0x0/0x10
-[    8.294324]  ... acquired at:
-[    8.294679]    lock_acquire+0x13f/0x3f0
-[    8.295133]    _raw_read_lock+0x5d/0x70
-[    8.295589]    brute_task_fatal_signal.cold+0x49/0xe0
-[    8.296185]    security_task_fatal_signal+0x22/0x30
-[    8.296772]    get_signal+0x3e0/0xcf0
-[    8.297212]    arch_do_signal+0x30/0x880
-[    8.297682]    exit_to_user_mode_prepare+0xfc/0x170
-[    8.298263]    syscall_exit_to_user_mode+0x38/0x240
-[    8.298844]    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    8.299464] 
-[    8.299648] 
-[    8.299648] the dependencies between the lock to be acquired
-[    8.299648]  and SOFTIRQ-irq-unsafe lock:
-[    8.300969] -> (tasklist_lock){.+.+}-{2:2} {
-[    8.301481]    HARDIRQ-ON-R at:
-[    8.301857]                     lock_acquire+0x13f/0x3f0
-[    8.302482]                     _raw_read_lock+0x5d/0x70
-[    8.303110]                     do_wait+0xd2/0x2e0
-[    8.303677]                     kernel_wait+0x49/0x90
-[    8.304266]                     call_usermodehelper_exec_work+0x61/0xb0
-[    8.305038]                     process_one_work+0x23e/0x580
-[    8.305700]                     worker_thread+0x55/0x3c0
-[    8.306320]                     kthread+0x141/0x160
-[    8.306895]                     ret_from_fork+0x22/0x30
-[    8.307506]    SOFTIRQ-ON-R at:
-[    8.307880]                     lock_acquire+0x13f/0x3f0
-[    8.308505]                     _raw_read_lock+0x5d/0x70
-[    8.309125]                     do_wait+0xd2/0x2e0
-[    8.309689]                     kernel_wait+0x49/0x90
-[    8.310272]                     call_usermodehelper_exec_work+0x61/0xb0
-[    8.311044]                     process_one_work+0x23e/0x580
-[    8.311709]                     worker_thread+0x55/0x3c0
-[    8.312335]                     kthread+0x141/0x160
-[    8.312910]                     ret_from_fork+0x22/0x30
-[    8.313529]    INITIAL USE at:
-[    8.313897]                    lock_acquire+0x13f/0x3f0
-[    8.314515]                    _raw_write_lock_irq+0x34/0x50
-[    8.315187]                    copy_process+0x11d5/0x1cb0
-[    8.315834]                    kernel_clone+0x9b/0x3f0
-[    8.316446]                    kernel_thread+0x55/0x70
-[    8.317057]                    rest_init+0x21/0x258
-[    8.317636]                    start_kernel+0x566/0x587
-[    8.318250]                    secondary_startup_64_no_verify+0xc2/0xcb
-[    8.319033]    INITIAL READ USE at:
-[    8.319452]                         lock_acquire+0x13f/0x3f0
-[    8.320117]                         _raw_read_lock+0x5d/0x70
-[    8.320777]                         do_wait+0xd2/0x2e0
-[    8.321387]                         kernel_wait+0x49/0x90
-[    8.322031]                         call_usermodehelper_exec_work+0x61/0xb0
-[    8.322852]                         process_one_work+0x23e/0x580
-[    8.323557]                         worker_thread+0x55/0x3c0
-[    8.324220]                         kthread+0x141/0x160
-[    8.324837]                         ret_from_fork+0x22/0x30
-[    8.325490]  }
-[    8.325694]  ... key      at: [<ffffffff97206098>] tasklist_lock+0x18/0x40
-[    8.326509]  ... acquired at:
-[    8.326871]    lock_acquire+0x13f/0x3f0
-[    8.327330]    _raw_read_lock+0x5d/0x70
-[    8.327790]    brute_task_fatal_signal.cold+0x49/0xe0
-[    8.328392]    security_task_fatal_signal+0x22/0x30
-[    8.328958]    get_signal+0x3e0/0xcf0
-[    8.329388]    arch_do_signal+0x30/0x880
-[    8.329855]    exit_to_user_mode_prepare+0xfc/0x170
-[    8.330434]    syscall_exit_to_user_mode+0x38/0x240
-[    8.331010]    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    8.331622] 
-[    8.331801] 
-[    8.331801] stack backtrace:
-[    8.332322] CPU: 2 PID: 2505 Comm: runc Not tainted 5.10.0-rc3 #2
-[    8.333037] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1 04/01/2014
-[    8.334088] Call Trace:
-[    8.334385]  dump_stack+0x77/0x97
-[    8.334779]  check_irq_usage.cold+0x279/0x2ec
-[    8.335292]  ? check_noncircular+0x75/0x110
-[    8.335783]  __lock_acquire+0x12e0/0x2590
-[    8.336256]  lock_acquire+0x13f/0x3f0
-[    8.336696]  ? brute_task_fatal_signal.cold+0x49/0xe0
-[    8.337284]  _raw_read_lock+0x5d/0x70
-[    8.337721]  ? brute_task_fatal_signal.cold+0x49/0xe0
-[    8.338315]  brute_task_fatal_signal.cold+0x49/0xe0
-[    8.338885]  security_task_fatal_signal+0x22/0x30
-[    8.339435]  get_signal+0x3e0/0xcf0
-[    8.339849]  arch_do_signal+0x30/0x880
-[    8.340290]  ? rcu_read_lock_sched_held+0x3f/0x70
-[    8.340853]  ? kfree+0x25d/0x2c0
-[    8.341241]  exit_to_user_mode_prepare+0xfc/0x170
-[    8.341796]  syscall_exit_to_user_mode+0x38/0x240
-[    8.342350]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    8.342945] RIP: 0033:0x461923
-[    8.343310] Code: 24 20 c3 cc cc cc cc 48 8b 7c 24 08 8b 74 24 10 8b 54 24 14 4c 8b 54 24 18 4c 8b 44 24 20 44 8b 4c 24 28 b8 ca 00 00 00 0f 05 <89> 44 24 30 c3 cc cc cc cc cc cc cc cc 8b 7c 24 08 48 8b 74 24 10
-[    8.345488] RSP: 002b:00007fd62affcda8 EFLAGS: 00000286 ORIG_RAX: 00000000000000ca
-[    8.346385] RAX: fffffffffffffe00 RBX: 000000c000032e00 RCX: 0000000000461923
-[    8.347225] RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000b3b898
-[    8.348071] RBP: 00007fd62affcdf0 R08: 0000000000000000 R09: 0000000000000000
-[    8.349006] R10: 0000000000000000 R11: 0000000000000286 R12: 000000c000001680
-[    8.349838] R13: 00007ffd85b25fcf R14: 00007ffd85b260d0 R15: 00007fd62affcfc0
-
-I think it should be possible to using existing task locking semantics
-to manage the statistics, but I'll need to take a closer look.
-
-> Other implementations
-> ---------------------
-> 
-> The public version of grsecurity, as a summary, is based on the idea of
-> delay the fork system call if a child died due to a fatal error. This has
-> some issues:
-> 
-> 1.- Bad practices: Add delays to the kernel is, in general, a bad idea.
-> 
-> 2.- Weak points: This protection can be bypassed using two different
->     methods since it acts only when the fork is called after a child has
->     crashed.
-> 
->     2.1.- Bypass 1: So, it would still be possible for an attacker to fork
->           a big amount of children (in the order of thousands), then probe
->           all of them, and finally wait the protection time before repeat
->           the steps.
-> 
->     2.2.- Bypass 2: This method is based on the idea that the protection
->           doesn't act if the parent crashes. So, it would still be possible
->           for an attacker to fork a process and probe itself. Then, fork
->           the child process and probe itself again. This way, these steps
->           can be repeated infinite times without any mitigation.
-
-It's good to clarify what the expected behaviors should be; however,
-while working with the resulting system, it wasn't clear what the threat
-model was for this defense. I think we need two things: clear
-descriptions of what is expected to be detected (and what is not), and a
-set of self-tests that can be used to validate those expectations.
-
-Also, what, specifically, does "fatal error" cover? Is it strictly fatal
-signals? (i.e. "error" might refer to exit code, for example.)
-
-> 
-> This implementation
-> -------------------
-> 
-> The main idea behind this implementation is to improve the existing ones
-> focusing on the weak points annotated before. The solution for the first
-> bypass method is to detect a fast crash rate instead of only one simple
-> crash. For the second bypass method the solution is to detect both the
-> crash of parent and child processes. Moreover, as a mitigation method it is
-> better to kill all the offending tasks involve in the attack instead of use
-> delays.
-> 
-> So, the solution to the two bypass methods previously commented is to use
-> some statistical data shared across all the processes that can have the
-> same memory contents. Or in other words, a statistical data shared between
-> all the fork hierarchy processes after an execve system call.
-
-Hm, is this already tracked in some other way? i.e. the family hierarchy
-of the mm struct? They're only shared on clone, but get totally copied on
-fork(). Should that be the place where this is tracked instead? (i.e. I
-could fork and totally rearrange my VMAs.)
-
-> 
-> The purpose of these statistics is to compute the application crash period
-> in order to detect an attack. This crash period is the time between the
-> execve system call and the first fault or the time between two consecutives
-> faults, but this has a drawback. If an application crashes once quickly
-> from the execve system call or crashes twice in a short period of time for
-> some reason, a false positive attack will be triggered. To avoid this
-> scenario the shared statistical data holds a list of the i last crashes
-> timestamps and the application crash period is computed as follows:
-> 
-> crash_period = (n_last_timestamp - n_minus_i_timestamp) / i;
-> 
-> This ways, the size of the last crashes timestamps list allows to fine
-> tuning the detection sensibility.
-
-Instead of a list, can't the rate just be calculated on an on-going
-basis?
-
-> When this crash period falls under a certain threshold there is a clear
-> signal that something malicious is happening. Once detected, the mitigation
-> only kills the processes that share the same statistical data and so, all
-> the tasks that can have the same memory contents. This way, an attack is
-> rejected.
-
-Here's where I think the threat model needs some more work. The above
-describes what I think is a less common situation. I expect the common
-attack to hold still with a single value, and let the fork/exec spin
-until the value lines up. (i.e. a fork is required.)
-
-Here are the threat scenarios that come to mind for me:
-
-1- launching (fork/exec) a setuid process repeatedly until you get a
-   desirable memory layout (e.g. what Stack Clash[1] did).
-
-2- connecting to an exec()ing network daemon (e.g. xinetd) repeatedly
-   until you get a desirable memory layout (e.g. what CTFs do for simple
-   network service[2]).
-
-3- launching processes _without_ exec (e.g. Android Zygote[3]), and
-   exposing state to attack a sibling.
-
-4- connecting to a fork()ing network daemon (e.g. apache) repeatedly
-   until you expose the previously-shared memory layout of all the other
-   children (e.g. kind of related to HeartBleed[3], though that was a
-   direct exposure not a crasher).
-
-In each case, a privilege boundary is being crossed (setuid in the first,
-priv-changes in the 2nd, and network-to-local in the latter two), so I
-suspect that kind of detail will need to play a part in the design to
-help avoid false positives.
-
-Regardless, when I tested this series, 1 and 3 isn't detected, since
-they pass through an execve(), and I think that needs to be covered as
-well.
-
-[1] https://www.qualys.com/2017/06/19/stack-clash/stack-clash.txt
-[2] https://github.com/BSidesPDX/CTF-2017/blob/master/pwn/200-leek/src/leek.service
-[3] https://link.springer.com/article/10.1007/s10207-018-00425-8
-[4] https://heartbleed.com/
-
-> 
-> 1.- Per system enabling: This feature can be enabled at build time using
->     the CONFIG_SECURITY_FORK_BRUTE option or using the visual config
->     application under the following menu:
-> 
->     Security options ---> Fork brute force attack detection and mitigation
-
-(there is a built-in boot time disabling too, by changing the lsm=
-bootparam)
-
-> 
-> 2.- Per process enabling/disabling: To allow that specific applications can
->     turn off or turn on the detection and mitigation of a fork brute force
->     attack when required, there are two new prctls.
-> 
->     prctl(PR_SECURITY_FORK_BRUTE_ENABLE, 0, 0, 0, 0)
->     prctl(PR_SECURITY_FORK_BRUTE_DISABLE, 0, 0, 0, 0)
-
-How do you see this being used?
-
-> 3.- Fine tuning: To customize the detection's sensibility there are two new
->     sysctl attributes that allow to set the last crashes timestamps list
->     size and the application crash period threshold (in milliseconds). Both
->     are accessible through the following files respectively.
-> 
->     /proc/sys/kernel/brute/timestamps_list_size
->     /proc/sys/kernel/brute/crash_period_threshold
-> 
->     The list size allows to avoid false positives due to crashes unrelated
->     with a real attack. The period threshold sets the time limit to detect
->     an attack. And, since a fork brute force attack will be detected if the
->     application crash period falls under this threshold, the higher this
->     value, the more sensitive the detection will be.
-
-I wonder if these will be needed as we narrow in on the specific threat
-model (i.e. there will be enough additional signal to obviate this
-tuning).
-
-And in testing I found another false positive that I haven't fully
-diagnosed. I found that at boot, with Docker installed, "runc" would
-immediately trip the mitigation. With some debugging added, I looks like
-runc had several forked processes that got SIGKILLed in quick succession,
-and then the entire group got killed by Brute. I haven't narrowed down
-what runc is doing here, but it makes me wonder if there might need
-to be an exception for user-space delivered signals, as opposed to
-kernel-delivered signals...
-
-Thanks again for the work! I'm liking the idea of getting a solid
-protection for this. It's been a long-standing hole in upstream. :)
-
--Kees
+Well, perhaps the best way to start is to explain how you have been
+testing this so far and then using that information to draft a test
+for the testsuite.
 
 -- 
-Kees Cook
+paul moore
+www.paul-moore.com
