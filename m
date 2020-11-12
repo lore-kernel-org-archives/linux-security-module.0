@@ -2,100 +2,385 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5081EC56201
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5C8C388F7
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05F5921534
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D0492168B
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:40:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pdFjGdzJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729070AbgKLFiM (ORCPT
+        id S1729448AbgKLFiK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Nov 2020 00:38:12 -0500
-Received: from namei.org ([65.99.196.166]:52612 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729185AbgKLFAH (ORCPT
+        Thu, 12 Nov 2020 00:38:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55168 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730009AbgKLByR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Nov 2020 00:00:07 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0AC4xj4d005412;
-        Thu, 12 Nov 2020 04:59:45 GMT
-Date:   Thu, 12 Nov 2020 15:59:45 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-cc:     Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1 0/9] Landlock fixes
-In-Reply-To: <20201111213442.434639-1-mic@digikod.net>
-Message-ID: <alpine.LRH.2.21.2011121559140.5257@namei.org>
-References: <20201111213442.434639-1-mic@digikod.net>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1592972126-1605157185=:5257"
+        Wed, 11 Nov 2020 20:54:17 -0500
+Received: from mail-pl1-x649.google.com (mail-pl1-x649.google.com [IPv6:2607:f8b0:4864:20::649])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72E42C040201
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:12 -0800 (PST)
+Received: by mail-pl1-x649.google.com with SMTP id m7so2314722pls.12
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=3lqfRZtVZbvZzlKideU4HlR83ofeb2JRCxMe3NEILqc=;
+        b=pdFjGdzJwu13zU0M/ASUiwCpli3mLLVPgtO6oabvuOWJu2ZP6zxWHqrFrIWAsQKvrJ
+         OxOmpQOn6YZcjHoqviZ5TtjcLbUOkK6xCJypbCsuOnWgHTYNmmeGd3wzErIMA8sjwUEY
+         FbFD3LT9IyF3iuyfAV19D6SWCiWgTvfJsDNSujCv9RXu1vMOe2D3wyQtqy5Gr0KsmU92
+         kzkXanNb6Z/EAGeE48pC8qjUp3i5E9A+MWGdzQdm/7k2d3xGohHv5VQ2yE3r+vXfNACk
+         84Nyc4K0WhhC91y/3PywLdJmN0Lfz9S1UDyuW8ctPDSSaumxKEoQvsetsPJc7yMK23aS
+         VIMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=3lqfRZtVZbvZzlKideU4HlR83ofeb2JRCxMe3NEILqc=;
+        b=lBFggDHlSh423FuqNYC4lb4J5ax9daUQNt4Hk0Rsnj+nd2O5fcuheawhU0jptrPU7E
+         i/xxstrX8te9fFAtoHSHmCWy4divadX6Soy68dXD2usfy3rp9b3prQsN5UoCtD+APr2x
+         OdE4Udr3DlS58ZAP7O6KtpPNqAIqg6kF8lNZ4dK+FrK0ifkGPVt9oHqpkaZ+RRsse6qf
+         MA98697rjFBMABEjy+I7DHfaiYqbTaUqxpCc9urd57t+3U3dnIZeDoseopzES0ihCbUh
+         2DMJAyhwZtJtjekCqRN3kPsTDwfmBb3ZDQj3iQ2QvxHLzK+SSW8QrTV84YldZfVXDAL0
+         HC4A==
+X-Gm-Message-State: AOAM532hSeDTWgcpjcKPo1dfn+P6PIfh0vthgpoUIUkVLdeVy9nn4dmM
+        QRjX6oOQVjhJBJMmoLLMYAZYeCVSVPQhrrdxOw==
+X-Google-Smtp-Source: ABdhPJzL7Ru2KFAyZ0V1LC4T/GMc65JRwkk3s3T+BmwMR4rs6T/ny4ewYAQd8DGrABQP7XiF39VbaUBCstlR4CGLZQ==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a17:90b:293:: with SMTP id
+ az19mr685557pjb.1.1605146051307; Wed, 11 Nov 2020 17:54:11 -0800 (PST)
+Date:   Wed, 11 Nov 2020 17:53:57 -0800
+In-Reply-To: <20201112015359.1103333-1-lokeshgidra@google.com>
+Message-Id: <20201112015359.1103333-3-lokeshgidra@google.com>
+Mime-Version: 1.0
+References: <20201112015359.1103333-1-lokeshgidra@google.com>
+X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
+Subject: [PATCH v13 2/4] fs: add LSM-supporting anon-inode interface
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Daniel Colascione <dancol@google.com>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Daniel Colascione <dancol@google.com>
 
---1665246916-1592972126-1605157185=:5257
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+This change adds a new function, anon_inode_getfd_secure, that creates
+anonymous-node file with individual non-S_PRIVATE inode to which security
+modules can apply policy. Existing callers continue using the original
+singleton-inode kind of anonymous-inode file. We can transition anonymous
+inode users to the new kind of anonymous inode in individual patches for
+the sake of bisection and review.
 
-On Wed, 11 Nov 2020, Mickaël Salaün wrote:
+The new function accepts an optional context_inode parameter that callers
+can use to provide additional contextual information to security modules.
+For example, in case of userfaultfd, the created inode is a 'logical child'
+of the context_inode (userfaultfd inode of the parent process) in the sense
+that it provides the security context required during creation of the child
+process' userfaultfd inode.
 
-> Hi,
-> 
-> This patch series fixes some issues and makes the Landlock filesystem
-> access-control more consistent and deterministic when stacking multiple
-> rulesets.  This is checked by current and new tests.  I also extended
-> documentation and example to help users.
-> 
-> This series can be applied on top of
-> https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/log/?h=landlock_lsm
+Signed-off-by: Daniel Colascione <dancol@google.com>
 
-Actually, given the number of fixes here, please respin so we get a 
-cleaner initial PR for Linus.
+[Delete obsolete comments to alloc_anon_inode()]
+[Add context_inode description in comments to anon_inode_getfd_secure()]
+[Remove definition of anon_inode_getfile_secure() as there are no callers]
+[Make __anon_inode_getfile() static]
+[Use correct error cast in __anon_inode_getfile()]
+[Fix error handling in __anon_inode_getfile()]
 
-> 
-> Regards,
-> 
-> Mickaël Salaün (9):
->   landlock: Fix memory allocation error handling
->   landlock: Cosmetic fixes for filesystem management
->   landlock: Enforce deterministic interleaved path rules
->   landlock: Always intersect access rights
->   landlock: Add extra checks when inserting a rule
->   selftests/landlock: Extend layout1.inherit_superset
->   landlock: Clean up get_ruleset_from_fd()
->   landlock: Add help to enable Landlock as a stacked LSM
->   landlock: Extend documentation about limitations
-> 
->  Documentation/userspace-api/landlock.rst   |  17 +++
->  samples/landlock/sandboxer.c               |  21 +++-
->  security/landlock/Kconfig                  |   4 +-
->  security/landlock/fs.c                     |  67 +++++-----
->  security/landlock/object.c                 |   5 +-
->  security/landlock/ruleset.c                |  34 ++---
->  security/landlock/syscall.c                |  24 ++--
->  tools/testing/selftests/landlock/fs_test.c | 140 +++++++++++++++++++--
->  8 files changed, 239 insertions(+), 73 deletions(-)
-> 
-> 
-> base-commit: 96b3198c4025c11347651700b77e45a686d78553
-> 
+Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/anon_inodes.c            | 150 ++++++++++++++++++++++++++----------
+ fs/libfs.c                  |   5 --
+ include/linux/anon_inodes.h |   5 ++
+ 3 files changed, 115 insertions(+), 45 deletions(-)
 
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 89714308c25b..023337d65a03 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -55,61 +55,79 @@ static struct file_system_type anon_inode_fs_type = {
+ 	.kill_sb	= kill_anon_super,
+ };
+ 
+-/**
+- * anon_inode_getfile - creates a new file instance by hooking it up to an
+- *                      anonymous inode, and a dentry that describe the "class"
+- *                      of the file
+- *
+- * @name:    [in]    name of the "class" of the new file
+- * @fops:    [in]    file operations for the new file
+- * @priv:    [in]    private data for the new file (will be file's private_data)
+- * @flags:   [in]    flags
+- *
+- * Creates a new file by hooking it on a single inode. This is useful for files
+- * that do not need to have a full-fledged inode in order to operate correctly.
+- * All the files created with anon_inode_getfile() will share a single inode,
+- * hence saving memory and avoiding code duplication for the file/inode/dentry
+- * setup.  Returns the newly created file* or an error pointer.
+- */
+-struct file *anon_inode_getfile(const char *name,
+-				const struct file_operations *fops,
+-				void *priv, int flags)
++static struct inode *anon_inode_make_secure_inode(
++	const char *name,
++	const struct inode *context_inode)
+ {
+-	struct file *file;
++	struct inode *inode;
++	const struct qstr qname = QSTR_INIT(name, strlen(name));
++	int error;
++
++	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
++	if (IS_ERR(inode))
++		return inode;
++	inode->i_flags &= ~S_PRIVATE;
++	error =	security_inode_init_security_anon(inode, &qname, context_inode);
++	if (error) {
++		iput(inode);
++		return ERR_PTR(error);
++	}
++	return inode;
++}
+ 
+-	if (IS_ERR(anon_inode_inode))
+-		return ERR_PTR(-ENODEV);
++static struct file *__anon_inode_getfile(const char *name,
++					 const struct file_operations *fops,
++					 void *priv, int flags,
++					 const struct inode *context_inode,
++					 bool secure)
++{
++	struct inode *inode;
++	struct file *file;
+ 
+ 	if (fops->owner && !try_module_get(fops->owner))
+ 		return ERR_PTR(-ENOENT);
+ 
+-	/*
+-	 * We know the anon_inode inode count is always greater than zero,
+-	 * so ihold() is safe.
+-	 */
+-	ihold(anon_inode_inode);
+-	file = alloc_file_pseudo(anon_inode_inode, anon_inode_mnt, name,
++	if (secure) {
++		inode =	anon_inode_make_secure_inode(name, context_inode);
++		if (IS_ERR(inode)) {
++			file = ERR_CAST(inode);
++			goto err;
++		}
++	} else {
++		inode =	anon_inode_inode;
++		if (IS_ERR(inode)) {
++			file = ERR_PTR(-ENODEV);
++			goto err;
++		}
++		/*
++		 * We know the anon_inode inode count is always
++		 * greater than zero, so ihold() is safe.
++		 */
++		ihold(inode);
++	}
++
++	file = alloc_file_pseudo(inode, anon_inode_mnt, name,
+ 				 flags & (O_ACCMODE | O_NONBLOCK), fops);
+ 	if (IS_ERR(file))
+-		goto err;
++		goto err_iput;
+ 
+-	file->f_mapping = anon_inode_inode->i_mapping;
++	file->f_mapping = inode->i_mapping;
+ 
+ 	file->private_data = priv;
+ 
+ 	return file;
+ 
++err_iput:
++	iput(inode);
+ err:
+-	iput(anon_inode_inode);
+ 	module_put(fops->owner);
+ 	return file;
+ }
+-EXPORT_SYMBOL_GPL(anon_inode_getfile);
+ 
+ /**
+- * anon_inode_getfd - creates a new file instance by hooking it up to an
+- *                    anonymous inode, and a dentry that describe the "class"
+- *                    of the file
++ * anon_inode_getfile - creates a new file instance by hooking it up to an
++ *                      anonymous inode, and a dentry that describe the "class"
++ *                      of the file
+  *
+  * @name:    [in]    name of the "class" of the new file
+  * @fops:    [in]    file operations for the new file
+@@ -118,12 +136,23 @@ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+  *
+  * Creates a new file by hooking it on a single inode. This is useful for files
+  * that do not need to have a full-fledged inode in order to operate correctly.
+- * All the files created with anon_inode_getfd() will share a single inode,
++ * All the files created with anon_inode_getfile() will share a single inode,
+  * hence saving memory and avoiding code duplication for the file/inode/dentry
+- * setup.  Returns new descriptor or an error code.
++ * setup.  Returns the newly created file* or an error pointer.
+  */
+-int anon_inode_getfd(const char *name, const struct file_operations *fops,
+-		     void *priv, int flags)
++struct file *anon_inode_getfile(const char *name,
++				const struct file_operations *fops,
++				void *priv, int flags)
++{
++	return __anon_inode_getfile(name, fops, priv, flags, NULL, false);
++}
++EXPORT_SYMBOL_GPL(anon_inode_getfile);
++
++static int __anon_inode_getfd(const char *name,
++			      const struct file_operations *fops,
++			      void *priv, int flags,
++			      const struct inode *context_inode,
++			      bool secure)
+ {
+ 	int error, fd;
+ 	struct file *file;
+@@ -133,7 +162,8 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		return error;
+ 	fd = error;
+ 
+-	file = anon_inode_getfile(name, fops, priv, flags);
++	file = __anon_inode_getfile(name, fops, priv, flags, context_inode,
++				    secure);
+ 	if (IS_ERR(file)) {
+ 		error = PTR_ERR(file);
+ 		goto err_put_unused_fd;
+@@ -146,8 +176,48 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 	put_unused_fd(fd);
+ 	return error;
+ }
++
++/**
++ * anon_inode_getfd - creates a new file instance by hooking it up to
++ *                    an anonymous inode and a dentry that describe
++ *                    the "class" of the file
++ *
++ * @name:    [in]    name of the "class" of the new file
++ * @fops:    [in]    file operations for the new file
++ * @priv:    [in]    private data for the new file (will be file's private_data)
++ * @flags:   [in]    flags
++ *
++ * Creates a new file by hooking it on a single inode. This is
++ * useful for files that do not need to have a full-fledged inode in
++ * order to operate correctly.  All the files created with
++ * anon_inode_getfd() will use the same singleton inode, reducing
++ * memory use and avoiding code duplication for the file/inode/dentry
++ * setup.  Returns a newly created file descriptor or an error code.
++ */
++int anon_inode_getfd(const char *name, const struct file_operations *fops,
++		     void *priv, int flags)
++{
++	return __anon_inode_getfd(name, fops, priv, flags, NULL, false);
++}
+ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+ 
++/**
++ * Like anon_inode_getfd(), but creates a new !S_PRIVATE anon inode rather than
++ * reuse the singleton anon inode, and calls the inode_init_security_anon() LSM
++ * hook. This allows the inode to have its own security context and for a LSM
++ * to reject creation of the inode.  An optional @context_inode argument is
++ * also added to provide the logical relationship with the new inode.  The LSM
++ * may use @context_inode in inode_init_security_anon(), but a reference to it
++ * is not held.
++ */
++int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
++			    void *priv, int flags,
++			    const struct inode *context_inode)
++{
++	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
++}
++EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
++
+ static int __init anon_inode_init(void)
+ {
+ 	anon_inode_mnt = kern_mount(&anon_inode_fs_type);
+diff --git a/fs/libfs.c b/fs/libfs.c
+index fc34361c1489..51c19c72e563 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1212,11 +1212,6 @@ static int anon_set_page_dirty(struct page *page)
+ 	return 0;
+ };
+ 
+-/*
+- * A single inode exists for all anon_inode files. Contrary to pipes,
+- * anon_inode inodes have no associated per-instance data, so we need
+- * only allocate one of them.
+- */
+ struct inode *alloc_anon_inode(struct super_block *s)
+ {
+ 	static const struct address_space_operations anon_aops = {
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index d0d7d96261ad..71881a2b6f78 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -10,12 +10,17 @@
+ #define _LINUX_ANON_INODES_H
+ 
+ struct file_operations;
++struct inode;
+ 
+ struct file *anon_inode_getfile(const char *name,
+ 				const struct file_operations *fops,
+ 				void *priv, int flags);
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags);
++int anon_inode_getfd_secure(const char *name,
++			    const struct file_operations *fops,
++			    void *priv, int flags,
++			    const struct inode *context_inode);
+ 
+ #endif /* _LINUX_ANON_INODES_H */
+ 
 -- 
-James Morris
-<jmorris@namei.org>
+2.29.2.299.gdc1121823c-goog
 
---1665246916-1592972126-1605157185=:5257--
