@@ -2,249 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13434C2D0A3
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C5EC56201
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 16:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7848F21534
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:40:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dpamQo0R"
+	by mail.kernel.org (Postfix) with ESMTP id 7F24922227
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 16:11:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbgKLFiI (ORCPT
+        id S1728757AbgKLQLf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Nov 2020 00:38:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729331AbgKLByE (ORCPT
+        Thu, 12 Nov 2020 11:11:35 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2096 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728426AbgKLQLf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Nov 2020 20:54:04 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77A65C061A51
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:04 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id h9so4272959ybj.10
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:message-id:mime-version:subject:from:to:cc;
-        bh=jTdS5qD6Cs9spAbYdY/Y3qiyvOeoxSwh4Xr7vha7mcg=;
-        b=dpamQo0R6nrhSTmxCkRKiC1S89iAq3sss5Kiv2a6XarKjuK3+EubjqCft+NNU1H7IC
-         x2gBDgyR5iTp4mXOzjYVMKH0rxAdd6zdG6XrlKFe1dzrvlpu2Y9ujzE3nnP7YKKf6LMV
-         UrELwuRxw4AyprYz+CJODn4usi8UFJr/uXAYYX6jla+Aob5qkEECdtBJWWY/0a1Lt1UW
-         PKHCuDhtQlbL10Nh1y5MBK3U7oGj0/+r2AKZwWwTIZgr+4G3BQnhQsFjOX43FiQxyc6F
-         X/f/BGPh2byzOAI+h8HtktaCiFDrdBDMXgZ4CW+II/WvSC3vaz/sUizCHC65B/ngJOAz
-         fg2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
-         :to:cc;
-        bh=jTdS5qD6Cs9spAbYdY/Y3qiyvOeoxSwh4Xr7vha7mcg=;
-        b=BB1wTgk+F1b+B0lbFCmXkOjXnjKWZF6ZUaO7PRVOnyjjHtHzXyJ7q5AajBWR6Gx8X9
-         bvy+YZw2Rfmyc0QuWwAGRVdFyKyHIJGuuSutfLPjRrXydGuAiNA5juCJXOEvd98hUyDW
-         2WBWhaZrwuzkqSWpVaeaL2FO2TW3sSGPmLyz3q3OQYeeqEQDIlhew/3hlF+uDzvL4tlg
-         qGNPXNf4nhO2iqcjmwbY+vgFS9ktSvF6EzTHGGnOOf/tSxxXu9fMStG1ClXEmbWoqa/l
-         CzQYVqbwyVlu+xHFg5bwCBWpJA1CJsuV775XdTeVbT9bSKHVdYB8qdJ1l8IDlSKJ2Rrc
-         Go8Q==
-X-Gm-Message-State: AOAM5303NPV4vBZNbcRhYCdrSmvlcTAtHDcSVMHzGyC86GyZ77Z8sAQ3
-        /1khSk6+XaWiGC8L2x2aXtTX0LKcUi0JiVzTvg==
-X-Google-Smtp-Source: ABdhPJy9JsUpQkdSRUHfTzJh2hR6ARIfiVnUI96HsBjT1we1tvudMgQHBXcHU/wLeqsd4JC8oh1Ogf5NpN6GjIekTQ==
-Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
-X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a25:4cc7:: with SMTP id
- z190mr38493734yba.405.1605146043522; Wed, 11 Nov 2020 17:54:03 -0800 (PST)
-Date:   Wed, 11 Nov 2020 17:53:55 -0800
-Message-Id: <20201112015359.1103333-1-lokeshgidra@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
-Subject: [PATCH v13 0/4] SELinux support for anonymous inodes and UFFD
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Nov 2020 11:11:35 -0500
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CX64K1xg2z67Ks4;
+        Fri, 13 Nov 2020 00:09:37 +0800 (CST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.161)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1913.5; Thu, 12 Nov 2020 17:11:33 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] ima: Set and clear FMODE_CAN_READ in ima_calc_file_hash()
+Date:   Thu, 12 Nov 2020 17:10:05 +0100
+Message-ID: <20201112161005.6192-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.27.GIT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.65.161]
+X-ClientProxiedBy: lhreml715-chm.china.huawei.com (10.201.108.66) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Userfaultfd in unprivileged contexts could be potentially very
-useful. We'd like to harden userfaultfd to make such unprivileged use
-less risky. This patch series allows SELinux to manage userfaultfd
-file descriptors and in the future, other kinds of
-anonymous-inode-based file descriptor.  SELinux policy authors can
-apply policy types to anonymous inodes by providing name-based
-transition rules keyed off the anonymous inode internal name (
-"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
-applying policy to the new SIDs thus produced.
+Commit a1f9b1c0439db ("integrity/ima: switch to using __kernel_read")
+replaced the __vfs_read() call in integrity_kernel_read() with
+__kernel_read(), a new helper introduced by commit 61a707c543e2a ("fs: add
+a __kernel_read helper").
 
-With SELinux managed userfaultfd, an admin can control creation and
-movement of the file descriptors. In particular, handling of
-a userfaultfd descriptor by a different process is essentially a
-ptrace access into the process, without any of the corresponding
-security_ptrace_access_check() checks. For privacy, the admin may
-want to deny such accesses, which is possible with SELinux support.
+Since the new helper requires that also the FMODE_CAN_READ flag is set in
+file->f_mode, this patch saves the original f_mode and sets the flag if the
+file descriptor has the necessary file operation. Lastly, it restores the
+original f_mode at the end of ima_calc_file_hash().
 
-Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
-allows callers to opt into this SELinux management. In this new "secure"
-mode, anon_inodes create new ephemeral inodes for anonymous file objects
-instead of reusing the normal anon_inodes singleton dummy inode. A new
-LSM hook gives security modules an opportunity to configure and veto
-these ephemeral inodes.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_crypto.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-This patch series is one of two fork of [1] and is an
-alternative to [2].
-
-The primary difference between the two patch series is that this
-partch series creates a unique inode for each "secure" anonymous
-inode, while the other patch series ([2]) continues using the
-singleton dummy anonymous inode and adds a way to attach SELinux
-security information directly to file objects.
-
-I prefer the approach in this patch series because 1) it's a smaller
-patch than [2], and 2) it produces a more regular security
-architecture: in this patch series, secure anonymous inodes aren't
-S_PRIVATE and they maintain the SELinux property that the label for a
-file is in its inode. We do need an additional inode per anonymous
-file, but per-struct-file inode creation doesn't seem to be a problem
-for pipes and sockets.
-
-The previous version of this feature ([1]) created a new SELinux
-security class for userfaultfd file descriptors. This version adopts
-the generic transition-based approach of [2].
-
-This patch series also differs from [2] in that it doesn't affect all
-anonymous inodes right away --- instead requiring anon_inodes callers
-to opt in --- but this difference isn't one of basic approach. The
-important question to resolve is whether we should be creating new
-inodes or enhancing per-file data.
-
-Changes from the first version of the patch:
-
-  - Removed some error checks
-  - Defined a new anon_inode SELinux class to resolve the
-    ambiguity in [3]
-  - Inherit sclass as well as descriptor from context inode
-
-Changes from the second version of the patch:
-
-  - Fixed example policy in the commit message to reflect the use of
-    the new anon_inode class.
-
-Changes from the third version of the patch:
-
-  - Dropped the fops parameter to the LSM hook
-  - Documented hook parameters
-  - Fixed incorrect class used for SELinux transition
-  - Removed stray UFFD changed early in the series
-  - Removed a redundant ERR_PTR(PTR_ERR())
-
-Changes from the fourth version of the patch:
-
-  - Removed an unused parameter from an internal function
-  - Fixed function documentation
-
-Changes from the fifth version of the patch:
-
-  - Fixed function documentation in fs/anon_inodes.c and
-    include/linux/lsm_hooks.h
-  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
-    owner from userfaultfd_ctx.
-
-Changes from the sixth version of the patch:
-
-  - Removed definition of anon_inode_getfile_secure() as there are no
-    callers.
-  - Simplified function description of anon_inode_getfd_secure().
-  - Elaborated more on the purpose of 'context_inode' in commit message.
-
-Changes from the seventh version of the patch:
-
-  - Fixed error handling in _anon_inode_getfile().
-  - Fixed minor comment and indentation related issues.
-
-Changes from the eighth version of the patch:
-
-  - Replaced selinux_state.initialized with selinux_state.initialized
-
-Changes from the ninth version of the patch:
-
-  - Fixed function names in fs/anon_inodes.c
-  - Fixed comment of anon_inode_getfd_secure()
-  - Fixed name of the patch wherein userfaultfd code uses
-    anon_inode_getfd_secure()
-
-Changes from the tenth version of the patch:
-
-  - Split first patch into VFS and LSM specific patches
-  - Fixed comments in fs/anon_inodes.c
-  - Fixed comment of alloc_anon_inode()
-
-Changes from the eleventh version of the patch:
-
-  - Removed comment of alloc_anon_inode() for consistency with the code
-  - Fixed explanation of LSM hook in the commit message
-
-Changes from the twelfth version of the patch:
-  - Replaced FILE__CREATE with ANON_INODE__CREATE while initializing
-    anon-inode's SELinux security struct.
-  - Check context_inode's SELinux label and return -EACCES if it's
-    invalid.
-
-[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
-[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
-[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
-
-Daniel Colascione (3):
-  fs: add LSM-supporting anon-inode interface
-  selinux: teach SELinux about anonymous inodes
-  userfaultfd: use secure anon inodes for userfaultfd
-
-Lokesh Gidra (1):
-  security: add inode_init_security_anon() LSM hook
-
- fs/anon_inodes.c                    | 150 ++++++++++++++++++++--------
- fs/libfs.c                          |   5 -
- fs/userfaultfd.c                    |  19 ++--
- include/linux/anon_inodes.h         |   5 +
- include/linux/lsm_hook_defs.h       |   2 +
- include/linux/lsm_hooks.h           |   9 ++
- include/linux/security.h            |  10 ++
- security/security.c                 |   8 ++
- security/selinux/hooks.c            |  56 +++++++++++
- security/selinux/include/classmap.h |   2 +
- 10 files changed, 212 insertions(+), 54 deletions(-)
-
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 21989fa0c107..22ed86a0c964 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -537,6 +537,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 	loff_t i_size;
+ 	int rc;
+ 	struct file *f = file;
++	fmode_t saved_mode;
+ 	bool new_file_instance = false, modified_mode = false;
+ 
+ 	/*
+@@ -550,7 +551,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 	}
+ 
+ 	/* Open a new file instance in O_RDONLY if we cannot read */
+-	if (!(file->f_mode & FMODE_READ)) {
++	if (!(file->f_mode & FMODE_READ) || !(file->f_mode & FMODE_CAN_READ)) {
+ 		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
+ 				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
+ 		flags |= O_RDONLY;
+@@ -562,7 +563,10 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 			 */
+ 			pr_info_ratelimited("Unable to reopen file for reading.\n");
+ 			f = file;
++			saved_mode = f->f_mode;
+ 			f->f_mode |= FMODE_READ;
++			if (likely(file->f_op->read || file->f_op->read_iter))
++				f->f_mode |= FMODE_CAN_READ;
+ 			modified_mode = true;
+ 		} else {
+ 			new_file_instance = true;
+@@ -582,7 +586,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 	if (new_file_instance)
+ 		fput(f);
+ 	else if (modified_mode)
+-		f->f_mode &= ~FMODE_READ;
++		f->f_mode = saved_mode;
+ 	return rc;
+ }
+ 
 -- 
-2.29.2.299.gdc1121823c-goog
+2.27.GIT
 
