@@ -2,195 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E15C388F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5081EC56201
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1767E21534
+	by mail.kernel.org (Postfix) with ESMTP id 05F5921534
 	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KHw/IjNn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbgKLFiL (ORCPT
+        id S1729070AbgKLFiM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Nov 2020 00:38:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728306AbgKLBzu (ORCPT
+        Thu, 12 Nov 2020 00:38:12 -0500
+Received: from namei.org ([65.99.196.166]:52612 "EHLO namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729185AbgKLFAH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Nov 2020 20:55:50 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25912C0401C4
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:18 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id u37so4277572ybi.15
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=P1DeZBXMBKdtEUpa7z1m8DxvFC3ulFf31LohQa26mKY=;
-        b=KHw/IjNnKXINcRHDWgmqRHd0Zj1R0TpCpGkfvcK6YinJS9r0qY95sipaMLev7KDQLY
-         SHvrOKRhjJK/mVp8a2oe/RxC2epBcB4njCqmWfs/WJHD+XSU5QvqOVEHfZc9DzUV2DcX
-         zvqrzF0nu1YXHO7NObYOQnEFk4pdkrB3+mkT3SwMmpSZzlzC9Jvb4efewCRlLMHHReAr
-         y+PEqn1JjuD/WISS3WPqtUOBmtQfpr/LIvNvH62uiqNkMDSkz882tB2/qHaRI5oWZ15r
-         gJ1ll23udno6hVYcfe5GHleYlRSKx9Y3ylFdqS06NbLX0XzLLHFeN8khM45k+brEDzWy
-         bIbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=P1DeZBXMBKdtEUpa7z1m8DxvFC3ulFf31LohQa26mKY=;
-        b=lXrqLDLZRs4R0o55oUa8ZbnsMgNn1gFpStUGvHLndaN1Wy6QqDp+Y8KEVmF0Jt/His
-         lwwXZx+7lKaLLFkTpx28hDa4C8wfJpsRCyOFG53T4T2T4VyglhMCmtJzCX5rfzASl8ej
-         fFOjnM2DCw78pe3veQn7swgh9q2fD9O5JLd3WFLPfLaD/LFUkp+ScvpfYKOnwcyPUiV7
-         lTyuE7yoCfU8soCgbIgLXeuvBVUtJBxqcxUvWeC7E3SXx7gcHav0/0gYpY2YSUCq4+D9
-         /YW4mIND9i/iP53LFQjpBS2w3hjO0EhjbzEw1TtWaHbrNdu4QZra8eDVl/ZFKx7LDEGf
-         nqkQ==
-X-Gm-Message-State: AOAM531J0VLHx7a+mrqqPleGot4RmF564BgXF8BdJEVsQMZTPaES3peB
-        8OqVdkCqHza+6OpaPkb+oKd1yUx6OMCfcr3U4Q==
-X-Google-Smtp-Source: ABdhPJzeZK4CgcTcXxnvjBUkLa6KfV72dT9Gdn9uAHIiX/UDZe+AdtYjzlUXrrU731++FmFjMGYes+NLu+clHGl60Q==
-Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
-X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
- (user=lokeshgidra job=sendgmr) by 2002:a25:80cd:: with SMTP id
- c13mr42308074ybm.371.1605146057270; Wed, 11 Nov 2020 17:54:17 -0800 (PST)
-Date:   Wed, 11 Nov 2020 17:53:59 -0800
-In-Reply-To: <20201112015359.1103333-1-lokeshgidra@google.com>
-Message-Id: <20201112015359.1103333-5-lokeshgidra@google.com>
-Mime-Version: 1.0
-References: <20201112015359.1103333-1-lokeshgidra@google.com>
-X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
-Subject: [PATCH v13 4/4] userfaultfd: use secure anon inodes for userfaultfd
-From:   Lokesh Gidra <lokeshgidra@google.com>
-To:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Lokesh Gidra <lokeshgidra@google.com>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Aaron Goidel <acgoide@tycho.nsa.gov>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        Daniel Colascione <dancol@google.com>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Nov 2020 00:00:07 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id 0AC4xj4d005412;
+        Thu, 12 Nov 2020 04:59:45 GMT
+Date:   Thu, 12 Nov 2020 15:59:45 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 0/9] Landlock fixes
+In-Reply-To: <20201111213442.434639-1-mic@digikod.net>
+Message-ID: <alpine.LRH.2.21.2011121559140.5257@namei.org>
+References: <20201111213442.434639-1-mic@digikod.net>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="1665246916-1592972126-1605157185=:5257"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Daniel Colascione <dancol@google.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-This change gives userfaultfd file descriptors a real security
-context, allowing policy to act on them.
+--1665246916-1592972126-1605157185=:5257
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
+On Wed, 11 Nov 2020, Mickaël Salaün wrote:
 
-[Remove owner inode from userfaultfd_ctx]
-[Use anon_inode_getfd_secure() instead of anon_inode_getfile_secure()
- in userfaultfd syscall]
-[Use inode of file in userfaultfd_read() in resolve_userfault_fork()]
+> Hi,
+> 
+> This patch series fixes some issues and makes the Landlock filesystem
+> access-control more consistent and deterministic when stacking multiple
+> rulesets.  This is checked by current and new tests.  I also extended
+> documentation and example to help users.
+> 
+> This series can be applied on top of
+> https://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git/log/?h=landlock_lsm
 
-Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
----
- fs/userfaultfd.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+Actually, given the number of fixes here, please respin so we get a 
+cleaner initial PR for Linus.
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 000b457ad087..dd78daf06de6 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -972,14 +972,14 @@ static __poll_t userfaultfd_poll(struct file *file, poll_table *wait)
- 
- static const struct file_operations userfaultfd_fops;
- 
--static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
--				  struct userfaultfd_ctx *new,
-+static int resolve_userfault_fork(struct userfaultfd_ctx *new,
-+				  struct inode *inode,
- 				  struct uffd_msg *msg)
- {
- 	int fd;
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, new,
--			      O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
-+			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
- 	if (fd < 0)
- 		return fd;
- 
-@@ -989,7 +989,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *ctx,
- }
- 
- static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
--				    struct uffd_msg *msg)
-+				    struct uffd_msg *msg, struct inode *inode)
- {
- 	ssize_t ret;
- 	DECLARE_WAITQUEUE(wait, current);
-@@ -1100,7 +1100,7 @@ static ssize_t userfaultfd_ctx_read(struct userfaultfd_ctx *ctx, int no_wait,
- 	spin_unlock_irq(&ctx->fd_wqh.lock);
- 
- 	if (!ret && msg->event == UFFD_EVENT_FORK) {
--		ret = resolve_userfault_fork(ctx, fork_nctx, msg);
-+		ret = resolve_userfault_fork(fork_nctx, inode, msg);
- 		spin_lock_irq(&ctx->event_wqh.lock);
- 		if (!list_empty(&fork_event)) {
- 			/*
-@@ -1160,6 +1160,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	ssize_t _ret, ret = 0;
- 	struct uffd_msg msg;
- 	int no_wait = file->f_flags & O_NONBLOCK;
-+	struct inode *inode = file_inode(file);
- 
- 	if (ctx->state == UFFD_STATE_WAIT_API)
- 		return -EINVAL;
-@@ -1167,7 +1168,7 @@ static ssize_t userfaultfd_read(struct file *file, char __user *buf,
- 	for (;;) {
- 		if (count < sizeof(msg))
- 			return ret ? ret : -EINVAL;
--		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg);
-+		_ret = userfaultfd_ctx_read(ctx, no_wait, &msg, inode);
- 		if (_ret < 0)
- 			return ret ? ret : _ret;
- 		if (copy_to_user((__u64 __user *) buf, &msg, sizeof(msg)))
-@@ -1985,8 +1986,8 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	/* prevent the mm struct to be freed */
- 	mmgrab(ctx->mm);
- 
--	fd = anon_inode_getfd("[userfaultfd]", &userfaultfd_fops, ctx,
--			      O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS));
-+	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
-+			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
- 	if (fd < 0) {
- 		mmdrop(ctx->mm);
- 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+> 
+> Regards,
+> 
+> Mickaël Salaün (9):
+>   landlock: Fix memory allocation error handling
+>   landlock: Cosmetic fixes for filesystem management
+>   landlock: Enforce deterministic interleaved path rules
+>   landlock: Always intersect access rights
+>   landlock: Add extra checks when inserting a rule
+>   selftests/landlock: Extend layout1.inherit_superset
+>   landlock: Clean up get_ruleset_from_fd()
+>   landlock: Add help to enable Landlock as a stacked LSM
+>   landlock: Extend documentation about limitations
+> 
+>  Documentation/userspace-api/landlock.rst   |  17 +++
+>  samples/landlock/sandboxer.c               |  21 +++-
+>  security/landlock/Kconfig                  |   4 +-
+>  security/landlock/fs.c                     |  67 +++++-----
+>  security/landlock/object.c                 |   5 +-
+>  security/landlock/ruleset.c                |  34 ++---
+>  security/landlock/syscall.c                |  24 ++--
+>  tools/testing/selftests/landlock/fs_test.c | 140 +++++++++++++++++++--
+>  8 files changed, 239 insertions(+), 73 deletions(-)
+> 
+> 
+> base-commit: 96b3198c4025c11347651700b77e45a686d78553
+> 
+
 -- 
-2.29.2.299.gdc1121823c-goog
+James Morris
+<jmorris@namei.org>
 
+--1665246916-1592972126-1605157185=:5257--
