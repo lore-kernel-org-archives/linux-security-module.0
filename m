@@ -2,98 +2,206 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25297C56202
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 01:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F87DC2D0A3
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCD6B20791
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 01:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B5D1208FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 05:38:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Lac253Ha"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SQyRpCsk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbgKLBdt (ORCPT
+        id S1729294AbgKLFiJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Nov 2020 20:33:49 -0500
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:45790
-        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727994AbgKKX5U (ORCPT
+        Thu, 12 Nov 2020 00:38:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55150 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730006AbgKLByL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Nov 2020 18:57:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1605139039; bh=gbDRRLj3nC+66Gz+0gdW214wwNJkkNR+I4HxPH7eHqE=; h=To:Cc:From:Subject:Date:References:From:Subject; b=Lac253Ha5BRRVMK3K1EtMwfxGg/cgpLfIgMsgmaauEOYxoPhthPA39/b9rIqaLYp99KcdbNF0P/+D8TruGEnKeIEk0d/uvbmrO56T1XjCQJQwHTL/aiPERaI0NsDUTrzh1RwtcKs6eLBTYZVxNbYkHz9SNwchNTlwiSS7wGZAjG8kSi9yQshdlzsnhGbrEWbf+5QDaBS/ZzsFt9PnPrlDpw48gEBjqnZufrmDccK36D3RAI60+qB0bPb04Eyq+7nL0Utv8G2YQ3lP4uJYmiZZ3xkQyReMGKv47NtTsP4yFD3To5/V1HWgaO+2LfOLEIh+pkf2MiukdtIPC9PDlbP2Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1605139039; bh=94gNheKyuIADfvskxTyHdcrSbOiRDjycTA+547YC5Jm=; h=To:From:Subject:Date:From:Subject; b=fTyFKPIKBsLb153U0rTYFCt/EzwKcxVzEwgnmIwFPvtFco+EkeyhLbjJiyOCQ9uXgdjEHVR7fEM5Pr+VAJWnQhOVYMNd7hfdVNl81m2G3uwb/oWYT1Zh1V5qkmylzsIMMHdZ91JbSQQmWAk89UDSBh2mKiVoDQhn+GJqOUMZJOj3uuZlOi8dcG4BNIRSAysdgXOifSD/UYR2AjGBm/2suvEBoSROsaF+ihA8C6sqnjx96HDfVtmZF0UTFNwYJbAmOqmIRvjd43nGq67pxX0IdZseWDOPGkTr4UcN0BRHcbK5awLCg13elt2HlLPl7y5V3P92OpYbKzwxXg22LNsqlg==
-X-YMail-OSG: H8fUJRwVM1mJBcCnxbktDbhZMeC6X_4kOngMMLVsXLjQnIs2q9nan8wWD74DyP9
- PbT9fW.TnVJLW1Ulq38wCM_Tl4F4OILSlT2NwVF6BTeQXNTCp6sCuvsWbnHxhB6tVbdVIcH5_PK_
- HKjU7KRaDxTJRM5EThleaY8nS5n5ENrIkaaCACvlPf.4_VrxKFpyeQa84ot2Tr0lkNw8DRMqQPt9
- O5Xfa.NrWPkJrsAlnhjR83979nAf9WoE_Iu3HMVRcZOKa_p.wPkvlMW.w5xGZAlfLXvSJkuBANvz
- MCxjnDYOQOT.AJ30qFgnbkqDL8QHk4vvB6q_paD3WULlcN2Sa_LeSZ0wiE9u1ooVdcRctSg1.jmz
- fA97PiqVfVMAQDEkWLnrH.sRhNBP6LulqHaIUvgzsStS.MbWuovL.dGO0LPCuSroEMKsyHVI33MP
- RTL4lQPhw_UMfuMDvxHNiUwzMFcI43pOSmLQ6MiSnP3vCS2jJQWXOPmtGEsyBu1NPIb2KIKjCZE2
- Zmxe.iGzIp_fqarE8Si_uwpohiQrXKS4qC5_NC4PwNFcnTpcQoi7SZOa0EPwiMul7bR0RerzzMIV
- BjSAxCmBdwNVbO11A00aZnFwV1Vnyv1EgDbx4xCxK1QMC02Y9xXfktienHq3J.xUulZMLTwUW05S
- g_5pftKdM21eXU4uBHBnqIPPMfAHWrutipqZ6gp2pC3oxNV9v61uBSK8jVuw55E2U6JTGJDwaMWS
- .9q8RdfXHtrI8sgGbmDkqZbtQOaWgz4UQj5ZnhCPS9K63ShIL_Ng4QBTjm3qmW9Ydn66JxkgecI1
- DiJkGvrox2pLTbgKPkYn9z06mBJWToY8LKM2W9Kd97YHtZahzLBn.Fukpt2HIa4..r_O1Ejeacux
- Qc92E0Uct4wmfgOkPP1gYEpaMik8N7E8JXXfHzdrlS1zy1bVP.Vjd12DNnIJxzznzkKo6heKAXaH
- 4qUwe1dlNZQ5QXORBkPpcKIEFCDoaHzsDPykQ.PFnNNJ_2kzpNm8qvKGFzF_0Qom.bhXEnTyog.4
- 0MYtwvbTdGyfVF648MYQ5ZX.kIeqKt4xTXXqjerEZ2HKxa6MUl_wMliPnCafz7YS5hKy8ySKWajr
- pENZLK5FAltQhJYQAoUKsWhb7KvIZV32vy4zkTc3t3kct3DcT7Zq44g.UVvDZrEXIhVQ0RZoZFa8
- .e0oHwbzuZ1yyCVxbNxm9rjeyr2iNNbYPCokH8q_pm7RIl.MXeR.2s8hnN6Tr.TXw9_ltmsZo9S_
- Xu3l4ANS9QY71W5Er7n.0IkeL9MLrOw6_FdmcXqv.J7dYbvsG6z4zso0NKUYdE4_bT_gzGBrILj6
- y8EQ3sGl935RRq.aHbfLtKYywTRBWvic0yLjrQ.p7Mm4wlg2h2qoMkPQsWVCVbkdtFOXibnJuHQI
- kZBeNnP1O1EcwTYjsLXQL5WDJ9SvzylT09wZOwN_nS5HTbxiWpy7o1VWzRJkStJ9KOuv4vNZCwLM
- 4ZV.qNph8KNlVUGS8gvQTp.hf1x_o6WobhUYgXI3naTBbQ161g5yNme5H2KOYmtlSn0dcEogAU_v
- kalJvEqkPrIhWx0B3eqV_4p5lBKjlSQa3x6UG1fjOlUH5NTVVL8NA3Xln4v7vCCCVEL9YEYJQ29r
- sU0Y8yEIyjj_O3.2eyaS7VO5FuVA13oxtXloZcCOfOAcHlVaeQzfPN08930vd2kNYrkJHtmBcfdx
- HScy15rHyJd56FIWOQJu5oKoqcdgdsBU0e3KdnO_2su0n5lcKbIBXOtP6xyq0Wb5cvrw4BxQ0M0W
- K1kuHa7uR0htcuXqUeqTerv_GIg53cwtx9m5YP8TqUL5DDiS7hJM4WCr97dhRUwEYlb6jobd5heB
- hYvTJg5NNBCHruSSpA.DYi3RXmWGF_3.LT7kX31iaIJTk3EAp16MISL8l0wiMxUcuo.ieKLjdGmF
- 6vw9GI8DXyN5lOgKnwgSHF49XkUiR6MKwHbtzGvuIT1RtWTK1xgNlwlzYZeHm85p_C5TL3R8.v2u
- pdOGjerjgz2KN.9RLBR1.pr4V63fqNufyhEntO08ReJrxCBwDQoQR0KTzQ9uMkBIh2FUrY4Kjvi9
- cBikjCUwtSsoftifR.c1Jow7hK.WLmqITr4J1sa17cGRT78edudNM2YOOxpYZmdEUm1Cp._P2CRA
- s65o_SbiMgov4r2LlwsFLUHmk.BOzlXqWTqc3p6lNGy7gzADBs5OT2zlrO2wWgf2bZsKJOxAvK67
- dcYXzkRIHI3ka7TyYEeHh6pqUtObZ9AZhBywLZVdfuK7CUKoAFufV5ReuAEsC0SFyLmhbPg8WP7Z
- u42XgwI5LBDldXkPhoJeOVLiHjdBUu8dyLoZJRHomHU0hZFSse3EKiQ0z1bbOg0fneGAB.HuLHg1
- _R7wlsambfVRL3KLtltEyllB9AXcmUWCIZfKOzu5W3RN.RoliRthmuumBI6bKRhDpcCKdWg66N0e
- DeY_QYyVsVRQaSqMdf368aQ5BUFQ6yyKSvP5hqTJH0yyhpuuSabBK_XuB1BcjaTaukZvnH.9WQCc
- CeyTEeEpbMnZtnH2TnGn02Tz9MqCrC9e.kxL5_8.uwQnGNmErI0VtQ3ANVCJZI8hyPCtc78cNxzD
- tj878Lmgx0GzAgyRtUMMgoCSeIZxrMZ1.ixocuJ5.aeoqcSjVjb1hBSVtHOzgh335RrJfsTdCzrx
- c723DI1HlJVT9MvOiNutg_WNtSTnUGrZpOy5I2qCl49bqdSIU4B7lI22mdFXVCc8PICV4rH3HoJj
- 8Ns4X2inmkA0Z7wisp3gTn1NwQhpl9BQ._qoWnnlJb5FNfB0igHzQRWWWKNS1asj_Gd22JPiiz9L
- lIM8s52seslHycw6xokKPkCYIk3rC3t8FHvVUHv98DenoKQSUM8DKC.gtgSR.tTIS6UJF1JNhgXp
- qn1KAs0f4tNq0HI3C8mSqH.w0t0z66bAVwwTL3g--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Wed, 11 Nov 2020 23:57:19 +0000
-Received: by smtp424.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID edb9b4c4f175c87ac7707af56e977ef8;
-          Wed, 11 Nov 2020 23:57:17 +0000 (UTC)
-To:     "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        smack-announce@lists.01.org
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: Smack kernel test suite
-Message-ID: <471fb2bc-646d-a7a9-6fd2-3e4fba2a6b8a@schaufler-ca.com>
-Date:   Wed, 11 Nov 2020 15:57:16 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-References: <471fb2bc-646d-a7a9-6fd2-3e4fba2a6b8a.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.16944 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
+        Wed, 11 Nov 2020 20:54:11 -0500
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B08DC061A55
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:09 -0800 (PST)
+Received: by mail-yb1-xb4a.google.com with SMTP id h64so4304782ybc.1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Nov 2020 17:54:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:to:cc;
+        bh=c9Og5DC1k1cUQRw8CGbu3hvhZccACMgaVukw9TXsnBk=;
+        b=SQyRpCskDDQyjOj6Y7KQvyf3aH7p5CeESVkOzrwBVOw1wcZF5i6plpZZMnli4dRCk7
+         KoIwO3P2UyZnp6UypXtHWy5M2Dap/44fsRQwyPpwXGdkVenFWanSIFIsv8SGfQcvEbdD
+         o3eZGOw8xs9KPTNqy27mnkEv64rarQjcTaWJnxSDIWKqLGZwr5qem3oI89F0v3cxeyAU
+         j/PhrDuI/dRIqJ5zGSIoLc1kEtTjSQdSW91Q0HjlOPZvrgj3pxvwZiNTwhAZwfq7bafH
+         2sxTzHwcbexnyW7lTYQKJQZnTscocjiFdeH1tr0iAXvu/jrYNsRGNcaV10CkQ6IUrf/I
+         8iBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=c9Og5DC1k1cUQRw8CGbu3hvhZccACMgaVukw9TXsnBk=;
+        b=ayEw197c2THhig5Y4uaaDmcyomPPK5J5Malpc6ly52409wkc6t9RLj/FMd2OZJhYA3
+         Epv++Bo7wfmJI1TZuqc9IgRIg6Rv3D7dGg2pJ68860gEnzqPMHJzEuFccxiC9DPUQg9M
+         jR0SKd9dhA9IsEFboqTfZkasJLdHPutAauDgxMuiONWMzxE/nfZi6Gw2mdTtP2jrL14k
+         l25JyLc6moUZzAQslS+tMbueIfT96PFJM2qMhnPYCgCjHHowlvNCyGGf19naEkHKNcCL
+         +w44OfyO5ANjcSIXEfSV5nE+TnrRQUPP/yUyz/mmk6ekOAOPmpCi/WQH7YEliu9HhiJp
+         jCOg==
+X-Gm-Message-State: AOAM530hvWn3k04XMoSAFLRrfN+kuKsVxnty62kiNrZYjiHB/Klemcxy
+        Z6m0m8AcioPEhqqZ55Jbw1OLuyh1/Ws02Heoaw==
+X-Google-Smtp-Source: ABdhPJwbEExJZLbWaATpLGAop1r2dI05u8VEsbPmkQZCo1UtYBTDWpESrtyVB/fsRM0ZspxgBdPVqcsf9LpufrRfvw==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a25:5702:: with SMTP id
+ l2mr38652087ybb.184.1605146048341; Wed, 11 Nov 2020 17:54:08 -0800 (PST)
+Date:   Wed, 11 Nov 2020 17:53:56 -0800
+In-Reply-To: <20201112015359.1103333-1-lokeshgidra@google.com>
+Message-Id: <20201112015359.1103333-2-lokeshgidra@google.com>
+Mime-Version: 1.0
+References: <20201112015359.1103333-1-lokeshgidra@google.com>
+X-Mailer: git-send-email 2.29.2.299.gdc1121823c-goog
+Subject: [PATCH v13 1/4] security: add inode_init_security_anon() LSM hook
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It is long overdue, but I have finally created a Smack kernel test suite.=
+This change adds a new LSM hook, inode_init_security_anon(), that will
+be used while creating secure anonymous inodes. The hook allows/denies
+its creation and assigns a security context to the inode.
 
-The test suite includes about 100 simple tests. You can find it on github=
-:
+The new hook accepts an optional context_inode parameter that callers
+can use to provide additional contextual information to security modules
+for granting/denying permission to create an anon-inode of the same type.
+This context_inode's security_context can also be used to initialize the
+newly created anon-inode's security_context.
 
-	https://github.com/smack-team/smack-testsuite.git
+Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+---
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/lsm_hooks.h     |  9 +++++++++
+ include/linux/security.h      | 10 ++++++++++
+ security/security.c           |  8 ++++++++
+ 4 files changed, 29 insertions(+)
 
-
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 32a940117e7a..435a2e22ff95 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -113,6 +113,8 @@ LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inode)
+ LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+ 	 struct inode *dir, const struct qstr *qstr, const char **name,
+ 	 void **value, size_t *len)
++LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
++	 const struct qstr *name, const struct inode *context_inode)
+ LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+ 	 umode_t mode)
+ LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index c503f7ab8afb..3af055b7ee1f 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -233,6 +233,15 @@
+  *	Returns 0 if @name and @value have been successfully set,
+  *	-EOPNOTSUPP if no security attribute is needed, or
+  *	-ENOMEM on memory allocation failure.
++ * @inode_init_security_anon:
++ *      Set up the incore security field for the new anonymous inode
++ *      and return whether the inode creation is permitted by the security
++ *      module or not.
++ *      @inode contains the inode structure
++ *      @name name of the anonymous inode class
++ *      @context_inode optional related inode
++ *	Returns 0 on success, -EACCES if the security module denies the
++ *	creation of this inode, or another -errno upon other errors.
+  * @inode_create:
+  *	Check permission to create a regular file.
+  *	@dir contains inode structure of the parent of the new file.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index bc2725491560..7494a93b9ed9 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -323,6 +323,9 @@ void security_inode_free(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
++int security_inode_init_security_anon(struct inode *inode,
++				      const struct qstr *name,
++				      const struct inode *context_inode);
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len);
+@@ -737,6 +740,13 @@ static inline int security_inode_init_security(struct inode *inode,
+ 	return 0;
+ }
+ 
++static inline int security_inode_init_security_anon(struct inode *inode,
++						    const struct qstr *name,
++						    const struct inode *context_inode)
++{
++	return 0;
++}
++
+ static inline int security_old_inode_init_security(struct inode *inode,
+ 						   struct inode *dir,
+ 						   const struct qstr *qstr,
+diff --git a/security/security.c b/security/security.c
+index a28045dc9e7f..8989ba6af4f6 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1058,6 +1058,14 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ }
+ EXPORT_SYMBOL(security_inode_init_security);
+ 
++int security_inode_init_security_anon(struct inode *inode,
++				      const struct qstr *name,
++				      const struct inode *context_inode)
++{
++	return call_int_hook(inode_init_security_anon, 0, inode, name,
++			     context_inode);
++}
++
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+ 				     const struct qstr *qstr, const char **name,
+ 				     void **value, size_t *len)
+-- 
+2.29.2.299.gdc1121823c-goog
 
