@@ -4,56 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED7CC388F7
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B195C388F7
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2FE21D7F
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC3322201
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Nov 2020 22:03:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5FnTwOY"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKxd7ejf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727657AbgKLWDA (ORCPT
+        id S1727745AbgKLWDZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:03:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        Thu, 12 Nov 2020 17:03:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727633AbgKLWC7 (ORCPT
+        id S1727736AbgKLWDX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Nov 2020 17:02:59 -0500
+        Thu, 12 Nov 2020 17:03:23 -0500
 Received: from suppilovahvero.lan (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69DA922241;
-        Thu, 12 Nov 2020 22:02:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E08D322246;
+        Thu, 12 Nov 2020 22:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605218578;
-        bh=yVgndefqtR/1td76lmvXOkKFH5pxkUAaxXl2DA3iKBE=;
+        s=default; t=1605218602;
+        bh=Bi4QfkXjBDOdgaWCQU/fAvGSk3toJ8Fb2yNcpnwhkmI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n5FnTwOYB88mzgBFAEDOnnCeGX+u6WKXcm8DKoa8gQcqS+3wFCXmWT8XdwT9AXTI1
-         Qerq4fV0dhzXNgwNflzs7/hm+7cNHeFboEvTgy/FTzGiEe2zXhFWe3M9TiodDFbNH7
-         fMfeD7MdL0eTCXrAeS2ilIbL/4jCuvu4aE0yDsQ0=
+        b=rKxd7ejfP3R/yz6966PdQivUQMWkwGW/pHpRD4eik1FXaHtKeO7VRtD5h8P5siJvM
+         eoN0TV8IJYY5WOk3/uiugqsrzO78C5aFiJDhnk98BI/JtgjsBeQqoKbFS7rqURmp0X
+         xHDOJ6XDQLF5OIaGrr5UIwqn23J80lK6JrjUDAno=
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     x86@kernel.org, linux-sgx@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-security-module@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jethro Beekman <jethro@fortanix.com>,
+        linux-security-module@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>, akpm@linux-foundation.org,
         andriy.shevchenko@linux.intel.com, asapek@google.com, bp@alien8.de,
         cedric.xing@intel.com, chenalexchen@google.com,
         conradparker@google.com, cyhanish@google.com,
         dave.hansen@intel.com, haitao.huang@intel.com, kai.huang@intel.com,
         kai.svahn@intel.com, kmoy@google.com, ludloff@google.com,
-        luto@kernel.org, nhorman@redhat.com, npmccallum@redhat.com,
-        puiterwijk@redhat.com, rientjes@google.com,
-        sean.j.christopherson@intel.com, tglx@linutronix.de,
-        yaozhangx@google.com, mikko.ylinen@intel.com
-Subject: [PATCH v41 11/24] x86/sgx: Add SGX misc driver interface
-Date:   Fri, 13 Nov 2020 00:01:22 +0200
-Message-Id: <20201112220135.165028-12-jarkko@kernel.org>
+        nhorman@redhat.com, npmccallum@redhat.com, puiterwijk@redhat.com,
+        rientjes@google.com, sean.j.christopherson@intel.com,
+        tglx@linutronix.de, yaozhangx@google.com, mikko.ylinen@intel.com
+Subject: [PATCH v41 15/24] x86/sgx: Add SGX_IOC_ENCLAVE_PROVISION
+Date:   Fri, 13 Nov 2020 00:01:26 +0200
+Message-Id: <20201112220135.165028-16-jarkko@kernel.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201112220135.165028-1-jarkko@kernel.org>
 References: <20201112220135.165028-1-jarkko@kernel.org>
@@ -63,452 +60,204 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Intel(R) SGX is new hardware functionality that can be used by applications
-to set aside private regions of code and data called enclaves. New hardware
-protects enclave code and data from outside access and modification.
+The whole point of SGX is to create a hardware protected place to do
+“stuff”.  But, before someone is willing to hand the keys to the castle
+over, an enclave must often prove that it is running on an SGX-protected
+processor.  Provisioning enclaves play a key role in providing proof.
 
-Add a driver that presents a device file and ioctl API to build and manage
-enclaves.  Subsequent patches will expend the ioctl()’s functionality.
+There are actually three different enclaves in play in order to make this
+happen:
+
+1. The application enclave.  The familiar one we know and love that runs
+   the actual code that’s doing real work.  There can be many of these on
+   a single system, or even in a single application.
+2. The quoting enclave  (QE).  The QE is mentioned in lots of silly
+   whitepapers, but, for the purposes of kernel enabling, just pretend they
+   do not exist.
+3. The provisioning enclave.  There is typically only one of these
+   enclaves per system.  Provisioning enclaves have access to a special
+   hardware key.
+
+   They can use this key to help to generate certificates which serve as
+   proof that enclaves are running on trusted SGX hardware.  These
+   certificates can be passed around without revealing the special key.
+
+Any user which can create a provisioning enclave can access the
+processor-unique Provisioning Certificate Key which has privacy and
+fingerprinting implications.  Even if a user is permitted to create normal
+application enclaves (via /dev/sgx_enclave), they should not be able to
+create provisioning enclaves.  That means a separate permissions scheme is
+needed to control provisioning enclave privileges.
+
+Implement a separate device file (/dev/sgx_provision) which permits
+creating provisioning enclaves.  This device will typically have more
+strict permissions than the plain enclave device.
+
+The actual device “driver” is an empty stub.  Open file descriptors for
+this device will represent a token which allows provisioning enclave duty.
+This file descriptor can be passed around and ultimately given as an
+argument to the /dev/sgx_enclave driver ioctl().
 
 Cc: linux-security-module@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-Tested-by: Jethro Beekman <jethro@fortanix.com> # v40
-# Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-# Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
-Changes from v40:
-* Do not check !page in sgx_encl_may_map() while iterating.
-* Do not check !vm_private_data in sgx_encl_find(), as the enclave is
-  created at VFS open.
-
 Changes from v39:
-* Rename /dev/sgx/enclave as /dev/sgx_enclave.
-* In the page fault handler, do not check for SGX_ENCL_DEAD. This allows
-  to do forensics to the memory of debug enclaves.
+* Rename /dev/sgx/provision as /dev/sgx_provision.
 
- arch/x86/kernel/cpu/sgx/Makefile |   2 +
- arch/x86/kernel/cpu/sgx/driver.c | 112 ++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/driver.h |  16 ++++
- arch/x86/kernel/cpu/sgx/encl.c   | 146 +++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h   |  60 +++++++++++++
- arch/x86/kernel/cpu/sgx/main.c   |  12 ++-
- 6 files changed, 347 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/kernel/cpu/sgx/driver.c
- create mode 100644 arch/x86/kernel/cpu/sgx/driver.h
- create mode 100644 arch/x86/kernel/cpu/sgx/encl.c
- create mode 100644 arch/x86/kernel/cpu/sgx/encl.h
+ arch/x86/include/uapi/asm/sgx.h  | 11 ++++++++++
+ arch/x86/kernel/cpu/sgx/driver.c | 24 ++++++++++++++++++++-
+ arch/x86/kernel/cpu/sgx/driver.h |  2 ++
+ arch/x86/kernel/cpu/sgx/ioctl.c  | 37 ++++++++++++++++++++++++++++++++
+ 4 files changed, 73 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/sgx/Makefile b/arch/x86/kernel/cpu/sgx/Makefile
-index 79510ce01b3b..3fc451120735 100644
---- a/arch/x86/kernel/cpu/sgx/Makefile
-+++ b/arch/x86/kernel/cpu/sgx/Makefile
-@@ -1,2 +1,4 @@
- obj-y += \
-+	driver.o \
-+	encl.o \
- 	main.o
+diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
+index 66f2d32cb4d7..c32210235bf5 100644
+--- a/arch/x86/include/uapi/asm/sgx.h
++++ b/arch/x86/include/uapi/asm/sgx.h
+@@ -25,6 +25,8 @@ enum sgx_page_flags {
+ 	_IOWR(SGX_MAGIC, 0x01, struct sgx_enclave_add_pages)
+ #define SGX_IOC_ENCLAVE_INIT \
+ 	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
++#define SGX_IOC_ENCLAVE_PROVISION \
++	_IOW(SGX_MAGIC, 0x03, struct sgx_enclave_provision)
+ 
+ /**
+  * struct sgx_enclave_create - parameter structure for the
+@@ -63,4 +65,13 @@ struct sgx_enclave_init {
+ 	__u64 sigstruct;
+ };
+ 
++/**
++ * struct sgx_enclave_provision - parameter structure for the
++ *				  %SGX_IOC_ENCLAVE_PROVISION ioctl
++ * @fd:		file handle of /dev/sgx_provision
++ */
++struct sgx_enclave_provision {
++	__u64 fd;
++};
++
+ #endif /* _UAPI_ASM_X86_SGX_H */
 diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
-new file mode 100644
-index 000000000000..248213dea78e
---- /dev/null
+index ef14abbb67e1..f618a04c4224 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
 +++ b/arch/x86/kernel/cpu/sgx/driver.c
-@@ -0,0 +1,112 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*  Copyright(c) 2016-20 Intel Corporation. */
+@@ -112,6 +112,10 @@ static const struct file_operations sgx_encl_fops = {
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
+ 
++const struct file_operations sgx_provision_fops = {
++	.owner			= THIS_MODULE,
++};
 +
-+#include <linux/acpi.h>
-+#include <linux/miscdevice.h>
-+#include <linux/mman.h>
-+#include <linux/security.h>
-+#include <linux/suspend.h>
-+#include <asm/traps.h>
-+#include "driver.h"
-+#include "encl.h"
+ static struct miscdevice sgx_dev_enclave = {
+ 	.minor = MISC_DYNAMIC_MINOR,
+ 	.name = "sgx_enclave",
+@@ -119,11 +123,19 @@ static struct miscdevice sgx_dev_enclave = {
+ 	.fops = &sgx_encl_fops,
+ };
+ 
++static struct miscdevice sgx_dev_provision = {
++	.minor = MISC_DYNAMIC_MINOR,
++	.name = "sgx_provision",
++	.nodename = "sgx_provision",
++	.fops = &sgx_provision_fops,
++};
 +
-+static int sgx_open(struct inode *inode, struct file *file)
-+{
-+	struct sgx_encl *encl;
-+
-+	encl = kzalloc(sizeof(*encl), GFP_KERNEL);
-+	if (!encl)
-+		return -ENOMEM;
-+
-+	xa_init(&encl->page_array);
-+	mutex_init(&encl->lock);
-+
-+	file->private_data = encl;
-+
-+	return 0;
-+}
-+
-+static int sgx_release(struct inode *inode, struct file *file)
-+{
-+	struct sgx_encl *encl = file->private_data;
-+	struct sgx_encl_page *entry;
-+	unsigned long index;
-+
-+	xa_for_each(&encl->page_array, index, entry) {
-+		if (entry->epc_page) {
-+			sgx_free_epc_page(entry->epc_page);
-+			encl->secs_child_cnt--;
-+			entry->epc_page = NULL;
-+		}
-+
-+		kfree(entry);
-+	}
-+
-+	xa_destroy(&encl->page_array);
-+
-+	if (!encl->secs_child_cnt && encl->secs.epc_page) {
-+		sgx_free_epc_page(encl->secs.epc_page);
-+		encl->secs.epc_page = NULL;
-+	}
-+
-+	/* Detect EPC page leak's. */
-+	WARN_ON_ONCE(encl->secs_child_cnt);
-+	WARN_ON_ONCE(encl->secs.epc_page);
-+
-+	kfree(encl);
-+	return 0;
-+}
-+
-+static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	struct sgx_encl *encl = file->private_data;
+ int __init sgx_drv_init(void)
+ {
+ 	unsigned int eax, ebx, ecx, edx;
+ 	u64 attr_mask;
+ 	u64 xfrm_mask;
 +	int ret;
-+
-+	ret = sgx_encl_may_map(encl, vma->vm_start, vma->vm_end, vma->vm_flags);
+ 
+ 	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
+ 		return -ENODEV;
+@@ -147,5 +159,15 @@ int __init sgx_drv_init(void)
+ 		sgx_xfrm_reserved_mask = ~xfrm_mask;
+ 	}
+ 
+-	return misc_register(&sgx_dev_enclave);
++	ret = misc_register(&sgx_dev_enclave);
 +	if (ret)
 +		return ret;
 +
-+	vma->vm_ops = &sgx_vm_ops;
-+	vma->vm_flags |= VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP | VM_IO;
-+	vma->vm_private_data = encl;
++	ret = misc_register(&sgx_dev_provision);
++	if (ret) {
++		misc_deregister(&sgx_dev_enclave);
++		return ret;
++	}
 +
 +	return 0;
-+}
-+
-+static unsigned long sgx_get_unmapped_area(struct file *file,
-+					   unsigned long addr,
-+					   unsigned long len,
-+					   unsigned long pgoff,
-+					   unsigned long flags)
-+{
-+	if ((flags & MAP_TYPE) == MAP_PRIVATE)
-+		return -EINVAL;
-+
-+	if (flags & MAP_FIXED)
-+		return addr;
-+
-+	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
-+}
-+
-+static const struct file_operations sgx_encl_fops = {
-+	.owner			= THIS_MODULE,
-+	.open			= sgx_open,
-+	.release		= sgx_release,
-+	.mmap			= sgx_mmap,
-+	.get_unmapped_area	= sgx_get_unmapped_area,
-+};
-+
-+static struct miscdevice sgx_dev_enclave = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "sgx_enclave",
-+	.nodename = "sgx_enclave",
-+	.fops = &sgx_encl_fops,
-+};
-+
-+int __init sgx_drv_init(void)
-+{
-+	if (!cpu_feature_enabled(X86_FEATURE_SGX_LC))
-+		return -ENODEV;
-+
-+	return misc_register(&sgx_dev_enclave);
-+}
+ }
 diff --git a/arch/x86/kernel/cpu/sgx/driver.h b/arch/x86/kernel/cpu/sgx/driver.h
-new file mode 100644
-index 000000000000..cda9c43b7543
---- /dev/null
+index 6b0063221659..4eddb4d571ef 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.h
 +++ b/arch/x86/kernel/cpu/sgx/driver.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __ARCH_SGX_DRIVER_H__
-+#define __ARCH_SGX_DRIVER_H__
+@@ -20,6 +20,8 @@ extern u64 sgx_attributes_reserved_mask;
+ extern u64 sgx_xfrm_reserved_mask;
+ extern u32 sgx_misc_reserved_mask;
+ 
++extern const struct file_operations sgx_provision_fops;
 +
-+#include <crypto/hash.h>
-+#include <linux/kref.h>
-+#include <linux/mmu_notifier.h>
-+#include <linux/radix-tree.h>
-+#include <linux/rwsem.h>
-+#include <linux/sched.h>
-+#include <linux/workqueue.h>
-+#include "sgx.h"
-+
-+int sgx_drv_init(void);
-+
-+#endif /* __ARCH_X86_SGX_DRIVER_H__ */
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-new file mode 100644
-index 000000000000..848b17a3a028
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*  Copyright(c) 2016-20 Intel Corporation. */
-+
-+#include <linux/lockdep.h>
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/shmem_fs.h>
-+#include <linux/suspend.h>
-+#include <linux/sched/mm.h>
-+#include "arch.h"
-+#include "encl.h"
-+#include "encls.h"
-+#include "sgx.h"
-+
-+static struct sgx_encl_page *sgx_encl_load_page(struct sgx_encl *encl,
-+						unsigned long addr,
-+						unsigned long vm_flags)
-+{
-+	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
-+	struct sgx_encl_page *entry;
-+
-+	entry = xa_load(&encl->page_array, PFN_DOWN(addr));
-+	if (!entry)
-+		return ERR_PTR(-EFAULT);
-+
-+	/*
-+	 * Verify that the faulted page has equal or higher build time
-+	 * permissions than the VMA permissions (i.e. the subset of {VM_READ,
-+	 * VM_WRITE, VM_EXECUTE} in vma->vm_flags).
-+	 */
-+	if ((entry->vm_max_prot_bits & vm_prot_bits) != vm_prot_bits)
-+		return ERR_PTR(-EFAULT);
-+
-+	/* No page found. */
-+	if (!entry->epc_page)
-+		return ERR_PTR(-EFAULT);
-+
-+	/* Entry successfully located. */
-+	return entry;
-+}
-+
-+static vm_fault_t sgx_vma_fault(struct vm_fault *vmf)
-+{
-+	unsigned long addr = (unsigned long)vmf->address;
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct sgx_encl_page *entry;
-+	unsigned long phys_addr;
-+	struct sgx_encl *encl;
-+	vm_fault_t ret;
-+
-+	encl = vma->vm_private_data;
-+
-+	mutex_lock(&encl->lock);
-+
-+	entry = sgx_encl_load_page(encl, addr, vma->vm_flags);
-+	if (IS_ERR(entry)) {
-+		mutex_unlock(&encl->lock);
-+
-+		return VM_FAULT_SIGBUS;
-+	}
-+
-+	phys_addr = sgx_get_epc_phys_addr(entry->epc_page);
-+
-+	ret = vmf_insert_pfn(vma, addr, PFN_DOWN(phys_addr));
-+	if (ret != VM_FAULT_NOPAGE) {
-+		mutex_unlock(&encl->lock);
-+
-+		return VM_FAULT_SIGBUS;
-+	}
-+
-+	mutex_unlock(&encl->lock);
-+
-+	return VM_FAULT_NOPAGE;
-+}
-+
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ 
+ int sgx_drv_init(void);
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index e036819ea5c1..0ba0e670e2f0 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -569,6 +569,40 @@ static long sgx_ioc_enclave_init(struct sgx_encl *encl, void __user *arg)
+ 	return ret;
+ }
+ 
 +/**
-+ * sgx_encl_may_map() - Check if a requested VMA mapping is allowed
-+ * @encl:		an enclave pointer
-+ * @start:		lower bound of the address range, inclusive
-+ * @end:		upper bound of the address range, exclusive
-+ * @vm_flags:		VMA flags
++ * sgx_ioc_enclave_provision() - handler for %SGX_IOC_ENCLAVE_PROVISION
++ * @enclave:	an enclave pointer
++ * @arg:	userspace pointer to a struct sgx_enclave_provision instance
 + *
-+ * Iterate through the enclave pages contained within [@start, @end) to verify
-+ * that the permissions requested by a subset of {VM_READ, VM_WRITE, VM_EXEC}
-+ * does not contain any permissions that are not contained in the build time
-+ * permissions of any of the enclave pages within the given address range.
++ * Allow ATTRIBUTE.PROVISION_KEY for an enclave by providing a file handle to
++ * /dev/sgx_provision.
 + *
-+ * An enclave creator must declare the strongest permissions that will be
-+ * needed for each enclave page  This ensures that mappings  have the identical
-+ * or weaker permissions that the earlier declared permissions.
-+ *
-+ * Return: 0 on success, -EACCES otherwise
++ * Return:
++ * - 0:		Success.
++ * - -errno:	Otherwise.
 + */
-+int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-+		     unsigned long end, unsigned long vm_flags)
++static long sgx_ioc_enclave_provision(struct sgx_encl *encl, void __user *arg)
 +{
-+	unsigned long vm_prot_bits = vm_flags & (VM_READ | VM_WRITE | VM_EXEC);
-+	struct sgx_encl_page *page;
-+	unsigned long count = 0;
-+	int ret = 0;
++	struct sgx_enclave_provision params;
++	struct file *file;
 +
-+	XA_STATE(xas, &encl->page_array, PFN_DOWN(start));
++	if (copy_from_user(&params, arg, sizeof(params)))
++		return -EFAULT;
 +
-+	/*
-+	 * Disallow READ_IMPLIES_EXEC tasks as their VMA permissions might
-+	 * conflict with the enclave page permissions.
-+	 */
-+	if (current->personality & READ_IMPLIES_EXEC)
-+		return -EACCES;
-+
-+	mutex_lock(&encl->lock);
-+	xas_lock(&xas);
-+	xas_for_each(&xas, page, PFN_DOWN(end - 1)) {
-+		if (~page->vm_max_prot_bits & vm_prot_bits) {
-+			ret = -EACCES;
-+			break;
-+		}
-+
-+		/* Reschedule on every XA_CHECK_SCHED iteration. */
-+		if (!(++count % XA_CHECK_SCHED)) {
-+			xas_pause(&xas);
-+			xas_unlock(&xas);
-+			mutex_unlock(&encl->lock);
-+
-+			cond_resched();
-+
-+			mutex_lock(&encl->lock);
-+			xas_lock(&xas);
-+		}
-+	}
-+	xas_unlock(&xas);
-+	mutex_unlock(&encl->lock);
-+
-+	return ret;
-+}
-+
-+static int sgx_vma_mprotect(struct vm_area_struct *vma, unsigned long start,
-+			    unsigned long end, unsigned long newflags)
-+{
-+	return sgx_encl_may_map(vma->vm_private_data, start, end, newflags);
-+}
-+
-+const struct vm_operations_struct sgx_vm_ops = {
-+	.fault = sgx_vma_fault,
-+	.mprotect = sgx_vma_mprotect,
-+};
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-new file mode 100644
-index 000000000000..b7e02eab5868
---- /dev/null
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -0,0 +1,60 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/**
-+ * Copyright(c) 2016-20 Intel Corporation.
-+ *
-+ * Contains the software defined data structures for enclaves.
-+ */
-+#ifndef _X86_ENCL_H
-+#define _X86_ENCL_H
-+
-+#include <linux/cpumask.h>
-+#include <linux/kref.h>
-+#include <linux/list.h>
-+#include <linux/mm_types.h>
-+#include <linux/mmu_notifier.h>
-+#include <linux/mutex.h>
-+#include <linux/notifier.h>
-+#include <linux/srcu.h>
-+#include <linux/workqueue.h>
-+#include <linux/xarray.h>
-+#include "sgx.h"
-+
-+struct sgx_encl_page {
-+	unsigned long desc;
-+	unsigned long vm_max_prot_bits;
-+	struct sgx_epc_page *epc_page;
-+	struct sgx_encl *encl;
-+};
-+
-+struct sgx_encl {
-+	unsigned long base;
-+	unsigned long size;
-+	unsigned int page_cnt;
-+	unsigned int secs_child_cnt;
-+	struct mutex lock;
-+	struct xarray page_array;
-+	struct sgx_encl_page secs;
-+};
-+
-+extern const struct vm_operations_struct sgx_vm_ops;
-+
-+static inline int sgx_encl_find(struct mm_struct *mm, unsigned long addr,
-+				struct vm_area_struct **vma)
-+{
-+	struct vm_area_struct *result;
-+	struct sgx_encl *encl;
-+
-+	result = find_vma(mm, addr);
-+	if (!result || result->vm_ops != &sgx_vm_ops || addr < result->vm_start)
++	file = fget(params.fd);
++	if (!file)
 +		return -EINVAL;
 +
-+	encl = result->vm_private_data;
-+	*vma = result;
++	if (file->f_op != &sgx_provision_fops) {
++		fput(file);
++		return -EINVAL;
++	}
 +
++	encl->attributes_mask |= SGX_ATTR_PROVISIONKEY;
++
++	fput(file);
 +	return 0;
 +}
-+
-+int sgx_encl_may_map(struct sgx_encl *encl, unsigned long start,
-+		     unsigned long end, unsigned long vm_flags);
-+
-+#endif /* _X86_ENCL_H */
-diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
-index 2e53afc288a4..38f2e80cc31a 100644
---- a/arch/x86/kernel/cpu/sgx/main.c
-+++ b/arch/x86/kernel/cpu/sgx/main.c
-@@ -9,6 +9,8 @@
- #include <linux/sched/mm.h>
- #include <linux/sched/signal.h>
- #include <linux/slab.h>
-+#include "driver.h"
-+#include "encl.h"
- #include "encls.h"
  
- struct sgx_epc_section sgx_epc_sections[SGX_MAX_EPC_SECTIONS];
-@@ -232,9 +234,10 @@ static bool __init sgx_page_cache_init(void)
- 
- static void __init sgx_init(void)
+ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
  {
-+	int ret;
- 	int i;
- 
--	if (!boot_cpu_has(X86_FEATURE_SGX))
-+	if (!cpu_feature_enabled(X86_FEATURE_SGX))
- 		return;
- 
- 	if (!sgx_page_cache_init())
-@@ -243,8 +246,15 @@ static void __init sgx_init(void)
- 	if (!sgx_page_reclaimer_init())
- 		goto err_page_cache;
- 
-+	ret = sgx_drv_init();
-+	if (ret)
-+		goto err_kthread;
-+
- 	return;
- 
-+err_kthread:
-+	kthread_stop(ksgxd_tsk);
-+
- err_page_cache:
- 	for (i = 0; i < sgx_nr_epc_sections; i++) {
- 		vfree(sgx_epc_sections[i].pages);
+@@ -588,6 +622,9 @@ long sgx_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	case SGX_IOC_ENCLAVE_INIT:
+ 		ret = sgx_ioc_enclave_init(encl, (void __user *)arg);
+ 		break;
++	case SGX_IOC_ENCLAVE_PROVISION:
++		ret = sgx_ioc_enclave_provision(encl, (void __user *)arg);
++		break;
+ 	default:
+ 		ret = -ENOIOCTLCMD;
+ 		break;
 -- 
 2.27.0
 
