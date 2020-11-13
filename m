@@ -2,119 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66148C388F7
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Nov 2020 07:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13865C388F7
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Nov 2020 07:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 227CE20825
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Nov 2020 07:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE7620825
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Nov 2020 07:27:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgKMHV2 (ORCPT
+        id S1726272AbgKMH1b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Nov 2020 02:21:28 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:44977 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726112AbgKMHV1 (ORCPT
+        Fri, 13 Nov 2020 02:27:31 -0500
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:47857 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726133AbgKMH1b (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Nov 2020 02:21:27 -0500
-Received: by mail-il1-f198.google.com with SMTP id g14so473745ilc.11
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Nov 2020 23:21:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=gVVMdz3oRX87N13pmpdCesTAp3yBHf4CwILFJimeEYc=;
-        b=Bo4DgV4qn2Zgt5DdzCzpQX5hyOzQL3XTi9y5UkO+GicMy5cflpppRuAKOKh5nG1kPR
-         S55VFLIW3+IP5vqPs3IVhNRejRg3gMmAr2ibg5/d4KXYbYtX8nbpturIs6UPa1zov83n
-         xoTmLIgwb2eL8Xy2pusxfQShz1BGDsDlC/lsSf46ukxj3Iw3RLMDCosSXwLwFj5nPo1p
-         4f1LOe7Y26dDNWYecyEk1M9xt1+qwUTo45QLAgZVV4kGOSNHaypbm1vuIT/EV0PNgtzc
-         mEuat28Ev586ITznTZi1CSc3HOOH2DhnpALfOjHoOSsIE0OH81tb6rzBsOb38HD4lzSe
-         kKXw==
-X-Gm-Message-State: AOAM531lMuO4j6iG7Er9MOqohHEQO+cWKaqw4xSV2Z+5PQLOvlbIGJ1Q
-        PBzIXd5InyWItMbi2OG7kgsB+9muveNqdDCE+5CruVXsMGlh
-X-Google-Smtp-Source: ABdhPJxgwUKqCrbFTiHbsTHi0QhBas4uFAyNRLPjuGp1oQ6hauIbTtMZWWFCPYVKk7mwG17R4/NRZ2XGz2JVOlmANsNkDqsQukdg
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:235b:: with SMTP id r27mr908738iot.123.1605252086524;
- Thu, 12 Nov 2020 23:21:26 -0800 (PST)
-Date:   Thu, 12 Nov 2020 23:21:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000647eff05b3f7e0d4@google.com>
-Subject: general protection fault in tomoyo_socket_sendmsg_permission
-From:   syzbot <syzbot+95ce4b142579611ef0a9@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 13 Nov 2020 02:27:31 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=alimailimapcm10staff010182156082;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0UFAj9js_1605252447;
+Received: from aliy80.localdomain(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0UFAj9js_1605252447)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 13 Nov 2020 15:27:27 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Smack: fix kernel-doc interface on functions
+Date:   Fri, 13 Nov 2020 15:26:59 +0800
+Message-Id: <1605252419-64251-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+The are some kernel-doc interface issues:
+security/smack/smackfs.c:1950: warning: Function parameter or member
+'list' not described in 'smk_parse_label_list'
+security/smack/smackfs.c:1950: warning: Excess function parameter
+'private' description in 'smk_parse_label_list'
+security/smack/smackfs.c:1979: warning: Function parameter or member
+'list' not described in 'smk_destroy_label_list'
+security/smack/smackfs.c:1979: warning: Excess function parameter 'head'
+description in 'smk_destroy_label_list'
+security/smack/smackfs.c:2141: warning: Function parameter or member
+'count' not described in 'smk_read_logging'
+security/smack/smackfs.c:2141: warning: Excess function parameter 'cn'
+description in 'smk_read_logging'
+security/smack/smackfs.c:2278: warning: Function parameter or member
+'format' not described in 'smk_user_access'
 
-syzbot found the following issue on:
+Correct them in this patch.
 
-HEAD commit:    9dbc1c03 Merge tag 'xfs-5.10-fixes-3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10453034500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1735b7978b1c3721
-dashboard link: https://syzkaller.appspot.com/bug?extid=95ce4b142579611ef0a9
-compiler:       gcc (GCC) 10.1.0-syz 20200507
-userspace arch: i386
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+95ce4b142579611ef0a9@syzkaller.appspotmail.com
-
-general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 0 PID: 23364 Comm: vhci_tx Not tainted 5.10.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:tomoyo_socket_sendmsg_permission+0x80/0x340 security/tomoyo/network.c:762
-Code: c7 40 0c f3 f3 f3 f3 65 48 8b 04 25 28 00 00 00 48 89 84 24 a0 00 00 00 31 c0 e8 0b 70 f1 fd 48 8d 7d 18 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 0f 85 7d 02 00 00 48 b8 00 00 00 00 00 fc ff df 4c
-RSP: 0018:ffffc90016f77ad0 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 1ffff92002deef5b RCX: ffffffff83b3789e
-RDX: ffff8880186c8000 RSI: ffffffff837e9945 RDI: 0000000000000018
-RBP: 0000000000000000 R08: 0000000000000030 R09: ffffc90016f77d97
-R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc90016f77ce8 R14: ffffc90016f77ce8 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000562623b70868 CR3: 000000002af19000 CR4: 00000000001526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- security_socket_sendmsg+0x50/0xb0 security/security.c:2140
- sock_sendmsg+0x3f/0x120 net/socket.c:668
- vhci_send_cmd_submit+0x897/0xf90 drivers/usb/usbip/vhci_tx.c:139
- vhci_tx_loop+0xfc/0x370 drivers/usb/usbip/vhci_tx.c:241
- kthread+0x3af/0x4a0 kernel/kthread.c:292
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:296
-Modules linked in:
----[ end trace 535369ec3e6ef304 ]---
-RIP: 0010:tomoyo_socket_sendmsg_permission+0x80/0x340 security/tomoyo/network.c:762
-Code: c7 40 0c f3 f3 f3 f3 65 48 8b 04 25 28 00 00 00 48 89 84 24 a0 00 00 00 31 c0 e8 0b 70 f1 fd 48 8d 7d 18 48 89 f8 48 c1 e8 03 <42> 80 3c 20 00 0f 85 7d 02 00 00 48 b8 00 00 00 00 00 fc ff df 4c
-RSP: 0018:ffffc90016f77ad0 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 1ffff92002deef5b RCX: ffffffff83b3789e
-RDX: ffff8880186c8000 RSI: ffffffff837e9945 RDI: 0000000000000018
-RBP: 0000000000000000 R08: 0000000000000030 R09: ffffc90016f77d97
-R10: 0000000000000000 R11: 0000000000000000 R12: dffffc0000000000
-R13: ffffc90016f77ce8 R14: ffffc90016f77ce8 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b9e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f0c3a930740 CR3: 000000002af19000 CR4: 00000000001526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ security/smack/smackfs.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index e567b4baf3a0..5d44b7d258ef 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -1942,7 +1942,7 @@ static void smk_list_swap_rcu(struct list_head *public,
+  * smk_parse_label_list - parse list of Smack labels, separated by spaces
+  *
+  * @data: the string to parse
+- * @private: destination list
++ * @list: destination list
+  *
+  * Returns zero on success or error code, as appropriate
+  */
+@@ -1973,7 +1973,7 @@ static int smk_parse_label_list(char *data, struct list_head *list)
+ 
+ /**
+  * smk_destroy_label_list - destroy a list of smack_known_list_elem
+- * @head: header pointer of the list to destroy
++ * @list: header pointer of the list to destroy
+  */
+ void smk_destroy_label_list(struct list_head *list)
+ {
+@@ -2131,7 +2131,7 @@ static const struct file_operations smk_unconfined_ops = {
+  * smk_read_logging - read() for /smack/logging
+  * @filp: file pointer, not actually used
+  * @buf: where to put the result
+- * @cn: maximum to send along
++ * @count: maximum to send along
+  * @ppos: where to start
+  *
+  * Returns number of bytes read or error code, as appropriate
+@@ -2272,6 +2272,7 @@ static const struct file_operations smk_load_self_ops = {
+  * @buf: data from user space
+  * @count: bytes sent
+  * @ppos: where to start - must be 0
++ * @format: /smack/load or /smack/load2 or /smack/change-rule format.
+  */
+ static ssize_t smk_user_access(struct file *file, const char __user *buf,
+ 				size_t count, loff_t *ppos, int format)
+-- 
+2.29.GIT
+
