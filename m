@@ -2,77 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D78C63699
-	for <linux-security-module@archiver.kernel.org>; Sat, 14 Nov 2020 07:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5837EC63798
+	for <linux-security-module@archiver.kernel.org>; Sat, 14 Nov 2020 11:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 560412137B
-	for <linux-security-module@archiver.kernel.org>; Sat, 14 Nov 2020 07:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1986120644
+	for <linux-security-module@archiver.kernel.org>; Sat, 14 Nov 2020 11:11:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AIV3rfSG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbgKNHEC (ORCPT
+        id S1726736AbgKNLLG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 14 Nov 2020 02:04:02 -0500
-Received: from namei.org ([65.99.196.166]:53158 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbgKNHEC (ORCPT
+        Sat, 14 Nov 2020 06:11:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53988 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbgKNLLF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 14 Nov 2020 02:04:02 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0AE73uCd023314;
-        Sat, 14 Nov 2020 07:03:56 GMT
-Date:   Sat, 14 Nov 2020 18:03:56 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Paul Moore <paul@paul-moore.com>
-cc:     netdev@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH] netlabel: fix an uninitialized warning in
- netlbl_unlabel_staticlist()
-In-Reply-To: <160530304068.15651.18355773009751195447.stgit@sifl>
-Message-ID: <alpine.LRH.2.21.2011141803490.23236@namei.org>
-References: <160530304068.15651.18355773009751195447.stgit@sifl>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Sat, 14 Nov 2020 06:11:05 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC767C0613D1;
+        Sat, 14 Nov 2020 03:11:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=c2ywRzbolqgg0PiY4dTP6tEXg/1GMWOqYqpkIhQPtFA=; b=AIV3rfSG62BHj0VPqVdppa27MP
+        aQ0RDNa3035+upEk4F2pw5ABYaUHP6HZolx/lUdmmMypkquJZLCHPPMAjgTpVGvhurvBLKiZ1j1G6
+        1NuApnTvmLVK2tdMEdzEiyjnMBNu/AwxAnfIXBlE6ZjHycSEu9Edz99WrHpZZ/XK07nFrcEyuYs0E
+        X/ZEiEuuxOdcWZsmyWKcT3MayniVj2uuI0SIrakOUp/966DgS1S6D/iBDVTfucqGD68ckNsqNB9lz
+        dP61AJDZuf4FssDcwD63t4T0N/Gtae0lrRLLOaV4ag3bqb3tY0tITGUSrxFJmRdJgRYNBDtdoFiCV
+        nTgZmf6w==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kdtSL-0004dJ-7U; Sat, 14 Nov 2020 11:10:57 +0000
+Date:   Sat, 14 Nov 2020 11:10:57 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
+        stable@vger.kernel.org, torvalds@linux-foundation.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Subject: Re: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Message-ID: <20201114111057.GA16415@infradead.org>
+References: <20201113080132.16591-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201113080132.16591-1-roberto.sassu@huawei.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 13 Nov 2020, Paul Moore wrote:
-
-> Static checking revealed that a previous fix to
-> netlbl_unlabel_staticlist() leaves a stack variable uninitialized,
-> this patches fixes that.
+On Fri, Nov 13, 2020 at 09:01:32AM +0100, Roberto Sassu wrote:
+> Commit a1f9b1c0439db ("integrity/ima: switch to using __kernel_read")
+> replaced the __vfs_read() call in integrity_kernel_read() with
+> __kernel_read(), a new helper introduced by commit 61a707c543e2a ("fs: add
+> a __kernel_read helper").
 > 
-> Fixes: 866358ec331f ("netlabel: fix our progress tracking in netlbl_unlabel_staticlist()")
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> Since the new helper requires that also the FMODE_CAN_READ flag is set in
+> file->f_mode, this patch saves the original f_mode and sets the flag if the
+> the file descriptor has the necessary file operation. Lastly, it restores
+> the original f_mode at the end of ima_calc_file_hash().
 
+This looks bogus.  FMODE_CAN_READ has a pretty clear definition and
+you can't just go and read things if it is not set.  Also f_mode
+manipulations on a life file are racy.
 
-Reviewed-by: James Morris <jamorris@linux.microsoft.com>
-
+> 
+> Cc: stable@vger.kernel.org # 5.8.x
+> Fixes: a1f9b1c0439db ("integrity/ima: switch to using __kernel_read")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  net/netlabel/netlabel_unlabeled.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/integrity/ima/ima_crypto.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 > 
-> diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
-> index fc55c9116da0..ccb491642811 100644
-> --- a/net/netlabel/netlabel_unlabeled.c
-> +++ b/net/netlabel/netlabel_unlabeled.c
-> @@ -1167,7 +1167,7 @@ static int netlbl_unlabel_staticlist(struct sk_buff *skb,
->  	u32 skip_bkt = cb->args[0];
->  	u32 skip_chain = cb->args[1];
->  	u32 skip_addr4 = cb->args[2];
-> -	u32 iter_bkt, iter_chain, iter_addr4 = 0, iter_addr6 = 0;
-> +	u32 iter_bkt, iter_chain = 0, iter_addr4 = 0, iter_addr6 = 0;
->  	struct netlbl_unlhsh_iface *iface;
->  	struct list_head *iter_list;
->  	struct netlbl_af4list *addr4;
+> diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+> index 21989fa0c107..22ed86a0c964 100644
+> --- a/security/integrity/ima/ima_crypto.c
+> +++ b/security/integrity/ima/ima_crypto.c
+> @@ -537,6 +537,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>  	loff_t i_size;
+>  	int rc;
+>  	struct file *f = file;
+> +	fmode_t saved_mode;
+>  	bool new_file_instance = false, modified_mode = false;
+>  
+>  	/*
+> @@ -550,7 +551,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>  	}
+>  
+>  	/* Open a new file instance in O_RDONLY if we cannot read */
+> -	if (!(file->f_mode & FMODE_READ)) {
+> +	if (!(file->f_mode & FMODE_READ) || !(file->f_mode & FMODE_CAN_READ)) {
+>  		int flags = file->f_flags & ~(O_WRONLY | O_APPEND |
+>  				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
+>  		flags |= O_RDONLY;
+> @@ -562,7 +563,10 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>  			 */
+>  			pr_info_ratelimited("Unable to reopen file for reading.\n");
+>  			f = file;
+> +			saved_mode = f->f_mode;
+>  			f->f_mode |= FMODE_READ;
+> +			if (likely(file->f_op->read || file->f_op->read_iter))
+> +				f->f_mode |= FMODE_CAN_READ;
+>  			modified_mode = true;
+>  		} else {
+>  			new_file_instance = true;
+> @@ -582,7 +586,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+>  	if (new_file_instance)
+>  		fput(f);
+>  	else if (modified_mode)
+> -		f->f_mode &= ~FMODE_READ;
+> +		f->f_mode = saved_mode;
+>  	return rc;
+>  }
+>  
+> -- 
+> 2.27.GIT
 > 
-
--- 
-James Morris
-<jmorris@namei.org>
-
+---end quoted text---
