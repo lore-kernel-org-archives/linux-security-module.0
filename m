@@ -2,140 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 513FEC6379F
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 10:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B7CC56202
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 12:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 059FA238E6
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 10:17:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="MgM5nsMq"
+	by mail.kernel.org (Postfix) with ESMTP id ABF632222A
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 12:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727406AbgKQKQr (ORCPT
+        id S1726685AbgKQM36 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Nov 2020 05:16:47 -0500
-Received: from smtp74.iad3a.emailsrvr.com ([173.203.187.74]:57093 "EHLO
-        smtp74.iad3a.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727188AbgKQKQr (ORCPT
+        Tue, 17 Nov 2020 07:29:58 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2116 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbgKQM36 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Nov 2020 05:16:47 -0500
-X-Greylist: delayed 546 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Nov 2020 05:16:46 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=openvpn.net;
-        s=20170822-45nk5nwl; t=1605607660;
-        bh=OoSt4zI/A55xd2DmFGEKW06kRreOILROaH9aCHdoT70=;
-        h=To:From:Subject:Date:From;
-        b=MgM5nsMqzl6NvYT70GkQLaNWEi3sv6HhVY8rhkLkqN81v03JT1oBZOuJ2UfFwEVr2
-         fibYI7U9518Oi7nddW/kZVDex+x4jI0IZX3B5Kjx1oHVHupMKDN5cjk6CQnBtJMLiy
-         uxayVsr7qFYgGoAprmv/CNMmsxuSOhMplBYvx0Eg=
-X-Auth-ID: antonio@openvpn.net
-Received: by smtp26.relay.iad3a.emailsrvr.com (Authenticated sender: antonio-AT-openvpn.net) with ESMTPSA id 8742A1A17;
-        Tue, 17 Nov 2020 05:07:38 -0500 (EST)
-To:     Ard Biesheuvel <ardb@kernel.org>, Antonio Quartulli <a@unstable.cc>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        wireguard@lists.zx2c4.com,
-        "open list:BPF JIT for MIPS (32-BIT AND 64-BIT)" 
-        <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>
-References: <20201117021839.4146-1-a@unstable.cc>
- <CAMj1kXFxk31wtD3H8V0KbMd82UL_babEWpVTSkfqPpNjSqPNLA@mail.gmail.com>
- <5096882f-2b39-eafb-4901-0899783c5519@unstable.cc>
- <CAMj1kXGZATR7XyFb2SWiAxcBCUzXgvojvgR9fHczEu9zrpF9ug@mail.gmail.com>
-From:   Antonio Quartulli <antonio@openvpn.net>
-Organization: OpenVPN Inc.
-Subject: Re: [PATCH cryptodev] crypto: lib/chacha20poly1305 - allow users to
- specify 96bit nonce
-Message-ID: <47819bd4-3bed-d7e5-523a-6ec5c70caad8@openvpn.net>
-Date:   Tue, 17 Nov 2020 11:06:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAMj1kXGZATR7XyFb2SWiAxcBCUzXgvojvgR9fHczEu9zrpF9ug@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 17 Nov 2020 07:29:58 -0500
+Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Cb4w04p1dz67F1g;
+        Tue, 17 Nov 2020 20:27:44 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1913.5; Tue, 17 Nov 2020 13:29:55 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
+ Tue, 17 Nov 2020 13:29:55 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Mimi Zohar <zohar@linux.ibm.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: RE: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Thread-Topic: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
+ ima_calc_file_hash()
+Thread-Index: AQHWuZM+vbqfejrqe02000rC0h3xoqnHabyAgAMLzKCAAG/IAIAABvEAgAAOKACAAAjEgIABPphg
+Date:   Tue, 17 Nov 2020 12:29:55 +0000
+Message-ID: <945773097832444ca31847c830b0053c@huawei.com>
+References: <20201113080132.16591-1-roberto.sassu@huawei.com>
+ <20201114111057.GA16415@infradead.org>
+ <0fd0fb3360194d909ba48f13220f9302@huawei.com>
+ <20201116162202.GA15010@infradead.org>
+ <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
+ <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
+ <20201116180855.GX3576660@ZenIV.linux.org.uk>
+In-Reply-To: <20201116180855.GX3576660@ZenIV.linux.org.uk>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Classification-ID: 3c7d4df9-03f3-4138-8fe9-03b0ab2b7cbf-1-1
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
-
-On 17/11/2020 10:52, Ard Biesheuvel wrote:
-> On Tue, 17 Nov 2020 at 10:47, Antonio Quartulli <a@unstable.cc> wrote:
->>
->> Hi,
->>
->>
->> On 17/11/2020 09:31, Ard Biesheuvel wrote:
->>> If you are going back to the drawing board with in-kernel acceleration
->>> for OpenVPN, I strongly suggest to:
->>> a) either stick to one implementation, and use the library interface,
->>> or use dynamic dispatch using the crypto API AEAD abstraction, which
->>> already implements 96-bit nonces for ChaCha20Poly1305,
->>
->> What we are implementing is a simple Data Channel Offload, which is
->> expected to be compatible with the current userspace implementation.
->> Therefore we don't want to change how encryption is performed.
->>
->> Using the crypto API AEAD abstraction will be my next move at this point.
->>
+> From: Al Viro [mailto:viro@ftp.linux.org.uk] On Behalf Of Al Viro
+> Sent: Monday, November 16, 2020 7:09 PM
+> On Mon, Nov 16, 2020 at 09:37:32AM -0800, Linus Torvalds wrote:
+> > On Mon, Nov 16, 2020 at 8:47 AM Mimi Zohar <zohar@linux.ibm.com>
+> wrote:
+> > >
+> > > This discussion seems to be going down the path of requiring an IMA
+> > > filesystem hook for reading the file, again.  That solution was
+> > > rejected, not by me.  What is new this time?
+> >
+> > You can't read a non-read-opened file. Not even IMA can.
+> >
+> > So don't do that then.
+> >
+> > IMA is doing something wrong. Why would you ever read a file that can't
+> be read?
+> >
+> > Fix whatever "open" function instead of trying to work around the fact
+> > that you opened it wrong.
 > 
-> Aren't you already using that for gcm(aes) ?
+> IMA pulls that crap on _every_ open(2), including O_WRONLY.  As far as I'm
+> concerned, the only sane answer is not enabling that thing on your builds;
+> they are deeply special and I hadn't been able to reason with them no
+> matter how much I tried ;-/
 
-Yes, correct. That's why I had no real objection to using it :-)
+A file-based protection mechanism against offline attacks would require
+to verify the current HMAC also before writing and to update the HMAC
+after the write.
 
-At first I was confused and I thought this new library interface was
-"the preferred way" for using chacha20poly1305, therefore I went down
-this path.
+One of the reasons why dentry_open() cannot be used and IMA switches
+to the old method of changing the mode of the current file descriptor is
+that the current process does not have enough privileges to do the
+operation.
 
-> 
->> I just find it a bit strange that an API of a well defined crypto schema
->> is implemented in a way that accommodates only some of its use cases.
->>
-> 
-> You mean the 64-bit nonce used by the library version of
-> ChaCha20Poly1305? I agree that this is a bit unusual, but a library
-> interface doesn't seem like the right abstraction for this in the
-> first place, so I guess it is irrelevant.
+If we find a way to read the file that always works, without reducing the
+security, the old method can be removed.
 
-Alright.
+Roberto
 
-> 
->>
->> But I guess it's accepted that we will have to live with two APIs for a bit.
->>
->>
->>> b) consider using Aegis128 instead of AES-GCM or ChaChaPoly - it is
->>> one of the winners of the CAESAR competition, and on hardware that
->>> supports AES instructions, it is extremely efficient, and not
->>> encumbered by the same issues that make AES-GCM tricky to use.
->>>
->>> We might implement a library interface for Aegis128 if that is preferable.
->>
->> Thanks for the pointer!
->> I guess we will consider supporting Aegis128 once it gets standardized
->> (AFAIK it is not yet).
->>
-> 
-> It is. The CAESAR competition is over, and produced a suite of
-> recommended algorithms, one of which is Aegis128 for the high
-> performance use case. (Note that other variants of Aegis did not make
-> it into the final recommendation)
-
-oops, I was not up-to-date. Thanks again!
-We'll definitely look into this soon.
-
-
-Best Regards,
-
--- 
-Antonio Quartulli
-OpenVPN Inc.
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
