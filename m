@@ -2,243 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE7BC64E75
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 16:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CFBC63777
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 18:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF8CB24248
-	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 16:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F131924686
+	for <linux-security-module@archiver.kernel.org>; Tue, 17 Nov 2020 18:24:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PEkPOajt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbgKQQrj (ORCPT
+        id S1731000AbgKQSYW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 17 Nov 2020 11:47:39 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:43120 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728241AbgKQQri (ORCPT
+        Tue, 17 Nov 2020 13:24:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50144 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730952AbgKQSYV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 17 Nov 2020 11:47:38 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id D66FD201E2;
-        Tue, 17 Nov 2020 17:47:36 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ES73IN5Y180E; Tue, 17 Nov 2020 17:47:30 +0100 (CET)
-Received: from mail-essen-01.secunet.de (unknown [10.53.40.204])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 5996D201D3;
-        Tue, 17 Nov 2020 17:47:30 +0100 (CET)
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- mail-essen-01.secunet.de (10.53.40.204) with Microsoft SMTP Server (TLS) id
- 14.3.487.0; Tue, 17 Nov 2020 17:47:29 +0100
-Received: from moon.secunet.de (172.18.26.121) by mbx-essen-01.secunet.de
- (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2044.4; Tue, 17 Nov
- 2020 17:47:29 +0100
-Date:   Tue, 17 Nov 2020 17:47:23 +0100
-From:   Antony Antony <antony.antony@secunet.com>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Jakub Kicinski" <kuba@kernel.org>
-CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        "Antony Antony" <antony@phenome.org>,
-        Antony Antony <antony.antony@secunet.com>,
-        Stephan Mueller <smueller@chronox.de>
-Subject: [PATCH ipsec-next v5] xfrm: redact SA secret with lockdown
- confidentiality
-Message-ID: <20201117164723.GA3868@moon.secunet.de>
-Reply-To: <antony.antony@secunet.com>
-References: <20201016133352.GA2338@moon.secunet.de>
+        Tue, 17 Nov 2020 13:24:21 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6E56C0613CF
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2020 10:24:19 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id p12so25390220ljc.9
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2020 10:24:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jvUf4J0DFW1w2WtJ3V6+jniQAPhY7yyvFEspsD/tJmg=;
+        b=PEkPOajtdsc4vIPnzM9bVRVqYkht1WKu9HytymEE8l1JV5LOIEPq4BZ4U++e/c0KUw
+         gwT0H1upKqxmypmrqpI9U3ggwpq1tCugR4BokqmJbZUSWy5UvZT3kY0Gec7Lk89ev35b
+         zSUKO3Tk9zzocvLF3Nc/ui5aJ3U1f2I/TBi5s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jvUf4J0DFW1w2WtJ3V6+jniQAPhY7yyvFEspsD/tJmg=;
+        b=sMYpiKPaOl3zEK5/7dJFRGhskRsVv+or6c2k/QkNbyDbwnYz47OrAfL9IvIo1YWgjK
+         Nq+81F1y8L3GlndRM9mE/tByDLtPht4Q16o9AZejy3elOVG2hi8D2bVUNzTISDMbZnuF
+         wKmJ3KJjDPCEwogPHukREN20+LXoVq9UQzwOSHRmv5QrcrU4lGrBVvKQP2P30OToAuJ/
+         eO0Ki2GEz2MNxTJOj0Odqg12PEaVHboqtNZo447gPS80eeshyOXT3M1ZH51CrHS8QReZ
+         wJzpQndMFzqm3ZSHZAhpZBJwdC6rAuaq+Eh2G4BNxsMVIYXRUN0uySR+G4J8P+R8FKDR
+         YpHA==
+X-Gm-Message-State: AOAM530nI7UQsynTuUdtRzwem05ocrMjyIoO8ARxTLtzzx0r3voUmzhW
+        2LmYx/oY7IZRHjQOL1Q46X1grVtS5Xztqw==
+X-Google-Smtp-Source: ABdhPJyT5i0uD8sDgpbqg+KBzRpYgXLvQKTm8weV30a/memPd4OKkHlaOmOE3sCUmjRM5o4w+16xAw==
+X-Received: by 2002:a2e:2e1a:: with SMTP id u26mr2498928lju.223.1605637457306;
+        Tue, 17 Nov 2020 10:24:17 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id i9sm225757lja.56.2020.11.17.10.24.15
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Nov 2020 10:24:15 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id v144so31387752lfa.13
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Nov 2020 10:24:15 -0800 (PST)
+X-Received: by 2002:a19:c301:: with SMTP id t1mr2049940lff.105.1605637454918;
+ Tue, 17 Nov 2020 10:24:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20201016133352.GA2338@moon.secunet.de>
-Organization: secunet
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- mbx-essen-01.secunet.de (10.53.40.197)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+References: <20201113080132.16591-1-roberto.sassu@huawei.com>
+ <20201114111057.GA16415@infradead.org> <0fd0fb3360194d909ba48f13220f9302@huawei.com>
+ <20201116162202.GA15010@infradead.org> <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
+ <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
+ <20201116174127.GA4578@infradead.org> <CAHk-=wjd0RNthZQTLVsnK_d9SFYH0rug2tkezLLB0J-YZzVC+Q@mail.gmail.com>
+ <3f8cc7c9462353ac2eef58e39beee079bdd9c7b4.camel@linux.ibm.com>
+In-Reply-To: <3f8cc7c9462353ac2eef58e39beee079bdd9c7b4.camel@linux.ibm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Nov 2020 10:23:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wih-ibNUxeiKpuKrw3Rd2=QEAZ8zgRWt_CORAjbZykRWQ@mail.gmail.com>
+Message-ID: <CAHk-=wih-ibNUxeiKpuKrw3Rd2=QEAZ8zgRWt_CORAjbZykRWQ@mail.gmail.com>
+Subject: Re: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in ima_calc_file_hash()
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-redact XFRM SA secret in the netlink response to xfrm_get_sa()
-or dumpall sa.
-Enable lockdown, confidentiality mode, at boot or at run time.
+On Mon, Nov 16, 2020 at 10:35 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> We need to differentiate between signed files, which by definition are
+> immutable, and those that are mutable.  Appending to a mutable file,
+> for example, would result in the file hash not being updated.
+> Subsequent reads would fail.
 
-e.g. when enabled:
-cat /sys/kernel/security/lockdown
-none integrity [confidentiality]
+Why would that require any reading of the file at all AT WRITE TIME?
 
-ip xfrm state
-src 172.16.1.200 dst 172.16.1.100
-	proto esp spi 0x00000002 reqid 2 mode tunnel
-	replay-window 0
-	aead rfc4106(gcm(aes)) 0x0000000000000000000000000000000000000000 96
+Don't do it. Really.
 
-note: the aead secret is redacted.
-Redacting secret is also a FIPS 140-2 requirement.
+When opening the file write-only, you just invalidate the hash. It
+doesn't matter anyway - you're only writing.
 
-v1->v2
- - add size checks before memset calls
-v2->v3
- - replace spaces with tabs for consistency
-v3->v4
- - use kernel lockdown instead of a /proc setting
-v4->v5
- - remove kconfig option
+Later on, when reading, only at that point does the hash matter, and
+then you can do the verification.
 
-Reviewed-by: Stephan Mueller <smueller@chronox.de>
-Signed-off-by: Antony Antony <antony.antony@secunet.com>
----
- include/linux/security.h |  1 +
- net/xfrm/xfrm_user.c     | 74 ++++++++++++++++++++++++++++++++++++----
- security/security.c      |  1 +
- 3 files changed, 69 insertions(+), 7 deletions(-)
+Although honestly, I don't even see the point. You know the hash won't
+match, if you wrote to the file.
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index bc2725491560..1112a79a7dba 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -127,6 +127,7 @@ enum lockdown_reason {
- 	LOCKDOWN_PERF,
- 	LOCKDOWN_TRACEFS,
- 	LOCKDOWN_XMON_RW,
-+	LOCKDOWN_XFRM_SECRET,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
- 
-diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-index d0c32a8fcc4a..0727ac853b55 100644
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -848,21 +848,84 @@ static int copy_user_offload(struct xfrm_state_offload *xso, struct sk_buff *skb
- 	return 0;
- }
- 
-+static bool xfrm_redact(void)
-+{
-+	return IS_ENABLED(CONFIG_SECURITY) &&
-+		security_locked_down(LOCKDOWN_XFRM_SECRET);
-+}
-+
- static int copy_to_user_auth(struct xfrm_algo_auth *auth, struct sk_buff *skb)
- {
- 	struct xfrm_algo *algo;
-+	struct xfrm_algo_auth *ap;
- 	struct nlattr *nla;
-+	bool redact_secret = xfrm_redact();
- 
- 	nla = nla_reserve(skb, XFRMA_ALG_AUTH,
- 			  sizeof(*algo) + (auth->alg_key_len + 7) / 8);
- 	if (!nla)
- 		return -EMSGSIZE;
--
- 	algo = nla_data(nla);
- 	strncpy(algo->alg_name, auth->alg_name, sizeof(algo->alg_name));
--	memcpy(algo->alg_key, auth->alg_key, (auth->alg_key_len + 7) / 8);
-+
-+	if (redact_secret && auth->alg_key_len)
-+		memset(algo->alg_key, 0, (auth->alg_key_len + 7) / 8);
-+	else
-+		memcpy(algo->alg_key, auth->alg_key,
-+		       (auth->alg_key_len + 7) / 8);
- 	algo->alg_key_len = auth->alg_key_len;
- 
-+	nla = nla_reserve(skb, XFRMA_ALG_AUTH_TRUNC, xfrm_alg_auth_len(auth));
-+	if (!nla)
-+		return -EMSGSIZE;
-+	ap = nla_data(nla);
-+	memcpy(ap, auth, sizeof(struct xfrm_algo_auth));
-+	if (redact_secret && auth->alg_key_len)
-+		memset(ap->alg_key, 0, (auth->alg_key_len + 7) / 8);
-+	else
-+		memcpy(ap->alg_key, auth->alg_key,
-+		       (auth->alg_key_len + 7) / 8);
-+	return 0;
-+}
-+
-+static int copy_to_user_aead(struct xfrm_algo_aead *aead, struct sk_buff *skb)
-+{
-+	struct nlattr *nla = nla_reserve(skb, XFRMA_ALG_AEAD, aead_len(aead));
-+	struct xfrm_algo_aead *ap;
-+	bool redact_secret = xfrm_redact();
-+
-+	if (!nla)
-+		return -EMSGSIZE;
-+
-+	ap = nla_data(nla);
-+	memcpy(ap, aead, sizeof(*aead));
-+
-+	if (redact_secret && aead->alg_key_len)
-+		memset(ap->alg_key, 0, (aead->alg_key_len + 7) / 8);
-+	else
-+		memcpy(ap->alg_key, aead->alg_key,
-+		       (aead->alg_key_len + 7) / 8);
-+	return 0;
-+}
-+
-+static int copy_to_user_ealg(struct xfrm_algo *ealg, struct sk_buff *skb)
-+{
-+	struct xfrm_algo *ap;
-+	bool redact_secret = xfrm_redact();
-+	struct nlattr *nla = nla_reserve(skb, XFRMA_ALG_CRYPT,
-+					 xfrm_alg_len(ealg));
-+	if (!nla)
-+		return -EMSGSIZE;
-+
-+	ap = nla_data(nla);
-+	memcpy(ap, ealg, sizeof(*ealg));
-+
-+	if (redact_secret && ealg->alg_key_len)
-+		memset(ap->alg_key, 0, (ealg->alg_key_len + 7) / 8);
-+	else
-+		memcpy(ap->alg_key, ealg->alg_key,
-+		       (ealg->alg_key_len + 7) / 8);
-+
- 	return 0;
- }
- 
-@@ -906,20 +969,17 @@ static int copy_to_user_state_extra(struct xfrm_state *x,
- 			goto out;
- 	}
- 	if (x->aead) {
--		ret = nla_put(skb, XFRMA_ALG_AEAD, aead_len(x->aead), x->aead);
-+		ret = copy_to_user_aead(x->aead, skb);
- 		if (ret)
- 			goto out;
- 	}
- 	if (x->aalg) {
- 		ret = copy_to_user_auth(x->aalg, skb);
--		if (!ret)
--			ret = nla_put(skb, XFRMA_ALG_AUTH_TRUNC,
--				      xfrm_alg_auth_len(x->aalg), x->aalg);
- 		if (ret)
- 			goto out;
- 	}
- 	if (x->ealg) {
--		ret = nla_put(skb, XFRMA_ALG_CRYPT, xfrm_alg_len(x->ealg), x->ealg);
-+		ret = copy_to_user_ealg(x->ealg, skb);
- 		if (ret)
- 			goto out;
- 	}
-diff --git a/security/security.c b/security/security.c
-index a28045dc9e7f..abff77c1c8a7 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -65,6 +65,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_PERF] = "unsafe use of perf",
- 	[LOCKDOWN_TRACEFS] = "use of tracefs",
- 	[LOCKDOWN_XMON_RW] = "xmon read and write access",
-+	[LOCKDOWN_XFRM_SECRET] = "xfrm SA secret",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
- 
--- 
-2.20.1
-
+           Linus
