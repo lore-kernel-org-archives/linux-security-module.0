@@ -2,132 +2,357 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-28.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E82C5519F
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Nov 2020 21:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F285C63697
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Nov 2020 22:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3D71246AD
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Nov 2020 21:25:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 051D42468D
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Nov 2020 22:39:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WQ9Phpz9"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRZIVIaW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726136AbgKRVZn (ORCPT
+        id S1726983AbgKRWj5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Nov 2020 16:25:43 -0500
-Received: from sonic303-9.consmr.mail.bf2.yahoo.com ([74.6.131.48]:44683 "EHLO
-        sonic303-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725879AbgKRVZn (ORCPT
+        Wed, 18 Nov 2020 17:39:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58832 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725879AbgKRWj4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Nov 2020 16:25:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1605734742; bh=bioqQLs4FnPXT54uPLtO9DQWvWLtuU1wvgs6Ela/2NQ=; h=To:References:Cc:From:Subject:Date:In-Reply-To:From:Subject; b=WQ9Phpz9M7ruo9tMNkjS64y6dtX7DvOWjWBPCfhx9F4Ejd0EHcE0AR8bXSXk83oDxrvpZlYR8qsVAci20258WqzMHCuNgl8yfQrGmOmR0STzEKslzC0aVIN9eelQ3zdhJ4mhvsXG9mU6JbFRn6fPvCK8dtc6nExN6DcGAWWNouCkNSyfgBz6u7SDygKMf9V0IYNMvoh28eu64jbWNDzcJ5A4OaUIO1CacTMLX4R/aIR7FiycUWhZmg2VhVxJhAEuTVti1UKBvZt+GUBH+br5JvyIfquzG9lqewBG2FQCsqcio5Zm7zCBsqpJe7LGHlVZExJVUdUUmFp1yvdKfTFlPw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1605734742; bh=g+pWJ8WwyI1ICMTLr26VYhf2Z34zQlrRkLza44Rwkcr=; h=To:From:Subject:Date:From:Subject; b=KsmHOF29C9ANmPzlN0Hlhm6QvonBXmCySgy6n2md2Ygnu1sLMn2U6ZTGSoSIzlTny6gopwQTX2TrRPSMndAEzPInGT2Y3fxUdigkz2HhPL3LEbFsfDtq8fATEjdw35gF90MSm3ku3Ffxlwj7ozCXUe6Z/+KGdpVxPi4suiY734xl92ieP3mPnl2ogyegxn2cXR3grLbPHLmxLKc/hz01IJ6b6a2dag9tSCSNb7yinz/qrwmoXPJNCYViAaEOAav5rucFZZID38wU7Pf2J/Iuf48LznJRwpHTX9HPteo6U0E4FEL5l6/XpRknQnmEZ8G45Fg8CC8wYnauxgfn+WydyQ==
-X-YMail-OSG: qxOpfZgVM1mXPrB.DMXPDg0AY7LMNe37lAOylC17yJDSj4LhawGa9Hti35dbf68
- O2SNwTx.yXQbW7fWyUlxpZ9izMNUSkgzg.y7RnWKau.I_WKeLOoZ1rAmkvyS8rE8100CReGyxC3R
- tnmlkNIHBVCgyurpH2BJX7uaaIECyBbBhe3Dq1ptFz9r14UGeosj_HkA3CyHdfR440jLREDXoODl
- LYuMC7RwX7s3BCZScRnQ02H_uVzlNKNp8LfV2MYgwEtI5SoDswVEbZrA1R_OQiusJngF7gwo_3qG
- VniqFKDNzVT_hOFZpJ8Gfk8FrYZpO2F6IECQRBjFjvOvG5_DMBHsqhrUXldlG3BVIr0HSMOKAzIy
- wlUZZJgGoFDbBt6Y1pn7aQhfN762_bvIWTR3k6n_zs3Ycy47M8Wf.L.oo0BdHURHDLq1BaLrrelR
- M9R.dd2tkPub6Q8PEb9OrYOwPJTAHR1yPFBxxSB2Nny2dMYtJ1WXhtBNhCl4gRkXxmP6QrA_1zlJ
- Ec1dPAvH0wT_JyCb6UMbygjoEa2Q2tStPklKcp9HwvuvAkTQSwAmjiRg9q0zRFPTU3vYlThbujaj
- ZtlePWOVEY.7AsYrkb89frDE8DRm0hsiE2T2ImBPrBUX.amLI6VCXVKyG10NNM7he6B_qxgKwhU3
- id6OsQb6F0YMDnqETCy8dbviezOc1D0Uq8C7eCRaX97v9GN70RsD845n9ohy2TBwM5zj7XLlh2MW
- p16bLXsuVdYwQffljCebMFNvjzU1cPO3.O6.MUj_NWvX4O8L.yQC.TIxBsnUt27wRkF_OGgLpH9G
- wmVKLR1Hi31TEckxSEyPwpEuMAwHH64InI6XsyA9lzryNzm49c0iwz2VgSsLcfMHbBLUip4shnlW
- V3hZlJjjoer0YBnQ4vfLaMGSRq7sdzZXU9.0OqefW.15sdbSbF6Eh7ZYsCFDnmW5.MKWdF0L95U6
- OgA8mh.zG3dXD7KCBvrWd1_7nxBTOeKPe.kJNa5mc_WZJmYCRNWvShWo3ytSMfpJZq5df_DEqme4
- sLbF7K36_jw1WfjlitRcoTjpoHFIeS9Q5Fm8SW8rvqw5y8oLE2IdcDXH09alzM2AvJyDhGy.p9p0
- W6AfgV0AjOpsdHZCCz6Ne0oLVzo7e4bGPqBPRYwKcX703s6hVuJ2b_I8YqyVSy1929TtAqpGs5R0
- xSnRJW_JmdYu1zo4oXZEWsCJg2bKAZO7PMHndOu3KY30FBWdd.vkeaBQ8DWhclmPd6BjbWIGdz9C
- qO4pvzLhMJDuXAIphR1gTzBRc.DUCfBqsaobmupD..R9MqzOOU_i2KRct7b.hdSwjoQPmifFvFC0
- 1f8LxqoUEHzepEE9GVZ8FAbtwDEBr5dv9m51l4mKM00XG5ycM_oKoZcVyEBtsvPwDcXac4K9HIpR
- h7G3Q4sVfWFB9FjO6G1DWdszuKHaqAtHhon8Fy.Llu1hOxCnwW1Wy4Sn1rFja7962hw4SptcmYio
- 9mHZH4WZ8dEzXwi.aYk_N3oIYLCNCtiiDIxk.VQdFiBz2kKswF6TmIgjDVygd2YTi_Jpb5m_2bMq
- 1sWCL_49Ou2vxyiNVsvUsxYLDCLCmQ2elf9XoF1jDHMapGhX0psTl8HVrQFGAeM5EkgOLOeklDma
- 3IkyjGjqsUP8LFlZrM1H1JJ9FHfJxZS9sRRdkR6.wbf3wHCxctu1o_pGFqddEb5J3sX2rCDR9Sem
- 9pSdhavyjtOHm0GkccSQ8.WuD7Y2av9ftz70Eg6SHsbvsUv2EcfgVBMt05P.cG09c465vTGfs65b
- fbZKyoRn1mzMJ7c_GCR7XoFlD0g0flb1KUVJ3qlb8aZfTeb29wllx8nTEUvGekKbqXEeiZRVccI1
- t_ssfIuULR6rAHG0dPCGjmbUB4myTQclJYMr_h71xiuRzdATyF5gF90WfVyewZ_7MSKmDIHUEwiq
- OuAlYQKlrVL3LoynJP1dwLL1PLrilcZvLkDFvXampZ3pntCkd7BxfENSgG0.BCxXnlfO_RU.K.r8
- _mPPY4NMwK9_xAH4uN0rUF2BK8esWouoYTCgRuEy5NWZPgtpz6fxCUaOZrJDDFzVgDidIL.Gptec
- sXjCkgR9o2HC8aL1xb3N2iyy.RI..EhNLv5zFrZVloJ7hWsRYmtPyg9ioJ06kctGOJ5egTmJ4huv
- mqe3bc32O6.UTbSZ1aXtxOjSKhU2WET535ZJTc8MVwYFyRhfitCyleZoHlZaZ1GbVroTqeZ58OmB
- VLXGSYHR65nUjsthBeZBQwwyIxMaLs_.kuRATpJd2t0mr7Q1QhuO9isG39HG.MZZvF_OijU.OrxG
- G_4D7RjtBAAYLTIQl4u06INwUWvlUUTipgcHDaTodl6XU8OUn4UtNbWKngtN3P_NE5miKtcF6fny
- BPbk6uwbVjNYpcO84FeO9AvXiybFP43xeObpetS2CvCwru6dWrEbcARYUhlZV.lrz_SiFc4.q5wo
- KyNtF9ycJBks9xqDnx69s0kiGZ7OzErybz9.JgNnSZsXmRF.GTcZfhiC_GMsE7Qw3SjKjdrUyXeh
- _KIyZ1prCtgZY9cM7Zrt2Iy4NqlgVL.R07dl9_5UAoQy0CJlFhonuLa0WGYbuvzAhYCJIsl.Q2WT
- 0G0Jw1ebXwCaCr8.N4R4ZQaLBzxpepbPG3BR..83rIEo8dFEUZ7tx5r71EG6KSyPvpJybLv.yci3
- sIOicpE9t6f3xiXFRHZm1WVeaSoYyc1bQ4asXDj4YtPHbfzacqRfNkpxE1NKPJ4Zwk.PsYq0dPKk
- nxK64WzmqGIvAWxUDNSp5zdLMppfHE9Kimp9HJr8w_p0K_RjG43kL9zeKea8kQQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.bf2.yahoo.com with HTTP; Wed, 18 Nov 2020 21:25:42 +0000
-Received: by smtp403.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 0570a634525de8507934b2aae41d0407;
-          Wed, 18 Nov 2020 21:25:40 +0000 (UTC)
-To:     Martin Kelly <martin.kelly@crowdstrike.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <2bf667b20edc407786778c00b0c375b5@casmbox08.crowdstrike.sys>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: Question about security_file_open contract
-Message-ID: <593aa790-010d-61d8-a150-92e4b2db0086@schaufler-ca.com>
-Date:   Wed, 18 Nov 2020 13:25:38 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.4.1
+        Wed, 18 Nov 2020 17:39:56 -0500
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30FA1C0613D6
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2020 14:39:56 -0800 (PST)
+Received: by mail-ed1-x544.google.com with SMTP id q16so3729800edv.10
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Nov 2020 14:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mh4Qjzb8KLSgaMNmAYGectlp/+Zs2oISPb70IoHgsI8=;
+        b=CRZIVIaWJn4wRTqExaJYLXqnr5OhuX/Ux33O/CKOWLZw+6wBPmuXEyiSTB3fn/OuoB
+         5W7kGYZwmmLIjODlbM1WZgo/01YuAEr0CtnFBOV16R4EfITvzzkyEd8XO075r/UTcJt+
+         zImZ+g75iGdxnhvDVM6/d6dyWVqZMgivbYHNHtVo27ZrWnAK7egyTI5flEh2L5o1F2Zc
+         peaGWkXGnNSPGL/j6sgFZiGnhQ62hcV06/KYWEuTYsZJEskQEaXB7Wp4YlAEe9vWwqY0
+         c1fiNV9lk1053jw3Yucz8Rp5fk4RAcK6rlIp9pJBUHkJ5EJFsKuW0LiA8cZKrqaYTwhn
+         yh5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mh4Qjzb8KLSgaMNmAYGectlp/+Zs2oISPb70IoHgsI8=;
+        b=I3sNiB0XATA1WKfdqXdgZE8Zbea9rPqtYioBCZzMDGBzBT31hX9mw1IJxvC8OMI0Xd
+         EaSOFciUbUmCwZp+bkCwcBo7tYwNWb9Okb/8MWfEukqDa9tJ0UAJFNhZz7U3AkGwxWBw
+         A4Xc+Ab2c+P4412TGV0qPJ6kCfymWIu0kIL19hJQfTz9y3Qqsd/Cf06EEErf5togUQuL
+         K4dJa9Ay+1SDFn2rwy5W6YTf9uFwmc80zwe1rS/mbbP53vWap0oW8CUDAd8urJuhxzG3
+         mZbLIQY2sR4UtxfWujq8CCiPF6ViC86h9gb7zgSOrp4DL6+N5JVMBfcmo0WZKCBvTRDT
+         7q2Q==
+X-Gm-Message-State: AOAM530SWtpFq+1C/QJ6a8hvKm0PkEY2vUlt6G+ec7Bg7UM6JK4koN/z
+        15Xi3te+4pedHraYNalvHK2ZMSsVQCthsPQZq1oSmw==
+X-Google-Smtp-Source: ABdhPJwQhDxciSRkAl2VxK0vZnAeNRN4fgcGI2LnmSEZCHTKqJlvVqW32Uzql9y2c4OzJjhY30YrLxWXujyaeuTcCCU=
+X-Received: by 2002:aa7:c704:: with SMTP id i4mr27725768edq.51.1605739194344;
+ Wed, 18 Nov 2020 14:39:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2bf667b20edc407786778c00b0c375b5@casmbox08.crowdstrike.sys>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.16944 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+ <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+ <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com> <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
+From:   Lokesh Gidra <lokeshgidra@google.com>
+Date:   Wed, 18 Nov 2020 14:39:42 -0800
+Message-ID: <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
+Content-Type: multipart/mixed; boundary="00000000000048c66905b4694aa9"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 11/18/2020 12:44 PM, Martin Kelly wrote:
-> Hi,
+--00000000000048c66905b4694aa9
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, Nov 12, 2020 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> I'm debugging a thorny problem and want to verify my understanding abou=
-t the
-> expected contract between LSM and kernel drivers. Specifically, I'm hit=
-ting
-> an issue in which the following occurs:
+> On Tue, Nov 10, 2020 at 10:30 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > On Tue, Nov 10, 2020 at 6:13 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Tue, Nov 10, 2020 at 1:24 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > > > On Mon, Nov 9, 2020 at 7:12 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > > On Fri, Nov 6, 2020 at 10:56 AM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > > > > >
+> > > > > > From: Daniel Colascione <dancol@google.com>
+> > > > > >
+> > > > > > This change uses the anon_inodes and LSM infrastructure introduced in
+> > > > > > the previous patches to give SELinux the ability to control
+> > > > > > anonymous-inode files that are created using the new
+> > > > > > anon_inode_getfd_secure() function.
+> > > > > >
+> > > > > > A SELinux policy author detects and controls these anonymous inodes by
+> > > > > > adding a name-based type_transition rule that assigns a new security
+> > > > > > type to anonymous-inode files created in some domain. The name used
+> > > > > > for the name-based transition is the name associated with the
+> > > > > > anonymous inode for file listings --- e.g., "[userfaultfd]" or
+> > > > > > "[perf_event]".
+> > > > > >
+> > > > > > Example:
+> > > > > >
+> > > > > > type uffd_t;
+> > > > > > type_transition sysadm_t sysadm_t : anon_inode uffd_t "[userfaultfd]";
+> > > > > > allow sysadm_t uffd_t:anon_inode { create };
+> > > > > >
+> > > > > > (The next patch in this series is necessary for making userfaultfd
+> > > > > > support this new interface.  The example above is just
+> > > > > > for exposition.)
+> > > > > >
+> > > > > > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > > > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > > > > ---
+> > > > > >  security/selinux/hooks.c            | 53 +++++++++++++++++++++++++++++
+> > > > > >  security/selinux/include/classmap.h |  2 ++
+> > > > > >  2 files changed, 55 insertions(+)
+> > > > > >
+> > > > > > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > > > > > index 6b1826fc3658..1c0adcdce7a8 100644
+> > > > > > --- a/security/selinux/hooks.c
+> > > > > > +++ b/security/selinux/hooks.c
+> > > > > > @@ -2927,6 +2927,58 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+> > > > > >         return 0;
+> > > > > >  }
+> > > > > >
+> > > > > > +static int selinux_inode_init_security_anon(struct inode *inode,
+> > > > > > +                                           const struct qstr *name,
+> > > > > > +                                           const struct inode *context_inode)
+> > > > > > +{
+> > > > > > +       const struct task_security_struct *tsec = selinux_cred(current_cred());
+> > > > > > +       struct common_audit_data ad;
+> > > > > > +       struct inode_security_struct *isec;
+> > > > > > +       int rc;
+> > > > > > +
+> > > > > > +       if (unlikely(!selinux_initialized(&selinux_state)))
+> > > > > > +               return 0;
+> > > > > > +
+> > > > > > +       isec = selinux_inode(inode);
+> > > > > > +
+> > > > > > +       /*
+> > > > > > +        * We only get here once per ephemeral inode.  The inode has
+> > > > > > +        * been initialized via inode_alloc_security but is otherwise
+> > > > > > +        * untouched.
+> > > > > > +        */
+> > > > > > +
+> > > > > > +       if (context_inode) {
+> > > > > > +               struct inode_security_struct *context_isec =
+> > > > > > +                       selinux_inode(context_inode);
+> > > > > > +               isec->sclass = context_isec->sclass;
+> > > > > > +               isec->sid = context_isec->sid;
+> > > > >
+> > > > > I suppose this isn't a major concern given the limited usage at the
+> > > > > moment, but I wonder if it would be a good idea to make sure the
+> > > > > context_inode's SELinux label is valid before we assign it to the
+> > > > > anonymous inode?  If it is invalid, what should we do?  Do we attempt
+> > > > > to (re)validate it?  Do we simply fallback to the transition approach?
+> > > >
+> > > > Frankly, I'm not too familiar with SELinux. Originally this patch
+> > > > series was developed by Daniel, in consultation with Stephen Smalley.
+> > > > In my (probably naive) opinion we should fallback to transition
+> > > > approach. But I'd request you to tell me if this needs to be addressed
+> > > > now, and if so then what's the right approach.
+> > > >
+> > > > If the decision is to address this now, then what's the best way to
+> > > > check the SELinux label validity?
+> > >
+> > > You can check to see if an inode's label is valid by looking at the
+> > > isec->initialized field; if it is LABEL_INITIALIZED then it is all
+> > > set, if it is any other value then the label isn't entirely correct.
+> > > It may have not have ever been fully initialized (and has a default
+> > > value) or it may have live on a remote filesystem where the host has
+> > > signaled that the label has changed (and the label is now outdated).
+> > >
+> > > This patchset includes support for userfaultfd, which means we don't
+> > > really have to worry about the remote fs problem, but the
+> > > never-fully-initialized problem could be real in this case.  Normally
+> > > we would revalidate an inode in SELinux by calling
+> > > __inode_security_revalidate() which requires either a valid dentry or
+> > > one that can be found via the inode; does d_find_alias() work on
+> > > userfaultfd inodes?
+> > >
+> > > If all else fails, it seems like the safest approach would be to
+> > > simply fail the selinux_inode_init_security_anon() call if a
+> > > context_inode was supplied and the label wasn't valid.  If we later
+> > > decide to change it to falling back to the transition approach we can
+> > > do that, we can't go the other way (from transition to error).
+> >
+> > I'm not sure about d_find_alias() on userfaultfd inodes. But it seems
+> > ok to fail selinux_inode_init_security_anon() to begin with.
 >
-> - A process exits, calling task_exit().
-> - exit_fs() is called, setting current->fs =3D NULL.
-> - Next, exit_task_work() is called, which calls fput().
-> - In response to the fput(), the filesystem opens a file to update some=
-
-> metadata, calling dentry_open().
-
-Which process do you expect the file to be opened for? As you
-point out, current is being torn down. What is your kernel driver
-doing that led you to think this was a good idea?
-
-
-> - dentry_open() calls security_file_open(), calling into the LSM. The L=
-SM
-> crashes because it assumes it's called from process context and thus
-> current->fs is not NULL.
-
-Right. Without a valid process context it's impossible to make
-access control decisions.
-
+> I'm okay with simply failing here, but I'm growing a bit concerned
+> that this patchset hasn't been well tested.  That is a problem.
 >
-> I'm trying to figure out exactly what the contract is here. Is it safe =
-for
-> an LSM to assume current->fs should be non-NULL when security_file_open=
- is
-> called?  More generally, is it safe for an LSM to assume that
-> security_file_open will always be called from process context? In other=
+> > > > > This brings up another question, and requirement - what testing are
+> > > > > you doing for this patchset?  We require that new SELinux kernel
+> > > > > functionality includes additions to the SELinux test suite to help
+> > > > > verify the functionality.  I'm also *strongly* encouraging that new
+> > > > > contributions come with updates to The SELinux Notebook.  If you are
+> > > > > unsure about what to do for either, let us know and we can help get
+> > > > > you started.
+> > > > >
+> > > > > * https://github.com/SELinuxProject/selinux-testsuite
+> > > > > * https://github.com/SELinuxProject/selinux-notebook
+> > > > >
+> > > > I'd definitely need help with both of these. Kindly guide how to proceed.
+> > >
+> > > Well, perhaps the best way to start is to explain how you have been
+> > > testing this so far and then using that information to draft a test
+> > > for the testsuite.
+> >
+> > As I said in my previous reply, Daniel worked on this patch along with
+> > Stephan Smalley. Here's the conversation regarding testing from back
+> > then:
+> > https://lore.kernel.org/lkml/CAEjxPJ4iquFSBfEj+UEFLUFHPsezuQ-Bzv09n+WgOWk38Nyw3w@mail.gmail.com/
+> >
+> > There have been only minor changes (fixing comments/coding-style),
+> > except for addressing a double free issue with userfaultfd_ctx since
+> > last time it was tested as per the link above.
+>
+> I should probably be more clear.  I honestly don't care who originally
+> wrote the patch, the simple fact is that you are the one who is
+> posting it *now* for inclusion in the kernel; at the very least I
+> expect you to be able to demonstrate that you are able to reliably
+> test this functionality and prove it is working.  While being able to
+> test this submission initially is important, it is far more important
+> to have the tests and docs necessary to maintain this functionality
+> long term.  Perhaps you and/or Google will continue to contribute and
+> support this functionality long term, but it would be irresponsible of
+> me to assume that to be true; both people and companies come and go
+> but code has a tendency to live forever.
+>
+> Let's start again; how have you been testing this code?
+>
+I have created a cuttlefish build and have tested with the attached
+userfaultfd program:
 
-> words, is the LSM at fault here or the driver?
+1) Without these kernel patches the program executes without any restrictions
 
-The driver. If you want to open files directly from the driver,
-as opposed to from a process, you need a valid kernel context.
+vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
+api: 170
+features: 511
+ioctls: 9223372036854775811
 
-> Thanks,
-> Martin
+read: Try again
 
+
+2) With these patches applied but without any policy the 'permission
+denied' is thrown
+
+vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
+syscall(userfaultfd): Permission denied
+
+with the following logcat message:
+11-18 14:21:44.041  3130  3130 W userfaultfdSimp: type=1400
+audit(0.0:107): avc: denied { create } for dev="anon_inodefs"
+ino=45031 scontext=u:r:shell:s0 tcontext=u:object_r:shell:s0
+tclass=anon_inode permissive=0
+
+
+3) With the attached .te policy file in place the following output is
+observed, confirming that the patch is working as intended.
+vsoc_x86_64:/ $ ./vendor/bin/userfaultfdSimple
+UFFDIO_API: Permission denied
+
+with the following logcat message:
+11-18 14:33:29.142  2028  2028 W userfaultfdSimp: type=1400
+audit(0.0:104): avc: denied { ioctl } for
+path="anon_inode:[userfaultfd]" dev="anon_inodefs" ino=41169
+ioctlcmd=0xaa3f scontext=u:r:userfaultfdSimple:s0
+tcontext=u:object_r:uffd_t:s0 tclass=anon_inode permissive=0
+
+
+> --
+> paul moore
+> www.paul-moore.com
+
+--00000000000048c66905b4694aa9
+Content-Type: text/x-c++src; charset="US-ASCII"; name="userfaultfd_simple.cc"
+Content-Disposition: attachment; filename="userfaultfd_simple.cc"
+Content-Transfer-Encoding: base64
+Content-ID: <f_khnyhxjz0>
+X-Attachment-Id: f_khnyhxjz0
+
+I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxmY250bC5oPgojaW5jbHVkZSA8dW5pc3RkLmg+
+CiNpbmNsdWRlIDxjc3RyaW5nPgoKI2luY2x1ZGUgPHN5cy90eXBlcy5oPgojaW5jbHVkZSA8c3lz
+L2lvY3RsLmg+CiNpbmNsdWRlIDxzeXMvc3lzY2FsbC5oPgoKI2luY2x1ZGUgPGxpbnV4L3VzZXJm
+YXVsdGZkLmg+Cgp2b2lkIHByaW50X2FwaShjb25zdCBzdHJ1Y3QgdWZmZGlvX2FwaSAqYXBpKQp7
+CglwcmludGYoImFwaTogJWxsdVxuIiwgYXBpLT5hcGkpOwoJcHJpbnRmKCJmZWF0dXJlczogJWxs
+dVxuIiwgYXBpLT5mZWF0dXJlcyk7CglwcmludGYoImlvY3RsczogJWxsdVxuIiwgYXBpLT5pb2N0
+bHMpOwoKCXByaW50ZigiXG4iKTsKfQoKaW50IG1haW4odm9pZCkKewoJbG9uZyB1ZmZkID0gc3lz
+Y2FsbChfX05SX3VzZXJmYXVsdGZkLCBPX0NMT0VYRUMgfCBPX05PTkJMT0NLKTsKCWlmICh1ZmZk
+IDwgMCkgewoJCXBlcnJvcigic3lzY2FsbCh1c2VyZmF1bHRmZCkiKTsKCQlyZXR1cm4gLTE7Cgl9
+CgoJc3RydWN0IHVmZmRpb19hcGkgYXBpOwoJc3RkOjptZW1zZXQoJmFwaSwgMHgwLCBzaXplb2Yg
+YXBpKTsKCWFwaS5hcGkgPSBVRkZEX0FQSTsKCWlmIChpb2N0bCh1ZmZkLCBVRkZESU9fQVBJLCAm
+YXBpKSA8IDApIHsKCQlwZXJyb3IoIlVGRkRJT19BUEkiKTsKCQlyZXR1cm4gLTE7Cgl9CgoJcHJp
+bnRfYXBpKCZhcGkpOwoKCXN0cnVjdCB1ZmZkX21zZyBtc2c7CglzdGQ6Om1lbXNldCgmbXNnLCAw
+eDAsIHNpemVvZiBtc2cpOwoJc3NpemVfdCBjb3VudCA9IHJlYWQodWZmZCwgJm1zZywgc2l6ZW9m
+KG1zZykpOwoJaWYgKGNvdW50IDwgMCkgewoJCXBlcnJvcigicmVhZCIpOwoJCXJldHVybiAtMTsK
+CX0gZWxzZSBpZiAoY291bnQgPT0gMCkgewoJCXByaW50ZigicmVhZCBFT0ZcblxuIik7Cgl9CgoJ
+cHJpbnRmKCJyZWFkIHVmZmRcblxuIik7CgoJcmV0dXJuIDA7Cn0K
+--00000000000048c66905b4694aa9
+Content-Type: application/octet-stream; name="userfaultfdSimple.te"
+Content-Disposition: attachment; filename="userfaultfdSimple.te"
+Content-Transfer-Encoding: base64
+Content-ID: <f_khnziydf1>
+X-Attachment-Id: f_khnziydf1
+
+CnR5cGUgdXNlcmZhdWx0ZmRTaW1wbGUsIGRvbWFpbjsKCnR5cGUgdXNlcmZhdWx0ZmRTaW1wbGVf
+ZXhlYywgdmVuZG9yX2ZpbGVfdHlwZSwgZXhlY190eXBlLCBmaWxlX3R5cGU7Cgp0eXBlIHVmZmRf
+dDsKdHlwZV90cmFuc2l0aW9uIHVzZXJmYXVsdGZkU2ltcGxlIHVzZXJmYXVsdGZkU2ltcGxlIDog
+YW5vbl9pbm9kZSB1ZmZkX3QgIlt1c2VyZmF1bHRmZF0iOwphbGxvdyB1c2VyZmF1bHRmZFNpbXBs
+ZSB1ZmZkX3Q6YW5vbl9pbm9kZSB7IGNyZWF0ZSBpb2N0bCByZWFkIH07CgojIFVuY29tbWVudCBv
+bmUgb2YgdGhlIGFsbG93eCBsaW5lcyBiZWxvdyB0byB0ZXN0IGlvY3RsIHdoaXRlbGlzdGluZy4K
+IyBOb25lCmFsbG93eHBlcm0gdXNlcmZhdWx0ZmRTaW1wbGUgdWZmZF90OmFub25faW5vZGUgaW9j
+dGwgMHgwOwojIFVGRkRJT19BUEkKI2FsbG93eHBlcm0gdXNlcmZhdWx0ZmRTaW1wbGUgdWZmZF90
+OmFub25faW5vZGUgaW9jdGwgMHhhYTNmOwoKZG9udGF1ZGl0IHVzZXJmYXVsdGZkU2ltcGxlIGFk
+YmQ6ZmQgdXNlOwpkb250YXVkaXQgdXNlcmZhdWx0ZmRTaW1wbGUgYWRiZDp1bml4X3N0cmVhbV9z
+b2NrZXQgeyByZWFkIHdyaXRlIH07CmRvbnRhdWRpdCB1c2VyZmF1bHRmZFNpbXBsZSBkZXZwdHM6
+Y2hyX2ZpbGUgeyBnZXRhdHRyIGlvY3RsIHJlYWQgd3JpdGUgfTsKZG9udGF1ZGl0IHVzZXJmYXVs
+dGZkU2ltcGxlIHNoZWxsOmZkIHVzZTsKCmRvbWFpbl9hdXRvX3RyYW5zKHNoZWxsLCB1c2VyZmF1
+bHRmZFNpbXBsZV9leGVjLCB1c2VyZmF1bHRmZFNpbXBsZSk7Cg==
+--00000000000048c66905b4694aa9--
