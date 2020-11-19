@@ -2,38 +2,39 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-23.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E69C64E8A
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464F3C6379F
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D624D22202
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0C09222BA
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="evICjJiY"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qEZd7tyF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbgKSX01 (ORCPT
+        id S1727153AbgKSX0i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Nov 2020 18:26:27 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:32948 "EHLO
+        Thu, 19 Nov 2020 18:26:38 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:33002 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727060AbgKSX0Y (ORCPT
+        with ESMTP id S1727070AbgKSX00 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Nov 2020 18:26:24 -0500
+        Thu, 19 Nov 2020 18:26:26 -0500
 Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id B8C1E20B7125;
-        Thu, 19 Nov 2020 15:26:22 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B8C1E20B7125
+        by linux.microsoft.com (Postfix) with ESMTPSA id 94B1F20B8005;
+        Thu, 19 Nov 2020 15:26:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 94B1F20B8005
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1605828383;
-        bh=sxVlLAkqjda0ZXj26t6BGZjCQWun9IH/OvCSStwtKOs=;
+        s=default; t=1605828385;
+        bh=uk4x4LQiWntk6528VOlokJxBRGx63RfP1GrYurFa5OI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=evICjJiYyEEAVnbZPLvH2k3cp2ZId1S4M7yN1pvKJnzRTwjpVmtENHoyn1Sov2Lwv
-         0zO/bW/WET+7WOMSQZKYOKOeK0peizS6Yh73HfWylcBoXJ27xXOM1Ydt2IhCU9ygpO
-         cttU8Nfnxf8HKu4zYCr/qccZ4CO3J7jEtAHJTsLM=
+        b=qEZd7tyFxy6Hzpyvftyyglq0YHDh6WKPkmyzcSyI4JZCdGKJ0J3/YPV6L2iMDYBWz
+         7DTsQuz9XNOb7JLLg74Q5ZVpqqnMCuhsgcNsvU4/oVtFX7OD4MYi250SWEXB7TuGJc
+         QQ8BPP/Mb+wuewh7tm72NOYej0SpBDWctJcWzO2o=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
         casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
@@ -42,107 +43,75 @@ Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
         nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v6 4/8] IMA: add policy rule to measure critical data
-Date:   Thu, 19 Nov 2020 15:26:07 -0800
-Message-Id: <20201119232611.30114-5-tusharsu@linux.microsoft.com>
+Subject: [PATCH v6 7/8] IMA: add a built-in policy rule for critical data measurement
+Date:   Thu, 19 Nov 2020 15:26:10 -0800
+Message-Id: <20201119232611.30114-8-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
 References: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A new IMA policy rule is needed for the IMA hook
-ima_measure_critical_data() and the corresponding func CRITICAL_DATA for
-measuring the input buffer. The policy rule should ensure the buffer
-would get measured only when the policy rule allows the action. The
-policy rule should also support the necessary constraints (flags etc.)
-for integrity critical buffer data measurements.
+From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 
-Add a policy rule to define the constraints for restricting integrity
-critical data measurements.
+The IMA hook to measure kernel critical data, namely
+ima_measure_critical_data(), could be called before a custom IMA policy
+is loaded. Define a new critical data builtin policy to allow measuring
+early kernel integrity critical data before a custom IMA policy is
+loaded.
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Add critical data to built-in IMA rules if the kernel command line
+contains "ima_policy=critical_data".
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- security/integrity/ima/ima_policy.c | 35 +++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
+ security/integrity/ima/ima_policy.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 2a0c0603626e..583be7674f3e 100644
+index c9e52dab0638..119604a3efa0 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
- #define IMA_KEYRINGS	0x0400
-+#define IMA_DATA_SOURCES	0x0800
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -85,6 +86,7 @@ struct ima_rule_entry {
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
- 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
-+	struct ima_rule_opt_list *data_sources; /* Measure data from these sources */
- 	struct ima_template_desc *template;
+@@ -206,6 +206,10 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
+ 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
  };
  
-@@ -479,6 +481,12 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
- 		else
- 			opt_list = rule->keyrings;
- 		break;
-+	case CRITICAL_DATA:
-+		if (!rule->data_sources)
-+			return true;
-+		else
-+			opt_list = rule->data_sources;
-+		break;
- 	default:
- 		break;
- 	}
-@@ -518,13 +526,19 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
++static struct ima_rule_entry critical_data_rules[] __ro_after_init = {
++	{.action = MEASURE, .func = CRITICAL_DATA, .flags = IMA_FUNC},
++};
++
+ /* An array of architecture specific rules */
+ static struct ima_rule_entry *arch_policy_entry __ro_after_init;
+ 
+@@ -228,6 +232,7 @@ __setup("ima_tcb", default_measure_policy_setup);
+ 
+ static bool ima_use_appraise_tcb __initdata;
+ static bool ima_use_secure_boot __initdata;
++static bool ima_use_critical_data __ro_after_init;
+ static bool ima_fail_unverifiable_sigs __ro_after_init;
+ static int __init policy_setup(char *str)
  {
- 	int i;
+@@ -242,6 +247,8 @@ static int __init policy_setup(char *str)
+ 			ima_use_appraise_tcb = true;
+ 		else if (strcmp(p, "secure_boot") == 0)
+ 			ima_use_secure_boot = true;
++		else if (strcmp(p, "critical_data") == 0)
++			ima_use_critical_data = true;
+ 		else if (strcmp(p, "fail_securely") == 0)
+ 			ima_fail_unverifiable_sigs = true;
+ 		else
+@@ -875,6 +882,11 @@ void __init ima_init_policy(void)
+ 			  ARRAY_SIZE(default_appraise_rules),
+ 			  IMA_DEFAULT_POLICY);
  
--	if (func == KEY_CHECK) {
--		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
--			ima_match_rule_data(rule, func_data, cred);
--	}
- 	if ((rule->flags & IMA_FUNC) &&
- 	    (rule->func != func && func != POST_SETATTR))
- 		return false;
++	if (ima_use_critical_data)
++		add_rules(critical_data_rules,
++			  ARRAY_SIZE(critical_data_rules),
++			  IMA_DEFAULT_POLICY);
 +
-+	switch (func) {
-+	case KEY_CHECK:
-+	case CRITICAL_DATA:
-+		return ((rule->func == func) &&
-+			ima_match_rule_data(rule, func_data, cred));
-+	default:
-+		break;
-+	}
-+
- 	if ((rule->flags & IMA_MASK) &&
- 	    (rule->mask != mask && func != POST_SETATTR))
- 		return false;
-@@ -1119,6 +1133,19 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		if (ima_rule_contains_lsm_cond(entry))
- 			return false;
+ 	ima_update_policy_flag();
+ }
  
-+		break;
-+	case CRITICAL_DATA:
-+		if (entry->action & ~(MEASURE | DONT_MEASURE))
-+			return false;
-+
-+		if (!(entry->flags & IMA_DATA_SOURCES) ||
-+		    (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-+		    IMA_DATA_SOURCES)))
-+			return false;
-+
-+		if (ima_rule_contains_lsm_cond(entry))
-+			return false;
-+
- 		break;
- 	default:
- 		return false;
 -- 
 2.17.1
 
