@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F703C388F9
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B91FC64E69
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2E862145D
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC0C622227
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Nov 2020 23:26:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hWq0U1w8"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HMfweoFp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgKSX0X (ORCPT
+        id S1727097AbgKSX01 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Nov 2020 18:26:23 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:32888 "EHLO
+        Thu, 19 Nov 2020 18:26:27 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:32978 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgKSX0V (ORCPT
+        with ESMTP id S1727069AbgKSX0Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Nov 2020 18:26:21 -0500
+        Thu, 19 Nov 2020 18:26:25 -0500
 Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 16CDC20B717A;
-        Thu, 19 Nov 2020 15:26:20 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 16CDC20B717A
+        by linux.microsoft.com (Postfix) with ESMTPSA id 0411720B7133;
+        Thu, 19 Nov 2020 15:26:23 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0411720B7133
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1605828380;
-        bh=dhlGnEZlGpNxq/A2IMzUae7PuZI1BlOtVKzTk5lmd1s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hWq0U1w8fiqVnTCLDdVLlNEBgB2TZllSK/m2fskO7R2e1ifrdJjHrRkbdrvTLJaek
-         42D7skHa70nlzAJXPr802Ak0JXS2VrUufBD0A/zB00OiuhkVQVsb/0SpKOXxXrrLdM
-         5xP5Z5oQdvw03JnleuaRqO0GRSH4vQ42ZcSYKfKo=
+        s=default; t=1605828384;
+        bh=zxzJjRVL4Fw/rli7hkZOoZEuxfHZymVb0lvoIbeaev0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HMfweoFp7uHK00RJeXeETLV0MZGJdjAIqIz5bVWxDLV8uCide56pZiI4B2M1mhyCb
+         mff2cJPlCShtEo1DjwLEns1rswSZVbfmIm/UM3jBCxU7y6s5EMObHcS8MYIXjiEddf
+         qcNIKd2hrOxzFfwrhfYSEwT/87v5ugPIppyH/5iY=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
         casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
@@ -42,132 +42,98 @@ Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
         nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v6 0/8] IMA: support for measuring kernel integrity critical data
-Date:   Thu, 19 Nov 2020 15:26:03 -0800
-Message-Id: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
+Subject: [PATCH v6 6/8] IMA: add support to critical data hook to limit data sources for measurement
+Date:   Thu, 19 Nov 2020 15:26:09 -0800
+Message-Id: <20201119232611.30114-7-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
+References: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Kernel integrity critical data can be defined as the in-memory kernel
-data which if accidentally or maliciously altered, can compromise the
-integrity of the system.
+The IMA hook ima_measure_critical_data() does not support a way to
+specify the source of the critical data provider. Thus, the data
+measurement cannot be constrained, based on the data source, through the
+IMA policy.
 
-There are several kernel subsystems that contain integrity critical
-data - e.g. LSMs like SELinux, or AppArmor; or device-mapper targets
-like dm-crypt, dm-verity etc. Examples of critical data could be kernel
-in-memory r/o structures, hash of the memory structures, or data that
-represents a linux kernel subsystem state.
+Extend the IMA hook ima_measure_critical_data() to support passing 
+the data source name as an input parameter, so that the policy rule can
+be used to limit data sources being measured.
 
-This patch set defines a new IMA hook namely ima_measure_critical_data()
-to measure the critical data. Kernel subsystems can use this
-functionality, to take advantage of IMA's measuring and quoting 
-abilities - thus ultimately enabling remote attestation for the
-subsystem specific information stored in the kernel memory.
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
+ include/linux/ima.h               |  6 ++++--
+ security/integrity/ima/ima_main.c | 11 ++++++++---
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-The functionality is generic enough to measure the data, from the kernel
-subsystems, that is required to protect the integrity of the kernel at
-runtime.
-
-System administrators may want to limit the critical data being
-measured, quoted, and attested. To enable that, a new IMA policy
-condition is defined.
-
-This patch set also addresses the need for measuring kernel critical
-data early, before a custom IMA policy is loaded - by providing a
-builtin IMA policy.
-
-And lastly, the series provides the first consumer of the new IMA hook -
-namely SeLinux.
-
-This series is based on the following repo/branch:
-
- repo: https://github.com/torvalds/linux
- branch: master
- commit 09162bc32c88 ("Linux 5.10-rc4")
-
-This series also has a dependency on the following patch
-https://patchwork.kernel.org/patch/11901423/
-
-Change Log v6:
-Incorporated feedback from Mimi on v5 of this series.
- - Got rid of patch 5 from the v5 of the series.(the allow list for data
-   sources)
- - Updated function descriptions, changed variable names etc.
- - Moved the input param event_data_source in ima_measure_critical_data()
-   to a new patch. (patch 6/8 of this series)
- - Split patch 4 from v5 of the series into two patches (patch 4/8 and 
-   patch 5/8)
- - Updated cover letter and patch descriptions as per feedback.
-
-Change Log v5:
-(1) Incorporated feedback from Stephen on the last SeLinux patch.
- SeLinux Patch: https://patchwork.kernel.org/patch/11801585/
- - Freed memory in the reverse order of allocation in 
-   selinux_measure_state().
- - Used scnprintf() instead of snprintf() to create the string for
-   selinux state.
- - Allocated event name passed to ima_measure_critical_data() before
-   gathering selinux state and policy information for measuring.
-
-(2) Incorporated feedback from Mimi on v4 of this series.
- V4 of this Series: https://patchwork.kernel.org/project/linux-integrity/list/?series=354437
-
- - Removed patch "[v4,2/6] IMA: conditionally allow empty rule data"
- - Reversed the order of following patches.
-      [v4,4/6] IMA: add policy to measure critical data from kernel components
-      [v4,5/6] IMA: add hook to measure critical data from kernel components
-   and renamed them to remove "from kernel components"
- - Added a new patch to this series - 
-       IMA: add critical_data to built-in policy rules
-
- - Added the next version of SeLinux patch (mentioned above) to this
-   series 
-       selinux: measure state and hash of the policy using IMA
-
- - Updated cover-letter description to give broader perspective of the
-   feature, rearranging paragraphs, removing unnecessary info, clarifying
-   terms etc.
- - Got rid of opt_list param from ima_match_rule_data().
- - Updated the documentation to remove sources that don't yet exist.
- - detailed IMA hook description added to ima_measure_critical_data(),
-   as well as elaborating terms event_name, event_data_source. 
- - "data_sources:=" is not a mandatory policy option for 
-   func=CRITICAL_DATA anymore. If not present, all the data sources
-   specified in __ima_supported_kernel_data_sources will be measured.
-
-Lakshmi Ramasubramanian (2):
-  IMA: add a built-in policy rule for critical data measurement
-  selinux: measure state and hash of the policy using IMA
-
-Tushar Sugandhi (6):
-  IMA: generalize keyring specific measurement constructs
-  IMA: add support to measure buffer data hash
-  IMA: define a hook to measure kernel integrity critical data
-  IMA: add policy rule to measure critical data
-  IMA: extend policy to add data sources as a critical data measurement
-    constraint
-  IMA: add support to critical data hook to limit data sources for
-    measurement
-
- Documentation/ABI/testing/ima_policy         |  10 +-
- include/linux/ima.h                          |   8 +
- security/integrity/ima/ima.h                 |   8 +-
- security/integrity/ima/ima_api.c             |   8 +-
- security/integrity/ima/ima_appraise.c        |   2 +-
- security/integrity/ima/ima_asymmetric_keys.c |   2 +-
- security/integrity/ima/ima_main.c            |  81 +++++++++-
- security/integrity/ima/ima_policy.c          | 123 ++++++++++++---
- security/integrity/ima/ima_queue_keys.c      |   3 +-
- security/selinux/Makefile                    |   2 +
- security/selinux/hooks.c                     |   3 +
- security/selinux/include/security.h          |  11 +-
- security/selinux/measure.c                   | 157 +++++++++++++++++++
- security/selinux/selinuxfs.c                 |   8 +
- security/selinux/ss/services.c               |  71 +++++++--
- 15 files changed, 448 insertions(+), 49 deletions(-)
- create mode 100644 security/selinux/measure.c
-
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 9911a6e496b6..60ba073f1575 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -30,7 +30,8 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+ extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
+-extern void ima_measure_critical_data(const char *event_name,
++extern void ima_measure_critical_data(const char *event_data_source,
++				      const char *event_name,
+ 				      const void *buf, int buf_len,
+ 				      bool measure_buf_hash);
+ 
+@@ -119,7 +120,8 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+ }
+ 
+ static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
+-static inline void ima_measure_critical_data(const char *event_name,
++static inline void ima_measure_critical_data(const char *event_data_source,
++					     const char *event_name,
+ 					     const void *buf, int buf_len,
+ 					     bool measure_buf_hash) {}
+ #endif /* CONFIG_IMA */
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 7661f09569f3..27b8b8316622 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -924,6 +924,7 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+ 
+ /**
+  * ima_measure_critical_data - measure kernel integrity critical data
++ * @event_data_source: kernel data source being measured
+  * @event_name: event name to be used for the buffer entry
+  * @buf: pointer to buffer containing data to measure
+  * @buf_len: length of buffer(in bytes)
+@@ -932,6 +933,9 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+  * Measure the kernel subsystem data, critical to the integrity of the kernel,
+  * into the IMA log and extend the @pcr.
+  *
++ * Use @event_data_source to describe the kernel data source for the buffer
++ * being measured.
++ *
+  * Use @event_name to describe the state/buffer data change.
+  * Examples of critical data (buf) could be kernel in-memory r/o structures,
+  * hash of the memory structures, or data that represents subsystem state
+@@ -944,17 +948,18 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+  *
+  * The data (buf) can only be measured, not appraised.
+  */
+-void ima_measure_critical_data(const char *event_name,
++void ima_measure_critical_data(const char *event_data_source,
++			       const char *event_name,
+ 			       const void *buf, int buf_len,
+ 			       bool measure_buf_hash)
+ {
+-	if (!event_name || !buf || !buf_len) {
++	if (!event_name || !event_data_source || !buf || !buf_len) {
+ 		pr_err("Invalid arguments passed to %s().\n", __func__);
+ 		return;
+ 	}
+ 
+ 	process_buffer_measurement(NULL, buf, buf_len, event_name,
+-				   CRITICAL_DATA, 0, NULL,
++				   CRITICAL_DATA, 0, event_data_source,
+ 				   measure_buf_hash);
+ }
+ 
 -- 
 2.17.1
 
