@@ -2,119 +2,238 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4C6C64E7B
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Nov 2020 12:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72599C5519F
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Nov 2020 13:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 452E022240
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Nov 2020 12:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25BF422272
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Nov 2020 13:17:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JsAS2P88"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbgKTMwE (ORCPT
+        id S1727417AbgKTNRN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Nov 2020 07:52:04 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2136 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726586AbgKTMwD (ORCPT
+        Fri, 20 Nov 2020 08:17:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49140 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgKTNRN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Nov 2020 07:52:03 -0500
-Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CcxGl1WXgz67Fvf;
-        Fri, 20 Nov 2020 20:50:23 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1913.5; Fri, 20 Nov 2020 13:52:00 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.1913.007;
- Fri, 20 Nov 2020 13:52:00 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Fri, 20 Nov 2020 08:17:13 -0500
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B186DC0613CF
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2020 05:17:12 -0800 (PST)
+Received: by mail-wr1-x441.google.com with SMTP id b6so10023537wrt.4
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2020 05:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gud8TQdWG2KeJ5eqXnujFScTdH5YvKCszy+3uGYvBLY=;
+        b=JsAS2P880N+8DPnkDGT7DKKgXQzA3YXS6i6YwHO4j0npfUo72WcPqCuHBhRLhw+f58
+         3Xn/Bjy61GO1MsE+3uatjJkJZidXlfA8QuGzv55tPBsO22Kjh/3hcV0DyH7ITLAqnvFN
+         +mcTWlf7jvupzNesWG4e1ybrO9Yskg7bGhVic=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Gud8TQdWG2KeJ5eqXnujFScTdH5YvKCszy+3uGYvBLY=;
+        b=JIYSTWON1BaYkMZR1AIVtrMyoUryRrHgBP2rJCkZR6y62jGgyWbe7FmeHseJeeYsrQ
+         U/whs9KjuOSlek7WTnZWRIJ3IpWc+4zjRN/VBCA9T48WMpQHeG+E/b5872vM1hIOj9pB
+         2g3Hb5zjJZUvcgoBTJT9LkUb6aW9wz+V7nawZtwhaI9Nt+k7z+a9DU2Q1d9A9gm5tdaS
+         v9Rbu3awrQmnbBxKRdzUAOlIblCsGWL8CoB4qOy167LiqdFAa9ug7AI3O3XzYPP/gD3V
+         7hGSL4YcYf72S503BgDE2KFFIC90NL2/3YH7M0p43SQ4CySN5Txc3EbAeILUZiVLISfh
+         LEPw==
+X-Gm-Message-State: AOAM533wqzWldbW7rLVsC7vAttVL3X0yUlyRd9sHvYs7EqUHE7UAInME
+        YkU9qabqAqT1NIJ2+ul9FKendg==
+X-Google-Smtp-Source: ABdhPJwJSTBCUva8ryQ8J/J8yWWWvmJt0sNUn79Fqo27ZMJn3q3e1QlAqOpTzwN3XyEgikySgWIUVQ==
+X-Received: by 2002:a5d:5308:: with SMTP id e8mr15718844wrv.299.1605878231382;
+        Fri, 20 Nov 2020 05:17:11 -0800 (PST)
+Received: from kpsingh.c.googlers.com.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
+        by smtp.gmail.com with ESMTPSA id u203sm4260197wme.32.2020.11.20.05.17.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2020 05:17:10 -0800 (PST)
+From:   KP Singh <kpsingh@chromium.org>
+To:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>,
         Mimi Zohar <zohar@linux.ibm.com>
-CC:     Christoph Hellwig <hch@infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Casey Schaufler" <casey@schaufler-ca.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        "James Morris" <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Micah Morton" <mortonm@chromium.org>
-Subject: RE: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
- ima_calc_file_hash()
-Thread-Topic: [RESEND][PATCH] ima: Set and clear FMODE_CAN_READ in
- ima_calc_file_hash()
-Thread-Index: AQHWuZM+vbqfejrqe02000rC0h3xoqnHabyAgAMLzKCAAG/IAIAABvEAgAAOKACAAAEYgIAAB9QAgAAHL4CAAY8zAIAAU72AgAABvoCAAAHXAIAD/8pw
-Date:   Fri, 20 Nov 2020 12:52:00 +0000
-Message-ID: <6dafff7889d34bc799b4c5bfd0bfebc8@huawei.com>
-References: <20201113080132.16591-1-roberto.sassu@huawei.com>
- <20201114111057.GA16415@infradead.org>
- <0fd0fb3360194d909ba48f13220f9302@huawei.com>
- <20201116162202.GA15010@infradead.org>
- <c556508437ffc10d3873fe25cbbba3484ca574df.camel@linux.ibm.com>
- <CAHk-=wiso=-Fhe2m042CfBNUGhoVB1Pry14DF64uUgztHVOW0g@mail.gmail.com>
- <20201116174127.GA4578@infradead.org>
- <CAHk-=wjd0RNthZQTLVsnK_d9SFYH0rug2tkezLLB0J-YZzVC+Q@mail.gmail.com>
- <3f8cc7c9462353ac2eef58e39beee079bdd9c7b4.camel@linux.ibm.com>
- <CAHk-=wih-ibNUxeiKpuKrw3Rd2=QEAZ8zgRWt_CORAjbZykRWQ@mail.gmail.com>
- <5d8fa26d376999f703aac9103166a572fc0df437.camel@linux.ibm.com>
- <CAHk-=wiPfWZYsAqhQry=mhAbKei8bHZDyVPJS0XHZz_FH9Jymw@mail.gmail.com>
- <CAHk-=wjinHpYRk_F1qiaXbXcMtn-ZHKkPkBvZpDJHjoN_2o4ag@mail.gmail.com>
-In-Reply-To: <CAHk-=wjinHpYRk_F1qiaXbXcMtn-ZHKkPkBvZpDJHjoN_2o4ag@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Subject: [PATCH bpf-next 1/3] ima: Implement ima_inode_hash
+Date:   Fri, 20 Nov 2020 13:17:06 +0000
+Message-Id: <20201120131708.3237864-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.29.2.454.gaff20da3a2-goog
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBMaW51cyBUb3J2YWxkcyBbbWFpbHRvOnRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24u
-b3JnXQ0KPiBTZW50OiBXZWRuZXNkYXksIE5vdmVtYmVyIDE4LCAyMDIwIDEyOjM3IEFNDQo+IE9u
-IFR1ZSwgTm92IDE3LCAyMDIwIGF0IDM6MjkgUE0gTGludXMgVG9ydmFsZHMNCj4gPHRvcnZhbGRz
-QGxpbnV4LWZvdW5kYXRpb24ub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9uIFR1ZSwgTm92IDE3LCAy
-MDIwIGF0IDM6MjQgUE0gTWltaSBab2hhciA8em9oYXJAbGludXguaWJtLmNvbT4NCj4gd3JvdGU6
-DQo+ID4gPg0KPiA+ID4gSSByZWFsbHkgd2lzaCBpdCB3YXNuJ3QgbmVlZGVkLg0KPiA+DQo+ID4g
-U2VyaW91c2x5LCBJIGdldCB0aGUgZmVlbGluZyB0aGF0IElNQSBpcyBjb21wbGV0ZWx5IG1pcy1k
-ZXNpZ25lZCwgYW5kDQo+ID4gaXMgZG9pbmcgYWN0aXZlbHkgYmFkIHRoaW5ncy4NCj4gPg0KPiA+
-IFdobyB1c2VzIHRoaXMgImZlYXR1cmUiLCBhbmQgd2hvIGNhcmVzPyBCZWNhdXNlIEkgd291bGQg
-c3VnZ2VzdCB5b3UNCj4gPiBqdXN0IGNoYW5nZSB0aGUgcG9saWN5IGFuZCBiZSBkb25lIHdpdGgg
-aXQuDQo+IA0KPiBBbm90aGVyIGFsdGVybmF0aXZlIGlzIHRvIGNoYW5nZSB0aGUgcG9saWN5IGFu
-ZCBzYXkgImFueSB3cml0ZS1vbmx5DQo+IG9wZW4gZ2V0cyB0dXJuZWQgaW50byBhIHJlYWQtd3Jp
-dGUgb3BlbiIuDQoNCk9uZSBpc3N1ZSB0aGF0IHdvdWxkIGFyaXNlIGZyb20gZG9pbmcgaXQgaXMg
-dGhhdCBzZWN1cml0eSBwb2xpY2llcyBuZWVkDQp0byBiZSBtb2RpZmllZCB0byBncmFudCB0aGUg
-YWRkaXRpb25hbCByZWFkIHBlcm1pc3Npb24uIElmIHRoZSBvcGVuDQpmbGFnIGlzIGFkZGVkIGVh
-cmx5LCB0aGUgTFNNIGhvb2sgc2VjdXJpdHlfZmlsZV9vcGVuKCkgd2lsbCBzZWUgaXQuDQoNClRo
-aXMgc29sdXRpb24gc2VlbXMgbm90IG9wdGltYWwsIGFzIHdlIGFyZSBnaXZpbmcgdG8gcHJvY2Vz
-c2VzIGENCnBlcm1pc3Npb24gdGhhdCB0aGV5IHdvdWxkbid0IHJlYWxseSB0YWtlIGFkdmFudGFn
-ZSBvZiwgc2luY2UgdGhlDQpjb250ZW50IHJlYWQgcmVtYWlucyBpbiBrZXJuZWwgc3BhY2UuIEFu
-ZCBhbiBhZGRpdGlvbmFsIHBlcm1pc3Npb24NCmlzIGEgcGVybWlzc2lvbiB0aGF0IGNhbiBiZSBl
-eHBsb2l0ZWQuDQoNCkFzIE1pbWkgc2FpZCwgd2UgYWxyZWFkeSBoYXZlIGEgc2Vjb25kIG9wZW4g
-d2l0aCBkZW50cnlfb3BlbigpIHdoZW4NCnRoZSBvcmlnaW5hbCBmaWxlIGRlc2NyaXB0b3IgaXMg
-bm90IHN1aXRhYmxlLiBUaGUgb25seSBwcm9ibGVtLCB3aGljaCBpcw0Kd2h5IGNoYW5naW5nIHRo
-ZSBtb2RlIGlzIHN0aWxsIHRoZXJlLCBpcyB0aGF0IGEgcHJvY2VzcyBzdGlsbCBtaWdodCBub3QN
-CmhhdmUgdGhlIHByaXZpbGVnZSB0byByZWFkLCBhbmQgdGhpcyBpcyBhIGxlZ2l0aW1hdGUgY2Fz
-ZS4NCg0KV2UgY291bGQgYXNzaWduIGEgbW9yZSBwb3dlcmZ1bCBjcmVkZW50aWFsIHRvIHRoZSBw
-cm9jZXNzLCBzaW5jZQ0KZGVudHJ5X29wZW4oKSBhY2NlcHRzIGEgY3JlZGVudGlhbCBhcyBhbiBh
-cmd1bWVudC4gV2UgY291bGQgb2J0YWluDQpzdWNoIHBvd2VyZnVsIGNyZWRlbnRpYWwgZnJvbSBw
-cmVwYXJlX2tlcm5lbF9jcmVkKCkuIFRoaXMgb3B0aW9uDQpoYXMgYmV0dGVyIGNoYW5jZXMgdG8g
-d29yayB3aXRob3V0IG1vZGlmeWluZyBleGlzdGluZyBzZWN1cml0eSBwb2xpY2llcw0KYXMgbGlr
-ZWx5IHRob3NlIHBvbGljaWVzIGFscmVhZHkgYXNzaWduZWQgdGhlIHJlcXVpcmVkIHByaXZpbGVn
-ZSB0byB0aGUNCmtlcm5lbC4gSG93ZXZlciwgZG9pbmcgc28gbWlnaHQgbm90IGJlIHdoYXQgTFNN
-IHBlb3BsZSByZWNvbW1lbmQuDQoNCkFueSBzdWdnZXN0aW9uPw0KDQpUaGFua3MNCg0KUm9iZXJ0
-bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFu
-YWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
+From: KP Singh <kpsingh@google.com>
+
+This is in preparation to add a helper for BPF LSM programs to use
+IMA hashes when attached to LSM hooks. There are LSM hooks like
+inode_unlink which do not have a struct file * argument and cannot
+use the existing ima_file_hash API.
+
+An inode based API is, therefore, useful in LSM based detections like an
+executable trying to delete itself which rely on the inode_unlink LSM
+hook.
+
+Moreover, the ima_file_hash function does nothing with the struct file
+pointer apart from calling file_inode on it and converting it to an
+inode.
+
+Signed-off-by: KP Singh <kpsingh@google.com>
+---
+ include/linux/ima.h               |  6 +++
+ scripts/bpf_helpers_doc.py        |  1 +
+ security/integrity/ima/ima_main.c | 74 ++++++++++++++++++++++---------
+ 3 files changed, 59 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 8fa7bcfb2da2..7233a2751754 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -29,6 +29,7 @@ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+ extern void ima_post_path_mknod(struct dentry *dentry);
+ extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
++extern int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size);
+ extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
+ 
+ #ifdef CONFIG_IMA_KEXEC
+@@ -115,6 +116,11 @@ static inline int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
+ #endif /* CONFIG_IMA */
+ 
+diff --git a/scripts/bpf_helpers_doc.py b/scripts/bpf_helpers_doc.py
+index c5bc947a70ad..add7fcb32dcd 100755
+--- a/scripts/bpf_helpers_doc.py
++++ b/scripts/bpf_helpers_doc.py
+@@ -478,6 +478,7 @@ class PrinterHelpers(Printer):
+             'struct tcp_request_sock',
+             'struct udp6_sock',
+             'struct task_struct',
++            'struct inode',
+             'struct path',
+             'struct btf_ptr',
+     }
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 2d1af8899cab..1dd2123b5b43 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -501,37 +501,17 @@ int ima_file_check(struct file *file, int mask)
+ }
+ EXPORT_SYMBOL_GPL(ima_file_check);
+ 
+-/**
+- * ima_file_hash - return the stored measurement if a file has been hashed and
+- * is in the iint cache.
+- * @file: pointer to the file
+- * @buf: buffer in which to store the hash
+- * @buf_size: length of the buffer
+- *
+- * On success, return the hash algorithm (as defined in the enum hash_algo).
+- * If buf is not NULL, this function also outputs the hash into buf.
+- * If the hash is larger than buf_size, then only buf_size bytes will be copied.
+- * It generally just makes sense to pass a buffer capable of holding the largest
+- * possible hash: IMA_MAX_DIGEST_SIZE.
+- * The file hash returned is based on the entire file, including the appended
+- * signature.
+- *
+- * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
+- * If the parameters are incorrect, return -EINVAL.
+- */
+-int ima_file_hash(struct file *file, char *buf, size_t buf_size)
++static int __ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
+ {
+-	struct inode *inode;
+ 	struct integrity_iint_cache *iint;
+ 	int hash_algo;
+ 
+-	if (!file)
++	if (!inode)
+ 		return -EINVAL;
+ 
+ 	if (!ima_policy_flag)
+ 		return -EOPNOTSUPP;
+ 
+-	inode = file_inode(file);
+ 	iint = integrity_iint_find(inode);
+ 	if (!iint)
+ 		return -EOPNOTSUPP;
+@@ -558,8 +538,58 @@ int ima_file_hash(struct file *file, char *buf, size_t buf_size)
+ 
+ 	return hash_algo;
+ }
++
++/**
++ * ima_file_hash - return the stored measurement if a file has been hashed and
++ * is in the iint cache.
++ * @file: pointer to the file
++ * @buf: buffer in which to store the hash
++ * @buf_size: length of the buffer
++ *
++ * On success, return the hash algorithm (as defined in the enum hash_algo).
++ * If buf is not NULL, this function also outputs the hash into buf.
++ * If the hash is larger than buf_size, then only buf_size bytes will be copied.
++ * It generally just makes sense to pass a buffer capable of holding the largest
++ * possible hash: IMA_MAX_DIGEST_SIZE.
++ * The file hash returned is based on the entire file, including the appended
++ * signature.
++ *
++ * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
++ * If the parameters are incorrect, return -EINVAL.
++ */
++int ima_file_hash(struct file *file, char *buf, size_t buf_size)
++{
++	if (!file)
++		return -EINVAL;
++
++	return __ima_inode_hash(file_inode(file), buf, buf_size);
++}
+ EXPORT_SYMBOL_GPL(ima_file_hash);
+ 
++/**
++ * ima_inode_hash - return the stored measurement if the inode has been hashed
++ * and is in the iint cache.
++ * @inode: pointer to the inode
++ * @buf: buffer in which to store the hash
++ * @buf_size: length of the buffer
++ *
++ * On success, return the hash algorithm (as defined in the enum hash_algo).
++ * If buf is not NULL, this function also outputs the hash into buf.
++ * If the hash is larger than buf_size, then only buf_size bytes will be copied.
++ * It generally just makes sense to pass a buffer capable of holding the largest
++ * possible hash: IMA_MAX_DIGEST_SIZE.
++ * The hash returned is based on the entire contents, including the appended
++ * signature.
++ *
++ * If IMA is disabled or if no measurement is available, return -EOPNOTSUPP.
++ * If the parameters are incorrect, return -EINVAL.
++ */
++int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size)
++{
++	return __ima_inode_hash(inode, buf, buf_size);
++}
++EXPORT_SYMBOL_GPL(ima_inode_hash);
++
+ /**
+  * ima_post_create_tmpfile - mark newly created tmpfile as new
+  * @file : newly created tmpfile
+-- 
+2.29.2.454.gaff20da3a2-goog
+
