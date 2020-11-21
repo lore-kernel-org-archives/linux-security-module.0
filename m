@@ -2,137 +2,191 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11938C5519F
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Nov 2020 00:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A2AC56202
+	for <linux-security-module@archiver.kernel.org>; Sat, 21 Nov 2020 00:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7DF924137
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Nov 2020 00:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B33AB23A65
+	for <linux-security-module@archiver.kernel.org>; Sat, 21 Nov 2020 00:51:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cRoBALPF"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4P5Gesa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbgKUAVJ (ORCPT
+        id S1728410AbgKUAvB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Nov 2020 19:21:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39478 "EHLO
+        Fri, 20 Nov 2020 19:51:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728207AbgKUAVJ (ORCPT
+        with ESMTP id S1728305AbgKUAvA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Nov 2020 19:21:09 -0500
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F5F6C061A47
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2020 16:21:08 -0800 (PST)
-Received: by mail-lf1-x142.google.com with SMTP id u18so15894280lfd.9
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2020 16:21:08 -0800 (PST)
+        Fri, 20 Nov 2020 19:51:00 -0500
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CBDC0613CF
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2020 16:50:59 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id 1so12151314wme.3
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Nov 2020 16:50:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=drZa5velgen67wbuhgWCwO4H5ccjjMv2YMhC3r+McB0=;
-        b=cRoBALPFmUDu+Z0/0D5ewnX7flXktvF13PyVjt5u+qRieTP0Df9B5Q4xmQWEdFtQwz
-         TJP7P8SsG14kLwr778JOBowdh/blCruw5yQw9tafpanLY7lU392StpA1oIirOPMZdBjV
-         3C9V7nVaotQBG4KcuwA02LzpTjj4j5IefgW4w=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gNfZ0xa6JKwNNxWqj03/KjB0EjaVfS36YlA9F8Reu1w=;
+        b=j4P5Gesa95dGfyRNG4KWRAmUesbt1qCEz9MZcVyRRZef5a9//bkVESKcmemK1Qa5Mf
+         2EY2QipBVW6g9Ez/hC9CGBFw2H2k2caM6kxJ+wYI4lk8K1y7bvToESGzEOApAKO2P7Lz
+         Ncgxb38t4RITuRIkWHXNj+ySXUuvDplVn5niI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=drZa5velgen67wbuhgWCwO4H5ccjjMv2YMhC3r+McB0=;
-        b=hZ3PHOCOpl9vZkSj9cHWWy/UNDzEbg5E3bOc1sdWLjwLa4fLowAEItm+konh/WFYCM
-         zWRXvLNiUA2OneovP9/3jugnOZAFAQ8hx1D/04Ge2IEjmAreWsi8Zw6dhV4AlYQzuzHL
-         uXIO/7vyv+dSh5fvgFmAFHg3FQSLjrBSSAE+ghaKSpfRTXEUvLl3Z+fIHMgWjrzjpSVE
-         Yvh2UcMhO0MQmhkcrov1TR8cwnAcN0MtVVToQ8zsFSHFVF3jzanSI9C7jaPY6rCe0sjU
-         18eIZvRdEaoARmsYkWSsAplh81srN6MlyLAcU3OzQSUBOHPtvmVbhScX14HO3AM7ljzB
-         S3Nw==
-X-Gm-Message-State: AOAM531P0yqs5ACfL2gW429VJJ4Zwnte7UVQAUhReXnhkuMi6xd9/vdS
-        wJs2JLVTFWblSaEhZgLCGRX2OzQ2xA6nEbjMbPGNGw==
-X-Google-Smtp-Source: ABdhPJwj+FDMobw209UyLNKnz1dkYYaf/t6WrekVSol8Lb45lO3K3r2Nggoos7syItRduEXQP1UCDn97j7XbeZ0JV8c=
-X-Received: by 2002:a05:6512:110a:: with SMTP id l10mr9118329lfg.167.1605918066950;
- Fri, 20 Nov 2020 16:21:06 -0800 (PST)
-MIME-Version: 1.0
-References: <20201120131708.3237864-1-kpsingh@chromium.org>
- <20201120131708.3237864-3-kpsingh@chromium.org> <cad0ea25-8567-368a-1f99-b4adc7440a7f@fb.com>
-In-Reply-To: <cad0ea25-8567-368a-1f99-b4adc7440a7f@fb.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gNfZ0xa6JKwNNxWqj03/KjB0EjaVfS36YlA9F8Reu1w=;
+        b=EC09mSnEAojOvYVk7MU4JO1Wrqr6xFMhhha+uPnvRAnuD1/WobeNo1wLAIxrDxyKjE
+         o2An9e/GIm9cjX1E6M5GZ7QtX2z2XJpc+lmj01ncms51JO3oesbLNxkkqy2LtAB2In+w
+         rQF8di9hDGK/+am80omeJZtYenld/q0fOZw6VluoVnKqnmhMcHXRO4ko1pMk/ixTAoKJ
+         x7PMpw2v1e5vsbS2CM03F8bjzDZroomTvw9KlRpv/5mzF3MYlCNP6jA4N0nIRSDMK2gG
+         C5F8Pja0Dywad1u9kuN2r1ho7IHcuZyD+8faoZvRjyHu6jFS9F+LVRgrRKPpNJHyKYs1
+         HxaA==
+X-Gm-Message-State: AOAM533HYMCLKJVWOVQ6RWK8vahIMWz4PqI1i3vqF5l6jpi4pjH88CV1
+        dXZS4X+0NOAXOaA6hzRrPflPxg==
+X-Google-Smtp-Source: ABdhPJwE901Pq8K1Dg2K7dhF6+5tXg1xc7YKa4Hla328PUHTL3fxH0K1hjO6sPaGQs9wHxvOjssF5Q==
+X-Received: by 2002:a1c:f20e:: with SMTP id s14mr12139150wmc.126.1605919858004;
+        Fri, 20 Nov 2020 16:50:58 -0800 (PST)
+Received: from kpsingh.c.googlers.com.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
+        by smtp.gmail.com with ESMTPSA id s8sm7133607wrn.33.2020.11.20.16.50.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Nov 2020 16:50:57 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
-Date:   Sat, 21 Nov 2020 01:20:56 +0100
-Message-ID: <CACYkzJ7doNURahGQn=0d8k73USH85owoZ8yDdwtG48oQLNHYaw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/3] bpf: Update LSM selftests for bpf_ima_inode_hash
-To:     Yonghong Song <yhs@fb.com>
-Cc:     James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+To:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH bpf-next v2 3/3] bpf: Update LSM selftests for bpf_ima_inode_hash
+Date:   Sat, 21 Nov 2020 00:50:54 +0000
+Message-Id: <20201121005054.3467947-3-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.29.2.454.gaff20da3a2-goog
+In-Reply-To: <20201121005054.3467947-1-kpsingh@chromium.org>
+References: <20201121005054.3467947-1-kpsingh@chromium.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 20, 2020 at 7:11 PM Yonghong Song <yhs@fb.com> wrote:
->
->
->
-> On 11/20/20 5:17 AM, KP Singh wrote:
-> > From: KP Singh <kpsingh@google.com>
-> >
-> > - Update the IMA policy before executing the test binary (this is not an
-> >    override of the policy, just an append that ensures that hashes are
-> >    calculated on executions).
-> >
-> > - Call the bpf_ima_inode_hash in the bprm_committed_creds hook and check
-> >    if the call succeeded and a hash was calculated.
-> >
-> > Signed-off-by: KP Singh <kpsingh@google.com>
->
-> LGTM with a few nits below.
->
-> Acked-by: Yonghong Song <yhs@fb.com>
->
-> > ---
-> >   tools/testing/selftests/bpf/config            |  3 ++
+From: KP Singh <kpsingh@google.com>
 
-[...]
+- Update the IMA policy before executing the test binary (this is not an
+  override of the policy, just an append that ensures that hashes are
+  calculated on executions).
 
-> >   }
-> >
-> [...]
-> > +
-> >   void test_test_lsm(void)
-> >   {
-> >       struct lsm *skel = NULL;
-> > @@ -66,6 +88,10 @@ void test_test_lsm(void)
-> >       if (CHECK(err, "attach", "lsm attach failed: %d\n", err))
-> >               goto close_prog;
-> >
-> > +     err = update_ima_policy();
-> > +     if (CHECK(err != 0, "update_ima_policy", "error = %d\n", err))
-> > +             goto close_prog;
->
-> "err != 0" => err?
-> "error = %d" => "err %d" for consistency with other usage in this function.
+- Call the bpf_ima_inode_hash in the bprm_committed_creds hook and check
+  if the call succeeded and a hash was calculated.
 
-Done.
+Acked-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: KP Singh <kpsingh@google.com>
+---
+ tools/testing/selftests/bpf/config            |  3 ++
+ .../selftests/bpf/prog_tests/test_lsm.c       | 32 +++++++++++++++++++
+ tools/testing/selftests/bpf/progs/lsm.c       |  7 +++-
+ 3 files changed, 41 insertions(+), 1 deletion(-)
 
->
-> > +
-> >       err = exec_cmd(&skel->bss->monitored_pid);
-> >       if (CHECK(err < 0, "exec_cmd", "err %d errno %d\n", err, errno))
-> >               goto close_prog;
-> > @@ -83,6 +109,12 @@ void test_test_lsm(void)
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index 2118e23ac07a..4b5764031368 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -39,3 +39,6 @@ CONFIG_BPF_JIT=y
+ CONFIG_BPF_LSM=y
+ CONFIG_SECURITY=y
+ CONFIG_LIRC=y
++CONFIG_IMA=y
++CONFIG_IMA_WRITE_POLICY=y
++CONFIG_IMA_READ_POLICY=y
+diff --git a/tools/testing/selftests/bpf/prog_tests/test_lsm.c b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
+index 6ab29226c99b..bcb050a296a4 100644
+--- a/tools/testing/selftests/bpf/prog_tests/test_lsm.c
++++ b/tools/testing/selftests/bpf/prog_tests/test_lsm.c
+@@ -52,6 +52,28 @@ int exec_cmd(int *monitored_pid)
+ 	return -EINVAL;
+ }
+ 
++#define IMA_POLICY "measure func=BPRM_CHECK"
++
++/* This does not override the policy, IMA policy updates are
++ * append only, so this just ensures that "measure func=BPRM_CHECK"
++ * is in the policy. IMA does not allow us to remove this line once
++ * it is added.
++ */
++static int update_ima_policy(void)
++{
++	int fd, ret = 0;
++
++	fd = open("/sys/kernel/security/ima/policy", O_WRONLY);
++	if (fd < 0)
++		return -errno;
++
++	if (write(fd, IMA_POLICY, sizeof(IMA_POLICY)) == -1)
++		ret = -errno;
++
++	close(fd);
++	return ret;
++}
++
+ void test_test_lsm(void)
+ {
+ 	struct lsm *skel = NULL;
+@@ -66,6 +88,10 @@ void test_test_lsm(void)
+ 	if (CHECK(err, "attach", "lsm attach failed: %d\n", err))
+ 		goto close_prog;
+ 
++	err = update_ima_policy();
++	if (CHECK(err, "update_ima_policy", "err %d\n", err))
++		goto close_prog;
++
+ 	err = exec_cmd(&skel->bss->monitored_pid);
+ 	if (CHECK(err < 0, "exec_cmd", "err %d errno %d\n", err, errno))
+ 		goto close_prog;
+@@ -83,6 +109,12 @@ void test_test_lsm(void)
+ 	CHECK(skel->bss->mprotect_count != 1, "mprotect_count",
+ 	      "mprotect_count = %d\n", skel->bss->mprotect_count);
+ 
++	CHECK(skel->data->ima_hash_ret < 0, "ima_hash_ret",
++	      "ima_hash_ret = %ld\n", skel->data->ima_hash_ret);
++
++	CHECK(skel->bss->ima_hash == 0, "ima_hash",
++	      "ima_hash = %lu\n", skel->bss->ima_hash);
++
+ 	syscall(__NR_setdomainname, &buf, -2L);
+ 	syscall(__NR_setdomainname, 0, -3L);
+ 	syscall(__NR_setdomainname, ~0L, -4L);
+diff --git a/tools/testing/selftests/bpf/progs/lsm.c b/tools/testing/selftests/bpf/progs/lsm.c
+index ff4d343b94b5..5adc193e414d 100644
+--- a/tools/testing/selftests/bpf/progs/lsm.c
++++ b/tools/testing/selftests/bpf/progs/lsm.c
+@@ -35,6 +35,8 @@ char _license[] SEC("license") = "GPL";
+ int monitored_pid = 0;
+ int mprotect_count = 0;
+ int bprm_count = 0;
++long ima_hash_ret = -1;
++u64 ima_hash = 0;
+ 
+ SEC("lsm/file_mprotect")
+ int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
+@@ -65,8 +67,11 @@ int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
+ 	__u32 key = 0;
+ 	__u64 *value;
+ 
+-	if (monitored_pid == pid)
++	if (monitored_pid == pid) {
+ 		bprm_count++;
++		ima_hash_ret = bpf_ima_inode_hash(bprm->file->f_inode,
++						  &ima_hash, sizeof(ima_hash));
++	}
+ 
+ 	bpf_copy_from_user(args, sizeof(args), (void *)bprm->vma->vm_mm->arg_start);
+ 	bpf_copy_from_user(args, sizeof(args), (void *)bprm->mm->arg_start);
+-- 
+2.29.2.454.gaff20da3a2-goog
 
-[...]
-
-> >   int mprotect_count = 0;
-> >   int bprm_count = 0;
-> > +int ima_hash_ret = -1;
->
-> The helper returns type "long", but "int" type here should be fine too.
-
-Changed it to long for correctness.
