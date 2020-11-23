@@ -2,238 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15717C63777
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:45:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB44C2D0E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B85D020727
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AA3C20719
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:49:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ucprSht0"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PTQJX6vR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbgKWTok (ORCPT
+        id S1729786AbgKWTt2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 14:44:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729521AbgKWTok (ORCPT
+        Mon, 23 Nov 2020 14:49:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:16350 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728973AbgKWTt2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 14:44:40 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CCEC0613CF
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 11:44:40 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id s30so25470436lfc.4
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 11:44:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WkkyfzYc5dkm/KIiF9W4jRT3BRx+3sqZpO+ldzSWHAU=;
-        b=ucprSht07o3L8qhZLLc2Vt4PubCLLYecCKNAauQVntt/WOQx0TnUKdvhSMo4O3kPUB
-         uaUTYfr9u7VuLEvtbM35aoZwakgOWHYVHjw4Mng7Nx7VrQbWv4Tt/KS5ugKh9SaGeFX2
-         RVWHUO8H6oE35g5xy4ExNT0J9tz1RPg7b9HOQlsjqvp5KHt1ZdUObef9cJxmfTjtGs3e
-         thKIj2KnAjmAnht0O8u+JMUIDM9eFbTD7ieYfOqhRhtEVosbjAvqv+gyPmolJ+wWqzdt
-         5ZUswM45maUXB35BfcN7RSu535krwgoOUgZM4t2JGI8pMMDiwiDnaCVZppVOab7LjX70
-         E/mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WkkyfzYc5dkm/KIiF9W4jRT3BRx+3sqZpO+ldzSWHAU=;
-        b=QBqaZ3C8psOODmTcNgCPbOD2U0VA2DopKAM6JBkvOkAJO3OxeR4gxULM2sWLvv2ej6
-         qdQCxr/UL1KCpEX9vHE2IIKwsGa+o51fRqXGmuB8v+5Kwv76sD6EbIuzkTKJVuG0bD29
-         mrIsqirz5Kdw1uWM8GQXkW6678kOvQ2sLxzfD3uIFWJgP32PhskKStYYEhiYp3O//gjL
-         P2yAosredT7wW16iPrRFyB5sCDDZ43zN22ij41CoBJtoeoXz4H3V6/Of2UkQvkbf76Vt
-         mPrRG593KLORBM8QHWbH4bYKsgsziclKjgjgedc3xgQy1+AbM8LADBEhlaJ3NU7ijnxW
-         KavQ==
-X-Gm-Message-State: AOAM530V++9F5RA1LY4wu5a7GKLc5L0EWqEJUCHIsmOFtjDPkVcxaVRN
-        jdNVm4FM9quC86P2+9TokItiNhxVbcTKlRSE9NJPdQ==
-X-Google-Smtp-Source: ABdhPJxvAu80d98nm8DgUgnbxicof2cbnVoJUKvK4sfJq22s1FLjdXhc3R1+79TzlVPSsvuacsn9pSzptfgKcYYBWqk=
-X-Received: by 2002:ac2:5a49:: with SMTP id r9mr259465lfn.381.1606160678276;
- Mon, 23 Nov 2020 11:44:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20201112205141.775752-1-mic@digikod.net> <20201112205141.775752-8-mic@digikod.net>
- <CAG48ez3HA63CX852LLDFCcNyzRGwAr3x_cvA1-t8tgDxfF1dOQ@mail.gmail.com> <1d524ea9-85eb-049c-2156-05cad6d6fcfd@digikod.net>
-In-Reply-To: <1d524ea9-85eb-049c-2156-05cad6d6fcfd@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 23 Nov 2020 20:44:11 +0100
-Message-ID: <CAG48ez2cmsrZbUEmQmzPQugJikkvfs_MWmMizxmoyspCeXAXRQ@mail.gmail.com>
-Subject: Re: [PATCH v24 07/12] landlock: Support filesystem access-control
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 23 Nov 2020 14:49:28 -0500
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0ANJVUjP007843;
+        Mon, 23 Nov 2020 14:49:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=0B9RKFIVUN2IsJ5nGG5ET35xVEvhvmpf5VR3A1EdtVw=;
+ b=PTQJX6vRLuNFFGrSSIFWnCHNJkByX+ZN1uZnD1tNeGuMLztS6t21jN1wZh9xahrH2ALf
+ nW1WE8XL39qmM+zhmEaxvBw6R0jWWE79RmCRBb9bZlfhQas8u/L2owlqKk9OMALNCOVr
+ 4Us4ic23o1mb1ftuKBZ4TJ8rkcMoLUnuJNVcA0jwaZSPzuASPiFT/eL10kgbmfT7pWzQ
+ uKTM45/rFQPjmoxXRZ74gw0UEkihMXmlYkJOAQxfZeHkrSa30SRGHh+5PU1l2qZUmRK1
+ GIFOx7Fr0MbchyYXF2FrHUkQWXRyRhF21F+lWS34u6vhVGhC2GRaLBvfOfUp/emzfJgo nQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34ygtt4m2m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Nov 2020 14:49:19 -0500
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0ANJVerJ008563;
+        Mon, 23 Nov 2020 14:49:18 -0500
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34ygtt4m20-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Nov 2020 14:49:18 -0500
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0ANJluVM026535;
+        Mon, 23 Nov 2020 19:49:16 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma03ams.nl.ibm.com with ESMTP id 34xth8aurd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Nov 2020 19:49:16 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0ANJnENL49152498
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Nov 2020 19:49:14 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2D37952051;
+        Mon, 23 Nov 2020 19:49:14 +0000 (GMT)
+Received: from sig-9-65-241-175.ibm.com (unknown [9.65.241.175])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id E380E52057;
+        Mon, 23 Nov 2020 19:49:10 +0000 (GMT)
+Message-ID: <7990c489ed6fb3ae36978820400b7cf60c55c126.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 0/8] IMA: support for measuring kernel integrity
+ critical data
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
+        paul@paul-moore.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org, nramas@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Date:   Mon, 23 Nov 2020 14:49:10 -0500
+In-Reply-To: <20201123171800.GA6407@duo.ucw.cz>
+References: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
+         <20201120124657.GA31468@duo.ucw.cz>
+         <aadf6e35-39bc-74d4-6ca3-d708860738a5@linux.microsoft.com>
+         <20201122210031.GA26756@amd>
+         <d82ad1cac36e948c904300548c64244c145589ee.camel@linux.ibm.com>
+         <20201123171800.GA6407@duo.ucw.cz>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-23_17:2020-11-23,2020-11-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ mlxscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 suspectscore=3
+ bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2011230124
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Nov 21, 2020 at 11:06 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
-> On 21/11/2020 08:00, Jann Horn wrote:
-> > On Thu, Nov 12, 2020 at 9:52 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> >> Thanks to the Landlock objects and ruleset, it is possible to identify
-> >> inodes according to a process's domain.  To enable an unprivileged
-> >> process to express a file hierarchy, it first needs to open a director=
-y
-> >> (or a file) and pass this file descriptor to the kernel through
-> >> landlock_add_rule(2).  When checking if a file access request is
-> >> allowed, we walk from the requested dentry to the real root, following
-> >> the different mount layers.  The access to each "tagged" inodes are
-> >> collected according to their rule layer level, and ANDed to create
-> >> access to the requested file hierarchy.  This makes possible to identi=
-fy
-> >> a lot of files without tagging every inodes nor modifying the
-> >> filesystem, while still following the view and understanding the user
-> >> has from the filesystem.
-> >>
-> >> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
-> >> keep the same struct inodes for the same inodes whereas these inodes a=
-re
-> >> in use.
-> >>
-> >> This commit adds a minimal set of supported filesystem access-control
-> >> which doesn't enable to restrict all file-related actions.  This is th=
-e
-> >> result of multiple discussions to minimize the code of Landlock to eas=
-e
-> >> review.  Thanks to the Landlock design, extending this access-control
-> >> without breaking user space will not be a problem.  Moreover, seccomp
-> >> filters can be used to restrict the use of syscall families which may
-> >> not be currently handled by Landlock.
-> >>
-> >> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> >> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-> >> Cc: James Morris <jmorris@namei.org>
-> >> Cc: Jann Horn <jannh@google.com>
-> >> Cc: Jeff Dike <jdike@addtoit.com>
-> >> Cc: Kees Cook <keescook@chromium.org>
-> >> Cc: Richard Weinberger <richard@nod.at>
-> >> Cc: Serge E. Hallyn <serge@hallyn.com>
-> >> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >> ---
-> >>
-> >> Changes since v23:
-> >> * Enforce deterministic interleaved path rules.  To have consistent
-> >>   layered rules, granting access to a path implies that all accesses
-> >>   tied to inodes, from the requested file to the real root, must be
-> >>   checked.  Otherwise, stacked rules may result to overzealous
-> >>   restrictions.  By excluding the ability to add exceptions in the sam=
-e
-> >>   layer (e.g. /a allowed, /a/b denied, and /a/b/c allowed), we get
-> >>   deterministic interleaved path rules.  This removes an optimization
-> >
-> > I don't understand the "deterministic interleaved path rules" part.
->
-> I explain bellow.
->
-> >
-> >
-> > What if I have a policy like this?
-> >
-> > /home/user READ
-> > /home/user/Downloads READ+WRITE
-> >
-> > That's a reasonable policy, right?
->
-> Definitely, I forgot this, thanks for the outside perspective!
->
-> >
-> > If I then try to open /home/user/Downloads/foo in WRITE mode, the loop
-> > will first check against the READ+WRITE rule for /home/user, that
-> > check will pass, and then it will check against the READ rule for /,
-> > which will deny the access, right? That seems bad.
->
-> Yes that was the intent.
->
-> >
-> >
-> > The v22 code ensured that for each layer, the most specific rule (the
-> > first we encounter on the walk) always wins, right? What's the problem
-> > with that?
->
-> This can be explained with the interleaved_masked_accesses test:
-> https://github.com/landlock-lsm/linux/blob/landlock-v24/tools/testing/sel=
-ftests/landlock/fs_test.c#L647
->
-> In this case there is 4 stacked layers:
-> layer 1: allows s1d1/s1d2/s1d3/file1
-> layer 2: allows s1d1/s1d2/s1d3
->          denies s1d1/s1d2
-> layer 3: allows s1d1
-> layer 4: allows s1d1/s1d2
->
-> In the v23, access to file1 would be allowed until layer 3, but layer 4
-> would merge a new rule for the s1d2 inode. Because we don't record where
-> exactly the access come from, we can't tell that layer 2 allowed access
-> thanks to s1d3 and that its s1d2 rule was ignored. I think this behavior
-> doesn't make sense from the user point of view.
+On Mon, 2020-11-23 at 18:18 +0100, Pavel Machek wrote:
+> > > Basically every other data structure in kernel is "critical" by your
+> > > definition, and you can't really measure them all; some of them change
+> > > rather often. Going piecemeal does not really help here.
+> > 
+> > Agreed, measuring data structures that change is not really applicable.
+> > However, measuring data structures that once initialized don't change,
+> > does make sense (similar concept to __ro_after_init).  The attestation
+> > server doesn't need to know anything about the measurement, other than
+> > more than a single measurement is indicative of a problem.
+> 
+> So, why not simply measure everything that is ro_after_init?
 
-Aah, I think I'm starting to understand the issue now. Basically, with
-the current UAPI, the semantics have to be "an access is permitted if,
-for each policy layer, at least one rule encountered on the pathwalk
-permits the access; rules that deny the access are irrelevant". And if
-it turns out that someone needs to be able to deny access to specific
-inodes, we'll have to extend struct landlock_path_beneath_attr.
+I guess we could, but the original discussion, a long time ago prior to
+LSM stacking, was limited to measuring the LSM hooks.
 
-That reminds me... if we do need to make such a change in the future,
-it would be easier in terms of UAPI compatibility if
-landlock_add_rule() used copy_struct_from_user(), which is designed to
-create backwards and forwards compatibility with other version of UAPI
-headers. So adding that now might save us some headaches later.
+Mimi
 
-
-> In the v24, access to file1 would only be allowed with layer 1. The
-> layer 2, would deny access to file1 because of the s1d2 rule. This makes
-> the reasoning consistent and deterministic whatever the layers are,
-> while storing the same access and layer bits. But I agree that this may
-> not be desirable.
->
-> In a perfect v25, file1 should be allowed by all these layers. I didn't
-> find a simple solution to this while minimizing the memory allocated by
-> rule (cf. struct landlock_rule: mainly 32-bits for access rights and
-> 64-bits for the layers that contributed to this ANDed accesses). I would
-> like to avoid storing 32-bits access rights per stacked layer. Do you
-> see another solution?
-
-I don't think you can avoid storing the access rights per layer unless
-you actually merge the layers when setting up the ruleset (which would
-be messy). But I don't think that's a big problem. A straightforward
-implementation might become inefficient if you stack too many policy
-layers, but I don't think that's a problem for an initial
-implementation - the common usecase is probably going to be a single
-layer, or maybe two, or something like that?
-
-If you had a ton of layers, most of them would likely specify the same
-access permissions - so one possible optimization might be to use the
-current representation if all rules matching the inode specify the
-same permissions, and use a different representation otherwise. But I
-don't think such an optimization is necessary at this point.
