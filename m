@@ -2,256 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA66C2D0E4
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB99CC63697
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14E3E206FA
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691A320663
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:21:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Dm6gdPNr";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="afLQY18K"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Yw2aQU9x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388961AbgKWTCv (ORCPT
+        id S1732323AbgKWTVN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 14:02:51 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:33876 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729119AbgKWTCv (ORCPT
+        Mon, 23 Nov 2020 14:21:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730636AbgKWTVN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 14:02:51 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.42/8.16.0.42) with SMTP id 0ANJ0StV006159;
-        Mon, 23 Nov 2020 11:00:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : from : to : cc
- : references : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=o+m1onBTcCjnhKHLFAFPmTiQ2yKpnjLlDUQSXVDzZuE=;
- b=Dm6gdPNrP06b8qgUdzGzvI3gF47wdvRssXSOpQeNCEGMhJuqZV9WSduPLdMLc9UoqvN0
- ADJSnj5ZfInUmLi8Eow8vXxws0RupH+Pi84aIN4pCHfYs9z9KqZ3MOkJ6/22Fxt13Fl0
- l4VwvkmpLyxvVYPL3u37ZuYtqj/UiCKWncI= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by m0089730.ppops.net with ESMTP id 34ykstny6n-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Mon, 23 Nov 2020 11:00:30 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 23 Nov 2020 11:00:26 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YcYvtvIsF3v4VnH5Xz401MRci5cLJmsfLz/HrjxE5G05cRi/AOd2nncAaqRsNkL0RFcD8RGSGIwwxcZSwnN4Sqd2AZXIDxPU+TUyNhl78KB4LQpl7ksnwkBuIS4QMGeUdBb5iblcn5uYPmGGEtZ1u2eyKMYaK69ei/BL+XRvrnIvAnXCMvQX2aQqRl372PvnVfWNZy2M0u+Ttl0+XnmBexxcxxq2M3S8eTtyvaRZ9KPT6XzHjxpfQxHt9GFr+jLDC6voUF447C1DpCazhFc1bv2+ZxhEYUdnk5T/J7GyzguOvToahzJdad6M5q9LiohS5d0rbt0oB7M0T+ULF4BAvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZisoldRYEitwIM8GJsORWE7EXrrv7ME6lPD8W6KMxuo=;
- b=ex8D6JpMS3Rk8dOLcequWsIYpebOTsSNAAZKkVDx+7n2j/fEerkkF5L0pCScUK9r7UvXfFPEaXJOAHNvvA/c81Gjjld3sJqWeqCiQ+4mtTLg9LYucKVSwb7XSgQt08DMY7A7PrzSjAjtAp0q07QpIDMQN/Qdbe2r/pMJJcdyDa18gMm5Rz4PL9lrYYjJT8kQckZ6egOEghk4LiecfnPOIla4Xff2JwXKMHCciF2ODp8mCsTGGOSdoGFODr5KprhREp0Xy1iT/2kAuLgbKApGdsNO8zYKl8sTDdf/vbggd+kHUwMAhko91rxcNGghT2Aiv160HJE4uNoXymhO0/TrtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZisoldRYEitwIM8GJsORWE7EXrrv7ME6lPD8W6KMxuo=;
- b=afLQY18KiJlgg9OwBj5A5pAux2u7SQxzFSSgVu0q9+GUc+uj0zua1kH/0ALHiz+DIM7bKKqlaNib0Nbx2Nf9S/FdlUZxrdoHFwO/NcJQ0mf4EZ27Sh+OB1UvTIGPnR6xSdY+LrlX39zxyih6taQce29fORJL0f8nwRtVURy5TVY=
-Authentication-Results: suse.cz; dkim=none (message not signed)
- header.d=none;suse.cz; dmarc=none action=none header.from=fb.com;
-Received: from BYAPR15MB4088.namprd15.prod.outlook.com (2603:10b6:a02:c3::18)
- by BYAPR15MB3512.namprd15.prod.outlook.com (2603:10b6:a03:10a::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.22; Mon, 23 Nov
- 2020 19:00:25 +0000
-Received: from BYAPR15MB4088.namprd15.prod.outlook.com
- ([fe80::9ae:1628:daf9:4b03]) by BYAPR15MB4088.namprd15.prod.outlook.com
- ([fe80::9ae:1628:daf9:4b03%7]) with mapi id 15.20.3589.029; Mon, 23 Nov 2020
- 19:00:25 +0000
-Subject: Re: [PATCH bpf-next v2 3/3] bpf: Update LSM selftests for
- bpf_ima_inode_hash
-From:   Yonghong Song <yhs@fb.com>
-To:     KP Singh <kpsingh@chromium.org>
-CC:     Mimi Zohar <zohar@linux.ibm.com>,
-        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Petr Vorel <pvorel@suse.cz>
-References: <20201121005054.3467947-1-kpsingh@chromium.org>
- <20201121005054.3467947-3-kpsingh@chromium.org>
- <05776c185bdc61a8d210107e5937c31e2e47b936.camel@linux.ibm.com>
- <CACYkzJ4VkwRV5WKe8WZjXgd1C1erXr_NtZhgKJL3ckTmS1M5VA@mail.gmail.com>
- <0f54c1636b390689031ac48e32b238a83777e09c.camel@linux.ibm.com>
- <CACYkzJ6VEKBJnJZ+CBvpF6C=Kft5A2O5f=Uu4rTMtUiRKN5S-g@mail.gmail.com>
- <cf0d94ca-b6a0-1a1a-6cf2-a641002588bf@fb.com>
- <CACYkzJ6RK=bhdGphbK6VZoLdvEfEo9rtYKCS=-dfyt5F=AujnQ@mail.gmail.com>
- <7f4e1733-175e-288d-8c6c-4adc12f17ad5@fb.com>
-Message-ID: <1aef0681-a19d-cda3-8d64-4f7340045818@fb.com>
-Date:   Mon, 23 Nov 2020 11:00:22 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.4.3
-In-Reply-To: <7f4e1733-175e-288d-8c6c-4adc12f17ad5@fb.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-X-Originating-IP: [2620:10d:c090:400::5:fc96]
-X-ClientProxiedBy: MW2PR16CA0016.namprd16.prod.outlook.com (2603:10b6:907::29)
- To BYAPR15MB4088.namprd15.prod.outlook.com (2603:10b6:a02:c3::18)
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2620:10d:c085:21e8::1039] (2620:10d:c090:400::5:fc96) by MW2PR16CA0016.namprd16.prod.outlook.com (2603:10b6:907::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.20 via Frontend Transport; Mon, 23 Nov 2020 19:00:24 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e668745c-dcee-4afd-ae18-08d88fe20955
-X-MS-TrafficTypeDiagnostic: BYAPR15MB3512:
-X-Microsoft-Antispam-PRVS: <BYAPR15MB35128922038C50E4C9DB76A3D3FC0@BYAPR15MB3512.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +Tpjq8gqu6s5BMl20mwngZWrwg9Kygq+swciy5cmC8143hLm8wNl6PeA9l49WvydfF2xEfcxwQxvZxwqQLdH3WZe0W1HCgdTKDjwgp5b1mb100JddmwLN3moiigRgBYXD4ABUEleT/RMOxyI7Jc6vLGz/5nvIW6fwgVRY5CHpmKTyiSSo+EvTvFLQ8dbjikcgmJfv6/Y1Vv7Y2iz5fqm7YAf0/poRrOo1Y/henRN8ah4cqhLwfdmlMGQjnuxTSviZFlrI061x+9bft5zE/Rc3QhlysvV391QyETwmTtySxrTJJAjtlE3zVShL/ldLkzLlCpQGCfRFxdpo1JSsGDfFV4fL2G/p3ROM+L+6VfmElPF3c+cUCoIakv9Oe0eVOwGDCj35zvmKwp9ZxqmbJJNKZxIBSJjKTwjNmwDBfjnhFSQGzDhr4xmn+rePgNoYXaiGFmPgiaanbMpKJZLJqTcZltaTwz4ylHZHNpk15rTasM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR15MB4088.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(346002)(376002)(39860400002)(396003)(366004)(53546011)(5660300002)(54906003)(36756003)(4326008)(186003)(6916009)(52116002)(8676002)(6486002)(2906002)(16526019)(966005)(7416002)(31696002)(316002)(15650500001)(86362001)(66946007)(83380400001)(31686004)(66556008)(478600001)(66476007)(8936002)(2616005)(573474001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData: YTxD5nKi6ch4GjeLNNauUz1oo9Sqr0l4YixJM6xiUOp/6O5SgXR5W6QoYPQMF83NHVqSVa3eeWL3ckr4rIY51csOpcSZE4NW7T0OPM/6XwzKE/nuP6dEwvnPa47s4UBdtQo4DSdMOcasZd1BuFXqfb4HwSt+a/dINZeDUCvmuxg3o7hBhAOVQJP6XfVdn8zTUK2YUpaD7ZUzfbmgh5VysJWwlErv9X+E8TMekOouXwaL6cHX/GuOOYZssqnFDu3jDF8YTKc/6Zdp8qGsc1n71ayNIuxXbFEJm3mRzGavK4qt9h97UVdqvvK6442WnaHYUezRoqlWdjZpagKuB3id04nnecyY8Frr6JeMRXTUenowjq9cilsnAj+aeXVdmQnG++EI4ERTZzk9TjwntF2m1NFdweERdCeHRr7bjrza/YA+DjHK8Ehkf+NhNlIKHFxf1X4EMMfMV1LFCkzPtjJDPXM4M+MRYOr1FtHrIUGRTTM5caOwQKtlSgHppcT2e1mx7SFAvNsirKnHr6yu+jzLzF9WfQCEgmn6csmK5+/kVPOEeUNa6RdBYyKNj2DJHod+oWXJVDFFIrE6lf8pgVWBybvN8N0T+hVkxyBvCkbX2ICKPGuokRzVAa2qTu4Cjyq7wy3KR5YoEMpUOWb7Anx6gbuXXZwvu3EGnqph9yunKXKcXx/6c3Zuge8aFO45DEdfkYyC7cl96J2J+l0cNF/Sgn5QdIZw5p7n2/X+gJ1hOtqKv/xCNHMTTjEvs4EKoFQl5+ZyDToFFb3YO/1/5XDyOI6v5DMPqDsE1QEYy75510sEHzx8Rb/3sBZov0wiMTSVyCQi9SjCNhmn79EAZFUWMruaxCxN1p6SiT3Yus8CENjC5jTSZA/EBds0MCu4t33hkHCed0gbwzslBPIsKSKux+TLzFmF/udGcBV1mNPfpHA=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e668745c-dcee-4afd-ae18-08d88fe20955
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR15MB4088.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Nov 2020 19:00:25.6345
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jL2KBFX72+yOKwHg2azr7aS/tAFyMcDqNcbOXiyfxEmo3JWbDB1snkk5TjkijZA6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3512
-X-OriginatorOrg: fb.com
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 1 URL was un-rewritten
+        Mon, 23 Nov 2020 14:21:13 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B584C061A4E
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 11:21:11 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id lv15so19076396ejb.12
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 11:21:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IDXip25iFNJyM0PQT3UUP9BSDp/9JtkjedehC7iQYgI=;
+        b=Yw2aQU9xEKztBeZFpgzdcCIMM0F7lTQYAdM0JHnjP4hY6mpUB8V8tRh5WOa76T2xZn
+         B1D9HaFeGSXAB9IPtUy8gP8yQitPaU5Epa1pIMOyO5nxNi6mRbogZsDTpv9Xhkhfuuvs
+         b8Z1itlSu7vABBV16xIdb7eU1FLhji8NhNjQSxzdcfbvlhMTsd8UqbT1OdabZJyBZbAW
+         Kg75RcoHpXHQJ+ndeWLo8CW6muNIxihUQo+Yrmmixvw+Q0ZLz5L3ZZXM7cXtigdf5XkT
+         Zmps8vvpm9sg4emPXqNaTMqnyULRtHIDz98Qt8GVJP7KqgH6Al67RYpPbOZDRLiVCGPZ
+         PX+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IDXip25iFNJyM0PQT3UUP9BSDp/9JtkjedehC7iQYgI=;
+        b=qghjbYLLZW96RnXzZjINJa6Ntr9KJ02GD+omfL7dKviyHCnSBe6VSLLuv5cdjOClNR
+         xy4c/jeiAQrUYQz1EUdAjL/lZYisfnpD0KGoxu6krwRunoXieH7iALcCT9vBjJia/DjO
+         ImwNPu6OEIlTJw7k0Z4hVmdN1Tl97teEEGCSBlTt1HcnkLaYqECTc971Gyif5lvlelCg
+         HPHfX77peqGp75dK7bowZYsO7KsPk0QQFYIcNDEq+Dh/kZFW7zB9+nIObpsK+V/eLEhx
+         Bz4R+KMVXjsN2SSvQayB0IfUV8ftRmYJpbEuY8df1YIIHfcJyqQ7vO+XEV6kcZPgnnB3
+         Z+JQ==
+X-Gm-Message-State: AOAM531m864YYs80p2MC/XTaHRidgbpt5UENudDJmj8RrmF+O93lArcU
+        ZCYfztvtKsXp21WxfpChvqFQ3D1SUZyoaUBxNS2Htg==
+X-Google-Smtp-Source: ABdhPJyAk0qU6rtTXOSnzSdut6i2VQ3kE6QNCZM4uiHTEAQJ9L6iAGGfXL9N+fu/hljow+r8JVhLjzMnXPAJLlg5eHc=
+X-Received: by 2002:a17:906:c312:: with SMTP id s18mr1030453ejz.185.1606159269816;
+ Mon, 23 Nov 2020 11:21:09 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-23_17:2020-11-23,2020-11-23 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 spamscore=0
- mlxlogscore=999 mlxscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- adultscore=0 phishscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011230124
-X-FB-Internal: deliver
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+ <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+ <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
+ <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
+ <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com> <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
+From:   Lokesh Gidra <lokeshgidra@google.com>
+Date:   Mon, 23 Nov 2020 11:20:58 -0800
+Message-ID: <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Sun, Nov 22, 2020 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > I have created a cuttlefish build and have tested with the attached
+> > userfaultfd program:
+>
+> Thanks, that's a good place to start, a few comments:
+>
+> - While we support Android as a distribution, it isn't a platform that
+> we common use for development and testing.  At the moment, Fedora is
+> probably your best choice for that.
+>
+I tried setting up a debian/ubuntu system for testing using the
+instructions on the selinux-testsuite page, but the system kept
+freezing after 'setenforce 1'. I'll try with fedora now.
 
+> - Your test program should be written in vanilla C for the
+> selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
+> should be a trivial conversion.
+>
+> - I think you have a good start on a test for the selinux-testsuite,
+> please take a look at the test suite and submit a patch against that
+> repo.  Ondrej (CC'd) currently maintains the test suite and he may
+> have some additional thoughts.
+>
+> * https://github.com/SELinuxProject/selinux-testsuite
 
-On 11/23/20 10:54 AM, Yonghong Song wrote:
-> 
-> 
-> On 11/23/20 10:46 AM, KP Singh wrote:
->> On Mon, Nov 23, 2020 at 7:36 PM Yonghong Song <yhs@fb.com> wrote:
->>>
->>>
->>>
->>> On 11/23/20 10:27 AM, KP Singh wrote:
->>>> [...]
->>>>
->>>>>>>
->>>>>>> Even if a custom policy has been loaded, potentially additional
->>>>>>> measurements unrelated to this test would be included the 
->>>>>>> measurement
->>>>>>> list.  One way of limiting a rule to a specific test is by loopback
->>>>>>> mounting a file system and defining a policy rule based on the 
->>>>>>> loopback
->>>>>>> mount unique uuid.
->>>>>>
->>>>>> Thanks Mimi!
->>>>>>
->>>>>> I wonder if we simply limit this to policy to /tmp and run an 
->>>>>> executable
->>>>>> from /tmp (like test_local_storage.c does).
->>>>>>
->>>>>> The only side effect would be of extra hashes being calculated on
->>>>>> binaries run from /tmp which is not too bad I guess?
->>>>>
->>>>> The builtin measurement policy (ima_policy=tcb") explicitly defines a
->>>>> rule to not measure /tmp files.  Measuring /tmp results in a lot of
->>>>> measurements.
->>>>>
->>>>> {.action = DONT_MEASURE, .fsmagic = TMPFS_MAGIC, .flags = 
->>>>> IMA_FSMAGIC},
->>>>>
->>>>>>
->>>>>> We could do the loop mount too, but I am guessing the most clean way
->>>>>> would be to shell out to mount from the test? Are there some other 
->>>>>> examples
->>>>>> of IMA we could look at?
->>>>>
->>>>> LTP loopback mounts a filesystem, since /tmp is not being measured 
->>>>> with
->>>>> the builtin "tcb" policy.  Defining new policy rules should be limited
->>>>> to the loopback mount.  This would pave the way for defining IMA-
->>>>> appraisal signature verification policy rules, without impacting the
->>>>> running system.
->>>>
->>>> +Andrii
->>>>
->>>> Do you think we can split the IMA test out,
->>>> have a little shell script that does the loopback mount, gets the
->>>> FS UUID, updates the IMA policy and then runs a C program?
->>>>
->>>> This would also allow "test_progs" to be independent of CONFIG_IMA.
->>>>
->>>> I am guessing the structure would be something similar
->>>> to test_xdp_redirect.sh
->>>
->>> Look at sk_assign test.
->>>
->>> sk_assign.c:    if (CHECK_FAIL(system("ip link set dev lo up")))
->>> sk_assign.c:    if (CHECK_FAIL(system("ip route add local default dev 
->>> lo")))
->>> sk_assign.c:    if (CHECK_FAIL(system("ip -6 route add local default dev
->>> lo")))
->>> sk_assign.c:    if (CHECK_FAIL(system("tc qdisc add dev lo clsact")))
->>> sk_assign.c:    if (CHECK(system(tc_cmd), "BPF load failed;"
->>>
->>> You can use "system" to invoke some bash commands to simulate a script
->>> in the tests.
->>
->> Heh, that's what I was trying to avoid, I need to parse the output to 
->> the get
->> the name of which loop device was assigned and then call a command like:
->>
->> # blkid /dev/loop0
->> /dev/loop0: UUID="607ed7ce-3fad-4236-8faf-8ab744f23e01" TYPE="ext3"
->>
->> Running simple commands with "system" seems okay but parsing output
->> is a bit too much :)
->>
->> I read about:
->>
->> https://man7.org/linux/man-pages/man4/loop.4.html 
->>
->> But I still need to create a backing file, format it and then get the 
->> UUID.
->>
->> Any simple trick that I may be missing?
-> 
-> Maybe you can create a bash script on your prog_test files and do
-> system("./<>.sh"). In the shell script, you can use all the bash magic
-> (sed, awk, etc) to parse and store the needed result in a temp file, and
-> after a successful system(""), you just read that temp file. Does this 
-> work?
-
-I guess under the current framework, you can also create a .sh file
-manually and place it into tools/testing/selftests/bpf directory
-and call it in your prog_tests .c file with system("./<>.sh")...
-
-> 
->> - KP
->>
->>>
->>>>
->>>> - KP
->>>>
->>>>>
->>>>> Mimi
->>>>>
+Thanks a lot for the inputs. I'll start working on this.
+>
+> > 1) Without these kernel patches the program executes without any restrictions
+> >
+> > vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
+> > api: 170
+> > features: 511
+> > ioctls: 9223372036854775811
+> >
+> > read: Try again
+> >
+> >
+> > 2) With these patches applied but without any policy the 'permission
+> > denied' is thrown
+> >
+> > vsoc_x86_64:/ $ ./system/bin/userfaultfdSimple
+> > syscall(userfaultfd): Permission denied
+> >
+> > with the following logcat message:
+> > 11-18 14:21:44.041  3130  3130 W userfaultfdSimp: type=1400
+> > audit(0.0:107): avc: denied { create } for dev="anon_inodefs"
+> > ino=45031 scontext=u:r:shell:s0 tcontext=u:object_r:shell:s0
+> > tclass=anon_inode permissive=0
+> >
+> >
+> > 3) With the attached .te policy file in place the following output is
+> > observed, confirming that the patch is working as intended.
+> > vsoc_x86_64:/ $ ./vendor/bin/userfaultfdSimple
+> > UFFDIO_API: Permission denied
+> >
+> > with the following logcat message:
+> > 11-18 14:33:29.142  2028  2028 W userfaultfdSimp: type=1400
+> > audit(0.0:104): avc: denied { ioctl } for
+> > path="anon_inode:[userfaultfd]" dev="anon_inodefs" ino=41169
+> > ioctlcmd=0xaa3f scontext=u:r:userfaultfdSimple:s0
+> > tcontext=u:object_r:uffd_t:s0 tclass=anon_inode permissive=0
+>
+> --
+> paul moore
+> www.paul-moore.com
