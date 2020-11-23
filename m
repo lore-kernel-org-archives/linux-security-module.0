@@ -2,106 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE04DC6379F
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26457C63798
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73C0F20773
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:15:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFAE72080A
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:25:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PEMDBFWH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731732AbgKWNOI (ORCPT
+        id S1731956AbgKWNZH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 08:14:08 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:48974 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388559AbgKWNOH (ORCPT
+        Mon, 23 Nov 2020 08:25:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55094 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730533AbgKWNY7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 08:14:07 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 52ECD20501;
-        Mon, 23 Nov 2020 14:14:02 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id HfJRb24I4Lvz; Mon, 23 Nov 2020 14:14:01 +0100 (CET)
-Received: from mail-essen-01.secunet.de (unknown [10.53.40.204])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id D322D20322;
-        Mon, 23 Nov 2020 14:14:01 +0100 (CET)
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- mail-essen-01.secunet.de (10.53.40.204) with Microsoft SMTP Server (TLS) id
- 14.3.487.0; Mon, 23 Nov 2020 14:14:01 +0100
-Received: from gauss2.secunet.de (10.182.7.193) by mbx-essen-01.secunet.de
- (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2044.4; Mon, 23 Nov
- 2020 14:14:01 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 8E45D3180619;
- Mon, 23 Nov 2020 07:42:57 +0100 (CET)
-Date:   Mon, 23 Nov 2020 07:42:57 +0100
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Antony Antony <antony.antony@secunet.com>
-CC:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        "Antony Antony" <antony@phenome.org>,
-        Stephan Mueller <smueller@chronox.de>
-Subject: Re: [PATCH ipsec-next v5] xfrm: redact SA secret with lockdown
- confidentiality
-Message-ID: <20201123064257.GF15658@gauss3.secunet.de>
-References: <20201016133352.GA2338@moon.secunet.de>
- <20201117164723.GA3868@moon.secunet.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20201117164723.GA3868@moon.secunet.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: cas-essen-01.secunet.de (10.53.40.201) To
- mbx-essen-01.secunet.de (10.53.40.197)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+        Mon, 23 Nov 2020 08:24:59 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0AND76aI034959;
+        Mon, 23 Nov 2020 08:24:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=SF2O5ZXVTST15P2rDMbKpT5pSzhsEEPZsi5upw+5tz8=;
+ b=PEMDBFWHjGZ0tz6Xx4aKRQ1C8lU+bjlLYYUUZGRhga9/OYbKePR3B202Aj6PDf5LJALO
+ vwcZBF1hbzRajhGss6LZpETscPUwE2MalYXWVv9G1tHS2/8O1xkc5k+TypmtD8Syxl1i
+ PgNHXFVrpfh5Dl634ARKM6wtrr1zoTtg0mKexj9EOBvX9727yIGHbiuguUOdtsWU22Sq
+ bRFUoX0k2wSXPjXHdZ9H96qhI/V5h4gkJUC38upK9VE/2FdFOOh3pNPiNxXM4uy4YXi6
+ gcD6z6pRUi5jBnNe3eS3thsbrnwKgZg/2vGIfiMS/fPHIiIlRfUGBynaezCAlR7zeHEt mg== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 34xyrvj5eb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Nov 2020 08:24:42 -0500
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0ANDMBlj013395;
+        Mon, 23 Nov 2020 13:24:40 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma04ams.nl.ibm.com with ESMTP id 34xth8jfuf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Nov 2020 13:24:40 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0ANDOcqW8061484
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Nov 2020 13:24:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2085CA404D;
+        Mon, 23 Nov 2020 13:24:38 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 13057A4055;
+        Mon, 23 Nov 2020 13:24:36 +0000 (GMT)
+Received: from sig-9-65-241-175.ibm.com (unknown [9.65.241.175])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 23 Nov 2020 13:24:35 +0000 (GMT)
+Message-ID: <05776c185bdc61a8d210107e5937c31e2e47b936.camel@linux.ibm.com>
+Subject: Re: [PATCH bpf-next v2 3/3] bpf: Update LSM selftests for
+ bpf_ima_inode_hash
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>
+Date:   Mon, 23 Nov 2020 08:24:35 -0500
+In-Reply-To: <20201121005054.3467947-3-kpsingh@chromium.org>
+References: <20201121005054.3467947-1-kpsingh@chromium.org>
+         <20201121005054.3467947-3-kpsingh@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-23_09:2020-11-23,2020-11-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ phishscore=0 adultscore=0 mlxlogscore=999 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 suspectscore=3 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011230086
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 17, 2020 at 05:47:23PM +0100, Antony Antony wrote:
-> redact XFRM SA secret in the netlink response to xfrm_get_sa()
-> or dumpall sa.
-> Enable lockdown, confidentiality mode, at boot or at run time.
+On Sat, 2020-11-21 at 00:50 +0000, KP Singh wrote:
+> From: KP Singh <kpsingh@google.com>
 > 
-> e.g. when enabled:
-> cat /sys/kernel/security/lockdown
-> none integrity [confidentiality]
-> 
-> ip xfrm state
-> src 172.16.1.200 dst 172.16.1.100
-> 	proto esp spi 0x00000002 reqid 2 mode tunnel
-> 	replay-window 0
-> 	aead rfc4106(gcm(aes)) 0x0000000000000000000000000000000000000000 96
-> 
-> note: the aead secret is redacted.
-> Redacting secret is also a FIPS 140-2 requirement.
-> 
-> v1->v2
->  - add size checks before memset calls
-> v2->v3
->  - replace spaces with tabs for consistency
-> v3->v4
->  - use kernel lockdown instead of a /proc setting
-> v4->v5
->  - remove kconfig option
-> 
-> Reviewed-by: Stephan Mueller <smueller@chronox.de>
-> Signed-off-by: Antony Antony <antony.antony@secunet.com>
-> ---
->  include/linux/security.h |  1 +
->  net/xfrm/xfrm_user.c     | 74 ++++++++++++++++++++++++++++++++++++----
->  security/security.c      |  1 +
->  3 files changed, 69 insertions(+), 7 deletions(-)
+> - Update the IMA policy before executing the test binary (this is not an
+>   override of the policy, just an append that ensures that hashes are
+>   calculated on executions).
 
-I'm ok with this and I plan to apply it to ipsec-next if I do not see
-objections from the LSM people.
+Assuming the builtin policy has been replaced with a custom policy and
+CONFIG_IMA_WRITE_POLICY is enabled, then yes the rule is appended.   If
+a custom policy has not yet been loaded, loading this rule becomes the
+defacto custom policy.
+
+Even if a custom policy has been loaded, potentially additional
+measurements unrelated to this test would be included the measurement
+list.  One way of limiting a rule to a specific test is by loopback
+mounting a file system and defining a policy rule based on the loopback
+mount unique uuid.
+ 
+Mimi
 
