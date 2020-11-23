@@ -2,122 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A45C64E69
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 22:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCEDC388F9
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 22:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 898822065E
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 22:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EF71206D5
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 22:43:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Ihm9gWe+"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="g1pCD8WX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732349AbgKWWHB (ORCPT
+        id S1733007AbgKWWnJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 17:07:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60616 "EHLO
+        Mon, 23 Nov 2020 17:43:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732290AbgKWWHB (ORCPT
+        with ESMTP id S1733002AbgKWWnJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 17:07:01 -0500
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61CDBC0613CF
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 14:06:59 -0800 (PST)
-Received: by mail-ed1-x543.google.com with SMTP id k1so5801066eds.13
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 14:06:59 -0800 (PST)
+        Mon, 23 Nov 2020 17:43:09 -0500
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FE3C061A4F
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 14:43:07 -0800 (PST)
+Received: by mail-ej1-x62a.google.com with SMTP id i19so25633680ejx.9
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 14:43:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ArDHvUzfUiZzh94W960BgkUJZn/5DnacTXHC4Nbv9kI=;
-        b=Ihm9gWe+6m2iCUrCqSrzj2hxvAUOkkHpCGtwhE41f3Rdh8c80xsJegtLMifcQSq7l4
-         MQxmEg8qFYnoifRMupAHJLQd5lYZm+n6GzQdGqoyCuHFxDt3fXMsW4siDYXty7uFQyR+
-         ZiLBHsJEHGtWXoprHv+EbMvUbaSfI62VdYDnQ6kSau+U/tc34IQsesxRL2sYZY1EAFs1
-         LsTOG7yiGz9YGo+XzQObpUnu50coOcAWET1QWObW0HN2FliSyDT2/hew7cMEOL8j6Rt4
-         CkHD0bLpWTrv0L4vHLaw7qmLF7A/4zumynmI5rzULQJ1fukCf4JWCo9n/ipboGbcKUNv
-         ClRg==
+        bh=YFMysbUvILtvyZ1ruMl43SlEWruGMGrEuiKh8Nwg4BY=;
+        b=g1pCD8WXZAYH+/bCJyVT5mTCDV7Z/z7bOY1/rcdOo75KUvpGWVgoZ8g22QDGwY3QwC
+         w1qVDaZn7AyQhP+pIfTHx2F3NhFnU5bHKGhHbJyKWql5hQRnjse5PujiVZBBhT+9vAxJ
+         gdtD6tOogLcfv69pgn3LeS881NSRcP4v+bcInTa4kH77pJ8/mNnLbubYDvCNX+XNtvq5
+         KygZiv82QdVVzPokO5tVlQeM0WibzUq6oafCt/TLU2nk0sqC3kQ8XEx7Jujbj98EenZj
+         F8TeKoK/aQ3awHizSHLPNkhD6Fmws1yRDshQ41gxQjyotiAeTVLZO2cYYWX9O37fWmcG
+         igQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ArDHvUzfUiZzh94W960BgkUJZn/5DnacTXHC4Nbv9kI=;
-        b=mV8HFYegLHPaMP1mOQBjBZYX3eTAswQ7vw5EGWo10m+DLlBefjaxalMhze+hdg7FSZ
-         92Y0PxN8nPmXCmtck+ki37H+zsxq8avmqilUjzl+uL90x8e2rGAVgGEGw0e6fkNjCVHj
-         yE0DkXkie21FVLrzcrnlzqOIjtAkvjvwiEYredTqIg9OxtOjn9z/3nPfzvUoZKEWRllN
-         y6dadm4iOarCDb9wMTK494FZzsebmJF6c3JlVrqidQaBtKqDmW4HyYD9jhxmoenwivm1
-         I8J57N0/VOW2ldW4y5yM/5OJts7c5nq3dTQ10pP6MuUl4YCOsgo/CeK/7xG3ONo3OVim
-         W+gw==
-X-Gm-Message-State: AOAM533ubV57frFRP4/2FELKDQgJbSHdtPmiJ/EfGV8lIZ8Rv29Zl6LX
-        kgTNiRD9jyleHjHoaDeg7qJHy5aEvMdCcZN2BLs0
-X-Google-Smtp-Source: ABdhPJyCGu6X9xaHoLXWBbQARSvPVPAoR3jFBNgP4UppEnyulyojvZlb/ppHqsSx8lMhDFxNpQsOSthLAo4GmR/YyTM=
-X-Received: by 2002:a50:a6d0:: with SMTP id f16mr1171069edc.135.1606169217904;
- Mon, 23 Nov 2020 14:06:57 -0800 (PST)
+        bh=YFMysbUvILtvyZ1ruMl43SlEWruGMGrEuiKh8Nwg4BY=;
+        b=QLifPB4pmpQgqAW9WF5cKJAqGJmxWEv3xP8mBOcOwv4cxegfmDWzi8fyIFgnW6m03R
+         940gfW1flFt3H5vFvTBP+kGLAERWhvBM2W25a2dfJfQas9cwab6l59RLsw6tpNyqR+Rk
+         I3PDf9J4T/mInG1sHKpN4Iw+IgE6SLowOiCopCusm4s7XLTRqDtwPgnCOqUozCfDKMgG
+         R47gCzrTIGVH9Riry8euAMqJ6kwysrhnZ+XxAbNEuBXlrW9JZAaxrrjoVmY8wWZq/Ex1
+         vmWqXwk2+lBQyh6GFpKpP7VA+lb/UOUFl31We76H1KG0zzwnMa4K6kN+b16wQ3q9NYrb
+         Sqzw==
+X-Gm-Message-State: AOAM5308ek6gRpJ6K3Lwe5k/0rayEjy3KywLgyRicvnOCnO9yJYEsuN6
+        k8I0p3SeAfP/fWM1oU6gdnM+cbP3SxLpc7/Qq4qT
+X-Google-Smtp-Source: ABdhPJyou24cx0HMQT9xpW2L2DZvDO9hsan2ip4JU49y9UllQY2ZoaOAQC2uis0G2V7t0HpAmgynMlX6E37HmfH++5g=
+X-Received: by 2002:a17:906:7c9:: with SMTP id m9mr1632418ejc.178.1606171385064;
+ Mon, 23 Nov 2020 14:43:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201115103718.298186-32-christian.brauner@ubuntu.com> <CAHC9VhQ5gcOa0+KKDtKEgg_v4SZV2hPdaKUbPGJAQrVB8mn0jA@mail.gmail.com>
- <20201123074157.fqus6fgtcytydp2c@wittgenstein>
-In-Reply-To: <20201123074157.fqus6fgtcytydp2c@wittgenstein>
+References: <20201106155626.3395468-1-lokeshgidra@google.com>
+ <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
+ <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
+ <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
+ <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
+ <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
+ <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
+ <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com> <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com>
+In-Reply-To: <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 23 Nov 2020 17:06:46 -0500
-Message-ID: <CAHC9VhTrYDEAkaLbwtF7hQS=8HpM4wx7A_fN4=9pL6EAM-KPGw@mail.gmail.com>
-Subject: Re: [PATCH v2 31/39] audit: handle idmapped mounts
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
+Date:   Mon, 23 Nov 2020 17:42:53 -0500
+Message-ID: <CAHC9VhTtLj9QPqEqO5hHPDmMnWzUaD-2PwGw=bQ=SBxvV78Sxg@mail.gmail.com>
+Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jann Horn <jannh@google.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
         Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-audit@redhat.com,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Thomas Cedeno <thomascedeno@google.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Kalesh Singh <kaleshsingh@google.com>,
+        Calin Juravle <calin@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        "Cc: Android Kernel" <kernel-team@android.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Ondrej Mosnacek <omosnace@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 23, 2020 at 2:42 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> On Sun, Nov 22, 2020 at 05:17:39PM -0500, Paul Moore wrote:
-> > On Sun, Nov 15, 2020 at 5:43 AM Christian Brauner
-> > <christian.brauner@ubuntu.com> wrote:
-> > >
-> > > Audit will sometimes log the inode's i_uid and i_gid. Enable audit to log the
-> > > mapped inode when it is accessed from an idmapped mount.
+On Mon, Nov 23, 2020 at 2:21 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> On Sun, Nov 22, 2020 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> > > I have created a cuttlefish build and have tested with the attached
+> > > userfaultfd program:
 > >
-> > I mentioned this in an earlier patch in this patchset, but it is worth
+> > Thanks, that's a good place to start, a few comments:
+> >
+> > - While we support Android as a distribution, it isn't a platform that
+> > we common use for development and testing.  At the moment, Fedora is
+> > probably your best choice for that.
+> >
+> I tried setting up a debian/ubuntu system for testing using the
+> instructions on the selinux-testsuite page, but the system kept
+> freezing after 'setenforce 1'. I'll try with fedora now.
+
+I would expect you to have much better luck with Fedora.
+
+> > - Your test program should be written in vanilla C for the
+> > selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
+> > should be a trivial conversion.
+> >
+> > - I think you have a good start on a test for the selinux-testsuite,
+> > please take a look at the test suite and submit a patch against that
+> > repo.  Ondrej (CC'd) currently maintains the test suite and he may
+> > have some additional thoughts.
+> >
+> > * https://github.com/SELinuxProject/selinux-testsuite
 >
-> I did not receive that message.
+> Thanks a lot for the inputs. I'll start working on this.
 
-I'm guessing just a slow mail relay somewhere as you responded to both
-of my emails on this patchset, I think we're all set for now :)
-
-Thanks.
+Great, let us know if you hit any problems.  I think we would all like
+to see this upstream :)
 
 -- 
 paul moore
