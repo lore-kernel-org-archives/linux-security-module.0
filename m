@@ -2,150 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3759C2D0E4
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 16:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E39AC2D0E4
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 17:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98E042073C
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 16:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C13FC2075A
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 17:18:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbgKWQbe (ORCPT
+        id S2387971AbgKWRSE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 11:31:34 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:48269 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730953AbgKWQZc (ORCPT
+        Mon, 23 Nov 2020 12:18:04 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:55268 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729378AbgKWRSD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 11:25:32 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 74EC3580370;
-        Mon, 23 Nov 2020 11:24:39 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 23 Nov 2020 11:24:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=dCNTwpbrygdlSzzc2FSEUktQs4G
-        /tw8OZWUghu6D3ME=; b=mvdckROrTihded/w+9kbPJNVEi2oJxpsRMBdE13AueF
-        cwuXhp7Z5s5KniXQa1DndY9EPlaQ/d+ogqLn9NGqNE2FE+kWQsD3euvCwsXoTBpP
-        USZ80C2yJENk16vx6Z8MC7CQCKCEdRubyZ6tEy+777bHg7UrRf0xedXg983fDZ/6
-        MaLCVcqHB+IWEeO+Qsyz0Uh0vGjKXLrSrtxFjX9oZ/xGJyvd19EoeHXG6WRgD+0A
-        G7sHoeCQWvU2b5C3FOsujWiwg+cNqTPduzJqxAmcFfjCLx1tki5qvQlMV+zgsqZQ
-        LGY2MNjuc7pqYwmKhNfumxsz7ybtxtyNBy4d4QHxUPw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=dCNTwp
-        brygdlSzzc2FSEUktQs4G/tw8OZWUghu6D3ME=; b=ApOjkzVhfFeqlzdsO7tG0b
-        x2bQvq7ntcNEhFM0AFLCrw3ZO/EH2RGTygVpMrJ3dAP6MlKHkmTa+uP0MyrFtomH
-        5LAjlgtNQN09OTRea7p7pYONwGQAiVwp9Ax0WCv7exAeYjgFHgcAeCCe86kOOEBw
-        TxHIO8klW2S3Akyz3KykNiHdz1QbGkoVKP3HuUC5FxziM2P5ni1OV5BfU8lV8saq
-        2exDpozvp/Vgs0QTp5yJ7jm0oWt1ATsc/kFQ/EA/1DeayhNK2QO/GADZBALtBfgQ
-        pLJfM2SFh/XPPgSNRfFT5zUu4QQ+7nTbkavi+lKMIQZrLlCIK7q6VOh5Ds2FvUrw
-        ==
-X-ME-Sender: <xms:ROK7XwG4HmiTg6r-VtpaxQ8BUu5C7WtH7yBcDEY0pBc-xjHzCsqNmA>
-    <xme:ROK7X5VaR7V6uDdE9dSztt7S7p_Nppv_Cqmy0ebDwP52dvBRPHRpx0s9-CG7CcIa_
-    Gy7KnQpIy3MT8M_XjQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudegiedgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigthhho
-    ucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtffrrg
-    htthgvrhhnpeegkeefjeegkedtjefgfeduleekueetjeeghffhuefgffefleehgeeifedv
-    gfethfenucfkphepuddvkedruddtjedrvdeguddrudejgeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthigthhhosehthigthhhordhpihii
-    iigr
-X-ME-Proxy: <xmx:ROK7X6LHf_mNExSBh-HxxcJKsQe01xb9FDOEOXarK8KYqYlrbdHcCA>
-    <xmx:ROK7XyH4_tINpnuCxhWINI4B9cIUYfNZv_XFfRLd4ZrRCLzGrQy2sw>
-    <xmx:ROK7X2UQLYJyie5vQRGBHgE4Xffguht8EUxvPlpHJ4ctfCLhIShHNg>
-    <xmx:R-K7Xw33IJLVlu-7Jj36Cl8q_gbpZ3FG0VNLOTRskavmAPFl1i_qcA>
-Received: from cisco (unknown [128.107.241.174])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 652D83280060;
-        Mon, 23 Nov 2020 11:24:30 -0500 (EST)
-Date:   Mon, 23 Nov 2020 11:24:28 -0500
-From:   Tycho Andersen <tycho@tycho.pizza>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 07/39] mount: attach mappings to mounts
-Message-ID: <20201123162428.GA24807@cisco>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201115103718.298186-8-christian.brauner@ubuntu.com>
- <20201123154719.GD4025434@cisco>
+        Mon, 23 Nov 2020 12:18:03 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 23EAC1C0B9D; Mon, 23 Nov 2020 18:18:01 +0100 (CET)
+Date:   Mon, 23 Nov 2020 18:18:00 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
+        paul@paul-moore.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org, nramas@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: Re: [PATCH v6 0/8] IMA: support for measuring kernel integrity
+ critical data
+Message-ID: <20201123171800.GA6407@duo.ucw.cz>
+References: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
+ <20201120124657.GA31468@duo.ucw.cz>
+ <aadf6e35-39bc-74d4-6ca3-d708860738a5@linux.microsoft.com>
+ <20201122210031.GA26756@amd>
+ <d82ad1cac36e948c904300548c64244c145589ee.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
 Content-Disposition: inline
-In-Reply-To: <20201123154719.GD4025434@cisco>
+In-Reply-To: <d82ad1cac36e948c904300548c64244c145589ee.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 23, 2020 at 10:47:19AM -0500, Tycho Andersen wrote:
-> On Sun, Nov 15, 2020 at 11:36:46AM +0100, Christian Brauner wrote:
-> > +static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
-> > +{
-> > +	return mnt->mnt_user_ns;
-> > +}
-> 
-> I think you might want a READ_ONCE() here. Right now it seems ok, since the
-> mnt_user_ns can't change, but if we ever allow it to change (and I see you have
-> a idmapped_mounts_wip_v2_allow_to_change_idmapping branch on your public tree
-> :D), the pattern of,
-> 
->         user_ns = mnt_user_ns(path->mnt);
->         if (mnt_idmapped(path->mnt)) {
->                 uid = kuid_from_mnt(user_ns, uid);
->                 gid = kgid_from_mnt(user_ns, gid);
->         }
-> 
-> could race.
 
-Actually, isn't a race possible now?
+--EeQfGwPcQSOJBaQU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-kuid_from_mnt(mnt_user_ns(path->mnt) /* &init_user_ns */);
-WRITE_ONCE(mnt->mnt.mnt_user_ns, user_ns);
-WRITE_ONCE(m->mnt.mnt_flags, flags);
-kgid_from_mnt(mnt_user_ns(path->mnt) /* the right user ns */);
+Hi!
 
-So maybe it should be:
+> > > >How is it supposed to be useful?
+> > > >
+> > > >I'm pretty sure there are critical data that are not measured by
+> > > >proposed module... and that are written under normal circumstances.
+> > > >
+> > > The goal of this series is to introduce the IMA hook
+> > > measure_critical_data() and the necessary policies to use it; and
+> > > illustrate that use with one example (SELinux). It is not scalable to
+> > > identify and update all the critical data sources to use the proposed
+> > > module at once.
+> > >=20
+> > > A piecemeal approach to add more critical data measurement in subsequ=
+ent
+> > > patches would be easy to implement and review.
+> >=20
+> > Basically every other data structure in kernel is "critical" by your
+> > definition, and you can't really measure them all; some of them change
+> > rather often. Going piecemeal does not really help here.
+>=20
+> Agreed, measuring data structures that change is not really applicable.
+> However, measuring data structures that once initialized don't change,
+> does make sense (similar concept to __ro_after_init).  The attestation
+> server doesn't need to know anything about the measurement, other than
+> more than a single measurement is indicative of a problem.
 
-         if (mnt_idmapped(path->mnt)) {
-                 barrier();
-                 user_ns = mnt_user_ns(path->mnt);
-                 uid = kuid_from_mnt(user_ns, uid);
-                 gid = kgid_from_mnt(user_ns, gid);
-         }
+So, why not simply measure everything that is ro_after_init?
 
-since there's no data dependency between mnt_idmapped() and
-mnt_user_ns()?
+But... I really fail to see how this is useful. It is trivial to
+"backdoor" kernel w/o modifying anything that is
+ro_after_init. (Example: page tables).
 
-Tycho
+								Pavel
+--=20
+http://www.livejournal.com/~pavelmachek
+
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX7vuyAAKCRAw5/Bqldv6
+8l0NAKCno5uLV1J+u9T4SaYxmY8EkH/yQQCeJ/9tVl7wyA/jWR7tMN6Lj6pfIx8=
+=FwxO
+-----END PGP SIGNATURE-----
+
+--EeQfGwPcQSOJBaQU--
