@@ -6,73 +6,84 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26457C63798
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:25:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C640BC56202
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFAE72080A
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F83A20658
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 13:41:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PEMDBFWH"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KDWosr6E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731956AbgKWNZH (ORCPT
+        id S1730879AbgKWNlz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 08:25:07 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55094 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730533AbgKWNY7 (ORCPT
+        Mon, 23 Nov 2020 08:41:55 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12500 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730860AbgKWNly (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 08:24:59 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0AND76aI034959;
-        Mon, 23 Nov 2020 08:24:42 -0500
+        Mon, 23 Nov 2020 08:41:54 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0ANDUufe054615;
+        Mon, 23 Nov 2020 08:41:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=SF2O5ZXVTST15P2rDMbKpT5pSzhsEEPZsi5upw+5tz8=;
- b=PEMDBFWHjGZ0tz6Xx4aKRQ1C8lU+bjlLYYUUZGRhga9/OYbKePR3B202Aj6PDf5LJALO
- vwcZBF1hbzRajhGss6LZpETscPUwE2MalYXWVv9G1tHS2/8O1xkc5k+TypmtD8Syxl1i
- PgNHXFVrpfh5Dl634ARKM6wtrr1zoTtg0mKexj9EOBvX9727yIGHbiuguUOdtsWU22Sq
- bRFUoX0k2wSXPjXHdZ9H96qhI/V5h4gkJUC38upK9VE/2FdFOOh3pNPiNxXM4uy4YXi6
- gcD6z6pRUi5jBnNe3eS3thsbrnwKgZg/2vGIfiMS/fPHIiIlRfUGBynaezCAlR7zeHEt mg== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 34xyrvj5eb-1
+ bh=chruBFvNGuRKqGj1QlVcNgCM3MgDyhdklfyEEoguCso=;
+ b=KDWosr6ETemK3ES0X7OImUBDAMYVrUJXyDtAw+McGitSFqiW79RoD1OO/p5N/eZI7dI7
+ KLTSRnbkUvG9ew8bgURQHTYzOSOeiFxLWuFjFOLsRHwvYGk27QDts5UP9gd5MNgn0Qxj
+ Q8zqo6P9X3vZ5jLqmP1MzcSar6dTPd9rt6yB2FHYIzP7Rm7736YzZ85ZRd607sI0STbP
+ 957diyHohUedqpRg2/Y2Q7Z1GNnXkcU+Z6ZVNMCqSTHkrXJyYUJbvESETsarEUMOZuzw
+ HweWMWAoMjNwxgiNrZ4N191kJ+cdQXCO8N1ynSir1tS/fPJlWlMUoKSq4WTLcjVScut/ Kg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34yq4759xa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Nov 2020 08:24:42 -0500
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0ANDMBlj013395;
-        Mon, 23 Nov 2020 13:24:40 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04ams.nl.ibm.com with ESMTP id 34xth8jfuf-1
+        Mon, 23 Nov 2020 08:41:44 -0500
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0ANDUugv054630;
+        Mon, 23 Nov 2020 08:41:44 -0500
+Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 34yq4759wf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 23 Nov 2020 13:24:40 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0ANDOcqW8061484
+        Mon, 23 Nov 2020 08:41:44 -0500
+Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
+        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0ANDaNsS019241;
+        Mon, 23 Nov 2020 13:41:42 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma02fra.de.ibm.com with ESMTP id 350cvrr2ws-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Nov 2020 13:41:42 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0ANDfd4761342026
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 23 Nov 2020 13:24:38 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2085CA404D;
-        Mon, 23 Nov 2020 13:24:38 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 13057A4055;
-        Mon, 23 Nov 2020 13:24:36 +0000 (GMT)
+        Mon, 23 Nov 2020 13:41:39 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9722011C04A;
+        Mon, 23 Nov 2020 13:41:39 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8FB5F11C052;
+        Mon, 23 Nov 2020 13:41:36 +0000 (GMT)
 Received: from sig-9-65-241-175.ibm.com (unknown [9.65.241.175])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 23 Nov 2020 13:24:35 +0000 (GMT)
-Message-ID: <05776c185bdc61a8d210107e5937c31e2e47b936.camel@linux.ibm.com>
-Subject: Re: [PATCH bpf-next v2 3/3] bpf: Update LSM selftests for
- bpf_ima_inode_hash
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 23 Nov 2020 13:41:36 +0000 (GMT)
+Message-ID: <d82ad1cac36e948c904300548c64244c145589ee.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 0/8] IMA: support for measuring kernel integrity
+ critical data
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>
-Date:   Mon, 23 Nov 2020 08:24:35 -0500
-In-Reply-To: <20201121005054.3467947-3-kpsingh@chromium.org>
-References: <20201121005054.3467947-1-kpsingh@chromium.org>
-         <20201121005054.3467947-3-kpsingh@chromium.org>
+To:     Pavel Machek <pavel@ucw.cz>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Cc:     stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
+        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
+        paul@paul-moore.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, jmorris@namei.org, nramas@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Date:   Mon, 23 Nov 2020 08:41:35 -0500
+In-Reply-To: <20201122210031.GA26756@amd>
+References: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
+         <20201120124657.GA31468@duo.ucw.cz>
+         <aadf6e35-39bc-74d4-6ca3-d708860738a5@linux.microsoft.com>
+         <20201122210031.GA26756@amd>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
 Mime-Version: 1.0
@@ -80,31 +91,47 @@ Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
  definitions=2020-11-23_09:2020-11-23,2020-11-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- phishscore=0 adultscore=0 mlxlogscore=999 clxscore=1011 bulkscore=0
- lowpriorityscore=0 mlxscore=0 suspectscore=3 priorityscore=1501
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011230086
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 impostorscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 suspectscore=3 spamscore=0
+ lowpriorityscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2011230088
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2020-11-21 at 00:50 +0000, KP Singh wrote:
-> From: KP Singh <kpsingh@google.com>
+Hi Pavel,
+
+On Sun, 2020-11-22 at 22:00 +0100, Pavel Machek wrote:
+> Hi!
 > 
-> - Update the IMA policy before executing the test binary (this is not an
->   override of the policy, just an append that ensures that hashes are
->   calculated on executions).
+> > >How is it supposed to be useful?
+> > >
+> > >I'm pretty sure there are critical data that are not measured by
+> > >proposed module... and that are written under normal circumstances.
+> > >
+> > The goal of this series is to introduce the IMA hook
+> > measure_critical_data() and the necessary policies to use it; and
+> > illustrate that use with one example (SELinux). It is not scalable to
+> > identify and update all the critical data sources to use the proposed
+> > module at once.
+> > 
+> > A piecemeal approach to add more critical data measurement in subsequent
+> > patches would be easy to implement and review.
+> 
+> Basically every other data structure in kernel is "critical" by your
+> definition, and you can't really measure them all; some of them change
+> rather often. Going piecemeal does not really help here.
 
-Assuming the builtin policy has been replaced with a custom policy and
-CONFIG_IMA_WRITE_POLICY is enabled, then yes the rule is appended.   If
-a custom policy has not yet been loaded, loading this rule becomes the
-defacto custom policy.
+Agreed, measuring data structures that change is not really applicable.
+However, measuring data structures that once initialized don't change,
+does make sense (similar concept to __ro_after_init).  The attestation
+server doesn't need to know anything about the measurement, other than
+more than a single measurement is indicative of a problem.
 
-Even if a custom policy has been loaded, potentially additional
-measurements unrelated to this test would be included the measurement
-list.  One way of limiting a rule to a specific test is by loopback
-mounting a file system and defining a policy rule based on the loopback
-mount unique uuid.
- 
 Mimi
+
+> Example of critical data structure: page table entries for process I
+> own.
+
+
 
