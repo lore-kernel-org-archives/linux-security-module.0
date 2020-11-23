@@ -2,153 +2,238 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4210DC6379D
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15717C63777
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0D3C20727
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B85D020727
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Nov 2020 19:45:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gQt1e+OQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ucprSht0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730690AbgKWThu (ORCPT
+        id S1730619AbgKWTok (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Nov 2020 14:37:50 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:43592 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730683AbgKWTht (ORCPT
+        Mon, 23 Nov 2020 14:44:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729521AbgKWTok (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Nov 2020 14:37:49 -0500
-Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 999C720B717A;
-        Mon, 23 Nov 2020 11:37:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 999C720B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1606160269;
-        bh=nKE9ax347McNMh2dmVuxCHdA60lE1Lj1JfhVD8MiYHg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gQt1e+OQTP6YHmycUCZNsLBZ5DpexXnLF946JnOKKBsGiIGRldemKi+3Vi+rPJQxU
-         puJnpgUGzmgK6b5l0gZAudPAZe+5UhD0Di5yzUMOaL00REoPCK+iUpJjtDH8AGyGew
-         YdSpUpMRjoTjlyo4VQKQClPH1t7jXW2OwHOCL3fw=
-Subject: Re: [PATCH v6 8/8] selinux: measure state and hash of the policy
- using IMA
-To:     James Morris <jmorris@namei.org>
-Cc:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com,
-        tyhicks@linux.microsoft.com, sashal@kernel.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20201119232611.30114-1-tusharsu@linux.microsoft.com>
- <20201119232611.30114-9-tusharsu@linux.microsoft.com>
- <alpine.LRH.2.21.2011211301340.18334@namei.org>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <33718d39-a3a2-595b-46b0-f1a195348000@linux.microsoft.com>
-Date:   Mon, 23 Nov 2020 11:37:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 23 Nov 2020 14:44:40 -0500
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12CCEC0613CF
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 11:44:40 -0800 (PST)
+Received: by mail-lf1-x141.google.com with SMTP id s30so25470436lfc.4
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Nov 2020 11:44:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=WkkyfzYc5dkm/KIiF9W4jRT3BRx+3sqZpO+ldzSWHAU=;
+        b=ucprSht07o3L8qhZLLc2Vt4PubCLLYecCKNAauQVntt/WOQx0TnUKdvhSMo4O3kPUB
+         uaUTYfr9u7VuLEvtbM35aoZwakgOWHYVHjw4Mng7Nx7VrQbWv4Tt/KS5ugKh9SaGeFX2
+         RVWHUO8H6oE35g5xy4ExNT0J9tz1RPg7b9HOQlsjqvp5KHt1ZdUObef9cJxmfTjtGs3e
+         thKIj2KnAjmAnht0O8u+JMUIDM9eFbTD7ieYfOqhRhtEVosbjAvqv+gyPmolJ+wWqzdt
+         5ZUswM45maUXB35BfcN7RSu535krwgoOUgZM4t2JGI8pMMDiwiDnaCVZppVOab7LjX70
+         E/mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=WkkyfzYc5dkm/KIiF9W4jRT3BRx+3sqZpO+ldzSWHAU=;
+        b=QBqaZ3C8psOODmTcNgCPbOD2U0VA2DopKAM6JBkvOkAJO3OxeR4gxULM2sWLvv2ej6
+         qdQCxr/UL1KCpEX9vHE2IIKwsGa+o51fRqXGmuB8v+5Kwv76sD6EbIuzkTKJVuG0bD29
+         mrIsqirz5Kdw1uWM8GQXkW6678kOvQ2sLxzfD3uIFWJgP32PhskKStYYEhiYp3O//gjL
+         P2yAosredT7wW16iPrRFyB5sCDDZ43zN22ij41CoBJtoeoXz4H3V6/Of2UkQvkbf76Vt
+         mPrRG593KLORBM8QHWbH4bYKsgsziclKjgjgedc3xgQy1+AbM8LADBEhlaJ3NU7ijnxW
+         KavQ==
+X-Gm-Message-State: AOAM530V++9F5RA1LY4wu5a7GKLc5L0EWqEJUCHIsmOFtjDPkVcxaVRN
+        jdNVm4FM9quC86P2+9TokItiNhxVbcTKlRSE9NJPdQ==
+X-Google-Smtp-Source: ABdhPJxvAu80d98nm8DgUgnbxicof2cbnVoJUKvK4sfJq22s1FLjdXhc3R1+79TzlVPSsvuacsn9pSzptfgKcYYBWqk=
+X-Received: by 2002:ac2:5a49:: with SMTP id r9mr259465lfn.381.1606160678276;
+ Mon, 23 Nov 2020 11:44:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.2011211301340.18334@namei.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201112205141.775752-1-mic@digikod.net> <20201112205141.775752-8-mic@digikod.net>
+ <CAG48ez3HA63CX852LLDFCcNyzRGwAr3x_cvA1-t8tgDxfF1dOQ@mail.gmail.com> <1d524ea9-85eb-049c-2156-05cad6d6fcfd@digikod.net>
+In-Reply-To: <1d524ea9-85eb-049c-2156-05cad6d6fcfd@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 23 Nov 2020 20:44:11 +0100
+Message-ID: <CAG48ez2cmsrZbUEmQmzPQugJikkvfs_MWmMizxmoyspCeXAXRQ@mail.gmail.com>
+Subject: Re: [PATCH v24 07/12] landlock: Support filesystem access-control
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi James,
+On Sat, Nov 21, 2020 at 11:06 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
+ wrote:
+> On 21/11/2020 08:00, Jann Horn wrote:
+> > On Thu, Nov 12, 2020 at 9:52 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
+et> wrote:
+> >> Thanks to the Landlock objects and ruleset, it is possible to identify
+> >> inodes according to a process's domain.  To enable an unprivileged
+> >> process to express a file hierarchy, it first needs to open a director=
+y
+> >> (or a file) and pass this file descriptor to the kernel through
+> >> landlock_add_rule(2).  When checking if a file access request is
+> >> allowed, we walk from the requested dentry to the real root, following
+> >> the different mount layers.  The access to each "tagged" inodes are
+> >> collected according to their rule layer level, and ANDed to create
+> >> access to the requested file hierarchy.  This makes possible to identi=
+fy
+> >> a lot of files without tagging every inodes nor modifying the
+> >> filesystem, while still following the view and understanding the user
+> >> has from the filesystem.
+> >>
+> >> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
+> >> keep the same struct inodes for the same inodes whereas these inodes a=
+re
+> >> in use.
+> >>
+> >> This commit adds a minimal set of supported filesystem access-control
+> >> which doesn't enable to restrict all file-related actions.  This is th=
+e
+> >> result of multiple discussions to minimize the code of Landlock to eas=
+e
+> >> review.  Thanks to the Landlock design, extending this access-control
+> >> without breaking user space will not be a problem.  Moreover, seccomp
+> >> filters can be used to restrict the use of syscall families which may
+> >> not be currently handled by Landlock.
+> >>
+> >> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> >> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+> >> Cc: James Morris <jmorris@namei.org>
+> >> Cc: Jann Horn <jannh@google.com>
+> >> Cc: Jeff Dike <jdike@addtoit.com>
+> >> Cc: Kees Cook <keescook@chromium.org>
+> >> Cc: Richard Weinberger <richard@nod.at>
+> >> Cc: Serge E. Hallyn <serge@hallyn.com>
+> >> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> >> ---
+> >>
+> >> Changes since v23:
+> >> * Enforce deterministic interleaved path rules.  To have consistent
+> >>   layered rules, granting access to a path implies that all accesses
+> >>   tied to inodes, from the requested file to the real root, must be
+> >>   checked.  Otherwise, stacked rules may result to overzealous
+> >>   restrictions.  By excluding the ability to add exceptions in the sam=
+e
+> >>   layer (e.g. /a allowed, /a/b denied, and /a/b/c allowed), we get
+> >>   deterministic interleaved path rules.  This removes an optimization
+> >
+> > I don't understand the "deterministic interleaved path rules" part.
+>
+> I explain bellow.
+>
+> >
+> >
+> > What if I have a policy like this?
+> >
+> > /home/user READ
+> > /home/user/Downloads READ+WRITE
+> >
+> > That's a reasonable policy, right?
+>
+> Definitely, I forgot this, thanks for the outside perspective!
+>
+> >
+> > If I then try to open /home/user/Downloads/foo in WRITE mode, the loop
+> > will first check against the READ+WRITE rule for /home/user, that
+> > check will pass, and then it will check against the READ rule for /,
+> > which will deny the access, right? That seems bad.
+>
+> Yes that was the intent.
+>
+> >
+> >
+> > The v22 code ensured that for each layer, the most specific rule (the
+> > first we encounter on the walk) always wins, right? What's the problem
+> > with that?
+>
+> This can be explained with the interleaved_masked_accesses test:
+> https://github.com/landlock-lsm/linux/blob/landlock-v24/tools/testing/sel=
+ftests/landlock/fs_test.c#L647
+>
+> In this case there is 4 stacked layers:
+> layer 1: allows s1d1/s1d2/s1d3/file1
+> layer 2: allows s1d1/s1d2/s1d3
+>          denies s1d1/s1d2
+> layer 3: allows s1d1
+> layer 4: allows s1d1/s1d2
+>
+> In the v23, access to file1 would be allowed until layer 3, but layer 4
+> would merge a new rule for the s1d2 inode. Because we don't record where
+> exactly the access come from, we can't tell that layer 2 allowed access
+> thanks to s1d3 and that its s1d2 rule was ignored. I think this behavior
+> doesn't make sense from the user point of view.
 
-On 2020-11-20 6:05 p.m., James Morris wrote:
-> On Thu, 19 Nov 2020, Tushar Sugandhi wrote:
-> 
->> an impact on the security guarantees provided by SELinux. Measuring
->> such in-memory data structures through IMA subsystem provides a secure
->> way for a remote attestation service to know the state of the system
->> and also the runtime changes in the state of the system.
-> 
-> I think we need better clarity on the security model here than just "a
-> secure way...".  Secure how and against what threats?
-> 
-Thanks for taking a look at this patch series.
+Aah, I think I'm starting to understand the issue now. Basically, with
+the current UAPI, the semantics have to be "an access is permitted if,
+for each policy layer, at least one rule encountered on the pathwalk
+permits the access; rules that deny the access are irrelevant". And if
+it turns out that someone needs to be able to deny access to specific
+inodes, we'll have to extend struct landlock_path_beneath_attr.
 
-Here is the overall threat model:
-
-For a given device inside an organization, various services/
-infrastructure tools owned by the org interact with the device. These
-services/tools can be external to the device. They can interact with the
-device both during setup and rest of the device lifetime. These
-interactions may involve sharing the org sensitive data and/or running
-business critical workload on that device. Before sharing data/running
-workload on that device - the org would want to know the security
-profile of the device. E.g. SELinux is enforced (with the policy that is
-expected by the org), disks are encrypted with a certain configuration,
-secure boot is enabled etc. If the org requirements are satisfied, then
-only the external services will start interacting with the device.
-
-For the org, extracting that information from the device is tricky.
-The services could look for some markers on the device necessary to
-satisfy the org requirements. But the device could already be
-compromised with some malware, and could simply lie to the external
-services by putting false markers on the device. For instance, the
-malware can put a random SELinux policy file at the expected location
-even when SELinux is not even enabled on the device.
-
-If the org trusts these false markers, the compromised device could go
-undetected - and can do further damage once it has access to the org
-sensitive data / business critical processes.
-
-This is the threat we are trying to address.
-
-For the org, to address this threat - at least three things are needed:
-
-(1) Producers of the markers are as close to the source as possible:
-The source that does the work of actually protecting the device.
-E.g. SELinux state reported from the SELinux kernel LVM itself, rather
-than some user mode process extracting that information).
-This will make it harder for the bad actors to mimic the information -
-thus reducing the ROI for them.
-
-(2) Extracting the information from the device in a tamper resistant
-way:
-Even if the information is produced by the expected source, it can still
-get altered by attackers. This can happen before the info reaches the
-external services - the services that make the decision whether to trust
-the device with org sensitive info or not.
-The IMA measurement infrastructure, with TPM extend and quoting,
-provides the necessary assurance to those services - that the
-information coming from the device is not tampered with.
-
-(3) Tracking the state change during the lifetime of the device:
-The device may start in a good configuration. But over the lifetime,
-that configuration may deteriorate. E.g. SELinux stores the
-current operating mode, in memory, which could be "enforce" or "audit".
-Changes to this data at runtime impacts the security guarantees provided
-by SELinux. Such changes could be made inadvertently or by malware
-running on the device.
+That reminds me... if we do need to make such a change in the future,
+it would be easier in terms of UAPI compatibility if
+landlock_add_rule() used copy_struct_from_user(), which is designed to
+create backwards and forwards compatibility with other version of UAPI
+headers. So adding that now might save us some headaches later.
 
 
-The IMA hook plus policies in the first 7/8 patches provide the
-necessary functionality to achieve (2).
+> In the v24, access to file1 would only be allowed with layer 1. The
+> layer 2, would deny access to file1 because of the s1d2 rule. This makes
+> the reasoning consistent and deterministic whatever the layers are,
+> while storing the same access and layer bits. But I agree that this may
+> not be desirable.
+>
+> In a perfect v25, file1 should be allowed by all these layers. I didn't
+> find a simple solution to this while minimizing the memory allocated by
+> rule (cf. struct landlock_rule: mainly 32-bits for access rights and
+> 64-bits for the layers that contributed to this ANDed accesses). I would
+> like to avoid storing 32-bits access rights per stacked layer. Do you
+> see another solution?
 
-The last SELinux 8/8 patch helps achieve (1).
+I don't think you can avoid storing the access rights per layer unless
+you actually merge the layers when setting up the ruleset (which would
+be messy). But I don't think that's a big problem. A straightforward
+implementation might become inefficient if you stack too many policy
+layers, but I don't think that's a problem for an initial
+implementation - the common usecase is probably going to be a single
+layer, or maybe two, or something like that?
 
-And the patches in the series overall work together to achieve (3).
-
-> This looks to me like configuration assurance, i.e. you just want to know
-> that systems have been configured correctly, not to detect a competent
-> attack. Is that correct?
-
-The attestation service would look at various measurements coming from
-the device. And there could be a discrepancy between the measurements,
-or the measurements won't match the expected predetermined values. In
-that case, the attestation service may conclude that not only the device
-is misconfigured, but also that misconfiguration is a result of
-potentially compromised device. Then the necessary action can be taken
-for the device (removing it from the network, not sharing data/workload
-with it etc.)
-
-~Tushar
+If you had a ton of layers, most of them would likely specify the same
+access permissions - so one possible optimization might be to use the
+current representation if all rules matching the inode specify the
+same permissions, and use a different representation otherwise. But I
+don't think such an optimization is necessary at this point.
