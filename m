@@ -2,141 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-22.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A277C2D0E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 14:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BADC56201
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 14:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4506D2083E
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 14:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD5520674
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 14:30:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cyrn05kV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbgKXOAB (ORCPT
+        id S2389035AbgKXOaA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Nov 2020 09:00:01 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:54719 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbgKXOAA (ORCPT
+        Tue, 24 Nov 2020 09:30:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54910 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388014AbgKXO37 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Nov 2020 09:00:00 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1khYrD-0002SV-VO; Tue, 24 Nov 2020 13:59:48 +0000
-Date:   Tue, 24 Nov 2020 14:59:46 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Tycho Andersen <tycho@tycho.pizza>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
-        selinux@vger.kernel.org, Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v2 07/39] mount: attach mappings to mounts
-Message-ID: <20201124135946.27krt6za2qapyx43@wittgenstein>
-References: <20201115103718.298186-1-christian.brauner@ubuntu.com>
- <20201115103718.298186-8-christian.brauner@ubuntu.com>
- <20201123154719.GD4025434@cisco>
- <20201123162428.GA24807@cisco>
- <20201124123035.hbv4sstyoucht7xp@wittgenstein>
- <20201124133740.GA52954@cisco>
- <20201124134035.2l36avuaqp6gxyum@wittgenstein>
- <20201124134459.GB52954@cisco>
+        Tue, 24 Nov 2020 09:29:59 -0500
+Received: from embeddedor (187-162-31-110.static.axtel.net [187.162.31.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73B192076E;
+        Tue, 24 Nov 2020 14:29:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606228199;
+        bh=WVnMFGVgDwBYzrdi0QU1bU9tavRmGvM2q9lX3BwdRMQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cyrn05kV9I3Ovr0jbD56E7qkiHgiFipxQB3vtHIO6UguzFxDsrtYBK6iy5NucPGDI
+         haAqgEbZRoGYcExkJ648Areu/FBuy0pQv6JzILwRSvy9PLfW5MA6o8+hcuRQOW0xPN
+         /k4l2rZ/zPaYiaSVt6OK2RBZCssHgRwslE89yHzk=
+Date:   Tue, 24 Nov 2020 08:30:14 -0600
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 052/141] security: keys: Fix fall-through warnings for
+ Clang
+Message-ID: <20201124143014.GA16084@embeddedor>
+References: <cover.1605896059.git.gustavoars@kernel.org>
+ <412e11590b667712c03c1e4d4c7573fda3a4b1cb.1605896059.git.gustavoars@kernel.org>
+ <20201123225402.GB19839@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201124134459.GB52954@cisco>
+In-Reply-To: <20201123225402.GB19839@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 24, 2020 at 08:44:59AM -0500, Tycho Andersen wrote:
-> On Tue, Nov 24, 2020 at 02:40:35PM +0100, Christian Brauner wrote:
-> > On Tue, Nov 24, 2020 at 08:37:40AM -0500, Tycho Andersen wrote:
-> > > On Tue, Nov 24, 2020 at 01:30:35PM +0100, Christian Brauner wrote:
-> > > > On Mon, Nov 23, 2020 at 11:24:28AM -0500, Tycho Andersen wrote:
-> > > > > On Mon, Nov 23, 2020 at 10:47:19AM -0500, Tycho Andersen wrote:
-> > > > > > On Sun, Nov 15, 2020 at 11:36:46AM +0100, Christian Brauner wrote:
-> > > > > > > +static inline struct user_namespace *mnt_user_ns(const struct vfsmount *mnt)
-> > > > > > > +{
-> > > > > > > +	return mnt->mnt_user_ns;
-> > > > > > > +}
-> > > > > > 
-> > > > > > I think you might want a READ_ONCE() here. Right now it seems ok, since the
-> > > > > > mnt_user_ns can't change, but if we ever allow it to change (and I see you have
-> > > > > > a idmapped_mounts_wip_v2_allow_to_change_idmapping branch on your public tree
-> > > > > > :D), the pattern of,
-> > > > > > 
-> > > > > >         user_ns = mnt_user_ns(path->mnt);
-> > > > > >         if (mnt_idmapped(path->mnt)) {
-> > > > > >                 uid = kuid_from_mnt(user_ns, uid);
-> > > > > >                 gid = kgid_from_mnt(user_ns, gid);
-> > > > > >         }
-> > > > > > 
-> > > > > > could race.
-> > > > > 
-> > > > > Actually, isn't a race possible now?
-> > > > > 
-> > > > > kuid_from_mnt(mnt_user_ns(path->mnt) /* &init_user_ns */);
-> > > > > WRITE_ONCE(mnt->mnt.mnt_user_ns, user_ns);
-> > > > > WRITE_ONCE(m->mnt.mnt_flags, flags);
-> > > > > kgid_from_mnt(mnt_user_ns(path->mnt) /* the right user ns */);
-> > > > > 
-> > > > > So maybe it should be:
-> > > > > 
-> > > > >          if (mnt_idmapped(path->mnt)) {
-> > > > >                  barrier();
-> > > > >                  user_ns = mnt_user_ns(path->mnt);
-> > > > >                  uid = kuid_from_mnt(user_ns, uid);
-> > > > >                  gid = kgid_from_mnt(user_ns, gid);
-> > > > >          }
-> > > > > 
-> > > > > since there's no data dependency between mnt_idmapped() and
-> > > > > mnt_user_ns()?
-> > > > 
-> > > > I think I had something to handle this case in another branch of mine.
-> > > > The READ_ONCE() you mentioned in another patch I had originally dropped
-> > > > because I wasn't sure whether it works on pointers but after talking to
-> > > > Jann and David it seems that it handles pointers fine.
-> > > > Let me take a look and fix it in the next version. I just finished
-> > > > porting the test suite to xfstests as Christoph requested and I'm
-> > > > looking at this now.
-> > > 
-> > > Another way would be to just have mnt_idmapped() test
-> > > mnt_user_ns() != &init_user_ns instead of the flags; then I think you
-> > > get the data dependency and thus correct ordering for free.
+On Tue, Nov 24, 2020 at 12:54:02AM +0200, Jarkko Sakkinen wrote:
+> On Fri, Nov 20, 2020 at 12:32:20PM -0600, Gustavo A. R. Silva wrote:
+> > In preparation to enable -Wimplicit-fallthrough for Clang, fix a warning
+> > by explicitly adding a break statement instead of letting the code fall
+> > through to the next case.
 > > 
-> > I indeed dropped mnt_idmapped() which is unnecessary. :)
+> > Link: https://github.com/KSPP/linux/issues/115
+> > Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> > ---
+> >  security/keys/process_keys.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+> > index 1fe8b934f656..e3d79a7b6db6 100644
+> > --- a/security/keys/process_keys.c
+> > +++ b/security/keys/process_keys.c
+> > @@ -783,6 +783,7 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
+> >  				if (need_perm != KEY_AUTHTOKEN_OVERRIDE &&
+> >  				    need_perm != KEY_DEFER_PERM_CHECK)
+> >  					goto invalid_key;
+> > +				break;
+> >  			case 0:
+> >  				break;
+> >  			}
+> > -- 
+> > 2.27.0
+> > 
+> > 
 > 
-> It still might be a nice helper to prevent people from checking the
-> flags and forgetting that there's a memory ordering issue, though.
+> 
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-I just mentioned this offline but for the record: the flag is gone since
-we can rely on the pointer alone. :)
-
-Christian
+Thank you, Jarkko.
+--
+Gustavo
