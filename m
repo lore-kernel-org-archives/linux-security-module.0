@@ -2,170 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DC3C2D0E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 15:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AA3C63798
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 15:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9E0A2087C
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 15:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2D202086A
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Nov 2020 15:12:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mNl/Joee"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S32ef2Bv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbgKXPBX (ORCPT
+        id S1728352AbgKXPMO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Nov 2020 10:01:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48116 "EHLO
+        Tue, 24 Nov 2020 10:12:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731087AbgKXPBX (ORCPT
+        with ESMTP id S1728372AbgKXPMN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Nov 2020 10:01:23 -0500
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58943C0613D6
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2020 07:01:21 -0800 (PST)
-Received: by mail-lj1-x244.google.com with SMTP id b17so22333327ljf.12
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2020 07:01:21 -0800 (PST)
+        Tue, 24 Nov 2020 10:12:13 -0500
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEB30C0617A6
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2020 07:12:13 -0800 (PST)
+Received: by mail-wr1-x442.google.com with SMTP id u12so22742365wrt.0
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2020 07:12:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4cufC7N8nRv3SkCz2IJuYYqy8EP5LoCq+PiCIULlPW0=;
-        b=mNl/Joee3mZwk30XNCTYG5kdWOulL4KcpSFJJnGh86vK4xb4jgc7VmmrSomvrjsLff
-         ne/69Cv+zuk5lr94nZFUG8iyt/sqpOPgj1Nuj9NcXlC4eqX6IlxgB23FD2Ic4AJfB1bV
-         QX0D9GA4sqn7jOUNma4wX9HoeEG2LHXYjKKe4=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zo/eh4ktsJrvBJDhlleePdIuf6jkuW1NUUnewCNp2aA=;
+        b=S32ef2BvvdYvJXT+dX/Sz/zKAStOA6HlrzJx5QZH8K5801QaZ5/FQXnZtciyBb/7Zm
+         X3xhA/pIpPCD8MLVwrPc47UFcnmABqySOsW6HgVxn5Rbjk3OIxPn5wVsWSfYCqrrhgxn
+         RFEY10+OSbJS2t8gVKAdgBxSABPT1j2NsIFLw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4cufC7N8nRv3SkCz2IJuYYqy8EP5LoCq+PiCIULlPW0=;
-        b=Jil7Fteu3Xg6ggL6u3wFi04IYAyNAvgY10xAsg4SJcZDVNlkOiquocJkw5NvtSSl0k
-         YXDZaM8GLe0R2CMdr07itVD1o3lU2zkbapbxbtMi+luABNpCFzKgivUKy0Pk5pvZ48CP
-         bxjTm01Vowj+PCgCtHidSzkK2ZZ2evxCGcaq/WE4Eocxicrl8Mxsr6kFiMcPIxMc9VcB
-         I3rGd+7jGCGfw8p4OE8nL7DR1E28/10BpBMY/NoRotgKxeEOi32Oi8+xW0h3sI61GKxf
-         s5hcgR2gIy3epbSOUC8ZDHz4rWoXDvaHVwVj2KWfEIRGX8NGykzMNrbfxpluCLm7LoDS
-         3rjA==
-X-Gm-Message-State: AOAM531ycmVHn+xPDPmz6uJBY4l6eYFc0b1BRV2nmFHDfFbsfiWBmzzp
-        0Y8FY44U3r99x6zRHQSt87oWu0tLnOTGadLiohHNVw==
-X-Google-Smtp-Source: ABdhPJwIEoDcDkp7w38V6oWL+60rjnYt6TjmgnqxWK3R1hsqDpgobsUas8XwaZu6zdQQBEl+Zuzw9LtexHB9RzsHpjQ=
-X-Received: by 2002:a2e:85c6:: with SMTP id h6mr2139852ljj.110.1606230075181;
- Tue, 24 Nov 2020 07:01:15 -0800 (PST)
-MIME-Version: 1.0
-References: <20201120131708.3237864-1-kpsingh@chromium.org>
- <20201120131708.3237864-2-kpsingh@chromium.org> <20201124040220.oyajc7wqn7gqgyib@ast-mbp>
- <CACYkzJ4i9qCgBRm3_pt19Tty4eR0RTMOg66f-_Rb7N3mBvgU8w@mail.gmail.com>
-In-Reply-To: <CACYkzJ4i9qCgBRm3_pt19Tty4eR0RTMOg66f-_Rb7N3mBvgU8w@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zo/eh4ktsJrvBJDhlleePdIuf6jkuW1NUUnewCNp2aA=;
+        b=qCpYnhB3vcc3Tx34Zk17DuZaPHu6m3pbLDwF+YCeFaBneDwWq5Y5rS0ql+RaV1hjbs
+         K1AtHty0ARqQ5JKH4aZSJf9aSBsCWXtHk5zoeMUK7fIDxs3Zj4L5g3bbWPCZZfHxdfSz
+         qYQXYQpwA1tvnXHnJlXrfm5vlKkRtbKL8B82sTuxLgkoFL9XIsepORdbg0w55z6KJdl8
+         yzeJciG1XJIr0XbXxvyHuWBVr3uFFLOrrpKD8F9gcIzsE6g+9Ni+Vaax2Kw11eQm4C+u
+         coMrp3F/24SUTd8xYLyDSICo/M5oYaZVM8qKS3jteDTdx7A6CtIUN0kyB6IwAT5VD5VB
+         7J4w==
+X-Gm-Message-State: AOAM5336y/0uMpsNEVjF5khEG9DwBMTgb/M9Fdy4v/pXAs//DgoPFXyq
+        hgCIPr2UiTVgXI/a8kYkzod/1Q==
+X-Google-Smtp-Source: ABdhPJz7rM/ysBu70throMYID2n092kypArpUlgruAbhh9VP+nhscLS+z5ycOFTueeCRvUwHEWrB1A==
+X-Received: by 2002:a5d:5604:: with SMTP id l4mr5677722wrv.127.1606230732372;
+        Tue, 24 Nov 2020 07:12:12 -0800 (PST)
+Received: from kpsingh.c.googlers.com.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
+        by smtp.gmail.com with ESMTPSA id g131sm6353127wma.35.2020.11.24.07.12.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Nov 2020 07:12:11 -0800 (PST)
 From:   KP Singh <kpsingh@chromium.org>
-Date:   Tue, 24 Nov 2020 16:01:04 +0100
-Message-ID: <CACYkzJ7mhbwzDwifDuBF91MKf0u6Cw2+HGWDMLJuTXnWz-gfJw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/3] bpf: Add a BPF helper for getting the IMA
- hash of an inode
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
+To:     James Morris <jmorris@namei.org>, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Florent Revest <revest@chromium.org>,
         Brendan Jackman <jackmanb@chromium.org>,
         Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH bpf-next v3 0/3] Implement bpf_ima_inode_hash
+Date:   Tue, 24 Nov 2020 15:12:07 +0000
+Message-Id: <20201124151210.1081188-1-kpsingh@chromium.org>
+X-Mailer: git-send-email 2.29.2.454.gaff20da3a2-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 24, 2020 at 12:04 PM KP Singh <kpsingh@chromium.org> wrote:
->
-> On Tue, Nov 24, 2020 at 5:02 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Fri, Nov 20, 2020 at 01:17:07PM +0000, KP Singh wrote:
-> > > +
-> > > +static bool bpf_ima_inode_hash_allowed(const struct bpf_prog *prog)
-> > > +{
-> > > +     return bpf_lsm_is_sleepable_hook(prog->aux->attach_btf_id);
-> > > +}
-> > > +
-> > > +BTF_ID_LIST_SINGLE(bpf_ima_inode_hash_btf_ids, struct, inode)
-> > > +
-> > > +const static struct bpf_func_proto bpf_ima_inode_hash_proto = {
-> > > +     .func           = bpf_ima_inode_hash,
-> > > +     .gpl_only       = false,
-> > > +     .ret_type       = RET_INTEGER,
-> > > +     .arg1_type      = ARG_PTR_TO_BTF_ID,
-> > > +     .arg1_btf_id    = &bpf_ima_inode_hash_btf_ids[0],
-> > > +     .arg2_type      = ARG_PTR_TO_UNINIT_MEM,
-> > > +     .arg3_type      = ARG_CONST_SIZE_OR_ZERO,
-> > > +     .allowed        = bpf_ima_inode_hash_allowed,
-> > > +};
-> > > +
-> > >  static const struct bpf_func_proto *
-> > >  bpf_lsm_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-> > >  {
-> > > @@ -97,6 +121,8 @@ bpf_lsm_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
-> > >               return &bpf_task_storage_delete_proto;
-> > >       case BPF_FUNC_bprm_opts_set:
-> > >               return &bpf_bprm_opts_set_proto;
-> > > +     case BPF_FUNC_ima_inode_hash:
-> > > +             return &bpf_ima_inode_hash_proto;
-> >
-> > That's not enough for correctness.
-> > Not only hook has to sleepable, but the program has to be sleepable too.
-> > The patch 3 should be causing all sort of kernel warnings
-> > for calling mutex from preempt disabled.
-> > There it calls bpf_ima_inode_hash() from SEC("lsm/file_mprotect") program.
+From: KP Singh <kpsingh@google.com>
 
-Okay I dug into why I did not get any warnings, I do have
-CONFIG_DEBUG_ATOMIC_SLEEP
-and friends enabled and I do look at dmesg and... I think you misread
-the diff of my patch :)
+# v2 -> v3
 
-it's indeed attaching to "lsm.s/bprm_committed_creds":
+- Fixed an issue pointed out by Alexei, the helper should only be
+  exposed to sleepable hooks.
+- Update the selftests to constrain the IMA policy udpate to a loopback
+  filesystem specifically created for the test. Also, split this out
+  from the LSM test. I dropped the Ack from this last patch since this
+  is a re-write.
 
-[https://lore.kernel.org/bpf/CACYkzJ7Oi8wXf=9a-e=fFHJirRbD=u47z+3+M2cRTCy_1fwtgw@mail.gmail.com/T/#m8d55bf0cdda614338cecd7154476497628612f6a]
+KP Singh (3):
+  ima: Implement ima_inode_hash
+  bpf: Add a BPF helper for getting the IMA hash of an inode
+  bpf: Add a selftest for bpf_ima_inode_hash
 
- SEC("lsm/file_mprotect")
- int BPF_PROG(test_int_hook, struct vm_area_struct *vma,
-@@ -65,8 +67,11 @@ int BPF_PROG(test_void_hook, struct linux_binprm *bprm)
-  __u32 key = 0;
-  __u64 *value;
+ include/linux/ima.h                           |  6 ++
+ include/uapi/linux/bpf.h                      | 11 +++
+ kernel/bpf/bpf_lsm.c                          | 26 ++++++
+ scripts/bpf_helpers_doc.py                    |  2 +
+ security/integrity/ima/ima_main.c             | 78 ++++++++++++------
+ tools/include/uapi/linux/bpf.h                | 11 +++
+ tools/testing/selftests/bpf/config            |  4 +
+ tools/testing/selftests/bpf/ima_setup.sh      | 80 +++++++++++++++++++
+ .../selftests/bpf/prog_tests/test_ima.c       | 74 +++++++++++++++++
+ tools/testing/selftests/bpf/progs/ima.c       | 28 +++++++
+ 10 files changed, 296 insertions(+), 24 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/ima_setup.sh
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/test_ima.c
+ create mode 100644 tools/testing/selftests/bpf/progs/ima.c
 
-- if (monitored_pid == pid)
-+ if (monitored_pid == pid) {
-  bprm_count++;
-+ ima_hash_ret = bpf_ima_inode_hash(bprm->file->f_inode,
-+  &ima_hash, sizeof(ima_hash));
-+ }
-
-  bpf_copy_from_user(args, sizeof(args), (void *)bprm->vma->vm_mm->arg_start);
-  bpf_copy_from_user(args, sizeof(args), (void *)bprm->mm->arg_start);
 -- 
+2.29.2.454.gaff20da3a2-goog
 
-The diff makes it look like it is attaching to "lsm/file_mprotect" but
-it's actually attaching to
-"lsm.s/bprm_committed_creds".
-
-Now we can either check for prod->aux->sleepable in
-bpf_ima_inode_hash_allowed or
-just not expose the helper to non-sleepable hooks. I went with the
-latter as this is what
-we do for bpf_copy_from_user.
-
-- KP
-
->
-> I did actually mean to use SEC("lsm.s/bprm_committed_creds"), my bad.
->
-> > "lsm/" is non-sleepable. "lsm.s/" is.
-> > please enable CONFIG_DEBUG_ATOMIC_SLEEP=y in your config.
->
-> Oops, yes I did notice that during recent work on the test cases.
->
-> Since we need a stronger check than just warnings, I am doing
-> something similar to
-> what we do for bpf_copy_from_user i.e.
->
->      return prog->aux->sleepable ? &bpf_ima_inode_hash_proto : NULL;
