@@ -2,167 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60575C63798
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 01:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F77C56202
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 02:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E220420708
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 01:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 838D520678
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 02:21:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="S4w78aWh"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="R6maUKMA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgKYBwb (ORCPT
+        id S1726165AbgKYCUy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Nov 2020 20:52:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbgKYBw3 (ORCPT
+        Tue, 24 Nov 2020 21:20:54 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57050 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725616AbgKYCUx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Nov 2020 20:52:29 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 337CEC061A4E
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2020 17:52:29 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id f23so776408ejk.2
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Nov 2020 17:52:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WrgS6CV4x3UltwJI2DnW1OzuHdog2ZsVn68ZxLeKHHU=;
-        b=S4w78aWhQBYjTBwAY7d5gbt+PtP/y46iHMJppknBZWw58tkWSFAI6xaAPgM/6eBm9O
-         N4Xgn+YMtJYIAiCQkH6TQhZnGm5nON8Q+WvOEzqQKP+/YTQMqy1oKULToO0pgY03LNg6
-         n7HtEFeHwJ0+va8ynSQsHpx9s1PHD17ALbIMF5KnA1ikcX4wAG6LMrfW2jZEL93DAy3e
-         f44ViUPd8G7cGzVwQVZ9YI6Shv6UwBJpOBoJkGle9al4+Llkc0vcwf4irsoCEgzeV6Gb
-         /WtWVQk4b97Ne3qcoZB2s7tOyS8fvcV4vlEqJSwk4LusdWDygADzSnIVkAEGjpy68tvA
-         kbtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WrgS6CV4x3UltwJI2DnW1OzuHdog2ZsVn68ZxLeKHHU=;
-        b=DRR8qM2ybPumeOPmTfg/8Nd8CscdyGzBIYaYl9wja7U483Ra+iPRpKNLIoxd0tSpKY
-         9GLmYicbBS2Z1f0gIShsZqvuSZHYJanZRoN6Y8y9nEw4+kx2TijrMyxEyXr5FHNssJ6T
-         Y56KfYXdQs4MU02mXdMUTtKLXwTe91YWIYmhN1290EynSCb15zW6zuXxLPBxymFo4JBZ
-         La6t/HbScI/gCHlGO0XMmjG8WXoBL9E/OQn2iIzgxAfBiGQrs4VW7YGHQXsJl5RNGEpT
-         GuciJmwNzUil5aLhX5c8ek8VmWF9P9AF462edwhmxmBWWwOEilpS4esm8H0GtgX24FMo
-         tuCg==
-X-Gm-Message-State: AOAM532zZBmzooj78TAT+WkYRAtKIX0By3JUq9O0OwW47iuGh48nKD9X
-        0vKm/AewMPrPchL//vzffqnNxu1/bpdNnPzhJM+9
-X-Google-Smtp-Source: ABdhPJy5QqTI/AmFehlIzbR5PA4citzw5aGePHpuJGKPI7XqWUoaYAYA5Mj9jqBoqrVHRoi3kpCcjDOXx5MKAZts+mc=
-X-Received: by 2002:a17:906:c096:: with SMTP id f22mr1130856ejz.488.1606269147585;
- Tue, 24 Nov 2020 17:52:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20201106155626.3395468-1-lokeshgidra@google.com>
- <20201106155626.3395468-4-lokeshgidra@google.com> <CAHC9VhRsaE5vhcSMr5nYzrHrM6Pc5-JUErNfntsRrPjKQNALxw@mail.gmail.com>
- <CA+EESO7LuRM_MH9z=BhLbWJrxMvnepq-NSTu_UJsPXxc0QkEag@mail.gmail.com>
- <CAHC9VhQJvTp4Xx2jCDK1zMbOmXLAAm_+ZnexydgAeWz1eGKfUg@mail.gmail.com>
- <CA+EESO79Yx6gMBYX+QkU9f7TKo-L+_COomCoAqwFQYwg8xy=gg@mail.gmail.com>
- <CAHC9VhSjVE6tC04h7k09LgTBrR-XW274ypvhcabkoyYLcDszHw@mail.gmail.com>
- <CA+EESO7vqNMXeyk7GZ7syXrTFG54oaf1PUsC7+2ndEBEQeBpdw@mail.gmail.com>
- <CAHC9VhQn-E+kTzzwwAiSLLQVtm5u=m5bOz2n-q+oA+8quT2noQ@mail.gmail.com>
- <CA+EESO6qfCCZ5K1sWWrcBm6VM0w3LWkiOfAh3dhM-eVigVYYWA@mail.gmail.com>
- <CAHC9VhTtLj9QPqEqO5hHPDmMnWzUaD-2PwGw=bQ=SBxvV78Sxg@mail.gmail.com> <CA+EESO465UY7v5W4k6cqWHTDq6e6pb_NBnZZRMjawHPvfEOOLw@mail.gmail.com>
-In-Reply-To: <CA+EESO465UY7v5W4k6cqWHTDq6e6pb_NBnZZRMjawHPvfEOOLw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 24 Nov 2020 20:52:15 -0500
-Message-ID: <CAHC9VhRRuc+Vxj5waVkVaJ5DN6XpTZnU8eub_Z0BFUMa5yJz0g@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] selinux: teach SELinux about anonymous inodes
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Cedeno <thomascedeno@google.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        Calin Juravle <calin@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        "Cc: Android Kernel" <kernel-team@android.com>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 24 Nov 2020 21:20:53 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0AP24vW0064944;
+        Tue, 24 Nov 2020 21:20:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=1UoIOVcvh0hbYFn1xsc3ArW7972Yu0vK1B/8QcLbzoM=;
+ b=R6maUKMAn5RmXDZOsTi4DSJuT4B/HCR7BFz3SjhldmUsPcvKppFkgkj7+w7tVwv/LzK3
+ N55TqTZ1ZUGm+g8jBqh5z2L/i7tC0juKV82qlXh38D5BZri5rdqQpO2x7FPQfAqGDoFE
+ jsM9BkDKFrRPu5h9+IgNWgpvTFe+Q8hrReb+dPlvTHG0WBn1lNZg6jBskF1l2HqTexj2
+ nxO34mDoVviOTZ+iIITKlvyXnOJfd8lU8kmJTLI7MIzRa2QmsNOdb6LmQjcHs5ccoYgb
+ nVwDJdx8oJjzXU+RhhiEfZ3zXeoirMig0idlTn3L5aMH+ESQuC7Er17TN8FcwFWQlsT1 Uw== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 350vbvub6u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 24 Nov 2020 21:20:39 -0500
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0AP2HFxk022126;
+        Wed, 25 Nov 2020 02:20:37 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma04ams.nl.ibm.com with ESMTP id 3518j8g7w1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 25 Nov 2020 02:20:37 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0AP2KY8C48628164
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 25 Nov 2020 02:20:35 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A90DF52057;
+        Wed, 25 Nov 2020 02:20:34 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.82.212])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id D00D252052;
+        Wed, 25 Nov 2020 02:20:32 +0000 (GMT)
+Message-ID: <adaa989215f4b748eb817d15bd3c2e8db2cbee3c.camel@linux.ibm.com>
+Subject: Re: [PATCH bpf-next v3 3/3] bpf: Add a selftest for
+ bpf_ima_inode_hash
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     KP Singh <kpsingh@chromium.org>, James Morris <jmorris@namei.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Florent Revest <revest@chromium.org>,
+        Brendan Jackman <jackmanb@chromium.org>
+Date:   Tue, 24 Nov 2020 21:20:31 -0500
+In-Reply-To: <20201124151210.1081188-4-kpsingh@chromium.org>
+References: <20201124151210.1081188-1-kpsingh@chromium.org>
+         <20201124151210.1081188-4-kpsingh@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-24_11:2020-11-24,2020-11-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
+ mlxscore=0 priorityscore=1501 lowpriorityscore=0 malwarescore=0
+ adultscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011250007
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Nov 24, 2020 at 3:44 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> On Mon, Nov 23, 2020 at 2:43 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Nov 23, 2020 at 2:21 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > On Sun, Nov 22, 2020 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Wed, Nov 18, 2020 at 5:39 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
-> > > > > I have created a cuttlefish build and have tested with the attached
-> > > > > userfaultfd program:
-> > > >
-> > > > Thanks, that's a good place to start, a few comments:
-> > > >
-> > > > - While we support Android as a distribution, it isn't a platform that
-> > > > we common use for development and testing.  At the moment, Fedora is
-> > > > probably your best choice for that.
-> > > >
-> > > I tried setting up a debian/ubuntu system for testing using the
-> > > instructions on the selinux-testsuite page, but the system kept
-> > > freezing after 'setenforce 1'. I'll try with fedora now.
-> >
-> > I would expect you to have much better luck with Fedora.
->
-> Yes. It worked!
+On Tue, 2020-11-24 at 15:12 +0000, KP Singh wrote:
+> diff --git a/tools/testing/selftests/bpf/ima_setup.sh b/tools/testing/selftests/bpf/ima_setup.sh
+> new file mode 100644
+> index 000000000000..15490ccc5e55
+> --- /dev/null
+> +++ b/tools/testing/selftests/bpf/ima_setup.sh
+> @@ -0,0 +1,80 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +set -e
+> +set -u
+> +
+> +IMA_POLICY_FILE="/sys/kernel/security/ima/policy"
+> +TEST_BINARY="/bin/true"
+> +
+> +usage()
+> +{
+> +        echo "Usage: $0 <setup|cleanup|run> <existing_tmp_dir>"
+> +        exit 1
+> +}
+> +
+> +setup()
+> +{
+> +        local tmp_dir="$1"
+> +        local mount_img="${tmp_dir}/test.img"
+> +        local mount_dir="${tmp_dir}/mnt"
+> +        local copied_bin_path="${mount_dir}/$(basename ${TEST_BINARY})"
+> +        mkdir -p ${mount_dir}
+> +
+> +        dd if=/dev/zero of="${mount_img}" bs=1M count=10
+> +
+> +        local loop_device="$(losetup --find --show ${mount_img})"
+> +
+> +        mkfs.ext4 "${loop_device}"
+> +        mount "${loop_device}" "${mount_dir}"
+> +
+> +        cp "${TEST_BINARY}" "${mount_dir}"
+> +        local mount_uuid="$(blkid -s UUID -o value ${loop_device})"
+> +        echo "measure func=BPRM_CHECK fsuuid=${mount_uuid}" > ${IMA_POLICY_FILE}
 
-Excellent :)
+Anyone using IMA, normally define policy rules requiring the policy
+itself to be signed.   Instead of writing the policy rules, write the
+signed policy file pathname.  Refer to dracut commit 479b5cd9
+("98integrity: support validating the IMA policy file signature").
 
-> > > > - Your test program should be written in vanilla C for the
-> > > > selinux-testsuite.  Looking at the userfaultfdSimple.cc code that
-> > > > should be a trivial conversion.
-> > > >
-> > > > - I think you have a good start on a test for the selinux-testsuite,
-> > > > please take a look at the test suite and submit a patch against that
-> > > > repo.  Ondrej (CC'd) currently maintains the test suite and he may
-> > > > have some additional thoughts.
-> > > >
-> > > > * https://github.com/SELinuxProject/selinux-testsuite
-> > >
-> > > Thanks a lot for the inputs. I'll start working on this.
-> >
-> > Great, let us know if you hit any problems.  I think we would all like
-> > to see this upstream :)
->
-> I have the patch ready. I couldn't find any instructions on the
-> testsuite site about patch submission. Can you please tell me how to
-> proceed.
+Both enabling IMA_APPRAISE_REQUIRE_POLICY_SIGS and the builtin
+"appraise_tcb" policy require loading a signed policy.
 
-You can post it to the SELinux mailing list, much like you would do a
-SELinux kernel patch.  I'll take a look and I'll make sure Ondrej
-looks at it too.
+Mimi
 
-Thanks!
-
--- 
-paul moore
-www.paul-moore.com
