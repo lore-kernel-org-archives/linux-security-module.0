@@ -2,169 +2,184 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68001C56202
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 03:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB2FC63777
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 07:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 104922224B
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 03:01:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7D56206E5
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Nov 2020 07:05:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qQYY1QyC"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DUjk2u5m";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DUjk2u5m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbgKYDB0 (ORCPT
+        id S1727772AbgKYHFq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Nov 2020 22:01:26 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28484 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725998AbgKYDBZ (ORCPT
+        Wed, 25 Nov 2020 02:05:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbgKYHFm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Nov 2020 22:01:25 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0AP2W3R4120618;
-        Tue, 24 Nov 2020 22:01:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=6amDYJMbvv+cZ/V0BO4yE2KEA8QwnKwYTTvHtJ1k4+I=;
- b=qQYY1QyCt5B2pvfPm8Jh94ucil9O0Ku15PCOy3KvENc92p9rYA9H5dvJWvnEDK7ffVIU
- D5HzfYpEtDKf7AgjDXF+evO3SWwEDbY4meC68/LFb2Gq+u8XrU8//NIakAatTHA4vwde
- wQWOd1VggxUJ4uWP89Q8UCWbehiZAQJbaFc3S6YSoyC18dC9DYOQEpiOO21v3BXfjJEW
- bRMuFLFQ8GV466G4EY79rs1Cg18H9K0S/ivtjLVrYiZmhjCK3IRL71Ua8GRyiZ+QA2Ow
- gT9IaYgFqKo0dKfn5wjnJBjxRf12ISBzsF8gOoZHWgUOTI0iRRBooxuXT6muY+BsZF3s Dw== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 350rna222x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Nov 2020 22:01:11 -0500
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0AP2w1xL031115;
-        Wed, 25 Nov 2020 03:01:09 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 3518j8g8q6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 25 Nov 2020 03:01:09 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0AP317EO6881928
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 Nov 2020 03:01:07 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 69E31AE0EC;
-        Wed, 25 Nov 2020 03:01:07 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C9C8AE0CB;
-        Wed, 25 Nov 2020 03:01:05 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.82.212])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 25 Nov 2020 03:01:04 +0000 (GMT)
-Message-ID: <8f91820c6a79592105d4ce85ccfaeeda2aa645c3.camel@linux.ibm.com>
-Subject: Re: [PATCH bpf-next v3 3/3] bpf: Add a selftest for
- bpf_ima_inode_hash
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     KP Singh <kpsingh@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>
-Date:   Tue, 24 Nov 2020 22:01:04 -0500
-In-Reply-To: <CACYkzJ5ZJ_yu=dXM5-jXEO5p5WzpXDT5EdT0agL1pgdNRqGamw@mail.gmail.com>
-References: <20201124151210.1081188-1-kpsingh@chromium.org>
-         <20201124151210.1081188-4-kpsingh@chromium.org>
-         <adaa989215f4b748eb817d15bd3c2e8db2cbee3c.camel@linux.ibm.com>
-         <CACYkzJ5ZJ_yu=dXM5-jXEO5p5WzpXDT5EdT0agL1pgdNRqGamw@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
+        Wed, 25 Nov 2020 02:05:42 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 571CDC0613D6;
+        Tue, 24 Nov 2020 23:05:42 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2D9901280404;
+        Tue, 24 Nov 2020 23:05:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1606287940;
+        bh=PpyvloC8ztllb7q8ndtGKJRs78ChiB3jg6tteM0zYL0=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=DUjk2u5mMxkvusJZ7TUknDmT+9jEkjAK5Du54VYrLnX3ZVAsqbXKInJF3+bjbWxe1
+         sPTOm9Jo8O4FiM37EcbSbGJ09Z6i3toRLj70BanOqmx/doOouqQw1ofRfirJ315HKN
+         ACp6UaCD/rMf1rqLOvr/v7W+FqOYQZREI5LkhaoU=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 8h4rTuJEi-3j; Tue, 24 Nov 2020 23:05:40 -0800 (PST)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A873112803EC;
+        Tue, 24 Nov 2020 23:05:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1606287940;
+        bh=PpyvloC8ztllb7q8ndtGKJRs78ChiB3jg6tteM0zYL0=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=DUjk2u5mMxkvusJZ7TUknDmT+9jEkjAK5Du54VYrLnX3ZVAsqbXKInJF3+bjbWxe1
+         sPTOm9Jo8O4FiM37EcbSbGJ09Z6i3toRLj70BanOqmx/doOouqQw1ofRfirJ315HKN
+         ACp6UaCD/rMf1rqLOvr/v7W+FqOYQZREI5LkhaoU=
+Message-ID: <a841536fe65bb33f1c72ce2455a6eb47a0107565.camel@HansenPartnership.com>
+Subject: Re: [Intel-wired-lan] [PATCH 000/141] Fix fall-through warnings for
+ Clang
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Joe Perches <joe@perches.com>,
+        Jakub Kicinski <kuba@kernel.org>, alsa-devel@alsa-project.org,
+        linux-atm-general@lists.sourceforge.net,
+        reiserfs-devel@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        linux-ide@vger.kernel.org, dm-devel@redhat.com,
+        keyrings@vger.kernel.org, linux-mtd@lists.infradead.org,
+        GR-everest-linux-l2@marvell.com, wcn36xx@lists.infradead.org,
+        samba-technical@lists.samba.org, linux-i3c@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        linux-afs@lists.infradead.org,
+        usb-storage@lists.one-eyed-alien.net, drbd-dev@lists.linbit.com,
+        devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
+        rds-devel@oss.oracle.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-scsi@vger.kernel.org, linux-rdma@vger.kernel.org,
+        oss-drivers@netronome.com, bridge@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org,
+        linux-stm32@st-md-mailman.stormreply.com, cluster-devel@redhat.com,
+        linux-acpi@vger.kernel.org, coreteam@netfilter.org,
+        intel-wired-lan@lists.osuosl.org, linux-input@vger.kernel.org,
+        Miguel Ojeda <ojeda@kernel.org>,
+        tipc-discussion@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        selinux@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, linux-geode@lists.infradead.org,
+        linux-can@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-gpio@vger.kernel.org, op-tee@lists.trustedfirmware.org,
+        linux-mediatek@lists.infradead.org, xen-devel@lists.xenproject.org,
+        nouveau@lists.freedesktop.org, linux-hams@vger.kernel.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org, linux-hwmon@vger.kernel.org,
+        x86@kernel.org, linux-nfs@vger.kernel.org,
+        GR-Linux-NIC-Dev@marvell.com, linux-mm@kvack.org,
+        netdev@vger.kernel.org, linux-decnet-user@lists.sourceforge.net,
+        linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sctp@vger.kernel.org, linux-usb@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-integrity@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+Date:   Tue, 24 Nov 2020 23:05:35 -0800
+In-Reply-To: <202011241327.BB28F12F6@keescook>
+References: <202011201129.B13FDB3C@keescook>
+         <20201120115142.292999b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+         <202011220816.8B6591A@keescook>
+         <9b57fd4914b46f38d54087d75e072d6e947cb56d.camel@HansenPartnership.com>
+         <ca071decb87cc7e905411423c05a48f9fd2f58d7.camel@perches.com>
+         <0147972a72bc13f3629de8a32dee6f1f308994b5.camel@HansenPartnership.com>
+         <d8d1e9add08cdd4158405e77762d4946037208f8.camel@perches.com>
+         <dbd2cb703ed9eefa7dde9281ea26ab0f7acc8afe.camel@HansenPartnership.com>
+         <20201123130348.GA3119@embeddedor>
+         <8f5611bb015e044fa1c0a48147293923c2d904e4.camel@HansenPartnership.com>
+         <202011241327.BB28F12F6@keescook>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-24_11:2020-11-24,2020-11-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 clxscore=1015 malwarescore=0
- spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011250011
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-11-25 at 03:55 +0100, KP Singh wrote:
-> On Wed, Nov 25, 2020 at 3:20 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > On Tue, 2020-11-24 at 15:12 +0000, KP Singh wrote:
-> > > diff --git a/tools/testing/selftests/bpf/ima_setup.sh b/tools/testing/selftests/bpf/ima_setup.sh
-> > > new file mode 100644
-> > > index 000000000000..15490ccc5e55
-> > > --- /dev/null
-> > > +++ b/tools/testing/selftests/bpf/ima_setup.sh
-> > > @@ -0,0 +1,80 @@
-> > > +#!/bin/bash
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +set -e
-> > > +set -u
-> > > +
-> > > +IMA_POLICY_FILE="/sys/kernel/security/ima/policy"
-> > > +TEST_BINARY="/bin/true"
-> > > +
-> > > +usage()
-> > > +{
-> > > +        echo "Usage: $0 <setup|cleanup|run> <existing_tmp_dir>"
-> > > +        exit 1
-> > > +}
-> > > +
-> > > +setup()
-> > > +{
-> > > +        local tmp_dir="$1"
-> > > +        local mount_img="${tmp_dir}/test.img"
-> > > +        local mount_dir="${tmp_dir}/mnt"
-> > > +        local copied_bin_path="${mount_dir}/$(basename ${TEST_BINARY})"
-> > > +        mkdir -p ${mount_dir}
-> > > +
-> > > +        dd if=/dev/zero of="${mount_img}" bs=1M count=10
-> > > +
-> > > +        local loop_device="$(losetup --find --show ${mount_img})"
-> > > +
-> > > +        mkfs.ext4 "${loop_device}"
-> > > +        mount "${loop_device}" "${mount_dir}"
-> > > +
-> > > +        cp "${TEST_BINARY}" "${mount_dir}"
-> > > +        local mount_uuid="$(blkid -s UUID -o value ${loop_device})"
-> > > +        echo "measure func=BPRM_CHECK fsuuid=${mount_uuid}" > ${IMA_POLICY_FILE}
-> >
-> > Anyone using IMA, normally define policy rules requiring the policy
-> > itself to be signed.   Instead of writing the policy rules, write the
+On Tue, 2020-11-24 at 13:32 -0800, Kees Cook wrote:
+> On Mon, Nov 23, 2020 at 08:31:30AM -0800, James Bottomley wrote:
+> > Really, no ... something which produces no improvement has no value
+> > at all ... we really shouldn't be wasting maintainer time with it
+> > because it has a cost to merge.  I'm not sure we understand where
+> > the balance lies in value vs cost to merge but I am confident in
+> > the zero value case.
 > 
-> The goal of this self test is to not fully test the IMA functionality but check
-> if the BPF helper works and returns a hash with the minimal possible IMA
-> config dependencies. And it seems like we can accomplish this by simply
-> writing the policy to securityfs directly.
-> 
-> From what I noticed, IMA_APPRAISE_REQUIRE_POLICY_SIGS
-> requires configuring a lot of other kernel options
-> (IMA_APPRAISE, ASYMMETRIC_KEYS etc.) that seem
-> like too much for bpf self tests to depend on.
-> 
-> I guess we can independently add selftests for IMA  which represent
-> a more real IMA configuration.  Hope this sounds reasonable?
+> What? We can't measure how many future bugs aren't introduced because
+> the kernel requires explicit case flow-control statements for all new
+> code.
 
-Sure.  My point was that writing the policy rule might fail.
+No but we can measure how vulnerable our current coding habits are to
+the mistake this warning would potentially prevent.  I don't think it's
+wrong to extrapolate that if we had no instances at all of prior coding
+problems we likely wouldn't have any in future either making adopting
+the changes needed to enable the warning valueless ... that's the zero
+value case I was referring to above.
 
-Mimi
+Now, what we have seems to be about 6 cases (at least what's been shown
+in this thread) where a missing break would cause potentially user
+visible issues.  That means the value of this isn't zero, but it's not
+a no-brainer massive win either.  That's why I think asking what we've
+invested vs the return isn't a useless exercise.
+
+> We already enable -Wimplicit-fallthrough globally, so that's not the
+> discussion. The issue is that Clang is (correctly) even more strict
+> than GCC for this, so these are the remaining ones to fix for full
+> Clang coverage too.
 > 
-> > signed policy file pathname.  Refer to dracut commit 479b5cd9
-> > ("98integrity: support validating the IMA policy file signature").
-> >
-> > Both enabling IMA_APPRAISE_REQUIRE_POLICY_SIGS and the builtin
-> > "appraise_tcb" policy require loading a signed policy.
-> 
-> Thanks for the pointers.
+> People have spent more time debating this already than it would have
+> taken to apply the patches. :)
+
+You mean we've already spent 90% of the effort to come this far so we
+might as well go the remaining 10% because then at least we get some
+return? It's certainly a clinching argument in defence procurement ...
+
+> This is about robustness and language wrangling. It's a big code-
+> base, and this is the price of our managing technical debt for
+> permanent robustness improvements. (The numbers I ran from Gustavo's
+> earlier patches were that about 10% of the places adjusted were
+> identified as legitimate bugs being fixed. This final series may be
+> lower, but there are still bugs being found from it -- we need to
+> finish this and shut the door on it for good.)
+
+I got my six patches by analyzing the lwn.net report of the fixes that
+was cited which had 21 of which 50% didn't actually change the emitted
+code, and 25% didn't have a user visible effect.
+
+But the broader point I'm making is just because the compiler people
+come up with a shiny new warning doesn't necessarily mean the problem
+it's detecting is one that causes us actual problems in the code base. 
+I'd really be happier if we had a theory about what classes of CVE or
+bug we could eliminate before we embrace the next new warning.
+
+James
 
 
 
