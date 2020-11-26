@@ -2,65 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45029C63777
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Nov 2020 06:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184B2C63777
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Nov 2020 10:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F181621741
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Nov 2020 06:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44FD208CA
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Nov 2020 10:35:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388224AbgKZG6F (ORCPT
+        id S1729563AbgKZKfO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Nov 2020 01:58:05 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59781 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388217AbgKZG6F (ORCPT
+        Thu, 26 Nov 2020 05:35:14 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2158 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729095AbgKZKfO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Nov 2020 01:58:05 -0500
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 0AQ6vn4d083776;
-        Thu, 26 Nov 2020 15:57:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav106.sakura.ne.jp);
- Thu, 26 Nov 2020 15:57:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav106.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 0AQ6vnYB083773
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 26 Nov 2020 15:57:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] tomoyo: Avoid potential null pointer access
-To:     Zheng Zengkai <zhengzengkai@huawei.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
-        weiyongjun1@huawei.com
-References: <20201125121043.107662-1-zhengzengkai@huawei.com>
- <cfc96d99-adff-6eb9-9685-422587830eb8@i-love.sakura.ne.jp>
- <01d29bbf-9d77-c787-b2c2-d88a6a5047f7@huawei.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <59e0abdd-88a9-6269-9cd1-0f65792784ec@i-love.sakura.ne.jp>
-Date:   Thu, 26 Nov 2020 15:57:46 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Thu, 26 Nov 2020 05:35:14 -0500
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ChYww1WYjz67Hmq;
+        Thu, 26 Nov 2020 18:32:32 +0800 (CST)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.161)
+ by fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2106.2; Thu, 26 Nov 2020 11:35:10 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <torvalds@linux-foundation.org>,
+        <hch@infradead.org>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] ima: Don't modify file descriptor mode on the fly
+Date:   Thu, 26 Nov 2020 11:34:56 +0100
+Message-ID: <20201126103456.15167-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.27.GIT
 MIME-Version: 1.0
-In-Reply-To: <01d29bbf-9d77-c787-b2c2-d88a6a5047f7@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.65.161]
+X-ClientProxiedBy: lhreml705-chm.china.huawei.com (10.201.108.54) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020/11/26 15:33, Zheng Zengkai wrote:
-> As your say,  I found the function tomoyo_assign_namespace( )
-> 
-> in security/tomoyo/domain.c has the similar situation,
-> 
-> Can I add __GFP_NOWARN for both and remove the null check for _entry_ in tomoyo_assign_namespace( )?
-> 
+Commit a408e4a86b36b ("ima: open a new file instance if no read
+permissions") already introduced a second open to measure a file when the
+original file descriptor does not allow it. However, it didn't remove the
+existing method of changing the mode of the original file descriptor, which
+is still necessary if the current process does not have enough privileges
+to open a new one.
 
-Good catch. Yes, please send as a patch.
+Changing the mode isn't really an option, as the filesystem might need to
+do preliminary steps to make the read possible. Thus, this patch removes
+the code and keeps the second open as the only option to measure a file
+when it is unreadable with the original file descriptor.
+
+Cc: <stable@vger.kernel.org> # 4.20.x: 0014cc04e8ec0 ima: Set file->f_mode
+Cc: <stable@vger.kernel.org> # 4.20.x
+Fixes: 2fe5d6def1672 ("ima: integrity appraisal extension")
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_crypto.c | 20 +++++---------------
+ 1 file changed, 5 insertions(+), 15 deletions(-)
+
+diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
+index 21989fa0c107..f6a7e9643b54 100644
+--- a/security/integrity/ima/ima_crypto.c
++++ b/security/integrity/ima/ima_crypto.c
+@@ -537,7 +537,7 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 	loff_t i_size;
+ 	int rc;
+ 	struct file *f = file;
+-	bool new_file_instance = false, modified_mode = false;
++	bool new_file_instance = false;
+ 
+ 	/*
+ 	 * For consistency, fail file's opened with the O_DIRECT flag on
+@@ -555,18 +555,10 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ 				O_TRUNC | O_CREAT | O_NOCTTY | O_EXCL);
+ 		flags |= O_RDONLY;
+ 		f = dentry_open(&file->f_path, flags, file->f_cred);
+-		if (IS_ERR(f)) {
+-			/*
+-			 * Cannot open the file again, lets modify f_mode
+-			 * of original and continue
+-			 */
+-			pr_info_ratelimited("Unable to reopen file for reading.\n");
+-			f = file;
+-			f->f_mode |= FMODE_READ;
+-			modified_mode = true;
+-		} else {
+-			new_file_instance = true;
+-		}
++		if (IS_ERR(f))
++			return PTR_ERR(f);
++
++		new_file_instance = true;
+ 	}
+ 
+ 	i_size = i_size_read(file_inode(f));
+@@ -581,8 +573,6 @@ int ima_calc_file_hash(struct file *file, struct ima_digest_data *hash)
+ out:
+ 	if (new_file_instance)
+ 		fput(f);
+-	else if (modified_mode)
+-		f->f_mode &= ~FMODE_READ;
+ 	return rc;
+ }
+ 
+-- 
+2.27.GIT
+
