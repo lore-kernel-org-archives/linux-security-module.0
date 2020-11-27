@@ -2,128 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EE9C63798
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Nov 2020 13:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E3FC64E7A
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Nov 2020 16:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A40322248
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Nov 2020 13:10:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEB57206DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Nov 2020 16:45:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EYRtiIpZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ITG6u3q1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbgK0NJs (ORCPT
+        id S1731374AbgK0Qpe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Nov 2020 08:09:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729580AbgK0NJr (ORCPT
+        Fri, 27 Nov 2020 11:45:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:32706 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731233AbgK0Qpd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Nov 2020 08:09:47 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3998C0617A7
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2020 05:09:46 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id s9so5838165ljo.11
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Nov 2020 05:09:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RViarWIqyoq/ayFT+noWEVBCT5Qp7dKKwNqyH4mKwAI=;
-        b=EYRtiIpZ9RlOHG2risep3WX76M0vCjzPqwbDOaLXliSRyvVurBBUKydX+E3fhjKq9c
-         j1QAhakUQFaTmyK/CiU1WA01SLocE+BW/S6qwAqHzrZbWFTwpTjwyrNOuSInwBxCxBhl
-         hpMCIwrrBn+2RToDeN2ieT4fW/PG4IXtHOruA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RViarWIqyoq/ayFT+noWEVBCT5Qp7dKKwNqyH4mKwAI=;
-        b=EmALEp8bD9DHcuLZ2lgOoKukvdTFGmN4Gjl27Dv14Sos0Lw9jpcBaMt7jFPvNJy99+
-         3st0ecFwjMYbGN1JWu7KVxrrykgEfY+a549YxhAXDECJ0h7xqXGfRaA+mLeIfopQ3WbD
-         iLyWSioLvZQplgF2CrgMzGRm57/I54At7i4YvnumItAZEHgIrojm/XMCbuCGlYKM99lb
-         RU3ba5f1GENWXXrszBtKnEAh5clP3aIeOGtU+4Lv7XjDXhdyS0HUTI4j0NPkrTVgJkJf
-         d1ISgRl2YyqIirIUc6p8vt0kUOmfKyIGdHiZENMh4Aesf9BLIoQJ5LnMwSTYKaMpY0fJ
-         CS8Q==
-X-Gm-Message-State: AOAM532xXvBtz8rtmAsjvgb2QBkPFZJsftgpaE14v7ZHQ9TRifb6woVH
-        TBb5ccAoAqV/MAenGyT4PMqL0Cob1aOiAjdA4orTOw==
-X-Google-Smtp-Source: ABdhPJwey4p3rPhSFKkHCs0zkk0IHDRamVnPb59Oe2QyeTvSdl8qmH0dC49E5IZf42YNnT8dfB2dGPtXrBsyV2KqeVo=
-X-Received: by 2002:a2e:8e3b:: with SMTP id r27mr3451519ljk.466.1606482583760;
- Fri, 27 Nov 2020 05:09:43 -0800 (PST)
-MIME-Version: 1.0
-References: <20201124151210.1081188-1-kpsingh@chromium.org>
- <20201124151210.1081188-4-kpsingh@chromium.org> <CAEf4BzbDKX8+AaueNngEeGnWQLfN0Fy+jgcxrwbeLeVfVh0E9Q@mail.gmail.com>
-In-Reply-To: <CAEf4BzbDKX8+AaueNngEeGnWQLfN0Fy+jgcxrwbeLeVfVh0E9Q@mail.gmail.com>
-From:   KP Singh <kpsingh@chromium.org>
-Date:   Fri, 27 Nov 2020 14:09:33 +0100
-Message-ID: <CACYkzJ5t3McRMmCDQwRXD2n=1QLsgWWOFfJ_iXGGYP5yqorsEQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 3/3] bpf: Add a selftest for bpf_ima_inode_hash
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+        Fri, 27 Nov 2020 11:45:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606495532;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BFzxJ0LqFvUbcYcFeHzyf+vWZiMH5SU2REmsbBd10N8=;
+        b=ITG6u3q1GXWpYpr2rXLT2W6cTrPA6MnaMDEAOGzjY3vUEgTAkqM7ENCwfUv3vYSNBgFS7s
+        p2fcMsVpB754WUtzXo9aZq7ce2RILXAvdZyi23o24vnx+EzxwvoTKvaSIdg19HMoTif5Ef
+        v/X5ZVWi3J9Yi72UWvsFRXrcgXKEdCY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-410-hJyyTcCMPxWe0M8Pz4bx4g-1; Fri, 27 Nov 2020 11:45:30 -0500
+X-MC-Unique: hJyyTcCMPxWe0M8Pz4bx4g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 801403FD1;
+        Fri, 27 Nov 2020 16:45:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C393060BF1;
+        Fri, 27 Nov 2020 16:45:24 +0000 (UTC)
+Subject: [PATCH 0/9] keys: Miscellaneous fixes
+From:   David Howells <dhowells@redhat.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Cc:     James Morris <jmorris@namei.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Florent Revest <revest@chromium.org>,
-        Brendan Jackman <jackmanb@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
+        Jann Horn <jannh@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Ben Boeckel <mathstuf@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        Denis Efremov <efremov@linux.com>, keyrings@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tom Rix <trix@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 27 Nov 2020 16:45:24 +0000
+Message-ID: <160649552401.2744658.15096366594785577090.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 27, 2020 at 5:29 AM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Nov 24, 2020 at 7:16 AM KP Singh <kpsingh@chromium.org> wrote:
-> >
-> > From: KP Singh <kpsingh@google.com>
-> >
 
-[...]
+Hi Jarkko,
 
->
-> > +cleanup() {
-> > +        local tmp_dir="$1"
-> > +        local mount_img="${tmp_dir}/test.img"
-> > +        local mount_dir="${tmp_dir}/mnt"
-> > +
-> > +        local loop_devices=$(losetup -j ${mount_img} -O NAME --noheadings)
->
-> libbpf and kernel-patches CIs are using BusyBox environment which has
-> losetup that doesn't support -j option. Is there some way to work
-> around that? What we have is this:
->
-> BusyBox v1.31.1 () multi-call binary.
->
-> Usage: losetup [-rP] [-o OFS] {-f|LOOPDEV} FILE: associate loop devices
->
->     losetup -c LOOPDEV: reread file size
->
->     losetup -d LOOPDEV: disassociate
->
->     losetup -a: show status
+I've collected together a bunch of minor keyrings fixes, but I'm not sure
+there's anything that can't wait for the next merge window.
 
-I can try to grep and parse the status output as a fallback. Will send another
-fix.
+The patches can be found on the following branch:
 
-- KP
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-fixes
 
->
->     losetup -f: show next free loop device
->
->     -o OFS    Start OFS bytes into FILE
->
->     -P    Scan for partitions
->
->     -r    Read-only
->
->     -f    Show/use next free loop device
->
->
-> > +        for loop_dev in "${loop_devices}"; do
+David
+---
+Alexander A. Klimov (1):
+      encrypted-keys: Replace HTTP links with HTTPS ones
 
-[...]
+Denis Efremov (1):
+      security/keys: use kvfree_sensitive()
+
+Gabriel Krisman Bertazi (1):
+      watch_queue: Drop references to /dev/watch_queue
+
+Gustavo A. R. Silva (1):
+      security: keys: Fix fall-through warnings for Clang
+
+Jann Horn (1):
+      keys: Remove outdated __user annotations
+
+Krzysztof Kozlowski (1):
+      KEYS: asymmetric: Fix kerneldoc
+
+Randy Dunlap (2):
+      security: keys: delete repeated words in comments
+      crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
+
+Tom Rix (1):
+      KEYS: remove redundant memset
+
+
+ Documentation/security/keys/core.rst     |  4 ++--
+ crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
+ crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
+ include/keys/encrypted-type.h            |  2 +-
+ samples/Kconfig                          |  2 +-
+ samples/watch_queue/watch_test.c         |  2 +-
+ security/keys/Kconfig                    |  8 ++++----
+ security/keys/big_key.c                  |  9 +++------
+ security/keys/keyctl.c                   |  2 +-
+ security/keys/keyctl_pkey.c              |  2 --
+ security/keys/keyring.c                  | 10 +++++-----
+ 11 files changed, 24 insertions(+), 28 deletions(-)
+
+
