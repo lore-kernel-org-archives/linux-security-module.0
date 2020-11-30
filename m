@@ -5,35 +5,35 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F2BC83012
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 15:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FD3C83019
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 15:37:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 567EE2076C
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 15:37:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4900206C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 15:37:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbgK3Ph3 (ORCPT
+        id S1726953AbgK3Phi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Nov 2020 10:37:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57968 "EHLO
+        Mon, 30 Nov 2020 10:37:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbgK3Ph2 (ORCPT
+        with ESMTP id S1728159AbgK3Phi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Nov 2020 10:37:28 -0500
+        Mon, 30 Nov 2020 10:37:38 -0500
 Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:12e:520::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8759BC0613D2;
-        Mon, 30 Nov 2020 07:36:48 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7B11C0613D4;
+        Mon, 30 Nov 2020 07:36:57 -0800 (PST)
 Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
         (envelope-from <fw@breakpoint.cc>)
-        id 1kjlEN-0001zi-7A; Mon, 30 Nov 2020 16:36:47 +0100
+        id 1kjlEV-000205-K8; Mon, 30 Nov 2020 16:36:55 +0100
 From:   Florian Westphal <fw@strlen.de>
 To:     <netdev@vger.kernel.org>
 Cc:     mptcp@lists.01.org, linux-security-module@vger.kernel.org,
         Florian Westphal <fw@strlen.de>
-Subject: [PATCH net-next 1/3] security: add const qualifier to struct sock in various places
-Date:   Mon, 30 Nov 2020 16:36:29 +0100
-Message-Id: <20201130153631.21872-2-fw@strlen.de>
+Subject: [PATCH net-next 3/3] mptcp: emit tcp reset when a join request fails
+Date:   Mon, 30 Nov 2020 16:36:31 +0100
+Message-Id: <20201130153631.21872-4-fw@strlen.de>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20201130153631.21872-1-fw@strlen.de>
 References: <20201130153631.21872-1-fw@strlen.de>
@@ -42,205 +42,142 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A followup change to tcp_request_sock_op would have to drop the 'const'
-qualifier from the 'route_req' function as the
-'security_inet_conn_request' call is moved there - and that function
-expects a 'struct sock *'.
+RFC 8684 says:
+ If the token is unknown or the host wants to refuse subflow establishment
+ (for example, due to a limit on the number of subflows it will permit),
+ the receiver will send back a reset (RST) signal, analogous to an unknown
+ port in TCP, containing an MP_TCPRST option (Section 3.6) with an
+ "MPTCP specific error" reason code.
 
-However, it turns out its also possible to add a const qualifier to
-security_inet_conn_request instead.
+mptcp-next doesn't support MP_TCPRST yet, this can be added in another
+change.
 
 Signed-off-by: Florian Westphal <fw@strlen.de>
 ---
- The code churn is unfortunate.  Alternative would be to change
- the function signature of ->route_req:
- struct dst_entry *(*route_req)(struct sock *sk, ...
- [ i.e., drop 'const' ].  Thoughts?
+ net/mptcp/subflow.c | 47 ++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 36 insertions(+), 11 deletions(-)
 
- include/linux/lsm_audit.h       | 2 +-
- include/linux/lsm_hook_defs.h   | 2 +-
- include/linux/security.h        | 4 ++--
- security/apparmor/include/net.h | 2 +-
- security/apparmor/lsm.c         | 2 +-
- security/apparmor/net.c         | 6 +++---
- security/lsm_audit.c            | 4 ++--
- security/security.c             | 2 +-
- security/selinux/hooks.c        | 2 +-
- security/smack/smack_lsm.c      | 4 ++--
- 10 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index 28f23b341c1c..cd23355d2271 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -26,7 +26,7 @@
- 
- struct lsm_network_audit {
- 	int netif;
--	struct sock *sk;
-+	const struct sock *sk;
- 	u16 family;
- 	__be16 dport;
- 	__be16 sport;
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 32a940117e7a..acc0494cceba 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -301,7 +301,7 @@ LSM_HOOK(void, LSM_RET_VOID, sk_clone_security, const struct sock *sk,
- 	 struct sock *newsk)
- LSM_HOOK(void, LSM_RET_VOID, sk_getsecid, struct sock *sk, u32 *secid)
- LSM_HOOK(void, LSM_RET_VOID, sock_graft, struct sock *sk, struct socket *parent)
--LSM_HOOK(int, 0, inet_conn_request, struct sock *sk, struct sk_buff *skb,
-+LSM_HOOK(int, 0, inet_conn_request, const struct sock *sk, struct sk_buff *skb,
- 	 struct request_sock *req)
- LSM_HOOK(void, LSM_RET_VOID, inet_csk_clone, struct sock *newsk,
- 	 const struct request_sock *req)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index bc2725491560..0df62735651b 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -1358,7 +1358,7 @@ void security_sk_clone(const struct sock *sk, struct sock *newsk);
- void security_sk_classify_flow(struct sock *sk, struct flowi *fl);
- void security_req_classify_flow(const struct request_sock *req, struct flowi *fl);
- void security_sock_graft(struct sock*sk, struct socket *parent);
--int security_inet_conn_request(struct sock *sk,
-+int security_inet_conn_request(const struct sock *sk,
- 			struct sk_buff *skb, struct request_sock *req);
- void security_inet_csk_clone(struct sock *newsk,
- 			const struct request_sock *req);
-@@ -1519,7 +1519,7 @@ static inline void security_sock_graft(struct sock *sk, struct socket *parent)
- {
- }
- 
--static inline int security_inet_conn_request(struct sock *sk,
-+static inline int security_inet_conn_request(const struct sock *sk,
- 			struct sk_buff *skb, struct request_sock *req)
- {
+diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
+index c55b8f176746..5a8005746bc8 100644
+--- a/net/mptcp/subflow.c
++++ b/net/mptcp/subflow.c
+@@ -112,9 +112,14 @@ static int __subflow_init_req(struct request_sock *req, const struct sock *sk_li
  	return 0;
-diff --git a/security/apparmor/include/net.h b/security/apparmor/include/net.h
-index 2431c011800d..aadb4b29fb66 100644
---- a/security/apparmor/include/net.h
-+++ b/security/apparmor/include/net.h
-@@ -107,6 +107,6 @@ int aa_sock_file_perm(struct aa_label *label, const char *op, u32 request,
- 		      struct socket *sock);
- 
- int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
--			   u32 secid, struct sock *sk);
-+			   u32 secid, const struct sock *sk);
- 
- #endif /* __AA_NET_H */
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index ffeaee5ed968..1b0aba8eb723 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1147,7 +1147,7 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
  }
  
- #ifdef CONFIG_NETWORK_SECMARK
--static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-+static int apparmor_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
- 				      struct request_sock *req)
+-static void subflow_init_req(struct request_sock *req,
+-			     const struct sock *sk_listener,
+-			     struct sk_buff *skb)
++/* Init mptcp request socket.
++ *
++ * Returns an error code if a JOIN has failed and a TCP reset
++ * should be sent.
++ */
++static int subflow_init_req(struct request_sock *req,
++			    const struct sock *sk_listener,
++			    struct sk_buff *skb)
  {
- 	struct aa_sk_ctx *ctx = SK_CTX(sk);
-diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-index fa0e85568450..e0c1b50d6edd 100644
---- a/security/apparmor/net.c
-+++ b/security/apparmor/net.c
-@@ -211,7 +211,7 @@ static int apparmor_secmark_init(struct aa_secmark *secmark)
+ 	struct mptcp_subflow_context *listener = mptcp_subflow_ctx(sk_listener);
+ 	struct mptcp_subflow_request_sock *subflow_req = mptcp_subflow_rsk(req);
+@@ -125,7 +130,7 @@ static void subflow_init_req(struct request_sock *req,
+ 
+ 	ret = __subflow_init_req(req, sk_listener);
+ 	if (ret)
+-		return;
++		return 0;
+ 
+ 	mptcp_get_options(skb, &mp_opt);
+ 
+@@ -133,7 +138,7 @@ static void subflow_init_req(struct request_sock *req,
+ 		SUBFLOW_REQ_INC_STATS(req, MPTCP_MIB_MPCAPABLEPASSIVE);
+ 
+ 		if (mp_opt.mp_join)
+-			return;
++			return 0;
+ 	} else if (mp_opt.mp_join) {
+ 		SUBFLOW_REQ_INC_STATS(req, MPTCP_MIB_JOINSYNRX);
+ 	}
+@@ -157,7 +162,7 @@ static void subflow_init_req(struct request_sock *req,
+ 			} else {
+ 				subflow_req->mp_capable = 1;
+ 			}
+-			return;
++			return 0;
+ 		}
+ 
+ 		err = mptcp_token_new_request(req);
+@@ -175,7 +180,11 @@ static void subflow_init_req(struct request_sock *req,
+ 		subflow_req->remote_nonce = mp_opt.nonce;
+ 		subflow_req->msk = subflow_token_join_request(req, skb);
+ 
+-		if (unlikely(req->syncookie) && subflow_req->msk) {
++		/* Can't fall back to TCP in this case. */
++		if (!subflow_req->msk)
++			return -EPERM;
++
++		if (unlikely(req->syncookie)) {
+ 			if (mptcp_can_accept_new_subflow(subflow_req->msk))
+ 				subflow_init_req_cookie_join_save(subflow_req, skb);
+ 		}
+@@ -183,6 +192,8 @@ static void subflow_init_req(struct request_sock *req,
+ 		pr_debug("token=%u, remote_nonce=%u msk=%p", subflow_req->token,
+ 			 subflow_req->remote_nonce, subflow_req->msk);
+ 	}
++
++	return 0;
  }
  
- static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
--			   struct common_audit_data *sa, struct sock *sk)
-+			   struct common_audit_data *sa)
+ int mptcp_subflow_init_cookie_req(struct request_sock *req,
+@@ -234,6 +245,7 @@ static struct dst_entry *subflow_v4_route_req(const struct sock *sk,
+ 					      struct request_sock *req)
  {
- 	int i, ret;
- 	struct aa_perms perms = { };
-@@ -244,13 +244,13 @@ static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
+ 	struct dst_entry *dst;
++	int err;
+ 
+ 	tcp_rsk(req)->is_mptcp = 1;
+ 
+@@ -241,8 +253,14 @@ static struct dst_entry *subflow_v4_route_req(const struct sock *sk,
+ 	if (!dst)
+ 		return NULL;
+ 
+-	subflow_init_req(req, sk, skb);
+-	return dst;
++	err = subflow_init_req(req, sk, skb);
++	if (err == 0)
++		return dst;
++
++	dst_release(dst);
++	if (!req->syncookie)
++		tcp_request_sock_ops.send_reset(sk, skb);
++	return NULL;
  }
  
- int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
--			   u32 secid, struct sock *sk)
-+			   u32 secid, const struct sock *sk)
+ #if IS_ENABLED(CONFIG_MPTCP_IPV6)
+@@ -252,6 +270,7 @@ static struct dst_entry *subflow_v6_route_req(const struct sock *sk,
+ 					      struct request_sock *req)
  {
- 	struct aa_profile *profile;
- 	DEFINE_AUDIT_SK(sa, op, sk);
+ 	struct dst_entry *dst;
++	int err;
  
- 	return fn_for_each_confined(label, profile,
- 				    aa_secmark_perm(profile, request, secid,
--						    &sa, sk));
-+						    &sa));
+ 	tcp_rsk(req)->is_mptcp = 1;
+ 
+@@ -259,8 +278,14 @@ static struct dst_entry *subflow_v6_route_req(const struct sock *sk,
+ 	if (!dst)
+ 		return NULL;
+ 
+-	subflow_init_req(req, sk, skb);
+-	return dst;
++	err = subflow_init_req(req, sk, skb);
++	if (err == 0)
++		return dst;
++
++	dst_release(dst);
++	if (!req->syncookie)
++		tcp6_request_sock_ops.send_reset(sk, skb);
++	return NULL;
  }
  #endif
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 53d0d183db8f..078f9cdcd7f5 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -183,7 +183,7 @@ int ipv6_skb_to_auditdata(struct sk_buff *skb,
  
- 
- static inline void print_ipv6_addr(struct audit_buffer *ab,
--				   struct in6_addr *addr, __be16 port,
-+				   const struct in6_addr *addr, __be16 port,
- 				   char *name1, char *name2)
- {
- 	if (!ipv6_addr_any(addr))
-@@ -322,7 +322,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	}
- 	case LSM_AUDIT_DATA_NET:
- 		if (a->u.net->sk) {
--			struct sock *sk = a->u.net->sk;
-+			const struct sock *sk = a->u.net->sk;
- 			struct unix_sock *u;
- 			struct unix_address *addr;
- 			int len = 0;
-diff --git a/security/security.c b/security/security.c
-index a28045dc9e7f..6509f95d203f 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2225,7 +2225,7 @@ void security_sock_graft(struct sock *sk, struct socket *parent)
- }
- EXPORT_SYMBOL(security_sock_graft);
- 
--int security_inet_conn_request(struct sock *sk,
-+int security_inet_conn_request(const struct sock *sk,
- 			struct sk_buff *skb, struct request_sock *req)
- {
- 	return call_int_hook(inet_conn_request, 0, sk, skb, req);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 6b1826fc3658..6fa593006802 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5355,7 +5355,7 @@ static void selinux_sctp_sk_clone(struct sctp_endpoint *ep, struct sock *sk,
- 	selinux_netlbl_sctp_sk_clone(sk, newsk);
- }
- 
--static int selinux_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-+static int selinux_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
- 				     struct request_sock *req)
- {
- 	struct sk_security_struct *sksec = sk->sk_security;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 5c90b9fa4d40..3a62d6aa74a6 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3864,7 +3864,7 @@ static inline struct smack_known *smack_from_skb(struct sk_buff *skb)
-  *
-  * Returns smack_known of the IP options or NULL if that won't work.
-  */
--static struct smack_known *smack_from_netlbl(struct sock *sk, u16 family,
-+static struct smack_known *smack_from_netlbl(const struct sock *sk, u16 family,
- 					     struct sk_buff *skb)
- {
- 	struct netlbl_lsm_secattr secattr;
-@@ -4114,7 +4114,7 @@ static void smack_sock_graft(struct sock *sk, struct socket *parent)
-  * Returns 0 if a task with the packet label could write to
-  * the socket, otherwise an error code
-  */
--static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-+static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
- 				   struct request_sock *req)
- {
- 	u16 family = sk->sk_family;
 -- 
 2.26.2
 
