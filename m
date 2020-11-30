@@ -2,122 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6F0C83012
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 08:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 326C2C5519F
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 09:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A0D520857
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 08:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C032A207F7
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 09:23:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ddTxy7Y9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbgK3IZK (ORCPT
+        id S1726828AbgK3JXJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Nov 2020 03:25:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727535AbgK3IZI (ORCPT
+        Mon, 30 Nov 2020 04:23:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:37958 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726729AbgK3JXJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Nov 2020 03:25:08 -0500
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46787C0613D2
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Nov 2020 00:24:22 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ckyv71SkPzlhCHK;
-        Mon, 30 Nov 2020 09:24:19 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [94.23.54.103])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ckyv42C21zlh8TB;
-        Mon, 30 Nov 2020 09:24:16 +0100 (CET)
-Subject: Re: [PATCH v1 0/9] Enable root to update the blacklist keyring
+        Mon, 30 Nov 2020 04:23:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1606728103;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=px5S5/2ACTb7LrXOQlU1HB+xECEC+xUcw2a+QHxz+2k=;
+        b=ddTxy7Y9xl4iOviKzYpBtGvdTEa/pH9+7wTRh/i9ePe1jHVyKg/SgVIgNyDv95llcMvNL3
+        Lj5hlddBPJ0gXn9gx2h2PHPjl8onaR+tVyjW9SvzLDqBXhSnGFArKGaans8fzmDzqSMJ3t
+        pXGmWEwkTQpJt+iT91GeNAK1rqimJ+Q=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-584-lg6gJ8jBN6KqDllTvU0sYw-1; Mon, 30 Nov 2020 04:21:39 -0500
+X-MC-Unique: lg6gJ8jBN6KqDllTvU0sYw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D538C80B70A;
+        Mon, 30 Nov 2020 09:21:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0011360C4D;
+        Mon, 30 Nov 2020 09:21:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201129033859.GG39488@kernel.org>
+References: <20201129033859.GG39488@kernel.org> <160649552401.2744658.15096366594785577090.stgit@warthog.procyon.org.uk>
 To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+Cc:     dhowells@redhat.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
         James Morris <jmorris@namei.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20201120180426.922572-1-mic@digikod.net>
- <20201130024011.GA24870@kernel.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <80fb0eae-8321-5ae2-8d50-eabbe86981da@digikod.net>
-Date:   Mon, 30 Nov 2020 09:23:59 +0100
-User-Agent: 
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
+        Jann Horn <jannh@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Ben Boeckel <mathstuf@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        Denis Efremov <efremov@linux.com>, keyrings@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tom Rix <trix@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/9] keys: Miscellaneous fixes
 MIME-Version: 1.0
-In-Reply-To: <20201130024011.GA24870@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3093310.1606728092.1@warthog.procyon.org.uk>
+Date:   Mon, 30 Nov 2020 09:21:32 +0000
+Message-ID: <3093311.1606728092@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-On 30/11/2020 03:40, Jarkko Sakkinen wrote:
-> On Fri, Nov 20, 2020 at 07:04:17PM +0100, Mickaël Salaün wrote:
->> Hi,
->>
->> This patch series mainly add a new configuration option to enable the
->> root user to load signed keys in the blacklist keyring.  This keyring is
->> useful to "untrust" certificates or files.  Enabling to safely update
->> this keyring without recompiling the kernel makes it more usable.
-> 
-> I apologize for latency. This cycle has been difficult because of
-> final cuts with the huge SGX patch set.
-> 
-> I did skim through this and did not see anything striking (but it
-> was a quick look).
-> 
-> What would be easiest way to smoke test the changes?
+> I think that looks good, thank you. I'm sending PR next week. Should I
+> bundle those to that?
 
-An easy way to test it is to enable the second trusted keyring to
-dynamically load certificates in the kernel. Then we can create a hash
-of a valid certificate (but not loaded yet) and sign it as explained in
-tools/certs/print-cert-tbs-hash.sh (patch 9/9). Once this hash is loaded
-in the kernel, loading the blacklisted certificate will be denied. We
-can also test it with a PKCS#7 signature chain, either with the
-blacklist keyring itself, or with a signed dm-verity image.
+I've updated the branch to include an ack from you, plus added the
+semicolon-removal patch and a #include-removal patch.
 
-> 
->> Regards,
->>
->> Mickaël Salaün (9):
->>   certs: Fix blacklisted hexadecimal hash string check
->>   certs: Make blacklist_vet_description() more strict
->>   certs: Factor out the blacklist hash creation
->>   certs: Check that builtin blacklist hashes are valid
->>   PKCS#7: Fix missing include
->>   certs: Fix blacklist flag type confusion
->>   certs: Allow root user to append signed hashes to the blacklist
->>     keyring
->>   certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
->>   tools/certs: Add print-cert-tbs-hash.sh
->>
->>  MAINTAINERS                                   |   2 +
->>  certs/.gitignore                              |   1 +
->>  certs/Kconfig                                 |  10 +
->>  certs/Makefile                                |  15 +-
->>  certs/blacklist.c                             | 210 +++++++++++++-----
->>  certs/system_keyring.c                        |   5 +-
->>  crypto/asymmetric_keys/x509_public_key.c      |   3 +-
->>  include/keys/system_keyring.h                 |  14 +-
->>  include/linux/verification.h                  |   2 +
->>  scripts/check-blacklist-hashes.awk            |  37 +++
->>  .../platform_certs/keyring_handler.c          |  26 +--
->>  tools/certs/print-cert-tbs-hash.sh            |  91 ++++++++
->>  12 files changed, 335 insertions(+), 81 deletions(-)
->>  create mode 100755 scripts/check-blacklist-hashes.awk
->>  create mode 100755 tools/certs/print-cert-tbs-hash.sh
->>
->>
->> base-commit: 09162bc32c880a791c6c0668ce0745cf7958f576
->> -- 
->> 2.29.2
->>
->>
-> 
-> /Jarkko
-> 
+You can try sending them on, though I don't think any of them are really
+critical patches (and we are in -rc6).
+
+David
+
