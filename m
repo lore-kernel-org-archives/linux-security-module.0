@@ -2,91 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 326C2C5519F
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 09:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AEAFC63777
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 15:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C032A207F7
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 09:23:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ddTxy7Y9"
+	by mail.kernel.org (Postfix) with ESMTP id 4D155206C0
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 15:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbgK3JXJ (ORCPT
+        id S1727028AbgK3PhY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Nov 2020 04:23:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:37958 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726729AbgK3JXJ (ORCPT
+        Mon, 30 Nov 2020 10:37:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57952 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbgK3PhY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Nov 2020 04:23:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1606728103;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=px5S5/2ACTb7LrXOQlU1HB+xECEC+xUcw2a+QHxz+2k=;
-        b=ddTxy7Y9xl4iOviKzYpBtGvdTEa/pH9+7wTRh/i9ePe1jHVyKg/SgVIgNyDv95llcMvNL3
-        Lj5hlddBPJ0gXn9gx2h2PHPjl8onaR+tVyjW9SvzLDqBXhSnGFArKGaans8fzmDzqSMJ3t
-        pXGmWEwkTQpJt+iT91GeNAK1rqimJ+Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-584-lg6gJ8jBN6KqDllTvU0sYw-1; Mon, 30 Nov 2020 04:21:39 -0500
-X-MC-Unique: lg6gJ8jBN6KqDllTvU0sYw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D538C80B70A;
-        Mon, 30 Nov 2020 09:21:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-159.rdu2.redhat.com [10.10.112.159])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0011360C4D;
-        Mon, 30 Nov 2020 09:21:32 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201129033859.GG39488@kernel.org>
-References: <20201129033859.GG39488@kernel.org> <160649552401.2744658.15096366594785577090.stgit@warthog.procyon.org.uk>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     dhowells@redhat.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Morris <jmorris@namei.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-        Jann Horn <jannh@google.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        Ben Boeckel <mathstuf@gmail.com>,
-        linux-security-module@vger.kernel.org,
-        Denis Efremov <efremov@linux.com>, keyrings@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Tom Rix <trix@redhat.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] keys: Miscellaneous fixes
+        Mon, 30 Nov 2020 10:37:24 -0500
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:12e:520::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56605C0613CF;
+        Mon, 30 Nov 2020 07:36:44 -0800 (PST)
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@breakpoint.cc>)
+        id 1kjlEJ-0001za-0y; Mon, 30 Nov 2020 16:36:43 +0100
+From:   Florian Westphal <fw@strlen.de>
+To:     <netdev@vger.kernel.org>
+Cc:     mptcp@lists.01.org, linux-security-module@vger.kernel.org
+Subject: [PATCH net-next 0/3] mptcp: reject invalid mp_join requests right away
+Date:   Mon, 30 Nov 2020 16:36:28 +0100
+Message-Id: <20201130153631.21872-1-fw@strlen.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3093310.1606728092.1@warthog.procyon.org.uk>
-Date:   Mon, 30 Nov 2020 09:21:32 +0000
-Message-ID: <3093311.1606728092@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jarkko Sakkinen <jarkko@kernel.org> wrote:
+At the moment MPTCP can detect an invalid join request (invalid token,
+max number of subflows reached, and so on) right away but cannot reject
+the connection until the 3WHS has completed.
+Instead the connection will complete and the subflow is reset afterwards.
 
-> I think that looks good, thank you. I'm sending PR next week. Should I
-> bundle those to that?
+To send the reset most information is already available, but we don't have
+good spot where the reset could be sent:
 
-I've updated the branch to include an ack from you, plus added the
-semicolon-removal patch and a #include-removal patch.
+1. The ->init_req callback is too early and also doesn't allow to return an
+   error that could be used to inform the TCP stack that the SYN should be
+   dropped.
 
-You can try sending them on, though I don't think any of them are really
-critical patches (and we are in -rc6).
+2. The ->route_req callback lacks the skb needed to send a reset.
 
-David
+3. The ->send_synack callback is the best fit from the available hooks,
+   but its called after the request socket has been inserted into the queue
+   already. This means we'd have to remove it again right away.
+
+From a technical point of view, the second hook would be best:
+ 1. Its before insertion into listener queue.
+ 2. If it returns NULL TCP will drop the packet for us.
+
+Problem is that we'd have to pass the skb to the function just for MPTCP.
+
+Paolo suggested to merge init_req and route_req callbacks instead:
+This makes all info available to MPTCP -- a return value of NULL drops the
+packet and MPTCP can send the reset if needed.
+
+Because 'route_req' has a 'const struct sock *', this means either removal
+of const qualifier, or a bit of code churn to pass 'const' in security land.
+
+This does the latter; I did not find any spots that need write access to struct
+sock.
+
+To recap, the two alternatives are:
+1. Solve it entirely in MPTCP: use the ->send_synack callback to
+   unlink the request socket from the listener & drop it.
+2. Avoid 'security' churn by removing the const qualifier.
+
 
