@@ -2,142 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A51C3E8C5
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Nov 2020 13:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87FEC64E7B
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 02:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98F6D20719
-	for <linux-security-module@archiver.kernel.org>; Sun, 29 Nov 2020 13:18:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 674F220857
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 02:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="W40tMc3Q"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GlbMP+VJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727253AbgK2NSb (ORCPT
+        id S1726376AbgK3Ck6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 29 Nov 2020 08:18:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25372 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727073AbgK2NSa (ORCPT
+        Sun, 29 Nov 2020 21:40:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60510 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbgK3Ck6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 29 Nov 2020 08:18:30 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0ATD2Yb7009442;
-        Sun, 29 Nov 2020 08:17:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=RET6IEGV68d1uV4rz0SlQt3ZjlfobHeZrj6jvGCfiKE=;
- b=W40tMc3Qrq+LHzjaQ3hAZ+7kBNUWb98bsvqczXv4rmBCigQfNLpxlccYYtNdgR7uB2+c
- 7DgpZp9Xe7FSFiynXiTjOgHR0HBnFQECcXX4SdCd24kiiuO7dVOTuXWOGAGaOZVI5O2p
- 5Gb3VoQLQT6lh77aDjb6fwe5Ib1uOEjSJT/dBXUIaNykHGpHrU15/JLcxoOtwjDgvbxe
- dLqH6A3cT4nSORiSGfqdKIxmN8JzT56ZsMEyD/4qg96u0Jl55FnFJxSWGqpTcbfy70wz
- cSaAGY9sxNG1tqv272x5WbRsbffMf/1zTHPtRpBVG6PFySqH9T+y1Cs+ZwKlH6q6ZYbt 3Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3544deynbk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 29 Nov 2020 08:17:48 -0500
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0ATD2cMb009724;
-        Sun, 29 Nov 2020 08:17:47 -0500
-Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3544deyn7j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 29 Nov 2020 08:17:47 -0500
-Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
-        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0ATDH1s5028058;
-        Sun, 29 Nov 2020 13:17:42 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04fra.de.ibm.com with ESMTP id 353e688jvh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 29 Nov 2020 13:17:42 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0ATDHeAC59441586
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 29 Nov 2020 13:17:40 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 889D811C04C;
-        Sun, 29 Nov 2020 13:17:40 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2E48011C04A;
-        Sun, 29 Nov 2020 13:17:39 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.20.242])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun, 29 Nov 2020 13:17:38 +0000 (GMT)
-Message-ID: <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with
- kernel measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Sun, 29 Nov 2020 08:17:38 -0500
-In-Reply-To: <20200709012735.GX2722994@sasha-vm>
-References: <20200708154116.3199728-1-sashal@kernel.org>
-         <20200708154116.3199728-3-sashal@kernel.org>
-         <1594224793.23056.251.camel@linux.ibm.com>
-         <20200709012735.GX2722994@sasha-vm>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-29_07:2020-11-26,2020-11-29 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- clxscore=1031 mlxlogscore=999 spamscore=0 phishscore=0 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 impostorscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2011290087
+        Sun, 29 Nov 2020 21:40:58 -0500
+Received: from kernel.org (83-245-197-237.elisa-laajakaista.fi [83.245.197.237])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2B5120796;
+        Mon, 30 Nov 2020 02:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606704017;
+        bh=+o51HGYQAabd+bBncNaq+T1AM3nmV45eMx6YXRss1JY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GlbMP+VJ63i/dSwtGdVeNtERCGzCpf+dvLQAuOAjyYYl2ZgVSnK9fYpCYNDFuQqdf
+         fV1WbcQezdfNCw8TpdcoBgwSCYTy3FxKMIPdlLqHgGERYZytx2uBxkdQpgctF5I4LK
+         E9z7Lv4sbGtfGQNk6bSz/zgna30/ocRhNkdcFp7Y=
+Date:   Mon, 30 Nov 2020 04:40:11 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 0/9] Enable root to update the blacklist keyring
+Message-ID: <20201130024011.GA24870@kernel.org>
+References: <20201120180426.922572-1-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201120180426.922572-1-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Sasha,
-
-On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
-> On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
-> >Hi Sasha,
-> >
-> >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
-> >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
-> >>
-> >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
-> >>
-> >> Registers 8-9 are used to store measurements of the kernel and its
-> >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
-> >> should include them in the boot aggregate. Registers 8-9 should be
-> >> only included in non-SHA1 digests to avoid ambiguity.
-> >
-> >Prior to Linux 5.8, the SHA1 template data hashes were padded before
-> >being extended into the TPM.  Support for calculating and extending
-> >the per TPM bank template data digests is only being upstreamed in
-> >Linux 5.8.
-> >
-> >How will attestation servers know whether to include PCRs 8 & 9 in the
-> >the boot_aggregate calculation?  Now, there is a direct relationship
-> >between the template data SHA1 padded digest not including PCRs 8 & 9,
-> >and the new per TPM bank template data digest including them.
+On Fri, Nov 20, 2020 at 07:04:17PM +0100, Mickaël Salaün wrote:
+> Hi,
 > 
-> Got it, I'll drop it then, thank you!
+> This patch series mainly add a new configuration option to enable the
+> root user to load signed keys in the blacklist keyring.  This keyring is
+> useful to "untrust" certificates or files.  Enabling to safely update
+> this keyring without recompiling the kernel makes it more usable.
 
-After re-thinking this over, I realized that the attestation server can
-verify the "boot_aggregate" based on the quoted PCRs without knowing
-whether padded SHA1 hashes or per TPM bank hash values were extended
-into the TPM[1], but non-SHA1 boot aggregate values [2] should always
-include PCRs 8 & 9.
+I apologize for latency. This cycle has been difficult because of
+final cuts with the huge SGX patch set.
 
-Any place commit 6f1a1d103b48 was backported [2], this commit
-20c59ce010f8 ("ima: extend boot_aggregate with kernel measurements")
-should be backported as well.
+I did skim through this and did not see anything striking (but it
+was a quick look).
 
-thanks,
+What would be easiest way to smoke test the changes?
 
-Mimi
+> Regards,
+> 
+> Mickaël Salaün (9):
+>   certs: Fix blacklisted hexadecimal hash string check
+>   certs: Make blacklist_vet_description() more strict
+>   certs: Factor out the blacklist hash creation
+>   certs: Check that builtin blacklist hashes are valid
+>   PKCS#7: Fix missing include
+>   certs: Fix blacklist flag type confusion
+>   certs: Allow root user to append signed hashes to the blacklist
+>     keyring
+>   certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
+>   tools/certs: Add print-cert-tbs-hash.sh
+> 
+>  MAINTAINERS                                   |   2 +
+>  certs/.gitignore                              |   1 +
+>  certs/Kconfig                                 |  10 +
+>  certs/Makefile                                |  15 +-
+>  certs/blacklist.c                             | 210 +++++++++++++-----
+>  certs/system_keyring.c                        |   5 +-
+>  crypto/asymmetric_keys/x509_public_key.c      |   3 +-
+>  include/keys/system_keyring.h                 |  14 +-
+>  include/linux/verification.h                  |   2 +
+>  scripts/check-blacklist-hashes.awk            |  37 +++
+>  .../platform_certs/keyring_handler.c          |  26 +--
+>  tools/certs/print-cert-tbs-hash.sh            |  91 ++++++++
+>  12 files changed, 335 insertions(+), 81 deletions(-)
+>  create mode 100755 scripts/check-blacklist-hashes.awk
+>  create mode 100755 tools/certs/print-cert-tbs-hash.sh
+> 
+> 
+> base-commit: 09162bc32c880a791c6c0668ce0745cf7958f576
+> -- 
+> 2.29.2
+> 
+> 
 
-[1] commit 1ea973df6e21 ("ima: Calculate and extend PCR with digests in ima_template_entry")
-[2] commit 6f1a1d103b48 ("ima: Switch to ima_hash_algo for boot aggregate")
-
+/Jarkko
