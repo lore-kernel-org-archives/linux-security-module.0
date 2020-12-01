@@ -2,149 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FDDC71155
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 03:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC3AC83013
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 05:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9C7820725
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 03:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B1CD217A0
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 05:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nJvsqH/T"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="emDPbOhP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbgLADNx (ORCPT
+        id S1726144AbgLAFyc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Nov 2020 22:13:53 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727175AbgLADNw (ORCPT
+        Tue, 1 Dec 2020 00:54:32 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:58552 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725859AbgLAFyb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Nov 2020 22:13:52 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B12XWtF006157;
-        Mon, 30 Nov 2020 22:13:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=U+7tVdah5JE6eK79o/rDLnBG1iVAJhi1zZFFZuJdUoI=;
- b=nJvsqH/TBLc+bfD1FJgxehzybeOIXPaKrq7a42pLx4ToFJ+W0ltWoE6G5fHz8zZ7k6Uh
- flkPpUj4T/X/eyZT5svj7nBDHW6ET1rdntb6xdahghiKyDh2flaa7ipY9hj85H+OnvLA
- g5CklXIyalVuask+cUVtnLXsJ2TSfsNBczntIEI8LkjlyMkT2vWlWvtlFFp1lgrDaw1K
- f616rQcwyb5+BQELArp+dStxd7o4Y794OrbKx/tBVWkIY/wq+xsEKm/vKywV/pJkeWfH
- t8tvmQHp0nkYZpl6g/NQcjhGKTJ6BoOydbKRl4sUQGTqHuAYVEQSrUQ8OEET7k+LddgD BA== 
+        Tue, 1 Dec 2020 00:54:31 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B15mv4T107359;
+        Tue, 1 Dec 2020 05:53:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=l9ihS9O8ty7fvCGsyg6t+FL2UWzq+Pp7wI7g9M3fu94=;
+ b=emDPbOhPomsDJ0NVhkgalKaWcDmTVt43uxmasZhRdsIKDAK5SyUn3ZBbDT0tfjc2Ub+G
+ pwnVB+2L6jYArSQUwoKsFjxw+gIeAIQd1agInCI9m5zu6sstYek99cFlGrF83pfAMoYp
+ 7h3VW08t/kH06cHx+UsVCvNai9zlonapT50haza8ExqU3V0ifCJ/7nW0lmA/qRSavM+P
+ eE0d7ezZdfPLepa71ISDd/u3VXj3GbiZhoaxq0dsKdiEuu46H687kMfk2k9ooRtVL0+n
+ yN1cC747fo++ObKGg9Es3E0DMkXRjQCXCIESHdIfuri0sdDNQNO6hiI2IHC3bOw+gche Nw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 353c2aru93-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 01 Dec 2020 05:53:04 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B15oFV7104729;
+        Tue, 1 Dec 2020 05:53:03 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 355d210yx2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Nov 2020 22:13:10 -0500
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B131ljO121314;
-        Mon, 30 Nov 2020 22:13:10 -0500
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 355d210ywd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 30 Nov 2020 22:13:10 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B138TBH028584;
-        Tue, 1 Dec 2020 03:13:08 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06ams.nl.ibm.com with ESMTP id 354fpd9df5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 01 Dec 2020 03:13:07 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B13D5re45809934
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 1 Dec 2020 03:13:05 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 95D02A4057;
-        Tue,  1 Dec 2020 03:13:05 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 189E8A4051;
-        Tue,  1 Dec 2020 03:13:04 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.59.46])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  1 Dec 2020 03:13:03 +0000 (GMT)
-Message-ID: <02e53ce5fc00a2eaff3cace9c94b8b375dc580ef.camel@linux.ibm.com>
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with
- kernel measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
+        by userp3020.oracle.com with ESMTP id 3540arqfy7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 01 Dec 2020 05:53:03 +0000
+Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B15r2KY111063;
+        Tue, 1 Dec 2020 05:53:02 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 3540arqfwj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 01 Dec 2020 05:53:02 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0B15qbsa005213;
+        Tue, 1 Dec 2020 05:52:40 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Nov 2020 21:52:37 -0800
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        amd-gfx@lists.freedesktop.org, bridge@lists.linux-foundation.org,
+        ceph-devel@vger.kernel.org, cluster-devel@redhat.com,
+        coreteam@netfilter.org, devel@driverdev.osuosl.org,
+        dm-devel@redhat.com, drbd-dev@tron.linbit.com,
+        dri-devel@lists.freedesktop.org, GR-everest-linux-l2@marvell.com,
+        GR-Linux-NIC-Dev@marvell.com, intel-gfx@lists.freedesktop.org,
+        intel-wired-lan@lists.osuosl.org, keyrings@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-acpi@vger.kernel.org,
+        linux-afs@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-atm-general@lists.sourceforge.net,
+        linux-block@vger.kernel.org, linux-can@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-decnet-user@lists.sourceforge.net,
+        linux-ext4@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-geode@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-i3c@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Mon, 30 Nov 2020 22:13:02 -0500
-In-Reply-To: <20201201002157.GT643756@sasha-vm>
-References: <20200708154116.3199728-1-sashal@kernel.org>
-         <20200708154116.3199728-3-sashal@kernel.org>
-         <1594224793.23056.251.camel@linux.ibm.com>
-         <20200709012735.GX2722994@sasha-vm>
-         <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
-         <20201201002157.GT643756@sasha-vm>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-11-30_12:2020-11-30,2020-11-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- lowpriorityscore=0 suspectscore=0 clxscore=1031 malwarescore=0 bulkscore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 mlxscore=0 adultscore=0
+        linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-usb@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, nouveau@lists.freedesktop.org,
+        op-tee@lists.trustedfirmware.org, oss-drivers@netronome.com,
+        patches@opensource.cirrus.com, rds-devel@oss.oracle.com,
+        reiserfs-devel@vger.kernel.org, samba-technical@lists.samba.org,
+        selinux@vger.kernel.org, target-devel@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net,
+        usb-storage@lists.one-eyed-alien.net,
+        virtualization@lists.linux-foundation.org,
+        wcn36xx@lists.infradead.org, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-hardening@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Miguel Ojeda <ojeda@kernel.org>, Joe Perches <joe@perches.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 000/141] Fix fall-through warnings for Clang
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq1h7p6gjkk.fsf@ca-mkp.ca.oracle.com>
+References: <cover.1605896059.git.gustavoars@kernel.org>
+Date:   Tue, 01 Dec 2020 00:52:27 -0500
+In-Reply-To: <cover.1605896059.git.gustavoars@kernel.org> (Gustavo
+        A. R. Silva's message of "Fri, 20 Nov 2020 12:21:39 -0600")
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 lowpriorityscore=0
+ clxscore=1011 bulkscore=0 mlxlogscore=683 phishscore=0 malwarescore=0
+ spamscore=0 adultscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012010015
+ definitions=main-2012010039
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2020-11-30 at 19:21 -0500, Sasha Levin wrote:
-> On Sun, Nov 29, 2020 at 08:17:38AM -0500, Mimi Zohar wrote:
-> >Hi Sasha,
-> >
-> >On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
-> >> On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
-> >> >Hi Sasha,
-> >> >
-> >> >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
-> >> >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
-> >> >>
-> >> >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
-> >> >>
-> >> >> Registers 8-9 are used to store measurements of the kernel and its
-> >> >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
-> >> >> should include them in the boot aggregate. Registers 8-9 should be
-> >> >> only included in non-SHA1 digests to avoid ambiguity.
-> >> >
-> >> >Prior to Linux 5.8, the SHA1 template data hashes were padded before
-> >> >being extended into the TPM.  Support for calculating and extending
-> >> >the per TPM bank template data digests is only being upstreamed in
-> >> >Linux 5.8.
-> >> >
-> >> >How will attestation servers know whether to include PCRs 8 & 9 in the
-> >> >the boot_aggregate calculation?  Now, there is a direct relationship
-> >> >between the template data SHA1 padded digest not including PCRs 8 & 9,
-> >> >and the new per TPM bank template data digest including them.
-> >>
-> >> Got it, I'll drop it then, thank you!
-> >
-> >After re-thinking this over, I realized that the attestation server can
-> >verify the "boot_aggregate" based on the quoted PCRs without knowing
-> >whether padded SHA1 hashes or per TPM bank hash values were extended
-> >into the TPM[1], but non-SHA1 boot aggregate values [2] should always
-> >include PCRs 8 & 9.
-> >
-> >Any place commit 6f1a1d103b48 was backported [2], this commit
-> >20c59ce010f8 ("ima: extend boot_aggregate with kernel measurements")
-> >should be backported as well.
-> 
-> Which kernels should it apply to? 5.7 is EOL now, so I looked at 5.4 but
-> it doesn't apply cleanly there.
 
-For 5.4, both "git cherry-pick" and "git am --3way" for 20c59ce010f8
-seem to work.
+Gustavo,
 
-thanks,
+> This series aims to fix almost all remaining fall-through warnings in
+> order to enable -Wimplicit-fallthrough for Clang.
 
-Mimi
+Applied 20-22,54,120-124 to 5.11/scsi-staging, thanks.
 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
