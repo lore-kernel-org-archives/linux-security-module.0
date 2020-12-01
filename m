@@ -2,114 +2,103 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BB1C71155
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 22:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD073C63777
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 00:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE89B20725
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Nov 2020 22:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E8ED20809
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 00:22:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kinvolk.io header.i=@kinvolk.io header.b="QuqQG9AD"
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZSIUni6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730738AbgK3Wxo (ORCPT
+        id S1729931AbgLAAWk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Nov 2020 17:53:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729586AbgK3Wxo (ORCPT
+        Mon, 30 Nov 2020 19:22:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727375AbgLAAWk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Nov 2020 17:53:44 -0500
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7324DC0617A7
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Nov 2020 14:52:17 -0800 (PST)
-Received: by mail-lf1-x141.google.com with SMTP id q13so24447357lfr.10
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Nov 2020 14:52:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kinvolk.io; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PQg0SNNWkwV7My6wc0FC7IpKl7QLq5MHv/j5j0aPpNA=;
-        b=QuqQG9ADdDmV18jCrPnWfHcW15X5FNFPRcNOsTuadXp0R1ofszUYyn14cFgcYm1xt9
-         Ohx+O/XrOQeBzi2yNeMof2W9YaRXAoKumW+LWK+qJSn1igYlensrTdITOtBIwPZWx8hE
-         yhr6LcaDWCZeMzfGxo8TOF8bDqi5UbWdB4uhs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PQg0SNNWkwV7My6wc0FC7IpKl7QLq5MHv/j5j0aPpNA=;
-        b=cU4avdgHL8SmYxtGKt1ezLLTWe5D6/dNAsxLtlyaDIIHPyIHgvHuRp+uYGr0H1SZf2
-         hKeDyakguNkjaGuBl2wSqYPMnjIHx3JfWe93XfZ/KGoZGZkUjdsX5UtObxYnYVNs4+09
-         DKC6TYPNzf5zsLJkMDfMxrHRFLvZ2WMM8QkWHrMEqoFX7lvlQhY2mxmb9ao5GoAFqECK
-         BlJOhkkl13Z66AILJwXoR5/Exe795wusIqQHSlJyz8iEOBy6xFr1bop9kDdjlEXKRKCQ
-         pEUFQhZ6maihbEhuUo7VqF6EmQ9XBH69Nb7v+/3Q1laY4GHxk+/XSOCrgVen56vvZw9i
-         jUOw==
-X-Gm-Message-State: AOAM530h+XkyoLKzv50XYyoXGx6c+kWGqvlRLKOTBd4HPKQ0S9DUgjTI
-        KlE0kk48yMo7aWq5gGIFnTi0zpveUDAimSqueFhPDA==
-X-Google-Smtp-Source: ABdhPJz6lQl/wsVF1Ne7U27EUw+OIPqS46oDCHQlHg6Xbv5haiwWr87dAhx/ApTPrUOy9koOzRi6b9gPinDiWazEth4=
-X-Received: by 2002:a19:8684:: with SMTP id i126mr841376lfd.561.1606776735655;
- Mon, 30 Nov 2020 14:52:15 -0800 (PST)
+        Mon, 30 Nov 2020 19:22:40 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E14720706;
+        Tue,  1 Dec 2020 00:21:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606782119;
+        bh=jidxCeKSZhkwUbNx5KSkEk3WyfcJfqoe6qsuKPa93Xg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OZSIUni6CuHazkbY4OgDC4XQpZdATYDeMo2AQrStNF+L0AxXLrQVGpDeIJspqRJdZ
+         igso+8FlvYZAATRbsbBFCBTIx7AYTpkTMfpk5a0BS1kMRmstzrgYG3GCxtzywkfgZ5
+         pJXoeQtko8JHeg1/5/lv2AZSjNYTxnBM/sTMZH3A=
+Date:   Mon, 30 Nov 2020 19:21:57 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Maurizio Drocco <maurizio.drocco@ibm.com>,
+        Bruno Meneguele <bmeneg@redhat.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with kernel
+ measurements
+Message-ID: <20201201002157.GT643756@sasha-vm>
+References: <20200708154116.3199728-1-sashal@kernel.org>
+ <20200708154116.3199728-3-sashal@kernel.org>
+ <1594224793.23056.251.camel@linux.ibm.com>
+ <20200709012735.GX2722994@sasha-vm>
+ <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
 MIME-Version: 1.0
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-34-christian.brauner@ubuntu.com>
-In-Reply-To: <20201128213527.2669807-34-christian.brauner@ubuntu.com>
-From:   =?UTF-8?Q?Mauricio_V=C3=A1squez_Bernal?= <mauricio@kinvolk.io>
-Date:   Mon, 30 Nov 2020 17:52:04 -0500
-Message-ID: <CAHap4zvDuSpZzeyZPc61mQURu_0oGKjkiROohYXkAFYyD85Vvw@mail.gmail.com>
-Subject: Re: [PATCH v3 33/38] ext4: support idmapped mounts
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        containers@lists.linux-foundation.org,
-        Christoph Hellwig <hch@lst.de>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>, smbarber@chromium.org,
-        linux-ext4@vger.kernel.org, Mrunal Patel <mpatel@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, selinux@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        David Howells <dhowells@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Theodore Tso <tytso@mit.edu>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        fstests@vger.kernel.org, linux-security-module@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-api@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Alban Crequy <alban@kinvolk.io>,
-        linux-integrity@vger.kernel.org, Todd Kjos <tkjos@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
-> index 619dd35ddd48..5918c05cfe5b 100644
-> --- a/fs/ext4/Kconfig
-> +++ b/fs/ext4/Kconfig
-> @@ -118,3 +118,12 @@ config EXT4_KUNIT_TESTS
->           to the KUnit documentation in Documentation/dev-tools/kunit/.
+On Sun, Nov 29, 2020 at 08:17:38AM -0500, Mimi Zohar wrote:
+>Hi Sasha,
 >
->           If unsure, say N.
-> +
-> +config EXT4_IDMAP_MOUNTS
-> +       bool "Support vfs idmapped mounts in ext4"
-> +       depends on EXT4_FS
-> +       default n
-> +       help
-> +         The vfs allows to expose a filesystem at different mountpoints with
-> +         differnet idmappings. Allow ext4 to be exposed through idmapped
+>On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
+>> On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
+>> >Hi Sasha,
+>> >
+>> >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
+>> >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
+>> >>
+>> >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
+>> >>
+>> >> Registers 8-9 are used to store measurements of the kernel and its
+>> >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
+>> >> should include them in the boot aggregate. Registers 8-9 should be
+>> >> only included in non-SHA1 digests to avoid ambiguity.
+>> >
+>> >Prior to Linux 5.8, the SHA1 template data hashes were padded before
+>> >being extended into the TPM.  Support for calculating and extending
+>> >the per TPM bank template data digests is only being upstreamed in
+>> >Linux 5.8.
+>> >
+>> >How will attestation servers know whether to include PCRs 8 & 9 in the
+>> >the boot_aggregate calculation?  Now, there is a direct relationship
+>> >between the template data SHA1 padded digest not including PCRs 8 & 9,
+>> >and the new per TPM bank template data digest including them.
+>>
+>> Got it, I'll drop it then, thank you!
+>
+>After re-thinking this over, I realized that the attestation server can
+>verify the "boot_aggregate" based on the quoted PCRs without knowing
+>whether padded SHA1 hashes or per TPM bank hash values were extended
+>into the TPM[1], but non-SHA1 boot aggregate values [2] should always
+>include PCRs 8 & 9.
+>
+>Any place commit 6f1a1d103b48 was backported [2], this commit
+>20c59ce010f8 ("ima: extend boot_aggregate with kernel measurements")
+>should be backported as well.
 
-s/differnet/different/g
+Which kernels should it apply to? 5.7 is EOL now, so I looked at 5.4 but
+it doesn't apply cleanly there.
+
+-- 
+Thanks,
+Sasha
