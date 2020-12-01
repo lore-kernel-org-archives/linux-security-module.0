@@ -2,200 +2,537 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FABAC83016
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 14:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48093C8301E
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 19:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BA5820705
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 14:11:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q8Pq03hi"
+	by mail.kernel.org (Postfix) with ESMTP id 202EA2168B
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Dec 2020 19:25:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391648AbgLAOKw (ORCPT
+        id S1730345AbgLATZB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Dec 2020 09:10:52 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:36918 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388604AbgLAOKu (ORCPT
+        Tue, 1 Dec 2020 14:25:01 -0500
+Received: from smtp-190e.mail.infomaniak.ch ([185.125.25.14]:56453 "EHLO
+        smtp-190e.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392275AbgLATYd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Dec 2020 09:10:50 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1Dt2KT119141;
-        Tue, 1 Dec 2020 14:09:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=CVxJrJvszPiYRoVvo8QMoaANjq0rT1w3VAIVepGqitY=;
- b=Q8Pq03hifJp4hxcZYQuiJvbKTKZMKP2mLNTS1aHW6hAxlDpObu2xNteC6Yj/L36I1kmY
- WSfMJZMdSk8bN2J9+UmYiF9MWo5KvhVT37I7ctRf5KKEocNW4v8PFVCDeiU3k6pn404k
- Igra+V15xZpvhIpriUlAo6fac2mI985JVt4CqtU5vfkzzkfANqieFePUQJBzO6eRndXt
- r4RGB+aUeJDKgHUaSwwmUD5k/B0oZ1T+RFudNU+Upzz4yF4kbfdExpcaXwIzXbiJCqdd
- NFMbLYQpnYBf2dU4wooUhfeXNwTuWm/ESbR6RxVNN2eeS+ZfeOwZNtuQUXq4Dn72Z2fB vg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 353egkjmec-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 01 Dec 2020 14:09:31 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B1Du5d4003800;
-        Tue, 1 Dec 2020 14:09:30 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by aserp3020.oracle.com with ESMTP id 3540ey0nww-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 01 Dec 2020 14:09:30 +0000
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B1E8IaF039759;
-        Tue, 1 Dec 2020 14:09:29 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 3540ey0nvu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Dec 2020 14:09:29 +0000
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0B1E9NOp018011;
-        Tue, 1 Dec 2020 14:09:24 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 01 Dec 2020 06:09:23 -0800
-Date:   Tue, 1 Dec 2020 17:08:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Kees Cook <keescook@chromium.org>, alsa-devel@alsa-project.org,
-        linux-atm-general@lists.sourceforge.net,
-        reiserfs-devel@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-fbdev@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-ide@vger.kernel.org, dm-devel@redhat.com,
-        keyrings@vger.kernel.org, linux-mtd@lists.infradead.org,
-        GR-everest-linux-l2@marvell.com, wcn36xx@lists.infradead.org,
-        samba-technical@lists.samba.org, linux-i3c@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        linux-afs@lists.infradead.org,
-        usb-storage@lists.one-eyed-alien.net, drbd-dev@tron.linbit.com,
-        devel@driverdev.osuosl.org, linux-cifs@vger.kernel.org,
-        rds-devel@oss.oracle.com, linux-scsi@vger.kernel.org,
-        linux-rdma@vger.kernel.org, oss-drivers@netronome.com,
-        bridge@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        linux-stm32@st-md-mailman.stormreply.com, cluster-devel@redhat.com,
-        linux-acpi@vger.kernel.org, coreteam@netfilter.org,
-        intel-wired-lan@lists.osuosl.org, linux-input@vger.kernel.org,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        selinux@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org, linux-geode@lists.infradead.org,
-        linux-can@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-gpio@vger.kernel.org, op-tee@lists.trustedfirmware.org,
-        linux-mediatek@lists.infradead.org, xen-devel@lists.xenproject.org,
-        nouveau@lists.freedesktop.org, linux-hams@vger.kernel.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-hwmon@vger.kernel.org,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        linux-nfs@vger.kernel.org, GR-Linux-NIC-Dev@marvell.com,
-        tipc-discussion@lists.sourceforge.net,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Network Development <netdev@vger.kernel.org>,
-        linux-decnet-user@lists.sourceforge.net, linux-mmc@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, linux-usb@vger.kernel.org,
-        netfilter-devel@vger.kernel.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, patches@opensource.cirrus.com,
-        Joe Perches <joe@perches.com>, linux-integrity@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 000/141] Fix fall-through warnings for Clang
-Message-ID: <20201201140849.GH2767@kadam>
-References: <cover.1605896059.git.gustavoars@kernel.org>
- <20201120105344.4345c14e@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <202011201129.B13FDB3C@keescook>
- <20201120115142.292999b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
- <202011220816.8B6591A@keescook>
- <CAKwvOdntVfXj2WRR5n6Kw7BfG7FdKpTeHeh5nPu5AzwVMhOHTg@mail.gmail.com>
+        Tue, 1 Dec 2020 14:24:33 -0500
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ClsTX4x1zzlhkpq;
+        Tue,  1 Dec 2020 20:23:44 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ClsTX28c9zlh8T4;
+        Tue,  1 Dec 2020 20:23:44 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v25 12/12] landlock: Add user and kernel documentation
+Date:   Tue,  1 Dec 2020 20:23:22 +0100
+Message-Id: <20201201192322.213239-13-mic@digikod.net>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201201192322.213239-1-mic@digikod.net>
+References: <20201201192322.213239-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdntVfXj2WRR5n6Kw7BfG7FdKpTeHeh5nPu5AzwVMhOHTg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9821 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 impostorscore=0 clxscore=1015 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012010090
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 23, 2020 at 05:32:51PM -0800, Nick Desaulniers wrote:
-> On Sun, Nov 22, 2020 at 8:17 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Fri, Nov 20, 2020 at 11:51:42AM -0800, Jakub Kicinski wrote:
-> > > If none of the 140 patches here fix a real bug, and there is no change
-> > > to machine code then it sounds to me like a W=2 kind of a warning.
-> >
-> > FWIW, this series has found at least one bug so far:
-> > https://lore.kernel.org/lkml/CAFCwf11izHF=g1mGry1fE5kvFFFrxzhPSM6qKAO8gxSp=Kr_CQ@mail.gmail.com/
-> 
-> So looks like the bulk of these are:
-> switch (x) {
->   case 0:
->     ++x;
->   default:
->     break;
-> }
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-This should not generate a warning.
+This documentation can be built with the Sphinx framework.
 
-> 
-> I have a patch that fixes those up for clang:
-> https://reviews.llvm.org/D91895
-> 
-> There's 3 other cases that don't quite match between GCC and Clang I
-> observe in the kernel:
-> switch (x) {
->   case 0:
->     ++x;
->   default:
->     goto y;
-> }
-> y:;
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
+Reviewed-by: Jann Horn <jannh@google.com>
+---
 
-This should generate a warning.
+Changes since v24:
+* Add Reviewed-by: Jann Horn <jannh@google.com>
+* Add a paragraph to explain how the ruleset layers work.
+* Bump date.
 
-> 
-> switch (x) {
->   case 0:
->     ++x;
->   default:
->     return;
-> }
+Changes since v23:
+* Explain limitations for the maximum number of stacked ruleset, and the
+  memory usage restrictions.
 
-Warn for this.
+Changes since v22:
+* Fix spelling and remove obsolete sentence (spotted by Jann Horn).
+* Bump date.
 
+Changes since v21:
+* Move the user space documentation to userspace-api/landlock.rst and
+  the kernel documentation to security/landlock.rst .
+* Add license headers.
+* Add last update dates.
+* Update MAINTAINERS file.
+* Add (back) links to git.kernel.org .
+* Fix spelling.
 
-> 
-> switch (x) {
->   case 0:
->     ++x;
->   default:
->     ;
-> }
+Changes since v20:
+* Update examples and documentation with the new syscalls.
 
-Don't warn for this.
+Changes since v19:
+* Update examples and documentation with the new syscalls.
 
-If adding a break statement changes the flow of the code then warn about
-potentially missing break statements, but if it doesn't change anything
-then don't warn about it.
+Changes since v15:
+* Add current limitations.
 
-regards,
-dan carpenter
+Changes since v14:
+* Fix spelling (contributed by Randy Dunlap).
+* Extend documentation about inheritance and explain layer levels.
+* Remove the use of now-removed access rights.
+* Use GitHub links.
+* Improve kernel documentation.
+* Add section for tests.
+* Update example.
+
+Changes since v13:
+* Rewrote the documentation according to the major revamp.
+
+Previous changes:
+https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
+---
+ Documentation/security/index.rst         |   1 +
+ Documentation/security/landlock.rst      |  79 +++++++
+ Documentation/userspace-api/index.rst    |   1 +
+ Documentation/userspace-api/landlock.rst | 280 +++++++++++++++++++++++
+ MAINTAINERS                              |   2 +
+ 5 files changed, 363 insertions(+)
+ create mode 100644 Documentation/security/landlock.rst
+ create mode 100644 Documentation/userspace-api/landlock.rst
+
+diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+index 8129405eb2cc..16335de04e8c 100644
+--- a/Documentation/security/index.rst
++++ b/Documentation/security/index.rst
+@@ -16,3 +16,4 @@ Security Documentation
+    siphash
+    tpm/index
+    digsig
++   landlock
+diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
+new file mode 100644
+index 000000000000..92317b2ad732
+--- /dev/null
++++ b/Documentation/security/landlock.rst
+@@ -0,0 +1,79 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++.. Copyright © 2019-2020 ANSSI
++
++==================================
++Landlock LSM: kernel documentation
++==================================
++
++:Author: Mickaël Salaün
++:Date: December 2020
++
++Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
++harden a whole system, this feature should be available to any process,
++including unprivileged ones.  Because such process may be compromised or
++backdoored (i.e. untrusted), Landlock's features must be safe to use from the
++kernel and other processes point of view.  Landlock's interface must therefore
++expose a minimal attack surface.
++
++Landlock is designed to be usable by unprivileged processes while following the
++system security policy enforced by other access control mechanisms (e.g. DAC,
++LSM).  Indeed, a Landlock rule shall not interfere with other access-controls
++enforced on the system, only add more restrictions.
++
++Any user can enforce Landlock rulesets on their processes.  They are merged and
++evaluated according to the inherited ones in a way that ensures that only more
++constraints can be added.
++
++User space documentation can be found here: :doc:`/userspace-api/landlock`.
++
++Guiding principles for safe access controls
++===========================================
++
++* A Landlock rule shall be focused on access control on kernel objects instead
++  of syscall filtering (i.e. syscall arguments), which is the purpose of
++  seccomp-bpf.
++* To avoid multiple kinds of side-channel attacks (e.g. leak of security
++  policies, CPU-based attacks), Landlock rules shall not be able to
++  programmatically communicate with user space.
++* Kernel access check shall not slow down access request from unsandboxed
++  processes.
++* Computation related to Landlock operations (e.g. enforcing a ruleset) shall
++  only impact the processes requesting them.
++
++Tests
++=====
++
++Userspace tests for backward compatibility, ptrace restrictions and filesystem
++support can be found here: `tools/testing/selftests/landlock/`_.
++
++Kernel structures
++=================
++
++Object
++------
++
++.. kernel-doc:: security/landlock/object.h
++    :identifiers:
++
++Ruleset and domain
++------------------
++
++A domain is a read-only ruleset tied to a set of subjects (i.e. tasks'
++credentials).  Each time a ruleset is enforced on a task, the current domain is
++duplicated and the ruleset is imported as a new layer of rules in the new
++domain.  Indeed, once in a domain, each rule is tied to a layer level.  To
++grant access to an object, at least one rule of each layer must allow the
++requested action on the object.  A task can then only transit to a new domain
++which is the intersection of the constraints from the current domain and those
++of a ruleset provided by the task.
++
++The definition of a subject is implicit for a task sandboxing itself, which
++makes the reasoning much easier and helps avoid pitfalls.
++
++.. kernel-doc:: security/landlock/ruleset.h
++    :identifiers:
++
++.. Links
++.. _tools/testing/selftests/landlock/:
++   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/landlock/
+diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
+index acd2cc2a538d..01f1748ab569 100644
+--- a/Documentation/userspace-api/index.rst
++++ b/Documentation/userspace-api/index.rst
+@@ -18,6 +18,7 @@ place where this information is gathered.
+ 
+    no_new_privs
+    seccomp_filter
++   landlock
+    unshare
+    spec_ctrl
+    accelerators/ocxl
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+new file mode 100644
+index 000000000000..84aea5478acc
+--- /dev/null
++++ b/Documentation/userspace-api/landlock.rst
+@@ -0,0 +1,280 @@
++.. SPDX-License-Identifier: GPL-2.0
++.. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++.. Copyright © 2019-2020 ANSSI
++
++=====================================
++Landlock: unprivileged access control
++=====================================
++
++:Author: Mickaël Salaün
++:Date: December 2020
++
++The goal of Landlock is to enable to restrict ambient rights (e.g. global
++filesystem access) for a set of processes.  Because Landlock is a stackable
++LSM, it makes possible to create safe security sandboxes as new security layers
++in addition to the existing system-wide access-controls. This kind of sandbox
++is expected to help mitigate the security impact of bugs or
++unexpected/malicious behaviors in user space applications.  Landlock empowers
++any process, including unprivileged ones, to securely restrict themselves.
++
++Landlock rules
++==============
++
++A Landlock rule describes an action on an object.  An object is currently a
++file hierarchy, and the related filesystem actions are defined in `Access
++rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
++the thread enforcing it, and its future children.
++
++Defining and enforcing a security policy
++----------------------------------------
++
++We first need to create the ruleset that will contain our rules.  For this
++example, the ruleset will contain rules which only allow read actions, but
++write actions will be denied.  The ruleset then needs to handle both of these
++kind of actions.
++
++.. code-block:: c
++
++    int ruleset_fd;
++    struct landlock_ruleset_attr ruleset_attr = {
++        .handled_access_fs =
++            LANDLOCK_ACCESS_FS_EXECUTE |
++            LANDLOCK_ACCESS_FS_WRITE_FILE |
++            LANDLOCK_ACCESS_FS_READ_FILE |
++            LANDLOCK_ACCESS_FS_READ_DIR |
++            LANDLOCK_ACCESS_FS_REMOVE_DIR |
++            LANDLOCK_ACCESS_FS_REMOVE_FILE |
++            LANDLOCK_ACCESS_FS_MAKE_CHAR |
++            LANDLOCK_ACCESS_FS_MAKE_DIR |
++            LANDLOCK_ACCESS_FS_MAKE_REG |
++            LANDLOCK_ACCESS_FS_MAKE_SOCK |
++            LANDLOCK_ACCESS_FS_MAKE_FIFO |
++            LANDLOCK_ACCESS_FS_MAKE_BLOCK |
++            LANDLOCK_ACCESS_FS_MAKE_SYM,
++    };
++
++    ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
++    if (ruleset_fd < 0) {
++        perror("Failed to create a ruleset");
++        return 1;
++    }
++
++We can now add a new rule to this ruleset thanks to the returned file
++descriptor referring to this ruleset.  The rule will only allow reading the
++file hierarchy ``/usr``.  Without another rule, write actions would then be
++denied by the ruleset.  To add ``/usr`` to the ruleset, we open it with the
++``O_PATH`` flag and fill the &struct landlock_path_beneath_attr with this file
++descriptor.
++
++.. code-block:: c
++
++    int err;
++    struct landlock_path_beneath_attr path_beneath = {
++        .allowed_access =
++            LANDLOCK_ACCESS_FS_EXECUTE |
++            LANDLOCK_ACCESS_FS_READ_FILE |
++            LANDLOCK_ACCESS_FS_READ_DIR,
++    };
++
++    path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
++    if (path_beneath.parent_fd < 0) {
++        perror("Failed to open file");
++        close(ruleset_fd);
++        return 1;
++    }
++    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
++                            &path_beneath, 0);
++    close(path_beneath.parent_fd);
++    if (err) {
++        perror("Failed to update ruleset");
++        close(ruleset_fd);
++        return 1;
++    }
++
++We now have a ruleset with one rule allowing read access to ``/usr`` while
++denying all other handled accesses for the filesystem.  The next step is to
++restrict the current thread from gaining more privileges (e.g. thanks to a SUID
++binary).
++
++.. code-block:: c
++
++    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
++        perror("Failed to restrict privileges");
++        close(ruleset_fd);
++        return 1;
++    }
++
++The current thread is now ready to sandbox itself with the ruleset.
++
++.. code-block:: c
++
++    if (landlock_enforce_ruleset_current(ruleset_fd, 0)) {
++        perror("Failed to enforce ruleset");
++        close(ruleset_fd);
++        return 1;
++    }
++    close(ruleset_fd);
++
++If the `landlock_enforce_ruleset_current` system call succeeds, the current
++thread is now restricted and this policy will be enforced on all its
++subsequently created children as well.  Once a thread is landlocked, there is
++no way to remove its security policy; only adding more restrictions is allowed.
++These threads are now in a new Landlock domain, merge of their parent one (if
++any) with the new ruleset.
++
++Full working code can be found in `samples/landlock/sandboxer.c`_.
++
++Inheritance
++-----------
++
++Every new thread resulting from a :manpage:`clone(2)` inherits Landlock domain
++restrictions from its parent.  This is similar to the seccomp inheritance (cf.
++:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
++:manpage:`credentials(7)`.  For instance, one process's thread may apply
++Landlock rules to itself, but they will not be automatically applied to other
++sibling threads (unlike POSIX thread credential changes, cf.
++:manpage:`nptl(7)`).
++
++When a thread sandboxes itself, we have the guarantee that the related security
++policy will stay enforced on all this thread's descendants.  This allows
++creating standalone and modular security policies per application, which will
++automatically be composed between themselves according to their runtime parent
++policies.
++
++A sandboxed thread can add more constraints to itself with a new enforced
++ruleset.  This complementary policy inherits from the previous enforced
++rulesets.  Access to a file path is granted if, for each policy layer, at least
++one rule encountered on the path (from the file to the root) grants the access.
++
++Ptrace restrictions
++-------------------
++
++A sandboxed process has less privileges than a non-sandboxed process and must
++then be subject to additional restrictions when manipulating another process.
++To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
++process, a sandboxed process should have a subset of the target process rules,
++which means the tracee must be in a sub-domain of the tracer.
++
++Kernel interface
++================
++
++Access rights
++-------------
++
++.. kernel-doc:: include/uapi/linux/landlock.h
++    :identifiers: fs_access
++
++Creating a new ruleset
++----------------------
++
++.. kernel-doc:: security/landlock/syscall.c
++    :identifiers: sys_landlock_create_ruleset
++
++.. kernel-doc:: include/uapi/linux/landlock.h
++    :identifiers: landlock_ruleset_attr
++
++Extending a ruleset
++-------------------
++
++.. kernel-doc:: security/landlock/syscall.c
++    :identifiers: sys_landlock_add_rule
++
++.. kernel-doc:: include/uapi/linux/landlock.h
++    :identifiers: landlock_rule_type landlock_path_beneath_attr
++
++Enforcing a ruleset
++-------------------
++
++.. kernel-doc:: security/landlock/syscall.c
++    :identifiers: sys_landlock_enforce_ruleset_current
++
++Current limitations
++===================
++
++Ruleset layers
++--------------
++
++There is a limit of 64 layers of stacked rulesets.  This can be an issue for a
++task willing to enforce a new ruleset in complement to its 64 inherited
++rulesets.  Once this limit is reached, sys_landlock_enforce_ruleset_current()
++returns E2BIG.  It is then strongly suggested to carefully build rulesets once
++in the life of a thread, especially for applications able to launch other
++applications which may also want to sandbox themselves (e.g. shells, container
++managers, etc.).
++
++Memory usage
++------------
++
++Kernel memory allocated to create rulesets is accounted and can be restricted
++by the :doc:`/admin-guide/cgroup-v1/memory`.
++
++File renaming and linking
++-------------------------
++
++Because Landlock targets unprivileged access controls, it is needed to properly
++handle composition of rules.  Such property also implies rules nesting.
++Properly handling multiple layers of ruleset, each one of them able to restrict
++access to files, also implies to inherit the ruleset restrictions from a parent
++to its hierarchy.  Because files are identified and restricted by their
++hierarchy, moving or linking a file from one directory to another imply to
++propagate the hierarchy constraints.  To protect against privilege escalations
++through renaming or linking, and for the sack of simplicity, Landlock currently
++limits linking and renaming to the same directory.  Future Landlock evolutions
++will enable more flexibility for renaming and linking, with dedicated ruleset
++flags.
++
++OverlayFS
++---------
++
++An OverlayFS mount point consists of upper and lower layers.  It is currently
++not possible to reliably infer which underlying file hierarchy matches an
++OverlayFS path composed of such layers.  It is then not currently possible to
++track the source of an indirect access request, and then not possible to
++properly identify and allow an unified OverlayFS hierarchy.  Restricting files
++in an OverlayFS mount point works, but files allowed in one layer may not be
++allowed in a related OverlayFS mount point.  A future Landlock evolution will
++make possible to properly work with OverlayFS, according to a dedicated ruleset
++flag.
++
++
++Special filesystems
++-------------------
++
++Access to regular files and directories can be restricted by Landlock,
++according to the handled accesses of a ruleset.  However, files which do not
++come from a user-visible filesystem (e.g. pipe, socket), but can still be
++accessed through /proc/self/fd/, cannot currently be restricted.  Likewise,
++some special kernel filesystems such as nsfs which can be accessed through
++/proc/self/ns/, cannot currently be restricted.  For now, these kind of special
++paths are then always allowed.  Future Landlock evolutions will enable to
++restrict such paths, with dedicated ruleset flags.
++
++Questions and answers
++=====================
++
++What about user space sandbox managers?
++---------------------------------------
++
++Using user space process to enforce restrictions on kernel resources can lead
++to race conditions or inconsistent evaluations (i.e. `Incorrect mirroring of
++the OS code and state
++<https://www.ndss-symposium.org/ndss2003/traps-and-pitfalls-practical-problems-system-call-interposition-based-security-tools/>`_).
++
++What about namespaces and containers?
++-------------------------------------
++
++Namespaces can help create sandboxes but they are not designed for
++access-control and then miss useful features for such use case (e.g. no
++fine-grained restrictions).  Moreover, their complexity can lead to security
++issues, especially when untrusted processes can manipulate them (cf.
++`Controlling access to user namespaces <https://lwn.net/Articles/673597/>`_).
++
++Additional documentation
++========================
++
++* :doc:`/security/landlock`
++* https://landlock.io
++
++.. Links
++.. _samples/landlock/sandboxer.c:
++   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/samples/landlock/sandboxer.c
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 674a06639852..aa872992765a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9827,6 +9827,8 @@ L:	linux-security-module@vger.kernel.org
+ S:	Supported
+ W:	https://landlock.io
+ T:	git https://github.com/landlock-lsm/linux.git
++F:	Documentation/security/landlock.rst
++F:	Documentation/userspace-api/landlock.rst
+ F:	include/uapi/linux/landlock.h
+ F:	security/landlock/
+ K:	landlock
+-- 
+2.29.2
+
