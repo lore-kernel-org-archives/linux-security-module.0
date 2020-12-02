@@ -2,228 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6CAC64E90
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 11:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6904BC64E7B
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 16:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4002522242
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 11:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CC7921D81
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 16:44:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgLBL5i convert rfc822-to-8bit (ORCPT
+        id S1726307AbgLBQoP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Dec 2020 06:57:38 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2192 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbgLBL5i (ORCPT
+        Wed, 2 Dec 2020 11:44:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726003AbgLBQoP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Dec 2020 06:57:38 -0500
-Received: from fraeml703-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CmHTJ0gSgz67GZG;
-        Wed,  2 Dec 2020 19:55:00 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Wed, 2 Dec 2020 12:56:55 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.002;
- Wed, 2 Dec 2020 12:56:55 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-Thread-Topic: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-Thread-Index: AQHWuAxk5SBMtTsknkm2+R4w/QyBPKnj0s2g
-Date:   Wed, 2 Dec 2020 11:56:55 +0000
-Message-ID: <a401e63a91114daba2037e2b0083101f@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
- <20201111092302.1589-5-roberto.sassu@huawei.com>
-In-Reply-To: <20201111092302.1589-5-roberto.sassu@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 2 Dec 2020 11:44:15 -0500
+Date:   Wed, 2 Dec 2020 18:43:25 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1606927412;
+        bh=wijw0esZ82fBGAydteF7NxnnMyjnWjn71iroLETMnDY=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yEn2kee0fUZj4NMPSs028YRICiogsgLwyFY7/X04ciLrsxk+v4OlkNYRXdKZJYjQz
+         hEOoallMKD9iKQrQbvG52cRLo3aKwBbEhWeOd/Q2u98EOq3EOuE7rd3yRaQLqWKbEi
+         8jDP1/T2QUOfsREqpO0lLA1CbE6mO5bIuUb4MbkI=
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
+        Jann Horn <jannh@google.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Ben Boeckel <mathstuf@gmail.com>,
+        linux-security-module@vger.kernel.org,
+        Denis Efremov <efremov@linux.com>, keyrings@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tom Rix <trix@redhat.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/9] keys: Miscellaneous fixes
+Message-ID: <20201202164325.GA89981@kernel.org>
+References: <20201129033859.GG39488@kernel.org>
+ <160649552401.2744658.15096366594785577090.stgit@warthog.procyon.org.uk>
+ <3093311.1606728092@warthog.procyon.org.uk>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3093311.1606728092@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Roberto Sassu
-> Sent: Wednesday, November 11, 2020 10:23 AM
-> ima_inode_setxattr() and ima_inode_removexattr() hooks are called
-> before an
-> operation is performed. Thus, ima_reset_appraise_flags() should not be
-> called there, as flags might be unnecessarily reset if the operation is
-> denied.
+On Mon, Nov 30, 2020 at 09:21:32AM +0000, David Howells wrote:
+> Jarkko Sakkinen <jarkko@kernel.org> wrote:
 > 
-> This patch introduces the post hooks ima_inode_post_setxattr() and
-> ima_inode_post_removexattr(), removes ima_inode_removexattr() and
-> adds the
-> call to ima_reset_appraise_flags() in the new functions.
+> > I think that looks good, thank you. I'm sending PR next week. Should I
+> > bundle those to that?
+> 
+> I've updated the branch to include an ack from you, plus added the
+> semicolon-removal patch and a #include-removal patch.
+> 
+> You can try sending them on, though I don't think any of them are really
+> critical patches (and we are in -rc6).
+> 
+> David
 
-Removing ima_inode_removexattr() is not correct. We should still prevent
-that security.ima is removed when CAP_SYS_ADMIN is not set. I will fix
-this in the next version.
+I think I'll pass then and focus on SGX for the time being. Getting that
+to the mainline will release quite a lot of bandwidth, i.e. on average
+the best way to go forward.
 
-Roberto
+I'll test this patch set once we are in 5.11-rc1:
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+https://lore.kernel.org/keyrings/20201120180426.922572-1-mic@digikod.net/
 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  fs/xattr.c                            |  2 ++
->  include/linux/ima.h                   | 19 +++++++++++++++----
->  security/integrity/ima/ima_appraise.c | 22 +++++++++++++++-------
->  security/security.c                   |  4 +---
->  4 files changed, 33 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index cd7a563e8bcd..149b8cf5f99f 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -16,6 +16,7 @@
->  #include <linux/namei.h>
->  #include <linux/security.h>
->  #include <linux/evm.h>
-> +#include <linux/ima.h>
->  #include <linux/syscalls.h>
->  #include <linux/export.h>
->  #include <linux/fsnotify.h>
-> @@ -474,6 +475,7 @@ __vfs_removexattr_locked(struct dentry *dentry,
-> const char *name,
-> 
->  	if (!error) {
->  		fsnotify_xattr(dentry);
-> +		ima_inode_post_removexattr(dentry, name);
->  		evm_inode_post_removexattr(dentry, name);
->  	}
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index ac3d82f962f2..19a775fa2ba5 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -150,7 +150,12 @@ extern bool is_ima_appraise_enabled(void);
->  extern void ima_inode_post_setattr(struct dentry *dentry);
->  extern int ima_inode_setxattr(struct dentry *dentry, const char
-> *xattr_name,
->  		       const void *xattr_value, size_t xattr_value_len);
-> -extern int ima_inode_removexattr(struct dentry *dentry, const char
-> *xattr_name);
-> +extern void ima_inode_post_setxattr(struct dentry *dentry,
-> +				    const char *xattr_name,
-> +				    const void *xattr_value,
-> +				    size_t xattr_value_len);
-> +extern void ima_inode_post_removexattr(struct dentry *dentry,
-> +				       const char *xattr_name);
->  #else
->  static inline bool is_ima_appraise_enabled(void)
->  {
-> @@ -170,10 +175,16 @@ static inline int ima_inode_setxattr(struct dentry
-> *dentry,
->  	return 0;
->  }
-> 
-> -static inline int ima_inode_removexattr(struct dentry *dentry,
-> -					const char *xattr_name)
-> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
-> +					   const char *xattr_name,
-> +					   const void *xattr_value,
-> +					   size_t xattr_value_len)
-> +{
-> +}
-> +
-> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
-> +					      const char *xattr_name)
->  {
-> -	return 0;
->  }
->  #endif /* CONFIG_IMA_APPRAISE */
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c
-> b/security/integrity/ima/ima_appraise.c
-> index 8361941ee0a1..77c01f50425e 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -574,21 +574,29 @@ int ima_inode_setxattr(struct dentry *dentry,
-> const char *xattr_name,
->  	if (result == 1) {
->  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
->  			return -EINVAL;
-> -		ima_reset_appraise_flags(d_backing_inode(dentry),
-> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
->  		result = 0;
->  	}
->  	return result;
->  }
-> 
-> -int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
-> +void ima_inode_post_setxattr(struct dentry *dentry, const char
-> *xattr_name,
-> +			     const void *xattr_value, size_t xattr_value_len)
-> +{
-> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
-> +	int result;
-> +
-> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
-> +				   xattr_value_len);
-> +	if (result == 1)
-> +		ima_reset_appraise_flags(d_backing_inode(dentry),
-> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
-> +}
-> +
-> +void ima_inode_post_removexattr(struct dentry *dentry, const char
-> *xattr_name)
->  {
->  	int result;
-> 
->  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
-> -	if (result == 1) {
-> +	if (result == 1)
->  		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> -		result = 0;
-> -	}
-> -	return result;
->  }
-> diff --git a/security/security.c b/security/security.c
-> index a28045dc9e7f..fc43f45938b4 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1309,6 +1309,7 @@ void security_inode_post_setxattr(struct dentry
-> *dentry, const char *name,
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return;
->  	call_void_hook(inode_post_setxattr, dentry, name, value, size,
-> flags);
-> +	ima_inode_post_setxattr(dentry, name, value, size);
->  	evm_inode_post_setxattr(dentry, name, value, size);
->  }
-> 
-> @@ -1339,9 +1340,6 @@ int security_inode_removexattr(struct dentry
-> *dentry, const char *name)
->  	ret = call_int_hook(inode_removexattr, 1, dentry, name);
->  	if (ret == 1)
->  		ret = cap_inode_removexattr(dentry, name);
-> -	if (ret)
-> -		return ret;
-> -	ret = ima_inode_removexattr(dentry, name);
->  	if (ret)
->  		return ret;
->  	return evm_inode_removexattr(dentry, name);
-> --
-> 2.27.GIT
-
+/Jarkko
