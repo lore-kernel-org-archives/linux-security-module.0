@@ -2,245 +2,461 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C54C64E7C
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 19:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E6EC71155
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 19:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0F39221FB
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 19:29:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E313E22240
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 19:35:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgLBT3e (ORCPT
+        id S1728301AbgLBTew (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Dec 2020 14:29:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbgLBT3d (ORCPT
+        Wed, 2 Dec 2020 14:34:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33854 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgLBTew (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Dec 2020 14:29:33 -0500
-Date:   Wed, 2 Dec 2020 11:28:48 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1606937330;
-        bh=z5W3/57J3jIIbcLvnJCxMXKZU34kYFvZkMbuDfKk5K4=;
-        h=From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UXxiUHppqHgLmGnFh5w07AmdM9JFCVXbpb4rVEbDi9HutkBmBT59oz/DgWn7zGw8C
-         dFhOYMs/aIiXjhEB4HKayY/+kcUX/gU3FdQbVt8SqFK4n61/nP/5Y8GAA7IF7337K0
-         EKy9ZXsU4zUCun5UU/IuFRLG22B5fJLhWh6PDQtbNMx6x/wHELxM2V4P50iSI2WwNP
-         4rQvGfxFYs2h0c4QObsQEvYUXMPT8+9R/1QFhHQf/YYcj72NsCmWDedVfNb6mmiDss
-         naO1Vs0a4BEJy73uOariKu+CrUcJ1SomXIzfWc8M8BL/D2MGsPZHVTXjJ0QuDtB8w4
-         Ftd+KTviXBAHQ==
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Florian Westphal <fw@strlen.de>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     <netdev@vger.kernel.org>, mptcp@lists.01.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] security: add const qualifier to struct
- sock in various places
-Message-ID: <20201202112848.46bf4ea6@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-In-Reply-To: <20201130153631.21872-2-fw@strlen.de>
-References: <20201130153631.21872-1-fw@strlen.de>
-        <20201130153631.21872-2-fw@strlen.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 2 Dec 2020 14:34:52 -0500
+Received: from mail-qt1-x844.google.com (mail-qt1-x844.google.com [IPv6:2607:f8b0:4864:20::844])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9453C0613CF;
+        Wed,  2 Dec 2020 11:34:11 -0800 (PST)
+Received: by mail-qt1-x844.google.com with SMTP id r6so1942373qtm.3;
+        Wed, 02 Dec 2020 11:34:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=1Wk+CAE1KvZQne0n7C3iLulWineyglxiQ8gJr5x5grc=;
+        b=FAhLa6G8eX+fjpnVroXPFkvBDEQOpaU5GjpyozPh9wLYSrllX5qwb9OWEoRX2GAjL/
+         a8zjBccMgbmaZs07bzs/vJPZl66PyaKj9xZ40f7nJibhGbMFejZlKlvor5F95dWFSVn6
+         OprO2gwLFF39lWSjifoAi/6q3MHzhaZoxaoRrr0XKGpYu6Sz7ItpK98PEJUYB/7bn7Vm
+         pGBUvkTE4EFEuWCddCflaiV0GBPL0XRkD2QUi9nlgzx24m86bJlQaMEsncBMUO7m1DZw
+         /ZTypAw8BCUoNv15fQErE121Q3FDVNy4pvkvucyhxWwfBmocxQB53oBtFDSi6Icmx7hl
+         3fFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=1Wk+CAE1KvZQne0n7C3iLulWineyglxiQ8gJr5x5grc=;
+        b=RTtDiFC72XvFANrN2nhLpnBqFeDI6ScLjd1umgF/dKi8f3WSXyxTyQ4TZFlllbTHYo
+         qPndbnxNR/DlFW98bl2ihtoXRIduGyUbYCnv16p2/f6GKLbtOiZhAIXL0hUwIPry+uyk
+         fs3umYN+LuzVez0gzu+3DOdJRj33P0OV5GHk+gZJcQCRnPzAxqX0rOCt1o7PuDpKXctg
+         EaF/85fuwlWusOt+jlgOCbUuBE9GYQyvV3dlMK/sQO1DXxgxs8xNNz7EiClYLdSoWWAu
+         I4OjCDubcmYN4DQhT+j1L/eb4D7tbGsxsvBaHq0caOLG8O6ktRghEhg1wIC1IzvZ9RNx
+         N+bA==
+X-Gm-Message-State: AOAM533haPS6UmbLSp+0iLlIh8h+wI7WHoGJEBDxchqyvax3UQt5pvGU
+        IynS9R+LPokzRYR59qBeLhM=
+X-Google-Smtp-Source: ABdhPJxJqIVwHaVuexoGYpw1rpgol+wjWjfEEsC5HnzxfkY+wYFRQcS/bkFadsGeTDcgJ2n+PrlpKg==
+X-Received: by 2002:aed:33c4:: with SMTP id v62mr4186172qtd.19.1606937650828;
+        Wed, 02 Dec 2020 11:34:10 -0800 (PST)
+Received: from elaines-2018-ibm-macbook-pro.lan (c-71-192-139-151.hsd1.nh.comcast.net. [71.192.139.151])
+        by smtp.gmail.com with ESMTPSA id u13sm2589321qta.87.2020.12.02.11.34.08
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 02 Dec 2020 11:34:10 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 13.4 \(3608.120.23.2.4\))
+Subject: Re: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a new
+ trust source
+From:   gmail Elaine Palmer <erpalmerny@gmail.com>
+In-Reply-To: <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
+Date:   Wed, 2 Dec 2020 14:34:07 -0500
+Cc:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com, dhowells@redhat.com, jens.wiklander@linaro.org,
+        corbet@lwn.net, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, janne.karhunen@gmail.com,
+        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org,
+        Kenneth Goldman <kgoldman@us.ibm.com>, gcwilson@linux.ibm.com,
+        zgu@us.ibm.com, stefanb@us.ibm.com, NAYNA JAIN1 <naynjain@ibm.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <81A6B61D-3811-4957-B270-52AE5FA6DE4F@gmail.com>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+X-Mailer: Apple Mail (2.3608.120.23.2.4)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 30 Nov 2020 16:36:29 +0100 Florian Westphal wrote:
-> A followup change to tcp_request_sock_op would have to drop the 'const'
-> qualifier from the 'route_req' function as the
-> 'security_inet_conn_request' call is moved there - and that function
-> expects a 'struct sock *'.
-> 
-> However, it turns out its also possible to add a const qualifier to
-> security_inet_conn_request instead.
-> 
-> Signed-off-by: Florian Westphal <fw@strlen.de>
+
+Hi Sumit, =20
+
+Thank you for the detailed descriptions and examples of trust sources =
+for Trusted Keys.   A group of us in IBM (Stefan Berger, Ken Goldman, =
+Zhongshu Gu, Nayna Jain, Elaine Palmer, George Wilson, Mimi Zohar) have =
+been doing related work for quite some time, and we have one primary =
+concern and some suggested changes to the document.=20
+
+Our primary concern is that describing a TEE as a Trust Source needs to =
+be more specific.   For example, "ARM TrustZone" is not sufficient, but =
+"wolfSSL embedded SSL/TLS library with ARM TrustZone CryptoCell-310" is. =
+ Just because a key is protected by software running in a TEE is not =
+enough to establish trust.  Just like cryptographic modules, a Trust =
+Source should be defined as a specific implementation on specific =
+hardware with well-documented environmental assumptions, dependencies, =
+and threats.
+
+In addition to the above concern, our suggested changes are inline =
+below.
+
+> Begin forwarded message:
+>=20
+> From: Sumit Garg <sumit.garg@linaro.org>
+> Subject: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a =
+new trust source
+> Date: November 3, 2020 at 11:01:45 AM EST
+> To: jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com, =
+jejb@linux.ibm.com
+> Cc: dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net, =
+jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com, =
+janne.karhunen@gmail.com, daniel.thompson@linaro.org, =
+Markus.Wamser@mixed-mode.de, lhinds@redhat.com, =
+keyrings@vger.kernel.org, linux-integrity@vger.kernel.org, =
+linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, =
+linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =
+op-tee@lists.trustedfirmware.org, Sumit Garg <sumit.garg@linaro.org>
+>=20
+> Update documentation for Trusted and Encrypted Keys with TEE as a new
+> trust source. Following is brief description of updates:
+>=20
+> - Add a section to demostrate a list of supported devices along with
+> their security properties/guarantees.
+> - Add a key generation section.
+> - Updates for usage section including differences specific to a trust
+> source.
+>=20
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 > ---
->  The code churn is unfortunate.  Alternative would be to change
->  the function signature of ->route_req:
->  struct dst_entry *(*route_req)(struct sock *sk, ...
->  [ i.e., drop 'const' ].  Thoughts?
+> Documentation/security/keys/trusted-encrypted.rst | 203 =
+++++++++++++++++++----
+> 1 file changed, 171 insertions(+), 32 deletions(-)
+>=20
+> diff --git a/Documentation/security/keys/trusted-encrypted.rst =
+b/Documentation/security/keys/trusted-encrypted.rst
+> index 1da879a..16042c8 100644
+> --- a/Documentation/security/keys/trusted-encrypted.rst
+> +++ b/Documentation/security/keys/trusted-encrypted.rst
+> @@ -6,30 +6,161 @@ Trusted and Encrypted Keys are two new key types =
+added to the existing kernel
+> key ring service.  Both of these new types are variable length =
+symmetric keys,
+> and in both cases all keys are created in the kernel, and user space =
+sees,
+> stores, and loads only encrypted blobs.  Trusted Keys require the =
+availability
+> -of a Trusted Platform Module (TPM) chip for greater security, while =
+Encrypted
+> -Keys can be used on any system.  All user level blobs, are displayed =
+and loaded
+> -in hex ascii for convenience, and are integrity verified.
+> +of a Trust Source for greater security, while Encrypted Keys can be =
+used on any
+> +system. All user level blobs, are displayed and loaded in hex ascii =
+for
+> +convenience, and are integrity verified.
+>=20
+> -Trusted Keys use a TPM both to generate and to seal the keys.  Keys =
+are sealed
+> -under a 2048 bit RSA key in the TPM, and optionally sealed to =
+specified PCR
+> -(integrity measurement) values, and only unsealed by the TPM, if PCRs =
+and blob
+> -integrity verifications match.  A loaded Trusted Key can be updated =
+with new
+> -(future) PCR values, so keys are easily migrated to new pcr values, =
+such as
+> -when the kernel and initramfs are updated.  The same key can have =
+many saved
+> -blobs under different PCR values, so multiple boots are easily =
+supported.
+>=20
+> -TPM 1.2
+> --------
+> +Trust Source
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> -By default, trusted keys are sealed under the SRK, which has the =
+default
+> -authorization value (20 zeros).  This can be set at takeownership =
+time with the
+> -trouser's utility: "tpm_takeownership -u -z".
+> +Trust Source provides the source of security for the Trusted Keys, on =
+which
+> +basis Trusted Keys establishes a Trust model with its user. A Trust =
+Source could
+> +differ from one system to another depending on its security =
+requirements. It
+> +could be either an off-chip device or an on-chip device. Following =
+section
+> +demostrates a list of supported devices along with their security =
+properties/
+> +guarantees:
+Please change the following=20
+"Trust Source provides the source of security for the Trusted Keys, on =
+which basis Trusted Keys establishes a Trust model with its user."=20
+to=20
+"A trust source provides the source of security for the Trusted Keys.  =
+Whether or not a trust source is sufficiently safe depends on the =
+strength and correctness of its implementation, as well as the threat =
+environment for a specific use case.  Since the kernel doesn't know what =
+the environment is, and there is no metric of trust, it is dependent on =
+the consumer of the Trusted Keys to determine if the trust source is =
+sufficiently safe."
+>=20
+> -TPM 2.0
+> --------
+> +  *  Root of trust for storage
+>=20
+> -The user must first create a storage key and make it persistent, so =
+the key is
+> -available after reboot. This can be done using the following =
+commands.
+> +     (1) TPM (Trusted Platform Module: hardware device)
+> +
+> +         Rooted to Storage Root Key (SRK) which never leaves the TPM =
+that
+> +         provides crypto operation to establish root of trust for =
+storage.
+> +
+> +     (2) TEE (Trusted Execution Environment: OP-TEE based on Arm =
+TrustZone)
+> +
+> +         Rooted to Hardware Unique Key (HUK) which is generally burnt =
+in on-chip
+> +         fuses and is accessible to TEE only.
+> +
+> +  *  Execution isolation
+> +
+> +     (1) TPM
+> +
+> +         Fixed set of operations running in isolated execution =
+environment.
+> +
+> +     (2) TEE
+> +
+> +         Customizable set of operations running in isolated execution
+> +         environment verified via Secure/Trusted boot process.
+> +
+> +  * Optional binding to platform integrity state
+> +
+> +     (1) TPM
+> +
+> +         Keys can be optionally sealed to specified PCR (integrity =
+measurement)
+> +         values, and only unsealed by the TPM, if PCRs and blob =
+integrity
+> +         verifications match. A loaded Trusted Key can be updated =
+with new
+> +         (future) PCR values, so keys are easily migrated to new PCR =
+values,
+> +         such as when the kernel and initramfs are updated. The same =
+key can
+> +         have many saved blobs under different PCR values, so =
+multiple boots are
+> +         easily supported.
+> +
+> +     (2) TEE
+> +
+> +         Relies on Secure/Trusted boot process for platform =
+integrity. It can
+> +         be extended with TEE based measured boot process.
+> +
+> +  *  On-chip versus off-chip
+> +
+> +     (1) TPM
+> +
+> +         Off-chip device connected via serial bus (like I2C, SPI =
+etc.) exposing
+> +         physical access which represents an attack surface that can =
+be
+> +         mitigated via tamper detection.
+> +
+> +     (2) TEE
+> +
+> +         On-chip functionality, immune to this attack surface.
+> +
+> +  *  Memory attacks (DRAM based like attaching a bus monitor etc.)
+> +
+> +     (1) TPM
+> +
+> +         Immune to these attacks as it doesn=E2=80=99t make use of =
+system DRAM.
+> +
+> +     (2) TEE
+> +
+> +         An implementation based on TrustZone protected DRAM is =
+susceptible to
+> +         such attacks. In order to mitigate these attacks one needs =
+to rely on
+> +         on-chip secure RAM to store secrets or have the entire TEE
+> +         implementation based on on-chip secure RAM. An alternative =
+mitigation
+> +         would be to use encrypted DRAM.
+> +
+> +  *  Side-channel attacks (cache, memory, CPU or time based)
+> +
+> +     (1) TPM
+> +
+> +         Immune to side-channel attacks as its resources are isolated =
+from the
+> +         main OS.
+> +
+> +     (2) TEE
+> +
+> +         A careful implementation is required to mitigate against =
+these attacks
+> +         for resources which are shared (eg. shared memory) with the =
+main OS.
+> +         Cache and CPU based side-channel attacks can be mitigated =
+via
+> +         invalidating caches and CPU registers during context switch =
+to and from
+> +         the secure world.
+> +         To mitigate against time based attacks, one needs to have =
+time
+> +         invariant implementations (like crypto algorithms etc.).
+> +
+> +  *  Resistance to physical attacks (power analysis, electromagnetic =
+emanation,
+> +     probes etc.)
+> +
+> +     (1) TPM
+> +
+> +         Provides limited protection utilizing tamper resistance.
+> +
+> +     (2) TEE
+> +
+> +         Provides no protection by itself, relies on the underlying =
+platform for
+> +         features such as tamper resistance.
+> +
+> +
+please add the following:
 
-Security folks - is this okay to merge into net-next?
+* Provisioning - the trust source's unique and verifiable cryptographic =
+identity is provisioned during manufacturing
 
-We can put it on a branch and pull into both trees if the risk 
-of conflicts is high.
+(1) TPM
+The unique and verifiable cryptographic identity is the endorsement key =
+(EK) or its primary seed.  A review of the generation of the EK and its =
+accompanying certificate is part of the Common Criteria evaluation of =
+the product's lifecycle processes (ALC_*).  See "TCG Protection Profile =
+for PC Client Specific TPM 2" =
+(https://trustedcomputinggroup.org/resource/pc-client-protection-profile-f=
+or-tpm-2-0/).
 
-> diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-> index 28f23b341c1c..cd23355d2271 100644
-> --- a/include/linux/lsm_audit.h
-> +++ b/include/linux/lsm_audit.h
-> @@ -26,7 +26,7 @@
->  
->  struct lsm_network_audit {
->  	int netif;
-> -	struct sock *sk;
-> +	const struct sock *sk;
->  	u16 family;
->  	__be16 dport;
->  	__be16 sport;
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 32a940117e7a..acc0494cceba 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -301,7 +301,7 @@ LSM_HOOK(void, LSM_RET_VOID, sk_clone_security, const struct sock *sk,
->  	 struct sock *newsk)
->  LSM_HOOK(void, LSM_RET_VOID, sk_getsecid, struct sock *sk, u32 *secid)
->  LSM_HOOK(void, LSM_RET_VOID, sock_graft, struct sock *sk, struct socket *parent)
-> -LSM_HOOK(int, 0, inet_conn_request, struct sock *sk, struct sk_buff *skb,
-> +LSM_HOOK(int, 0, inet_conn_request, const struct sock *sk, struct sk_buff *skb,
->  	 struct request_sock *req)
->  LSM_HOOK(void, LSM_RET_VOID, inet_csk_clone, struct sock *newsk,
->  	 const struct request_sock *req)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index bc2725491560..0df62735651b 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -1358,7 +1358,7 @@ void security_sk_clone(const struct sock *sk, struct sock *newsk);
->  void security_sk_classify_flow(struct sock *sk, struct flowi *fl);
->  void security_req_classify_flow(const struct request_sock *req, struct flowi *fl);
->  void security_sock_graft(struct sock*sk, struct socket *parent);
-> -int security_inet_conn_request(struct sock *sk,
-> +int security_inet_conn_request(const struct sock *sk,
->  			struct sk_buff *skb, struct request_sock *req);
->  void security_inet_csk_clone(struct sock *newsk,
->  			const struct request_sock *req);
-> @@ -1519,7 +1519,7 @@ static inline void security_sock_graft(struct sock *sk, struct socket *parent)
->  {
->  }
->  
-> -static inline int security_inet_conn_request(struct sock *sk,
-> +static inline int security_inet_conn_request(const struct sock *sk,
->  			struct sk_buff *skb, struct request_sock *req)
->  {
->  	return 0;
-> diff --git a/security/apparmor/include/net.h b/security/apparmor/include/net.h
-> index 2431c011800d..aadb4b29fb66 100644
-> --- a/security/apparmor/include/net.h
-> +++ b/security/apparmor/include/net.h
-> @@ -107,6 +107,6 @@ int aa_sock_file_perm(struct aa_label *label, const char *op, u32 request,
->  		      struct socket *sock);
->  
->  int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
-> -			   u32 secid, struct sock *sk);
-> +			   u32 secid, const struct sock *sk);
->  
->  #endif /* __AA_NET_H */
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index ffeaee5ed968..1b0aba8eb723 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -1147,7 +1147,7 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
->  }
->  
->  #ifdef CONFIG_NETWORK_SECMARK
-> -static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-> +static int apparmor_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
->  				      struct request_sock *req)
->  {
->  	struct aa_sk_ctx *ctx = SK_CTX(sk);
-> diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-> index fa0e85568450..e0c1b50d6edd 100644
-> --- a/security/apparmor/net.c
-> +++ b/security/apparmor/net.c
-> @@ -211,7 +211,7 @@ static int apparmor_secmark_init(struct aa_secmark *secmark)
->  }
->  
->  static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
-> -			   struct common_audit_data *sa, struct sock *sk)
-> +			   struct common_audit_data *sa)
->  {
->  	int i, ret;
->  	struct aa_perms perms = { };
-> @@ -244,13 +244,13 @@ static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
->  }
->  
->  int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
-> -			   u32 secid, struct sock *sk)
-> +			   u32 secid, const struct sock *sk)
->  {
->  	struct aa_profile *profile;
->  	DEFINE_AUDIT_SK(sa, op, sk);
->  
->  	return fn_for_each_confined(label, profile,
->  				    aa_secmark_perm(profile, request, secid,
-> -						    &sa, sk));
-> +						    &sa));
->  }
->  #endif
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 53d0d183db8f..078f9cdcd7f5 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -183,7 +183,7 @@ int ipv6_skb_to_auditdata(struct sk_buff *skb,
->  
->  
->  static inline void print_ipv6_addr(struct audit_buffer *ab,
-> -				   struct in6_addr *addr, __be16 port,
-> +				   const struct in6_addr *addr, __be16 port,
->  				   char *name1, char *name2)
->  {
->  	if (!ipv6_addr_any(addr))
-> @@ -322,7 +322,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
->  	}
->  	case LSM_AUDIT_DATA_NET:
->  		if (a->u.net->sk) {
-> -			struct sock *sk = a->u.net->sk;
-> +			const struct sock *sk = a->u.net->sk;
->  			struct unix_sock *u;
->  			struct unix_address *addr;
->  			int len = 0;
-> diff --git a/security/security.c b/security/security.c
-> index a28045dc9e7f..6509f95d203f 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2225,7 +2225,7 @@ void security_sock_graft(struct sock *sk, struct socket *parent)
->  }
->  EXPORT_SYMBOL(security_sock_graft);
->  
-> -int security_inet_conn_request(struct sock *sk,
-> +int security_inet_conn_request(const struct sock *sk,
->  			struct sk_buff *skb, struct request_sock *req)
->  {
->  	return call_int_hook(inet_conn_request, 0, sk, skb, req);
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 6b1826fc3658..6fa593006802 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -5355,7 +5355,7 @@ static void selinux_sctp_sk_clone(struct sctp_endpoint *ep, struct sock *sk,
->  	selinux_netlbl_sctp_sk_clone(sk, newsk);
->  }
->  
-> -static int selinux_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-> +static int selinux_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
->  				     struct request_sock *req)
->  {
->  	struct sk_security_struct *sksec = sk->sk_security;
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 5c90b9fa4d40..3a62d6aa74a6 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3864,7 +3864,7 @@ static inline struct smack_known *smack_from_skb(struct sk_buff *skb)
->   *
->   * Returns smack_known of the IP options or NULL if that won't work.
->   */
-> -static struct smack_known *smack_from_netlbl(struct sock *sk, u16 family,
-> +static struct smack_known *smack_from_netlbl(const struct sock *sk, u16 family,
->  					     struct sk_buff *skb)
->  {
->  	struct netlbl_lsm_secattr secattr;
-> @@ -4114,7 +4114,7 @@ static void smack_sock_graft(struct sock *sk, struct socket *parent)
->   * Returns 0 if a task with the packet label could write to
->   * the socket, otherwise an error code
->   */
-> -static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-> +static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
->  				   struct request_sock *req)
->  {
->  	u16 family = sk->sk_family;
+(2) TEE
+A protection profile for TEEs does not yet exist.  Therefore, the =
+provisioning process that generates the Hardware Unique Key is not =
+evaluated by an independent third party and is highly dependent on the =
+manufacturing environment. =20
 
+
+* Cryptography
+(1) TPM
+As part of the TPM's mandatory Common Criteria evaluation, the =
+correctness of the TPM's implementation of cryptographic algorithms, the =
+protection of keys, and the generation of random numbers, and other =
+security-relevant functions must be documented, reviewed, and tested by =
+an independent third party evaluation agency.  It must meet the =
+requirements of FIPS 140-2, FIPS 140-3, or ISO/IEC 19790:2012.=20
+
+(2) TEE
+Evaluations of cryptographic modules within TEEs are not required, but =
+some are available for specific implementations within TEEs.
+
+
+
+* Interfaces and APIs
+(1) TPMs have well-documented, standardized interfaces and APIs.
+(2) Unless they implement functionality such as a virtual TPM, TEEs have =
+custom interfaces and APIs.=20
+
+
+
+* Threat model
+The strength and appropriateness of  TPMs and TEEs for a given purpose =
+must be assessed when using them to protect security-relevant data.   =20=
+
+
+We suggest documenting environmental assumptions and dependencies in a =
+high-level threat model for each additional trust source.  Just as each =
+new LSM needs to comply with Documentation/security/lsm-development.rst, =
+each new Trusted Key source should provide a high-level threat model.   =
+An example of a high-level threat model is "Common Security Threats =
+v1.0=E2=80=9D =
+(https://www.opencompute.org/documents/common-security-threats-notes-1-pdf=
+ ).=20
+
+The original Trusted Keys implementation assumed discrete physical TPMs =
+for key protection.  However, even physical TPMs themselves vary based =
+on the manufacturer and systems in which they are placed.  The embedded =
+chipset, firmware load, algorithms, packaging, pins, and countermeasures =
+vary.  (Threats and mitigations on physical TPMs are well documented, =
+e.g., "Threat Model of a Scenario Based on Trusted Platform Module 2.0 =
+Specification=E2=80=9D (http://ceur-ws.org/Vol-1011/6.pdf).
+
+Specific to Trusted Keys and TPMs, there is some discussion of threats =
+and mitigations in the Integrity_overview.pdf on the IMA wiki:
+
+	=E2=80=A2 The trusted key component does two things to help with =
+secure key management on Linux. First, it provides a kernel key ring =
+service in which the symmetric encryption keys are never visible in =
+plain text to userspace. The keys are created in the kernel, and sealed =
+by a hardware device such as a TPM, with userspace seeing only the =
+sealed blobs. Malicious or compromised applications cannot steal a =
+trusted key, since only the kernel can see the unsealed blobs. Secondly, =
+the trusted keys can tie key unsealing to the integrity measurements, so =
+that keys cannot be stolen in an offline attack, such as by booting an =
+unlocked Linux image from CD or USB.  As the measurements will be =
+different, the TPM chip will refuse to unseal the keys, even for the =
+kernel.
+
+Consumers of Trusted Keys in different environments need enough =
+information so that they can create their own threat models tailored to =
+their use cases.  For the present submission, a high-level security =
+model of ARM TrustZone and how Trusted Keys key protection is =
+implemented along with an enumeration of security considerations for =
+end-use threat models would be appropriate. =20
+
+An excellent and related paper describes the strengths, weaknesses, and =
+countermeasures of a firmware TPM implemented within a TEE.  See "fTPM: =
+A Software-only Implementation of a TPM Chip=E2=80=9D =
+(https://www.usenix.org/conference/usenixsecurity16/technical-sessions/pre=
+sentation/raj)
+
+
+> +Key Generation
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Trusted Keys
+> +------------
+> +
+> +New keys are created from trust source generated random numbers, and =
+are
+> +encrypted/decrypted using trust source storage root key.
+Please change the following
+"New keys are created from trust source generated random numbers, and =
+are encrypted/decrypted using trust source storage root key."
+to
+"New keys are created from random numbers generated in the trust source. =
+They are encrypted/decrypted using a child key in the storage key =
+hierarchy.  Encryption and decryption of the child key must be protected =
+by a strong access control policy within the trust source. =E2=80=9C
+
+Thank you.=20
+Elaine
+_____________________________________
+Elaine R. Palmer, Senior Technical Staff Member
+Secure Systems and Academy of Technology
+IBM T.J. Watson Research Center=
