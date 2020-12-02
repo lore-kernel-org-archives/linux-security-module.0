@@ -2,77 +2,228 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F019C71155
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 10:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A6CAC64E90
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 11:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDAA622202
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 10:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4002522242
+	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 11:57:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388442AbgLBKCB (ORCPT
+        id S1729081AbgLBL5i convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Dec 2020 05:02:01 -0500
-Received: from verein.lst.de ([213.95.11.211]:53409 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388089AbgLBKCA (ORCPT
+        Wed, 2 Dec 2020 06:57:38 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2192 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbgLBL5i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Dec 2020 05:02:00 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id C39C267373; Wed,  2 Dec 2020 11:01:14 +0100 (CET)
-Date:   Wed, 2 Dec 2020 11:01:14 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org, fstests@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH v3 04/38] fs: add mount_setattr()
-Message-ID: <20201202100114.GA7360@lst.de>
-References: <20201128213527.2669807-1-christian.brauner@ubuntu.com> <20201128213527.2669807-5-christian.brauner@ubuntu.com> <20201201104907.GD27730@lst.de> <20201202094218.ym5zqnulwz6gj6eo@wittgenstein> <20201202094751.GA6129@lst.de> <20201202095547.GA6408@lst.de> <20201202095745.bhazopysyw5kbiee@wittgenstein>
+        Wed, 2 Dec 2020 06:57:38 -0500
+Received: from fraeml703-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CmHTJ0gSgz67GZG;
+        Wed,  2 Dec 2020 19:55:00 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2106.2; Wed, 2 Dec 2020 12:56:55 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.002;
+ Wed, 2 Dec 2020 12:56:55 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+Subject: RE: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Topic: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Index: AQHWuAxk5SBMtTsknkm2+R4w/QyBPKnj0s2g
+Date:   Wed, 2 Dec 2020 11:56:55 +0000
+Message-ID: <a401e63a91114daba2037e2b0083101f@huawei.com>
+References: <20201111092302.1589-1-roberto.sassu@huawei.com>
+ <20201111092302.1589-5-roberto.sassu@huawei.com>
+In-Reply-To: <20201111092302.1589-5-roberto.sassu@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.220.96.108]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201202095745.bhazopysyw5kbiee@wittgenstein>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 02, 2020 at 10:57:45AM +0100, Christian Brauner wrote:
-> Sounds good!
-> If we make this a preparatory patch do you want to be recorded in the
-> author field?
+> From: Roberto Sassu
+> Sent: Wednesday, November 11, 2020 10:23 AM
+> ima_inode_setxattr() and ima_inode_removexattr() hooks are called
+> before an
+> operation is performed. Thus, ima_reset_appraise_flags() should not be
+> called there, as flags might be unnecessarily reset if the operation is
+> denied.
+> 
+> This patch introduces the post hooks ima_inode_post_setxattr() and
+> ima_inode_post_removexattr(), removes ima_inode_removexattr() and
+> adds the
+> call to ima_reset_appraise_flags() in the new functions.
 
-No need to record me in any way.  This was just whiteboard coding.
+Removing ima_inode_removexattr() is not correct. We should still prevent
+that security.ima is removed when CAP_SYS_ADMIN is not set. I will fix
+this in the next version.
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/xattr.c                            |  2 ++
+>  include/linux/ima.h                   | 19 +++++++++++++++----
+>  security/integrity/ima/ima_appraise.c | 22 +++++++++++++++-------
+>  security/security.c                   |  4 +---
+>  4 files changed, 33 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index cd7a563e8bcd..149b8cf5f99f 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/security.h>
+>  #include <linux/evm.h>
+> +#include <linux/ima.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/export.h>
+>  #include <linux/fsnotify.h>
+> @@ -474,6 +475,7 @@ __vfs_removexattr_locked(struct dentry *dentry,
+> const char *name,
+> 
+>  	if (!error) {
+>  		fsnotify_xattr(dentry);
+> +		ima_inode_post_removexattr(dentry, name);
+>  		evm_inode_post_removexattr(dentry, name);
+>  	}
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index ac3d82f962f2..19a775fa2ba5 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -150,7 +150,12 @@ extern bool is_ima_appraise_enabled(void);
+>  extern void ima_inode_post_setattr(struct dentry *dentry);
+>  extern int ima_inode_setxattr(struct dentry *dentry, const char
+> *xattr_name,
+>  		       const void *xattr_value, size_t xattr_value_len);
+> -extern int ima_inode_removexattr(struct dentry *dentry, const char
+> *xattr_name);
+> +extern void ima_inode_post_setxattr(struct dentry *dentry,
+> +				    const char *xattr_name,
+> +				    const void *xattr_value,
+> +				    size_t xattr_value_len);
+> +extern void ima_inode_post_removexattr(struct dentry *dentry,
+> +				       const char *xattr_name);
+>  #else
+>  static inline bool is_ima_appraise_enabled(void)
+>  {
+> @@ -170,10 +175,16 @@ static inline int ima_inode_setxattr(struct dentry
+> *dentry,
+>  	return 0;
+>  }
+> 
+> -static inline int ima_inode_removexattr(struct dentry *dentry,
+> -					const char *xattr_name)
+> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
+> +					   const char *xattr_name,
+> +					   const void *xattr_value,
+> +					   size_t xattr_value_len)
+> +{
+> +}
+> +
+> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
+> +					      const char *xattr_name)
+>  {
+> -	return 0;
+>  }
+>  #endif /* CONFIG_IMA_APPRAISE */
+> 
+> diff --git a/security/integrity/ima/ima_appraise.c
+> b/security/integrity/ima/ima_appraise.c
+> index 8361941ee0a1..77c01f50425e 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -574,21 +574,29 @@ int ima_inode_setxattr(struct dentry *dentry,
+> const char *xattr_name,
+>  	if (result == 1) {
+>  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+>  			return -EINVAL;
+> -		ima_reset_appraise_flags(d_backing_inode(dentry),
+> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+>  		result = 0;
+>  	}
+>  	return result;
+>  }
+> 
+> -int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+> +void ima_inode_post_setxattr(struct dentry *dentry, const char
+> *xattr_name,
+> +			     const void *xattr_value, size_t xattr_value_len)
+> +{
+> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
+> +	int result;
+> +
+> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
+> +				   xattr_value_len);
+> +	if (result == 1)
+> +		ima_reset_appraise_flags(d_backing_inode(dentry),
+> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+> +}
+> +
+> +void ima_inode_post_removexattr(struct dentry *dentry, const char
+> *xattr_name)
+>  {
+>  	int result;
+> 
+>  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+> -	if (result == 1) {
+> +	if (result == 1)
+>  		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> -		result = 0;
+> -	}
+> -	return result;
+>  }
+> diff --git a/security/security.c b/security/security.c
+> index a28045dc9e7f..fc43f45938b4 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1309,6 +1309,7 @@ void security_inode_post_setxattr(struct dentry
+> *dentry, const char *name,
+>  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>  		return;
+>  	call_void_hook(inode_post_setxattr, dentry, name, value, size,
+> flags);
+> +	ima_inode_post_setxattr(dentry, name, value, size);
+>  	evm_inode_post_setxattr(dentry, name, value, size);
+>  }
+> 
+> @@ -1339,9 +1340,6 @@ int security_inode_removexattr(struct dentry
+> *dentry, const char *name)
+>  	ret = call_int_hook(inode_removexattr, 1, dentry, name);
+>  	if (ret == 1)
+>  		ret = cap_inode_removexattr(dentry, name);
+> -	if (ret)
+> -		return ret;
+> -	ret = ima_inode_removexattr(dentry, name);
+>  	if (ret)
+>  		return ret;
+>  	return evm_inode_removexattr(dentry, name);
+> --
+> 2.27.GIT
+
