@@ -2,249 +2,231 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3ABC4361B
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 17:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF7CC433FE
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 17:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED25207B3
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 17:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7349F207B5
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 17:32:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731355AbgLCRIR (ORCPT
+        id S1727355AbgLCRcR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Dec 2020 12:08:17 -0500
-Received: from namei.org ([65.99.196.166]:57570 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731445AbgLCRIR (ORCPT
+        Thu, 3 Dec 2020 12:32:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40264 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbgLCRcQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Dec 2020 12:08:17 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id 0B3H7GDa009376;
-        Thu, 3 Dec 2020 17:07:16 GMT
-Date:   Fri, 4 Dec 2020 04:07:16 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Jakub Kicinski <kuba@kernel.org>
-cc:     Florian Westphal <fw@strlen.de>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thu, 3 Dec 2020 12:32:16 -0500
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4938FC061A4E
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Dec 2020 09:31:31 -0800 (PST)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Cn2v33bvXzlh9H4;
+        Thu,  3 Dec 2020 18:31:27 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Cn2v12HmSzlh8T6;
+        Thu,  3 Dec 2020 18:31:25 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        netdev@vger.kernel.org, mptcp@lists.01.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH net-next 1/3] security: add const qualifier to struct
- sock in various places
-In-Reply-To: <20201202112848.46bf4ea6@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-Message-ID: <alpine.LRH.2.21.2012040407080.9312@namei.org>
-References: <20201130153631.21872-1-fw@strlen.de> <20201130153631.21872-2-fw@strlen.de> <20201202112848.46bf4ea6@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christian Heimes <christian@python.org>,
+        Deven Bowers <deven.desai@linux.microsoft.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Eric Chiang <ericchiang@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>, Jan Kara <jack@suse.cz>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Scott Shell <scottsh@microsoft.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steve Dower <steve.dower@python.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Thibaut Sautereau <thibaut.sautereau@clip-os.org>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v12 0/3] Add trusted_for(2) (was O_MAYEXEC)
+Date:   Thu,  3 Dec 2020 18:31:15 +0100
+Message-Id: <20201203173118.379271-1-mic@digikod.net>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2 Dec 2020, Jakub Kicinski wrote:
+Hi,
 
-> On Mon, 30 Nov 2020 16:36:29 +0100 Florian Westphal wrote:
-> > A followup change to tcp_request_sock_op would have to drop the 'const'
-> > qualifier from the 'route_req' function as the
-> > 'security_inet_conn_request' call is moved there - and that function
-> > expects a 'struct sock *'.
-> > 
-> > However, it turns out its also possible to add a const qualifier to
-> > security_inet_conn_request instead.
-> > 
-> > Signed-off-by: Florian Westphal <fw@strlen.de>
-> > ---
-> >  The code churn is unfortunate.  Alternative would be to change
-> >  the function signature of ->route_req:
-> >  struct dst_entry *(*route_req)(struct sock *sk, ...
-> >  [ i.e., drop 'const' ].  Thoughts?
-> 
-> Security folks - is this okay to merge into net-next?
-> 
-> We can put it on a branch and pull into both trees if the risk 
-> of conflicts is high.
+This patch series is a rebase on v5.10-rc6 .  Can you please consider to
+merge this into the tree?
+
+Overview
+========
+
+The final goal of this patch series is to enable the kernel to be a
+global policy manager by entrusting processes with access control at
+their level.  To reach this goal, two complementary parts are required:
+* user space needs to be able to know if it can trust some file
+  descriptor content for a specific usage;
+* and the kernel needs to make available some part of the policy
+  configured by the system administrator.
+
+Primary goal of trusted_for(2)
+==============================
+
+This new syscall enables user space to ask the kernel: is this file
+descriptor's content trusted to be used for this purpose?  The set of
+usage currently only contains "execution", but other may follow (e.g.
+"configuration", "sensitive_data").  If the kernel identifies the file
+descriptor as trustworthy for this usage, user space should then take
+this information into account.  The "execution" usage means that the
+content of the file descriptor is trusted according to the system policy
+to be executed by user space, which means that it interprets the content
+or (try to) maps it as executable memory.
+
+A simple system-wide security policy can be enforced by the system
+administrator through a sysctl configuration consistent with the mount
+points or the file access rights.  The documentation patch explains the
+prerequisites.
+
+It is important to note that this can only enable to extend access
+control managed by the kernel.  Hence it enables current access control
+mechanism to be extended and become a superset of what they can
+currently control.  Indeed, the security policy could also be delegated
+to an LSM, either a MAC system or an integrity system.  For instance,
+this is required to close a major IMA measurement/appraisal interpreter
+integrity gap by bringing the ability to check the use of scripts [1].
+Other uses are expected, such as for magic-links [2], SGX integration
+[3], bpffs [4].
+
+Complementary W^X protections can be brought by SELinux, IPE [5] and
+trampfd [6].
+
+Prerequisite of its use
+=======================
+
+User space needs to adapt to take advantage of this new feature.  For
+example, the PEP 578 [7] (Runtime Audit Hooks) enables Python 3.8 to be
+extended with policy enforcement points related to code interpretation,
+which can be used to align with the PowerShell audit features.
+Additional Python security improvements (e.g. a limited interpreter
+without -c, stdin piping of code) are on their way [8].
+
+Examples
+========
+
+The initial idea comes from CLIP OS 4 and the original implementation
+has been used for more than 12 years:
+https://github.com/clipos-archive/clipos4_doc
+Chrome OS has a similar approach:
+https://chromium.googlesource.com/chromiumos/docs/+/master/security/noexec_shell_scripts.md
+
+Userland patches can be found here:
+https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+Actually, there is more than the O_MAYEXEC changes (which matches this search)
+e.g., to prevent Python interactive execution. There are patches for
+Bash, Wine, Java (Icedtea), Busybox's ash, Perl and Python. There are
+also some related patches which do not directly rely on O_MAYEXEC but
+which restrict the use of browser plugins and extensions, which may be
+seen as scripts too:
+https://github.com/clipos-archive/clipos4_portage-overlay/tree/master/www-client
+
+An introduction to O_MAYEXEC was given at the Linux Security Summit
+Europe 2018 - Linux Kernel Security Contributions by ANSSI:
+https://www.youtube.com/watch?v=chNjCRtPKQY&t=17m15s
+The "write xor execute" principle was explained at Kernel Recipes 2018 -
+CLIP OS: a defense-in-depth OS:
+https://www.youtube.com/watch?v=PjRE0uBtkHU&t=11m14s
+See also a first LWN article about O_MAYEXEC and a new one about
+trusted_for(2) and its background:
+* https://lwn.net/Articles/820000/
+* https://lwn.net/Articles/832959/
+
+This patch series can be applied on top of v5.10-rc6 .  This can be
+tested with CONFIG_SYSCTL.  I would really appreciate constructive
+comments on this patch series.
+
+Previous series:
+https://lore.kernel.org/lkml/20201019164932.1430614-1-mic@digikod.net/
+
+[1] https://lore.kernel.org/lkml/1544647356.4028.105.camel@linux.ibm.com/
+[2] https://lore.kernel.org/lkml/20190904201933.10736-6-cyphar@cyphar.com/
+[3] https://lore.kernel.org/lkml/CALCETrVovr8XNZSroey7pHF46O=kj_c5D9K8h=z2T_cNrpvMig@mail.gmail.com/
+[4] https://lore.kernel.org/lkml/CALCETrVeZ0eufFXwfhtaG_j+AdvbzEWE0M3wjXMWVEO7pj+xkw@mail.gmail.com/
+[5] https://lore.kernel.org/lkml/20200406221439.1469862-12-deven.desai@linux.microsoft.com/
+[6] https://lore.kernel.org/lkml/20200922215326.4603-1-madvenka@linux.microsoft.com/
+[7] https://www.python.org/dev/peps/pep-0578/
+[8] https://lore.kernel.org/lkml/0c70debd-e79e-d514-06c6-4cd1e021fa8b@python.org/
+
+Regards,
+
+Mickaël Salaün (3):
+  fs: Add trusted_for(2) syscall implementation and related sysctl
+  arch: Wire up trusted_for(2)
+  selftest/interpreter: Add tests for trusted_for(2) policies
+
+ Documentation/admin-guide/sysctl/fs.rst       |  50 +++
+ arch/alpha/kernel/syscalls/syscall.tbl        |   1 +
+ arch/arm/tools/syscall.tbl                    |   1 +
+ arch/arm64/include/asm/unistd.h               |   2 +-
+ arch/arm64/include/asm/unistd32.h             |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl         |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl         |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl   |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl     |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl     |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl       |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl      |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl         |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl           |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl        |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl        |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl       |   1 +
+ fs/open.c                                     |  77 ++++
+ include/linux/fs.h                            |   1 +
+ include/linux/syscalls.h                      |   2 +
+ include/uapi/asm-generic/unistd.h             |   4 +-
+ include/uapi/linux/trusted-for.h              |  18 +
+ kernel/sysctl.c                               |  12 +-
+ tools/testing/selftests/Makefile              |   1 +
+ .../testing/selftests/interpreter/.gitignore  |   2 +
+ tools/testing/selftests/interpreter/Makefile  |  21 +
+ tools/testing/selftests/interpreter/config    |   1 +
+ .../selftests/interpreter/trust_policy_test.c | 362 ++++++++++++++++++
+ 30 files changed, 567 insertions(+), 4 deletions(-)
+ create mode 100644 include/uapi/linux/trusted-for.h
+ create mode 100644 tools/testing/selftests/interpreter/.gitignore
+ create mode 100644 tools/testing/selftests/interpreter/Makefile
+ create mode 100644 tools/testing/selftests/interpreter/config
+ create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
 
 
-Acked-by: James Morris <jamorris@linux.microsoft.com>
-
-> 
-> > diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-> > index 28f23b341c1c..cd23355d2271 100644
-> > --- a/include/linux/lsm_audit.h
-> > +++ b/include/linux/lsm_audit.h
-> > @@ -26,7 +26,7 @@
-> >  
-> >  struct lsm_network_audit {
-> >  	int netif;
-> > -	struct sock *sk;
-> > +	const struct sock *sk;
-> >  	u16 family;
-> >  	__be16 dport;
-> >  	__be16 sport;
-> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> > index 32a940117e7a..acc0494cceba 100644
-> > --- a/include/linux/lsm_hook_defs.h
-> > +++ b/include/linux/lsm_hook_defs.h
-> > @@ -301,7 +301,7 @@ LSM_HOOK(void, LSM_RET_VOID, sk_clone_security, const struct sock *sk,
-> >  	 struct sock *newsk)
-> >  LSM_HOOK(void, LSM_RET_VOID, sk_getsecid, struct sock *sk, u32 *secid)
-> >  LSM_HOOK(void, LSM_RET_VOID, sock_graft, struct sock *sk, struct socket *parent)
-> > -LSM_HOOK(int, 0, inet_conn_request, struct sock *sk, struct sk_buff *skb,
-> > +LSM_HOOK(int, 0, inet_conn_request, const struct sock *sk, struct sk_buff *skb,
-> >  	 struct request_sock *req)
-> >  LSM_HOOK(void, LSM_RET_VOID, inet_csk_clone, struct sock *newsk,
-> >  	 const struct request_sock *req)
-> > diff --git a/include/linux/security.h b/include/linux/security.h
-> > index bc2725491560..0df62735651b 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -1358,7 +1358,7 @@ void security_sk_clone(const struct sock *sk, struct sock *newsk);
-> >  void security_sk_classify_flow(struct sock *sk, struct flowi *fl);
-> >  void security_req_classify_flow(const struct request_sock *req, struct flowi *fl);
-> >  void security_sock_graft(struct sock*sk, struct socket *parent);
-> > -int security_inet_conn_request(struct sock *sk,
-> > +int security_inet_conn_request(const struct sock *sk,
-> >  			struct sk_buff *skb, struct request_sock *req);
-> >  void security_inet_csk_clone(struct sock *newsk,
-> >  			const struct request_sock *req);
-> > @@ -1519,7 +1519,7 @@ static inline void security_sock_graft(struct sock *sk, struct socket *parent)
-> >  {
-> >  }
-> >  
-> > -static inline int security_inet_conn_request(struct sock *sk,
-> > +static inline int security_inet_conn_request(const struct sock *sk,
-> >  			struct sk_buff *skb, struct request_sock *req)
-> >  {
-> >  	return 0;
-> > diff --git a/security/apparmor/include/net.h b/security/apparmor/include/net.h
-> > index 2431c011800d..aadb4b29fb66 100644
-> > --- a/security/apparmor/include/net.h
-> > +++ b/security/apparmor/include/net.h
-> > @@ -107,6 +107,6 @@ int aa_sock_file_perm(struct aa_label *label, const char *op, u32 request,
-> >  		      struct socket *sock);
-> >  
-> >  int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
-> > -			   u32 secid, struct sock *sk);
-> > +			   u32 secid, const struct sock *sk);
-> >  
-> >  #endif /* __AA_NET_H */
-> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> > index ffeaee5ed968..1b0aba8eb723 100644
-> > --- a/security/apparmor/lsm.c
-> > +++ b/security/apparmor/lsm.c
-> > @@ -1147,7 +1147,7 @@ static void apparmor_sock_graft(struct sock *sk, struct socket *parent)
-> >  }
-> >  
-> >  #ifdef CONFIG_NETWORK_SECMARK
-> > -static int apparmor_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-> > +static int apparmor_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
-> >  				      struct request_sock *req)
-> >  {
-> >  	struct aa_sk_ctx *ctx = SK_CTX(sk);
-> > diff --git a/security/apparmor/net.c b/security/apparmor/net.c
-> > index fa0e85568450..e0c1b50d6edd 100644
-> > --- a/security/apparmor/net.c
-> > +++ b/security/apparmor/net.c
-> > @@ -211,7 +211,7 @@ static int apparmor_secmark_init(struct aa_secmark *secmark)
-> >  }
-> >  
-> >  static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
-> > -			   struct common_audit_data *sa, struct sock *sk)
-> > +			   struct common_audit_data *sa)
-> >  {
-> >  	int i, ret;
-> >  	struct aa_perms perms = { };
-> > @@ -244,13 +244,13 @@ static int aa_secmark_perm(struct aa_profile *profile, u32 request, u32 secid,
-> >  }
-> >  
-> >  int apparmor_secmark_check(struct aa_label *label, char *op, u32 request,
-> > -			   u32 secid, struct sock *sk)
-> > +			   u32 secid, const struct sock *sk)
-> >  {
-> >  	struct aa_profile *profile;
-> >  	DEFINE_AUDIT_SK(sa, op, sk);
-> >  
-> >  	return fn_for_each_confined(label, profile,
-> >  				    aa_secmark_perm(profile, request, secid,
-> > -						    &sa, sk));
-> > +						    &sa));
-> >  }
-> >  #endif
-> > diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> > index 53d0d183db8f..078f9cdcd7f5 100644
-> > --- a/security/lsm_audit.c
-> > +++ b/security/lsm_audit.c
-> > @@ -183,7 +183,7 @@ int ipv6_skb_to_auditdata(struct sk_buff *skb,
-> >  
-> >  
-> >  static inline void print_ipv6_addr(struct audit_buffer *ab,
-> > -				   struct in6_addr *addr, __be16 port,
-> > +				   const struct in6_addr *addr, __be16 port,
-> >  				   char *name1, char *name2)
-> >  {
-> >  	if (!ipv6_addr_any(addr))
-> > @@ -322,7 +322,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
-> >  	}
-> >  	case LSM_AUDIT_DATA_NET:
-> >  		if (a->u.net->sk) {
-> > -			struct sock *sk = a->u.net->sk;
-> > +			const struct sock *sk = a->u.net->sk;
-> >  			struct unix_sock *u;
-> >  			struct unix_address *addr;
-> >  			int len = 0;
-> > diff --git a/security/security.c b/security/security.c
-> > index a28045dc9e7f..6509f95d203f 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2225,7 +2225,7 @@ void security_sock_graft(struct sock *sk, struct socket *parent)
-> >  }
-> >  EXPORT_SYMBOL(security_sock_graft);
-> >  
-> > -int security_inet_conn_request(struct sock *sk,
-> > +int security_inet_conn_request(const struct sock *sk,
-> >  			struct sk_buff *skb, struct request_sock *req)
-> >  {
-> >  	return call_int_hook(inet_conn_request, 0, sk, skb, req);
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 6b1826fc3658..6fa593006802 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -5355,7 +5355,7 @@ static void selinux_sctp_sk_clone(struct sctp_endpoint *ep, struct sock *sk,
-> >  	selinux_netlbl_sctp_sk_clone(sk, newsk);
-> >  }
-> >  
-> > -static int selinux_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-> > +static int selinux_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
-> >  				     struct request_sock *req)
-> >  {
-> >  	struct sk_security_struct *sksec = sk->sk_security;
-> > diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> > index 5c90b9fa4d40..3a62d6aa74a6 100644
-> > --- a/security/smack/smack_lsm.c
-> > +++ b/security/smack/smack_lsm.c
-> > @@ -3864,7 +3864,7 @@ static inline struct smack_known *smack_from_skb(struct sk_buff *skb)
-> >   *
-> >   * Returns smack_known of the IP options or NULL if that won't work.
-> >   */
-> > -static struct smack_known *smack_from_netlbl(struct sock *sk, u16 family,
-> > +static struct smack_known *smack_from_netlbl(const struct sock *sk, u16 family,
-> >  					     struct sk_buff *skb)
-> >  {
-> >  	struct netlbl_lsm_secattr secattr;
-> > @@ -4114,7 +4114,7 @@ static void smack_sock_graft(struct sock *sk, struct socket *parent)
-> >   * Returns 0 if a task with the packet label could write to
-> >   * the socket, otherwise an error code
-> >   */
-> > -static int smack_inet_conn_request(struct sock *sk, struct sk_buff *skb,
-> > +static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
-> >  				   struct request_sock *req)
-> >  {
-> >  	u16 family = sk->sk_family;
-> 
-
+base-commit: b65054597872ce3aefbc6a666385eabdf9e288da
 -- 
-James Morris
-<jmorris@namei.org>
+2.29.2
 
