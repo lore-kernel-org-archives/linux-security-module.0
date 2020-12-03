@@ -2,119 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D9CEC0007A
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 20:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48252C4361B
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 22:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7123221F4
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 20:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0822B2228A
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 22:25:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbgLCUn7 (ORCPT
+        id S1727746AbgLCWYw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Dec 2020 15:43:59 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43220 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725885AbgLCUn7 (ORCPT
+        Thu, 3 Dec 2020 17:24:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52854 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727415AbgLCWYw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Dec 2020 15:43:59 -0500
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B3KdYgE140764;
-        Thu, 3 Dec 2020 15:43:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=xdxiKiKIqcjET4+9fMusWkPkzX/cFh6Jey/xlFUt0Ko=;
- b=tPY+g20s0ly84EtVX1PWEPYqvpfxCR0OvwACGwBmqt8WSAloANHHX0leeMr7/j/xKlnD
- wv5YYKFTL7oS9tD9i6o93f1I89tggTY4xENlokmBpUvBUTx4MYWQO9HccGo/nyapJYVm
- 1ukfkCPlep+PJj4tVuAyC+13mFI8B6Fo2PO6tBZokaXaJ4KKXyH13LBYCqzX2yV2NLpu
- f+FcsxvqSF+AxYH5YZuy7oHMybsupwpW0+ejw3PrDxi9ISPvaPzNZM1S/vt478jF6QWe
- 0x0OGG5ALocHyBNn+QLkXycZZtDHCG2AdfgEVN5UIg4VSaK+KLy7mPywexpyRyRNTJsG YA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 357734g6mu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Dec 2020 15:43:14 -0500
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B3KdqJu141331;
-        Thu, 3 Dec 2020 15:43:09 -0500
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 357734g6m3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Dec 2020 15:43:08 -0500
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B3Kg4Rd011961;
-        Thu, 3 Dec 2020 20:43:06 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma03ams.nl.ibm.com with ESMTP id 3573v9r52b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Dec 2020 20:43:06 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B3Kh44s51052944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 3 Dec 2020 20:43:04 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 752E9AE051;
-        Thu,  3 Dec 2020 20:43:04 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9FDCAE04D;
-        Thu,  3 Dec 2020 20:43:02 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.43.205])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  3 Dec 2020 20:43:02 +0000 (GMT)
-Message-ID: <e2579b090abb447aa4b0773ba6c91df0f6e84eb6.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "mjg59@google.com" <mjg59@google.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Date:   Thu, 03 Dec 2020 15:43:01 -0500
-In-Reply-To: <a401e63a91114daba2037e2b0083101f@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-5-roberto.sassu@huawei.com>
-         <a401e63a91114daba2037e2b0083101f@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
+        Thu, 3 Dec 2020 17:24:52 -0500
+Date:   Thu, 3 Dec 2020 14:24:09 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607034251;
+        bh=Zr/89+pOI8j1IPxXkFjH3sfC7DYmfGTlISIa4l3iDJU=;
+        h=From:To:Cc:Subject:In-Reply-To:References:From;
+        b=k6aAaQ2F8HG/9l7LJRh2LxHEilEIDFaWG+vrtFBn17k9Xm9i2wrVR82qD1Eg4ZOQW
+         ON5or1pYihYHwck1jKXuuJUYHXvZgHUQhLPziZSWVX0bzMegSTojj4eEk0DMBr45Wq
+         rEGchPm96UFSaRU8J9mmgurb+8DTOUFKnzVh3ZmrhSw0boGhYD28VAxUyXw4a5QLQD
+         jwAQy3ZCpeG1ptITO4hyhK6frf7NqeoSjGuraDAyiBNOV96ldVJwJSIebw8/AVLvbk
+         nVsscK5II+oN0uEpQkDbGKBaBGaTGvn17T4d9OL1GN0yafy+HN6lAkbEjXx2paH638
+         AiNioJyWg0SvQ==
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     James Morris <jmorris@namei.org>
+Cc:     Florian Westphal <fw@strlen.de>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        netdev@vger.kernel.org, mptcp@lists.01.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] security: add const qualifier to struct
+ sock in various places
+Message-ID: <20201203142409.3bbc068f@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+In-Reply-To: <alpine.LRH.2.21.2012040407080.9312@namei.org>
+References: <20201130153631.21872-1-fw@strlen.de>
+        <20201130153631.21872-2-fw@strlen.de>
+        <20201202112848.46bf4ea6@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+        <alpine.LRH.2.21.2012040407080.9312@namei.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
- definitions=2020-12-03_12:2020-12-03,2020-12-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 spamscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- mlxscore=0 bulkscore=0 impostorscore=0 adultscore=0 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012030120
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2020-12-02 at 11:56 +0000, Roberto Sassu wrote:
-> > From: Roberto Sassu
-> > Sent: Wednesday, November 11, 2020 10:23 AM
-> > ima_inode_setxattr() and ima_inode_removexattr() hooks are called
-> > before an
-> > operation is performed. Thus, ima_reset_appraise_flags() should not be
-> > called there, as flags might be unnecessarily reset if the operation is
-> > denied.
+On Fri, 4 Dec 2020 04:07:16 +1100 (AEDT) James Morris wrote:
+> On Wed, 2 Dec 2020, Jakub Kicinski wrote:
+> > On Mon, 30 Nov 2020 16:36:29 +0100 Florian Westphal wrote:  
+> > > A followup change to tcp_request_sock_op would have to drop the 'const'
+> > > qualifier from the 'route_req' function as the
+> > > 'security_inet_conn_request' call is moved there - and that function
+> > > expects a 'struct sock *'.
+> > > 
+> > > However, it turns out its also possible to add a const qualifier to
+> > > security_inet_conn_request instead.
+> > > 
+> > > Signed-off-by: Florian Westphal <fw@strlen.de>
+> > > ---
+> > >  The code churn is unfortunate.  Alternative would be to change
+> > >  the function signature of ->route_req:
+> > >  struct dst_entry *(*route_req)(struct sock *sk, ...
+> > >  [ i.e., drop 'const' ].  Thoughts?  
 > > 
-> > This patch introduces the post hooks ima_inode_post_setxattr() and
-> > ima_inode_post_removexattr(), removes ima_inode_removexattr() and
-> > adds the
-> > call to ima_reset_appraise_flags() in the new functions.
+> > Security folks - is this okay to merge into net-next?
+> > 
+> > We can put it on a branch and pull into both trees if the risk 
+> > of conflicts is high.  
 > 
-> Removing ima_inode_removexattr() is not correct. We should still prevent
-> that security.ima is removed when CAP_SYS_ADMIN is not set. I will fix
-> this in the next version.
+> Acked-by: James Morris <jamorris@linux.microsoft.com>
 
-Ok.  So this patch will define the post hooks and defer
-ima_reset_appraise_flags() to them, leaving the original hooks intact.
+Thank you!
 
-Mimi
-
+Into net-next it goes..
