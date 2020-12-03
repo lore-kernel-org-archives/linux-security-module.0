@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C81C1B0D8
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 00:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30804C4167B
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 00:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D55A7224F4
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 00:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0BF922513
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 00:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbgLDACM (ORCPT
+        id S2387439AbgLDACQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Dec 2020 19:02:12 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41697 "EHLO
+        Thu, 3 Dec 2020 19:02:16 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41706 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728063AbgLDACK (ORCPT
+        with ESMTP id S2388003AbgLDACO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Dec 2020 19:02:10 -0500
+        Thu, 3 Dec 2020 19:02:14 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kkyXF-0007ka-Su; Fri, 04 Dec 2020 00:01:18 +0000
+        id 1kkyXQ-0007ka-Jn; Fri, 04 Dec 2020 00:01:28 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -62,9 +62,9 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v4 02/40] mount: make {lock,unlock}_mount_hash() static
-Date:   Fri,  4 Dec 2020 00:56:58 +0100
-Message-Id: <20201203235736.3528991-3-christian.brauner@ubuntu.com>
+Subject: [PATCH v4 08/40] fs: add id translation helpers
+Date:   Fri,  4 Dec 2020 00:57:04 +0100
+Message-Id: <20201203235736.3528991-9-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
 References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
@@ -73,12 +73,16 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The lock_mount_hash() and unlock_mount_hash() helpers are never called
-outside a single file. Remove them from the header and make them static
-to reflect this fact. There's no need to have them callable from other
-places right now, as Christoph observed.
+Add simple helpers to make it easy to map kuids into and from idmapped
+mounts. We provide simple wrappers that filesystems can use to e.g.
+initialize inodes similar to i_{uid,gid}_read() and i_{uid,gid}_write().
+Accessing an inode through an idmapped mount will require the inode to
+be mapped according to the mount's user namespace. If the fsids are used
+to compare against inodes or to initialize inodes they are required to
+be shifted from the mount's user namespace. Passing the initial user
+namespace to these helpers makes them a nop and so any non-idmapped
+paths will not be impacted.
 
-Suggested-by: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org
@@ -87,60 +91,84 @@ Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
 /* v2 */
 - Christoph Hellwig <hch@lst.de>:
-  - Add a patch to make {lock,unlock)_mount_hash() static.
+  - Get rid of the ifdefs and the config option that hid idmapped mounts.
 
 /* v3 */
 unchanged
 
 /* v4 */
-unchanged
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 ---
- fs/mount.h     | 10 ----------
- fs/namespace.c | 10 ++++++++++
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ include/linux/fs.h | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/fs/mount.h b/fs/mount.h
-index c7abb7b394d8..562d96d57bad 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -125,16 +125,6 @@ static inline void get_mnt_ns(struct mnt_namespace *ns)
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8667d0cdc71e..0c820837d240 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -39,6 +39,7 @@
+ #include <linux/fs_types.h>
+ #include <linux/build_bug.h>
+ #include <linux/stddef.h>
++#include <linux/cred.h>
  
- extern seqlock_t mount_lock;
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
+@@ -1574,6 +1575,52 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
+ 	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
+ }
  
--static inline void lock_mount_hash(void)
--{
--	write_seqlock(&mount_lock);
--}
--
--static inline void unlock_mount_hash(void)
--{
--	write_sequnlock(&mount_lock);
--}
--
- struct proc_mounts {
- 	struct mnt_namespace *ns;
- 	struct path root;
-diff --git a/fs/namespace.c b/fs/namespace.c
-index f183161833ad..798bbf4f48ad 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -87,6 +87,16 @@ EXPORT_SYMBOL_GPL(fs_kobj);
-  */
- __cacheline_aligned_in_smp DEFINE_SEQLOCK(mount_lock);
- 
-+static inline void lock_mount_hash(void)
++static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
++				   kuid_t kuid)
 +{
-+	write_seqlock(&mount_lock);
++	return make_kuid(mnt_userns, __kuid_val(kuid));
 +}
 +
-+static inline void unlock_mount_hash(void)
++static inline kgid_t kgid_into_mnt(struct user_namespace *mnt_userns,
++				   kgid_t kgid)
 +{
-+	write_sequnlock(&mount_lock);
++	return make_kgid(mnt_userns, __kgid_val(kgid));
 +}
 +
- static inline struct hlist_head *m_hash(struct vfsmount *mnt, struct dentry *dentry)
- {
- 	unsigned long tmp = ((unsigned long)mnt / L1_CACHE_BYTES);
++static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
++				    const struct inode *inode)
++{
++	return kuid_into_mnt(mnt_userns, inode->i_uid);
++}
++
++static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
++				    const struct inode *inode)
++{
++	return kgid_into_mnt(mnt_userns, inode->i_gid);
++}
++
++static inline kuid_t kuid_from_mnt(struct user_namespace *mnt_userns,
++				   kuid_t kuid)
++{
++	return KUIDT_INIT(from_kuid(mnt_userns, kuid));
++}
++
++static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
++				   kgid_t kgid)
++{
++	return KGIDT_INIT(from_kgid(mnt_userns, kgid));
++}
++
++static inline kuid_t fsuid_into_mnt(struct user_namespace *mnt_userns)
++{
++	return kuid_from_mnt(mnt_userns, current_fsuid());
++}
++
++static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
++{
++	return kgid_from_mnt(mnt_userns, current_fsgid());
++}
++
+ extern struct timespec64 current_time(struct inode *inode);
+ 
+ /*
 -- 
 2.29.2
 
