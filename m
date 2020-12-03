@@ -2,108 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=BAYES_40,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B08A2C6369E
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 23:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092B9C71156
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 08:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54561221EB
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Dec 2020 23:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADCF520757
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Dec 2020 08:46:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbgLBXxt (ORCPT
+        id S1730005AbgLCIqk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Dec 2020 18:53:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727183AbgLBXxt (ORCPT
+        Thu, 3 Dec 2020 03:46:40 -0500
+Received: from mail.boldwhite24.com ([80.211.42.67]:50894 "EHLO
+        mail.boldwhite24.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729999AbgLCIqj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Dec 2020 18:53:49 -0500
-Date:   Wed, 2 Dec 2020 18:53:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1606953188;
-        bh=nxraud1so4X4CpHWIt+N3aVKYnhWwVdXg+cr93YJPxs=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mW4IzRBUNyPI1MOXlyDTOCV709Gt58pz0xBHvRAQmE8vieFh3hGmezUGpQI7HRkhi
-         cUJttO1Qz22Z6PafhusGZFFqRLLgp3cGhmcbr7uOOL7MitWnCUw8hYWohF/p12ROYO
-         HHzNqICZ+eZ39jwIcluPPgFHFIYkqKHVShnD3MSHmbvkIzIJYmKt346I+uCFB2SsLi
-         WDbqFe7nRF9EU2qd76a8D/oaVJdlPCf1ljR1C8QDQETHHDT6RI8XkMirB6h0+Y6cmU
-         M+VQHj9/4Vet14bkKtE17oqWg60kq9PDaqNEj/NOFyukdnlcP0xkwSzN1Nu3Xrqkh0
-         RX/6Jis2VwtGw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with kernel
- measurements
-Message-ID: <20201202235307.GX643756@sasha-vm>
-References: <20200708154116.3199728-1-sashal@kernel.org>
- <20200708154116.3199728-3-sashal@kernel.org>
- <1594224793.23056.251.camel@linux.ibm.com>
- <20200709012735.GX2722994@sasha-vm>
- <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
- <20201201002157.GT643756@sasha-vm>
- <02e53ce5fc00a2eaff3cace9c94b8b375dc580ef.camel@linux.ibm.com>
+        Thu, 3 Dec 2020 03:46:39 -0500
+Received: by mail.boldwhite24.com (Postfix, from userid 1001)
+        id 5F4ACA2E00; Thu,  3 Dec 2020 08:45:19 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=boldwhite24.com;
+        s=mail; t=1606985139;
+        bh=hS3ibs4caZkahrzgcMN2TAJo2B2H5Muwb2NidDYlIzQ=;
+        h=Date:From:To:Subject:From;
+        b=10HeNBszJ8OJ8+Q/L9pdNpE5yPQgS9r9bhNiLYbHny+Ko0qiAZI9xWqQlW2UkooIh
+         HUFx7d83AG5+8tzALsmCbLLr+XDQToResi0qv6et1ihFsaWh9XMMrnWkOlhrPVwZ7G
+         1QHNQ5yxUWxGkwTEstViW8t5eDM9Ow/poROQsICkJrV/8rMTHCXOQ3tLuu4Nxchl0u
+         VY57kMwdmtPoK1j6RYhItw9qjq69+w+COvYdfoTCZAhVtgvNtZx1PgJSfjwjGLi3oF
+         K2E2D75S9vdEKEk5y4mRHA0RRnf/IJN7mH0M+ho0ebsZOJMpmxKQjp+34j+eLdZAdF
+         uObIW3Qi/SIbQ==
+Received: by mail.boldwhite24.com for <linux-security-module@vger.kernel.org>; Thu,  3 Dec 2020 08:45:13 GMT
+Message-ID: <20201203074501-0.1.2m.ammn.0.8rdbpimjd5@boldwhite24.com>
+Date:   Thu,  3 Dec 2020 08:45:13 GMT
+From:   =?UTF-8?Q? "Diego_S=C3=A1nchez" ?= <diego.sanchez@boldwhite24.com>
+To:     <linux-security-module@vger.kernel.org>
+Subject: Disinfection
+X-Mailer: mail.boldwhite24.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <02e53ce5fc00a2eaff3cace9c94b8b375dc580ef.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Nov 30, 2020 at 10:13:02PM -0500, Mimi Zohar wrote:
->On Mon, 2020-11-30 at 19:21 -0500, Sasha Levin wrote:
->> On Sun, Nov 29, 2020 at 08:17:38AM -0500, Mimi Zohar wrote:
->> >Hi Sasha,
->> >
->> >On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
->> >> On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
->> >> >Hi Sasha,
->> >> >
->> >> >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
->> >> >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
->> >> >>
->> >> >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
->> >> >>
->> >> >> Registers 8-9 are used to store measurements of the kernel and its
->> >> >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
->> >> >> should include them in the boot aggregate. Registers 8-9 should be
->> >> >> only included in non-SHA1 digests to avoid ambiguity.
->> >> >
->> >> >Prior to Linux 5.8, the SHA1 template data hashes were padded before
->> >> >being extended into the TPM.  Support for calculating and extending
->> >> >the per TPM bank template data digests is only being upstreamed in
->> >> >Linux 5.8.
->> >> >
->> >> >How will attestation servers know whether to include PCRs 8 & 9 in the
->> >> >the boot_aggregate calculation?  Now, there is a direct relationship
->> >> >between the template data SHA1 padded digest not including PCRs 8 & 9,
->> >> >and the new per TPM bank template data digest including them.
->> >>
->> >> Got it, I'll drop it then, thank you!
->> >
->> >After re-thinking this over, I realized that the attestation server can
->> >verify the "boot_aggregate" based on the quoted PCRs without knowing
->> >whether padded SHA1 hashes or per TPM bank hash values were extended
->> >into the TPM[1], but non-SHA1 boot aggregate values [2] should always
->> >include PCRs 8 & 9.
->> >
->> >Any place commit 6f1a1d103b48 was backported [2], this commit
->> >20c59ce010f8 ("ima: extend boot_aggregate with kernel measurements")
->> >should be backported as well.
->>
->> Which kernels should it apply to? 5.7 is EOL now, so I looked at 5.4 but
->> it doesn't apply cleanly there.
->
->For 5.4, both "git cherry-pick" and "git am --3way" for 20c59ce010f8
->seem to work.
+Good morning,
 
-You're right, I've grabbed it too. Thanks!
+looking for companies interested in raising additional capital by diversi=
+fying their offer in soaps, liquids and gels for hand disinfection and co=
+smetics for body and hair care.
 
--- 
-Thanks,
-Sasha
+The distribution of innovative products corresponding to the current pref=
+erences of customers in the field of hygiene and preventive healthcare al=
+lows our partners to gain new markets and achieve better economic results=
+=2E
+
+In addition to products with bactericidal action, our range includes show=
+er gels, shampoos and hair conditioners, as well as efficient, concentrat=
+ed detergents.
+
+The versatility (suitable for all skin types) combined with an affordable=
+ price means that customers make an informed choice of a product among ot=
+hers available on the market.
+
+Are you interested in cooperation?
+
+Diego S=C3=A1nchez
