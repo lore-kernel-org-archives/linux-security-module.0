@@ -2,123 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDC8C1B087
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 15:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C8DEC433FE
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 15:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 378F922B3F
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 15:00:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A4F22B47
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 15:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387662AbgLDPAh convert rfc822-to-8bit (ORCPT
+        id S1730423AbgLDPb1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Dec 2020 10:00:37 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2209 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbgLDPAh (ORCPT
+        Fri, 4 Dec 2020 10:31:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729840AbgLDPb0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Dec 2020 10:00:37 -0500
-Received: from fraeml706-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4CnbQB1sBRz67LGf;
-        Fri,  4 Dec 2020 22:56:50 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml706-chm.china.huawei.com (10.206.15.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Fri, 4 Dec 2020 15:59:54 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.002;
- Fri, 4 Dec 2020 15:59:54 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-Subject: RE: [PATCH v3 06/11] evm: Ignore INTEGRITY_NOLABEL if no HMAC key is
- loaded
-Thread-Topic: [PATCH v3 06/11] evm: Ignore INTEGRITY_NOLABEL if no HMAC key is
- loaded
-Thread-Index: AQHWuAyPc3OXOTvUVE6QYcHvma97kKnl6NcAgADOOtCAAEQzgIAAKDSg
-Date:   Fri, 4 Dec 2020 14:59:54 +0000
-Message-ID: <f36fa4c332b14ca2ba17a17d44fbe8cb@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-7-roberto.sassu@huawei.com>
-         <b9f1a31e9b2dfb7a7167574a39652932263488e8.camel@linux.ibm.com>
-         <3c628dc54804469597a72d03c33e8315@huawei.com>
- <0eec775cf5c44f646defe33aec5f241a06844d3a.camel@linux.ibm.com>
-In-Reply-To: <0eec775cf5c44f646defe33aec5f241a06844d3a.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.220.96.108]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 4 Dec 2020 10:31:26 -0500
+Date:   Fri, 4 Dec 2020 17:30:37 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607095846;
+        bh=NHKkkiVjcEytL4TWZgxQrssmxGcP3N0tIxymDLc440g=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qBI1LL+o1KhplcvIkiunZUov3Mg8GnpFsgg7rJ/ut5AHZOEsNV4OUKeAFdFG2Oa0W
+         mYkMXl5jIgoqDfpjRIBbIgHXQ1vGWbb0OJFqvLLg+/XuL+lBJh7xa0Q/BiAj3ikEL8
+         hFI1078z6KQxlbDqHQLWcwwhNDknoAl1RP1j3k/GDVli6LOaHaOgW7IGuTTAWPD+b3
+         SIOWgpOoZsKoIaw8zdMRVVevSi2HKOvRJq245q2Vh0NLbYcDJYJ++WCfiaQonzWDoC
+         iQExKMaT6wKrDsc7Kf/xO0p6HpdWfM32hCMFmYWeBE/i7pedyt6CyIQgLp2+OMK7WD
+         yYC7QSsicJNyw==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     gmail Elaine Palmer <erpalmerny@gmail.com>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com, dhowells@redhat.com, jens.wiklander@linaro.org,
+        corbet@lwn.net, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, janne.karhunen@gmail.com,
+        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org,
+        Kenneth Goldman <kgoldman@us.ibm.com>, gcwilson@linux.ibm.com,
+        zgu@us.ibm.com, stefanb@us.ibm.com, NAYNA JAIN1 <naynjain@ibm.com>
+Subject: Re: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a new
+ trust source
+Message-ID: <20201204153037.GC4922@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
+ <81A6B61D-3811-4957-B270-52AE5FA6DE4F@gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81A6B61D-3811-4957-B270-52AE5FA6DE4F@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Friday, December 4, 2020 2:05 PM
-> On Fri, 2020-12-04 at 08:05 +0000, Roberto Sassu wrote:
-> > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > > Sent: Thursday, December 3, 2020 9:43 PM
-> > > Hi Roberto,
-> > >
-> > > On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> > > > When a file is being created, LSMs can set the initial label with the
-> > > > inode_init_security hook. If no HMAC key is loaded, the new file will
-> have
-> > > > LSM xattrs but not the HMAC.
-> > > >
-> > > > Unfortunately, EVM will deny any further metadata operation on new
-> > > files,
-> > > > as evm_protect_xattr() will always return the INTEGRITY_NOLABEL
-> error.
-> > > This
-> > > > would limit the usability of EVM when only a public key is loaded, as
-> > > > commands such as cp or tar with the option to preserve xattrs won't
-> work.
-> > > >
-> > > > Ignoring this error won't be an issue if no HMAC key is loaded, as the
-> > > > inode is locked until the post hook, and EVM won't calculate the HMAC
-> on
-> > > > metadata that wasn't previously verified. Thus this patch checks if an
-> > > > HMAC key is loaded and if not, ignores INTEGRITY_NOLABEL.
-> > >
-> > > I'm not sure what problem this patch is trying to solve.
-> > > evm_protect_xattr() is only called by evm_inode_setxattr() and
-> > > evm_inode_removexattr(), which first checks whether
-> > > EVM_ALLOW_METADATA_WRITES is enabled.
-> >
-> > The idea is to also support EVM verification when only a public key
-> > is loaded. An advantage to do that is that for example we can prevent
-> > accidental metadata changes when the signature is portable.
+On Wed, Dec 02, 2020 at 02:34:07PM -0500, gmail Elaine Palmer wrote:
+> Hi Sumit,  
 > 
-> Right, there are a couple of  scenarios.  Let's be more specific as to
-> which scenario this patch is addressing.
+> Thank you for the detailed descriptions and examples of trust sources
+> for Trusted Keys.   A group of us in IBM (Stefan Berger, Ken Goldman,
+> Zhongshu Gu, Nayna Jain, Elaine Palmer, George Wilson, Mimi Zohar)
+> have been doing related work for quite some time, and we have one
+> primary concern and some suggested changes to the document. 
 > 
-> - a public key is loaded and EVM_ALLOW_METADATA_WRITES is enabled,
-> - a public key is loaded and EVM_ALLOW_METADATA_WRITES is disabled,
-> - an HMAC key is loaded
+> Our primary concern is that describing a TEE as a Trust Source needs
+> to be more specific.   For example, "ARM TrustZone" is not sufficient,
+> but "wolfSSL embedded SSL/TLS library with ARM TrustZone
+> CryptoCell-310" is.  Just because a key is protected by software
+> running in a TEE is not enough to establish trust.  Just like
+> cryptographic modules, a Trust Source should be defined as a specific
+> implementation on specific hardware with well-documented environmental
+> assumptions, dependencies, and threats.
 > 
-> For the first and last case, this patch shouldn't be necessary.  Only
-> the second case, with EVM_ALLOW_METADATA_WRITES disabled, probably
-> does
-> not work.  I would claim that is working as designed.
+> In addition to the above concern, our suggested changes are inline
+> below.
 
-If there is no HMAC key loaded and a file is created, I think EVM should
-not expect an HMAC and return an error. If we do metadata verification
-only when an HMAC key is loaded, we miss a functionality that could be
-useful also when only a public key is loaded.
+In order to give a decent review comment it should have two ingredients:
 
-Roberto
+- Where the existing line of code / text / whatever goes wrong.
+- How it should modified and why that makes sense. And use as plain
+  English and non-academic terms as possible, if it is documentation.
+  Further, scope is only the kernel implementation, no more or no
+  less.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
+"do this" is not unfortunately an argument. Feedback is welcome when
+it is supported by something common sensse.
+
+Some meta suggestion of related to email:
+
+Please also use a proper email client and split your paragraphs into
+at most 80 character lines with new line characters when writing email.
+I prefer to use 72 character line length so that there's some space
+for longer email threads.
+
+/Jarkko
