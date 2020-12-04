@@ -2,142 +2,74 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76723C4361B
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 05:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA9DC4361A
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 07:55:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20E4222597
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 05:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37E8022571
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 07:55:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbgLDFRb (ORCPT
+        id S1728807AbgLDHyr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Dec 2020 00:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47726 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725300AbgLDFRb (ORCPT
+        Fri, 4 Dec 2020 02:54:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbgLDHyr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Dec 2020 00:17:31 -0500
-Date:   Fri, 4 Dec 2020 07:16:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607059009;
-        bh=MytoTQmK0FWpezBeB0/MIP6XIJc0eGXJUDMWPEVo7PA=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SuRTAIIUpLjq3GUyKoK3lRf2aP+PaQZ5/PHvW+PdJV9RBOUq4jqvEwmrkzGp23Mdc
-         eHU+vvWSnsIKri9zYinMa5cNfTq7O8qk25EG7K9tHw3MNzJSWMhy4BuJvYtAWx0msc
-         A9UW3vaU51sXDgVCz1Ez1SLfJqsEuk2sgqH6EOS58woJacVBUqlsqVrFI5mvfP6a4C
-         YIVa8iBrmGRX2zXFu2DiXu65vG5IUZExc0SCeKhrmoiQfnToOd3WOOdrfCX8/8WDUg
-         d7kzEaS/3nYG3eBiXmopNWZrEKe/FxTZT/2vZ+nfuQdH9kkAwpGMoyk9DRrXHv+Hwz
-         SB1T4+ZpRwx7Q==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Subject: Re: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
-Message-ID: <20201204051642.GA154469@kernel.org>
-References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
- <20201105050736.GA702944@kernel.org>
- <CAFA6WYPetvod-Wov2n_L5TL771j+-kt+_csyWYT-uM=haEKMZQ@mail.gmail.com>
- <20201106145252.GA10434@kernel.org>
+        Fri, 4 Dec 2020 02:54:47 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2890FC061A52;
+        Thu,  3 Dec 2020 23:54:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=YwMmp9Po9KaoD0NNYk3HwEV3ejsrXIggwtX+cmpAFd8=; b=vd1ekFAS1Iuc4aTT78JnV3zy58
+        g4wpw/IAVO93BSBjUdXMCKIf19dLiuJM6DH/2NvcbOSis0lNlnY5EN9g6tqpTk3S4GCAjjOtwvDeh
+        UCXX6UhU1yGNBZlZH7AqqtJ5X8MeH6EPb6FYfk9Xemz+mlcaaTzL1eJIuJEjpuEAiZBs3F2Xk0Axg
+        16CUEvcBIC4eKvcDAEeJFR+lOKxhgqh2lBPETOUCX9wKfQjhfsb8KlfDuc12Ej8O5ctWdbF/lGaBA
+        qBrypqtfGvpwV0+c1QG6AFY7thVJnv5W6Qu1zdkW5H149iDeBObkPSG9EvQdD5/c/YR6pTT3MeH2C
+        XDVAAYTA==;
+Received: from hch by casper.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1kl5un-0007uq-Fk; Fri, 04 Dec 2020 07:54:05 +0000
+Date:   Fri, 4 Dec 2020 07:54:05 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] [RFC] xfs: initialise attr fork on inode create
+Message-ID: <20201204075405.GA30060@infradead.org>
+References: <20201202232724.1730114-1-david@fromorbit.com>
+ <20201203084012.GA32480@infradead.org>
+ <20201203214426.GE3913616@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201106145252.GA10434@kernel.org>
+In-Reply-To: <20201203214426.GE3913616@dread.disaster.area>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Nov 06, 2020 at 04:52:52PM +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 06, 2020 at 03:02:41PM +0530, Sumit Garg wrote:
-> > On Thu, 5 Nov 2020 at 10:37, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > >
-> > > On Tue, Nov 03, 2020 at 09:31:42PM +0530, Sumit Garg wrote:
-> > > > Add support for TEE based trusted keys where TEE provides the functionality
-> > > > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > > > an alternative in case platform doesn't possess a TPM device.
-> > > >
-> > > > This patch-set has been tested with OP-TEE based early TA which is already
-> > > > merged in upstream [1].
-> > >
-> > > Is the new RPI400 computer a platform that can be used for testing
-> > > patch sets like this? I've been looking for a while something ARM64
-> > > based with similar convenience as Intel NUC's, and on the surface
-> > > this new RPI product looks great for kernel testing purposes.
+On Fri, Dec 04, 2020 at 08:44:26AM +1100, Dave Chinner wrote:
+> > > +		if ((IS_ENABLED(CONFIG_SECURITY) && dir->i_sb->s_security) ||
+> > > +		    default_acl || acl)
+> > > +			need_xattr = true;
+> > > +
+> > > +		error = xfs_create(XFS_I(dir), &name, mode, rdev,
+> > > +					need_xattr, &ip);
 > > 
-> > Here [1] is the list of supported versions of Raspberry Pi in OP-TEE.
-> > The easiest approach would be to pick up a supported version or else
-> > do an OP-TEE port for an unsupported one (which should involve minimal
-> > effort).
-> > 
-> > [1] https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#what-versions-of-raspberry-pi-will-work
-> > 
-> > -Sumit
+> > It might be wort to factor the condition into a little helper.  Also
+> > I think we also have security labels for O_TMPFILE inodes, so it might
+> > be worth plugging into that path as well.
 > 
-> If porting is doable, then I'll just order RPI 400, and test with QEMU
-> up until either I port OP-TEE myself or someone else does it.
-> 
-> For seldom ARM testing, RPI 400 is really convenient device with its
-> boxed form factor.
+> Yeah, a helper is a good idea - I just wanted to get some feedback
+> first on whether it's a good idea to peek directly at
+> i_sb->s_security or whether there is some other way of knowing ahead
+> of time that a security xattr is going to be created. I couldn't
+> find one, but that doesn't mean such an interface doesn't exist in
+> all the twisty passages of the LSM layers...
 
-I'm now a proud owner of Raspberry Pi 400 home computer :-)
-
-I also found instructions on how to boot a custom OS from a USB stick:
-
-https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/msd.md
-
-Also, my favorite build system BuildRoot has bunch of of the shelf
-configs:
-
-➜  buildroot-sgx (master) ✔ ls -1 configs | grep raspberry
-raspberrypi0_defconfig
-raspberrypi0w_defconfig
-raspberrypi2_defconfig
-raspberrypi3_64_defconfig
-raspberrypi3_defconfig
-raspberrypi3_qt5we_defconfig
-raspberrypi4_64_defconfig
-raspberrypi4_defconfig
-raspberrypi_defconfig
-
-I.e. I'm capable of compiling kernel and user space and boot it up
-with it.
-
-Further, I can select this compilation option:
-
-BR2_TARGET_OPTEE_OS:                                                                                                                                              │  
-                                                                                                                                                                     │  
-   OP-TEE OS provides the secure world boot image and the trust                                                                                                      │  
-   application development kit of the OP-TEE project. OP-TEE OS                                                                                                      │  
-   also provides generic trusted application one can embedded                                                                                                        │  
-   into its system.                                                                                                                                                  │  
-                                                                                                                                                                     │  
-   http://github.com/OP-TEE/optee_os       
-
-Is that what I want? If I put this all together and apply your patches,
-should the expectation be that I can use trusted keys?
-
-Please note that I had a few remarks about your patches (minor but need
-to be fixed), but this version is already solid enough for testing.
-
-/Jarkko
+I've added the relevant list, maybe someone there has an opinion.
