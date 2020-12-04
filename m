@@ -2,79 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD4CCC433FE
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 15:39:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B76C4361A
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 23:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8834B22BF5
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 15:39:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A9922519
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 23:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730536AbgLDPjO (ORCPT
+        id S1726508AbgLDXXL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 4 Dec 2020 10:39:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40336 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730395AbgLDPjO (ORCPT
+        Fri, 4 Dec 2020 18:23:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726158AbgLDXXK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 4 Dec 2020 10:39:14 -0500
-Date:   Fri, 4 Dec 2020 17:38:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607096313;
-        bh=iTThFfM4EWdfNqRekI8Xw/sXCVHPS1MXBYIjkuMK8Ks=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=V7vsQ1s4GxsMXkkDoUlNHfZPeXbbuLJCSXhMiX/9w+dV6iw6wiZ3Awxol5VI5w8Gf
-         ka4Y+tRVd/7Z5/XJfmzYbh5+yFBGCpyADJntQIMPG6/KHcnqWqychZ6kf0ExzYWuPv
-         Wm+pBJCRKkOW2OuEdKdoOFL8BNSY5UE398cBbF3OG6sDSRrXMOWvawYKDQy71EjXaR
-         Omm6q+Q3QhzheEfyLUlc9Sk+c2oJxnXRTQGg+kYRUSJ30ZxFwMe9C2322Y0jXWk11p
-         +88w85y3ZnG/KI6BekGYGf+JbNZzhEuBSOmADrfyxN2C/VDKXyfTsucMHaXJCbN2hV
-         oCZ8Ek1o67aoA==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     =?us-ascii?B?PT9VVEYtOD9RP01pY2thPWMzPWFibF9TYWxhPWMzPWJjbj89?= 
-        <mic@digikod.net>, David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?us-ascii?B?PT9VVEYtOD9RP01pY2thPWMzPWFibF9TYWxhPWMzPWJjbj89?= 
-        <mic@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1 0/9] Enable root to update the blacklist keyring
-Message-ID: <20201204153827.GB6337@kernel.org>
-References: <80fb0eae-8321-5ae2-8d50-eabbe86981da@digikod.net>
- <20201120180426.922572-1-mic@digikod.net>
- <20201130024011.GA24870@kernel.org>
- <113544.1607090496@warthog.procyon.org.uk>
+        Fri, 4 Dec 2020 18:23:10 -0500
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8759C0613D1
+        for <linux-security-module@vger.kernel.org>; Fri,  4 Dec 2020 15:22:24 -0800 (PST)
+Received: by mail-ej1-x643.google.com with SMTP id ce23so7281631ejb.8
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Dec 2020 15:22:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rlS3C6WuGwoBn7IObI4+YTjRX0/xv/TM3dmDMkafGlw=;
+        b=FPM0PRzrYdMcK1zg3P9Wu0xJvL3z6vDGp5YNtp5fKJcuOddtsm8WOeC20JJzhSLaNH
+         D+NNNWLUVM0BGkeeQUTlPd9v/oNB+bLWeOnTZWgvGe9Htk0ALBY4cHazx1MTEkIJ/rLB
+         BYWt5/wuiXK9XlgUlUeKcjC9ypilxegwkbP/GF0E2sWNGea+rX7twJyOexEYi1/nWukW
+         WU9nEjec6CNEgQnbnTmpqwxjOLDQPMvVpBKPkVmjWEjp7ldxtmTL50hdIxpis822zyCN
+         koujM6BUbbzVfM+5k3XwkkU+gtMj/uD5fbLwBolQDCjFNddqfw5CYMDQOBiIbA+uYJ5y
+         yU7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rlS3C6WuGwoBn7IObI4+YTjRX0/xv/TM3dmDMkafGlw=;
+        b=UGWH2HM95sjZWUpcvP1bsNQOmoP3/aW2nRdACsxPYRqIHVsbYo+LddFxVXx999sw3L
+         XGAOikXDEhLv6aJQkjFWJyqJqY+/MsofJJvogNkYeaBCvr+Or+z58kfQvs6fMHbLoGIl
+         PXm+lpuwr0d6nwZu8j9+nUByDhXdasngcWPW6fNIXV+SAWnGTGnUIPOZ/4tvKv6eTDTy
+         4Xqoj/US/dC2Zmg9AfVxdw/a7kTmel49P/1Uv5Bn9cs1A7KnKh7V08CABr2ogohdrIlm
+         TBSE633dLXXrFPW9TTi7xzkbrNdXycG1Km6H2Vb38vlSJcKCL7MzXSdGod+K/NdLJXaj
+         hKrA==
+X-Gm-Message-State: AOAM533XeoX49ITnrj8cjOHXsM+7v/pXS614FK0twIsuMWSywTuMxmBP
+        Yoie8hfErY6YpyHDGvh+DwJcDSqR084NjV12o29h
+X-Google-Smtp-Source: ABdhPJyralX6EO3PtSqy1eB+Kk4U1fsGsLAzxcLe/3O1w/Nv5j7MlLXXrZ+NiPUhiLtwFqNVy3lBR1szM+0ofdHR8rw=
+X-Received: by 2002:a17:906:46d6:: with SMTP id k22mr9222051ejs.542.1607124143374;
+ Fri, 04 Dec 2020 15:22:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <113544.1607090496@warthog.procyon.org.uk>
+References: <3336b397dda1d15ee9fb87107f9cc21a5d1fe510.1606904940.git.pabeni@redhat.com>
+ <3a5f156da4569957b91bb5aa4d2a316b729a2c69.camel@redhat.com>
+ <539f376-62c2-dbe7-fbfd-6dc7a53eafa@linux.intel.com> <CAHC9VhTVc07P_MhWm7YRF6LXdMRQOcDEKe7SB+fpJJizdKOvEg@mail.gmail.com>
+ <20201203235415.GD5710@breakpoint.cc> <CAHC9VhT-rj=tJwVycS19TgJDQ766oUH6ng+Uv=wu+WDrgE0AHA@mail.gmail.com>
+ <8c844984eaa92413066367af69b56194b111ad8f.camel@redhat.com>
+In-Reply-To: <8c844984eaa92413066367af69b56194b111ad8f.camel@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 4 Dec 2020 18:22:12 -0500
+Message-ID: <CAHC9VhS9xRSbHMCgDkix0fHYeO=aA_=DVyV1Xdu8qFpggws8Kg@mail.gmail.com>
+Subject: Re: [MPTCP] Re: [RFC PATCH] selinux: handle MPTCP consistently with TCP
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, mptcp@lists.01.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 04, 2020 at 02:01:36PM +0000, David Howells wrote:
-> Mickaël Salaün <mic@digikod.net> wrote:
-> 
-> > > What would be easiest way to smoke test the changes?
-> > 
-> > An easy way to test it is to enable the second trusted keyring to
-> > dynamically load certificates in the kernel. Then we can create a hash
-> > of a valid certificate (but not loaded yet) and sign it as explained in
-> > tools/certs/print-cert-tbs-hash.sh (patch 9/9). Once this hash is loaded
-> > in the kernel, loading the blacklisted certificate will be denied. We
-> > can also test it with a PKCS#7 signature chain, either with the
-> > blacklist keyring itself, or with a signed dm-verity image.
-> 
-> It might also be possible to use the pkcs#7 test key type
-> (CONFIG_PKCS7_TEST_KEY) to aid in that.
-> 
-> David
+On Fri, Dec 4, 2020 at 5:04 AM Paolo Abeni <pabeni@redhat.com> wrote:
+>
+> On Thu, 2020-12-03 at 21:24 -0500, Paul Moore wrote:
+> > On Thu, Dec 3, 2020 at 6:54 PM Florian Westphal <fw@strlen.de> wrote:
+> > > Paul Moore <paul@paul-moore.com> wrote:
+> > > > I'm not very well versed in MPTCP, but this *seems* okay to me, minus
+> > > > the else-crud chunk.  Just to confirm my understanding, while MPTCP
+> > > > allows one TCP connection/stream to be subdivided and distributed
+> > > > across multiple interfaces, it does not allow multiple TCP streams to
+> > > > be multiplexed on a single connection, yes?
+> > >
+> > > Its the latter.  The application sees a TCP interface (socket), but
+> > > data may be carried over multiple individual tcp streams on the wire.
+> >
+> > Hmm, that may complicate things a bit from a SELinux perspective.  Maybe not.
+> >
+> > Just to make sure I understand, with MPTCP, a client that
+> > traditionally opened multiple TCP sockets to talk to a server would
+> > now just open a single MPTCP socket and create multiple sub-flows
+> > instead of multiple TCP sockets?
+>
+> I expect most clients will not be updated specifically for MPTCP,
+> except changing the protocol number at socket creation time - and we
+> would like to avoid even that.
+>
+> If a given application creates multiple sockets, it will still do that
+> with MPTCP. The kernel, according to the configuration provided by the
+> user-space and/or by the peer, may try to create additional subflows
+> for each MPTCP sockets, using different local or remote address and/or
+> port number. Each subflow is represented inside the kernel as a TCP
+> 'struct sock' with specific ULP operations. No related 'struct socket'
+> is exposed to user-space.
 
-Thanks, note taken.
+Hmm, okay, there are probably a few other things we need to worry
+about then from a SELinux point of view.  Smack may be okay since it
+largely ignores sockets as a security entity, but Casey would be the
+one to comment on that.  I'm not certain of the current AppArmor
+network controls, or the other LSMs for that matter, but they should
+be seeing this conversation on the LSM list so I assume they will
+comment as necessary.
 
-/Jarkko
+For SELinux the issue is that we need to track state in the sock
+struct, via sock->sk_security, and that state needs to be initialized
+and set properly.  Similarly with TCP request_sock structs, via
+request_sock->{secid,peer_secid}.  Is the MPTCP code allocating and/or
+otherwise creating socks or request_socks outside of the regular TCP
+code?  We would also be concerned about socket structs, but I'm
+guessing that code reuses the TCP code based on what you've said.
+
+-- 
+paul moore
+www.paul-moore.com
