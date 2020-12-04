@@ -2,93 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0990DC4361A
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 02:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76723C4361B
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 05:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1F8422511
-	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 02:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20E4222597
+	for <linux-security-module@archiver.kernel.org>; Fri,  4 Dec 2020 05:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726344AbgLDCZh (ORCPT
+        id S1726244AbgLDFRb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Dec 2020 21:25:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38428 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726080AbgLDCZh (ORCPT
+        Fri, 4 Dec 2020 00:17:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47726 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725300AbgLDFRb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Dec 2020 21:25:37 -0500
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75610C061A51
-        for <linux-security-module@vger.kernel.org>; Thu,  3 Dec 2020 18:24:51 -0800 (PST)
-Received: by mail-ej1-x644.google.com with SMTP id jx16so6476533ejb.10
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Dec 2020 18:24:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vfNYS6MLlkiU5bhAM8lpLHEUCLkxO4vhhPJPNj6ZzNQ=;
-        b=jzqTqHQxAL0LS5ScINSdTvJ5zKHIN4mzyc3RDRQIbl1EF4UgJZkgm9+LksrAiBWdBS
-         GbvMqruzlhYe+6b/80eR3GUHCGeL2fngGwBJalds+M32lrMq4284PqYPLJ6VCgZT0OEH
-         2qW55y14gA+aX3cIEzRC4/lE/OOde1EoiPcRzs7HsJ1mK/uRwagNqXDpHB4NAsufXXsS
-         GKZEFR9a3A2ntPCAr3/+zwppZHZ0ymofctxTh2kzctf9p1ikhaOgAM1FH2Eof5su65oc
-         NEUSsLlzwbrrGXb16IOK4N6YXa7SNMamWo2j3yHi+43Dwxz40xoj0BUpq4Ln7L59FnQ7
-         fKNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vfNYS6MLlkiU5bhAM8lpLHEUCLkxO4vhhPJPNj6ZzNQ=;
-        b=H/V1RDenoCMgEMQ38GzViHWhzufbPvd3t5/W3+nVHG8HTxMQPwgbzZSFAZ7WKWVP2b
-         xGrYg/m9lFbDa9b7q+9UHEJapLAhGmBrPzyO9uO63qgRoTU2nrjV2jwDGmnykqbS9oKs
-         TujmZbXbrndd+TjRi9STe4h2ylYXeF9W3iRU/NQyI6GQ/PikcqyxNYr2bbwbiA0n1dcF
-         PZLVHQHfNFLDqtCieMN1NHA3HKcmvNVsOL8Rw14F2Vdyq/yRjUfF6RCSAKdhJcyeyf04
-         GJbPS+UD7KzutLdbuTuOmCJK165SjJjl5Pwx66om+NOYJ5eAmjieZRnMzrtX2npySdRv
-         gPaw==
-X-Gm-Message-State: AOAM530j2NioxLYlbVWr3J9b3iaX/l4V/VkyxW9uMp8tKWwMQf0UVWcO
-        KKZFb3OXmsXS+ma6xF4yhhRvAwk47F5XtKcQCVUJ
-X-Google-Smtp-Source: ABdhPJw/wDaom2dKRiHEelptoKI7eTgbi/3h3Sigmu3HEvydpnNloOUiujb1l7lVayhrH7BWfiJip3s+9gbSZ/u8Evc=
-X-Received: by 2002:a17:906:46d6:: with SMTP id k22mr5088315ejs.542.1607048690170;
- Thu, 03 Dec 2020 18:24:50 -0800 (PST)
+        Fri, 4 Dec 2020 00:17:31 -0500
+Date:   Fri, 4 Dec 2020 07:16:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607059009;
+        bh=MytoTQmK0FWpezBeB0/MIP6XIJc0eGXJUDMWPEVo7PA=;
+        h=From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SuRTAIIUpLjq3GUyKoK3lRf2aP+PaQZ5/PHvW+PdJV9RBOUq4jqvEwmrkzGp23Mdc
+         eHU+vvWSnsIKri9zYinMa5cNfTq7O8qk25EG7K9tHw3MNzJSWMhy4BuJvYtAWx0msc
+         A9UW3vaU51sXDgVCz1Ez1SLfJqsEuk2sgqH6EOS58woJacVBUqlsqVrFI5mvfP6a4C
+         YIVa8iBrmGRX2zXFu2DiXu65vG5IUZExc0SCeKhrmoiQfnToOd3WOOdrfCX8/8WDUg
+         d7kzEaS/3nYG3eBiXmopNWZrEKe/FxTZT/2vZ+nfuQdH9kkAwpGMoyk9DRrXHv+Hwz
+         SB1T4+ZpRwx7Q==
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v8 0/4] Introduce TEE based Trusted Keys support
+Message-ID: <20201204051642.GA154469@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <20201105050736.GA702944@kernel.org>
+ <CAFA6WYPetvod-Wov2n_L5TL771j+-kt+_csyWYT-uM=haEKMZQ@mail.gmail.com>
+ <20201106145252.GA10434@kernel.org>
 MIME-Version: 1.0
-References: <3336b397dda1d15ee9fb87107f9cc21a5d1fe510.1606904940.git.pabeni@redhat.com>
- <3a5f156da4569957b91bb5aa4d2a316b729a2c69.camel@redhat.com>
- <539f376-62c2-dbe7-fbfd-6dc7a53eafa@linux.intel.com> <CAHC9VhTVc07P_MhWm7YRF6LXdMRQOcDEKe7SB+fpJJizdKOvEg@mail.gmail.com>
- <20201203235415.GD5710@breakpoint.cc>
-In-Reply-To: <20201203235415.GD5710@breakpoint.cc>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 3 Dec 2020 21:24:39 -0500
-Message-ID: <CAHC9VhT-rj=tJwVycS19TgJDQ766oUH6ng+Uv=wu+WDrgE0AHA@mail.gmail.com>
-Subject: Re: [MPTCP] Re: [RFC PATCH] selinux: handle MPTCP consistently with TCP
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Mat Martineau <mathew.j.martineau@linux.intel.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, mptcp@lists.01.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201106145252.GA10434@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 3, 2020 at 6:54 PM Florian Westphal <fw@strlen.de> wrote:
-> Paul Moore <paul@paul-moore.com> wrote:
-> > I'm not very well versed in MPTCP, but this *seems* okay to me, minus
-> > the else-crud chunk.  Just to confirm my understanding, while MPTCP
-> > allows one TCP connection/stream to be subdivided and distributed
-> > across multiple interfaces, it does not allow multiple TCP streams to
-> > be multiplexed on a single connection, yes?
->
-> Its the latter.  The application sees a TCP interface (socket), but
-> data may be carried over multiple individual tcp streams on the wire.
+On Fri, Nov 06, 2020 at 04:52:52PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Nov 06, 2020 at 03:02:41PM +0530, Sumit Garg wrote:
+> > On Thu, 5 Nov 2020 at 10:37, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > >
+> > > On Tue, Nov 03, 2020 at 09:31:42PM +0530, Sumit Garg wrote:
+> > > > Add support for TEE based trusted keys where TEE provides the functionality
+> > > > to seal and unseal trusted keys using hardware unique key. Also, this is
+> > > > an alternative in case platform doesn't possess a TPM device.
+> > > >
+> > > > This patch-set has been tested with OP-TEE based early TA which is already
+> > > > merged in upstream [1].
+> > >
+> > > Is the new RPI400 computer a platform that can be used for testing
+> > > patch sets like this? I've been looking for a while something ARM64
+> > > based with similar convenience as Intel NUC's, and on the surface
+> > > this new RPI product looks great for kernel testing purposes.
+> > 
+> > Here [1] is the list of supported versions of Raspberry Pi in OP-TEE.
+> > The easiest approach would be to pick up a supported version or else
+> > do an OP-TEE port for an unsupported one (which should involve minimal
+> > effort).
+> > 
+> > [1] https://optee.readthedocs.io/en/latest/building/devices/rpi3.html#what-versions-of-raspberry-pi-will-work
+> > 
+> > -Sumit
+> 
+> If porting is doable, then I'll just order RPI 400, and test with QEMU
+> up until either I port OP-TEE myself or someone else does it.
+> 
+> For seldom ARM testing, RPI 400 is really convenient device with its
+> boxed form factor.
 
-Hmm, that may complicate things a bit from a SELinux perspective.  Maybe not.
+I'm now a proud owner of Raspberry Pi 400 home computer :-)
 
-Just to make sure I understand, with MPTCP, a client that
-traditionally opened multiple TCP sockets to talk to a server would
-now just open a single MPTCP socket and create multiple sub-flows
-instead of multiple TCP sockets?
+I also found instructions on how to boot a custom OS from a USB stick:
 
--- 
-paul moore
-www.paul-moore.com
+https://www.raspberrypi.org/documentation/hardware/raspberrypi/bootmodes/msd.md
+
+Also, my favorite build system BuildRoot has bunch of of the shelf
+configs:
+
+➜  buildroot-sgx (master) ✔ ls -1 configs | grep raspberry
+raspberrypi0_defconfig
+raspberrypi0w_defconfig
+raspberrypi2_defconfig
+raspberrypi3_64_defconfig
+raspberrypi3_defconfig
+raspberrypi3_qt5we_defconfig
+raspberrypi4_64_defconfig
+raspberrypi4_defconfig
+raspberrypi_defconfig
+
+I.e. I'm capable of compiling kernel and user space and boot it up
+with it.
+
+Further, I can select this compilation option:
+
+BR2_TARGET_OPTEE_OS:                                                                                                                                              │  
+                                                                                                                                                                     │  
+   OP-TEE OS provides the secure world boot image and the trust                                                                                                      │  
+   application development kit of the OP-TEE project. OP-TEE OS                                                                                                      │  
+   also provides generic trusted application one can embedded                                                                                                        │  
+   into its system.                                                                                                                                                  │  
+                                                                                                                                                                     │  
+   http://github.com/OP-TEE/optee_os       
+
+Is that what I want? If I put this all together and apply your patches,
+should the expectation be that I can use trusted keys?
+
+Please note that I had a few remarks about your patches (minor but need
+to be fixed), but this version is already solid enough for testing.
+
+/Jarkko
