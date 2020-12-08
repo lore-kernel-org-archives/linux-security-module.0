@@ -2,118 +2,342 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E718C4361B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 15:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C911FC2BB40
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 15:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B29023A7B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 15:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A250923AC0
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 15:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730084AbgLHPg7 (ORCPT
+        id S1730243AbgLHP4o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Dec 2020 10:36:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:54321 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730095AbgLHPg7 (ORCPT
+        Tue, 8 Dec 2020 10:56:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10850 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730224AbgLHP4n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Dec 2020 10:36:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607441733;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fpc5ulSPymtnGLIAKsGuqY9zEvlWjcFpdT/KvjBlxaY=;
-        b=S9ED+OF9PbECG0y+cripL8JpIR2V6wseNm6NheOTiwnxBseITs4tkiqKssKEtTSYUTXnZe
-        FuwJxe6jeq6/6woPISRimhNhelmW1yCSMfGtZjJZeAAlAHW9XSbOsz5lmRf1zQnx3zilQY
-        NomczOnOTX1YiMq6n9H6VKucDiAIzNE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-471-Zp-LDso9MhmVtPgdgKZQag-1; Tue, 08 Dec 2020 10:35:29 -0500
-X-MC-Unique: Zp-LDso9MhmVtPgdgKZQag-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B2E4A0C2D;
-        Tue,  8 Dec 2020 15:35:15 +0000 (UTC)
-Received: from ovpn-113-218.ams2.redhat.com (ovpn-113-218.ams2.redhat.com [10.36.113.218])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6AA3D100238C;
-        Tue,  8 Dec 2020 15:35:11 +0000 (UTC)
-Message-ID: <08b7534580e1bdb134ba0c2816977836cd446c5d.camel@redhat.com>
-Subject: Re: [MPTCP] Re: [RFC PATCH] selinux: handle MPTCP consistently with
- TCP
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, mptcp@lists.01.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 08 Dec 2020 16:35:05 +0100
-In-Reply-To: <CAHC9VhS9xRSbHMCgDkix0fHYeO=aA_=DVyV1Xdu8qFpggws8Kg@mail.gmail.com>
-References: <3336b397dda1d15ee9fb87107f9cc21a5d1fe510.1606904940.git.pabeni@redhat.com>
-         <3a5f156da4569957b91bb5aa4d2a316b729a2c69.camel@redhat.com>
-         <539f376-62c2-dbe7-fbfd-6dc7a53eafa@linux.intel.com>
-         <CAHC9VhTVc07P_MhWm7YRF6LXdMRQOcDEKe7SB+fpJJizdKOvEg@mail.gmail.com>
-         <20201203235415.GD5710@breakpoint.cc>
-         <CAHC9VhT-rj=tJwVycS19TgJDQ766oUH6ng+Uv=wu+WDrgE0AHA@mail.gmail.com>
-         <8c844984eaa92413066367af69b56194b111ad8f.camel@redhat.com>
-         <CAHC9VhS9xRSbHMCgDkix0fHYeO=aA_=DVyV1Xdu8qFpggws8Kg@mail.gmail.com>
+        Tue, 8 Dec 2020 10:56:43 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B8FXQB9082451;
+        Tue, 8 Dec 2020 10:55:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=sgslLMZMuUiYSpTZavlRw+pWO63NAuMG+xEOhlbTbd4=;
+ b=MJaprZ7qsJnz1TMqXS8jHqxzSCDwFAgTDq1WVHtnwWLZDuneeuq7cDqvVrqyFuPyViR/
+ MAxyXMbi4tkjGThy9PmRxcZcxE57GsGjivEU/OvQ+V4qJBfFrfnj93gjgsxbPPJ7McAu
+ h/fKyjeDDkc10+l/c/hPnHkpOEQIbyCOe42sPFON3zrG9tbHtHvaypOd21vsTlaP7BkL
+ dJhKcEsFQkEGK0+hLiABiQEaCM24MTghsnW+flRRp6RDQqAg0b4B/7GRV6nFJccJGvS9
+ X/VgSaFjrqiIcnODnNcTF/9jJszrsqdLld24QUbM6Q7igG3JE/+0h+hrCN+O34sXzPur cg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35a5ufw61v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 10:55:34 -0500
+Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B8FXf4i083877;
+        Tue, 8 Dec 2020 10:55:33 -0500
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35a5ufw5yw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 10:55:33 -0500
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B8FcOTW015905;
+        Tue, 8 Dec 2020 15:55:31 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04fra.de.ibm.com with ESMTP id 3581u81w2n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 15:55:31 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B8FtS8025559390
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Dec 2020 15:55:28 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8041252051;
+        Tue,  8 Dec 2020 15:55:28 +0000 (GMT)
+Received: from sig-9-65-221-14.ibm.com (unknown [9.65.221.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EA9F552052;
+        Tue,  8 Dec 2020 15:55:23 +0000 (GMT)
+Message-ID: <f00c8c7dd1e184e139e6cb5aba2b4a1c5fc68363.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a
+ new trust source
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Sumit Garg <sumit.garg@linaro.org>,
+        jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
+        Elaine Palmer <erpalmer@us.ibm.com>
+Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
+        Markus.Wamser@mixed-mode.de, lhinds@redhat.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org,
+        George Wilson <gcwilson@us.ibm.com>
+Date:   Tue, 08 Dec 2020 10:55:23 -0500
+In-Reply-To: <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+         <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-1.fc32) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2020-12-08_09:2020-12-08,2020-12-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ suspectscore=0 adultscore=0 mlxlogscore=999 clxscore=1015 mlxscore=0
+ spamscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012080096
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Hi Sumit, Jarkko,
 
-I'm sorry for the latency, I'll have limited internet access till
-tomorrow.
+Re-posting Elaine Palmer's comments, inline below, trimmed and properly
+formatted.
 
-On Fri, 2020-12-04 at 18:22 -0500, Paul Moore wrote:
-> For SELinux the issue is that we need to track state in the sock
-> struct, via sock->sk_security, and that state needs to be initialized
-> and set properly. 
+On Tue, 2020-11-03 at 21:31 +0530, Sumit Garg wrote:
+> Update documentation for Trusted and Encrypted Keys with TEE as a new
+> trust source. Following is brief description of updates:
+> 
+> - Add a section to demostrate a list of supported devices along with
+>   their security properties/guarantees.
+> - Add a key generation section.
+> - Updates for usage section including differences specific to a trust
+>   source.
+> 
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  Documentation/security/keys/trusted-encrypted.rst | 203 ++++++++++++++++++----
+>  1 file changed, 171 insertions(+), 32 deletions(-)
+> 
+> diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
+> index 1da879a..16042c8 100644
+> --- a/Documentation/security/keys/trusted-encrypted.rst
+> +++ b/Documentation/security/keys/trusted-encrypted.rst
+> @@ -6,30 +6,161 @@ Trusted and Encrypted Keys are two new key types added to the existing kernel
+>  key ring service.  Both of these new types are variable length symmetric keys,
+>  and in both cases all keys are created in the kernel, and user space sees,
+>  stores, and loads only encrypted blobs.  Trusted Keys require the availability
+> -of a Trusted Platform Module (TPM) chip for greater security, while Encrypted
+> -Keys can be used on any system.  All user level blobs, are displayed and loaded
+> -in hex ascii for convenience, and are integrity verified.
+> +of a Trust Source for greater security, while Encrypted Keys can be used on any
+> +system. All user level blobs, are displayed and loaded in hex ascii for
+> +convenience, and are integrity verified.
+>  
+> -Trusted Keys use a TPM both to generate and to seal the keys.  Keys are sealed
+> -under a 2048 bit RSA key in the TPM, and optionally sealed to specified PCR
+> -(integrity measurement) values, and only unsealed by the TPM, if PCRs and blob
+> -integrity verifications match.  A loaded Trusted Key can be updated with new
+> -(future) PCR values, so keys are easily migrated to new pcr values, such as
+> -when the kernel and initramfs are updated.  The same key can have many saved
+> -blobs under different PCR values, so multiple boots are easily supported.
+>  
+> -TPM 1.2
+> --------
+> +Trust Source
+> +============
+>  
+> -By default, trusted keys are sealed under the SRK, which has the default
+> -authorization value (20 zeros).  This can be set at takeownership time with the
+> -trouser's utility: "tpm_takeownership -u -z".
+> +Trust Source provides the source of security for the Trusted Keys, on which
+> +basis Trusted Keys establishes a Trust model with its user.
 
-As far as I can see, for regular sockets, sk_security is allocated via:
+A trust source provides the source of security for the Trusted
+Keys.  Whether or not a trust source is sufficiently safe depends on
+the strength and correctness of its implementation, as well as the
+threat environment for a specific use case.  Since the kernel doesn't
+know what the environment is, and there is no metric of trust, it is
+dependent on the consumer of the Trusted Keys to determine if the trust
+source is sufficiently safe.
 
-- sk_prot_alloc() -> security_sk_alloc() for client/listener sockets
-- sk_clone_lock() -> sock_copy() for server sockets
+>  A Trust Source could
+> +differ from one system to another depending on its security requirements. It
+> +could be either an off-chip device or an on-chip device. Following section
+> +demostrates a list of supported devices along with their security properties/
+> +guarantees:
+>  
+> -TPM 2.0
+> --------
+> +  *  Root of trust for storage
+>  
+> -The user must first create a storage key and make it persistent, so the key is
+> -available after reboot. This can be done using the following commands.
+> +     (1) TPM (Trusted Platform Module: hardware device)
+> +
+> +         Rooted to Storage Root Key (SRK) which never leaves the TPM that
+> +         provides crypto operation to establish root of trust for storage.
+> +
+> +     (2) TEE (Trusted Execution Environment: OP-TEE based on Arm TrustZone)
+> +
+> +         Rooted to Hardware Unique Key (HUK) which is generally burnt in on-chip
+> +         fuses and is accessible to TEE only.
+> +
+> +  *  Execution isolation
+> +
+> +     (1) TPM
+> +
+> +         Fixed set of operations running in isolated execution environment.
+> +
+> +     (2) TEE
+> +
+> +         Customizable set of operations running in isolated execution
+> +         environment verified via Secure/Trusted boot process.
+> +
+> +  * Optional binding to platform integrity state
+> +
+> +     (1) TPM
+> +
+> +         Keys can be optionally sealed to specified PCR (integrity measurement)
+> +         values, and only unsealed by the TPM, if PCRs and blob integrity
+> +         verifications match. A loaded Trusted Key can be updated with new
+> +         (future) PCR values, so keys are easily migrated to new PCR values,
+> +         such as when the kernel and initramfs are updated. The same key can
+> +         have many saved blobs under different PCR values, so multiple boots are
+> +         easily supported.
+> +
+> +     (2) TEE
+> +
+> +         Relies on Secure/Trusted boot process for platform integrity. It can
+> +         be extended with TEE based measured boot process.
+> +
+> +  *  On-chip versus off-chip
+> +
+> +     (1) TPM
+> +
+> +         Off-chip device connected via serial bus (like I2C, SPI etc.) exposing
+> +         physical access which represents an attack surface that can be
+> +         mitigated via tamper detection.
+> +
+> +     (2) TEE
+> +
+> +         On-chip functionality, immune to this attack surface.
+> +
+> +  *  Memory attacks (DRAM based like attaching a bus monitor etc.)
+> +
+> +     (1) TPM
+> +
+> +         Immune to these attacks as it doesn’t make use of system DRAM.
+> +
+> +     (2) TEE
+> +
+> +         An implementation based on TrustZone protected DRAM is susceptible to
+> +         such attacks. In order to mitigate these attacks one needs to rely on
+> +         on-chip secure RAM to store secrets or have the entire TEE
+> +         implementation based on on-chip secure RAM. An alternative mitigation
+> +         would be to use encrypted DRAM.
+> +
+> +  *  Side-channel attacks (cache, memory, CPU or time based)
+> +
+> +     (1) TPM
+> +
+> +         Immune to side-channel attacks as its resources are isolated from the
+> +         main OS.
+> +
+> +     (2) TEE
+> +
+> +         A careful implementation is required to mitigate against these attacks
+> +         for resources which are shared (eg. shared memory) with the main OS.
+> +         Cache and CPU based side-channel attacks can be mitigated via
+> +         invalidating caches and CPU registers during context switch to and from
+> +         the secure world.
+> +         To mitigate against time based attacks, one needs to have time
+> +         invariant implementations (like crypto algorithms etc.).
+> +
+> +  *  Resistance to physical attacks (power analysis, electromagnetic emanation,
+> +     probes etc.)
+> +
+> +     (1) TPM
+> +
+> +         Provides limited protection utilizing tamper resistance.
+> +
+> +     (2) TEE
+> +
+> +         Provides no protection by itself, relies on the underlying platform for
+> +         features such as tamper resistance.
+> +
 
-MPTCP uses the above helpers, sk_security should be initialized
-properly.
+Please add the following topics:
 
-MPTCP goes through an additional sk_prot_alloc() for each subflow, so
-each of them will get it's own independent context. The subflows are
-not exposed to any syscall (accept()/recvmsg()/sendmsg()/poll()/...),
-so I guess selinux will mostly ignored them right?
+* Provisioning - the trust source's unique and verifiable cryptographic
+identity is provisioned during manufacturing
 
-The kernel will pick some of them to actually send the data, and, on
-the receive side, will move the data from the subflows into the user-
-space visible mptcp socket.
+(1) TPM
 
->  Similarly with TCP request_sock structs, via
-> request_sock->{secid,peer_secid}.  Is the MPTCP code allocating and/or
-> otherwise creating socks or request_socks outside of the regular TCP
-> code?  
+The unique and verifiable cryptographic identity is the endorsement key
+(EK) or its primary seed.  A review of the generation of the EK and its
+accompanying certificate is part of the Common Criteria evaluation of
+the product's lifecycle processes (ALC_*).  See "TCG Protection Profile
+for PC Client Specific TPM 2" (
+https://trustedcomputinggroup.org/resource/pc-client-protection-profile-for-tpm-2-0/
+).
 
-Request sockets are easier, I guess/hope: MPTCP handles them very
-closely to plain TCP.
+(2) TEE
 
-> We would also be concerned about socket structs, but I'm
-> guessing that code reuses the TCP code based on what you've said.
+A protection profile for TEEs does not yet exist.  Therefore, the
+provisioning process that generates the Hardware Unique Key is not
+evaluated by an independent third party and is highly dependent on the
+manufacturing environment.
 
-Only the main MPTCP 'struct socket' is exposed to the user space, and
-that is allocated via the usual __sys_socket() call-chain. I guess that
-should be fine. If you could provide some more context (what I should
-look after) I can dig more.
 
-Thanks!
+* Cryptography
 
-Paolo
+(1) TPM
+
+As part of the TPM's mandatory Common Criteria evaluation, the
+correctness of the TPM's implementation of cryptographic algorithms,
+the protection of keys, and the generation of random numbers, and other
+security-relevant functions must be documented, reviewed, and tested by
+an independent third party evaluation agency.  It must meet the
+requirements of FIPS 140-2, FIPS 140-3, or ISO/IEC 19790:2012. 
+
+(2) TEE
+
+Evaluations of cryptographic modules within TEEs are not required, but
+some are available for specific implementations within TEEs.
+
+
+* Interfaces and APIs
+
+(1) TPM
+
+ TPMs have well-documented, standardized interfaces and APIs.
+
+(2) TEE
+
+Unless TEEs implement functionality such as a virtual TPM, they have
+custom interfaces and APIs. 
+
+
+* Threat model
+
+The strength and appropriateness of TPMs and TEEs for a given purpose
+must be assessed when using them to protect security-relevant data.
+
+> +
+> +Key Generation
+> +==============
+> +
+> +Trusted Keys
+> +------------
+> +
+> +New keys are created from trust source generated random numbers, and are
+> +encrypted/decrypted using trust source storage root key.
+
+New keys are created from random numbers generated in the trust source.
+They are encrypted/decrypted using a child key in the storage key
+hierarchy.  Encryption and decryption of the child key must be
+protected by a strong access control policy within the trust source.
+
+Thank you,
+
+Elaine (and Mimi)
 
