@@ -2,142 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1152EC4167B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 04:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF65C4361B
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 10:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D04C723A61
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 04:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9521D217A0
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 10:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbgLHEyC (ORCPT
+        id S1728980AbgLHKII (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Dec 2020 23:54:02 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58180 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727451AbgLHEyB (ORCPT
+        Tue, 8 Dec 2020 05:08:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:37384 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727122AbgLHKIH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Dec 2020 23:54:01 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B84nxYX064111;
-        Tue, 8 Dec 2020 04:52:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=corp-2020-01-29;
- bh=1e3cV7XKyt5cBPHNeWYhYMHu3W87CKppja6U1Jvw5F4=;
- b=V+G180Fh0lHbcmydQJqS5i+cerb42SoRrRI9QCXlQMjyWKKfj0acXqExTQUiK+7OEtft
- OuMy/8L57grCegXY4FPi2mfpdUD9NETOrjU6XyLEGnB6yCKU9e30d2WSgQTsYBxq/cMN
- 5junVfgiRpfFB5rc1EfDtZHP43anCs3FIrUtz16u4yPsKG0NCInMT5yeMTaPCX1MMJeq
- qZ1GHIcbwNatFRQ/tELhwJDJybfqjlIskC/pDoCLpTPJ2KTrod7PX9rst5aaRTC3xIQA
- veh/+mbPHLjYXfePq5oiUCHv2+7Gowf8M2KKiHFzojpZKSSSQD2meZy2nTRpI8CVh6TQ Yg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 35825m0srp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 08 Dec 2020 04:52:35 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0B84ocFe155422;
-        Tue, 8 Dec 2020 04:52:34 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by userp3020.oracle.com with ESMTP id 358kys9m8t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 08 Dec 2020 04:52:34 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B84qX4M159553;
-        Tue, 8 Dec 2020 04:52:33 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userp3020.oracle.com with ESMTP id 358kys9m7s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Dec 2020 04:52:33 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0B84qDZf015901;
-        Tue, 8 Dec 2020 04:52:15 GMT
-Received: from ca-mkp.ca.oracle.com (/10.156.108.201)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 07 Dec 2020 20:52:13 -0800
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-To:     linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     "Martin K . Petersen" <martin.petersen@oracle.com>,
-        coreteam@netfilter.org, selinux@vger.kernel.org,
-        Miguel Ojeda <ojeda@kernel.org>, Joe Perches <joe@perches.com>,
-        linux-hardening@vger.kernel.org, reiserfs-devel@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, patches@opensource.cirrus.com,
-        linux-fbdev@vger.kernel.org, keyrings@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-geode@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-hams@vger.kernel.org, linux-ext4@vger.kernel.org,
-        wcn36xx@lists.infradead.org, GR-everest-linux-l2@marvell.com,
-        x86@kernel.org, linux-watchdog@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-atm-general@lists.sourceforge.net,
-        linux-wireless@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-decnet-user@lists.sourceforge.net,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        netfilter-devel@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-mediatek@lists.infradead.org,
+        Tue, 8 Dec 2020 05:08:07 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1kmZtq-0001Ek-3Q; Tue, 08 Dec 2020 10:07:14 +0000
+Date:   Tue, 8 Dec 2020 11:07:10 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
-        samba-technical@lists.samba.org, ceph-devel@vger.kernel.org,
-        drbd-dev@tron.linbit.com, intel-gfx@lists.freedesktop.org,
-        dm-devel@redhat.com, linux-acpi@vger.kernel.org,
-        linux-ide@vger.kernel.org, xen-devel@lists.xenproject.org,
-        op-tee@lists.trustedfirmware.org, linux-hwmon@vger.kernel.org,
-        linux-sctp@vger.kernel.org, bridge@lists.linux-foundation.org,
-        linux-mtd@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-can@vger.kernel.org, rds-devel@oss.oracle.com,
-        oss-drivers@netronome.com, tipc-discussion@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-rdma@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        usb-storage@lists.one-eyed-alien.net,
-        linux1394-devel@lists.sourceforge.net, alsa-devel@alsa-project.org,
-        linux-i3c@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-afs@lists.infradead.org, nouveau@lists.freedesktop.org,
-        GR-Linux-NIC-Dev@marvell.com, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-mm@kvack.org,
-        intel-wired-lan@lists.osuosl.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: (subset) [PATCH 000/141] Fix fall-through warnings for Clang
-Date:   Mon,  7 Dec 2020 23:52:01 -0500
-Message-Id: <160740299787.710.4201881220590518200.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <cover.1605896059.git.gustavoars@kernel.org>
-References: <cover.1605896059.git.gustavoars@kernel.org>
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: Re: [PATCH v4 05/40] fs: add attr_flags_to_mnt_flags helper
+Message-ID: <20201208100710.7hmim5663xeqnivu@wittgenstein>
+References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
+ <20201203235736.3528991-6-christian.brauner@ubuntu.com>
+ <20201207171021.GB13614@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9828 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
- phishscore=0 mlxlogscore=740 clxscore=1015 priorityscore=1501 mlxscore=0
- spamscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012080029
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201207171021.GB13614@lst.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 20 Nov 2020 12:21:39 -0600, Gustavo A. R. Silva wrote:
-
-> This series aims to fix almost all remaining fall-through warnings in
-> order to enable -Wimplicit-fallthrough for Clang.
+On Mon, Dec 07, 2020 at 06:10:21PM +0100, Christoph Hellwig wrote:
+> > @@ -3450,6 +3450,28 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
+> >  	return ret;
+> >  }
+> >  
+> > +#define FSMOUNT_VALID_FLAGS                                                    \
+> > +	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |            \
+> > +	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
 > 
-> In preparation to enable -Wimplicit-fallthrough for Clang, explicitly
-> add multiple break/goto/return/fallthrough statements instead of just
-> letting the code fall through to the next case.
-> 
-> [...]
+> Any good reason for aligning the \ using spaces all the way out?
 
-Applied to 5.11/scsi-queue, thanks!
-
-[054/141] target: Fix fall-through warnings for Clang
-          https://git.kernel.org/mkp/scsi/c/492096ecfa39
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+That's just my clang-format config I use with vim. When I do Ctrl + E it
+automatically aligns them on the closest "tab boundary. I'll fix this
+up.
