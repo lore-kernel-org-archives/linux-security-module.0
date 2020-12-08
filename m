@@ -2,88 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF65C4361B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 10:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 750CCC4361B
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 10:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9521D217A0
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 10:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F10D217A0
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 10:08:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbgLHKII (ORCPT
+        id S1728496AbgLHKIf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Dec 2020 05:08:08 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:37384 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbgLHKIH (ORCPT
+        Tue, 8 Dec 2020 05:08:35 -0500
+Received: from mga03.intel.com ([134.134.136.65]:7173 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727260AbgLHKIf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Dec 2020 05:08:07 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kmZtq-0001Ek-3Q; Tue, 08 Dec 2020 10:07:14 +0000
-Date:   Tue, 8 Dec 2020 11:07:10 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org,
+        Tue, 8 Dec 2020 05:08:35 -0500
+IronPort-SDR: cGXVqn3pMm1is2zyhSkoSNrV9soSL1SzAEGmVc+vzWhPbOcwARR3uVtSFgJJ7N9O+DFfydbhw2
+ n9AuiML0QXLg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9828"; a="173979359"
+X-IronPort-AV: E=Sophos;i="5.78,402,1599548400"; 
+   d="scan'208";a="173979359"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2020 02:06:45 -0800
+IronPort-SDR: DY/OKfubnP+etAUpBVSW0OIuB6mvZ6xrvC5sG9UaGtE1yXePkBZYeark2oJGKWrDCKFZ6dlW9k
+ OUXG9MenEWWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.78,402,1599548400"; 
+   d="scan'208";a="483579185"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 08 Dec 2020 02:06:44 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 471B516E; Tue,  8 Dec 2020 12:06:41 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
         John Johansen <john.johansen@canonical.com>,
+        linux-security-module@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Geoffrey Thomas <geofft@ldpreload.com>,
-        Mrunal Patel <mpatel@redhat.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
-        Tycho Andersen <tycho@tycho.ws>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Lennart Poettering <lennart@poettering.net>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
-        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH v4 05/40] fs: add attr_flags_to_mnt_flags helper
-Message-ID: <20201208100710.7hmim5663xeqnivu@wittgenstein>
-References: <20201203235736.3528991-1-christian.brauner@ubuntu.com>
- <20201203235736.3528991-6-christian.brauner@ubuntu.com>
- <20201207171021.GB13614@lst.de>
+        "Serge E . Hallyn " <serge@hallyn.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] apparmor: Remove duplicate macro list_entry_is_head()
+Date:   Tue,  8 Dec 2020 12:06:39 +0200
+Message-Id: <20201208100639.88182-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20201207171021.GB13614@lst.de>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 07, 2020 at 06:10:21PM +0100, Christoph Hellwig wrote:
-> > @@ -3450,6 +3450,28 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
-> >  	return ret;
-> >  }
-> >  
-> > +#define FSMOUNT_VALID_FLAGS                                                    \
-> > +	(MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID | MOUNT_ATTR_NODEV |            \
-> > +	 MOUNT_ATTR_NOEXEC | MOUNT_ATTR__ATIME | MOUNT_ATTR_NODIRATIME)
-> 
-> Any good reason for aligning the \ using spaces all the way out?
+Strangely I hadn't had noticed the existence of the list_entry_is_head() in
+apparmor code when added the same one in the list.h. Luckily it's fully
+identical and didn't break builds. In any case we don't need a duplicate
+anymore, thus remove it from apparmor code.
 
-That's just my clang-format config I use with vim. When I do Ctrl + E it
-automatically aligns them on the closest "tab boundary. I'll fix this
-up.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ security/apparmor/apparmorfs.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 5fd4a64e431f..f95c6bfa8b8e 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -2046,9 +2046,6 @@ int __aafs_ns_mkdir(struct aa_ns *ns, struct dentry *parent, const char *name,
+ 	return error;
+ }
+ 
+-
+-#define list_entry_is_head(pos, head, member) (&pos->member == (head))
+-
+ /**
+  * __next_ns - find the next namespace to list
+  * @root: root namespace to stop search at (NOT NULL)
+-- 
+2.29.2
+
