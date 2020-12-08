@@ -2,117 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B48CCC4361B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 17:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0364C4361B
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 23:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 729BC23B74
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 17:49:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84CEA23AC4
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 23:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbgLHRtz (ORCPT
+        id S1731707AbgLHXf5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Dec 2020 12:49:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726810AbgLHRty (ORCPT
+        Tue, 8 Dec 2020 18:35:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730144AbgLHXf4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Dec 2020 12:49:54 -0500
-Date:   Tue, 8 Dec 2020 19:49:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607449754;
-        bh=rOJ6wd7pPv9VKVPvlMY8tmHKt2EG7z2LdgbuHHBAfBM=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lEYRfeTg3M0LKd3/09Wd6RwkuxU+RdWKeY9jt5u1xLhxEwW0JQAxrMDwiiLoL4EjF
-         m08HD606VXjtVcf8OUY2IbPJEd9/bxiMe+45LZV7E9VyfC/rCkGGUzSry4pvNVfkoA
-         kMnE8TseXtiGD4K49NYeKLTZ0VjSbnmvDmn/Cdlw5JD8Ur1/w34w+TIX5d8Ka3g2H0
-         xOlP+HfbYAMpmoGibCcGP7MNZ8ORJBzOfXt7DDcqivg8cddhBK7TrU2zrPOBLL9CJQ
-         WlIKQ8GHr4Wh5juj/wxkDhLXMavFoNbn397FRxCySP1js949sMRxd+PiecdofpBmLp
-         bjV8CIPeuz4rw==
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>, sumit.garg@linaro.org
-Cc:     Elaine Palmer <erpalmerny@gmail.com>,
-        jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
-        dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
-        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
-        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
-        Markus.Wamser@mixed-mode.de, lhinds@redhat.com,
-        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        op-tee@lists.trustedfirmware.org,
-        Kenneth Goldman <kgoldman@us.ibm.com>, gcwilson@linux.ibm.com,
-        zgu@us.ibm.com, stefanb@us.ibm.com, NAYNA JAIN1 <naynjain@ibm.com>
-Subject: Re: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a new
- trust source
-Message-ID: <20201208174906.GA58572@kernel.org>
-References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
- <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
- <81A6B61D-3811-4957-B270-52AE5FA6DE4F@gmail.com>
- <20201204153037.GC4922@kernel.org>
- <ba6cd934bf7460cf6e9fc101a759a63fdd4e6e9b.camel@linux.ibm.com>
+        Tue, 8 Dec 2020 18:35:56 -0500
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62383C0613CF
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Dec 2020 15:35:16 -0800 (PST)
+Received: by mail-ej1-x644.google.com with SMTP id d17so297386ejy.9
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Dec 2020 15:35:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BsyNJpij5PGvFSU8PlgITBtcamCnj7Q9cgkrohmXagI=;
+        b=oUATB/gHSTyWWKfCVxTndCLe4lGRRBTDZ8Yek4REXWnDLXXExbykYbTvCSqxtEGnQZ
+         fgzAU5o0FI0WFV6XYDCvnXrwwI6Cn+kKKu5s/bbDaHvQkYr/NxqNRysjI0p8Z2HvqDym
+         WiuSe6cxUkJs+Gn5bNaomu7/8/MnwVBF3D8PSQMFNlP/ncEsnAk/GK6n6L/b3N47KC9q
+         84EasdgovCHT9XnLCxuTHUCf8IiUOBu/5uxTZr3PrNrdw+kWQSb1F18iQRkvk6CmipK/
+         m2VlS/3Jfp8hYlVqJcfRvFtKbp+FUE7Ackcjew8wYcy9Tb7TA/Y4AwZpyptDG1+cK677
+         Nkzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BsyNJpij5PGvFSU8PlgITBtcamCnj7Q9cgkrohmXagI=;
+        b=KxZwXIF8ijsTbpizs7woX844qTkoFmFxKOXsZQKmz3O/9ME0SizH0SPD1WXMBx499x
+         uu1T14FH8nGR2kBEccan6co34ZuyUSPYENkmuYPWuC1pdrp5aVk8RgrRxdCKmMk/J0Ok
+         gwtDlFokPttBoAcwElEtx81wiqDiLGxiwBTuA+vX/Dhk+FsDwogOolewDe2+jUXYpHPT
+         IQUDWc8HOhM1UyMc1btDaD4Mat2LZpi912zU6ZVgHGGxCcoKpbWTqqE69SLyMKC4UGyG
+         dfHDHnx5gDqit2Xkr8kicgIRTnbfGsA/Q1cIK61FYez9c7m+tNiEbsjOCuVIaKw+4WIn
+         s2mg==
+X-Gm-Message-State: AOAM5311xgQYSt7Z7yrUYTAvD6NQAnxMEZsWATCDPt6yuRjRzUvuk7aI
+        f5WePq3o9dvdlQkbwOUF1+cR3ipoxlpOHnm9sd+4
+X-Google-Smtp-Source: ABdhPJxOVGDlGEzOsg4GzrfMZjts9prlepXkWI/yfRvBxibqpacizJfg6J+RmU6FO5mUBeFwvqQH1fVkgianeC+TXgU=
+X-Received: by 2002:a17:906:3712:: with SMTP id d18mr104255ejc.178.1607470514998;
+ Tue, 08 Dec 2020 15:35:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ba6cd934bf7460cf6e9fc101a759a63fdd4e6e9b.camel@linux.ibm.com>
+References: <3336b397dda1d15ee9fb87107f9cc21a5d1fe510.1606904940.git.pabeni@redhat.com>
+ <3a5f156da4569957b91bb5aa4d2a316b729a2c69.camel@redhat.com>
+ <539f376-62c2-dbe7-fbfd-6dc7a53eafa@linux.intel.com> <CAHC9VhTVc07P_MhWm7YRF6LXdMRQOcDEKe7SB+fpJJizdKOvEg@mail.gmail.com>
+ <20201203235415.GD5710@breakpoint.cc> <CAHC9VhT-rj=tJwVycS19TgJDQ766oUH6ng+Uv=wu+WDrgE0AHA@mail.gmail.com>
+ <8c844984eaa92413066367af69b56194b111ad8f.camel@redhat.com>
+ <CAHC9VhS9xRSbHMCgDkix0fHYeO=aA_=DVyV1Xdu8qFpggws8Kg@mail.gmail.com> <08b7534580e1bdb134ba0c2816977836cd446c5d.camel@redhat.com>
+In-Reply-To: <08b7534580e1bdb134ba0c2816977836cd446c5d.camel@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 8 Dec 2020 18:35:03 -0500
+Message-ID: <CAHC9VhQmZ_Ra8eY3O-qNo-QN9wLXBFP3VHuHvjY8vWOMSfGafA@mail.gmail.com>
+Subject: Re: [MPTCP] Re: [RFC PATCH] selinux: handle MPTCP consistently with TCP
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, mptcp@lists.01.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 08, 2020 at 10:02:57AM -0500, Mimi Zohar wrote:
-> Hi Jarkko,
-> 
-> On Fri, 2020-12-04 at 17:30 +0200, Jarkko Sakkinen wrote:
-> > On Wed, Dec 02, 2020 at 02:34:07PM -0500, gmail Elaine Palmer wrote:
-> > > Hi Sumit,  
-> > > 
-> > > Thank you for the detailed descriptions and examples of trust sources
-> > > for Trusted Keys.   A group of us in IBM (Stefan Berger, Ken Goldman,
-> > > Zhongshu Gu, Nayna Jain, Elaine Palmer, George Wilson, Mimi Zohar)
-> > > have been doing related work for quite some time, and we have one
-> > > primary concern and some suggested changes to the document. 
-> > > 
-> > > Our primary concern is that describing a TEE as a Trust Source needs
-> > > to be more specific.   For example, "ARM TrustZone" is not sufficient,
-> > > but "wolfSSL embedded SSL/TLS library with ARM TrustZone
-> > > CryptoCell-310" is.  Just because a key is protected by software
-> > > running in a TEE is not enough to establish trust.  Just like
-> > > cryptographic modules, a Trust Source should be defined as a specific
-> > > implementation on specific hardware with well-documented environmental
-> > > assumptions, dependencies, and threats.
-> > > 
-> > > In addition to the above concern, our suggested changes are inline
-> > > below.
-> > 
-> > In order to give a decent review comment it should have two ingredients:
-> > 
-> > - Where the existing line of code / text / whatever goes wrong.
-> > - How it should modified and why that makes sense. And use as plain
-> >   English and non-academic terms as possible, if it is documentation.
-> >   Further, scope is only the kernel implementation, no more or no
-> >   less.
-> > 
-> > "do this" is not unfortunately an argument. Feedback is welcome when
-> > it is supported by something common sensse.
-> 
-> Even after the code is fully debugged, reviewed and tested, our concern
-> is that people will assume the security guarantees of TEE based trusted
-> keys to be equivalent to that of a discrete TPM.
-> 
-> > 
-> > Some meta suggestion of related to email:
-> > 
-> > Please also use a proper email client and split your paragraphs into
-> > at most 80 character lines with new line characters when writing email.
-> > I prefer to use 72 character line length so that there's some space
-> > for longer email threads.
-> 
-> Sure, we'll re-post the suggested documentation changes/additions.
-> 
-> Mimi
+On Tue, Dec 8, 2020 at 10:35 AM Paolo Abeni <pabeni@redhat.com> wrote:
+>
+> Hello,
+>
+> I'm sorry for the latency, I'll have limited internet access till
+> tomorrow.
+>
+> On Fri, 2020-12-04 at 18:22 -0500, Paul Moore wrote:
+> > For SELinux the issue is that we need to track state in the sock
+> > struct, via sock->sk_security, and that state needs to be initialized
+> > and set properly.
+>
+> As far as I can see, for regular sockets, sk_security is allocated via:
+>
+> - sk_prot_alloc() -> security_sk_alloc() for client/listener sockets
+> - sk_clone_lock() -> sock_copy() for server sockets
+>
+> MPTCP uses the above helpers, sk_security should be initialized
+> properly.
 
-So. Wouldn't it be a better idea to post a patch that Sumit could
-squash to his (and add co-developed-by tag)?
+At least for SELinux, the security_socket_post_create() hook is
+critical too as that is where the SELinux sock/socket state values are
+actually set; see selinux_socket_post_create() for the SELinux hook.
 
-/Jarkko
+> MPTCP goes through an additional sk_prot_alloc() for each subflow, so
+> each of them will get it's own independent context. The subflows are
+> not exposed to any syscall (accept()/recvmsg()/sendmsg()/poll()/...),
+> so I guess selinux will mostly ignored them right?
+
+SELinux cares quite a bit about the sock structs, they are an
+important part of the per-packet access controls as well as a few
+other things, so we need to make sure the SELinux state is managed
+properly.
+
+From what you have said so far, it is starting to sound like labeling
+the subflows with the same label as the parent socket is a reasonable
+solution.  In that case, it seems like doing a security_sk_clone()
+between the main socket/sock and the new subflow sock should work.
+
+> >  Similarly with TCP request_sock structs, via
+> > request_sock->{secid,peer_secid}.  Is the MPTCP code allocating and/or
+> > otherwise creating socks or request_socks outside of the regular TCP
+> > code?
+>
+> Request sockets are easier, I guess/hope: MPTCP handles them very
+> closely to plain TCP.
+
+Are there a calls to security_inet_conn_request() and
+security_inet_csk_clone() in the MPTCP code path?  As an example look
+at tcp_conn_request() and inet_csk_clone_lock() for IPv4.
+
+> > We would also be concerned about socket structs, but I'm
+> > guessing that code reuses the TCP code based on what you've said.
+>
+> Only the main MPTCP 'struct socket' is exposed to the user space, and
+> that is allocated via the usual __sys_socket() call-chain. I guess that
+> should be fine. If you could provide some more context (what I should
+> look after) I can dig more.
+
+Hopefully the stuff above should help, if not let me know :)
+
+-- 
+paul moore
+www.paul-moore.com
