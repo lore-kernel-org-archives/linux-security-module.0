@@ -2,103 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2140DC4167B
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 13:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0079FC1B0D8
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 15:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2DDB23ABA
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 13:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9F3E23A7A
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Dec 2020 15:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbgLHNuX (ORCPT
+        id S1730050AbgLHPEV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Dec 2020 08:50:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgLHNuX (ORCPT
+        Tue, 8 Dec 2020 10:04:21 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48521 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730046AbgLHPEU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Dec 2020 08:50:23 -0500
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 113EFC061749;
-        Tue,  8 Dec 2020 05:49:37 -0800 (PST)
-Received: by mail-il1-x143.google.com with SMTP id v3so15558022ilo.5;
-        Tue, 08 Dec 2020 05:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MQXYbDMPL3yLYU7/kBOYlmtMsBjUqShGbSk3HBKaf8g=;
-        b=qB1tZR3lpatG/0Zal3n5vfTlz2EOHV54ihJtai6PxbNg83npjonBDrtvWxoWqKEHMn
-         boRmt5oXMbD5LvNj4OeZIaYR+ST5n8gpvHjkcbEIXqJUaprLoWbQkHTTjPeAci8N94HW
-         loWBBpYEAkEob3/Cv/C1sDTjjxUvN4st0YeCB3Q7TQMzPQ2R19sISFXvvnF0zyV1kyGG
-         5w2kMfl/y3PE7p++iIOkxI/Zia39QDXZ+OQI8WiAlzXHgdbj92dbSCukLUIPqjMD5QM/
-         rvn5FhYjVTgU4PQvs1yECbhgurO+i+oCHAWjXh/zVWbgcNWS8WRzHjBnt5RoSNZ5bFhQ
-         nhvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MQXYbDMPL3yLYU7/kBOYlmtMsBjUqShGbSk3HBKaf8g=;
-        b=jI0ul73ONQ1eM/zORf7+g7lsPQAkLiR5j7TpcJkcQzO7iT6wUzpmzX5RRHY9GyrYGk
-         pYxzuH3Y2hZs/6+laaaAKVHfQu+se0VFgzGa/tKqvi83QHlafGlJLXYwfvjOShugFSel
-         L7+vqwA3oyelO8LmT4Rzbz4NquqrmfNoSdxAwQ0aDN1nsDiA6419u4GF981NoUsifXGd
-         k93boS5lvCjB30Ca/lmlLMGGwN7EwnxcRiE90whoiAYTKNF54DTdlLpLroKYGIa/+lAB
-         USl+iFkF7RUtXQEU8EpFiRnnnB94ENSsOBLcN3+uGyykcqHS/ZwJPrX9sps4IrvMbyTd
-         BwoA==
-X-Gm-Message-State: AOAM530DViDqOMsZgqiIKOuh2R9OYTYdztqt7+6+6s8jqW/ey24LgUTq
-        X1WT6fmuWmclGtmJ1a33H+BpylK/13FyybNnmTudX1Cx410=
-X-Google-Smtp-Source: ABdhPJzs16Xbq9yXw4nMJe03SEuYZzH2JW3YVHgNPO0ogZUhHvZ9E49JOk1KNqGKQdSDMeXaSAPZ0uvc65/dx2fdz1w=
-X-Received: by 2002:a05:6e02:14ce:: with SMTP id o14mr27386946ilk.9.1607435376411;
- Tue, 08 Dec 2020 05:49:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
-In-Reply-To: <20201207163255.564116-4-mszeredi@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 8 Dec 2020 15:49:25 +0200
-Message-ID: <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
-To:     Miklos Szeredi <mszeredi@redhat.com>
-Cc:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 8 Dec 2020 10:04:20 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B8Ewa1E035969;
+        Tue, 8 Dec 2020 10:03:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=b2XJgiYDL+gYwfvrLP1nQ3SWXHe3EAzumbytpHb1NY8=;
+ b=b1i8VkAvyKLhi4cQqHKIbu9zHFmt8WEF4DEy6WIppqsyIDgRP+3tleHlUpEkInxKBpbD
+ H1QvbE9ex+u2kahDPpInmd8CMeirzriyN2dBKqjjZKEdkl+FHbs6WVs7ivuB6aarjlf3
+ YUFgQ0TJL6sWny4ePm/DIk+aWTFO9Kb/pB6hOeOv1CbKLeDxo6phEOVJ/f7Jx87lwGNu
+ yvO75Yie0oB/mfSPQOZFzJsD1E60TcToFN/uJHUMRco1u724rj/HfyF36UmGpewQLFAb
+ uw+AF73gVTQMc8B96kno7LW7suQwGu18Y3tfib6462Z55pZuqS0y1AEAgOJ1/2Pcs+IM sw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35a6272wwb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 10:03:10 -0500
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B8EweGt036233;
+        Tue, 8 Dec 2020 10:03:10 -0500
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 35a6272wt4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 10:03:10 -0500
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B8F2TTu015011;
+        Tue, 8 Dec 2020 15:03:06 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3581u83npt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Dec 2020 15:03:06 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B8F33TC60817676
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Dec 2020 15:03:03 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5A7885204F;
+        Tue,  8 Dec 2020 15:03:03 +0000 (GMT)
+Received: from sig-9-65-221-14.ibm.com (unknown [9.65.221.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 004A75208A;
+        Tue,  8 Dec 2020 15:02:57 +0000 (GMT)
+Message-ID: <ba6cd934bf7460cf6e9fc101a759a63fdd4e6e9b.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a
+ new trust source
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Elaine Palmer <erpalmerny@gmail.com>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
+        dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
+        Markus.Wamser@mixed-mode.de, lhinds@redhat.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org,
+        Kenneth Goldman <kgoldman@us.ibm.com>, gcwilson@linux.ibm.com,
+        zgu@us.ibm.com, stefanb@us.ibm.com, NAYNA JAIN1 <naynjain@ibm.com>
+Date:   Tue, 08 Dec 2020 10:02:57 -0500
+In-Reply-To: <20201204153037.GC4922@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+         <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
+         <81A6B61D-3811-4957-B270-52AE5FA6DE4F@gmail.com>
+         <20201204153037.GC4922@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2020-12-08_09:2020-12-08,2020-12-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 phishscore=0 clxscore=1011 impostorscore=0
+ bulkscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ suspectscore=3 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012080086
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 7, 2020 at 6:36 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
->
-> CAP_DAC_READ_SEARCH is required by open_by_handle_at(2) so check it in
-> ovl_decode_real_fh() as well to prevent privilege escalation for
-> unprivileged overlay mounts.
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  fs/overlayfs/namei.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> index a6162c4076db..82a55fdb1e7a 100644
-> --- a/fs/overlayfs/namei.c
-> +++ b/fs/overlayfs/namei.c
-> @@ -156,6 +156,9 @@ struct dentry *ovl_decode_real_fh(struct ovl_fh *fh, struct vfsmount *mnt,
->         struct dentry *real;
->         int bytes;
->
-> +       if (!capable(CAP_DAC_READ_SEARCH))
-> +               return NULL;
-> +
+Hi Jarkko,
 
-If the mounter is not capable in init ns, ovl_check_origin() and
-ovl_verify_index()
-will not function as expected and this will break index and nfs export features.
-So I think we need to also check capability in ovl_can_decode_fh(), to auto
-disable those features.
+On Fri, 2020-12-04 at 17:30 +0200, Jarkko Sakkinen wrote:
+> On Wed, Dec 02, 2020 at 02:34:07PM -0500, gmail Elaine Palmer wrote:
+> > Hi Sumit,  
+> > 
+> > Thank you for the detailed descriptions and examples of trust sources
+> > for Trusted Keys.   A group of us in IBM (Stefan Berger, Ken Goldman,
+> > Zhongshu Gu, Nayna Jain, Elaine Palmer, George Wilson, Mimi Zohar)
+> > have been doing related work for quite some time, and we have one
+> > primary concern and some suggested changes to the document. 
+> > 
+> > Our primary concern is that describing a TEE as a Trust Source needs
+> > to be more specific.   For example, "ARM TrustZone" is not sufficient,
+> > but "wolfSSL embedded SSL/TLS library with ARM TrustZone
+> > CryptoCell-310" is.  Just because a key is protected by software
+> > running in a TEE is not enough to establish trust.  Just like
+> > cryptographic modules, a Trust Source should be defined as a specific
+> > implementation on specific hardware with well-documented environmental
+> > assumptions, dependencies, and threats.
+> > 
+> > In addition to the above concern, our suggested changes are inline
+> > below.
+> 
+> In order to give a decent review comment it should have two ingredients:
+> 
+> - Where the existing line of code / text / whatever goes wrong.
+> - How it should modified and why that makes sense. And use as plain
+>   English and non-academic terms as possible, if it is documentation.
+>   Further, scope is only the kernel implementation, no more or no
+>   less.
+> 
+> "do this" is not unfortunately an argument. Feedback is welcome when
+> it is supported by something common sensse.
 
-Thanks,
-Amir.
+Even after the code is fully debugged, reviewed and tested, our concern
+is that people will assume the security guarantees of TEE based trusted
+keys to be equivalent to that of a discrete TPM.
+
+> 
+> Some meta suggestion of related to email:
+> 
+> Please also use a proper email client and split your paragraphs into
+> at most 80 character lines with new line characters when writing email.
+> I prefer to use 72 character line length so that there's some space
+> for longer email threads.
+
+Sure, we'll re-post the suggested documentation changes/additions.
+
+Mimi
+
