@@ -2,114 +2,90 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FE4C433FE
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 10:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13802C4167B
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EC0723B79
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 10:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C915C23B6C
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:00:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729687AbgLIKOK (ORCPT
+        id S1730657AbgLIMAP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Dec 2020 05:14:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729531AbgLIKOJ (ORCPT
+        Wed, 9 Dec 2020 07:00:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27272 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730961AbgLIMAJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Dec 2020 05:14:09 -0500
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FCF5C061794
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Dec 2020 02:13:29 -0800 (PST)
-Received: by mail-vs1-xe41.google.com with SMTP id h6so577361vsr.6
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Dec 2020 02:13:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GQQ1cftUs+z76vK6Lt731SlO6kCrFdJIO/2nHU2yT40=;
-        b=o/bXVedngN5pBxJH9KaF1htfa8gkhRjfiZvttaWZRToXJRtG+QqS8OSvQkhoND4ds6
-         8gLvFQLHhyGLVUZNOAdOIMFep9yf6detoqQLZk944USazgAMRCEgAuMgdlpjrMWdeGNF
-         ZdmnLWUhd+cDms8Du28ybWfG6vGi9quEFLNrc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GQQ1cftUs+z76vK6Lt731SlO6kCrFdJIO/2nHU2yT40=;
-        b=Hfv3sxNnpZDlef1laJFfwVNibF2zmqHyKMlyP7XUM+fJraQsseopWtB0GqyQDjybxJ
-         S2IYZqvxqKaU615gBTxTZ/0Yer7+yaee4GsoXGhfujX9a2h9/oSoWNXwfYp2Qp6Ez304
-         8CRNnB0TeZ4Ro4oLWL63rDgm6LUkN/sMdFKJWaTcMGfr9v/UPxTT6kjWXsvT5dPkciJ2
-         wRslRtHDr3x3kahoK0o4lcVVmLhm1RQaomPZb+1cUNCjqais58+AdWxW6y3qI2x1BqbW
-         4TgjHS+GNCqSW/etxNt/PIu6htYFVq3GbM9Q1b+KbzM+2CoSvXBkWVu4zXewse5TzO+L
-         6x8w==
-X-Gm-Message-State: AOAM533wASqxYxaB0gajuG72AFfPw9JkxxEYaMj9ld5C5l+YHqp5JtjN
-        LDQwJsIszJ2fehkoZN60Ntl+SSk2HkdHn2ON/RzUsg==
-X-Google-Smtp-Source: ABdhPJzREqcFmVRiyHTHLToKAaVH2NKuecCoZyx8wfazBSxTrTVhIRS7jyFnBaKgTWOjW7kai9p6aOWj8y5f7/0D+t0=
-X-Received: by 2002:a67:ed57:: with SMTP id m23mr926246vsp.7.1607508808505;
- Wed, 09 Dec 2020 02:13:28 -0800 (PST)
+        Wed, 9 Dec 2020 07:00:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607515123;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/OLi6xw6A05rVF+FY+DCz7u5b/15LezMPYjls9q2mPE=;
+        b=UaHMZcqNM8GVl+b7AfaWaYTaqDyBD9L8FkOKZM6byZ9Bf7zSZa+zlsQB37V261+Ewr/B09
+        twCVSFY+qcijJUPge+sYhuGyePmTErTxYcSuZ0adnW5Hhs/Nx9eX23Y0pZNOZVffgm+yxp
+        uGXkh9FDaS+dKma+4MR3kZvImh7UBFk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-399-B7C-5k_CNgGhnwgKwhTXzg-1; Wed, 09 Dec 2020 06:58:39 -0500
+X-MC-Unique: B7C-5k_CNgGhnwgKwhTXzg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A43F4612A2;
+        Wed,  9 Dec 2020 11:58:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C798919C78;
+        Wed,  9 Dec 2020 11:58:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20201120180426.922572-5-mic@digikod.net>
+References: <20201120180426.922572-5-mic@digikod.net> <20201120180426.922572-1-mic@digikod.net>
+To:     =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl=3D20Sala=3DC3=3DBCn=3F?=
+         =?us-ascii?Q?=3D?= <mic@digikod.net>
+Cc:     dhowells@redhat.com, David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl?=
+         =?us-ascii?Q?=3D20Sala=3DC3=3DBCn=3F=3D?= 
+        <mic@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 4/9] certs: Check that builtin blacklist hashes are valid
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
- <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 9 Dec 2020 11:13:17 +0100
-Message-ID: <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 09 Dec 2020 11:58:31 +0000
+Message-ID: <1221725.1607515111@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Dec 8, 2020 at 2:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Mon, Dec 7, 2020 at 6:36 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
-> >
-> > CAP_DAC_READ_SEARCH is required by open_by_handle_at(2) so check it in
-> > ovl_decode_real_fh() as well to prevent privilege escalation for
-> > unprivileged overlay mounts.
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  fs/overlayfs/namei.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/fs/overlayfs/namei.c b/fs/overlayfs/namei.c
-> > index a6162c4076db..82a55fdb1e7a 100644
-> > --- a/fs/overlayfs/namei.c
-> > +++ b/fs/overlayfs/namei.c
-> > @@ -156,6 +156,9 @@ struct dentry *ovl_decode_real_fh(struct ovl_fh *fh, struct vfsmount *mnt,
-> >         struct dentry *real;
-> >         int bytes;
-> >
-> > +       if (!capable(CAP_DAC_READ_SEARCH))
-> > +               return NULL;
-> > +
->
-> If the mounter is not capable in init ns, ovl_check_origin() and
-> ovl_verify_index()
-> will not function as expected and this will break index and nfs export features.
+Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
 
-NFS export is clear-cut.
+> +      cmd_check_blacklist_hashes =3D $(AWK) -f scripts/check-blacklist-h=
+ashes.awk $(2); touch $@
 
-Hard link indexing should work without fh decoding, since it is only
-encoding the file handle to search for the index entry, and encoding
-is not privileged.
+The script name needs prefixing with $(srctree)/ so that it can be used with
+alternative build directories.
 
-Not sure how ovl_verify_index will choke on that, will have to try...
-but worse case we just need to disable verification.
+Note that doesn't apply to scripts/extract-cert in the same makefile as tha=
+t's
+a built program and is to be found in the build dir, not the sources.
 
-And yeah, using .overlay.origin attribute for inode number consistency
-won't work either, but it should fail silently (which is probably a
-good thing).  Haven't tested this yet, though.
+Btw, I'm pulling some of your cleanups/fixes into my fixes branch.
 
-Thanks,
-Miklos
+David
+
