@@ -2,161 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C321AC47434
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7736C19425
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 16:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A339423BE3
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8992423C17
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 16:22:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731301AbgLIMVf (ORCPT
+        id S1731338AbgLIQVi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Dec 2020 07:21:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:28721 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731349AbgLIMQQ (ORCPT
+        Wed, 9 Dec 2020 11:21:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53766 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbgLIQVf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Dec 2020 07:16:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607516090;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=hyA2PO8n71MXxUKu/m0tSLtuCTd/rvDr3IPFkb7YJtc=;
-        b=ie4e8ElvKvhLca9lExLV1WOc0fGx6DhBUZPMV8thq43TelZrPjjj0q6N85E+5X2MzU/1lX
-        EjPZtsvW3NRGF+qRCKgjP/wW2/Co4huAUpA8c9gOWwgAZ61VfYpAeHRWOsdid2J9c8xop5
-        mCa5OxEYfHMj/k0C/WQr8QnssjaAjDU=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-157-g6j_3dX3Nh2n2wD4Cvb9CQ-1; Wed, 09 Dec 2020 07:14:46 -0500
-X-MC-Unique: g6j_3dX3Nh2n2wD4Cvb9CQ-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8A808100F770;
-        Wed,  9 Dec 2020 12:14:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C08D5C1D0;
-        Wed,  9 Dec 2020 12:14:24 +0000 (UTC)
-Subject: [PATCH 00/18] keys: Miscellaneous fixes
-From:   David Howells <dhowells@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        Petko Manolov <petkan@mip-labs.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-        YueHaibing <yuehaibing@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Jann Horn <jannh@google.com>, linux-crypto@vger.kernel.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ben Boeckel <mathstuf@gmail.com>, keyrings@vger.kernel.org,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        linux-security-module@vger.kernel.org,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Tom Rix <trix@redhat.com>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Denis Efremov <efremov@linux.com>,
-        =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 09 Dec 2020 12:14:24 +0000
-Message-ID: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.23
+        Wed, 9 Dec 2020 11:21:35 -0500
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2773C0613D6
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Dec 2020 08:20:54 -0800 (PST)
+Received: by mail-vs1-xe43.google.com with SMTP id u7so1173366vsg.11
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Dec 2020 08:20:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ftrjIMacRnCDUW60B5wDdWIgLtC6j6ITMAxZ0z4dcsk=;
+        b=HgrvSW72NUDBACx2rcJOdsk9j2ywqmTiRhxzfml2ObmeS9/p68ApjmmEUiVuFFixel
+         U8V/3sWV/jT/RnYtuN76/jqqa0beH35lqx0GkOdrSQB8kmGRwv6xH/mpxgBW9stqYh98
+         TB1KeZ8zKUBTeHyC8I0eCxJ7EFkcfOUQYVVWk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ftrjIMacRnCDUW60B5wDdWIgLtC6j6ITMAxZ0z4dcsk=;
+        b=hOTEgdi1w7shkhU+g1K9DxRPNdT2hvWd2mm9WQd3OmCF1KvpZ9CvPcKqBqCOb9sNnB
+         mzmQ4fBNTh60t5oQKZGIXr3Cuz9UrrCHk/Pomsl5XcNs3aJN73zfB9fMZMo9GQpP/wgp
+         G+43Y6G3cq+m0253vE2LCvYe+Hr7kSlygQrUl5+ZVnjh+q6CYnJkWyHfNV7ZK2Bsk6SP
+         MuFvAheMXbPeIRp+SY5YWFpqTv1B/Or0YUnqVFSz6Wr1li1a0xcJa8sebwDyPmVxC6JP
+         nHRHMxnQ033IYs6F700TXPoIBjCpVbVTn9sYtY4peeJGZRNiShIv2DiMQBB3qlDK3i6z
+         XhbQ==
+X-Gm-Message-State: AOAM530qp4ZTxaVL5dqXywDqOsWvPaKu+KOqBbAMGLmrFgAWqtLXnMSE
+        6c5JfxZMmypyCxSMPeyO1eFRYwlNM1Cb9Qj5Bvim/w==
+X-Google-Smtp-Source: ABdhPJzZZ3IkQz7rOL8NyykGCELcBs/amTcJ+Xv2OgUQT+RVIeDoKVuHGvs38tWdvxSIhPXmjhSG0BuRFZBayhnap/U=
+X-Received: by 2002:a67:ed57:: with SMTP id m23mr2755029vsp.7.1607530854236;
+ Wed, 09 Dec 2020 08:20:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
+ <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com> <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com>
+In-Reply-To: <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 9 Dec 2020 17:20:43 +0100
+Message-ID: <CAJfpeguvt-Mia9YmT55q3R9tSFocpgq7FzjDKJgnaOEQsaBNVA@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Dec 9, 2020 at 11:13 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Hi Jarkko,
+> Hard link indexing should work without fh decoding, since it is only
+> encoding the file handle to search for the index entry, and encoding
+> is not privileged.
 
-I've extended my collection of minor keyrings fixes for the next merge
-window.  Anything else I should add (or anything I should drop)?
+Tested this a bit and while hard link indexing does work,  inode
+lookup is broken since it uses the origin inode as a key (which is not
+available) instead of using the origin value directly.  This is
+fixable, but needs a fair amount of restructuring, so let's just
+postpone this and disable index for now, as you suggested.
 
-The patches can be found on the following branch:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-fixes
-
-David
----
-Alex Shi (2):
-      PKCS#7: drop function from kernel-doc pkcs7_validate_trust_one
-      certs/blacklist: fix kernel doc interface issue
-
-Alexander A. Klimov (1):
-      encrypted-keys: Replace HTTP links with HTTPS ones
-
-David Howells (1):
-      certs: Fix blacklist flag type confusion
-
-Denis Efremov (1):
-      security/keys: use kvfree_sensitive()
-
-Gabriel Krisman Bertazi (1):
-      watch_queue: Drop references to /dev/watch_queue
-
-Gustavo A. R. Silva (1):
-      security: keys: Fix fall-through warnings for Clang
-
-Jann Horn (1):
-      keys: Remove outdated __user annotations
-
-Krzysztof Kozlowski (1):
-      KEYS: asymmetric: Fix kerneldoc
-
-Mickaël Salaün (3):
-      certs: Fix blacklisted hexadecimal hash string check
-      PKCS#7: Fix missing include
-      certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
-
-Randy Dunlap (2):
-      security: keys: delete repeated words in comments
-      crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
-
-Tianjia Zhang (1):
-      crypto: public_key: Remove redundant header file from public_key.h
-
-Tom Rix (2):
-      KEYS: remove redundant memset
-      keys: remove trailing semicolon in macro definition
-
-YueHaibing (1):
-      crypto: pkcs7: Use match_string() helper to simplify the code
-
-
- Documentation/security/keys/core.rst     |  4 ++--
- certs/blacklist.c                        | 10 +++++-----
- certs/system_keyring.c                   |  5 +++--
- crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
- crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
- crypto/asymmetric_keys/pkcs7_trust.c     |  2 +-
- crypto/asymmetric_keys/pkcs7_verify.c    |  9 ++++-----
- include/crypto/public_key.h              |  1 -
- include/keys/encrypted-type.h            |  2 +-
- include/linux/key.h                      |  5 +++--
- include/linux/verification.h             |  2 ++
- samples/Kconfig                          |  2 +-
- samples/watch_queue/watch_test.c         |  2 +-
- security/integrity/ima/ima_mok.c         |  3 +--
- security/keys/Kconfig                    |  8 ++++----
- security/keys/big_key.c                  |  9 +++------
- security/keys/key.c                      |  2 ++
- security/keys/keyctl.c                   |  2 +-
- security/keys/keyctl_pkey.c              |  2 --
- security/keys/keyring.c                  | 10 +++++-----
- 20 files changed, 45 insertions(+), 46 deletions(-)
-
-
+Thanks,
+Miklos
