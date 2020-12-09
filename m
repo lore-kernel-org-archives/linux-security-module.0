@@ -2,90 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13802C4167B
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C8BC19425
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C915C23B6C
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B0323BE5
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 12:21:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730657AbgLIMAP (ORCPT
+        id S1731065AbgLIMU5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Dec 2020 07:00:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27272 "EHLO
+        Wed, 9 Dec 2020 07:20:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36848 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730961AbgLIMAJ (ORCPT
+        by vger.kernel.org with ESMTP id S1731426AbgLIMQo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Dec 2020 07:00:09 -0500
+        Wed, 9 Dec 2020 07:16:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607515123;
+        s=mimecast20190719; t=1607516118;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/OLi6xw6A05rVF+FY+DCz7u5b/15LezMPYjls9q2mPE=;
-        b=UaHMZcqNM8GVl+b7AfaWaYTaqDyBD9L8FkOKZM6byZ9Bf7zSZa+zlsQB37V261+Ewr/B09
-        twCVSFY+qcijJUPge+sYhuGyePmTErTxYcSuZ0adnW5Hhs/Nx9eX23Y0pZNOZVffgm+yxp
-        uGXkh9FDaS+dKma+4MR3kZvImh7UBFk=
+        bh=/mvd3i8Iisj3of36p/MCFCEO3iZ3VRAoJPd3yylzh6w=;
+        b=iLn744BOqKzGJIwOWSJ7PnaxCSjVxoBmGX7Nh4qKy7uc0so179U382PT29SrfnxBLp3n2J
+        MlDF10LYJGp/9atd7OKHdIWkMZBHCZDrnOXag7XXOUQQnt59TE0PoJ7yqa+inWDarrVwEo
+        2n/DMsxV9HZ++37ZSQyZbd4JDNJD4wc=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-399-B7C-5k_CNgGhnwgKwhTXzg-1; Wed, 09 Dec 2020 06:58:39 -0500
-X-MC-Unique: B7C-5k_CNgGhnwgKwhTXzg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+ us-mta-257-9cqO1hUXOkmEWPtLscZjoA-1; Wed, 09 Dec 2020 07:15:15 -0500
+X-MC-Unique: 9cqO1hUXOkmEWPtLscZjoA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A43F4612A2;
-        Wed,  9 Dec 2020 11:58:36 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ECB49107ACE3;
+        Wed,  9 Dec 2020 12:15:13 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C798919C78;
-        Wed,  9 Dec 2020 11:58:32 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 136096E521;
+        Wed,  9 Dec 2020 12:15:11 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 06/18] security: keys: delete repeated words in comments
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20201120180426.922572-5-mic@digikod.net>
-References: <20201120180426.922572-5-mic@digikod.net> <20201120180426.922572-1-mic@digikod.net>
-To:     =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl=3D20Sala=3DC3=3DBCn=3F?=
-         =?us-ascii?Q?=3D?= <mic@digikod.net>
-Cc:     dhowells@redhat.com, David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, keyrings@vger.kernel.org,
         James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl?=
-         =?us-ascii?Q?=3D20Sala=3DC3=3DBCn=3F=3D?= 
-        <mic@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1 4/9] certs: Check that builtin blacklist hashes are valid
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 09 Dec 2020 12:15:11 +0000
+Message-ID: <160751611127.1238376.11653059698742959354.stgit@warthog.procyon.org.uk>
+In-Reply-To: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
+References: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 09 Dec 2020 11:58:31 +0000
-Message-ID: <1221725.1607515111@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+From: Randy Dunlap <rdunlap@infradead.org>
 
-> +      cmd_check_blacklist_hashes =3D $(AWK) -f scripts/check-blacklist-h=
-ashes.awk $(2); touch $@
+Drop repeated words in comments.
+{to, will, the}
 
-The script name needs prefixing with $(srctree)/ so that it can be used with
-alternative build directories.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: keyrings@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
+---
 
-Note that doesn't apply to scripts/extract-cert in the same makefile as tha=
-t's
-a built program and is to be found in the build dir, not the sources.
+ security/keys/keyctl.c  |    2 +-
+ security/keys/keyring.c |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-Btw, I'm pulling some of your cleanups/fixes into my fixes branch.
+diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+index 61a614c21b9b..96a92a645216 100644
+--- a/security/keys/keyctl.c
++++ b/security/keys/keyctl.c
+@@ -506,7 +506,7 @@ long keyctl_keyring_clear(key_serial_t ringid)
+  * keyring, otherwise replace the link to the matching key with a link to the
+  * new key.
+  *
+- * The key must grant the caller Link permission and the the keyring must grant
++ * The key must grant the caller Link permission and the keyring must grant
+  * the caller Write permission.  Furthermore, if an additional link is created,
+  * the keyring's quota will be extended.
+  *
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 977066208387..5e6a90760753 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -881,7 +881,7 @@ static bool search_nested_keyrings(struct key *keyring,
+  *
+  * Keys are matched to the type provided and are then filtered by the match
+  * function, which is given the description to use in any way it sees fit.  The
+- * match function may use any attributes of a key that it wishes to to
++ * match function may use any attributes of a key that it wishes to
+  * determine the match.  Normally the match function from the key type would be
+  * used.
+  *
+@@ -1204,7 +1204,7 @@ static int keyring_detect_cycle_iterator(const void *object,
+ }
+ 
+ /*
+- * See if a cycle will will be created by inserting acyclic tree B in acyclic
++ * See if a cycle will be created by inserting acyclic tree B in acyclic
+  * tree A at the topmost level (ie: as a direct child of A).
+  *
+  * Since we are adding B to A at the top level, checking for cycles should just
 
-David
 
