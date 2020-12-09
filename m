@@ -2,104 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D523C4361B
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 18:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CDE3C4167B
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 19:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF1923C1A
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 18:17:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F315D22AAC
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 19:14:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732944AbgLISRJ (ORCPT
+        id S2387444AbgLITN3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Dec 2020 13:17:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43368 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732687AbgLISRC (ORCPT
+        Wed, 9 Dec 2020 14:13:29 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:46315 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732900AbgLITNS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Dec 2020 13:17:02 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A9FC0613CF;
-        Wed,  9 Dec 2020 10:16:22 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id z5so2568621iob.11;
-        Wed, 09 Dec 2020 10:16:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0bnqZJonPm2Y5rYBHlDQYhPCxMpoVcbNGKebJQlZK0o=;
-        b=qkhZTAiGze98uNr1WjA5/wLIhNSehJmfMFfgUD8xlmDDr9V5Y5ZFHpFEBWs8n3Qtkg
-         Y9SwVVaRMH+qBNyqfLpdTWFiXNXpP0624tfi5xJoWMBwM9cuwiupVIc8yMENklBLFcrl
-         CAZj3uSVxZqNZUO3QE9P0de9IyZiM/heJRCLkyQFvXQoJe2tog+vie3Wphrf1FsWtVQO
-         nz6eB9kyg67GbIG+w9PSSAF600D6UfMxu2RVSn8fmUCj2WBYI44stH8X+LHqxLij0+Xh
-         Ky/1rHICxjYGenItETlfONNeIclnT7lh+yn5OXElreSOQcv+7fdp5xlqxBNRQNI8s4zP
-         +kXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0bnqZJonPm2Y5rYBHlDQYhPCxMpoVcbNGKebJQlZK0o=;
-        b=hM4OEK+u8ZK304Bi3+u6YhyvneHnHSq+wezUyHS1uzj972uG7EpEvSxQfutg+mMHwa
-         5NdPy0LzIjMeJzRjy6FU8o1ukkAFQa0Xr2zLVCO4DUq/TN3tUeVXcJoEPWIcVowHef4Q
-         ZdnE60ZkkktbuoUAUfdpYtwm1OLFmZ6oUsVY0TKtsndgHJDI0gQTbpwg8ygyI7tpN4tD
-         1iCcK2+B0whVJ8moIOAVe9CvkEDGo6IJDF2RtCGumqp7JJIX7XYq5xX05vQjFtv9Z4U6
-         1XBcwBhuQ81E/Vqsdo0/IukfZ+f3KN/n49SLZ+PaYFy8B8Tf4FdruO1lVqCB304B++wc
-         Ltcg==
-X-Gm-Message-State: AOAM533oYGMfsl7fQq/oCHe+cRS7uTYgvzZ+PN/JwncxiEF27Kj2nja0
-        Fvve38YJ7gKYFseOFsCsvzc+wXYPgnlyfx7UQfM=
-X-Google-Smtp-Source: ABdhPJwA+AlarNaiEaz4q0T5sNgD9fSqisBJmFpg0z0xOmYs0H+it97uPc7KbcQZq+nqKtOfuo1PK6oNjMjpnlB3/lQ=
-X-Received: by 2002:a02:a60a:: with SMTP id c10mr4606978jam.123.1607537781901;
- Wed, 09 Dec 2020 10:16:21 -0800 (PST)
+        Wed, 9 Dec 2020 14:13:18 -0500
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 15DB0580233;
+        Wed,  9 Dec 2020 14:12:09 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute2.internal (MEProxy); Wed, 09 Dec 2020 14:12:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=xqge9GL++YyfKHKH4XONW7ozJfi
+        dwx7PvG5HtEjyOe0=; b=m3gY3WLVBfZGq/irJNiytLeMlzk/M5NTAAR/FH5jqHr
+        /0SmipuGZSJkkQHLZy03t4wdKQvKtNeyujVLs3QQvKg6JLC/JC0a4gxkEUkHjs/Y
+        6D28H4EaRr2kgLZg6QDgPG1GbppiuyflIO60t5BbxiK/X8UBOA/Y/utQsYwo1wtJ
+        Uh6IVwdCDmCplnnZi2RYkaZZdVHvDiCzM9vgsik+LUr8tl89CYu6l37DLHwPsktL
+        o+UB6Wp5njGfoUq7L/dB7O8Z+etIcobJUMMMBQX8yvNJJ7vFhPuM6PUORuTqjA4g
+        bs1GVO/iitBXudSv17VToLBGbG+ClYFILvVkN2z71BA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=xqge9G
+        L++YyfKHKH4XONW7ozJfidwx7PvG5HtEjyOe0=; b=ft6xD5Jxyu6vQl4RKJVLj6
+        JjuBWCO35p679lel5YZypf0d3CtLZ+mofFE6diDitfM4SIMkMmFL/S7pjyDaLBd0
+        FXRc5mXE8TbnacwOXp0V3eNzaEiZ8iley6vbY+XNGup1dzyU4XZuoEFbHnik06h7
+        oLjFf2pXRaFhCOAlgLGuQ4UN79LKgLzyx2k+Akqm0kiVvN+yGalW9Y9iMNwfKusB
+        FcaoX5E8ePqrDtY9yVUbSY+zJT/IBVBeKN5Pw0jAupaAm3oEWuj+ffPZSVQmwp4Y
+        CPzH0vzicO6eyFiXK3c+P9oINGZ2cNv1Zd7alLZV1r9ZRUjggyH8LhmRRhZtPBrA
+        ==
+X-ME-Sender: <xms:hCHRX66wOUyGK3PYwc_CEMwTAwRa3uQT0kiIgZHjHC1DLGz8t2w8Mg>
+    <xme:hCHRXz6qqlU5fATQNBifjZZ39A4oKbEqYwrL3zJb1wJaLpcZD3AJz8dxOExZHru6i
+    miQsrAYtmxxRnrhOp8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedujedrudejkedguddvfecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
+    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepudffjeegieefudelveekueffkeffjeeiledvgfeiffekkeeihedvveejledt
+    tddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepvdegrdduieelrddvtd
+    drvdehheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehmvgessggvnhgsohgvtghkvghlrdhnvght
+X-ME-Proxy: <xmx:hCHRX5eIJntLG4IlKcBofqVmsx_lVi7N7qKKRe4dfnqeBDeIZUicpw>
+    <xmx:hCHRX3I-NzDLPiJ_DoGzTobgwfd_YWlR25la3yv4MNdyvl8c5C25jw>
+    <xmx:hCHRX-LG-9KAiEVWQ-Vh0exrJZqz9or-NauN9V41178F7D0uOAXq8w>
+    <xmx:iSHRX2DloI69yDVccwBkLxgeeTdCTFaaRs4phr7s_Un6Q6v7to5v-w>
+Received: from localhost (unknown [24.169.20.255])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 622931080066;
+        Wed,  9 Dec 2020 14:12:04 -0500 (EST)
+Date:   Wed, 9 Dec 2020 14:12:04 -0500
+From:   Ben Boeckel <me@benboeckel.net>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Petko Manolov <petkan@mip-labs.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Jann Horn <jannh@google.com>, linux-crypto@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Ben Boeckel <mathstuf@gmail.com>, keyrings@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        linux-security-module@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Tom Rix <trix@redhat.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@iki.fi>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Denis Efremov <efremov@linux.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: Re: [PATCH 00/18] keys: Miscellaneous fixes
+Message-ID: <20201209191204.GB1448831@erythro>
+References: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
- <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
- <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com> <CAJfpeguvt-Mia9YmT55q3R9tSFocpgq7FzjDKJgnaOEQsaBNVA@mail.gmail.com>
-In-Reply-To: <CAJfpeguvt-Mia9YmT55q3R9tSFocpgq7FzjDKJgnaOEQsaBNVA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 9 Dec 2020 20:16:10 +0200
-Message-ID: <CAOQ4uxjDEVnz3Y_BqH41J4+E5dWRPyut_VPokEeMBNALx9oQhw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
+User-Agent: Mutt/1.14.6 (2020-07-11)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 9, 2020 at 6:20 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Wed, Dec 9, 2020 at 11:13 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > Hard link indexing should work without fh decoding, since it is only
-> > encoding the file handle to search for the index entry, and encoding
-> > is not privileged.
->
-> Tested this a bit and while hard link indexing does work,  inode
-> lookup is broken since it uses the origin inode as a key (which is not
+On Wed, Dec 09, 2020 at 12:14:24 +0000, David Howells wrote:
+> I've extended my collection of minor keyrings fixes for the next merge
+> window.  Anything else I should add (or anything I should drop)?
+> 
+> The patches can be found on the following branch:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-fixes
 
-Yes, that is what I meant by ovl_check_origin() is broken.
+1-16 LGTM (modulo the typo in patch 7's commit message). 17 and 18 are
+outside my knowledge right now.
 
-> available) instead of using the origin value directly.  This is
-> fixable, but needs a fair amount of restructuring, so let's just
+Reviewed-by: Ben Boeckel <mathstuf@gmail.com>
 
-Maybe it also requires on-disk changes.
-We should be able to use the origin fh as the key for lower inode,
-but we need the lower st_inode for initializing the ovl inode with
-correct ino. If we cannot decode lower inode from origin fh, I think
-we would need to store the ino in user.overlay.ino on copy up or
-maintain redirect, but redirect is not supported either with user ns mount...
-
-> postpone this and disable index for now, as you suggested.
->
-
-Nobody seems to be enabling it anyway :-/
-
-Thanks,
-Amir.
+--Ben
