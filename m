@@ -2,123 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E99BC4167B
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 16:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D523C4361B
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 18:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2483A23BC7
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 16:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BF1923C1A
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Dec 2020 18:17:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730859AbgLIQvf (ORCPT
+        id S1732944AbgLISRJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Dec 2020 11:51:35 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26846 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727156AbgLIQvf (ORCPT
+        Wed, 9 Dec 2020 13:17:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43368 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732687AbgLISRC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Dec 2020 11:51:35 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0B9GWbLp073428;
-        Wed, 9 Dec 2020 11:50:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=Odsb8xyjIIIVuDCTk0SLDsR/3RdCoFAvh4mqCubQ+2A=;
- b=sou2VVe58bYe8S9Xkbe77OrgSXLpzFqyoHcV1WfYtP4zZZ0WjphhwqtJOy0oiQw7krQr
- EIWJzOIkE6p0zcdVpRRJjChuM5iWd+aMN4OJMCs3nBAXeW+SBwjx/l4HtdmDvusCJtQ+
- gdf0L3OhNN1SL3kFRCvDK4O+COOLYf6bN260MytuXNWezpa7FNTAdm6SiP4JF2R5NIux
- Xld2anv19DBl9Zbn6AaG01fSo1lyJEQoJspk6VR9zzlHakjbsWX/hH21fyn8BoBmelxW
- +6LkLmyoVapnZ39qMZP7JnERgLOAz5o39m69oBFF0n6C2tkfJOnlIdTQHbQqklG1UNeo kA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 35b1gxhm0y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Dec 2020 11:50:31 -0500
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0B9GWh8i074282;
-        Wed, 9 Dec 2020 11:50:30 -0500
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 35b1gxhkyy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Dec 2020 11:50:30 -0500
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0B9Gmomc002346;
-        Wed, 9 Dec 2020 16:50:28 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma03fra.de.ibm.com with ESMTP id 3581u8q49p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 09 Dec 2020 16:50:27 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0B9GoOJI47120874
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 9 Dec 2020 16:50:25 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D2A744C046;
-        Wed,  9 Dec 2020 16:50:24 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 248254C044;
-        Wed,  9 Dec 2020 16:50:20 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.20.48])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Dec 2020 16:50:19 +0000 (GMT)
-Message-ID: <b2465d27f3683331019c5a9b6d0856304d992a0a.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 3/4] doc: trusted-encrypted: updates with TEE as a
- new trust source
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>, sumit.garg@linaro.org
-Cc:     Elaine Palmer <erpalmerny@gmail.com>,
-        jarkko.sakkinen@linux.intel.com, jejb@linux.ibm.com,
-        dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
-        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
-        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
-        Markus.Wamser@mixed-mode.de, lhinds@redhat.com,
-        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        op-tee@lists.trustedfirmware.org,
-        Kenneth Goldman <kgoldman@us.ibm.com>, gcwilson@linux.ibm.com,
-        zgu@us.ibm.com, stefanb@us.ibm.com, NAYNA JAIN1 <naynjain@ibm.com>
-Date:   Wed, 09 Dec 2020 11:50:19 -0500
-In-Reply-To: <20201208174906.GA58572@kernel.org>
-References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
-         <1604419306-26105-4-git-send-email-sumit.garg@linaro.org>
-         <81A6B61D-3811-4957-B270-52AE5FA6DE4F@gmail.com>
-         <20201204153037.GC4922@kernel.org>
-         <ba6cd934bf7460cf6e9fc101a759a63fdd4e6e9b.camel@linux.ibm.com>
-         <20201208174906.GA58572@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2020-12-09_13:2020-12-09,2020-12-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- adultscore=0 suspectscore=0 phishscore=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 clxscore=1015 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012090112
+        Wed, 9 Dec 2020 13:17:02 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A9FC0613CF;
+        Wed,  9 Dec 2020 10:16:22 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id z5so2568621iob.11;
+        Wed, 09 Dec 2020 10:16:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0bnqZJonPm2Y5rYBHlDQYhPCxMpoVcbNGKebJQlZK0o=;
+        b=qkhZTAiGze98uNr1WjA5/wLIhNSehJmfMFfgUD8xlmDDr9V5Y5ZFHpFEBWs8n3Qtkg
+         Y9SwVVaRMH+qBNyqfLpdTWFiXNXpP0624tfi5xJoWMBwM9cuwiupVIc8yMENklBLFcrl
+         CAZj3uSVxZqNZUO3QE9P0de9IyZiM/heJRCLkyQFvXQoJe2tog+vie3Wphrf1FsWtVQO
+         nz6eB9kyg67GbIG+w9PSSAF600D6UfMxu2RVSn8fmUCj2WBYI44stH8X+LHqxLij0+Xh
+         Ky/1rHICxjYGenItETlfONNeIclnT7lh+yn5OXElreSOQcv+7fdp5xlqxBNRQNI8s4zP
+         +kXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0bnqZJonPm2Y5rYBHlDQYhPCxMpoVcbNGKebJQlZK0o=;
+        b=hM4OEK+u8ZK304Bi3+u6YhyvneHnHSq+wezUyHS1uzj972uG7EpEvSxQfutg+mMHwa
+         5NdPy0LzIjMeJzRjy6FU8o1ukkAFQa0Xr2zLVCO4DUq/TN3tUeVXcJoEPWIcVowHef4Q
+         ZdnE60ZkkktbuoUAUfdpYtwm1OLFmZ6oUsVY0TKtsndgHJDI0gQTbpwg8ygyI7tpN4tD
+         1iCcK2+B0whVJ8moIOAVe9CvkEDGo6IJDF2RtCGumqp7JJIX7XYq5xX05vQjFtv9Z4U6
+         1XBcwBhuQ81E/Vqsdo0/IukfZ+f3KN/n49SLZ+PaYFy8B8Tf4FdruO1lVqCB304B++wc
+         Ltcg==
+X-Gm-Message-State: AOAM533oYGMfsl7fQq/oCHe+cRS7uTYgvzZ+PN/JwncxiEF27Kj2nja0
+        Fvve38YJ7gKYFseOFsCsvzc+wXYPgnlyfx7UQfM=
+X-Google-Smtp-Source: ABdhPJwA+AlarNaiEaz4q0T5sNgD9fSqisBJmFpg0z0xOmYs0H+it97uPc7KbcQZq+nqKtOfuo1PK6oNjMjpnlB3/lQ=
+X-Received: by 2002:a02:a60a:: with SMTP id c10mr4606978jam.123.1607537781901;
+ Wed, 09 Dec 2020 10:16:21 -0800 (PST)
+MIME-Version: 1.0
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-4-mszeredi@redhat.com>
+ <CAOQ4uxhti+COYB3GhfMcPFwpfBRYQvr98oCO9wwS029W5e0A5g@mail.gmail.com>
+ <CAJfpegsGpS=cym2NpnS6H-uMyLMKdbLpE1QxiDz4GQU1s-dYfg@mail.gmail.com> <CAJfpeguvt-Mia9YmT55q3R9tSFocpgq7FzjDKJgnaOEQsaBNVA@mail.gmail.com>
+In-Reply-To: <CAJfpeguvt-Mia9YmT55q3R9tSFocpgq7FzjDKJgnaOEQsaBNVA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 9 Dec 2020 20:16:10 +0200
+Message-ID: <CAOQ4uxjDEVnz3Y_BqH41J4+E5dWRPyut_VPokEeMBNALx9oQhw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] ovl: check privs before decoding file handle
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-12-08 at 19:49 +0200, Jarkko Sakkinen wrote:
-> On Tue, Dec 08, 2020 at 10:02:57AM -0500, Mimi Zohar wrote:
+On Wed, Dec 9, 2020 at 6:20 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> On Wed, Dec 9, 2020 at 11:13 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>
+> > Hard link indexing should work without fh decoding, since it is only
+> > encoding the file handle to search for the index entry, and encoding
+> > is not privileged.
+>
+> Tested this a bit and while hard link indexing does work,  inode
+> lookup is broken since it uses the origin inode as a key (which is not
 
-> > > Please also use a proper email client and split your paragraphs into
-> > > at most 80 character lines with new line characters when writing email.
-> > > I prefer to use 72 character line length so that there's some space
-> > > for longer email threads.
-> > 
-> > Sure, we'll re-post the suggested documentation changes/additions.
-> > 
-> > Mimi
-> 
-> So. Wouldn't it be a better idea to post a patch that Sumit could
-> squash to his (and add co-developed-by tag)?
+Yes, that is what I meant by ovl_check_origin() is broken.
 
-I just posted it on Elaine's behalf.
-  
-Mimi
+> available) instead of using the origin value directly.  This is
+> fixable, but needs a fair amount of restructuring, so let's just
 
+Maybe it also requires on-disk changes.
+We should be able to use the origin fh as the key for lower inode,
+but we need the lower st_inode for initializing the ovl inode with
+correct ino. If we cannot decode lower inode from origin fh, I think
+we would need to store the ino in user.overlay.ino on copy up or
+maintain redirect, but redirect is not supported either with user ns mount...
+
+> postpone this and disable index for now, as you suggested.
+>
+
+Nobody seems to be enabling it anyway :-/
+
+Thanks,
+Amir.
