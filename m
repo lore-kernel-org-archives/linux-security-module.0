@@ -2,298 +2,129 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A57DC2BBCD
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BA8C3526B
 	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 23:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 614F623B85
+	by mail.kernel.org (Postfix) with ESMTP id CC6BF23BA7
 	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 23:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394171AbgLJWbW (ORCPT
+        id S2394167AbgLJWbW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Thu, 10 Dec 2020 17:31:22 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:58222 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405122AbgLJWY7 (ORCPT
+Received: from namei.org ([65.99.196.166]:60274 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405118AbgLJWYm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Dec 2020 17:24:59 -0500
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7782620B717A;
-        Thu, 10 Dec 2020 14:14:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7782620B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607638462;
-        bh=n3rV1v0Ksy9472jn2PGaV3S3QfVFG8vBPEUCy9pnfAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PzZd+5UU0YnBD2A1OxjzzeYLonjWSS3EKnu85df1paOvStDnESOdKHCOIigF4pRut
-         VLFDLu6khKqqhpRlqpYfkViVwVjVvBVH6CtVeo0DPL6ZsCTsO5AWCw4/0Jk/6rp/pb
-         ZIIor6KYn1JI/hc2oal+iTPDPv20YUbLr4g35f9Y=
-Date:   Thu, 10 Dec 2020 16:14:17 -0600
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com, sashal@kernel.org,
-        jmorris@namei.org, nramas@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Thu, 10 Dec 2020 17:24:42 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 28F6DDBF;
+        Thu, 10 Dec 2020 22:16:53 +0000 (UTC)
+Date:   Fri, 11 Dec 2020 09:16:53 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: Re: [PATCH v7 1/8] IMA: generalize keyring specific measurement
- constructs
-Message-ID: <20201210221417.GF489768@sequoia>
-References: <20201209194212.5131-1-tusharsu@linux.microsoft.com>
- <20201209194212.5131-2-tusharsu@linux.microsoft.com>
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY
+Message-ID: <bc4788a7-77ed-693-9b3a-52ab9bacc3b@namei.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201209194212.5131-2-tusharsu@linux.microsoft.com>
+Content-Type: multipart/mixed; boundary="1665246916-1130980013-1607638613=:97768"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-12-09 11:42:05, Tushar Sugandhi wrote:
-> IMA functions such as ima_match_keyring(), process_buffer_measurement(),
-> ima_match_policy() etc. handle data specific to keyrings. Currently,
-> these constructs are not generic to handle any func specific data.
-> This makes it harder to extend them without code duplication.
-> 
-> Refactor the keyring specific measurement constructs to be generic and
-> reusable in other measurement scenarios.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I've got a few code cleanup suggestions to ima_match_rule_data() below
-but the current patch is fine:
+--1665246916-1130980013-1607638613=:97768
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
 
-Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+Please apply this config bugfix from Serge Hallyn.
 
-> ---
->  security/integrity/ima/ima.h        |  6 ++--
->  security/integrity/ima/ima_api.c    |  6 ++--
->  security/integrity/ima/ima_main.c   |  6 ++--
->  security/integrity/ima/ima_policy.c | 49 ++++++++++++++++++-----------
->  4 files changed, 40 insertions(+), 27 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index 8e8b1e3cb847..e5622ce8cbb1 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -256,7 +256,7 @@ static inline void ima_process_queued_keys(void) {}
->  int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
->  		   int mask, enum ima_hooks func, int *pcr,
->  		   struct ima_template_desc **template_desc,
-> -		   const char *keyring);
-> +		   const char *func_data);
->  int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
->  int ima_collect_measurement(struct integrity_iint_cache *iint,
->  			    struct file *file, void *buf, loff_t size,
-> @@ -268,7 +268,7 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
->  			   struct ima_template_desc *template_desc);
->  void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  				const char *eventname, enum ima_hooks func,
-> -				int pcr, const char *keyring);
-> +				int pcr, const char *func_data);
->  void ima_audit_measurement(struct integrity_iint_cache *iint,
->  			   const unsigned char *filename);
->  int ima_alloc_init_template(struct ima_event_data *event_data,
-> @@ -284,7 +284,7 @@ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
->  int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
->  		     enum ima_hooks func, int mask, int flags, int *pcr,
->  		     struct ima_template_desc **template_desc,
-> -		     const char *keyring);
-> +		     const char *func_data);
->  void ima_init_policy(void);
->  void ima_update_policy(void);
->  void ima_update_policy_flag(void);
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index 4f39fb93f278..af218babd198 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -170,7 +170,7 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
->   * @func: caller identifier
->   * @pcr: pointer filled in if matched measure policy sets pcr=
->   * @template_desc: pointer filled in if matched measure policy sets template=
-> - * @keyring: keyring name used to determine the action
-> + * @func_data: private data specific to @func, can be NULL.
->   *
->   * The policy is defined in terms of keypairs:
->   *		subj=, obj=, type=, func=, mask=, fsmagic=
-> @@ -186,14 +186,14 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
->  int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
->  		   int mask, enum ima_hooks func, int *pcr,
->  		   struct ima_template_desc **template_desc,
-> -		   const char *keyring)
-> +		   const char *func_data)
->  {
->  	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
->  
->  	flags &= ima_policy_flag;
->  
->  	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr,
-> -				template_desc, keyring);
-> +				template_desc, func_data);
->  }
->  
->  /*
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 68956e884403..e76ef4bfd0f4 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -786,13 +786,13 @@ int ima_post_load_data(char *buf, loff_t size,
->   * @eventname: event name to be used for the buffer entry.
->   * @func: IMA hook
->   * @pcr: pcr to extend the measurement
-> - * @keyring: keyring name to determine the action to be performed
-> + * @func_data: private data specific to @func, can be NULL.
->   *
->   * Based on policy, the buffer is measured into the ima log.
->   */
->  void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  				const char *eventname, enum ima_hooks func,
-> -				int pcr, const char *keyring)
-> +				int pcr, const char *func_data)
->  {
->  	int ret = 0;
->  	const char *audit_cause = "ENOMEM";
-> @@ -831,7 +831,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
->  	if (func) {
->  		security_task_getsecid(current, &secid);
->  		action = ima_get_action(inode, current_cred(), secid, 0, func,
-> -					&pcr, &template, keyring);
-> +					&pcr, &template, func_data);
->  		if (!(action & IMA_MEASURE))
->  			return;
->  	}
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 823a0c1379cb..25419c7ff50b 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -453,30 +453,44 @@ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
->  }
->  
->  /**
-> - * ima_match_keyring - determine whether the keyring matches the measure rule
-> - * @rule: a pointer to a rule
-> - * @keyring: name of the keyring to match against the measure rule
-> + * ima_match_rule_data - determine whether the given func_data matches
-> + *			 the measure rule data
-> + * @rule: IMA policy rule
-> + * @func_data: data to match against the measure rule data
->   * @cred: a pointer to a credentials structure for user validation
->   *
-> - * Returns true if keyring matches one in the rule, false otherwise.
-> + * Returns true if func_data matches one in the rule, false otherwise.
->   */
-> -static bool ima_match_keyring(struct ima_rule_entry *rule,
-> -			      const char *keyring, const struct cred *cred)
-> +static bool ima_match_rule_data(struct ima_rule_entry *rule,
-> +				const char *func_data,
-> +				const struct cred *cred)
->  {
-> +	const struct ima_rule_opt_list *opt_list = NULL;
->  	bool matched = false;
->  	size_t i;
->  
->  	if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
->  		return false;
->  
-> -	if (!rule->keyrings)
-> -		return true;
-> +	switch (rule->func) {
-> +	case KEY_CHECK:
-> +		if (!rule->keyrings)
-> +			return true;
-> +		else
-> +			opt_list = rule->keyrings;
 
-You return if rule->keyrings is NULL so drop this else and simply make
-the opt_list assignment.
+The following changes since commit bbf5c979011a099af5dc76498918ed7df445635b:
 
-> +		break;
-> +	default:
-> +		break;
+  Linux 5.9 (2020-10-11 14:15:50 -0700)
 
-I would like to see the 'return false;' happen immediately here instead
-of waiting for the opt_list check below.
+are available in the Git repository at:
 
-> +	}
->  
-> -	if (!keyring)
-> +	if (!func_data)
-> +		return false;
-> +
-> +	if (!opt_list)
->  		return false;
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.10a
 
-If you return false in the 'default:' case above, you can just remove this
-entire conditional because you'll be assigning opt_list in all of the
-valid cases of the switch statement.
+for you to fetch changes up to ed9b25d1970a4787ac6a39c2091e63b127ecbfc1:
 
-Tyler
+  [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY (2020-12-04 16:24:11 -0800)
 
->  
-> -	for (i = 0; i < rule->keyrings->count; i++) {
-> -		if (!strcmp(rule->keyrings->items[i], keyring)) {
-> +	for (i = 0; i < opt_list->count; i++) {
-> +		if (!strcmp(opt_list->items[i], func_data)) {
->  			matched = true;
->  			break;
->  		}
-> @@ -493,20 +507,20 @@ static bool ima_match_keyring(struct ima_rule_entry *rule,
->   * @secid: the secid of the task to be validated
->   * @func: LIM hook identifier
->   * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
-> - * @keyring: keyring name to check in policy for KEY_CHECK func
-> + * @func_data: private data specific to @func, can be NULL.
->   *
->   * Returns true on rule match, false on failure.
->   */
->  static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
->  			    const struct cred *cred, u32 secid,
->  			    enum ima_hooks func, int mask,
-> -			    const char *keyring)
-> +			    const char *func_data)
->  {
->  	int i;
->  
->  	if (func == KEY_CHECK) {
->  		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
-> -		       ima_match_keyring(rule, keyring, cred);
-> +			ima_match_rule_data(rule, func_data, cred);
->  	}
->  	if ((rule->flags & IMA_FUNC) &&
->  	    (rule->func != func && func != POST_SETATTR))
-> @@ -610,8 +624,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
->   * @mask: requested action (MAY_READ | MAY_WRITE | MAY_APPEND | MAY_EXEC)
->   * @pcr: set the pcr to extend
->   * @template_desc: the template that should be used for this rule
-> - * @keyring: the keyring name, if given, to be used to check in the policy.
-> - *           keyring can be NULL if func is anything other than KEY_CHECK.
-> + * @func_data: private data specific to @func, can be NULL.
->   *
->   * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
->   * conditions.
-> @@ -623,7 +636,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
->  int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
->  		     enum ima_hooks func, int mask, int flags, int *pcr,
->  		     struct ima_template_desc **template_desc,
-> -		     const char *keyring)
-> +		     const char *func_data)
->  {
->  	struct ima_rule_entry *entry;
->  	int action = 0, actmask = flags | (flags << 1);
-> @@ -638,7 +651,7 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
->  			continue;
->  
->  		if (!ima_match_rules(entry, inode, cred, secid, func, mask,
-> -				     keyring))
-> +				     func_data))
->  			continue;
->  
->  		action |= entry->flags & IMA_ACTION_FLAGS;
-> -- 
-> 2.17.1
-> 
+----------------------------------------------------------------
+Fix namespaced fscaps when !CONFIG_SECURITY from Serge Hallyn.
+
+----------------------------------------------------------------
+Serge Hallyn (1):
+      [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY
+
+ include/linux/security.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ed9b25d1970a4787ac6a39c2091e63b127ecbfc1
+Author: Serge Hallyn <shallyn@cisco.com>
+Date:   Sun Nov 15 21:55:31 2020 -0600
+
+    [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY
+    
+    Namespaced file capabilities were introduced in 8db6c34f1dbc .
+    When userspace reads an xattr for a namespaced capability, a
+    virtualized representation of it is returned if the caller is
+    in a user namespace owned by the capability's owning rootid.
+    The function which performs this virtualization was not hooked
+    up if CONFIG_SECURITY=n.  Therefore in that case the original
+    xattr was shown instead of the virtualized one.
+    
+    To test this using libcap-bin (*1),
+    
+    $ v=$(mktemp)
+    $ unshare -Ur setcap cap_sys_admin-eip $v
+    $ unshare -Ur setcap -v cap_sys_admin-eip $v
+    /tmp/tmp.lSiIFRvt8Y: OK
+    
+    "setcap -v" verifies the values instead of setting them, and
+    will check whether the rootid value is set.  Therefore, with
+    this bug un-fixed, and with CONFIG_SECURITY=n, setcap -v will
+    fail:
+    
+    $ v=$(mktemp)
+    $ unshare -Ur setcap cap_sys_admin=eip $v
+    $ unshare -Ur setcap -v cap_sys_admin=eip $v
+    nsowner[got=1000, want=0],/tmp/tmp.HHDiOOl9fY differs in []
+    
+    Fix this bug by calling cap_inode_getsecurity() in
+    security_inode_getsecurity() instead of returning
+    -EOPNOTSUPP, when CONFIG_SECURITY=n.
+    
+    *1 - note, if libcap is too old for getcap to have the '-n'
+    option, then use verify-caps instead.
+    
+    Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=209689
+    Cc: Hervé Guillemet <herve@guillemet.org>
+    Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+    Signed-off-by: Serge Hallyn <shallyn@cisco.com>
+    Signed-off-by: Andrew G. Morgan <morgan@kernel.org>
+    Signed-off-by: James Morris <jamorris@linux.microsoft.com>
+
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 0a0a03b36a3b..2befc0a25eb3 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -864,7 +864,7 @@ static inline int security_inode_killpriv(struct dentry *dentry)
+ 
+ static inline int security_inode_getsecurity(struct inode *inode, const char *name, void **buffer, bool alloc)
+ {
+-	return -EOPNOTSUPP;
++	return cap_inode_getsecurity(inode, name, buffer, alloc);
+ }
+ 
+ static inline int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags)
+--1665246916-1130980013-1607638613=:97768--
