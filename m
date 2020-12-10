@@ -2,129 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BA8C3526B
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 23:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C227C2D0E4
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 23:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC6BF23BA7
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 23:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D540E23B85
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 23:12:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394167AbgLJWbW (ORCPT
+        id S1733150AbgLJXLw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Dec 2020 17:31:22 -0500
-Received: from namei.org ([65.99.196.166]:60274 "EHLO mail.namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405118AbgLJWYm (ORCPT
+        Thu, 10 Dec 2020 18:11:52 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:35858 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389312AbgLJXL2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Dec 2020 17:24:42 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 28F6DDBF;
-        Thu, 10 Dec 2020 22:16:53 +0000 (UTC)
-Date:   Fri, 11 Dec 2020 09:16:53 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-kernel@vger.kernel.org,
+        Thu, 10 Dec 2020 18:11:28 -0500
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id E447020B717A;
+        Thu, 10 Dec 2020 15:10:46 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E447020B717A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1607641847;
+        bh=HD/Eb/nvd1N3loreEli1aDjX1T/BFtunMTmkh4/ZF9I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fJqTDE9woz58M75YJE5P6R/KI3RRTAP7jVY7xTi8OztwtzBfzPzXvA+FIWB3qCfoD
+         T4B74zQam133lOOP/KcW6Gjxa2XXh6NNbRsrPJ9Y1ILKP1gQI8GhV2AW0pNsjH+liz
+         jtDjvrlWBbrRUhFZFkag7FdlG/lb7hzANrZLme38=
+Date:   Thu, 10 Dec 2020 17:10:45 -0600
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, paul@paul-moore.com, sashal@kernel.org,
+        jmorris@namei.org, nramas@linux.microsoft.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY
-Message-ID: <bc4788a7-77ed-693-9b3a-52ab9bacc3b@namei.org>
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: Re: [PATCH v7 4/8] IMA: add policy rule to measure critical data
+Message-ID: <20201210231045.GI489768@sequoia>
+References: <20201209194212.5131-1-tusharsu@linux.microsoft.com>
+ <20201209194212.5131-5-tusharsu@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-1130980013-1607638613=:97768"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201209194212.5131-5-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 2020-12-09 11:42:08, Tushar Sugandhi wrote:
+> A new IMA policy rule is needed for the IMA hook
+> ima_measure_critical_data() and the corresponding func CRITICAL_DATA for
+> measuring the input buffer. The policy rule should ensure the buffer
+> would get measured only when the policy rule allows the action. The
+> policy rule should also support the necessary constraints (flags etc.)
+> for integrity critical buffer data measurements.
+> 
+> Add a policy rule to define the constraints for restricting integrity
+> critical data measurements.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima_policy.c | 35 +++++++++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 4 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 2a0c0603626e..9a8ee80a3128 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -34,6 +34,7 @@
+>  #define IMA_PCR		0x0100
+>  #define IMA_FSNAME	0x0200
+>  #define IMA_KEYRINGS	0x0400
+> +#define IMA_DATA_SOURCE	0x0800
 
---1665246916-1130980013-1607638613=:97768
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
+You introduce data_source= in the next patch. This macro shouldn't be
+added until the next patch.
 
-Please apply this config bugfix from Serge Hallyn.
+>  
+>  #define UNKNOWN		0
+>  #define MEASURE		0x0001	/* same as IMA_MEASURE */
+> @@ -85,6 +86,7 @@ struct ima_rule_entry {
+>  	} lsm[MAX_LSM_RULES];
+>  	char *fsname;
+>  	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+> +	struct ima_rule_opt_list *data_source; /* Measure data from this source */
+>  	struct ima_template_desc *template;
+>  };
+>  
+> @@ -479,6 +481,12 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
+>  		else
+>  			opt_list = rule->keyrings;
+>  		break;
+> +	case CRITICAL_DATA:
+> +		if (!rule->data_source)
+> +			return true;
+> +		else
+> +			opt_list = rule->data_source;
 
+If you take my suggestions on patch #1, remove the else and simply
+assign opt_list here, too.
 
-The following changes since commit bbf5c979011a099af5dc76498918ed7df445635b:
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> @@ -518,13 +526,19 @@ static bool ima_match_rules(struct ima_rule_entry *rule, struct inode *inode,
+>  {
+>  	int i;
+>  
+> -	if (func == KEY_CHECK) {
+> -		return (rule->flags & IMA_FUNC) && (rule->func == func) &&
+> -			ima_match_rule_data(rule, func_data, cred);
+> -	}
+>  	if ((rule->flags & IMA_FUNC) &&
+>  	    (rule->func != func && func != POST_SETATTR))
+>  		return false;
+> +
+> +	switch (func) {
+> +	case KEY_CHECK:
+> +	case CRITICAL_DATA:
+> +		return ((rule->func == func) &&
+> +			ima_match_rule_data(rule, func_data, cred));
+> +	default:
+> +		break;
+> +	}
+> +
+>  	if ((rule->flags & IMA_MASK) &&
+>  	    (rule->mask != mask && func != POST_SETATTR))
+>  		return false;
+> @@ -1119,6 +1133,19 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+>  		if (ima_rule_contains_lsm_cond(entry))
+>  			return false;
+>  
+> +		break;
+> +	case CRITICAL_DATA:
+> +		if (entry->action & ~(MEASURE | DONT_MEASURE))
+> +			return false;
+> +
+> +		if (!(entry->flags & IMA_DATA_SOURCE) ||
+> +		    (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
+> +		    IMA_DATA_SOURCE)))
 
-  Linux 5.9 (2020-10-11 14:15:50 -0700)
+IMA_DATA_SOURCE shouldn't exist in this patch. This isn't the right
+indentation, either. See how IMA_KEYRINGS is indented in the KEY_CHECK
+case above.
 
-are available in the Git repository at:
+Tyler
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.10a
-
-for you to fetch changes up to ed9b25d1970a4787ac6a39c2091e63b127ecbfc1:
-
-  [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY (2020-12-04 16:24:11 -0800)
-
-----------------------------------------------------------------
-Fix namespaced fscaps when !CONFIG_SECURITY from Serge Hallyn.
-
-----------------------------------------------------------------
-Serge Hallyn (1):
-      [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY
-
- include/linux/security.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-commit ed9b25d1970a4787ac6a39c2091e63b127ecbfc1
-Author: Serge Hallyn <shallyn@cisco.com>
-Date:   Sun Nov 15 21:55:31 2020 -0600
-
-    [SECURITY] fix namespaced fscaps when !CONFIG_SECURITY
-    
-    Namespaced file capabilities were introduced in 8db6c34f1dbc .
-    When userspace reads an xattr for a namespaced capability, a
-    virtualized representation of it is returned if the caller is
-    in a user namespace owned by the capability's owning rootid.
-    The function which performs this virtualization was not hooked
-    up if CONFIG_SECURITY=n.  Therefore in that case the original
-    xattr was shown instead of the virtualized one.
-    
-    To test this using libcap-bin (*1),
-    
-    $ v=$(mktemp)
-    $ unshare -Ur setcap cap_sys_admin-eip $v
-    $ unshare -Ur setcap -v cap_sys_admin-eip $v
-    /tmp/tmp.lSiIFRvt8Y: OK
-    
-    "setcap -v" verifies the values instead of setting them, and
-    will check whether the rootid value is set.  Therefore, with
-    this bug un-fixed, and with CONFIG_SECURITY=n, setcap -v will
-    fail:
-    
-    $ v=$(mktemp)
-    $ unshare -Ur setcap cap_sys_admin=eip $v
-    $ unshare -Ur setcap -v cap_sys_admin=eip $v
-    nsowner[got=1000, want=0],/tmp/tmp.HHDiOOl9fY differs in []
-    
-    Fix this bug by calling cap_inode_getsecurity() in
-    security_inode_getsecurity() instead of returning
-    -EOPNOTSUPP, when CONFIG_SECURITY=n.
-    
-    *1 - note, if libcap is too old for getcap to have the '-n'
-    option, then use verify-caps instead.
-    
-    Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=209689
-    Cc: Hervé Guillemet <herve@guillemet.org>
-    Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-    Signed-off-by: Serge Hallyn <shallyn@cisco.com>
-    Signed-off-by: Andrew G. Morgan <morgan@kernel.org>
-    Signed-off-by: James Morris <jamorris@linux.microsoft.com>
-
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 0a0a03b36a3b..2befc0a25eb3 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -864,7 +864,7 @@ static inline int security_inode_killpriv(struct dentry *dentry)
- 
- static inline int security_inode_getsecurity(struct inode *inode, const char *name, void **buffer, bool alloc)
- {
--	return -EOPNOTSUPP;
-+	return cap_inode_getsecurity(inode, name, buffer, alloc);
- }
- 
- static inline int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags)
---1665246916-1130980013-1607638613=:97768--
+> +			return false;
+> +
+> +		if (ima_rule_contains_lsm_cond(entry))
+> +			return false;
+> +
+>  		break;
+>  	default:
+>  		return false;
+> -- 
+> 2.17.1
+> 
