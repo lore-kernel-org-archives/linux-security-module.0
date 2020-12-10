@@ -2,126 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F07C2C4361B
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 09:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD75C433FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 09:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ADCF23B31
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 09:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F9C923D25
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Dec 2020 09:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732673AbgLJJki (ORCPT
+        id S1728756AbgLJJup (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Dec 2020 04:40:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44264 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731146AbgLJJkg (ORCPT
+        Thu, 10 Dec 2020 04:50:45 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:59397 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725997AbgLJJup (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Dec 2020 04:40:36 -0500
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00E33C061794
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Dec 2020 01:39:55 -0800 (PST)
-Received: by mail-vs1-xe41.google.com with SMTP id x26so2524772vsq.1
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Dec 2020 01:39:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lv1NfgTb7QIF3AXa/c4X8+rTmIE6V/EqKtuPGFR6zg8=;
-        b=S7Pkm4cCLEf4W4nwx8c7uks4lJK8p3/l3GOZ1ira+Vv19bt2HnmTD4QjI4tfkEzNIj
-         rAcSOaVsaZUwp3dwaYi12HGVGQIo/DJKFgNGpYZpWmlf7Z3oT7XRlTBL3jNn61FgQgQP
-         A1SW+/t+IAi+hS2p1U4fvyLHgRh05nhpeoxv4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lv1NfgTb7QIF3AXa/c4X8+rTmIE6V/EqKtuPGFR6zg8=;
-        b=gXHoThVIKHLLJ1hk7iwAgR3N9PVMs/6grrDL9jcdGmMsH6beCQ5CEOXmJzkgqy49zo
-         G7rzmfehyTt5qc5O5vJP29aKepQcYpsH2IcnEuiNnblEWixA/91MsToPNzA6P2QnScno
-         hXRikifYeKjJAWIk2Sgunf4JJ7aVLxLes2xIL7zozDMLEcUiDUHmdWzjhUTLoP2aTAAY
-         9Yb/ZwJE7lckCqLGzaOyjGOBYL0uLvovDJfATuufOIg2UydMBADOjEGyLBqwt+6IX4Jl
-         vVTEtT/GLUlk2ZjY4GN23bUkZuKzXBlo6gl1+bITjWaq8q85YkxRZfYc+fUXLgKuKMPD
-         fTRQ==
-X-Gm-Message-State: AOAM532y/lG5/TrrDL02YZVRnIe9s+HZTSNVz0ld3boZGCu0gVk7erS9
-        93N7Kc5FmYKrjPU9PpjFgc2FxzU+MtWFZ7sKGeYRWQ==
-X-Google-Smtp-Source: ABdhPJxC25gs9iKjXNoeKLvSyprubfFJKB9elMWP9JJu4yk22W5JJYzGK+qDK5LYzdi+9eQj0J0q5TCPHorI5NHeZYk=
-X-Received: by 2002:a05:6102:2:: with SMTP id j2mr6462091vsp.47.1607593195047;
- Thu, 10 Dec 2020 01:39:55 -0800 (PST)
+        Thu, 10 Dec 2020 04:50:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607593759;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ANRQNvQxs5wiZtk/4xV+GI9Sns6KDSiXIeFUsgCF5nw=;
+        b=dYZhXkZa9c5QZS5fXz+uWU/+kZNCgZTjTXIlo6OtGrB4QKVlj/BXypm2p91L2zFWYy4uyW
+        GRBIGOoM45cx+omd+GUZNL28V7YWE7cTmIq00jOOuxwkhTJFsxoWKIoB5C5RqIM7WIF8/n
+        MsE8s2nP+a4bc+Vc3dQLbzS0TJpf+Eg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-412-lCu6pvXdM4Wj2oM-EJz8lg-1; Thu, 10 Dec 2020 04:49:15 -0500
+X-MC-Unique: lCu6pvXdM4Wj2oM-EJz8lg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B7B66AFA89;
+        Thu, 10 Dec 2020 09:49:12 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0A4D55B6A2;
+        Thu, 10 Dec 2020 09:49:08 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20200916004927.64276-1-eric.snowberg@oracle.com>
+References: <20200916004927.64276-1-eric.snowberg@oracle.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jarkko.sakkinen@linux.intel.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jmorris@namei.org, serge@hallyn.com,
+        nayna@linux.ibm.com, zohar@linux.ibm.com, erichte@linux.ibm.com,
+        mpe@ellerman.id.au, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <1725e01a-4d4d-aecb-bad6-54aa220b4cd2@i-love.sakura.ne.jp>
- <7a64acab-dd05-765f-df2c-4896eb6a29df@canonical.com>
-In-Reply-To: <7a64acab-dd05-765f-df2c-4896eb6a29df@canonical.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 10 Dec 2020 10:39:44 +0100
-Message-ID: <CAJfpegsiuf8ib5cvVrr=zHZ+Xu7BMMTT2eYapsEUdmPcRBUiwQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] allow unprivileged overlay mounts
-To:     John Johansen <john.johansen@canonical.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1360577.1607593748.1@warthog.procyon.org.uk>
+Date:   Thu, 10 Dec 2020 09:49:08 +0000
+Message-ID: <1360578.1607593748@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Dec 10, 2020 at 10:00 AM John Johansen
-<john.johansen@canonical.com> wrote:
->
-> On 12/8/20 2:27 AM, Tetsuo Handa wrote:
-> > On 2020/12/08 1:32, Miklos Szeredi wrote:
-> >> A general observation is that overlayfs does not call security_path_*()
-> >> hooks on the underlying fs.  I don't see this as a problem, because a
-> >> simple bind mount done inside a private mount namespace also defeats the
-> >> path based security checks.  Maybe I'm missing something here, so I'm
-> >> interested in comments from AppArmor and Tomoyo developers.
-> >
-> > Regarding TOMOYO, I don't want overlayfs to call security_path_*() hooks on the
-> > underlying fs, but the reason is different. It is not because a simple bind mount
-> > done inside a private mount namespace defeats the path based security checks.
-> > TOMOYO does want to check what device/filesystem is mounted on which location. But
-> > currently TOMOYO is failing to check it due to fsopen()/fsmount()/move_mount() API.
-> >
->
-> Regardless of TOMOYO's approach I would say that overlays should call the
-> security_path_*() hooks, making it possible for an LSM to do something based off of
-> them when needed.
->
-> The current state of private mounts with regard to path based mediation is broken.
-> I just haven't had time to try and come up with an acceptable fix for it. overlayfs
-> is actually broken under apparmor mediation, and accesses to the lower layer end up
-> getting denied but there is no way to properly allow them. So policy that hits this
-> needs a flag set that allows for it in a very hacky way (its on the list of things
-> to fix).
->
-> Path based mediation has to carefully control mounts otherwise policy can be
-> circumvented as Miklos rightly points out. Ideally path based LSM wouldn't allow
-> you to do the simple bind mount inside a private mount namespace (at least not
-> unless policy allowed for it). AppArmor does mediate the mount hooks and bind
-> mounts in a private mount namespace (if they go through the LSM mount hooks) will
-> be denied. Again the problem is how to allow them, and this is broken.
+Eric Snowberg <eric.snowberg@oracle.com> wrote:
 
-Okay, so what does that mean for overlayfs?
+> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
+> is found, it is added as an asymmetrical key to the .blacklist keyring.
+> Anytime the .platform keyring is used, the keys in the .blacklist keyring
+> are referenced, if a matching key is found, the key will be rejected.
 
-AA can deny the overlay mount just as well as the bind mount, and it
-can allow it just as well as the bind mount.  Policy could be the
-same.
+Ummm...  Why this way and not as a blacklist key which takes up less space?
+I'm guessing that you're using the key chain matching logic.  We really only
+need to blacklist the key IDs.
 
-Also all the security_path_ hooks will still get called for each
-access on overlayfs itself.  They won't be called for the accesses
-which overlayfs does on underlying layers, but is that needed?
+Also, what should happen if a revocation cert rejected by the blacklist?
 
-Overlay could call those hooks itself (since the vfs_ helpers don't)
-but the big question is whether that makes any sense.  AFAICS it might
-make sense, but only if AA would correctly handle bind mounts, and
-especially detached bind mounts (which is what overlayfs technically
-uses).
+> +int mark_key_revocationlisted(const char *data, size_t size)
 
-Thanks,
-Miklos
+Hmmm...  The name looks wrong, but I can see the potential issue that kernel
+keys can actually be marked revoked as a separate concept.  How about
+add_key_to_revocation_list() and is_key_on_revocation_list().
 
-Tja
+David
+
