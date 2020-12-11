@@ -2,143 +2,77 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596CAC4361B
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 19:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE4FC4361B
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 20:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A50B2405B
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 19:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A1F22311A
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 20:05:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405620AbgLKRry (ORCPT
+        id S2390795AbgLKSdq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Dec 2020 12:47:54 -0500
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:59906 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2405633AbgLKRrS (ORCPT
+        Fri, 11 Dec 2020 13:33:46 -0500
+Received: from smtp-bc0f.mail.infomaniak.ch ([45.157.188.15]:45427 "EHLO
+        smtp-bc0f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2393989AbgLKSdV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Dec 2020 12:47:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A4A201280195;
-        Fri, 11 Dec 2020 09:46:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1607708796;
-        bh=eES7dkAWAETGlrB/U5ZcYdxiZYF5ERyWxz5zpk5XS54=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=aSCTaU08AIo2KulFz0YKW5uDbOoeqsKWNO8rT5OQkooKfvQgZoFprGW9Hij4XfqTn
-         U6PBJKECnnVooKjlRbbwv/O+OMIQxkgFYOrYx4KGngF+2bMuaHYc7bQbSrXlhucPGg
-         1E0wiTJzYVG7ZyXVanYziUzjN9e8C++KrjAVm4iI=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id wC4SYAMM1k4E; Fri, 11 Dec 2020 09:46:36 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 114BA1280193;
-        Fri, 11 Dec 2020 09:46:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1607708796;
-        bh=eES7dkAWAETGlrB/U5ZcYdxiZYF5ERyWxz5zpk5XS54=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=aSCTaU08AIo2KulFz0YKW5uDbOoeqsKWNO8rT5OQkooKfvQgZoFprGW9Hij4XfqTn
-         U6PBJKECnnVooKjlRbbwv/O+OMIQxkgFYOrYx4KGngF+2bMuaHYc7bQbSrXlhucPGg
-         1E0wiTJzYVG7ZyXVanYziUzjN9e8C++KrjAVm4iI=
-Message-ID: <76710d8ec58c440ed7a7b446696b8659f694d0db.camel@HansenPartnership.com>
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with
- kernel measurements
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Fri, 11 Dec 2020 09:46:35 -0800
-In-Reply-To: <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
-References: <20200708154116.3199728-1-sashal@kernel.org>
-         <20200708154116.3199728-3-sashal@kernel.org>
-         <1594224793.23056.251.camel@linux.ibm.com>
-         <20200709012735.GX2722994@sasha-vm>
-         <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
-         <20201211031008.GN489768@sequoia>
-         <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Fri, 11 Dec 2020 13:33:21 -0500
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Cszsp6KkXzlh8TL;
+        Fri, 11 Dec 2020 19:32:30 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Cszsm6CK0zlh8TF;
+        Fri, 11 Dec 2020 19:32:28 +0100 (CET)
+Subject: Re: [PATCH v1 4/9] certs: Check that builtin blacklist hashes are
+ valid
+To:     David Howells <dhowells@redhat.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20201120180426.922572-5-mic@digikod.net>
+ <20201120180426.922572-1-mic@digikod.net>
+ <1221725.1607515111@warthog.procyon.org.uk>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <492d0fe7-826a-ac8f-bc41-29718ab3bb60@digikod.net>
+Date:   Fri, 11 Dec 2020 19:32:28 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1221725.1607515111@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2020-12-11 at 06:01 -0500, Mimi Zohar wrote:
-> On Thu, 2020-12-10 at 21:10 -0600, Tyler Hicks wrote:
-> > On 2020-11-29 08:17:38, Mimi Zohar wrote:
-> > > Hi Sasha,
-> > > 
-> > > On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
-> > > > On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
-> > > > > Hi Sasha,
-> > > > > 
-> > > > > On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
-> > > > > > From: Maurizio Drocco <maurizio.drocco@ibm.com>
-> > > > > > 
-> > > > > > [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c
-> > > > > > ]
-> > > > > > 
-> > > > > > Registers 8-9 are used to store measurements of the kernel
-> > > > > > and its command line (e.g., grub2 bootloader with tpm
-> > > > > > module enabled). IMA should include them in the boot
-> > > > > > aggregate. Registers 8-9 should be only included in non-
-> > > > > > SHA1 digests to avoid ambiguity.
-> > > > > 
-> > > > > Prior to Linux 5.8, the SHA1 template data hashes were padded
-> > > > > before being extended into the TPM.  Support for calculating
-> > > > > and extending the per TPM bank template data digests is only
-> > > > > being upstreamed in Linux 5.8.
-> > > > > 
-> > > > > How will attestation servers know whether to include PCRs 8 &
-> > > > > 9 in the the boot_aggregate calculation?  Now, there is a
-> > > > > direct relationship between the template data SHA1 padded
-> > > > > digest not including PCRs 8 & 9, and the new per TPM bank
-> > > > > template data digest including them.
-> > > > 
-> > > > Got it, I'll drop it then, thank you!
-> > > 
-> > > After re-thinking this over, I realized that the attestation
-> > > server can verify the "boot_aggregate" based on the quoted PCRs
-> > > without knowing whether padded SHA1 hashes or per TPM bank hash
-> > > values were extended into the TPM[1], but non-SHA1 boot aggregate
-> > > values [2] should always include PCRs 8 & 9.
-> > 
-> > I'm still not clear on how an attestation server would know to
-> > include PCRs 8 and 9 after this change came through a stable kernel
-> > update. It doesn't seem like something appropriate for stable since
-> > it requires code changes to attestation servers to handle the
-> > change.
-> > 
-> > I know this has already been released in some stable releases, so
-> > I'm too late, but perhaps I'm missing something.
+
+On 09/12/2020 12:58, David Howells wrote:
+> Mickaël Salaün <mic@digikod.net> wrote:
 > 
-> The point of adding PCRs 8 & 9 only to non-SHA1 boot_aggregate values
-> was to avoid affecting existing attestation servers.  The intention
-> was when attestation servers added support for the non-sha1
-> boot_aggregate values, they'd also include PCRs 8 & 9.  The existing
-> SHA1 boot_aggregate value remains PCRs 0 - 7.
+>> +      cmd_check_blacklist_hashes = $(AWK) -f scripts/check-blacklist-hashes.awk $(2); touch $@
 > 
-> To prevent this or something similar from happening again, what
-> should have been the proper way of including PCRs 8 & 9?
+> The script name needs prefixing with $(srctree)/ so that it can be used with
+> alternative build directories.
 
-Just to be pragmatic: this is going to happen again.  Shim is already
-measuring the Mok variables through PCR 14, so if we want an accurate
-boot aggregate, we're going to have to include PCR 14 as well (or
-persuade shim to measure through a PCR we're already including, which
-isn't impossible since I think shim should be measuring the Mok
-variables using the EV_EFI_VARIABLE_DRIVER_CONFIG event and, since it
-affects secure boot policy, that does argue it should be measured
-through PCR 7).
+Right
 
-James
+> 
+> Note that doesn't apply to scripts/extract-cert in the same makefile as that's
+> a built program and is to be found in the build dir, not the sources.
+> 
+> Btw, I'm pulling some of your cleanups/fixes into my fixes branch.
 
+OK, thanks. I'll send a new patch series rebased on your branch.
 
+> 
+> David
+> 
