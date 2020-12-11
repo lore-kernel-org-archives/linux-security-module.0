@@ -2,154 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCACEC4167B
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 11:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF6BDC4361B
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 15:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A514523C17
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 11:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD61120657
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 15:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389789AbgLKLC4 (ORCPT
+        id S2406086AbgLKOpa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Dec 2020 06:02:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29542 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389198AbgLKLCz (ORCPT
+        Fri, 11 Dec 2020 09:45:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47052 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406373AbgLKOpN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Dec 2020 06:02:55 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0BBB1uHl044220;
-        Fri, 11 Dec 2020 06:02:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=2UWdtsIqmeTCpDTpXt5VueVpDBTzEi7aN1IYg6RDpdA=;
- b=ZOKHrGBDbNvIl0Sa1klVruC7a0MCf9kjMh++99ZBZ5L5XfT6V3K4F2QSU+nWWSMlDSr7
- ZWIyZjtshjuWtdXdbU+j+nXCq03eGQyfA2y0Ur10nKSEiPduD4td3TP1peYZEUUT9CkX
- DCD9B41g4oOcUxO4gMj8HEM9HCZBZga0esQirtU6fswHlUpOfe999SQmQu+qxREC71mG
- GbUIs9KjI5pjCBWGT+2t93Vm+clsjvkOZyHz73TgaWASR378gdV6yonj6br6G7dWZs3l
- c8ys5y5sYEVhuL3sfOFxES0xQGCIi7qiRcONlCIki/iolfTSsk6TRZmvmd8Ucks/9ifH Lw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 35c6ka9mhx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Dec 2020 06:02:12 -0500
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0BBB2ALL045416;
-        Fri, 11 Dec 2020 06:02:10 -0500
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 35c6ka9mbx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Dec 2020 06:02:10 -0500
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0BBAvTb2000783;
-        Fri, 11 Dec 2020 11:01:59 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03ams.nl.ibm.com with ESMTP id 3581u86wx6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Dec 2020 11:01:59 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0BBB1vvD29950354
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Dec 2020 11:01:57 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E07B4A4062;
-        Fri, 11 Dec 2020 11:01:56 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EE6DA4054;
-        Fri, 11 Dec 2020 11:01:55 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.117.114])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 11 Dec 2020 11:01:55 +0000 (GMT)
-Message-ID: <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with
- kernel measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Fri, 11 Dec 2020 06:01:54 -0500
-In-Reply-To: <20201211031008.GN489768@sequoia>
-References: <20200708154116.3199728-1-sashal@kernel.org>
-         <20200708154116.3199728-3-sashal@kernel.org>
-         <1594224793.23056.251.camel@linux.ibm.com>
-         <20200709012735.GX2722994@sasha-vm>
-         <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
-         <20201211031008.GN489768@sequoia>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2020-12-11_01:2020-12-09,2020-12-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- clxscore=1031 impostorscore=0 bulkscore=0 priorityscore=1501
- lowpriorityscore=0 spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2012110066
+        Fri, 11 Dec 2020 09:45:13 -0500
+Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9D24C061794
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Dec 2020 06:44:32 -0800 (PST)
+Received: by mail-vs1-xe43.google.com with SMTP id x4so4887345vsp.7
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Dec 2020 06:44:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iA2d+rrgQXobuuvVm/MUOiVayGvmYelRBSVm3q6aijM=;
+        b=QC+2zzSTtj2h9xb3ytk8TQjtarb/1GIRAvMJFFc+Qxkt/CBt49otfxb7ho4zOPpf4E
+         UfBQ3/5zogW1pgkylCK4jy+jNk6SOq2gKmQdOBtYzQUikhcIC23uCLF+/y1pl5y/jKw5
+         IOoj16FRlUdrkBotwusINUnIih2vrZpVeKZ/M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iA2d+rrgQXobuuvVm/MUOiVayGvmYelRBSVm3q6aijM=;
+        b=fiJQOH85ibdRHBUJUKCEeoEUKFhel5DpHAD/XbrlL8/pyoZchnkGyy8E1hSVkz6dDB
+         IyWc2mUywJvx7Cwpg1nYyYmG2om6iI43ogmc/r53uTHxQxriw0VcOCgyBLHsHU34/ZTu
+         HuyUzISj6BW5u5fLhHZTDyuzOxoMeSzY9n+lSbz1i0q8lo7e7GA51KyqpIO5MfRBZbz/
+         b9qtETEd/JMVtWKUS1ClTVqxJaIn1V7R2a1NVI8OLVyiq+UcBLv9pzqbpr7OyOFdS3ve
+         37hH22eWYGPSyzxYiWOIbn2c8KgPx9f3tKPaY2sd5d8ei/Mp8rN1s8SaeYtfcP6r+lek
+         lQRA==
+X-Gm-Message-State: AOAM530QY2yPtZtDTKud2LIuxU0JAnPqecaqZ6L0dp6xC4g8gEmUAUed
+        XcjC2v01TpB4nAjKXTj+vXwuymKr3t3qN/L5Y2ehQw==
+X-Google-Smtp-Source: ABdhPJw16B1+C37MqnknEmfxoPs/GB/5T0eiuKddU0msdiG+DFkYSfUXcfzDJxaC8LyuizxgKkePC4UHOQt5Q6aVUI4=
+X-Received: by 2002:a67:ed57:: with SMTP id m23mr13654785vsp.7.1607697871933;
+ Fri, 11 Dec 2020 06:44:31 -0800 (PST)
+MIME-Version: 1.0
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-9-mszeredi@redhat.com>
+ <CAOQ4uxgy23chB-NQcXJ+P3hO0_M3iAkgi_wyhbpfT3wkaU+E7w@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgy23chB-NQcXJ+P3hO0_M3iAkgi_wyhbpfT3wkaU+E7w@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 11 Dec 2020 15:44:21 +0100
+Message-ID: <CAJfpegvpEkB2HL5THcUsmBVvcru1-DkSTo_DmA4pWNU_TV7ODg@mail.gmail.com>
+Subject: Re: [PATCH v2 08/10] ovl: do not fail because of O_NOATIME
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2020-12-10 at 21:10 -0600, Tyler Hicks wrote:
-> On 2020-11-29 08:17:38, Mimi Zohar wrote:
-> > Hi Sasha,
-> > 
-> > On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
-> > > On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
-> > > >Hi Sasha,
-> > > >
-> > > >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
-> > > >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
-> > > >>
-> > > >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
-> > > >>
-> > > >> Registers 8-9 are used to store measurements of the kernel and its
-> > > >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
-> > > >> should include them in the boot aggregate. Registers 8-9 should be
-> > > >> only included in non-SHA1 digests to avoid ambiguity.
-> > > >
-> > > >Prior to Linux 5.8, the SHA1 template data hashes were padded before
-> > > >being extended into the TPM.  Support for calculating and extending
-> > > >the per TPM bank template data digests is only being upstreamed in
-> > > >Linux 5.8.
-> > > >
-> > > >How will attestation servers know whether to include PCRs 8 & 9 in the
-> > > >the boot_aggregate calculation?  Now, there is a direct relationship
-> > > >between the template data SHA1 padded digest not including PCRs 8 & 9,
-> > > >and the new per TPM bank template data digest including them.
-> > > 
-> > > Got it, I'll drop it then, thank you!
-> > 
-> > After re-thinking this over, I realized that the attestation server can
-> > verify the "boot_aggregate" based on the quoted PCRs without knowing
-> > whether padded SHA1 hashes or per TPM bank hash values were extended
-> > into the TPM[1], but non-SHA1 boot aggregate values [2] should always
-> > include PCRs 8 & 9.
-> 
-> I'm still not clear on how an attestation server would know to include
-> PCRs 8 and 9 after this change came through a stable kernel update. It
-> doesn't seem like something appropriate for stable since it requires
-> code changes to attestation servers to handle the change.
-> 
-> I know this has already been released in some stable releases, so I'm
-> too late, but perhaps I'm missing something.
+On Tue, Dec 8, 2020 at 12:32 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Mon, Dec 7, 2020 at 6:37 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
+> >
+> > In case the file cannot be opened with O_NOATIME because of lack of
+> > capabilities, then clear O_NOATIME instead of failing.
+> >
+> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > ---
+> >  fs/overlayfs/file.c | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> > index dc767034d37b..d6ac7ac66410 100644
+> > --- a/fs/overlayfs/file.c
+> > +++ b/fs/overlayfs/file.c
+> > @@ -53,9 +53,10 @@ static struct file *ovl_open_realfile(const struct file *file,
+> >         err = inode_permission(realinode, MAY_OPEN | acc_mode);
+> >         if (err) {
+> >                 realfile = ERR_PTR(err);
+> > -       } else if (!inode_owner_or_capable(realinode)) {
+> > -               realfile = ERR_PTR(-EPERM);
+> >         } else {
+> > +               if (!inode_owner_or_capable(realinode))
+> > +                       flags &= ~O_NOATIME;
+> > +
+>
+> Isn't that going to break:
+>
+>         flags |= OVL_OPEN_FLAGS;
+>
+>         /* If some flag changed that cannot be changed then something's amiss */
+>         if (WARN_ON((file->f_flags ^ flags) & ~OVL_SETFL_MASK))
+>
+> IOW setting a flag that is allowed to change will fail because of
+> missing O_ATIME in file->f_flags.
 
-The point of adding PCRs 8 & 9 only to non-SHA1 boot_aggregate values
-was to avoid affecting existing attestation servers.  The intention was
-when attestation servers added support for the non-sha1 boot_aggregate
-values, they'd also include PCRs 8 & 9.  The existing SHA1
-boot_aggregate value remains PCRs 0 - 7.
+Well spotted.  I just removed those lines as a fix.   The check never
+triggered since its introduction in 4.19, so I guess it isn't worth
+adding more complexity for.
 
-To prevent this or something similar from happening again, what should
-have been the proper way of including PCRs 8 & 9?
+>
+> I guess we need test coverage for SETFL.
 
-thanks,
+There might be some in ltp, haven't checked.  Would be nice if the fs
+related ltp tests could be integrated into xfstests.
 
-Mimi
 
+Thanks,
+Miklos
