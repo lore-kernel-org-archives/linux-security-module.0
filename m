@@ -2,169 +2,171 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2715EC19437
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 03:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C221C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 08:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9C6F23BF0
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 03:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A18B23104
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 08:20:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390451AbgLKDaQ (ORCPT
+        id S2405515AbgLKITl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Dec 2020 22:30:16 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:40524 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395109AbgLKD3k (ORCPT
+        Fri, 11 Dec 2020 03:19:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43970 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405451AbgLKITE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Dec 2020 22:29:40 -0500
-Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1A7BF20B717A;
-        Thu, 10 Dec 2020 19:28:59 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1A7BF20B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607657339;
-        bh=rcijWVVTMTzX5ZOWnSTyFBk2pvV6w0RdbNA7Gje7iD4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=TBF+wcoIRE6sji0On6Qc1ljAt2RENrh6+/tBpIIOKUNLezGTP/fFVBE7O/nIVjs4b
-         wbRoHeZbMuuwiRsQGmskUBvQS7MgN+f7pn9ysGEfHLolD01YG9kxEofHnE9IONRVq8
-         a2K5As5n+9Cyv1c3U1xLNVqaGYvEgof4qdJYhquw=
-Subject: Re: [PATCH v7 5/8] IMA: limit critical data measurement based on a
- label
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com, sashal@kernel.org,
-        jmorris@namei.org, nramas@linux.microsoft.com,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Fri, 11 Dec 2020 03:19:04 -0500
+Received: from mail.kapsi.fi (mail.kapsi.fi [IPv6:2001:67c:1be8::25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BACCC0613CF;
+        Fri, 11 Dec 2020 00:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
+         s=20161220; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Q/1c6zPVM2kb71FCgSBD6/BH9IEEPXCHItl80hWLcm0=; b=u/yNH50V0yU1iD8Syex+KFHGGA
+        y0LTrZM6Bv1aX/OLuM9ZrAIceytMk7Qy8++YBOjHUyCjZO8/AOU2vmdSzYDuI/XbTKaU1R9StBqiw
+        Y1k9eMua+bF4q40NniX6vk3DKVDCZLzGboS+52kpRzqFljtyzD59mcsjRm69LUOcHa6thJceOcqq0
+        XioQ2+Awe9qJypEOhbqQBW6OOSAriepEoy/WCLjBAOKhRqhV/HorrsQHP9hbTenfflOxgxRSqi6Yu
+        GcA+bh+KyJk5c4v0w91QmIbSpqLybY+aV+gRsHgC8DzRvLzWSv1LlIUv+dWqko9BhzgqFR+cYKTNS
+        ch7+3Yqw==;
+Received: from 83-245-197-237.elisa-laajakaista.fi ([83.245.197.237] helo=kapsi.fi)
+        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <jarkko.sakkinen@iki.fi>)
+        id 1kndcl-0006qP-07; Fri, 11 Dec 2020 10:17:59 +0200
+Date:   Fri, 11 Dec 2020 10:17:57 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@iki.fi>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        Petko Manolov <petkan@mip-labs.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Jann Horn <jannh@google.com>, linux-crypto@vger.kernel.org,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Ben Boeckel <mathstuf@gmail.com>, keyrings@vger.kernel.org,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20201209194212.5131-1-tusharsu@linux.microsoft.com>
- <20201209194212.5131-6-tusharsu@linux.microsoft.com>
- <20201210231505.GJ489768@sequoia>
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Message-ID: <730f52ec-4b78-9aac-6c2e-c1ca63c929f1@linux.microsoft.com>
-Date:   Thu, 10 Dec 2020 19:28:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Tom Rix <trix@redhat.com>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Denis Efremov <efremov@linux.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: Re: [PATCH 00/18] keys: Miscellaneous fixes
+Message-ID: <20201211081757.GA3789@kapsi.fi>
+References: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20201210231505.GJ489768@sequoia>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <160751606428.1238376.14935502103503420781.stgit@warthog.procyon.org.uk>
+X-SA-Exim-Connect-IP: 83.245.197.237
+X-SA-Exim-Mail-From: jarkko.sakkinen@iki.fi
+X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Dec 09, 2020 at 12:14:24PM +0000, David Howells wrote:
+> 
+> Hi Jarkko,
+> 
+> I've extended my collection of minor keyrings fixes for the next merge
+> window.  Anything else I should add (or anything I should drop)?
+
+Looks good to me. I dropped the keys fixes that I had previously in
+my tree that I saw in yours.
 
 
-On 2020-12-10 3:15 p.m., Tyler Hicks wrote:
-> On 2020-12-09 11:42:09, Tushar Sugandhi wrote:
->> System administrators should be able to limit which kernel subsystems
->> they want to measure the critical data for. To enable that, an IMA policy
->> condition to choose specific kernel subsystems is needed. This policy
->> condition would constrain the measurement of the critical data based on
->> a label for the given subsystems.
->>
->> Add a new IMA policy condition - "data_source:=" to the IMA func
->> CRITICAL_DATA to allow measurement of various kernel subsystems. This
->> policy condition would enable the system administrators to restrict the
->> measurement to the labels listed in "data_source:=".
->>
->> Limit the measurement to the labels that are specified in the IMA
->> policy - CRITICAL_DATA+"data_source:=". If "data_sources:=" is not
->> provided with the func CRITICAL_DATA, the data from all the
->> supported kernel subsystems is measured.
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> 
-> This patch will look good once all the IMA_DATA_SOURCE stuff is moved
-> over from patch #4.
-> 
-> Tyler
-> 
-Sounds good. Will do.
-~Tushar
+/Jarkko
 
->> ---
->>   Documentation/ABI/testing/ima_policy |  2 ++
->>   security/integrity/ima/ima_policy.c  | 26 +++++++++++++++++++++++++-
->>   2 files changed, 27 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
->> index 6ec7daa87cba..0f4ee9e0a455 100644
->> --- a/Documentation/ABI/testing/ima_policy
->> +++ b/Documentation/ABI/testing/ima_policy
->> @@ -52,6 +52,8 @@ Description:
->>   			template:= name of a defined IMA template type
->>   			(eg, ima-ng). Only valid when action is "measure".
->>   			pcr:= decimal value
->> +			data_source:= [label]
->> +			label:= a unique string used for grouping and limiting critical data.
->>   
->>   		  default policy:
->>   			# PROC_SUPER_MAGIC
->> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
->> index 9a8ee80a3128..7486d09a3f60 100644
->> --- a/security/integrity/ima/ima_policy.c
->> +++ b/security/integrity/ima/ima_policy.c
->> @@ -934,7 +934,7 @@ enum {
->>   	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
->>   	Opt_appraise_type, Opt_appraise_flag,
->>   	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
->> -	Opt_err
->> +	Opt_data_source, Opt_err
->>   };
->>   
->>   static const match_table_t policy_tokens = {
->> @@ -971,6 +971,7 @@ static const match_table_t policy_tokens = {
->>   	{Opt_pcr, "pcr=%s"},
->>   	{Opt_template, "template=%s"},
->>   	{Opt_keyrings, "keyrings=%s"},
->> +	{Opt_data_source, "data_source=%s"},
->>   	{Opt_err, NULL}
->>   };
->>   
->> @@ -1350,6 +1351,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>   
->>   			entry->flags |= IMA_KEYRINGS;
->>   			break;
->> +		case Opt_data_source:
->> +			ima_log_string(ab, "data_source", args[0].from);
->> +
->> +			if (entry->data_source) {
->> +				result = -EINVAL;
->> +				break;
->> +			}
->> +
->> +			entry->data_source = ima_alloc_rule_opt_list(args);
->> +			if (IS_ERR(entry->data_source)) {
->> +				result = PTR_ERR(entry->data_source);
->> +				entry->data_source = NULL;
->> +				break;
->> +			}
->> +
->> +			entry->flags |= IMA_DATA_SOURCE;
->> +			break;
->>   		case Opt_fsuuid:
->>   			ima_log_string(ab, "fsuuid", args[0].from);
->>   
->> @@ -1730,6 +1748,12 @@ int ima_policy_show(struct seq_file *m, void *v)
->>   		seq_puts(m, " ");
->>   	}
->>   
->> +	if (entry->flags & IMA_DATA_SOURCE) {
->> +		seq_puts(m, "data_source=");
->> +		ima_show_rule_opt_list(m, entry->data_source);
->> +		seq_puts(m, " ");
->> +	}
->> +
->>   	if (entry->flags & IMA_PCR) {
->>   		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
->>   		seq_printf(m, pt(Opt_pcr), tbuf);
->> -- 
->> 2.17.1
->>
+> 
+> The patches can be found on the following branch:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-fixes
+> 
+> David
+> ---
+> Alex Shi (2):
+>       PKCS#7: drop function from kernel-doc pkcs7_validate_trust_one
+>       certs/blacklist: fix kernel doc interface issue
+> 
+> Alexander A. Klimov (1):
+>       encrypted-keys: Replace HTTP links with HTTPS ones
+> 
+> David Howells (1):
+>       certs: Fix blacklist flag type confusion
+> 
+> Denis Efremov (1):
+>       security/keys: use kvfree_sensitive()
+> 
+> Gabriel Krisman Bertazi (1):
+>       watch_queue: Drop references to /dev/watch_queue
+> 
+> Gustavo A. R. Silva (1):
+>       security: keys: Fix fall-through warnings for Clang
+> 
+> Jann Horn (1):
+>       keys: Remove outdated __user annotations
+> 
+> Krzysztof Kozlowski (1):
+>       KEYS: asymmetric: Fix kerneldoc
+> 
+> Mickaël Salaün (3):
+>       certs: Fix blacklisted hexadecimal hash string check
+>       PKCS#7: Fix missing include
+>       certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
+> 
+> Randy Dunlap (2):
+>       security: keys: delete repeated words in comments
+>       crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
+> 
+> Tianjia Zhang (1):
+>       crypto: public_key: Remove redundant header file from public_key.h
+> 
+> Tom Rix (2):
+>       KEYS: remove redundant memset
+>       keys: remove trailing semicolon in macro definition
+> 
+> YueHaibing (1):
+>       crypto: pkcs7: Use match_string() helper to simplify the code
+> 
+> 
+>  Documentation/security/keys/core.rst     |  4 ++--
+>  certs/blacklist.c                        | 10 +++++-----
+>  certs/system_keyring.c                   |  5 +++--
+>  crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
+>  crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
+>  crypto/asymmetric_keys/pkcs7_trust.c     |  2 +-
+>  crypto/asymmetric_keys/pkcs7_verify.c    |  9 ++++-----
+>  include/crypto/public_key.h              |  1 -
+>  include/keys/encrypted-type.h            |  2 +-
+>  include/linux/key.h                      |  5 +++--
+>  include/linux/verification.h             |  2 ++
+>  samples/Kconfig                          |  2 +-
+>  samples/watch_queue/watch_test.c         |  2 +-
+>  security/integrity/ima/ima_mok.c         |  3 +--
+>  security/keys/Kconfig                    |  8 ++++----
+>  security/keys/big_key.c                  |  9 +++------
+>  security/keys/key.c                      |  2 ++
+>  security/keys/keyctl.c                   |  2 +-
+>  security/keys/keyctl_pkey.c              |  2 --
+>  security/keys/keyring.c                  | 10 +++++-----
+>  20 files changed, 45 insertions(+), 46 deletions(-)
+> 
+> 
+> 
