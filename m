@@ -7,26 +7,29 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 240F7C4361B
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 20:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7B6C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 20:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB91324058
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 20:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E9124058
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Dec 2020 20:51:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391692AbgLKTEm (ORCPT
+        id S2393560AbgLKTFq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Dec 2020 14:04:42 -0500
-Received: from smtp-bc0f.mail.infomaniak.ch ([45.157.188.15]:48749 "EHLO
-        smtp-bc0f.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389626AbgLKTEj (ORCPT
+        Fri, 11 Dec 2020 14:05:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393420AbgLKTFX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Dec 2020 14:04:39 -0500
+        Fri, 11 Dec 2020 14:05:23 -0500
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BB09C06138C
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Dec 2020 11:03:49 -0800 (PST)
 Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ct0Yr4b9Yzlh9wN;
-        Fri, 11 Dec 2020 20:03:44 +0100 (CET)
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Ct0Yv1GTxzlhLNB;
+        Fri, 11 Dec 2020 20:03:47 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ct0Yq6lwpzlh8T5;
-        Fri, 11 Dec 2020 20:03:43 +0100 (CET)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Ct0Yt670Fzlh8T5;
+        Fri, 11 Dec 2020 20:03:46 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -40,9 +43,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v2 1/5] certs: Make blacklist_vet_description() more strict
-Date:   Fri, 11 Dec 2020 20:03:26 +0100
-Message-Id: <20201211190330.2586116-2-mic@digikod.net>
+Subject: [PATCH v2 3/5] certs: Check that builtin blacklist hashes are valid
+Date:   Fri, 11 Dec 2020 20:03:28 +0100
+Message-Id: <20201211190330.2586116-4-mic@digikod.net>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201211190330.2586116-1-mic@digikod.net>
 References: <20201211190330.2586116-1-mic@digikod.net>
@@ -54,14 +57,11 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Before exposing this new key type to user space, make sure that only
-meaningful blacklisted hashes are accepted.  This is also checked for
-builtin blacklisted hashes, but a following commit make sure that the
-user will notice (at built time) and will fix the configuration if it
-already included errors.
-
-Check that a blacklist key description starts with a valid prefix and
-then a valid hexadecimal string.
+Add and use a check-blacklist-hashes.awk script to make sure that the
+builtin blacklist hashes will be approved by the run time blacklist
+description checks.  This is useful to debug invalid hash formats, and
+it make sure that previous hashes which could have been loaded in the
+kernel (but ignored) are now noticed and deal with by the user.
 
 Cc: David Howells <dhowells@redhat.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
@@ -69,84 +69,113 @@ Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 ---
 
 Changes since v1:
-* Return ENOPKG (instead of EINVAL) when a hash is greater than the
-  maximum currently known hash (suggested by David Howells).
+* Prefix script path with $(scrtree)/ (suggested by David Howells).
+* Fix hexadecimal number check.
 ---
- certs/blacklist.c | 46 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 10 deletions(-)
+ MAINTAINERS                        |  1 +
+ certs/.gitignore                   |  1 +
+ certs/Makefile                     | 15 +++++++++++-
+ scripts/check-blacklist-hashes.awk | 37 ++++++++++++++++++++++++++++++
+ 4 files changed, 53 insertions(+), 1 deletion(-)
+ create mode 100755 scripts/check-blacklist-hashes.awk
 
-diff --git a/certs/blacklist.c b/certs/blacklist.c
-index bffe4c6f4a9e..9ea7d4eb6bfb 100644
---- a/certs/blacklist.c
-+++ b/certs/blacklist.c
-@@ -18,6 +18,16 @@
- #include <keys/system_keyring.h>
- #include "blacklist.h"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a008b70f3c16..e9d4453caf5d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4080,6 +4080,7 @@ L:	keyrings@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/admin-guide/module-signing.rst
+ F:	certs/
++F:	scripts/check-blacklist-hashes.awk
+ F:	scripts/extract-cert.c
+ F:	scripts/sign-file.c
  
-+/*
-+ * According to crypto/asymmetric_keys/x509_cert_parser.c:x509_note_pkey_algo(),
-+ * the size of the currently longest supported hash algorithm is 512 bits,
-+ * which translates into 128 hex characters.
-+ */
-+#define MAX_HASH_LEN	128
+diff --git a/certs/.gitignore b/certs/.gitignore
+index 2a2483990686..42cc2ac24b93 100644
+--- a/certs/.gitignore
++++ b/certs/.gitignore
+@@ -1,2 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++blacklist_hashes_checked
+ x509_certificate_list
+diff --git a/certs/Makefile b/certs/Makefile
+index f4c25b67aad9..eb45407ff282 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -6,7 +6,20 @@
+ obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o
+ ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
 +
-+static const char tbs_prefix[] = "tbs";
-+static const char bin_prefix[] = "bin";
++quiet_cmd_check_blacklist_hashes = CHECK   $(patsubst "%",%,$(2))
++      cmd_check_blacklist_hashes = $(AWK) -f $(srctree)/scripts/check-blacklist-hashes.awk $(2); touch $@
 +
- static struct key *blacklist_keyring;
++$(eval $(call config_filename,SYSTEM_BLACKLIST_HASH_LIST))
++
++$(obj)/blacklist_hashes.o: $(obj)/blacklist_hashes_checked
++
++targets += blacklist_hashes_checked
++$(obj)/blacklist_hashes_checked: $(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(SYSTEM_BLACKLIST_HASH_LIST_FILENAME) scripts/check-blacklist-hashes.awk FORCE
++	$(call if_changed,check_blacklist_hashes,$(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(CONFIG_SYSTEM_BLACKLIST_HASH_LIST))
++
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_hashes.o
++
+ else
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_nohashes.o
+ endif
+@@ -29,7 +42,7 @@ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREF
+ 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
+ endif # CONFIG_SYSTEM_TRUSTED_KEYRING
  
- /*
-@@ -26,24 +36,40 @@ static struct key *blacklist_keyring;
-  */
- static int blacklist_vet_description(const char *desc)
- {
--	int n = 0;
--
--	if (*desc == ':')
--		return -EINVAL;
--	for (; *desc; desc++)
--		if (*desc == ':')
--			goto found_colon;
-+	int i, prefix_len, tbs_step = 0, bin_step = 0;
+-clean-files := x509_certificate_list .x509.list
++clean-files := x509_certificate_list .x509.list blacklist_hashes_checked
+ 
+ ifeq ($(CONFIG_MODULE_SIG),y)
+ ###############################################################################
+diff --git a/scripts/check-blacklist-hashes.awk b/scripts/check-blacklist-hashes.awk
+new file mode 100755
+index 000000000000..107c1d3204d4
+--- /dev/null
++++ b/scripts/check-blacklist-hashes.awk
+@@ -0,0 +1,37 @@
++#!/usr/bin/awk -f
++# SPDX-License-Identifier: GPL-2.0
++#
++# Copyright © 2020, Microsoft Corporation. All rights reserved.
++#
++# Author: Mickaël Salaün <mic@linux.microsoft.com>
++#
++# Check that a CONFIG_SYSTEM_BLACKLIST_HASH_LIST file contains a valid array of
++# hash strings.  Such string must start with a prefix ("tbs" or "bin"), then a
++# colon (":"), and finally an even number of hexadecimal lowercase characters
++# (up to 128).
 +
-+	/* The following algorithm only works if prefix lenghts match. */
-+	BUILD_BUG_ON(sizeof(tbs_prefix) != sizeof(bin_prefix));
-+	prefix_len = sizeof(tbs_prefix) - 1;
-+	for (i = 0; *desc; desc++, i++) {
-+		if (*desc == ':') {
-+			if (tbs_step == prefix_len)
-+				goto found_colon;
-+			if (bin_step == prefix_len)
-+				goto found_colon;
-+			return -EINVAL;
-+		}
-+		if (i >= prefix_len)
-+			return -EINVAL;
-+		if (*desc == tbs_prefix[i])
-+			tbs_step++;
-+		if (*desc == bin_prefix[i])
-+			bin_step++;
++BEGIN {
++	RS = ","
++}
++{
++	if (!match($0, "^[ \t\n\r]*\"([^\"]*)\"[ \t\n\r]*$", part1)) {
++		print "Not a string (item " NR "):", $0;
++		exit 1;
 +	}
- 	return -EINVAL;
- 
- found_colon:
- 	desc++;
--	for (; *desc; desc++) {
-+	for (i = 0; *desc && i < MAX_HASH_LEN; desc++, i++) {
- 		if (!isxdigit(*desc) || isupper(*desc))
- 			return -EINVAL;
--		n++;
- 	}
-+	if (*desc)
-+		/* The hash is greater than MAX_HASH_LEN. */
-+		return -ENOPKG;
- 
--	if (n == 0 || n & 1)
-+	/* Checks for an even number of hexadecimal characters. */
-+	if (i == 0 || i & 1)
- 		return -EINVAL;
- 	return 0;
- }
++	if (!match(part1[1], "^(tbs|bin):(.*)$", part2)) {
++		print "Unknown prefix (item " NR "):", part1[1];
++		exit 1;
++	}
++	if (!match(part2[2], "^([0-9a-f]+)$", part3)) {
++		print "Not a lowercase hexadecimal string (item " NR "):", part2[2];
++		exit 1;
++	}
++	if (length(part3[1]) > 128) {
++		print "Hash string too long (item " NR "):", part3[1];
++		exit 1;
++	}
++	if (length(part3[1]) % 2 == 1) {
++		print "Not an even number of hexadecimal characters (item " NR "):", part3[1];
++		exit 1;
++	}
++}
 -- 
 2.29.2
 
