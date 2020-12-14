@@ -2,148 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4868EC2BBCA
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 18:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB51C2BB48
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 20:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EE2422573
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 18:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68DF522473
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 20:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408746AbgLNSqr (ORCPT
+        id S2503443AbgLNUyA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Dec 2020 13:46:47 -0500
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:38580
-        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2408729AbgLNSqf (ORCPT
+        Mon, 14 Dec 2020 15:54:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503437AbgLNUxs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Dec 2020 13:46:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1607971548; bh=P6YkrPT5uA6xxgGjT0j4A8luoT/rgVDj8d9AKZCndQQ=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=gD0EJfovHcz3qsa8+eMNJjx2drp3AU3Ina1cfHT/ks9Z3TgN6gysHm2SJasEDSEDBGP4rghDCFh02O3VaSYG7BMG80JfWDgIFAo2lxTvj7ELCq/rGZUcylHNZN9Mh5QflD2sL4AN3/a/TrO/jeRRsnTtmCLbEs+BvazHmvS1WxD5/4GXIn6bm0etONuNL4Nmcrl+VhcJ1tNcZpTb6kVJAk0MFWb3dVjy1dYbjXCy2h02Su/99rLDD0dHqKsZlRiKGkPoTqZ9bXf89oqowQzSK+fjZ3lhp9uFgk0J66QmkKRH22Q12hOM188XbiEJwhvNEDYcqP0/RCBjhVw2ZR/mog==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1607971548; bh=/OBwNzribKawewf0yP0CIZX3lxcW2uBUaR/pqPx9HA4=; h=Subject:To:From:Date:From:Subject; b=Ns/217mmg0911FZ8WbHOLCfklwn84GUbN9Z0eyynGv2VJZqeFY3ZmRxet7g7w/QwMCDnYsqyrApgE30nYR4l5VVIhAPd5f16S5WE9kxjqlNOWQORFtx1nXci3/BxSw6DyiLWcP6P58lfWj4ne2nyiD+12JPkdIzeAqIar9DEXkfUDnVE5EtJbkci27+gi/XiC+7xiLzs+NiTtta+JJnidQFXsbZhHMWFItCEtINHkqAZTPui59QxVGCn0ogPjt5qV93f/r5p3I/LLXcOEcZTKB4Q2VjMO90SWxkt2ip4UI3NMK/Dlpynwd5Eo4BvOVcHd9XAXjwK4CFiBVq5Wnwu0A==
-X-YMail-OSG: Ami_UT0VM1mwjRcaCIpKoS.69wE7nLWXyDrJXY0HjBrmScQMO1VcC6VBLEb.JZp
- 1ontZBpTvmrmQsCc6QSdWdAtt4Vzux5VH1PwBvSAiRGm.lYtswn1H9455Ic9.sjMyZ_YUSGVl6Cw
- Gv_U4rZ3ugCc0RU6LlttMn.5PXRZXM0n9b07BlBndx.7mVKdISsKRzMhbz9mLzO9.UNxK_pqA5_z
- J40QI2uisbtT.m4Eh2XO7cKxTk1v6lCMeIvHZralisHeduDXZf.5a24rPICDQBUZ7REnYkXv250j
- 6fLbukJcJaEhGau6TE2M3x9RS66kp9UqAzHZO.lgghZpg..KItGXuKNyhD09dpHni0jNVWmpMTok
- UtHCW_GiuQStF84fUQd09VsMVZIb47auyMqiOHm6d7_Ahe5mmpVab.1kGs9yeaVJXNsHxHFv6lbe
- JICKoiUNN02lsRsZgWDl5J6bbTtAVHQpWMdjy5ejoJmiyFw3KwkXwc2BXv7CirfWY0B9Syu82kVP
- QDPyqkCJm0jA9UzROEAUiC6rMEZGfxDQA3x.X7USr7rTdsG6p8G21Bfyv4hNucXvWFHduHahRs7w
- JZgIvJ0O31d2Ey1Bfqlo1NsRhL8fD62uG7Lzy8tPCOgE7g3328f54TuaylGDGqu1tsGptlEQaDT2
- e.MnwERS5Wh7iAPt6xvzBJraAoqqSjwMYWw.N7mtWthjO6Y0j6dr6S4hDdGWTqUcLB17_SRQnfhV
- Vz_N_ifbyFxnv4Va5YZlO5oSWedq4F3TLIqpGXx3Ly55ccdSevtfc7XRuyDlkVTwRwCXK_4NZvS_
- 0XcZFfQoUXbFDlSqv0Ujaba_csQeZhJAnvYUUYz1EF18MXDnGPKSJzDaT_9FsL83K64_xdxu4yxw
- nJ3OcptX.HrwlNogXgM9GVjs4_4YszqPndMuMWuBju1Nq2wkJvg33HMegOsGASGUpwLc8nvQTbKT
- Dkg28imXBzuqqKJAoCq8KfDC.3OBgNOhblYxAwc76HOet23Z29Yr16qxacjUQeeDunRj2yrnro7x
- sazeXF3CzLZz4bH6ldWjyj1TUT7Ge7DIiirjVFbjUd6u.PupElOmwdJELOUpSea8jPhO7XuvXLVM
- NYa3GwScpSi2O7d3XdWHB6Jcz5WSy34MBMrlcu_aKr_f_DeP8rtZ81NSEMyX.A.CSJ21R5L09goK
- vajyYoQ8Fc0hG5GLYPExGRWJ53KDAPPyju_r73Pirdh4bOXMbM7_JhJC2k.EnrBtPol40hk7rzlt
- YbUJouqEe6.fR8_2eYpjGNjlQNLTn.AadXhNFNS6gaPqN4OP3SLvmUo4ELRdDgMim9_C5JO1GFAW
- 6GxILaDWcNYQ7C92_4u3uKCCHzDpOGo_jLF6WIHZXR8qLRgRGI0C.Oc.9VVFg1F_4fOgEpLoKhqC
- a9w1yxY1SLdsdXG0DjS1mfNntBA.S.iPKvT2UFHIZGdQg4mUC4RFsJVsx9msW_S1Vz0fBm59NocE
- j0hoUA9x2T9ujYRZ5w_GrKoxupLYODRZvNXQfOvDL1lGo0vCFympYQwh5zniLqiXONoqAQ7vQGKE
- jdgou53ZX0vJVo2Ag2toXvvdG.zerCjxFFkuVTGYOWm7kFbK0umJaipIqXYiNhC_6p8mWHsonSNH
- wmxZgGo5UjCTw2P_BhRCI4qDEyJu8NkB217ryTGtHNpXfgpXgm43f6n6ZAJocQm10FqzYLDlnj8f
- pD6bizUHUKatuqjUbHLxPS6X969MVK63mJLfGlPND0z80.s.tdv8LGB4OOwJH0ykyhJbjEzgst6t
- vA.SZ8c0kvEO5.uGYYdzNIpkySFf4tlvZYWSyagttXM0THsJXj4FZSUiFu38klQcrklGmQxGCMRl
- 2GbP3iP9P7D0HfI6jnW87wOUbuYNtrlRyuVlwsAjA.gnQXNfsomSrNVycqCZI0jzmvg8m8Jr5fxl
- _P72hg4DbicrNmj9VFwIa9f0s6UMTEhvefw1S3iPt75a.0mRJ4XkHyL036bjodpfJqM56xFvAA8T
- RT2DZp62EBCUYTQEg9bbdPi3nohUdcLNqBngYknLxIHd0OEAbDjSRMkmLKSK8lBCaTBSH7pFnA9s
- n0pnsBMYvhXexVq.PnpuxHholxZTshW6Bw.eQjf_HHwN3Tu042GJRp5MYEMbr5pv9WqQ3WlJHu6O
- zUWLM0pNtHVycn9HWgSz5Zkh2wRKValrPofeWyBiY6yq11fvocL9iOa60jtY8KJSooOH936rfzD_
- c1oVnTGluaUJarDjLTrMRQ_SNrtIDDASqASFrZNOWbS0WMUOSCTyV6Ak9NQGHlF8vFX_eHjBL6TJ
- 0WigKWF5Z_X0kY5GgiVWVeKuSUDQT9xEm7nabAkdjy.TqLC2uNQpCAdzU12_p3xSfaBK3pXbf2g8
- Jyd9bxougExI6nwXS6RAfrHGi0LHIdyvvQ6Qgsn.POa6oLOZDkkPETpo47twE01Rz2RUY2QdBpQx
- 1ZmiCBBHSZQJpJbicDeJoZ_K2Cf_cMU_cERI8gFFTilemVm1VcR6YoaBjSIir5dLCJRAdCCwQs8F
- ujcnmtW6q0mCQh2h1CwHnOQnW5ZKj2zqT.IBhTGBwHO3BbtIz8zER4p9ADhD_bLOfyRDMXXx9EK.
- a5CQuJc3aL3ZCcgKvqL4xGsKxb2baopvAJtqctybdHa9mFDut7Vq8OdGFv_qyNBHjNGJPnaP4Bqf
- tDGUZ4Rw0XJefh.RQZD4.OhSyLOKZZ1vmD5tfylrWIRAUEl5pv2gzKDGpn3IWV7rGBtIqcoZEUZm
- bV9V.CG9u2awDNQuq3s2bUifgEjmguco_zJlthKOTBeqfDJqLwQhvIHFX2vC0.DkOgBqzwGi9k5d
- DpYVYxf3rP_hIc.9uBxBm4y6Z7PDlKY2mbXS90U8tjz6Eh1Pfzn_qSD2XAx9_nDC5HMiAa9B1jIm
- mIXtgFhmP_cqAHx2CauOpE2DvpUslIf0wrILC2FXT_k3VgUyatIzne6fDFrhn3.9EF_BHPbMEcSY
- llOBN1YPYQhK1WJV5O.Pq22VaRnINyniEgqcRr1A0LoeWaA0I.nDFeplhqMVcm8ub79idJ8NjiQu
- PtJ3YkOBXnV_kyGkw_.vuWrEk2B5taXRhJkoerjVu_0Wtywyw69RBQXPQCm.PTXbqULsFqQcyUhA
- atlMObue3yMeHjUGxxzxRrAWPwyWLabHJG36uRrZZ7NDpf3T60gBngiNStknY1GkfeQ6xOhY9R_0
- 7W38F6LU2PouU0Hv1gpYoJKx3TN7A_E0cWG2N_WfFCr7h00.CIpaa15UdPcJIrjUZdN3b.XunU06
- maVk_HJkVtxgt1iWnrXal5VDejcm4wFPTqjGzR6KiT0PEokiiZ52S2YLG8YlPFbYASnvKm3Ap0s2
- b7KoqixbyjctTxLxp4OmA_snkxK4Yu8KvL2y8lFezdq47m3yF9l99pT3wkY9BIibKRbe91a2SLu8
- -
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 14 Dec 2020 18:45:48 +0000
-Received: by smtp411.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 5cc7bf86203920dd4d4da35148d929fe;
-          Mon, 14 Dec 2020 18:45:44 +0000 (UTC)
-Subject: Re: [PATCH v2] proc: Allow pid_revalidate() during LOOKUP_RCU
-To:     Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20201204000212.773032-1-stephen.s.brennan@oracle.com>
- <20201212205522.GF2443@casper.infradead.org>
- <877dpln5uf.fsf@x220.int.ebiederm.org>
- <20201213162941.GG2443@casper.infradead.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <b18f4448-d31f-c4a7-ffea-e4cf2587b78b@schaufler-ca.com>
-Date:   Mon, 14 Dec 2020 10:45:43 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+        Mon, 14 Dec 2020 15:53:48 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 592D0C061793
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Dec 2020 12:53:08 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id v14so15003691wml.1
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Dec 2020 12:53:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=1r8mWX3dO5bIXJteVLwnQJfsBR/x5H9vpG4TpnJRsTM=;
+        b=emsdinqsft+oUmZgElqgUrxICpGBt4a4re39vhYVYex9X1twjpZUmJDg9YBvHQ20Mz
+         mmFLLRkIEAoFzuFaJCqXB7WHsUF3AX1hpvpqq/SgtPwuDGCiCjYGvQaYLo2lQcWZrSb2
+         MqVll5pxr+2M/2jUBTK9UkLEcDTC3uABbvqSDp8vurJW1OfIo/SIhmceaJI+Rably4hi
+         +FtZCer88GS1OpmfWidseaUNZlHAGL8z5CFr5XlrNgvz2fmbC/ayOMoiKm55aWlBWyVR
+         4uq6lJT4MfaRRhLyIoeKz9zPTEklqpBDjgj2Sq/KsUTPz/ROMJYLFmClwGhIzrWZvHiO
+         6wyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=1r8mWX3dO5bIXJteVLwnQJfsBR/x5H9vpG4TpnJRsTM=;
+        b=Lk/BVhCjWz/ukcwSyvi+5mO2CJxOPR8hzCwJQy07+z9I/Wmug96rwRvxxLmYUxE7Fh
+         xBpKAuYT25xY359NKU4+8alr+vxi7NqOYY2C1iAVww7HwFYfmvBatbOouT683gGvDP2n
+         D5VX6feTjpHtBcSobEUbpT8hLVkgZPjM8yXwssKcIKRf+FSlnjhydbzG+erkR+lS6DSF
+         gnLo4rpav3teq1etn3ndP8JTz/j+wHAyT3mpy6A0xCxjlz5GcwtAY46u4m3c9RBi3jre
+         oIbNfzwHHhCXNKFSpOnDSdlDy4HL2hJU58tRzM8Psx6urU2v6JKg/nyu32W8kiDEacCU
+         YxCw==
+X-Gm-Message-State: AOAM532mixvtIipuex27BUTkFS+kn6IxfligzO+DHZN1XF1VkXX8+3xa
+        x3ErvO9EsD0JC84NxN/oa+4FdmgHewt3g4e0EmdVzPI3fIt6Fvb10bA=
+X-Google-Smtp-Source: ABdhPJyvVs4v89b/SyxICWRDRZG8sXVVnHPGF2JCyUroyIb4NQ0+nWAl3nWKfUtOU73TUYtqQv3Orx5/yy2kX9MV8/I=
+X-Received: by 2002:a7b:cc12:: with SMTP id f18mr30013651wmh.110.1607979186711;
+ Mon, 14 Dec 2020 12:53:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201213162941.GG2443@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.17278 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
+From:   "Hyunwook (Wooky) Baek" <baekhw@google.com>
+Date:   Mon, 14 Dec 2020 12:52:55 -0800
+Message-ID: <CABMWKFCCd=DiruUr3W8DGGozexW-gmeFWVEg2OmuJLuTJXFr_g@mail.gmail.com>
+Subject: MOK variable config table: Kernel Panic in SEV-enabled VMs
+To:     Lenny Szubowicz <lszubowi@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org
+Cc:     pjones@redhat.com, dhowells@redhat.com, prarit@redhat.com,
+        Peter Gonda <pgonda@google.com>,
+        Rachit Mathur <rachitmathur@google.com>,
+        Zach Marano <zmarano@google.com>,
+        Jianxiong Gao <jxgao@google.com>,
+        Erdem Aktas <erdemaktas@google.com>,
+        David Rientjes <rientjes@google.com>, keescook@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 12/13/2020 8:29 AM, Matthew Wilcox wrote:
-> On Sun, Dec 13, 2020 at 08:22:32AM -0600, Eric W. Biederman wrote:
->> Matthew Wilcox <willy@infradead.org> writes:
->>
->>> On Thu, Dec 03, 2020 at 04:02:12PM -0800, Stephen Brennan wrote:
->>>> -void pid_update_inode(struct task_struct *task, struct inode *inode)
->>>> +static int do_pid_update_inode(struct task_struct *task, struct inode *inode,
->>>> +			       unsigned int flags)
->>> I'm really nitpicking here, but this function only _updates_ the inode
->>> if flags says it should.  So I was thinking something like this
->>> (compile tested only).
->>>
->>> I'd really appreocate feedback from someone like Casey or Stephen on
->>> what they need for their security modules.
->> Just so we don't have security module questions confusing things
->> can we please make this a 2 patch series?  With the first
->> patch removing security_task_to_inode?
->>
->> The justification for the removal is that all security_task_to_inode
->> appears to care about is the file type bits in inode->i_mode.  Something
->> that never changes.  Having this in a separate patch would make that
->> logical change easier to verify.
-> I don't think that's right, which is why I keep asking Stephen & Casey
-> for their thoughts.  For example,
->
->  * Sets the smack pointer in the inode security blob
->  */
-> static void smack_task_to_inode(struct task_struct *p, struct inode *inode)
-> {
->         struct inode_smack *isp = smack_inode(inode);
->         struct smack_known *skp = smk_of_task_struct(p);
->
->         isp->smk_inode = skp;
->         isp->smk_flags |= SMK_INODE_INSTANT;
-> }
->
-> That seems to do rather more than checking the file type bits.
+Hello,
 
-I'm going to have to bring myself up to speed on the
-discussion before I say anything dumb. I'm supposed to
-be Not! Working! today. I will get on it as permitted.
+We found SEV-enabled VMs crash with the latest CentOS and Rhel images in Google
+Cloud (centos-8-v20201112 and rhel-8-v20201112), because the MOK var table patch
+(https://lkml.org/lkml/2020/8/25/1344) is making a #GP with SEV-enabled VMs,
+but the patch is backported to those images. It looks like the patch
+is also included in
+the v5.10 release candidate.
 
+The SEV-enabled VMs work fine with the previous Rhel-8 and Centos-8 images
+(centos-8-v20201014 and rhel-8-v20201014).
+
+The following is the kernel log messages that show the VM crashes while
+running efi_mokvar_sysfs_init() with the rhel image (the centos kernel log is
+almost identical):
+
+[    1.720049] EFI Variables Facility v0.08 2004-May-17
+[    1.943612] input: AT Translated Set 2 keyboard as
+/devices/platform/i8042/serio0/input/input2
+[    2.480607] general protection fault: 0000 [#1] SMP NOPTI
+[    2.481549] CPU: 1 PID: 1 Comm: swapper/0 Not tainted
+4.18.0-193.28.1.el8_2.x86_64 #1
+[    2.481549] Hardware name: Google Google Compute Engine/Google
+Compute Engine, BIOS Google 01/01/2011
+[    2.481549] RIP: 0010:efi_mokvar_sysfs_init+0xa9/0x19d
+[    2.481549] Code: 4b 00 48 85 c0 0f 85 be 00 00 00 48 c7 c7 d8 a8
+12 9b bd f4 ff ff ff e8 a4 ba 73 fe e9 f0 00 00 00 48 85 d2 0f 85 b1
+00 00 00 <41> 80 3c 24 00 0f 84 bf 00 00 00 4d 85 e4 0f 84 b6 00 00 00
+48 8b
+[    2.481549] RSP: 0018:ffffa6d7c0c67df8 EFLAGS: 00010282
+[    2.481549] RAX: 0df68117d0b79f0b RBX: ffff96fe32837720 RCX: 0000000000000000
+[    2.481549] RDX: ffffa6d7c0c81000 RSI: ffffffff9b3934c0 RDI: ffff96fe32837758
+[    2.481549] RBP: ffffffff9b3934c0 R08: ffffffff9b3934c0 R09: 0000000000000228
+[    2.481549] R10: 0000000000000007 R11: 0000000000000008 R12: 0df627ef917fb013
+[    2.481549] R13: ffffffff9b3934c0 R14: ffffffff9a6b3da0 R15: ffff96fe32837758
+[    2.481549] FS:  0000000000000000(0000) GS:ffff96fe37b00000(0000)
+knlGS:0000000000000000
+[    2.481549] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.481549] CR2: 00007f0508d7c000 CR3: 0000800232ff8000 CR4: 0000000000340ee0
+[    2.481549] Call Trace:
+[    2.481549]  ? efi_rci2_sysfs_init+0x26d/0x26d
+[    2.481549]  ? do_early_param+0x91/0x91
+[    2.481549]  do_one_initcall+0x46/0x1c3
+[    2.481549]  ? do_early_param+0x91/0x91
+[    2.481549]  kernel_init_freeable+0x1af/0x258
+[    2.481549]  ? rest_init+0xaa/0xaa
+[    2.481549]  kernel_init+0xa/0xff
+[    2.481549]  ret_from_fork+0x22/0x40
+[    2.481549] Modules linked in:
+[    2.511520] ---[ end trace 24709f23c20e9cd9 ]---
+[    2.512376] RIP: 0010:efi_mokvar_sysfs_init+0xa9/0x19d
+[    2.513249] Code: 4b 00 48 85 c0 0f 85 be 00 00 00 48 c7 c7 d8 a8
+12 9b bd f4 ff ff ff e8 a4 ba 73 fe e9 f0 00 00 00 48 85 d2 0f 85 b1
+00 00 00 <41> 80 3c 24 00 0f 84 bf 00 00 00 4d 85 e4 0f 84 b6 00 00 00
+48 8b
+[    2.516876] RSP: 0018:ffffa6d7c0c67df8 EFLAGS: 00010282
+[    2.517844] RAX: 0df68117d0b79f0b RBX: ffff96fe32837720 RCX: 0000000000000000
+[    2.519128] RDX: ffffa6d7c0c81000 RSI: ffffffff9b3934c0 RDI: ffff96fe32837758
+[    2.520328] RBP: ffffffff9b3934c0 R08: ffffffff9b3934c0 R09: 0000000000000228
+[    2.521771] R10: 0000000000000007 R11: 0000000000000008 R12: 0df627ef917fb013
+[    2.523025] R13: ffffffff9b3934c0 R14: ffffffff9a6b3da0 R15: ffff96fe32837758
+[    2.524218] FS:  0000000000000000(0000) GS:ffff96fe37b00000(0000)
+knlGS:0000000000000000
+[    2.525591] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.528401] CR2: 00007f0508d7c000 CR3: 0000800232ff8000 CR4: 0000000000340ee0
+[    2.530155] Kernel panic - not syncing: Fatal exception
+[    2.531145] Kernel Offset: 0x19000000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[    2.531145] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Regards,
+Wooky
