@@ -2,137 +2,189 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4957EC4361B
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 05:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E72C1B0E3
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 10:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4C1C229C7
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 05:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3052229F0
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 10:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388513AbgLNFup (ORCPT
+        id S2406393AbgLNKFC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Dec 2020 00:50:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390077AbgLNFuh (ORCPT
+        Mon, 14 Dec 2020 05:05:02 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53344 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2406050AbgLNKEq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Dec 2020 00:50:37 -0500
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A57EC0613CF;
-        Sun, 13 Dec 2020 21:49:57 -0800 (PST)
-Received: by mail-io1-xd43.google.com with SMTP id y5so15758153iow.5;
-        Sun, 13 Dec 2020 21:49:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EzSj9ml19X1fpvFM+ibRGRWOesLE9X7twr2UcjQK6RM=;
-        b=Sj+btmu338yVzZf9IJdItaTlpCa9OvRugFyIo43i1GTNr2KYCS0DPEhzn4O9iCrVr+
-         zp3vQ/BceQD+Bha48E8zOrKmt3gAos9yHXxaUXkHNv3N3aPKZ2zVyDhMzDbkNnwE191n
-         ri3rGSjQqbNHHCFovIokFrJwBssQv/BByMDI6bPWMeJOC2MDG04i6v7aeOrtnt7BT6Jy
-         wQRuyXVzALlMPRXn9uUvq+L6r5Hu3Vqxh3HPRX7x6hOAuGwFIILYKvB4TD8NR0lwDi+5
-         /lnelvPaPz4iXG8pxaYNf4qrpDP6HkZY0u0DL+B7XmH9RyH5lJ/jYcDm0m5lo1yeriTG
-         +fEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EzSj9ml19X1fpvFM+ibRGRWOesLE9X7twr2UcjQK6RM=;
-        b=DCvvoCTqiNq1JhRmtyWAbvRox97nwSn+JwLAcJOm0Z4kRJCdIAo5e6ugk7Pv6qv5qr
-         dbP3fXCi4nmMB+RGHwGS0Jc1Q4wGMhOLYiG7FjjygeSkkSIxrax5PZIcKHskIsvd4KS4
-         7ZFzbargG9Gvs92ppB/pQ7epSXvh7F3tcaGO2IDn6kNI4507DMG3soM4mTVvgOaarxd2
-         GxMRovc/R3e4N8aIY/8hUCpH5s8UmIQybRzDAD8ykLbu292HSQlgAgtpWGIA3i9ng+P+
-         m6ku/IKJM5b6N1VPIkHUsmhHpvQThRkEXzcPS3PwmALcfPHvPfKFXvGp0fDmRoo8IgFh
-         ha/w==
-X-Gm-Message-State: AOAM5316ETMpbx1/OZuJHQOFkg04TQhmvJ6bGiLQPT7j1JAVXGcdD7EM
-        LqkENbf8H5s1vDymhdwgsAXnU3VTz3Mg1a61Sc4=
-X-Google-Smtp-Source: ABdhPJw01VcC/8JoePKk0J/yxnUTJBSNAx9/YJr8eMEw8jQcyo+jtql3VToOVEUl3j6AXoWcnNf5WeFY1gbJJpWwy7Q=
-X-Received: by 2002:a02:cc89:: with SMTP id s9mr30784713jap.81.1607924996345;
- Sun, 13 Dec 2020 21:49:56 -0800 (PST)
+        Mon, 14 Dec 2020 05:04:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1607940199;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yJ53/DNAVbjiqqhCO/hzm6oL/uzwR3mDMF7d+PeaBIM=;
+        b=NyDiU+cqZ7gVS5ICSgcRfhwMDTBrh2PY1sx4bZoAtNwI7ONB6Q9kBo3queibeUzERkL7+Z
+        nHyxr4d3UuarSLtw49V2NEzhqwV8V0r920R559hgIJyYDHsvUcJ1UQUMIEH/X4Q601NJbK
+        MF8ZFG5YaOo6ANzjOE2ySe6PGw9a1us=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-474-F0AQXuaSMLaHCptt73k5YA-1; Mon, 14 Dec 2020 05:03:15 -0500
+X-MC-Unique: F0AQXuaSMLaHCptt73k5YA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4A895190A7A3;
+        Mon, 14 Dec 2020 10:03:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E4752BCE6;
+        Mon, 14 Dec 2020 10:03:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Ben Boeckel <mathstuf@gmail.com>,
+        Denis Efremov <efremov@linux.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jann Horn <jannh@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Tom Rix <trix@redhat.com>, YueHaibing <yuehaibing@huawei.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] keys: Collected minor fixes and cleanups
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-9-mszeredi@redhat.com>
- <CAOQ4uxgy23chB-NQcXJ+P3hO0_M3iAkgi_wyhbpfT3wkaU+E7w@mail.gmail.com> <CAJfpegvpEkB2HL5THcUsmBVvcru1-DkSTo_DmA4pWNU_TV7ODg@mail.gmail.com>
-In-Reply-To: <CAJfpegvpEkB2HL5THcUsmBVvcru1-DkSTo_DmA4pWNU_TV7ODg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 14 Dec 2020 07:49:45 +0200
-Message-ID: <CAOQ4uxi2Gn2-nZajpqMd+u487eT7y=EZNafEeyd72178biKZ4w@mail.gmail.com>
-Subject: Re: [PATCH v2 08/10] ovl: do not fail because of O_NOATIME
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   David Howells <dhowells@redhat.com>
+Date:   Mon, 14 Dec 2020 10:03:06 +0000
+Message-ID: <2659836.1607940186@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 11, 2020 at 4:44 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Tue, Dec 8, 2020 at 12:32 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Mon, Dec 7, 2020 at 6:37 PM Miklos Szeredi <mszeredi@redhat.com> wrote:
-> > >
-> > > In case the file cannot be opened with O_NOATIME because of lack of
-> > > capabilities, then clear O_NOATIME instead of failing.
-> > >
-> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > > ---
-> > >  fs/overlayfs/file.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> > > index dc767034d37b..d6ac7ac66410 100644
-> > > --- a/fs/overlayfs/file.c
-> > > +++ b/fs/overlayfs/file.c
-> > > @@ -53,9 +53,10 @@ static struct file *ovl_open_realfile(const struct file *file,
-> > >         err = inode_permission(realinode, MAY_OPEN | acc_mode);
-> > >         if (err) {
-> > >                 realfile = ERR_PTR(err);
-> > > -       } else if (!inode_owner_or_capable(realinode)) {
-> > > -               realfile = ERR_PTR(-EPERM);
-> > >         } else {
-> > > +               if (!inode_owner_or_capable(realinode))
-> > > +                       flags &= ~O_NOATIME;
-> > > +
-> >
-> > Isn't that going to break:
-> >
-> >         flags |= OVL_OPEN_FLAGS;
-> >
-> >         /* If some flag changed that cannot be changed then something's amiss */
-> >         if (WARN_ON((file->f_flags ^ flags) & ~OVL_SETFL_MASK))
-> >
-> > IOW setting a flag that is allowed to change will fail because of
-> > missing O_ATIME in file->f_flags.
->
-> Well spotted.  I just removed those lines as a fix.   The check never
-> triggered since its introduction in 4.19, so I guess it isn't worth
-> adding more complexity for.
->
-> >
-> > I guess we need test coverage for SETFL.
->
-> There might be some in ltp, haven't checked.  Would be nice if the fs
-> related ltp tests could be integrated into xfstests.
->
 
-There is some test coverage for SETFL in xfstests.
+Hi Linus,
 
-The t_immutable tests for one, but those would not run if the mounter
-has no CAP_LINUX_IMMUTABLE, so would not have been useful to
-detect the problem above.
+Here's a set of minor fixes/cleanups that I've collected from various
+people for the next merge window.
 
-fsstress also seems to have support for SETFL ops, but I am not sure
-in how many tests it is exercises and perhaps the relevant problem
-would have been covered by some stress test that is not in the 'quick'
-tests group.
+A couple of them might, in theory, be visible to userspace:
 
-Thanks,
-Amir.
+ (*) Make blacklist_vet_description() reject uppercase letters as they
+     don't match the all-lowercase hex string generated for a blacklist
+     search.
+
+     This may want reconsideration in the future, but, currently, you can't
+     add to the blacklist keyring from userspace and the only source of
+     blacklist keys generates lowercase descriptions.
+
+ (*) Fix blacklist_init() to use a new KEY_ALLOC_* flag to indicate that it
+     wants KEY_FLAG_KEEP to be set rather than passing KEY_FLAG_KEEP into
+     keyring_alloc() as KEY_FLAG_KEEP isn't a valid alloc flag.
+
+     This isn't currently a problem as the blacklist keyring isn't
+     currently writable by userspace.
+
+The rest of the patches are cleanups and I don't think they should have any
+visible effect.
+
+David
+---
+The following changes since commit 85a2c56cb4454c73f56d3099d96942e7919b292f:
+
+  Merge tag 'pm-5.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/=
+rafael/linux-pm (2020-11-26 11:17:37 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
+keys-fixes-20201214
+
+for you to fetch changes up to 1b91ea77dfeb2c5924ab940f2e43177c78a37d8f:
+
+  certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID (2020-12-10 09:2=
+4:43 +0000)
+
+----------------------------------------------------------------
+Keys fixes
+
+----------------------------------------------------------------
+Alex Shi (2):
+      PKCS#7: drop function from kernel-doc pkcs7_validate_trust_one
+      certs/blacklist: fix kernel doc interface issue
+
+Alexander A. Klimov (1):
+      encrypted-keys: Replace HTTP links with HTTPS ones
+
+David Howells (1):
+      certs: Fix blacklist flag type confusion
+
+Denis Efremov (1):
+      security/keys: use kvfree_sensitive()
+
+Gabriel Krisman Bertazi (1):
+      watch_queue: Drop references to /dev/watch_queue
+
+Gustavo A. R. Silva (1):
+      security: keys: Fix fall-through warnings for Clang
+
+Jann Horn (1):
+      keys: Remove outdated __user annotations
+
+Krzysztof Kozlowski (1):
+      KEYS: asymmetric: Fix kerneldoc
+
+Micka=C3=ABl Sala=C3=BCn (3):
+      certs: Fix blacklisted hexadecimal hash string check
+      PKCS#7: Fix missing include
+      certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
+
+Randy Dunlap (2):
+      security: keys: delete repeated words in comments
+      crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
+
+Tianjia Zhang (1):
+      crypto: public_key: Remove redundant header file from public_key.h
+
+Tom Rix (2):
+      KEYS: remove redundant memset
+      keys: remove trailing semicolon in macro definition
+
+YueHaibing (1):
+      crypto: pkcs7: Use match_string() helper to simplify the code
+
+ Documentation/security/keys/core.rst     |  4 ++--
+ certs/blacklist.c                        | 10 +++++-----
+ certs/system_keyring.c                   |  5 +++--
+ crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
+ crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
+ crypto/asymmetric_keys/pkcs7_trust.c     |  2 +-
+ crypto/asymmetric_keys/pkcs7_verify.c    |  9 ++++-----
+ include/crypto/public_key.h              |  1 -
+ include/keys/encrypted-type.h            |  2 +-
+ include/linux/key.h                      |  5 +++--
+ include/linux/verification.h             |  2 ++
+ samples/Kconfig                          |  2 +-
+ samples/watch_queue/watch_test.c         |  2 +-
+ security/integrity/ima/ima_mok.c         |  3 +--
+ security/keys/Kconfig                    |  8 ++++----
+ security/keys/big_key.c                  |  9 +++------
+ security/keys/key.c                      |  2 ++
+ security/keys/keyctl.c                   |  2 +-
+ security/keys/keyctl_pkey.c              |  2 --
+ security/keys/keyring.c                  | 10 +++++-----
+ security/keys/process_keys.c             |  1 +
+ 21 files changed, 46 insertions(+), 46 deletions(-)
+
