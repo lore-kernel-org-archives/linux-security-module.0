@@ -2,189 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E72C1B0E3
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 10:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2264CC4361B
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 13:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3052229F0
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 10:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31C8224B1
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 13:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406393AbgLNKFC (ORCPT
+        id S1732580AbgLNNYy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Dec 2020 05:05:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53344 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406050AbgLNKEq (ORCPT
+        Mon, 14 Dec 2020 08:24:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407828AbgLNNYn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Dec 2020 05:04:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1607940199;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yJ53/DNAVbjiqqhCO/hzm6oL/uzwR3mDMF7d+PeaBIM=;
-        b=NyDiU+cqZ7gVS5ICSgcRfhwMDTBrh2PY1sx4bZoAtNwI7ONB6Q9kBo3queibeUzERkL7+Z
-        nHyxr4d3UuarSLtw49V2NEzhqwV8V0r920R559hgIJyYDHsvUcJ1UQUMIEH/X4Q601NJbK
-        MF8ZFG5YaOo6ANzjOE2ySe6PGw9a1us=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-474-F0AQXuaSMLaHCptt73k5YA-1; Mon, 14 Dec 2020 05:03:15 -0500
-X-MC-Unique: F0AQXuaSMLaHCptt73k5YA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4A895190A7A3;
-        Mon, 14 Dec 2020 10:03:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-116-67.rdu2.redhat.com [10.10.116.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E4752BCE6;
-        Mon, 14 Dec 2020 10:03:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Ben Boeckel <mathstuf@gmail.com>,
-        Denis Efremov <efremov@linux.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jann Horn <jannh@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        Tom Rix <trix@redhat.com>, YueHaibing <yuehaibing@huawei.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [GIT PULL] keys: Collected minor fixes and cleanups
+        Mon, 14 Dec 2020 08:24:43 -0500
+Received: from mail-vk1-xa44.google.com (mail-vk1-xa44.google.com [IPv6:2607:f8b0:4864:20::a44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08FFAC0613CF
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Dec 2020 05:24:03 -0800 (PST)
+Received: by mail-vk1-xa44.google.com with SMTP id b190so3877796vka.0
+        for <linux-security-module@vger.kernel.org>; Mon, 14 Dec 2020 05:24:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dXF27qujJ2VqBKUjmJ8eURLL/NeptG+bztfHuQjY1oI=;
+        b=hZFWeny4SmmmFgsIN/hVdNQwkTNWkl26Sd3otE4YIbYrLe6OsynbrRUWun1L4xQb5c
+         LBJcwb2IxXaPgsLLDyucI7cNa5kpkTnH19eNkf7X2ap3Qr/eUQbgn79JwAYCVcz7FyUf
+         QuHQfzNb72UT1pZBtLr+26j9206Qm4qUmcqEQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dXF27qujJ2VqBKUjmJ8eURLL/NeptG+bztfHuQjY1oI=;
+        b=pGEw1s3qZvf1tyrcxeTRoVh8lXnGTmBAPz4qTkUEtXBSJThjQiKwP1rEez4Xgo66OE
+         wxhs3UpdHRTFcQWJSj9Kptd0Js/mVWSsNomUSNKuCcx7raNes1HiOOPrj5+MGdsm02at
+         tWLvAD3yMrOJCHYB9Wmj4MHr3bn7K9Qn4b4iOsODObLAnN0dKbzcKOQNU751voURzN3V
+         Exi1W5YAMovpjajNwsfsxMXSM2zKsU0QdcNxYYn9DOpomzYiRpsHrWYUvM34yssrGcJ3
+         PeYW1fUSKntcr3ertCYJo73B0Pp+CAPfqO1oV8tWQxa9p4h3mHhSZNvGMwVPlnr/FGaX
+         Bfyg==
+X-Gm-Message-State: AOAM533LLYHUxYYgfrDrSkmx3scr3XGpt0XkpjcBdoFhDcKfiZO1L9P/
+        a/yInM7PEwvw9h46VIpahekEPnuhkfIJpuWSn7rkzA==
+X-Google-Smtp-Source: ABdhPJzvUSTfUW3Xz5alxiJ7sFlX7KF4jeVhXMp6RTxvmF/3K2yu8V8fxwM6en5+0ouWA5dKH+Ugplct2E9eCxUY53g=
+X-Received: by 2002:a1f:2c01:: with SMTP id s1mr24498538vks.11.1607952242187;
+ Mon, 14 Dec 2020 05:24:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   David Howells <dhowells@redhat.com>
-Date:   Mon, 14 Dec 2020 10:03:06 +0000
-Message-ID: <2659836.1607940186@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-5-mszeredi@redhat.com>
+ <CAOQ4uxhv+33nVxNQmZtf-uzZN0gMXBaDoiJYm88cWwa1fRQTTg@mail.gmail.com>
+ <CAJfpegsxku5D+08F6SUixQUfF6eDVm+o2pu6feLooq==ye0GDg@mail.gmail.com> <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 14 Dec 2020 14:23:51 +0100
+Message-ID: <CAJfpegvS3pD89GTfFTsAnRwQ+Oxuo+r7mP0JY1usDC3n3tT48Q@mail.gmail.com>
+Subject: Re: [PATCH v2 04/10] ovl: make ioctl() safe
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Dec 14, 2020 at 6:44 AM Amir Goldstein <amir73il@gmail.com> wrote:
 
-Hi Linus,
+> Perhaps, but there is a much bigger issue with this change IMO.
+> Not because of dropping rule (b) of the permission model, but because
+> of relaxing rule (a).
+>
+> Should overlayfs respect the conservative interpretation as it partly did
+> until this commit, a lower file must not lose IMMUTABLE/APPEND_ONLY
+> after copy up, but that is exactly what is going to happen if we first
+> copy up and then fail permission check on setting the flags.
 
-Here's a set of minor fixes/cleanups that I've collected from various
-people for the next merge window.
+Yeah, it's a mess.   This will hopefully sort it out, as it will allow
+easier copy up of flags:
 
-A couple of them might, in theory, be visible to userspace:
+https://lore.kernel.org/linux-fsdevel/20201123141207.GC327006@miu.piliscsaba.redhat.com/
 
- (*) Make blacklist_vet_description() reject uppercase letters as they
-     don't match the all-lowercase hex string generated for a blacklist
-     search.
+In actual fact losing S_APPEND is not currently prevented by copy-up
+triggered by anything other than FS_IOC_SETX*, and even that is prone
+to races as indicated by the bug report that resulted in this patch.
 
-     This may want reconsideration in the future, but, currently, you can't
-     add to the blacklist keyring from userspace and the only source of
-     blacklist keys generates lowercase descriptions.
+Let's just fix the IMMUTABLE case:
 
- (*) Fix blacklist_init() to use a new KEY_ALLOC_* flag to indicate that it
-     wants KEY_FLAG_KEEP to be set rather than passing KEY_FLAG_KEEP into
-     keyring_alloc() as KEY_FLAG_KEEP isn't a valid alloc flag.
+  - if the file is already copied up with data (since the overlay
+ioctl implementation currently uses the realdata), then we're fine to
+copy up
 
-     This isn't currently a problem as the blacklist keyring isn't
-     currently writable by userspace.
+  - if the file is not IMMUTABLE to start with, then also fine to copy
+up; even if the op will fail after copy up we haven't done anything
+that wouldn't be possible without this particular codepath
 
-The rest of the patches are cleanups and I don't think they should have any
-visible effect.
+  - if task has CAP_LINUX_IMMUTABLE (can add/remove immutable) then
+it's also fine to copy up since we can be fairly sure that the actual
+setflags will succeed as well.  If not, that can be a problem, but as
+I've said copying up IMMUTABLE and other flags should really be done
+by the copy up code, otherwise it won't work properly.
 
-David
----
-The following changes since commit 85a2c56cb4454c73f56d3099d96942e7919b292f:
+Something like this incremental should be good,  I think:
 
-  Merge tag 'pm-5.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/=
-rafael/linux-pm (2020-11-26 11:17:37 -0800)
+@@ -576,6 +576,15 @@ static long ovl_ioctl_set_flags(struct f
 
-are available in the Git repository at:
+  inode_lock(inode);
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
-keys-fixes-20201214
++ /*
++ * Prevent copy up if immutable and has no CAP_LINUX_IMMUTABLE
++ * capability.
++ */
++ ret = -EPERM;
++ if (!ovl_has_upperdata(inode) && IS_IMMUTABLE(inode) &&
++     !capable(CAP_LINUX_IMMUTABLE))
++ goto unlock;
++
+  ret = ovl_maybe_copy_up(file_dentry(file), O_WRONLY);
+  if (ret)
+  goto unlock;
 
-for you to fetch changes up to 1b91ea77dfeb2c5924ab940f2e43177c78a37d8f:
-
-  certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID (2020-12-10 09:2=
-4:43 +0000)
-
-----------------------------------------------------------------
-Keys fixes
-
-----------------------------------------------------------------
-Alex Shi (2):
-      PKCS#7: drop function from kernel-doc pkcs7_validate_trust_one
-      certs/blacklist: fix kernel doc interface issue
-
-Alexander A. Klimov (1):
-      encrypted-keys: Replace HTTP links with HTTPS ones
-
-David Howells (1):
-      certs: Fix blacklist flag type confusion
-
-Denis Efremov (1):
-      security/keys: use kvfree_sensitive()
-
-Gabriel Krisman Bertazi (1):
-      watch_queue: Drop references to /dev/watch_queue
-
-Gustavo A. R. Silva (1):
-      security: keys: Fix fall-through warnings for Clang
-
-Jann Horn (1):
-      keys: Remove outdated __user annotations
-
-Krzysztof Kozlowski (1):
-      KEYS: asymmetric: Fix kerneldoc
-
-Micka=C3=ABl Sala=C3=BCn (3):
-      certs: Fix blacklisted hexadecimal hash string check
-      PKCS#7: Fix missing include
-      certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
-
-Randy Dunlap (2):
-      security: keys: delete repeated words in comments
-      crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
-
-Tianjia Zhang (1):
-      crypto: public_key: Remove redundant header file from public_key.h
-
-Tom Rix (2):
-      KEYS: remove redundant memset
-      keys: remove trailing semicolon in macro definition
-
-YueHaibing (1):
-      crypto: pkcs7: Use match_string() helper to simplify the code
-
- Documentation/security/keys/core.rst     |  4 ++--
- certs/blacklist.c                        | 10 +++++-----
- certs/system_keyring.c                   |  5 +++--
- crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
- crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
- crypto/asymmetric_keys/pkcs7_trust.c     |  2 +-
- crypto/asymmetric_keys/pkcs7_verify.c    |  9 ++++-----
- include/crypto/public_key.h              |  1 -
- include/keys/encrypted-type.h            |  2 +-
- include/linux/key.h                      |  5 +++--
- include/linux/verification.h             |  2 ++
- samples/Kconfig                          |  2 +-
- samples/watch_queue/watch_test.c         |  2 +-
- security/integrity/ima/ima_mok.c         |  3 +--
- security/keys/Kconfig                    |  8 ++++----
- security/keys/big_key.c                  |  9 +++------
- security/keys/key.c                      |  2 ++
- security/keys/keyctl.c                   |  2 +-
- security/keys/keyctl_pkey.c              |  2 --
- security/keys/keyring.c                  | 10 +++++-----
- security/keys/process_keys.c             |  1 +
- 21 files changed, 46 insertions(+), 46 deletions(-)
-
+Thanks,
+Miklos
