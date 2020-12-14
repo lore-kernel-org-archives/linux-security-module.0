@@ -2,138 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5184FC4361B
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 14:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AD0C4361B
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 16:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0626C225AB
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 14:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EC982250E
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 16:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407311AbgLNOsC (ORCPT
+        id S2440099AbgLNQnQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Dec 2020 09:48:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731101AbgLNOrx (ORCPT
+        Mon, 14 Dec 2020 11:43:16 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:35526 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbgLNQnG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Dec 2020 09:47:53 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4ABC0613CF;
-        Mon, 14 Dec 2020 06:47:13 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id i18so17083870ioa.1;
-        Mon, 14 Dec 2020 06:47:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t7cynCFYbdf1gPvm9bpSof6fvbviPpKlg5br5sZOt4Q=;
-        b=h1OOPH0MU6BKrc+UxlfmIVrHGGygucAUJCvZgG7eo4wUkJGMhpxXpH2DqFMAMZJdy9
-         UCeAFKYfYjw7ESvqdJom0uaLZUPdL903HjOrprnFJYH9857kAtrOTwtvQIxNFmH9VYxI
-         79oASVPyA7SUN488m7ktMGyQHA+/43ev9S62V1dyS54a4FdE3XZ98xhxOD8wlVOUYE/F
-         DdPij0lDQTBy+/jnunLI/q06xQcKRa0xeltSez+KZDTHgEHVBfFuHjA43FSIo7RPAbrq
-         +LuYY1o3LvjzVl/V99SR57rx15OUqTZJ/4Tavtkxp9tJmovD/vIMxEUS6pdAXXfV1c3u
-         bU+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t7cynCFYbdf1gPvm9bpSof6fvbviPpKlg5br5sZOt4Q=;
-        b=uDmbL6vHavMSKtpbRyPs8Tut5yC70TpqC3SOwyYI+dQo00BQHVJB+9+uqC6P5UG4tg
-         dzTUnD5zMSPd0ifHGN1am3eqNlamDgziUsiaivQXZzMgOHIrvZ4/rodFECC7ZfQhQgdP
-         AXonOtnY7QzKveHxwyhKiZyMdhVAOBaA+FW7tB7lzHbuT+Tle8nhaPBPUC8QU9EjlJ2w
-         7JwI2Y3rKEjdHDpBP4WbMIOPSYwcePK+3pTvLwEkc7AEeoWtSep/v4Fl1+N9Cn1PJqMb
-         9L2ef3LfmRe56h1yCsON5+hKOzvlqCtyL90QxkErd/BFTx+m9/HWB8gv6llg2v1aUDtv
-         HtcA==
-X-Gm-Message-State: AOAM532KhthIr8BXD8SbhJoI6M3yX2GQIZ9UQzuLQj+jzkanw/AdPT14
-        rrtUfvRy1zloJowmHCQ+9u0E2MHsQ6O/7v4AmihEgEsU
-X-Google-Smtp-Source: ABdhPJzc1L8a2m+x9Cl1Y7Y3R5xvwiw+Dr9lE76WtoQNKu1mzfjfIQMsayg39oNPsADG4iO4bgqQk7DFykev3J+AVq8=
-X-Received: by 2002:a05:6602:1608:: with SMTP id x8mr32220716iow.72.1607957232695;
- Mon, 14 Dec 2020 06:47:12 -0800 (PST)
+        Mon, 14 Dec 2020 11:43:06 -0500
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 5131F20B717A;
+        Mon, 14 Dec 2020 08:42:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5131F20B717A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1607964144;
+        bh=17oy4+dXfaSLajpExnudcAmGMiMK3qcSh76GKO4RE2Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b2qc6msEewlTpaaV0pHx7Usu0G6P2kINFg1UemHsrAy0bPMmhv+KSd6uf9Ipt43F7
+         9ZVKoQrg73yNjw0u7uwhG92+h9a+KuVMhqxpH5ycdsnsUvuE2IjguASH0E3x3Yx3iV
+         XzTsxGp+NTbKbRHRyT9l877JRxZkgxsHU+0yRmnY=
+Date:   Mon, 14 Dec 2020 10:42:22 -0600
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Maurizio Drocco <maurizio.drocco@ibm.com>,
+        Bruno Meneguele <bmeneg@redhat.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with kernel
+ measurements
+Message-ID: <20201214164222.GK4951@sequoia>
+References: <20200708154116.3199728-1-sashal@kernel.org>
+ <20200708154116.3199728-3-sashal@kernel.org>
+ <1594224793.23056.251.camel@linux.ibm.com>
+ <20200709012735.GX2722994@sasha-vm>
+ <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
+ <20201211031008.GN489768@sequoia>
+ <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-5-mszeredi@redhat.com>
- <CAOQ4uxhv+33nVxNQmZtf-uzZN0gMXBaDoiJYm88cWwa1fRQTTg@mail.gmail.com>
- <CAJfpegsxku5D+08F6SUixQUfF6eDVm+o2pu6feLooq==ye0GDg@mail.gmail.com>
- <CAOQ4uxj6130FkTPQ0_83bBj2vJGaehdYk1dix6c8FgLStqN6qw@mail.gmail.com> <CAJfpegvS3pD89GTfFTsAnRwQ+Oxuo+r7mP0JY1usDC3n3tT48Q@mail.gmail.com>
-In-Reply-To: <CAJfpegvS3pD89GTfFTsAnRwQ+Oxuo+r7mP0JY1usDC3n3tT48Q@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 14 Dec 2020 16:47:01 +0200
-Message-ID: <CAOQ4uxh-L4dFsbkhHMCacMjLtPimF1OvJgd6uWJP9xYT3rufRA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/10] ovl: make ioctl() safe
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Dec 14, 2020 at 3:24 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Mon, Dec 14, 2020 at 6:44 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > Perhaps, but there is a much bigger issue with this change IMO.
-> > Not because of dropping rule (b) of the permission model, but because
-> > of relaxing rule (a).
-> >
-> > Should overlayfs respect the conservative interpretation as it partly did
-> > until this commit, a lower file must not lose IMMUTABLE/APPEND_ONLY
-> > after copy up, but that is exactly what is going to happen if we first
-> > copy up and then fail permission check on setting the flags.
->
-> Yeah, it's a mess.   This will hopefully sort it out, as it will allow
-> easier copy up of flags:
->
-> https://lore.kernel.org/linux-fsdevel/20201123141207.GC327006@miu.piliscsaba.redhat.com/
->
-> In actual fact losing S_APPEND is not currently prevented by copy-up
-> triggered by anything other than FS_IOC_SETX*, and even that is prone
-> to races as indicated by the bug report that resulted in this patch.
->
-> Let's just fix the IMMUTABLE case:
->
->   - if the file is already copied up with data (since the overlay
-> ioctl implementation currently uses the realdata), then we're fine to
-> copy up
->
->   - if the file is not IMMUTABLE to start with, then also fine to copy
-> up; even if the op will fail after copy up we haven't done anything
-> that wouldn't be possible without this particular codepath
->
->   - if task has CAP_LINUX_IMMUTABLE (can add/remove immutable) then
-> it's also fine to copy up since we can be fairly sure that the actual
-> setflags will succeed as well.  If not, that can be a problem, but as
-> I've said copying up IMMUTABLE and other flags should really be done
-> by the copy up code, otherwise it won't work properly.
->
-> Something like this incremental should be good,  I think:
->
-> @@ -576,6 +576,15 @@ static long ovl_ioctl_set_flags(struct f
->
->   inode_lock(inode);
->
-> + /*
-> + * Prevent copy up if immutable and has no CAP_LINUX_IMMUTABLE
-> + * capability.
-> + */
-> + ret = -EPERM;
-> + if (!ovl_has_upperdata(inode) && IS_IMMUTABLE(inode) &&
-> +     !capable(CAP_LINUX_IMMUTABLE))
-> + goto unlock;
-> +
->   ret = ovl_maybe_copy_up(file_dentry(file), O_WRONLY);
->   if (ret)
->   goto unlock;
->
+On 2020-12-11 06:01:54, Mimi Zohar wrote:
+> On Thu, 2020-12-10 at 21:10 -0600, Tyler Hicks wrote:
+> > On 2020-11-29 08:17:38, Mimi Zohar wrote:
+> > > Hi Sasha,
+> > > 
+> > > On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
+> > > > On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
+> > > > >Hi Sasha,
+> > > > >
+> > > > >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
+> > > > >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
+> > > > >>
+> > > > >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
+> > > > >>
+> > > > >> Registers 8-9 are used to store measurements of the kernel and its
+> > > > >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
+> > > > >> should include them in the boot aggregate. Registers 8-9 should be
+> > > > >> only included in non-SHA1 digests to avoid ambiguity.
+> > > > >
+> > > > >Prior to Linux 5.8, the SHA1 template data hashes were padded before
+> > > > >being extended into the TPM.  Support for calculating and extending
+> > > > >the per TPM bank template data digests is only being upstreamed in
+> > > > >Linux 5.8.
+> > > > >
+> > > > >How will attestation servers know whether to include PCRs 8 & 9 in the
+> > > > >the boot_aggregate calculation?  Now, there is a direct relationship
+> > > > >between the template data SHA1 padded digest not including PCRs 8 & 9,
+> > > > >and the new per TPM bank template data digest including them.
+> > > > 
+> > > > Got it, I'll drop it then, thank you!
+> > > 
+> > > After re-thinking this over, I realized that the attestation server can
+> > > verify the "boot_aggregate" based on the quoted PCRs without knowing
+> > > whether padded SHA1 hashes or per TPM bank hash values were extended
+> > > into the TPM[1], but non-SHA1 boot aggregate values [2] should always
+> > > include PCRs 8 & 9.
+> > 
+> > I'm still not clear on how an attestation server would know to include
+> > PCRs 8 and 9 after this change came through a stable kernel update. It
+> > doesn't seem like something appropriate for stable since it requires
+> > code changes to attestation servers to handle the change.
+> > 
+> > I know this has already been released in some stable releases, so I'm
+> > too late, but perhaps I'm missing something.
+> 
+> The point of adding PCRs 8 & 9 only to non-SHA1 boot_aggregate values
+> was to avoid affecting existing attestation servers.  The intention was
+> when attestation servers added support for the non-sha1 boot_aggregate
+> values, they'd also include PCRs 8 & 9.  The existing SHA1
+> boot_aggregate value remains PCRs 0 - 7.
 
-I guess that looks ok for a band aid.
+AFAIK, there's nothing that prevents the non-SHA1 TPM 2.0 PCR banks from
+being used even before v5.8, albeit with zero padded SHA1 digests.
+Existing attestation servers that already support that configuration are
+broken by this stable backport.
 
-Thanks,
-Amir.
+> To prevent this or something similar from happening again, what should
+> have been the proper way of including PCRs 8 & 9?
+
+I don't think that commits like 6f1a1d103b48 ("ima: Switch to
+ima_hash_algo for boot aggregate") and 20c59ce010f8 ("ima: extend
+boot_aggregate with kernel measurements") should be backported to
+stable.
+
+Including PCRs 8 and 9 definitely makes sense to include in the
+boot_aggregate value but limiting such a change to "starting in 5.8",
+rather than "starting in 5.8 and 5.4.82", is the safer approach when
+attestation server modifications are required.
+
+Tyler
+
+> 
+> thanks,
+> 
+> Mimi
+> 
