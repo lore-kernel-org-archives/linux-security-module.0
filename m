@@ -2,134 +2,164 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44AD0C4361B
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 16:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4427BC4361B
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 17:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC982250E
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 16:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7DFC22513
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Dec 2020 17:20:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440099AbgLNQnQ (ORCPT
+        id S2404597AbgLNRUR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Dec 2020 11:43:16 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:35526 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbgLNQnG (ORCPT
+        Mon, 14 Dec 2020 12:20:17 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:37928 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732189AbgLNRUQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Dec 2020 11:43:06 -0500
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5131F20B717A;
-        Mon, 14 Dec 2020 08:42:24 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5131F20B717A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1607964144;
-        bh=17oy4+dXfaSLajpExnudcAmGMiMK3qcSh76GKO4RE2Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b2qc6msEewlTpaaV0pHx7Usu0G6P2kINFg1UemHsrAy0bPMmhv+KSd6uf9Ipt43F7
-         9ZVKoQrg73yNjw0u7uwhG92+h9a+KuVMhqxpH5ycdsnsUvuE2IjguASH0E3x3Yx3iV
-         XzTsxGp+NTbKbRHRyT9l877JRxZkgxsHU+0yRmnY=
-Date:   Mon, 14 Dec 2020 10:42:22 -0600
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with kernel
- measurements
-Message-ID: <20201214164222.GK4951@sequoia>
-References: <20200708154116.3199728-1-sashal@kernel.org>
- <20200708154116.3199728-3-sashal@kernel.org>
- <1594224793.23056.251.camel@linux.ibm.com>
- <20200709012735.GX2722994@sasha-vm>
- <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
- <20201211031008.GN489768@sequoia>
- <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
+        Mon, 14 Dec 2020 12:20:16 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEH4DrF115864;
+        Mon, 14 Dec 2020 17:19:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=qa4SGN263GnWMH6gR/1PcYHczDLDbrHuMDP6ih5XBwY=;
+ b=CAlYT3ZgbqlFlxScgD+LTjBBReB04hq6L18khCgUX8hl+ZA+pi9jceoU/+473vAJIz2I
+ 64ojxLeTJuoJx0IfIYyIQmq3+jh/iZP6E2UNbNnPeFd2xqZNMHAJ5jwQi+FQXqURsUnt
+ P4gM2QbmKVdLrVfE3V+nTPO6gK6B/4EcvCtovho+PBD2W5okp77Y+h5oZkmWhFhfP56T
+ hJCeW1mp5gEaPu9P0wq36ADC0KWyD5OAL//ZOXw6PPgeld6JU6W23WwrAEbbZdbw139O
+ KT8xboR7xO33QQ/70bBOySb3eaJomt8woCe8lqeZQBt94HY42QEgg5bTU6SWJsDBaExF fw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 35cn9r6edm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 14 Dec 2020 17:19:11 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BEH4oqc051522;
+        Mon, 14 Dec 2020 17:19:10 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 35e6ep7mmw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Dec 2020 17:19:10 +0000
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 0BEHJ35c007597;
+        Mon, 14 Dec 2020 17:19:05 GMT
+Received: from localhost (/10.159.237.141)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 14 Dec 2020 09:19:03 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2] proc: Allow pid_revalidate() during LOOKUP_RCU
+In-Reply-To: <87tusplqwf.fsf@x220.int.ebiederm.org>
+References: <20201204000212.773032-1-stephen.s.brennan@oracle.com>
+ <87tusplqwf.fsf@x220.int.ebiederm.org>
+Date:   Mon, 14 Dec 2020 09:19:02 -0800
+Message-ID: <87sg88tiex.fsf@stepbren-lnx.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=754 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012140117
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9834 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=768
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012140117
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-12-11 06:01:54, Mimi Zohar wrote:
-> On Thu, 2020-12-10 at 21:10 -0600, Tyler Hicks wrote:
-> > On 2020-11-29 08:17:38, Mimi Zohar wrote:
-> > > Hi Sasha,
-> > > 
-> > > On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
-> > > > On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
-> > > > >Hi Sasha,
-> > > > >
-> > > > >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
-> > > > >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
-> > > > >>
-> > > > >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
-> > > > >>
-> > > > >> Registers 8-9 are used to store measurements of the kernel and its
-> > > > >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
-> > > > >> should include them in the boot aggregate. Registers 8-9 should be
-> > > > >> only included in non-SHA1 digests to avoid ambiguity.
-> > > > >
-> > > > >Prior to Linux 5.8, the SHA1 template data hashes were padded before
-> > > > >being extended into the TPM.  Support for calculating and extending
-> > > > >the per TPM bank template data digests is only being upstreamed in
-> > > > >Linux 5.8.
-> > > > >
-> > > > >How will attestation servers know whether to include PCRs 8 & 9 in the
-> > > > >the boot_aggregate calculation?  Now, there is a direct relationship
-> > > > >between the template data SHA1 padded digest not including PCRs 8 & 9,
-> > > > >and the new per TPM bank template data digest including them.
-> > > > 
-> > > > Got it, I'll drop it then, thank you!
-> > > 
-> > > After re-thinking this over, I realized that the attestation server can
-> > > verify the "boot_aggregate" based on the quoted PCRs without knowing
-> > > whether padded SHA1 hashes or per TPM bank hash values were extended
-> > > into the TPM[1], but non-SHA1 boot aggregate values [2] should always
-> > > include PCRs 8 & 9.
-> > 
-> > I'm still not clear on how an attestation server would know to include
-> > PCRs 8 and 9 after this change came through a stable kernel update. It
-> > doesn't seem like something appropriate for stable since it requires
-> > code changes to attestation servers to handle the change.
-> > 
-> > I know this has already been released in some stable releases, so I'm
-> > too late, but perhaps I'm missing something.
-> 
-> The point of adding PCRs 8 & 9 only to non-SHA1 boot_aggregate values
-> was to avoid affecting existing attestation servers.  The intention was
-> when attestation servers added support for the non-sha1 boot_aggregate
-> values, they'd also include PCRs 8 & 9.  The existing SHA1
-> boot_aggregate value remains PCRs 0 - 7.
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-AFAIK, there's nothing that prevents the non-SHA1 TPM 2.0 PCR banks from
-being used even before v5.8, albeit with zero padded SHA1 digests.
-Existing attestation servers that already support that configuration are
-broken by this stable backport.
+> Stephen Brennan <stephen.s.brennan@oracle.com> writes:
+>
+>> The pid_revalidate() function requires dropping from RCU into REF lookup
+>> mode. When many threads are resolving paths within /proc in parallel,
+>> this can result in heavy spinlock contention as each thread tries to
+>> grab a reference to the /proc dentry lock (and drop it shortly
+>> thereafter).
+>
+> I am feeling dense at the moment.  Which lock specifically are you
+> referring to?  The only locks I can thinking of are sleeping locks,
+> not spinlocks.
 
-> To prevent this or something similar from happening again, what should
-> have been the proper way of including PCRs 8 & 9?
+The lock in question is the d_lockref field (aliased as d_lock) of
+struct dentry. It is contended in this code path while processing the
+"/proc" dentry, switching from RCU to REF mode.
 
-I don't think that commits like 6f1a1d103b48 ("ima: Switch to
-ima_hash_algo for boot aggregate") and 20c59ce010f8 ("ima: extend
-boot_aggregate with kernel measurements") should be backported to
-stable.
+    walk_component()
+      lookup_fast()
+        d_revalidate()
+          pid_revalidate() // returns -ECHILD
+        unlazy_child()
+          lockref_get_not_dead(&nd->path.dentry->d_lockref)
 
-Including PCRs 8 and 9 definitely makes sense to include in the
-boot_aggregate value but limiting such a change to "starting in 5.8",
-rather than "starting in 5.8 and 5.4.82", is the safer approach when
-attestation server modifications are required.
+>
+>> diff --git a/fs/proc/base.c b/fs/proc/base.c
+>> index ebea9501afb8..833d55a59e20 100644
+>> --- a/fs/proc/base.c
+>> +++ b/fs/proc/base.c
+>> @@ -1830,19 +1846,22 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+>>  {
+>>  	struct inode *inode;
+>>  	struct task_struct *task;
+>> +	int rv = 0;
+>>  
+>> -	if (flags & LOOKUP_RCU)
+>> -		return -ECHILD;
+>> -
+>> -	inode = d_inode(dentry);
+>> -	task = get_proc_task(inode);
+>> -
+>> -	if (task) {
+>> -		pid_update_inode(task, inode);
+>> -		put_task_struct(task);
+>> -		return 1;
+>> +	if (flags & LOOKUP_RCU) {
+>
+> Why do we need to test flags here at all?
+> Why can't the code simply take an rcu_read_lock unconditionally and just
+> pass flags into do_pid_update_inode?
+>
 
-Tyler
+I don't have any good reason. If it is safe to update the inode without
+holding a reference to the task struct (or holding any other lock) then
+I can consolidate the whole conditional.
 
-> 
-> thanks,
-> 
-> Mimi
-> 
+>
+>> +		inode = d_inode_rcu(dentry);
+>> +		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+>> +		if (task)
+>> +			rv = do_pid_update_inode(task, inode, flags);
+>> +	} else {
+>> +		inode = d_inode(dentry);
+>> +		task = get_proc_task(inode);
+>> +		if (task) {
+>> +			rv = do_pid_update_inode(task, inode, flags);
+>> +			put_task_struct(task);
+>> +		}
+>
+>>  	}
+>> -	return 0;
+>> +	return rv;
+>>  }
+>>  
+>>  static inline bool proc_inode_is_dead(struct inode *inode)
+>
+> Eric
