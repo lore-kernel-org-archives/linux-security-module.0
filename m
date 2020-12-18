@@ -2,119 +2,349 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADADC4361B
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Dec 2020 01:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CABEC4361B
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Dec 2020 07:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2867923A59
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Dec 2020 01:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD5F23A63
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Dec 2020 07:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730792AbgLRBNT (ORCPT
+        id S1725860AbgLRHC7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 17 Dec 2020 20:13:19 -0500
-Received: from sonic309-28.consmr.mail.ne1.yahoo.com ([66.163.184.154]:38279
-        "EHLO sonic309-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730778AbgLRBNT (ORCPT
+        Fri, 18 Dec 2020 02:02:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725298AbgLRHC6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 17 Dec 2020 20:13:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1608253953; bh=BoqTbvYyh9kCc3Jf2fe/CBBK49ZWnK6/OJjEPf0Yxuo=; h=To:Cc:From:Subject:Date:References:From:Subject; b=WSc8Kf6S+/zTv0zxdwkW2bVTEqnEn/nH7BqWFGHMz8kQ4fx/3thL3+CMYv5wb8Hw/YCwliASyloZy0J6tvoXhEIWrM7Le8P+zYlTC6BERDai6MWPV+begxmaNvjAiumw18PLsr9szOVA2w4N7668YsB3jJ99Sb96gIG+qYCM67rfmCw74PUOlqCqGNCA/sHR/WamxZYVrzAGbzB7jla35BjAmqeZ+fDAfswjtZSMPvj3a7GJCCaFvtD9jO4EeManaGfgrctmdG3mINjgN69nldJYZaH+UXwzx8Pio4ZN85w95/FhUx3jCodelR/hnz2D6bBYi7snzXsSWgM9UuqSGA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1608253953; bh=/3F6lL1dFkTZHqrv3i4dCFcbnRjiU85a3dIXOupC3Ey=; h=To:From:Subject:Date:From:Subject; b=iI4Dyhb8FL6voDlUi3Z2SVal118CgfKB0tMM0u8U61CAX/oBQku1hoHoy8qlLZiC51gJNkPkCOM0NJ758p+nKOwxrYNrB1xziONsJMxow/GX2byBsYUX/yki0o+9acu4uEVUBq4NVumdtZRwKdHLC+Kp80D84Xks2vojQHAD72Vl0RcCSzh9L6T/J09Tikcn/RgHLV+QmPBJkP+OKEOrH/HC9HXwAaVCaUQCKGJeKSepqZoSUG90xrdoAOm/K4zohfybstMO/R3YYF8I6LJEGmiEIN186xVTSUMdckOqyS4+Em+uYOPXJxJf5+IY5If4SKYmD6oWSt9XS2QgHjs4xA==
-X-YMail-OSG: wvnUvMIVM1mH_pe2RR_f8t8YuIa5CeuxtPUP5kq3sijlnHqHdY6WHPgwwGi5C_T
- ifQ56hxoarS0isDyvqk4YX_t4mdP9gfxKZznx3pQMcWBHGahTJex5T1LuV5vBo6l0jwYQzJLqNL1
- m4gaD7uZ2r9hyXKvCQWO7Z1GTVY1MZrG5vlCtJx3x.PCvLyNXKbWe6oGFVhZSjThPtx43mpqlxzR
- ml2rI7dSgM_x_Qq5nDiGBuyIhcg3qsWbPXo8VdP9uCJteq7j3jcSnfMxYz4nUg5g7bXLi9NAZ5M8
- i9LPOdFZctXcgw7_zipTtXRr8hW6CXwulxc7QmSZU_XrdNmoQvUY2.a_hGy8LH1W_VgSRvhBycHD
- _XosGaDHpCfDh8VcyRIpzvWXP16A7I7LBDW6j40.byRJVcDfnfrHYB8cZ4pMb_r5ZSqBQe2fEylJ
- EgZihrCSDR7j6my9A09IvmIyi6uwZlYxpd_EFB_9Hk6o0jetDuqpN84QtfRhEfntWWMT0aexRyOF
- UOQZKfbhUpSsyIFhyYngo7nRiYxY2fPhsr3tAzU.MAvldSXuAmDuABGFegFmtmlIShB1SahqHJs4
- NiCH17R5bjhaGkLbYA_Mo4AJl0UTsiTwT6xevz2UMEXTSvaoBmyxsyGMc2BOJ5rAPBxGY0zFtqNE
- Oq8xhnf9CS_ysDrXnTyrPDQ.v8Keb_GGz5_Z6P0ANQXMwBJIb_gQ2eVqhvPhcJInGOmzFqHS6iVd
- Ja45vyMfDfP0dSg0sakfY52kj.TKQoilz316UjZjGW5pbRROXKaQOb7PI_oqchFTyptmsxzzT2de
- 9tZFcr10XPoE2zTswBYIwSEg9YiS3Z6QnaTFaZ1Ln_B8dWJrQeuS.Pc4NQ5ll3ATmhWa0YxAraJv
- .yvSNciARy.tU2JzXte93nr0nwvPCz0JQzSc5WdkbFxU4WCsCZ0uDLMn4TFK8JsckXabouWCH6QJ
- kf6ZG5xE_qEJWIrWQPz9O9ZTSUl3TC4vfH.eVxlt_CWIkQ8lYQvKyLPkGQl_5nDj7vTqIXZEBhMT
- l39Ffdlrvj9_VHB7t1Zv.jtWLhAxt59uGupEDIw2U2BmmswR7TM_ZFsze5MCB_A2ZFYUMbZMEc16
- sDzMrMamwWX6_3SsODdfelSOZL4rk74JjtLU8_aqwdSi9kw_soH_DoGkBi1pWBh1y58JDdMdZY9V
- J1sEk21J1BznSCti1AokVnLiwxHqnAMNMdqXPex30d_a9oi8OjJIEpCmvIoSFOc6EBySrIA93IZi
- .JI2VS0CGrz5w5CKxC60G8LkhY_p024Nb8w_yQH.jxDzHkk21CD9B7IkOGLWodqs_T0upJbUZXNI
- E1y7JZlu89FixmPyr0a9Ds62H7_hA.3rwOMZRoGS1L0NoF_vz7eMCeNNVhkQiTcsKIHjFKSjLUw3
- ks62PQgGgIhHY_vZcy14hsy8AJNfPasA7n4gkNiuSiWGsIj3n_yS9NSrWFjZqSQOmS1EGpZRErwP
- wonHBknotkXQGDize3KRty_I4_RsqSl29YMEu26ukiG7sjosw.Ei9Cqt_8DXaJ5hUCJyWUrPOqpp
- UyK_Z_SjC4.uHlLPEGY0VmzjoAc.295x5_2ZteH8is5BgF4UKMFJ_5_qLCWq17PT_9GUM9pOaXjA
- br7uPCaH7hQD1eBjpGtklUeDl9PjxZmr0WpvQKtL9MRuzcwLURSmIQlqohO.of.YKd2d0eASBAVd
- P.Lg.XzeRJy48AMaW6htceq0Btwe_3IQusnRUKqzRSXBLFU99QrRGdoTAPundSS_lU7QNoL6DN4O
- j.5ttKEmmVpjtQl9.oa4ZJB0_yQu__esASgQokgDrW6bU7hck8vVvWxLtrv36650hxjirSrSo3rd
- 9B3yTppP7dlWrfzUhEqtFHvwna1D2y3a2m4ogjcJTruTpTmCFcSQ8udD35qClMsGLG0igvW7uGSJ
- 3CRSnn.w_XQcVDUtJv6bWVGq6ewsYo621lz4u0JSy1o71lVP8Easv3aZFGlyW1WXPQpYIgiQ3jrQ
- TS9A8TqyKkT6CeCQ_fYGE5BeWEunnN07aTy1cCVnZN2lB07mNvYh33UIjWDMPxsD9Khkx4CH5xxd
- _Sz.j7uEjX_tlYWoSoIWSMZGEyvMLTS08mBtZTcIJDg5Mppi5w0qwTDSzpfP_Xp9PyXMt27wGYHI
- 1HCw27dxEc7jdKFXdvDqDFiLqZUGYu9hNml5H1O_Df9WIjiMQD13Pmxhrg8xxBLEhX0Zda2_wVHq
- dprYiHeDQa8IxtpzqrMSrnbF25iUbyFLMtDObLi3ehb6.V7wETqvrhFn4C7N4vCBY8aA.BcyqbsD
- Z4BO.YuGb5l0yDUxspVZqkk06M4MNJI8.UV3iaRrhVQSXv815w.rA0on5R1D7cPHJBAj1iKgLls8
- X_VuQ7E8Iztilu4IPvvaEqKXnwp6uy3ENJkG3RLwfG4LvHMQ6HzTEMr0QzB90vcFqax2xOUPrEQP
- 9Bt.Z2dFD2HJgQYS.2OtgSRscxQAAdh6ISWffU7tm50Ti7EVOwwWqMUm1ecK9_wi2SsjDeScelxs
- yORITezQcvqIa8OUTg6y0CTmw_EjiwTC8TlPqOYsBIcgDP_ILgtf.tZ86lyw04zS0bBJD_17v1FJ
- WMGsAgwzyfcCJ8wYvqfjuW_NNaBYbMC387aYiHFxY8r_iEz8_MwO3WWM4KuGcTEcSngIK8kJuCvT
- wxxQIFcybnHKHtOBdSbYgfDICzMJOQ3bEe54Ao5jrRwTIk2cOUFN2PLwQvoMTG0J86wy4vhsGAxR
- 2NtDBgwB67425c6uTTQpw7Yl84T9FmKVp
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 18 Dec 2020 01:12:33 +0000
-Received: by smtp416.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID f6b4219fc7d55273212009d95167a10a;
-          Fri, 18 Dec 2020 01:12:30 +0000 (UTC)
-To:     "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH] Smack: Handle io_uring kernel thread privileges.
-Message-ID: <dacfb329-de66-d0cf-dcf9-f030ea1370de@schaufler-ca.com>
-Date:   Thu, 17 Dec 2020 17:12:29 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+        Fri, 18 Dec 2020 02:02:58 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93045C0617A7;
+        Thu, 17 Dec 2020 23:02:18 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id 75so1208211ilv.13;
+        Thu, 17 Dec 2020 23:02:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nNA3gIrKHh9x8sDKplgxIB2z13v0h/7Qfqc7WMGts5E=;
+        b=AWA20ztU77fNmUet/InrjHBWCBQVqeiWzFGt5iInqGf7plQ5MBvR2WJ4TpSSy8SAPJ
+         nKwp+dUOf9seuC5MEm34PhKEke9oAToCSdyrm0jZjC2X05RENJmIYN4tMeV8kor5R0wK
+         KSH5s1e6MJwHXs4Oll5hBLrBhP3xTshj3JRFL+HPc0xLdDLsNWdC/gjNyfyarGWZKdGU
+         GawIhB2Mw6FTlewiGXUGMiKCbGKqLkkFexTzYwW28LhnDg0tH7QuzohmPJbxwf3hQ8HM
+         +RPQdzsHwdjKRuVqqQ8/tyKejgUj11+XPqT+6Xjisj2WUrdLFs9nfsOqxkbxMkzreVS6
+         5wVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nNA3gIrKHh9x8sDKplgxIB2z13v0h/7Qfqc7WMGts5E=;
+        b=jkidk5Quwv0vz5ZVY3Zm5Bdp+L40dWLjLkgnA4BeJ43clPShuorIx3fkGFlLkPk/N1
+         ugn8MVWdGni2Bum/efdICLn0YKU182QfoSnar2TUwNuyDDTJ6hmNFCWMLNJat1wYvMeK
+         zueQTTxmz9hSx+x2MvNvJSAkjExGce5TVZs782+JAPRkYk3RGDQ2himyHxS5KziUdOS4
+         36um3mYr46FKaq1lKwKMSQ3aqmgDqYbpjFQOUbC8kSnAd8Oey8HpT2eZNSwB1W33AyLT
+         8cZOuC4TWp2w3+fDa1EqNysrvSLJpFjD03GpT06EizBkNaP+sQlB9+X7CcBFf48yp3YO
+         6YEQ==
+X-Gm-Message-State: AOAM530KojGOt6tqeh3g9izFlVJEU+JnCEBKcF+SrQeu7yO565N2TMKi
+        6LRqkwO9ZNdPu8FID6dx1F8Z+xVGe+dGDKriI0o=
+X-Google-Smtp-Source: ABdhPJykBJejFkn9EteVOLWfluyZLYMNWKO94GlkEam90SosvpEYyooqKprqzIZPo2BK8mHiKWaCe2uWTqF1QjKFdsM=
+X-Received: by 2002:a05:6e02:60f:: with SMTP id t15mr2502684ils.250.1608274937791;
+ Thu, 17 Dec 2020 23:02:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-References: <dacfb329-de66-d0cf-dcf9-f030ea1370de.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.17278 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
+References: <2nv9d47zt7.fsf@aldarion.sourceruckus.org> <2n1rfrf5l0.fsf@aldarion.sourceruckus.org>
+ <CAOQ4uxg4hmtGXg6dNghjfVpfiJFj6nauzqTgZucwSJAJq1Z3Eg@mail.gmail.com>
+ <CAOQxz3wW8QF-+HFL1gcgH+nVvySN3fogop0v+KNcxpbzu9BkJA@mail.gmail.com>
+ <CAOQ4uxgsFnkUqnXYyMNdZU=s_Wq18fdbr0ZhepNLMYh9MfPe9w@mail.gmail.com>
+ <CAOQxz3wUvi_O7hzNrN8oTGfnFz-PiVr3Z6nG1ZXLFjpnH4q81g@mail.gmail.com>
+ <CAOQxz3zGaKnJCUe7DuegOqbbPAvNj8hTFA6_LsGEPTMXwUpn6g@mail.gmail.com>
+ <CAOQ4uxifSf-q1fXC_zxOpqR8GDX8sr2CWPsXrJ6e0YSrfB6v8Q@mail.gmail.com>
+ <CAOQxz3xZWCdF=7AZ=N0ajcN8FVjzU2sS_SpxzwRFyHGvwc7dZA@mail.gmail.com>
+ <CAOQ4uxjmUY+N6sBoD-d2MN4eehPCcWzBXTHkDqAcCVtkpbG2kw@mail.gmail.com>
+ <CAOQxz3y8N6ny23iA1Fe0L4M1gR=FHP5xANZXquu4NSLoucorKw@mail.gmail.com>
+ <CAOQ4uxg++DkgcO9K6wkSn0p6QvvkwK0nvxBzSpNE6RdaCH3aQg@mail.gmail.com>
+ <CAOQxz3wbqnUxSL-Ks=7USUZU1+04Uvqi-FnTZFGRL9uqQvvNfA@mail.gmail.com> <CAOQxz3xNWoj5Az-0JAk1Ay3T_QyE1bso7pxC_7n=hV3B5PBK0w@mail.gmail.com>
+In-Reply-To: <CAOQxz3xNWoj5Az-0JAk1Ay3T_QyE1bso7pxC_7n=hV3B5PBK0w@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 18 Dec 2020 09:02:06 +0200
+Message-ID: <CAOQ4uxjw5AroFpYBkGExiAfHir4OyABk023RQK_s6TPQ5aTJCw@mail.gmail.com>
+Subject: Re: failed open: No data available
+To:     Michael Labriola <michael.d.labriola@gmail.com>
+Cc:     overlayfs <linux-unionfs@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Jonathan Lebon <jlebon@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: multipart/mixed; boundary="0000000000005ec1e905b6b7b076"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Smack assumes that kernel threads are privileged for smackfs
-operations. This was necessary because the credential of the
-kernel thread was not related to a user operation. With io_uring
-the credential does reflect a user's rights and can be used.
+--0000000000005ec1e905b6b7b076
+Content-Type: text/plain; charset="UTF-8"
 
-Suggested-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
-=C2=A0security/smack/smack_access.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Fri, Dec 18, 2020 at 1:47 AM Michael Labriola
+<michael.d.labriola@gmail.com> wrote:
+>
+> On Thu, Dec 17, 2020 at 4:56 PM Michael Labriola
+> <michael.d.labriola@gmail.com> wrote:
+> >
+> > On Thu, Dec 17, 2020 at 3:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Thu, Dec 17, 2020 at 9:46 PM Michael Labriola
+> > > <michael.d.labriola@gmail.com> wrote:
+> > > >
+> > > > On Thu, Dec 17, 2020 at 1:07 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > >
+> > > > > On Thu, Dec 17, 2020 at 6:22 PM Michael Labriola
+> > > > *snip*
+> > > > > > On Thu, Dec 17, 2020 at 7:00 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > > > > > Thanks, Amir.  I didn't have CONFIG_DYNAMIC_DEBUG enabled, so
+> > > > >
+> > > > > I honestly don't expect to find much in the existing overlay debug prints
+> > > > > but you never know..
+> > > > > I suspect you will have to add debug prints to find the problem.
+> > > >
+> > > > Ok, here goes.  I had to setup a new virtual machine that doesn't use
+> > > > overlayfs for its root filesystem because turning on dynamic debug
+> > > > gave way too much output for a nice controlled test.  It's exhibiting
+> > > > the same behavior as my previous tests (5.8 good, 5.9 bad).  The is
+> > > > with a freshly compiled 5.9.15 w/ CONFIG_OVERLAY_FS_XINO_AUTO turned
+> > > > off and CONFIG_DYNAMIC_DEBUG turned on.  Here's what we get:
+> > > >
+> > > >  echo "file fs/overlayfs/*  +p" > /sys/kernel/debug/dynamic_debug/control
+> > > >  mount borky2.sqsh t
+> > > >  mount -t tmpfs tmp tt
+> > > >  mkdir -p tt/upper/{upper,work}
+> > > >  mount -t overlay -o \
+> > > >     lowerdir=t,upperdir=tt/upper/upper,workdir=tt/upper/work blarg ttt
+> > > > [  164.505193] overlayfs: mkdir(work/work, 040000) = 0
+> > > > [  164.505204] overlayfs: tmpfile(work/work, 0100000) = 0
+> > > > [  164.505209] overlayfs: create(work/#3, 0100000) = 0
+> > > > [  164.505210] overlayfs: rename(work/#3, work/#4, 0x4)
+> > > > [  164.505216] overlayfs: unlink(work/#3) = 0
+> > > > [  164.505217] overlayfs: unlink(work/#4) = 0
+> > > > [  164.505221] overlayfs: setxattr(work/work,
+> > > > "trusted.overlay.opaque", "0", 1, 0x0) = 0
+> > > >
+> > > >  touch ttt/FOO
+> > > > touch: cannot touch 'ttt/FOO': No data available
+> > > > [  191.919498] overlayfs: setxattr(upper/upper,
+> > > > "trusted.overlay.impure", "y", 1, 0x0) = 0
+> > > > [  191.919523] overlayfs: tmpfile(work/work, 0100644) = 0
+> > > > [  191.919788] overlayfs: tmpfile(work/work, 0100644) = 0
+> > > >
+> > > > That give you any hints?  I'll start reading through the overlayfs
+> > > > code.  I've never actually looked at it, so I'll be planting printk
+> > > > calls at random.  ;-)
+> > >
+> > > We have seen that open("FOO", O_WRONLY) fails
+> > > We know that FOO is lower at that time so that brings us to
+> > >
+> > > ovl_open
+> > >   ovl_maybe_copy_up
+> > >     ovl_copy_up_flags
+> > >       ovl_copy_up_one
+> > >         ovl_do_copy_up
+> > >           ovl_set_impure
+> > > [  191.919498] overlayfs: setxattr(upper/upper,
+> > > "trusted.overlay.impure", "y", 1, 0x0) = 0
+> > >           ovl_copy_up_tmpfile
+> > >             ovl_do_tmpfile
+> > > [  191.919523] overlayfs: tmpfile(work/work, 0100644) = 0
+> > >             ovl_copy_up_inode
+> > > This must be were we fail and likely in:
+> > >               ovl_copy_xattr
+> > >                  vfs_getxattr
+> > > which can return -ENODATA, but it is not expected because the
+> > > xattrs returned by vfs_listxattr should exist...
+> > >
+> > > So first guess would be to add a debug print for xattr 'name'
+> > > and return value of vfs_getxattr().
+> >
+> > Ok, here we go.  I've added a bunch of printks all over the place.
+> > Here's what we've got.  Things are unchanged during mount.  Trying to
+> > touch FOO now gives me this:
+> >
+> > [  114.365444] ovl_open: start
+> > [  114.365450] ovl_maybe_copy_up: start
+> > [  114.365452] ovl_maybe_copy_up: need copy up
+> > [  114.365454] ovl_maybe_copy_up: ovl_want_write succeeded
+> > [  114.365459] ovl_copy_up_one: calling ovl_do_copy_up()
+> > [  114.365460] ovl_do_copy_up: start
+> > [  114.365462] ovl_do_copy_up: impure
+> > [  114.365464] ovl_set_impure: start
+> > [  114.365484] overlayfs: setxattr(upper/upper,
+> > "trusted.overlay.impure", "y", 1, 0x0) = 0
+> > [  114.365486] ovl_copy_up_tmpfile: start
+> > [  114.365507] overlayfs: tmpfile(work/work, 0100644) = 0
+> > [  114.365510] ovl_copy_up_inode: start
+> > [  114.365511] ovl_copy_up_inode: ISREG && !metacopy
+> > [  114.365625] ovl_copy_xattr: start
+> > [  114.365630] ovl_copy_xattr: vfs_listxattr() returned 17
+> > [  114.365632] ovl_copy_xattr: buf allocated good
+> > [  114.365634] ovl_copy_xattr: vfs_listxattr() returned 17
+> > [  114.365636] ovl_copy_xattr: slen=17
+> > [  114.365638] ovl_copy_xattr: name='security.selinux'
+>
+> SELinux?  now that's not suspicious at all...
+>
+> > [  114.365643] ovl_copy_xattr: vfs_getxattr returned size=-61
+> > [  114.365644] ovl_copy_xattr: cleaning up
+> > [  114.365647] ovl_copy_up_inode: ovl_copy_xattr error=-61
+> > [  114.365649] ovl_copy_up_one: error=-61
+> > [  114.365651] ovl_copy_up_one: calling ovl_copy_up_end()
+> > [  114.365653] ovl_copy_up_flags: ovl_copy_up_one error=-61
+> > [  114.365655] ovl_maybe_copy_up: ovl_copy_up_flags error=-61
+> > [  114.365658] ovl_open: ovl_maybe_copy_up error=-61
+> > [  114.365728] ovl_copy_up_one: calling ovl_do_copy_up()
+> > [  114.365730] ovl_do_copy_up: start
+> > [  114.365731] ovl_do_copy_up: impure
+> > [  114.365733] ovl_set_impure: start
+> > [  114.365735] ovl_copy_up_tmpfile: start
+> > [  114.365748] overlayfs: tmpfile(work/work, 0100644) = 0
+> > [  114.365750] ovl_copy_up_inode: start
+> > [  114.365752] ovl_copy_up_inode: ISREG && !metacopy
+> > [  114.365770] ovl_copy_xattr: start
+> > [  114.365773] ovl_copy_xattr: vfs_listxattr() returned 17
+> > [  114.365774] ovl_copy_xattr: buf allocated good
+> > [  114.365776] ovl_copy_xattr: vfs_listxattr() returned 17
+> > [  114.365778] ovl_copy_xattr: slen=17
+> > [  114.365780] ovl_copy_xattr: name='security.selinux'
+> > [  114.365784] ovl_copy_xattr: vfs_getxattr returned size=-61
+> > [  114.365785] ovl_copy_xattr: cleaning up
+> > [  114.365787] ovl_copy_up_inode: ovl_copy_xattr error=-61
+> > [  114.365789] ovl_copy_up_one: error=-61
+> > [  114.365790] ovl_copy_up_one: calling ovl_copy_up_end()
+> > [  114.365792] ovl_copy_up_flags: ovl_copy_up_one error=-61
+> >
+> *snip*
+>
+> So, the selinux stuff made me raise an eyebrow...  I've got selinux
+> enabled in my kernel so that it's there if I boot up a RHEL box with
+> this kernel.  But I'm using Ubuntu right now, and the rest of SELinux
+> is not installed/enabled.  There shouldn't be any selinux labels in
+> the files I slurped up into my squashfs image, so there shouldn't be
+> any in the squashfs, so of course that won't work.
+>
+> I tried compiling CONFIG_SELINUX=n and guess what, it works now.  So
+> that's at least a work-around for me.
+>
+> So, for whatever reason, between 5.8 and 5.9, having CONFIG_SELINUX=y
+> but no security labels on the filesystem became a problem?  Is this
+> something that needs to get fixed in overlayfs?  Or do you think it's
+> a deeper problem that needs fixing elsewhere?
+>
 
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.=
-c
-index efe2406a3960..7eabb448acab 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -688,9 +688,10 @@ bool smack_privileged_cred(int cap, const struct cre=
-d *cred)
- bool smack_privileged(int cap)
- {
- 	/*
--	 * All kernel tasks are privileged
-+	 * Kernel threads may not have credentials we can use.
-+	 * The io_uring kernel threads do have reliable credentials.
- 	 */
--	if (unlikely(current->flags & PF_KTHREAD))
-+	if ((current->flags & (PF_KTHREAD | PF_IO_WORKER)) =3D=3D PF_KTHREAD)
- 		return true;
-=20
- 	return smack_privileged_cred(cap, current_cred());
+It's both :)
 
+Attached two patches that should each fix the issue independently,
+but we need to apply both. I only tested that they build.
+Please verify that each applied individually solves the problem.
 
+The selinux- patch fixes an selinux regression introduced in kernel v5.9
+the regression is manifested in your test case but goes beyond overlayfs.
+
+The ovl- patch is a workaround for the selinux regression, but it is also
+a micro optimization that doesn't hurt, so worth applying it anyway.
+
+Thanks,
+Amir.
+
+--0000000000005ec1e905b6b7b076
+Content-Type: text/plain; charset="US-ASCII"; 
+	name="selinux-fix-inconsistency-between-inode_getxattr-and.patch.txt"
+Content-Disposition: attachment; 
+	filename="selinux-fix-inconsistency-between-inode_getxattr-and.patch.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kitwa7o40>
+X-Attachment-Id: f_kitwa7o40
+
+RnJvbSA3YmI1NGMxY2UxMDZkZTI2YTFmNTJiZDkwZGMzNDY0ZmYxZmI0MjY5IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBGcmksIDE4IERlYyAyMDIwIDA3OjQxOjIxICswMjAwClN1YmplY3Q6IFtQQVRDSF0gc2Vs
+aW51eDogZml4IGluY29uc2lzdGVuY3kgYmV0d2VlbiBpbm9kZV9nZXR4YXR0ciBhbmQKIGlub2Rl
+X2xpc3RzZWN1cml0eQoKV2hlbiBpbm9kZSBoYXMgbm8gbGlzdHhhdHRyIG9wIG9mIGl0cyBvd24g
+KGUuZy4gc3F1YXNoZnMpIHZmc19saXN0eGF0dHIKY2FsbHMgdGhlIExTTSBpbm9kZV9saXN0c2Vj
+dXJpdHkgaG9va3MgdG8gbGlzdCB0aGUgeGF0dHJzIHRoYXQgTFNNcyB3aWxsCmludGVyY2VwdCBp
+biBpbm9kZV9nZXR4YXR0ciBob29rcy4KCldoZW4gc2VsaW51eCBMU00gaXMgaW5zdGFsbGVkIGJ1
+dCBub3QgaW5pdGlhbGl6ZWQsIGl0IHdpbGwgbGlzdCB0aGUKc2VjdXJpdHkuc2VsaW51eCB4YXR0
+ciBpbiBpbm9kZV9saXN0c2VjdXJpdHksIGJ1dCB3aWxsIG5vdCBpbnRlcmNlcHQgaXQKaW4gaW5v
+ZGVfZ2V0eGF0dHIuICBUaGlzIHJlc3VsdHMgaW4gLUVOT0RBVEEgZm9yIGEgZ2V0eGF0dHIgY2Fs
+bCBmb3IgYW4KeGF0dHIgcmV0dXJuZWQgYnkgbGlzdHhhdHRyLgoKVGhpcyBzaXR1YXRpb24gd2Fz
+IG1hbmlmZXN0ZWQgYXMgb3ZlcmxheWZzIGZhaWx1cmUgdG8gY29weSB1cCBsb3dlcgpmaWxlcyBm
+cm9tIHNxdWFzaGZzIHdoZW4gc2VsaW51eCBpcyBidWlsdC1pbiBidXQgbm90IGluaXRpYWxpemVk
+LApiZWNhdXNlIG92bF9jb3B5X3hhdHRyKCkgaXRlcmF0ZXMgdGhlIGxvd2VyIGlub2RlIHhhdHRy
+cyBieQp2ZnNfbGlzdHhhdHRyKCkgYW5kIHZmc19nZXR4YXR0cigpLgoKTWF0Y2ggdGhlIGxvZ2lj
+IG9mIGlub2RlX2xpc3RzZWN1cml0eSB0byB0aGF0IG9mIGlub2RlX2dldHhhdHRyIGFuZApkbyBu
+b3QgbGlzdCB0aGUgc2VjdXJpdHkuc2VsaW51eCB4YXR0ciBpZiBzZWxpbnV4IGlzIG5vdCBpbml0
+aWFsaXplZC4KClJlcG9ydGVkLWJ5OiBNaWNoYWVsIExhYnJpb2xhIDxtaWNoYWVsLmQubGFicmlv
+bGFAZ21haWwuY29tPgpGaXhlczogYzhlMjIyNjE2YzdlICgic2VsaW51eDogYWxsb3cgcmVhZGlu
+ZyBsYWJlbHMgYmVmb3JlIHBvbGljeSBpcyBsb2FkZWQiKQpDYzogc3RhYmxlQHZnZXIua2VybmVs
+Lm9yZyN2NS45KwpTaWduZWQtb2ZmLWJ5OiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwu
+Y29tPgotLS0KIHNlY3VyaXR5L3NlbGludXgvaG9va3MuYyB8IDQgKysrKwogMSBmaWxlIGNoYW5n
+ZWQsIDQgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL3NlY3VyaXR5L3NlbGludXgvaG9va3Mu
+YyBiL3NlY3VyaXR5L3NlbGludXgvaG9va3MuYwppbmRleCA2YjE4MjZmYzM2NTguLmUxMzJlMDgy
+YTVhZiAxMDA2NDQKLS0tIGEvc2VjdXJpdHkvc2VsaW51eC9ob29rcy5jCisrKyBiL3NlY3VyaXR5
+L3NlbGludXgvaG9va3MuYwpAQCAtMzQwNiw2ICszNDA2LDEwIEBAIHN0YXRpYyBpbnQgc2VsaW51
+eF9pbm9kZV9zZXRzZWN1cml0eShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBjb25zdCBjaGFyICpuYW1l
+LAogc3RhdGljIGludCBzZWxpbnV4X2lub2RlX2xpc3RzZWN1cml0eShzdHJ1Y3QgaW5vZGUgKmlu
+b2RlLCBjaGFyICpidWZmZXIsIHNpemVfdCBidWZmZXJfc2l6ZSkKIHsKIAljb25zdCBpbnQgbGVu
+ID0gc2l6ZW9mKFhBVFRSX05BTUVfU0VMSU5VWCk7CisKKwlpZiAoIXNlbGludXhfaW5pdGlhbGl6
+ZWQoJnNlbGludXhfc3RhdGUpKQorCQlyZXR1cm4gMDsKKwogCWlmIChidWZmZXIgJiYgbGVuIDw9
+IGJ1ZmZlcl9zaXplKQogCQltZW1jcHkoYnVmZmVyLCBYQVRUUl9OQU1FX1NFTElOVVgsIGxlbik7
+CiAJcmV0dXJuIGxlbjsKLS0gCjIuMjUuMQoK
+--0000000000005ec1e905b6b7b076
+Content-Type: text/plain; charset="US-ASCII"; 
+	name="ovl-skip-getxattr-of-security-labels.patch.txt"
+Content-Disposition: attachment; 
+	filename="ovl-skip-getxattr-of-security-labels.patch.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_kitwa7ob1>
+X-Attachment-Id: f_kitwa7ob1
+
+RnJvbSBmMzEwOTc5MTRmYzQ5MzM3M2MzYmMyYzM0NGE3MGU5MDU3OTExNDQyIE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBGcmksIDE4IERlYyAyMDIwIDA3OjQxOjIxICswMjAwClN1YmplY3Q6IFtQQVRDSF0gb3Zs
+OiBza2lwIGdldHhhdHRyIG9mIHNlY3VyaXR5IGxhYmVscwoKV2hlbiBpbm9kZSBoYXMgbm8gbGlz
+dHhhdHRyIG9wIG9mIGl0cyBvd24gKGUuZy4gc3F1YXNoZnMpIHZmc19saXN0eGF0dHIKY2FsbHMg
+dGhlIExTTSBpbm9kZV9saXN0c2VjdXJpdHkgaG9va3MgdG8gbGlzdCB0aGUgeGF0dHJzIHRoYXQg
+TFNNcyB3aWxsCmludGVyY2VwdCBpbiBpbm9kZV9nZXR4YXR0ciBob29rcy4KCldoZW4gc2VsaW51
+eCBMU00gaXMgaW5zdGFsbGVkIGJ1dCBub3QgaW5pdGlhbGl6ZWQsIGl0IHdpbGwgbGlzdCB0aGUK
+c2VjdXJpdHkuc2VsaW51eCB4YXR0ciBpbiBpbm9kZV9saXN0c2VjdXJpdHksIGJ1dCB3aWxsIG5v
+dCBpbnRlcmNlcHQgaXQKaW4gaW5vZGVfZ2V0eGF0dHIuICBUaGlzIHJlc3VsdHMgaW4gLUVOT0RB
+VEEgZm9yIGEgZ2V0eGF0dHIgY2FsbCBmb3IgYW4KeGF0dHIgcmV0dXJuZWQgYnkgbGlzdHhhdHRy
+LgoKVGhpcyBzaXR1YXRpb24gd2FzIG1hbmlmZXN0ZWQgYXMgb3ZlcmxheWZzIGZhaWx1cmUgdG8g
+Y29weSB1cCBsb3dlcgpmaWxlcyBmcm9tIHNxdWFzaGZzIHdoZW4gc2VsaW51eCBpcyBidWlsdC1p
+biBidXQgbm90IGluaXRpYWxpemVkLApiZWNhdXNlIG92bF9jb3B5X3hhdHRyKCkgaXRlcmF0ZXMg
+dGhlIGxvd2VyIGlub2RlIHhhdHRycyBieQp2ZnNfbGlzdHhhdHRyKCkgYW5kIHZmc19nZXR4YXR0
+cigpLgoKb3ZsX2NvcHlfeGF0dHIoKSBza2lwcyBjb3B5IHVwIG9mIHNlY3VyaXR5IGxhYmVscyB0
+aGF0IGFyZSBpbmRlbnRpZmllZCBieQppbm9kZV9jb3B5X3VwX3hhdHRyIExTTSBob29rcywgYnV0
+IGl0IGRvZXMgdGhhdCBhZnRlciB2ZnNfZ2V0eGF0dHIoKS4KU2luY2Ugd2UgYXJlIG5vdCBnb2lu
+ZyB0byBjb3B5IHRoZW0sIHNraXAgdmZzX2dldHhhdHRyKCkgb2YgdGhlIHNlY3VyaXR5CmxhYmVs
+cy4KClJlcG9ydGVkLWJ5OiBNaWNoYWVsIExhYnJpb2xhIDxtaWNoYWVsLmQubGFicmlvbGFAZ21h
+aWwuY29tPgpGaXhlczogYzhlMjIyNjE2YzdlICgic2VsaW51eDogYWxsb3cgcmVhZGluZyBsYWJl
+bHMgYmVmb3JlIHBvbGljeSBpcyBsb2FkZWQiKQpDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZyN2
+NS45KwpTaWduZWQtb2ZmLWJ5OiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgot
+LS0KIGZzL292ZXJsYXlmcy9jb3B5X3VwLmMgfCAxNSArKysrKysrKy0tLS0tLS0KIDEgZmlsZSBj
+aGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDcgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMv
+b3ZlcmxheWZzL2NvcHlfdXAuYyBiL2ZzL292ZXJsYXlmcy9jb3B5X3VwLmMKaW5kZXggZTViNjE2
+YzkzZTExLi4wZmVkNTMyZWZhNjggMTAwNjQ0Ci0tLSBhL2ZzL292ZXJsYXlmcy9jb3B5X3VwLmMK
+KysrIGIvZnMvb3ZlcmxheWZzL2NvcHlfdXAuYwpAQCAtODQsNiArODQsMTQgQEAgaW50IG92bF9j
+b3B5X3hhdHRyKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBkZW50cnkgKm9sZCwKIAog
+CQlpZiAob3ZsX2lzX3ByaXZhdGVfeGF0dHIoc2IsIG5hbWUpKQogCQkJY29udGludWU7CisKKwkJ
+ZXJyb3IgPSBzZWN1cml0eV9pbm9kZV9jb3B5X3VwX3hhdHRyKG5hbWUpOworCQlpZiAoZXJyb3Ig
+PCAwICYmIGVycm9yICE9IC1FT1BOT1RTVVBQKQorCQkJYnJlYWs7CisJCWlmIChlcnJvciA9PSAx
+KSB7CisJCQllcnJvciA9IDA7CisJCQljb250aW51ZTsgLyogRGlzY2FyZCAqLworCQl9CiByZXRy
+eToKIAkJc2l6ZSA9IHZmc19nZXR4YXR0cihvbGQsIG5hbWUsIHZhbHVlLCB2YWx1ZV9zaXplKTsK
+IAkJaWYgKHNpemUgPT0gLUVSQU5HRSkKQEAgLTEwNywxMyArMTE1LDYgQEAgaW50IG92bF9jb3B5
+X3hhdHRyKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIHN0cnVjdCBkZW50cnkgKm9sZCwKIAkJCWdv
+dG8gcmV0cnk7CiAJCX0KIAotCQllcnJvciA9IHNlY3VyaXR5X2lub2RlX2NvcHlfdXBfeGF0dHIo
+bmFtZSk7Ci0JCWlmIChlcnJvciA8IDAgJiYgZXJyb3IgIT0gLUVPUE5PVFNVUFApCi0JCQlicmVh
+azsKLQkJaWYgKGVycm9yID09IDEpIHsKLQkJCWVycm9yID0gMDsKLQkJCWNvbnRpbnVlOyAvKiBE
+aXNjYXJkICovCi0JCX0KIAkJZXJyb3IgPSB2ZnNfc2V0eGF0dHIobmV3LCBuYW1lLCB2YWx1ZSwg
+c2l6ZSwgMCk7CiAJCWlmIChlcnJvcikgewogCQkJaWYgKGVycm9yICE9IC1FT1BOT1RTVVBQIHx8
+IG92bF9tdXN0X2NvcHlfeGF0dHIobmFtZSkpCi0tIAoyLjI1LjEKCg==
+--0000000000005ec1e905b6b7b076--
