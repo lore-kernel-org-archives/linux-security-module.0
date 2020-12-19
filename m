@@ -2,265 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56969C4361B
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Dec 2020 22:56:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A78E6C3526C
+	for <linux-security-module@archiver.kernel.org>; Sat, 19 Dec 2020 00:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F079823B97
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Dec 2020 22:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7275520780
+	for <linux-security-module@archiver.kernel.org>; Sat, 19 Dec 2020 00:07:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbgLRWz5 (ORCPT
+        id S1726060AbgLSAHi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Dec 2020 17:55:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53050 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725813AbgLRWz5 (ORCPT
+        Fri, 18 Dec 2020 19:07:38 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49348 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbgLSAHi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Dec 2020 17:55:57 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7057BC0617A7
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Dec 2020 14:55:16 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id b2so4005441edm.3
-        for <linux-security-module@vger.kernel.org>; Fri, 18 Dec 2020 14:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tgmr6g8d+8NKSfy2Ajc0NMGFuN4E7GphvE93Fo9mAPY=;
-        b=Jdkd2AVnGkjt3wcXyIdqZzWSZw/3iZScPqmgcIpUrothFVEZNnGRpIztf9oS4z3EGc
-         ESdQW8kOVY/j9yXw+FLdLpppZK+/cJSHp1GbKDbq1262Gscy7lMSHtzTeFYEcKO0MA+I
-         +jhG5lQ3Cub22QRmMubNyA1EIgRhC9ptcs408zgvy90VyNfR/7SOWvHONolCXTWZXMyI
-         PvChg6UAprBb3KfnJH1rpFRK8UJhzE7YN2v0ZLY42rbnaZYyirXUJAG5H1U2sGB6ie7v
-         7ucJsZ/OGiZJ3AyR6w5ayGV9bFmcVBQ19YN4hfrK8dkPM4zoQ/5eEAXnxZ8fCWJ2zMmh
-         hBcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tgmr6g8d+8NKSfy2Ajc0NMGFuN4E7GphvE93Fo9mAPY=;
-        b=rlP99ItL4fjeukiakza+FRwGlJgp1BVb8qhMAItsiFoTdaho/6R8aQYjHyNI6iwQvz
-         xZJIUPVpg90/zxknUhTlTNsG2VBWPxXw/xXcK8U9eAqumUjVp2LghOYwuhKBF6YH/oY7
-         CNutFyLngCUAQTM3ivYBoEtNhrciBZBtpVBsfZXtZ0tcdwsEpwQoejnNBWWtVXCXxEXm
-         /UgSAlVli04Cy+iUkd/Bm2KtfCJ2swnAv3QdOhRN8xjXBBFSn4BwKxSt/BbBpml+miK0
-         +6tXuzJGTp95jGRC6R/BRYgbzqqpG/G3pbo7JTO5lI9rRfDhgejgepTkRdYqnoh8JE2+
-         d7Uw==
-X-Gm-Message-State: AOAM5337sj8EIhVcNnpk/u5eGoWsVnTqj5DaSqe7Cfrx6EPPqlSREKfd
-        iNjI/8+kSMZ5Q7gq/aILLQ/xlvcsE1lvAaC96rpP
-X-Google-Smtp-Source: ABdhPJzC3ovan2Qy7ExEpP6AZ2jnjIsdBvCDQzdLQPNvWcspSItVhRVedKhl7jLw5vnCPQy2zfpqsY6I8sicMsMZjbM=
-X-Received: by 2002:aa7:c0d6:: with SMTP id j22mr6632916edp.31.1608332114844;
- Fri, 18 Dec 2020 14:55:14 -0800 (PST)
+        Fri, 18 Dec 2020 19:07:38 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BJ06MVk018009;
+        Sat, 19 Dec 2020 00:06:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=corp-2020-01-29;
+ bh=h05qvuELutaWEFd0FH0nDiggcQgz3WjMZcVQ54H2AqM=;
+ b=g8reo9uoK2ZSBudZW4xxmSItvP+/L42kFQiBXHAnIIwqiUYWSaYFiCVCMUJdD/XyW50R
+ hVcc6UthXBb91n9ilE403Q8o7iLtw70p3Pd2drJQmMuqOLx+n6MdR4dAG/gcDaiGG39G
+ 9yJ7jshd32I/5o6rwFnuFPh5N7D+RsIAq8VcnsgdlsJUwhAyWYcQMha1150F9QQiZ1lY
+ el+BDhsA67ctUdZRbZDJi41WxX7IXuW25pS+nC6MRWJdGxMJMEgXyknSYJh6s/9ajfim
+ vH+PMr8q1uHc5JOBSnLj/dyQJmvrxvBtK6gPNUHbLFyiP3jIK9sL+n1uyKBTs3Fr5/oG RQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 35ckcbvw8m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 19 Dec 2020 00:06:32 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 0BJ05OhR049261;
+        Sat, 19 Dec 2020 00:06:32 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 35g3rgsfn0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 19 Dec 2020 00:06:31 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id 0BJ06Tmr022519;
+        Sat, 19 Dec 2020 00:06:29 GMT
+Received: from localhost (/10.159.241.141)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 18 Dec 2020 16:06:29 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v3 2/2] proc: ensure security hook is called after exec
+Date:   Fri, 18 Dec 2020 16:06:16 -0800
+Message-Id: <20201219000616.197585-2-stephen.s.brennan@oracle.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
+References: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
 MIME-Version: 1.0
-References: <2nv9d47zt7.fsf@aldarion.sourceruckus.org> <2n1rfrf5l0.fsf@aldarion.sourceruckus.org>
- <CAOQ4uxg4hmtGXg6dNghjfVpfiJFj6nauzqTgZucwSJAJq1Z3Eg@mail.gmail.com>
- <CAOQxz3wW8QF-+HFL1gcgH+nVvySN3fogop0v+KNcxpbzu9BkJA@mail.gmail.com>
- <CAOQ4uxgsFnkUqnXYyMNdZU=s_Wq18fdbr0ZhepNLMYh9MfPe9w@mail.gmail.com>
- <CAOQxz3wUvi_O7hzNrN8oTGfnFz-PiVr3Z6nG1ZXLFjpnH4q81g@mail.gmail.com>
- <CAOQxz3zGaKnJCUe7DuegOqbbPAvNj8hTFA6_LsGEPTMXwUpn6g@mail.gmail.com>
- <CAOQ4uxifSf-q1fXC_zxOpqR8GDX8sr2CWPsXrJ6e0YSrfB6v8Q@mail.gmail.com>
- <CAOQxz3xZWCdF=7AZ=N0ajcN8FVjzU2sS_SpxzwRFyHGvwc7dZA@mail.gmail.com>
- <CAOQ4uxjmUY+N6sBoD-d2MN4eehPCcWzBXTHkDqAcCVtkpbG2kw@mail.gmail.com>
- <CAOQxz3y8N6ny23iA1Fe0L4M1gR=FHP5xANZXquu4NSLoucorKw@mail.gmail.com>
- <CAOQ4uxg++DkgcO9K6wkSn0p6QvvkwK0nvxBzSpNE6RdaCH3aQg@mail.gmail.com>
- <CAOQxz3wbqnUxSL-Ks=7USUZU1+04Uvqi-FnTZFGRL9uqQvvNfA@mail.gmail.com>
- <CAOQxz3xNWoj5Az-0JAk1Ay3T_QyE1bso7pxC_7n=hV3B5PBK0w@mail.gmail.com>
- <CAOQ4uxjw5AroFpYBkGExiAfHir4OyABk023RQK_s6TPQ5aTJCw@mail.gmail.com> <CAOQxz3xz88=u8hb4UbbDcH55xLSmzrq+XUEeNqmaOkP_6DNCYg@mail.gmail.com>
-In-Reply-To: <CAOQxz3xz88=u8hb4UbbDcH55xLSmzrq+XUEeNqmaOkP_6DNCYg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 18 Dec 2020 17:55:03 -0500
-Message-ID: <CAHC9VhQ-xCJtNaOx1oYRNgsLVQKg+tm3i=8j-7v6hdh4Ty=-pQ@mail.gmail.com>
-Subject: Re: failed open: No data available
-To:     Michael Labriola <michael.d.labriola@gmail.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Jonathan Lebon <jlebon@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2012180164
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9839 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999
+ priorityscore=1501 mlxscore=0 suspectscore=0 adultscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2012180164
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Dec 18, 2020 at 3:50 PM Michael Labriola
-<michael.d.labriola@gmail.com> wrote:
-> On Fri, Dec 18, 2020 at 2:02 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > On Fri, Dec 18, 2020 at 1:47 AM Michael Labriola
-> > <michael.d.labriola@gmail.com> wrote:
-> > >
-> > > On Thu, Dec 17, 2020 at 4:56 PM Michael Labriola
-> > > <michael.d.labriola@gmail.com> wrote:
-> > > >
-> > > > On Thu, Dec 17, 2020 at 3:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > >
-> > > > > On Thu, Dec 17, 2020 at 9:46 PM Michael Labriola
-> > > > > <michael.d.labriola@gmail.com> wrote:
-> > > > > >
-> > > > > > On Thu, Dec 17, 2020 at 1:07 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Thu, Dec 17, 2020 at 6:22 PM Michael Labriola
-> > > > > > *snip*
-> > > > > > > > On Thu, Dec 17, 2020 at 7:00 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > > > > > > Thanks, Amir.  I didn't have CONFIG_DYNAMIC_DEBUG enabled, so
-> > > > > > >
-> > > > > > > I honestly don't expect to find much in the existing overlay debug prints
-> > > > > > > but you never know..
-> > > > > > > I suspect you will have to add debug prints to find the problem.
-> > > > > >
-> > > > > > Ok, here goes.  I had to setup a new virtual machine that doesn't use
-> > > > > > overlayfs for its root filesystem because turning on dynamic debug
-> > > > > > gave way too much output for a nice controlled test.  It's exhibiting
-> > > > > > the same behavior as my previous tests (5.8 good, 5.9 bad).  The is
-> > > > > > with a freshly compiled 5.9.15 w/ CONFIG_OVERLAY_FS_XINO_AUTO turned
-> > > > > > off and CONFIG_DYNAMIC_DEBUG turned on.  Here's what we get:
-> > > > > >
-> > > > > >  echo "file fs/overlayfs/*  +p" > /sys/kernel/debug/dynamic_debug/control
-> > > > > >  mount borky2.sqsh t
-> > > > > >  mount -t tmpfs tmp tt
-> > > > > >  mkdir -p tt/upper/{upper,work}
-> > > > > >  mount -t overlay -o \
-> > > > > >     lowerdir=t,upperdir=tt/upper/upper,workdir=tt/upper/work blarg ttt
-> > > > > > [  164.505193] overlayfs: mkdir(work/work, 040000) = 0
-> > > > > > [  164.505204] overlayfs: tmpfile(work/work, 0100000) = 0
-> > > > > > [  164.505209] overlayfs: create(work/#3, 0100000) = 0
-> > > > > > [  164.505210] overlayfs: rename(work/#3, work/#4, 0x4)
-> > > > > > [  164.505216] overlayfs: unlink(work/#3) = 0
-> > > > > > [  164.505217] overlayfs: unlink(work/#4) = 0
-> > > > > > [  164.505221] overlayfs: setxattr(work/work,
-> > > > > > "trusted.overlay.opaque", "0", 1, 0x0) = 0
-> > > > > >
-> > > > > >  touch ttt/FOO
-> > > > > > touch: cannot touch 'ttt/FOO': No data available
-> > > > > > [  191.919498] overlayfs: setxattr(upper/upper,
-> > > > > > "trusted.overlay.impure", "y", 1, 0x0) = 0
-> > > > > > [  191.919523] overlayfs: tmpfile(work/work, 0100644) = 0
-> > > > > > [  191.919788] overlayfs: tmpfile(work/work, 0100644) = 0
-> > > > > >
-> > > > > > That give you any hints?  I'll start reading through the overlayfs
-> > > > > > code.  I've never actually looked at it, so I'll be planting printk
-> > > > > > calls at random.  ;-)
-> > > > >
-> > > > > We have seen that open("FOO", O_WRONLY) fails
-> > > > > We know that FOO is lower at that time so that brings us to
-> > > > >
-> > > > > ovl_open
-> > > > >   ovl_maybe_copy_up
-> > > > >     ovl_copy_up_flags
-> > > > >       ovl_copy_up_one
-> > > > >         ovl_do_copy_up
-> > > > >           ovl_set_impure
-> > > > > [  191.919498] overlayfs: setxattr(upper/upper,
-> > > > > "trusted.overlay.impure", "y", 1, 0x0) = 0
-> > > > >           ovl_copy_up_tmpfile
-> > > > >             ovl_do_tmpfile
-> > > > > [  191.919523] overlayfs: tmpfile(work/work, 0100644) = 0
-> > > > >             ovl_copy_up_inode
-> > > > > This must be were we fail and likely in:
-> > > > >               ovl_copy_xattr
-> > > > >                  vfs_getxattr
-> > > > > which can return -ENODATA, but it is not expected because the
-> > > > > xattrs returned by vfs_listxattr should exist...
-> > > > >
-> > > > > So first guess would be to add a debug print for xattr 'name'
-> > > > > and return value of vfs_getxattr().
-> > > >
-> > > > Ok, here we go.  I've added a bunch of printks all over the place.
-> > > > Here's what we've got.  Things are unchanged during mount.  Trying to
-> > > > touch FOO now gives me this:
-> > > >
-> > > > [  114.365444] ovl_open: start
-> > > > [  114.365450] ovl_maybe_copy_up: start
-> > > > [  114.365452] ovl_maybe_copy_up: need copy up
-> > > > [  114.365454] ovl_maybe_copy_up: ovl_want_write succeeded
-> > > > [  114.365459] ovl_copy_up_one: calling ovl_do_copy_up()
-> > > > [  114.365460] ovl_do_copy_up: start
-> > > > [  114.365462] ovl_do_copy_up: impure
-> > > > [  114.365464] ovl_set_impure: start
-> > > > [  114.365484] overlayfs: setxattr(upper/upper,
-> > > > "trusted.overlay.impure", "y", 1, 0x0) = 0
-> > > > [  114.365486] ovl_copy_up_tmpfile: start
-> > > > [  114.365507] overlayfs: tmpfile(work/work, 0100644) = 0
-> > > > [  114.365510] ovl_copy_up_inode: start
-> > > > [  114.365511] ovl_copy_up_inode: ISREG && !metacopy
-> > > > [  114.365625] ovl_copy_xattr: start
-> > > > [  114.365630] ovl_copy_xattr: vfs_listxattr() returned 17
-> > > > [  114.365632] ovl_copy_xattr: buf allocated good
-> > > > [  114.365634] ovl_copy_xattr: vfs_listxattr() returned 17
-> > > > [  114.365636] ovl_copy_xattr: slen=17
-> > > > [  114.365638] ovl_copy_xattr: name='security.selinux'
-> > >
-> > > SELinux?  now that's not suspicious at all...
-> > >
-> > > > [  114.365643] ovl_copy_xattr: vfs_getxattr returned size=-61
-> > > > [  114.365644] ovl_copy_xattr: cleaning up
-> > > > [  114.365647] ovl_copy_up_inode: ovl_copy_xattr error=-61
-> > > > [  114.365649] ovl_copy_up_one: error=-61
-> > > > [  114.365651] ovl_copy_up_one: calling ovl_copy_up_end()
-> > > > [  114.365653] ovl_copy_up_flags: ovl_copy_up_one error=-61
-> > > > [  114.365655] ovl_maybe_copy_up: ovl_copy_up_flags error=-61
-> > > > [  114.365658] ovl_open: ovl_maybe_copy_up error=-61
-> > > > [  114.365728] ovl_copy_up_one: calling ovl_do_copy_up()
-> > > > [  114.365730] ovl_do_copy_up: start
-> > > > [  114.365731] ovl_do_copy_up: impure
-> > > > [  114.365733] ovl_set_impure: start
-> > > > [  114.365735] ovl_copy_up_tmpfile: start
-> > > > [  114.365748] overlayfs: tmpfile(work/work, 0100644) = 0
-> > > > [  114.365750] ovl_copy_up_inode: start
-> > > > [  114.365752] ovl_copy_up_inode: ISREG && !metacopy
-> > > > [  114.365770] ovl_copy_xattr: start
-> > > > [  114.365773] ovl_copy_xattr: vfs_listxattr() returned 17
-> > > > [  114.365774] ovl_copy_xattr: buf allocated good
-> > > > [  114.365776] ovl_copy_xattr: vfs_listxattr() returned 17
-> > > > [  114.365778] ovl_copy_xattr: slen=17
-> > > > [  114.365780] ovl_copy_xattr: name='security.selinux'
-> > > > [  114.365784] ovl_copy_xattr: vfs_getxattr returned size=-61
-> > > > [  114.365785] ovl_copy_xattr: cleaning up
-> > > > [  114.365787] ovl_copy_up_inode: ovl_copy_xattr error=-61
-> > > > [  114.365789] ovl_copy_up_one: error=-61
-> > > > [  114.365790] ovl_copy_up_one: calling ovl_copy_up_end()
-> > > > [  114.365792] ovl_copy_up_flags: ovl_copy_up_one error=-61
-> > > >
-> > > *snip*
-> > >
-> > > So, the selinux stuff made me raise an eyebrow...  I've got selinux
-> > > enabled in my kernel so that it's there if I boot up a RHEL box with
-> > > this kernel.  But I'm using Ubuntu right now, and the rest of SELinux
-> > > is not installed/enabled.  There shouldn't be any selinux labels in
-> > > the files I slurped up into my squashfs image, so there shouldn't be
-> > > any in the squashfs, so of course that won't work.
-> > >
-> > > I tried compiling CONFIG_SELINUX=n and guess what, it works now.  So
-> > > that's at least a work-around for me.
-> > >
-> > > So, for whatever reason, between 5.8 and 5.9, having CONFIG_SELINUX=y
-> > > but no security labels on the filesystem became a problem?  Is this
-> > > something that needs to get fixed in overlayfs?  Or do you think it's
-> > > a deeper problem that needs fixing elsewhere?
-> > >
-> >
-> > It's both :)
-> >
-> > Attached two patches that should each fix the issue independently,
-> > but we need to apply both. I only tested that they build.
-> > Please verify that each applied individually solves the problem.
-> >
-> > The selinux- patch fixes an selinux regression introduced in kernel v5.9
-> > the regression is manifested in your test case but goes beyond overlayfs.
-> >
-> > The ovl- patch is a workaround for the selinux regression, but it is also
-> > a micro optimization that doesn't hurt, so worth applying it anyway.
->
-> Ok, as expected, both patches independently fix the problem for me on
-> my 5.9 kernel.  FYI, applying the ovl patch failed initially
-> because ovl_is_private_xattr() grew an extra argument in 5.10.
->
-> Woohoo!  Thanks, Amir!
+Smack needs its security_task_to_inode() hook to be called when a task
+execs a new executable. Store the self_exec_id of the task and call the
+hook via pid_update_inode() whenever the exec_id changes.
 
-Hi Amir, thanks for the patches but would you mind sending them to the
-list not as attachments so we can review/comment/merge like we
-normally do?
+Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+---
 
+As discussed on the v2 of the patch, this should allow Smack to receive a
+security_task_to_inode() call only when the uid/gid changes, or when the task
+execs a new binary. I have verified that this doesn't change the performance of
+the patch set, and that we do fall out of RCU walk on tasks which have recently
+exec'd.
+
+ fs/proc/base.c     | 4 +++-
+ fs/proc/internal.h | 5 ++++-
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 4b246e9bd5df..ad59e92e8433 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1917,6 +1917,7 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
+ 	}
+ 
+ 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
++	ei->exec_id = task->self_exec_id;
+ 	security_task_to_inode(task, inode);
+ 
+ out:
+@@ -1965,6 +1966,7 @@ void pid_update_inode(struct task_struct *task, struct inode *inode)
+ 	task_dump_owner(task, inode->i_mode, &inode->i_uid, &inode->i_gid);
+ 
+ 	inode->i_mode &= ~(S_ISUID | S_ISGID);
++	PROC_I(inode)->exec_id = task->self_exec_id;
+ 	security_task_to_inode(task, inode);
+ }
+ 
+@@ -1979,7 +1981,7 @@ static bool pid_inode_needs_update(struct task_struct *task, struct inode *inode
+ 	task_dump_owner(task, inode->i_mode, &uid, &gid);
+ 	if (!uid_eq(uid, inode->i_uid) || !gid_eq(gid, inode->i_gid))
+ 		return true;
+-	return false;
++	return task->self_exec_id != PROC_I(inode)->exec_id;
+ }
+ 
+ /*
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index f60b379dcdc7..1df9b039dfc3 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -92,7 +92,10 @@ union proc_op {
+ 
+ struct proc_inode {
+ 	struct pid *pid;
+-	unsigned int fd;
++	union {
++		unsigned int fd;
++		u32 exec_id;
++	};
+ 	union proc_op op;
+ 	struct proc_dir_entry *pde;
+ 	struct ctl_table_header *sysctl;
 -- 
-paul moore
-www.paul-moore.com
+2.25.1
+
