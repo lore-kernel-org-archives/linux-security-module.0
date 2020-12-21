@@ -2,122 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD60C0018C
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Dec 2020 10:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D20EEC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Dec 2020 03:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9B5D23B70
-	for <linux-security-module@archiver.kernel.org>; Sat, 19 Dec 2020 10:06:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E0A123103
+	for <linux-security-module@archiver.kernel.org>; Mon, 21 Dec 2020 03:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726439AbgLSKGN (ORCPT
+        id S1725826AbgLUDrU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 19 Dec 2020 05:06:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42302 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbgLSKGM (ORCPT
+        Sun, 20 Dec 2020 22:47:20 -0500
+Received: from casper.infradead.org ([90.155.50.34]:38478 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbgLUDrT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 19 Dec 2020 05:06:12 -0500
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 191AFC0617B0;
-        Sat, 19 Dec 2020 02:05:32 -0800 (PST)
-Received: by mail-ej1-x62e.google.com with SMTP id q22so6792013eja.2;
-        Sat, 19 Dec 2020 02:05:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7W4RYxZj8lkWpWkE7UHIfL8SS0IH4o1LBa7PCi5M3wI=;
-        b=dhyBJMtvrKQNAWrETDplQ9mjvDaT0lh2/dFwdO2c0yU2efoRcGvwZwz3avH4WtFGC+
-         f28q7HEh/McQ/uRy7sCWOjFq29M+CPf0y7X+bk1MV74YMoA9c9Zy4HtweGrFAgK+oIoz
-         /J8POygW0Q/0TegHzFprmxfxKKXHx5eC7NbNWRvgyWUF/9BK7SZfOm9KNHELouT9K2rO
-         EBA7TD/lYPdWjTU+T7FU81vV+iODZ3YlFNXlhWPNEtjyn3geSy6V2D8ce/s5au8tZc8l
-         NEthhUaBKP6Jk0H3Mpbyx2vroIiDgUo8CKfZI0jmV8FsPsQ+eCf6PGGR7gHodeeGM8kk
-         4GOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7W4RYxZj8lkWpWkE7UHIfL8SS0IH4o1LBa7PCi5M3wI=;
-        b=HZHA98jMvRTwrU25mwCKVkqnraZaErLTQzr2VDCf1xMQ57zfGjZppvO66tcCn3VM/l
-         8zTygnXBP4K6ZhqMMjPrMYjMb114YBjdW4cZv+h7jARQsBdCKAoUOvUgt8qZxWR5fjgJ
-         /1gCr1CfThMj4u2Uwz5xbxmbqZ4E50JBy5hcelZunxdrm7k9Elj+TvCAYcKglpLYt2iL
-         NOcg66tbLjUXhdTmi1exhGeDYch2U3S9DOlz7wXv4PTkAPOOES5s9uK8XVcOdq+V814P
-         0OBDCSPuc0r+jJPOcIdUShj10Yi9jCsiAU7Qvfh+FL7pvXCezfeBpzNVcYrC7bE/AkCX
-         GbeQ==
-X-Gm-Message-State: AOAM532FSSRQWBRr+VVd5CtP6X1h3UIdt4zcl3kgnk9DewpIQsUAGslW
-        GIB0JTWKP3ADDhSpQ8kli5A=
-X-Google-Smtp-Source: ABdhPJze5KIsjiEkOFsbxg5X9Tu9I1qLEYe8iHtQXSOXOjINhhuqqibupHdBQQGJWKLZ7qpz4ZRMxg==
-X-Received: by 2002:a17:906:f153:: with SMTP id gw19mr7918482ejb.272.1608372330717;
-        Sat, 19 Dec 2020 02:05:30 -0800 (PST)
-Received: from localhost.localdomain ([31.210.181.203])
-        by smtp.gmail.com with ESMTPSA id a10sm6633651ejk.92.2020.12.19.02.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Dec 2020 02:05:30 -0800 (PST)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Michael Labriola <michael.d.labriola@gmail.com>,
-        Jonathan Lebon <jlebon@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH] selinux: fix inconsistency between inode_getxattr and inode_listsecurity
-Date:   Sat, 19 Dec 2020 12:05:27 +0200
-Message-Id: <20201219100527.16060-1-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Sun, 20 Dec 2020 22:47:19 -0500
+X-Greylist: delayed 1143 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Dec 2020 22:47:19 EST
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=1wn+qnkPDAZUCQEYEI3B57TLhs2MEwZtEb8Tmd7HIcY=; b=XMTNKkqIkf5IAPiefdOzcpLDuC
+        +rabIa4lNXH/SKOP2FeRyquZlDiM2Q7iodYJsu/hRxoI9tmuImIZjb8Fmsf/EAg4G7FZsRGKZzao0
+        q+t7cmDDuc/qtgoR8kJYRGaIx7EvlvGwkZ8uXAuNIKmDa5bsbXCEXLccT1oZNQ73f5xvBxopPTcgI
+        7K0GFihJ5wWUSL91pDPnRA4KcBHNhG7pFevmMnjdOZDIM01uGRU+xFA5LiXOYsrdWTg/uIJ/T/JBw
+        Knuc0phLeB1gnuqyse+L+n81twh2HI+G3ipTnO3GKdpjPp9M/e4zPJ9wJ2gYedQn6C9WpLhLskuOy
+        BSSwDGtA==;
+Received: from [2601:1c0:6280:3f0::64ea] (helo=smtpauth.infradead.org)
+        by casper.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1krBr4-0007Fx-KH; Mon, 21 Dec 2020 03:27:27 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH v2] security: ima: delete a repeated word in comments
+Date:   Sun, 20 Dec 2020 19:27:20 -0800
+Message-Id: <20201221032720.11325-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When inode has no listxattr op of its own (e.g. squashfs) vfs_listxattr
-calls the LSM inode_listsecurity hooks to list the xattrs that LSMs will
-intercept in inode_getxattr hooks.
+Drop a repeated word in comments.
+{the}
 
-When selinux LSM is installed but not initialized, it will list the
-security.selinux xattr in inode_listsecurity, but will not intercept it
-in inode_getxattr.  This results in -ENODATA for a getxattr call for an
-xattr returned by listxattr.
-
-This situation was manifested as overlayfs failure to copy up lower
-files from squashfs when selinux is built-in but not initialized,
-because ovl_copy_xattr() iterates the lower inode xattrs by
-vfs_listxattr() and vfs_getxattr().
-
-Match the logic of inode_listsecurity to that of inode_getxattr and
-do not list the security.selinux xattr if selinux is not initialized.
-
-Reported-by: Michael Labriola <michael.d.labriola@gmail.com>
-Tested-by: Michael Labriola <michael.d.labriola@gmail.com>
-Link: https://lore.kernel.org/linux-unionfs/2nv9d47zt7.fsf@aldarion.sourceruckus.org/
-Fixes: c8e222616c7e ("selinux: allow reading labels before policy is loaded")
-Cc: stable@vger.kernel.org#v5.9+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org
 ---
- security/selinux/hooks.c | 4 ++++
- 1 file changed, 4 insertions(+)
+v2: rebase
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 6b1826fc3658..e132e082a5af 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3406,6 +3406,10 @@ static int selinux_inode_setsecurity(struct inode *inode, const char *name,
- static int selinux_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
+ security/integrity/ima/ima_policy.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20201218.orig/security/integrity/ima/ima_policy.c
++++ linux-next-20201218/security/integrity/ima/ima_policy.c
+@@ -781,7 +781,7 @@ static int __init ima_init_arch_policy(v
+  * ima_init_policy - initialize the default measure rules.
+  *
+  * ima_rules points to either the ima_default_rules or the
+- * the new ima_policy_rules.
++ * new ima_policy_rules.
+  */
+ void __init ima_init_policy(void)
  {
- 	const int len = sizeof(XATTR_NAME_SELINUX);
-+
-+	if (!selinux_initialized(&selinux_state))
-+		return 0;
-+
- 	if (buffer && len <= buffer_size)
- 		memcpy(buffer, XATTR_NAME_SELINUX, len);
- 	return len;
--- 
-2.25.1
-
