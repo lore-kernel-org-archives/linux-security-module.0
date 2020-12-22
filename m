@@ -2,92 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64126C433DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Dec 2020 19:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF99C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Dec 2020 02:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E95B22BF3
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Dec 2020 19:56:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA24522AB9
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Dec 2020 02:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725870AbgLUT4Z convert rfc822-to-8bit (ORCPT
+        id S1725961AbgLVCFp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Dec 2020 14:56:25 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:60162 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgLUT4Y (ORCPT
+        Mon, 21 Dec 2020 21:05:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbgLVCFo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Dec 2020 14:56:24 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1krRHT-00CG6m-5k; Mon, 21 Dec 2020 12:55:43 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1krRHS-00GWfl-5v; Mon, 21 Dec 2020 12:55:42 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     "SMACK-discuss\@lists.01.org" <SMACK-discuss@lists.01.org>,
+        Mon, 21 Dec 2020 21:05:44 -0500
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7897C0613D3
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Dec 2020 18:05:04 -0800 (PST)
+Received: by mail-pj1-x102a.google.com with SMTP id b5so497585pjk.2
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Dec 2020 18:05:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BjqP2DWMzUgVSuoBJUlFTOQoE6yKTPo48L3QchtjvGY=;
+        b=FllSVdllnmuF7BkcPxpDztCU09IJNw8v0WbJN7gP+0L46GkBR9DmWxvyrQE+eQyhHN
+         qRAHjdRdaT1+IVfB8wmlA/4BZ1unmNARTAL18i8EdbzhDZ9CvKEWqBXVNa5bh4cECpP5
+         PvHvFIg1GMtq4jPrKbpbKe4Fdkm7l97U6r6O+24xy+jN/wE1hjW6i5E8oDQShBRsUqXg
+         64PYpAfK9877iLBrCHJgvQXwI9i99rC+9fq1oi881dXDCqKc/hhV1tGjh0dmM7XyN58f
+         siC4T8KqswTOS7yDSPG5npWMbyp9SOT6l8jfyLBOybvWkd6KEXdlyADxEXBdWq/Yttnk
+         GcrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BjqP2DWMzUgVSuoBJUlFTOQoE6yKTPo48L3QchtjvGY=;
+        b=AA0b1f9ApWhD40owLYC7qarIDXPWifYK6fLCRkCFxPh8CSipBGIUpV055XT2JDqAb1
+         apW6lkEBO5VkfX6mCkUvnxxYS0nO81qPk/qA/pAQPFuOROh/GTKrh9DRo8Qu3syVbycH
+         zxuoD7K9mVeHA6jBdyTOZV33jL5vrAv+bF9oM3DNRmNgi/GaM/NDIPhSwg7Z0YpKlTxy
+         mm/WuifXhewo1qRc/ms21cMjhvHnc+oRbcvze2XkOS0qsL0QT/4LSVuHt8HLzULc+iAb
+         MD6xjMgoEj+zvlujqs3vtVMjVtXfYj9yLISbwp/qfresObH2SSaNgSWj8Br1bYrrE5kL
+         554Q==
+X-Gm-Message-State: AOAM533Co3Xwa2eOCftCgb/sN7dlXaqK3AQ6peTVXC/ekYIm0ULowDx0
+        LzDpe/qpSTILn882Z6FXfMkW6g==
+X-Google-Smtp-Source: ABdhPJznY1ha1OFR7/m/5ybjAlNrIP/LyKhWd6iBeuUozlVL7tx1JQmei4BDY/Z7S9gJ0ryzVmTaJQ==
+X-Received: by 2002:a17:90a:1782:: with SMTP id q2mr19688250pja.189.1608602704017;
+        Mon, 21 Dec 2020 18:05:04 -0800 (PST)
+Received: from [192.168.1.134] ([66.219.217.173])
+        by smtp.gmail.com with ESMTPSA id k125sm14833904pga.57.2020.12.21.18.05.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Dec 2020 18:05:03 -0800 (PST)
+Subject: Re: [PATCH] Smack: Handle io_uring kernel thread privileges.
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        "SMACK-discuss@lists.01.org" <SMACK-discuss@lists.01.org>,
         Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        <linux-security-module@vger.kernel.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
         LKML <linux-kernel@vger.kernel.org>
 References: <dacfb329-de66-d0cf-dcf9-f030ea1370de.ref@schaufler-ca.com>
-        <dacfb329-de66-d0cf-dcf9-f030ea1370de@schaufler-ca.com>
-Date:   Mon, 21 Dec 2020 13:55:01 -0600
-In-Reply-To: <dacfb329-de66-d0cf-dcf9-f030ea1370de@schaufler-ca.com> (Casey
-        Schaufler's message of "Thu, 17 Dec 2020 17:12:29 -0800")
-Message-ID: <877dpbkk8a.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <dacfb329-de66-d0cf-dcf9-f030ea1370de@schaufler-ca.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <b76a1405-10ae-b8ef-2f08-f84d5cd66fb9@kernel.dk>
+Date:   Mon, 21 Dec 2020 19:05:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
+In-Reply-To: <dacfb329-de66-d0cf-dcf9-f030ea1370de@schaufler-ca.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1krRHS-00GWfl-5v;;;mid=<877dpbkk8a.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+ZoV3zem0M+sG6nXw/9Ef2BPwgVflGuUk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH] Smack: Handle io_uring kernel thread privileges.
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> writes:
-
+On 12/17/20 6:12 PM, Casey Schaufler wrote:
 > Smack assumes that kernel threads are privileged for smackfs
 > operations. This was necessary because the credential of the
 > kernel thread was not related to a user operation. With io_uring
 > the credential does reflect a user's rights and can be used.
 
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Acked-by: Jens Axboe <axboe@kernel.dk>
 
->
-> Suggested-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  security/smack/smack_access.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-> index efe2406a3960..7eabb448acab 100644
-> --- a/security/smack/smack_access.c
-> +++ b/security/smack/smack_access.c
-> @@ -688,9 +688,10 @@ bool smack_privileged_cred(int cap, const struct cred *cred)
->  bool smack_privileged(int cap)
->  {
->  	/*
-> -	 * All kernel tasks are privileged
-> +	 * Kernel threads may not have credentials we can use.
-> +	 * The io_uring kernel threads do have reliable credentials.
->  	 */
-> -	if (unlikely(current->flags & PF_KTHREAD))
-> +	if ((current->flags & (PF_KTHREAD | PF_IO_WORKER)) == PF_KTHREAD)
->  		return true;
->  
->  	return smack_privileged_cred(cap, current_cred());
+-- 
+Jens Axboe
+
