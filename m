@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D69FC43217
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 02:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A742DC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 03:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4723320578
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 02:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64834207AA
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 03:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729322AbgLWCVX (ORCPT
+        id S1728500AbgLWCTH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Dec 2020 21:21:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49830 "EHLO mail.kernel.org"
+        Tue, 22 Dec 2020 21:19:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727757AbgLWCVW (ORCPT
+        id S1728489AbgLWCTG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:21:22 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id EC3EF2256F;
-        Wed, 23 Dec 2020 02:21:05 +0000 (UTC)
+        Tue, 22 Dec 2020 21:19:06 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 04301229CA;
+        Wed, 23 Dec 2020 02:18:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608690066;
-        bh=SlXT8szZKSZsLWWHMYmsFWGBamP8ytWKV+iCTXyRrX8=;
+        s=k20201202; t=1608689897;
+        bh=x5PIUwxH5WbhePd4i2PbNKAofydYlihwur288ZNn9Ck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rKpzl2HErxIsxoml3y+TJwD46yo+P4j4NnxCeLAQipNk0QlCj2Qpj3rSP7FGHHwLG
-         LDmmbq8X9rmCgMCyJKT7zRy5U4sAmRAf7mx4Jrs6C1aA59QU1OiqzUHV8KPOWyuOJl
-         daXhoa/IGs3tPo2wiSngEe9W5yDt/BFIbq+EQBXe2jYTD79kNThTqsvqEVHhdB3Atw
-         qBmUsMHyXppRv6dIIa6Lx+iVTmyuF4fYUHEVnQcjv8xu1h6A4xLCS77wE3yiasVXv3
-         YFI69qnb5MVPm7w/GSXgJLGgMWU7umtdPWgFaITxBAezFwPhlxH2ieeP3phSrxNUBs
-         YuC79y3DPdkQA==
+        b=Pc2gFmd18ziJuepaThbh9nWTJVK7eX1iGNC/jdGD2D0jqgH1aVlNY1/gWCyBbFTIa
+         TZ7gQ3TI1Fiun5AI5StCyvGZnFT5YL3p+gGDAjfwfuFTCam5TsP+nOyuBE+diKGHJQ
+         QLbdjbm/4Qp6YmTpHPtsDn5zwz/pVDddtTiitOcRivThkSSgYiniV0UlBBw64ATmOW
+         XVPHndXGy99/3U3SVmAhqWKjSfcMXRWJEaAK9GjZPuUX7rCcIe3oFYrMtz8nZUBvp/
+         LZ7Jvj4pAXZKIKg8H+wFCVVTVu/5qEd5o+Zj/+sexSV1SPQ2rh5EJvyhCU2ysNGjgA
+         tUk0Cmr6ZElJA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -40,12 +40,12 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 4.19 02/87] tomoyo: fix clang pointer arithmetic warning
-Date:   Tue, 22 Dec 2020 21:19:38 -0500
-Message-Id: <20201223022103.2792705-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 003/130] tomoyo: fix clang pointer arithmetic warning
+Date:   Tue, 22 Dec 2020 21:16:06 -0500
+Message-Id: <20201223021813.2791612-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201223022103.2792705-1-sashal@kernel.org>
-References: <20201223022103.2792705-1-sashal@kernel.org>
+In-Reply-To: <20201223021813.2791612-1-sashal@kernel.org>
+References: <20201223021813.2791612-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,7 +73,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-index 1d3d7e7a1f055..6f1161f4e613d 100644
+index 546281c5b233a..065f4941c4d8c 100644
 --- a/security/tomoyo/securityfs_if.c
 +++ b/security/tomoyo/securityfs_if.c
 @@ -131,8 +131,8 @@ static const struct file_operations tomoyo_self_operations = {
