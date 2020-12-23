@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A742DC433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 03:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18888C4321A
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 03:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64834207AA
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 03:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5C35207B1
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Dec 2020 03:12:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbgLWCTH (ORCPT
+        id S1727435AbgLWCRw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Dec 2020 21:19:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46336 "EHLO mail.kernel.org"
+        Tue, 22 Dec 2020 21:17:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728489AbgLWCTG (ORCPT
+        id S1727360AbgLWCRv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Dec 2020 21:19:06 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 04301229CA;
-        Wed, 23 Dec 2020 02:18:16 +0000 (UTC)
+        Tue, 22 Dec 2020 21:17:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D5D822256F;
+        Wed, 23 Dec 2020 02:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608689897;
+        s=k20201202; t=1608689797;
         bh=x5PIUwxH5WbhePd4i2PbNKAofydYlihwur288ZNn9Ck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pc2gFmd18ziJuepaThbh9nWTJVK7eX1iGNC/jdGD2D0jqgH1aVlNY1/gWCyBbFTIa
-         TZ7gQ3TI1Fiun5AI5StCyvGZnFT5YL3p+gGDAjfwfuFTCam5TsP+nOyuBE+diKGHJQ
-         QLbdjbm/4Qp6YmTpHPtsDn5zwz/pVDddtTiitOcRivThkSSgYiniV0UlBBw64ATmOW
-         XVPHndXGy99/3U3SVmAhqWKjSfcMXRWJEaAK9GjZPuUX7rCcIe3oFYrMtz8nZUBvp/
-         LZ7Jvj4pAXZKIKg8H+wFCVVTVu/5qEd5o+Zj/+sexSV1SPQ2rh5EJvyhCU2ysNGjgA
-         tUk0Cmr6ZElJA==
+        b=H5AHmza8EQqndwxYNZCrksCyz1I8FL1aftAt4yR0j4JQPA8b4GweWKDDuXQ0UvvCw
+         dbSi/KLPduvooc6yl7JeRGNB/BwIjjM65G3riayW42QmR6jKrVqs3ZK76zuhBpC9v1
+         1VGM0scFD7svDYNHgAtnw/FFaHdEnOAkfctwgwDJ1n3lXJVp5kblvuTWJClr1LC36Q
+         eGsQ6k8eM6I5BnANG0XOUmfKWSRDykvBCq+JmI+2n17+gA3TDDCWAPv7InAABghn1B
+         Gpg/qsaPjYrlOJCxUJfc5NXJJEI8y9W6ruOgs9TPWZMOdPkgRMsJ/WLTd/OhG15cGL
+         h0rGJXsmZzp1Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -40,12 +40,12 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH AUTOSEL 5.4 003/130] tomoyo: fix clang pointer arithmetic warning
-Date:   Tue, 22 Dec 2020 21:16:06 -0500
-Message-Id: <20201223021813.2791612-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 008/217] tomoyo: fix clang pointer arithmetic warning
+Date:   Tue, 22 Dec 2020 21:12:57 -0500
+Message-Id: <20201223021626.2790791-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201223021813.2791612-1-sashal@kernel.org>
-References: <20201223021813.2791612-1-sashal@kernel.org>
+In-Reply-To: <20201223021626.2790791-1-sashal@kernel.org>
+References: <20201223021626.2790791-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
