@@ -2,122 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B730CC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Dec 2020 14:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4D6C433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Dec 2020 22:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 798A922255
-	for <linux-security-module@archiver.kernel.org>; Thu, 24 Dec 2020 14:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A760221F2
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Dec 2020 22:13:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbgLXOmm (ORCPT
+        id S1728941AbgLXWMs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 24 Dec 2020 09:42:42 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58400 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726609AbgLXOmm (ORCPT
+        Thu, 24 Dec 2020 17:12:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43806 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728901AbgLXWMs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 24 Dec 2020 09:42:42 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 0BOEWhWO064381;
-        Thu, 24 Dec 2020 09:41:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=7UGMiFVFxi00pwrQ6v3x2kjQ3RPwifgbIv6xsQ2BjTM=;
- b=HLU6xS+nCiXeqoVvfinujFBsxdeTOaNc9BocICxWN25+xkv1+0V+N+s4DmQ86ov+iKob
- GNjsJnFwOq/lfaEbUbx9PvoLows+Zr0GSDrv4dPQVrZ6G7U9GwwEUnsu9x1GWS9GOZ0e
- Xv5npalkmh8iE/GXO/slsMg4vmtts5I6pA9Rg5aqC9nTNWVCXQsQXNS8eX2YSGh6MXLx
- Ieb+eFCFa4zETIroDto6UfZr/JZ/RSdg+ef1lAHJofVkkk5++LtJOC0ZbbwHwnJo9feQ
- lSFneDG+oF+/+mtdppvM28ilQXIEaDq9ye69gcIHdROO0qifEACU29ioDVzK/NA9laUe /Q== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 35mtka31tq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Dec 2020 09:41:57 -0500
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 0BOEfvbx097495;
-        Thu, 24 Dec 2020 09:41:57 -0500
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 35mtka31ta-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Dec 2020 09:41:56 -0500
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 0BOEWkOn007779;
-        Thu, 24 Dec 2020 14:41:54 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03fra.de.ibm.com with ESMTP id 35ja5rsxmk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 24 Dec 2020 14:41:54 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 0BOEfqJc34800044
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Dec 2020 14:41:52 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50BF542047;
-        Thu, 24 Dec 2020 14:41:52 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 23FF342045;
-        Thu, 24 Dec 2020 14:41:49 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.1.132])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 24 Dec 2020 14:41:48 +0000 (GMT)
-Message-ID: <93dc6912192df78026f8f98c8f6ab67608c188f0.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 7/8] IMA: define a builtin critical data measurement
- policy
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
-        paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Date:   Thu, 24 Dec 2020 09:41:48 -0500
-In-Reply-To: <20201212180251.9943-8-tusharsu@linux.microsoft.com>
-References: <20201212180251.9943-1-tusharsu@linux.microsoft.com>
-         <20201212180251.9943-8-tusharsu@linux.microsoft.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-12.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2020-12-24_08:2020-12-24,2020-12-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- malwarescore=0 adultscore=0 spamscore=0 impostorscore=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2012240088
+        Thu, 24 Dec 2020 17:12:48 -0500
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C48C061575
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Dec 2020 14:12:07 -0800 (PST)
+Received: by mail-lf1-x134.google.com with SMTP id o17so7115517lfg.4
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Dec 2020 14:12:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cF4gWolnJ46SGXTA3iokNOBB6rTqdEEZbYRTGkpsaeY=;
+        b=MvN0X/pmZwkxtKecxvq3Z5pdlyl3EtTze+Z/yCEDu4b+SBlGjOcH1rOroJM5CAKO2d
+         ITncuvq/yXDOOzWHRGHBxnx2Yk6KCultAXCzFrl30b7WASF+P2W8FEVBViFVWHaonL6i
+         RJF1yoSkCcW9/Z4/6u/dtlCgNbEAFhP6+36dQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cF4gWolnJ46SGXTA3iokNOBB6rTqdEEZbYRTGkpsaeY=;
+        b=AgnMZqR3qi8sKCMvG+FPHbQ0xQ0jhV2rwMRfg9dlTCMqgFMatBdidMIJngt9wfEH08
+         VJpsQArOXC18wF3uL0xdlqlFykS7Rg4v9qjQ75UUdsHClslsNusC1maCYS1migAPqFQ2
+         0FUwyin8sKOUZ126hDKH77lCdRuS2EafbqrCNZ8ccIC9Wl8VjZa7yANVbt5hEtcRuL4R
+         hGKWqDLmFm9CEPT24VGmHsMu5pDf7TNk/+61zRk3X1a9olrN7JIfI3wZ0KA3wJoYPkVP
+         n86baSAQxpF8nWgFPZGk+hAzVpOPHifgEF2X4Ctsm6+AOiVwtJlHpVGqlETLIKsN11/B
+         FU3g==
+X-Gm-Message-State: AOAM533HgUjeoOmkVTSBGwndZv0RJXfu883t+XtSNN+o4qUReHAplX5B
+        2mZVH7SXFhBuhqIGH5Is0MJLXQ6A8s+H2w==
+X-Google-Smtp-Source: ABdhPJzBq9TgMpNF8LORzliLH7DidPyOFkKMBvR/iFxmTbUfLqn4XWedhCC0TaGrluT+olXVwCQVoA==
+X-Received: by 2002:a2e:9cc3:: with SMTP id g3mr15951008ljj.0.1608847925812;
+        Thu, 24 Dec 2020 14:12:05 -0800 (PST)
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
+        by smtp.gmail.com with ESMTPSA id h22sm3019612lfu.128.2020.12.24.14.12.04
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Dec 2020 14:12:05 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id o19so7158711lfo.1
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Dec 2020 14:12:04 -0800 (PST)
+X-Received: by 2002:ac2:41d9:: with SMTP id d25mr12053752lfi.377.1608847924320;
+ Thu, 24 Dec 2020 14:12:04 -0800 (PST)
+MIME-Version: 1.0
+References: <b73e7af1-25d3-1e68-c810-3858abc489d7.ref@schaufler-ca.com> <b73e7af1-25d3-1e68-c810-3858abc489d7@schaufler-ca.com>
+In-Reply-To: <b73e7af1-25d3-1e68-c810-3858abc489d7@schaufler-ca.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 24 Dec 2020 14:11:48 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi3kt+T+Xyh55_ca4sUxGinhr7Y8scsNSANjGhvcy4FCQ@mail.gmail.com>
+Message-ID: <CAHk-=wi3kt+T+Xyh55_ca4sUxGinhr7Y8scsNSANjGhvcy4FCQ@mail.gmail.com>
+Subject: Re: [GIT PULL] Smack additional patch for v5.11
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 2020-12-12 at 10:02 -0800, Tushar Sugandhi wrote:
-> From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> 
-> Define a new critical data builtin policy to allow measuring
-> early kernel integrity critical data before a custom IMA policy
-> is loaded.
-> 
-> Add critical data to built-in IMA rules if the kernel command line
-> contains "ima_policy=critical_data".
+On Tue, Dec 22, 2020 at 4:43 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>   https://github.com/cschaufler/smack-next smack-for-5.11
 
-This sentence isn't really necessary.
+That is not a tag.
 
-> 
-> Update the documentation on kernel parameters to document
-> the new critical data builtin policy.
-> 
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+And I really want signed tags for non-kernel.org pull requests.
 
-Otherwise,
-Reviewed-by:  Mimi Zohar <zohar@linux.ibm.com>
+Digging at that repo, I do find the tag, it's
+'tags/Smack-for-5.11-io_uring-fix' and it has a proper pgp signature
+from you.
 
-thanks,
+So I pulled that one. But please don't make me search for these things.
 
-Mimi
-
+                   Linus
