@@ -2,87 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC093C433DB
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 Jan 2021 21:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1A5C433E6
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Jan 2021 23:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE9F2076D
-	for <linux-security-module@archiver.kernel.org>; Sat,  2 Jan 2021 21:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3021B208C3
+	for <linux-security-module@archiver.kernel.org>; Sat,  2 Jan 2021 23:09:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbhABVho (ORCPT
+        id S1726893AbhABXIw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 2 Jan 2021 16:37:44 -0500
-Received: from mga11.intel.com ([192.55.52.93]:36487 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbhABVho (ORCPT
+        Sat, 2 Jan 2021 18:08:52 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:47821 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726904AbhABXIs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 2 Jan 2021 16:37:44 -0500
-IronPort-SDR: 7v49CNtAqioH5xNayiqBSzlAqA7g6k2K1FbEP0rWx5zUbmPI7opNVrJQVoKtzt9/qYrfxtdKoG
- WH3QtlAnUWoA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9852"; a="173329717"
-X-IronPort-AV: E=Sophos;i="5.78,470,1599548400"; 
-   d="scan'208";a="173329717"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2021 13:35:58 -0800
-IronPort-SDR: wV1gawkYGc9NR2N+p/Kyn/hkqFOTGHX3rcj9LnrirqPGlSSwsg4vhshZZnnBQcGW2ZMNsllmxD
- j1K6l6VEJBdA==
-X-IronPort-AV: E=Sophos;i="5.78,470,1599548400"; 
-   d="scan'208";a="349323384"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Jan 2021 13:35:57 -0800
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1kvoa3-001Fri-Oc; Sat, 02 Jan 2021 23:36:59 +0200
-Date:   Sat, 2 Jan 2021 23:36:59 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1] efi: Don't use knowledge about efi_guid_t internals
-Message-ID: <20210102213659.GP4077@smile.fi.intel.com>
-References: <20201015115028.81857-1-andriy.shevchenko@linux.intel.com>
+        Sat, 2 Jan 2021 18:08:48 -0500
+Received: by mail-io1-f71.google.com with SMTP id q21so9686393ios.14
+        for <linux-security-module@vger.kernel.org>; Sat, 02 Jan 2021 15:08:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=xiEz0zPMyUpnKzLhYUnlv16mJTBk47GYHjbMemvYGag=;
+        b=pDhY9Csw1+x3tsIbYlAmHalRUh/S3erBlv6RBwJLLshbKg4dVwZMHJ+WvqdyPsj+Ff
+         B+vr8oNEEIh7dETGffi4T/yHgqIPPCEnyogV7laVpoxd7EmePtZO/kKbB0CojfQigWKS
+         YFbg9SeBPhYGbU8RrSldox3pnZasNTQgaFpGq2QLVwdXcI3R6tndbxTI0dftzt4NE3zE
+         YXnKtuNNbCR0WTzqSghGaTTTYVTPjyOSPTO/Y62FezCpzIV+RiDKEWXBhPVYbnZ7ehwg
+         YVpzxOacRdXxYMv+TWbmyweWOrO0+yKDks3m24JMQ0Jv6UFQMUlTbXomARXPxAl9m7rS
+         pP4Q==
+X-Gm-Message-State: AOAM533n+HL3ghviR2Nx4W7k2LtsCE+g7Zan3378+7n2yJPiiC/j+7MA
+        0WTSD8sJ6MNgPYQxCYMUgea16+IgPABfeNclBlvDKepxoUwe
+X-Google-Smtp-Source: ABdhPJw5aPB63tv+UKyWH6P3GLw1/joSnocDf9Va4zkVn9W6ovN0OmH9m4h5GDMUABDOGXo/PpQv9dQg0Tviuv4SPWoyM7fs5DD8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20201015115028.81857-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a92:1508:: with SMTP id v8mr37962807ilk.162.1609628887224;
+ Sat, 02 Jan 2021 15:08:07 -0800 (PST)
+Date:   Sat, 02 Jan 2021 15:08:07 -0800
+In-Reply-To: <000000000000880dcc0598bcfac9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000b157705b7f2eefd@google.com>
+Subject: Re: possible deadlock in process_measurement (2)
+From:   syzbot <syzbot+18a1619cceea30ed45af@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, bhe@redhat.com,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, mike.kravetz@oracle.com,
+        richard.weiyang@linux.alibaba.com, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org,
+        zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Oct 15, 2020 at 02:50:28PM +0300, Andy Shevchenko wrote:
-> When print GUIDs supply pointer to the efi_guid_t (guid_t) type rather
-> its internal members.
+syzbot suspects this issue was fixed by commit:
 
-Any comment on this?
+commit 15a8d68e9dc23dc9def4bd7e9563db60f4f86580
+Author: Wei Yang <richard.weiyang@linux.alibaba.com>
+Date:   Tue Oct 13 23:56:33 2020 +0000
 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  security/integrity/platform_certs/efi_parser.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/platform_certs/efi_parser.c b/security/integrity/platform_certs/efi_parser.c
-> index 18f01f36fe6a..d98260f8402a 100644
-> --- a/security/integrity/platform_certs/efi_parser.c
-> +++ b/security/integrity/platform_certs/efi_parser.c
-> @@ -55,7 +55,7 @@ int __init parse_efi_signature_list(
->  		memcpy(&list, data, sizeof(list));
->  		pr_devel("LIST[%04x] guid=%pUl ls=%x hs=%x ss=%x\n",
->  			 offs,
-> -			 list.signature_type.b, list.signature_list_size,
-> +			 &list.signature_type, list.signature_list_size,
->  			 list.signature_header_size, list.signature_size);
->  
->  		lsize = list.signature_list_size;
-> -- 
-> 2.28.0
-> 
+    mm/hugetlb: a page from buddy is not on any list
 
--- 
-With Best Regards,
-Andy Shevchenko
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13612350d00000
+start commit:   1590a2e1 Merge tag 'acpi-5.8-rc3' of git://git.kernel.org/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf3aec367b9ab569
+dashboard link: https://syzkaller.appspot.com/bug?extid=18a1619cceea30ed45af
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c79dbb100000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=169bba3d100000
 
+If the result looks correct, please mark the issue as fixed by replying with:
 
+#syz fix: mm/hugetlb: a page from buddy is not on any list
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
