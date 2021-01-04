@@ -2,139 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE993C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 09:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663C8C433E9
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 14:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B825320643
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 09:41:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CBF020770
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 14:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725468AbhADJlT (ORCPT
+        id S1727100AbhADOR2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Jan 2021 04:41:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:53116 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725616AbhADJlT (ORCPT
+        Mon, 4 Jan 2021 09:17:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57814 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726396AbhADOR1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Jan 2021 04:41:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1609753192;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XVjW4HSk1hVwXdQeczGzcQ5veMflMC10yNN5cPRpH0g=;
-        b=ddVqIUxERq3rjSz+H4vfOOJYEE+rRattP2ZlNTd2LgSpwmnk6vc4R2UXiW1uv5rwx+R82T
-        /i7OOFTq0/McghGZbRUuJZgmqfPYgDovjKdBsAvszFQ1+3ZoSFLvgr/fKFzwFB5jaECBHm
-        hPAIOrJUqr4DR2XXK/jbYqV9fIVTong=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-166-6I_xb1ztNpugy_oNWEyQcQ-1; Mon, 04 Jan 2021 04:39:50 -0500
-X-MC-Unique: 6I_xb1ztNpugy_oNWEyQcQ-1
-Received: by mail-lf1-f72.google.com with SMTP id i21so16741719lfe.14
-        for <linux-security-module@vger.kernel.org>; Mon, 04 Jan 2021 01:39:50 -0800 (PST)
+        Mon, 4 Jan 2021 09:17:27 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EC5FC061574;
+        Mon,  4 Jan 2021 06:16:47 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id m25so64568952lfc.11;
+        Mon, 04 Jan 2021 06:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i5CNFkVFgsA9BzNgX/I+jI3gR5jn/LsiIfWVngBWCIo=;
+        b=lrB/U4f+X00uogk3MEbesYfb4TzdSeycj7JvT0MRsMg5ipEeIJPTYY0FHeLrcjCKmK
+         NEQnEIhA4BnBFtjxZ2FBPaz2Jn7zj1CVD7xmcTjU9L3Y9W8CBrMhPi1Rnp9bzoKbcBQI
+         5Ax5RINcChzD9QF0oJzx147Evo+dV2/qx3W36Sz08uqf4aI9DkCKRSxQZtDY86NZRBUM
+         2xha5Cxl5mpL3Y8YgkA2GSnQ83nE8tgtGgoyx9W+n/5yYqIBa85ZTrv4wu/VjAo3DdVh
+         omkJOCzU4iy814/Ltl6aqvFXaRhWk6l8rLdf+XU9ohcrhL5B7zCS+gyI2BtbeLZCZWIa
+         k1tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XVjW4HSk1hVwXdQeczGzcQ5veMflMC10yNN5cPRpH0g=;
-        b=R2XKwGNuIeWCnn2AkQdtfWJ21LPc/oZKeYeIrPNtYQ//fs5194ldAsRmCOniZ+wSx7
-         Bp72BJiuNC5so/0OIMwrbeZ6151m0Gt2SiD9tbueW+0QRGuJYnCL9Nd9OD80bluFZQW/
-         iFz2zWeeEa5RfZWnIFfUAZnyKrbERwg/MIzHgCm9dVv+JlB9dxm92736rC9W8PYlaOHW
-         TgSfHLqGgGpBpY3oDC/nKJbU5qFXCxKgGV0SdUqgQb6jQAreaUxXbqx2KOhpC/OPeOjv
-         Q3P4yvpmyAtlQdNNhGNM0RqYHBgr6UUwQmwDAZuCv5w5LFrd7GcjxtxncEs+923NBCZU
-         yC3g==
-X-Gm-Message-State: AOAM530VAGKej0uV8I1ii4jvgJ6vIJ7nrI6SEYXPsN38elukA38T3VEX
-        m6L6EMRE/7hIg1QLZk8UraElLfcuc5bAjTHD48UxsJ/dQoM9kyWCXw46GESou4P6yTuKcVFmipY
-        iIbHmh99mwlAbrIJh/WcvN95V1ozXhgRtiq5LC4NZ+cqjwa78eiUk
-X-Received: by 2002:a05:6512:2f7:: with SMTP id m23mr23333197lfq.517.1609753189233;
-        Mon, 04 Jan 2021 01:39:49 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwVqGu3rr3EuajkBL+S5l4IUuczgGkXJjRybffxYfPraoTA1d3B/A9pl2Fm+WEHVQQLsOX3YZNPWFKZp/FM7VY=
-X-Received: by 2002:a05:6512:2f7:: with SMTP id m23mr23333186lfq.517.1609753188974;
- Mon, 04 Jan 2021 01:39:48 -0800 (PST)
+        bh=i5CNFkVFgsA9BzNgX/I+jI3gR5jn/LsiIfWVngBWCIo=;
+        b=I8vZdre3ZFo/zcv1djmODHPXx8Ttmqs+HiS0Yc2ppvimg1pri5HYhmmGQJ4eXDHxjn
+         yEH3P2eBN8O+UynZRB37mVb2z0FGxSZuCgwtRcV8+ig7250l0YLfG035V8HoH31jdGcE
+         NVLEF92ur4uHp7plsoeL9q0DsoG68mFK6hPRVwzTRc0Z4WrD5LyeBTHTfqwGQRMQJSAc
+         d8SWkpOPnaG4+PaoIi3hFjy6xAr3eFA1mUqW30/2BPhBDTEF6aScW85I37+PwC80oOpy
+         ci5fZRbQgx7BFZUirE+RKgai0Kz6g/eyEVH8qsUnmJ5Uy0SIsSz2dFoPaYWwFLVJ9sgj
+         o3bA==
+X-Gm-Message-State: AOAM533QbbYZke7zpHPW6IuKnYeDodDEOLWp/OmoXu3Ojb0h3hQEUszD
+        5y23H+Nn78uteBKUeWPyuCyVdVPlwSEbHnQ6Smg=
+X-Google-Smtp-Source: ABdhPJzV+OL02hsKvA1TOJWU4Gy1IzHRylhUKjGeqk11Tj716Nv+esf0Z5CuhVen+kgAlLcnhWSejv/zrCoo+UlkDWw=
+X-Received: by 2002:a05:651c:200a:: with SMTP id s10mr34175031ljo.492.1609769805661;
+ Mon, 04 Jan 2021 06:16:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20201219100527.16060-1-amir73il@gmail.com>
-In-Reply-To: <20201219100527.16060-1-amir73il@gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 4 Jan 2021 10:39:32 +0100
-Message-ID: <CAFqZXNtcX54bv2xeQ26_i-=9OkdiJQQzPOveY=aaujOWJjGWLA@mail.gmail.com>
-Subject: Re: [PATCH] selinux: fix inconsistency between inode_getxattr and inode_listsecurity
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Michael Labriola <michael.d.labriola@gmail.com>,
-        Jonathan Lebon <jlebon@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
+References: <20201219000616.197585-1-stephen.s.brennan@oracle.com> <20201219000616.197585-2-stephen.s.brennan@oracle.com>
+In-Reply-To: <20201219000616.197585-2-stephen.s.brennan@oracle.com>
+From:   Stephen Smalley <stephen.smalley.work@gmail.com>
+Date:   Mon, 4 Jan 2021 09:16:34 -0500
+Message-ID: <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] proc: ensure security hook is called after exec
+To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
         SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Stable maillist <stable@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Dec 19, 2020 at 11:07 AM Amir Goldstein <amir73il@gmail.com> wrote:
-> When inode has no listxattr op of its own (e.g. squashfs) vfs_listxattr
-> calls the LSM inode_listsecurity hooks to list the xattrs that LSMs will
-> intercept in inode_getxattr hooks.
+On Fri, Dec 18, 2020 at 7:06 PM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
 >
-> When selinux LSM is installed but not initialized, it will list the
-> security.selinux xattr in inode_listsecurity, but will not intercept it
-> in inode_getxattr.  This results in -ENODATA for a getxattr call for an
-> xattr returned by listxattr.
+> Smack needs its security_task_to_inode() hook to be called when a task
+> execs a new executable. Store the self_exec_id of the task and call the
+> hook via pid_update_inode() whenever the exec_id changes.
 >
-> This situation was manifested as overlayfs failure to copy up lower
-> files from squashfs when selinux is built-in but not initialized,
-> because ovl_copy_xattr() iterates the lower inode xattrs by
-> vfs_listxattr() and vfs_getxattr().
->
-> Match the logic of inode_listsecurity to that of inode_getxattr and
-> do not list the security.selinux xattr if selinux is not initialized.
->
-> Reported-by: Michael Labriola <michael.d.labriola@gmail.com>
-> Tested-by: Michael Labriola <michael.d.labriola@gmail.com>
-> Link: https://lore.kernel.org/linux-unionfs/2nv9d47zt7.fsf@aldarion.sourceruckus.org/
-> Fixes: c8e222616c7e ("selinux: allow reading labels before policy is loaded")
-> Cc: stable@vger.kernel.org#v5.9+
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->  security/selinux/hooks.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 6b1826fc3658..e132e082a5af 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3406,6 +3406,10 @@ static int selinux_inode_setsecurity(struct inode *inode, const char *name,
->  static int selinux_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
->  {
->         const int len = sizeof(XATTR_NAME_SELINUX);
-> +
-> +       if (!selinux_initialized(&selinux_state))
-> +               return 0;
-> +
->         if (buffer && len <= buffer_size)
->                 memcpy(buffer, XATTR_NAME_SELINUX, len);
->         return len;
-> --
-> 2.25.1
+> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
 
-Looked at the logic in vfs_listxattr() and this looks reasonable.
-
-Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
-
-Thank you for the patch!
-
--- 
-Ondrej Mosnacek
-Software Engineer, Platform Security - SELinux kernel
-Red Hat, Inc.
-
+Sorry to be late in responding, but the proc inode security structure
+needs to be updated not only upon a context-changing exec but also
+upon a setcon(3) aka write to /proc/self/attr/current just like the
+uid/gid needs to be updated not only upon a setuid exec but also upon
+a setuid(2).  I'm also unclear as to why you can't call
+security_task_to_inode during RCU lookup; it doesn't block/sleep
+AFAICT.
+All it does is take a spinlock and update a few fields.
