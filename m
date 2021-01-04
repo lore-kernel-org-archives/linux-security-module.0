@@ -2,66 +2,56 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1042EC433E9
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 14:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9740CC433E9
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 19:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2714207BC
-	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 14:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EB562071E
+	for <linux-security-module@archiver.kernel.org>; Mon,  4 Jan 2021 19:52:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbhADOXP (ORCPT
+        id S1727763AbhADTw0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 4 Jan 2021 09:23:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727136AbhADOXP (ORCPT
+        Mon, 4 Jan 2021 14:52:26 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:43326 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbhADTw0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 4 Jan 2021 09:23:15 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95745C061793;
-        Mon,  4 Jan 2021 06:22:34 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id o13so64720527lfr.3;
-        Mon, 04 Jan 2021 06:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kXTFfeMRZQQpjX/bUjX/VUuqwPxBKyg8TYI+r24zwMc=;
-        b=bL9IjbB8aRoM2Bbdkox5AoGHJ7LmMDhG5X87RhacQffOkK4RDKh9GzBDzsLftnPqjg
-         sjV80SnDAn9HsjTEPA9YkwRPxUyVdnQBmUdeKBb/07ve4M5yhoiJkpnkolbCB1bB7yLF
-         4fIkPhcyWaaJmR3N99kkDhOhqel2j0sPbAgo9zH5cf3zqTnSF3E6HkO8dYrEZDfVrgtX
-         gDhvY0tDgHRPyUCGvBLSvEtKVY+nsdJCQTjGbY4qSfCx/Db8rW+TaQoVlZPjyrkfzeSc
-         n7HoTrR9GUEHLA+Ged8gOt/vkI8SWGZXUvdoC4ZYDH0yQ+Vph9fZX5iKRbus6nq3x+7I
-         EIxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kXTFfeMRZQQpjX/bUjX/VUuqwPxBKyg8TYI+r24zwMc=;
-        b=PCljmN9+XRc/74lw5nDuZN9IyJItbYtakmH3+ACqyXdxWOPSk3XxWybE+iUmy+Vhyp
-         vKSN7m8KmA/GAbZaS8HpZdA4HM09qjBv6P/8ihpU26oltpHJLyRqiX5UYtzgJGSmB6y8
-         +PyL6XyfFWMNfpUXSJi7hdoB+QBmvqNyxx3/+9uTHRVeagjpVljdcF8dYDje4tLC4Arf
-         TxWln3AGKP9yCQ9SZtXh36M5KL3FAkPJBHDfFJ02MLRtsAX7txbGBpBR4XTNLHY0lr8x
-         lZ9WURDAx2nO/RtS4pY2VA8h2pyPVaG2DKCoT55dmf4dvXeDNTZLkRZ3WgEuBLW2Gzm1
-         DxBw==
-X-Gm-Message-State: AOAM531vh05Sv1/5stTvVsV5vl8mGRzAQEeDqh5jMCRYPOCVtZ3wV1Kj
-        UmFzHnoazsGveylUV45Iwx79dtgaPYd9X4euxZ8=
-X-Google-Smtp-Source: ABdhPJytbIseJCFq7LhrJXQnsC4iBKXOUNOS6w9t+SOinAywUYi8J+1uiDqH+aTMStFRoDVoeD38KQIiVG21U4iPnlg=
-X-Received: by 2002:a19:c786:: with SMTP id x128mr35713651lff.323.1609770153039;
- Mon, 04 Jan 2021 06:22:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
- <20201219000616.197585-2-stephen.s.brennan@oracle.com> <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Mon, 4 Jan 2021 09:22:22 -0500
-Message-ID: <CAEjxPJ6HBGaPVbWFBTYgDDpDX6duvpJvCinSJP863kM69=qWqg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] proc: ensure security hook is called after exec
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+        Mon, 4 Jan 2021 14:52:26 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104JhsRt035793;
+        Mon, 4 Jan 2021 19:51:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=aR5E33ngmM7rA62zOVK1kNDHyQ1ZhIMHNofceRK43oY=;
+ b=tZ6PDIrmrYEHFS6MJkkZg39L4P9UbJPfi96nsJzOXI7+dwovQUhsLnxFeQo+B9Uvq+6m
+ dHovtt15YZRSJL1tCLKJOj/FIa0oBOERJDWL+yD6xe7a8cOTbS/YfKi3XouEcMxrsJJO
+ rgd3Ttio6mVEagOCaIcNLq56zQIy2669/WrkV8XgJIy0oGXg+qEgraSGVxASAsByRRvs
+ 7JaYIQ/kzXpZTP+FH1NNk3zHrCcRjAWJn6yWThEk8uuHvaRvFx6NoVcJz26WMdhDUrSe
+ CRgzS+5Vz0kySVly0+wSrJf8vi8gztS5QM4Tg3gnxlUnX+h2qgg39glbKJ27Ki7rShUB 6w== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 35tg8qwyfj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 04 Jan 2021 19:51:22 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 104JihXY093653;
+        Mon, 4 Jan 2021 19:51:21 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 35v1f7rp4p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Jan 2021 19:51:21 +0000
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 104Jp8Xv017494;
+        Mon, 4 Jan 2021 19:51:08 GMT
+Received: from localhost (/10.159.240.116)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Jan 2021 11:51:07 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -75,21 +65,39 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Linux FS Devel <linux-fsdevel@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 2/2] proc: ensure security hook is called after exec
+In-Reply-To: <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
+References: <20201219000616.197585-1-stephen.s.brennan@oracle.com>
+ <20201219000616.197585-2-stephen.s.brennan@oracle.com>
+ <CAEjxPJ4bUxSp3hMV9k5Z5Zpev=ravd6EJheC1Rdg+_72eUiNLA@mail.gmail.com>
+Date:   Mon, 04 Jan 2021 11:51:07 -0800
+Message-ID: <87pn2k5vmc.fsf@stepbren-lnx.us.oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101040124
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9854 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 phishscore=0 bulkscore=0
+ spamscore=0 impostorscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
+ mlxscore=0 malwarescore=0 lowpriorityscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101040124
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 4, 2021 at 9:16 AM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
+Stephen Smalley <stephen.smalley.work@gmail.com> writes:
+
 > On Fri, Dec 18, 2020 at 7:06 PM Stephen Brennan
 > <stephen.s.brennan@oracle.com> wrote:
-> >
-> > Smack needs its security_task_to_inode() hook to be called when a task
-> > execs a new executable. Store the self_exec_id of the task and call the
-> > hook via pid_update_inode() whenever the exec_id changes.
-> >
-> > Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
+>>
+>> Smack needs its security_task_to_inode() hook to be called when a task
+>> execs a new executable. Store the self_exec_id of the task and call the
+>> hook via pid_update_inode() whenever the exec_id changes.
+>>
+>> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
 >
 > Sorry to be late in responding, but the proc inode security structure
 > needs to be updated not only upon a context-changing exec but also
@@ -100,6 +108,58 @@ On Mon, Jan 4, 2021 at 9:16 AM Stephen Smalley
 > AFAICT.
 > All it does is take a spinlock and update a few fields.
 
-You could also optimize this by comparing the sid similar to how the
-uid/gid are compared and only updating it within the hook if it has
-not yet been initialized or has changed since it was originally set.
+The reason I assumed that we need to drop out of RCU mode to update the
+inode and call the security hooks was simply because that is how the
+code worked originally. I wanted to be conservative in my changes, by
+only leaving RCU mode "when necessary", but this assumed that it was
+necessary to leave RCU mode at all!
+
+None of the data in a proc inode (at least, i_mode, i_uid, i_gid) seems
+to be "RCU protected" in the sense that they could not be modified
+during an RCU read critical section. If this were the case, then there
+would have to be some sort of copying and a synchronize_rcu() used
+somewhere.  So it seems that running pid_update_inode() (which does not
+sleep and simply takes some spinlocks) should be safe during RCU mode.
+
+My assumption had originally been that the security_pid_to_inode() calls
+could be liable to sleep. But during this review we've seen that both
+the selinux and smack security_pid_to_inode() implementations are also
+"RCU safe" in that they do not sleep.
+
+So rather than trying to guess when this security hook would like to be
+called, it seems that it would be safe to take the easiest option: just
+execute pid_revalidate() in RCU mode always, for instance with the
+example changes below. Is there anything obviously wrong with this
+approach that I'm missing?
+
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index ebea9501afb8..105581e51032 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1830,19 +1830,18 @@ static int pid_revalidate(struct dentry *dentry, unsigned int flags)
+ {
+ 	struct inode *inode;
+ 	struct task_struct *task;
++	int rv = 0;
+ 
+-	if (flags & LOOKUP_RCU)
+-		return -ECHILD;
+-
+-	inode = d_inode(dentry);
+-	task = get_proc_task(inode);
++	rcu_read_lock();
++	inode = d_inode_rcu(dentry);
++	task = pid_task(proc_pid(inode), PIDTYPE_PID);
+ 
+ 	if (task) {
+ 		pid_update_inode(task, inode);
+-		put_task_struct(task);
+-		return 1;
++		rv = 1;
+ 	}
+-	return 0;
++	rcu_read_unlock();
++	return rv;
+ }
+ 
+ static inline bool proc_inode_is_dead(struct inode *inode)
