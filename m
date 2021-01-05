@@ -2,86 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD7A0C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jan 2021 21:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85530C433E6
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jan 2021 23:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 746772070B
-	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jan 2021 21:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 585BE22EBE
+	for <linux-security-module@archiver.kernel.org>; Tue,  5 Jan 2021 23:29:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbhAEVNs (ORCPT
+        id S1727183AbhAEX2a (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 5 Jan 2021 16:13:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35594 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbhAEVNr (ORCPT
+        Tue, 5 Jan 2021 18:28:30 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:34942 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbhAEX2a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 5 Jan 2021 16:13:47 -0500
-Received: from ZenIV.linux.org.uk (zeniv.linux.org.uk [IPv6:2002:c35c:fd02::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A492C061574;
-        Tue,  5 Jan 2021 13:13:07 -0800 (PST)
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1kwtdF-007AYs-Vb; Tue, 05 Jan 2021 21:12:46 +0000
-Date:   Tue, 5 Jan 2021 21:12:45 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
+        Tue, 5 Jan 2021 18:28:30 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 105NF5mt170674;
+        Tue, 5 Jan 2021 23:27:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : in-reply-to : references : date : message-id : mime-version :
+ content-type; s=corp-2020-01-29;
+ bh=tyV62G40bD/pUWWd9jFwnRCJ68TPKtBWn9L5iARg8W0=;
+ b=D53IVTKPiz3BFnesbpSctdeFdAosPnXlbG3fMixFG9nTKkaBiQXIAM45D4HATcTWLxJT
+ SnmpjvXL56kguDEKEQvysfaZi8uAMS/+c7BkXLXYZ8Fe97ASTg8hNyEjIuY+mGHHnJSk
+ cdbDdviVdq32Chu/Y/a3FnZv43Z4crxPhvJ21eH8JPU3B+3kr/bkdir9cpJW8W7Q+Eit
+ osCVM3XFiz7ScsL/nubict1Vwkwswh0op/xK0N/tddU/I6+TTQillD3HkjU/ZAy/LRKx
+ jFU1QR+vYmeb02zgW8htptX6MRsyiB+CBwz0JxRiXWge6JOW+fQx7x//L9wcfLrWrlCy NQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 35tebau93t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 05 Jan 2021 23:27:22 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 105NGPXj147406;
+        Tue, 5 Jan 2021 23:25:22 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 35v4rbyp9y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Jan 2021 23:25:22 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 105NPDq2008196;
+        Tue, 5 Jan 2021 23:25:15 GMT
+Received: from localhost (/10.159.141.245)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Jan 2021 15:25:13 -0800
+From:   Stephen Brennan <stephen.s.brennan@oracle.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
         Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        SElinux list <selinux@vger.kernel.org>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
         Casey Schaufler <casey@schaufler-ca.com>,
         Eric Biederman <ebiederm@xmission.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
 Subject: Re: [PATCH v4] proc: Allow pid_revalidate() during LOOKUP_RCU
-Message-ID: <20210105211245.GY3579531@ZenIV.linux.org.uk>
+In-Reply-To: <20210105195937.GX3579531@ZenIV.linux.org.uk>
 References: <20210104232123.31378-1-stephen.s.brennan@oracle.com>
  <20210105055935.GT3579531@ZenIV.linux.org.uk>
  <20210105165005.GV3579531@ZenIV.linux.org.uk>
  <20210105195937.GX3579531@ZenIV.linux.org.uk>
- <CAHk-=wiP9EAP=JHGKG5LUCusVjVzTQoPVyweJkrX5dP=T_NxXw@mail.gmail.com>
+Date:   Tue, 05 Jan 2021 15:25:11 -0800
+Message-ID: <87a6tnge5k.fsf@stepbren-lnx.us.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiP9EAP=JHGKG5LUCusVjVzTQoPVyweJkrX5dP=T_NxXw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9855 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 adultscore=0 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2101050133
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9855 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
+ priorityscore=1501 spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101050133
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 05, 2021 at 12:38:31PM -0800, Linus Torvalds wrote:
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-> This whole thing isn't important enough to get the dentry lock. It's
-> more of a hint than anything else.
-> 
-> Why isn't the fix to just use READ_ONCE() of the name pointer, and do
-> it under RCU?
+> On Tue, Jan 05, 2021 at 04:50:05PM +0000, Al Viro wrote:
+>
+>> LSM_AUDIT_DATA_DENTRY is easy to handle - wrap
+>>                 audit_log_untrustedstring(ab, a->u.dentry->d_name.name);
+>> into grabbing/dropping a->u.dentry->d_lock and we are done.
+>
+> Incidentally, LSM_AUDIT_DATA_DENTRY in mainline is *not* safe wrt
+> rename() - for long-named dentries it is possible to get preempted
+> in the middle of
+>                 audit_log_untrustedstring(ab, a->u.dentry->d_name.name);
+> and have the bugger renamed, with old name ending up freed.  The
+> same goes for LSM_AUDIT_DATA_INODE...
 
-Umm...  Take a look at audit_log_untrustedstring() - it really assumes
-that string is not changing under it.  It could be massaged to be
-resilent to such changes, and it's not even all that hard (copy the sucker
-byte-by-byte, checking them for prohibited characters, with fallback
-to hex dump if it finds one), but I really don't want to mess with
-that for -stable and TBH I don't see the point - if the system is
-spending enough time in spewing into audit for contention and/or
-cacheline pingpong to matter, you are FUBAR anyway.
+In the case of proc_pid_permission(), this preemption doesn't seem
+possible. We have task_lock() (a spinlock) held by ptrace_may_access()
+during this call, so preemption should be disabled:
 
-In this case dumber is better; sure, if it was just a string copy
-with the accuracy in face of concurrent renames not guaranteed,
-I'd be all for "let's see if we can just use %pd printf, or
-go for open-coded analogue of such".  But here the lack of
-whitespaces and quotes in the output is expected by userland
-tools and that's more sensitive than the accuracy...
+proc_pid_permission()
+  has_pid_permissions()
+    ptrace_may_access()
+      task_lock()
+      __ptrace_may_access()
+      | security_ptrace_access_check()
+      |   ptrace_access_check -> selinux_ptrace_access_check()
+      |     avc_has_perm()
+      |       avc_audit() // note that has_pid_permissions() didn't get a
+      |                   // flags field to propagate, so flags will not
+      |                   // contain MAY_NOT_BLOCK
+      |         slow_avc_audit()
+      |           common_lsm_audit()
+      |             dump_common_audit_data()
+      task_unlock()
 
-Again, if there's anybody seriously interested in analogue of
-%pd with that (or some other) form of quoting, it could be done.
-But I don't think it's a good idea for -stable and it obviously
-can be done on top of the minimal race fix.
+I understand the issue of d_name.name being freed across a preemption is
+more general than proc_pid_permission() (as other callers may have
+preemption enabled). However, it seems like there's another issue here.
+avc_audit() seems to imply that slow_avc_audit() would sleep:
+ 
+static inline int avc_audit(struct selinux_state *state,
+			    u32 ssid, u32 tsid,
+			    u16 tclass, u32 requested,
+			    struct av_decision *avd,
+			    int result,
+			    struct common_audit_data *a,
+			    int flags)
+{
+	u32 audited, denied;
+	audited = avc_audit_required(requested, avd, result, 0, &denied);
+	if (likely(!audited))
+		return 0;
+	/* fall back to ref-walk if we have to generate audit */
+	if (flags & MAY_NOT_BLOCK)
+		return -ECHILD;
+	return slow_avc_audit(state, ssid, tsid, tclass,
+			      requested, audited, denied, result,
+			      a);
+} 
+
+If there are other cases in here where we might sleep, it would be a
+problem to sleep with the task lock held, correct?
