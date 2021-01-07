@@ -2,138 +2,254 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18EACC433E6
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jan 2021 05:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EB9C433E6
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jan 2021 02:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E573F22CE3
-	for <linux-security-module@archiver.kernel.org>; Wed,  6 Jan 2021 05:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 446B7230FC
+	for <linux-security-module@archiver.kernel.org>; Thu,  7 Jan 2021 02:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725601AbhAFFAu (ORCPT
+        id S1726658AbhAGCKn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 6 Jan 2021 00:00:50 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:52480 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbhAFFAu (ORCPT
+        Wed, 6 Jan 2021 21:10:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53912 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbhAGCKm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 6 Jan 2021 00:00:50 -0500
-Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5D80F20B7192;
-        Tue,  5 Jan 2021 21:00:08 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5D80F20B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1609909208;
-        bh=nwBMt/PBxl2PWT1Ssl7JTvs6BvtU4tbh0KnWY20aks4=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=bjthC3ISI/WD9OOIWlN3NGQyAESnBXaoRY3QuBuxwhgNU0uPqopgLMg1cm5JTHvNX
-         hfX1nJTYV2MIOJfOZE0zlKqT3txadd12QSiXDDD9W9ICzNQvTbcgtNPL5yEI0CdpjQ
-         RH95+lukw3ZKEmsjRkaCghEWh2cPv4izzWPtzhBA=
-Subject: Re: [PATCH v9 2/8] IMA: add support to measure buffer data hash
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20201212180251.9943-1-tusharsu@linux.microsoft.com>
- <20201212180251.9943-3-tusharsu@linux.microsoft.com>
- <4e83480731b937cea479f688029560444b9cb66a.camel@linux.ibm.com>
- <3fdb72ae-f291-386b-e7b9-688dfe092dc5@linux.microsoft.com>
-Message-ID: <e401bb98-6b39-b148-fdba-76e48c7c3932@linux.microsoft.com>
-Date:   Tue, 5 Jan 2021 21:00:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 6 Jan 2021 21:10:42 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E43E1C0612EF
+        for <linux-security-module@vger.kernel.org>; Wed,  6 Jan 2021 18:10:01 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id r5so6183990eda.12
+        for <linux-security-module@vger.kernel.org>; Wed, 06 Jan 2021 18:10:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oRYS35mQrlbPBmZbRi04L5UchKku0XQLiBg5o+NaYE4=;
+        b=b0gYimu7iZSKLJTKB+JrcahEkiwt6EX9LvDZjZ91/THGJL0bd07pvRQ13s3H27Vd0l
+         z65nyaHm9nuc0KySpztAxm3keuUPfCF4V0j/mhRd4H8IEZUvaZsPUGP0zLsnZPVM+RAB
+         3E4nuwfsnWluISWJlamXbK1744ZjbPd69bMq4fcXeAG80M1dVzQiSwydx609mJjxjEk/
+         PUC27A7G9wgq8MgPoqGUZJoqTQRlLUFW6ZX/CJ47BC/LAHWbZGbh3PYJC22Wh3/z0sWs
+         k6GvQM3KFq9MO+apM7B+VKn9MPrwZNmi1BIBNkkFG4us8Nxsj0644Nlts7PeG68I8Sgw
+         /nSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oRYS35mQrlbPBmZbRi04L5UchKku0XQLiBg5o+NaYE4=;
+        b=PL/nY7avG7cUllVOEVBmB5C1w6cnclj1ojWhVQaUj+K+5ISuSnN69Fp7qfBfR6908o
+         0f+D5/yp/QdRZ/DLv8lRfDrY8U2rJl4I8q2B/09EM2EqCqyKKGhCMCg5aNQmWWDMDKwU
+         qRpArCNQcMhITOcbyaBjGwhd6mQ3/a9HxISXNSNdPijLQaBktNkbddPk9EFjAL7qrdor
+         ADvGk70D70GRVSQLH8d9sCwyAtHg9hyMb4U2Cbvj63acxbu9G/bMBQonp+9eboiG4h2B
+         zxo+Rkt5RF4JqN2SvHjCWcs+fagDY8fomIemW+MiCUAPv4UbVGoWGTvlpoCpw9xKVZ0F
+         8TZQ==
+X-Gm-Message-State: AOAM532Bx+FADaGx5scqkVnEbFT6fZ+iCBAR+C3UaNL/O+qR51FlneFS
+        X09ZrODD93C/nKwxhSmolcyVS6ZU21AVEYeYoUci
+X-Google-Smtp-Source: ABdhPJyfaRO+pi3Mu6vIrrtezY3AcKe9zRTV31MiamgBrX6iD9QQcv/kD1arQqU8Nv0DicplPz9tWxRtz0XyfhgB9IQ=
+X-Received: by 2002:a05:6402:ca1:: with SMTP id cn1mr5956047edb.128.1609985400522;
+ Wed, 06 Jan 2021 18:10:00 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <3fdb72ae-f291-386b-e7b9-688dfe092dc5@linux.microsoft.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20201112015359.1103333-1-lokeshgidra@google.com> <20201112015359.1103333-3-lokeshgidra@google.com>
+In-Reply-To: <20201112015359.1103333-3-lokeshgidra@google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 6 Jan 2021 21:09:49 -0500
+Message-ID: <CAHC9VhScpFVtxzU_nUDUc4zGT7+EZKFRpYAm+Ps5vd2AjKkaMQ@mail.gmail.com>
+Subject: Re: [PATCH v13 2/4] fs: add LSM-supporting anon-inode interface
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Aaron Goidel <acgoide@tycho.nsa.gov>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org,
+        Daniel Colascione <dancol@google.com>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-<snip>
+On Wed, Nov 11, 2020 at 8:54 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+> From: Daniel Colascione <dancol@google.com>
+>
+> This change adds a new function, anon_inode_getfd_secure, that creates
+> anonymous-node file with individual non-S_PRIVATE inode to which security
+> modules can apply policy. Existing callers continue using the original
+> singleton-inode kind of anonymous-inode file. We can transition anonymous
+> inode users to the new kind of anonymous inode in individual patches for
+> the sake of bisection and review.
+>
+> The new function accepts an optional context_inode parameter that callers
+> can use to provide additional contextual information to security modules.
+> For example, in case of userfaultfd, the created inode is a 'logical child'
+> of the context_inode (userfaultfd inode of the parent process) in the sense
+> that it provides the security context required during creation of the child
+> process' userfaultfd inode.
+>
+> Signed-off-by: Daniel Colascione <dancol@google.com>
+>
+> [Delete obsolete comments to alloc_anon_inode()]
+> [Add context_inode description in comments to anon_inode_getfd_secure()]
+> [Remove definition of anon_inode_getfile_secure() as there are no callers]
+> [Make __anon_inode_getfile() static]
+> [Use correct error cast in __anon_inode_getfile()]
+> [Fix error handling in __anon_inode_getfile()]
 
->>>   void process_buffer_measurement(struct inode *inode, const void 
->>> *buf, int size,
->>>                   const char *eventname, enum ima_hooks func,
->>> -                int pcr, const char *func_data);
->>> +                int pcr, const char *func_data,
->>> +                bool measure_buf_hash);
->>
->> Please abbreviate the boolean name to "hash".   The test would then be
->> "if (hash == true)" or "if (hash)".
->>
-> Will do.
+Lokesh, I'm assuming you made the changes in the brackets above?  If
+so they should include your initials or some other means of
+attributing them to you, e.g. "[LG: Fix error ...]".
 
-<snip>
+> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> Reviewed-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  fs/anon_inodes.c            | 150 ++++++++++++++++++++++++++----------
+>  fs/libfs.c                  |   5 --
+>  include/linux/anon_inodes.h |   5 ++
+>  3 files changed, 115 insertions(+), 45 deletions(-)
+>
+> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+> index 89714308c25b..023337d65a03 100644
+> --- a/fs/anon_inodes.c
+> +++ b/fs/anon_inodes.c
+> @@ -55,61 +55,79 @@ static struct file_system_type anon_inode_fs_type = {
+>         .kill_sb        = kill_anon_super,
+>  };
+>
+> -/**
+> - * anon_inode_getfile - creates a new file instance by hooking it up to an
+> - *                      anonymous inode, and a dentry that describe the "class"
+> - *                      of the file
+> - *
+> - * @name:    [in]    name of the "class" of the new file
+> - * @fops:    [in]    file operations for the new file
+> - * @priv:    [in]    private data for the new file (will be file's private_data)
+> - * @flags:   [in]    flags
+> - *
+> - * Creates a new file by hooking it on a single inode. This is useful for files
+> - * that do not need to have a full-fledged inode in order to operate correctly.
+> - * All the files created with anon_inode_getfile() will share a single inode,
+> - * hence saving memory and avoiding code duplication for the file/inode/dentry
+> - * setup.  Returns the newly created file* or an error pointer.
+> - */
+> -struct file *anon_inode_getfile(const char *name,
+> -                               const struct file_operations *fops,
+> -                               void *priv, int flags)
+> +static struct inode *anon_inode_make_secure_inode(
+> +       const char *name,
+> +       const struct inode *context_inode)
+>  {
+> -       struct file *file;
+> +       struct inode *inode;
+> +       const struct qstr qname = QSTR_INIT(name, strlen(name));
+> +       int error;
+> +
+> +       inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
+> +       if (IS_ERR(inode))
+> +               return inode;
+> +       inode->i_flags &= ~S_PRIVATE;
+> +       error = security_inode_init_security_anon(inode, &qname, context_inode);
+> +       if (error) {
+> +               iput(inode);
+> +               return ERR_PTR(error);
+> +       }
+> +       return inode;
+> +}
+>
+> -       if (IS_ERR(anon_inode_inode))
+> -               return ERR_PTR(-ENODEV);
+> +static struct file *__anon_inode_getfile(const char *name,
+> +                                        const struct file_operations *fops,
+> +                                        void *priv, int flags,
+> +                                        const struct inode *context_inode,
+> +                                        bool secure)
 
->>> - * process_buffer_measurement - Measure the buffer to ima log.
->>> + * process_buffer_measurement - Measure the buffer or the buffer 
->>> data hash
->>>    * @inode: inode associated with the object being measured (NULL 
->>> for KEY_CHECK)
->>>    * @buf: pointer to the buffer that needs to be added to the log.
->>>    * @size: size of buffer(in bytes).
->>> @@ -787,12 +787,23 @@ int ima_post_load_data(char *buf, loff_t size,
->>>    * @func: IMA hook
->>>    * @pcr: pcr to extend the measurement
->>>    * @func_data: private data specific to @func, can be NULL.
->>> + * @measure_buf_hash: measure buffer hash
->>
->> ^@hash: measure buffer data hash
->>
-> Agreed. Will fix.
-<snip>
->>>   void process_buffer_measurement(struct inode *inode, const void 
->>> *buf, int size,
->>>                   const char *eventname, enum ima_hooks func,
->>> -                int pcr, const char *func_data)
->>> +                int pcr, const char *func_data,
->>> +                bool measure_buf_hash)
->>>   {
->>>       int ret = 0;
->>>       const char *audit_cause = "ENOMEM";
->>> @@ -807,6 +818,8 @@ void process_buffer_measurement(struct inode 
->>> *inode, const void *buf, int size,
->>>           struct ima_digest_data hdr;
->>>           char digest[IMA_MAX_DIGEST_SIZE];
->>>       } hash = {};
->>> +    char buf_hash[IMA_MAX_DIGEST_SIZE];
->>> +    int buf_hash_len = hash_digest_size[ima_hash_algo];
->>>       int violation = 0;
->>>       int action = 0;
->>>       u32 secid;
->>> @@ -849,13 +862,27 @@ void process_buffer_measurement(struct inode 
->>> *inode, const void *buf, int size,
->>>           goto out;
->>>       }
->>> +    if (measure_buf_hash) {
->>
->> ^ if (hash) {
-> Yes.
->>> +        memcpy(buf_hash, hash.hdr.digest, buf_hash_len);
->>> +
->>> +        ret = ima_calc_buffer_hash(buf_hash, buf_hash_len,
->>> +                       iint.ima_hash);
->>> +        if (ret < 0) {
->>> +            audit_cause = "measure_buf_hash_error";
+Is it necessary to pass both the context_inode pointer and the secure
+boolean?  It seems like if context_inode is non-NULL then one could
+assume that a secure anonymous inode was requested; is there ever
+going to be a case where this is not true?
 
+> +{
+> +       struct inode *inode;
+> +       struct file *file;
+>
+>         if (fops->owner && !try_module_get(fops->owner))
+>                 return ERR_PTR(-ENOENT);
+>
+> -       /*
+> -        * We know the anon_inode inode count is always greater than zero,
+> -        * so ihold() is safe.
+> -        */
+> -       ihold(anon_inode_inode);
+> -       file = alloc_file_pseudo(anon_inode_inode, anon_inode_mnt, name,
+> +       if (secure) {
+> +               inode = anon_inode_make_secure_inode(name, context_inode);
+> +               if (IS_ERR(inode)) {
+> +                       file = ERR_CAST(inode);
+> +                       goto err;
+> +               }
+> +       } else {
+> +               inode = anon_inode_inode;
+> +               if (IS_ERR(inode)) {
+> +                       file = ERR_PTR(-ENODEV);
+> +                       goto err;
+> +               }
+> +               /*
+> +                * We know the anon_inode inode count is always
+> +                * greater than zero, so ihold() is safe.
+> +                */
+> +               ihold(inode);
+> +       }
+> +
+> +       file = alloc_file_pseudo(inode, anon_inode_mnt, name,
+>                                  flags & (O_ACCMODE | O_NONBLOCK), fops);
+>         if (IS_ERR(file))
+> -               goto err;
+> +               goto err_iput;
+>
+> -       file->f_mapping = anon_inode_inode->i_mapping;
+> +       file->f_mapping = inode->i_mapping;
+>
+>         file->private_data = priv;
+>
+>         return file;
+>
+> +err_iput:
+> +       iput(inode);
+>  err:
+> -       iput(anon_inode_inode);
+>         module_put(fops->owner);
+>         return file;
+>  }
+> -EXPORT_SYMBOL_GPL(anon_inode_getfile);
 
-Hi Mimi,
-There already exist a local struct variable named "hash" in p_b_m().
-I was thinking of using "buf_hash", but that one is taken too.
-Maybe I should use "buf_hash" for the input bool, and rename the
-existing "buf_hash" local variable to "digest_hash"?
-Does it sound ok?
-
-Thanks,
-Tushar
-
-
-<snip>
+--
+paul moore
+www.paul-moore.com
