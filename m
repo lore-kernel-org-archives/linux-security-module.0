@@ -2,183 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A375AC43331
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 09:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB450C433E6
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 11:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64B60235FA
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 09:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A81B239ED
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 11:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbhAHJxB (ORCPT
+        id S1726844AbhAHLvG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jan 2021 04:53:01 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:47461 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728300AbhAHJxA (ORCPT
+        Fri, 8 Jan 2021 06:51:06 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:37428 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726535AbhAHLvG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jan 2021 04:53:00 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1610099554; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=TwVrvVK1OzG/lArxagrlCuTmDgJ2ODUQJRFSPWgtUOk=; b=j2UcN/8uNh1hpG8UJPAXxbUEOF3mdXUqcamkhx3eEngMo9dA4inqyaXFabAGURPYMhRMKOIW
- uB2g1DYGFznqz3PyMH7g1kqSms998DtwTFTwGqsBm31vOyD5qT7QaPa45f0YgT5rMipfHlVK
- pjAlTAV/Th/atfXB8m01pJ1Vs+o=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n08.prod.us-east-1.postgun.com with SMTP id
- 5ff82b43d092322d9e7779ec (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 08 Jan 2021 09:52:03
- GMT
-Sender: pnagar=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id A2CC0C43468; Fri,  8 Jan 2021 09:52:02 +0000 (UTC)
-Received: from pnagar-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pnagar)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C6A8EC433C6;
-        Fri,  8 Jan 2021 09:51:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C6A8EC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=pnagar@codeaurora.org
-From:   Preeti Nagar <pnagar@codeaurora.org>
-To:     arnd@arndb.de, jmorris@namei.org, serge@hallyn.com,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-arch@vger.kernel.org
-Cc:     psodagud@codeaurora.org, nmardana@codeaurora.org,
-        dsule@codeaurora.org, pnagar@codeaurora.org,
-        Joe Perches <joe@perches.com>, Miguel Ojeda <ojeda@kernel.org>,
-        Nick Desaulniers <ndesaulniers@gooogle.com>,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v2] selinux: security: Move selinux_state to a separate page
-Date:   Fri,  8 Jan 2021 15:19:47 +0530
-Message-Id: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        Fri, 8 Jan 2021 06:51:06 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-227-JrkSGbMLN9-FUY2lxHNdvQ-1; Fri, 08 Jan 2021 11:49:28 +0000
+X-MC-Unique: JrkSGbMLN9-FUY2lxHNdvQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 8 Jan 2021 11:49:27 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 8 Jan 2021 11:49:27 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christoph Hellwig' <hch@lst.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-aio@kvack.org" <linux-aio@kvack.org>,
+        "io-uring@vger.kernel.org" <io-uring@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Subject: RE: [PATCH 05/11] iov_iter: merge the compat case into
+ rw_copy_check_uvector
+Thread-Topic: [PATCH 05/11] iov_iter: merge the compat case into
+ rw_copy_check_uvector
+Thread-Index: AQHWkCRUvpDO9SBAlU68E+WeFLSma6oeR04A
+Date:   Fri, 8 Jan 2021 11:49:27 +0000
+Message-ID: <7167a94511a84f30b18733d56007a7a5@AcuMS.aculab.com>
+References: <20200921143434.707844-1-hch@lst.de>
+ <20200921143434.707844-6-hch@lst.de>
+In-Reply-To: <20200921143434.707844-6-hch@lst.de>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The changes introduce a new security feature, RunTime Integrity Check
-(RTIC), designed to protect Linux Kernel at runtime. The motivation
-behind these changes is:
-1. The system protection offered by SE for Android relies on the
-assumption of kernel integrity. If the kernel itself is compromised (by
-a perhaps as yet unknown future vulnerability), SE for Android security
-mechanisms could potentially be disabled and rendered ineffective.
-2. Qualcomm Snapdragon devices use Secure Boot, which adds cryptographic
-checks to each stage of the boot-up process, to assert the authenticity
-of all secure software images that the device executes.  However, due to
-various vulnerabilities in SW modules, the integrity of the system can be
-compromised at any time after device boot-up, leading to un-authorized
-SW executing.
+From: Christoph Hellwig <hch@lst.de>
+> Sent: 21 September 2020 15:34
+> 
+> Stop duplicating the iovec verify code, and instead add add a
+> __import_iovec helper that does the whole verify and import, but takes
+> a bool compat to decided on the native or compat layout.  This also
+> ends up massively simplifying the calling conventions.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  lib/iov_iter.c | 195 ++++++++++++++++++-------------------------------
+>  1 file changed, 70 insertions(+), 125 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index a64867501a7483..8bfa47b63d39aa 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -10,6 +10,7 @@
+>  #include <net/checksum.h>
+>  #include <linux/scatterlist.h>
+>  #include <linux/instrumented.h>
+> +#include <linux/compat.h>
+> 
+>  #define PIPE_PARANOIA /* for now */
+> 
+> @@ -1650,43 +1651,76 @@ const void *dup_iter(struct iov_iter *new, struct iov_iter *old, gfp_t flags)
+>  }
+>  EXPORT_SYMBOL(dup_iter);
+> 
+> -static ssize_t rw_copy_check_uvector(int type,
+> -		const struct iovec __user *uvector, unsigned long nr_segs,
+> -		unsigned long fast_segs, struct iovec *fast_pointer,
+> -		struct iovec **ret_pointer)
+> +static int compat_copy_iovecs_from_user(struct iovec *iov,
+> +		const struct iovec __user *uvector, unsigned long nr_segs)
+> +{
+> +	const struct compat_iovec __user *uiov =
+> +		(const struct compat_iovec __user *)uvector;
+> +	unsigned long i;
+> +	int ret = -EFAULT;
+> +
+> +	if (!user_access_begin(uvector, nr_segs * sizeof(*uvector)))
+> +		return -EFAULT;
 
-The feature's idea is to move some sensitive kernel structures to a
-separate page and monitor further any unauthorized changes to these,
-from higher Exception Levels using stage 2 MMU. Moving these to a
-different page will help avoid getting page faults from un-related data.
-Using this mechanism, some sensitive variables of the kernel which are
-initialized after init or are updated rarely can also be protected from
-simple overwrites and attacks trying to modify these.
+I little bit late, but the above isn't quite right.
+It should be sizeof(*iouv) - the length is double what it should be.
 
-Currently, the change moves selinux_state structure to a separate page. In
-future we plan to move more security-related kernel assets to this page to
-enhance protection.
+Not that access_ok() can fail for compat addresses
+and the extra length won't matter for architectures that
+need the address/length to open an address hole into userspace.
 
-We want to seek your suggestions and comments on the idea and the changes
-in the patch.
+	David
 
-Signed-off-by: Preeti Nagar <pnagar@codeaurora.org>
----
- include/asm-generic/vmlinux.lds.h | 10 ++++++++++
- include/linux/init.h              |  4 ++++
- security/Kconfig                  | 10 ++++++++++
- security/selinux/hooks.c          |  4 ++++
- 4 files changed, 28 insertions(+)
-
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index b2b3d81..158dbc2 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -770,6 +770,15 @@
- 		*(.scommon)						\
- 	}
- 
-+#ifdef CONFIG_SECURITY_RTIC
-+#define RTIC_BSS							\
-+	. = ALIGN(PAGE_SIZE);						\
-+	KEEP(*(.bss.rtic))						\
-+	. = ALIGN(PAGE_SIZE);
-+#else
-+#define RTIC_BSS
-+#endif
-+
- /*
-  * Allow archectures to redefine BSS_FIRST_SECTIONS to add extra
-  * sections to the front of bss.
-@@ -782,6 +791,7 @@
- 	. = ALIGN(bss_align);						\
- 	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {				\
- 		BSS_FIRST_SECTIONS					\
-+		RTIC_BSS						\
- 		. = ALIGN(PAGE_SIZE);					\
- 		*(.bss..page_aligned)					\
- 		. = ALIGN(PAGE_SIZE);					\
-diff --git a/include/linux/init.h b/include/linux/init.h
-index 7b53cb3..617adcf 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -300,6 +300,10 @@ void __init parse_early_options(char *cmdline);
- /* Data marked not to be saved by software suspend */
- #define __nosavedata __section(".data..nosave")
- 
-+#ifdef CONFIG_SECURITY_RTIC
-+#define __rticdata  __section(".bss.rtic")
-+#endif
-+
- #ifdef MODULE
- #define __exit_p(x) x
- #else
-diff --git a/security/Kconfig b/security/Kconfig
-index 7561f6f..66b61b9 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -291,5 +291,15 @@ config LSM
- 
- source "security/Kconfig.hardening"
- 
-+config SECURITY_RTIC
-+        bool "RunTime Integrity Check feature"
-+        help
-+	  RTIC(RunTime Integrity Check) feature is to protect Linux kernel
-+	  at runtime. This relocates some of the security sensitive kernel
-+	  structures to a separate page aligned special section.
-+
-+	  This is to enable monitoring and protection of these kernel assets
-+	  from a higher exception level(EL) against any unauthorized changes.
-+
- endmenu
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 6b1826f..7add17c 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -104,7 +104,11 @@
- #include "audit.h"
- #include "avc_ss.h"
- 
-+#ifdef CONFIG_SECURITY_RTIC
-+struct selinux_state selinux_state __rticdata;
-+#else
- struct selinux_state selinux_state;
-+#endif
- 
- /* SECMARK reference count */
- static atomic_t selinux_secmark_refcount = ATOMIC_INIT(0);
--- 
-2.7.4
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
