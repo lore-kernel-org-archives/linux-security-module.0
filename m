@@ -2,184 +2,249 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-21.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEEBC43219
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A15CFC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 05:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1972D23601
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DE8A233FB
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 05:34:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbhAHEIp (ORCPT
+        id S1727902AbhAHFeC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jan 2021 23:08:45 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:59247 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726776AbhAHEIp (ORCPT
+        Fri, 8 Jan 2021 00:34:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725872AbhAHFeC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jan 2021 23:08:45 -0500
-Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id F12E520B6C44;
-        Thu,  7 Jan 2021 20:07:24 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F12E520B6C44
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610078845;
-        bh=oP4hs57Ovo2mWRRk2dcebbPVikngKbjBbImBel4Stjo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G7HhFWE2Q+GhEzDKvm2pshLCUMA3I880DIfAERIKxtYBJsuvzcpDLQLpsaBFQRQg6
-         GkaRh5fpPUYpnChAX7H5817+kvHf9ll9hWpS3gJ222wlzuPNtMcmWnMbWn4KPB8nWw
-         aIIEl6iNb3K6YhU1Drv8gkA5U0tmBuWS0MsolHN4=
-From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
-To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, paul@paul-moore.com
-Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v10 5/8] IMA: limit critical data measurement based on a label
-Date:   Thu,  7 Jan 2021 20:07:05 -0800
-Message-Id: <20210108040708.8389-6-tusharsu@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
-References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
+        Fri, 8 Jan 2021 00:34:02 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE20CC0612FA
+        for <linux-security-module@vger.kernel.org>; Thu,  7 Jan 2021 21:33:01 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id k7so14353808ybm.13
+        for <linux-security-module@vger.kernel.org>; Thu, 07 Jan 2021 21:33:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:message-id:mime-version:subject:from:to:cc;
+        bh=MVjzqfIQzv2/JEcPcc9N5pksK/O4iJEgrbBWuylANgo=;
+        b=m6ESfLIolGyg7Dd6ZOr5T9co3mWqX1+5/Oo9Koxk++ASlrzjEy/dgjpSCyYBjKsLUv
+         kgYZEpfQC0hAkfCbvTiqPKvdtPnzzllygvG5beaR10gQ8pGfV4SDM4hwXprgdE8hrUgR
+         uSZ9mbCIWvbAmPyMhu3ENpmsnOma6doTg7gSZPK0G9ZgWqD+n0VoW62OPxowD1u8j4+H
+         yQs067PWcQu6og+3lyhZtJaLpJG1UCoeiCEFwz2hZqtEKD3FJDoTT/lpGZ+3IN2xiTyE
+         2zgypMij69j4FdoXXIChhcvs6W0Ouxqbvx2Tz2LYIYM11hB6XPnHbC+ltgMzlVPAu/QM
+         nSYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:message-id:mime-version:subject:from
+         :to:cc;
+        bh=MVjzqfIQzv2/JEcPcc9N5pksK/O4iJEgrbBWuylANgo=;
+        b=PJ5rfzm2GanN5/l5FNzlPnp8HShCoBdIkZhMsYWFr9qXMcX5UMC5NokOxWOHeg9OHC
+         O//IaeDGJUJ7KKRDQ47iNbj1P/r7hA3na24zgtEwKAcJCJFTNF+6/WN2wwOf7waG4Lno
+         aX0z6wVeMSN0xkw4cZeDth7DaDP1dFtaR5xSpPx4aFMfIp6Fb5Ld60KtFvwVuiVVyJPA
+         0LNdSgeLzXd5qyDpY0Ib4TFGh98MCG+HKrZ8LS2YErhkoC+7/n0Xzt7xzdmi41R9MhRj
+         kgmOEF+bwr9xDn0ZvKiWohb8UzybihE8NOMJS+H2Wv+DcsTEv2KQXDE8zDBAiggs6TU3
+         UN7Q==
+X-Gm-Message-State: AOAM530008BvZjcgR61Q0X7FIGwxCeZosLSoWVCWB9fo0fsL5t7oMGp6
+        //EV8G9hRENruZ2z2ycPYZvsGv3gGO3aC/b0wg==
+X-Google-Smtp-Source: ABdhPJzSboKkdWyYAW04gxNgW/fgeCjzK22jkfeOl752QmoQXU4A1InBojN6Z1EJgPQrWkhIlK0RbTFvDHNdo2NlBg==
+Sender: "lokeshgidra via sendgmr" <lokeshgidra@lg.mtv.corp.google.com>
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:29dd])
+ (user=lokeshgidra job=sendgmr) by 2002:a25:7452:: with SMTP id
+ p79mr3315434ybc.23.1610083981023; Thu, 07 Jan 2021 21:33:01 -0800 (PST)
+Date:   Thu,  7 Jan 2021 21:32:55 -0800
+Message-Id: <20210108053259.726613-1-lokeshgidra@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
+Subject: [PATCH v14 0/4] SELinux support for anonymous inodes and UFFD
+From:   Lokesh Gidra <lokeshgidra@google.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Integrity critical data may belong to a single subsystem or it may
-arise from cross subsystem interaction.  Currently there is no mechanism
-to group or limit the data based on certain label.  Limiting and
-grouping critical data based on a label would make it flexible and
-configurable to measure.
+Userfaultfd in unprivileged contexts could be potentially very
+useful. We'd like to harden userfaultfd to make such unprivileged use
+less risky. This patch series allows SELinux to manage userfaultfd
+file descriptors and in the future, other kinds of
+anonymous-inode-based file descriptor.  SELinux policy authors can
+apply policy types to anonymous inodes by providing name-based
+transition rules keyed off the anonymous inode internal name (
+"[userfaultfd]" in the case of userfaultfd(2) file descriptors) and
+applying policy to the new SIDs thus produced.
 
-Define "label:=", a new IMA policy condition, for the IMA func
-CRITICAL_DATA to allow grouping and limiting measurement of integrity
-critical data.
+With SELinux managed userfaultfd, an admin can control creation and
+movement of the file descriptors. In particular, handling of
+a userfaultfd descriptor by a different process is essentially a
+ptrace access into the process, without any of the corresponding
+security_ptrace_access_check() checks. For privacy, the admin may
+want to deny such accesses, which is possible with SELinux support.
 
-Limit the measurement to the labels that are specified in the IMA
-policy - CRITICAL_DATA+"label:=".  If "label:=" is not provided with
-the func CRITICAL_DATA, measure all the input integrity critical data.
+Inside the kernel, a new anon_inode interface, anon_inode_getfd_secure,
+allows callers to opt into this SELinux management. In this new "secure"
+mode, anon_inodes create new ephemeral inodes for anonymous file objects
+instead of reusing the normal anon_inodes singleton dummy inode. A new
+LSM hook gives security modules an opportunity to configure and veto
+these ephemeral inodes.
 
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
----
- Documentation/ABI/testing/ima_policy |  2 ++
- security/integrity/ima/ima_policy.c  | 37 +++++++++++++++++++++++++---
- 2 files changed, 36 insertions(+), 3 deletions(-)
+This patch series is one of two fork of [1] and is an
+alternative to [2].
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 6ec7daa87cba..54fe1c15ed50 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -52,6 +52,8 @@ Description:
- 			template:= name of a defined IMA template type
- 			(eg, ima-ng). Only valid when action is "measure".
- 			pcr:= decimal value
-+			label:= [data_label]
-+			data_label:= a unique string used for grouping and limiting critical data.
- 
- 		  default policy:
- 			# PROC_SUPER_MAGIC
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 96ba4273c4d0..2c9db2d0b434 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -34,6 +34,7 @@
- #define IMA_PCR		0x0100
- #define IMA_FSNAME	0x0200
- #define IMA_KEYRINGS	0x0400
-+#define IMA_LABEL	0x0800
- 
- #define UNKNOWN		0
- #define MEASURE		0x0001	/* same as IMA_MEASURE */
-@@ -85,6 +86,7 @@ struct ima_rule_entry {
- 	} lsm[MAX_LSM_RULES];
- 	char *fsname;
- 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
-+	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
- 	struct ima_template_desc *template;
- };
- 
-@@ -479,7 +481,11 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
- 		opt_list = rule->keyrings;
- 		break;
- 	case CRITICAL_DATA:
--		return true;
-+		if (!rule->label)
-+			return true;
-+
-+		opt_list = rule->label;
-+		break;
- 	default:
- 		return false;
- 	}
-@@ -924,7 +930,7 @@ enum {
- 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
- 	Opt_appraise_type, Opt_appraise_flag,
- 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
--	Opt_err
-+	Opt_label, Opt_err
- };
- 
- static const match_table_t policy_tokens = {
-@@ -961,6 +967,7 @@ static const match_table_t policy_tokens = {
- 	{Opt_pcr, "pcr=%s"},
- 	{Opt_template, "template=%s"},
- 	{Opt_keyrings, "keyrings=%s"},
-+	{Opt_label, "label=%s"},
- 	{Opt_err, NULL}
- };
- 
-@@ -1128,7 +1135,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		if (entry->action & ~(MEASURE | DONT_MEASURE))
- 			return false;
- 
--		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR))
-+		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-+				     IMA_LABEL))
- 			return false;
- 
- 		if (ima_rule_contains_lsm_cond(entry))
-@@ -1338,6 +1346,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 
- 			entry->flags |= IMA_KEYRINGS;
- 			break;
-+		case Opt_label:
-+			ima_log_string(ab, "label", args[0].from);
-+
-+			if (entry->label) {
-+				result = -EINVAL;
-+				break;
-+			}
-+
-+			entry->label = ima_alloc_rule_opt_list(args);
-+			if (IS_ERR(entry->label)) {
-+				result = PTR_ERR(entry->label);
-+				entry->label = NULL;
-+				break;
-+			}
-+
-+			entry->flags |= IMA_LABEL;
-+			break;
- 		case Opt_fsuuid:
- 			ima_log_string(ab, "fsuuid", args[0].from);
- 
-@@ -1718,6 +1743,12 @@ int ima_policy_show(struct seq_file *m, void *v)
- 		seq_puts(m, " ");
- 	}
- 
-+	if (entry->flags & IMA_LABEL) {
-+		seq_puts(m, "label=");
-+		ima_show_rule_opt_list(m, entry->label);
-+		seq_puts(m, " ");
-+	}
-+
- 	if (entry->flags & IMA_PCR) {
- 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
- 		seq_printf(m, pt(Opt_pcr), tbuf);
+The primary difference between the two patch series is that this
+partch series creates a unique inode for each "secure" anonymous
+inode, while the other patch series ([2]) continues using the
+singleton dummy anonymous inode and adds a way to attach SELinux
+security information directly to file objects.
+
+I prefer the approach in this patch series because 1) it's a smaller
+patch than [2], and 2) it produces a more regular security
+architecture: in this patch series, secure anonymous inodes aren't
+S_PRIVATE and they maintain the SELinux property that the label for a
+file is in its inode. We do need an additional inode per anonymous
+file, but per-struct-file inode creation doesn't seem to be a problem
+for pipes and sockets.
+
+The previous version of this feature ([1]) created a new SELinux
+security class for userfaultfd file descriptors. This version adopts
+the generic transition-based approach of [2].
+
+This patch series also differs from [2] in that it doesn't affect all
+anonymous inodes right away --- instead requiring anon_inodes callers
+to opt in --- but this difference isn't one of basic approach. The
+important question to resolve is whether we should be creating new
+inodes or enhancing per-file data.
+
+Changes from the first version of the patch:
+
+  - Removed some error checks
+  - Defined a new anon_inode SELinux class to resolve the
+    ambiguity in [3]
+  - Inherit sclass as well as descriptor from context inode
+
+Changes from the second version of the patch:
+
+  - Fixed example policy in the commit message to reflect the use of
+    the new anon_inode class.
+
+Changes from the third version of the patch:
+
+  - Dropped the fops parameter to the LSM hook
+  - Documented hook parameters
+  - Fixed incorrect class used for SELinux transition
+  - Removed stray UFFD changed early in the series
+  - Removed a redundant ERR_PTR(PTR_ERR())
+
+Changes from the fourth version of the patch:
+
+  - Removed an unused parameter from an internal function
+  - Fixed function documentation
+
+Changes from the fifth version of the patch:
+
+  - Fixed function documentation in fs/anon_inodes.c and
+    include/linux/lsm_hooks.h
+  - Used anon_inode_getfd_secure() in userfaultfd() syscall and removed
+    owner from userfaultfd_ctx.
+
+Changes from the sixth version of the patch:
+
+  - Removed definition of anon_inode_getfile_secure() as there are no
+    callers.
+  - Simplified function description of anon_inode_getfd_secure().
+  - Elaborated more on the purpose of 'context_inode' in commit message.
+
+Changes from the seventh version of the patch:
+
+  - Fixed error handling in _anon_inode_getfile().
+  - Fixed minor comment and indentation related issues.
+
+Changes from the eighth version of the patch:
+
+  - Replaced selinux_state.initialized with selinux_state.initialized
+
+Changes from the ninth version of the patch:
+
+  - Fixed function names in fs/anon_inodes.c
+  - Fixed comment of anon_inode_getfd_secure()
+  - Fixed name of the patch wherein userfaultfd code uses
+    anon_inode_getfd_secure()
+
+Changes from the tenth version of the patch:
+
+  - Split first patch into VFS and LSM specific patches
+  - Fixed comments in fs/anon_inodes.c
+  - Fixed comment of alloc_anon_inode()
+
+Changes from the eleventh version of the patch:
+
+  - Removed comment of alloc_anon_inode() for consistency with the code
+  - Fixed explanation of LSM hook in the commit message
+
+Changes from the twelfth version of the patch:
+  - Replaced FILE__CREATE with ANON_INODE__CREATE while initializing
+    anon-inode's SELinux security struct.
+  - Check context_inode's SELinux label and return -EACCES if it's
+    invalid.
+
+Changes from the thirteenth version of the patch:
+  - Initialize anon-inode's sclass with SECCLASS_ANON_INODE.
+  - Check if context_inode has sclass set to SECCLASS_ANON_INODE.
+
+[1] https://lore.kernel.org/lkml/20200211225547.235083-1-dancol@google.com/
+[2] https://lore.kernel.org/linux-fsdevel/20200213194157.5877-1-sds@tycho.nsa.gov/
+[3] https://lore.kernel.org/lkml/23f725ca-5b5a-5938-fcc8-5bbbfc9ba9bc@tycho.nsa.gov/
+
+Daniel Colascione (3):
+  fs: add LSM-supporting anon-inode interface
+  selinux: teach SELinux about anonymous inodes
+  userfaultfd: use secure anon inodes for userfaultfd
+
+Lokesh Gidra (1):
+  security: add inode_init_security_anon() LSM hook
+
+ fs/anon_inodes.c                    | 150 ++++++++++++++++++++--------
+ fs/libfs.c                          |   5 -
+ fs/userfaultfd.c                    |  19 ++--
+ include/linux/anon_inodes.h         |   5 +
+ include/linux/lsm_hook_defs.h       |   2 +
+ include/linux/lsm_hooks.h           |   9 ++
+ include/linux/security.h            |  10 ++
+ security/security.c                 |   8 ++
+ security/selinux/hooks.c            |  59 +++++++++++
+ security/selinux/include/classmap.h |   2 +
+ 10 files changed, 215 insertions(+), 54 deletions(-)
+
 -- 
-2.17.1
+2.30.0.284.gd98b1dd5eaa7-goog
 
