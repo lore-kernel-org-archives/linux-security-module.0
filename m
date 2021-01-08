@@ -2,37 +2,36 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D656CC43331
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEEBC43219
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A34B423716
-	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1972D23601
+	for <linux-security-module@archiver.kernel.org>; Fri,  8 Jan 2021 04:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbhAHEIz (ORCPT
+        id S1727459AbhAHEIp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 7 Jan 2021 23:08:55 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:59260 "EHLO
+        Thu, 7 Jan 2021 23:08:45 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:59247 "EHLO
         linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbhAHEIq (ORCPT
+        with ESMTP id S1726776AbhAHEIp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 7 Jan 2021 23:08:46 -0500
+        Thu, 7 Jan 2021 23:08:45 -0500
 Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 273D920B6C46;
-        Thu,  7 Jan 2021 20:07:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 273D920B6C46
+        by linux.microsoft.com (Postfix) with ESMTPSA id F12E520B6C44;
+        Thu,  7 Jan 2021 20:07:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F12E520B6C44
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610078846;
-        bh=NblfeM4gSvMTuDUnr/Ywi4/vYvY7tsPtE6p51c4jjrY=;
+        s=default; t=1610078845;
+        bh=oP4hs57Ovo2mWRRk2dcebbPVikngKbjBbImBel4Stjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KTB1yGAbNVHfWJR6Tw/kNYwCDj3hdE5krKuPj5C0Oa9QiOhpDKgjTAdxK3p4WgctB
-         mSavfFsrZhphARf9DfRA4Uxl2dtO2recLkn8EkoSltEOvBuOgPMO+hb++vE7ebbGrc
-         0oZNB2q722hUNtT2HzykKzKtltHC0O+2hnJrD84g=
+        b=G7HhFWE2Q+GhEzDKvm2pshLCUMA3I880DIfAERIKxtYBJsuvzcpDLQLpsaBFQRQg6
+         GkaRh5fpPUYpnChAX7H5817+kvHf9ll9hWpS3gJ222wlzuPNtMcmWnMbWn4KPB8nWw
+         aIIEl6iNb3K6YhU1Drv8gkA5U0tmBuWS0MsolHN4=
 From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
 To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
         casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
@@ -41,99 +40,146 @@ Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
         nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
         selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Subject: [PATCH v10 7/8] IMA: define a builtin critical data measurement policy
-Date:   Thu,  7 Jan 2021 20:07:07 -0800
-Message-Id: <20210108040708.8389-8-tusharsu@linux.microsoft.com>
+Subject: [PATCH v10 5/8] IMA: limit critical data measurement based on a label
+Date:   Thu,  7 Jan 2021 20:07:05 -0800
+Message-Id: <20210108040708.8389-6-tusharsu@linux.microsoft.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
 References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Integrity critical data may belong to a single subsystem or it may
+arise from cross subsystem interaction.  Currently there is no mechanism
+to group or limit the data based on certain label.  Limiting and
+grouping critical data based on a label would make it flexible and
+configurable to measure.
 
-Define a new critical data builtin policy to allow measuring
-early kernel integrity critical data before a custom IMA policy
-is loaded.
+Define "label:=", a new IMA policy condition, for the IMA func
+CRITICAL_DATA to allow grouping and limiting measurement of integrity
+critical data.
 
-Update the documentation on kernel parameters to document
-the new critical data builtin policy.
+Limit the measurement to the labels that are specified in the IMA
+policy - CRITICAL_DATA+"label:=".  If "label:=" is not provided with
+the func CRITICAL_DATA, measure all the input integrity critical data.
 
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  5 ++++-
- security/integrity/ima/ima_policy.c             | 12 ++++++++++++
- 2 files changed, 16 insertions(+), 1 deletion(-)
+ Documentation/ABI/testing/ima_policy |  2 ++
+ security/integrity/ima/ima_policy.c  | 37 +++++++++++++++++++++++++---
+ 2 files changed, 36 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 526d65d8573a..6034d75c3ca0 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1746,7 +1746,7 @@
- 	ima_policy=	[IMA]
- 			The builtin policies to load during IMA setup.
- 			Format: "tcb | appraise_tcb | secure_boot |
--				 fail_securely"
-+				 fail_securely | critical_data"
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index 6ec7daa87cba..54fe1c15ed50 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -52,6 +52,8 @@ Description:
+ 			template:= name of a defined IMA template type
+ 			(eg, ima-ng). Only valid when action is "measure".
+ 			pcr:= decimal value
++			label:= [data_label]
++			data_label:= a unique string used for grouping and limiting critical data.
  
- 			The "tcb" policy measures all programs exec'd, files
- 			mmap'd for exec, and all files opened with the read
-@@ -1765,6 +1765,9 @@
- 			filesystems with the SB_I_UNVERIFIABLE_SIGNATURE
- 			flag.
- 
-+			The "critical_data" policy measures kernel integrity
-+			critical data.
-+
- 	ima_tcb		[IMA] Deprecated.  Use ima_policy= instead.
- 			Load a policy which meets the needs of the Trusted
- 			Computing Base.  This means IMA will measure all
+ 		  default policy:
+ 			# PROC_SUPER_MAGIC
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 2c9db2d0b434..9b45d064a87d 100644
+index 96ba4273c4d0..2c9db2d0b434 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -206,6 +206,10 @@ static struct ima_rule_entry secure_boot_rules[] __ro_after_init = {
- 	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
+@@ -34,6 +34,7 @@
+ #define IMA_PCR		0x0100
+ #define IMA_FSNAME	0x0200
+ #define IMA_KEYRINGS	0x0400
++#define IMA_LABEL	0x0800
+ 
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -85,6 +86,7 @@ struct ima_rule_entry {
+ 	} lsm[MAX_LSM_RULES];
+ 	char *fsname;
+ 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
++	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
+ 	struct ima_template_desc *template;
  };
  
-+static struct ima_rule_entry critical_data_rules[] __ro_after_init = {
-+	{.action = MEASURE, .func = CRITICAL_DATA, .flags = IMA_FUNC},
-+};
+@@ -479,7 +481,11 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
+ 		opt_list = rule->keyrings;
+ 		break;
+ 	case CRITICAL_DATA:
+-		return true;
++		if (!rule->label)
++			return true;
 +
- /* An array of architecture specific rules */
- static struct ima_rule_entry *arch_policy_entry __ro_after_init;
++		opt_list = rule->label;
++		break;
+ 	default:
+ 		return false;
+ 	}
+@@ -924,7 +930,7 @@ enum {
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+ 	Opt_appraise_type, Opt_appraise_flag,
+ 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
+-	Opt_err
++	Opt_label, Opt_err
+ };
  
-@@ -228,6 +232,7 @@ __setup("ima_tcb", default_measure_policy_setup);
+ static const match_table_t policy_tokens = {
+@@ -961,6 +967,7 @@ static const match_table_t policy_tokens = {
+ 	{Opt_pcr, "pcr=%s"},
+ 	{Opt_template, "template=%s"},
+ 	{Opt_keyrings, "keyrings=%s"},
++	{Opt_label, "label=%s"},
+ 	{Opt_err, NULL}
+ };
  
- static bool ima_use_appraise_tcb __initdata;
- static bool ima_use_secure_boot __initdata;
-+static bool ima_use_critical_data __initdata;
- static bool ima_fail_unverifiable_sigs __ro_after_init;
- static int __init policy_setup(char *str)
- {
-@@ -242,6 +247,8 @@ static int __init policy_setup(char *str)
- 			ima_use_appraise_tcb = true;
- 		else if (strcmp(p, "secure_boot") == 0)
- 			ima_use_secure_boot = true;
-+		else if (strcmp(p, "critical_data") == 0)
-+			ima_use_critical_data = true;
- 		else if (strcmp(p, "fail_securely") == 0)
- 			ima_fail_unverifiable_sigs = true;
- 		else
-@@ -871,6 +878,11 @@ void __init ima_init_policy(void)
- 			  ARRAY_SIZE(default_appraise_rules),
- 			  IMA_DEFAULT_POLICY);
+@@ -1128,7 +1135,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 		if (entry->action & ~(MEASURE | DONT_MEASURE))
+ 			return false;
  
-+	if (ima_use_critical_data)
-+		add_rules(critical_data_rules,
-+			  ARRAY_SIZE(critical_data_rules),
-+			  IMA_DEFAULT_POLICY);
+-		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR))
++		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
++				     IMA_LABEL))
+ 			return false;
+ 
+ 		if (ima_rule_contains_lsm_cond(entry))
+@@ -1338,6 +1346,23 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 
+ 			entry->flags |= IMA_KEYRINGS;
+ 			break;
++		case Opt_label:
++			ima_log_string(ab, "label", args[0].from);
 +
- 	ima_update_policy_flag();
- }
++			if (entry->label) {
++				result = -EINVAL;
++				break;
++			}
++
++			entry->label = ima_alloc_rule_opt_list(args);
++			if (IS_ERR(entry->label)) {
++				result = PTR_ERR(entry->label);
++				entry->label = NULL;
++				break;
++			}
++
++			entry->flags |= IMA_LABEL;
++			break;
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
  
+@@ -1718,6 +1743,12 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, " ");
+ 	}
+ 
++	if (entry->flags & IMA_LABEL) {
++		seq_puts(m, "label=");
++		ima_show_rule_opt_list(m, entry->label);
++		seq_puts(m, " ");
++	}
++
+ 	if (entry->flags & IMA_PCR) {
+ 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+ 		seq_printf(m, pt(Opt_pcr), tbuf);
 -- 
 2.17.1
 
