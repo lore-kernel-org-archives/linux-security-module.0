@@ -2,127 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.6 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBFCC433DB
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Jan 2021 01:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A46C433E6
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Jan 2021 11:34:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDEC223A75
-	for <linux-security-module@archiver.kernel.org>; Sat,  9 Jan 2021 01:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63E0B23A5B
+	for <linux-security-module@archiver.kernel.org>; Sat,  9 Jan 2021 11:34:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725872AbhAIBBy (ORCPT
+        id S1725978AbhAILei (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 8 Jan 2021 20:01:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbhAIBBy (ORCPT
+        Sat, 9 Jan 2021 06:34:38 -0500
+Received: from mail.zju.edu.cn ([61.164.42.155]:11582 "EHLO zju.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725896AbhAILeh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 8 Jan 2021 20:01:54 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 445D9C061574
-        for <linux-security-module@vger.kernel.org>; Fri,  8 Jan 2021 17:01:14 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id b131so17288378ybc.3
-        for <linux-security-module@vger.kernel.org>; Fri, 08 Jan 2021 17:01:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:to:cc;
-        bh=2kvzi9/MXTZJcB1AsjglVBP3UVDn0xJjKk3dMI1v624=;
-        b=VcHiHRV/86MH0/jN9gbnzQooC4E4wtdl5zD1RupCpcLQWXK8b5I0xyvN/IjgmF0xGD
-         ROzuNdi36AWzQEUpYdtSAgnomHyMrC4ViICFIFdX6WfYnIb4lHDhZMXCuwDLpG6BBZJi
-         GrIAxWe7K6yYmGJ9f7LTFeYcPrxY4qcaHsuaVcI90NHK3eOS5ctTPrcRNB/xmBwwbyxo
-         vNSWXw7DKHAkBRgRDl+pBAkxSm/WrZiEe9carLgI2OITduI3JdM87N2qJLCiM04sjQoP
-         6Wa+TnLX1sTYpACZx/E2Z6ZcFBPkbqKjfi+nj7+9RSgT3B+0D7Z+Xi7n34LfeORUfy7A
-         EkAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=2kvzi9/MXTZJcB1AsjglVBP3UVDn0xJjKk3dMI1v624=;
-        b=kXvMdLcilIjG5nExzO6ZIu5dctHjFt21Aal3Fda8UpxLPV9s3IzaGX09JAB3TYMEim
-         otLjWmomqYFtCyu8iy3Ab4UA18StT0ATzsmP3e5AJ0hwrt9+uI8NjIaB/YIb+NWJVS5K
-         /663VOji/qVg0ImqqZEGR9ZkJTqY0EQ0sSRebK22xR1M/xGLfPKpRgxzVcxOPgr0j7L9
-         WMD62bdWcwqFvTOdR4SjMwflXnYvHbzTWA0wxNnIBFTkDDaKfOwW9Q+xv8R+xM+ZqVQ9
-         P4eMAKySluh6m5CoPc8xsrKIgJNDuyo38LW6O9834PZis3SaMRN+RR+iJY+zgnUKB9mo
-         eURA==
-X-Gm-Message-State: AOAM532ZJFhLuhglcOU+8PU6bnpOA37WGIaY6kT22izXBNTcRQdcrgXW
-        NXUdhnNRkjhIWLdZkicGhrzLCu68pij13BMvJpU=
-X-Google-Smtp-Source: ABdhPJyphYZARxSQ3eZ20fkLrCwLnqSq8hbl+WU+W68ygugbIhgq/OB/aVIc3g6EHxNdGi5amR2+VitHd9pf6KFOWOM=
-Sender: "ndesaulniers via sendgmr" 
-        <ndesaulniers@ndesaulniers1.mtv.corp.google.com>
-X-Received: from ndesaulniers1.mtv.corp.google.com ([2620:15c:211:202:f693:9fff:fef4:4d25])
- (user=ndesaulniers job=sendgmr) by 2002:a25:2d5f:: with SMTP id
- s31mr9272103ybe.90.1610154073350; Fri, 08 Jan 2021 17:01:13 -0800 (PST)
-Date:   Fri,  8 Jan 2021 17:01:11 -0800
-In-Reply-To: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
-Message-Id: <20210109010111.2299669-1-ndesaulniers@google.com>
-Mime-Version: 1.0
-References: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
-X-Mailer: git-send-email 2.30.0.284.gd98b1dd5eaa7-goog
-Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a
- separate page
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     pnagar@codeaurora.org
-Cc:     arnd@arndb.de, dsule@codeaurora.org, eparis@parisplace.org,
-        jmorris@namei.org, joe@perches.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, jeffv@google.com,
-        nmardana@codeaurora.org, ojeda@kernel.org, paul@paul-moore.com,
-        psodagud@codeaurora.org, selinux@vger.kernel.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 9 Jan 2021 06:34:37 -0500
+Received: from localhost.localdomain (unknown [10.192.85.18])
+        by mail-app2 (Coremail) with SMTP id by_KCgA37zJ7lPlfaaY4AA--.60372S4;
+        Sat, 09 Jan 2021 19:33:22 +0800 (CST)
+From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
+To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@nokia.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] evm: Fix memleak in init_desc
+Date:   Sat,  9 Jan 2021 19:33:05 +0800
+Message-Id: <20210109113305.11035-1-dinghao.liu@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: by_KCgA37zJ7lPlfaaY4AA--.60372S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7tFWrurW3WFyDGw4kAr13Jwb_yoW8JFyrp3
+        Z8Kay7JrZ5JFW5Gr93Aa1rCry3GFWFyr43Kw43uw1ayFn8Zr4vqrsrArW8urn8Jay8Ar1S
+        y39av343Z3Wj93DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkS1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+        IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E
+        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
+        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
+        Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxF
+        aVAv8VW8uw4UJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+        4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxG
+        rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+        CI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
+        6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgoABlZdtR6GKAABsB
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Via:
-https://lore.kernel.org/lkml/1610099389-28329-1-git-send-email-pnagar@codeaurora.org/
+When kmalloc() fails, tmp_tfm allocated by
+crypto_alloc_shash() has not been freed, which
+leads to memleak.
 
-> diff --git a/include/linux/init.h b/include/linux/init.h
-> index 7b53cb3..617adcf 100644
-> --- a/include/linux/init.h
-> +++ b/include/linux/init.h
-> @@ -300,6 +300,10 @@ void __init parse_early_options(char *cmdline);
->  /* Data marked not to be saved by software suspend */
->  #define __nosavedata __section(".data..nosave")
->  
-> +#ifdef CONFIG_SECURITY_RTIC
-> +#define __rticdata  __section(".bss.rtic")
+Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+---
+ security/integrity/evm/evm_crypto.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-if you put:
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 168c3b78ac47..39fb31a638ac 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ {
+ 	long rc;
+ 	const char *algo;
+-	struct crypto_shash **tfm, *tmp_tfm;
++	struct crypto_shash **tfm, *tmp_tfm = NULL;
+ 	struct shash_desc *desc;
+ 
+ 	if (type == EVM_XATTR_HMAC) {
+@@ -118,13 +118,18 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
+ alloc:
+ 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
+ 			GFP_KERNEL);
+-	if (!desc)
++	if (!desc) {
++		if (tmp_tfm)
++			crypto_free_shash(tmp_tfm);
+ 		return ERR_PTR(-ENOMEM);
++	}
+ 
+ 	desc->tfm = *tfm;
+ 
+ 	rc = crypto_shash_init(desc);
+ 	if (rc) {
++		if (tmp_tfm)
++			crypto_free_shash(tmp_tfm);
+ 		kfree(desc);
+ 		return ERR_PTR(rc);
+ 	}
+-- 
+2.17.1
 
-#else
-#define __rticdata
-
-here, then you wouldn't need to label each datum you put in there.
-
-> +#endif
-> +
->  #ifdef MODULE
->  #define __exit_p(x) x
->  #else
-
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -104,7 +104,11 @@
->  #include "audit.h"
->  #include "avc_ss.h"
->  
-> +#ifdef CONFIG_SECURITY_RTIC
-> +struct selinux_state selinux_state __rticdata;
-> +#else
->  struct selinux_state selinux_state;
-> +#endif
-
-so you could then drop the if-def here.
-
-
-Happy to see this resolved when building with LLD+LTO, which has been a
-problem in the past.
-
-Disabling selinux is a common attack vector on Android devices, so happy
-to see some effort towards mitigation.  You might want to communicate
-the feature more to existing OEMs that are using your chipsets that
-support this feature.
