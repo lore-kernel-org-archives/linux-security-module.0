@@ -2,488 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6178FC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 13:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA88BC4332E
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 16:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33493223E8
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 13:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0E0022ADF
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 16:36:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387844AbhAKNuE (ORCPT
+        id S1730853AbhAKQfv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Jan 2021 08:50:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731419AbhAKNuB (ORCPT
+        Mon, 11 Jan 2021 11:35:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726997AbhAKQfv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Jan 2021 08:50:01 -0500
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA04EC061795
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Jan 2021 05:49:20 -0800 (PST)
-Received: by mail-ed1-x532.google.com with SMTP id r5so18787401eda.12
-        for <linux-security-module@vger.kernel.org>; Mon, 11 Jan 2021 05:49:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=O0H688X6pJlKu4+88D8pIB5LDvlj2S8doKlOfC5cIRs=;
-        b=g3w9cOLI9o05G2/TMeEcc82OCJDJQMliWZqEqAA7HbpM9AyAXH5u0ljkzcDmXY/8n7
-         b/zswmirm8LwjCgNxZNT+Ue8duIE8olZuQsvJZ9kHGqD7ub+8E2/fhGStkvms/Z97fQB
-         zGMkQv6StE//TVZ1l95yWPhR2hrAGzIt92GNo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=O0H688X6pJlKu4+88D8pIB5LDvlj2S8doKlOfC5cIRs=;
-        b=Mj7CV0wp+B+Td0hQR8AJ+N63mUZDQW9gO5omp/UH2noF5fscXcb62sbbPqFHd1KsoK
-         dv4SANtizkJu1nY/1PA7VB/8ZaOGdv4mdmmXnWwE+iHTnFsollOCUPPH1O/OpTmQ+img
-         u0m/C/ruhfezjHGf2iZEveZfAus5WQqdHtSKQ/KC0vZVcSZwXtZT18NqCEBB+cXGC1KL
-         EEfK+xwPD4iEQ0UUfxS2HN4Ucjjz/PN42FmKvJPJqEl4vauJUyqdNO9FbX88MMmZrE3E
-         bADbDwA+z8OZvtAzXri3mW8oBckrSmP2BVMtRQRtDb4EWYYrOCYTWos3ojIzi+m2rj3M
-         4igg==
-X-Gm-Message-State: AOAM531aKtLkRH1nu0mKMjAXUzrspgJGZKN/337buwqwPyCPoyhomYIC
-        eCn1ImF+DhaYtrhrhsTW6nuYUA==
-X-Google-Smtp-Source: ABdhPJzmrusw9sZ8P5JVqRVRcmzdj5gM0e7ZYfCIWRwT+E+zktyjy1A3ltsqUYcQGxe/oN9D0t8aOA==
-X-Received: by 2002:a05:6402:8d9:: with SMTP id d25mr13935564edz.278.1610372959372;
-        Mon, 11 Jan 2021 05:49:19 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id bo20sm7759496edb.1.2021.01.11.05.49.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Jan 2021 05:49:18 -0800 (PST)
-Date:   Mon, 11 Jan 2021 14:49:16 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into
- vfs_setxattr()
-Message-ID: <20210111134916.GC1236412@miu.piliscsaba.redhat.com>
-References: <20201207163255.564116-1-mszeredi@redhat.com>
- <20201207163255.564116-2-mszeredi@redhat.com>
- <87czyoimqz.fsf@x220.int.ebiederm.org>
+        Mon, 11 Jan 2021 11:35:51 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BCB3320B1F;
+        Mon, 11 Jan 2021 16:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610382910;
+        bh=JwHzWOn98yP3yzjPMaZT6BMENGep8O1PUosAAXMJ+PQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LjWTOdqglUL1RdtD3rwVIVY38br9kVmLGLXirDWW1EgbAq4d1GdUpUUgPEWivBPE2
+         nnO0Nom/TCusPJLUkaV/mH09njqN/xX6cUTBgSjpx3iPeJqpMf7b1wNxxZdM0mdoQy
+         FehL8I6bcBffc0xWYD9pECgm/7iofA/JISWVRGSQGDyExFlnHY4fggpaOOm//UQ/Xy
+         nKL2GNEeWxfYAVvQlKVKMdcD5RrBqe58NqbrAwMYg7TI83hAHhydx63rh0yoOCccWd
+         5yt0G0ygSQQDAyMSozaTDMqMiOXzQECWhY91mhRHR1jgVPDqdnbjlpCiOGKfM147JP
+         wB994mNoJ52yg==
+Date:   Mon, 11 Jan 2021 18:35:03 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com, dhowells@redhat.com, jens.wiklander@linaro.org,
+        corbet@lwn.net, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, janne.karhunen@gmail.com,
+        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v8 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
+Message-ID: <X/x+N0fgrzIZTeNi@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-3-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87czyoimqz.fsf@x220.int.ebiederm.org>
+In-Reply-To: <1604419306-26105-3-git-send-email-sumit.garg@linaro.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 01, 2021 at 11:35:16AM -0600, Eric W. Biederman wrote:
-> Miklos Szeredi <mszeredi@redhat.com> writes:
+On Tue, Nov 03, 2020 at 09:31:44PM +0530, Sumit Garg wrote:
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key.
 > 
-> > cap_convert_nscap() does permission checking as well as conversion of the
-> > xattr value conditionally based on fs's user-ns.
-> >
-> > This is needed by overlayfs and probably other layered fs (ecryptfs) and is
-> > what vfs_foo() is supposed to do anyway.
+> Refer to Documentation/tee.txt for detailed information about TEE.
 > 
-> Well crap.
-> 
-> I just noticed this and it turns out this change is wrong.
-> 
-> The problem is that it reads the rootid from the v3 fscap, using
-> current_user_ns() and then writes it using the sb->s_user_ns.
-> 
-> So any time the stacked filesystems sb->s_user_ns do not match or
-> current_user_ns does not match sb->s_user_ns this could be a problem.
-> 
-> In a stacked filesystem a second pass through vfs_setxattr will result
-> in the rootid being translated a second time (with potentially the wrong
-> namespaces).  I think because of the security checks a we won't write
-> something we shouldn't be able to write to the filesystem.  Still we
-> will be writing the wrong v3 fscap which can go quite badly.
-> 
-> This doesn't look terribly difficult to fix.
-> 
-> Probably convert this into a fs independent form using uids in
-> init_user_ns at input and have cap_convert_nscap convert the v3 fscap
-> into the filesystem dependent form.  With some way for stackable
-> filesystems to just skip converting it from the filesystem independent
-> format.
-> 
-> Uids in xattrs that are expected to go directly to disk, but aren't
-> always suitable for going directly to disk are tricky.
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-I've been looking at this for a couple of days and can't say I clearly
-understand everything yet.
+I haven't yet got QEMU environment working with aarch64, this produces
+just a blank screen:
 
-For one: a v2 fscap is supposed to be equivalent to a v3 fscap with a rootid of
-zero, right?
+./output/host/usr/bin/qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -kernel output/images/Image -initrd output/images/rootfs.cpio -serial stdio
 
-If so, why does cap_inode_getsecurity() treat them differently (v2 fscap
-succeeding unconditionally while v3 one being either converted to v2, rejected
-or left as v3 depending on current_user_ns())?
+My BuildRoot fork for TPM and keyring testing is located over here:
 
-Anyway, here's a patch that I think fixes getxattr() layering for
-security.capability.  Does basically what you suggested.  Slight change of
-semantics vs. v1 caps, not sure if that is still needed, getxattr()/setxattr()
-hasn't worked for these since the introduction of v3 in 4.14.  Untested.
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/buildroot-tpmdd.git/
 
-I still need to wrap my head around the permission requirements for the
-setxattr() case...
+The "ARM version" is at this point in aarch64 branch. Over time I will
+define tpmdd-x86_64 and tpmdd-aarch64 boards and everything will be then
+in the master branch.
 
-Thanks,
-Miklos
+To create identical images you just need to
 
----
- fs/overlayfs/super.c       |   15 +++
- include/linux/capability.h |    2 
- include/linux/fs.h         |    1 
- security/commoncap.c       |  210 ++++++++++++++++++++++++---------------------
- 4 files changed, 132 insertions(+), 96 deletions(-)
+$ make tpmdd_defconfig && make
 
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -395,6 +395,20 @@ static int ovl_remount(struct super_bloc
- 	return ret;
- }
- 
-+static int ovl_cap_get(struct dentry *dentry,
-+		       struct vfs_ns_cap_data *nscap)
-+{
-+	int res;
-+	const struct cred *old_cred;
-+	struct dentry *realdentry = ovl_dentry_real(dentry);
-+
-+	old_cred = ovl_override_creds(dentry->d_sb);
-+	res = vfs_cap_get(realdentry, nscap);
-+	revert_creds(old_cred);
-+
-+	return res;
-+}
-+
- static const struct super_operations ovl_super_operations = {
- 	.alloc_inode	= ovl_alloc_inode,
- 	.free_inode	= ovl_free_inode,
-@@ -405,6 +419,7 @@ static const struct super_operations ovl
- 	.statfs		= ovl_statfs,
- 	.show_options	= ovl_show_options,
- 	.remount_fs	= ovl_remount,
-+	.cap_get	= ovl_cap_get,
- };
- 
- enum {
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -272,4 +272,6 @@ extern int get_vfs_caps_from_disk(const
- 
- extern int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size);
- 
-+int vfs_cap_get(struct dentry *dentry, struct vfs_ns_cap_data *nscap);
-+
- #endif /* !_LINUX_CAPABILITY_H */
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1963,6 +1963,7 @@ struct super_operations {
- 				  struct shrink_control *);
- 	long (*free_cached_objects)(struct super_block *,
- 				    struct shrink_control *);
-+	int (*cap_get)(struct dentry *dentry, struct vfs_ns_cap_data *nscap);
- };
- 
- /*
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -341,6 +341,13 @@ static __u32 sansflags(__u32 m)
- 	return m & ~VFS_CAP_FLAGS_EFFECTIVE;
- }
- 
-+static bool is_v1header(size_t size, const struct vfs_cap_data *cap)
-+{
-+	if (size != XATTR_CAPS_SZ_1)
-+		return false;
-+	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_1;
-+}
-+
- static bool is_v2header(size_t size, const struct vfs_cap_data *cap)
- {
- 	if (size != XATTR_CAPS_SZ_2)
-@@ -355,6 +362,72 @@ static bool is_v3header(size_t size, con
- 	return sansflags(le32_to_cpu(cap->magic_etc)) == VFS_CAP_REVISION_3;
- }
- 
-+static bool validheader(size_t size, const struct vfs_cap_data *cap)
-+{
-+	return is_v1header(size, cap) || is_v2header(size, cap) || is_v3header(size, cap);
-+}
-+
-+static void cap_to_v3(const struct vfs_cap_data *cap,
-+			 struct vfs_ns_cap_data *nscap)
-+{
-+	u32 magic, nsmagic;
-+
-+	nsmagic = VFS_CAP_REVISION_3;
-+	magic = le32_to_cpu(cap->magic_etc);
-+	if (magic & VFS_CAP_FLAGS_EFFECTIVE)
-+		nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
-+	nscap->magic_etc = cpu_to_le32(nsmagic);
-+	nscap->rootid = cpu_to_le32(0);
-+}
-+
-+static int default_cap_get(struct dentry *dentry, struct vfs_ns_cap_data *nscap)
-+{
-+	int err;
-+	ssize_t size;
-+	kuid_t kroot;
-+	uid_t root, mappedroot;
-+	char *tmpbuf = NULL;
-+	struct vfs_cap_data *cap;
-+	struct user_namespace *fs_ns = dentry->d_sb->s_user_ns;
-+
-+	size = vfs_getxattr_alloc(dentry, XATTR_NAME_CAPS, &tmpbuf,
-+				  sizeof(struct vfs_ns_cap_data), GFP_NOFS);
-+	if (size < 0)
-+		return size;
-+
-+	cap = (struct vfs_cap_data *) tmpbuf;
-+	err = -EINVAL;
-+	if (!validheader(size, cap))
-+		goto out;
-+
-+	memset(nscap, 0, sizeof(*nscap));
-+	memcpy(nscap, tmpbuf, size);
-+	if (!is_v3header(size, cap))
-+		cap_to_v3(cap, nscap);
-+
-+	/* Convert rootid from fs user namespace to init user namespace */
-+	root = le32_to_cpu(nscap->rootid);
-+	kroot = make_kuid(fs_ns, root);
-+	mappedroot = from_kuid(&init_user_ns, kroot);
-+	nscap->rootid = cpu_to_le32(mappedroot);
-+
-+	err = 0;
-+out:
-+	kfree(tmpbuf);
-+	return err;
-+}
-+
-+int vfs_cap_get(struct dentry *dentry, struct vfs_ns_cap_data *nscap)
-+{
-+	struct super_block *sb = dentry->d_sb;
-+
-+	if (sb->s_op->cap_get)
-+		return sb->s_op->cap_get(dentry, nscap);
-+	else
-+		return default_cap_get(dentry, nscap);
-+}
-+EXPORT_SYMBOL(vfs_cap_get);
-+
- /*
-  * getsecurity: We are called for security.* before any attempt to read the
-  * xattr from the inode itself.
-@@ -369,14 +442,15 @@ static bool is_v3header(size_t size, con
- int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 			  bool alloc)
- {
--	int size, ret;
-+	int ret;
-+	ssize_t size;
- 	kuid_t kroot;
-+	__le32 nsmagic, magic;
- 	uid_t root, mappedroot;
--	char *tmpbuf = NULL;
-+	void *tmpbuf = NULL;
- 	struct vfs_cap_data *cap;
--	struct vfs_ns_cap_data *nscap;
-+	struct vfs_ns_cap_data nscap;
- 	struct dentry *dentry;
--	struct user_namespace *fs_ns;
- 
- 	if (strcmp(name, "capability") != 0)
- 		return -EOPNOTSUPP;
-@@ -385,67 +459,50 @@ int cap_inode_getsecurity(struct inode *
- 	if (!dentry)
- 		return -EINVAL;
- 
--	size = sizeof(struct vfs_ns_cap_data);
--	ret = (int) vfs_getxattr_alloc(dentry, XATTR_NAME_CAPS,
--				 &tmpbuf, size, GFP_NOFS);
-+	ret = vfs_cap_get(dentry, &nscap);
- 	dput(dentry);
- 
- 	if (ret < 0)
- 		return ret;
- 
--	fs_ns = inode->i_sb->s_user_ns;
--	cap = (struct vfs_cap_data *) tmpbuf;
--	if (is_v2header((size_t) ret, cap)) {
--		/* If this is sizeof(vfs_cap_data) then we're ok with the
--		 * on-disk value, so return that.  */
--		if (alloc)
--			*buffer = tmpbuf;
--		else
--			kfree(tmpbuf);
--		return ret;
--	} else if (!is_v3header((size_t) ret, cap)) {
--		kfree(tmpbuf);
--		return -EINVAL;
--	}
-+	tmpbuf = kmalloc(sizeof(struct vfs_ns_cap_data), GFP_NOFS);
-+	if (!tmpbuf)
-+		return -ENOMEM;
- 
--	nscap = (struct vfs_ns_cap_data *) tmpbuf;
--	root = le32_to_cpu(nscap->rootid);
--	kroot = make_kuid(fs_ns, root);
-+	root = le32_to_cpu(nscap.rootid);
-+	kroot = make_kuid(&init_user_ns, root);
- 
- 	/* If the root kuid maps to a valid uid in current ns, then return
- 	 * this as a nscap. */
- 	mappedroot = from_kuid(current_user_ns(), kroot);
- 	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
-+		size = sizeof(struct vfs_cap_data);
- 		if (alloc) {
- 			*buffer = tmpbuf;
--			nscap->rootid = cpu_to_le32(mappedroot);
--		} else
--			kfree(tmpbuf);
--		return size;
-+			tmpbuf = NULL;
-+			nscap.rootid = cpu_to_le32(mappedroot);
-+			memcpy(*buffer, &nscap, size);
-+		}
-+		goto out;
- 	}
- 
--	if (!rootid_owns_currentns(kroot)) {
--		kfree(tmpbuf);
--		return -EOPNOTSUPP;
--	}
-+	size = -EOPNOTSUPP;
-+	if (!rootid_owns_currentns(kroot))
-+		goto out;
- 
- 	/* This comes from a parent namespace.  Return as a v2 capability */
- 	size = sizeof(struct vfs_cap_data);
- 	if (alloc) {
--		*buffer = kmalloc(size, GFP_ATOMIC);
--		if (*buffer) {
--			struct vfs_cap_data *cap = *buffer;
--			__le32 nsmagic, magic;
--			magic = VFS_CAP_REVISION_2;
--			nsmagic = le32_to_cpu(nscap->magic_etc);
--			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
--				magic |= VFS_CAP_FLAGS_EFFECTIVE;
--			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
--			cap->magic_etc = cpu_to_le32(magic);
--		} else {
--			size = -ENOMEM;
--		}
-+		cap = *buffer = tmpbuf;
-+		tmpbuf = NULL;
-+		magic = VFS_CAP_REVISION_2;
-+		nsmagic = le32_to_cpu(nscap.magic_etc);
-+		if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
-+			magic |= VFS_CAP_FLAGS_EFFECTIVE;
-+		memcpy(&cap->data, &nscap.data, sizeof(__le32) * 2 * VFS_CAP_U32);
-+		cap->magic_etc = cpu_to_le32(magic);
- 	}
-+out:
- 	kfree(tmpbuf);
- 	return size;
- }
-@@ -462,11 +519,6 @@ static kuid_t rootid_from_xattr(const vo
- 	return make_kuid(task_ns, rootid);
- }
- 
--static bool validheader(size_t size, const struct vfs_cap_data *cap)
--{
--	return is_v2header(size, cap) || is_v3header(size, cap);
--}
--
- /*
-  * User requested a write of security.capability.  If needed, update the
-  * xattr to change from v2 to v3, or to fixup the v3 rootid.
-@@ -570,74 +622,40 @@ static inline int bprm_caps_from_vfs_cap
- int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data *cpu_caps)
- {
- 	struct inode *inode = d_backing_inode(dentry);
--	__u32 magic_etc;
--	unsigned tocopy, i;
--	int size;
--	struct vfs_ns_cap_data data, *nscaps = &data;
--	struct vfs_cap_data *caps = (struct vfs_cap_data *) &data;
--	kuid_t rootkuid;
--	struct user_namespace *fs_ns;
-+	unsigned int i;
-+	int ret;
-+	struct vfs_ns_cap_data nscaps;
- 
- 	memset(cpu_caps, 0, sizeof(struct cpu_vfs_cap_data));
- 
- 	if (!inode)
- 		return -ENODATA;
- 
--	fs_ns = inode->i_sb->s_user_ns;
--	size = __vfs_getxattr((struct dentry *)dentry, inode,
--			      XATTR_NAME_CAPS, &data, XATTR_CAPS_SZ);
--	if (size == -ENODATA || size == -EOPNOTSUPP)
-+	ret = vfs_cap_get((struct dentry *) dentry, &nscaps);
-+	if (ret == -ENODATA || ret == -EOPNOTSUPP)
- 		/* no data, that's ok */
- 		return -ENODATA;
- 
--	if (size < 0)
--		return size;
--
--	if (size < sizeof(magic_etc))
--		return -EINVAL;
--
--	cpu_caps->magic_etc = magic_etc = le32_to_cpu(caps->magic_etc);
-+	if (ret < 0)
-+		return ret;
- 
--	rootkuid = make_kuid(fs_ns, 0);
--	switch (magic_etc & VFS_CAP_REVISION_MASK) {
--	case VFS_CAP_REVISION_1:
--		if (size != XATTR_CAPS_SZ_1)
--			return -EINVAL;
--		tocopy = VFS_CAP_U32_1;
--		break;
--	case VFS_CAP_REVISION_2:
--		if (size != XATTR_CAPS_SZ_2)
--			return -EINVAL;
--		tocopy = VFS_CAP_U32_2;
--		break;
--	case VFS_CAP_REVISION_3:
--		if (size != XATTR_CAPS_SZ_3)
--			return -EINVAL;
--		tocopy = VFS_CAP_U32_3;
--		rootkuid = make_kuid(fs_ns, le32_to_cpu(nscaps->rootid));
--		break;
-+	cpu_caps->magic_etc = le32_to_cpu(nscaps.magic_etc);
-+	cpu_caps->rootid = make_kuid(&init_user_ns, le32_to_cpu(nscaps.rootid));
- 
--	default:
--		return -EINVAL;
--	}
- 	/* Limit the caps to the mounter of the filesystem
- 	 * or the more limited uid specified in the xattr.
- 	 */
--	if (!rootid_owns_currentns(rootkuid))
-+	if (!rootid_owns_currentns(cpu_caps->rootid))
- 		return -ENODATA;
- 
- 	CAP_FOR_EACH_U32(i) {
--		if (i >= tocopy)
--			break;
--		cpu_caps->permitted.cap[i] = le32_to_cpu(caps->data[i].permitted);
--		cpu_caps->inheritable.cap[i] = le32_to_cpu(caps->data[i].inheritable);
-+		cpu_caps->permitted.cap[i] = le32_to_cpu(nscaps.data[i].permitted);
-+		cpu_caps->inheritable.cap[i] = le32_to_cpu(nscaps.data[i].inheritable);
- 	}
- 
- 	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
- 	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
- 
--	cpu_caps->rootid = rootkuid;
--
- 	return 0;
- }
- 
+Can you check if you see anything obviously wrong? I'm eager to test this
+patch set, and in bigger picture I really need to have ready to run
+aarch64 environment available.
+
+/Jarkko
