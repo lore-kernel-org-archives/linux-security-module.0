@@ -2,106 +2,99 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11682C433DB
-	for <linux-security-module@archiver.kernel.org>; Sun, 10 Jan 2021 08:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A90FC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 06:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC80823B06
-	for <linux-security-module@archiver.kernel.org>; Sun, 10 Jan 2021 08:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA058225A9
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 06:26:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725820AbhAJIEI (ORCPT
+        id S1727169AbhAKG0V (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 10 Jan 2021 03:04:08 -0500
-Received: from mail.zju.edu.cn ([61.164.42.155]:14318 "EHLO zju.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725783AbhAJIEH (ORCPT
+        Mon, 11 Jan 2021 01:26:21 -0500
+Received: from so254-31.mailgun.net ([198.61.254.31]:32412 "EHLO
+        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbhAKG0U (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 10 Jan 2021 03:04:07 -0500
-Received: from localhost.localdomain (unknown [222.205.25.254])
-        by mail-app3 (Coremail) with SMTP id cC_KCgB3fyewtPpf7l49AA--.62276S4;
-        Sun, 10 Jan 2021 16:03:02 +0800 (CST)
-From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
-To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@nokia.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] evm: Fix memleak in init_desc
-Date:   Sun, 10 Jan 2021 16:02:53 +0800
-Message-Id: <20210110080253.32345-1-dinghao.liu@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: cC_KCgB3fyewtPpf7l49AA--.62276S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFWrurW3WFyDGw4kXrW5Jrb_yoW8Jw47pF
-        15tayxJrZ5AFy8Gr97AFs5Cry3GayYyrW3t3y3Zw1ayF15Xr4ktrs7ArW8uFn8Jay8Ar1S
-        y3ySvw13A3WjvaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvI1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
-        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
-        IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2
-        z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcV
-        Aq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j
-        6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64
-        vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8ZwCF04k20xvY0x0EwIxG
-        rwCF04k20xvE74AGY7Cv6cx26r4fKr1UJr1l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-        Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-        6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-        kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
-        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-        9x0JUhdbbUUUUU=
-X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgoBBlZdtR6iiAAEsB
+        Mon, 11 Jan 2021 01:26:20 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1610346362; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=Y66XF+Djddn7k3iYTGrUGms1lzGNsW9OD4rOjfjlTmE=;
+ b=fdCb0Dh1ZNZHo81bgsCeq1vpT9cBPJMbufafIAHNY6YSMFa0nT5JQjVIzWVNfskPGwih7A1X
+ +vNrSYmEY5Czdzdq2oJbWYn7VgkDw17A1tw+DbDi7mvXor7Y3dIwJEH2NtDVGWYY/rNqjc69
+ Nx6GYeo+8rR+3upAxn77AOi5m7w=
+X-Mailgun-Sending-Ip: 198.61.254.31
+X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-east-1.postgun.com with SMTP id
+ 5ffbef59c88af06107e5d798 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 11 Jan 2021 06:25:29
+ GMT
+Sender: pnagar=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E99EDC43465; Mon, 11 Jan 2021 06:25:28 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pnagar)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2BF48C433CA;
+        Mon, 11 Jan 2021 06:25:28 +0000 (UTC)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 11 Jan 2021 11:55:28 +0530
+From:   pnagar@codeaurora.org
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, jmorris@namei.org, serge@hallyn.com,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, linux-arch <linux-arch@vger.kernel.org>,
+        psodagud@codeaurora.org, nmardana@codeaurora.org,
+        dsule@codeaurora.org, Joe Perches <joe@perches.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Nick Desaulniers <ndesaulniers@gooogle.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a
+ separate page
+In-Reply-To: <CANiq72=y7gapKpVKFwu30jDpv4qswgo5K3+u5QMOY4dtacKX=Q@mail.gmail.com>
+References: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
+ <CANiq72=y7gapKpVKFwu30jDpv4qswgo5K3+u5QMOY4dtacKX=Q@mail.gmail.com>
+Message-ID: <afa0b8674f87c3cac17bf725c826d37e@codeaurora.org>
+X-Sender: pnagar@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When kmalloc() fails, tmp_tfm allocated by
-crypto_alloc_shash() has not been freed, which
-leads to memleak.
+On 2021-01-08 20:55, Miguel Ojeda wrote:
+> On Fri, Jan 8, 2021 at 10:52 AM Preeti Nagar <pnagar@codeaurora.org> 
+> wrote:
+>> 
+>> We want to seek your suggestions and comments on the idea and the 
+>> changes
+>> in the patch.
+> 
+> Not sure why I was Cc'd, but I have a quick comment nevertheless.
+> 
+>> +#ifdef CONFIG_SECURITY_RTIC
+>> +struct selinux_state selinux_state __rticdata;
+>> +#else
+>>  struct selinux_state selinux_state;
+>> +#endif
+> 
+> If you define an empty __rticdata for the !CONFIG case, then we don't
+> need #ifdefs for uses like this.
+> 
+> Cheers,
+> Miguel
+Thank you for the review! Will update this change in the next version of 
+the patch soon.
 
-Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
----
-
-Changelog:
-
-v2: - Remove checks against tmp_tfm before freeing.
----
- security/integrity/evm/evm_crypto.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 168c3b78ac47..a6dd47eb086d 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -73,7 +73,7 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- {
- 	long rc;
- 	const char *algo;
--	struct crypto_shash **tfm, *tmp_tfm;
-+	struct crypto_shash **tfm, *tmp_tfm = NULL;
- 	struct shash_desc *desc;
- 
- 	if (type == EVM_XATTR_HMAC) {
-@@ -118,13 +118,16 @@ static struct shash_desc *init_desc(char type, uint8_t hash_algo)
- alloc:
- 	desc = kmalloc(sizeof(*desc) + crypto_shash_descsize(*tfm),
- 			GFP_KERNEL);
--	if (!desc)
-+	if (!desc) {
-+		crypto_free_shash(tmp_tfm);
- 		return ERR_PTR(-ENOMEM);
-+	}
- 
- 	desc->tfm = *tfm;
- 
- 	rc = crypto_shash_init(desc);
- 	if (rc) {
-+		crypto_free_shash(tmp_tfm);
- 		kfree(desc);
- 		return ERR_PTR(rc);
- 	}
--- 
-2.17.1
-
+Thanks,
+Preeti
