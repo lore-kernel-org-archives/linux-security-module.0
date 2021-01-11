@@ -2,129 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E752C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 09:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D62EC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 13:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 042AD22AAF
-	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 09:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61DA622203
+	for <linux-security-module@archiver.kernel.org>; Mon, 11 Jan 2021 13:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbhAKJwU (ORCPT
+        id S1730980AbhAKNro (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 11 Jan 2021 04:52:20 -0500
-Received: from m43-15.mailgun.net ([69.72.43.15]:23929 "EHLO
-        m43-15.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbhAKJwU (ORCPT
+        Mon, 11 Jan 2021 08:47:44 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20844 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387573AbhAKNrn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 11 Jan 2021 04:52:20 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1610358720; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=kDRRlMU9xZvzsoyHtTnPDyjsx/BCROLlxB6BQXmIwhk=;
- b=NVGA2GxjmwTzdyD7FpjXKu2KakvoaozRXP+BYvx2C51B0A23r4pEiRbkeSV/ja2U8bmF+Qmy
- Ui0gDCBzuTYlFq6R/i703/qhlEhAaUxRXV8moRezUJkizckqjgGwYPWfLDIDxXylmUSaTfW6
- EsF5Zx5mST33qrVLGVabYMsmwmU=
-X-Mailgun-Sending-Ip: 69.72.43.15
-X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 5ffc1fa58fb3cda82f0b74ec (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 11 Jan 2021 09:51:33
- GMT
-Sender: pnagar=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 546ACC4346A; Mon, 11 Jan 2021 09:51:32 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: pnagar)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5942EC43462;
-        Mon, 11 Jan 2021 09:51:31 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 11 Jan 2021 15:21:31 +0530
-From:   pnagar@codeaurora.org
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     arnd@arndb.de, dsule@codeaurora.org, eparis@parisplace.org,
-        jmorris@namei.org, joe@perches.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, jeffv@google.com,
-        nmardana@codeaurora.org, ojeda@kernel.org, paul@paul-moore.com,
-        psodagud@codeaurora.org, selinux@vger.kernel.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com,
-        ndesaulniers via sendgmr 
-        <ndesaulniers@ndesaulniers1.mtv.corp.google.com>
-Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a
- separate page
-In-Reply-To: <20210109010111.2299669-1-ndesaulniers@google.com>
-References: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
- <20210109010111.2299669-1-ndesaulniers@google.com>
-Message-ID: <fe452dce51f07bdbd4c0ae2bc70c3086@codeaurora.org>
-X-Sender: pnagar@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        Mon, 11 Jan 2021 08:47:43 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10BDknDm144977;
+        Mon, 11 Jan 2021 08:46:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=pndz/Z80vqMHUBLIj5CZ6gUYG29beKH5GXEQU02RA9w=;
+ b=NHr6FeZcAib4+IezLZWu6kCvq8329gbUplF5EWkKESNegjuwgLGB3PpyEAtBuc5HHino
+ 5RFOKF3uM/d+B/zIauQbPMpXILzKmg6FiuytFm6GKTsLVfXXmnq7m5XpcdbA57ttZjyq
+ eLvDFTf/jLy+Y9AXlwbPsAVeJpnAEKijj4mj1aZ2BsorXqHa6swnLpRUiQ4aIiKm8ly/
+ auPLc9oQiOFDdUqhWrm942sC/tX6dQDYl2VGa16gXXhpxGUJ8H9aIZVWaPR8a5R6YTt0
+ cf9ibW1wg6ScmX0a9yNg1NkgrUHTHPemnLBXXRtoIy6xM2LEGBoLNsnvjyLzOob263y7 IA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 360qv0801m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jan 2021 08:46:49 -0500
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10BDkmYP144929;
+        Mon, 11 Jan 2021 08:46:48 -0500
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 360qv08012-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jan 2021 08:46:48 -0500
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10BDgHIA032091;
+        Mon, 11 Jan 2021 13:46:46 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06ams.nl.ibm.com with ESMTP id 35ydrd9xeq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 11 Jan 2021 13:46:45 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10BDkh9250725254
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 11 Jan 2021 13:46:43 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BB02D42045;
+        Mon, 11 Jan 2021 13:46:43 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B4B524204C;
+        Mon, 11 Jan 2021 13:46:41 +0000 (GMT)
+Received: from sig-9-65-221-171.ibm.com (unknown [9.65.221.171])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 11 Jan 2021 13:46:41 +0000 (GMT)
+Message-ID: <31aed9f12482d1156c224c2cc5ac8afd81e8cb14.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] evm: Fix memory leak in init_desc
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Markus Elfring <Markus.Elfring@web.de>,
+        Dinghao Liu <dinghao.liu@zju.edu.cn>,
+        Eric Biggers <ebiggers@kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Dmitry Kasatkin <dmitry.kasatkin@nokia.com>,
+        James Morris <jmorris@namei.org>, Kangjie Lu <kjlu@umn.edu>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Date:   Mon, 11 Jan 2021 08:46:40 -0500
+In-Reply-To: <7288d0ce-e900-d942-fb6b-eabb63649591@web.de>
+References: <20210110080253.32345-1-dinghao.liu@zju.edu.cn>
+         <7288d0ce-e900-d942-fb6b-eabb63649591@web.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-11_26:2021-01-11,2021-01-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 spamscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101110081
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021-01-09 06:31, Nick Desaulniers wrote:
-> Via:
-> https://lore.kernel.org/lkml/1610099389-28329-1-git-send-email-pnagar@codeaurora.org/
-> 
->> diff --git a/include/linux/init.h b/include/linux/init.h
->> index 7b53cb3..617adcf 100644
->> --- a/include/linux/init.h
->> +++ b/include/linux/init.h
->> @@ -300,6 +300,10 @@ void __init parse_early_options(char *cmdline);
->>  /* Data marked not to be saved by software suspend */
->>  #define __nosavedata __section(".data..nosave")
->> 
->> +#ifdef CONFIG_SECURITY_RTIC
->> +#define __rticdata  __section(".bss.rtic")
-> 
-> if you put:
-> 
-> #else
-> #define __rticdata
-> 
-> here, then you wouldn't need to label each datum you put in there.
-> 
->> +#endif
->> +
->>  #ifdef MODULE
->>  #define __exit_p(x) x
->>  #else
-> 
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -104,7 +104,11 @@
->>  #include "audit.h"
->>  #include "avc_ss.h"
->> 
->> +#ifdef CONFIG_SECURITY_RTIC
->> +struct selinux_state selinux_state __rticdata;
->> +#else
->>  struct selinux_state selinux_state;
->> +#endif
-> 
-> so you could then drop the if-def here.
-Will update this in next version, thank you for the suggestion.
+Hi Dinghao,
 
-> Happy to see this resolved when building with LLD+LTO, which has been a
-> problem in the past.
-Yes, downstream we have this verified with LTO configs enabled. Let us 
-know if
-you are suggesting to check anything additionally here.
+On Sun, 2021-01-10 at 11:50 +0100, Markus Elfring wrote:
+> > When kmalloc() fails, tmp_tfm allocated by
+> > crypto_alloc_shash() has not been freed, which
+> > leads to memleak.
 
-> Disabling selinux is a common attack vector on Android devices, so 
-> happy
-> to see some effort towards mitigation.  You might want to communicate
-> the feature more to existing OEMs that are using your chipsets that
-> support this feature.
-Glad to know the idea looks good! Yes, we will work on that, will 
-communicate
-internally as well, thank you.
+In the future, please conform to Documentation/process/submitting-
+patches.rst: 
+
+  - The body of the explanation, line wrapped at 75 columns, which will
+    be copied to the permanent changelog to describe this patch.
+
+> 
+> Do any Linux developers care for the following aspects?
+> 
+> * Imperative wordings for change descriptions
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=2ff90100ace886895e4fbb2850b8d5e49d931ed6#n89
+> 
+> * Usage of the term “memory leak” (instead of an abbreviation)
+
+In general I agree, but this is a really small, obvious bug fix. 
+Assuming Dinghao is fine with my updating the patch description, I'll
+fix it.
+
+Mimi
+
