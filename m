@@ -2,86 +2,275 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7B7C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 08:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E97BC433E9
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 09:38:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF24D22D2C
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 08:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22ABB23107
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 09:38:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729957AbhALILb (ORCPT
+        id S2390639AbhALJiA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 03:11:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728055AbhALILa (ORCPT
+        Tue, 12 Jan 2021 04:38:00 -0500
+Received: from so254-31.mailgun.net ([198.61.254.31]:37982 "EHLO
+        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730499AbhALJiA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 03:11:30 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8142B22DD3
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 08:10:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1610439049;
-        bh=J7r8JGyqvNMFR6iSDzi97sSGsc1Y6DMzrykLViXV6fA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CvDZ2/LgPHUnVjaBGRme6asm5oz3Pc849cEbV1EX62HTmsINZD/KsU3rAsQqnJxWq
-         LJhtApFpvi4sNIOoNn+WC3FMI3aos94ZoapFeysOujdNADNbH0t9gmX2p1xrNA3dR7
-         iIlgLDdbQgHwREmekY0l3390ilopJbd6AiRqf60oxCYUEQdkp6T4fx7jgG5NQjzY+N
-         RFYvk1Yhvk/bQ/qrj7Hwpq/0e22z4NQasZ2Oip0yhtf8JN2EpQ7uaIZfnIeAGxKFpS
-         8Ca+LMOnQAnNE1v/E6iJFSLVMtKglfvYIBKG6d9yMY8R7NB+D8OV3Idv9s8iQ2jmBz
-         9M7GIER4Ji5VQ==
-Received: by mail-lf1-f53.google.com with SMTP id h205so2018496lfd.5
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 00:10:49 -0800 (PST)
-X-Gm-Message-State: AOAM533W8L2iOtF7o6q/0t6PyvFRimNy0Jq/qEYgrc91JBTHTbEeU3Zs
-        A6hKnqgEf4xnDjncl//am5DfAvfPuawP1YmjT1QpTg==
-X-Google-Smtp-Source: ABdhPJwDmRryslYHSGTgg4xDrUBsNzdvYvy18GcpZHH/xo1M9Zu5sPiuBbI7vdYU1HbD+7t/PoptTXEzAj9WmlAQA0M=
-X-Received: by 2002:a19:5ca:: with SMTP id 193mr1660670lff.375.1610439047740;
- Tue, 12 Jan 2021 00:10:47 -0800 (PST)
+        Tue, 12 Jan 2021 04:38:00 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1610444253; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=dcaBq1lXPNIqcnm6SkqqWpFwh40DCTmtIQVK4VfzQ4E=;
+ b=Ih9QleH4rXvmiJ6t5JnlK44hwGW/7d8lUB5nAsayzYv3hLoV4NW8L35d9A2rjr+BhOcyLPPl
+ 2s4pi6qPimINzHuMRcMUHpDpveXcsp4S/sgb6Dt2MRmsSmYC4l78V7Ww9cA1OEghtdY5Ydrw
+ L+Kxx2fm9nhAMDL69HYzPpAWhZ4=
+X-Mailgun-Sending-Ip: 198.61.254.31
+X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
+ 5ffd6dbb415a6293c522aaa7 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 12 Jan 2021 09:36:59
+ GMT
+Sender: pnagar=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 473B3C43464; Tue, 12 Jan 2021 09:36:59 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pnagar)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 24930C43462;
+        Tue, 12 Jan 2021 09:36:57 +0000 (UTC)
 MIME-Version: 1.0
-References: <156f6860-73a4-f754-b460-d64de40ff626@linux.microsoft.com>
- <f4f21823-240c-394b-2222-bb8214e4ba7f@schaufler-ca.com> <f85cdd1b-1118-026b-c696-18863ad6352e@linux.microsoft.com>
- <391d332-4a31-2ed8-85a3-106f393dd1db@namei.org>
-In-Reply-To: <391d332-4a31-2ed8-85a3-106f393dd1db@namei.org>
-From:   KP Singh <kpsingh@kernel.org>
-Date:   Tue, 12 Jan 2021 09:10:37 +0100
-X-Gmail-Original-Message-ID: <CACYkzJ5H2+h5C9h-E3hmfLJZdqp29YK14JQsxN=4rcLcZs_0RQ@mail.gmail.com>
-Message-ID: <CACYkzJ5H2+h5C9h-E3hmfLJZdqp29YK14JQsxN=4rcLcZs_0RQ@mail.gmail.com>
-Subject: Re: Question about inode security blob
-To:     James Morris <jmorris@namei.org>
-Cc:     Fan Wu <wufan@linux.microsoft.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 12 Jan 2021 15:06:57 +0530
+From:   pnagar@codeaurora.org
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     arnd@arndb.de, jmorris@namei.org, serge@hallyn.com,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-arch@vger.kernel.org,
+        psodagud@codeaurora.org, nmardana@codeaurora.org,
+        dsule@codeaurora.org, Joe Perches <joe@perches.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a
+ separate page
+In-Reply-To: <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com>
+References: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
+ <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com>
+Message-ID: <dab6357acbd63edd53099d106d111bf4@codeaurora.org>
+X-Sender: pnagar@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 12, 2021 at 5:39 AM James Morris <jmorris@namei.org> wrote:
->
-> On Mon, 11 Jan 2021, Fan Wu wrote:
->
-> > > The inode->i_security should never be NULL if the inode has been
-> > > initialized. Any LSM hook that finds this to be NULL has probably
-> > > identified a bug elsewhere in the system.
-> > >
-> >
-> > Thanks for the quick reply. If I understand correctly, I should follow the
-> > first pattern if I want to use the inode blob.
->
-> I don't think it's necessary, and if there's a race somewhere causing
-> this, we shouldn't just paper it over.
->
-> Btw, none of the existing cases are even using WARN_ON or similar to let
-> the user know there's a problem.
+On 2021-01-08 22:41, Casey Schaufler wrote:
+> On 1/8/2021 1:49 AM, Preeti Nagar wrote:
+>> The changes introduce a new security feature, RunTime Integrity Check
+>> (RTIC), designed to protect Linux Kernel at runtime. The motivation
+>> behind these changes is:
+>> 1. The system protection offered by SE for Android relies on the
+>> assumption of kernel integrity. If the kernel itself is compromised 
+>> (by
+>> a perhaps as yet unknown future vulnerability), SE for Android 
+>> security
+>> mechanisms could potentially be disabled and rendered ineffective.
+>> 2. Qualcomm Snapdragon devices use Secure Boot, which adds 
+>> cryptographic
+>> checks to each stage of the boot-up process, to assert the 
+>> authenticity
+>> of all secure software images that the device executes.  However, due 
+>> to
+>> various vulnerabilities in SW modules, the integrity of the system can 
+>> be
+>> compromised at any time after device boot-up, leading to un-authorized
+>> SW executing.
+> 
+> It would be helpful if you characterized the "various vulnerabilities"
+> rather than simply asserting their existence. This would allow the 
+> reviewer
+> to determine if the proposed patch addresses the issue.
+> 
+There might not currently be vulnerabilities, but the system is meant 
+more
+specifically to harden valuable assets against future compromises. The 
+key
+value add is a third party independent entity keeping a watch on crucial
+kernel assets.
 
-I agree, for BPF, I will send a patch to switch to using WARN_ON_ONCE or just
-get rid of the check altogether.
+>> 
+>> The feature's idea is to move some sensitive kernel structures to a
+>> separate page and monitor further any unauthorized changes to these,
+>> from higher Exception Levels using stage 2 MMU. Moving these to a
+>> different page will help avoid getting page faults from un-related 
+>> data.
+> 
+> I've always been a little slow when it comes to understanding the
+> details of advanced memory management facilities. That's part of
+> why I work in access control. Could you expand this a bit, so that
+> someone who doesn't already know how your stage 2 MMU works might
+> be able to evaluate what you're doing here.
+> 
+Sure, will include more details. The mechanism we have been working on
+removes the write permissions for HLOS in the stage 2 page tables for
+the regions to be monitored, such that any modification attempts to 
+these
+will lead to faults being generated and handled by handlers. If the
+protected assets are moved to a separate page, faults will be generated
+corresponding to change attempts to these assets only. If not moved to a
+separate page, write attempts to un-related data which is present on the
+monitored pages will also be generated.
 
->
->
-> --
-> James Morris
-> <jmorris@namei.org>
->
+>> Using this mechanism, some sensitive variables of the kernel which are
+>> initialized after init or are updated rarely can also be protected 
+>> from
+>> simple overwrites and attacks trying to modify these.
+> 
+> How would this interact with or complement __read_mostly?
+> 
+Currently, the mechanism we are working on developing is
+independent of __read_mostly. This is something we can look more into
+while working further on the mechanism.
+
+>> 
+>> Currently, the change moves selinux_state structure to a separate 
+>> page. In
+>> future we plan to move more security-related kernel assets to this 
+>> page to
+>> enhance protection.
+> 
+> What's special about selinux_state? What about the SELinux policy?
+> How would I, as maintainer of the Smack security module, know if
+> some Smack data should be treated the same way?
+> 
+We are investigating more of the SELinux related and other kernel assets
+which can be included in the protection. The basis of selinux_state is
+because disabling of SELinux is one of the common attack vectors in
+Android. We understand any kernel assets, unauthorized changes to which
+can give way to security or any other type of attack can be considered 
+to
+be a potential asset to be added to the protection.
+
+>> 
+>> We want to seek your suggestions and comments on the idea and the 
+>> changes
+>> in the patch.
+>> 
+>> Signed-off-by: Preeti Nagar <pnagar@codeaurora.org>
+>> ---
+>>  include/asm-generic/vmlinux.lds.h | 10 ++++++++++
+>>  include/linux/init.h              |  4 ++++
+>>  security/Kconfig                  | 10 ++++++++++
+>>  security/selinux/hooks.c          |  4 ++++
+>>  4 files changed, 28 insertions(+)
+>> 
+>> diff --git a/include/asm-generic/vmlinux.lds.h 
+>> b/include/asm-generic/vmlinux.lds.h
+>> index b2b3d81..158dbc2 100644
+>> --- a/include/asm-generic/vmlinux.lds.h
+>> +++ b/include/asm-generic/vmlinux.lds.h
+>> @@ -770,6 +770,15 @@
+>>  		*(.scommon)						\
+>>  	}
+>> 
+>> +#ifdef CONFIG_SECURITY_RTIC
+>> +#define RTIC_BSS							\
+>> +	. = ALIGN(PAGE_SIZE);						\
+>> +	KEEP(*(.bss.rtic))						\
+>> +	. = ALIGN(PAGE_SIZE);
+>> +#else
+>> +#define RTIC_BSS
+>> +#endif
+>> +
+>>  /*
+>>   * Allow archectures to redefine BSS_FIRST_SECTIONS to add extra
+>>   * sections to the front of bss.
+>> @@ -782,6 +791,7 @@
+>>  	. = ALIGN(bss_align);						\
+>>  	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {				\
+>>  		BSS_FIRST_SECTIONS					\
+>> +		RTIC_BSS						\
+>>  		. = ALIGN(PAGE_SIZE);					\
+>>  		*(.bss..page_aligned)					\
+>>  		. = ALIGN(PAGE_SIZE);					\
+>> diff --git a/include/linux/init.h b/include/linux/init.h
+>> index 7b53cb3..617adcf 100644
+>> --- a/include/linux/init.h
+>> +++ b/include/linux/init.h
+>> @@ -300,6 +300,10 @@ void __init parse_early_options(char *cmdline);
+>>  /* Data marked not to be saved by software suspend */
+>>  #define __nosavedata __section(".data..nosave")
+>> 
+>> +#ifdef CONFIG_SECURITY_RTIC
+>> +#define __rticdata  __section(".bss.rtic")
+>> +#endif
+>> +
+>>  #ifdef MODULE
+>>  #define __exit_p(x) x
+>>  #else
+>> diff --git a/security/Kconfig b/security/Kconfig
+>> index 7561f6f..66b61b9 100644
+>> --- a/security/Kconfig
+>> +++ b/security/Kconfig
+>> @@ -291,5 +291,15 @@ config LSM
+>> 
+>>  source "security/Kconfig.hardening"
+>> 
+>> +config SECURITY_RTIC
+>> +        bool "RunTime Integrity Check feature"
+> 
+> Shouldn't this depend on the architecture(s) supporting the
+> feature?
+> 
+>> +        help
+>> +	  RTIC(RunTime Integrity Check) feature is to protect Linux kernel
+>> +	  at runtime. This relocates some of the security sensitive kernel
+>> +	  structures to a separate page aligned special section.
+>> +
+>> +	  This is to enable monitoring and protection of these kernel assets
+>> +	  from a higher exception level(EL) against any unauthorized 
+>> changes.
+> 
+> "if you are unsure ..."
+> 
+We just thought keeping it generic might be a better idea, thus, moved 
+the
+changes to generic files from arch-specific files and thus, kept config 
+also
+independent of the arch. Can surely make this config arch dependent if 
+that is
+a better approach?
+
+>> +
+>>  endmenu
+>> 
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 6b1826f..7add17c 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -104,7 +104,11 @@
+>>  #include "audit.h"
+>>  #include "avc_ss.h"
+>> 
+>> +#ifdef CONFIG_SECURITY_RTIC
+>> +struct selinux_state selinux_state __rticdata;
+>> +#else
+>>  struct selinux_state selinux_state;
+>> +#endif
+> 
+> Shouldn't the __rticdata tag be applied always, and its
+> definition take care of the cases where it doesn't do anything?
+> 
+Will update this change in the next version of the patch. Thank you.
+
+>> 
+>>  /* SECMARK reference count */
+>>  static atomic_t selinux_secmark_refcount = ATOMIC_INIT(0);
