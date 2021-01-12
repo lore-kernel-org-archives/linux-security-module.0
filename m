@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9ACC072B1
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 22:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FB2C07EBB
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 22:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7EF323122
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 22:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0E4B23127
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 22:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405448AbhALWRr (ORCPT
+        id S2436732AbhALWPu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 17:17:47 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:45133 "EHLO
+        Tue, 12 Jan 2021 17:15:50 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:44579 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438270AbhALWRo (ORCPT
+        with ESMTP id S2403998AbhALWON (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 17:17:44 -0500
+        Tue, 12 Jan 2021 17:14:13 -0500
 Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
         by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
         (Exim 4.86_2)
         (envelope-from <christian.brauner@ubuntu.com>)
-        id 1kzRld-0003bd-DP; Tue, 12 Jan 2021 22:03:57 +0000
+        id 1kzRlS-0003bd-Sd; Tue, 12 Jan 2021 22:03:47 +0000
 From:   Christian Brauner <christian.brauner@ubuntu.com>
 To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
@@ -63,23 +63,28 @@ Cc:     John Johansen <john.johansen@canonical.com>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christian Brauner <christian.brauner@ubuntu.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v5 27/42] notify: handle idmapped mounts
-Date:   Tue, 12 Jan 2021 23:01:09 +0100
-Message-Id: <20210112220124.837960-28-christian.brauner@ubuntu.com>
+Subject: [PATCH v5 23/42] open: handle idmapped mounts
+Date:   Tue, 12 Jan 2021 23:01:05 +0100
+Message-Id: <20210112220124.837960-24-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-X-Patch-Hashes: v=1; h=sha256; i=m4dSb1vZZyg/6OFc1HkrzZoINWVfXi6fEBCLScH9qO8=; m=L41rIL7rk4mTNxft12WYGnDO5UtEpl+ZRCRY1mXiFD4=; p=llIL77s1jziMeTXIOvn4NXU9WjoPCcFX94fV2iuBuAE=; g=251f87afe6b169e0d3ecada7420b76fa9931ce4f
-X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtwAKCRCRxhvAZXjcorEWAQC71l+ QLOLv+C2pRpl8uUNOVG8zRFchwfy6QElf2fHIyQEA4ZumE87DNQH0HrIO30nTP/w8RRjNy/LP24gV QqajeQg=
+X-Patch-Hashes: v=1; h=sha256; i=YKSd0FdGGLgCSTeDw7b6sTvRU/kXPfMpmc0z0c+ceJs=; m=AxYKhdYprzCvMt0kry+LbZ/gM5Cfh7tpdts7ieUNsD0=; p=c80yLYHWwcOTQmoErBkESbLUftwV7AnXz3vjhvFqrkU=; g=84e0417ac78ec9ee77a9341d2daa78d7d94f34c8
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCX/4YtwAKCRCRxhvAZXjconyxAPsG/hp JWZxsQjrINS8IOFAvVcvXwvob/K7Zf8blrWRz0QD/b4f9FIXMTluFOVMjbOFVPWoZGN/zTSM4fsOy q2wulg0=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Enable notify implementations to handle idmapped mounts by passing down
-the mount's user namespace. If the initial user namespace is passed
-nothing changes so non-idmapped mounts will see identical behavior as
-before.
+For core file operations such as changing directories or chrooting,
+determining file access, changing mode or ownership the vfs will verify
+that the caller is privileged over the inode. Extend the various helpers
+to handle idmapped mounts. If the inode is accessed through an idmapped
+mount it is mapped according to the mount's user namespace. Afterwards
+the permissions checks are identical to non-idmapped mounts. When
+changing file ownership we need to map the uid and gid from the mount's
+user namespace. If the initial user namespace is passed nothing changes
+so non-idmapped mounts will see identical behavior as before.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: David Howells <dhowells@redhat.com>
@@ -88,55 +93,158 @@ Cc: linux-fsdevel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
 /* v2 */
-patch introduced
+unchanged
 
 /* v3 */
-unchanged
+- David Howells <dhowells@redhat.com>:
+  - Remove mnt_idmapped() check after removing mnt_idmapped() helper in earlier
+    patches.
 
 /* v4 */
-unchanged
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
 /* v5 */
 base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
----
- fs/notify/fanotify/fanotify_user.c | 2 +-
- fs/notify/inotify/inotify_user.c   | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 4ca13fb33c7c..c60b8cc1f94d 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -702,7 +702,7 @@ static int fanotify_find_path(int dfd, const char __user *filename,
+- Christoph Hellwig <hch@lst.de>:
+  - Use new file_userns_helper().
+---
+ fs/open.c | 29 ++++++++++++++++++++++-------
+ 1 file changed, 22 insertions(+), 7 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index a9f3a3b46ef1..ac26f0a363a0 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -401,6 +401,7 @@ static const struct cred *access_override_creds(void)
+ 
+ static long do_faccessat(int dfd, const char __user *filename, int mode, int flags)
+ {
++	struct user_namespace *mnt_userns;
+ 	struct path path;
+ 	struct inode *inode;
+ 	int res;
+@@ -441,7 +442,8 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
+ 			goto out_path_release;
  	}
  
- 	/* you can only watch an inode if you have read permissions on it */
--	ret = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
-+	ret = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
- 	if (ret) {
- 		path_put(path);
- 		goto out;
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index 18e7024207a9..cecff22549d7 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -31,6 +31,7 @@
- #include <linux/wait.h>
- #include <linux/memcontrol.h>
- #include <linux/security.h>
-+#include <linux/mount.h>
+-	res = inode_permission(&init_user_ns, inode, mode | MAY_ACCESS);
++	mnt_userns = mnt_user_ns(path.mnt);
++	res = inode_permission(mnt_userns, inode, mode | MAY_ACCESS);
+ 	/* SuS v2 requires we report a read only fs too */
+ 	if (res || !(mode & S_IWOTH) || special_file(inode->i_mode))
+ 		goto out_path_release;
+@@ -489,6 +491,7 @@ SYSCALL_DEFINE2(access, const char __user *, filename, int, mode)
  
- #include "inotify.h"
- #include "../fdinfo.h"
-@@ -352,7 +353,7 @@ static int inotify_find_inode(const char __user *dirname, struct path *path,
+ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ {
++	struct user_namespace *mnt_userns;
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+@@ -497,7 +500,8 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
  	if (error)
- 		return error;
- 	/* you can only watch an inode if you have read permissions on it */
--	error = inode_permission(&init_user_ns, path->dentry->d_inode, MAY_READ);
-+	error = inode_permission(mnt_user_ns(path->mnt), path->dentry->d_inode, MAY_READ);
- 	if (error) {
- 		path_put(path);
- 		return error;
+ 		goto out;
+ 
+-	error = inode_permission(&init_user_ns, path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
++	mnt_userns = mnt_user_ns(path.mnt);
++	error = inode_permission(mnt_userns, path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
+ 	if (error)
+ 		goto dput_and_out;
+ 
+@@ -515,6 +519,7 @@ SYSCALL_DEFINE1(chdir, const char __user *, filename)
+ 
+ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+ {
++	struct user_namespace *mnt_userns;
+ 	struct fd f = fdget_raw(fd);
+ 	int error;
+ 
+@@ -526,7 +531,8 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+ 	if (!d_can_lookup(f.file->f_path.dentry))
+ 		goto out_putf;
+ 
+-	error = inode_permission(&init_user_ns, file_inode(f.file), MAY_EXEC | MAY_CHDIR);
++	mnt_userns = file_user_ns(f.file);
++	error = inode_permission(mnt_userns, file_inode(f.file), MAY_EXEC | MAY_CHDIR);
+ 	if (!error)
+ 		set_fs_pwd(current->fs, &f.file->f_path);
+ out_putf:
+@@ -537,6 +543,7 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+ 
+ SYSCALL_DEFINE1(chroot, const char __user *, filename)
+ {
++	struct user_namespace *mnt_userns;
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+@@ -545,7 +552,8 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
+ 	if (error)
+ 		goto out;
+ 
+-	error = inode_permission(&init_user_ns, path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
++	mnt_userns = mnt_user_ns(path.mnt);
++	error = inode_permission(mnt_userns, path.dentry->d_inode, MAY_EXEC | MAY_CHDIR);
+ 	if (error)
+ 		goto dput_and_out;
+ 
+@@ -570,6 +578,7 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
+ 
+ int chmod_common(const struct path *path, umode_t mode)
+ {
++	struct user_namespace *mnt_userns;
+ 	struct inode *inode = path->dentry->d_inode;
+ 	struct inode *delegated_inode = NULL;
+ 	struct iattr newattrs;
+@@ -585,7 +594,8 @@ int chmod_common(const struct path *path, umode_t mode)
+ 		goto out_unlock;
+ 	newattrs.ia_mode = (mode & S_IALLUGO) | (inode->i_mode & ~S_IALLUGO);
+ 	newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+-	error = notify_change(&init_user_ns, path->dentry, &newattrs, &delegated_inode);
++	mnt_userns = mnt_user_ns(path->mnt);
++	error = notify_change(mnt_userns, path->dentry, &newattrs, &delegated_inode);
+ out_unlock:
+ 	inode_unlock(inode);
+ 	if (delegated_inode) {
+@@ -646,6 +656,7 @@ SYSCALL_DEFINE2(chmod, const char __user *, filename, umode_t, mode)
+ 
+ int chown_common(const struct path *path, uid_t user, gid_t group)
+ {
++	struct user_namespace *mnt_userns;
+ 	struct inode *inode = path->dentry->d_inode;
+ 	struct inode *delegated_inode = NULL;
+ 	int error;
+@@ -656,6 +667,10 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	uid = make_kuid(current_user_ns(), user);
+ 	gid = make_kgid(current_user_ns(), group);
+ 
++	mnt_userns = mnt_user_ns(path->mnt);
++	uid = kuid_from_mnt(mnt_userns, uid);
++	gid = kgid_from_mnt(mnt_userns, gid);
++
+ retry_deleg:
+ 	newattrs.ia_valid =  ATTR_CTIME;
+ 	if (user != (uid_t) -1) {
+@@ -676,7 +691,7 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 	inode_lock(inode);
+ 	error = security_path_chown(path, uid, gid);
+ 	if (!error)
+-		error = notify_change(&init_user_ns, path->dentry, &newattrs, &delegated_inode);
++		error = notify_change(mnt_userns, path->dentry, &newattrs, &delegated_inode);
+ 	inode_unlock(inode);
+ 	if (delegated_inode) {
+ 		error = break_deleg_wait(&delegated_inode);
+@@ -1137,7 +1152,7 @@ struct file *filp_open(const char *filename, int flags, umode_t mode)
+ {
+ 	struct filename *name = getname_kernel(filename);
+ 	struct file *file = ERR_CAST(name);
+-	
++
+ 	if (!IS_ERR(name)) {
+ 		file = file_open_name(name, flags, mode);
+ 		putname(name);
 -- 
 2.30.0
 
