@@ -2,187 +2,374 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55C1C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 16:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D87C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84D942312A
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 16:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F50B2311B
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:07:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbhALQ5j (ORCPT
+        id S2392556AbhALRHQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 11:57:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:21286 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726113AbhALQ5j (ORCPT
+        Tue, 12 Jan 2021 12:07:16 -0500
+Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:44090
+        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390661AbhALRHP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 11:57:39 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10CGondv007647;
-        Tue, 12 Jan 2021 11:56:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=b+ac3jeEv5SLCCdbpBji9elosV82TGVn32zwP4hDzSY=;
- b=RNIvnFpRKlohMJ4s8AL6Ogq6JrxhfAkmR8m6ZYvO0yUZYgiU9awhem5oJqAwly7jDsTU
- 4TXuuWdEPD05dTISvYAkEPTopiQsqwFn6HmEeK6oe8DA+2VwqTMZXfwnlQso8CitOxKa
- C5e6tu6GTCt62OZEN6VyQNT/iiscfWaKoC2E4JCt1fY1yIdOqm4iJmzGvXO5xpDGQk+K
- 25rQ4MD81yKnV24PuqVq4BcnsNw22rIlTgU5EVsAnvT3YeN6/q8NR93C41kiNXuqffq9
- TfJUCf4OM7OFj465RyZRsmwGhm0brHLeM24Y+z8ZtNljM7ZqCGRM83+egn6fKYW30YyR yQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 361fn883cq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Jan 2021 11:56:56 -0500
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10CGpaWp012126;
-        Tue, 12 Jan 2021 11:56:54 -0500
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 361fn883bw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Jan 2021 11:56:53 -0500
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10CGuptv018744;
-        Tue, 12 Jan 2021 16:56:51 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma03ams.nl.ibm.com with ESMTP id 35y447uwfc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 12 Jan 2021 16:56:51 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10CGuiI629032802
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 12 Jan 2021 16:56:44 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 134FB4C044;
-        Tue, 12 Jan 2021 16:56:49 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D1A1E4C04E;
-        Tue, 12 Jan 2021 16:56:46 +0000 (GMT)
-Received: from sig-9-65-221-171.ibm.com (unknown [9.65.221.171])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Jan 2021 16:56:46 +0000 (GMT)
-Message-ID: <3a163a1839ff469acfa8dbb889c1b0889ec771bc.camel@linux.ibm.com>
-Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with
- kernel measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Maurizio Drocco <maurizio.drocco@ibm.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Date:   Tue, 12 Jan 2021 11:56:45 -0500
-In-Reply-To: <20210112153534.GA4146@sequoia>
-References: <20200708154116.3199728-1-sashal@kernel.org>
-         <20200708154116.3199728-3-sashal@kernel.org>
-         <1594224793.23056.251.camel@linux.ibm.com>
-         <20200709012735.GX2722994@sasha-vm>
-         <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
-         <20201211031008.GN489768@sequoia>
-         <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
-         <20201214164222.GK4951@sequoia> <20210112153534.GA4146@sequoia>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-12_12:2021-01-12,2021-01-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1031
- malwarescore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0
- suspectscore=0 priorityscore=1501 spamscore=0 impostorscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101120095
+        Tue, 12 Jan 2021 12:07:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1610471188; bh=4wRdEm+vP4GuMx3if3DWgHHYx7cbJiQBI+RqS7HpXXY=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Nsrdky9f+R00Nk0gk2HXPyG93ctpZ4lBYndTFpB+YYZzMzMm23TOLKXfUmQbB4ffo2FK/sVR9m6cAzzANCwuQm5yPh855o4qsT9ke3SEX3b02qDNL9mwwxv1vrQYMCUL5ZvglXy2zOG68JkY0pSU8skM7dy7HVP0It97S3sYS82fsBK5fvBB8BaIvyLZMCpKs8DrMO5Xt+JhjpQ1EjJHHV4vq0NcHoInMaVt9gHX2e19DGMy9DV0gnMqrzxe5q/C42qvdxnnEzFWh7kHYRnITHQV9a/tyPxQyzScnzItt8BIy1Utxr3UGiWA+/53jQV/a9UtNqjenDh8bftv5oo0gw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1610471188; bh=KXbCPBql+oqg3TvjE5J2RR+ggdV9JUtU0TuzITKtdJs=; h=Subject:To:From:Date:From:Subject; b=QgSejH9rjaiOoNhnv47eqLYF78YaFLnUiFw91/tXgLvTgcRBe5jVunimtUl9WJW3T1jrXM1oN0Uk2uEYBUTOBDAKindNtL2bNKgjgBWH5K54rskEnHxvXTDeSIw7RGKDR+KrjmlHxiom9GV75nMGm58RU1eNAyeViekAhjVwkAuKaGZplw8AgTFSSDhnpo9ol6ODms1/dvGB0BC471DdJI+1q1Z33fVSh02scYgQV/PwnVTFy6vX9sujxhL9Gb6J9tgppZYRVofJXbaus55Xq6HF1J5vbOUyGlb63o2aZiDfnEirwR2sFjdqnFHLjXoYMc6kMp/GoNbxMAepdR6+Ag==
+X-YMail-OSG: Grr4NF0VM1nlxFvex_erjvmKWNSyhZ.xEQBQb7fBRF903B.TsFkXF3HD2zyFIeR
+ Nkpf1xSXmmrCwHWuVzF1ZAdSPKVk4m963_CNungskIZ49Lrb4MpDajFrduoKzRjk0Y75bhvDy5jQ
+ QHSJBW1_8OflWz2PxL.Xt3M0ijT5czLyXteJ._8ojgBW8GG90zk_EIblG3rOrVfsemeHc4.x5oc8
+ n8.qOAB0YN_wM2s2crEAYO1bcMK10m7y9e39K3uLMdwjvtDbLZCV0zsNmMLqJuM01k.h7ir_H.HF
+ LjuvHkToYFwlyG4IPUjSRoPsm09M3l2xeum1v.0ieDYI97J8FU0Y3_SsAiVfdKXzqAcqTa45J7CC
+ IjUrDyXYrWuzPpTeUaKVkicbcwLxWoi46En4VjzHl7lpKUNO_W6wJglxGNB_oTbwlITchaLMDHcG
+ ah1cNbFTVd8allHzOyTJZPU4qkZ8ZZZ7bKucQWytueiyBlKfjuorHOa8KmOO1xu3gWRQajx0jgcy
+ sdgnl1Lc6Q3z_97otin_k57Vn4vMruG5Yt5fA5kk.5wzRJFK7tLyGebey7EnOEIwQkC3zMQ7UJrB
+ MZKDEOxekFD0NJ9ypTSi6VfFSdwf4gp3gDhsvjD5Gn.fxKqOQcRqmI_cTCp6gP0vL6AKyDO3aSzV
+ UzDGrJ3JtZQ_gBRMzluSTqK8MZMUKj3i8J7L5GoRd7Hup0UGBqLOXI7__YNZQBneCmE92wexnoKf
+ Eh4cH92FDPfy8SiMNutkzIkjBo8dP6F0Fs1JiQU4LPohueFLgOlLQdAhCliSZdX21OhyCMHahas.
+ VojDU34Pj5Z5aPBXCBMrAm7A5Cf.h4KrNyNOQSuDbseW9yUuzwKEgxJExxeEtlvxkpA3paHEhSYc
+ 0rtoxRGa28v2JH3TG2VrAbSkCgxulZxuhdqyEugU1ZXAjF_p7BgRsS_2c2IkeCIms2tc0sKUx4ZC
+ 0WPwBkICaaKM1a4t.13WXpKwFxfpgvUAPZchHKScniHwruJoMdMK8IGkLao_brU3sD6YsDC5GXoC
+ 10NolcFol47g_HaAExsxNW5DbepoydbvfIH0TG.p_JEmfIw0lAsvQzZPcCXe2kLuHoc8Nf2sG0.K
+ 4_2fteD4_I4uCXIVvBG71U5sbxHjhVfaFMicOwsawovx9ijkLqjQVE6CvmK7ZtWjISM9woInI2Oc
+ CaFiIfoxEi0Jw5GD2.fKPH5GwFTjQdCEjcXTptCCVJE2R9SIrfdOjtJRZ.OOC2agVw5MntLvQUmu
+ qDJuchS5Gy0eWQEYSEK9Guifi0T4CtKDqORWqWsEZ4yYJG_RxuSDBpn1dvyfknf_6QLMINsUigtR
+ jszUDzxb8P6.Xbe1vbDoYo..WzY8At6uQ12EzZstctqVtaedMEjgU52zkUO1xUd4sDVMXVdQDU7D
+ M__6S6kuEn_MKlMMiyqD_mjPJTfmvn4UdwvfPjDOfb3XXXBqMZXBTSOLbnoie4WkT_e5TEyYYmA9
+ HxD8Z0MqdH.mmHMuy9hHZoOl3joh_YMIth2AXEXAjJvVhaMuvjPVpoSTk3ML5yb5vkT4d1Hdq3EE
+ O9EuKATjwRERN1H_EaEUrNYDIjcUo2ME.sLMgWTHbVZlXWoiKoRgTqB7oUyufdrpBfahK0VoJt3d
+ OMG_tR.S882zbJw01riT_9nIwnZpIURYNgGLDk_XZQiUAP33WbSonqyAs2fnGPYjUQKw0BbzUchF
+ DIT9et0.JquCTuFs7svQ_xYt19JDIvKdMnD6hJa196V54N8F.D5J.U85h8STQQXMlZI8bssXNoGN
+ 9dSz9MNZh4zHO6OJBTAS5af0LPycICNl1rx5Qm4ES6q4RKhqf0SrOwXbDTYUJxn36FwhGhXP5Dn9
+ QZxknYtHQJ6YJV6dHcMMBiFVaeb869qHA2dE7KlvtVfzebcdPPS.Eg9Fg.LdvMYZ8unA2kG3wu7t
+ JcpL.DqxbSpvqu5Qwvmls37lYXFxOJMC05Z8Xr0RFbWCN_ZOrEOy4Hd1T_3.fd3nBU.PXR3oFw7s
+ Gjb1iWBMu46MPacekkpIclktBCHdlgX3ZyivsJBzg8jKNKoLzOqag8DDPUI59KpV4mbfRmEZGDQ0
+ TlzUjS1HT4Hw9b5IcQ2z8ZnNbubvKRkJhnuuBaeTLhUZWRsoQjwisNyUwl3rPHtlwpWU.gco5bv1
+ cnNJfH46yvS_mtSpHikjBKjyLc_2aPJdDRB1WDr4V1AM1mdvo0frilzoyIXATt72iStuDxC.8yXo
+ moJvabaATQekQMkNJcXdzc33sXxEUlQRsNVmPSDTIdr1CCKwtDTNHf_I6Fdd8D5ujFabOZZKj_Uq
+ MaWNb0Lh8n9DlNDZMPXISyE6EXsbxfQ37RW8b6RQp7qvF4n78Z_cQCcHVrKkbF.DsfIMsz7_lmm1
+ q.Gt6saEa9ReNacY2T_lzM00m7Z5XSQYlRk8GI2mocPRa2_Ba_2C_MIMghrEc8StioBSwrPPQmZs
+ l_WOSq78NN5SZeleGWvFG9auBUgrPqfViG4DWMf2yVmMa2vL2ERsn9TtV5.KW1lm_xuzm4eR3Sx2
+ xX0ldZwy8t3cVWA6z11085qpCasVgrjN7gQunYrFrV1D64_Wc_sngKAzTsA6c2948LyMAID1SGy2
+ xoRxdIGIZuuU_xm0sQvhRdanrPxy1Gou8Bjd89GxX2FBFtGqeu0dCaFzjtx_d1.8TLpa3AzwoUb5
+ yn2dCXiPJBNugjcixbSIbMglOxqneDUaYy7e.WIbnBQwsFfAe24fz0lIWbhhVQZy9M73TuKspHg.
+ LrkZM__GndO6VAg4HFhgT6Dalbvi2jK0TCpH9SQv9BJshzGuoL4V0z1.h6TzrDyFPwLAddAIRsnO
+ gVPqFfhlVhshVxJ3oRMSFsA0HWpX3.tCFghtXMSfjMQC1HiOGffusjOTjJIqXwm0UoQQQDqDpHO9
+ GRwdvGv9E1ZGLXIb_zQj2LCL7sMA1mDovb2rUNkMlCAGyLf_bo9ZavSDwiiwiZOsWY.gMW3wk2o.
+ GBDoRev9z5qY6H1rFvC.YseAUJxC4ZdTDtNMMYvdXzeZQiyddQqiad7m2Ll4.U8TyMa9eQ.LlG3Q
+ IJ4ts09eZQCiICinSsdguUCPgH7D8KLtq1gnLULcyUPhMpaawP0QhN7EdmMNhiAoKCEhTudDYe9n
+ 3LnYIYnqSVvFHOXG1_XCREyjq6BJ_UQt1X8pFHjvwglSkpfa8xPgYszssVHeGTxl8CSUYPA0g.m4
+ s4oYbtYFMh_1oGDNGibw9Ugx.0DVnHXw_uHuvTCuaNaKfKF6abBoh8JlPd6QvcBSUo5PPD8fMjmH
+ uqDERsyeXYw7rjkN9E7jHmKp2wanDsI03DqxI.7D003tmEH.H1TpL4tfuJZiORZzykJHJv.gw8sQ
+ PFNRyVDOpQgeRSzgOEV7KxKperu1_P_Ds0BWjn87jAsOqrXtfjR2IOm4ET3Qc4cdO.I.Vy6Luft1
+ WMDtkVG6KtCgu7Iizw0w3UsxQ67.MHxwCcnhBlW06xl0Qi0D4Iv.2rNZMHs5eK_1jIyBG.70pVtP
+ NUEVz1u5pdi6G5bjJ9bE2Tdld001K3EL7zD4l
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Jan 2021 17:06:28 +0000
+Received: by smtp405.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 89f7a1b75bcc5a74b364c40da27ba0fe;
+          Tue, 12 Jan 2021 17:06:24 +0000 (UTC)
+Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a
+ separate page
+To:     pnagar@codeaurora.org
+Cc:     arnd@arndb.de, jmorris@namei.org, serge@hallyn.com,
+        paul@paul-moore.com, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-arch@vger.kernel.org,
+        psodagud@codeaurora.org, nmardana@codeaurora.org,
+        dsule@codeaurora.org, Joe Perches <joe@perches.com>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
+ <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com>
+ <dab6357acbd63edd53099d106d111bf4@codeaurora.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <e6bd9820-8b77-57fc-f318-9b928e4d951b@schaufler-ca.com>
+Date:   Tue, 12 Jan 2021 09:06:23 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
+MIME-Version: 1.0
+In-Reply-To: <dab6357acbd63edd53099d106d111bf4@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.17501 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Tyler,
+On 1/12/2021 1:36 AM, pnagar@codeaurora.org wrote:
+> On 2021-01-08 22:41, Casey Schaufler wrote:
+>> On 1/8/2021 1:49 AM, Preeti Nagar wrote:
+>>> The changes introduce a new security feature, RunTime Integrity Check=
 
-On Tue, 2021-01-12 at 09:35 -0600, Tyler Hicks wrote:
-> On 2020-12-14 10:42:24, Tyler Hicks wrote:
-> > On 2020-12-11 06:01:54, Mimi Zohar wrote:
-> > > On Thu, 2020-12-10 at 21:10 -0600, Tyler Hicks wrote:
-> > > > On 2020-11-29 08:17:38, Mimi Zohar wrote:
-> > > > > Hi Sasha,
-> > > > > 
-> > > > > On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
-> > > > > > On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
-> > > > > > >Hi Sasha,
-> > > > > > >
-> > > > > > >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
-> > > > > > >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
-> > > > > > >>
-> > > > > > >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
-> > > > > > >>
-> > > > > > >> Registers 8-9 are used to store measurements of the kernel and its
-> > > > > > >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
-> > > > > > >> should include them in the boot aggregate. Registers 8-9 should be
-> > > > > > >> only included in non-SHA1 digests to avoid ambiguity.
-> > > > > > >
-> > > > > > >Prior to Linux 5.8, the SHA1 template data hashes were padded before
-> > > > > > >being extended into the TPM.  Support for calculating and extending
-> > > > > > >the per TPM bank template data digests is only being upstreamed in
-> > > > > > >Linux 5.8.
-> > > > > > >
-> > > > > > >How will attestation servers know whether to include PCRs 8 & 9 in the
-> > > > > > >the boot_aggregate calculation?  Now, there is a direct relationship
-> > > > > > >between the template data SHA1 padded digest not including PCRs 8 & 9,
-> > > > > > >and the new per TPM bank template data digest including them.
-> > > > > > 
-> > > > > > Got it, I'll drop it then, thank you!
-> > > > > 
-> > > > > After re-thinking this over, I realized that the attestation server can
-> > > > > verify the "boot_aggregate" based on the quoted PCRs without knowing
-> > > > > whether padded SHA1 hashes or per TPM bank hash values were extended
-> > > > > into the TPM[1], but non-SHA1 boot aggregate values [2] should always
-> > > > > include PCRs 8 & 9.
-> > > > 
-> > > > I'm still not clear on how an attestation server would know to include
-> > > > PCRs 8 and 9 after this change came through a stable kernel update. It
-> > > > doesn't seem like something appropriate for stable since it requires
-> > > > code changes to attestation servers to handle the change.
-> > > > 
-> > > > I know this has already been released in some stable releases, so I'm
-> > > > too late, but perhaps I'm missing something.
-> > > 
-> > > The point of adding PCRs 8 & 9 only to non-SHA1 boot_aggregate values
-> > > was to avoid affecting existing attestation servers.  The intention was
-> > > when attestation servers added support for the non-sha1 boot_aggregate
-> > > values, they'd also include PCRs 8 & 9.  The existing SHA1
-> > > boot_aggregate value remains PCRs 0 - 7.
-> > 
-> > AFAIK, there's nothing that prevents the non-SHA1 TPM 2.0 PCR banks from
-> > being used even before v5.8, albeit with zero padded SHA1 digests.
-> > Existing attestation servers that already support that configuration are
-> > broken by this stable backport.
+>>> (RTIC), designed to protect Linux Kernel at runtime. The motivation
+>>> behind these changes is:
+>>> 1. The system protection offered by SE for Android relies on the
+>>> assumption of kernel integrity. If the kernel itself is compromised (=
+by
+>>> a perhaps as yet unknown future vulnerability), SE for Android securi=
+ty
+>>> mechanisms could potentially be disabled and rendered ineffective.
+>>> 2. Qualcomm Snapdragon devices use Secure Boot, which adds cryptograp=
+hic
+>>> checks to each stage of the boot-up process, to assert the authentici=
+ty
+>>> of all secure software images that the device executes.=C2=A0 However=
+, due to
+>>> various vulnerabilities in SW modules, the integrity of the system ca=
+n be
+>>> compromised at any time after device boot-up, leading to un-authorize=
+d
+>>> SW executing.
+>>
+>> It would be helpful if you characterized the "various vulnerabilities"=
 
-> To wrap up this thread, I think the last thing to address is if this
-> commit should be reverted from stable kernels? Do you have any thoughts
-> about that, Mimi?
-> 
-> > 
-> > > To prevent this or something similar from happening again, what should
-> > > have been the proper way of including PCRs 8 & 9?
-> > 
-> > I don't think that commits like 6f1a1d103b48 ("ima: Switch to
-> > ima_hash_algo for boot aggregate") and 20c59ce010f8 ("ima: extend
-> > boot_aggregate with kernel measurements") should be backported to
-> > stable.
-> > 
-> > Including PCRs 8 and 9 definitely makes sense to include in the
-> > boot_aggregate value but limiting such a change to "starting in 5.8",
-> > rather than "starting in 5.8 and 5.4.82", is the safer approach when
-> > attestation server modifications are required.
+>> rather than simply asserting their existence. This would allow the rev=
+iewer
+>> to determine if the proposed patch addresses the issue.
+>>
+> There might not currently be vulnerabilities, but the system is meant m=
+ore
+> specifically to harden valuable assets against future compromises. The =
+key
+> value add is a third party independent entity keeping a watch on crucia=
+l
+> kernel assets.
 
-As I recall, commit 6f1a1d103b48 ("ima: Switch to ima_hash_algo for
-boot aggregate") was backported to address TPMs without SHA1 support,
-as reported by Jerry.
+Could you characterize the potential vulnerabilities, then?
+Seriously, there's a gazillion ways data integrity can be
+compromised. Which of those are addressed?
 
-Mimi
+>
+>>>
+>>> The feature's idea is to move some sensitive kernel structures to a
+>>> separate page and monitor further any unauthorized changes to these,
+>>> from higher Exception Levels using stage 2 MMU. Moving these to a
+>>> different page will help avoid getting page faults from un-related da=
+ta.
+>>
+>> I've always been a little slow when it comes to understanding the
+>> details of advanced memory management facilities. That's part of
+>> why I work in access control. Could you expand this a bit, so that
+>> someone who doesn't already know how your stage 2 MMU works might
+>> be able to evaluate what you're doing here.
+>>
+> Sure, will include more details. The mechanism we have been working on
+> removes the write permissions for HLOS in the stage 2 page tables for
+> the regions to be monitored, such that any modification attempts to the=
+se
+> will lead to faults being generated and handled by handlers. If the
+> protected assets are moved to a separate page, faults will be generated=
 
+> corresponding to change attempts to these assets only. If not moved to =
+a
+> separate page, write attempts to un-related data which is present on th=
+e
+> monitored pages will also be generated.
 
+Thanks.
 
+>
+>>> Using this mechanism, some sensitive variables of the kernel which ar=
+e
+>>> initialized after init or are updated rarely can also be protected fr=
+om
+>>> simple overwrites and attacks trying to modify these.
+>>
+>> How would this interact with or complement __read_mostly?
+>>
+> Currently, the mechanism we are working on developing is
+> independent of __read_mostly. This is something we can look more into
+> while working further on the mechanism.
+
+Please either integrate the two or explain how they differ.
+It appears that you haven't considered how you might exploit
+or expand the existing mechanism.
+
+>
+>>>
+>>> Currently, the change moves selinux_state structure to a separate pag=
+e. In
+>>> future we plan to move more security-related kernel assets to this pa=
+ge to
+>>> enhance protection.
+>>
+>> What's special about selinux_state? What about the SELinux policy?
+>> How would I, as maintainer of the Smack security module, know if
+>> some Smack data should be treated the same way?
+>>
+> We are investigating more of the SELinux related and other kernel asset=
+s
+> which can be included in the protection. The basis of selinux_state is
+> because disabling of SELinux is one of the common attack vectors in
+> Android. We understand any kernel assets, unauthorized changes to which=
+
+> can give way to security or any other type of attack can be considered =
+to
+> be a potential asset to be added to the protection.
+
+Yeah, I get that. It looks like this could be a useful mechanism
+beyond SELinux. No point in hoarding it.
+
+>
+>>>
+>>> We want to seek your suggestions and comments on the idea and the cha=
+nges
+>>> in the patch.
+>>>
+>>> Signed-off-by: Preeti Nagar <pnagar@codeaurora.org>
+>>> ---
+>>> =C2=A0include/asm-generic/vmlinux.lds.h | 10 ++++++++++
+>>> =C2=A0include/linux/init.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 ++++
+>>> =C2=A0security/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++++++++++
+>>> =C2=A0security/selinux/hooks.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 4 ++++
+>>> =C2=A04 files changed, 28 insertions(+)
+>>>
+>>> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/=
+vmlinux.lds.h
+>>> index b2b3d81..158dbc2 100644
+>>> --- a/include/asm-generic/vmlinux.lds.h
+>>> +++ b/include/asm-generic/vmlinux.lds.h
+>>> @@ -770,6 +770,15 @@
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *(.scommon)=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>
+>>> +#ifdef CONFIG_SECURITY_RTIC
+>>> +#define RTIC_BSS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> +=C2=A0=C2=A0=C2=A0 . =3D ALIGN(PAGE_SIZE);=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> +=C2=A0=C2=A0=C2=A0 KEEP(*(.bss.rtic))=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> +=C2=A0=C2=A0=C2=A0 . =3D ALIGN(PAGE_SIZE);
+>>> +#else
+>>> +#define RTIC_BSS
+>>> +#endif
+>>> +
+>>> =C2=A0/*
+>>> =C2=A0 * Allow archectures to redefine BSS_FIRST_SECTIONS to add extr=
+a
+>>> =C2=A0 * sections to the front of bss.
+>>> @@ -782,6 +791,7 @@
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 . =3D ALIGN(bss_align);=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 .bss : AT(ADDR(.bss) - LOAD_OFFSET) {=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BSS_FIRST_SECTIONS=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 RTIC_BSS=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 . =3D ALIGN(PAGE_SIZ=
+E);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *(.bss..page_aligned=
+)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 . =3D ALIGN(PAGE_SIZ=
+E);=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 \
+>>> diff --git a/include/linux/init.h b/include/linux/init.h
+>>> index 7b53cb3..617adcf 100644
+>>> --- a/include/linux/init.h
+>>> +++ b/include/linux/init.h
+>>> @@ -300,6 +300,10 @@ void __init parse_early_options(char *cmdline);
+>>> =C2=A0/* Data marked not to be saved by software suspend */
+>>> =C2=A0#define __nosavedata __section(".data..nosave")
+>>>
+>>> +#ifdef CONFIG_SECURITY_RTIC
+>>> +#define __rticdata=C2=A0 __section(".bss.rtic")
+>>> +#endif
+>>> +
+>>> =C2=A0#ifdef MODULE
+>>> =C2=A0#define __exit_p(x) x
+>>> =C2=A0#else
+>>> diff --git a/security/Kconfig b/security/Kconfig
+>>> index 7561f6f..66b61b9 100644
+>>> --- a/security/Kconfig
+>>> +++ b/security/Kconfig
+>>> @@ -291,5 +291,15 @@ config LSM
+>>>
+>>> =C2=A0source "security/Kconfig.hardening"
+>>>
+>>> +config SECURITY_RTIC
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "RunTime Integrity C=
+heck feature"
+>>
+>> Shouldn't this depend on the architecture(s) supporting the
+>> feature?
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 RTIC(RunTime Integrity Check) feature=
+ is to protect Linux kernel
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 at runtime. This relocates some of th=
+e security sensitive kernel
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 structures to a separate page aligned=
+ special section.
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This is to enable monitoring and prot=
+ection of these kernel assets
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 from a higher exception level(EL) aga=
+inst any unauthorized changes.
+>>
+>> "if you are unsure ..."
+>>
+> We just thought keeping it generic might be a better idea, thus, moved =
+the
+> changes to generic files from arch-specific files and thus, kept config=
+ also
+> independent of the arch. Can surely make this config arch dependent if =
+that is
+> a better approach?
+
+It's kind of silly to enable this if the hardware doesn't
+support it, isn't it?
+
+>
+>>> +
+>>> =C2=A0endmenu
+>>>
+>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>> index 6b1826f..7add17c 100644
+>>> --- a/security/selinux/hooks.c
+>>> +++ b/security/selinux/hooks.c
+>>> @@ -104,7 +104,11 @@
+>>> =C2=A0#include "audit.h"
+>>> =C2=A0#include "avc_ss.h"
+>>>
+>>> +#ifdef CONFIG_SECURITY_RTIC
+>>> +struct selinux_state selinux_state __rticdata;
+>>> +#else
+>>> =C2=A0struct selinux_state selinux_state;
+>>> +#endif
+>>
+>> Shouldn't the __rticdata tag be applied always, and its
+>> definition take care of the cases where it doesn't do anything?
+>>
+> Will update this change in the next version of the patch. Thank you.
+
+I saw that several other people had the same comment.
+
+>
+>>>
+>>> =C2=A0/* SECMARK reference count */
+>>> =C2=A0static atomic_t selinux_secmark_refcount =3D ATOMIC_INIT(0);
 
