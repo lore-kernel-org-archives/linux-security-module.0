@@ -2,172 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C51B1C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 13:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C627FC43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 14:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F99923109
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 13:52:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84EE722D73
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 14:59:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbhALNwE (ORCPT
+        id S1728583AbhALO7Y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 08:52:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56994 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727670AbhALNwD (ORCPT
+        Tue, 12 Jan 2021 09:59:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58559 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727670AbhALO7Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 08:52:03 -0500
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BE6C061794
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 05:51:23 -0800 (PST)
-Received: by mail-ed1-x52e.google.com with SMTP id g21so245345edy.0
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 05:51:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gR76E+hgdNRlJHpowh3xLAsehspUfAyQ4NgaYNaNiqI=;
-        b=XSibZhFRvJZDohRMzV6+t73OXFgW6De8K3ufGffee+z31Ye2gR/Ilr01EgaJEmnlwL
-         ZvpXtsqyg8hZMyFXUvtYWyDBrbSkBOoa/mJuQYQckbFEHWup5ZBxuA+Obs8dgGlQiShn
-         S6y1oYFJWXDD7jtkLOY1+PBoYoXaeZ5uiAlEpqgxA1hulebf1LeMSebaZhUw9qisGPUI
-         QYJK+AwC9hk98Qoo4vzmGHmHXJGf7fsEopq1aWLfeL7PD3vZu3ESJrxjWxrMYf+PcEIv
-         tJtfkw6iOT2EwqRpB2ydI4SuETItMfTbuVYTLDoae0FS+uCpP1GKxTdwIlVT163ocGk6
-         72fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gR76E+hgdNRlJHpowh3xLAsehspUfAyQ4NgaYNaNiqI=;
-        b=a5dFd0vRDbb6+s0Ilh4+hhu/HHaTKGC93f8IiXxL+EeM0oqxnM6p6trL2bIRn+RO+m
-         pdaAyLtLMJf1Py+EO/6z0kIPOImX+Wx1EnIdR4iykemgiWaFKgI5zvjefrUlDEFd0kRl
-         vSovSVcXP51zaFN3wylbN++8+e19GJdqDpY7BHcowa8mMPcYeR72OSiuzTeIOr0DFSuU
-         hdyE256PRg9hRKVq0CyvzSHtI7F+g/QIU9eFnAQFLX0PFAohsz1VERGjp+8QRbcAEMjC
-         W50/z4QIyQ3KUquv/1l70gDvR0vNRiobO4Cq5GTo6cKKWmIv74EtPpJ+QRKTgMQp3lOI
-         MQTg==
-X-Gm-Message-State: AOAM5311T11YE4SIpSKP//nrp8n3N1UC3fzYQLugFwCDdvXUO1xcEWMN
-        JUzaGX8BGHPoww1Dxr/UcVdZskgH+UFuTSQ6JhwN
-X-Google-Smtp-Source: ABdhPJx605NSGp4j1uinNyJCwVFX1VMEUon54nemEZnMArRth7X4vUuuw5rSwz7bOLn+xqkTJxC/1/vEaRcM7/ExqxM=
-X-Received: by 2002:aa7:cd63:: with SMTP id ca3mr3528729edb.164.1610459481682;
- Tue, 12 Jan 2021 05:51:21 -0800 (PST)
+        Tue, 12 Jan 2021 09:59:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610463478;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XlUm2JYDUqrCFaqRZjf68KX2pnc8iKtDpFI9TKkiM18=;
+        b=CivmYjR8C9bdFnQin+wimDMaVBgo7eGgcZgSTakvN/g5DOR6S25Aj2TZoL7mc5eImFRus/
+        VXqxSDVN8eghU+MeG4RZSZUNXbFK4AB3vEbUBAhet+kcOavK/PkTRA89+jq9df2d95kE7r
+        O9+OBrS3gbXCg+RTiTqVBCRrCxsFO/0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-323-mlPyzESvNF2x4AJowppFGg-1; Tue, 12 Jan 2021 09:57:54 -0500
+X-MC-Unique: mlPyzESvNF2x4AJowppFGg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3DD8803F4C;
+        Tue, 12 Jan 2021 14:57:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9EA5D6B540;
+        Tue, 12 Jan 2021 14:57:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
+References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com> <20200916004927.64276-1-eric.snowberg@oracle.com> <1360578.1607593748@warthog.procyon.org.uk>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
+        mpe@ellerman.id.au, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
 MIME-Version: 1.0
-References: <20201118102342.154277-1-omosnace@redhat.com>
-In-Reply-To: <20201118102342.154277-1-omosnace@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 12 Jan 2021 08:51:10 -0500
-Message-ID: <CAHC9VhQWbiqi_C-iw7i=qiz8gSikW6LM-EufNsPjs-pU3ABHcg@mail.gmail.com>
-Subject: Re: [PATCH] vfs: fix fsconfig(2) LSM mount option handling for btrfs
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 12 Jan 2021 14:57:39 +0000
+Message-ID: <2442460.1610463459@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Nov 18, 2020 at 5:23 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> When SELinux security options are passed to btrfs via fsconfig(2) rather
-> than via mount(2), the operation aborts with an error. What happens is
-> roughly this sequence:
->
-> 1. vfs_parse_fs_param() eats away the LSM options and parses them into
->    fc->security.
-> 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
->    nothing to btrfs.
-> [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
->  that for simplicity]
-> 3. btrfs calls security_sb_set_mnt_opts() with empty options.
-> 4. vfs_get_tree() then calls its own security_sb_set_mnt_opts() with the
->    options stashed in fc->security.
-> 5. SELinux doesn't like that different options were used for the same
->    superblock and returns -EINVAL.
->
-> In the case of mount(2), the options are parsed by
-> legacy_parse_monolithic(), which skips the eating away of security
-> opts because of the FS_BINARY_MOUNTDATA flag, so they are passed to the
-> FS via ctx->legacy_data. The second call to security_sb_set_mnt_opts()
-> (from vfs_get_tree()) now passes empty opts, but the non-empty -> empty
-> sequence is allowed by SELinux for the FS_BINARY_MOUNTDATA case.
->
-> It is a total mess, but the only sane fix for now seems to be to skip
-> processing the security opts in vfs_parse_fs_param() if the fc has
-> legacy opts set AND the fs specfies the FS_BINARY_MOUNTDATA flag. This
-> combination currently matches only btrfs and coda. For btrfs this fixes
-> the fsconfig(2) behavior, and for coda it makes setting security opts
-> via fsconfig(2) fail the same way as it would with mount(2) (because
-> FS_BINARY_MOUNTDATA filesystems are expected to call the mount opts LSM
-> hooks themselves, but coda never cared enough to do that). I believe
-> that is an acceptable state until both filesystems (or at least btrfs)
-> are converted to the new mount API (at which point btrfs won't need to
-> pretend it takes binary mount data any more and also won't need to call
-> the LSM hooks itself, assuming it will pass the fc->security information
-> properly).
->
-> Note that we can't skip LSM opts handling in vfs_parse_fs_param() solely
-> based on FS_BINARY_MOUNTDATA because that would break NFS.
->
-> See here for the original report and reproducer:
-> https://lore.kernel.org/selinux/c02674c970fa292610402aa866c4068772d9ad4e.camel@btinternet.com/
->
-> Reported-by: Richard Haines <richard_c_haines@btinternet.com>
-> Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  fs/fs_context.c | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
+Eric Snowberg <eric.snowberg@oracle.com> wrote:
 
-What do the VFS folks think about this patch?  It has been sitting for
-a couple of months now without any real comment and it would be nice
-to get some initial feedback on this as it fixes a real problem.
+> > On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> wrote:
+> >=20
+> > Eric Snowberg <eric.snowberg@oracle.com> wrote:
+> >=20
+> >> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_G=
+UID
+> >> is found, it is added as an asymmetrical key to the .blacklist keyring.
+> >> Anytime the .platform keyring is used, the keys in the .blacklist keyr=
+ing
+> >> are referenced, if a matching key is found, the key will be rejected.
+> >=20
+> > Ummm...  Why this way and not as a blacklist key which takes up less sp=
+ace?
+> > I'm guessing that you're using the key chain matching logic.  We really=
+ only
+> > need to blacklist the key IDs.
+>=20
+> I implemented it this way so that certs in the dbx would only impact=20
+> the .platform keyring. I was under the impression we didn=E2=80=99t want =
+to have=20
+> Secure Boot UEFI db/dbx certs dictate keyring functionality within the ke=
+rnel
+> itself. Meaning if we have a matching dbx cert in any other keyring (buil=
+tin,
+> secondary, ima, etc.), it would be allowed. If that is not how you=E2=80=
+=99d like to=20
+> see it done, let me know and I=E2=80=99ll make the change.
 
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index 2834d1afa6e80..cfc5ee2e381ef 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -106,12 +106,28 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
->         if (ret != -ENOPARAM)
->                 return ret;
->
-> -       ret = security_fs_context_parse_param(fc, param);
-> -       if (ret != -ENOPARAM)
-> -               /* Param belongs to the LSM or is disallowed by the LSM; so
-> -                * don't pass to the FS.
-> -                */
-> -               return ret;
-> +       /*
-> +        * In the legacy+binary mode, skip the security_fs_context_parse_param()
-> +        * call and let the legacy handler process also the security options.
-> +        * It will format them into the monolithic string, where the FS can
-> +        * process them (with FS_BINARY_MOUNTDATA it is expected to do it).
-> +        *
-> +        * Currently, this matches only btrfs and coda. Coda is broken with
-> +        * fsconfig(2) anyway, because it does actually take binary data. Btrfs
-> +        * only *pretends* to take binary data to work around the SELinux's
-> +        * no-remount-with-different-options check, so this allows it to work
-> +        * with fsconfig(2) properly.
-> +        *
-> +        * Once btrfs is ported to the new mount API, this hack can be reverted.
-> +        */
-> +       if (fc->ops != &legacy_fs_context_ops || !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
-> +               ret = security_fs_context_parse_param(fc, param);
-> +               if (ret != -ENOPARAM)
-> +                       /* Param belongs to the LSM or is disallowed by the LSM;
-> +                        * so don't pass to the FS.
-> +                        */
-> +                       return ret;
-> +       }
->
->         if (fc->ops->parse_param) {
->                 ret = fc->ops->parse_param(fc, param);
-> --
-> 2.26.2
+I wonder if that is that the right thing to do.  I guess this is a policy
+decision and may depend on the particular user.
 
--- 
-paul moore
-www.paul-moore.com
+> > Also, what should happen if a revocation cert rejected by the blacklist?
+>=20
+> I=E2=80=99m not sure I understand the question. How would it be rejected?
+
+The SHA256 of a revocation cert being loaded could match an
+already-blacklisted SHA256 sum, either compiled in or already loaded from
+UEFI.
+
+David
+
