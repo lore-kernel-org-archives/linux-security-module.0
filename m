@@ -2,113 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C627FC43381
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 14:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A031C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 15:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84EE722D73
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 14:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F12123132
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 15:36:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbhALO7Y (ORCPT
+        id S2391522AbhALPgp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 09:59:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58559 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727670AbhALO7Y (ORCPT
+        Tue, 12 Jan 2021 10:36:45 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:42098 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391460AbhALPgp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 09:59:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610463478;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XlUm2JYDUqrCFaqRZjf68KX2pnc8iKtDpFI9TKkiM18=;
-        b=CivmYjR8C9bdFnQin+wimDMaVBgo7eGgcZgSTakvN/g5DOR6S25Aj2TZoL7mc5eImFRus/
-        VXqxSDVN8eghU+MeG4RZSZUNXbFK4AB3vEbUBAhet+kcOavK/PkTRA89+jq9df2d95kE7r
-        O9+OBrS3gbXCg+RTiTqVBCRrCxsFO/0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-mlPyzESvNF2x4AJowppFGg-1; Tue, 12 Jan 2021 09:57:54 -0500
-X-MC-Unique: mlPyzESvNF2x4AJowppFGg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C3DD8803F4C;
-        Tue, 12 Jan 2021 14:57:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9EA5D6B540;
-        Tue, 12 Jan 2021 14:57:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
-References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com> <20200916004927.64276-1-eric.snowberg@oracle.com> <1360578.1607593748@warthog.procyon.org.uk>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Tue, 12 Jan 2021 10:36:45 -0500
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 59A3220B6C40;
+        Tue, 12 Jan 2021 07:36:03 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 59A3220B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1610465763;
+        bh=McXfpx7CXiTJWz8uagaZ4YpQfZgo3sZg2yh4/x+j+Yc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V0Z8At8aZ8JrV6C7ViNabSX4/+P0ef/JP6xqvVGNr9XPNlLIwshd1g0xxCt4yhFbC
+         Ql8o+9n/AppO4baHyIjQQACKwa5DdNFyFHNI/aqA4giXq0Qbaqjlb2Uf/ZrVWKCdx+
+         u2RP1TmzzHrYc3QgsKQNMDqRQ89E/JFDQPnqNq0s=
+Date:   Tue, 12 Jan 2021 09:35:34 -0600
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Maurizio Drocco <maurizio.drocco@ibm.com>,
+        Bruno Meneguele <bmeneg@redhat.com>,
+        linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
+Subject: Re: [PATCH AUTOSEL 5.7 03/30] ima: extend boot_aggregate with kernel
+ measurements
+Message-ID: <20210112153534.GA4146@sequoia>
+References: <20200708154116.3199728-1-sashal@kernel.org>
+ <20200708154116.3199728-3-sashal@kernel.org>
+ <1594224793.23056.251.camel@linux.ibm.com>
+ <20200709012735.GX2722994@sasha-vm>
+ <5b8dcdaf66fbe2a39631833b03772a11613fbbbf.camel@linux.ibm.com>
+ <20201211031008.GN489768@sequoia>
+ <659c09673affe9637a5d1391c12af3aa710ba78a.camel@linux.ibm.com>
+ <20201214164222.GK4951@sequoia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 12 Jan 2021 14:57:39 +0000
-Message-ID: <2442460.1610463459@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201214164222.GK4951@sequoia>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Eric Snowberg <eric.snowberg@oracle.com> wrote:
+On 2020-12-14 10:42:24, Tyler Hicks wrote:
+> On 2020-12-11 06:01:54, Mimi Zohar wrote:
+> > On Thu, 2020-12-10 at 21:10 -0600, Tyler Hicks wrote:
+> > > On 2020-11-29 08:17:38, Mimi Zohar wrote:
+> > > > Hi Sasha,
+> > > > 
+> > > > On Wed, 2020-07-08 at 21:27 -0400, Sasha Levin wrote:
+> > > > > On Wed, Jul 08, 2020 at 12:13:13PM -0400, Mimi Zohar wrote:
+> > > > > >Hi Sasha,
+> > > > > >
+> > > > > >On Wed, 2020-07-08 at 11:40 -0400, Sasha Levin wrote:
+> > > > > >> From: Maurizio Drocco <maurizio.drocco@ibm.com>
+> > > > > >>
+> > > > > >> [ Upstream commit 20c59ce010f84300f6c655d32db2610d3433f85c ]
+> > > > > >>
+> > > > > >> Registers 8-9 are used to store measurements of the kernel and its
+> > > > > >> command line (e.g., grub2 bootloader with tpm module enabled). IMA
+> > > > > >> should include them in the boot aggregate. Registers 8-9 should be
+> > > > > >> only included in non-SHA1 digests to avoid ambiguity.
+> > > > > >
+> > > > > >Prior to Linux 5.8, the SHA1 template data hashes were padded before
+> > > > > >being extended into the TPM.  Support for calculating and extending
+> > > > > >the per TPM bank template data digests is only being upstreamed in
+> > > > > >Linux 5.8.
+> > > > > >
+> > > > > >How will attestation servers know whether to include PCRs 8 & 9 in the
+> > > > > >the boot_aggregate calculation?  Now, there is a direct relationship
+> > > > > >between the template data SHA1 padded digest not including PCRs 8 & 9,
+> > > > > >and the new per TPM bank template data digest including them.
+> > > > > 
+> > > > > Got it, I'll drop it then, thank you!
+> > > > 
+> > > > After re-thinking this over, I realized that the attestation server can
+> > > > verify the "boot_aggregate" based on the quoted PCRs without knowing
+> > > > whether padded SHA1 hashes or per TPM bank hash values were extended
+> > > > into the TPM[1], but non-SHA1 boot aggregate values [2] should always
+> > > > include PCRs 8 & 9.
+> > > 
+> > > I'm still not clear on how an attestation server would know to include
+> > > PCRs 8 and 9 after this change came through a stable kernel update. It
+> > > doesn't seem like something appropriate for stable since it requires
+> > > code changes to attestation servers to handle the change.
+> > > 
+> > > I know this has already been released in some stable releases, so I'm
+> > > too late, but perhaps I'm missing something.
+> > 
+> > The point of adding PCRs 8 & 9 only to non-SHA1 boot_aggregate values
+> > was to avoid affecting existing attestation servers.  The intention was
+> > when attestation servers added support for the non-sha1 boot_aggregate
+> > values, they'd also include PCRs 8 & 9.  The existing SHA1
+> > boot_aggregate value remains PCRs 0 - 7.
+> 
+> AFAIK, there's nothing that prevents the non-SHA1 TPM 2.0 PCR banks from
+> being used even before v5.8, albeit with zero padded SHA1 digests.
+> Existing attestation servers that already support that configuration are
+> broken by this stable backport.
 
-> > On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> wrote:
-> >=20
-> > Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> >=20
-> >> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_G=
-UID
-> >> is found, it is added as an asymmetrical key to the .blacklist keyring.
-> >> Anytime the .platform keyring is used, the keys in the .blacklist keyr=
-ing
-> >> are referenced, if a matching key is found, the key will be rejected.
-> >=20
-> > Ummm...  Why this way and not as a blacklist key which takes up less sp=
-ace?
-> > I'm guessing that you're using the key chain matching logic.  We really=
- only
-> > need to blacklist the key IDs.
->=20
-> I implemented it this way so that certs in the dbx would only impact=20
-> the .platform keyring. I was under the impression we didn=E2=80=99t want =
-to have=20
-> Secure Boot UEFI db/dbx certs dictate keyring functionality within the ke=
-rnel
-> itself. Meaning if we have a matching dbx cert in any other keyring (buil=
-tin,
-> secondary, ima, etc.), it would be allowed. If that is not how you=E2=80=
-=99d like to=20
-> see it done, let me know and I=E2=80=99ll make the change.
+To wrap up this thread, I think the last thing to address is if this
+commit should be reverted from stable kernels? Do you have any thoughts
+about that, Mimi?
 
-I wonder if that is that the right thing to do.  I guess this is a policy
-decision and may depend on the particular user.
+Tyler
 
-> > Also, what should happen if a revocation cert rejected by the blacklist?
->=20
-> I=E2=80=99m not sure I understand the question. How would it be rejected?
-
-The SHA256 of a revocation cert being loaded could match an
-already-blacklisted SHA256 sum, either compiled in or already loaded from
-UEFI.
-
-David
-
+> 
+> > To prevent this or something similar from happening again, what should
+> > have been the proper way of including PCRs 8 & 9?
+> 
+> I don't think that commits like 6f1a1d103b48 ("ima: Switch to
+> ima_hash_algo for boot aggregate") and 20c59ce010f8 ("ima: extend
+> boot_aggregate with kernel measurements") should be backported to
+> stable.
+> 
+> Including PCRs 8 and 9 definitely makes sense to include in the
+> boot_aggregate value but limiting such a change to "starting in 5.8",
+> rather than "starting in 5.8 and 5.4.82", is the safer approach when
+> attestation server modifications are required.
+> 
+> Tyler
+> 
+> > 
+> > thanks,
+> > 
+> > Mimi
+> > 
