@@ -2,275 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E97BC433E9
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 09:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42608C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 09:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22ABB23107
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 09:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 152C023107
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 09:44:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390639AbhALJiA (ORCPT
+        id S1729913AbhALJn6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 04:38:00 -0500
-Received: from so254-31.mailgun.net ([198.61.254.31]:37982 "EHLO
-        so254-31.mailgun.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730499AbhALJiA (ORCPT
+        Tue, 12 Jan 2021 04:43:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60062 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbhALJn5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 04:38:00 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1610444253; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=dcaBq1lXPNIqcnm6SkqqWpFwh40DCTmtIQVK4VfzQ4E=;
- b=Ih9QleH4rXvmiJ6t5JnlK44hwGW/7d8lUB5nAsayzYv3hLoV4NW8L35d9A2rjr+BhOcyLPPl
- 2s4pi6qPimINzHuMRcMUHpDpveXcsp4S/sgb6Dt2MRmsSmYC4l78V7Ww9cA1OEghtdY5Ydrw
- L+Kxx2fm9nhAMDL69HYzPpAWhZ4=
-X-Mailgun-Sending-Ip: 198.61.254.31
-X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 5ffd6dbb415a6293c522aaa7 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 12 Jan 2021 09:36:59
- GMT
-Sender: pnagar=codeaurora.org@mg.codeaurora.org
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 473B3C43464; Tue, 12 Jan 2021 09:36:59 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: pnagar)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 24930C43462;
-        Tue, 12 Jan 2021 09:36:57 +0000 (UTC)
+        Tue, 12 Jan 2021 04:43:57 -0500
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D193C061794
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 01:43:17 -0800 (PST)
+Received: by mail-vs1-xe2e.google.com with SMTP id e20so1077344vsr.12
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 01:43:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=U8KTXZZOdpOWwMytCWHlaAOpcUYTe69I04JML7H0hG4=;
+        b=GVvuYrEgA9sAgijOBvVQtrkUVxvX21VAJ/HOJKoOCjnLjgbBxuRRFyqyBj6mdoDtwx
+         MblZLo0aV0kA3Y5xRg2IHa5TPh/JmmRaIMIXdpimKBRs5i2dMef/d/GKuF+PUPICMiyH
+         Q7J7N2L+F36ehIRo0MHvikiW+UHHUtKD0KMzM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=U8KTXZZOdpOWwMytCWHlaAOpcUYTe69I04JML7H0hG4=;
+        b=LUVmytTlN8PKFspAv6iwdLaj2R3RIwKlUmTEreAGqPXs5beHOIcW34W9qbiGH74ke1
+         DQF4Pss/ZEvjLZ2v7plZqOhDa9iOLRUYyvtfz2zsi52/ZpLLCyNyXheVSoHB60/RWsW4
+         Z/+RfEXH5JMjJ9hgF3hQKXhazVj4tUNnGOuZu+7K96RWWGE4mcBEkKo8qrvZmaparYb3
+         NFswof34mSGtxeiYyagO+a+TH9Vl9fuHiZPp4fLUJi7iZX4U8vZxPPw6drlLpivzz8ZT
+         IAc+/AKj9BhFjD9kD4EVxppGUqQ08SaSrV7XC/2BSBPtBt9ymAPBOqvQTWOX70qJg96G
+         pUZQ==
+X-Gm-Message-State: AOAM533Z5kBgvszctO0fuWuH7/kRSD2VTBsJ3B9XNqj3D5l9Cd9A6V9k
+        o2ye8ng8ByWPGfhGxipFIJen06TEA/VPGJiu3PG9hQ==
+X-Google-Smtp-Source: ABdhPJxpwQa1FNKaf4h67iHm+CypgL2VHALPf8lPbgkbnj8As0D5XiZeWka0RFF9jMbBWHAzsWd0sPyom6NvQtKHvsk=
+X-Received: by 2002:a67:fa50:: with SMTP id j16mr2837868vsq.9.1610444596217;
+ Tue, 12 Jan 2021 01:43:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Jan 2021 15:06:57 +0530
-From:   pnagar@codeaurora.org
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     arnd@arndb.de, jmorris@namei.org, serge@hallyn.com,
-        paul@paul-moore.com, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-arch@vger.kernel.org,
-        psodagud@codeaurora.org, nmardana@codeaurora.org,
-        dsule@codeaurora.org, Joe Perches <joe@perches.com>,
-        Miguel Ojeda <ojeda@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a
- separate page
-In-Reply-To: <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com>
-References: <1610099389-28329-1-git-send-email-pnagar@codeaurora.org>
- <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com>
-Message-ID: <dab6357acbd63edd53099d106d111bf4@codeaurora.org>
-X-Sender: pnagar@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-2-mszeredi@redhat.com>
+ <87czyoimqz.fsf@x220.int.ebiederm.org> <20210111134916.GC1236412@miu.piliscsaba.redhat.com>
+ <874kjnm2p2.fsf@x220.int.ebiederm.org>
+In-Reply-To: <874kjnm2p2.fsf@x220.int.ebiederm.org>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 12 Jan 2021 10:43:05 +0100
+Message-ID: <CAJfpegtKMwTZwENX7hrVGUVRWgNTf4Tr_bRxYrPpPAH_D2fH-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into vfs_setxattr()
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021-01-08 22:41, Casey Schaufler wrote:
-> On 1/8/2021 1:49 AM, Preeti Nagar wrote:
->> The changes introduce a new security feature, RunTime Integrity Check
->> (RTIC), designed to protect Linux Kernel at runtime. The motivation
->> behind these changes is:
->> 1. The system protection offered by SE for Android relies on the
->> assumption of kernel integrity. If the kernel itself is compromised 
->> (by
->> a perhaps as yet unknown future vulnerability), SE for Android 
->> security
->> mechanisms could potentially be disabled and rendered ineffective.
->> 2. Qualcomm Snapdragon devices use Secure Boot, which adds 
->> cryptographic
->> checks to each stage of the boot-up process, to assert the 
->> authenticity
->> of all secure software images that the device executes.  However, due 
->> to
->> various vulnerabilities in SW modules, the integrity of the system can 
->> be
->> compromised at any time after device boot-up, leading to un-authorized
->> SW executing.
-> 
-> It would be helpful if you characterized the "various vulnerabilities"
-> rather than simply asserting their existence. This would allow the 
-> reviewer
-> to determine if the proposed patch addresses the issue.
-> 
-There might not currently be vulnerabilities, but the system is meant 
-more
-specifically to harden valuable assets against future compromises. The 
-key
-value add is a third party independent entity keeping a watch on crucial
-kernel assets.
+On Tue, Jan 12, 2021 at 1:15 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>
+> Miklos Szeredi <miklos@szeredi.hu> writes:
+>
+> > On Fri, Jan 01, 2021 at 11:35:16AM -0600, Eric W. Biederman wrote:
 
->> 
->> The feature's idea is to move some sensitive kernel structures to a
->> separate page and monitor further any unauthorized changes to these,
->> from higher Exception Levels using stage 2 MMU. Moving these to a
->> different page will help avoid getting page faults from un-related 
->> data.
-> 
-> I've always been a little slow when it comes to understanding the
-> details of advanced memory management facilities. That's part of
-> why I work in access control. Could you expand this a bit, so that
-> someone who doesn't already know how your stage 2 MMU works might
-> be able to evaluate what you're doing here.
-> 
-Sure, will include more details. The mechanism we have been working on
-removes the write permissions for HLOS in the stage 2 page tables for
-the regions to be monitored, such that any modification attempts to 
-these
-will lead to faults being generated and handled by handlers. If the
-protected assets are moved to a separate page, faults will be generated
-corresponding to change attempts to these assets only. If not moved to a
-separate page, write attempts to un-related data which is present on the
-monitored pages will also be generated.
+> > For one: a v2 fscap is supposed to be equivalent to a v3 fscap with a rootid of
+> > zero, right?
+>
+> Yes.  This assumes that everything is translated into the uids of the
+> target filesystem.
+>
+> > If so, why does cap_inode_getsecurity() treat them differently (v2 fscap
+> > succeeding unconditionally while v3 one being either converted to v2, rejected
+> > or left as v3 depending on current_user_ns())?
+>
+> As I understand it v2 fscaps have always succeeded unconditionally.  The
+> only case I can see for a v2 fscap might not succeed when read is if the
+> filesystem is outside of the initial user namespace.
 
->> Using this mechanism, some sensitive variables of the kernel which are
->> initialized after init or are updated rarely can also be protected 
->> from
->> simple overwrites and attacks trying to modify these.
-> 
-> How would this interact with or complement __read_mostly?
-> 
-Currently, the mechanism we are working on developing is
-independent of __read_mostly. This is something we can look more into
-while working further on the mechanism.
+Looking again, it's rather confusing.  cap_inode_getsecurity()
+currently handles the following cases:
 
->> 
->> Currently, the change moves selinux_state structure to a separate 
->> page. In
->> future we plan to move more security-related kernel assets to this 
->> page to
->> enhance protection.
-> 
-> What's special about selinux_state? What about the SELinux policy?
-> How would I, as maintainer of the Smack security module, know if
-> some Smack data should be treated the same way?
-> 
-We are investigating more of the SELinux related and other kernel assets
-which can be included in the protection. The basis of selinux_state is
-because disabling of SELinux is one of the common attack vectors in
-Android. We understand any kernel assets, unauthorized changes to which
-can give way to security or any other type of attack can be considered 
-to
-be a potential asset to be added to the protection.
+v1: -> fails with -EINVAL
 
->> 
->> We want to seek your suggestions and comments on the idea and the 
->> changes
->> in the patch.
->> 
->> Signed-off-by: Preeti Nagar <pnagar@codeaurora.org>
->> ---
->>  include/asm-generic/vmlinux.lds.h | 10 ++++++++++
->>  include/linux/init.h              |  4 ++++
->>  security/Kconfig                  | 10 ++++++++++
->>  security/selinux/hooks.c          |  4 ++++
->>  4 files changed, 28 insertions(+)
->> 
->> diff --git a/include/asm-generic/vmlinux.lds.h 
->> b/include/asm-generic/vmlinux.lds.h
->> index b2b3d81..158dbc2 100644
->> --- a/include/asm-generic/vmlinux.lds.h
->> +++ b/include/asm-generic/vmlinux.lds.h
->> @@ -770,6 +770,15 @@
->>  		*(.scommon)						\
->>  	}
->> 
->> +#ifdef CONFIG_SECURITY_RTIC
->> +#define RTIC_BSS							\
->> +	. = ALIGN(PAGE_SIZE);						\
->> +	KEEP(*(.bss.rtic))						\
->> +	. = ALIGN(PAGE_SIZE);
->> +#else
->> +#define RTIC_BSS
->> +#endif
->> +
->>  /*
->>   * Allow archectures to redefine BSS_FIRST_SECTIONS to add extra
->>   * sections to the front of bss.
->> @@ -782,6 +791,7 @@
->>  	. = ALIGN(bss_align);						\
->>  	.bss : AT(ADDR(.bss) - LOAD_OFFSET) {				\
->>  		BSS_FIRST_SECTIONS					\
->> +		RTIC_BSS						\
->>  		. = ALIGN(PAGE_SIZE);					\
->>  		*(.bss..page_aligned)					\
->>  		. = ALIGN(PAGE_SIZE);					\
->> diff --git a/include/linux/init.h b/include/linux/init.h
->> index 7b53cb3..617adcf 100644
->> --- a/include/linux/init.h
->> +++ b/include/linux/init.h
->> @@ -300,6 +300,10 @@ void __init parse_early_options(char *cmdline);
->>  /* Data marked not to be saved by software suspend */
->>  #define __nosavedata __section(".data..nosave")
->> 
->> +#ifdef CONFIG_SECURITY_RTIC
->> +#define __rticdata  __section(".bss.rtic")
->> +#endif
->> +
->>  #ifdef MODULE
->>  #define __exit_p(x) x
->>  #else
->> diff --git a/security/Kconfig b/security/Kconfig
->> index 7561f6f..66b61b9 100644
->> --- a/security/Kconfig
->> +++ b/security/Kconfig
->> @@ -291,5 +291,15 @@ config LSM
->> 
->>  source "security/Kconfig.hardening"
->> 
->> +config SECURITY_RTIC
->> +        bool "RunTime Integrity Check feature"
-> 
-> Shouldn't this depend on the architecture(s) supporting the
-> feature?
-> 
->> +        help
->> +	  RTIC(RunTime Integrity Check) feature is to protect Linux kernel
->> +	  at runtime. This relocates some of the security sensitive kernel
->> +	  structures to a separate page aligned special section.
->> +
->> +	  This is to enable monitoring and protection of these kernel assets
->> +	  from a higher exception level(EL) against any unauthorized 
->> changes.
-> 
-> "if you are unsure ..."
-> 
-We just thought keeping it generic might be a better idea, thus, moved 
-the
-changes to generic files from arch-specific files and thus, kept config 
-also
-independent of the arch. Can surely make this config arch dependent if 
-that is
-a better approach?
+v2: -> returns unconverted xattr
 
->> +
->>  endmenu
->> 
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index 6b1826f..7add17c 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -104,7 +104,11 @@
->>  #include "audit.h"
->>  #include "avc_ss.h"
->> 
->> +#ifdef CONFIG_SECURITY_RTIC
->> +struct selinux_state selinux_state __rticdata;
->> +#else
->>  struct selinux_state selinux_state;
->> +#endif
-> 
-> Shouldn't the __rticdata tag be applied always, and its
-> definition take care of the cases where it doesn't do anything?
-> 
-Will update this change in the next version of the patch. Thank you.
+v3:
+ a) rootid is mapped in the current namespace to non-zero:
+     -> convert rootid
 
->> 
->>  /* SECMARK reference count */
->>  static atomic_t selinux_secmark_refcount = ATOMIC_INIT(0);
+ b) rootid owns the current or ancerstor namespace:
+     -> convert to v2
+
+ c) rootid is not mapped and is not owner:
+     -> return -EOPNOTSUPP -> falls back to unconverted v3
+
+So lets take the example, where a tmpfs is created in a private user
+namespace and one file has a v2 cap and the other an equivalent v3 cap
+with a zero rootid.  This is the result when looking at it from
+
+1) the namespace of the fs:
+---------------------------------------
+t = cap_dac_override+eip
+tt = cap_dac_override+eip
+
+2) the initial namespace:
+---------------------------------------
+t = cap_dac_override+eip
+tt = cap_dac_override+eip [rootid=1000]
+
+3) an unrelated namespace:
+---------------------------------------
+t = cap_dac_override+eip
+tt = cap_dac_override+eip
+
+Note: in this last case getxattr will actually return a v3 cap with
+zero rootid for "tt" which getcap does not display due to being zero.
+I could do a setup with a nested namespaces that better demonstrate
+the confusing nature of this, but I think this also proves the point.
+
+At this point userspace simply cannot determine whether the returned
+cap is in any way valid or not.
+
+The following semantics would make a ton more sense, since getting a
+v2 would indicate that rootid is unknown:
+
+- if cap is v2 convert to v3 with zero rootid
+- after this, check if rootid needs to be translated, if not return v3
+- if yes, try to translate to current ns, if succeeds return translated v3
+- if not mappable, return v2
+
+Hmm?
+
+> > Anyway, here's a patch that I think fixes getxattr() layering for
+> > security.capability.  Does basically what you suggested.  Slight change of
+> > semantics vs. v1 caps, not sure if that is still needed, getxattr()/setxattr()
+> > hasn't worked for these since the introduction of v3 in 4.14.
+> > Untested.
+>
+> Taking a look.  The goal of change how these operate is to make it so
+> that layered filesystems can just pass through the data if they don't
+> want to change anything (even with the user namespaces of the
+> filesystems in question are different).
+>
+> Feedback on the code below:
+> - cap_get should be in inode_operations like get_acl and set_acl.
+
+So it's not clear to me why xattr ops are per-sb and acl ops are per-inode.
+
+> - cap_get should return a cpu_vfs_cap_data.
+>
+>   Which means that only make_kuid is needed when reading the cap from
+>   disk.
+
+It also means translating the cap bits back and forth between disk and
+cpu endian.  Not a big deal, but...
+
+>   Which means that except for the rootid_owns_currentns check (which
+>   needs to happen elsewhere) default_cap_get should be today's
+>   get_vfs_cap_from_disk.
+
+That's true.   So what's the deal with v1 caps?  Support was silently
+dropped for getxattr/setxattr but remained in get_vfs_caps_from_disk()
+(I guess to not break legacy disk images), but maybe it's time to
+deprecate v1 caps completely?
+
+> - With the introduction of cap_get I believe commoncap should stop
+>   implementing the security_inode_getsecurity hook, and rather have
+>   getxattr observe is the file capability xatter and call the new
+>   vfs_cap_get then translate to a v2 or v3 cap as appropriate when
+>   returning the cap to userspace.
+
+Confused.  vfs_cap_get() is the one the layered filesystem will
+recurse with, so it must not translate the cap.   The one to do that
+would be __vfs_getxattr(), right?
+
+Thanks,
+Miklos
