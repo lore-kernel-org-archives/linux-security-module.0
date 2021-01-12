@@ -2,135 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F9C433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3487AC433E9
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 18:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91D322311C
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCDE23121
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 18:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391359AbhALRQT (ORCPT
+        id S2406365AbhALSZx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 12:16:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390500AbhALRQS (ORCPT
+        Tue, 12 Jan 2021 13:25:53 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:34916 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391199AbhALSZw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 12:16:18 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45467C061786
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 09:15:37 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id g12so2416024ejf.8
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 09:15:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tlN+SR1GxJrZealRnBj4IK5rirhuxkSGuR3XMgHjbM8=;
-        b=2JSJLgjjYoRmh4WKyhvwd7P5EYDVodgao689juYrDTUOryxHHdbBFMvk6F49hQeANI
-         0ncsHC6TWKiQttECpHZrIyibJPz+veA90aIDcBmWL8CoCxSzcbVkT+1W9ZlazKYMz/h2
-         1U+NJdpU2NaPSMv/3Vcpq2YAuJEHuqV6eG6jOOiBvDIozHbxI3BklrmCl45uL2220jUW
-         ESl6nOXuVqKatMmHbrqSdiXJkN9Pim4J5Ue8lUTHALCuTETNbMgXoLGGXl/x8o30mu7E
-         c4TyKsipejVO9TqPCAFj2Ot6gBV0ui2tytc4Nb1V65qr081j32kxNtvVrCJ0L/mppkvw
-         eXHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tlN+SR1GxJrZealRnBj4IK5rirhuxkSGuR3XMgHjbM8=;
-        b=OisYoYIONtBXjH/ZVQxA/kRS+CdfaKOhPqTgaVetRhT9KSPr/yFzd7yYfVnaMJG1mM
-         mHy9tQtwg7taSSIf1U8UNCTh3arhmr0dR1hFievYDA18MweQtuWr0UbTGlAuhveneF98
-         9aLHUbQXJ5C6qSdzfDJvbzhXAyCGE3Cr9Qa35d9TjdoEZxRtIBF3cMWsfMbowjJ0Eedi
-         WYQ9bzWWYJKflP1COpVULe5R25cS3XH/lMmcnbMobaO9dJnrtQF6ri6FqiCCPyujtyWN
-         b0BPr6MSyxNrCQOwwCehnjjWIfm4+AAs2kzElg6YqeG9V+Oj0XcXK4sp/ZrtrAjH6EJV
-         +pAw==
-X-Gm-Message-State: AOAM533TnKwV0WsQGQwubsH3JbAXfgXaVP7lBu0inTgm/ugPJOQSkawl
-        arM+QLhADAnws5VJkDp8jpWxz3RCRcpq+neD+4IU
-X-Google-Smtp-Source: ABdhPJzveLbKd2/fd+yW9COqHniIV8xf3qTx7Ia1dcnpsn0rSIKQjLxMysH9YBtmMRiS0RAcwMxpM8nudC4fcrMjxEQ=
-X-Received: by 2002:a17:906:1393:: with SMTP id f19mr3814197ejc.431.1610471735707;
- Tue, 12 Jan 2021 09:15:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20210108222223.952458-1-lokeshgidra@google.com>
-In-Reply-To: <20210108222223.952458-1-lokeshgidra@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 12 Jan 2021 12:15:24 -0500
-Message-ID: <CAHC9VhSLFUyeo8he4t7rFoHgRHfpB=URoAioF+a3+xjZP8JdSQ@mail.gmail.com>
-Subject: Re: [PATCH v15 0/4] SELinux support for anonymous inodes and UFFD
-To:     Lokesh Gidra <lokeshgidra@google.com>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
+        Tue, 12 Jan 2021 13:25:52 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 7792220B6C40;
+        Tue, 12 Jan 2021 10:25:11 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7792220B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1610475911;
+        bh=qy3ti2dFqNqzP6FP7vg6YhFp5uWu+v5fID15lyNEIuw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=eKZLZ8Sgxg1EPb8LG5UCoPzpgpSvDYjqzZiuualeGjnsgxXxl3SherhBga/kP7ANP
+         ej7DuYEWImAjRGsusPXz+nj/LZ3ydA9wQyUnhSNCZkPqhtfSDp58m6w5F6PYm1fSNe
+         BbcDvx2wKTWMa/WiQNYpbpUwOJybcWnLkwIozeEg=
+Subject: Re: [PATCH v10 8/8] selinux: include a consumer of the new IMA
+ critical data hook
+To:     Paul Moore <paul@paul-moore.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Cc:     zohar@linux.ibm.com,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Daniel Colascione <dancol@dancol.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        KP Singh <kpsingh@google.com>,
-        David Howells <dhowells@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Adrian Reber <areber@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        kaleshsingh@google.com, calin@google.com, surenb@google.com,
-        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
+ <20210108040708.8389-9-tusharsu@linux.microsoft.com>
+ <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <1b076701-3af8-6997-82ae-7196c263a7f4@linux.microsoft.com>
+Date:   Tue, 12 Jan 2021 10:25:11 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 8, 2021 at 5:22 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
->
-> Userfaultfd in unprivileged contexts could be potentially very
-> useful. We'd like to harden userfaultfd to make such unprivileged use
-> less risky. This patch series allows SELinux to manage userfaultfd
-> file descriptors and in the future, other kinds of
-> anonymous-inode-based file descriptor.
+On 1/12/21 8:27 AM, Paul Moore wrote:
+> On Thu, Jan 7, 2021 at 11:07 PM Tushar Sugandhi
+> <tusharsu@linux.microsoft.com> wrote:
+>> From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+>>
+>> SELinux stores the active policy in memory, so the changes to this data
+>> at runtime would have an impact on the security guarantees provided
+>> by SELinux.  Measuring in-memory SELinux policy through IMA subsystem
+>> provides a secure way for the attestation service to remotely validate
+>> the policy contents at runtime.
+>>
+>> Measure the hash of the loaded policy by calling the IMA hook
+>> ima_measure_critical_data().  Since the size of the loaded policy
+>> can be large (several MB), measure the hash of the policy instead of
+>> the entire policy to avoid bloating the IMA log entry.
+>>
+>> To enable SELinux data measurement, the following steps are required:
+>>
+>> 1, Add "ima_policy=critical_data" to the kernel command line arguments
+>>     to enable measuring SELinux data at boot time.
+>> For example,
+>>    BOOT_IMAGE=/boot/vmlinuz-5.10.0-rc1+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
+>>
+>> 2, Add the following rule to /etc/ima/ima-policy
+>>     measure func=CRITICAL_DATA label=selinux
+>>
+>> Sample measurement of the hash of SELinux policy:
+>>
+>> To verify the measured data with the current SELinux policy run
+>> the following commands and verify the output hash values match.
+>>
+>>    sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
+>>
+>>    grep "selinux-policy-hash" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6
+>>
+>> Note that the actual verification of SELinux policy would require loading
+>> the expected policy into an identical kernel on a pristine/known-safe
+>> system and run the sha256sum /sys/kernel/selinux/policy there to get
+>> the expected hash.
+>>
+>> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+>> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>> Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+>> ---
+>>   Documentation/ABI/testing/ima_policy |  3 +-
+>>   security/selinux/Makefile            |  2 +
+>>   security/selinux/ima.c               | 64 ++++++++++++++++++++++++++++
+>>   security/selinux/include/ima.h       | 24 +++++++++++
+>>   security/selinux/include/security.h  |  3 +-
+>>   security/selinux/ss/services.c       | 64 ++++++++++++++++++++++++----
+>>   6 files changed, 149 insertions(+), 11 deletions(-)
+>>   create mode 100644 security/selinux/ima.c
+>>   create mode 100644 security/selinux/include/ima.h
+> 
+> I remain concerned about the possibility of bypassing a measurement by
+> tampering with the time, but I appear to be the only one who is
+> worried about this so I'm not going to block this patch on those
+> grounds.
+> 
+> Acked-by: Paul Moore <paul@paul-moore.com>
 
-...
+Thanks Paul.
 
-> Daniel Colascione (3):
->   fs: add LSM-supporting anon-inode interface
->   selinux: teach SELinux about anonymous inodes
->   userfaultfd: use secure anon inodes for userfaultfd
->
-> Lokesh Gidra (1):
->   security: add inode_init_security_anon() LSM hook
->
->  fs/anon_inodes.c                    | 150 ++++++++++++++++++++--------
->  fs/libfs.c                          |   5 -
->  fs/userfaultfd.c                    |  19 ++--
->  include/linux/anon_inodes.h         |   5 +
->  include/linux/lsm_hook_defs.h       |   2 +
->  include/linux/lsm_hooks.h           |   9 ++
->  include/linux/security.h            |  10 ++
->  security/security.c                 |   8 ++
->  security/selinux/hooks.c            |  57 +++++++++++
->  security/selinux/include/classmap.h |   2 +
->  10 files changed, 213 insertions(+), 54 deletions(-)
+  -lakshmi
 
-With several rounds of reviews done and the corresponding SELinux test
-suite looking close to being ready I think it makes sense to merge
-this via the SELinux tree.  VFS folks, if you have any comments or
-objections please let me know soon.  If I don't hear anything within
-the next day or two I'll go ahead and merge this for linux-next.
-
-Thanks.
-
--- 
-paul moore
-www.paul-moore.com
