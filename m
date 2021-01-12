@@ -2,127 +2,243 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3487AC433E9
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 18:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B19B9C433E6
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 18:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDCDE23121
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 18:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B56023121
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 18:39:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406365AbhALSZx (ORCPT
+        id S2404205AbhALSio (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 13:25:53 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:34916 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391199AbhALSZw (ORCPT
+        Tue, 12 Jan 2021 13:38:44 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:60528 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392028AbhALSio (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 13:25:52 -0500
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 7792220B6C40;
-        Tue, 12 Jan 2021 10:25:11 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7792220B6C40
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1610475911;
-        bh=qy3ti2dFqNqzP6FP7vg6YhFp5uWu+v5fID15lyNEIuw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=eKZLZ8Sgxg1EPb8LG5UCoPzpgpSvDYjqzZiuualeGjnsgxXxl3SherhBga/kP7ANP
-         ej7DuYEWImAjRGsusPXz+nj/LZ3ydA9wQyUnhSNCZkPqhtfSDp58m6w5F6PYm1fSNe
-         BbcDvx2wKTWMa/WiQNYpbpUwOJybcWnLkwIozeEg=
-Subject: Re: [PATCH v10 8/8] selinux: include a consumer of the new IMA
- critical data hook
-To:     Paul Moore <paul@paul-moore.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Cc:     zohar@linux.ibm.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, tyhicks@linux.microsoft.com,
-        sashal@kernel.org, James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
- <20210108040708.8389-9-tusharsu@linux.microsoft.com>
- <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <1b076701-3af8-6997-82ae-7196c263a7f4@linux.microsoft.com>
-Date:   Tue, 12 Jan 2021 10:25:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 12 Jan 2021 13:38:44 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kzOYL-004nlM-OM; Tue, 12 Jan 2021 11:38:01 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1kzOYK-005CSt-IX; Tue, 12 Jan 2021 11:38:01 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>,
+        <linux-api@vger.kernel.org>
+References: <20201207163255.564116-1-mszeredi@redhat.com>
+        <20201207163255.564116-2-mszeredi@redhat.com>
+        <87czyoimqz.fsf@x220.int.ebiederm.org>
+        <20210111134916.GC1236412@miu.piliscsaba.redhat.com>
+        <874kjnm2p2.fsf@x220.int.ebiederm.org>
+        <CAJfpegtKMwTZwENX7hrVGUVRWgNTf4Tr_bRxYrPpPAH_D2fH-Q@mail.gmail.com>
+Date:   Tue, 12 Jan 2021 12:36:58 -0600
+In-Reply-To: <CAJfpegtKMwTZwENX7hrVGUVRWgNTf4Tr_bRxYrPpPAH_D2fH-Q@mail.gmail.com>
+        (Miklos Szeredi's message of "Tue, 12 Jan 2021 10:43:05 +0100")
+Message-ID: <87bldugfxx.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1kzOYK-005CSt-IX;;;mid=<87bldugfxx.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX198By4slrZJIYiPN3b1y747982LQZfcFyE=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into vfs_setxattr()
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/12/21 8:27 AM, Paul Moore wrote:
-> On Thu, Jan 7, 2021 at 11:07 PM Tushar Sugandhi
-> <tusharsu@linux.microsoft.com> wrote:
->> From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->>
->> SELinux stores the active policy in memory, so the changes to this data
->> at runtime would have an impact on the security guarantees provided
->> by SELinux.  Measuring in-memory SELinux policy through IMA subsystem
->> provides a secure way for the attestation service to remotely validate
->> the policy contents at runtime.
->>
->> Measure the hash of the loaded policy by calling the IMA hook
->> ima_measure_critical_data().  Since the size of the loaded policy
->> can be large (several MB), measure the hash of the policy instead of
->> the entire policy to avoid bloating the IMA log entry.
->>
->> To enable SELinux data measurement, the following steps are required:
->>
->> 1, Add "ima_policy=critical_data" to the kernel command line arguments
->>     to enable measuring SELinux data at boot time.
->> For example,
->>    BOOT_IMAGE=/boot/vmlinuz-5.10.0-rc1+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
->>
->> 2, Add the following rule to /etc/ima/ima-policy
->>     measure func=CRITICAL_DATA label=selinux
->>
->> Sample measurement of the hash of SELinux policy:
->>
->> To verify the measured data with the current SELinux policy run
->> the following commands and verify the output hash values match.
->>
->>    sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
->>
->>    grep "selinux-policy-hash" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6
->>
->> Note that the actual verification of SELinux policy would require loading
->> the expected policy into an identical kernel on a pristine/known-safe
->> system and run the sha256sum /sys/kernel/selinux/policy there to get
->> the expected hash.
->>
->> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->> Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
->> ---
->>   Documentation/ABI/testing/ima_policy |  3 +-
->>   security/selinux/Makefile            |  2 +
->>   security/selinux/ima.c               | 64 ++++++++++++++++++++++++++++
->>   security/selinux/include/ima.h       | 24 +++++++++++
->>   security/selinux/include/security.h  |  3 +-
->>   security/selinux/ss/services.c       | 64 ++++++++++++++++++++++++----
->>   6 files changed, 149 insertions(+), 11 deletions(-)
->>   create mode 100644 security/selinux/ima.c
->>   create mode 100644 security/selinux/include/ima.h
-> 
-> I remain concerned about the possibility of bypassing a measurement by
-> tampering with the time, but I appear to be the only one who is
-> worried about this so I'm not going to block this patch on those
-> grounds.
-> 
-> Acked-by: Paul Moore <paul@paul-moore.com>
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-Thanks Paul.
+> On Tue, Jan 12, 2021 at 1:15 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
+>>
+>> Miklos Szeredi <miklos@szeredi.hu> writes:
+>>
+>> > On Fri, Jan 01, 2021 at 11:35:16AM -0600, Eric W. Biederman wrote:
+>
+>> > For one: a v2 fscap is supposed to be equivalent to a v3 fscap with a rootid of
+>> > zero, right?
+>>
+>> Yes.  This assumes that everything is translated into the uids of the
+>> target filesystem.
+>>
+>> > If so, why does cap_inode_getsecurity() treat them differently (v2 fscap
+>> > succeeding unconditionally while v3 one being either converted to v2, rejected
+>> > or left as v3 depending on current_user_ns())?
+>>
+>> As I understand it v2 fscaps have always succeeded unconditionally.  The
+>> only case I can see for a v2 fscap might not succeed when read is if the
+>> filesystem is outside of the initial user namespace.
+>
+> Looking again, it's rather confusing.  cap_inode_getsecurity()
+> currently handles the following cases:
+>
+> v1: -> fails with -EINVAL
+>
+> v2: -> returns unconverted xattr
+>
+> v3:
+>  a) rootid is mapped in the current namespace to non-zero:
+>      -> convert rootid
+>
+>  b) rootid owns the current or ancerstor namespace:
+>      -> convert to v2
+>
+>  c) rootid is not mapped and is not owner:
+>      -> return -EOPNOTSUPP -> falls back to unconverted v3
+>
+> So lets take the example, where a tmpfs is created in a private user
+> namespace and one file has a v2 cap and the other an equivalent v3 cap
+> with a zero rootid.  This is the result when looking at it from
+>
+> 1) the namespace of the fs:
+> ---------------------------------------
+> t = cap_dac_override+eip
+> tt = cap_dac_override+eip
+>
+> 2) the initial namespace:
+> ---------------------------------------
+> t = cap_dac_override+eip
+> tt = cap_dac_override+eip [rootid=1000]
+>
+> 3) an unrelated namespace:
+> ---------------------------------------
+> t = cap_dac_override+eip
+> tt = cap_dac_override+eip
+>
+> Note: in this last case getxattr will actually return a v3 cap with
+> zero rootid for "tt" which getcap does not display due to being zero.
+> I could do a setup with a nested namespaces that better demonstrate
+> the confusing nature of this, but I think this also proves the point.
 
-  -lakshmi
+Yes.  There is real confusion on the reading case when the namespaces
+do not match.
 
+> At this point userspace simply cannot determine whether the returned
+> cap is in any way valid or not.
+>
+> The following semantics would make a ton more sense, since getting a
+> v2 would indicate that rootid is unknown:
+
+> - if cap is v2 convert to v3 with zero rootid
+> - after this, check if rootid needs to be translated, if not return v3
+> - if yes, try to translate to current ns, if succeeds return translated v3
+> - if not mappable, return v2
+>
+> Hmm?
+
+So there is the basic question do we want to read the raw bytes on disk
+or do we want to return something meaningful to the reader.  As the
+existing tools use the xattr interface to set/clear fscaps returning
+data to user space rather than raw bytes seems the perfered interface.
+
+My ideal semantics would be:
+
+- If current_user_ns() == sb->s_user_ns return the raw data.
+
+  I don't know how to implement this first scenario while permitting
+  stacked filesystems.
+  
+- Calculate the cpu_vfs_cap_data as get_vfs_caps_from_disk does.
+  That gives the meaning of the xattr.
+
+- If "from_kuid(current_userns(), krootid) == 0" return a v2 cap.
+
+- If "rootid_owns_currentns()" return a v2 cap.
+
+- Else return an error.  Probably a permission error.
+
+  The fscap simply can not make sense to the user if the rootid does not
+  map.  Return a v2 cap would imply that the caps are present on the
+  executable (in the current context) which they are not.
+
+
+>> > Anyway, here's a patch that I think fixes getxattr() layering for
+>> > security.capability.  Does basically what you suggested.  Slight change of
+>> > semantics vs. v1 caps, not sure if that is still needed, getxattr()/setxattr()
+>> > hasn't worked for these since the introduction of v3 in 4.14.
+>> > Untested.
+>>
+>> Taking a look.  The goal of change how these operate is to make it so
+>> that layered filesystems can just pass through the data if they don't
+>> want to change anything (even with the user namespaces of the
+>> filesystems in question are different).
+>>
+>> Feedback on the code below:
+>> - cap_get should be in inode_operations like get_acl and set_acl.
+>
+> So it's not clear to me why xattr ops are per-sb and acl ops are per-inode.
+
+I don't know why either.  What I do see is everything except
+inode->i_sb->s_xattr (the list of xattr handlers) is in
+inode_operations.
+
+Especially permission.  So just for consistency I would keep everything
+in the inode_operations.
+
+>> - cap_get should return a cpu_vfs_cap_data.
+>>
+>>   Which means that only make_kuid is needed when reading the cap from
+>>   disk.
+>
+> It also means translating the cap bits back and forth between disk and
+> cpu endian.  Not a big deal, but...
+
+For the very rare case of userspace reading and writing them.
+
+For the common case of actually using them it should be optimal, and
+it allows for non-standard implementations.  Anything where someone gets
+clever we want the bits to be in cpu format to make mistakes harder.
+
+>>   Which means that except for the rootid_owns_currentns check (which
+>>   needs to happen elsewhere) default_cap_get should be today's
+>>   get_vfs_cap_from_disk.
+>
+> That's true.   So what's the deal with v1 caps?  Support was silently
+> dropped for getxattr/setxattr but remained in get_vfs_caps_from_disk()
+> (I guess to not break legacy disk images), but maybe it's time to
+> deprecate v1 caps completely?
+
+I really don't remember.  When I look I see they appear to be a subset
+of v2 caps.  I would have to look to see if they bits might have a
+different meaning.
+
+>> - With the introduction of cap_get I believe commoncap should stop
+>>   implementing the security_inode_getsecurity hook, and rather have
+>>   getxattr observe is the file capability xatter and call the new
+>>   vfs_cap_get then translate to a v2 or v3 cap as appropriate when
+>>   returning the cap to userspace.
+>
+> Confused.  vfs_cap_get() is the one the layered filesystem will
+> recurse with, so it must not translate the cap.   The one to do that
+> would be __vfs_getxattr(), right?
+
+So there are two layers that I am worrying about.
+
+The layer dealing with fscaps knowing they are fscaps.  That is
+vfs_cap_get and friends.
+
+Then there is the layer dealing with xattrs which should also handle
+fscaps.  So that the xattr layer stacks properly I believe we need to
+completely bypass vfs_getxattr and friends and at the edge of userspace
+before there is any possibility of interception call vfs_cap_get and
+translate the result to a form userspace can consume.
+
+With xattrs and caps we are in part of the kernel that hasn't seen a lot
+of attention and so is not the best factored.  So I am proposing we fix
+up the abstractions to make it easier to implement stacked fscap support.
+
+Eric
