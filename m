@@ -2,89 +2,172 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F63C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 10:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C51B1C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 13:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 398B522B30
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 10:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F99923109
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 13:52:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391071AbhALKFp (ORCPT
+        id S1728386AbhALNwE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 05:05:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36526 "EHLO
+        Tue, 12 Jan 2021 08:52:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390352AbhALKFo (ORCPT
+        with ESMTP id S1727670AbhALNwD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 05:05:44 -0500
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A99A3C061795
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 02:04:58 -0800 (PST)
-Received: by mail-vk1-xa2d.google.com with SMTP id m145so467448vke.7
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 02:04:58 -0800 (PST)
+        Tue, 12 Jan 2021 08:52:03 -0500
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BE6C061794
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 05:51:23 -0800 (PST)
+Received: by mail-ed1-x52e.google.com with SMTP id g21so245345edy.0
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 05:51:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rS4sdXVHr4l3vGRPMuRvaL1eabkA37lCE2nh9ri+8DA=;
-        b=f6Llr2Ei6o9IxbS05Jb89UXoWPqSI2kibVhcgOSycNIT9BHPBbZWtGxXn+WN4i5WCB
-         AJOaz8a1xnVBZLXTssdcpIgtFblHkyYiljyiuxZ638ZbcdCEUWce4loVsjZ0tXWMhxu6
-         AmEclYLBi87TEBoqp95L0D4aYhWwzlVJWZkj8=
+        bh=gR76E+hgdNRlJHpowh3xLAsehspUfAyQ4NgaYNaNiqI=;
+        b=XSibZhFRvJZDohRMzV6+t73OXFgW6De8K3ufGffee+z31Ye2gR/Ilr01EgaJEmnlwL
+         ZvpXtsqyg8hZMyFXUvtYWyDBrbSkBOoa/mJuQYQckbFEHWup5ZBxuA+Obs8dgGlQiShn
+         S6y1oYFJWXDD7jtkLOY1+PBoYoXaeZ5uiAlEpqgxA1hulebf1LeMSebaZhUw9qisGPUI
+         QYJK+AwC9hk98Qoo4vzmGHmHXJGf7fsEopq1aWLfeL7PD3vZu3ESJrxjWxrMYf+PcEIv
+         tJtfkw6iOT2EwqRpB2ydI4SuETItMfTbuVYTLDoae0FS+uCpP1GKxTdwIlVT163ocGk6
+         72fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rS4sdXVHr4l3vGRPMuRvaL1eabkA37lCE2nh9ri+8DA=;
-        b=pjfFzldJf6s0FYjdWSgL/5Ggllt0HoEzPm4yFxF4noEksi5FEwfnZFQ3ewVYqKzc7T
-         +Y3Dj8tBypf+FXJL2UyMqEefqV+TiCjbd5n9I2tv3tabDYXqgYOsNOaIWQ/Q48IOplCl
-         /YuX/sWq2Epd4ndwf9cbf4fTG2oAS+j/HzlKXEMySlZu/OjS6hdjgBF94Of0VVCv6Lbv
-         f9NyJRbQfJy6cvGPPoTV4RM6UaRvSUVZgRneQIarlT531M6vy0lZiEWIuKlYLbRvxgGZ
-         adqS2fdg9LofS9V5MQpFuPO5Sd99oQEhSV9IK0Djy73oV/QlShdlpui1pOlqzByr9PJR
-         s01A==
-X-Gm-Message-State: AOAM533xQqsxkQM7OKKWxKFwLhCzLiDsdp/oQ9YxsCZmwtZLqMLDQ+r+
-        sMpJutaXvlvlHZb0Z3fB98DXIxFSZq3zIlYZRNTgOQ==
-X-Google-Smtp-Source: ABdhPJztDdZxYIknYtDyA4L4qWH3qQH8eT1tvdwztKucGwlw6fqzlmexa8qFWsTe/ripf7WrljQs6a1FAY+W8sF9/m0=
-X-Received: by 2002:ac5:c284:: with SMTP id h4mr3303695vkk.14.1610445897639;
- Tue, 12 Jan 2021 02:04:57 -0800 (PST)
+        bh=gR76E+hgdNRlJHpowh3xLAsehspUfAyQ4NgaYNaNiqI=;
+        b=a5dFd0vRDbb6+s0Ilh4+hhu/HHaTKGC93f8IiXxL+EeM0oqxnM6p6trL2bIRn+RO+m
+         pdaAyLtLMJf1Py+EO/6z0kIPOImX+Wx1EnIdR4iykemgiWaFKgI5zvjefrUlDEFd0kRl
+         vSovSVcXP51zaFN3wylbN++8+e19GJdqDpY7BHcowa8mMPcYeR72OSiuzTeIOr0DFSuU
+         hdyE256PRg9hRKVq0CyvzSHtI7F+g/QIU9eFnAQFLX0PFAohsz1VERGjp+8QRbcAEMjC
+         W50/z4QIyQ3KUquv/1l70gDvR0vNRiobO4Cq5GTo6cKKWmIv74EtPpJ+QRKTgMQp3lOI
+         MQTg==
+X-Gm-Message-State: AOAM5311T11YE4SIpSKP//nrp8n3N1UC3fzYQLugFwCDdvXUO1xcEWMN
+        JUzaGX8BGHPoww1Dxr/UcVdZskgH+UFuTSQ6JhwN
+X-Google-Smtp-Source: ABdhPJx605NSGp4j1uinNyJCwVFX1VMEUon54nemEZnMArRth7X4vUuuw5rSwz7bOLn+xqkTJxC/1/vEaRcM7/ExqxM=
+X-Received: by 2002:aa7:cd63:: with SMTP id ca3mr3528729edb.164.1610459481682;
+ Tue, 12 Jan 2021 05:51:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20201207163255.564116-1-mszeredi@redhat.com> <20201207163255.564116-2-mszeredi@redhat.com>
- <87czyoimqz.fsf@x220.int.ebiederm.org> <20210111134916.GC1236412@miu.piliscsaba.redhat.com>
- <874kjnm2p2.fsf@x220.int.ebiederm.org> <CAJfpegtKMwTZwENX7hrVGUVRWgNTf4Tr_bRxYrPpPAH_D2fH-Q@mail.gmail.com>
-In-Reply-To: <CAJfpegtKMwTZwENX7hrVGUVRWgNTf4Tr_bRxYrPpPAH_D2fH-Q@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 12 Jan 2021 11:04:46 +0100
-Message-ID: <CAJfpegutxHPuEnUxapcwcwiEiND8Swdi7CSOMaU06qV9=uUdXA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] vfs: move cap_convert_nscap() call into vfs_setxattr()
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, "Serge E. Hallyn" <serge@hallyn.com>
+References: <20201118102342.154277-1-omosnace@redhat.com>
+In-Reply-To: <20201118102342.154277-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 12 Jan 2021 08:51:10 -0500
+Message-ID: <CAHC9VhQWbiqi_C-iw7i=qiz8gSikW6LM-EufNsPjs-pU3ABHcg@mail.gmail.com>
+Subject: Re: [PATCH] vfs: fix fsconfig(2) LSM mount option handling for btrfs
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-btrfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 12, 2021 at 10:43 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-
-> The following semantics would make a ton more sense, since getting a
-> v2 would indicate that rootid is unknown:
+On Wed, Nov 18, 2020 at 5:23 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 >
-> - if cap is v2 convert to v3 with zero rootid
-> - after this, check if rootid needs to be translated, if not return v3
-> - if yes, try to translate to current ns, if succeeds return translated v3
-> - if not mappable, return v2
+> When SELinux security options are passed to btrfs via fsconfig(2) rather
+> than via mount(2), the operation aborts with an error. What happens is
+> roughly this sequence:
 >
-> Hmm?
+> 1. vfs_parse_fs_param() eats away the LSM options and parses them into
+>    fc->security.
+> 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
+>    nothing to btrfs.
+> [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
+>  that for simplicity]
+> 3. btrfs calls security_sb_set_mnt_opts() with empty options.
+> 4. vfs_get_tree() then calls its own security_sb_set_mnt_opts() with the
+>    options stashed in fc->security.
+> 5. SELinux doesn't like that different options were used for the same
+>    superblock and returns -EINVAL.
+>
+> In the case of mount(2), the options are parsed by
+> legacy_parse_monolithic(), which skips the eating away of security
+> opts because of the FS_BINARY_MOUNTDATA flag, so they are passed to the
+> FS via ctx->legacy_data. The second call to security_sb_set_mnt_opts()
+> (from vfs_get_tree()) now passes empty opts, but the non-empty -> empty
+> sequence is allowed by SELinux for the FS_BINARY_MOUNTDATA case.
+>
+> It is a total mess, but the only sane fix for now seems to be to skip
+> processing the security opts in vfs_parse_fs_param() if the fc has
+> legacy opts set AND the fs specfies the FS_BINARY_MOUNTDATA flag. This
+> combination currently matches only btrfs and coda. For btrfs this fixes
+> the fsconfig(2) behavior, and for coda it makes setting security opts
+> via fsconfig(2) fail the same way as it would with mount(2) (because
+> FS_BINARY_MOUNTDATA filesystems are expected to call the mount opts LSM
+> hooks themselves, but coda never cared enough to do that). I believe
+> that is an acceptable state until both filesystems (or at least btrfs)
+> are converted to the new mount API (at which point btrfs won't need to
+> pretend it takes binary mount data any more and also won't need to call
+> the LSM hooks itself, assuming it will pass the fc->security information
+> properly).
+>
+> Note that we can't skip LSM opts handling in vfs_parse_fs_param() solely
+> based on FS_BINARY_MOUNTDATA because that would break NFS.
+>
+> See here for the original report and reproducer:
+> https://lore.kernel.org/selinux/c02674c970fa292610402aa866c4068772d9ad4e.camel@btinternet.com/
+>
+> Reported-by: Richard Haines <richard_c_haines@btinternet.com>
+> Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  fs/fs_context.c | 28 ++++++++++++++++++++++------
+>  1 file changed, 22 insertions(+), 6 deletions(-)
 
-Actually, it would make even more sense to simply skip unconvertible
-caps and return -ENODATA.  In fact that's what I thought would happen
-until I looked at the -EOPNOTSUPP fallback code in vfs_getxattr().
+What do the VFS folks think about this patch?  It has been sitting for
+a couple of months now without any real comment and it would be nice
+to get some initial feedback on this as it fixes a real problem.
 
-Serge, do you remember what was the reason for the unconverted fallback?
+> diff --git a/fs/fs_context.c b/fs/fs_context.c
+> index 2834d1afa6e80..cfc5ee2e381ef 100644
+> --- a/fs/fs_context.c
+> +++ b/fs/fs_context.c
+> @@ -106,12 +106,28 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
+>         if (ret != -ENOPARAM)
+>                 return ret;
+>
+> -       ret = security_fs_context_parse_param(fc, param);
+> -       if (ret != -ENOPARAM)
+> -               /* Param belongs to the LSM or is disallowed by the LSM; so
+> -                * don't pass to the FS.
+> -                */
+> -               return ret;
+> +       /*
+> +        * In the legacy+binary mode, skip the security_fs_context_parse_param()
+> +        * call and let the legacy handler process also the security options.
+> +        * It will format them into the monolithic string, where the FS can
+> +        * process them (with FS_BINARY_MOUNTDATA it is expected to do it).
+> +        *
+> +        * Currently, this matches only btrfs and coda. Coda is broken with
+> +        * fsconfig(2) anyway, because it does actually take binary data. Btrfs
+> +        * only *pretends* to take binary data to work around the SELinux's
+> +        * no-remount-with-different-options check, so this allows it to work
+> +        * with fsconfig(2) properly.
+> +        *
+> +        * Once btrfs is ported to the new mount API, this hack can be reverted.
+> +        */
+> +       if (fc->ops != &legacy_fs_context_ops || !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
+> +               ret = security_fs_context_parse_param(fc, param);
+> +               if (ret != -ENOPARAM)
+> +                       /* Param belongs to the LSM or is disallowed by the LSM;
+> +                        * so don't pass to the FS.
+> +                        */
+> +                       return ret;
+> +       }
+>
+>         if (fc->ops->parse_param) {
+>                 ret = fc->ops->parse_param(fc, param);
+> --
+> 2.26.2
 
-Thanks,
-Miklos
+-- 
+paul moore
+www.paul-moore.com
