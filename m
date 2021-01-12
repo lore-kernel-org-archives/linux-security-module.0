@@ -2,269 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46225C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F9C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:16:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13DC820B1F
-	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91D322311C
+	for <linux-security-module@archiver.kernel.org>; Tue, 12 Jan 2021 17:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406002AbhALRLf (ORCPT
+        id S2391359AbhALRQT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 12 Jan 2021 12:11:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:41851 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2406000AbhALRLf (ORCPT
+        Tue, 12 Jan 2021 12:16:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390500AbhALRQS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 12 Jan 2021 12:11:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610471408;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0PkzLvgcA4r37DaY0fgu41zgOmPFRngjc6RumeAnzi8=;
-        b=G8COeCJso0e5cz3CHxj5HYXRNFkcE9skeUWfxRQWIzE/s2abaCgSoCF4U5CWL7apG3TXO3
-        Ztd15R/+niOFhMUFeCiqmhKy5wPq3CBLrsK7tNIqmbvPTZw96ZY2gGi5/A9g49Z6lVc+CH
-        LjL8yEIcj9rPyQixe8QBjlAtTYjikfM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-413-eKLBVP_zMJadl95gHCJEmg-1; Tue, 12 Jan 2021 12:10:06 -0500
-X-MC-Unique: eKLBVP_zMJadl95gHCJEmg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 63A428015A6;
-        Tue, 12 Jan 2021 17:10:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C74A5D9D2;
-        Tue, 12 Jan 2021 17:10:00 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
-References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com> <20200916004927.64276-1-eric.snowberg@oracle.com> <1360578.1607593748@warthog.procyon.org.uk>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
+        Tue, 12 Jan 2021 12:16:18 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45467C061786
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 09:15:37 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id g12so2416024ejf.8
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Jan 2021 09:15:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tlN+SR1GxJrZealRnBj4IK5rirhuxkSGuR3XMgHjbM8=;
+        b=2JSJLgjjYoRmh4WKyhvwd7P5EYDVodgao689juYrDTUOryxHHdbBFMvk6F49hQeANI
+         0ncsHC6TWKiQttECpHZrIyibJPz+veA90aIDcBmWL8CoCxSzcbVkT+1W9ZlazKYMz/h2
+         1U+NJdpU2NaPSMv/3Vcpq2YAuJEHuqV6eG6jOOiBvDIozHbxI3BklrmCl45uL2220jUW
+         ESl6nOXuVqKatMmHbrqSdiXJkN9Pim4J5Ue8lUTHALCuTETNbMgXoLGGXl/x8o30mu7E
+         c4TyKsipejVO9TqPCAFj2Ot6gBV0ui2tytc4Nb1V65qr081j32kxNtvVrCJ0L/mppkvw
+         eXHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tlN+SR1GxJrZealRnBj4IK5rirhuxkSGuR3XMgHjbM8=;
+        b=OisYoYIONtBXjH/ZVQxA/kRS+CdfaKOhPqTgaVetRhT9KSPr/yFzd7yYfVnaMJG1mM
+         mHy9tQtwg7taSSIf1U8UNCTh3arhmr0dR1hFievYDA18MweQtuWr0UbTGlAuhveneF98
+         9aLHUbQXJ5C6qSdzfDJvbzhXAyCGE3Cr9Qa35d9TjdoEZxRtIBF3cMWsfMbowjJ0Eedi
+         WYQ9bzWWYJKflP1COpVULe5R25cS3XH/lMmcnbMobaO9dJnrtQF6ri6FqiCCPyujtyWN
+         b0BPr6MSyxNrCQOwwCehnjjWIfm4+AAs2kzElg6YqeG9V+Oj0XcXK4sp/ZrtrAjH6EJV
+         +pAw==
+X-Gm-Message-State: AOAM533TnKwV0WsQGQwubsH3JbAXfgXaVP7lBu0inTgm/ugPJOQSkawl
+        arM+QLhADAnws5VJkDp8jpWxz3RCRcpq+neD+4IU
+X-Google-Smtp-Source: ABdhPJzveLbKd2/fd+yW9COqHniIV8xf3qTx7Ia1dcnpsn0rSIKQjLxMysH9YBtmMRiS0RAcwMxpM8nudC4fcrMjxEQ=
+X-Received: by 2002:a17:906:1393:: with SMTP id f19mr3814197ejc.431.1610471735707;
+ Tue, 12 Jan 2021 09:15:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2560431.1610471400.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 12 Jan 2021 17:10:00 +0000
-Message-ID: <2560432.1610471400@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+References: <20210108222223.952458-1-lokeshgidra@google.com>
+In-Reply-To: <20210108222223.952458-1-lokeshgidra@google.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 12 Jan 2021 12:15:24 -0500
+Message-ID: <CAHC9VhSLFUyeo8he4t7rFoHgRHfpB=URoAioF+a3+xjZP8JdSQ@mail.gmail.com>
+Subject: Re: [PATCH v15 0/4] SELinux support for anonymous inodes and UFFD
+To:     Lokesh Gidra <lokeshgidra@google.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Daniel Colascione <dancol@dancol.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        KP Singh <kpsingh@google.com>,
+        David Howells <dhowells@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Adrian Reber <areber@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        kaleshsingh@google.com, calin@google.com, surenb@google.com,
+        jeffv@google.com, kernel-team@android.com, linux-mm@kvack.org,
+        Andrew Morton <akpm@linux-foundation.org>, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-How about the attached?  I've changed the function names to something that=
- I
-think reads better, but otherwise it's the same.
+On Fri, Jan 8, 2021 at 5:22 PM Lokesh Gidra <lokeshgidra@google.com> wrote:
+>
+> Userfaultfd in unprivileged contexts could be potentially very
+> useful. We'd like to harden userfaultfd to make such unprivileged use
+> less risky. This patch series allows SELinux to manage userfaultfd
+> file descriptors and in the future, other kinds of
+> anonymous-inode-based file descriptor.
 
-David
----
-commit 8913866babb96fcfe452aac6042ca8862d4c0b53
-Author: Eric Snowberg <eric.snowberg@oracle.com>
-Date:   Tue Sep 15 20:49:27 2020 -0400
+...
 
-    certs: Add EFI_CERT_X509_GUID support for dbx entries
-    =
+> Daniel Colascione (3):
+>   fs: add LSM-supporting anon-inode interface
+>   selinux: teach SELinux about anonymous inodes
+>   userfaultfd: use secure anon inodes for userfaultfd
+>
+> Lokesh Gidra (1):
+>   security: add inode_init_security_anon() LSM hook
+>
+>  fs/anon_inodes.c                    | 150 ++++++++++++++++++++--------
+>  fs/libfs.c                          |   5 -
+>  fs/userfaultfd.c                    |  19 ++--
+>  include/linux/anon_inodes.h         |   5 +
+>  include/linux/lsm_hook_defs.h       |   2 +
+>  include/linux/lsm_hooks.h           |   9 ++
+>  include/linux/security.h            |  10 ++
+>  security/security.c                 |   8 ++
+>  security/selinux/hooks.c            |  57 +++++++++++
+>  security/selinux/include/classmap.h |   2 +
+>  10 files changed, 213 insertions(+), 54 deletions(-)
 
-    The Secure Boot Forbidden Signature Database, dbx, contains a list of =
-now
-    revoked signatures and keys previously approved to boot with UEFI Secu=
-re
-    Boot enabled.  The dbx is capable of containing any number of
-    EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUI=
-D
-    entries.
-    =
+With several rounds of reviews done and the corresponding SELinux test
+suite looking close to being ready I think it makes sense to merge
+this via the SELinux tree.  VFS folks, if you have any comments or
+objections please let me know soon.  If I don't hear anything within
+the next day or two I'll go ahead and merge this for linux-next.
 
-    Currently when EFI_CERT_X509_GUID are contained in the dbx, the entrie=
-s are
-    skipped.
-    =
+Thanks.
 
-    Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_G=
-UID
-    is found, it is added as an asymmetrical key to the .blacklist keyring=
-.
-    Anytime the .platform keyring is used, the keys in the .blacklist keyr=
-ing
-    are referenced, if a matching key is found, the key will be rejected.
-    =
-
-    Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-    Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-
-diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 6514f9ebc943..a7f021878a4b 100644
---- a/certs/blacklist.c
-+++ b/certs/blacklist.c
-@@ -100,6 +100,38 @@ int mark_hash_blacklisted(const char *hash)
- 	return 0;
- }
- =
-
-+int add_key_to_revocation_list(const char *data, size_t size)
-+{
-+	key_ref_t key;
-+
-+	key =3D key_create_or_update(make_key_ref(blacklist_keyring, true),
-+				   "asymmetric",
-+				   NULL,
-+				   data,
-+				   size,
-+				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
-+				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
-+
-+	if (IS_ERR(key)) {
-+		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
-+		return PTR_ERR(key);
-+	}
-+
-+	return 0;
-+}
-+
-+int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
-+{
-+	int ret;
-+
-+	ret =3D validate_trust(pkcs7, blacklist_keyring);
-+
-+	if (ret =3D=3D 0)
-+		return -EKEYREJECTED;
-+
-+	return -ENOKEY;
-+}
-+
- /**
-  * is_hash_blacklisted - Determine if a hash is blacklisted
-  * @hash: The hash to be checked as a binary blob
-diff --git a/certs/blacklist.h b/certs/blacklist.h
-index 1efd6fa0dc60..420bb7c86e07 100644
---- a/certs/blacklist.h
-+++ b/certs/blacklist.h
-@@ -1,3 +1,15 @@
- #include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <crypto/pkcs7.h>
- =
-
- extern const char __initconst *const blacklist_hashes[];
-+
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+#define validate_trust pkcs7_validate_trust
-+#else
-+static inline int validate_trust(struct pkcs7_message *pkcs7,
-+				 struct key *trust_keyring)
-+{
-+	return -ENOKEY;
-+}
-+#endif
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 798291177186..cc165b359ea3 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -241,6 +241,12 @@ int verify_pkcs7_message_sig(const void *data, size_t=
- len,
- 			pr_devel("PKCS#7 platform keyring is not available\n");
- 			goto error;
- 		}
-+
-+		ret =3D is_key_on_revocation_list(pkcs7);
-+		if (ret !=3D -ENOKEY) {
-+			pr_devel("PKCS#7 platform key is on revocation list\n");
-+			goto error;
-+		}
- 	}
- 	ret =3D pkcs7_validate_trust(pkcs7, trusted_keys);
- 	if (ret < 0) {
-diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-index fb8b07daa9d1..61f98739e8b1 100644
---- a/include/keys/system_keyring.h
-+++ b/include/keys/system_keyring.h
-@@ -31,11 +31,14 @@ extern int restrict_link_by_builtin_and_secondary_trus=
-ted(
- #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_b=
-uiltin_trusted
- #endif
- =
-
-+extern struct pkcs7_message *pkcs7;
- #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
- extern int mark_hash_blacklisted(const char *hash);
-+extern int add_key_to_revocation_list(const char *data, size_t size);
- extern int is_hash_blacklisted(const u8 *hash, size_t hash_len,
- 			       const char *type);
- extern int is_binary_blacklisted(const u8 *hash, size_t hash_len);
-+extern int is_key_on_revocation_list(struct pkcs7_message *pkcs7);
- #else
- static inline int is_hash_blacklisted(const u8 *hash, size_t hash_len,
- 				      const char *type)
-@@ -47,6 +50,14 @@ static inline int is_binary_blacklisted(const u8 *hash,=
- size_t hash_len)
- {
- 	return 0;
- }
-+static inline int add_key_to_revocation_list(const char *data, size_t siz=
-e)
-+{
-+	return 0;
-+}
-+static inline int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
-+{
-+	return -ENOKEY;
-+}
- #endif
- =
-
- #ifdef CONFIG_IMA_BLACKLIST_KEYRING
-diff --git a/security/integrity/platform_certs/keyring_handler.c b/securit=
-y/integrity/platform_certs/keyring_handler.c
-index c5ba695c10e3..5604bd57c990 100644
---- a/security/integrity/platform_certs/keyring_handler.c
-+++ b/security/integrity/platform_certs/keyring_handler.c
-@@ -55,6 +55,15 @@ static __init void uefi_blacklist_binary(const char *so=
-urce,
- 	uefi_blacklist_hash(source, data, len, "bin:", 4);
- }
- =
-
-+/*
-+ * Add an X509 cert to the revocation list.
-+ */
-+static __init void uefi_revocation_list_x509(const char *source,
-+					     const void *data, size_t len)
-+{
-+	add_key_to_revocation_list(data, len);
-+}
-+
- /*
-  * Return the appropriate handler for particular signature list types fou=
-nd in
-  * the UEFI db and MokListRT tables.
-@@ -76,5 +85,7 @@ __init efi_element_handler_t get_handler_for_dbx(const e=
-fi_guid_t *sig_type)
- 		return uefi_blacklist_x509_tbs;
- 	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) =3D=3D 0)
- 		return uefi_blacklist_binary;
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) =3D=3D 0)
-+		return uefi_revocation_list_x509;
- 	return 0;
- }
-
+-- 
+paul moore
+www.paul-moore.com
