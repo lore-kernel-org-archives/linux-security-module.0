@@ -1,77 +1,89 @@
 Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.7 required=3.0 tests=BAYES_50,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PHP_SCRIPT,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58498C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 07:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA90C4332B
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 10:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10C0023339
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 07:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6419B23428
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 10:58:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbhAMHhJ (ORCPT
+        id S1727052AbhAMK6W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 02:37:09 -0500
-Received: from server.terraprime.co.uk ([95.154.247.154]:59109 "EHLO
-        server.terraprime.co.uk" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725787AbhAMHhJ (ORCPT
+        Wed, 13 Jan 2021 05:58:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60120 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726939AbhAMK6W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 02:37:09 -0500
-X-Greylist: delayed 941 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 Jan 2021 02:37:08 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=verityscott.co.uk; s=default; h=Content-Type:Content-Transfer-Encoding:
-        MIME-Version:Message-ID:From:Date:Subject:To:Sender:Reply-To:Cc:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RVP4OrTVxOc91EWBkvqpaztFnl7T3UuglHZYlUTWUWU=; b=Kpm4u95E6X5p352pOLJcWMQ74m
-        7uqSfy3E+XE/39oNcz68pbRa2XEl8gasTdMOOjjoEiaVrJG1qsBcesSIjuT6TF2m6EwikN1Y/5+2O
-        KNeNLYa5Z7oVuFaEZKo0ozX26egOFXdoUgOf/NBCSSxu4Vhslgk+hbdKXi1F2pyB3Q0uK8p3xXMy1
-        MlZCZmNtnsURkOGbkxdtWZuCtHotUmmZCQXlVLzpRNwxwwSMi1Qz43K/f8tl1CDcXPzDRXBnw4CMx
-        waSNQx0jC7NoAPmtC4nvXlnxbXMbNwk5DCFK2ZFyzhggPxUzgwcSWqE/cYh8lSlg5daN7HeG50xnB
-        Hcu3R9aw==;
-Received: from veritysc by stormcat.logicserver.co.uk with local (Exim 4.93)
-        (envelope-from <veritysc@stormcat.logicserver.co.uk>)
-        id 1kzaSU-0003bU-E2
-        for linux-security-module@vger.kernel.org; Wed, 13 Jan 2021 07:20:46 +0000
-To:     linux-security-module@vger.kernel.org
-Subject: Account Details for 10.000 US-Dollar Erfolgsgeschichte pro Woche. So erhalten Sie ein passives Einkommen von 10000 USD / Monat  >>>>>>>>>>>>>>  https://www.google.com/url?q=https%3A%2F%2Fvk.cc%2FbW9Ahb%3Fq%3Dq&sa=D&ldp=lua&usg=AFQjCNHVxvk2YmHpOxS9HBrvNR92fr6sBw    at Verity Scott
-X-PHP-Script: verityscott.co.uk/index.php/component/users/ for 212.102.57.187
-X-PHP-Originating-Script: 1032:phpmailer.php
-Date:   Wed, 13 Jan 2021 07:20:46 +0000
-From:   Root User <root@localhost>
-Message-ID: <35e7b07ac94f0481875c3d549a6aae18@verityscott.co.uk>
-X-Priority: 3
-X-Mailer: PHPMailer 5.1 (phpmailer.sourceforge.net)
+        Wed, 13 Jan 2021 05:58:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610535416;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5mnxdraFFc27NKPKaDd5/PxGNaQDZhdz3BpuYoF4+jY=;
+        b=EYzIWxYgCTBnk2L/61+d6p59OId9BJHbcLa2Pc/zg+UZmWVB7n1UAGGRgvsGd+5N8buq1n
+        9TUA6UxHEOOBoq8DbVQAbvItJavdZLgd0qGxRJ53MV/0yG25rdW+FR2Fn8F0+n0uOc6kng
+        9a4BMC+OntI/EPju47v6etD/n5CLJoQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-270-52fHE9t9Mq2VGNsItg2Cnw-1; Wed, 13 Jan 2021 05:56:52 -0500
+X-MC-Unique: 52fHE9t9Mq2VGNsItg2Cnw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D44E918C8C02;
+        Wed, 13 Jan 2021 10:56:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 05A086A914;
+        Wed, 13 Jan 2021 10:56:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <e6bd9820-8b77-57fc-f318-9b928e4d951b@schaufler-ca.com>
+References: <e6bd9820-8b77-57fc-f318-9b928e4d951b@schaufler-ca.com> <1610099389-28329-1-git-send-email-pnagar@codeaurora.org> <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com> <dab6357acbd63edd53099d106d111bf4@codeaurora.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     dhowells@redhat.com, pnagar@codeaurora.org, arnd@arndb.de,
+        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, psodagud@codeaurora.org,
+        nmardana@codeaurora.org, dsule@codeaurora.org,
+        Joe Perches <joe@perches.com>, Miguel Ojeda <ojeda@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a separate page
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="utf-8"
-X-OutGoing-Spam-Status: No, score=2.8
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - stormcat.logicserver.co.uk
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [1032 990] / [47 12]
-X-AntiAbuse: Sender Address Domain - stormcat.logicserver.co.uk
-X-Get-Message-Sender-Via: stormcat.logicserver.co.uk: authenticated_id: veritysc/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: stormcat.logicserver.co.uk: veritysc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2646560.1610535404.1@warthog.procyon.org.uk>
+Date:   Wed, 13 Jan 2021 10:56:44 +0000
+Message-ID: <2646561.1610535404@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello 10.000 US-Dollar Erfolgsgeschichte pro Woche. So erhalten Sie ein passives Einkommen von 10000 USD / Monat  >>>>>>>>>>>>>>  https://www.google.com/url?q=https%3A%2F%2Fvk.cc%2FbW9Ahb%3Fq%3Dq&sa=D&ldp=lua&usg=AFQjCNHVxvk2YmHpOxS9HBrvNR92fr6sBw   ,
+Casey Schaufler <casey@schaufler-ca.com> wrote:
 
-Thank you for registering at Verity Scott. Your account is created and must be activated before you can use it.
-To activate the account click on the following link or copy-paste it in your browser:
-http://verityscott.co.uk/index.php?option=com_users&task=registration.activate&token=641a03dfe3238829cb2fadae94219864 
+> >> How would this interact with or complement __read_mostly?
+> >>
+> > Currently, the mechanism we are working on developing is
+> > independent of __read_mostly. This is something we can look more into
+> > while working further on the mechanism.
+> 
+> Please either integrate the two or explain how they differ.
+> It appears that you haven't considered how you might exploit
+> or expand the existing mechanism.
 
-After activation you may login to http://verityscott.co.uk/ using the following username and password:
+I think __read_mostly is about grouping stuff together that's rarely going to
+be read to make the CPU's data cache more efficient.  It doesn't stop people
+writing to such a variable.
 
-Username: 10.000 US-Dollar Erfolgsgeschichte pro Woche. So erhalten Sie ein passives Einkommen von 10000 USD / Monat    https://www.google.com/url?q=https3A2F2Fvk.cc2FbW9Ahb3Fq3Dqsa=Dldp=luausg=AFQjCNHVxvk2YmHpOxS9HBrvNR92fr6sBw   
-Password: f5vs6Uk9@qH
+David
 
