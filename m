@@ -2,276 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0117C433E6
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 13:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E352C433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 15:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67026233FB
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 13:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B997B2339F
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 15:17:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725871AbhAMNmF (ORCPT
+        id S1726041AbhAMPRX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 08:42:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:40268 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726948AbhAMNmE (ORCPT
+        Wed, 13 Jan 2021 10:17:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:12894 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725949AbhAMPRW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 08:42:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610545238;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=wREJNFq1amBAl6HRWgMB0MKqw+u/sJVwXhEPRKqsHag=;
-        b=CuTKLPpRhPovHuZ6ea8rfEMwfkGJm0Rg3bFtFphZY0V/S0F9JVnR29WuEB6PJgTjp6dqJG
-        xoMD03yDEIIjo+gqZB1qhfROfmnnRhNaMPjA0X37TfYskBOoFY4ClEcCa48fqM1KJ5LDip
-        VIUhcOa+M76ZNr7eetxuz0VL/EoA7bY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-568-cfXE2W1nP52Qzxije5XCPQ-1; Wed, 13 Jan 2021 08:40:34 -0500
-X-MC-Unique: cfXE2W1nP52Qzxije5XCPQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7484A85EE8C;
-        Wed, 13 Jan 2021 13:40:16 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 878315D6A8;
-        Wed, 13 Jan 2021 13:40:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, jarkko@kernel.org, eric.snowberg@oracle.com,
-        ard.biesheuvel@linaro.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] certs: Add EFI_CERT_X509_GUID support for dbx entries
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2660555.1610545213.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 13 Jan 2021 13:40:13 +0000
-Message-ID: <2660556.1610545213@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        Wed, 13 Jan 2021 10:17:22 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10DFCsJ0012977;
+        Wed, 13 Jan 2021 10:16:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=FFwSMGnjHPCEZG/p5ENas76+2RF2zeo2Gl3j/YpLT+Y=;
+ b=NSIBCVXOq4h/cHxyOvxZIsuO9TCbF6bHQxYRc9mRiTDG5kBGfnP0pp/0KVzmzk5GSSyO
+ kYh7tI2iOWFDLSTs7E9pvAVFu+twYhwGGmqY2dluZ6oXdzilslgROCfngE2iqoHmdeWM
+ MPRIprntvp7G+LV4bwqbRVDBpAW0BdAKaAIBqnCnjgIMPwU2iVsiLk5ZCdOtGKn44pwW
+ 215HNO3bgleTanxUiomNC6TPA96Awhbwn2LBIDE7B4vJgnN9LbDVtwC3yVykkmNKQCwM
+ R9ll3af3sV2ySLuIDzOoNaEXwIaAeRj/v0k1xYN7BU4YKK9fzhDrif4xwGQTM6b61DKM OQ== 
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3623a383bd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Jan 2021 10:16:37 -0500
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10DF8FmV012643;
+        Wed, 13 Jan 2021 15:16:35 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 35y448d6y2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Jan 2021 15:16:35 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10DFGSUo29950208
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jan 2021 15:16:28 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CACC6A4054;
+        Wed, 13 Jan 2021 15:16:32 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11142A4066;
+        Wed, 13 Jan 2021 15:16:31 +0000 (GMT)
+Received: from sig-9-65-221-171.ibm.com (unknown [9.65.221.171])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Jan 2021 15:16:30 +0000 (GMT)
+Message-ID: <19977f2dbe6d25d7b38bdca4628bd1dded1142d9.camel@linux.ibm.com>
+Subject: Re: [PATCH] [v2] evm: Fix memleak in init_desc
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dinghao Liu <dinghao.liu@zju.edu.cn>, kjlu@umn.edu
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@nokia.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 13 Jan 2021 10:16:30 -0500
+In-Reply-To: <20210110080253.32345-1-dinghao.liu@zju.edu.cn>
+References: <20210110080253.32345-1-dinghao.liu@zju.edu.cn>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-13_07:2021-01-13,2021-01-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 priorityscore=1501 impostorscore=0 mlxlogscore=834
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101130090
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+Hi Dinghao,
 
-Are you willing to take this between merge windows - or does it need to wa=
-it
-for the next merge window?  It's not technically a bug fix to the kernel, =
-but
-it does have a CVE attached to it.
+On Sun, 2021-01-10 at 16:02 +0800, Dinghao Liu wrote:
+> When kmalloc() fails, tmp_tfm allocated by
+> crypto_alloc_shash() has not been freed, which
+> leads to memleak.
+> 
+> Fixes: d46eb3699502b ("evm: crypto hash replaced by shash")
+> Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
 
-Note that I've also updated Jarkko's address in his Reviewed-by since his
-Intel address no longer works.
+This patch is now queued, with an updated patch description, in next-
+integrity-testing.
 
-David
----
-commit b5f71d4461d6d09463b2ce8bc4fc150ea1c385c0
-Author: Eric Snowberg <eric.snowberg@oracle.com>
-Date:   Tue Sep 15 20:49:27 2020 -0400
+thanks,
 
-    certs: Add EFI_CERT_X509_GUID support for dbx entries
-    =
-
-    This fixes CVE-2020-26541.
-    =
-
-    The Secure Boot Forbidden Signature Database, dbx, contains a list of =
-now
-    revoked signatures and keys previously approved to boot with UEFI Secu=
-re
-    Boot enabled.  The dbx is capable of containing any number of
-    EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUI=
-D
-    entries.
-    =
-
-    Currently when EFI_CERT_X509_GUID are contained in the dbx, the entrie=
-s are
-    skipped.
-    =
-
-    Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_G=
-UID
-    is found, it is added as an asymmetrical key to the .blacklist keyring=
-.
-    Anytime the .platform keyring is used, the keys in the .blacklist keyr=
-ing
-    are referenced, if a matching key is found, the key will be rejected.
-    =
-
-    [DH: I've changed the names of the new functions with Eric's approval]
-    =
-
-    Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-    Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-    Signed-off-by: David Howells <dhowells@redhat.com>
-
-diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 6514f9ebc943..a7f021878a4b 100644
---- a/certs/blacklist.c
-+++ b/certs/blacklist.c
-@@ -100,6 +100,38 @@ int mark_hash_blacklisted(const char *hash)
- 	return 0;
- }
- =
-
-+int add_key_to_revocation_list(const char *data, size_t size)
-+{
-+	key_ref_t key;
-+
-+	key =3D key_create_or_update(make_key_ref(blacklist_keyring, true),
-+				   "asymmetric",
-+				   NULL,
-+				   data,
-+				   size,
-+				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
-+				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
-+
-+	if (IS_ERR(key)) {
-+		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
-+		return PTR_ERR(key);
-+	}
-+
-+	return 0;
-+}
-+
-+int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
-+{
-+	int ret;
-+
-+	ret =3D validate_trust(pkcs7, blacklist_keyring);
-+
-+	if (ret =3D=3D 0)
-+		return -EKEYREJECTED;
-+
-+	return -ENOKEY;
-+}
-+
- /**
-  * is_hash_blacklisted - Determine if a hash is blacklisted
-  * @hash: The hash to be checked as a binary blob
-diff --git a/certs/blacklist.h b/certs/blacklist.h
-index 1efd6fa0dc60..420bb7c86e07 100644
---- a/certs/blacklist.h
-+++ b/certs/blacklist.h
-@@ -1,3 +1,15 @@
- #include <linux/kernel.h>
-+#include <linux/errno.h>
-+#include <crypto/pkcs7.h>
- =
-
- extern const char __initconst *const blacklist_hashes[];
-+
-+#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-+#define validate_trust pkcs7_validate_trust
-+#else
-+static inline int validate_trust(struct pkcs7_message *pkcs7,
-+				 struct key *trust_keyring)
-+{
-+	return -ENOKEY;
-+}
-+#endif
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 798291177186..cc165b359ea3 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -241,6 +241,12 @@ int verify_pkcs7_message_sig(const void *data, size_t=
- len,
- 			pr_devel("PKCS#7 platform keyring is not available\n");
- 			goto error;
- 		}
-+
-+		ret =3D is_key_on_revocation_list(pkcs7);
-+		if (ret !=3D -ENOKEY) {
-+			pr_devel("PKCS#7 platform key is on revocation list\n");
-+			goto error;
-+		}
- 	}
- 	ret =3D pkcs7_validate_trust(pkcs7, trusted_keys);
- 	if (ret < 0) {
-diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-index fb8b07daa9d1..61f98739e8b1 100644
---- a/include/keys/system_keyring.h
-+++ b/include/keys/system_keyring.h
-@@ -31,11 +31,14 @@ extern int restrict_link_by_builtin_and_secondary_trus=
-ted(
- #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_b=
-uiltin_trusted
- #endif
- =
-
-+extern struct pkcs7_message *pkcs7;
- #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
- extern int mark_hash_blacklisted(const char *hash);
-+extern int add_key_to_revocation_list(const char *data, size_t size);
- extern int is_hash_blacklisted(const u8 *hash, size_t hash_len,
- 			       const char *type);
- extern int is_binary_blacklisted(const u8 *hash, size_t hash_len);
-+extern int is_key_on_revocation_list(struct pkcs7_message *pkcs7);
- #else
- static inline int is_hash_blacklisted(const u8 *hash, size_t hash_len,
- 				      const char *type)
-@@ -47,6 +50,14 @@ static inline int is_binary_blacklisted(const u8 *hash,=
- size_t hash_len)
- {
- 	return 0;
- }
-+static inline int add_key_to_revocation_list(const char *data, size_t siz=
-e)
-+{
-+	return 0;
-+}
-+static inline int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
-+{
-+	return -ENOKEY;
-+}
- #endif
- =
-
- #ifdef CONFIG_IMA_BLACKLIST_KEYRING
-diff --git a/security/integrity/platform_certs/keyring_handler.c b/securit=
-y/integrity/platform_certs/keyring_handler.c
-index c5ba695c10e3..5604bd57c990 100644
---- a/security/integrity/platform_certs/keyring_handler.c
-+++ b/security/integrity/platform_certs/keyring_handler.c
-@@ -55,6 +55,15 @@ static __init void uefi_blacklist_binary(const char *so=
-urce,
- 	uefi_blacklist_hash(source, data, len, "bin:", 4);
- }
- =
-
-+/*
-+ * Add an X509 cert to the revocation list.
-+ */
-+static __init void uefi_revocation_list_x509(const char *source,
-+					     const void *data, size_t len)
-+{
-+	add_key_to_revocation_list(data, len);
-+}
-+
- /*
-  * Return the appropriate handler for particular signature list types fou=
-nd in
-  * the UEFI db and MokListRT tables.
-@@ -76,5 +85,7 @@ __init efi_element_handler_t get_handler_for_dbx(const e=
-fi_guid_t *sig_type)
- 		return uefi_blacklist_x509_tbs;
- 	if (efi_guidcmp(*sig_type, efi_cert_sha256_guid) =3D=3D 0)
- 		return uefi_blacklist_binary;
-+	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) =3D=3D 0)
-+		return uefi_revocation_list_x509;
- 	return 0;
- }
+Mimi
 
