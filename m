@@ -2,88 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA90C4332B
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 10:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A83C433E6
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 11:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6419B23428
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 10:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB7623359
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 11:17:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbhAMK6W (ORCPT
+        id S1728279AbhAMLRx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 05:58:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:60120 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726939AbhAMK6W (ORCPT
+        Wed, 13 Jan 2021 06:17:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728167AbhAMLRx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 05:58:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1610535416;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=5mnxdraFFc27NKPKaDd5/PxGNaQDZhdz3BpuYoF4+jY=;
-        b=EYzIWxYgCTBnk2L/61+d6p59OId9BJHbcLa2Pc/zg+UZmWVB7n1UAGGRgvsGd+5N8buq1n
-        9TUA6UxHEOOBoq8DbVQAbvItJavdZLgd0qGxRJ53MV/0yG25rdW+FR2Fn8F0+n0uOc6kng
-        9a4BMC+OntI/EPju47v6etD/n5CLJoQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-270-52fHE9t9Mq2VGNsItg2Cnw-1; Wed, 13 Jan 2021 05:56:52 -0500
-X-MC-Unique: 52fHE9t9Mq2VGNsItg2Cnw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D44E918C8C02;
-        Wed, 13 Jan 2021 10:56:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 05A086A914;
-        Wed, 13 Jan 2021 10:56:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <e6bd9820-8b77-57fc-f318-9b928e4d951b@schaufler-ca.com>
-References: <e6bd9820-8b77-57fc-f318-9b928e4d951b@schaufler-ca.com> <1610099389-28329-1-git-send-email-pnagar@codeaurora.org> <0f467390-e018-6051-0014-ab475ed76863@schaufler-ca.com> <dab6357acbd63edd53099d106d111bf4@codeaurora.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, pnagar@codeaurora.org, arnd@arndb.de,
-        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-arch@vger.kernel.org, psodagud@codeaurora.org,
-        nmardana@codeaurora.org, dsule@codeaurora.org,
-        Joe Perches <joe@perches.com>, Miguel Ojeda <ojeda@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] selinux: security: Move selinux_state to a separate page
+        Wed, 13 Jan 2021 06:17:53 -0500
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E04A4C061794
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Jan 2021 03:17:12 -0800 (PST)
+Received: by mail-lf1-x129.google.com with SMTP id o13so2203773lfr.3
+        for <linux-security-module@vger.kernel.org>; Wed, 13 Jan 2021 03:17:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TAxh0QRvG+U9nWMtk6yUVRJ8OL/Nsz5USXDEEU+kuLw=;
+        b=hjKQy54pj428UdfskrcDqwX2PEoAuGx3i2g7PycDem6NXMGRHHmGGyHmVKwWLb2K3J
+         GuCbG2pSWNT9EckrACedFivAg7m266Bek8bObR0AWPoaMYAIxLF4kyEoFgxdxCys/z2O
+         1M2sH3NJT6oCtEB49yIGbpWyB9hsme9sBdr9hxRICtZApQMPPnUjWWzc2M1Zd4hFsvgG
+         uji2fNoa/rsQcIj+hu18ZBNFHEL92k4D5/8f5dYZvaqKQELkydytmCDEthvAlm+xp2CH
+         jawETw48NCp3uaDciJagmM/I2m4mDeIiV0WqM9x++VNbLXd50mJ2oGlO07uAiYEAkZlM
+         TxiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TAxh0QRvG+U9nWMtk6yUVRJ8OL/Nsz5USXDEEU+kuLw=;
+        b=bbeSJjN8QQbBT5qDxIvaDOKFNO/d52Mz/+9VXd/ADVrWmnxQzMPs2wjE0HEim6smrZ
+         mQcq1f4JVJtujrk1Qg50XqHzgTwDY+akRUIjAxYClN/Qzlj+p47cJX6v7NmtWmMnpRE3
+         cPD6JuTiXxrdTQSgPtQxOauCqjIccSvqYzBdY0Qy7HWMt3UKQQDVuygRjSdSG/OdSCPX
+         lZX9VrBu3vYoMAu1GigD/+yx2DkFwVujmP/AevrPWvkHDkaSzQ0oWwsjzJRDcbdvf8qJ
+         R/1AJIy44G5tk6l1EqncN9/YLd6/MVfS+yypPSrQyuIicVFnG8952mDQv9Lfm3RyfjCV
+         m1Fg==
+X-Gm-Message-State: AOAM531sQggyBNXiKanYd6gSccPzS0chFk+1I7rwXmyj99sWZrMusahj
+        +DV6KS5zyI3N/o/VW2yPXYL29Z2y1RNpDoeXMajJ9g==
+X-Google-Smtp-Source: ABdhPJweF4+YKogH4cN92gRs6BUwNLlYpSWHBGR0Ptdw8KYpzPSd0hSF3S5iZRq39IC4We8OFJ8+kD0bPFuTv8QjcXc=
+X-Received: by 2002:a19:c211:: with SMTP id l17mr671408lfc.194.1610536631374;
+ Wed, 13 Jan 2021 03:17:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2646560.1610535404.1@warthog.procyon.org.uk>
-Date:   Wed, 13 Jan 2021 10:56:44 +0000
-Message-ID: <2646561.1610535404@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-3-git-send-email-sumit.garg@linaro.org> <X/x+N0fgrzIZTeNi@kernel.org>
+In-Reply-To: <X/x+N0fgrzIZTeNi@kernel.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 13 Jan 2021 16:47:00 +0530
+Message-ID: <CAFA6WYOUvWAZtYfR4q8beZFkX-CtdxqwJaRQM+GHNMDfQiEWOA@mail.gmail.com>
+Subject: Re: [PATCH v8 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+Hi Jarkko,
 
-> >> How would this interact with or complement __read_mostly?
-> >>
-> > Currently, the mechanism we are working on developing is
-> > independent of __read_mostly. This is something we can look more into
-> > while working further on the mechanism.
-> 
-> Please either integrate the two or explain how they differ.
-> It appears that you haven't considered how you might exploit
-> or expand the existing mechanism.
+On Mon, 11 Jan 2021 at 22:05, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>
+> On Tue, Nov 03, 2020 at 09:31:44PM +0530, Sumit Garg wrote:
+> > Add support for TEE based trusted keys where TEE provides the functionality
+> > to seal and unseal trusted keys using hardware unique key.
+> >
+> > Refer to Documentation/tee.txt for detailed information about TEE.
+> >
+> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+>
+> I haven't yet got QEMU environment working with aarch64, this produces
+> just a blank screen:
+>
+> ./output/host/usr/bin/qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -kernel output/images/Image -initrd output/images/rootfs.cpio -serial stdio
+>
+> My BuildRoot fork for TPM and keyring testing is located over here:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/buildroot-tpmdd.git/
+>
+> The "ARM version" is at this point in aarch64 branch. Over time I will
+> define tpmdd-x86_64 and tpmdd-aarch64 boards and everything will be then
+> in the master branch.
+>
+> To create identical images you just need to
+>
+> $ make tpmdd_defconfig && make
+>
+> Can you check if you see anything obviously wrong? I'm eager to test this
+> patch set, and in bigger picture I really need to have ready to run
+> aarch64 environment available.
 
-I think __read_mostly is about grouping stuff together that's rarely going to
-be read to make the CPU's data cache more efficient.  It doesn't stop people
-writing to such a variable.
+I would rather suggest you to follow steps listed here [1] as to test
+this feature on Qemu aarch64 we need to build firmwares such as TF-A,
+OP-TEE, UEFI etc. which are all integrated into OP-TEE Qemu build
+system [2]. And then it would be easier to migrate them to your
+buildroot environment as well.
 
-David
+[1] https://lists.trustedfirmware.org/pipermail/op-tee/2020-May/000027.html
+[2] https://optee.readthedocs.io/en/latest/building/devices/qemu.html#qemu-v8
 
+-Sumit
+
+>
+> /Jarkko
