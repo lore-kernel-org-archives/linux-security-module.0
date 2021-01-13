@@ -2,88 +2,183 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB36BC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 20:43:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50045C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 21:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7416922DFA
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 20:43:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED8EE22D58
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 21:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbhAMUnV (ORCPT
+        id S1729175AbhAMVtU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 15:43:21 -0500
-Received: from mga17.intel.com ([192.55.52.151]:54856 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725885AbhAMUnU (ORCPT
+        Wed, 13 Jan 2021 16:49:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5350 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726013AbhAMVtE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 15:43:20 -0500
-IronPort-SDR: BqaGB00I+jlC5kgp/DHIu8bh76+w4eWrCEFnpHF7R6HP8XxaVwuesaLsnvEz1EA+gO2bGGDkuZ
- 9LECEuMvh5Dw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9863"; a="158042589"
-X-IronPort-AV: E=Sophos;i="5.79,345,1602572400"; 
-   d="scan'208";a="158042589"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 12:41:34 -0800
-IronPort-SDR: rik8a87SibAyMJx9YKB+Yvhcm7UmFbqnOu9ufcOhQmN2c4wRi6q5norGHVwSJSr2k/7CmYTXPb
- XZJ5/YuhbBig==
-X-IronPort-AV: E=Sophos;i="5.79,345,1602572400"; 
-   d="scan'208";a="381998210"
-Received: from oslutsk1-mobl1.ccr.corp.intel.com (HELO linux.intel.com) ([10.249.40.71])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jan 2021 12:41:27 -0800
-Date:   Wed, 13 Jan 2021 22:41:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-Message-ID: <X/9a8naM8p4tT5sO@linux.intel.com>
-References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
- <20200916004927.64276-1-eric.snowberg@oracle.com>
- <1360578.1607593748@warthog.procyon.org.uk>
- <2442460.1610463459@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2442460.1610463459@warthog.procyon.org.uk>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+        Wed, 13 Jan 2021 16:49:04 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10DL30Eg133717;
+        Wed, 13 Jan 2021 16:11:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=QhuL9Gz2bxSFv4rXqkxZpAJq3ZeRITP9eZdUj9QObPw=;
+ b=k1RFcphbsG2oKqUQ+/BhkBZbB/T0zxfrXdrw0CgWrZr2hQ72eCyM4VlQQ9g9hFJ1/KEu
+ EfhQWFNmeTZ+Ad5hi6oxxHDXyx66glvQw4WGTSCRs2cjxildWB+9SeI9SnIVbyJpO6Jw
+ cYF1iOQLl/bbxyT1jeKq7cqREfu1f8R0DcJGpQVj4AyPcH7tvZIYXLwFA6PtbvV9SMcs
+ siArdxDixICILS4WxRdsBNpEaPduGq4ILpajyce6q8z9ug22DE3bgEbcNtCyvXBXmPA+
+ TfJq2UiE686tV/Du/nh84Xi1jlyBPv+K0GGdlGbe+XQrjh+mOyAi8+hH8UzSqOQIHIqC Ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 36284jgmvc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Jan 2021 16:11:18 -0500
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10DL3e7i140759;
+        Wed, 13 Jan 2021 16:11:18 -0500
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 36284jgmun-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Jan 2021 16:11:18 -0500
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10DL3H72023444;
+        Wed, 13 Jan 2021 21:11:16 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma05fra.de.ibm.com with ESMTP id 35y448auv3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 13 Jan 2021 21:11:16 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10DLBEen40632698
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jan 2021 21:11:14 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E3AF642041;
+        Wed, 13 Jan 2021 21:11:13 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74C4A42049;
+        Wed, 13 Jan 2021 21:11:10 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.57.196])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Jan 2021 21:11:10 +0000 (GMT)
+Message-ID: <71cddb6c8676ccd63c89364d805cfca76d32cb6e.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 8/8] selinux: include a consumer of the new IMA
+ critical data hook
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, James Morris <jmorris@namei.org>,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Date:   Wed, 13 Jan 2021 16:11:09 -0500
+In-Reply-To: <CAHC9VhTzaQ_q8gJ0oeok_yJ54XLETNvOuhhKnyRwgqsqvpBLCw@mail.gmail.com>
+References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
+         <20210108040708.8389-9-tusharsu@linux.microsoft.com>
+         <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
+         <97328fc71687a0e1c327f6821548be9ba35bb193.camel@linux.ibm.com>
+         <CAHC9VhTzaQ_q8gJ0oeok_yJ54XLETNvOuhhKnyRwgqsqvpBLCw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
+ definitions=2021-01-13_11:2021-01-13,2021-01-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 mlxscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2101130124
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 12, 2021 at 02:57:39PM +0000, David Howells wrote:
-> Eric Snowberg <eric.snowberg@oracle.com> wrote:
+On Wed, 2021-01-13 at 14:19 -0500, Paul Moore wrote:
+> On Wed, Jan 13, 2021 at 2:13 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > On Tue, 2021-01-12 at 11:27 -0500, Paul Moore wrote:
+> > > On Thu, Jan 7, 2021 at 11:07 PM Tushar Sugandhi
+> > > <tusharsu@linux.microsoft.com> wrote:
+> > > > From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> > > >
+> > > > SELinux stores the active policy in memory, so the changes to this data
+> > > > at runtime would have an impact on the security guarantees provided
+> > > > by SELinux.  Measuring in-memory SELinux policy through IMA subsystem
+> > > > provides a secure way for the attestation service to remotely validate
+> > > > the policy contents at runtime.
+> > > >
+> > > > Measure the hash of the loaded policy by calling the IMA hook
+> > > > ima_measure_critical_data().  Since the size of the loaded policy
+> > > > can be large (several MB), measure the hash of the policy instead of
+> > > > the entire policy to avoid bloating the IMA log entry.
+> > > >
+> > > > To enable SELinux data measurement, the following steps are required:
+> > > >
+> > > > 1, Add "ima_policy=critical_data" to the kernel command line arguments
+> > > >    to enable measuring SELinux data at boot time.
+> > > > For example,
+> > > >   BOOT_IMAGE=/boot/vmlinuz-5.10.0-rc1+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
+> > > >
+> > > > 2, Add the following rule to /etc/ima/ima-policy
+> > > >    measure func=CRITICAL_DATA label=selinux
+> > > >
+> > > > Sample measurement of the hash of SELinux policy:
+> > > >
+> > > > To verify the measured data with the current SELinux policy run
+> > > > the following commands and verify the output hash values match.
+> > > >
+> > > >   sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
+> > > >
+> > > >   grep "selinux-policy-hash" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6
+> > > >
+> > > > Note that the actual verification of SELinux policy would require loading
+> > > > the expected policy into an identical kernel on a pristine/known-safe
+> > > > system and run the sha256sum /sys/kernel/selinux/policy there to get
+> > > > the expected hash.
+> > > >
+> > > > Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+> > > > Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > > > Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
+> > > > ---
+> > > >  Documentation/ABI/testing/ima_policy |  3 +-
+> > > >  security/selinux/Makefile            |  2 +
+> > > >  security/selinux/ima.c               | 64 ++++++++++++++++++++++++++++
+> > > >  security/selinux/include/ima.h       | 24 +++++++++++
+> > > >  security/selinux/include/security.h  |  3 +-
+> > > >  security/selinux/ss/services.c       | 64 ++++++++++++++++++++++++----
+> > > >  6 files changed, 149 insertions(+), 11 deletions(-)
+> > > >  create mode 100644 security/selinux/ima.c
+> > > >  create mode 100644 security/selinux/include/ima.h
+> > >
+> > > I remain concerned about the possibility of bypassing a measurement by
+> > > tampering with the time, but I appear to be the only one who is
+> > > worried about this so I'm not going to block this patch on those
+> > > grounds.
+> > >
+> > > Acked-by: Paul Moore <paul@paul-moore.com>
+> >
+> > Thanks, Paul.
+> >
+> > Including any unique string would cause the buffer hash to change,
+> > forcing a new measurement.  Perhaps they were concerned with
+> > overflowing a counter.
 > 
-> > > On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> wrote:
-> > > 
-> > > Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> > > 
-> > >> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
-> > >> is found, it is added as an asymmetrical key to the .blacklist keyring.
-> > >> Anytime the .platform keyring is used, the keys in the .blacklist keyring
-> > >> are referenced, if a matching key is found, the key will be rejected.
-> > > 
-> > > Ummm...  Why this way and not as a blacklist key which takes up less space?
-> > > I'm guessing that you're using the key chain matching logic.  We really only
-> > > need to blacklist the key IDs.
-> > 
-> > I implemented it this way so that certs in the dbx would only impact 
-> > the .platform keyring. I was under the impression we didn’t want to have 
-> > Secure Boot UEFI db/dbx certs dictate keyring functionality within the kernel
-> > itself. Meaning if we have a matching dbx cert in any other keyring (builtin,
-> > secondary, ima, etc.), it would be allowed. If that is not how you’d like to 
-> > see it done, let me know and I’ll make the change.
-> 
-> I wonder if that is that the right thing to do.  I guess this is a policy
-> decision and may depend on the particular user.
+> My understanding is that Lakshmi wanted to force a new measurement
+> each time and felt using a timestamp would be the best way to do that.
+> A counter, even if it wraps, would have a different value each time
+> whereas a timestamp is vulnerable to time adjustments.  While a
+> properly controlled and audited system could be configured and
+> monitored to detect such an event (I *think*), why rely on that if it
+> isn't necessary?
 
-Why would you want to allow dbx entry in any keyring?
+Why are you saying that even if the counter wraps a new measurement is
+guaranteed.   I agree with the rest of what you said.
 
-/Jarkko
+Mimi
+
+
