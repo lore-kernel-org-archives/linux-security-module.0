@@ -2,156 +2,74 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF1EC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 19:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20C0C433E6
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 19:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 148E623102
-	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 19:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7840E23102
+	for <linux-security-module@archiver.kernel.org>; Wed, 13 Jan 2021 19:25:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbhAMTUS (ORCPT
+        id S1728627AbhAMTZ1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 14:20:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43710 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbhAMTUR (ORCPT
+        Wed, 13 Jan 2021 14:25:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:46546 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728610AbhAMTZ0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 14:20:17 -0500
-Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F56EC061794
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Jan 2021 11:19:37 -0800 (PST)
-Received: by mail-ej1-x634.google.com with SMTP id f4so4674921ejx.7
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Jan 2021 11:19:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S/PHuWHTpBgQdNKFQVbdGCQEXvy7VZiLuqAEx0fTPmc=;
-        b=tL+6Yn+IUsR2YEh35/aL3jXmHoQrvV8UasLgKQs0l8QTPelm18MXU0i3P5X+q4QWyq
-         IhkiuKLuRQY4K2Bm+4ujxq41d+pjIeAoE7mCKTalqgNt447l7cBLfHL7p7cWpN6fvHsf
-         MkfuWSXLj+eD22GOZPqCKgArFwovqD9oCbHS+/cDZVlW3quSi0wTe4iSNl4juLeRW3dP
-         tZs7fPTeHCn3YCA5FgzY+0GRtINk3h4JiQd8M25jLQQoNIwHojUVEo3rFd4aIINQc7KR
-         O94AirXCPjk3ria+0IeigE7amaEwrI5r79qJdIqrwqBuRbpYNY/1F+9qOtfE0tmo+l2Z
-         N2Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S/PHuWHTpBgQdNKFQVbdGCQEXvy7VZiLuqAEx0fTPmc=;
-        b=b7TPSJV3EAF7SBnN/QsfRx8hioKs7RplzKvrqkgDj8vqgyznIu9YK8AoAptcmE/xdS
-         18XjAEfI65Z7kmHJmgHyXmJjdI+bQ+KurwwYBUdIWMeVSjCI1NRgzS9NyJZdVtjPxphG
-         YH0gVzmQKj0cv+Xl4SZOKf/mi2hy5iE0r0CZmK2Y1wElIgc8gJ3lvWXzPDm/l4GuneYa
-         4FfM9TEh7CgNhriuvvmhCDQPVcJhoRcrAggPlZPYcAaDDyNO5hputpxomqZyilXwtmXA
-         AzNdmduBmTe5bS8r/OO5Yk6lyjmhEbVLCk4tH/golMh0yg9YThOuL2pPhOjZYAl2BSI9
-         DmUw==
-X-Gm-Message-State: AOAM5326EY5OEvD7ikbjt3DH6mZEI7y4g/YKxaAonEbMLfz93sML2cG1
-        EvZ6F6ixYRKy9mwUTaG7Y6BJYhYrpv1Ye+2HvdBU
-X-Google-Smtp-Source: ABdhPJzpy46FnrM89yDbgKYDTI8w6gf3C22HrHYgT3GZAYPhAuzSu+VXCuKNthgyqqXgSQ08rYGZHUwVDEZ9CXerKRc=
-X-Received: by 2002:a17:907:4126:: with SMTP id mx6mr2618600ejb.91.1610565575830;
- Wed, 13 Jan 2021 11:19:35 -0800 (PST)
+        Wed, 13 Jan 2021 14:25:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1610565840;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HcC8AUhgxB2nKsEbFplqxs+UaFp2Qy31anNGiuGduMU=;
+        b=GgDhEAv7MWhdCqZTvFUEc0eDSNFTjsJgztsO0lmHXiLSGXojnuLZfbjNrWkIGxjwj/t+8M
+        Srv3KvyHIgz8YZkeuu5rSAMANwjbtBAS4002RxYgfDoFlTyfoiFNyBBxFX8KUeNgeaQ4Km
+        vopiDSUVHgBatOctM2rHRoSwtv6kv6k=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-150-AHAiIQ4VPOmJHO8dvXQUzg-1; Wed, 13 Jan 2021 14:23:56 -0500
+X-MC-Unique: AHAiIQ4VPOmJHO8dvXQUzg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3114D107ACF7;
+        Wed, 13 Jan 2021 19:23:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-112-8.rdu2.redhat.com [10.10.112.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BF1810023B3;
+        Wed, 13 Jan 2021 19:23:51 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2660556.1610545213@warthog.procyon.org.uk>
+References: <2660556.1610545213@warthog.procyon.org.uk>
+To:     torvalds@linux-foundation.org
+Cc:     dhowells@redhat.com, jarkko@kernel.org, eric.snowberg@oracle.com,
+        ard.biesheuvel@linaro.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] certs: Add EFI_CERT_X509_GUID support for dbx entries
 MIME-Version: 1.0
-References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
- <20210108040708.8389-9-tusharsu@linux.microsoft.com> <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
- <97328fc71687a0e1c327f6821548be9ba35bb193.camel@linux.ibm.com>
-In-Reply-To: <97328fc71687a0e1c327f6821548be9ba35bb193.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 13 Jan 2021 14:19:24 -0500
-Message-ID: <CAHC9VhTzaQ_q8gJ0oeok_yJ54XLETNvOuhhKnyRwgqsqvpBLCw@mail.gmail.com>
-Subject: Re: [PATCH v10 8/8] selinux: include a consumer of the new IMA
- critical data hook
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, tyhicks@linux.microsoft.com,
-        sashal@kernel.org, James Morris <jmorris@namei.org>,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2688930.1610565830.1@warthog.procyon.org.uk>
+Date:   Wed, 13 Jan 2021 19:23:50 +0000
+Message-ID: <2688931.1610565830@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 13, 2021 at 2:13 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> On Tue, 2021-01-12 at 11:27 -0500, Paul Moore wrote:
-> > On Thu, Jan 7, 2021 at 11:07 PM Tushar Sugandhi
-> > <tusharsu@linux.microsoft.com> wrote:
-> > > From: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> > >
-> > > SELinux stores the active policy in memory, so the changes to this data
-> > > at runtime would have an impact on the security guarantees provided
-> > > by SELinux.  Measuring in-memory SELinux policy through IMA subsystem
-> > > provides a secure way for the attestation service to remotely validate
-> > > the policy contents at runtime.
-> > >
-> > > Measure the hash of the loaded policy by calling the IMA hook
-> > > ima_measure_critical_data().  Since the size of the loaded policy
-> > > can be large (several MB), measure the hash of the policy instead of
-> > > the entire policy to avoid bloating the IMA log entry.
-> > >
-> > > To enable SELinux data measurement, the following steps are required:
-> > >
-> > > 1, Add "ima_policy=critical_data" to the kernel command line arguments
-> > >    to enable measuring SELinux data at boot time.
-> > > For example,
-> > >   BOOT_IMAGE=/boot/vmlinuz-5.10.0-rc1+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
-> > >
-> > > 2, Add the following rule to /etc/ima/ima-policy
-> > >    measure func=CRITICAL_DATA label=selinux
-> > >
-> > > Sample measurement of the hash of SELinux policy:
-> > >
-> > > To verify the measured data with the current SELinux policy run
-> > > the following commands and verify the output hash values match.
-> > >
-> > >   sha256sum /sys/fs/selinux/policy | cut -d' ' -f 1
-> > >
-> > >   grep "selinux-policy-hash" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6
-> > >
-> > > Note that the actual verification of SELinux policy would require loading
-> > > the expected policy into an identical kernel on a pristine/known-safe
-> > > system and run the sha256sum /sys/kernel/selinux/policy there to get
-> > > the expected hash.
-> > >
-> > > Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> > > Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > Reviewed-by: Tyler Hicks <tyhicks@linux.microsoft.com>
-> > > ---
-> > >  Documentation/ABI/testing/ima_policy |  3 +-
-> > >  security/selinux/Makefile            |  2 +
-> > >  security/selinux/ima.c               | 64 ++++++++++++++++++++++++++++
-> > >  security/selinux/include/ima.h       | 24 +++++++++++
-> > >  security/selinux/include/security.h  |  3 +-
-> > >  security/selinux/ss/services.c       | 64 ++++++++++++++++++++++++----
-> > >  6 files changed, 149 insertions(+), 11 deletions(-)
-> > >  create mode 100644 security/selinux/ima.c
-> > >  create mode 100644 security/selinux/include/ima.h
-> >
-> > I remain concerned about the possibility of bypassing a measurement by
-> > tampering with the time, but I appear to be the only one who is
-> > worried about this so I'm not going to block this patch on those
-> > grounds.
-> >
-> > Acked-by: Paul Moore <paul@paul-moore.com>
->
-> Thanks, Paul.
->
-> Including any unique string would cause the buffer hash to change,
-> forcing a new measurement.  Perhaps they were concerned with
-> overflowing a counter.
+David Howells <dhowells@redhat.com> wrote:
 
-My understanding is that Lakshmi wanted to force a new measurement
-each time and felt using a timestamp would be the best way to do that.
-A counter, even if it wraps, would have a different value each time
-whereas a timestamp is vulnerable to time adjustments.  While a
-properly controlled and audited system could be configured and
-monitored to detect such an event (I *think*), why rely on that if it
-isn't necessary?
+>     This fixes CVE-2020-26541.
 
--- 
-paul moore
-www.paul-moore.com
+Note that I added the CVE number, not Eric.
+
+David
+
