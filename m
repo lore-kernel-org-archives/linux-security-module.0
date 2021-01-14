@@ -2,91 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958DEC4361B
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 01:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD04C43332
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 02:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7352F2075E
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 01:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2218F23442
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 02:06:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729689AbhAMX7P (ORCPT
+        id S1726448AbhANCGW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 18:59:15 -0500
-Received: from bedivere.hansenpartnership.com ([96.44.175.130]:35902 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729673AbhAMX5X (ORCPT
+        Wed, 13 Jan 2021 21:06:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42588 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729109AbhANCGT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 18:57:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 111BD1280967;
-        Wed, 13 Jan 2021 15:56:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1610582202;
-        bh=q5pGq2KcrqVHwr6DWLs6LIeKvtAYhp7bGGEZNqwZjhA=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=Fb1S1Sj1vVDOa8OxYc5R9qH8TRZd5VQvkWgxjsrU2sJEryQQQoDch3DyLYrfN281v
-         bI5z3QYMnYVemMDu86I3X100EFxB1EAJVIUR02Xihe86r64x4MJeouFIyHw0ohSzrI
-         bM/2Oynq3kvIyhuqzpAZaAGBidcDsJdJmUEJ8ULo=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8xhLw8ix8LKo; Wed, 13 Jan 2021 15:56:42 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1FEF31280965;
-        Wed, 13 Jan 2021 15:56:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1610582201;
-        bh=q5pGq2KcrqVHwr6DWLs6LIeKvtAYhp7bGGEZNqwZjhA=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=jLQW+vdSzE4xCQJ+JTZQykAi09eeeVzkgHVIoIp5SUG+44q2hoeTq6UkuWrtniITW
-         PyjfWOXdnY1ftmGa9xni5xHmB/ud3y9NIDVsV6eUNwR+sHAjRklliGxjVtpwMufHWy
-         QvPNy1NKP0phQ0OUpfhZxyd/wrjjusO+nnHRD4qQ=
-Message-ID: <c33c8e3839a41e9654f41cc92c7231104931b1d7.camel@HansenPartnership.com>
-Subject: Re: [PATCH] certs: Add EFI_CERT_X509_GUID support for dbx entries
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     David Howells <dhowells@redhat.com>, torvalds@linux-foundation.org
-Cc:     jarkko@kernel.org, eric.snowberg@oracle.com,
-        ard.biesheuvel@linaro.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 13 Jan 2021 15:56:39 -0800
-In-Reply-To: <2660556.1610545213@warthog.procyon.org.uk>
-References: <2660556.1610545213@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Wed, 13 Jan 2021 21:06:19 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C0C9223442;
+        Thu, 14 Jan 2021 02:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610589938;
+        bh=NNgK5BZvTtLVTBZUqJP4R8eSarXLcVpD1VeEm8Vu678=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uEbV8/lm9F6iat9HimlHsiyPyU7AtTod+Gg+fJNZtrdkgZzZFz+9JsAWD2RYgolAy
+         zd23Qdv8WM3G/NHSLsEIu07x7B8V0NS0KLE2Cq6nAhkI1a2G7lDOnpvCG7UfwpERtY
+         YSAfuut5osfYLOXLZjDF6T/hbMCAB1kUSspXmMpxzmH0DDX0fSf55dZKV3bBFkThsY
+         AAUY/7Mz8S1jU4JIZahoaTywyTn/kTlM1YPf+vCrPm59ZUvORuNPcy/OlzXnc7K8at
+         qj3qmvqCUzX0XG7wNxM+Csrb3WyJBgHr4QRrdYADo3S7lpxoyTGZPyjinLwkQsZEkz
+         LINZx0hO334Bg==
+Date:   Thu, 14 Jan 2021 04:05:31 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v8 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
+Message-ID: <X/+m6+m2/snYj9Vc@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-3-git-send-email-sumit.garg@linaro.org>
+ <X/x+N0fgrzIZTeNi@kernel.org>
+ <CAFA6WYOUvWAZtYfR4q8beZFkX-CtdxqwJaRQM+GHNMDfQiEWOA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFA6WYOUvWAZtYfR4q8beZFkX-CtdxqwJaRQM+GHNMDfQiEWOA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-01-13 at 13:40 +0000, David Howells wrote:
-> Hi Linus,
+On Wed, Jan 13, 2021 at 04:47:00PM +0530, Sumit Garg wrote:
+> Hi Jarkko,
 > 
-> Are you willing to take this between merge windows - or does it need
-> to wait for the next merge window?  It's not technically a bug fix to
-> the kernel, but it does have a CVE attached to it.
+> On Mon, 11 Jan 2021 at 22:05, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Tue, Nov 03, 2020 at 09:31:44PM +0530, Sumit Garg wrote:
+> > > Add support for TEE based trusted keys where TEE provides the functionality
+> > > to seal and unseal trusted keys using hardware unique key.
+> > >
+> > > Refer to Documentation/tee.txt for detailed information about TEE.
+> > >
+> > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> >
+> > I haven't yet got QEMU environment working with aarch64, this produces
+> > just a blank screen:
+> >
+> > ./output/host/usr/bin/qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -kernel output/images/Image -initrd output/images/rootfs.cpio -serial stdio
+> >
+> > My BuildRoot fork for TPM and keyring testing is located over here:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/buildroot-tpmdd.git/
+> >
+> > The "ARM version" is at this point in aarch64 branch. Over time I will
+> > define tpmdd-x86_64 and tpmdd-aarch64 boards and everything will be then
+> > in the master branch.
+> >
+> > To create identical images you just need to
+> >
+> > $ make tpmdd_defconfig && make
+> >
+> > Can you check if you see anything obviously wrong? I'm eager to test this
+> > patch set, and in bigger picture I really need to have ready to run
+> > aarch64 environment available.
 > 
-> Note that I've also updated Jarkko's address in his Reviewed-by since
-> his Intel address no longer works.
+> I would rather suggest you to follow steps listed here [1] as to test
+> this feature on Qemu aarch64 we need to build firmwares such as TF-A,
+> OP-TEE, UEFI etc. which are all integrated into OP-TEE Qemu build
+> system [2]. And then it would be easier to migrate them to your
+> buildroot environment as well.
+> 
+> [1] https://lists.trustedfirmware.org/pipermail/op-tee/2020-May/000027.html
+> [2] https://optee.readthedocs.io/en/latest/building/devices/qemu.html#qemu-v8
+> 
+> -Sumit
 
-Sorry, late to the party.
+Can you provide 'keyctl_change'? Otherwise, the steps are easy to follow.
 
-I suppose I lost the argument that we shouldn't really be trusting any
-certs from db when shim is in operation because they're all EFI binary
-signing ones and will usually simply be the microsoft certificate and
-possibly an OEM platform one and we're usually pivoting the root of
-trust to the certificates in the MokList.
+After I've successfully tested 2/4, I'd suggest that you roll out one more
+version and CC the documentation patch to Elaine and Mini, and clearly
+remark in the commit message that TEE is a standard, with a link to the
+specification.
 
-However, if we are going to do this, we should also be blacklisting the
-certificates in MokListX which the OS sees through MokListXRT.  Since
-MokListX is an essential piece of our revocation infrastructure it
-should have been mentioned in the CVE but wasn't for some reason.
-
-James
-
-
+/Jarkko
