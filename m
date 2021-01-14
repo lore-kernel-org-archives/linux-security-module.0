@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A391C4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EECFC43219
 	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 15:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D217123B01
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 15:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5769723B03
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 15:20:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729561AbhANPUX (ORCPT
+        id S1729125AbhANPUg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Jan 2021 10:20:23 -0500
-Received: from smtp-bc0b.mail.infomaniak.ch ([45.157.188.11]:48887 "EHLO
-        smtp-bc0b.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729325AbhANPTz (ORCPT
+        Thu, 14 Jan 2021 10:20:36 -0500
+Received: from smtp-42ab.mail.infomaniak.ch ([84.16.66.171]:46453 "EHLO
+        smtp-42ab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729162AbhANPTw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Jan 2021 10:19:55 -0500
+        Thu, 14 Jan 2021 10:19:52 -0500
 Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGnz00j5kzMqXYC;
-        Thu, 14 Jan 2021 16:19:08 +0100 (CET)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGnyx49bPzMqK38;
+        Thu, 14 Jan 2021 16:19:05 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGnyz5BJ8zlppyt;
-        Thu, 14 Jan 2021 16:19:07 +0100 (CET)
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGnyw1V8nzlpq09;
+        Thu, 14 Jan 2021 16:19:04 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -41,10 +41,11 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
+        Alex Shi <alex.shi@linux.alibaba.com>,
         Ben Boeckel <mathstuf@gmail.com>
-Subject: [PATCH v3 03/10] PKCS#7: Fix missing include
-Date:   Thu, 14 Jan 2021 16:19:02 +0100
-Message-Id: <20210114151909.2344974-4-mic@digikod.net>
+Subject: [PATCH v3 01/10] certs/blacklist: fix kernel doc interface issue
+Date:   Thu, 14 Jan 2021 16:19:00 +0100
+Message-Id: <20210114151909.2344974-2-mic@digikod.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210114151909.2344974-1-mic@digikod.net>
 References: <20210114151909.2344974-1-mic@digikod.net>
@@ -54,38 +55,42 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+From: Alex Shi <alex.shi@linux.alibaba.com>
 
-Add missing linux/types.h for size_t.
+certs/blacklist.c:84: warning: Function parameter or member 'hash' not
+described in 'mark_hash_blacklisted'
 
-[DH: Changed from stddef.h]
-
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: keyrings@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Ben Boeckel <mathstuf@gmail.com>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 ---
 
 Changes since v2:
-* Cherry-pick v1 patch from
+* Cherry-pick patch from
   https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
-  to rebase on v5.11-rc3.
+  to avoid future merge conflicts.
+* Rearrange Signed-off-by and Reviewed-by order.
 ---
- include/linux/verification.h | 2 ++
- 1 file changed, 2 insertions(+)
+ certs/blacklist.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/verification.h b/include/linux/verification.h
-index 911ab7c2b1ab..a655923335ae 100644
---- a/include/linux/verification.h
-+++ b/include/linux/verification.h
-@@ -8,6 +8,8 @@
- #ifndef _LINUX_VERIFICATION_H
- #define _LINUX_VERIFICATION_H
+diff --git a/certs/blacklist.c b/certs/blacklist.c
+index 6514f9ebc943..2719fb2fbc1c 100644
+--- a/certs/blacklist.c
++++ b/certs/blacklist.c
+@@ -78,7 +78,7 @@ static struct key_type key_type_blacklist = {
  
-+#include <linux/types.h>
-+
- /*
-  * Indicate that both builtin trusted keys and secondary trusted keys
-  * should be used.
+ /**
+  * mark_hash_blacklisted - Add a hash to the system blacklist
+- * @hash - The hash as a hex string with a type prefix (eg. "tbs:23aa429783")
++ * @hash: The hash as a hex string with a type prefix (eg. "tbs:23aa429783")
+  */
+ int mark_hash_blacklisted(const char *hash)
+ {
 -- 
 2.30.0
 
