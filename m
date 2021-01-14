@@ -2,106 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1B3C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 03:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59808C43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 04:16:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECF7623741
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 03:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3032223107
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 04:16:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727155AbhANDYF (ORCPT
+        id S1727074AbhANEQL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 13 Jan 2021 22:24:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34880 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727533AbhANDX6 (ORCPT
+        Wed, 13 Jan 2021 23:16:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725997AbhANEQK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 13 Jan 2021 22:23:58 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E608C061795
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Jan 2021 19:23:18 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id f17so4886707ljg.12
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Jan 2021 19:23:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FEfB7z2Pg3tEbsUuKrEZpLqRqQiSI7cwvfIpRmMaPsg=;
-        b=ERDheW9rkL9QnlcBk+gjMEWNicKOrODmm03n00UhTyuOanz3yIf+tVQ2IhyWO8CwON
-         GKpMHZiqMwxQyAHoTp5gWGJ9T/9Cv+QqTqzD/Q0j7l6WJ3FK2LOR2lYJleXMUi/HaPtq
-         hAo0tLKKn2Q7t/UBKM4+ZCJT32+rgjpcSTro39e8R9WGksf2PWbqS4pLDiAzVnHdQwFS
-         cKqbNI76NaFU69m3LsyPmjdP3CzRq2oPRT9ho+fOAmBKu1eGIxoQiB5laGLfmKCFbLTh
-         A+1wPcGioLznXyUUcakh1ovdoJ4a55uHhp/zcRprrvdM7164eLO9rwAW7zpziuw26kme
-         wiUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FEfB7z2Pg3tEbsUuKrEZpLqRqQiSI7cwvfIpRmMaPsg=;
-        b=d5xKsUrkv+exJol5q9omJ6kFL2xJ+eaSkdPP8XZYuSWz/fMbzKhJhtlelWi5uu+ZZ9
-         eSBdBrQcyvBn0cWQycNiosQQ4s296ekERzkjE2OE43w+dSPye7zajfRQv5LOFgfescbF
-         1DjUPh9eZczOZ49ul5Nb7V4aa/1kDuoOp6vciTUxP2As0yQ3fiuJC1Kq+/D/xt0vB8S3
-         vq+dd09mPpWJFJwD3gt0x2Bx0crlEKLOQIz0MSWfvEd1YTyaAWr277aKmFcMEW4IvB81
-         gV7GGTavp0xRqt90HM18Q7uLAgzqoCQeXWU4BEMrkDb8EOGAB9AlotMIfqO2AMIvvRbQ
-         ELLg==
-X-Gm-Message-State: AOAM530zGkGFBjwDIa3aNClM9FujTHhcmyflyvjbLaB50rC7UcX3tcUP
-        WOAy2EkJ6vwxr4SLh2k5ZXaaJYx5bN9jGqb+XE2gpw==
-X-Google-Smtp-Source: ABdhPJzfRhrd1kMrfF3j3pfT5UxcaTNs6jz7zJ40MKXw+hJC73ejwL+h4IUubxMUXNGPVLdYIr3TdisY3PE9ZGevcmg=
-X-Received: by 2002:a2e:593:: with SMTP id 141mr2267937ljf.86.1610594596352;
- Wed, 13 Jan 2021 19:23:16 -0800 (PST)
+        Wed, 13 Jan 2021 23:16:10 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A9062221EA;
+        Thu, 14 Jan 2021 04:15:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610597730;
+        bh=5bNu9OxM9PUIxaOuedQwfOFYLhmDVNIPEZSAT3dGhb4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lrSQCF9v7s7KHxfHt1nkxgsmvAit5IxBibLwjFe2veJ3/4mOHUNU1Z4GkBW3HKTfX
+         V5Vcy5OHNrVjf3NxqbB/STou7PmQ+6bK0zTLYvQieLffpEzIXdlAa3eMGytH4gxVoh
+         f/3+LsE4zIaW9espS0TlkNyF4vihVTAUORBcgS40TZDk2U/Pt3+4GV36s4mJ90qp6x
+         BmUWhC9474MZLGcxHWUG6uwhLPx/ECjuQ92VnC7nPZNhD+kXzamEL5TQbmzgUbDN2d
+         L0gmAdcGs8DocVDSD68w0WVDWbF+KNM4Gf1+s2XbynEQo9SR3QnfURob5hY+q2kRm8
+         H2ENi2WpF+SZg==
+Date:   Thu, 14 Jan 2021 06:15:24 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Enable root to update the blacklist keyring
+Message-ID: <X//FXJjQNV/ElHQg@kernel.org>
+References: <20201211190330.2586116-1-mic@digikod.net>
+ <67945fa6-2796-bfcd-5541-d54662e9802a@digikod.net>
+ <X/qJJsVe7+nP+gR6@kernel.org>
 MIME-Version: 1.0
-References: <20201209192839.1396820-1-mic@digikod.net>
-In-Reply-To: <20201209192839.1396820-1-mic@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Thu, 14 Jan 2021 04:22:50 +0100
-Message-ID: <CAG48ez3DE8xgr_etVGV5eNjH2CXXo9MR7jTcu+_LCkJUchLXcQ@mail.gmail.com>
-Subject: Re: [PATCH v26 00/12] Landlock LSM
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <X/qJJsVe7+nP+gR6@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Dec 9, 2020 at 8:28 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
-rote:
-> This patch series adds new built-time checks, a new test, renames some
-> variables and functions to improve readability, and shift syscall
-> numbers to align with -next.
+On Sun, Jan 10, 2021 at 06:57:10AM +0200, Jarkko Sakkinen wrote:
+> On Tue, Jan 05, 2021 at 11:12:57AM +0100, Mickaël Salaün wrote:
+> > Jarkko, David, what is the status of this patch series? Do you need help
+> > to test it?
+> 
+> Hi, a leave/vacation and the holiday period badly mixed my schedules.
+> 
+> I'm testing this upcoming week.
+> 
+> /Jarkko
 
-Sorry, I've finally gotten around to looking at v26 - I hadn't
-actually looked at v25 either yet. I think there's still one remaining
-small issue in the filesystem access logic, but I think that's very
-simple to fix, as long as we agree on what the expected semantics are.
-Otherwise it basically looks good, apart from some typos.
+❯ git-pw series apply 400795
+Applying: certs: Make blacklist_vet_description() more strict
+error: sha1 information is lacking or useless (certs/blacklist.c).
+error: could not build fake ancestor
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+Patch failed at 0001 certs: Make blacklist_vet_description() more strict
+When you have resolved this problem, run "git am --continue".
+If you prefer to skip this patch, run "git am --skip" instead.
+To restore the original branch and stop patching, run "git am --abort".
 
-I think v27 will be the final version of this series. :) (And I'll try
-to actually look at that version much faster - I realize that waiting
-for code reviews this long sucks.)
+Can you rebase to rc3 and resend? 
+
+Also, please add this to the patches 1-3:
+
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+Also, 4-5 look good but I hold for testing before acking further.
+
+Thanks, and apologies for such a long wait.
+
+/Jarkko
