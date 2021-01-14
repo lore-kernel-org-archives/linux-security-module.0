@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B34C4332E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D139C43331
 	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 15:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ABCA23B06
+	by mail.kernel.org (Postfix) with ESMTP id 4424D23B06
 	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 15:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729604AbhANPVA (ORCPT
+        id S1729606AbhANPVB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Jan 2021 10:21:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47704 "EHLO
+        Thu, 14 Jan 2021 10:21:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729603AbhANPU7 (ORCPT
+        with ESMTP id S1729602AbhANPVA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Jan 2021 10:20:59 -0500
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [IPv6:2001:1600:4:17::1908])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B12C1C061757
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jan 2021 07:19:55 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGnyy5dGwzMq5Vl;
-        Thu, 14 Jan 2021 16:19:06 +0100 (CET)
+        Thu, 14 Jan 2021 10:21:00 -0500
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD0DC0617A2
+        for <linux-security-module@vger.kernel.org>; Thu, 14 Jan 2021 07:20:03 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DGnz76JbGzMqYvq;
+        Thu, 14 Jan 2021 16:19:15 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGnyy3VPxzlh8T3;
-        Thu, 14 Jan 2021 16:19:06 +0100 (CET)
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DGnz741DRzlh8Tl;
+        Thu, 14 Jan 2021 16:19:15 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -42,12 +42,10 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Mimi Zohar <zohar@linux.ibm.com>,
         "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ben Boeckel <mathstuf@gmail.com>
-Subject: [PATCH v3 02/10] certs: Fix blacklisted hexadecimal hash string check
-Date:   Thu, 14 Jan 2021 16:19:01 +0100
-Message-Id: <20210114151909.2344974-3-mic@digikod.net>
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v3 09/10] certs: Allow root user to append signed hashes to the blacklist keyring
+Date:   Thu, 14 Jan 2021 16:19:08 +0100
+Message-Id: <20210114151909.2344974-10-mic@digikod.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210114151909.2344974-1-mic@digikod.net>
 References: <20210114151909.2344974-1-mic@digikod.net>
@@ -59,46 +57,217 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Mickaël Salaün <mic@linux.microsoft.com>
 
-When looking for a blacklisted hash, bin2hex() is used to transform a
-binary hash to an ascii (lowercase) hexadecimal string.  This string is
-then search for in the description of the keys from the blacklist
-keyring.  When adding a key to the blacklist keyring,
-blacklist_vet_description() checks the hash prefix and the hexadecimal
-string, but not that this string is lowercase.  It is then valid to set
-hashes with uppercase hexadecimal, which will be silently ignored by the
-kernel.
+Add a kernel option SYSTEM_BLACKLIST_AUTH_UPDATE to enable the root user
+to dynamically add new keys to the blacklist keyring.  This enables to
+invalidate new certificates, either from being loaded in a keyring, or
+from being trusted in a PKCS#7 certificate chain.  This also enables to
+add new file hashes to be denied by the integrity infrastructure.
 
-Add an additional check to blacklist_vet_description() to check that
-hexadecimal strings are in lowercase.
+Being able to untrust a certificate which could have normaly been
+trusted is a sensitive operation.  This is why adding new hashes to the
+blacklist keyring is only allowed when these hashes are signed and
+vouched by the builtin trusted keyring.  A blacklist hash is stored as a
+key description.  The PKCS#7 signature of this description must be
+provided as the key payload.
 
+Marking a certificate as untrusted should be enforced while the system
+is running.  It is then forbiden to remove such blacklist keys.
+
+Update blacklist keyring and blacklist key access rights:
+* allows the root user to search for a specific blacklisted hash, which
+  make sense because the descriptions are already viewable;
+* forbids key update;
+* restricts kernel rights on the blacklist keyring to align with the
+  root user rights.
+
+See the help in tools/certs/print-cert-tbs-hash.sh provided by a
+following commit.
+
+Cc: David Howells <dhowells@redhat.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Ben Boeckel <mathstuf@gmail.com>
 ---
 
 Changes since v2:
-* Cherry-pick v1 patch from
-  https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
-  to rebase on v5.11-rc3.
-* Rearrange Cc order.
+* Add comment for blacklist_key_instantiate().
 ---
- certs/blacklist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ certs/Kconfig     | 10 ++++++
+ certs/blacklist.c | 90 +++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 81 insertions(+), 19 deletions(-)
 
+diff --git a/certs/Kconfig b/certs/Kconfig
+index c94e93d8bccf..35fe9989e7b9 100644
+--- a/certs/Kconfig
++++ b/certs/Kconfig
+@@ -83,4 +83,14 @@ config SYSTEM_BLACKLIST_HASH_LIST
+ 	  wrapper to incorporate the list into the kernel.  Each <hash> should
+ 	  be a string of hex digits.
+ 
++config SYSTEM_BLACKLIST_AUTH_UPDATE
++	bool "Allow root to add signed blacklist keys"
++	depends on SYSTEM_BLACKLIST_KEYRING
++	depends on SYSTEM_DATA_VERIFICATION
++	help
++	  If set, provide the ability to load new blacklist keys at run time if
++	  they are signed and vouched by a certificate from the builtin trusted
++	  keyring.  The PKCS#7 signature of the description is set in the key
++	  payload.  Blacklist keys cannot be removed.
++
+ endmenu
 diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 2719fb2fbc1c..a888b934a1cd 100644
+index 1e63971bea94..07c592ae5307 100644
 --- a/certs/blacklist.c
 +++ b/certs/blacklist.c
-@@ -37,7 +37,7 @@ static int blacklist_vet_description(const char *desc)
- found_colon:
- 	desc++;
- 	for (; *desc; desc++) {
--		if (!isxdigit(*desc))
-+		if (!isxdigit(*desc) || isupper(*desc))
- 			return -EINVAL;
- 		n++;
- 	}
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/seq_file.h>
+ #include <linux/uidgid.h>
++#include <linux/verification.h>
+ #include <keys/system_keyring.h>
+ #include "blacklist.h"
+ 
+@@ -25,6 +26,9 @@
+  */
+ #define MAX_HASH_LEN	128
+ 
++#define BLACKLIST_KEY_PERM (KEY_POS_SEARCH | KEY_POS_VIEW | \
++			    KEY_USR_SEARCH | KEY_USR_VIEW)
++
+ static const char tbs_prefix[] = "tbs";
+ static const char bin_prefix[] = "bin";
+ 
+@@ -74,19 +78,51 @@ static int blacklist_vet_description(const char *desc)
+ 	return 0;
+ }
+ 
+-/*
+- * The hash to be blacklisted is expected to be in the description.  There will
+- * be no payload.
+- */
+-static int blacklist_preparse(struct key_preparsed_payload *prep)
++static int blacklist_key_instantiate(struct key *key,
++		struct key_preparsed_payload *prep)
+ {
+-	if (prep->datalen > 0)
+-		return -EINVAL;
+-	return 0;
++#ifdef CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE
++	int err;
++#endif
++
++	/* Sets safe default permissions for keys loaded by user space. */
++	key->perm = BLACKLIST_KEY_PERM;
++
++	/*
++	 * Skips the authentication step for builtin hashes, they are not
++	 * signed but still trusted.
++	 */
++	if (key->flags & (1 << KEY_FLAG_BUILTIN))
++		goto out;
++
++#ifdef CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE
++	/*
++	 * Verifies the description's PKCS#7 signature against the builtin
++	 * trusted keyring.
++	 */
++	err = verify_pkcs7_signature(key->description,
++			strlen(key->description), prep->data, prep->datalen,
++			NULL, VERIFYING_UNSPECIFIED_SIGNATURE, NULL, NULL);
++	if (err)
++		return err;
++#else
++	/*
++	 * It should not be possible to come here because the keyring doesn't
++	 * have KEY_USR_WRITE and the only other way to call this function is
++	 * for builtin hashes.
++	 */
++	WARN_ON_ONCE(1);
++	return -EPERM;
++#endif
++
++out:
++	return generic_key_instantiate(key, prep);
+ }
+ 
+-static void blacklist_free_preparse(struct key_preparsed_payload *prep)
++static int blacklist_key_update(struct key *key,
++		struct key_preparsed_payload *prep)
+ {
++	return -EPERM;
+ }
+ 
+ static void blacklist_describe(const struct key *key, struct seq_file *m)
+@@ -97,9 +133,8 @@ static void blacklist_describe(const struct key *key, struct seq_file *m)
+ static struct key_type key_type_blacklist = {
+ 	.name			= "blacklist",
+ 	.vet_description	= blacklist_vet_description,
+-	.preparse		= blacklist_preparse,
+-	.free_preparse		= blacklist_free_preparse,
+-	.instantiate		= generic_key_instantiate,
++	.instantiate		= blacklist_key_instantiate,
++	.update			= blacklist_key_update,
+ 	.describe		= blacklist_describe,
+ };
+ 
+@@ -148,8 +183,7 @@ static int mark_raw_hash_blacklisted(const char *hash)
+ 				   hash,
+ 				   NULL,
+ 				   0,
+-				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
+-				    KEY_USR_VIEW),
++				   BLACKLIST_KEY_PERM,
+ 				   KEY_ALLOC_NOT_IN_QUOTA |
+ 				   KEY_ALLOC_BUILT_IN);
+ 	if (IS_ERR(key)) {
+@@ -208,25 +242,43 @@ int is_binary_blacklisted(const u8 *hash, size_t hash_len)
+ }
+ EXPORT_SYMBOL_GPL(is_binary_blacklisted);
+ 
++static int restrict_link_for_blacklist(struct key *dest_keyring,
++		const struct key_type *type, const union key_payload *payload,
++		struct key *restrict_key)
++{
++	if (type != &key_type_blacklist)
++		return -EPERM;
++	return 0;
++}
++
+ /*
+  * Initialise the blacklist
+  */
+ static int __init blacklist_init(void)
+ {
+ 	const char *const *bl;
++	struct key_restriction *restriction;
+ 
+ 	if (register_key_type(&key_type_blacklist) < 0)
+ 		panic("Can't allocate system blacklist key type\n");
+ 
++	restriction = kzalloc(sizeof(*restriction), GFP_KERNEL);
++	if (!restriction)
++		panic("Can't allocate blacklist keyring restriction\n");
++	restriction->check = restrict_link_for_blacklist;
++
+ 	blacklist_keyring =
+ 		keyring_alloc(".blacklist",
+ 			      GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, current_cred(),
+-			      (KEY_POS_ALL & ~KEY_POS_SETATTR) |
+-			      KEY_USR_VIEW | KEY_USR_READ |
+-			      KEY_USR_SEARCH,
+-			      KEY_ALLOC_NOT_IN_QUOTA |
++			      KEY_POS_VIEW | KEY_POS_READ | KEY_POS_SEARCH |
++			      KEY_POS_WRITE |
++			      KEY_USR_VIEW | KEY_USR_READ | KEY_USR_SEARCH
++#ifdef CONFIG_SYSTEM_BLACKLIST_AUTH_UPDATE
++			      | KEY_USR_WRITE
++#endif
++			      , KEY_ALLOC_NOT_IN_QUOTA |
+ 			      KEY_ALLOC_SET_KEEP,
+-			      NULL, NULL);
++			      restriction, NULL);
+ 	if (IS_ERR(blacklist_keyring))
+ 		panic("Can't allocate system blacklist keyring\n");
+ 
 -- 
 2.30.0
 
