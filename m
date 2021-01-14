@@ -2,126 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-20.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47789C4332B
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 16:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55FBBC433E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 16:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2459523B2A
-	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 16:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2195323B52
+	for <linux-security-module@archiver.kernel.org>; Thu, 14 Jan 2021 16:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbhANQRP (ORCPT
+        id S1727240AbhANQXc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 14 Jan 2021 11:17:15 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:54871 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbhANQQ7 (ORCPT
+        Thu, 14 Jan 2021 11:23:32 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:33376 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbhANQXb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 14 Jan 2021 11:16:59 -0500
-Received: by mail-io1-f72.google.com with SMTP id w26so9133195iox.21
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jan 2021 08:16:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=oKRYaFHIzRW8a/LJ+hEDSk8C4TL34dpHsdSSXCrYJqM=;
-        b=TQDM81lPf1qGe8Cmc2E46QXj4HW3zKuT+/9r1va573GnwI71tCuYlWKK5sLreEVW7K
-         bGp3MjZl4MImnfkYPGQuMWqpI5fIW6cjbYe5KDleMzv/CJMT2bLfXKBBgbR6ylVVrvsd
-         VSkIFW9gnD2zqQ+hAbgK1mJMlldukLOldehZsm7yrKdyW+OAn08ksuUNIIsQEUiRXQ6u
-         3gQb99lns7EIe8qb7RUj2qrSE3n9h4bFI9wBPOvvroXj86HOD4MoRv3DONAxepEmkbHW
-         jKWRiHJ9WhGDRf0rghm3S8vu6j6HBRnc/k2j969TFI3ig6oMYLwlCAgqqzHsp3npuf+6
-         q61w==
-X-Gm-Message-State: AOAM532wJIyJj0CqYHSFJRe8n3sQ2b/ygmp2iq+cqvcXFf8Jm4wnuqCZ
-        aC19kkC0rHlrivfNXPvvbidoSElsNQyq58UbkagQCGpCDddT
-X-Google-Smtp-Source: ABdhPJwFgQUDEYptyv9C5bMTwmhL12kGkEqXWKfEycMBsRaDBwnoBSsVNR137Kal0X2WXL9XGIeq9+RCgM0S0J6CBCks/h6yQW4t
+        Thu, 14 Jan 2021 11:23:31 -0500
+Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
+        by linux.microsoft.com (Postfix) with ESMTPSA id E852C20B6C40;
+        Thu, 14 Jan 2021 08:22:49 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E852C20B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1610641370;
+        bh=8KBsWFA0uQdPJalWO9bcjGILs5uqsg5GOYsPyXUXKMI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mTtI4JG+13FKeFJaS+lUZgtByd4Xfm/FOqBumNKjFfHRu+xm/LtQDQ/NM3rSc1xMG
+         IzpVB4HFbMfxv4HO1I61xiAJ70t9o2xTpczjlXT52C8R3cEw0o8bLbsJsQEkRJxNOp
+         8bWdTMDbEOSZXv1FxLuSKLURovAmUj7+izH48Dpw=
+Subject: Re: [PATCH v10 8/8] selinux: include a consumer of the new IMA
+ critical data hook
+To:     Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
+Cc:     Tushar Sugandhi <tusharsu@linux.microsoft.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, tyhicks@linux.microsoft.com,
+        sashal@kernel.org, James Morris <jmorris@namei.org>,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20210108040708.8389-1-tusharsu@linux.microsoft.com>
+ <20210108040708.8389-9-tusharsu@linux.microsoft.com>
+ <CAHC9VhSJk0wG=WzO3bwsueiy19mMi9m6MamTrQfH8C=gXUtvGw@mail.gmail.com>
+ <97328fc71687a0e1c327f6821548be9ba35bb193.camel@linux.ibm.com>
+ <CAHC9VhTzaQ_q8gJ0oeok_yJ54XLETNvOuhhKnyRwgqsqvpBLCw@mail.gmail.com>
+ <71cddb6c8676ccd63c89364d805cfca76d32cb6e.camel@linux.ibm.com>
+ <CAHC9VhRhYWEcK7TepZ=LK1m=9Zn_gtOZyAYfamP-TFU3rRH+zw@mail.gmail.com>
+ <e29a618645b0e73ec06960a02b6da465614689ff.camel@linux.ibm.com>
+ <CAHC9VhTHqwKem=MyQBY4TNAq-DOVhwEZS8pjrSE=4OxdEVm-GA@mail.gmail.com>
+ <3746bc7673df25354411151442a7772b867be396.camel@linux.ibm.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <fc80b1a1-ff4d-3bf2-59bd-2cb56135bf0f@linux.microsoft.com>
+Date:   Thu, 14 Jan 2021 08:22:44 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:a88a:: with SMTP id l10mr6992659jam.95.1610640978402;
- Thu, 14 Jan 2021 08:16:18 -0800 (PST)
-Date:   Thu, 14 Jan 2021 08:16:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060e1fe05b8de93e5@google.com>
-Subject: WARNING in memdup_user_nul
-From:   syzbot <syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3746bc7673df25354411151442a7772b867be396.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On 1/13/21 6:49 PM, Mimi Zohar wrote:
 
-syzbot found the following issue on:
+Hi Mimi,
 
-HEAD commit:    65f0d241 Merge tag 'sound-5.11-rc4' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11753ee0d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
-dashboard link: https://syzkaller.appspot.com/bug?extid=a71a442385a0b2815497
-compiler:       clang version 11.0.0 (https://github.com/llvm/llvm-project.git ca2dcbd030eadbf0aa9b660efe864ff08af6e18b)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=152fba3f500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176728e7500000
+>>>>>>>> I remain concerned about the possibility of bypassing a measurement by
+>>>>>>>> tampering with the time, but I appear to be the only one who is
+>>>>>>>> worried about this so I'm not going to block this patch on those
+>>>>>>>> grounds.
+>>>>>>>>
+>>>>>>>> Acked-by: Paul Moore <paul@paul-moore.com>
+>>>>>>>
+>>>>>>> Thanks, Paul.
+>>>>>>>
+>>>>>>> Including any unique string would cause the buffer hash to change,
+>>>>>>> forcing a new measurement.  Perhaps they were concerned with
+>>>>>>> overflowing a counter.
+>>>>>>
+>>>>>> My understanding is that Lakshmi wanted to force a new measurement
+>>>>>> each time and felt using a timestamp would be the best way to do that.
+>>>>>> A counter, even if it wraps, would have a different value each time
+>>>>>> whereas a timestamp is vulnerable to time adjustments.  While a
+>>>>>> properly controlled and audited system could be configured and
+>>>>>> monitored to detect such an event (I *think*), why rely on that if it
+>>>>>> isn't necessary?
+>>>>>
+>>>>> Why are you saying that even if the counter wraps a new measurement is
+>>>>> guaranteed.   I agree with the rest of what you said.
+>>>>
+>>>> I was assuming that the IMA code simply compares the passed
+>>>> "policy_event_name" value to the previous value, if they are different
+>>>> a new measurement is taken, if they are the same the measurement
+>>>> request is ignored.  If this is the case the counter value is only
+>>>> important in as much as that it is different from the previous value,
+>>>> even simply toggling a single bit back and forth would suffice in this
+>>>> case.  IMA doesn't keep a record of every previous "policy_event_name"
+>>>> value does it?  Am I misunderstanding how
+>>>> ima_measure_critical_data(...) works?
+>>>
+>>> Originally, there was quite a bit of discussion as to how much or how
+>>> little should be measured for a number of reasons.  One reason is that
+>>> the TPM is relatively slow.  Another reason is to limit the size of the
+>>> measurement list.  For this reason, duplicate hashes aren't added to
+>>> the measurement list or extended into the TPM.
+>>>
+>>> When a dentry is removed from cache, its also removed from IMA's iint
+>>> cache.  A subsequent file read would result in adding the measurement
+>>> and extending the TPM again.  ima_lookup_digest_entry() is called to
+>>> prevent adding the duplicate entry.
+>>>
+>>> Lakshmi is trying to address the situation where an event changes a
+>>> value, but then is restored to the original value.  The original and
+>>> subsequent events are measured, but restoring to the original value
+>>> isn't re-measured.  This isn't any different than when a file is
+>>> modified and then reverted.
+>>>
+>>> Instead of changing the name like this, which doesn't work for files,
+>>> allowing duplicate measurements should be generic, based on policy.
+>>
+>> Perhaps it is just the end of the day and I'm a bit tired, but I just
+>> read all of the above and I have no idea what your current thoughts
+>> are regarding this patch.
+> 
+> Other than appending the timestamp, which is a hack, the patch is fine.
+> Support for re-measuring an event can be upstreamed independently.
+> 
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+Thanks for clarifying the details related to duplicate measurement 
+detection and re-measuring.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12cf2548d00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11cf2548d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16cf2548d00000
+I will keep the timestamp for the time being, even though its a hack, as 
+it helps with re-measuring state changes in SELinux. We will add support 
+for "policy driven" re-measurement as a subsequent patch series.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8449 at mm/page_alloc.c:4976 __alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Modules linked in:
-CPU: 0 PID: 8449 Comm: syz-executor564 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Code: aa 09 00 e9 dd fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c eb fd ff ff 4c 89 ef e8 54 aa 09 00 8b 74 24 18 e9 da fd ff ff <0f> 0b e9 f3 fd ff ff a9 00 00 08 00 75 16 8b 4c 24 1c 89 cb 81 e3
-RSP: 0018:ffffc90000ebfa60 EFLAGS: 00010246
-RAX: ffffc90000ebfae0 RBX: ffffc90000ebfae0 RCX: 0000000000000000
-RDX: 0000000000000028 RSI: 0000000000000000 RDI: ffffc90000ebfb08
-RBP: ffffc90000ebfba0 R08: dffffc0000000000 R09: ffffc90000ebfae0
-R10: fffff520001d7f61 R11: 0000000000000000 R12: dffffc0000000000
-R13: 0000000000000012 R14: 1ffff920001d7f58 R15: 0000000000040cc0
-FS:  0000000002595880(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000040 CR3: 0000000015a93000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- alloc_pages include/linux/gfp.h:547 [inline]
- kmalloc_order+0x40/0x130 mm/slab_common.c:837
- kmalloc_order_trace+0x15/0x70 mm/slab_common.c:853
- kmalloc_large include/linux/slab.h:481 [inline]
- __kmalloc_track_caller+0x246/0x330 mm/slub.c:4457
- memdup_user_nul+0x26/0xf0 mm/util.c:260
- smk_write_syslog+0x29/0x90 security/smack/smackfs.c:2651
- vfs_write+0x289/0xc90 fs/read_write.c:603
- ksys_write+0x171/0x2a0 fs/read_write.c:658
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440289
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffe1057358 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440289
-RDX: 00000000200000cb RSI: 00000000200000c0 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401a90
-R13: 0000000000401b20 R14: 0000000000000000 R15: 0000000000000000
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+thanks,
+  -lakshmi
