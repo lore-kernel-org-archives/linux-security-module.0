@@ -2,175 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A1CC433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 06:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED4FC433E9
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 09:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0932323A23
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 06:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65BEB23444
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 09:11:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbhAOGD1 (ORCPT
+        id S1729094AbhAOJLP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jan 2021 01:03:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40044 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbhAOGDZ (ORCPT
+        Fri, 15 Jan 2021 04:11:15 -0500
+Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:43507 "EHLO
+        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728199AbhAOJLN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jan 2021 01:03:25 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FECEC061575
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jan 2021 22:02:45 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id u21so9176800lja.0
-        for <linux-security-module@vger.kernel.org>; Thu, 14 Jan 2021 22:02:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MDmlV62xy2dTAa7jUaW4qdfTp5nhVCOQRSmVDFfq7CU=;
-        b=P3f/TC0N21PLslxgUMkEFSMq6IEjaNybcJJZ9sGTGnSYNOG2usJJTVflhsSmi4hqHR
-         KN06JeUoyNa7d3JQCTiClZLNTEcyDizNR63bHhj/nr66vJLqBVq0wsG6z/M0+ht2q9QW
-         aGskVR2SNoz2AmO8Ad2lStOC76v9OnGDq/QyQ+wISQgNLdZx7kcJkH+Uz2V+JXLJ78mW
-         BXRHu0W6VcWo1rVP/TqK9xCMkJE3QIgdaDSJqdhEcf7YqGQkxJ7SH9gRjTFEy9FslFfb
-         /4ZCr3zhKywmBqS6j721detK5gmAfBUoyFS5OZt72xdBTeJ81NKxZ0c6BjI9gc+8hXCC
-         1/QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MDmlV62xy2dTAa7jUaW4qdfTp5nhVCOQRSmVDFfq7CU=;
-        b=Wt+5VaeVwYHBqo4Wus1c639NCE8gbS9Cbii7buBb8UqBf3lO/AdOz2xy9kl8JZOlWl
-         zWgjrsALbQnNoA1wd3bwzn7aSj7auVVJ5M9OURRWM82dpF610/62l3hVnaTGTOU+cL9J
-         6Pp5S82sKq2vLu9gXmCNwrsHIIHeEodF1bZGqv+b+UQbXRopbRjAnrJ/tH9rSbduJ5rS
-         6j0SOaue2o4hxpl9BYmJJNy2ddOxRVpA/jcTXnAeXMKsdpdmTws087K5xs1+X0pw34ZP
-         LqwL7L65rR5X7hli50ePZRFLrGVdEuFSb3SxB0EhwlyyvyRp8IXxhFI6uaksHxhzMhqm
-         FJFA==
-X-Gm-Message-State: AOAM531WdPRkg0uDIc2rdF/V4HH7ReEXmIDY7KoO1Hmr4bPYs7e5F2sU
-        3WRLTOw/nPlX4VD7qvs2yB8ewQpHWFOJTILlVfTy6g==
-X-Google-Smtp-Source: ABdhPJx95UKtrbv3RMWAwaHdwARhnz6c9CWvdsRsZhfDyk0HF1CL0Rx8irqQzcSP9Qi0gnaJ8BTByLuHRW09qLnJd7M=
-X-Received: by 2002:a2e:2242:: with SMTP id i63mr4467220lji.343.1610690563696;
- Thu, 14 Jan 2021 22:02:43 -0800 (PST)
-MIME-Version: 1.0
-References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
- <1604419306-26105-3-git-send-email-sumit.garg@linaro.org> <X/x+N0fgrzIZTeNi@kernel.org>
- <CAFA6WYOUvWAZtYfR4q8beZFkX-CtdxqwJaRQM+GHNMDfQiEWOA@mail.gmail.com> <X/+m6+m2/snYj9Vc@kernel.org>
-In-Reply-To: <X/+m6+m2/snYj9Vc@kernel.org>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 15 Jan 2021 11:32:31 +0530
-Message-ID: <CAFA6WYNyirit_AFhoE+XR9PHw=OjRgEdXDqz1uanj_SN2NXeMw@mail.gmail.com>
-Subject: Re: [PATCH v8 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Fri, 15 Jan 2021 04:11:13 -0500
+X-Greylist: delayed 64279 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Jan 2021 04:11:12 EST
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DHFl51bMyzMprtq;
+        Fri, 15 Jan 2021 10:10:25 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DHFl26L60zlppyv;
+        Fri, 15 Jan 2021 10:10:22 +0100 (CET)
+Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
+To:     Jann Horn <jannh@google.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
-Content-Type: text/plain; charset="UTF-8"
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201209192839.1396820-1-mic@digikod.net>
+ <20201209192839.1396820-8-mic@digikod.net>
+ <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
+ <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net>
+ <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
+Date:   Fri, 15 Jan 2021 10:10:36 +0100
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 14 Jan 2021 at 07:35, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Wed, Jan 13, 2021 at 04:47:00PM +0530, Sumit Garg wrote:
-> > Hi Jarkko,
-> >
-> > On Mon, 11 Jan 2021 at 22:05, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > >
-> > > On Tue, Nov 03, 2020 at 09:31:44PM +0530, Sumit Garg wrote:
-> > > > Add support for TEE based trusted keys where TEE provides the functionality
-> > > > to seal and unseal trusted keys using hardware unique key.
-> > > >
-> > > > Refer to Documentation/tee.txt for detailed information about TEE.
-> > > >
-> > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > >
-> > > I haven't yet got QEMU environment working with aarch64, this produces
-> > > just a blank screen:
-> > >
-> > > ./output/host/usr/bin/qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -kernel output/images/Image -initrd output/images/rootfs.cpio -serial stdio
-> > >
-> > > My BuildRoot fork for TPM and keyring testing is located over here:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/buildroot-tpmdd.git/
-> > >
-> > > The "ARM version" is at this point in aarch64 branch. Over time I will
-> > > define tpmdd-x86_64 and tpmdd-aarch64 boards and everything will be then
-> > > in the master branch.
-> > >
-> > > To create identical images you just need to
-> > >
-> > > $ make tpmdd_defconfig && make
-> > >
-> > > Can you check if you see anything obviously wrong? I'm eager to test this
-> > > patch set, and in bigger picture I really need to have ready to run
-> > > aarch64 environment available.
-> >
-> > I would rather suggest you to follow steps listed here [1] as to test
-> > this feature on Qemu aarch64 we need to build firmwares such as TF-A,
-> > OP-TEE, UEFI etc. which are all integrated into OP-TEE Qemu build
-> > system [2]. And then it would be easier to migrate them to your
-> > buildroot environment as well.
-> >
-> > [1] https://lists.trustedfirmware.org/pipermail/op-tee/2020-May/000027.html
-> > [2] https://optee.readthedocs.io/en/latest/building/devices/qemu.html#qemu-v8
-> >
-> > -Sumit
->
-> Can you provide 'keyctl_change'? Otherwise, the steps are easy to follow.
->
 
-$ cat keyctl_change
-diff --git a/common.mk b/common.mk
-index aeb7b41..663e528 100644
---- a/common.mk
-+++ b/common.mk
-@@ -229,6 +229,7 @@ BR2_PACKAGE_OPTEE_TEST_SDK ?= $(OPTEE_OS_TA_DEV_KIT_DIR)
- BR2_PACKAGE_OPTEE_TEST_SITE ?= $(OPTEE_TEST_PATH)
- BR2_PACKAGE_STRACE ?= y
- BR2_TARGET_GENERIC_GETTY_PORT ?= $(if
-$(CFG_NW_CONSOLE_UART),ttyAMA$(CFG_NW_CONSOLE_UART),ttyAMA0)
-+BR2_PACKAGE_KEYUTILS := y
+On 14/01/2021 23:43, Jann Horn wrote:
+> On Thu, Jan 14, 2021 at 7:54 PM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 14/01/2021 04:22, Jann Horn wrote:
+>>> On Wed, Dec 9, 2020 at 8:28 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> Thanks to the Landlock objects and ruleset, it is possible to identify
+>>>> inodes according to a process's domain.  To enable an unprivileged
+>>>> process to express a file hierarchy, it first needs to open a directory
+>>>> (or a file) and pass this file descriptor to the kernel through
+>>>> landlock_add_rule(2).  When checking if a file access request is
+>>>> allowed, we walk from the requested dentry to the real root, following
+>>>> the different mount layers.  The access to each "tagged" inodes are
+>>>> collected according to their rule layer level, and ANDed to create
+>>>> access to the requested file hierarchy.  This makes possible to identify
+>>>> a lot of files without tagging every inodes nor modifying the
+>>>> filesystem, while still following the view and understanding the user
+>>>> has from the filesystem.
+>>>>
+>>>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
+>>>> keep the same struct inodes for the same inodes whereas these inodes are
+>>>> in use.
+>>>>
+>>>> This commit adds a minimal set of supported filesystem access-control
+>>>> which doesn't enable to restrict all file-related actions.  This is the
+>>>> result of multiple discussions to minimize the code of Landlock to ease
+>>>> review.  Thanks to the Landlock design, extending this access-control
+>>>> without breaking user space will not be a problem.  Moreover, seccomp
+>>>> filters can be used to restrict the use of syscall families which may
+>>>> not be currently handled by Landlock.
+>>> [...]
+>>>> +static bool check_access_path_continue(
+>>>> +               const struct landlock_ruleset *const domain,
+>>>> +               const struct path *const path, const u32 access_request,
+>>>> +               u64 *const layer_mask)
+>>>> +{
+>>> [...]
+>>>> +       /*
+>>>> +        * An access is granted if, for each policy layer, at least one rule
+>>>> +        * encountered on the pathwalk grants the access, regardless of their
+>>>> +        * position in the layer stack.  We must then check not-yet-seen layers
+>>>> +        * for each inode, from the last one added to the first one.
+>>>> +        */
+>>>> +       for (i = 0; i < rule->num_layers; i++) {
+>>>> +               const struct landlock_layer *const layer = &rule->layers[i];
+>>>> +               const u64 layer_level = BIT_ULL(layer->level - 1);
+>>>> +
+>>>> +               if (!(layer_level & *layer_mask))
+>>>> +                       continue;
+>>>> +               if ((layer->access & access_request) != access_request)
+>>>> +                       return false;
+>>>> +               *layer_mask &= ~layer_level;
+>>>
+>>> Hmm... shouldn't the last 5 lines be replaced by the following?
+>>>
+>>> if ((layer->access & access_request) == access_request)
+>>>     *layer_mask &= ~layer_level;
+>>>
+>>> And then, since this function would always return true, you could
+>>> change its return type to "void".
+>>>
+>>>
+>>> As far as I can tell, the current version will still, if a ruleset
+>>> looks like this:
+>>>
+>>> /usr read+write
+>>> /usr/lib/ read
+>>>
+>>> reject write access to /usr/lib, right?
+>>
+>> If these two rules are from different layers, then yes it would work as
+>> intended. However, if these rules are from the same layer the path walk
+>> will not stop at /usr/lib but go down to /usr, which grants write
+>> access.
+> 
+> I don't see why the code would do what you're saying it does. And an
+> experiment seems to confirm what I said; I checked out landlock-v26,
+> and the behavior I get is:
 
- # All BR2_* variables from the makefile or the environment are appended to
- # ../out-br/extra.conf. All values are quoted "..." except y and n.
-diff --git a/kconfigs/qemu.conf b/kconfigs/qemu.conf
-index 368c18a..832ab74 100644
---- a/kconfigs/qemu.conf
-+++ b/kconfigs/qemu.conf
-@@ -20,3 +20,5 @@ CONFIG_9P_FS=y
- CONFIG_9P_FS_POSIX_ACL=y
- CONFIG_HW_RANDOM=y
- CONFIG_HW_RANDOM_VIRTIO=y
-+CONFIG_TRUSTED_KEYS=y
-+CONFIG_ENCRYPTED_KEYS=y
+There is a misunderstanding, I was responding to your proposition to
+modify check_access_path_continue(), not about the behavior of landlock-v26.
 
-> After I've successfully tested 2/4, I'd suggest that you roll out one more
-> version and CC the documentation patch to Elaine and Mini, and clearly
-> remark in the commit message that TEE is a standard, with a link to the
-> specification.
->
+> 
+> user@vm:~/landlock$ dd if=/dev/null of=/tmp/aaa
+> 0+0 records in
+> 0+0 records out
+> 0 bytes copied, 0.00106365 s, 0.0 kB/s
+> user@vm:~/landlock$ LL_FS_RO='/lib' LL_FS_RW='/' ./sandboxer dd
+> if=/dev/null of=/tmp/aaa
+> 0+0 records in
+> 0+0 records out
+> 0 bytes copied, 0.000491814 s, 0.0 kB/s
+> user@vm:~/landlock$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd
+> if=/dev/null of=/tmp/aaa
+> dd: failed to open '/tmp/aaa': Permission denied
+> user@vm:~/landlock$
+> 
+> Granting read access to /tmp prevents writing to it, even though write
+> access was granted to /.
+> 
 
-Sure, I will roll out the next version after your testing.
+It indeed works like this with landlock-v26. However, with your above
+proposition, it would work like this:
 
--Sumit
+$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd if=/dev/null of=/tmp/aaa
+0+0 records in
+0+0 records out
+0 bytes copied, 0.000187265 s, 0.0 kB/s
 
-> /Jarkko
+…which is not what users would expect I guess. :)
