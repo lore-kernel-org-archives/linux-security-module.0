@@ -2,109 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5619C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 11:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9278C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 12:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77E7B238E8
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 11:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A0CB23128
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 12:04:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbhAOLoJ (ORCPT
+        id S1726402AbhAOMEI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jan 2021 06:44:09 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:38400 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725880AbhAOLoI (ORCPT
+        Fri, 15 Jan 2021 07:04:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbhAOMEI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jan 2021 06:44:08 -0500
-Received: by mail-io1-f71.google.com with SMTP id q140so14086869iod.5
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Jan 2021 03:43:53 -0800 (PST)
+        Fri, 15 Jan 2021 07:04:08 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C068FC061757;
+        Fri, 15 Jan 2021 04:03:52 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id jx16so12894923ejb.10;
+        Fri, 15 Jan 2021 04:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=DZKL8N3bCOLd5d6DHEQ8H/r2ag/CUrBRkfKsXkDdZC4=;
+        b=PH5nw1CRQzbcVNiXb/+ZTZ+co58w9pO7JBjqbwHzJc2SkQkCi2t9JsJUuJYDuNDHok
+         lgWIHNrXKQjb3BddFMR3ZuR0wZ5Vel68eSGj63YsXPTi51wjTUCeUCc0uCgmSkGa/xtA
+         KOx07y75aC8sgiQX9jVBC6bV6I3xmv7xGZv9NP8pv2WyfhraP5M1aeh6Vallki1P9GCd
+         f9PcE4SIFZxqGJdd3jEpq+6GgW3hrmGhWe7lCIfYqguVyIQbsQkTFO6N7bRe/1619X0f
+         0ZH/2mn9ABBlrxu2GAwaPLEKCOIjCW9TfOP7lHbfTMgZbPjNZinDRyhWHKJdOnDdq14Y
+         29Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=hpftx0jAbEhydpZgk9H3QZlGfFkysavuEi8adv7RKds=;
-        b=l9t0/r6SKZ+xdXn1vSbE3LitDLLQj1JTUsEpqC3lVY9Wd1XrG/O38U5t0bpKmAVQbx
-         JzGAVybLX4+BLthHuhXpqlkvJpblmwGffWtJRLFkbaflIiMNd0KIDasONoMLS0KQ1eiW
-         EyOJpAskDRGnUF37mpEWhHOxz/1iY3nNIDBfrcWBkpfo5MVILrn78wc7c1juhEof/rKf
-         PiAzqKSdekgNPyHCsD1PU+FLHu8p2A3rUdV/vU8TytFeG1ipgbMaHyBICh4HPedGv3Rk
-         w7MygEpRgP6jDJP7/+8vVyzzxta/tYzSt31GaNnmX0t8iRIDk+rsSd4eda5xH8iQiq9y
-         hoDA==
-X-Gm-Message-State: AOAM531+l8txzmvIz1ECnriX8fvYyOkfA0rlmZBZ6jfngl/0jA4/yBA6
-        PjqHG4fDlYM1d1kml6Kv4zhOSJZNHbghyk8dtVUOBTSQCaNc
-X-Google-Smtp-Source: ABdhPJwjmrFwQlb+qBOZ4wN2CHp7/cgF51rpj0BMoV9EtlktQh2agcShFwn5uuexu5w0lSeAfNKLkN66mJghx+oA5rrFkXV6oj4n
-MIME-Version: 1.0
-X-Received: by 2002:a92:b6ca:: with SMTP id m71mr10328318ill.232.1610711007730;
- Fri, 15 Jan 2021 03:43:27 -0800 (PST)
-Date:   Fri, 15 Jan 2021 03:43:27 -0800
-In-Reply-To: <00000000000077819e05b8e0acc8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000073a06905b8eee114@google.com>
-Subject: Re: WARNING in smk_write_relabel_self
-From:   syzbot <syzbot+670d1a1e6b6face0440a@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=DZKL8N3bCOLd5d6DHEQ8H/r2ag/CUrBRkfKsXkDdZC4=;
+        b=EdBQWaIW1ERHiqFGCJsol/pVu697m/k6fNsiXvRAyTE2y9sRvRyIzXY+clrHYSEtiQ
+         qtCy37rjKIwlWO1+MegQfYnKkj3LDgMDK4gExzIe0a9orr5p3Zb2cNfsJM23RyEzpjxQ
+         64tHlYJabaKfq4xO8omO47vJ2lBbh2I7Om1PXRJta6rVyWjIwhpan9Xzh+5kO/eKJYNh
+         vOmihyDpQp+vfOtW+7Hbd6OPLz4q8Kn4MMiS26Y6LNekzkLRuMsztfDCiSS2AYmmInnx
+         gfdMJYu5cHXIIA7OT6JqiOO+y3URliXIgaZhG+WozSzG6ZX1dPw+C5vpusePA1DLAVUq
+         jLlA==
+X-Gm-Message-State: AOAM53112KkVgmqnBxE1E3c/Pf3udEIZLMrcl4n3Lwpo3bPD6ZSNQ5An
+        GsTtStg5eFcwi/JcmLlAdhw=
+X-Google-Smtp-Source: ABdhPJyPPqMVbBEXYP+7LoChiNf3GY+blJP0XXqz/DGs5XIuWOLFIH8d3yAEmudH9WjagMJorCBlyA==
+X-Received: by 2002:a17:906:d87:: with SMTP id m7mr8452658eji.108.1610712231381;
+        Fri, 15 Jan 2021 04:03:51 -0800 (PST)
+Received: from felia.fritz.box ([2001:16b8:2d39:a000:7c85:8e80:b862:a8bf])
+        by smtp.gmail.com with ESMTPSA id m5sm3228350eja.11.2021.01.15.04.03.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jan 2021 04:03:50 -0800 (PST)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Daniel Colascione <dancol@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] fs: anon_inodes: rephrase to appropriate kernel-doc
+Date:   Fri, 15 Jan 2021 13:03:42 +0100
+Message-Id: <20210115120342.8849-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot has found a reproducer for the following issue on:
+Commit e7e832ce6fa7 ("fs: add LSM-supporting anon-inode interface") adds
+more kerneldoc description, but also a few new warnings on
+anon_inode_getfd_secure() due to missing parameter descriptions.
 
-HEAD commit:    5ee88057 Merge tag 'drm-fixes-2021-01-15' of git://anongit..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a68ee7500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
-dashboard link: https://syzkaller.appspot.com/bug?extid=670d1a1e6b6face0440a
-compiler:       clang version 11.0.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ec309f500000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15d8889f500000
+Rephrase to appropriate kernel-doc for anon_inode_getfd_secure().
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+670d1a1e6b6face0440a@syzkaller.appspotmail.com
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+ fs/anon_inodes.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8457 at mm/page_alloc.c:4976 __alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Modules linked in:
-CPU: 0 PID: 8457 Comm: syz-executor864 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Code: aa 09 00 e9 dd fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c eb fd ff ff 4c 89 ef e8 54 aa 09 00 8b 74 24 18 e9 da fd ff ff <0f> 0b e9 f3 fd ff ff a9 00 00 08 00 75 16 8b 4c 24 1c 89 cb 81 e3
-RSP: 0018:ffffc900012ef9a0 EFLAGS: 00010246
-RAX: ffffc900012efa20 RBX: ffffc900012efa20 RCX: 0000000000000000
-RDX: 0000000000000028 RSI: 0000000000000000 RDI: ffffc900012efa48
-RBP: ffffc900012efae0 R08: dffffc0000000000 R09: ffffc900012efa20
-R10: fffff5200025df49 R11: 0000000000000000 R12: dffffc0000000000
-R13: 0000000000000012 R14: 1ffff9200025df40 R15: 0000000000040cc0
-FS:  00000000023a2880(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f8e9dc94000 CR3: 0000000014b8a000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- alloc_pages include/linux/gfp.h:547 [inline]
- kmalloc_order+0x40/0x130 mm/slab_common.c:837
- kmalloc_order_trace+0x15/0x70 mm/slab_common.c:853
- kmalloc_large include/linux/slab.h:481 [inline]
- __kmalloc_track_caller+0x246/0x330 mm/slub.c:4457
- memdup_user_nul+0x26/0xf0 mm/util.c:260
- smk_write_relabel_self+0x17a/0x510 security/smack/smackfs.c:2748
- vfs_write+0x289/0xc90 fs/read_write.c:603
- ksys_write+0x171/0x2a0 fs/read_write.c:658
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440389
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd61b9f558 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440389
-RDX: 0000000020000398 RSI: 0000000020000340 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401b90
-R13: 0000000000401c20 R14: 0000000000000000 R15: 0000000000000000
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index 023337d65a03..a280156138ed 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -202,13 +202,20 @@ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+ 
+ /**
+- * Like anon_inode_getfd(), but creates a new !S_PRIVATE anon inode rather than
+- * reuse the singleton anon inode, and calls the inode_init_security_anon() LSM
+- * hook. This allows the inode to have its own security context and for a LSM
+- * to reject creation of the inode.  An optional @context_inode argument is
+- * also added to provide the logical relationship with the new inode.  The LSM
+- * may use @context_inode in inode_init_security_anon(), but a reference to it
+- * is not held.
++ * anon_inode_getfd_secure - Like anon_inode_getfd(), but creates a new
++ * !S_PRIVATE anon inode rather than reuse the singleton anon inode, and calls
++ * the inode_init_security_anon() LSM hook. This allows the inode to have its
++ * own security context and for a LSM to reject creation of the inode.
++ *
++ * @name:    [in]    name of the "class" of the new file
++ * @fops:    [in]    file operations for the new file
++ * @priv:    [in]    private data for the new file (will be file's private_data)
++ * @flags:   [in]    flags
++ * @context_inode:
++ *           [in]    the logical relationship with the new inode (optional)
++ *
++ * The LSM may use @context_inode in inode_init_security_anon(), but a
++ * reference to it is not held.
+  */
+ int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
+ 			    void *priv, int flags,
+-- 
+2.17.1
 
