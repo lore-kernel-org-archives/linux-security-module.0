@@ -2,100 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F333BC433E9
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 17:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75859C433E9
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 17:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BDC542399C
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 17:22:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2550A20691
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 17:24:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732099AbhAORWe (ORCPT
+        id S1730730AbhAORYZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jan 2021 12:22:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
+        Fri, 15 Jan 2021 12:24:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbhAORWd (ORCPT
+        with ESMTP id S1733203AbhAORYX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jan 2021 12:22:33 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C9F7C061794;
-        Fri, 15 Jan 2021 09:21:53 -0800 (PST)
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 52C0912806CB;
-        Fri, 15 Jan 2021 09:21:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1610731313;
-        bh=eVzompidzUYaKPM2zxaqKrfZo1Iu4LvdVyHg60ED2NQ=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=WVocnMLZzbCjnSOMORE5QuohV98hVmsC4Hz/QWR/W0oTeUIUqdCf6p0EDHmKngv1X
-         MpZlmnGnKPoCZOn+tbGrT62KYgsVHkSlMFopjgRL9OkH8K3qqkgmLdnTT0vYMpA2MH
-         oRhKJLIcx0zoCS9K0e6M5lGwWIl0sw4g1JBs+BPU=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zZuRvVCurBjz; Fri, 15 Jan 2021 09:21:53 -0800 (PST)
-Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::c447])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 83A4412806BA;
-        Fri, 15 Jan 2021 09:21:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1610731313;
-        bh=eVzompidzUYaKPM2zxaqKrfZo1Iu4LvdVyHg60ED2NQ=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=WVocnMLZzbCjnSOMORE5QuohV98hVmsC4Hz/QWR/W0oTeUIUqdCf6p0EDHmKngv1X
-         MpZlmnGnKPoCZOn+tbGrT62KYgsVHkSlMFopjgRL9OkH8K3qqkgmLdnTT0vYMpA2MH
-         oRhKJLIcx0zoCS9K0e6M5lGwWIl0sw4g1JBs+BPU=
-Message-ID: <0659f965b3321e793fee03136ae50cbbcd4a53bf.camel@HansenPartnership.com>
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
-        dwmw2@infradead.org, jarkko.sakkinen@linux.intel.com
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        zohar@linux.ibm.com, erichte@linux.ibm.com, mpe@ellerman.id.au,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org
-Date:   Fri, 15 Jan 2021 09:21:51 -0800
-In-Reply-To: <20200916004927.64276-1-eric.snowberg@oracle.com>
-References: <20200916004927.64276-1-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Fri, 15 Jan 2021 12:24:23 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041F2C061757
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jan 2021 09:23:43 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id b21so1552248edy.6
+        for <linux-security-module@vger.kernel.org>; Fri, 15 Jan 2021 09:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mJrsR9g+dyqkkVVvYtEu6xfD1Zo92dOcpjjoxvFadQo=;
+        b=ge+GnUbEBLY+2evuY9Uj+uaN2jIYKWBKeP45kxv0m+2jXjz3M/6ABWkT/cxfrrGRq1
+         4WNTMkLNR2uAeZ2AccElDyg/YHkMrBs/gGDoGct8UXXHPgz8PXATa6eEOBiANAdkuam1
+         rp+M7bSxWpd33oqT8kvS3U/BVZaLAyBg8GWwIsNdEKl63eBd3Rn+7qjvCaDpG6I6LmIz
+         ppYSC9rjrXDv9oNatkHLla47fsh0+pBergQGzDv+J33+ulldNGXUtGEltU+CgjYMpawp
+         IWlLnc68w4znX2PD84B4cD1COJHGuLzY3SuktMfTPpHDLoXv9Lwn5inJdv8LgtDK3SN3
+         jr3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mJrsR9g+dyqkkVVvYtEu6xfD1Zo92dOcpjjoxvFadQo=;
+        b=mVh22746ipWQZOa+dxwkWpuqVBzUnNbBPfzOz0mlKAYivt1Q28s7uonlv8WNwFidhF
+         XjU26SDLLE8PHpiOK2FfRm4r0V+PxOrt995GPo8Wyf0FakHZnrfVLqXhPI1BGg2boMCy
+         ow3bmjSeZ1J8QO76D+a8EwJ28rB4CuK9BjKK6WJecz+yetgC49FTp5bdaRIyGm97C3us
+         vQJKdjXIDA4YgB8EwyP6y6HJcyCTieLxE/XvmnFNwijNw+ySZ0pE0ZVBNxacrCg8RMp/
+         cTpnsp8XEEg1r+pwpczSioO+qWdNabaQYY9unE8rbI0+/EhCYPft0lv0IHR1pXBW89Kd
+         /eYQ==
+X-Gm-Message-State: AOAM533OWjU8o778IAcZyrsyCiZoAUEaWFk3RUXfreKmIppijHK8okfP
+        n4GURZTRaxmDyHH8EEQDi8ewmSJoCWTv8+Zi2WzS
+X-Google-Smtp-Source: ABdhPJxNJ1+S8LITVO12epfE1LpA0SxxE+7Im+Q6DiX6C3VsYyEebNuKAcm5/5AsziFCv15wGpFl9G0psW/zml1Wnk0=
+X-Received: by 2002:a05:6402:ca1:: with SMTP id cn1mr10426635edb.128.1610731421674;
+ Fri, 15 Jan 2021 09:23:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20210115120342.8849-1-lukas.bulwahn@gmail.com>
+In-Reply-To: <20210115120342.8849-1-lukas.bulwahn@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 15 Jan 2021 12:23:28 -0500
+Message-ID: <CAHC9VhSfn9Ux_KcDysAH_vOWhiS3TvPYcXYZLg_5pr9Vee0f2g@mail.gmail.com>
+Subject: Re: [PATCH] fs: anon_inodes: rephrase to appropriate kernel-doc
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2020-09-15 at 20:49 -0400, Eric Snowberg wrote:
-> The Secure Boot Forbidden Signature Database, dbx, contains a list of
-> now revoked signatures and keys previously approved to boot with UEFI
-> Secure Boot enabled.  The dbx is capable of containing any number of
-> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and
-> EFI_CERT_X509_GUID entries.
-> 
-> Currently when EFI_CERT_X509_GUID are contained in the dbx, the
-> entries are skipped.
-> 
-> Add support for EFI_CERT_X509_GUID dbx entries. When a
-> EFI_CERT_X509_GUID is found, it is added as an asymmetrical key to
-> the .blacklist keyring. Anytime the .platform keyring is used, the
-> keys in the .blacklist keyring are referenced, if a matching key is
-> found, the key will be rejected.
-> 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+On Fri, Jan 15, 2021 at 7:03 AM Lukas Bulwahn <lukas.bulwahn@gmail.com> wrote:
+>
+> Commit e7e832ce6fa7 ("fs: add LSM-supporting anon-inode interface") adds
+> more kerneldoc description, but also a few new warnings on
+> anon_inode_getfd_secure() due to missing parameter descriptions.
+>
+> Rephrase to appropriate kernel-doc for anon_inode_getfd_secure().
+>
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> ---
+>  fs/anon_inodes.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
 
-If you're using shim, as most of our users are, you have no access to
-dbx to blacklist certificates.  Plus our security envelope includes the
-Mok variables, so you should also be paying attestion to MokListX (or
-it's RT equivalent: MokListXRT).
+Merged into selinux/next with the other related LSM/SELinux anon-inode
+patches, thank you!
 
-If you add this to the patch, we get something that is mechanistically
-complete and which also allows users to add certs to their Mok
-blacklist.
-
-James
-
-
+-- 
+paul moore
+www.paul-moore.com
