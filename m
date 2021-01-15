@@ -2,181 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED4FC433E9
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 09:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03707C43381
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 09:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65BEB23444
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 09:11:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFCBD233CF
+	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 09:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbhAOJLP (ORCPT
+        id S1727433AbhAOJQX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jan 2021 04:11:15 -0500
-Received: from smtp-1908.mail.infomaniak.ch ([185.125.25.8]:43507 "EHLO
-        smtp-1908.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728199AbhAOJLN (ORCPT
+        Fri, 15 Jan 2021 04:16:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726829AbhAOJQW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jan 2021 04:11:13 -0500
-X-Greylist: delayed 64279 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Jan 2021 04:11:12 EST
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DHFl51bMyzMprtq;
-        Fri, 15 Jan 2021 10:10:25 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DHFl26L60zlppyv;
-        Fri, 15 Jan 2021 10:10:22 +0100 (CET)
-Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20201209192839.1396820-1-mic@digikod.net>
- <20201209192839.1396820-8-mic@digikod.net>
- <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
- <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net>
- <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
-Date:   Fri, 15 Jan 2021 10:10:36 +0100
-User-Agent: 
+        Fri, 15 Jan 2021 04:16:22 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 103DA23444;
+        Fri, 15 Jan 2021 09:15:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1610702141;
+        bh=HsXfEw2W9Ay3fvQyweDsIzqlVILEiC1heWJklEoBt5Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fcWibo+9gXXZlUM+vzxrsMJelVmYiUHZYc220yDF3uUFmQ+HRIaPEymlQSGKpbjUK
+         VrrRLg6sznKlpFtwju9MTKJ8JvvyKWZ3xLChA+aBi7/f7MXa4de5GF6rjVPu6jv5EE
+         varvkyN0LuytWXLcBJLkgEY1RdChhxRrP1zKEIF1HNOnEah4x6jy6H8N43GMjM/Mrf
+         AJu2LAKWp5jZ6zHjxsCwIi3gfpwgkpJY8MC0A6DD0m+1IaKhpW6b0+v81MJziE4FMb
+         V0Vh0nwDMzppiPkGL/dMeoJPAEw414y8FTrn12khUGaYLY4QZFaYgcmcmlZCeqvY6+
+         jdL1+LdMzi+lw==
+Date:   Fri, 15 Jan 2021 11:15:34 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
+        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
+        mpe@ellerman.id.au, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com
+Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
+Message-ID: <YAFdNiYZSWpB9vOw@kernel.org>
+References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
+ <20200916004927.64276-1-eric.snowberg@oracle.com>
+ <1360578.1607593748@warthog.procyon.org.uk>
+ <2442460.1610463459@warthog.procyon.org.uk>
+ <X/9a8naM8p4tT5sO@linux.intel.com>
+ <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 14/01/2021 23:43, Jann Horn wrote:
-> On Thu, Jan 14, 2021 at 7:54 PM Mickaël Salaün <mic@digikod.net> wrote:
->> On 14/01/2021 04:22, Jann Horn wrote:
->>> On Wed, Dec 9, 2020 at 8:28 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>> Thanks to the Landlock objects and ruleset, it is possible to identify
->>>> inodes according to a process's domain.  To enable an unprivileged
->>>> process to express a file hierarchy, it first needs to open a directory
->>>> (or a file) and pass this file descriptor to the kernel through
->>>> landlock_add_rule(2).  When checking if a file access request is
->>>> allowed, we walk from the requested dentry to the real root, following
->>>> the different mount layers.  The access to each "tagged" inodes are
->>>> collected according to their rule layer level, and ANDed to create
->>>> access to the requested file hierarchy.  This makes possible to identify
->>>> a lot of files without tagging every inodes nor modifying the
->>>> filesystem, while still following the view and understanding the user
->>>> has from the filesystem.
->>>>
->>>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
->>>> keep the same struct inodes for the same inodes whereas these inodes are
->>>> in use.
->>>>
->>>> This commit adds a minimal set of supported filesystem access-control
->>>> which doesn't enable to restrict all file-related actions.  This is the
->>>> result of multiple discussions to minimize the code of Landlock to ease
->>>> review.  Thanks to the Landlock design, extending this access-control
->>>> without breaking user space will not be a problem.  Moreover, seccomp
->>>> filters can be used to restrict the use of syscall families which may
->>>> not be currently handled by Landlock.
->>> [...]
->>>> +static bool check_access_path_continue(
->>>> +               const struct landlock_ruleset *const domain,
->>>> +               const struct path *const path, const u32 access_request,
->>>> +               u64 *const layer_mask)
->>>> +{
->>> [...]
->>>> +       /*
->>>> +        * An access is granted if, for each policy layer, at least one rule
->>>> +        * encountered on the pathwalk grants the access, regardless of their
->>>> +        * position in the layer stack.  We must then check not-yet-seen layers
->>>> +        * for each inode, from the last one added to the first one.
->>>> +        */
->>>> +       for (i = 0; i < rule->num_layers; i++) {
->>>> +               const struct landlock_layer *const layer = &rule->layers[i];
->>>> +               const u64 layer_level = BIT_ULL(layer->level - 1);
->>>> +
->>>> +               if (!(layer_level & *layer_mask))
->>>> +                       continue;
->>>> +               if ((layer->access & access_request) != access_request)
->>>> +                       return false;
->>>> +               *layer_mask &= ~layer_level;
->>>
->>> Hmm... shouldn't the last 5 lines be replaced by the following?
->>>
->>> if ((layer->access & access_request) == access_request)
->>>     *layer_mask &= ~layer_level;
->>>
->>> And then, since this function would always return true, you could
->>> change its return type to "void".
->>>
->>>
->>> As far as I can tell, the current version will still, if a ruleset
->>> looks like this:
->>>
->>> /usr read+write
->>> /usr/lib/ read
->>>
->>> reject write access to /usr/lib, right?
->>
->> If these two rules are from different layers, then yes it would work as
->> intended. However, if these rules are from the same layer the path walk
->> will not stop at /usr/lib but go down to /usr, which grants write
->> access.
+On Wed, Jan 13, 2021 at 05:11:10PM -0700, Eric Snowberg wrote:
 > 
-> I don't see why the code would do what you're saying it does. And an
-> experiment seems to confirm what I said; I checked out landlock-v26,
-> and the behavior I get is:
-
-There is a misunderstanding, I was responding to your proposition to
-modify check_access_path_continue(), not about the behavior of landlock-v26.
-
+> > On Jan 13, 2021, at 1:41 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> > 
+> > On Tue, Jan 12, 2021 at 02:57:39PM +0000, David Howells wrote:
+> >> Eric Snowberg <eric.snowberg@oracle.com> wrote:
+> >> 
+> >>>> On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> wrote:
+> >>>> 
+> >>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
+> >>>> 
+> >>>>> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
+> >>>>> is found, it is added as an asymmetrical key to the .blacklist keyring.
+> >>>>> Anytime the .platform keyring is used, the keys in the .blacklist keyring
+> >>>>> are referenced, if a matching key is found, the key will be rejected.
+> >>>> 
+> >>>> Ummm...  Why this way and not as a blacklist key which takes up less space?
+> >>>> I'm guessing that you're using the key chain matching logic.  We really only
+> >>>> need to blacklist the key IDs.
+> >>> 
+> >>> I implemented it this way so that certs in the dbx would only impact 
+> >>> the .platform keyring. I was under the impression we didn’t want to have 
+> >>> Secure Boot UEFI db/dbx certs dictate keyring functionality within the kernel
+> >>> itself. Meaning if we have a matching dbx cert in any other keyring (builtin,
+> >>> secondary, ima, etc.), it would be allowed. If that is not how you’d like to 
+> >>> see it done, let me know and I’ll make the change.
+> >> 
+> >> I wonder if that is that the right thing to do.  I guess this is a policy
+> >> decision and may depend on the particular user.
+> > 
+> > Why would you want to allow dbx entry in any keyring?
 > 
-> user@vm:~/landlock$ dd if=/dev/null of=/tmp/aaa
-> 0+0 records in
-> 0+0 records out
-> 0 bytes copied, 0.00106365 s, 0.0 kB/s
-> user@vm:~/landlock$ LL_FS_RO='/lib' LL_FS_RW='/' ./sandboxer dd
-> if=/dev/null of=/tmp/aaa
-> 0+0 records in
-> 0+0 records out
-> 0 bytes copied, 0.000491814 s, 0.0 kB/s
-> user@vm:~/landlock$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd
-> if=/dev/null of=/tmp/aaa
-> dd: failed to open '/tmp/aaa': Permission denied
-> user@vm:~/landlock$
+> Today, DB and MOK certs go into the platform keyring.  These certs are only
+> referenced during kexec.  They can’t be used for other things like validating
+> kernel module signatures.  If we follow the same pattern, the DBX and MOKX entries
+> in the blacklist keyring should only impact kexec. 
 > 
-> Granting read access to /tmp prevents writing to it, even though write
-> access was granted to /.
-> 
+> Currently, Mickaël Salaün has another outstanding series to allow root to update 
+> the blacklist keyring.  I assume the use case for this is around certificates used 
+> within the kernel, for example revoking kernel module signatures.  The question I have
+> is, should another keyring be introduced?  One that carries DBX and MOKX, which just
+> correspond to certs/hashes in the platform keyring; this keyring would only be
+> referenced for kexec, just like the platform keyring is today. Then, the current
+> blacklist keyring would be used for everything internal to the kernel.
 
-It indeed works like this with landlock-v26. However, with your above
-proposition, it would work like this:
+Right, I'm following actively that series.
 
-$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd if=/dev/null of=/tmp/aaa
-0+0 records in
-0+0 records out
-0 bytes copied, 0.000187265 s, 0.0 kB/s
+Why couldn't user space drive this process and use that feature to do it?
 
-…which is not what users would expect I guess. :)
+/Jarkko
