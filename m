@@ -2,119 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 931B2C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 23:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D7BC433E6
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 00:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDF223339
-	for <linux-security-module@archiver.kernel.org>; Fri, 15 Jan 2021 23:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5202223A6C
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 00:28:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbhAOXDD (ORCPT
+        id S1726472AbhAPA2N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 15 Jan 2021 18:03:03 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39242 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727468AbhAOXDD (ORCPT
+        Fri, 15 Jan 2021 19:28:13 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:60998 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726176AbhAPA2N (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 15 Jan 2021 18:03:03 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10FMtUw5143992;
-        Fri, 15 Jan 2021 23:01:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2020-01-29; bh=vwI1S6MedWZIivl9RaecNBXX0A7OEkx5Ubykr5olZOY=;
- b=QVozDoSzkR77ZpD28RT3wkHZBsrO5gFb7tfRhMkHtHfUcy+3oHz5oOf+2sk/jw91w9yG
- TqQaXXuedfp7Jhhp5uadszlszE9HbnV+5mKaKwvUH7VzHkjsnnskEd5zsYLlhhrdJbFC
- 3CRjHlGTv9AwvQHHG6xjW4bsCI7vObA6qCUfyxSSNl2xPBWFN6KQrUh8ZLkUMx8HKpvu
- bbFTnoRMiQ/d44ZITtcdRCZn7NEdZD8oDsj5txBacf6kwMgTcxkg+WGoEgC8Pd+HeQXy
- FW94olgk/dy66ie9hpSOV5l4/9rHZpari6iIRoeBetkHqwFOJ6TRwNlVj+lIpWuH+FdS wg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 360kvkf07f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jan 2021 23:01:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10FMslXI130905;
-        Fri, 15 Jan 2021 22:59:47 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 360kfbp7ng-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jan 2021 22:59:47 +0000
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 10FMxdqI031193;
-        Fri, 15 Jan 2021 22:59:39 GMT
-Received: from dhcp-10-154-190-197.vpn.oracle.com (/10.154.190.197)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jan 2021 14:59:39 -0800
+        Fri, 15 Jan 2021 19:28:13 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1l0ZR2-0002Mr-95; Sat, 16 Jan 2021 00:27:20 +0000
+Date:   Sat, 16 Jan 2021 01:27:18 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        St?phane Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v5 00/42] idmapped mounts
+Message-ID: <20210116002718.jjs6eov65cvwrata@wittgenstein>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+ <20210114171241.GA1164240@magnolia>
+ <20210114204334.GK331610@dread.disaster.area>
+ <20210115162423.GB2179337@infradead.org>
+ <YAHWGMb9rTehRsRz@mit.edu>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <0659f965b3321e793fee03136ae50cbbcd4a53bf.camel@HansenPartnership.com>
-Date:   Fri, 15 Jan 2021 16:01:00 -0700
-Cc:     David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C40CED72-E44A-47DF-A965-04BFFE440B3A@oracle.com>
-References: <20200916004927.64276-1-eric.snowberg@oracle.com>
- <0659f965b3321e793fee03136ae50cbbcd4a53bf.camel@HansenPartnership.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3273)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9865 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 bulkscore=0 spamscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101150138
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9865 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- lowpriorityscore=0 bulkscore=0 priorityscore=1501 malwarescore=0
- clxscore=1015 impostorscore=0 spamscore=0 mlxscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101150138
+Content-Disposition: inline
+In-Reply-To: <YAHWGMb9rTehRsRz@mit.edu>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Jan 15, 2021 at 12:51:20PM -0500, Theodore Ts'o wrote:
+> On Fri, Jan 15, 2021 at 04:24:23PM +0000, Christoph Hellwig wrote:
+> > 
+> > That is what the capabilities are designed for and we already check
+> > for them.
+> 
+> So perhaps I'm confused, but my understanding is that in the
+> containers world, capabilities are a lot more complicated.  There is:
+> 
+> 1) The initial namespace capability set
+> 
+> 2) The container's user-namespace capability set
+> 
+> 3) The namespace in which the file system is mounted --- which is
+>       "usually, but not necessarily the initial namespace" and
+>       presumably could potentially not necessarily be the current
+>       container's user name space, is namespaces can be hierarchically
+>       arranged.
+> 
+> Is that correct?  If so, how does this patch set change things (if
+> any), and and how does this interact with quota administration
+> operations?
 
-> On Jan 15, 2021, at 10:21 AM, James Bottomley =
-<James.Bottomley@HansenPartnership.com> wrote:
->=20
-> On Tue, 2020-09-15 at 20:49 -0400, Eric Snowberg wrote:
->> The Secure Boot Forbidden Signature Database, dbx, contains a list of
->> now revoked signatures and keys previously approved to boot with UEFI
->> Secure Boot enabled.  The dbx is capable of containing any number of
->> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and
->> EFI_CERT_X509_GUID entries.
->>=20
->> Currently when EFI_CERT_X509_GUID are contained in the dbx, the
->> entries are skipped.
->>=20
->> Add support for EFI_CERT_X509_GUID dbx entries. When a
->> EFI_CERT_X509_GUID is found, it is added as an asymmetrical key to
->> the .blacklist keyring. Anytime the .platform keyring is used, the
->> keys in the .blacklist keyring are referenced, if a matching key is
->> found, the key will be rejected.
->>=20
->> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->=20
-> If you're using shim, as most of our users are, you have no access to
-> dbx to blacklist certificates.  Plus our security envelope includes =
-the
-> Mok variables, so you should also be paying attestion to MokListX (or
-> it's RT equivalent: MokListXRT).
->=20
-> If you add this to the patch, we get something that is mechanistically
-> complete and which also allows users to add certs to their Mok
-> blacklist.
+The cases you listed are correct. The patchset doesn't change them.
+Simply put, the patchset doesn't alter capability checking in any way.
 
-That make sense. I=E2=80=99ll work on a patch to add this ability.
+> 
+> On a related note, ext4 specifies a "reserved user" or "reserved
+> group" which can access the reserved blocks.  If we have a file system
+> which is mounted in a namespace running a container which is running
+> RHEL or SLES, and in that container, we have a file system mounted (so
+> it was not mounted in the initial namespace), with id-mapping --- and
+> then there is a further sub-container created with its own user
+> sub-namespace further mapping uids/gids --- will the right thing
+> happen?  For that matter, how *is* the "right thing" defined?
 
+In short, nothing changes. Whatever happened before happens now.
+
+Specifically s_resuid/s_resgid are superblock mount options and so never
+change on a per-mount basis and thus also aren't affected by idmapped
+mounts.
+
+> 
+> Sorry if this is a potentially stupid question, but I find user
+> namespaces and id and capability mapping to be hopefully confusing for
+> my tiny brain.  :-)
+
+No, I really appreciate the questions. :) My brain can most likely
+handle less. :)
+
+Christian
