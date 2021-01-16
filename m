@@ -2,109 +2,244 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B60C6C433DB
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 07:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B24C433E9
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 17:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7996723A5A
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 07:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45DDD20732
+	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 17:17:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbhAPHj5 (ORCPT
+        id S1727786AbhAPRRb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 16 Jan 2021 02:39:57 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:33086 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbhAPHj4 (ORCPT
+        Sat, 16 Jan 2021 12:17:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726993AbhAPRR2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 16 Jan 2021 02:39:56 -0500
-Received: by mail-io1-f71.google.com with SMTP id m3so19031914ioy.0
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Jan 2021 23:39:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=XNO2X9QsJWsMKa6x0kj7dO5GxScLbpJTTbVeJMjwKF0=;
-        b=G86rlBSxed4GbhSMpSEFA1pxKy0oKXcTwoosx+o7Ri8YW2nMtsg7RnSxJZ27CyLj8S
-         3oAl7pgvCM3zcktdvGXOyxcfE8x0RScPEZl4LFRCBhaKnCdbYqz5lbUJMRzonY2GYbkb
-         YMzkSOTBOYgkNxlvxMZjvIzeVBNJVrU4gvNy55ja2vIeGx2wKgk6WGhRfJ24jd4syBYI
-         2alv4PcdR5oSdhEfuuaMkXbtYzcAAiUeLR4qRbTgVD0cN/5X+CXmKuAkh77wRBNDFN8b
-         paSjwliv2V+JSpa46/8UZI65yLLjb3jmgzIpj9OPJL5FDkLE5na0kBRkjkyrVXsVxc8S
-         RC+Q==
-X-Gm-Message-State: AOAM532JH6DeMXZ8bis8+TN/oe2lJPGeIWI6tYwUGcbkjAZaEU+oIjdi
-        bh4jm6MrBcVttFKPBVwCq7Oa+ZZeb8DrPIMChbKemoT0Fyu6
-X-Google-Smtp-Source: ABdhPJxa0rcWUGUhDHoDvxnBVeJm7kaO1d4flGmxk2bqPMwv2znPn0nWNhhfTrtQgnct1KCP1rf7Ubjrv838fDwfJv2sSk/yWZ8P
+        Sat, 16 Jan 2021 12:17:28 -0500
+X-Greylist: delayed 166611 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 16 Jan 2021 09:16:42 PST
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D29C061574;
+        Sat, 16 Jan 2021 09:16:42 -0800 (PST)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DJ4Th0JkRzMqHHH;
+        Sat, 16 Jan 2021 18:16:40 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DJ4Tc5tpwzlh8TM;
+        Sat, 16 Jan 2021 18:16:36 +0100 (CET)
+Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
+To:     Jann Horn <jannh@google.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20201209192839.1396820-1-mic@digikod.net>
+ <20201209192839.1396820-8-mic@digikod.net>
+ <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
+ <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net>
+ <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
+ <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
+ <CAG48ez1O0VTwEiRd3KqexoF78WR+cmP5bGk5Kh5Cs7aPepiDVg@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <28d2a149-0fe0-764b-85b3-6f979d1dd931@digikod.net>
+Date:   Sat, 16 Jan 2021 18:16:57 +0100
+User-Agent: 
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:11a5:: with SMTP id 5mr2110532ilj.294.1610782755889;
- Fri, 15 Jan 2021 23:39:15 -0800 (PST)
-Date:   Fri, 15 Jan 2021 23:39:15 -0800
-In-Reply-To: <0000000000003e36df05b8ed6677@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f9ab3905b8ff959f@google.com>
-Subject: Re: WARNING in smk_write_net4addr
-From:   syzbot <syzbot+bf76b4978f531b8e2edb@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAG48ez1O0VTwEiRd3KqexoF78WR+cmP5bGk5Kh5Cs7aPepiDVg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-syzbot has found a reproducer for the following issue on:
 
-HEAD commit:    f4e087c6 Merge tag 'acpi-5.11-rc4' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=161212d0d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf76b4978f531b8e2edb
-compiler:       clang version 11.0.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1449f3e0d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a71868d00000
+On 15/01/2021 19:31, Jann Horn wrote:
+> On Fri, Jan 15, 2021 at 10:10 AM Mickaël Salaün <mic@digikod.net> wrote:
+>> On 14/01/2021 23:43, Jann Horn wrote:
+>>> On Thu, Jan 14, 2021 at 7:54 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>> On 14/01/2021 04:22, Jann Horn wrote:
+>>>>> On Wed, Dec 9, 2020 at 8:28 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>>>> Thanks to the Landlock objects and ruleset, it is possible to identify
+>>>>>> inodes according to a process's domain.  To enable an unprivileged
+>>>>>> process to express a file hierarchy, it first needs to open a directory
+>>>>>> (or a file) and pass this file descriptor to the kernel through
+>>>>>> landlock_add_rule(2).  When checking if a file access request is
+>>>>>> allowed, we walk from the requested dentry to the real root, following
+>>>>>> the different mount layers.  The access to each "tagged" inodes are
+>>>>>> collected according to their rule layer level, and ANDed to create
+>>>>>> access to the requested file hierarchy.  This makes possible to identify
+>>>>>> a lot of files without tagging every inodes nor modifying the
+>>>>>> filesystem, while still following the view and understanding the user
+>>>>>> has from the filesystem.
+>>>>>>
+>>>>>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
+>>>>>> keep the same struct inodes for the same inodes whereas these inodes are
+>>>>>> in use.
+>>>>>>
+>>>>>> This commit adds a minimal set of supported filesystem access-control
+>>>>>> which doesn't enable to restrict all file-related actions.  This is the
+>>>>>> result of multiple discussions to minimize the code of Landlock to ease
+>>>>>> review.  Thanks to the Landlock design, extending this access-control
+>>>>>> without breaking user space will not be a problem.  Moreover, seccomp
+>>>>>> filters can be used to restrict the use of syscall families which may
+>>>>>> not be currently handled by Landlock.
+>>>>> [...]
+>>>>>> +static bool check_access_path_continue(
+>>>>>> +               const struct landlock_ruleset *const domain,
+>>>>>> +               const struct path *const path, const u32 access_request,
+>>>>>> +               u64 *const layer_mask)
+>>>>>> +{
+>>>>> [...]
+>>>>>> +       /*
+>>>>>> +        * An access is granted if, for each policy layer, at least one rule
+>>>>>> +        * encountered on the pathwalk grants the access, regardless of their
+>>>>>> +        * position in the layer stack.  We must then check not-yet-seen layers
+>>>>>> +        * for each inode, from the last one added to the first one.
+>>>>>> +        */
+>>>>>> +       for (i = 0; i < rule->num_layers; i++) {
+>>>>>> +               const struct landlock_layer *const layer = &rule->layers[i];
+>>>>>> +               const u64 layer_level = BIT_ULL(layer->level - 1);
+>>>>>> +
+>>>>>> +               if (!(layer_level & *layer_mask))
+>>>>>> +                       continue;
+>>>>>> +               if ((layer->access & access_request) != access_request)
+>>>>>> +                       return false;
+>>>>>> +               *layer_mask &= ~layer_level;
+>>>>>
+>>>>> Hmm... shouldn't the last 5 lines be replaced by the following?
+>>>>>
+>>>>> if ((layer->access & access_request) == access_request)
+>>>>>     *layer_mask &= ~layer_level;
+>>>>>
+>>>>> And then, since this function would always return true, you could
+>>>>> change its return type to "void".
+>>>>>
+>>>>>
+>>>>> As far as I can tell, the current version will still, if a ruleset
+>>>>> looks like this:
+>>>>>
+>>>>> /usr read+write
+>>>>> /usr/lib/ read
+>>>>>
+>>>>> reject write access to /usr/lib, right?
+>>>>
+>>>> If these two rules are from different layers, then yes it would work as
+>>>> intended. However, if these rules are from the same layer the path walk
+>>>> will not stop at /usr/lib but go down to /usr, which grants write
+>>>> access.
+>>>
+>>> I don't see why the code would do what you're saying it does. And an
+>>> experiment seems to confirm what I said; I checked out landlock-v26,
+>>> and the behavior I get is:
+>>
+>> There is a misunderstanding, I was responding to your proposition to
+>> modify check_access_path_continue(), not about the behavior of landlock-v26.
+>>
+>>>
+>>> user@vm:~/landlock$ dd if=/dev/null of=/tmp/aaa
+>>> 0+0 records in
+>>> 0+0 records out
+>>> 0 bytes copied, 0.00106365 s, 0.0 kB/s
+>>> user@vm:~/landlock$ LL_FS_RO='/lib' LL_FS_RW='/' ./sandboxer dd
+>>> if=/dev/null of=/tmp/aaa
+>>> 0+0 records in
+>>> 0+0 records out
+>>> 0 bytes copied, 0.000491814 s, 0.0 kB/s
+>>> user@vm:~/landlock$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd
+>>> if=/dev/null of=/tmp/aaa
+>>> dd: failed to open '/tmp/aaa': Permission denied
+>>> user@vm:~/landlock$
+>>>
+>>> Granting read access to /tmp prevents writing to it, even though write
+>>> access was granted to /.
+>>>
+>>
+>> It indeed works like this with landlock-v26. However, with your above
+>> proposition, it would work like this:
+>>
+>> $ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd if=/dev/null of=/tmp/aaa
+>> 0+0 records in
+>> 0+0 records out
+>> 0 bytes copied, 0.000187265 s, 0.0 kB/s
+>>
+>> …which is not what users would expect I guess. :)
+> 
+> Ah, so we are disagreeing about what the right semantics are. ^^ To
+> me, that is exactly the behavior I would expect.
+> 
+> Imagine that someone wants to write a program that needs to be able to
+> load libraries from /usr/lib (including subdirectories) and needs to
+> be able to write output to some user-specified output directory. So
+> they use something like this to sandbox their program (plus error
+> handling):
+> 
+> static void add_fs_rule(int ruleset_fd, char *path, u64 allowed_access) {
+>   int fd = open(path, O_PATH);
+>   struct landlock_path_beneath_attr path_beneath = {
+>     .parent_fd = fd,
+>     .allowed_access = allowed_access
+>   };
+>   landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
+>           &path_beneath, 0);
+>   close(fd);
+> }
+> int main(int argc, char **argv) {
+>   char *output_dir = argv[1];
+>   int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+> sizeof(ruleset_attr, 0);
+>   add_fs_rule(ruleset_fd, "/usr/lib", ACCESS_FS_ROUGHLY_READ);
+>   add_fs_rule(ruleset_fd, output_dir,
+> LANDLOCK_ACCESS_FS_WRITE_FILE|LANDLOCK_ACCESS_FS_MAKE_REG|LANDLOCK_ACCESS_FS_REMOVE_FILE);
+>   prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+>   landlock_enforce_ruleset_current(ruleset_fd, 0);
+> }
+> 
+> This will *almost* always work; but if the output directory is
+> /usr/lib/x86_64-linux-gnu/ , loading libraries from that directory
+> won't work anymore, right? So if userspace wanted this to *always*
+> works correctly, it would have to somehow figure out whether there is
+> a path upwards from the output directory (under any mount) that will
+> encounter /usr/lib, and set different permissions if that is the case.
+> That seems unnecessarily messy to me; and I think that this will make
+> it harder for generic commandline tools and such to adopt landlock.
+> 
+> 
+> If you do want to have the ability to deny access to subtrees of trees
+> to which access is permitted, I think that that should be made
+> explicit in the UAPI - e.g. you could (at a later point, after this
+> series has landed) introduce a new EXCLUDE flag for
+> landlock_add_rule() that means "I want to deny the access specified by
+> this rule", or something like that. (And you'd have to very carefully
+> document under which circumstances such rules are actually effective -
+> e.g. if someone grants full access to $HOME, but excludes $HOME/.ssh,
+> an attacker would still be able to rename $HOME/.ssh to $HOME/old_ssh,
+> and then if the program is later restarted and creates the ruleset
+> from scratch again, the old SSH folder will be accessible.)
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf76b4978f531b8e2edb@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8454 at mm/page_alloc.c:4976 __alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Modules linked in:
-CPU: 0 PID: 8454 Comm: syz-executor791 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Code: aa 09 00 e9 dd fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c eb fd ff ff 4c 89 ef e8 54 aa 09 00 8b 74 24 18 e9 da fd ff ff <0f> 0b e9 f3 fd ff ff a9 00 00 08 00 75 16 8b 4c 24 1c 89 cb 81 e3
-RSP: 0018:ffffc9000945f940 EFLAGS: 00010246
-RAX: ffffc9000945f9c0 RBX: ffffc9000945f9c0 RCX: 0000000000000000
-RDX: 0000000000000028 RSI: 0000000000000000 RDI: ffffc9000945f9e8
-RBP: ffffc9000945fa80 R08: dffffc0000000000 R09: ffffc9000945f9c0
-R10: fffff5200128bf3d R11: 0000000000000000 R12: dffffc0000000000
-R13: 0000000000000012 R14: 1ffff9200128bf34 R15: 0000000000040cc0
-FS:  0000000000ffe880(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000140 CR3: 000000001c506000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- alloc_pages include/linux/gfp.h:547 [inline]
- kmalloc_order+0x40/0x130 mm/slab_common.c:837
- kmalloc_order_trace+0x15/0x70 mm/slab_common.c:853
- kmalloc_large include/linux/slab.h:481 [inline]
- __kmalloc_track_caller+0x246/0x330 mm/slub.c:4457
- memdup_user_nul+0x26/0xf0 mm/util.c:260
- smk_write_net4addr+0xde/0x13d0 security/smack/smackfs.c:1173
- vfs_write+0x289/0xc90 fs/read_write.c:603
- ksys_write+0x171/0x2a0 fs/read_write.c:658
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440249
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff42192178 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440249
-RDX: 00000000200001e2 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401a50
-R13: 0000000000401ae0 R14: 0000000000000000 R15: 0000000000000000
-
+OK, it's indeed a more pragmatic approach. I'll take your change and
+merge check_access_path_continue() with check_access_path(). Thanks!
