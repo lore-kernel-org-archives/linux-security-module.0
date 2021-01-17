@@ -2,244 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B24C433E9
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 17:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94788C433E0
+	for <linux-security-module@archiver.kernel.org>; Sun, 17 Jan 2021 21:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45DDD20732
-	for <linux-security-module@archiver.kernel.org>; Sat, 16 Jan 2021 17:17:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 603E3224B0
+	for <linux-security-module@archiver.kernel.org>; Sun, 17 Jan 2021 21:07:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbhAPRRb (ORCPT
+        id S1730342AbhAQVHX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 16 Jan 2021 12:17:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40654 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726993AbhAPRR2 (ORCPT
+        Sun, 17 Jan 2021 16:07:23 -0500
+Received: from mail107.syd.optusnet.com.au ([211.29.132.53]:44711 "EHLO
+        mail107.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726785AbhAQVHW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 16 Jan 2021 12:17:28 -0500
-X-Greylist: delayed 166611 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 16 Jan 2021 09:16:42 PST
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D29C061574;
-        Sat, 16 Jan 2021 09:16:42 -0800 (PST)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DJ4Th0JkRzMqHHH;
-        Sat, 16 Jan 2021 18:16:40 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DJ4Tc5tpwzlh8TM;
-        Sat, 16 Jan 2021 18:16:36 +0100 (CET)
-Subject: Re: [PATCH v26 07/12] landlock: Support filesystem access-control
-To:     Jann Horn <jannh@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Sun, 17 Jan 2021 16:07:22 -0500
+Received: from dread.disaster.area (pa49-181-54-82.pa.nsw.optusnet.com.au [49.181.54.82])
+        by mail107.syd.optusnet.com.au (Postfix) with ESMTPS id AB1B4D5ED06;
+        Mon, 18 Jan 2021 08:06:22 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1l1FFd-0011Hk-2N; Mon, 18 Jan 2021 08:06:21 +1100
+Date:   Mon, 18 Jan 2021 08:06:21 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20201209192839.1396820-1-mic@digikod.net>
- <20201209192839.1396820-8-mic@digikod.net>
- <CAG48ez1wbAQwU-eoC9DngHyUM_5F01MJQpRnLaJFvfRUrnXBdA@mail.gmail.com>
- <aeb3e152-8108-89d2-0577-4b130368f14f@digikod.net>
- <CAG48ez2HJCFvmFALDYDYnufE755Dqh3JquAMf-1mnzmRrdKaoQ@mail.gmail.com>
- <9be6481f-9c03-dd32-378f-20bc7c52315c@digikod.net>
- <CAG48ez1O0VTwEiRd3KqexoF78WR+cmP5bGk5Kh5Cs7aPepiDVg@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <28d2a149-0fe0-764b-85b3-6f979d1dd931@digikod.net>
-Date:   Sat, 16 Jan 2021 18:16:57 +0100
-User-Agent: 
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5 37/42] xfs: support idmapped mounts
+Message-ID: <20210117210621.GA78941@dread.disaster.area>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+ <20210112220124.837960-38-christian.brauner@ubuntu.com>
+ <20210114205154.GL331610@dread.disaster.area>
+ <20210114221048.ppf2pfuxrjak4kvm@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez1O0VTwEiRd3KqexoF78WR+cmP5bGk5Kh5Cs7aPepiDVg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210114221048.ppf2pfuxrjak4kvm@wittgenstein>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
+        a=NAd5MxazP4FGoF8nXO8esw==:117 a=NAd5MxazP4FGoF8nXO8esw==:17
+        a=kj9zAlcOel0A:10 a=EmqxpYm9HcoA:10 a=7-415B0cAAAA:8
+        a=QsOiS33c3F2EFrvaDEcA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Thu, Jan 14, 2021 at 11:10:48PM +0100, Christian Brauner wrote:
+> On Fri, Jan 15, 2021 at 07:51:54AM +1100, Dave Chinner wrote:
+> > On Tue, Jan 12, 2021 at 11:01:19PM +0100, Christian Brauner wrote:
+> > > From: Christoph Hellwig <hch@lst.de>
+> > > 
+> > > Enable idmapped mounts for xfs. This basically just means passing down
+> > > the user_namespace argument from the VFS methods down to where it is
+> > > passed to helper.
+> > > 
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ....
+> > > @@ -654,6 +658,7 @@ xfs_vn_change_ok(
+> > >   */
+> > >  static int
+> > >  xfs_setattr_nonsize(
+> > > +	struct user_namespace	*mnt_userns,
+> > >  	struct xfs_inode	*ip,
+> > >  	struct iattr		*iattr)
+> > >  {
+> > > @@ -813,7 +818,7 @@ xfs_setattr_nonsize(
+> > >  	 * 	     Posix ACL code seems to care about this issue either.
+> > >  	 */
+> > >  	if (mask & ATTR_MODE) {
+> > > -		error = posix_acl_chmod(&init_user_ns, inode, inode->i_mode);
+> > > +		error = posix_acl_chmod(mnt_userns, inode, inode->i_mode);
+> > >  		if (error)
+> > >  			return error;
+> > >  	}
+> > > @@ -868,7 +873,7 @@ xfs_setattr_size(
+> > >  		 * Use the regular setattr path to update the timestamps.
+> > >  		 */
+> > >  		iattr->ia_valid &= ~ATTR_SIZE;
+> > > -		return xfs_setattr_nonsize(ip, iattr);
+> > > +		return xfs_setattr_nonsize(&init_user_ns, ip, iattr);
+> > 
+> > Shouldn't that be passing mnt_userns?
+> 
+> Hey Dave,
+> 
+> Thanks for taking a look.
+> 
+> This is the time updating codepath.
 
-On 15/01/2021 19:31, Jann Horn wrote:
-> On Fri, Jan 15, 2021 at 10:10 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On 14/01/2021 23:43, Jann Horn wrote:
->>> On Thu, Jan 14, 2021 at 7:54 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>> On 14/01/2021 04:22, Jann Horn wrote:
->>>>> On Wed, Dec 9, 2020 at 8:28 PM Mickaël Salaün <mic@digikod.net> wrote:
->>>>>> Thanks to the Landlock objects and ruleset, it is possible to identify
->>>>>> inodes according to a process's domain.  To enable an unprivileged
->>>>>> process to express a file hierarchy, it first needs to open a directory
->>>>>> (or a file) and pass this file descriptor to the kernel through
->>>>>> landlock_add_rule(2).  When checking if a file access request is
->>>>>> allowed, we walk from the requested dentry to the real root, following
->>>>>> the different mount layers.  The access to each "tagged" inodes are
->>>>>> collected according to their rule layer level, and ANDed to create
->>>>>> access to the requested file hierarchy.  This makes possible to identify
->>>>>> a lot of files without tagging every inodes nor modifying the
->>>>>> filesystem, while still following the view and understanding the user
->>>>>> has from the filesystem.
->>>>>>
->>>>>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
->>>>>> keep the same struct inodes for the same inodes whereas these inodes are
->>>>>> in use.
->>>>>>
->>>>>> This commit adds a minimal set of supported filesystem access-control
->>>>>> which doesn't enable to restrict all file-related actions.  This is the
->>>>>> result of multiple discussions to minimize the code of Landlock to ease
->>>>>> review.  Thanks to the Landlock design, extending this access-control
->>>>>> without breaking user space will not be a problem.  Moreover, seccomp
->>>>>> filters can be used to restrict the use of syscall families which may
->>>>>> not be currently handled by Landlock.
->>>>> [...]
->>>>>> +static bool check_access_path_continue(
->>>>>> +               const struct landlock_ruleset *const domain,
->>>>>> +               const struct path *const path, const u32 access_request,
->>>>>> +               u64 *const layer_mask)
->>>>>> +{
->>>>> [...]
->>>>>> +       /*
->>>>>> +        * An access is granted if, for each policy layer, at least one rule
->>>>>> +        * encountered on the pathwalk grants the access, regardless of their
->>>>>> +        * position in the layer stack.  We must then check not-yet-seen layers
->>>>>> +        * for each inode, from the last one added to the first one.
->>>>>> +        */
->>>>>> +       for (i = 0; i < rule->num_layers; i++) {
->>>>>> +               const struct landlock_layer *const layer = &rule->layers[i];
->>>>>> +               const u64 layer_level = BIT_ULL(layer->level - 1);
->>>>>> +
->>>>>> +               if (!(layer_level & *layer_mask))
->>>>>> +                       continue;
->>>>>> +               if ((layer->access & access_request) != access_request)
->>>>>> +                       return false;
->>>>>> +               *layer_mask &= ~layer_level;
->>>>>
->>>>> Hmm... shouldn't the last 5 lines be replaced by the following?
->>>>>
->>>>> if ((layer->access & access_request) == access_request)
->>>>>     *layer_mask &= ~layer_level;
->>>>>
->>>>> And then, since this function would always return true, you could
->>>>> change its return type to "void".
->>>>>
->>>>>
->>>>> As far as I can tell, the current version will still, if a ruleset
->>>>> looks like this:
->>>>>
->>>>> /usr read+write
->>>>> /usr/lib/ read
->>>>>
->>>>> reject write access to /usr/lib, right?
->>>>
->>>> If these two rules are from different layers, then yes it would work as
->>>> intended. However, if these rules are from the same layer the path walk
->>>> will not stop at /usr/lib but go down to /usr, which grants write
->>>> access.
->>>
->>> I don't see why the code would do what you're saying it does. And an
->>> experiment seems to confirm what I said; I checked out landlock-v26,
->>> and the behavior I get is:
->>
->> There is a misunderstanding, I was responding to your proposition to
->> modify check_access_path_continue(), not about the behavior of landlock-v26.
->>
->>>
->>> user@vm:~/landlock$ dd if=/dev/null of=/tmp/aaa
->>> 0+0 records in
->>> 0+0 records out
->>> 0 bytes copied, 0.00106365 s, 0.0 kB/s
->>> user@vm:~/landlock$ LL_FS_RO='/lib' LL_FS_RW='/' ./sandboxer dd
->>> if=/dev/null of=/tmp/aaa
->>> 0+0 records in
->>> 0+0 records out
->>> 0 bytes copied, 0.000491814 s, 0.0 kB/s
->>> user@vm:~/landlock$ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd
->>> if=/dev/null of=/tmp/aaa
->>> dd: failed to open '/tmp/aaa': Permission denied
->>> user@vm:~/landlock$
->>>
->>> Granting read access to /tmp prevents writing to it, even though write
->>> access was granted to /.
->>>
->>
->> It indeed works like this with landlock-v26. However, with your above
->> proposition, it would work like this:
->>
->> $ LL_FS_RO='/tmp' LL_FS_RW='/' ./sandboxer dd if=/dev/null of=/tmp/aaa
->> 0+0 records in
->> 0+0 records out
->> 0 bytes copied, 0.000187265 s, 0.0 kB/s
->>
->> …which is not what users would expect I guess. :)
-> 
-> Ah, so we are disagreeing about what the right semantics are. ^^ To
-> me, that is exactly the behavior I would expect.
-> 
-> Imagine that someone wants to write a program that needs to be able to
-> load libraries from /usr/lib (including subdirectories) and needs to
-> be able to write output to some user-specified output directory. So
-> they use something like this to sandbox their program (plus error
-> handling):
-> 
-> static void add_fs_rule(int ruleset_fd, char *path, u64 allowed_access) {
->   int fd = open(path, O_PATH);
->   struct landlock_path_beneath_attr path_beneath = {
->     .parent_fd = fd,
->     .allowed_access = allowed_access
->   };
->   landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
->           &path_beneath, 0);
->   close(fd);
-> }
-> int main(int argc, char **argv) {
->   char *output_dir = argv[1];
->   int ruleset_fd = landlock_create_ruleset(&ruleset_attr,
-> sizeof(ruleset_attr, 0);
->   add_fs_rule(ruleset_fd, "/usr/lib", ACCESS_FS_ROUGHLY_READ);
->   add_fs_rule(ruleset_fd, output_dir,
-> LANDLOCK_ACCESS_FS_WRITE_FILE|LANDLOCK_ACCESS_FS_MAKE_REG|LANDLOCK_ACCESS_FS_REMOVE_FILE);
->   prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
->   landlock_enforce_ruleset_current(ruleset_fd, 0);
-> }
-> 
-> This will *almost* always work; but if the output directory is
-> /usr/lib/x86_64-linux-gnu/ , loading libraries from that directory
-> won't work anymore, right? So if userspace wanted this to *always*
-> works correctly, it would have to somehow figure out whether there is
-> a path upwards from the output directory (under any mount) that will
-> encounter /usr/lib, and set different permissions if that is the case.
-> That seems unnecessarily messy to me; and I think that this will make
-> it harder for generic commandline tools and such to adopt landlock.
-> 
-> 
-> If you do want to have the ability to deny access to subtrees of trees
-> to which access is permitted, I think that that should be made
-> explicit in the UAPI - e.g. you could (at a later point, after this
-> series has landed) introduce a new EXCLUDE flag for
-> landlock_add_rule() that means "I want to deny the access specified by
-> this rule", or something like that. (And you'd have to very carefully
-> document under which circumstances such rules are actually effective -
-> e.g. if someone grants full access to $HOME, but excludes $HOME/.ssh,
-> an attacker would still be able to rename $HOME/.ssh to $HOME/old_ssh,
-> and then if the program is later restarted and creates the ruleset
-> from scratch again, the old SSH folder will be accessible.)
-> 
+Yes, I understand the code path, that's why I asked the question and
+commented that it's a landmine. That is, if in future we ever need
+to do anything that is is in any way namespace related in the
+truncate path, the wrong thing will happen because we are passing
+the wrong namespace into that function.
 
-OK, it's indeed a more pragmatic approach. I'll take your change and
-merge check_access_path_continue() with check_access_path(). Thanks!
+Please just pass down the correct namespace for the operation even
+though we don't currently require it for the operations being
+performed in that path.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
