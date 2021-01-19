@@ -2,126 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF918C433DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jan 2021 16:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31A9C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 00:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2A6B222BB
-	for <linux-security-module@archiver.kernel.org>; Mon, 18 Jan 2021 16:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AA0222ADC
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 00:14:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389885AbhARQu0 (ORCPT
+        id S1732682AbhASAOw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Jan 2021 11:50:26 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:36034 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392837AbhARQs6 (ORCPT
+        Mon, 18 Jan 2021 19:14:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48738 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732667AbhASAOv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Jan 2021 11:48:58 -0500
-Received: by mail-io1-f71.google.com with SMTP id x4so29136705ioh.3
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Jan 2021 08:48:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JUuVdTOisvuEkvRCf1xzi+cw44dGW+Nv6pXH3+R3PYk=;
-        b=SbL9IYpElXe/W9tulfn0WOpAOTEQ4oFP2GCWRZTaScUmnR0VxmLa2al5YnTTOs3saq
-         vY7qnqBP4qjjtLaFdC8su61TEjL9G7WzQTZi8l/S+6pww/rrZyLA8hiE2niqKef6COWs
-         uAU5N7o0LdKxlBC7Jk5BTRnoGCnubW/JfuRHPTPb5i/fBEUK+uMKZmyIxUXzK2YmckbI
-         5TfmxH2lSeZABLGu0yZWcYvM3CTTF8FSEbo3p7Zv9yeNcZSJHyLvlg1XqZbkwYvkdRQj
-         10zck1RTHKVZUhSd9yMxwTCpEhJ4Rrth3qOeFQ7WdonQMnls6PInFsR50GZ/p2AdJR/9
-         O7cw==
-X-Gm-Message-State: AOAM5307/Fa3FbZSVsKV/dzjIiBuNi0PC82vINPnPQaj1MoYMKxIPlkC
-        OTTFI5k8wl3d9pONHMwLwb9twuF0W+n4YnELiZ+bX+ltyyrG
-X-Google-Smtp-Source: ABdhPJwTcy4CmoIaSdh7toEt5Efupkuv+RbQyY4cRj3hFH9SvpvjQBIN40esaffLiA3YCG9vu+FL/o6QMF7fxQm5wWWe9jER4hJy
+        Mon, 18 Jan 2021 19:14:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1611015205;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=k8uZwZ9l9/9GHM34N72Urrm3zDwDS5163gHM9WUjrbg=;
+        b=Rsrzfo9EAxgJKl8r6yCT60Z0ycl/YvqG7PSzNQ90Fa6ZBaG1Te6/hx56WW81qskvJ6hHu3
+        TBtF0nIAwOSz6Gtx3mU8g3bnt9Frqe7ycLb8H2zJdxEQAR+3ORnghBMwfe7CLnD75KweVw
+        asIIU4hLIbx4bBrcKehfYudRXY/qWu4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-323-Fj6D9-fAOwi5YHvuGOer8Q-1; Mon, 18 Jan 2021 19:13:23 -0500
+X-MC-Unique: Fj6D9-fAOwi5YHvuGOer8Q-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2AB6F18C89C4;
+        Tue, 19 Jan 2021 00:13:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A5A960C9C;
+        Tue, 19 Jan 2021 00:13:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     Tobias Markus <tobias@markus-regensburg.de>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        dhowells@redhat.com, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] X.509: Fix crash caused by NULL pointer
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b47:: with SMTP id f7mr144838ilu.96.1610988497466;
- Mon, 18 Jan 2021 08:48:17 -0800 (PST)
-Date:   Mon, 18 Jan 2021 08:48:17 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000020fc9605b92f7de9@google.com>
-Subject: WARNING in smk_set_cipso
-From:   syzbot <syzbot+438aafc66532f0dba169@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date:   Tue, 19 Jan 2021 00:13:19 +0000
+Message-ID: <164034.1611015199@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
 
-syzbot found the following issue on:
+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 
-HEAD commit:    65f0d241 Merge tag 'sound-5.11-rc4' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=136656f7500000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee2266946ed36986
-dashboard link: https://syzkaller.appspot.com/bug?extid=438aafc66532f0dba169
-compiler:       clang version 11.0.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17499268d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132a5207500000
+On the following call path, `sig->pkey_algo` is not assigned
+in asymmetric_key_verify_signature(), which causes runtime
+crash in public_key_verify_signature().
 
-Bisection is inconclusive: the issue happens on the oldest tested release.
+  keyctl_pkey_verify
+    asymmetric_key_verify_signature
+      verify_signature
+        public_key_verify_signature
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=155dda20d00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=175dda20d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=135dda20d00000
+This patch simply check this situation and fixes the crash
+caused by NULL pointer.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+438aafc66532f0dba169@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 8454 at mm/page_alloc.c:4976 __alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Modules linked in:
-CPU: 1 PID: 8454 Comm: syz-executor584 Not tainted 5.11.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__alloc_pages_nodemask+0x4e5/0x5a0 mm/page_alloc.c:5020
-Code: aa 09 00 e9 dd fd ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c eb fd ff ff 4c 89 ef e8 54 aa 09 00 8b 74 24 18 e9 da fd ff ff <0f> 0b e9 f3 fd ff ff a9 00 00 08 00 75 16 8b 4c 24 1c 89 cb 81 e3
-RSP: 0018:ffffc90000e9f900 EFLAGS: 00010246
-RAX: ffffc90000e9f980 RBX: ffffc90000e9f980 RCX: 0000000000000000
-RDX: 0000000000000028 RSI: 0000000000000000 RDI: ffffc90000e9f9a8
-RBP: ffffc90000e9fa40 R08: dffffc0000000000 R09: ffffc90000e9f980
-R10: fffff520001d3f35 R11: 0000000000000000 R12: dffffc0000000000
-R13: 0000000000000012 R14: 1ffff920001d3f2c R15: 0000000000040cc0
-FS:  0000000002629880(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f751f4c71a8 CR3: 000000001264e000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- alloc_pages include/linux/gfp.h:547 [inline]
- kmalloc_order+0x40/0x130 mm/slab_common.c:837
- kmalloc_order_trace+0x15/0x70 mm/slab_common.c:853
- kmalloc_large include/linux/slab.h:481 [inline]
- __kmalloc_track_caller+0x246/0x330 mm/slub.c:4457
- memdup_user_nul+0x26/0xf0 mm/util.c:260
- smk_set_cipso+0x18b/0x7e0 security/smack/smackfs.c:859
- vfs_write+0x289/0xc90 fs/read_write.c:603
- ksys_write+0x171/0x2a0 fs/read_write.c:658
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x440359
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 7b 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc65526ad8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440359
-RDX: 0000000020014b6f RSI: 0000000020014b00 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000014 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000401b60
-R13: 0000000000401bf0 R14: 0000000000000000 R15: 0000000000000000
-
-
+Fixes: 215525639631 ("X.509: support OSCCA SM2-with-SM3 certificate verific=
+ation")
+Reported-by: Tobias Markus <tobias@markus-regensburg.de>
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-and-tested-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+Tested-by: Jo=C3=A3o Fonseca <jpedrofonseca@ua.pt>
+Cc: stable@vger.kernel.org # v5.10+
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+ crypto/asymmetric_keys/public_key.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/p=
+ublic_key.c
+index 8892908ad58c..788a4ba1e2e7 100644
+--- a/crypto/asymmetric_keys/public_key.c
++++ b/crypto/asymmetric_keys/public_key.c
+@@ -356,7 +356,8 @@ int public_key_verify_signature(const struct public_key=
+ *pkey,
+ 	if (ret)
+ 		goto error_free_key;
+=20
+-	if (strcmp(sig->pkey_algo, "sm2") =3D=3D 0 && sig->data_size) {
++	if (sig->pkey_algo && strcmp(sig->pkey_algo, "sm2") =3D=3D 0 &&
++	    sig->data_size) {
+ 		ret =3D cert_sig_digest_update(sig, tfm);
+ 		if (ret)
+ 			goto error_free_key;
+
