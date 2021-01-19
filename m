@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BAAC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 14:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 798FDC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 14:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66867205ED
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 14:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D96F206E9
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 14:29:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391870AbhASO0l (ORCPT
+        id S1729385AbhASO2B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:26:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        Tue, 19 Jan 2021 09:28:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733215AbhASJ1W (ORCPT
+        with ESMTP id S2387540AbhASJcz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:27:22 -0500
+        Tue, 19 Jan 2021 04:32:55 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE667C061574;
-        Tue, 19 Jan 2021 01:26:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D84B8C061574;
+        Tue, 19 Jan 2021 01:32:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=BW6tx7OpnvLt5vntSjQgqgymuU
-        qg2g0U0TMdeTHpMFDqa9Ngc4GekeIKJLsh9fJ1/hPrDz6zewzXug0SYNWW5zUHuX//r2gXqyb4lI1
-        MVpm+5DySQytP/KiuxuwuXT2efGcUltJtQrn5wn8/h2awWeoDgoQ6/eTnDBWQVTb3M/nfMoYeeCxB
-        o4YN1xLmJR97N9qeQxrNWWd1VYRvTjtSV4CyYT2ZYPDOb8Vy2bkKhGf89Ximh65XbRzkRGZqgfu+f
-        JjZpvdSW4LYkEYUzOZDh192HdRchj0JbFnPvvMfHYY+2oBYkHN5jhepehP9TDYsNhb4P94iAAxVPZ
-        kcoopEtw==;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=klmdlbjPa4neptyaD8swknjp/k
+        nbMlLprwFliwRnvcdRaOJYdwGeZbz6Un4IXMUlyocgli46NlrB64Fksx3nkuMgHN6CwkhIZY4Rx9M
+        84U15Jxy0Qq26tk1ZTx7Lh0cBHOZAEDw/Q3B4nBv1ruy13YViq7iU8qvQR8cu5TUTeI2XcBi2Ijzi
+        VWNUP+j4e9Crd9qOY+GJXvOACm2fuEYn624SOwwZn5CcmjS5vvkVTlk1Qd5R/cF7H27qpC9BEnIaQ
+        ldTjngNW+rNIdglgcRAb9VxfSYAUPbaUxS9GYrqRlkjusQd0OelL0jdDG6UzjAtRX6Zhu1dUP8wUF
+        SVWqfaIQ==;
 Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1nHY-00E76h-AH; Tue, 19 Jan 2021 09:26:36 +0000
-Date:   Tue, 19 Jan 2021 09:26:36 +0000
+        id 1l1nMh-00E7Ri-R3; Tue, 19 Jan 2021 09:31:57 +0000
+Date:   Tue, 19 Jan 2021 09:31:55 +0000
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -74,14 +74,14 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 14/42] acl: handle idmapped mounts
-Message-ID: <20210119092636.GF3361757@infradead.org>
+Subject: Re: [PATCH v5 17/42] commoncap: handle idmapped mounts
+Message-ID: <20210119093155.GB3364550@infradead.org>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-15-christian.brauner@ubuntu.com>
+ <20210112220124.837960-18-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210112220124.837960-15-christian.brauner@ubuntu.com>
+In-Reply-To: <20210112220124.837960-18-christian.brauner@ubuntu.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
