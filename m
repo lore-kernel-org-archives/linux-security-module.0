@@ -2,110 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A31A9C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 00:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D531C43331
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 14:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AA0222ADC
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 00:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0B8E2312E
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 14:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732682AbhASAOw (ORCPT
+        id S2392537AbhASO0N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 18 Jan 2021 19:14:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48738 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732667AbhASAOv (ORCPT
+        Tue, 19 Jan 2021 09:26:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43492 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732735AbhASJYB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 18 Jan 2021 19:14:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611015205;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=k8uZwZ9l9/9GHM34N72Urrm3zDwDS5163gHM9WUjrbg=;
-        b=Rsrzfo9EAxgJKl8r6yCT60Z0ycl/YvqG7PSzNQ90Fa6ZBaG1Te6/hx56WW81qskvJ6hHu3
-        TBtF0nIAwOSz6Gtx3mU8g3bnt9Frqe7ycLb8H2zJdxEQAR+3ORnghBMwfe7CLnD75KweVw
-        asIIU4hLIbx4bBrcKehfYudRXY/qWu4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-323-Fj6D9-fAOwi5YHvuGOer8Q-1; Mon, 18 Jan 2021 19:13:23 -0500
-X-MC-Unique: Fj6D9-fAOwi5YHvuGOer8Q-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2AB6F18C89C4;
-        Tue, 19 Jan 2021 00:13:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A5A960C9C;
-        Tue, 19 Jan 2021 00:13:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Tobias Markus <tobias@markus-regensburg.de>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        dhowells@redhat.com, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] X.509: Fix crash caused by NULL pointer
+        Tue, 19 Jan 2021 04:24:01 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36F39C061574;
+        Tue, 19 Jan 2021 01:23:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=kxnpvdEioqW2SL/zS2zHQR8JutL4B883AHpsl2zQebg=; b=it9Hptg7/g4IK+bZS7OVTPBwvu
+        uEJwSofsw371xci3PeKBU/FjZML7V0mhZqDGM/lGkG2sEfj+XX/v3+r6ucKos47mtHBGfRbdfMl7S
+        mkKi8Qz9aZJcYyRsKs3CCkAXK63lVddcXS3y+EWvEwVQDRWIIC6QPa9t3tWIdAHTiHQYwDv9eLGWR
+        1R5YiOHnEr/nZ/SA58AW5jMykRQpkhcbJSWRZTR9AwuJy05gz+2oKe4MpWZyRaKOG5Xyg2lLZ2iQG
+        o80tSyIExjTsT8UaNxFm8eZuQOOzWCnxZ6GCz3SWZtCIlSZ2x15M2bHcfBr5kdAwznSdV2VpZUcXh
+        yDnrc9Fg==;
+Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1l1nEK-00E6t0-Rv; Tue, 19 Jan 2021 09:23:17 +0000
+Date:   Tue, 19 Jan 2021 09:23:16 +0000
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        St??phane Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5 11/42] namei: make permission helpers idmapped mount
+ aware
+Message-ID: <20210119092316.GC3361757@infradead.org>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+ <20210112220124.837960-12-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 19 Jan 2021 00:13:19 +0000
-Message-ID: <164034.1611015199@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210112220124.837960-12-christian.brauner@ubuntu.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Jan 12, 2021 at 11:00:53PM +0100, Christian Brauner wrote:
+> The two helpers inode_permission() and generic_permission() are used by
+> the vfs to perform basic permission checking by verifying that the
+> caller is privileged over an inode. In order to handle idmapped mounts
+> we extend the two helpers with an additional user namespace argument.
+> On idmapped mounts the two helpers will make sure to map the inode
+> according to the mount's user namespace and then peform identical
+> permission checks to inode_permission() and generic_permission(). If the
+> initial user namespace is passed nothing changes so non-idmapped mounts
+> will see identical behavior as before.
 
-From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+More long lines in here.
 
-On the following call path, `sig->pkey_algo` is not assigned
-in asymmetric_key_verify_signature(), which causes runtime
-crash in public_key_verify_signature().
+Otherwise looks good:
 
-  keyctl_pkey_verify
-    asymmetric_key_verify_signature
-      verify_signature
-        public_key_verify_signature
-
-This patch simply check this situation and fixes the crash
-caused by NULL pointer.
-
-Fixes: 215525639631 ("X.509: support OSCCA SM2-with-SM3 certificate verific=
-ation")
-Reported-by: Tobias Markus <tobias@markus-regensburg.de>
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-and-tested-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-Tested-by: Jo=C3=A3o Fonseca <jpedrofonseca@ua.pt>
-Cc: stable@vger.kernel.org # v5.10+
----
-
- crypto/asymmetric_keys/public_key.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/p=
-ublic_key.c
-index 8892908ad58c..788a4ba1e2e7 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -356,7 +356,8 @@ int public_key_verify_signature(const struct public_key=
- *pkey,
- 	if (ret)
- 		goto error_free_key;
-=20
--	if (strcmp(sig->pkey_algo, "sm2") =3D=3D 0 && sig->data_size) {
-+	if (sig->pkey_algo && strcmp(sig->pkey_algo, "sm2") =3D=3D 0 &&
-+	    sig->data_size) {
- 		ret =3D cert_sig_digest_update(sig, tfm);
- 		if (ret)
- 			goto error_free_key;
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
