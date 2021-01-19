@@ -2,40 +2,41 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A49C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 22:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66E5C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 22:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB5E223108
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 22:51:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CC1723104
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 22:51:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404875AbhASO3f (ORCPT
+        id S2404776AbhASO33 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:29:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47712 "EHLO
+        Tue, 19 Jan 2021 09:29:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387781AbhASJnl (ORCPT
+        with ESMTP id S1727781AbhASJkY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:43:41 -0500
+        Tue, 19 Jan 2021 04:40:24 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373D4C0613C1;
-        Tue, 19 Jan 2021 01:43:00 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD65C061574;
+        Tue, 19 Jan 2021 01:39:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
         References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9acveTIrtmshZa2kKhvPTcQBw36FunS33HkdJa8AHjc=; b=s7c2UNLYdD3Wg/Q6KFDrPWO33z
-        5NTdjpifi/UeIV8tUP+jwvs9lLk+iVs9ntJhesGxrDR2xFN+xb2sjgIL2XCYbT7rJQB0bDNaf06bm
-        sOCyQFA7AGQefvzpHr/clyZUcINsqreGrFbxe3QDuIxuAKtjs+cDCi9wU4EoZYJj34eJtNeOJzhcq
-        EJKHB9O70gs7ugPnGzDe0xiqTMuZOkulxl3y1uqrmZMS4n8qu2r6FXXj+89XS9rbt5n8GNxJ7z+89
-        y6MyhTCzfdXekyv3NZjsv+uHxv56KblnFMzwut1+AIkzg4RmCbU6VLrTay46MVzxtVQgH4+WMGH5n
-        3Pi6BDZA==;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=e7p28fQeFsTQicxttsEAAv52wm
+        HwxQ/dZ7NskjpL9w8wQu2x5MR3w1D5EeTcwvZ+z/fM52+sbCcBQKUsLIMXpxGuq6DNSj9fAVnt0qm
+        mBceuZQy9Z+81QATIE8CPeMKNI3hl3KPZsfAUsC7wPWtwBUzMY5fH1se4aI15Qumn67+TvhHv92VP
+        mrN4+O1SB/eXgzLHLqH66ZDcyMqW2Qq3Me5ipwgwuow/ZRlklZ4QFQYCYVhLt+amEBEhlfDsTLFQa
+        MNsAr1zVQcDpGcK5Jkjb++jx2N1V5V1GlAy1qIDgdVyBOl0YS3opKOkDf2u5rkoRLQvFQl4SxJSTU
+        A/lGM5Kw==;
 Received: from hch by casper.infradead.org with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1l1nXD-00E8Fi-FR; Tue, 19 Jan 2021 09:42:48 +0000
-Date:   Tue, 19 Jan 2021 09:42:47 +0000
+        id 1l1nU3-00E7wG-Eo; Tue, 19 Jan 2021 09:39:33 +0000
+Date:   Tue, 19 Jan 2021 09:39:31 +0000
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Christian Brauner <christian.brauner@ubuntu.com>
 Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -73,16 +74,18 @@ Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v5 27/42] notify: handle idmapped mounts
-Message-ID: <20210119094247.GL3364550@infradead.org>
+Subject: Re: [PATCH v5 24/42] af_unix: handle idmapped mounts
+Message-ID: <20210119093931.GI3364550@infradead.org>
 References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
- <20210112220124.837960-28-christian.brauner@ubuntu.com>
+ <20210112220124.837960-25-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210112220124.837960-28-christian.brauner@ubuntu.com>
+In-Reply-To: <20210112220124.837960-25-christian.brauner@ubuntu.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Another spot where the path_permission helper would be useful..
+Looks good,
+
+Reviewed-by: Christoph Hellwig <hch@lst.de>
