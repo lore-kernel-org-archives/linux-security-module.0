@@ -2,116 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDC3C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 18:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6EEC433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 21:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C009222C9E
-	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 18:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B57022D08
+	for <linux-security-module@archiver.kernel.org>; Tue, 19 Jan 2021 21:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbhASQ2T (ORCPT
+        id S1732149AbhASVIp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jan 2021 11:28:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:43366 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731461AbhASQXl (ORCPT
+        Tue, 19 Jan 2021 16:08:45 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:49448 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388912AbhASVIF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jan 2021 11:23:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1611073331;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=u9Q4y96bo6R543WF3WIb9gh7PSMWrwFibDeVZ11baSM=;
-        b=YpZskEslwcC1ql+JBHlrIdF4dVhhIyTG83eZVGtaXpZYmvuQKxP+s1QD72BKReQERkNXrd
-        TafFgMNO/01gZxvyYDlH3eduEMrcyAU0EDZhF5Aq6q26zy9Vr5+9enFHtR0WUaiRJlgWep
-        zSmKuY6X3/Fzlu/YNYm07BHjCSqbsD4=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-559-Me7Zukm2PmG1Vmle86dbZQ-1; Tue, 19 Jan 2021 11:22:09 -0500
-X-MC-Unique: Me7Zukm2PmG1Vmle86dbZQ-1
-Received: by mail-ed1-f71.google.com with SMTP id g14so9699407edt.12
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Jan 2021 08:22:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=u9Q4y96bo6R543WF3WIb9gh7PSMWrwFibDeVZ11baSM=;
-        b=SJKaudGdRB+vxJGusUGn34Y6OFCbBccoX7ezq7TLxV/bOHm6tkbbQ2imBga1n0mqFA
-         iCx67eWihpKqFTW+VojKuANE41vISrvrSOCHnUPji5Ec0YjY/PZU4+vZoxmwiV27hfrR
-         c/GyE08Yhs4FxJzjSPdtlIBtoYsz7Gy9E16e63VBIh/nc5crNjYXfOZPbDmrGHvoxNP6
-         lzRhlujFVy7YPf4QTwclvAVUk3naYlOLlmDp/Qk0rwuaJH8kXxjXywEJyUWaAGPrJ81Z
-         e03286Sv1+2+mQnQJBr5PvbUilWV8CdsEQSzvhPImD1O6JzeTe0YZmKpyjmmznbWImPY
-         ktXA==
-X-Gm-Message-State: AOAM532NRlZtNkYPmAuDGSFLMXlMAp2aT6g4Jqdx2czrYA/86k27fCfu
-        tMyad7A1XaXn2anE6BpWAXOZPY1fYD48viFCbN6H0k6MOrZ9GFKOSKYSkFI39CtLYjcHpw/2JyU
-        Cp3+KFFyva5oDGT0t6mUcSG9JUbd+B2NFvNsl
-X-Received: by 2002:a17:906:b055:: with SMTP id bj21mr3576257ejb.355.1611073328352;
-        Tue, 19 Jan 2021 08:22:08 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzcHzUnJ7YyoKIR+WDesoLPvRjoftwu+C8P2YCi0ehF8psSXAN/K0sAcoG8KXYJcSh2tch14w==
-X-Received: by 2002:a17:906:b055:: with SMTP id bj21mr3576247ejb.355.1611073328141;
-        Tue, 19 Jan 2021 08:22:08 -0800 (PST)
-Received: from miu.piliscsaba.redhat.com (catv-86-101-169-67.catv.broadband.hu. [86.101.169.67])
-        by smtp.gmail.com with ESMTPSA id f22sm2168066eje.34.2021.01.19.08.22.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Jan 2021 08:22:07 -0800 (PST)
-From:   Miklos Szeredi <mszeredi@redhat.com>
-To:     "Eric W . Biederman" <ebiederm@xmission.com>
+        Tue, 19 Jan 2021 16:08:05 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l1yDh-008bE6-7d; Tue, 19 Jan 2021 14:07:21 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l1yDg-009tuJ-7a; Tue, 19 Jan 2021 14:07:20 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Miklos Szeredi <mszeredi@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         "Serge E . Hallyn" <serge@hallyn.com>,
         Tyler Hicks <code@tyhicks.com>
-Subject: [PATCH 0/2] capability conversion fixes
-Date:   Tue, 19 Jan 2021 17:22:02 +0100
-Message-Id: <20210119162204.2081137-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.26.2
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-2-mszeredi@redhat.com>
+Date:   Tue, 19 Jan 2021 15:06:10 -0600
+In-Reply-To: <20210119162204.2081137-2-mszeredi@redhat.com> (Miklos Szeredi's
+        message of "Tue, 19 Jan 2021 17:22:03 +0100")
+Message-ID: <87a6t4ab7h.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=mszeredi@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain
+X-XM-SPF: eid=1l1yDg-009tuJ-7a;;;mid=<87a6t4ab7h.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX192I2sk61mecKt+hRhFGN4NPXzT2CICcgs=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 1/2] ecryptfs: fix uid translation for setxattr on security.capability
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-It turns out overlayfs is actually okay wrt. mutliple conversions, because
-it uses the right context for lower operations.  I.e. before calling
-vfs_{set,get}xattr() on underlying fs, it overrides creds with that of the
-mounter, so the current user ns will now match that of
-overlay_sb->s_user_ns, meaning that the caps will be converted to just the
-right format for the next layer
+Miklos Szeredi <mszeredi@redhat.com> writes:
 
-OTOH ecryptfs, which is the only other one affected by commit 7c03e2cda4a5
-("vfs: move cap_convert_nscap() call into vfs_setxattr()") needs to be
-fixed up, since it doesn't do the cap override thing that overlayfs does.
+> Prior to commit 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into
+> vfs_setxattr()") the translation of nscap->rootid did not take stacked
+> filesystems (overlayfs and ecryptfs) into account.
+>
+> That patch fixed the overlay case, but made the ecryptfs case worse.
+>
+> Restore old the behavior for ecryptfs that existed before the overlayfs
+> fix.  This does not fix ecryptfs's handling of complex user namespace
+> setups, but it does make sure existing setups don't regress.
 
-I don't have an ecryptfs setup, so untested, but it's a fairly trivial
-change.
+Today vfs_setxattr handles handles a delegated_inode and breaking
+leases.  Code that is enabled with CONFIG_FILE_LOCKING.  So unless
+I am missing something this introduces a different regression into
+ecryptfs.
 
-My other observation was that cap_inode_getsecurity() messes up conversion
-of caps in more than one case.  This is independent of the overlayfs user
-ns enablement but affects it as well.
+>
+> Reported-by: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Tyler Hicks <code@tyhicks.com>
+> Fixes: 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into vfs_setxattr()")
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/ecryptfs/inode.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+> index e23752d9a79f..58d0f7187997 100644
+> --- a/fs/ecryptfs/inode.c
+> +++ b/fs/ecryptfs/inode.c
+> @@ -1016,15 +1016,19 @@ ecryptfs_setxattr(struct dentry *dentry, struct inode *inode,
+>  {
+>  	int rc;
+>  	struct dentry *lower_dentry;
+> +	struct inode *lower_inode;
+>  
+>  	lower_dentry = ecryptfs_dentry_to_lower(dentry);
+> -	if (!(d_inode(lower_dentry)->i_opflags & IOP_XATTR)) {
+> +	lower_inode = d_inode(lower_dentry);
+> +	if (!(lower_inode->i_opflags & IOP_XATTR)) {
+>  		rc = -EOPNOTSUPP;
+>  		goto out;
+>  	}
+> -	rc = vfs_setxattr(lower_dentry, name, value, size, flags);
+> +	inode_lock(lower_inode);
+> +	rc = __vfs_setxattr_locked(lower_dentry, name, value, size, flags, NULL);
+> +	inode_unlock(lower_inode);
+>  	if (!rc && inode)
+> -		fsstack_copy_attr_all(inode, d_inode(lower_dentry));
+> +		fsstack_copy_attr_all(inode, lower_inode);
+>  out:
+>  	return rc;
+>  }
 
-Maybe we can revisit the infrastructure improvements we discussed, but I
-think these fixes are more appropriate for the current cycle.
-
-Thanks,
-Miklos
-
-Miklos Szeredi (2):
-  ecryptfs: fix uid translation for setxattr on security.capability
-  security.capability: fix conversions on getxattr
-
- fs/ecryptfs/inode.c  | 10 +++++--
- security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
- 2 files changed, 50 insertions(+), 27 deletions(-)
-
--- 
-2.26.2
-
+Eric
