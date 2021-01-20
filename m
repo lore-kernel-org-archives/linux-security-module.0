@@ -2,82 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 793C7C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 04:18:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D0FC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 05:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1962312B
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 04:18:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 526AD23132
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 05:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbhATES3 (ORCPT
+        id S1729214AbhATFAP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 19 Jan 2021 23:18:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48862 "EHLO mail.kernel.org"
+        Wed, 20 Jan 2021 00:00:15 -0500
+Received: from namei.org ([65.99.196.166]:50792 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728134AbhATERL (ORCPT
+        id S1729027AbhATE7p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 19 Jan 2021 23:17:11 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3C8E623131;
-        Wed, 20 Jan 2021 04:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611116190;
-        bh=xyjnizKJKYbTRv0UN0+Gwt4VTaFiAxMHtX+9p9eYe1s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ah7CzMikRzj9W9tCn1AXbZZE8R1ZZweT7ziyrwOtDpZNF2g4cVOr6PlWh5KRAFxsC
-         AsbyuxEJ7GBuwoXPbRq9GiQePaNVne4UT+gu7x4YV6Ov8TvIZ0Z/FAHEm6WoCE8U/o
-         x3tNJU7WNAdOBS6eYKCR3szPJBlq0AI3sjlazIcwBrqsJWGeK4ORLPxH3rMihm1ykE
-         Lr0r4acf4K5C7MoADs+SRSfn/OeKJ4tTs7cNgaqo330SvD6nYRKcsjP8u3Vf0m2zqy
-         Rs0SpKX5xSvb/Rg6JYz14DF23Yy5LF9BUa8F30nt64fgx+JITef2DSwaq5iXNc6OAk
-         XDQUGoZNZjTsA==
-Date:   Wed, 20 Jan 2021 06:16:23 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 06/10] certs: Make blacklist_vet_description() more
- strict
-Message-ID: <YAeul+B2x6QK0NVq@kernel.org>
-References: <20210114151909.2344974-1-mic@digikod.net>
- <20210114151909.2344974-7-mic@digikod.net>
+        Tue, 19 Jan 2021 23:59:45 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 6BA181BC;
+        Wed, 20 Jan 2021 04:57:56 +0000 (UTC)
+Date:   Wed, 20 Jan 2021 15:57:56 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+cc:     linux-nfs@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        David Quigley <dpquigl@davequigley.com>
+Subject: Re: [PATCH] NFSv4.2: fix return value of
+ _nfs4_get_security_label()
+In-Reply-To: <20210115174356.408688-1-omosnace@redhat.com>
+Message-ID: <2d85fd54-5c4d-391e-f01b-1537017aafa@namei.org>
+References: <20210115174356.408688-1-omosnace@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210114151909.2344974-7-mic@digikod.net>
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 14, 2021 at 04:19:05PM +0100, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> Before exposing this new key type to user space, make sure that only
-> meaningful blacklisted hashes are accepted.  This is also checked for
-> builtin blacklisted hashes, but a following commit make sure that the
-> user will notice (at built time) and will fix the configuration if it
-> already included errors.
-> 
-> Check that a blacklist key description starts with a valid prefix and
-> then a valid hexadecimal string.
-> 
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+On Fri, 15 Jan 2021, Ondrej Mosnacek wrote:
 
-In this I'm not as worried about ABI, i.e. you don't have any reason
-supply any other data, which doesn't follow these ruels, whereas there
-could very well be a script that does format hex "incorrectly".
+> An xattr 'get' handler is expected to return the length of the value on
+> success, yet _nfs4_get_security_label() (and consequently also
+> nfs4_xattr_get_nfs4_label(), which is used as an xattr handler) returns
+> just 0 on success.
+> 
+> Fix this by returning label.len instead, which contains the length of
+> the result.
+> 
+> Fixes: aa9c2669626c ("NFS: Client implementation of Labeled-NFS")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  fs/nfs/nfs4proc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 2f4679a62712a..28465d8aada64 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -5971,7 +5971,7 @@ static int _nfs4_get_security_label(struct inode *inode, void *buf,
+>  		return ret;
+>  	if (!(fattr.valid & NFS_ATTR_FATTR_V4_SECURITY_LABEL))
+>  		return -ENOENT;
+> -	return 0;
+> +	return label.len;
+>  }
 
-/Jarkko
+
+Reviewed-by: James Morris <jamorris@linux.microsoft.com>
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+
