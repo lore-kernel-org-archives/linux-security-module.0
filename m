@@ -2,270 +2,382 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1233EC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:12:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA58EC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BF3EF23718
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:12:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7291A23719
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:13:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbhAUALg (ORCPT
+        id S1727350AbhAUAMK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:11:36 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:50078 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387448AbhATWOY (ORCPT
+        Wed, 20 Jan 2021 19:12:10 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:32825 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732020AbhATWeV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 17:14:24 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10KMBLwC032613;
-        Wed, 20 Jan 2021 22:11:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2020-01-29;
- bh=NBZolkO8TUzPi4A0jPNuJ8H01dInvYr3OrZswu4IYV0=;
- b=iR0YmkwHlEBAtae3pAviwLvIgMDlbHt43Ys5hZIL0LKqNOFToN/vN+aANmzNanDu6OJp
- Rx9PnpJWRLG1Lq+KfvJFzjuUitId7tm0BRAQyobAzmkP4sxGPvCtNmUhx/oFatJVfM0C
- yFE+NOD4PSjNbnlV/6u3bhb283WOuFarctL3eeX8U1Z5PAyHBDAgbF5y3elXy4xO7+Tz
- tqPsam4rnmFqa7apnI4jPXesqf0X14tZVI1pF2cq0i0xA38cfzaMqrNfPRedUZrb3Hy6
- nBmZR4OCD9Jts8NmOQliUX+CUbOMy0cae5qPOz0QoNDB78kdwz8kvPPJYU1IFKtqhTOB SA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 3668qmvpmv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jan 2021 22:11:21 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 10KMAiqU056542;
-        Wed, 20 Jan 2021 22:11:20 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2172.outbound.protection.outlook.com [104.47.56.172])
-        by userp3020.oracle.com with ESMTP id 3668qx236s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Jan 2021 22:11:20 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HwW8M44l+A70tpXDUzfaSn5WfGcaYprOEKnq4TVkvw9jCHwSMaYnCsMZzG/DGE4QXJvFlNG5ZpjQ/D81zLZc9Jka5RkgARWqQevVHcC9dwHZLDxQveAX6kTtT72AeuQ8gdBKm1GHY+xguOEMSdlIiJ8UDWcfhclkbSSgNbZc+ga0xraCjXuZVUqoWDs0G4d9fL154WTt5pUtsoPUGDj5p681HvJnCWcmOaje5Kuv3ONH/06rj4JCfpXwrzD4BWvvPWIZN1zuavOaKrQt0zD2+Ii/ZmUw1sEL/8SQkwUd1jufT786lfN7uyIQGFgxAgDumVc0CYWrMuNhKFW5c2WYBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NBZolkO8TUzPi4A0jPNuJ8H01dInvYr3OrZswu4IYV0=;
- b=ijvo7zLEUT+O6QHZyr82cCqVFTuO80D1mtfykAjvCjUvVOO4z+V4eVs8ejE2YbJebCSCEd8GC8axnUDbXCuJMEC1vDbS9i2j6wZJ7RT0qLR0z6K4mDirVgW+bmMcso0LjHdIT3OOGL+AOT3JB6QOkx92td4cBWmu6B7qx5v92SUU8nX5os5US8Ma8OBGquQgmNHG135vJYZ2EPpIWUtJIRqL7m7+uaajpsRc4HT4+aIQz8A+06Fd37vUi3eISEP3NwXuUsb9fVMNBnYuAfDyreM6dUEzaIh3a1lk3CVErZ51NwsDT0AbPpx8SFTVK0sRdTuckvCq+TiWCbs5erJvMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NBZolkO8TUzPi4A0jPNuJ8H01dInvYr3OrZswu4IYV0=;
- b=l/Jg/fAVj0lH16Se3eb0JALSJZUYbe47ErR/QuGN70pHBRS5UgKfwvpSubBX1JDf20HJvcRGawWrgqjESmbSInfIF4NcgY2wyWR3kblRZmQaTnQy9ktMJkvXDEyym4+Sh1uMz/T3VxVvrKUfmDHWBqLmIbLNpyYryQzHouXU/1E=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from DM6PR10MB3099.namprd10.prod.outlook.com (2603:10b6:5:1ad::18)
- by DM6PR10MB2938.namprd10.prod.outlook.com (2603:10b6:5:6c::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3763.11; Wed, 20 Jan
- 2021 22:11:17 +0000
-Received: from DM6PR10MB3099.namprd10.prod.outlook.com
- ([fe80::70bf:d626:5218:70e4]) by DM6PR10MB3099.namprd10.prod.outlook.com
- ([fe80::70bf:d626:5218:70e4%7]) with mapi id 15.20.3763.014; Wed, 20 Jan 2021
- 22:11:17 +0000
-Content-Type: text/plain; charset=utf-8
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <YAgTawk3EENF/P6j@kernel.org>
-Date:   Wed, 20 Jan 2021 15:13:11 -0700
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com,
-        Eric Snowberg <eric.snowberg@oracle.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D9F5E0BD-E2FC-428F-91B3-35D2750493A0@oracle.com>
-References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
- <20200916004927.64276-1-eric.snowberg@oracle.com>
- <1360578.1607593748@warthog.procyon.org.uk>
- <2442460.1610463459@warthog.procyon.org.uk>
- <X/9a8naM8p4tT5sO@linux.intel.com>
- <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
- <YAFdNiYZSWpB9vOw@kernel.org>
- <CFBF6AEC-2832-44F7-9D7F-F20489498C33@oracle.com>
- <YAgTawk3EENF/P6j@kernel.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-X-Mailer: Apple Mail (2.3273)
-X-Originating-IP: [24.52.35.144]
-X-ClientProxiedBy: CH2PR07CA0064.namprd07.prod.outlook.com
- (2603:10b6:610:5b::38) To DM6PR10MB3099.namprd10.prod.outlook.com
- (2603:10b6:5:1ad::18)
+        Wed, 20 Jan 2021 17:34:21 -0500
+Received: from [50.53.41.238] (helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1l2M1m-0006Ez-4i; Wed, 20 Jan 2021 22:32:38 +0000
+Subject: Re: [RFC][PATCH] apparmor: Enforce progressively tighter permissions
+ for no_new_privs
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-security-module@vger.kernel.org
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <james.l.morris@oracle.com>,
+        apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        James Morris <jmorris@namei.org>
+References: <87lfcn5mfz.fsf@x220.int.ebiederm.org>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
+ azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
+ NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
+ L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
+ YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
+ UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
+ dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
+ OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
+ OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
+ V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
+ MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
+ NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
+ ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
+ d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
+ S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
+ d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
+ WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
+ ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
+ SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
+ bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
+ WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
+ NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
+ NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
+ cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
+ ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
+ QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
+ dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
+ OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
+ NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
+ cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
+ bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
+ V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
+ TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
+ QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
+ OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
+ SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
+ VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
+ QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
+ CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
+ RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
+ T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
+ N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
+ TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
+ L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
+ Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
+ ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
+ dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
+ a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
+ V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
+ aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
+ SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
+ SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
+ SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
+ M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
+ cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
+ TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
+ aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
+ RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
+ Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
+ a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
+ RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
+ VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
+ U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
+ Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
+ ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
+ WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
+ Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
+ Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
+ enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
+ WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
+ NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
+ MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
+ RVkgQkxPQ0stLS0tLQo=
+Organization: Canonical
+Message-ID: <c887b7f1-7c50-cd9d-fd97-b89274c2765c@canonical.com>
+Date:   Wed, 20 Jan 2021 14:32:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [172.16.177.128] (24.52.35.144) by CH2PR07CA0064.namprd07.prod.outlook.com (2603:10b6:610:5b::38) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3784.11 via Frontend Transport; Wed, 20 Jan 2021 22:11:15 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a6744483-c580-4aef-ec73-08d8bd904efe
-X-MS-TrafficTypeDiagnostic: DM6PR10MB2938:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM6PR10MB29389FB0CD77503A949094AF87A20@DM6PR10MB2938.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: h+XrUBTbtrxE0vupmipZ8N4cNoQ1fFXLnwYb0zzaF29m/gZt+tNSZ205jZtVGCIe2XxT1IRIJRn3E/+Jal0uPacGoI61C1GAtoLAaYTic3PVRaIRm20MrDxDgq6FzdrSr3LGedzJo2iV2nP5FEsmVlRETSmT8Y0W9aEwLQCVoW1a4KZN9q/C+XRLRUYsMPtgtYp5A68bR0riEUwS1XLm5myhBy8nyWHI0+99ABDRJ3mc+aWcVSVi3bhHpfA2jPCb9GNl+5q8wID1cchCl5uokRe59u+EHrk1nor14dHncBMkon23FPghWU9X7nzy2BI7YZ55yJrLSzUuJ7Zrth6D4IJVhHQRrNoYzMage03YQ49NcazQ/j0QWMdh8ib43kgoeBrrW/0PfxcNnqnA4U4ez1CLvkrtVp/Sx8pTFmqFYG/UUtPMmg8xvafamcsdxvxE9ikc/N1+Ef5JBfsuGhaVedDeygco+13CGUBsAyapAWliuPZYCsXuVUSZQwfXKrMAfVciNYh8NiwmzplLJt+nYzCSf3Khq7q2Xy130pcUHyLxNJeOJ2FJiECyCzU8Ycf5UDoIXONFgo0Z0w/Qqx+sFg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB3099.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(396003)(366004)(39860400002)(346002)(376002)(508600001)(5660300002)(36756003)(53546011)(316002)(83380400001)(7416002)(2906002)(107886003)(66574015)(6916009)(26005)(186003)(16576012)(6666004)(66476007)(44832011)(66556008)(956004)(52116002)(2616005)(16526019)(6486002)(8936002)(8676002)(33656002)(4326008)(54906003)(66946007)(86362001)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?NlF0Q2c2SHNpYUFvV2JTbGYyVElHK09RTDBEWVBKTDk1ckhQUWpHSENIYWp4?=
- =?utf-8?B?ZTRmQ0JEKy9TU04xT3VkS3RUa2VXMVpnWmVLejI5cTJ5MXZUWlprMUFpbnh6?=
- =?utf-8?B?TDQ1M3hSK0dqc1RHVGVGb0lRdURHQml4TUZRMStwb0hTYWFCNE9NSFhBQUwv?=
- =?utf-8?B?RmxlUUlhZElkUlcxYUVvWUJIaUxLVzFwZGcrcTV4d1M5RVJGYThMVW1LTkFI?=
- =?utf-8?B?V3hUQU90WUxkRlhTUVlqeFNUaHVmTGw1RTBsbXFBZDNTeVN4TU9kcHlnR2sx?=
- =?utf-8?B?R2FONEtCd0tBWlQrWDdjZXZJRXpRd0dTZ1BjVGM3OGpiSmhsNjMxWjdFL0lX?=
- =?utf-8?B?M3RBSUdYUUlncnl3SVphaUJtQlY3aURFZnNWLzMwb0RobUpMOWk2MXdFVlc0?=
- =?utf-8?B?cjFWd1YyajVKcXl1ZXBRNnRPUzJmZkROSFZjNUxWbkMwTVZ3NGtIQzFpMEVU?=
- =?utf-8?B?VE5MQTNhWWRCclkxVnhoNWordTJxZ0tscG5ES3I1UThlL0tNUWplYy9aMldq?=
- =?utf-8?B?dUhmRWFNWUJxeDVaWHBFV1QrclN2bjd3OGVFaEptRFJGNUo3MHB4Y2pwQzNa?=
- =?utf-8?B?WG5zMGJ4OFdPOFNJTThhR1ZBMnJMSkY5Mmh2dTdDd1dMMTdJakNTWHk5UWpI?=
- =?utf-8?B?N0x2UTlUMEpkOE4xY1VzQUwrYUxoZnRYU1BkOVlNUDlKdHRXTFdubk9BZEh0?=
- =?utf-8?B?YnhFeFVJU0hXSkJlakh6Y2puaE5seHVxRXlmdmJRbXRKUGNrR1ZTczJ6Q01B?=
- =?utf-8?B?VC9MQ2JLYXBFM2hCalZ5SlNDa3VWUWRJSGQxWUZXTmtRcHQwTzQ2dUZrVDhO?=
- =?utf-8?B?MUxVTC82cVdmd2k3aFZVekVqVWU2MW04YUczYlJRZ3Z5RmI2VmFoZEN3MUhm?=
- =?utf-8?B?ZWxYbEd0SjdpSHpxU1IrUTZJOUZyMjlqb3ZITTBmN2dJc0VXcG0rOVJ1VGtI?=
- =?utf-8?B?b2dCTGJLa0hYY2lDUjRWN216VU1NeFdEMERlRkhwMXdRM0FoNE1RWVJLRm5C?=
- =?utf-8?B?bmFDelBRZXl2ekNST09DdDFSV3JxZVd6cHdxS054UnRReCtHZk1qOW9FRU90?=
- =?utf-8?B?MWZtWnMrZm5UZEdNVld1aUFTblRUbU5ZdEhVV1Vydjk2VXYzVld1Rit1REJX?=
- =?utf-8?B?RXhrNmVLMTNwUDRwdHlEL3RFY2ZvSCtpbEhFWWRFQUlzWHd1UU1QbnRHMnM3?=
- =?utf-8?B?OWdxUDJSWjhsUTlGOW16M3hSMzV2ckxLMDBXeHFrWFVmQjhVWHBwbDlZWEIv?=
- =?utf-8?B?bk1Qd0dZaHViMjVrTDhSSHZQV0N2cCtkVVljeWp0SHFZZkc4ZklEcWo1eHcz?=
- =?utf-8?Q?wPDkICzrMBP48=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6744483-c580-4aef-ec73-08d8bd904efe
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB3099.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Jan 2021 22:11:17.3543
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: L6vet4FfkLxLJo1mzLt6T9Y4F84fI0PsVbwIkVYgioLu1sz4ZVE+OA7QCN+X8ccGPGAI64EuCf49L9OzxN1sdSCX8wRs0OGnWfDHBn5G6zE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB2938
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9870 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 phishscore=0 adultscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101200126
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9870 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 priorityscore=1501
- adultscore=0 impostorscore=0 mlxlogscore=999 spamscore=0 suspectscore=0
- phishscore=0 clxscore=1015 bulkscore=0 mlxscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2101200126
+In-Reply-To: <87lfcn5mfz.fsf@x220.int.ebiederm.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 1/20/21 1:26 PM, Eric W. Biederman wrote:
+> 
+> The current understanding of apparmor with respect to no_new_privs is at
+> odds with how no_new_privs is implemented and understood by the rest of
+> the kernel.
+> 
+> The documentation of no_new_privs states:
+>> With ``no_new_privs`` set, ``execve()`` promises not to grant the
+>> privilege to do anything that could not have been done without the
+>> execve call.
+> 
+> And reading through the kernel except for apparmor that description
+> matches what is implemented.
+> 
 
-> On Jan 20, 2021, at 4:26 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->=20
-> On Fri, Jan 15, 2021 at 09:49:02AM -0700, Eric Snowberg wrote:
->>=20
->>> On Jan 15, 2021, at 2:15 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->>>=20
->>> On Wed, Jan 13, 2021 at 05:11:10PM -0700, Eric Snowberg wrote:
->>>>=20
->>>>> On Jan 13, 2021, at 1:41 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.i=
-ntel.com> wrote:
->>>>>=20
->>>>> On Tue, Jan 12, 2021 at 02:57:39PM +0000, David Howells wrote:
->>>>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
->>>>>>=20
->>>>>>>> On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> w=
-rote:
->>>>>>>>=20
->>>>>>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
->>>>>>>>=20
->>>>>>>>> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X=
-509_GUID
->>>>>>>>> is found, it is added as an asymmetrical key to the .blacklist ke=
-yring.
->>>>>>>>> Anytime the .platform keyring is used, the keys in the .blacklist=
- keyring
->>>>>>>>> are referenced, if a matching key is found, the key will be rejec=
-ted.
->>>>>>>>=20
->>>>>>>> Ummm...  Why this way and not as a blacklist key which takes up le=
-ss space?
->>>>>>>> I'm guessing that you're using the key chain matching logic.  We r=
-eally only
->>>>>>>> need to blacklist the key IDs.
->>>>>>>=20
->>>>>>> I implemented it this way so that certs in the dbx would only impac=
-t=20
->>>>>>> the .platform keyring. I was under the impression we didn=E2=80=99t=
- want to have=20
->>>>>>> Secure Boot UEFI db/dbx certs dictate keyring functionality within =
-the kernel
->>>>>>> itself. Meaning if we have a matching dbx cert in any other keyring=
- (builtin,
->>>>>>> secondary, ima, etc.), it would be allowed. If that is not how you=
-=E2=80=99d like to=20
->>>>>>> see it done, let me know and I=E2=80=99ll make the change.
->>>>>>=20
->>>>>> I wonder if that is that the right thing to do.  I guess this is a p=
-olicy
->>>>>> decision and may depend on the particular user.
->>>>>=20
->>>>> Why would you want to allow dbx entry in any keyring?
->>>>=20
->>>> Today, DB and MOK certs go into the platform keyring.  These certs are=
- only
->>>> referenced during kexec.  They can=E2=80=99t be used for other things =
-like validating
->>>> kernel module signatures.  If we follow the same pattern, the DBX and =
-MOKX entries
->>>> in the blacklist keyring should only impact kexec.=20
->>>>=20
->>>> Currently, Micka=C3=ABl Sala=C3=BCn has another outstanding series to =
-allow root to update=20
->>>> the blacklist keyring.  I assume the use case for this is around certi=
-ficates used=20
->>>> within the kernel, for example revoking kernel module signatures.  The=
- question I have
->>>> is, should another keyring be introduced?  One that carries DBX and MO=
-KX, which just
->>>> correspond to certs/hashes in the platform keyring; this keyring would=
- only be
->>>> referenced for kexec, just like the platform keyring is today. Then, t=
-he current
->>>> blacklist keyring would be used for everything internal to the kernel.
->>>=20
->>> Right, I'm following actively that series.
->>>=20
->>> Why couldn't user space drive this process and use that feature to do i=
-t?
->>=20
->> I could see where the user would want to use both. With Micka=C3=ABl Sal=
-a=C3=BCn=E2=80=99s
->> series, the blacklist keyring is updated immediately.  However it does
->> not survive a reboot.  With my patch, the blacklist keyring is updated
->> during boot, based on what is in the dbx. Neither approach needs a new=20
->> kernel build.
->=20
-> I don't want to purposely challenge this, but why does it matter
-> that it doesn't survive the boot? I'm referring here to the golden
-> principle of kernel defining a mechanism, not policy. User space
-> can do the population however it wants to for every boot.
->=20
-> E.g. systemd service could do this.
->=20
-> What am I missing here?
+That is not correct.
 
-This change simply adds support for a missing type.  The kernel=20
-already supports cert and hash entries (EFI_CERT_X509_SHA256_GUID,
-EFI_CERT_SHA256_GUID) that originate from the dbx and are loaded=20
-into the blacklist keyring during boot.  I=E2=80=99m not sure why a cert=20
-defined with EFI_CERT_X509_GUID should be handled in a different=20
-manner.
+commit 7b0d0b40cd78 ("selinux: Permit bounded transitions under
+    NO_NEW_PRIVS or NOSUID.")
 
-I suppose a user space tool could be created. But wouldn=E2=80=99t what is
-currently done in the kernel in this area need to be removed?
+Allows for bound transitions under selinux
+and
+
+commit af63f4193f9f selinux: Generalize support for NNP/nosuid SELinux
+    domain transitions
+
+goes further and "Decouple NNP/nosuid from SELinux transitions". 
+
+> There are two major divergences of apparmor from this definition:
+> - proc_setattr enforces limitations when no_new_privs are set.
+> - the limitation is enforced from the apparent time when no_new_privs is
+>   set instead of guaranteeing that each execve has progressively more
+>   narrow permissions.
+> 
+> The code in apparmor that attempts to discover the apparmor label at the
+> point where no_new_privs is set is not robust.  The capture happens a
+> long time after no_new_privs is set.
+> 
+
+yes, but that shouldn't matter. As apparmor has not changed its label
+at any point between when no_new_privs was set and when the check is
+done. AppArmor is attempting to change it label, and if it finds NNP
+has been set we capture what the confinement was.
+
+> Capturing the label at the point where no_new_privs is set is
+> practically impossible to implement robustly.  Today the rule is struct
+> cred can only be changed by it's current task.  Today
+
+right, and apparmor only ever has the task update its own label.
+
+> SECCOMP_FILTER_FLAG_TSYNC sets no_new_privs from another thread.  A
+> robust implementation would require changing something fundamental in
+> how creds are managed for SECCOMP_FILTER_FLAG_TSYNC to be able to
+> capture the cred at the point it is set.
+> 
+I am open to supporting something like that.
+
+> Futhermore given the consistent documentation and how everything else
+> implements no_new_privs, not having the permissions get progressively
+
+Again see above
+
+> tighter is a footgun aimed at userspace.  I fully expect it to break any
+
+tighter is somewhat relative, nor is it only progressively tighter it
+is bounded against the snapshot of the label that was on the task.
+
+> security sensitive software that uses no_new_privs and was not
+> deliberately designed and tested against apparmor.
+> 
+
+Currently the situation has become either an either or choice between
+the LSM and NNP. We are trying to walk a balance. Ideally apparmor
+would like to do something similar to selinux and decouple the label
+transition from NNP and nosuid via an internal capability, but we
+have not gone there yet.
+
+> Avoid the questionable and hard to fix implementation and the
+> potential to confuse userspace by having no_new_privs enforce
+> progressinvely tighter permissions.
+> 
+
+This would completely break several use cases.
+
+> Fixes: 9fcf78cca198 ("apparmor: update domain transitions that are subsets of confinement at nnp")
+> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
+> ---
+> 
+> I came accross this while examining the places cred_guard_mutex is
+> used and trying to find a way to make those code paths less insane.
+> 
+> If it would be more pallatable I would not mind removing the
+> task_no_new_privs test entirely from aa_change_hat and aa_change_profile
+> as those are not part of exec, so arguably no_new_privs should not care
+> about them at all.
+> 
+> Can we please get rid of the huge semantic wart and pain in the implementation?
+> 
+>  security/apparmor/domain.c       | 39 ++++----------------------------
+>  security/apparmor/include/task.h |  4 ----
+>  security/apparmor/task.c         |  7 ------
+>  3 files changed, 4 insertions(+), 46 deletions(-)
+> 
+> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+> index f919ebd042fd..8f77059bf890 100644
+> --- a/security/apparmor/domain.c
+> +++ b/security/apparmor/domain.c
+> @@ -869,17 +869,6 @@ int apparmor_bprm_creds_for_exec(struct linux_binprm *bprm)
+>  
+>  	label = aa_get_newest_label(cred_label(bprm->cred));
+>  
+> -	/*
+> -	 * Detect no new privs being set, and store the label it
+> -	 * occurred under. Ideally this would happen when nnp
+> -	 * is set but there isn't a good way to do that yet.
+> -	 *
+> -	 * Testing for unconfined must be done before the subset test
+> -	 */
+> -	if ((bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS) && !unconfined(label) &&
+> -	    !ctx->nnp)
+> -		ctx->nnp = aa_get_label(label);
+> -
+>  	/* buffer freed below, name is pointer into buffer */
+>  	buffer = aa_get_buffer(false);
+>  	if (!buffer) {
+> @@ -915,7 +904,7 @@ int apparmor_bprm_creds_for_exec(struct linux_binprm *bprm)
+>  	 */
+>  	if ((bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS) &&
+>  	    !unconfined(label) &&
+> -	    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
+> +	    !aa_label_is_unconfined_subset(new, label)) {
+>  		error = -EPERM;
+>  		info = "no new privs";
+>  		goto audit;
+> @@ -1158,16 +1147,6 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
+>  	label = aa_get_newest_cred_label(cred);
+>  	previous = aa_get_newest_label(ctx->previous);
+>  
+> -	/*
+> -	 * Detect no new privs being set, and store the label it
+> -	 * occurred under. Ideally this would happen when nnp
+> -	 * is set but there isn't a good way to do that yet.
+> -	 *
+> -	 * Testing for unconfined must be done before the subset test
+> -	 */
+> -	if (task_no_new_privs(current) && !unconfined(label) && !ctx->nnp)
+> -		ctx->nnp = aa_get_label(label);
+> -
+>  	if (unconfined(label)) {
+>  		info = "unconfined can not change_hat";
+>  		error = -EPERM;
+> @@ -1193,7 +1172,7 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
+>  		 * reduce restrictions.
+>  		 */
+>  		if (task_no_new_privs(current) && !unconfined(label) &&
+> -		    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
+> +		    !aa_label_is_unconfined_subset(new, label)) {
+>  			/* not an apparmor denial per se, so don't log it */
+>  			AA_DEBUG("no_new_privs - change_hat denied");
+>  			error = -EPERM;
+> @@ -1214,7 +1193,7 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
+>  		 * reduce restrictions.
+>  		 */
+>  		if (task_no_new_privs(current) && !unconfined(label) &&
+> -		    !aa_label_is_unconfined_subset(previous, ctx->nnp)) {
+> +		    !aa_label_is_unconfined_subset(previous, label)) {
+>  			/* not an apparmor denial per se, so don't log it */
+>  			AA_DEBUG("no_new_privs - change_hat denied");
+>  			error = -EPERM;
+> @@ -1303,16 +1282,6 @@ int aa_change_profile(const char *fqname, int flags)
+>  
+>  	label = aa_get_current_label();
+>  
+> -	/*
+> -	 * Detect no new privs being set, and store the label it
+> -	 * occurred under. Ideally this would happen when nnp
+> -	 * is set but there isn't a good way to do that yet.
+> -	 *
+> -	 * Testing for unconfined must be done before the subset test
+> -	 */
+> -	if (task_no_new_privs(current) && !unconfined(label) && !ctx->nnp)
+> -		ctx->nnp = aa_get_label(label);
+> -
+>  	if (!fqname || !*fqname) {
+>  		aa_put_label(label);
+>  		AA_DEBUG("no profile name");
+> @@ -1409,7 +1378,7 @@ int aa_change_profile(const char *fqname, int flags)
+>  		 * reduce restrictions.
+>  		 */
+>  		if (task_no_new_privs(current) && !unconfined(label) &&
+> -		    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
+> +		    !aa_label_is_unconfined_subset(new, label)) {
+>  			/* not an apparmor denial per se, so don't log it */
+>  			AA_DEBUG("no_new_privs - change_hat denied");
+>  			error = -EPERM;
+> diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
+> index f13d12373b25..8a9c258e2018 100644
+> --- a/security/apparmor/include/task.h
+> +++ b/security/apparmor/include/task.h
+> @@ -17,13 +17,11 @@ static inline struct aa_task_ctx *task_ctx(struct task_struct *task)
+>  
+>  /*
+>   * struct aa_task_ctx - information for current task label change
+> - * @nnp: snapshot of label at time of no_new_privs
+>   * @onexec: profile to transition to on next exec  (MAY BE NULL)
+>   * @previous: profile the task may return to     (MAY BE NULL)
+>   * @token: magic value the task must know for returning to @previous_profile
+>   */
+>  struct aa_task_ctx {
+> -	struct aa_label *nnp;
+>  	struct aa_label *onexec;
+>  	struct aa_label *previous;
+>  	u64 token;
+> @@ -42,7 +40,6 @@ struct aa_label *aa_get_task_label(struct task_struct *task);
+>  static inline void aa_free_task_ctx(struct aa_task_ctx *ctx)
+>  {
+>  	if (ctx) {
+> -		aa_put_label(ctx->nnp);
+>  		aa_put_label(ctx->previous);
+>  		aa_put_label(ctx->onexec);
+>  	}
+> @@ -57,7 +54,6 @@ static inline void aa_dup_task_ctx(struct aa_task_ctx *new,
+>  				   const struct aa_task_ctx *old)
+>  {
+>  	*new = *old;
+> -	aa_get_label(new->nnp);
+>  	aa_get_label(new->previous);
+>  	aa_get_label(new->onexec);
+>  }
+> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
+> index d17130ee6795..4b9ec370a171 100644
+> --- a/security/apparmor/task.c
+> +++ b/security/apparmor/task.c
+> @@ -41,7 +41,6 @@ struct aa_label *aa_get_task_label(struct task_struct *task)
+>  int aa_replace_current_label(struct aa_label *label)
+>  {
+>  	struct aa_label *old = aa_current_raw_label();
+> -	struct aa_task_ctx *ctx = task_ctx(current);
+>  	struct cred *new;
+>  
+>  	AA_BUG(!label);
+> @@ -56,12 +55,6 @@ int aa_replace_current_label(struct aa_label *label)
+>  	if (!new)
+>  		return -ENOMEM;
+>  
+> -	if (ctx->nnp && label_is_stale(ctx->nnp)) {
+> -		struct aa_label *tmp = ctx->nnp;
+> -
+> -		ctx->nnp = aa_get_newest_label(tmp);
+> -		aa_put_label(tmp);
+> -	}
+>  	if (unconfined(label) || (labels_ns(old) != labels_ns(label)))
+>  		/*
+>  		 * if switching to unconfined or a different label namespace
+> 
 
