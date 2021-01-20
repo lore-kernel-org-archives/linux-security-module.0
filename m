@@ -2,132 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103D1C432C3
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 12:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3BFC43331
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 12:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D43D123382
+	by mail.kernel.org (Postfix) with ESMTP id AB29223383
 	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 12:44:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730263AbhATMlT (ORCPT
+        id S1730807AbhATMl1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 07:41:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732761AbhATL1W (ORCPT
+        Wed, 20 Jan 2021 07:41:27 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43216 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729022AbhATM2v (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 06:27:22 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6221622AAA;
-        Wed, 20 Jan 2021 11:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611142001;
-        bh=vBYgu7+Vk//vFZiH3/SNchvwbekN9GzeUV312H49ldU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jmiSRx+Q/FgCNwuKmR/yJ1G3rjIZWTTRRA8gIcWPAHkttsQ1dvcNBJVI/eSbsw1Xm
-         t5mW+CZp/bSQoO5s9MJxX/1gQE0XTGAqfTzq42L1+1lnIzeMr9J7vQw+8GHjcZa21n
-         gx2lpKSjFu//AgqJdLs2ycHMkffk+mcd+qLwQF+I2kLU1ftKWGhGuAnOYc3GATqBgT
-         OLx+vU9jgOb9KsAiLdxZ9wyiTR8DWw9i8OAQ0TrVWXC0U/69umpqnn4bNdgstPl2lA
-         N9adz3cK3a12wd5dxgzRdklHmInOVZd02dP+5X8k+t3c0+70QttyDwSrco/7v9dAUd
-         2IdZqCRa3ttNg==
-Date:   Wed, 20 Jan 2021 13:26:35 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-Message-ID: <YAgTawk3EENF/P6j@kernel.org>
-References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
- <20200916004927.64276-1-eric.snowberg@oracle.com>
- <1360578.1607593748@warthog.procyon.org.uk>
- <2442460.1610463459@warthog.procyon.org.uk>
- <X/9a8naM8p4tT5sO@linux.intel.com>
- <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
- <YAFdNiYZSWpB9vOw@kernel.org>
- <CFBF6AEC-2832-44F7-9D7F-F20489498C33@oracle.com>
+        Wed, 20 Jan 2021 07:28:51 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1l2CCh-0006rZ-My; Wed, 20 Jan 2021 12:03:15 +0000
+Date:   Wed, 20 Jan 2021 13:03:10 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Stephen Barber <smbarber@chromium.org>,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, linux-integrity@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v5 15/42] fs: add file_user_ns() helper
+Message-ID: <20210120120310.6tczonwl3rdtnyu3@wittgenstein>
+References: <20210112220124.837960-1-christian.brauner@ubuntu.com>
+ <20210112220124.837960-16-christian.brauner@ubuntu.com>
+ <CAG48ez3Ccr77+zH56YGimESf9jdy_xnQrebypn1TXEP3Q+xw=w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CFBF6AEC-2832-44F7-9D7F-F20489498C33@oracle.com>
+In-Reply-To: <CAG48ez3Ccr77+zH56YGimESf9jdy_xnQrebypn1TXEP3Q+xw=w@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 15, 2021 at 09:49:02AM -0700, Eric Snowberg wrote:
+On Tue, Jan 19, 2021 at 04:05:00PM +0100, Jann Horn wrote:
+> On Wed, Jan 13, 2021 at 1:52 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> > Add a simple helper to retrieve the user namespace associated with the
+> > vfsmount of a file. Christoph correctly points out that this makes
+> > codepaths (e.g. ioctls) way easier to follow that would otherwise
+> > dereference via mnt_user_ns(file->f_path.mnt).
+> >
+> > In order to make file_user_ns() static inline we'd need to include
+> > mount.h in either file.h or fs.h which seems undesirable so let's simply
+> > not force file_user_ns() to be inline.
+> [...]
+> > +struct user_namespace *file_user_ns(struct file *file)
+> > +{
+> > +       return mnt_user_ns(file->f_path.mnt);
+> > +}
 > 
-> > On Jan 15, 2021, at 2:15 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > 
-> > On Wed, Jan 13, 2021 at 05:11:10PM -0700, Eric Snowberg wrote:
-> >> 
-> >>> On Jan 13, 2021, at 1:41 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> >>> 
-> >>> On Tue, Jan 12, 2021 at 02:57:39PM +0000, David Howells wrote:
-> >>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> >>>> 
-> >>>>>> On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> wrote:
-> >>>>>> 
-> >>>>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> >>>>>> 
-> >>>>>>> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
-> >>>>>>> is found, it is added as an asymmetrical key to the .blacklist keyring.
-> >>>>>>> Anytime the .platform keyring is used, the keys in the .blacklist keyring
-> >>>>>>> are referenced, if a matching key is found, the key will be rejected.
-> >>>>>> 
-> >>>>>> Ummm...  Why this way and not as a blacklist key which takes up less space?
-> >>>>>> I'm guessing that you're using the key chain matching logic.  We really only
-> >>>>>> need to blacklist the key IDs.
-> >>>>> 
-> >>>>> I implemented it this way so that certs in the dbx would only impact 
-> >>>>> the .platform keyring. I was under the impression we didn’t want to have 
-> >>>>> Secure Boot UEFI db/dbx certs dictate keyring functionality within the kernel
-> >>>>> itself. Meaning if we have a matching dbx cert in any other keyring (builtin,
-> >>>>> secondary, ima, etc.), it would be allowed. If that is not how you’d like to 
-> >>>>> see it done, let me know and I’ll make the change.
-> >>>> 
-> >>>> I wonder if that is that the right thing to do.  I guess this is a policy
-> >>>> decision and may depend on the particular user.
-> >>> 
-> >>> Why would you want to allow dbx entry in any keyring?
-> >> 
-> >> Today, DB and MOK certs go into the platform keyring.  These certs are only
-> >> referenced during kexec.  They can’t be used for other things like validating
-> >> kernel module signatures.  If we follow the same pattern, the DBX and MOKX entries
-> >> in the blacklist keyring should only impact kexec. 
-> >> 
-> >> Currently, Mickaël Salaün has another outstanding series to allow root to update 
-> >> the blacklist keyring.  I assume the use case for this is around certificates used 
-> >> within the kernel, for example revoking kernel module signatures.  The question I have
-> >> is, should another keyring be introduced?  One that carries DBX and MOKX, which just
-> >> correspond to certs/hashes in the platform keyring; this keyring would only be
-> >> referenced for kexec, just like the platform keyring is today. Then, the current
-> >> blacklist keyring would be used for everything internal to the kernel.
-> > 
-> > Right, I'm following actively that series.
-> > 
-> > Why couldn't user space drive this process and use that feature to do it?
+> That name is confusing to me, because when I think of "the userns of a
+> file", it's file->f_cred->user_ns. There are a bunch of places that
+> look at that, as you can see from grepping for "f_cred->user_ns".
 > 
-> I could see where the user would want to use both. With Mickaël Salaün’s
-> series, the blacklist keyring is updated immediately.  However it does
-> not survive a reboot.  With my patch, the blacklist keyring is updated
-> during boot, based on what is in the dbx. Neither approach needs a new 
-> kernel build.
+> If you really want this to be a separate helper, can you maybe give it
+> a clearer name? file_mnt_user_ns(), or something like that, idk.
 
-I don't want to purposely challenge this, but why does it matter
-that it doesn't survive the boot? I'm referring here to the golden
-principle of kernel defining a mechanism, not policy. User space
-can do the population however it wants to for every boot.
-
-E.g. systemd service could do this.
-
-What am I missing here?
-
-/Jarkko
+Done.
