@@ -6,93 +6,99 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA79C43381
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 07:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F50C433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 08:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C733F23142
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 07:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC9523158
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 08:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729853AbhATHzX (ORCPT
+        id S1728613AbhATIBh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 02:55:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
+        Wed, 20 Jan 2021 03:01:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729577AbhATHyR (ORCPT
+        with ESMTP id S1730033AbhATH7p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 02:54:17 -0500
-Received: from mail-ua1-x930.google.com (mail-ua1-x930.google.com [IPv6:2607:f8b0:4864:20::930])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5138EC0613ED
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Jan 2021 23:52:39 -0800 (PST)
-Received: by mail-ua1-x930.google.com with SMTP id k22so3956984ual.0
-        for <linux-security-module@vger.kernel.org>; Tue, 19 Jan 2021 23:52:39 -0800 (PST)
+        Wed, 20 Jan 2021 02:59:45 -0500
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A4C9C061575
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jan 2021 23:59:05 -0800 (PST)
+Received: by mail-vk1-xa2b.google.com with SMTP id a6so5452024vkb.8
+        for <linux-security-module@vger.kernel.org>; Tue, 19 Jan 2021 23:59:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uNdd7I2hNKAtcfKQGi3GUg+MhbxssvCuRmdUQZa83G4=;
-        b=Ylwu8MaIfcMtXeRHHcdwBLnRoutC82UYXqkJIBtOivUEMmhWi5MIahULll+FlWnkT7
-         JmPX49Txh2CBicmCu1r/uHDoOgGt43Pt6egifpvlG0N9WkQ4sd9dWwhT2XqzPCrYxuFJ
-         lvaRyu3cL5u3PMTRSekUykObI3rpbo85ziBNs=
+        bh=raG85U5m6BVpkFn9tnlYSwbmBuD+wqMz8bt05EHQnpE=;
+        b=COBq+q3DyHX/wjdBbdPiY06GVMPcsbaUsOQZTyJ7qWCOT9Qwlsa14PlxON1EmmP3dn
+         ZyLBJZlg9mscFGi0pxRYe1PkgnxzZ7cc4PGSDkCygYvQXkYEPB+iqlRQKVsFYRij4TSP
+         0se7PqcCswNtOkSxGRxAGUJHRKavvDfakuICQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uNdd7I2hNKAtcfKQGi3GUg+MhbxssvCuRmdUQZa83G4=;
-        b=QPKe5vR49UgxiVYAzWq86VCoBZrtUPraOUHgF6f30k33RRsz4Sc1PjhUf73yqQ/mp+
-         1/66Wq+4ER7qdDQAtijRyJ5vGgWRjagYvtPa+HC0nKDqPY2E45UBY9N3O+/fngjcn23S
-         BazHGPwTnzV6Plnp+m7svhrcS9uqgNHWUHEDEjbq0YEiV9ZIynR0rVMdACk6OoBecZTV
-         TGm844uAWCYtC8Vg4qg9VhkDVg2Xf5vAEMeoaRQi3asBNlJ0pyEJFkWZSuFhvJvurpvL
-         FW2tJLCEYyj53Q8nSgKKkPuZ3ze80PeuhPj0iqdKQvzfpPlZNGekqAQH2FscwMToIMoq
-         XhwA==
-X-Gm-Message-State: AOAM532ptOmeT/S9n3DhOnhLXZCarmH++rjJOYx646vlkiVWSaxNjyt1
-        +aeYqyjYo8YoleN/D8P2P1qVPMsJ/nQJz4cyUdC15Q==
-X-Google-Smtp-Source: ABdhPJwRciGoD7gQP+crKeuujj3hoGxybSoXTk18gDmGI7WKaAUZHP/lExz5OVrqMvYJynhTLUACKyEZrrtu5fA93GI=
-X-Received: by 2002:ab0:7296:: with SMTP id w22mr5234322uao.13.1611129158535;
- Tue, 19 Jan 2021 23:52:38 -0800 (PST)
+        bh=raG85U5m6BVpkFn9tnlYSwbmBuD+wqMz8bt05EHQnpE=;
+        b=JVTj66UcB+xi4y0acql832HwHEyDTZx6O2XpHZNbDeWp5s+aeTTFo1qlu2qy/g52zN
+         ROxH67UzyOxsccc+82lgnlPHivZQTlBpBYQJnrbguuDbFj93zGNv0tLJ2FP+bdEhMcvL
+         Ay4NW61bawJZLkAs6akz9jvcTN9av7W7zvXyjvbaL3a+bEwNpiaKecqPvkxRk7mLsbOO
+         YqVXjKR9bqPGIZoiCTUtKMpO3MSg9OsaKAvezFYDXQ62GG3CbdJkb3iO4jmUw4QSXTxp
+         28n1DYNvYmWerVGm9rgMoJS17kkbNL+FPkY4xYGXwlM9OIVfoI2yVIQGLBiE75lsHQWp
+         Lpfg==
+X-Gm-Message-State: AOAM532xl3Sh9+0Tg2LqRfa8s04nR2MKgY27fBg2OVdFBeWwEbkvop99
+        QBD4RgUUtbotHFx8C7NQcPfb/1OLXYICZ7CX/jKA8w==
+X-Google-Smtp-Source: ABdhPJxTrW09RNX/58RsaWlPlSBaSO57A7eNZ40/KxN4vYPs/WQG40kBkXd8dat0tMmqg4Q+Tp0YtsfcCmv0wTVCO0Q=
+X-Received: by 2002:a1f:410c:: with SMTP id o12mr5782747vka.19.1611129544253;
+ Tue, 19 Jan 2021 23:59:04 -0800 (PST)
 MIME-Version: 1.0
-References: <20210119162204.2081137-1-mszeredi@redhat.com> <20210119162204.2081137-2-mszeredi@redhat.com>
- <87a6t4ab7h.fsf@x220.int.ebiederm.org>
-In-Reply-To: <87a6t4ab7h.fsf@x220.int.ebiederm.org>
+References: <20210119162204.2081137-1-mszeredi@redhat.com> <20210119162204.2081137-3-mszeredi@redhat.com>
+ <8735yw8k7a.fsf@x220.int.ebiederm.org>
+In-Reply-To: <8735yw8k7a.fsf@x220.int.ebiederm.org>
 From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 20 Jan 2021 08:52:27 +0100
-Message-ID: <CAJfpegvy4u9cC7SXWqteg54q-96fH3SqqfEybcQtAMxsewAGYg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ecryptfs: fix uid translation for setxattr on security.capability
+Date:   Wed, 20 Jan 2021 08:58:53 +0100
+Message-ID: <CAJfpegt=qKzyu76b_vNF5_Be2-1dovZ6t06=haVgtC8sq1qsbA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
 To:     "Eric W. Biederman" <ebiederm@xmission.com>
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         linux-fsdevel@vger.kernel.org,
         overlayfs <linux-unionfs@vger.kernel.org>,
         LSM <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <code@tyhicks.com>
+        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 19, 2021 at 10:11 PM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
+On Wed, Jan 20, 2021 at 2:39 AM Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
 > Miklos Szeredi <mszeredi@redhat.com> writes:
 >
-> > Prior to commit 7c03e2cda4a5 ("vfs: move cap_convert_nscap() call into
-> > vfs_setxattr()") the translation of nscap->rootid did not take stacked
-> > filesystems (overlayfs and ecryptfs) into account.
+> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+> > currently return in v2 format unconditionally.
 > >
-> > That patch fixed the overlay case, but made the ecryptfs case worse.
+> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+> > and so the same conversions performed on it.
 > >
-> > Restore old the behavior for ecryptfs that existed before the overlayfs
-> > fix.  This does not fix ecryptfs's handling of complex user namespace
-> > setups, but it does make sure existing setups don't regress.
+> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+> > user namespace in case of v2) cannot be mapped in the current user
+> > namespace.
 >
-> Today vfs_setxattr handles handles a delegated_inode and breaking
-> leases.  Code that is enabled with CONFIG_FILE_LOCKING.  So unless
-> I am missing something this introduces a different regression into
-> ecryptfs.
+> This looks like a good cleanup.
+>
+> I do wonder how well this works with stacking.  In particular
+> ovl_xattr_set appears to call vfs_getxattr without overriding the creds.
+> What the purpose of that is I haven't quite figured out.  It looks like
+> it is just a probe to see if an xattr is present so maybe it is ok.
 
-This is in line with all the other cases of ecryptfs passing NULL as
-delegated inode.
+Yeah, it's checking in the removexattr case whether copy-up is needed
+or not (i.e. if trying to remove a non-existent xattr, then no need to
+copy up).
 
-I'll defer this to the maintainer of ecryptfs.
+But for consistency it should also be wrapped in override creds.
+Adding fix to this series.
+
+I'll also audit for any remaining omissions.  One known and documented
+case is vfs_ioctl(FS_IOC_{[SG]ETFLAGS,FS[SG]ETXATTR}), but that
+shouldn't be affected by user namespaces.
 
 Thanks,
 Miklos
