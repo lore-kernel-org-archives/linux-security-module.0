@@ -2,152 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7021CC433E6
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0ADC433E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 03:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39C6623719
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:54:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42379238E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 03:53:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbhAUAxL (ORCPT
+        id S1732230AbhAUDx1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:53:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37546 "EHLO mail.kernel.org"
+        Wed, 20 Jan 2021 22:53:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbhAUAhd (ORCPT
+        id S2404283AbhATXyC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 19:37:33 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B082224D1;
-        Thu, 21 Jan 2021 00:36:46 +0000 (UTC)
+        Wed, 20 Jan 2021 18:54:02 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2D032224D1;
+        Wed, 20 Jan 2021 23:53:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611189410;
-        bh=wQ8RTAAdqKPawygxmXduBoC5eOWU4KdTfxeWk7uby9o=;
+        s=k20201202; t=1611186801;
+        bh=KaAIzngTFdJOggqeK7loFLhsbvngspe0/HlURAXHAgw=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RePUxeC/sF5jSjok7HRtFf8tz6/BH6MmHiMCw4vM67j1iIncx0gbwbvHPXIqnguzL
-         cR+t/k4/sFoEf49TaEj2iuB6W/TCzph7tNXE+P6K9ghJLHElc3IzDDCqrnnrd06xYS
-         RXwsfi2ensCprZqc51clJe7f3DbOppEiyr64TgqIGqcXPA9+1tREMO0hIIhcPZ2PDP
-         Fxw0rNc0u1khVNsOertQylIj1q7EHOBGUOm+ibTz/I40OUQfF1WSeyMd6cEIueBujC
-         coleKskonEc5FeEJuB0yyTOaJIExz6dSBRbl6ojz1ewBVZ36uDsjgbLRGJMXPH0vtT
-         h1qDMFAunbopg==
-Date:   Thu, 21 Jan 2021 02:36:43 +0200
+        b=SHaQCXddx55iPn4zzRZ4h369HDxx+f10wwgXlwvnOYnceCMv/Tgt7UkQTt7vPpHk7
+         9CkGiWZx82+8Ue2VivIz/zDsRM1gPo/2HhcS3pGRiQXyOqSLeiqI9Ts6LiBwaOLTrQ
+         3Xa7oxqO6LpkXGVzVDW+mpRMD8BxILd9xkCAEoT6Rw8sYFkCSiWrMZvHlK5G+urMGs
+         FTZbWHiobojD4DtlCkJ6qO/JQmwjGQufBxqTNqrDSUt6sQ9QJbaBDeFUJ/I+zhepfk
+         ob0gCIqOmAffaeGFmUtLSFMuQHhyPWzrA567O6CJGCrFI8Mzty5QfSqaYbOG3FPrsF
+         XkJXSzsRDlatg==
+Date:   Thu, 21 Jan 2021 01:53:16 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        David Howells <dhowells@redhat.com>, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jmorris@namei.org, serge@hallyn.com, nayna@linux.ibm.com,
-        Mimi Zohar <zohar@linux.ibm.com>, erichte@linux.ibm.com,
-        mpe@ellerman.id.au, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-Message-ID: <YAjMm9Gq/FFOzQYG@kernel.org>
-References: <E090372C-06A3-4991-8FC3-F06A0DA60729@oracle.com>
- <20200916004927.64276-1-eric.snowberg@oracle.com>
- <1360578.1607593748@warthog.procyon.org.uk>
- <2442460.1610463459@warthog.procyon.org.uk>
- <X/9a8naM8p4tT5sO@linux.intel.com>
- <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
- <YAFdNiYZSWpB9vOw@kernel.org>
- <CFBF6AEC-2832-44F7-9D7F-F20489498C33@oracle.com>
- <YAgTawk3EENF/P6j@kernel.org>
- <D9F5E0BD-E2FC-428F-91B3-35D2750493A0@oracle.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 08/10] certs: Check that builtin blacklist hashes are
+ valid
+Message-ID: <YAjCbKwQf8nS+Nuu@kernel.org>
+References: <20210114151909.2344974-1-mic@digikod.net>
+ <20210114151909.2344974-9-mic@digikod.net>
+ <YAe9egzT5D7B0swR@kernel.org>
+ <11ce77c9-7b43-e2a0-55bc-c0035bf3d681@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <D9F5E0BD-E2FC-428F-91B3-35D2750493A0@oracle.com>
+In-Reply-To: <11ce77c9-7b43-e2a0-55bc-c0035bf3d681@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 20, 2021 at 03:13:11PM -0700, Eric Snowberg wrote:
+On Wed, Jan 20, 2021 at 12:57:55PM +0100, Mickaël Salaün wrote:
 > 
-> > On Jan 20, 2021, at 4:26 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> On 20/01/2021 06:19, Jarkko Sakkinen wrote:
+> > On Thu, Jan 14, 2021 at 04:19:07PM +0100, Mickaël Salaün wrote:
+> >> From: Mickaël Salaün <mic@linux.microsoft.com>
+> >>
+> >> Add and use a check-blacklist-hashes.awk script to make sure that the
+> >> builtin blacklist hashes will be approved by the run time blacklist
+> >> description checks.  This is useful to debug invalid hash formats, and
+> >> it make sure that previous hashes which could have been loaded in the
+> >> kernel (but ignored) are now noticed and deal with by the user.
+> >>
+> >> Cc: David Howells <dhowells@redhat.com>
+> >> Cc: David Woodhouse <dwmw2@infradead.org>
+> >> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> >> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 > > 
-> > On Fri, Jan 15, 2021 at 09:49:02AM -0700, Eric Snowberg wrote:
-> >> 
-> >>> On Jan 15, 2021, at 2:15 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> >>> 
-> >>> On Wed, Jan 13, 2021 at 05:11:10PM -0700, Eric Snowberg wrote:
-> >>>> 
-> >>>>> On Jan 13, 2021, at 1:41 PM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> >>>>> 
-> >>>>> On Tue, Jan 12, 2021 at 02:57:39PM +0000, David Howells wrote:
-> >>>>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> >>>>>> 
-> >>>>>>>> On Dec 10, 2020, at 2:49 AM, David Howells <dhowells@redhat.com> wrote:
-> >>>>>>>> 
-> >>>>>>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> >>>>>>>> 
-> >>>>>>>>> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
-> >>>>>>>>> is found, it is added as an asymmetrical key to the .blacklist keyring.
-> >>>>>>>>> Anytime the .platform keyring is used, the keys in the .blacklist keyring
-> >>>>>>>>> are referenced, if a matching key is found, the key will be rejected.
-> >>>>>>>> 
-> >>>>>>>> Ummm...  Why this way and not as a blacklist key which takes up less space?
-> >>>>>>>> I'm guessing that you're using the key chain matching logic.  We really only
-> >>>>>>>> need to blacklist the key IDs.
-> >>>>>>> 
-> >>>>>>> I implemented it this way so that certs in the dbx would only impact 
-> >>>>>>> the .platform keyring. I was under the impression we didnâ€™t want to have 
-> >>>>>>> Secure Boot UEFI db/dbx certs dictate keyring functionality within the kernel
-> >>>>>>> itself. Meaning if we have a matching dbx cert in any other keyring (builtin,
-> >>>>>>> secondary, ima, etc.), it would be allowed. If that is not how youâ€™d like to 
-> >>>>>>> see it done, let me know and Iâ€™ll make the change.
-> >>>>>> 
-> >>>>>> I wonder if that is that the right thing to do.  I guess this is a policy
-> >>>>>> decision and may depend on the particular user.
-> >>>>> 
-> >>>>> Why would you want to allow dbx entry in any keyring?
-> >>>> 
-> >>>> Today, DB and MOK certs go into the platform keyring.  These certs are only
-> >>>> referenced during kexec.  They canâ€™t be used for other things like validating
-> >>>> kernel module signatures.  If we follow the same pattern, the DBX and MOKX entries
-> >>>> in the blacklist keyring should only impact kexec. 
-> >>>> 
-> >>>> Currently, MickaÃ«l SalaÃ¼n has another outstanding series to allow root to update 
-> >>>> the blacklist keyring.  I assume the use case for this is around certificates used 
-> >>>> within the kernel, for example revoking kernel module signatures.  The question I have
-> >>>> is, should another keyring be introduced?  One that carries DBX and MOKX, which just
-> >>>> correspond to certs/hashes in the platform keyring; this keyring would only be
-> >>>> referenced for kexec, just like the platform keyring is today. Then, the current
-> >>>> blacklist keyring would be used for everything internal to the kernel.
-> >>> 
-> >>> Right, I'm following actively that series.
-> >>> 
-> >>> Why couldn't user space drive this process and use that feature to do it?
-> >> 
-> >> I could see where the user would want to use both. With MickaÃ«l SalaÃ¼nâ€™s
-> >> series, the blacklist keyring is updated immediately.  However it does
-> >> not survive a reboot.  With my patch, the blacklist keyring is updated
-> >> during boot, based on what is in the dbx. Neither approach needs a new 
-> >> kernel build.
+> > I get this with a self-signed cert:
 > > 
-> > I don't want to purposely challenge this, but why does it matter
-> > that it doesn't survive the boot? I'm referring here to the golden
-> > principle of kernel defining a mechanism, not policy. User space
-> > can do the population however it wants to for every boot.
+> > certs/Makefile:18: *** target pattern contains no '%'.  Stop.
 > > 
-> > E.g. systemd service could do this.
-> > 
-> > What am I missing here?
+> > CONFIG_SYSTEM_BLACKLIST_HASH_LIST="tbs:8eed1340eef37c1dc84d996406ad05c7dbb3eade19132d688408ca2f63904869"
 > 
-> This change simply adds support for a missing type.  The kernel 
-> already supports cert and hash entries (EFI_CERT_X509_SHA256_GUID,
-> EFI_CERT_SHA256_GUID) that originate from the dbx and are loaded 
-> into the blacklist keyring during boot.  Iâ€™m not sure why a cert 
-> defined with EFI_CERT_X509_GUID should be handled in a different 
-> manner.
-> 
-> I suppose a user space tool could be created. But wouldnâ€™t what is
-> currently done in the kernel in this area need to be removed?
+> As said in the Kconfig documentation for
+> CONFIG_SYSTEM_BLACKLIST_HASH_LIST, you need to provide a file with the
+> list, not to set the string directly in the configuration variable. This
+> patch series didn't change this behavior. The same kind of macros are
+> used for CONFIG_MODULE_SIG_KEY.
 
-Right. I don't think this was a great idea in the first place to
-do to the kernel but since it exists, I guess the patch does make
-sense.
+OK, the documentation just states that:
+
+"Hashes to be preloaded into the system blacklist keyring"
+
+No mention about a file. I'd add a patch to update this documentation.
+
+> 
+> > 
+> > I used the script in 10/10 to test this, which is another
+> > reamark: the patches are in invalid order, as you need to
+> > apply 10/10 before you can test  8/10.
+> 
+> I'll move patch 10/10 earlier but this kind of formatting was already
+> required (but silently ignored) for this option to be really taken into
+> account. Only the kernel code was available to understand how to
+> effectively create such hash.
+
+Great, thanks.
+
+
+> > 
+> > /Jarkko
+> > 
+
 
 /Jarkko
+
