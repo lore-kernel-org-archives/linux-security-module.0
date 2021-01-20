@@ -2,143 +2,487 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D1FC433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 13:25:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F395C433E9
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 14:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 061112245C
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 13:25:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F028233F7
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 14:48:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731894AbhATNYN (ORCPT
+        id S1730671AbhATOKM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 08:24:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37700 "EHLO
+        Wed, 20 Jan 2021 09:10:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387841AbhATNSr (ORCPT
+        with ESMTP id S2390063AbhATNhF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 08:18:47 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46399C061757
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Jan 2021 05:18:07 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id u25so34064377lfc.2
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Jan 2021 05:18:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KEq8tBsSJotuDC8emCL/6gnLfDlNS7DjovwJhhjL6ms=;
-        b=ULlMSelK9Ah0BMaovUHmsACU3A8+D692YYxmt2OYno3eGXN24zqnixuDonvFpZ2434
-         yGSCIJLnb9rvtjhVV8XPX2nCR1tR5/W56AKUtGD1OkiGVo7IeB4jiaFQf7E/SPuBZCPk
-         d4Lus8TY9Pvv6JwfYfacYCpF4wqkl22vCHCQTbwiluzAHo44vfyw87aw1bj7GxrJh8cR
-         nZV9kGNYb8OxcaZ9Ql7C/WeH9v4zws6ASGW2+LqT3AtKKoJHzqc0nxsas+X7WZpY7KVr
-         OAUDEHg2PDM3TgJfR2sQZHreqITp3VHs1U9nSDMrPkcdRevPf/w7OuV8CjENhYu9SBn6
-         VcWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KEq8tBsSJotuDC8emCL/6gnLfDlNS7DjovwJhhjL6ms=;
-        b=V0xdi22AmD36j9UkAmtL9ip4QurwbnYzjGUEsdQQL2oXENgPZrOuNMUqkVk9WvbGui
-         0phKLSTwvXR11T+CbY4QB8f/jAxdUs6+rh0jNjmp+fgxEklg8opQdY2Lsg0zZx3CYjc7
-         fhiph6FJLazIFzoqeIbCbxsrFrc3fQbHpxF6BFEzFGzX5xJVHRTTpspx5xqZOfKeU+uG
-         LKPfO1EAT4ZEn4eHJC3GTXnKA/7FnRG78GyP48Fr+o/INi9hB5I5w3QVHmggMQxuXesy
-         yBXsdRiYQbia/iMFkOVkO6/Bz/F9zKW/XGo4hm9wpEUOHXLj17XfW8/kn03fJGXOtbBo
-         SQ3g==
-X-Gm-Message-State: AOAM533B6azK/zy6Z+7JILMtO07Bk0c2imp5+Zt85hNQjHMNJFxR6TZB
-        5EyrS6qvLa9z6igFM/td8hdtUi+ifJbn5WcdfE2HrA==
-X-Google-Smtp-Source: ABdhPJzqDqJvZXUcfXv4xFpgmlCE0aHWXWLar3aIIwchg7i4ldiK53CzSQfu3T1ZKIGVaiUK6Qge3/wJtkCQkY/hjps=
-X-Received: by 2002:a19:8cb:: with SMTP id 194mr4180105lfi.463.1611148685415;
- Wed, 20 Jan 2021 05:18:05 -0800 (PST)
+        Wed, 20 Jan 2021 08:37:05 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9B26C0613C1
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jan 2021 05:36:24 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1l2Dek-00048J-VN; Wed, 20 Jan 2021 14:36:19 +0100
+Subject: Re: [PATCH v8 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
+To:     Sumit Garg <sumit.garg@linaro.org>,
+        jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com
+Cc:     dhowells@redhat.com, jens.wiklander@linaro.org, corbet@lwn.net,
+        jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com,
+        janne.karhunen@gmail.com, daniel.thompson@linaro.org,
+        Markus.Wamser@mixed-mode.de, lhinds@redhat.com,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-3-git-send-email-sumit.garg@linaro.org>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <cf82c754-646d-529e-3a88-f724a90aa93d@pengutronix.de>
+Date:   Wed, 20 Jan 2021 14:36:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-References: <20210111170622.2613577-1-surenb@google.com> <20210112074629.GG22493@dhcp22.suse.cz>
- <20210112174507.GA23780@redhat.com> <CAJuCfpFQz=x-LvONO3c4iqjKP4NKJMgUuiYc8HACKHAv1Omu0w@mail.gmail.com>
- <20210113142202.GC22493@dhcp22.suse.cz>
-In-Reply-To: <20210113142202.GC22493@dhcp22.suse.cz>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 20 Jan 2021 14:17:39 +0100
-Message-ID: <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mm/madvise: replace ptrace attach requirement for process_madvise
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Suren Baghdasaryan <surenb@google.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>,
-        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-mm <linux-mm@kvack.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1604419306-26105-3-git-send-email-sumit.garg@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 13, 2021 at 3:22 PM Michal Hocko <mhocko@suse.com> wrote:
-> On Tue 12-01-21 09:51:24, Suren Baghdasaryan wrote:
-> > On Tue, Jan 12, 2021 at 9:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > >
-> > > On 01/12, Michal Hocko wrote:
-> > > >
-> > > > On Mon 11-01-21 09:06:22, Suren Baghdasaryan wrote:
-> > > >
-> > > > > What we want is the ability for one process to influence another process
-> > > > > in order to optimize performance across the entire system while leaving
-> > > > > the security boundary intact.
-> > > > > Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
-> > > > > and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
-> > > > > and CAP_SYS_NICE for influencing process performance.
-> > > >
-> > > > I have to say that ptrace modes are rather obscure to me. So I cannot
-> > > > really judge whether MODE_READ is sufficient. My understanding has
-> > > > always been that this is requred to RO access to the address space. But
-> > > > this operation clearly has a visible side effect. Do we have any actual
-> > > > documentation for the existing modes?
-> > > >
-> > > > I would be really curious to hear from Jann and Oleg (now Cced).
-> > >
-> > > Can't comment, sorry. I never understood these security checks and never tried.
-> > > IIUC only selinux/etc can treat ATTACH/READ differently and I have no idea what
-> > > is the difference.
+Hello Sumit,
 
-Yama in particular only does its checks on ATTACH and ignores READ,
-that's the difference you're probably most likely to encounter on a
-normal desktop system, since some distros turn Yama on by default.
-Basically the idea there is that running "gdb -p $pid" or "strace -p
-$pid" as a normal user will usually fail, but reading /proc/$pid/maps
-still works; so you can see things like detailed memory usage
-information and such, but you're not supposed to be able to directly
-peek into a running SSH client and inject data into the existing SSH
-connection, or steal the cryptographic keys for the current
-connection, or something like that.
+On 03.11.20 17:01, Sumit Garg wrote:
+> Add support for TEE based trusted keys where TEE provides the functionality
+> to seal and unseal trusted keys using hardware unique key.
+> 
+> Refer to Documentation/tee.txt for detailed information about TEE.
+> 
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> ---
+>  include/keys/trusted_tee.h                |  55 ++++++
+>  security/keys/trusted-keys/Makefile       |   1 +
+>  security/keys/trusted-keys/trusted_core.c |   4 +
+>  security/keys/trusted-keys/trusted_tee.c  | 278 ++++++++++++++++++++++++++++++
+>  4 files changed, 338 insertions(+)
+>  create mode 100644 include/keys/trusted_tee.h
+>  create mode 100644 security/keys/trusted-keys/trusted_tee.c
+> 
+> diff --git a/include/keys/trusted_tee.h b/include/keys/trusted_tee.h
+> new file mode 100644
+> index 0000000..2e2bb15
+> --- /dev/null
+> +++ b/include/keys/trusted_tee.h
+> @@ -0,0 +1,55 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2019-2020 Linaro Ltd.
+> + *
+> + * Author:
+> + * Sumit Garg <sumit.garg@linaro.org>
+> + */
+> +
+> +#ifndef __TEE_TRUSTED_KEY_H
+> +#define __TEE_TRUSTED_KEY_H
+> +
+> +#include <linux/tee_drv.h>
+> +
+> +#define DRIVER_NAME "tee-trusted-key"
 
-> > I haven't seen a written explanation on ptrace modes but when I
-> > consulted Jann his explanation was:
-> >
-> > PTRACE_MODE_READ means you can inspect metadata about processes with
-> > the specified domain, across UID boundaries.
-> > PTRACE_MODE_ATTACH means you can fully impersonate processes with the
-> > specified domain, across UID boundaries.
->
-> Maybe this would be a good start to document expectations. Some more
-> practical examples where the difference is visible would be great as
-> well.
+Looks unusual to define this in a header, especially when
+it's included in trusted_core.c as well. Could you move it?
 
-Before documenting the behavior, it would be a good idea to figure out
-what to do with perf_event_open(). That one's weird in that it only
-requires PTRACE_MODE_READ, but actually allows you to sample stuff
-like userspace stack and register contents (if perf_event_paranoid is
-1 or 2). Maybe for SELinux things (and maybe also for Yama), there
-should be a level in between that allows fully inspecting the process
-(for purposes like profiling) but without the ability to corrupt its
-memory or registers or things like that. Or maybe perf_event_open()
-should just use the ATTACH mode.
+> +
+> +/*
+> + * Get random data for symmetric key
+> + *
+> + * [out]     memref[0]        Random data
+> + */
+> +#define TA_CMD_GET_RANDOM	0x0
+> +
+> +/*
+> + * Seal trusted key using hardware unique key
+> + *
+> + * [in]      memref[0]        Plain key
+> + * [out]     memref[1]        Sealed key datablob
+> + */
+> +#define TA_CMD_SEAL		0x1
+> +
+> +/*
+> + * Unseal trusted key using hardware unique key
+> + *
+> + * [in]      memref[0]        Sealed key datablob
+> + * [out]     memref[1]        Plain key
+> + */
+> +#define TA_CMD_UNSEAL		0x2
+
+These also look like implementation-specific stuff
+that should go into trusted_tee.c?
+
+> +
+> +/**
+> + * struct trusted_key_private - TEE Trusted key private data
+> + * @dev:		TEE based Trusted key device.
+> + * @ctx:		TEE context handler.
+> + * @session_id:		Trusted key TA session identifier.
+> + * @shm_pool:		Memory pool shared with TEE device.
+> + */
+> +struct trusted_key_private {
+
+This is name is a bit too generic. Either move it to trusted_tee
+or put a caam_ prefix in front?
+
+> +	struct device *dev;
+> +	struct tee_context *ctx;
+> +	u32 session_id;
+> +	struct tee_shm *shm_pool;
+> +};
+> +
+> +extern struct trusted_key_ops tee_trusted_key_ops;
+
+This looks like the only thing that must be in this header.
+
+> +
+> +#endif
+> diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+> index 49e3bcf..012dd78 100644
+> --- a/security/keys/trusted-keys/Makefile
+> +++ b/security/keys/trusted-keys/Makefile
+> @@ -7,3 +7,4 @@ obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+>  trusted-y += trusted_core.o
+>  trusted-y += trusted_tpm1.o
+>  trusted-y += trusted_tpm2.o
+> +trusted-y += trusted_tee.o
+
+Shouldn't this depend on CONFIG_TEE or similar? Otherwise without LTO, you'd
+run into linker errors.
+
+[Apologies if these points were raised in previous review cycles, I just
+ recently subscribed]
+
+Cheers,
+Ahmad
+
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+> index aa4f2a0..15b1b0f3 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -8,6 +8,7 @@
+>  
+>  #include <keys/user-type.h>
+>  #include <keys/trusted-type.h>
+> +#include <keys/trusted_tee.h>
+>  #include <keys/trusted_tpm.h>
+>  #include <linux/capability.h>
+>  #include <linux/err.h>
+> @@ -29,6 +30,9 @@ static const struct trusted_key_source trusted_key_sources[] = {
+>  #if defined(CONFIG_TCG_TPM)
+>  	{ "tpm", &tpm_trusted_key_ops },
+>  #endif
+> +#if defined(CONFIG_TEE)
+> +	{ "tee", &tee_trusted_key_ops },
+> +#endif
+>  };
+>  
+>  DEFINE_STATIC_CALL_NULL(trusted_key_init, *trusted_key_sources[0].ops->init);
+> diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+> new file mode 100644
+> index 0000000..da8785a
+> --- /dev/null
+> +++ b/security/keys/trusted-keys/trusted_tee.c
+> @@ -0,0 +1,278 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019-2020 Linaro Ltd.
+> + *
+> + * Author:
+> + * Sumit Garg <sumit.garg@linaro.org>
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/key-type.h>
+> +#include <linux/slab.h>
+> +#include <linux/string.h>
+> +#include <linux/uuid.h>
+> +
+> +#include <keys/trusted-type.h>
+> +#include <keys/trusted_tee.h>
+> +
+> +static struct trusted_key_private pvt_data;
+> +
+> +/*
+> + * Have the TEE seal(encrypt) the symmetric key
+> + */
+> +static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+> +{
+> +	int ret;
+> +	struct tee_ioctl_invoke_arg inv_arg;
+> +	struct tee_param param[4];
+> +	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
+> +
+> +	memset(&inv_arg, 0, sizeof(inv_arg));
+> +	memset(&param, 0, sizeof(param));
+> +
+> +	reg_shm_in = tee_shm_register(pvt_data.ctx, (unsigned long)p->key,
+> +				      p->key_len, TEE_SHM_DMA_BUF |
+> +				      TEE_SHM_KERNEL_MAPPED);
+> +	if (IS_ERR(reg_shm_in)) {
+> +		dev_err(pvt_data.dev, "key shm register failed\n");
+> +		return PTR_ERR(reg_shm_in);
+> +	}
+> +
+> +	reg_shm_out = tee_shm_register(pvt_data.ctx, (unsigned long)p->blob,
+> +				       sizeof(p->blob), TEE_SHM_DMA_BUF |
+> +				       TEE_SHM_KERNEL_MAPPED);
+> +	if (IS_ERR(reg_shm_out)) {
+> +		dev_err(pvt_data.dev, "blob shm register failed\n");
+> +		ret = PTR_ERR(reg_shm_out);
+> +		goto out;
+> +	}
+> +
+> +	inv_arg.func = TA_CMD_SEAL;
+> +	inv_arg.session = pvt_data.session_id;
+> +	inv_arg.num_params = 4;
+> +
+> +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
+> +	param[0].u.memref.shm = reg_shm_in;
+> +	param[0].u.memref.size = p->key_len;
+> +	param[0].u.memref.shm_offs = 0;
+> +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+> +	param[1].u.memref.shm = reg_shm_out;
+> +	param[1].u.memref.size = sizeof(p->blob);
+> +	param[1].u.memref.shm_offs = 0;
+> +
+> +	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+> +	if ((ret < 0) || (inv_arg.ret != 0)) {
+> +		dev_err(pvt_data.dev, "TA_CMD_SEAL invoke err: %x\n",
+> +			inv_arg.ret);
+> +		ret = -EFAULT;
+> +	} else {
+> +		p->blob_len = param[1].u.memref.size;
+> +	}
+> +
+> +out:
+> +	if (reg_shm_out)
+> +		tee_shm_free(reg_shm_out);
+> +	if (reg_shm_in)
+> +		tee_shm_free(reg_shm_in);
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Have the TEE unseal(decrypt) the symmetric key
+> + */
+> +static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+> +{
+> +	int ret;
+> +	struct tee_ioctl_invoke_arg inv_arg;
+> +	struct tee_param param[4];
+> +	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
+> +
+> +	memset(&inv_arg, 0, sizeof(inv_arg));
+> +	memset(&param, 0, sizeof(param));
+> +
+> +	reg_shm_in = tee_shm_register(pvt_data.ctx, (unsigned long)p->blob,
+> +				      p->blob_len, TEE_SHM_DMA_BUF |
+> +				      TEE_SHM_KERNEL_MAPPED);
+> +	if (IS_ERR(reg_shm_in)) {
+> +		dev_err(pvt_data.dev, "blob shm register failed\n");
+> +		return PTR_ERR(reg_shm_in);
+> +	}
+> +
+> +	reg_shm_out = tee_shm_register(pvt_data.ctx, (unsigned long)p->key,
+> +				       sizeof(p->key), TEE_SHM_DMA_BUF |
+> +				       TEE_SHM_KERNEL_MAPPED);
+> +	if (IS_ERR(reg_shm_out)) {
+> +		dev_err(pvt_data.dev, "key shm register failed\n");
+> +		ret = PTR_ERR(reg_shm_out);
+> +		goto out;
+> +	}
+> +
+> +	inv_arg.func = TA_CMD_UNSEAL;
+> +	inv_arg.session = pvt_data.session_id;
+> +	inv_arg.num_params = 4;
+> +
+> +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT;
+> +	param[0].u.memref.shm = reg_shm_in;
+> +	param[0].u.memref.size = p->blob_len;
+> +	param[0].u.memref.shm_offs = 0;
+> +	param[1].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+> +	param[1].u.memref.shm = reg_shm_out;
+> +	param[1].u.memref.size = sizeof(p->key);
+> +	param[1].u.memref.shm_offs = 0;
+> +
+> +	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+> +	if ((ret < 0) || (inv_arg.ret != 0)) {
+> +		dev_err(pvt_data.dev, "TA_CMD_UNSEAL invoke err: %x\n",
+> +			inv_arg.ret);
+> +		ret = -EFAULT;
+> +	} else {
+> +		p->key_len = param[1].u.memref.size;
+> +	}
+> +
+> +out:
+> +	if (reg_shm_out)
+> +		tee_shm_free(reg_shm_out);
+> +	if (reg_shm_in)
+> +		tee_shm_free(reg_shm_in);
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Have the TEE generate random symmetric key
+> + */
+> +static int trusted_tee_get_random(unsigned char *key, size_t key_len)
+> +{
+> +	int ret;
+> +	struct tee_ioctl_invoke_arg inv_arg;
+> +	struct tee_param param[4];
+> +	struct tee_shm *reg_shm = NULL;
+> +
+> +	memset(&inv_arg, 0, sizeof(inv_arg));
+> +	memset(&param, 0, sizeof(param));
+> +
+> +	reg_shm = tee_shm_register(pvt_data.ctx, (unsigned long)key, key_len,
+> +				   TEE_SHM_DMA_BUF | TEE_SHM_KERNEL_MAPPED);
+> +	if (IS_ERR(reg_shm)) {
+> +		dev_err(pvt_data.dev, "key shm register failed\n");
+> +		return PTR_ERR(reg_shm);
+> +	}
+> +
+> +	inv_arg.func = TA_CMD_GET_RANDOM;
+> +	inv_arg.session = pvt_data.session_id;
+> +	inv_arg.num_params = 4;
+> +
+> +	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
+> +	param[0].u.memref.shm = reg_shm;
+> +	param[0].u.memref.size = key_len;
+> +	param[0].u.memref.shm_offs = 0;
+> +
+> +	ret = tee_client_invoke_func(pvt_data.ctx, &inv_arg, param);
+> +	if ((ret < 0) || (inv_arg.ret != 0)) {
+> +		dev_err(pvt_data.dev, "TA_CMD_GET_RANDOM invoke err: %x\n",
+> +			inv_arg.ret);
+> +		ret = -EFAULT;
+> +	} else {
+> +		ret = param[0].u.memref.size;
+> +	}
+> +
+> +	tee_shm_free(reg_shm);
+> +
+> +	return ret;
+> +}
+> +
+> +static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> +{
+> +	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
+> +		return 1;
+> +	else
+> +		return 0;
+> +}
+> +
+> +static int trusted_key_probe(struct device *dev)
+> +{
+> +	struct tee_client_device *rng_device = to_tee_client_device(dev);
+> +	int ret;
+> +	struct tee_ioctl_open_session_arg sess_arg;
+> +
+> +	memset(&sess_arg, 0, sizeof(sess_arg));
+> +
+> +	pvt_data.ctx = tee_client_open_context(NULL, optee_ctx_match, NULL,
+> +					       NULL);
+> +	if (IS_ERR(pvt_data.ctx))
+> +		return -ENODEV;
+> +
+> +	memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
+> +	sess_arg.clnt_login = TEE_IOCTL_LOGIN_REE_KERNEL;
+> +	sess_arg.num_params = 0;
+> +
+> +	ret = tee_client_open_session(pvt_data.ctx, &sess_arg, NULL);
+> +	if ((ret < 0) || (sess_arg.ret != 0)) {
+> +		dev_err(dev, "tee_client_open_session failed, err: %x\n",
+> +			sess_arg.ret);
+> +		ret = -EINVAL;
+> +		goto out_ctx;
+> +	}
+> +	pvt_data.session_id = sess_arg.session;
+> +
+> +	ret = register_key_type(&key_type_trusted);
+> +	if (ret < 0)
+> +		goto out_sess;
+> +
+> +	pvt_data.dev = dev;
+> +
+> +	return 0;
+> +
+> +out_sess:
+> +	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
+> +out_ctx:
+> +	tee_client_close_context(pvt_data.ctx);
+> +
+> +	return ret;
+> +}
+> +
+> +static int trusted_key_remove(struct device *dev)
+> +{
+> +	unregister_key_type(&key_type_trusted);
+> +	tee_client_close_session(pvt_data.ctx, pvt_data.session_id);
+> +	tee_client_close_context(pvt_data.ctx);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct tee_client_device_id trusted_key_id_table[] = {
+> +	{UUID_INIT(0xf04a0fe7, 0x1f5d, 0x4b9b,
+> +		   0xab, 0xf7, 0x61, 0x9b, 0x85, 0xb4, 0xce, 0x8c)},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(tee, trusted_key_id_table);
+> +
+> +static struct tee_client_driver trusted_key_driver = {
+> +	.id_table	= trusted_key_id_table,
+> +	.driver		= {
+> +		.name		= DRIVER_NAME,
+> +		.bus		= &tee_bus_type,
+> +		.probe		= trusted_key_probe,
+> +		.remove		= trusted_key_remove,
+> +	},
+> +};
+> +
+> +static int trusted_tee_init(void)
+> +{
+> +	return driver_register(&trusted_key_driver.driver);
+> +}
+> +
+> +static void trusted_tee_exit(void)
+> +{
+> +	driver_unregister(&trusted_key_driver.driver);
+> +}
+> +
+> +struct trusted_key_ops tee_trusted_key_ops = {
+> +	.migratable = 0, /* non-migratable */
+> +	.init = trusted_tee_init,
+> +	.seal = trusted_tee_seal,
+> +	.unseal = trusted_tee_unseal,
+> +	.get_random = trusted_tee_get_random,
+> +	.exit = trusted_tee_exit,
+> +};
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
