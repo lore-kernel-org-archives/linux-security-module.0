@@ -2,127 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A588C4361B
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 12:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D1FC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 13:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52E1723371
-	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 12:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 061112245C
+	for <linux-security-module@archiver.kernel.org>; Wed, 20 Jan 2021 13:25:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733287AbhATMkV (ORCPT
+        id S1731894AbhATNYN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 07:40:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
+        Wed, 20 Jan 2021 08:24:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388932AbhATLOQ (ORCPT
+        with ESMTP id S2387841AbhATNSr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 06:14:16 -0500
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29612C0613D3;
-        Wed, 20 Jan 2021 03:13:12 -0800 (PST)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DLNDN5227zMqLkr;
-        Wed, 20 Jan 2021 12:13:08 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DLNDL1gRxzlh8T2;
-        Wed, 20 Jan 2021 12:13:06 +0100 (CET)
-Subject: Re: [PATCH v3 02/10] certs: Fix blacklisted hexadecimal hash string
- check
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ben Boeckel <mathstuf@gmail.com>
-References: <20210114151909.2344974-1-mic@digikod.net>
- <20210114151909.2344974-3-mic@digikod.net> <YAem+DjBR92WG+bK@kernel.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <05e3ce56-c27c-877d-8ebe-d088ba95f248@digikod.net>
-Date:   Wed, 20 Jan 2021 12:12:50 +0100
-User-Agent: 
+        Wed, 20 Jan 2021 08:18:47 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46399C061757
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jan 2021 05:18:07 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id u25so34064377lfc.2
+        for <linux-security-module@vger.kernel.org>; Wed, 20 Jan 2021 05:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KEq8tBsSJotuDC8emCL/6gnLfDlNS7DjovwJhhjL6ms=;
+        b=ULlMSelK9Ah0BMaovUHmsACU3A8+D692YYxmt2OYno3eGXN24zqnixuDonvFpZ2434
+         yGSCIJLnb9rvtjhVV8XPX2nCR1tR5/W56AKUtGD1OkiGVo7IeB4jiaFQf7E/SPuBZCPk
+         d4Lus8TY9Pvv6JwfYfacYCpF4wqkl22vCHCQTbwiluzAHo44vfyw87aw1bj7GxrJh8cR
+         nZV9kGNYb8OxcaZ9Ql7C/WeH9v4zws6ASGW2+LqT3AtKKoJHzqc0nxsas+X7WZpY7KVr
+         OAUDEHg2PDM3TgJfR2sQZHreqITp3VHs1U9nSDMrPkcdRevPf/w7OuV8CjENhYu9SBn6
+         VcWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KEq8tBsSJotuDC8emCL/6gnLfDlNS7DjovwJhhjL6ms=;
+        b=V0xdi22AmD36j9UkAmtL9ip4QurwbnYzjGUEsdQQL2oXENgPZrOuNMUqkVk9WvbGui
+         0phKLSTwvXR11T+CbY4QB8f/jAxdUs6+rh0jNjmp+fgxEklg8opQdY2Lsg0zZx3CYjc7
+         fhiph6FJLazIFzoqeIbCbxsrFrc3fQbHpxF6BFEzFGzX5xJVHRTTpspx5xqZOfKeU+uG
+         LKPfO1EAT4ZEn4eHJC3GTXnKA/7FnRG78GyP48Fr+o/INi9hB5I5w3QVHmggMQxuXesy
+         yBXsdRiYQbia/iMFkOVkO6/Bz/F9zKW/XGo4hm9wpEUOHXLj17XfW8/kn03fJGXOtbBo
+         SQ3g==
+X-Gm-Message-State: AOAM533B6azK/zy6Z+7JILMtO07Bk0c2imp5+Zt85hNQjHMNJFxR6TZB
+        5EyrS6qvLa9z6igFM/td8hdtUi+ifJbn5WcdfE2HrA==
+X-Google-Smtp-Source: ABdhPJzqDqJvZXUcfXv4xFpgmlCE0aHWXWLar3aIIwchg7i4ldiK53CzSQfu3T1ZKIGVaiUK6Qge3/wJtkCQkY/hjps=
+X-Received: by 2002:a19:8cb:: with SMTP id 194mr4180105lfi.463.1611148685415;
+ Wed, 20 Jan 2021 05:18:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <YAem+DjBR92WG+bK@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210111170622.2613577-1-surenb@google.com> <20210112074629.GG22493@dhcp22.suse.cz>
+ <20210112174507.GA23780@redhat.com> <CAJuCfpFQz=x-LvONO3c4iqjKP4NKJMgUuiYc8HACKHAv1Omu0w@mail.gmail.com>
+ <20210113142202.GC22493@dhcp22.suse.cz>
+In-Reply-To: <20210113142202.GC22493@dhcp22.suse.cz>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 20 Jan 2021 14:17:39 +0100
+Message-ID: <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mm/madvise: replace ptrace attach requirement for process_madvise
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-mm <linux-mm@kvack.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jan 13, 2021 at 3:22 PM Michal Hocko <mhocko@suse.com> wrote:
+> On Tue 12-01-21 09:51:24, Suren Baghdasaryan wrote:
+> > On Tue, Jan 12, 2021 at 9:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > > On 01/12, Michal Hocko wrote:
+> > > >
+> > > > On Mon 11-01-21 09:06:22, Suren Baghdasaryan wrote:
+> > > >
+> > > > > What we want is the ability for one process to influence another process
+> > > > > in order to optimize performance across the entire system while leaving
+> > > > > the security boundary intact.
+> > > > > Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
+> > > > > and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
+> > > > > and CAP_SYS_NICE for influencing process performance.
+> > > >
+> > > > I have to say that ptrace modes are rather obscure to me. So I cannot
+> > > > really judge whether MODE_READ is sufficient. My understanding has
+> > > > always been that this is requred to RO access to the address space. But
+> > > > this operation clearly has a visible side effect. Do we have any actual
+> > > > documentation for the existing modes?
+> > > >
+> > > > I would be really curious to hear from Jann and Oleg (now Cced).
+> > >
+> > > Can't comment, sorry. I never understood these security checks and never tried.
+> > > IIUC only selinux/etc can treat ATTACH/READ differently and I have no idea what
+> > > is the difference.
 
-On 20/01/2021 04:43, Jarkko Sakkinen wrote:
-> On Thu, Jan 14, 2021 at 04:19:01PM +0100, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> When looking for a blacklisted hash, bin2hex() is used to transform a
->> binary hash to an ascii (lowercase) hexadecimal string.  This string is
->> then search for in the description of the keys from the blacklist
->> keyring.  When adding a key to the blacklist keyring,
->> blacklist_vet_description() checks the hash prefix and the hexadecimal
->> string, but not that this string is lowercase.  It is then valid to set
->> hashes with uppercase hexadecimal, which will be silently ignored by the
->> kernel.
->>
->> Add an additional check to blacklist_vet_description() to check that
->> hexadecimal strings are in lowercase.
->>
->> Cc: David Woodhouse <dwmw2@infradead.org>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> Reviewed-by: Ben Boeckel <mathstuf@gmail.com>
->> ---
->>
->> Changes since v2:
->> * Cherry-pick v1 patch from
->>   https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
->>   to rebase on v5.11-rc3.
->> * Rearrange Cc order.
->> ---
->>  certs/blacklist.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/certs/blacklist.c b/certs/blacklist.c
->> index 2719fb2fbc1c..a888b934a1cd 100644
->> --- a/certs/blacklist.c
->> +++ b/certs/blacklist.c
->> @@ -37,7 +37,7 @@ static int blacklist_vet_description(const char *desc)
->>  found_colon:
->>  	desc++;
->>  	for (; *desc; desc++) {
->> -		if (!isxdigit(*desc))
->> +		if (!isxdigit(*desc) || isupper(*desc))
->>  			return -EINVAL;
->>  		n++;
->>  	}
->> -- 
->> 2.30.0
->>
-> 
-> Shouldn't this rather convert the upper case to lower case? I don't like
-> the ABI break that this causes.
+Yama in particular only does its checks on ATTACH and ignores READ,
+that's the difference you're probably most likely to encounter on a
+normal desktop system, since some distros turn Yama on by default.
+Basically the idea there is that running "gdb -p $pid" or "strace -p
+$pid" as a normal user will usually fail, but reading /proc/$pid/maps
+still works; so you can see things like detailed memory usage
+information and such, but you're not supposed to be able to directly
+peek into a running SSH client and inject data into the existing SSH
+connection, or steal the cryptographic keys for the current
+connection, or something like that.
 
-It doesn't break the ABI because keys loaded in the blacklist keyring
-can only happen with builtin hashes.  Moreover these builtin hashes will
-be checked by patch 10/10 at build time.
+> > I haven't seen a written explanation on ptrace modes but when I
+> > consulted Jann his explanation was:
+> >
+> > PTRACE_MODE_READ means you can inspect metadata about processes with
+> > the specified domain, across UID boundaries.
+> > PTRACE_MODE_ATTACH means you can fully impersonate processes with the
+> > specified domain, across UID boundaries.
+>
+> Maybe this would be a good start to document expectations. Some more
+> practical examples where the difference is visible would be great as
+> well.
 
-This patch is also important to remove a false sense of security and
-warns about mis-blacklisted certificates or binaries:
-https://lore.kernel.org/lkml/c9664a67-61b7-6b4a-86d7-5aca9ff06fa5@digikod.net/
-
-Hot-patching keys doesn't seem a good idea, especially when these keys
-are signed. Moreover, it would bring additional complexity and will
-require to change the core of the key management.
-
-> 
-> /Jarkko
-> 
+Before documenting the behavior, it would be a good idea to figure out
+what to do with perf_event_open(). That one's weird in that it only
+requires PTRACE_MODE_READ, but actually allows you to sample stuff
+like userspace stack and register contents (if perf_event_paranoid is
+1 or 2). Maybe for SELinux things (and maybe also for Yama), there
+should be a level in between that allows fully inspecting the process
+(for purposes like profiling) but without the ability to corrupt its
+memory or registers or things like that. Or maybe perf_event_open()
+should just use the ATTACH mode.
