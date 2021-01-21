@@ -2,129 +2,366 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 428E7C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 09:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB54EC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 13:22:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECF2B238EC
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 09:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 963B0206F7
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 13:22:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbhAUJTa (ORCPT
+        id S1731951AbhAUNWK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Jan 2021 04:19:30 -0500
-Received: from smtp-1909.mail.infomaniak.ch ([185.125.25.9]:59229 "EHLO
-        smtp-1909.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727283AbhAUJT2 (ORCPT
+        Thu, 21 Jan 2021 08:22:10 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53815 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731750AbhAUNV0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Jan 2021 04:19:28 -0500
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DLxdV4N3RzMqNgr;
-        Thu, 21 Jan 2021 10:18:22 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DLxdS702Gzlh8Tb;
-        Thu, 21 Jan 2021 10:18:20 +0100 (CET)
-Subject: Re: [PATCH v3 08/10] certs: Check that builtin blacklist hashes are
- valid
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thu, 21 Jan 2021 08:21:26 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1l2Zt6-0005g7-BI; Thu, 21 Jan 2021 13:20:36 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <20210114151909.2344974-1-mic@digikod.net>
- <20210114151909.2344974-9-mic@digikod.net> <YAe9egzT5D7B0swR@kernel.org>
- <11ce77c9-7b43-e2a0-55bc-c0035bf3d681@digikod.net>
- <YAjCbKwQf8nS+Nuu@kernel.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <c644f660-8b65-586d-42d8-45601ca58ca3@digikod.net>
-Date:   Thu, 21 Jan 2021 10:18:20 +0100
-User-Agent: 
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v6 04/40] capability: handle idmapped mounts
+Date:   Thu, 21 Jan 2021 14:19:23 +0100
+Message-Id: <20210121131959.646623-5-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-In-Reply-To: <YAjCbKwQf8nS+Nuu@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
+X-Patch-Hashes: v=1; h=sha256; i=ePMljlU6SgOW2CsGAJQU42bgWmfl/2527kQxnJ4/OsA=; m=uZrGytpJK66vmcdQIAh4cQdVJC13QtEwI23m6gY7HP0=; p=6gsyRJF9Cy+pgOpvfHsdU+9ldB5Vob1j3CDvrGaQbz4=; g=dc88c5c3ca2aa4fedbfca69f25f903ea5e4373f7
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9owAKCRCRxhvAZXjcoh1WAP4vJLa HkhHZNwp7eLXt0Xqy0n3knklgTzgBa1xAE/mhUAEAhA7WVoNwiY7xYMqlb29ha7Iy6LdtwwZPwqQw 1zu/LAA=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+In order to determine whether a caller holds privilege over a given
+inode the capability framework exposes the two helpers
+privileged_wrt_inode_uidgid() and capable_wrt_inode_uidgid(). The former
+verifies that the inode has a mapping in the caller's user namespace and
+the latter additionally verifies that the caller has the requested
+capability in their current user namespace.
+If the inode is accessed through an idmapped mount map it into the
+mount's user namespace. Afterwards the checks are identical to
+non-idmapped inodes. If the initial user namespace is passed all
+operations are a nop so non-idmapped mounts will not see a change in
+behavior.
 
-On 21/01/2021 00:53, Jarkko Sakkinen wrote:
-> On Wed, Jan 20, 2021 at 12:57:55PM +0100, Mickaël Salaün wrote:
->>
->> On 20/01/2021 06:19, Jarkko Sakkinen wrote:
->>> On Thu, Jan 14, 2021 at 04:19:07PM +0100, Mickaël Salaün wrote:
->>>> From: Mickaël Salaün <mic@linux.microsoft.com>
->>>>
->>>> Add and use a check-blacklist-hashes.awk script to make sure that the
->>>> builtin blacklist hashes will be approved by the run time blacklist
->>>> description checks.  This is useful to debug invalid hash formats, and
->>>> it make sure that previous hashes which could have been loaded in the
->>>> kernel (but ignored) are now noticed and deal with by the user.
->>>>
->>>> Cc: David Howells <dhowells@redhat.com>
->>>> Cc: David Woodhouse <dwmw2@infradead.org>
->>>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->>>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
->>>
->>> I get this with a self-signed cert:
->>>
->>> certs/Makefile:18: *** target pattern contains no '%'.  Stop.
->>>
->>> CONFIG_SYSTEM_BLACKLIST_HASH_LIST="tbs:8eed1340eef37c1dc84d996406ad05c7dbb3eade19132d688408ca2f63904869"
->>
->> As said in the Kconfig documentation for
->> CONFIG_SYSTEM_BLACKLIST_HASH_LIST, you need to provide a file with the
->> list, not to set the string directly in the configuration variable. This
->> patch series didn't change this behavior. The same kind of macros are
->> used for CONFIG_MODULE_SIG_KEY.
-> 
-> OK, the documentation just states that:
-> 
-> "Hashes to be preloaded into the system blacklist keyring"
-> 
-> No mention about a file. I'd add a patch to update this documentation.
+Link: https://lore.kernel.org/r/20210112220124.837960-11-christian.brauner@ubuntu.com
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+- Christoph Hellwig <hch@lst.de>:
+  - Don't pollute the vfs with additional helpers simply extend the existing
+    helpers with an additional argument and switch all callers.
 
-I was referring to the full description:
+/* v3 */
+unchanged
 
-config SYSTEM_BLACKLIST_HASH_LIST
-	string "Hashes to be preloaded into the system blacklist keyring"
-	depends on SYSTEM_BLACKLIST_KEYRING
-	help
-	  If set, this option should be the filename of a list of hashes in the
-	  form "<hash>", "<hash>", ... .  This will be included into a C
-	  wrapper to incorporate the list into the kernel.  Each <hash> should
-	  be a string of hex digits.
+/* v4 */
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
-…but the short description doesn't mention filename.
+/* v5 */
+unchanged
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
 
-> 
->>
->>>
->>> I used the script in 10/10 to test this, which is another
->>> reamark: the patches are in invalid order, as you need to
->>> apply 10/10 before you can test  8/10.
->>
->> I'll move patch 10/10 earlier but this kind of formatting was already
->> required (but silently ignored) for this option to be really taken into
->> account. Only the kernel code was available to understand how to
->> effectively create such hash.
-> 
-> Great, thanks.
-> 
-> 
->>>
->>> /Jarkko
->>>
-> 
-> 
-> /Jarkko
-> 
+/* v6 */
+base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+
+- Christoph Hellwig <hch@lst.de>:
+  - Remove "extern" from headers.
+  - Wrap lines over 80 chars.
+---
+ fs/attr.c                  |  8 ++++----
+ fs/exec.c                  |  3 ++-
+ fs/inode.c                 |  3 ++-
+ fs/namei.c                 | 13 ++++++++-----
+ fs/overlayfs/super.c       |  2 +-
+ fs/posix_acl.c             |  2 +-
+ fs/xfs/xfs_ioctl.c         |  2 +-
+ include/linux/capability.h |  7 +++++--
+ kernel/capability.c        | 14 +++++++++-----
+ security/commoncap.c       |  5 +++--
+ 10 files changed, 36 insertions(+), 23 deletions(-)
+
+diff --git a/fs/attr.c b/fs/attr.c
+index b4bbdbd4c8ca..d270f640a192 100644
+--- a/fs/attr.c
++++ b/fs/attr.c
+@@ -23,7 +23,7 @@ static bool chown_ok(const struct inode *inode, kuid_t uid)
+ 	if (uid_eq(current_fsuid(), inode->i_uid) &&
+ 	    uid_eq(uid, inode->i_uid))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_CHOWN))
+ 		return true;
+ 	if (uid_eq(inode->i_uid, INVALID_UID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+@@ -36,7 +36,7 @@ static bool chgrp_ok(const struct inode *inode, kgid_t gid)
+ 	if (uid_eq(current_fsuid(), inode->i_uid) &&
+ 	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
+ 		return true;
+-	if (capable_wrt_inode_uidgid(inode, CAP_CHOWN))
++	if (capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_CHOWN))
+ 		return true;
+ 	if (gid_eq(inode->i_gid, INVALID_GID) &&
+ 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
+@@ -92,7 +92,7 @@ int setattr_prepare(struct dentry *dentry, struct iattr *attr)
+ 		/* Also check the setgid bit! */
+ 		if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
+ 				inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			attr->ia_mode &= ~S_ISGID;
+ 	}
+ 
+@@ -193,7 +193,7 @@ void setattr_copy(struct inode *inode, const struct iattr *attr)
+ 		umode_t mode = attr->ia_mode;
+ 
+ 		if (!in_group_p(inode->i_gid) &&
+-		    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 		inode->i_mode = mode;
+ 	}
+diff --git a/fs/exec.c b/fs/exec.c
+index 5d4d52039105..89d4780ff48f 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1411,7 +1411,8 @@ void would_dump(struct linux_binprm *bprm, struct file *file)
+ 		/* Ensure mm->user_ns contains the executable */
+ 		user_ns = old = bprm->mm->user_ns;
+ 		while ((user_ns != &init_user_ns) &&
+-		       !privileged_wrt_inode_uidgid(user_ns, inode))
++		       !privileged_wrt_inode_uidgid(user_ns, &init_user_ns,
++						    inode))
+ 			user_ns = user_ns->parent;
+ 
+ 		if (old != user_ns) {
+diff --git a/fs/inode.c b/fs/inode.c
+index 6442d97d9a4a..cd40cbf87ce4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2146,7 +2146,8 @@ void inode_init_owner(struct inode *inode, const struct inode *dir,
+ 			mode |= S_ISGID;
+ 		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+ 			 !in_group_p(inode->i_gid) &&
+-			 !capable_wrt_inode_uidgid(dir, CAP_FSETID))
++			 !capable_wrt_inode_uidgid(&init_user_ns, dir,
++						   CAP_FSETID))
+ 			mode &= ~S_ISGID;
+ 	} else
+ 		inode->i_gid = current_fsgid();
+diff --git a/fs/namei.c b/fs/namei.c
+index 78443a85480a..fd4724bce4f5 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -357,10 +357,11 @@ int generic_permission(struct inode *inode, int mask)
+ 	if (S_ISDIR(inode->i_mode)) {
+ 		/* DACs are overridable for directories */
+ 		if (!(mask & MAY_WRITE))
+-			if (capable_wrt_inode_uidgid(inode,
++			if (capable_wrt_inode_uidgid(&init_user_ns, inode,
+ 						     CAP_DAC_READ_SEARCH))
+ 				return 0;
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_OVERRIDE))
+ 			return 0;
+ 		return -EACCES;
+ 	}
+@@ -370,7 +371,8 @@ int generic_permission(struct inode *inode, int mask)
+ 	 */
+ 	mask &= MAY_READ | MAY_WRITE | MAY_EXEC;
+ 	if (mask == MAY_READ)
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_READ_SEARCH))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_READ_SEARCH))
+ 			return 0;
+ 	/*
+ 	 * Read/write DACs are always overridable.
+@@ -378,7 +380,8 @@ int generic_permission(struct inode *inode, int mask)
+ 	 * at least one exec bit set.
+ 	 */
+ 	if (!(mask & MAY_EXEC) || (inode->i_mode & S_IXUGO))
+-		if (capable_wrt_inode_uidgid(inode, CAP_DAC_OVERRIDE))
++		if (capable_wrt_inode_uidgid(&init_user_ns, inode,
++					     CAP_DAC_OVERRIDE))
+ 			return 0;
+ 
+ 	return -EACCES;
+@@ -2659,7 +2662,7 @@ int __check_sticky(struct inode *dir, struct inode *inode)
+ 		return 0;
+ 	if (uid_eq(dir->i_uid, fsuid))
+ 		return 0;
+-	return !capable_wrt_inode_uidgid(inode, CAP_FOWNER);
++	return !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FOWNER);
+ }
+ EXPORT_SYMBOL(__check_sticky);
+ 
+diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
+index 2bd570cbe8a4..88d877787770 100644
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@ -1017,7 +1017,7 @@ ovl_posix_acl_xattr_set(const struct xattr_handler *handler,
+ 	if (unlikely(inode->i_mode & S_ISGID) &&
+ 	    handler->flags == ACL_TYPE_ACCESS &&
+ 	    !in_group_p(inode->i_gid) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_FSETID)) {
++	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID)) {
+ 		struct iattr iattr = { .ia_valid = ATTR_KILL_SGID };
+ 
+ 		err = ovl_setattr(dentry, &iattr);
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index 95882b3f5f62..4ca6d53c6f0a 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -656,7 +656,7 @@ int posix_acl_update_mode(struct inode *inode, umode_t *mode_p,
+ 	if (error == 0)
+ 		*acl = NULL;
+ 	if (!in_group_p(inode->i_gid) &&
+-	    !capable_wrt_inode_uidgid(inode, CAP_FSETID))
++	    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 		mode &= ~S_ISGID;
+ 	*mode_p = mode;
+ 	return 0;
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 3fbd98f61ea5..97bd29fc8c43 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1502,7 +1502,7 @@ xfs_ioctl_setattr(
+ 	 */
+ 
+ 	if ((VFS_I(ip)->i_mode & (S_ISUID|S_ISGID)) &&
+-	    !capable_wrt_inode_uidgid(VFS_I(ip), CAP_FSETID))
++	    !capable_wrt_inode_uidgid(&init_user_ns, VFS_I(ip), CAP_FSETID))
+ 		VFS_I(ip)->i_mode &= ~(S_ISUID|S_ISGID);
+ 
+ 	/* Change the ownerships and register project quota modifications */
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index b2f698915c0f..62bfa3ed84d7 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -247,8 +247,11 @@ static inline bool ns_capable_setid(struct user_namespace *ns, int cap)
+ 	return true;
+ }
+ #endif /* CONFIG_MULTIUSER */
+-extern bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode);
+-extern bool capable_wrt_inode_uidgid(const struct inode *inode, int cap);
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 struct user_namespace *mnt_userns,
++				 const struct inode *inode);
++bool capable_wrt_inode_uidgid(struct user_namespace *mnt_userns,
++			      const struct inode *inode, int cap);
+ extern bool file_ns_capable(const struct file *file, struct user_namespace *ns, int cap);
+ extern bool ptracer_capable(struct task_struct *tsk, struct user_namespace *ns);
+ static inline bool perfmon_capable(void)
+diff --git a/kernel/capability.c b/kernel/capability.c
+index de7eac903a2a..46a361dde042 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -484,10 +484,12 @@ EXPORT_SYMBOL(file_ns_capable);
+  *
+  * Return true if the inode uid and gid are within the namespace.
+  */
+-bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *inode)
++bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
++				 struct user_namespace *mnt_userns,
++				 const struct inode *inode)
+ {
+-	return kuid_has_mapping(ns, inode->i_uid) &&
+-		kgid_has_mapping(ns, inode->i_gid);
++	return kuid_has_mapping(ns, i_uid_into_mnt(mnt_userns, inode)) &&
++	       kgid_has_mapping(ns, i_gid_into_mnt(mnt_userns, inode));
+ }
+ 
+ /**
+@@ -499,11 +501,13 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns, const struct inode *
+  * its own user namespace and that the given inode's uid and gid are
+  * mapped into the current user namespace.
+  */
+-bool capable_wrt_inode_uidgid(const struct inode *inode, int cap)
++bool capable_wrt_inode_uidgid(struct user_namespace *mnt_userns,
++			      const struct inode *inode, int cap)
+ {
+ 	struct user_namespace *ns = current_user_ns();
+ 
+-	return ns_capable(ns, cap) && privileged_wrt_inode_uidgid(ns, inode);
++	return ns_capable(ns, cap) &&
++	       privileged_wrt_inode_uidgid(ns, mnt_userns, inode);
+ }
+ EXPORT_SYMBOL(capable_wrt_inode_uidgid);
+ 
+diff --git a/security/commoncap.c b/security/commoncap.c
+index bacc1111d871..88ee345f7bfa 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -489,7 +489,7 @@ int cap_convert_nscap(struct dentry *dentry, const void **ivalue, size_t size)
+ 		return -EINVAL;
+ 	if (!validheader(size, cap))
+ 		return -EINVAL;
+-	if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
++	if (!capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_SETFCAP))
+ 		return -EPERM;
+ 	if (size == XATTR_CAPS_SZ_2)
+ 		if (ns_capable(inode->i_sb->s_user_ns, CAP_SETFCAP))
+@@ -956,7 +956,8 @@ int cap_inode_removexattr(struct dentry *dentry, const char *name)
+ 		struct inode *inode = d_backing_inode(dentry);
+ 		if (!inode)
+ 			return -EINVAL;
+-		if (!capable_wrt_inode_uidgid(inode, CAP_SETFCAP))
++		if (!capable_wrt_inode_uidgid(&init_user_ns, inode,
++					      CAP_SETFCAP))
+ 			return -EPERM;
+ 		return 0;
+ 	}
+-- 
+2.30.0
+
