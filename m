@@ -2,138 +2,129 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6B5C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 06:39:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428E7C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 09:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1FE235E4
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 06:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF2B238EC
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 09:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbhAUGjA (ORCPT
+        id S1726668AbhAUJTa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Jan 2021 01:39:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387519AbhATXpp (ORCPT
+        Thu, 21 Jan 2021 04:19:30 -0500
+Received: from smtp-1909.mail.infomaniak.ch ([185.125.25.9]:59229 "EHLO
+        smtp-1909.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727283AbhAUJT2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 18:45:45 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3FF75221FE;
-        Wed, 20 Jan 2021 23:44:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611186302;
-        bh=DtYGGvkksfs7vXommXeJwl91lOsFd1rEuyBTgJv2+l0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E70AnGgrCqxaoh1vWdlhGmZ2hd7h/FB84wv2240pZVLQUYmrHgMKATyaqSOkK85F/
-         efCn9nc8j0I9yyif6cEaIBQ+Y8LWSf+T/dqeBGKToiPaLLnNeBV1+7hwW5AxIM/qIi
-         msPEsJTYyd/Wx5bu8Da6KODI7Zbxlq/djYsCS3CT/WKtcjJxGMw81TsvZN0B0zv+fH
-         yq1FOKDdleusG2CT5IJQua2USHSh1tGzSkT6kTlaaNQQJ6+uyly9wZta2XxuOIhExl
-         bu2B36wdUYjoVyWPzvMvz8AUR+XPQHfHGGqkXP6OrYIbAY4z8Hgjlm7KTVPVLiVjYh
-         Vr6VDSf5UWiWw==
-Date:   Thu, 21 Jan 2021 01:44:56 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+        Thu, 21 Jan 2021 04:19:28 -0500
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DLxdV4N3RzMqNgr;
+        Thu, 21 Jan 2021 10:18:22 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DLxdS702Gzlh8Tb;
+        Thu, 21 Jan 2021 10:18:20 +0100 (CET)
+Subject: Re: [PATCH v3 08/10] certs: Check that builtin blacklist hashes are
+ valid
+To:     Jarkko Sakkinen <jarkko@kernel.org>
 Cc:     David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
         "David S . Miller" <davem@davemloft.net>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         James Morris <jmorris@namei.org>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
         "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
         linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ben Boeckel <mathstuf@gmail.com>
-Subject: Re: [PATCH v3 02/10] certs: Fix blacklisted hexadecimal hash string
- check
-Message-ID: <YAjAePytNXMC6HqX@kernel.org>
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 References: <20210114151909.2344974-1-mic@digikod.net>
- <20210114151909.2344974-3-mic@digikod.net>
- <YAem+DjBR92WG+bK@kernel.org>
- <05e3ce56-c27c-877d-8ebe-d088ba95f248@digikod.net>
+ <20210114151909.2344974-9-mic@digikod.net> <YAe9egzT5D7B0swR@kernel.org>
+ <11ce77c9-7b43-e2a0-55bc-c0035bf3d681@digikod.net>
+ <YAjCbKwQf8nS+Nuu@kernel.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <c644f660-8b65-586d-42d8-45601ca58ca3@digikod.net>
+Date:   Thu, 21 Jan 2021 10:18:20 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <YAjCbKwQf8nS+Nuu@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <05e3ce56-c27c-877d-8ebe-d088ba95f248@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 20, 2021 at 12:12:50PM +0100, Mickaël Salaün wrote:
-> 
-> On 20/01/2021 04:43, Jarkko Sakkinen wrote:
-> > On Thu, Jan 14, 2021 at 04:19:01PM +0100, Mickaël Salaün wrote:
-> >> From: Mickaël Salaün <mic@linux.microsoft.com>
-> >>
-> >> When looking for a blacklisted hash, bin2hex() is used to transform a
-> >> binary hash to an ascii (lowercase) hexadecimal string.  This string is
-> >> then search for in the description of the keys from the blacklist
-> >> keyring.  When adding a key to the blacklist keyring,
-> >> blacklist_vet_description() checks the hash prefix and the hexadecimal
-> >> string, but not that this string is lowercase.  It is then valid to set
-> >> hashes with uppercase hexadecimal, which will be silently ignored by the
-> >> kernel.
-> >>
-> >> Add an additional check to blacklist_vet_description() to check that
-> >> hexadecimal strings are in lowercase.
-> >>
-> >> Cc: David Woodhouse <dwmw2@infradead.org>
-> >> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> >> Signed-off-by: David Howells <dhowells@redhat.com>
-> >> Reviewed-by: Ben Boeckel <mathstuf@gmail.com>
-> >> ---
-> >>
-> >> Changes since v2:
-> >> * Cherry-pick v1 patch from
-> >>   https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
-> >>   to rebase on v5.11-rc3.
-> >> * Rearrange Cc order.
-> >> ---
-> >>  certs/blacklist.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> >> index 2719fb2fbc1c..a888b934a1cd 100644
-> >> --- a/certs/blacklist.c
-> >> +++ b/certs/blacklist.c
-> >> @@ -37,7 +37,7 @@ static int blacklist_vet_description(const char *desc)
-> >>  found_colon:
-> >>  	desc++;
-> >>  	for (; *desc; desc++) {
-> >> -		if (!isxdigit(*desc))
-> >> +		if (!isxdigit(*desc) || isupper(*desc))
-> >>  			return -EINVAL;
-> >>  		n++;
-> >>  	}
-> >> -- 
-> >> 2.30.0
-> >>
-> > 
-> > Shouldn't this rather convert the upper case to lower case? I don't like
-> > the ABI break that this causes.
-> 
-> It doesn't break the ABI because keys loaded in the blacklist keyring
-> can only happen with builtin hashes.  Moreover these builtin hashes will
-> be checked by patch 10/10 at build time.
 
-Right the patches are just out of order then.
+On 21/01/2021 00:53, Jarkko Sakkinen wrote:
+> On Wed, Jan 20, 2021 at 12:57:55PM +0100, MickaÃ«l SalaÃ¼n wrote:
+>>
+>> On 20/01/2021 06:19, Jarkko Sakkinen wrote:
+>>> On Thu, Jan 14, 2021 at 04:19:07PM +0100, MickaÃ«l SalaÃ¼n wrote:
+>>>> From: MickaÃ«l SalaÃ¼n <mic@linux.microsoft.com>
+>>>>
+>>>> Add and use a check-blacklist-hashes.awk script to make sure that the
+>>>> builtin blacklist hashes will be approved by the run time blacklist
+>>>> description checks.  This is useful to debug invalid hash formats, and
+>>>> it make sure that previous hashes which could have been loaded in the
+>>>> kernel (but ignored) are now noticed and deal with by the user.
+>>>>
+>>>> Cc: David Howells <dhowells@redhat.com>
+>>>> Cc: David Woodhouse <dwmw2@infradead.org>
+>>>> Signed-off-by: MickaÃ«l SalaÃ¼n <mic@linux.microsoft.com>
+>>>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+>>>
+>>> I get this with a self-signed cert:
+>>>
+>>> certs/Makefile:18: *** target pattern contains no '%'.  Stop.
+>>>
+>>> CONFIG_SYSTEM_BLACKLIST_HASH_LIST="tbs:8eed1340eef37c1dc84d996406ad05c7dbb3eade19132d688408ca2f63904869"
+>>
+>> As said in the Kconfig documentation for
+>> CONFIG_SYSTEM_BLACKLIST_HASH_LIST, you need to provide a file with the
+>> list, not to set the string directly in the configuration variable. This
+>> patch series didn't change this behavior. The same kind of macros are
+>> used for CONFIG_MODULE_SIG_KEY.
+> 
+> OK, the documentation just states that:
+> 
+> "Hashes to be preloaded into the system blacklist keyring"
+> 
+> No mention about a file. I'd add a patch to update this documentation.
 
-/Jarkko
+I was referring to the full description:
+
+config SYSTEM_BLACKLIST_HASH_LIST
+	string "Hashes to be preloaded into the system blacklist keyring"
+	depends on SYSTEM_BLACKLIST_KEYRING
+	help
+	  If set, this option should be the filename of a list of hashes in the
+	  form "<hash>", "<hash>", ... .  This will be included into a C
+	  wrapper to incorporate the list into the kernel.  Each <hash> should
+	  be a string of hex digits.
+
+â€¦but the short description doesn't mention filename.
 
 > 
-> This patch is also important to remove a false sense of security and
-> warns about mis-blacklisted certificates or binaries:
-> https://lore.kernel.org/lkml/c9664a67-61b7-6b4a-86d7-5aca9ff06fa5@digikod.net/
+>>
+>>>
+>>> I used the script in 10/10 to test this, which is another
+>>> reamark: the patches are in invalid order, as you need to
+>>> apply 10/10 before you can test  8/10.
+>>
+>> I'll move patch 10/10 earlier but this kind of formatting was already
+>> required (but silently ignored) for this option to be really taken into
+>> account. Only the kernel code was available to understand how to
+>> effectively create such hash.
 > 
-> Hot-patching keys doesn't seem a good idea, especially when these keys
-> are signed. Moreover, it would bring additional complexity and will
-> require to change the core of the key management.
+> Great, thanks.
 > 
-> > 
-> > /Jarkko
-> > 
+> 
+>>>
+>>> /Jarkko
+>>>
+> 
+> 
+> /Jarkko
 > 
