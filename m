@@ -2,121 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D536DC43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 15:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D81FC4332D
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 15:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD14923A01
+	by mail.kernel.org (Postfix) with ESMTP id EEEB023A04
 	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 15:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732611AbhAUPWu (ORCPT
+        id S1732796AbhAUPUp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Jan 2021 10:22:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732456AbhAUPWm (ORCPT
+        Thu, 21 Jan 2021 10:20:45 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54651 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732219AbhAUN0O (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Jan 2021 10:22:42 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B1976238E3;
-        Thu, 21 Jan 2021 15:22:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611242521;
-        bh=e1ilRiA5h3unhmKhvZR7+3hv6JFsOS3SCqU2d1CFl+U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A1dYt9RSwiBIFlzecPP0bgBiCCg8/4rSint8Wob/6NthzWFOUvUY0ta36Qgtr4UK7
-         pzSokf/QnuZZHOLadJ3Vp7Zmlw768vHRL9P7trP1LwiMyjv0k5tMnasZAOwDVRDt+z
-         9I4188bALSILhVy5tAuQ7MS7q/rrKF6PAWJlc2pry2A/5AkJTalz9vkqUOoUozMvN5
-         k8i0TIrTrwXZtBRrYBktTqAw590mnAaI+vOAjduF5cXEPYrnXmOMUMxMtP2FykATQV
-         2jEQblWME+jW2vROJagChuyqrh5CF/esuwheeHlp6k9MfWBCnlsv/MvJMMpOiQe1BI
-         ovSu0aL1HrGFQ==
-Date:   Thu, 21 Jan 2021 17:21:58 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thu, 21 Jan 2021 08:26:14 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1l2Zu9-0005g7-Nn; Thu, 21 Jan 2021 13:21:41 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 08/10] certs: Check that builtin blacklist hashes are
- valid
-Message-ID: <YAmcFk9r8sUvT7U4@kernel.org>
-References: <20210114151909.2344974-1-mic@digikod.net>
- <20210114151909.2344974-9-mic@digikod.net>
- <YAe9egzT5D7B0swR@kernel.org>
- <11ce77c9-7b43-e2a0-55bc-c0035bf3d681@digikod.net>
- <YAjCbKwQf8nS+Nuu@kernel.org>
- <c644f660-8b65-586d-42d8-45601ca58ca3@digikod.net>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v6 20/40] init: handle idmapped mounts
+Date:   Thu, 21 Jan 2021 14:19:39 +0100
+Message-Id: <20210121131959.646623-21-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patch-Hashes: v=1; h=sha256; i=K1Mmb+2iBnpojBmIU4SJaafXPX8O2CFx1CDw+utpuOU=; m=S5fr/22/m+WbOwFrUpUHXheqOF01JiKNUA5zB/hY/Is=; p=MZSdRyOX771MwH+GLlcjB+0DrEr2A+58o5/RX/qOHFw=; g=45d6fad6f6d32f07d4014060b83492f4e5803561
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9pQAKCRCRxhvAZXjcovuOAQD0vz6 qwrpIJ0cuKYpZaxNYnIKAkRlsiy3S2ImpIjxs5wEAx6MHynYZhSK9hn2FPNdNgboF6ArU1F+IBR0A AU0LGgo=
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c644f660-8b65-586d-42d8-45601ca58ca3@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 21, 2021 at 10:18:20AM +0100, Mickaël Salaün wrote:
-> 
-> On 21/01/2021 00:53, Jarkko Sakkinen wrote:
-> > On Wed, Jan 20, 2021 at 12:57:55PM +0100, Mickaël Salaün wrote:
-> >>
-> >> On 20/01/2021 06:19, Jarkko Sakkinen wrote:
-> >>> On Thu, Jan 14, 2021 at 04:19:07PM +0100, Mickaël Salaün wrote:
-> >>>> From: Mickaël Salaün <mic@linux.microsoft.com>
-> >>>>
-> >>>> Add and use a check-blacklist-hashes.awk script to make sure that the
-> >>>> builtin blacklist hashes will be approved by the run time blacklist
-> >>>> description checks.  This is useful to debug invalid hash formats, and
-> >>>> it make sure that previous hashes which could have been loaded in the
-> >>>> kernel (but ignored) are now noticed and deal with by the user.
-> >>>>
-> >>>> Cc: David Howells <dhowells@redhat.com>
-> >>>> Cc: David Woodhouse <dwmw2@infradead.org>
-> >>>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> >>>> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
-> >>>
-> >>> I get this with a self-signed cert:
-> >>>
-> >>> certs/Makefile:18: *** target pattern contains no '%'.  Stop.
-> >>>
-> >>> CONFIG_SYSTEM_BLACKLIST_HASH_LIST="tbs:8eed1340eef37c1dc84d996406ad05c7dbb3eade19132d688408ca2f63904869"
-> >>
-> >> As said in the Kconfig documentation for
-> >> CONFIG_SYSTEM_BLACKLIST_HASH_LIST, you need to provide a file with the
-> >> list, not to set the string directly in the configuration variable. This
-> >> patch series didn't change this behavior. The same kind of macros are
-> >> used for CONFIG_MODULE_SIG_KEY.
-> > 
-> > OK, the documentation just states that:
-> > 
-> > "Hashes to be preloaded into the system blacklist keyring"
-> > 
-> > No mention about a file. I'd add a patch to update this documentation.
-> 
-> I was referring to the full description:
-> 
-> config SYSTEM_BLACKLIST_HASH_LIST
-> 	string "Hashes to be preloaded into the system blacklist keyring"
-> 	depends on SYSTEM_BLACKLIST_KEYRING
-> 	help
-> 	  If set, this option should be the filename of a list of hashes in the
-> 	  form "<hash>", "<hash>", ... .  This will be included into a C
-> 	  wrapper to incorporate the list into the kernel.  Each <hash> should
-> 	  be a string of hex digits.
-> 
-> …but the short description doesn't mention filename.
+Enable the init helpers to handle idmapped mounts by passing down the
+mount's user namespace. If the initial user namespace is passed nothing
+changes so non-idmapped mounts will see identical behavior as before.
 
-Aah.
+Link: https://lore.kernel.org/r/20210112220124.837960-29-christian.brauner@ubuntu.com
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+/* v2 */
+patch introduced
 
-Anyway, I'll test the next version. Now all should be clear how
-to approach that. Thanks.
+/* v3 */
+unchanged
 
-/Jarkko
+/* v4 */
+unchanged
+
+/* v5 */
+unchanged
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+
+/* v6 */
+base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+
+- Christoph Hellwig <hch@lst.de>:
+  - Use new path_permission() helper.
+---
+ fs/init.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/fs/init.c b/fs/init.c
+index e65452750fa5..5c36adaa9b44 100644
+--- a/fs/init.c
++++ b/fs/init.c
+@@ -157,8 +157,8 @@ int __init init_mknod(const char *filename, umode_t mode, unsigned int dev)
+ 		mode &= ~current_umask();
+ 	error = security_path_mknod(&path, dentry, mode, dev);
+ 	if (!error)
+-		error = vfs_mknod(&init_user_ns, path.dentry->d_inode, dentry,
+-				  mode, new_decode_dev(dev));
++		error = vfs_mknod(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				  dentry, mode, new_decode_dev(dev));
+ 	done_path_create(&path, dentry);
+ 	return error;
+ }
+@@ -167,6 +167,7 @@ int __init init_link(const char *oldname, const char *newname)
+ {
+ 	struct dentry *new_dentry;
+ 	struct path old_path, new_path;
++	struct user_namespace *mnt_userns;
+ 	int error;
+ 
+ 	error = kern_path(oldname, 0, &old_path);
+@@ -181,14 +182,15 @@ int __init init_link(const char *oldname, const char *newname)
+ 	error = -EXDEV;
+ 	if (old_path.mnt != new_path.mnt)
+ 		goto out_dput;
+-	error = may_linkat(&init_user_ns, &old_path);
++	mnt_userns = mnt_user_ns(new_path.mnt);
++	error = may_linkat(mnt_userns, &old_path);
+ 	if (unlikely(error))
+ 		goto out_dput;
+ 	error = security_path_link(old_path.dentry, &new_path, new_dentry);
+ 	if (error)
+ 		goto out_dput;
+-	error = vfs_link(old_path.dentry, &init_user_ns,
+-			 new_path.dentry->d_inode, new_dentry, NULL);
++	error = vfs_link(old_path.dentry, mnt_userns, new_path.dentry->d_inode,
++			 new_dentry, NULL);
+ out_dput:
+ 	done_path_create(&new_path, new_dentry);
+ out:
+@@ -207,8 +209,8 @@ int __init init_symlink(const char *oldname, const char *newname)
+ 		return PTR_ERR(dentry);
+ 	error = security_path_symlink(&path, dentry, oldname);
+ 	if (!error)
+-		error = vfs_symlink(&init_user_ns, path.dentry->d_inode, dentry,
+-				    oldname);
++		error = vfs_symlink(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				    dentry, oldname);
+ 	done_path_create(&path, dentry);
+ 	return error;
+ }
+@@ -231,8 +233,8 @@ int __init init_mkdir(const char *pathname, umode_t mode)
+ 		mode &= ~current_umask();
+ 	error = security_path_mkdir(&path, dentry, mode);
+ 	if (!error)
+-		error = vfs_mkdir(&init_user_ns, path.dentry->d_inode, dentry,
+-				  mode);
++		error = vfs_mkdir(mnt_user_ns(path.mnt), path.dentry->d_inode,
++				  dentry, mode);
+ 	done_path_create(&path, dentry);
+ 	return error;
+ }
+-- 
+2.30.0
+
