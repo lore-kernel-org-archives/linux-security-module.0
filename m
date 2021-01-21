@@ -2,265 +2,422 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEA0C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 20:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC7DC43381
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 20:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8B1B23A54
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 20:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECFEE23A5E
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 20:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbhAUUFo (ORCPT
+        id S1727182AbhAUUw0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Jan 2021 15:05:44 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:48386 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbhAUUDf (ORCPT
+        Thu, 21 Jan 2021 15:52:26 -0500
+Received: from smtp-bc0c.mail.infomaniak.ch ([45.157.188.12]:52007 "EHLO
+        smtp-bc0c.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726882AbhAUUwU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Jan 2021 15:03:35 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id ACB1020B7192;
-        Thu, 21 Jan 2021 12:02:52 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ACB1020B7192
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1611259373;
-        bh=84PuZ9THBM7C7BDS14/NZVcdEbnd3n4d/+WYQmnI1Zs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qWKNVGNflSXeaqnZItzC9Kf+2PWvra2B0D9jjxUV752yTPtKq/Sq9ecrhgSy3VEY/
-         UTYZ7teXoiuOZg1YiJppGvVM+GClnb7hrs8am/dMv3hVl9eJzenu4++VncOKJe+R0a
-         YioPeElPfJz32laPhxjbamqRmrIpWwMsVVst5dIw=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, tusharsu@linux.microsoft.com
-Cc:     tyhicks@linux.microsoft.com, casey@schaufler-ca.com,
-        agk@redhat.com, snitzer@redhat.com, gmazyland@gmail.com,
-        sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selinux: measure state and policy capabilities
-Date:   Thu, 21 Jan 2021 12:01:50 -0800
-Message-Id: <20210121200150.2448-1-nramas@linux.microsoft.com>
+        Thu, 21 Jan 2021 15:52:20 -0500
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DMF194n01zMpwdQ;
+        Thu, 21 Jan 2021 21:51:25 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DMF181TcGzlh8T2;
+        Thu, 21 Jan 2021 21:51:24 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v27 01/12] landlock: Add object management
+Date:   Thu, 21 Jan 2021 21:51:08 +0100
+Message-Id: <20210121205119.793296-2-mic@digikod.net>
 X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210121205119.793296-1-mic@digikod.net>
+References: <20210121205119.793296-1-mic@digikod.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SELinux stores the configuration state and the policy capabilities
-in kernel memory.  Changes to this data at runtime would have an impact
-on the security guarantees provided by SELinux.  Measuring SELinux
-configuration state and policy capabilities through IMA subsystem
-provides a tamper-resistant way for an attestation service to remotely
-validate the runtime state.
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Measure the configuration state and policy capabilities by calling
-the IMA hook ima_measure_critical_data().
+A Landlock object enables to identify a kernel object (e.g. an inode).
+A Landlock rule is a set of access rights allowed on an object.  Rules
+are grouped in rulesets that may be tied to a set of processes (i.e.
+subjects) to enforce a scoped access-control (i.e. a domain).
 
-To enable SELinux data measurement, the following steps are required:
+Because Landlock's goal is to empower any process (especially
+unprivileged ones) to sandbox themselves, we cannot rely on a
+system-wide object identification such as file extended attributes.
+Indeed, we need innocuous, composable and modular access-controls.
 
- 1, Add "ima_policy=critical_data" to the kernel command line arguments
-    to enable measuring SELinux data at boot time.
-    For example,
-      BOOT_IMAGE=/boot/vmlinuz-5.11.0-rc3+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
+The main challenge with these constraints is to identify kernel objects
+while this identification is useful (i.e. when a security policy makes
+use of this object).  But this identification data should be freed once
+no policy is using it.  This ephemeral tagging should not and may not be
+written in the filesystem.  We then need to manage the lifetime of a
+rule according to the lifetime of its objects.  To avoid a global lock,
+this implementation make use of RCU and counters to safely reference
+objects.
 
- 2, Add the following rule to /etc/ima/ima-policy
-       measure func=CRITICAL_DATA label=selinux
+A following commit uses this generic object management for inodes.
 
-Sample measurement of SELinux state and policy capabilities:
-
-10 2122...65d8 ima-buf sha256:13c2...1292 selinux-state 696e...303b
-
-To verify the measurement check the following:
-
-Execute the following command to extract the measured data
-from the IMA log for SELinux configuration (selinux-state).
-
-  grep "selinux-state" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6 | xxd -r -p
-
-The output should be a list of key-value pairs. For example,
- initialized=1;enabled=1;enforcing=0;checkreqprot=1;network_peer_controls=1;open_perms=1;extended_socket_class=1;always_check_network=0;cgroup_seclabel=1;nnp_nosuid_transition=1;genfs_seclabel_symlinks=0;
-
-To verify the measured data with the current SELinux state:
-
- => enabled should be set to 1 if /sys/fs/selinux folder exists,
-    0 otherwise
-
-For other entries, compare the integer value in the files
- => /sys/fs/selinux/enforce
- => /sys/fs/selinux/checkreqprot
-And, each of the policy capabilities files under
- => /sys/fs/selinux/policy_capabilities
-
-Note that the actual verification would be against an expected state
-and done on a system other than the measured system, typically
-requiring "initialized=1; enabled=1;enforcing=1;checkreqprot=0;" for
-a secure state and then whatever policy capabilities are actually set
-in the expected policy (which can be extracted from the policy itself
-via seinfo, for example).
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Serge E. Hallyn <serge@hallyn.com>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Jann Horn <jannh@google.com>
 ---
-This patch is based on
-commit e58bb688f2e4 "Merge branch 'measure-critical-data' into next-integrity"
-in "next-integrity-testing" branch
 
- security/selinux/hooks.c     |  5 +++
- security/selinux/ima.c       | 68 ++++++++++++++++++++++++++++++++++++
- security/selinux/selinuxfs.c | 10 ++++++
- 3 files changed, 83 insertions(+)
+Changes since v26:
+* Update Kconfig for landlock_enforce_ruleset_self(2).
+* Fix spelling.
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 644b17ec9e63..879a0d90615d 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -103,6 +103,7 @@
- #include "netlabel.h"
- #include "audit.h"
- #include "avc_ss.h"
-+#include "ima.h"
+Changes since v24:
+* Fix typo in comment (spotted by Jann Horn).
+* Add Reviewed-by: Jann Horn <jannh@google.com>
+
+Changes since v23:
+* Update landlock_create_object() to return error codes instead of NULL.
+  This help error handling in callers.
+* When using make oldconfig with a previous configuration already
+  including the CONFIG_LSM variable, no question is asked to update its
+  content.  Update the Kconfig help to warn about LSM stacking
+  configuration.
+* Constify variable (spotted by Vincent Dagonneau).
+
+Changes since v22:
+* Fix spelling (spotted by Jann Horn).
+
+Changes since v21:
+* Update Kconfig help.
+* Clean up comments.
+
+Changes since v18:
+* Account objects to kmemcg.
+
+Changes since v14:
+* Simplify the object, rule and ruleset management at the expense of a
+  less aggressive memory freeing (contributed by Jann Horn, with
+  additional modifications):
+  - Remove object->list aggregating the rules tied to an object.
+  - Remove landlock_get_object(), landlock_drop_object(),
+    {get,put}_object_cleaner() and landlock_rule_is_disabled().
+  - Rewrite landlock_put_object() to use a more simple mechanism
+    (no tricky RCU).
+  - Replace enum landlock_object_type and landlock_release_object() with
+    landlock_object_underops->release()
+  - Adjust unions and Sparse annotations.
+  Cf. https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
+* Merge struct landlock_rule into landlock_ruleset_elem to simplify the
+  rule management.
+* Constify variables.
+* Improve kernel documentation.
+* Cosmetic variable renames.
+* Remove the "default" in the Kconfig (suggested by Jann Horn).
+* Only use refcount_inc() through getter helpers.
+* Update Kconfig description.
+
+Changes since v13:
+* New dedicated implementation, removing the need for eBPF.
+
+Previous changes:
+https://lore.kernel.org/lkml/20190721213116.23476-6-mic@digikod.net/
+---
+ MAINTAINERS                | 10 +++++
+ security/Kconfig           |  1 +
+ security/Makefile          |  2 +
+ security/landlock/Kconfig  | 21 +++++++++
+ security/landlock/Makefile |  3 ++
+ security/landlock/object.c | 67 ++++++++++++++++++++++++++++
+ security/landlock/object.h | 91 ++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 195 insertions(+)
+ create mode 100644 security/landlock/Kconfig
+ create mode 100644 security/landlock/Makefile
+ create mode 100644 security/landlock/object.c
+ create mode 100644 security/landlock/object.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 00836f6452f0..74406a6bc6ee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9936,6 +9936,16 @@ F:	net/core/sock_map.c
+ F:	net/ipv4/tcp_bpf.c
+ F:	net/ipv4/udp_bpf.c
  
- struct selinux_state selinux_state;
- 
-@@ -7407,6 +7408,10 @@ int selinux_disable(struct selinux_state *state)
- 
- 	selinux_mark_disabled(state);
- 
-+	mutex_lock(&state->policy_mutex);
-+	selinux_ima_measure_state(state);
-+	mutex_unlock(&state->policy_mutex);
++LANDLOCK SECURITY MODULE
++M:	Mickaël Salaün <mic@digikod.net>
++L:	linux-security-module@vger.kernel.org
++S:	Supported
++W:	https://landlock.io
++T:	git https://github.com/landlock-lsm/linux.git
++F:	security/landlock/
++K:	landlock
++K:	LANDLOCK
 +
- 	pr_info("SELinux:  Disabled at runtime.\n");
+ LANTIQ / INTEL Ethernet drivers
+ M:	Hauke Mehrtens <hauke@hauke-m.de>
+ L:	netdev@vger.kernel.org
+diff --git a/security/Kconfig b/security/Kconfig
+index 7561f6f99f1d..15a4342b5d01 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -238,6 +238,7 @@ source "security/loadpin/Kconfig"
+ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
+ source "security/lockdown/Kconfig"
++source "security/landlock/Kconfig"
  
- 	/*
-diff --git a/security/selinux/ima.c b/security/selinux/ima.c
-index 03715893ff97..e65d462d2d30 100644
---- a/security/selinux/ima.c
-+++ b/security/selinux/ima.c
-@@ -12,6 +12,60 @@
- #include "security.h"
- #include "ima.h"
+ source "security/integrity/Kconfig"
  
+diff --git a/security/Makefile b/security/Makefile
+index 3baf435de541..c688f4907a1b 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -13,6 +13,7 @@ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+ subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+ subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
+ subdir-$(CONFIG_BPF_LSM)		+= bpf
++subdir-$(CONFIG_SECURITY_LANDLOCK)		+= landlock
+ 
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -32,6 +33,7 @@ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+ obj-$(CONFIG_BPF_LSM)			+= bpf/
++obj-$(CONFIG_SECURITY_LANDLOCK)	+= landlock/
+ 
+ # Object integrity file lists
+ subdir-$(CONFIG_INTEGRITY)		+= integrity
+diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+new file mode 100644
+index 000000000000..42a659e81196
+--- /dev/null
++++ b/security/landlock/Kconfig
+@@ -0,0 +1,21 @@
++# SPDX-License-Identifier: GPL-2.0-only
++
++config SECURITY_LANDLOCK
++	bool "Landlock support"
++	depends on SECURITY
++	select SECURITY_PATH
++	help
++	  Landlock is a safe sandboxing mechanism that enables processes to
++	  restrict themselves (and their future children) by gradually enforcing
++	  tailored access control policies.  A security policy is a set of access
++	  rights (e.g. open a file in read-only, make a directory, etc.) tied to a
++	  file hierarchy.  Such policy can be configured and enforced by any
++	  processes for themselves thanks to dedicated system calls:
++	  landlock_create_ruleset(), landlock_add_rule(), and
++	  landlock_enforce_ruleset_self().
++
++	  See Documentation/userspace-api/landlock.rst for further information.
++
++	  If you are unsure how to answer this question, answer N.  Otherwise, you
++	  should also prepend "landlock," to the content of CONFIG_LSM to enable
++	  Landlock at boot time.
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+new file mode 100644
+index 000000000000..cb6deefbf4c0
+--- /dev/null
++++ b/security/landlock/Makefile
+@@ -0,0 +1,3 @@
++obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
++
++landlock-y := object.o
+diff --git a/security/landlock/object.c b/security/landlock/object.c
+new file mode 100644
+index 000000000000..d674fdf9ff04
+--- /dev/null
++++ b/security/landlock/object.c
+@@ -0,0 +1,67 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * read_selinux_state - Read selinux configuration settings
++ * Landlock LSM - Object management
 + *
-+ * @state_str: Return the configuration settings.
-+ * @state_str_len: Size of the configuration settings string
-+ * @state: selinux_state
-+ *
-+ * Return 0 on success, error code on failure
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
 + */
-+static int read_selinux_state(char **state_str, int *state_str_len,
-+			      struct selinux_state *state)
++
++#include <linux/bug.h>
++#include <linux/compiler_types.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/rcupdate.h>
++#include <linux/refcount.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++
++#include "object.h"
++
++struct landlock_object *landlock_create_object(
++		const struct landlock_object_underops *const underops,
++		void *const underobj)
 +{
-+	char *buf;
-+	int i, buf_len, curr;
-+	bool initialized = selinux_initialized(state);
-+	bool enabled = !selinux_disabled(state);
-+	bool enforcing = enforcing_enabled(state);
-+	bool checkreqprot = checkreqprot_get(state);
++	struct landlock_object *new_object;
 +
-+	buf_len = snprintf(NULL, 0, "%s=%d;%s=%d;%s=%d;%s=%d;",
-+			   "initialized", initialized,
-+			   "enabled", enabled,
-+			   "enforcing", enforcing,
-+			   "checkreqprot", checkreqprot);
-+
-+	for (i = 0; i < __POLICYDB_CAPABILITY_MAX; i++) {
-+		buf_len += snprintf(NULL, 0, "%s=%d;",
-+				    selinux_policycap_names[i],
-+				    state->policycap[i]);
-+	}
-+	++buf_len;
-+
-+	buf = kzalloc(buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	curr = scnprintf(buf, buf_len, "%s=%d;%s=%d;%s=%d;%s=%d;",
-+			 "initialized", initialized,
-+			 "enabled", enabled,
-+			 "enforcing", enforcing,
-+			 "checkreqprot", checkreqprot);
-+
-+	for (i = 0; i < __POLICYDB_CAPABILITY_MAX; i++) {
-+		curr += scnprintf((buf + curr), (buf_len - curr), "%s=%d;",
-+				  selinux_policycap_names[i],
-+				  state->policycap[i]);
-+	}
-+
-+	*state_str = buf;
-+	*state_str_len = curr;
-+
-+	return 0;
++	if (WARN_ON_ONCE(!underops || !underobj))
++		return ERR_PTR(-ENOENT);
++	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
++	if (!new_object)
++		return ERR_PTR(-ENOMEM);
++	refcount_set(&new_object->usage, 1);
++	spin_lock_init(&new_object->lock);
++	new_object->underops = underops;
++	new_object->underobj = underobj;
++	return new_object;
 +}
 +
- /*
-  * selinux_ima_measure_state - Measure hash of the SELinux policy
-  *
-@@ -21,10 +75,24 @@
-  */
- void selinux_ima_measure_state(struct selinux_state *state)
- {
-+	char *state_str = NULL;
-+	int state_str_len;
- 	void *policy = NULL;
- 	size_t policy_len;
- 	int rc = 0;
- 
-+	rc = read_selinux_state(&state_str, &state_str_len, state);
-+	if (rc) {
-+		pr_err("SELinux: %s: failed to read state %d.\n",
-+			__func__, rc);
++/*
++ * The caller must own the object (i.e. thanks to object->usage) to safely put
++ * it.
++ */
++void landlock_put_object(struct landlock_object *const object)
++{
++	/*
++	 * The call to @object->underops->release(object) might sleep, e.g.
++	 * because of iput().
++	 */
++	might_sleep();
++	if (!object)
 +		return;
++
++	/*
++	 * If the @object's refcount cannot drop to zero, we can just decrement
++	 * the refcount without holding a lock. Otherwise, the decrement must
++	 * happen under @object->lock for synchronization with things like
++	 * get_inode_object().
++	 */
++	if (refcount_dec_and_lock(&object->usage, &object->lock)) {
++		__acquire(&object->lock);
++		/*
++		 * With @object->lock initially held, remove the reference from
++		 * @object->underobj to @object (if it still exists).
++		 */
++		object->underops->release(object);
++		kfree_rcu(object, rcu_free);
 +	}
++}
+diff --git a/security/landlock/object.h b/security/landlock/object.h
+new file mode 100644
+index 000000000000..56f17c51df01
+--- /dev/null
++++ b/security/landlock/object.h
+@@ -0,0 +1,91 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Object management
++ *
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ */
 +
-+	ima_measure_critical_data("selinux", "selinux-state",
-+				  state_str, state_str_len, false);
++#ifndef _SECURITY_LANDLOCK_OBJECT_H
++#define _SECURITY_LANDLOCK_OBJECT_H
 +
-+	kfree(state_str);
++#include <linux/compiler_types.h>
++#include <linux/refcount.h>
++#include <linux/spinlock.h>
 +
- 	/*
- 	 * Measure SELinux policy only after initialization is completed.
- 	 */
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 4bde570d56a2..8b561e1c2caa 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -41,6 +41,7 @@
- #include "security.h"
- #include "objsec.h"
- #include "conditional.h"
-+#include "ima.h"
- 
- enum sel_inos {
- 	SEL_ROOT_INO = 2,
-@@ -182,6 +183,10 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
- 		selinux_status_update_setenforce(state, new_value);
- 		if (!new_value)
- 			call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
++struct landlock_object;
 +
-+		mutex_lock(&state->policy_mutex);
-+		selinux_ima_measure_state(state);
-+		mutex_unlock(&state->policy_mutex);
- 	}
- 	length = count;
- out:
-@@ -762,6 +767,11 @@ static ssize_t sel_write_checkreqprot(struct file *file, const char __user *buf,
- 
- 	checkreqprot_set(fsi->state, (new_value ? 1 : 0));
- 	length = count;
++/**
++ * struct landlock_object_underops - Operations on an underlying object
++ */
++struct landlock_object_underops {
++	/**
++	 * @release: Releases the underlying object (e.g. iput() for an inode).
++	 */
++	void (*release)(struct landlock_object *const object)
++		__releases(object->lock);
++};
 +
-+	mutex_lock(&fsi->state->policy_mutex);
-+	selinux_ima_measure_state(fsi->state);
-+	mutex_unlock(&fsi->state->policy_mutex);
++/**
++ * struct landlock_object - Security blob tied to a kernel object
++ *
++ * The goal of this structure is to enable to tie a set of ephemeral access
++ * rights (pertaining to different domains) to a kernel object (e.g an inode)
++ * in a safe way.  This implies to handle concurrent use and modification.
++ *
++ * The lifetime of a &struct landlock_object depends of the rules referring to
++ * it.
++ */
++struct landlock_object {
++	/**
++	 * @usage: This counter is used to tie an object to the rules matching
++	 * it or to keep it alive while adding a new rule.  If this counter
++	 * reaches zero, this struct must not be modified, but this counter can
++	 * still be read from within an RCU read-side critical section.  When
++	 * adding a new rule to an object with a usage counter of zero, we must
++	 * wait until the pointer to this object is set to NULL (or recycled).
++	 */
++	refcount_t usage;
++	/**
++	 * @lock: Guards against concurrent modifications.  This lock must be
++	 * held from the time @usage drops to zero until any weak references
++	 * from @underobj to this object have been cleaned up.
++	 *
++	 * Lock ordering: inode->i_lock nests inside this.
++	 */
++	spinlock_t lock;
++	/**
++	 * @underobj: Used when cleaning up an object and to mark an object as
++	 * tied to its underlying kernel structure.  This pointer is protected
++	 * by @lock.  Cf. landlock_release_inodes() and release_inode().
++	 */
++	void *underobj;
++	union {
++		/**
++		 * @rcu_free: Enables lockless use of @usage, @lock and
++		 * @underobj from within an RCU read-side critical section.
++		 * @rcu_free and @underops are only used by
++		 * landlock_put_object().
++		 */
++		struct rcu_head rcu_free;
++		/**
++		 * @underops: Enables landlock_put_object() to release the
++		 * underlying object (e.g. inode).
++		 */
++		const struct landlock_object_underops *underops;
++	};
++};
 +
- out:
- 	kfree(page);
- 	return length;
++struct landlock_object *landlock_create_object(
++		const struct landlock_object_underops *const underops,
++		void *const underobj);
++
++void landlock_put_object(struct landlock_object *const object);
++
++static inline void landlock_get_object(struct landlock_object *const object)
++{
++	if (object)
++		refcount_inc(&object->usage);
++}
++
++#endif /* _SECURITY_LANDLOCK_OBJECT_H */
 -- 
 2.30.0
 
