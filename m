@@ -2,273 +2,211 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1022EC4321A
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F22EC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7251238A1
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C962D23719
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 00:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbhAUALI (ORCPT
+        id S1725863AbhAUAxC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 20 Jan 2021 19:11:08 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:51732 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730489AbhATVkE (ORCPT
+        Wed, 20 Jan 2021 19:53:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731633AbhAUAD2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 20 Jan 2021 16:40:04 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l2LC9-0034Ap-3R; Wed, 20 Jan 2021 14:39:17 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l2LC7-00GWBM-Sq; Wed, 20 Jan 2021 14:39:16 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     linux-security-module@vger.kernel.org
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Kees Cook <keescook@chromium.org>,
+        Wed, 20 Jan 2021 19:03:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C55DB2368A;
+        Thu, 21 Jan 2021 00:01:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1611187313;
+        bh=Eh0u5i8AW4x9ntLsFlUAc6rlbY2JykroCggN1fE25ec=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gZ2nE1nWc5IEdueOVVKR9vTP5loybR/I49ORFIwya9nGkp8IRtTWQXNmdnpsV9SHt
+         IbC4NVTSRTaW/UTjXdq3t02Fixqlc484JqdK3sdr59lnUVQTR5HL2nmYDC4pzq1Zdl
+         qtVGeiJMy2stNYuVaJGshQIh1w82JdOV4Txew7VIhlSAW1jXPry/NY4csB5Ch2gHbo
+         UifuHCqGdSgu/kcRvIlwwIsX4+vTLbjmba7Rh6/dmaKun51d+pSOHgGzYj48BPQMmL
+         N8XAe+Ze+T3z+dF15H49ScwHfVm4IiTfiLegna6iqRUOAFensVr6vH+u3F/YwcZ+rf
+         3owAiDsd4Zxqg==
+Date:   Thu, 21 Jan 2021 02:01:46 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
         James Morris <jmorris@namei.org>,
-        John Johansen <john.johansen@canonical.com>,
-        apparmor@lists.ubuntu.com, <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <87lfcn5mfz.fsf@x220.int.ebiederm.org>
-Date:   Wed, 20 Jan 2021 15:38:05 -0600
-In-Reply-To: <87lfcn5mfz.fsf@x220.int.ebiederm.org> (Eric W. Biederman's
-        message of "Wed, 20 Jan 2021 15:26:56 -0600")
-Message-ID: <87eeif5lxe.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v8 2/4] KEYS: trusted: Introduce TEE based Trusted Keys
+Message-ID: <YAjEaq+ZWD/eHU/x@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-3-git-send-email-sumit.garg@linaro.org>
+ <X/x+N0fgrzIZTeNi@kernel.org>
+ <CAFA6WYOUvWAZtYfR4q8beZFkX-CtdxqwJaRQM+GHNMDfQiEWOA@mail.gmail.com>
+ <X/+m6+m2/snYj9Vc@kernel.org>
+ <CAFA6WYNyirit_AFhoE+XR9PHw=OjRgEdXDqz1uanj_SN2NXeMw@mail.gmail.com>
+ <YAa0ys4YJcZtKdfF@kernel.org>
+ <YAeH2pb8szQyjusL@kernel.org>
+ <CAFA6WYP5G6NfGk96ePOC+2kpD6B+4hz9nywyUM9Nh=dJDYMiuA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1l2LC7-00GWBM-Sq;;;mid=<87eeif5lxe.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19JxT8+vqmhKq7/a7+VJ6sST9427zsCsPM=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [RFC][PATCH] apparmor: Enforce progressively tighter permissions for no_new_privs
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFA6WYP5G6NfGk96ePOC+2kpD6B+4hz9nywyUM9Nh=dJDYMiuA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Jan 20, 2021 at 12:53:28PM +0530, Sumit Garg wrote:
+> On Wed, 20 Jan 2021 at 07:01, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> >
+> > On Tue, Jan 19, 2021 at 12:30:42PM +0200, Jarkko Sakkinen wrote:
+> > > On Fri, Jan 15, 2021 at 11:32:31AM +0530, Sumit Garg wrote:
+> > > > On Thu, 14 Jan 2021 at 07:35, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > > > >
+> > > > > On Wed, Jan 13, 2021 at 04:47:00PM +0530, Sumit Garg wrote:
+> > > > > > Hi Jarkko,
+> > > > > >
+> > > > > > On Mon, 11 Jan 2021 at 22:05, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > > > > > >
+> > > > > > > On Tue, Nov 03, 2020 at 09:31:44PM +0530, Sumit Garg wrote:
+> > > > > > > > Add support for TEE based trusted keys where TEE provides the functionality
+> > > > > > > > to seal and unseal trusted keys using hardware unique key.
+> > > > > > > >
+> > > > > > > > Refer to Documentation/tee.txt for detailed information about TEE.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > > > > > >
+> > > > > > > I haven't yet got QEMU environment working with aarch64, this produces
+> > > > > > > just a blank screen:
+> > > > > > >
+> > > > > > > ./output/host/usr/bin/qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -kernel output/images/Image -initrd output/images/rootfs.cpio -serial stdio
+> > > > > > >
+> > > > > > > My BuildRoot fork for TPM and keyring testing is located over here:
+> > > > > > >
+> > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/buildroot-tpmdd.git/
+> > > > > > >
+> > > > > > > The "ARM version" is at this point in aarch64 branch. Over time I will
+> > > > > > > define tpmdd-x86_64 and tpmdd-aarch64 boards and everything will be then
+> > > > > > > in the master branch.
+> > > > > > >
+> > > > > > > To create identical images you just need to
+> > > > > > >
+> > > > > > > $ make tpmdd_defconfig && make
+> > > > > > >
+> > > > > > > Can you check if you see anything obviously wrong? I'm eager to test this
+> > > > > > > patch set, and in bigger picture I really need to have ready to run
+> > > > > > > aarch64 environment available.
+> > > > > >
+> > > > > > I would rather suggest you to follow steps listed here [1] as to test
+> > > > > > this feature on Qemu aarch64 we need to build firmwares such as TF-A,
+> > > > > > OP-TEE, UEFI etc. which are all integrated into OP-TEE Qemu build
+> > > > > > system [2]. And then it would be easier to migrate them to your
+> > > > > > buildroot environment as well.
+> > > > > >
+> > > > > > [1] https://lists.trustedfirmware.org/pipermail/op-tee/2020-May/000027.html
+> > > > > > [2] https://optee.readthedocs.io/en/latest/building/devices/qemu.html#qemu-v8
+> > > > > >
+> > > > > > -Sumit
+> > > > >
+> > > > > Can you provide 'keyctl_change'? Otherwise, the steps are easy to follow.
+> > > > >
+> > > >
+> > > > $ cat keyctl_change
+> > > > diff --git a/common.mk b/common.mk
+> > > > index aeb7b41..663e528 100644
+> > > > --- a/common.mk
+> > > > +++ b/common.mk
+> > > > @@ -229,6 +229,7 @@ BR2_PACKAGE_OPTEE_TEST_SDK ?= $(OPTEE_OS_TA_DEV_KIT_DIR)
+> > > >  BR2_PACKAGE_OPTEE_TEST_SITE ?= $(OPTEE_TEST_PATH)
+> > > >  BR2_PACKAGE_STRACE ?= y
+> > > >  BR2_TARGET_GENERIC_GETTY_PORT ?= $(if
+> > > > $(CFG_NW_CONSOLE_UART),ttyAMA$(CFG_NW_CONSOLE_UART),ttyAMA0)
+> > > > +BR2_PACKAGE_KEYUTILS := y
+> > > >
+> > > >  # All BR2_* variables from the makefile or the environment are appended to
+> > > >  # ../out-br/extra.conf. All values are quoted "..." except y and n.
+> > > > diff --git a/kconfigs/qemu.conf b/kconfigs/qemu.conf
+> > > > index 368c18a..832ab74 100644
+> > > > --- a/kconfigs/qemu.conf
+> > > > +++ b/kconfigs/qemu.conf
+> > > > @@ -20,3 +20,5 @@ CONFIG_9P_FS=y
+> > > >  CONFIG_9P_FS_POSIX_ACL=y
+> > > >  CONFIG_HW_RANDOM=y
+> > > >  CONFIG_HW_RANDOM_VIRTIO=y
+> > > > +CONFIG_TRUSTED_KEYS=y
+> > > > +CONFIG_ENCRYPTED_KEYS=y
+> > > >
+> > > > > After I've successfully tested 2/4, I'd suggest that you roll out one more
+> > > > > version and CC the documentation patch to Elaine and Mini, and clearly
+> > > > > remark in the commit message that TEE is a standard, with a link to the
+> > > > > specification.
+> > > > >
+> > > >
+> > > > Sure, I will roll out the next version after your testing.
+> > >
+> > > Thanks, I'll try this at instant, and give my feedback.
+> >
+> > I bump into this:
+> >
+> > $ make run-only
+> > ln -sf /home/jarkko/devel/tpm/optee/build/../out-br/images/rootfs.cpio.gz /home/jarkko/devel/tpm/optee/build/../out/bin/
+> > ln: failed to create symbolic link '/home/jarkko/devel/tpm/optee/build/../out/bin/': No such file or directory
+> > make: *** [Makefile:194: run-only] Error 1
+> >
+> 
+> Could you check if the following directory tree is built after
+> executing the below command?
+> 
+> $ make -j`nproc`
+> CFG_IN_TREE_EARLY_TAS=trusted_keys/f04a0fe7-1f5d-4b9b-abf7-619b85b4ce8c
+> 
+> $ tree out/bin/
+> out/bin/
+> ├── bl1.bin -> /home/sumit/build/optee/build/../trusted-firmware-a/build/qemu/release/bl1.bin
+> ├── bl2.bin -> /home/sumit/build/optee/build/../trusted-firmware-a/build/qemu/release/bl2.bin
+> ├── bl31.bin ->
+> /home/sumit/build/optee/build/../trusted-firmware-a/build/qemu/release/bl31.bin
+> ├── bl32.bin ->
+> /home/sumit/build/optee/build/../optee_os/out/arm/core/tee-header_v2.bin
+> ├── bl32_extra1.bin ->
+> /home/sumit/build/optee/build/../optee_os/out/arm/core/tee-pager_v2.bin
+> ├── bl32_extra2.bin ->
+> /home/sumit/build/optee/build/../optee_os/out/arm/core/tee-pageable_v2.bin
+> ├── bl33.bin ->
+> /home/sumit/build/optee/build/../edk2/Build/ArmVirtQemuKernel-AARCH64/RELEASE_GCC49/FV/QEMU_EFI.fd
+> ├── Image -> /home/sumit/build/optee/build/../linux/arch/arm64/boot/Image
+> └── rootfs.cpio.gz ->
+> /home/sumit/build/optee/build/../out-br/images/rootfs.cpio.gz
+> 
+> 0 directories, 9 files
+> 
+> -Sumit
 
-This should now Cc the correct email address for James Morris.
+I actually spotted a build error that was unnoticed last time:
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+make[2]: Entering directory '/home/jarkko/devel/tpm/optee/edk2/BaseTools/Tests'
+/bin/sh: 1: python: not found
 
-> The current understanding of apparmor with respect to no_new_privs is at
-> odds with how no_new_privs is implemented and understood by the rest of
-> the kernel.
->
-> The documentation of no_new_privs states:
->> With ``no_new_privs`` set, ``execve()`` promises not to grant the
->> privilege to do anything that could not have been done without the
->> execve call.
->
-> And reading through the kernel except for apparmor that description
-> matches what is implemented.
->
-> There are two major divergences of apparmor from this definition:
-> - proc_setattr enforces limitations when no_new_privs are set.
-> - the limitation is enforced from the apparent time when no_new_privs is
->   set instead of guaranteeing that each execve has progressively more
->   narrow permissions.
->
-> The code in apparmor that attempts to discover the apparmor label at the
-> point where no_new_privs is set is not robust.  The capture happens a
-> long time after no_new_privs is set.
->
-> Capturing the label at the point where no_new_privs is set is
-> practically impossible to implement robustly.  Today the rule is struct
-> cred can only be changed by it's current task.  Today
-> SECCOMP_FILTER_FLAG_TSYNC sets no_new_privs from another thread.  A
-> robust implementation would require changing something fundamental in
-> how creds are managed for SECCOMP_FILTER_FLAG_TSYNC to be able to
-> capture the cred at the point it is set.
->
-> Futhermore given the consistent documentation and how everything else
-> implements no_new_privs, not having the permissions get progressively
-> tighter is a footgun aimed at userspace.  I fully expect it to break any
-> security sensitive software that uses no_new_privs and was not
-> deliberately designed and tested against apparmor.
->
-> Avoid the questionable and hard to fix implementation and the
-> potential to confuse userspace by having no_new_privs enforce
-> progressinvely tighter permissions.
->
-> Fixes: 9fcf78cca198 ("apparmor: update domain transitions that are subsets of confinement at nnp")
-> Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
-> ---
->
-> I came accross this while examining the places cred_guard_mutex is
-> used and trying to find a way to make those code paths less insane.
->
-> If it would be more pallatable I would not mind removing the
-> task_no_new_privs test entirely from aa_change_hat and aa_change_profile
-> as those are not part of exec, so arguably no_new_privs should not care
-> about them at all.
->
-> Can we please get rid of the huge semantic wart and pain in the implementation?
->
->  security/apparmor/domain.c       | 39 ++++----------------------------
->  security/apparmor/include/task.h |  4 ----
->  security/apparmor/task.c         |  7 ------
->  3 files changed, 4 insertions(+), 46 deletions(-)
->
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index f919ebd042fd..8f77059bf890 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -869,17 +869,6 @@ int apparmor_bprm_creds_for_exec(struct linux_binprm *bprm)
->  
->  	label = aa_get_newest_label(cred_label(bprm->cred));
->  
-> -	/*
-> -	 * Detect no new privs being set, and store the label it
-> -	 * occurred under. Ideally this would happen when nnp
-> -	 * is set but there isn't a good way to do that yet.
-> -	 *
-> -	 * Testing for unconfined must be done before the subset test
-> -	 */
-> -	if ((bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS) && !unconfined(label) &&
-> -	    !ctx->nnp)
-> -		ctx->nnp = aa_get_label(label);
-> -
->  	/* buffer freed below, name is pointer into buffer */
->  	buffer = aa_get_buffer(false);
->  	if (!buffer) {
-> @@ -915,7 +904,7 @@ int apparmor_bprm_creds_for_exec(struct linux_binprm *bprm)
->  	 */
->  	if ((bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS) &&
->  	    !unconfined(label) &&
-> -	    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
-> +	    !aa_label_is_unconfined_subset(new, label)) {
->  		error = -EPERM;
->  		info = "no new privs";
->  		goto audit;
-> @@ -1158,16 +1147,6 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
->  	label = aa_get_newest_cred_label(cred);
->  	previous = aa_get_newest_label(ctx->previous);
->  
-> -	/*
-> -	 * Detect no new privs being set, and store the label it
-> -	 * occurred under. Ideally this would happen when nnp
-> -	 * is set but there isn't a good way to do that yet.
-> -	 *
-> -	 * Testing for unconfined must be done before the subset test
-> -	 */
-> -	if (task_no_new_privs(current) && !unconfined(label) && !ctx->nnp)
-> -		ctx->nnp = aa_get_label(label);
-> -
->  	if (unconfined(label)) {
->  		info = "unconfined can not change_hat";
->  		error = -EPERM;
-> @@ -1193,7 +1172,7 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
->  		 * reduce restrictions.
->  		 */
->  		if (task_no_new_privs(current) && !unconfined(label) &&
-> -		    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
-> +		    !aa_label_is_unconfined_subset(new, label)) {
->  			/* not an apparmor denial per se, so don't log it */
->  			AA_DEBUG("no_new_privs - change_hat denied");
->  			error = -EPERM;
-> @@ -1214,7 +1193,7 @@ int aa_change_hat(const char *hats[], int count, u64 token, int flags)
->  		 * reduce restrictions.
->  		 */
->  		if (task_no_new_privs(current) && !unconfined(label) &&
-> -		    !aa_label_is_unconfined_subset(previous, ctx->nnp)) {
-> +		    !aa_label_is_unconfined_subset(previous, label)) {
->  			/* not an apparmor denial per se, so don't log it */
->  			AA_DEBUG("no_new_privs - change_hat denied");
->  			error = -EPERM;
-> @@ -1303,16 +1282,6 @@ int aa_change_profile(const char *fqname, int flags)
->  
->  	label = aa_get_current_label();
->  
-> -	/*
-> -	 * Detect no new privs being set, and store the label it
-> -	 * occurred under. Ideally this would happen when nnp
-> -	 * is set but there isn't a good way to do that yet.
-> -	 *
-> -	 * Testing for unconfined must be done before the subset test
-> -	 */
-> -	if (task_no_new_privs(current) && !unconfined(label) && !ctx->nnp)
-> -		ctx->nnp = aa_get_label(label);
-> -
->  	if (!fqname || !*fqname) {
->  		aa_put_label(label);
->  		AA_DEBUG("no profile name");
-> @@ -1409,7 +1378,7 @@ int aa_change_profile(const char *fqname, int flags)
->  		 * reduce restrictions.
->  		 */
->  		if (task_no_new_privs(current) && !unconfined(label) &&
-> -		    !aa_label_is_unconfined_subset(new, ctx->nnp)) {
-> +		    !aa_label_is_unconfined_subset(new, label)) {
->  			/* not an apparmor denial per se, so don't log it */
->  			AA_DEBUG("no_new_privs - change_hat denied");
->  			error = -EPERM;
-> diff --git a/security/apparmor/include/task.h b/security/apparmor/include/task.h
-> index f13d12373b25..8a9c258e2018 100644
-> --- a/security/apparmor/include/task.h
-> +++ b/security/apparmor/include/task.h
-> @@ -17,13 +17,11 @@ static inline struct aa_task_ctx *task_ctx(struct task_struct *task)
->  
->  /*
->   * struct aa_task_ctx - information for current task label change
-> - * @nnp: snapshot of label at time of no_new_privs
->   * @onexec: profile to transition to on next exec  (MAY BE NULL)
->   * @previous: profile the task may return to     (MAY BE NULL)
->   * @token: magic value the task must know for returning to @previous_profile
->   */
->  struct aa_task_ctx {
-> -	struct aa_label *nnp;
->  	struct aa_label *onexec;
->  	struct aa_label *previous;
->  	u64 token;
-> @@ -42,7 +40,6 @@ struct aa_label *aa_get_task_label(struct task_struct *task);
->  static inline void aa_free_task_ctx(struct aa_task_ctx *ctx)
->  {
->  	if (ctx) {
-> -		aa_put_label(ctx->nnp);
->  		aa_put_label(ctx->previous);
->  		aa_put_label(ctx->onexec);
->  	}
-> @@ -57,7 +54,6 @@ static inline void aa_dup_task_ctx(struct aa_task_ctx *new,
->  				   const struct aa_task_ctx *old)
->  {
->  	*new = *old;
-> -	aa_get_label(new->nnp);
->  	aa_get_label(new->previous);
->  	aa_get_label(new->onexec);
->  }
-> diff --git a/security/apparmor/task.c b/security/apparmor/task.c
-> index d17130ee6795..4b9ec370a171 100644
-> --- a/security/apparmor/task.c
-> +++ b/security/apparmor/task.c
-> @@ -41,7 +41,6 @@ struct aa_label *aa_get_task_label(struct task_struct *task)
->  int aa_replace_current_label(struct aa_label *label)
->  {
->  	struct aa_label *old = aa_current_raw_label();
-> -	struct aa_task_ctx *ctx = task_ctx(current);
->  	struct cred *new;
->  
->  	AA_BUG(!label);
-> @@ -56,12 +55,6 @@ int aa_replace_current_label(struct aa_label *label)
->  	if (!new)
->  		return -ENOMEM;
->  
-> -	if (ctx->nnp && label_is_stale(ctx->nnp)) {
-> -		struct aa_label *tmp = ctx->nnp;
-> -
-> -		ctx->nnp = aa_get_newest_label(tmp);
-> -		aa_put_label(tmp);
-> -	}
->  	if (unconfined(label) || (labels_ns(old) != labels_ns(label)))
->  		/*
->  		 * if switching to unconfined or a different label namespace
+I'd prefer not to install Python2. It has been EOL over a year.
+
+/Jarkko
