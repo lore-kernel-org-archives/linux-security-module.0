@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C766C433E6
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDBE6C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04B2223A56
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A48F523A55
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 16:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731953AbhAUQvA (ORCPT
+        id S1731974AbhAUQvf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Jan 2021 11:51:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43522 "EHLO
+        Thu, 21 Jan 2021 11:51:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731897AbhAUP6I (ORCPT
+        with ESMTP id S1731731AbhAUP5u (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Jan 2021 10:58:08 -0500
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4FFC0617AB
-        for <linux-security-module@vger.kernel.org>; Thu, 21 Jan 2021 07:55:32 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DM6Rl18rszMpnPf;
-        Thu, 21 Jan 2021 16:55:31 +0100 (CET)
+        Thu, 21 Jan 2021 10:57:50 -0500
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 641F4C061794
+        for <linux-security-module@vger.kernel.org>; Thu, 21 Jan 2021 07:55:30 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DM6Rh3kCQzMr37d;
+        Thu, 21 Jan 2021 16:55:28 +0100 (CET)
 Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DM6Rk5yXDzlh8TW;
-        Thu, 21 Jan 2021 16:55:30 +0100 (CET)
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DM6Rh1G3Pzlpq00;
+        Thu, 21 Jan 2021 16:55:28 +0100 (CET)
 From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To:     David Howells <dhowells@redhat.com>,
         David Woodhouse <dwmw2@infradead.org>,
@@ -44,10 +44,11 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Tyler Hicks <tyhicks@linux.microsoft.com>,
         keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v4 06/10] certs: Make blacklist_vet_description() more strict
-Date:   Thu, 21 Jan 2021 16:55:09 +0100
-Message-Id: <20210121155513.539519-7-mic@digikod.net>
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>
+Subject: [PATCH v4 04/10] certs: Fix blacklist flag type confusion
+Date:   Thu, 21 Jan 2021 16:55:07 +0100
+Message-Id: <20210121155513.539519-5-mic@digikod.net>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210121155513.539519-1-mic@digikod.net>
 References: <20210121155513.539519-1-mic@digikod.net>
@@ -57,107 +58,114 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+From: David Howells <dhowells@redhat.com>
 
-Before exposing this new key type to user space, make sure that only
-meaningful blacklisted hashes are accepted.  This is also checked for
-builtin blacklisted hashes, but a following commit make sure that the
-user will notice (at built time) and will fix the configuration if it
-already included errors.
+KEY_FLAG_KEEP is not meant to be passed to keyring_alloc() or
+key_alloc(), as these only take KEY_ALLOC_* flags.  KEY_FLAG_KEEP has
+the same value as KEY_ALLOC_BYPASS_RESTRICTION, but fortunately only
+key_create_or_update() uses it.  LSMs using the key_alloc hook don't
+check that flag.
 
-Check that a blacklist key description starts with a valid prefix and
-then a valid hexadecimal string.
+KEY_FLAG_KEEP is then ignored but fortunately (again) the root user
+cannot write to the blacklist keyring, so it is not possible to remove a
+key/hash from it.
 
-Cc: David Howells <dhowells@redhat.com>
+Fix this by adding a KEY_ALLOC_SET_KEEP flag that tells key_alloc() to
+set KEY_FLAG_KEEP on the new key.  blacklist_init() can then, correctly,
+pass this to keyring_alloc().
+
+ima_mok_init() allocates another blacklist keyring (with different
+properties) dedicated to IMA.  We can also use KEY_ALLOC_SET_KEEP in
+ima_mok_init() rather than setting the flag manually.
+
+Note that this doesn't fix an observable bug with the current
+implementation but it is required to allow addition of new hashes to the
+blacklist in the future without making it possible for them to be
+removed or modified.
+
+Fixes: 734114f8782f ("KEYS: Add a system blacklist keyring")
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: David Woodhouse <dwmw2@infradead.org>
+Reported-by: Mickaël Salaün <mic@linux.microsoft.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+[mic@linux.microsoft.com: Fix argument bit-ORing in ima_mok_init() and
+extend commit description]
 Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
 
-Changes since v2:
-* Fix typo in blacklist_vet_description() comment, spotted by Tyler
-  Hicks.
-* Add Jarkko's Acked-by.
+Changes since v3:
+* Extend ima_mok_init() description (suggested by Jarkko Sakkinen).
+* Add Acked-by Jarkko Sakkinen.
 
-Changes since v1:
-* Return ENOPKG (instead of EINVAL) when a hash is greater than the
-  maximum currently known hash (suggested by David Howells).
+Changes since v2:
+* Cherry-pick rewritten v1 patch from
+  https://lore.kernel.org/lkml/2659836.1607940186@warthog.procyon.org.uk/
+  to rebase on v5.11-rc3 and fix ima_mok_init().
 ---
- certs/blacklist.c | 46 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 10 deletions(-)
+ certs/blacklist.c                | 2 +-
+ include/linux/key.h              | 1 +
+ security/integrity/ima/ima_mok.c | 4 +---
+ security/keys/key.c              | 2 ++
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/certs/blacklist.c b/certs/blacklist.c
-index 8a64b9e89cae..069050884bd2 100644
+index 4e1a58170d5c..446818e90b54 100644
 --- a/certs/blacklist.c
 +++ b/certs/blacklist.c
-@@ -18,6 +18,16 @@
- #include <keys/system_keyring.h>
- #include "blacklist.h"
+@@ -162,7 +162,7 @@ static int __init blacklist_init(void)
+ 			      KEY_USR_VIEW | KEY_USR_READ |
+ 			      KEY_USR_SEARCH,
+ 			      KEY_ALLOC_NOT_IN_QUOTA |
+-			      KEY_FLAG_KEEP,
++			      KEY_ALLOC_SET_KEEP,
+ 			      NULL, NULL);
+ 	if (IS_ERR(blacklist_keyring))
+ 		panic("Can't allocate system blacklist keyring\n");
+diff --git a/include/linux/key.h b/include/linux/key.h
+index 0f2e24f13c2b..eed3ce139a32 100644
+--- a/include/linux/key.h
++++ b/include/linux/key.h
+@@ -289,6 +289,7 @@ extern struct key *key_alloc(struct key_type *type,
+ #define KEY_ALLOC_BUILT_IN		0x0004	/* Key is built into kernel */
+ #define KEY_ALLOC_BYPASS_RESTRICTION	0x0008	/* Override the check on restricted keyrings */
+ #define KEY_ALLOC_UID_KEYRING		0x0010	/* allocating a user or user session keyring */
++#define KEY_ALLOC_SET_KEEP		0x0020	/* Set the KEEP flag on the key/keyring */
  
-+/*
-+ * According to crypto/asymmetric_keys/x509_cert_parser.c:x509_note_pkey_algo(),
-+ * the size of the currently longest supported hash algorithm is 512 bits,
-+ * which translates into 128 hex characters.
-+ */
-+#define MAX_HASH_LEN	128
-+
-+static const char tbs_prefix[] = "tbs";
-+static const char bin_prefix[] = "bin";
-+
- static struct key *blacklist_keyring;
+ extern void key_revoke(struct key *key);
+ extern void key_invalidate(struct key *key);
+diff --git a/security/integrity/ima/ima_mok.c b/security/integrity/ima/ima_mok.c
+index 36cadadbfba4..5594dd38ab04 100644
+--- a/security/integrity/ima/ima_mok.c
++++ b/security/integrity/ima/ima_mok.c
+@@ -38,13 +38,11 @@ __init int ima_mok_init(void)
+ 				(KEY_POS_ALL & ~KEY_POS_SETATTR) |
+ 				KEY_USR_VIEW | KEY_USR_READ |
+ 				KEY_USR_WRITE | KEY_USR_SEARCH,
+-				KEY_ALLOC_NOT_IN_QUOTA,
++				KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_SET_KEEP,
+ 				restriction, NULL);
  
- /*
-@@ -26,24 +36,40 @@ static struct key *blacklist_keyring;
-  */
- static int blacklist_vet_description(const char *desc)
- {
--	int n = 0;
+ 	if (IS_ERR(ima_blacklist_keyring))
+ 		panic("Can't allocate IMA blacklist keyring.");
 -
--	if (*desc == ':')
--		return -EINVAL;
--	for (; *desc; desc++)
--		if (*desc == ':')
--			goto found_colon;
-+	int i, prefix_len, tbs_step = 0, bin_step = 0;
-+
-+	/* The following algorithm only works if prefix lengths match. */
-+	BUILD_BUG_ON(sizeof(tbs_prefix) != sizeof(bin_prefix));
-+	prefix_len = sizeof(tbs_prefix) - 1;
-+	for (i = 0; *desc; desc++, i++) {
-+		if (*desc == ':') {
-+			if (tbs_step == prefix_len)
-+				goto found_colon;
-+			if (bin_step == prefix_len)
-+				goto found_colon;
-+			return -EINVAL;
-+		}
-+		if (i >= prefix_len)
-+			return -EINVAL;
-+		if (*desc == tbs_prefix[i])
-+			tbs_step++;
-+		if (*desc == bin_prefix[i])
-+			bin_step++;
-+	}
- 	return -EINVAL;
- 
- found_colon:
- 	desc++;
--	for (; *desc; desc++) {
-+	for (i = 0; *desc && i < MAX_HASH_LEN; desc++, i++) {
- 		if (!isxdigit(*desc) || isupper(*desc))
- 			return -EINVAL;
--		n++;
- 	}
-+	if (*desc)
-+		/* The hash is greater than MAX_HASH_LEN. */
-+		return -ENOPKG;
- 
--	if (n == 0 || n & 1)
-+	/* Checks for an even number of hexadecimal characters. */
-+	if (i == 0 || i & 1)
- 		return -EINVAL;
+-	set_bit(KEY_FLAG_KEEP, &ima_blacklist_keyring->flags);
  	return 0;
  }
+ device_initcall(ima_mok_init);
+diff --git a/security/keys/key.c b/security/keys/key.c
+index ebe752b137aa..c45afdd1dfbb 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -303,6 +303,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 		key->flags |= 1 << KEY_FLAG_BUILTIN;
+ 	if (flags & KEY_ALLOC_UID_KEYRING)
+ 		key->flags |= 1 << KEY_FLAG_UID_KEYRING;
++	if (flags & KEY_ALLOC_SET_KEEP)
++		key->flags |= 1 << KEY_FLAG_KEEP;
+ 
+ #ifdef KEY_DEBUGGING
+ 	key->magic = KEY_DEBUG_MAGIC;
 -- 
 2.30.0
 
