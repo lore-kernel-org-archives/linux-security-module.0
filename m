@@ -7,208 +7,177 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE64C433E9
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 16:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17ED4C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 17:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05E1523A55
-	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 16:52:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA73C21973
+	for <linux-security-module@archiver.kernel.org>; Thu, 21 Jan 2021 17:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731791AbhAUQwL (ORCPT
+        id S1733306AbhAUPn7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 21 Jan 2021 11:52:11 -0500
-Received: from smtp-8fa9.mail.infomaniak.ch ([83.166.143.169]:42025 "EHLO
-        smtp-8fa9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731094AbhAUP4d (ORCPT
+        Thu, 21 Jan 2021 10:43:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:53783 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731810AbhAUNVZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 21 Jan 2021 10:56:33 -0500
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DM6Rd4TrPzMr5H6;
-        Thu, 21 Jan 2021 16:55:25 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DM6Rd2K7fzlh8TL;
-        Thu, 21 Jan 2021 16:55:25 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thu, 21 Jan 2021 08:21:25 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein.fritz.box)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1l2Zsx-0005g7-Vb; Thu, 21 Jan 2021 13:20:28 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org
+Cc:     John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>,
         Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v4 02/10] certs: Check that builtin blacklist hashes are valid
-Date:   Thu, 21 Jan 2021 16:55:05 +0100
-Message-Id: <20210121155513.539519-3-mic@digikod.net>
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v6 02/40] fs: add id translation helpers
+Date:   Thu, 21 Jan 2021 14:19:21 +0100
+Message-Id: <20210121131959.646623-3-christian.brauner@ubuntu.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210121155513.539519-1-mic@digikod.net>
-References: <20210121155513.539519-1-mic@digikod.net>
+In-Reply-To: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Patch-Hashes: v=1; h=sha256; i=DPHLY9J1WgTtTJIZfW+M0ys29DrUndhBq8NbMQ4LhTc=; m=Z8GBK4fC03sqIZqOXqQYkCcHQhdF7ERtuNE2eOhnSzE=; p=i6IwWhz0PkRJmocnM2jCkNT8zKQq005bIpkzoIXat+A=; g=ec4a8e87015d814e143e60b5b5e399b0589415a2
+X-Patch-Sig: m=pgp; i=christian.brauner@ubuntu.com; s=0x0x91C61BC06578DCA2; b=iHUEABYKAB0WIQRAhzRXHqcMeLMyaSiRxhvAZXjcogUCYAl9owAKCRCRxhvAZXjconzfAQDQavg rIQRRUmnUDAhPbiiIzXQemWyr2/c439+nPRr9LgEA1vZvPehXei8CIjRiOLT8+cPPAQyc9a5nYiYG h9Gl/gQ=
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+Add simple helpers to make it easy to map kuids into and from idmapped
+mounts. We provide simple wrappers that filesystems can use to e.g.
+initialize inodes similar to i_{uid,gid}_read() and i_{uid,gid}_write().
+Accessing an inode through an idmapped mount maps the i_uid and i_gid of
+the inode to the mount's user namespace. If the fsids are used to
+initialize inodes they are unmapped according to the mount's user
+namespace. Passing the initial user namespace to these helpers makes
+them a nop and so any non-idmapped paths will not be impacted.
 
-Add and use a check-blacklist-hashes.awk script to make sure that the
-builtin blacklist hashes set with CONFIG_SYSTEM_BLACKLIST_HASH_LIST will
-effectively be taken into account as blacklisted hashes.  This is useful
-to debug invalid hash formats, and it make sure that previous hashes
-which could have been loaded in the kernel, but silently ignored, are
-now noticed and deal with by the user at kernel build time.
-
-This also prevent stricter blacklist key description checking (provided
-by following commits) to failed for builtin hashes.
-
-Update CONFIG_SYSTEM_BLACKLIST_HASH_LIST help to explain the content of
-a hash string and how to generate certificate ones.
-
+Link: https://lore.kernel.org/r/20210112220124.837960-9-christian.brauner@ubuntu.com
 Cc: David Howells <dhowells@redhat.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
+/* v2 */
+- Christoph Hellwig <hch@lst.de>:
+  - Get rid of the ifdefs and the config option that hid idmapped mounts.
 
-Changes since v3:
-* Improve commit description.
-* Update CONFIG_SYSTEM_BLACKLIST_HASH_LIST help.
-* Remove Acked-by Jarkko Sakkinen because of the above changes.
+/* v3 */
+unchanged
 
-Changes since v2:
-* Add Jarkko's Acked-by.
+/* v4 */
+- Serge Hallyn <serge@hallyn.com>:
+  - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+    terminology consistent.
 
-Changes since v1:
-* Prefix script path with $(scrtree)/ (suggested by David Howells).
-* Fix hexadecimal number check.
+/* v5 */
+unchanged
+base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+
+/* v6 */
+unchanged
+base-commit: 19c329f6808995b142b3966301f217c831e7cf31
 ---
- MAINTAINERS                        |  1 +
- certs/.gitignore                   |  1 +
- certs/Kconfig                      |  7 ++++--
- certs/Makefile                     | 15 +++++++++++-
- scripts/check-blacklist-hashes.awk | 37 ++++++++++++++++++++++++++++++
- 5 files changed, 58 insertions(+), 3 deletions(-)
- create mode 100755 scripts/check-blacklist-hashes.awk
+ include/linux/fs.h | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 773a362e807f..a18fd3d283c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4118,6 +4118,7 @@ L:	keyrings@vger.kernel.org
- S:	Maintained
- F:	Documentation/admin-guide/module-signing.rst
- F:	certs/
-+F:	scripts/check-blacklist-hashes.awk
- F:	scripts/extract-cert.c
- F:	scripts/sign-file.c
- F:	tools/certs/
-diff --git a/certs/.gitignore b/certs/.gitignore
-index 2a2483990686..42cc2ac24b93 100644
---- a/certs/.gitignore
-+++ b/certs/.gitignore
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0-only
-+blacklist_hashes_checked
- x509_certificate_list
-diff --git a/certs/Kconfig b/certs/Kconfig
-index c94e93d8bccf..6d09dec4a9e3 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -80,7 +80,10 @@ config SYSTEM_BLACKLIST_HASH_LIST
- 	help
- 	  If set, this option should be the filename of a list of hashes in the
- 	  form "<hash>", "<hash>", ... .  This will be included into a C
--	  wrapper to incorporate the list into the kernel.  Each <hash> should
--	  be a string of hex digits.
-+	  wrapper to incorporate the list into the kernel.  Each <hash> must be a
-+	  string starting with a prefix ("tbs" or "bin"), then a colon (":"), and
-+	  finally an even number of hexadecimal lowercase characters (up to 128).
-+	  Certificate hashes can be generated with
-+	  tools/certs/print-cert-tbs-hash.sh .
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd0b80e6361d..3165998e2294 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -40,6 +40,7 @@
+ #include <linux/build_bug.h>
+ #include <linux/stddef.h>
+ #include <linux/mount.h>
++#include <linux/cred.h>
  
- endmenu
-diff --git a/certs/Makefile b/certs/Makefile
-index f4c25b67aad9..eb45407ff282 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -6,7 +6,20 @@
- obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o
- obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o
- ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
-+
-+quiet_cmd_check_blacklist_hashes = CHECK   $(patsubst "%",%,$(2))
-+      cmd_check_blacklist_hashes = $(AWK) -f $(srctree)/scripts/check-blacklist-hashes.awk $(2); touch $@
-+
-+$(eval $(call config_filename,SYSTEM_BLACKLIST_HASH_LIST))
-+
-+$(obj)/blacklist_hashes.o: $(obj)/blacklist_hashes_checked
-+
-+targets += blacklist_hashes_checked
-+$(obj)/blacklist_hashes_checked: $(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(SYSTEM_BLACKLIST_HASH_LIST_FILENAME) scripts/check-blacklist-hashes.awk FORCE
-+	$(call if_changed,check_blacklist_hashes,$(SYSTEM_BLACKLIST_HASH_LIST_SRCPREFIX)$(CONFIG_SYSTEM_BLACKLIST_HASH_LIST))
-+
- obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_hashes.o
-+
- else
- obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_nohashes.o
- endif
-@@ -29,7 +42,7 @@ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREF
- 	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
- endif # CONFIG_SYSTEM_TRUSTED_KEYRING
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
+@@ -1573,6 +1574,52 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
+ 	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
+ }
  
--clean-files := x509_certificate_list .x509.list
-+clean-files := x509_certificate_list .x509.list blacklist_hashes_checked
- 
- ifeq ($(CONFIG_MODULE_SIG),y)
- ###############################################################################
-diff --git a/scripts/check-blacklist-hashes.awk b/scripts/check-blacklist-hashes.awk
-new file mode 100755
-index 000000000000..107c1d3204d4
---- /dev/null
-+++ b/scripts/check-blacklist-hashes.awk
-@@ -0,0 +1,37 @@
-+#!/usr/bin/awk -f
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright © 2020, Microsoft Corporation. All rights reserved.
-+#
-+# Author: Mickaël Salaün <mic@linux.microsoft.com>
-+#
-+# Check that a CONFIG_SYSTEM_BLACKLIST_HASH_LIST file contains a valid array of
-+# hash strings.  Such string must start with a prefix ("tbs" or "bin"), then a
-+# colon (":"), and finally an even number of hexadecimal lowercase characters
-+# (up to 128).
-+
-+BEGIN {
-+	RS = ","
-+}
++static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
++				   kuid_t kuid)
 +{
-+	if (!match($0, "^[ \t\n\r]*\"([^\"]*)\"[ \t\n\r]*$", part1)) {
-+		print "Not a string (item " NR "):", $0;
-+		exit 1;
-+	}
-+	if (!match(part1[1], "^(tbs|bin):(.*)$", part2)) {
-+		print "Unknown prefix (item " NR "):", part1[1];
-+		exit 1;
-+	}
-+	if (!match(part2[2], "^([0-9a-f]+)$", part3)) {
-+		print "Not a lowercase hexadecimal string (item " NR "):", part2[2];
-+		exit 1;
-+	}
-+	if (length(part3[1]) > 128) {
-+		print "Hash string too long (item " NR "):", part3[1];
-+		exit 1;
-+	}
-+	if (length(part3[1]) % 2 == 1) {
-+		print "Not an even number of hexadecimal characters (item " NR "):", part3[1];
-+		exit 1;
-+	}
++	return make_kuid(mnt_userns, __kuid_val(kuid));
 +}
++
++static inline kgid_t kgid_into_mnt(struct user_namespace *mnt_userns,
++				   kgid_t kgid)
++{
++	return make_kgid(mnt_userns, __kgid_val(kgid));
++}
++
++static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
++				    const struct inode *inode)
++{
++	return kuid_into_mnt(mnt_userns, inode->i_uid);
++}
++
++static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
++				    const struct inode *inode)
++{
++	return kgid_into_mnt(mnt_userns, inode->i_gid);
++}
++
++static inline kuid_t kuid_from_mnt(struct user_namespace *mnt_userns,
++				   kuid_t kuid)
++{
++	return KUIDT_INIT(from_kuid(mnt_userns, kuid));
++}
++
++static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
++				   kgid_t kgid)
++{
++	return KGIDT_INIT(from_kgid(mnt_userns, kgid));
++}
++
++static inline kuid_t fsuid_into_mnt(struct user_namespace *mnt_userns)
++{
++	return kuid_from_mnt(mnt_userns, current_fsuid());
++}
++
++static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
++{
++	return kgid_from_mnt(mnt_userns, current_fsgid());
++}
++
+ extern struct timespec64 current_time(struct inode *inode);
+ 
+ /*
 -- 
 2.30.0
 
