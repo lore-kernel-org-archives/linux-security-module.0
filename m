@@ -2,76 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759DEC433DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Jan 2021 22:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9488DC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Jan 2021 02:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40390221EB
-	for <linux-security-module@archiver.kernel.org>; Mon, 25 Jan 2021 22:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6872E22597
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Jan 2021 02:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbhAYWpA (ORCPT
+        id S1728538AbhAYRMY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 25 Jan 2021 17:45:00 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:55318 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732393AbhAYWoR (ORCPT
+        Mon, 25 Jan 2021 12:12:24 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:50740 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729955AbhAYRLm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Jan 2021 17:44:17 -0500
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 10PMgEK6033580;
-        Tue, 26 Jan 2021 07:42:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp);
- Tue, 26 Jan 2021 07:42:14 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 10PMgEOw033569
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 26 Jan 2021 07:42:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] smackfs: restrict bytes count in smackfs write functions
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc:     jmorris@namei.org, serge@hallyn.com, andreyknvl@google.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com,
-        Michal Hocko <mhocko@suse.com>
-References: <20210124143627.582115-1-snovitoll@gmail.com>
- <3f33d3a2-c84c-081f-c1c4-424e5eeeb8d2@schaufler-ca.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <3c35f7cc-1c8d-2fa0-6bc9-bde4e96017ce@i-love.sakura.ne.jp>
-Date:   Tue, 26 Jan 2021 07:42:12 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Mon, 25 Jan 2021 12:11:42 -0500
+X-Greylist: delayed 399 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jan 2021 12:11:14 EST
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id E0A35CAF; Mon, 25 Jan 2021 11:03:16 -0600 (CST)
+Date:   Mon, 25 Jan 2021 11:03:16 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        smbarber@chromium.org, Phil Estes <estesp@gmail.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 23/40] exec: handle idmapped mounts
+Message-ID: <20210125170316.GA8345@mail.hallyn.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-24-christian.brauner@ubuntu.com>
+ <875z3l0y56.fsf@x220.int.ebiederm.org>
+ <20210125164404.aullgl3vlajgkef3@wittgenstein>
 MIME-Version: 1.0
-In-Reply-To: <3f33d3a2-c84c-081f-c1c4-424e5eeeb8d2@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210125164404.aullgl3vlajgkef3@wittgenstein>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021/01/26 3:08, Casey Schaufler wrote:
-> On 1/24/2021 6:36 AM, Sabyrzhan Tasbolatov wrote:
->> syzbot found WARNINGs in several smackfs write operations where
->> bytes count is passed to memdup_user_nul which exceeds
->> GFP MAX_ORDER. Check count size if bigger SMK_LONGLABEL,
->> for smk_write_syslog if bigger than PAGE_SIZE - 1.
->>
->> Reported-by: syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com
->> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+On Mon, Jan 25, 2021 at 05:44:04PM +0100, Christian Brauner wrote:
+> On Mon, Jan 25, 2021 at 10:39:01AM -0600, Eric W. Biederman wrote:
+> > Christian Brauner <christian.brauner@ubuntu.com> writes:
+> > 
+> > > When executing a setuid binary the kernel will verify in bprm_fill_uid()
+> > > that the inode has a mapping in the caller's user namespace before
+> > > setting the callers uid and gid. Let bprm_fill_uid() handle idmapped
+> > > mounts. If the inode is accessed through an idmapped mount it is mapped
+> > > according to the mount's user namespace. Afterwards the checks are
+> > > identical to non-idmapped mounts. If the initial user namespace is
+> > > passed nothing changes so non-idmapped mounts will see identical
+> > > behavior as before.
+> > 
+> > This does not handle the v3 capabilites xattr with embeds a uid.
+> > So at least at that level you are missing some critical conversions.
 > 
-> Thank you for the patch. Unfortunately, SMK_LONGLABEL isn't
-> the right value in some of these cases. 
-> 
+> Thanks for looking. Vfs v3 caps are handled earlier in the series. I'm
+> not sure what you're referring to here. There are tests in xfstests that
+> verify vfs3 capability behavior.
 
-Since it uses sscanf(), I think that whitespaces must be excluded from upper limit
-check. I'm proposing adding __GFP_NOWARM on the memdup_user_nul() side at
-https://lkml.kernel.org/r/20210120103436.11830-1-penguin-kernel@I-love.SAKURA.ne.jp .
+*just* to make sure i'm not misunderstanding - s/vfs3/v3/ right?
