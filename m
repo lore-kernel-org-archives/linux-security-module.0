@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F71C4332D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FE44C43333
 	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jan 2021 00:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1026A2067C
+	by mail.kernel.org (Postfix) with ESMTP id 698072067C
 	for <linux-security-module@archiver.kernel.org>; Wed, 27 Jan 2021 00:59:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390072AbhA0Apl (ORCPT
+        id S2391641AbhA0AtN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Jan 2021 19:45:41 -0500
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com ([66.163.186.154]:33206
-        "EHLO sonic302-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728329AbhAZRCH (ORCPT
+        Tue, 26 Jan 2021 19:49:13 -0500
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:34203
+        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730556AbhAZRFX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 26 Jan 2021 12:02:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1611680478; bh=FpKGtxhyzTyHF0qxWOJjsudgR7Yn+20vUQDAWNloU74=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=HtJofGQw+8tUp0JXOy2hE/5dRQl9MrZM8ljo2gKWWzgjYEFl5RJ7JOerSZzQumhMlT1/0TAIX6cqFJ8ejCby/7LBF+o7HAJw95N7QNKQ8YH3d77g3WTpXLxAQj0haIhr/08EZmmrSAma1J0F9WJvJOCCYZOVZ7eDiRYen3Ugj6o5ouFaf/P47qqekEtPVYPVC+zBeyRkDQxPcLBBgObYnMwe9oNRKCwvCzm9269A9JoMxIfFasRVlxtUbW5kgI2GuWgOnI/Z1s24XckCNTJwDXdHkKxjqkL0+GhmFldxa4OTwbyoMYU1vBXHWoLYQQvU+jP21rFoXxaYG7i9lhhKoA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1611680478; bh=5qnUM9+wpnuISNjWHEvHJTy4cAw6rens8Xq6ifHWmmB=; h=From:To:Subject:Date:From:Subject:Reply-To; b=MDLfT+I1p82pKzfcoA8bffDV26BzaZ3PujHnySUhEoC8fz/U+9AWVMkDoun2dFh0VC1R1CYJ5ZgZpiVegLEb+GAY9b9aU2WfSKR2rwSErX2meOuwArkyXBW+JsB4ENbVWxbfWQkv6KbvDLKrVdTQevT4eCFXEtHiiTpI8RjTkvalcUIaFVlYmHZVQpMa2sAFaDln9HO1ppb8nErt1tmYmoZRuilyGxJgSk8ogS93JpQoMP0NTXLl+h6Mo6bVUEj0z4zPTf034F9T6t1GHEkxab25vQY3a65IyOt/QKhcRgz4ZRltJcHVm4nzLaUn0VubhL6Dvaq0pB7chT2HzEKtbw==
-X-YMail-OSG: WhoWSeMVM1nAZdlIGlcybNdqVFEUJtcDXoq9vQxygvju97vuRBhgg2vxgIq0KlZ
- Jg5WJEN2BPPKfasH9qxP7iioP6xiQfer7_r0cUDsEM7ZJtNy49r0F3Ld1u_L7j1RXUKrktZ2NRzq
- ggdUjjYLEOgprPxF1Evwij5yi3jxAe2y55gGARmJTZPDCL5.eMZ_Oo6_Cu_7Psr0Ofc60HFY1Ug.
- 0IB8aNryvqWhoak6Xl5QZ2PXupE9Nga2YbL1lpwZPEKsimZniTyd4HeraRz5PF4fDL3UI1MBwtmr
- 82nWLobdRwDkG1yEgVzMt_pkGFH6ghmYypM89Z4E_fT.lp8Gs4jrRCh1kGsAa1oY5ip1Uu.KBfvb
- OUshJ5KQokurFNYAwXvG2xPR26Y2vwUDXN_PLFU2VmkCvJUQRG5v7mG85B4DJMBsYVL6q7Q53LmB
- pFMVrWAY95KV7IL4LyX_itcSVvj6ZvFV0R3Ff1BCpFnbppNI4G2fcmleWk7QcoGOSuAXNs.neCf0
- 5a9e9nEaBfupuEOAcraN6M.kCO27Mf4NuH99GTk94MWbMmo2RJyLoIz8PszJbdNVZG2LGlC8KD4t
- UFQ7FLDQu8WbbN49rh.OzdNjvCcOqQGnN.hRhEqTvOyMpt3mTPMVzhP2syeRb6I5j6nT9uxxUCL1
- AzgaBWfXW7FZd3Fy1MgjzdeEgfGWNqKQrWIpdqVeC96abVXtX.3NvJS7IoXv2FeVac16PBCvBOs.
- jKeeUHxKHHD1mFHAS_vdnbRwI2tkgeJEL3oMk0Tkz6uUWBdMcKtCzsMmsr5pW0TVOMXvHvMS4mQN
- S4w.pzlbBkLgR6OQvvjlcq4d9HjyAKZTA0mWGv02qNDyDnjXMC5q44mMle.ZXuBurNQFvYt.vP4U
- 1BCnwcQXQxVQ1NpSQw59OpUthYu3xUh9W6Rz_bM94s8LJGXW1zSqtI4evgZaH_shpgNskx22B9Bz
- YQpidUJ6mFEraRgNgHF9_bitv53Z57dmND2z.hEvXP7ZfyNy_v7wskBEfDQHsAXQT10RDL.6yw0I
- Hs.BffJPtGNZHLhVnoiLNVd2xfNL1zu3QX1E_BlScBEwLuCZLa65oCv50Sih9Fatc4JnTD8vJjhN
- XMYkAvUlWy64uis0qfu3JQaQEV_eNEK_4zRxml37NUJBup_aXo6zZTR65kVcgjVZPH7lzxX_QVy1
- oS3ps5_j2rFOd3P0wl1WxZGuWligMbnEf.0Xy4faHgmRr_IgryvoiyhIPFVFfetvdFs2ZsVdCiNI
- ibKSruLchJbtGq0dfmL.IAXkwRk34Ss6cLeqSDk70LuQ3abnwTQWr11VX7FdwkOv7.NdoGgBi0LK
- PDxE6jltdg2zbSroINPRqWaR.sShH6mXUT0fZusRsuCK9AxLB_553ScKHvr2HVzcX_sgEYM__CTr
- cgxF3C1VsRsV__jLXIjXTSOOofez1HFWCxBB7LWCFc5HIj655tnluxccSLwL051yQcWIZXvftlvV
- t00ytFSQY.FPplGaSTMZMyrVfNmRTOA9IZPQKuRS5I1TNhUKNAUXD3DZEPPDbU4vm6Dv6PwTtjmm
- TB9g0t3RI6Ir3jq0qlC1caHdbaUlvDPt4oQzxubk0ZeLSDXgPeezg9RH40JeQ23.i5vqnhew3taN
- .w5v3JbY2Y1nOSzbLe3Iq6J66Gd0_F1FK8ZOByoQXwmj81W1hDZSDXhn66w5D.DOagVPMA9wWBeh
- cVZLJNHdbvdLYifPP1GiQM.KXUWf99joYAcHTDhocrLedIQhs0yIPQ41bXg_t.9tyEM5EjMsl7z2
- b9DB3dhLPq4lmcMffUkkzOEiwZtZP5UVtl2x0v.2oQCPWFmrhjNwOiDcFovP2ylHMSWwIdohM5NH
- jHtTEYTGQ011OfgnKh72kzZCqw8Bnkn8jbt4DlDGeL77UZlWh9FDEObeQIl8OFsh3NTsQsaXix7G
- 3Y4qhaP9ix5eneascKkBrq7oXEmd.76RMZT5ZqhJfN7wGO_li3SmIP5LX7Uytr0xuzE9zankrAxV
- YZCZmWRAQiy4WAg.ILssBlha4PXLvtP3W0AiYiNTMxjjN6RKqpmOdMOrXaX0pPvR.Atsf8OA4SWi
- AqTeoclva8aXckk_0ch_R9Pa2aqyVIFkGvYMM_cqLHTNTQbH2WbQ1J5qRivY1umAvuV3jZwuEmoX
- KmIaiFUimwx8XG0pOxQZsHeQVjVw1.qJ.OHTeIeE9zj_io0v3GUcWNmHPJ38wGVRaQdVSPDtE4wr
- WUKnyzjXzxLYHy1jExUL4Y4nbdUHDiS1Ay892ESFaXQehNOvm5l0u0UTQLQTW6jh6K.EkLhRfFMR
- 9prWT.ztjjmK9ngkIB_rhtPnaR3UoJ_x.q0xLzodkw81oALhP_R7I_D7GWbD2.4A3T4TXGR_IzpV
- 1Mvts29Mh.W_b7iaMUUOCxKs2N_Z174jJrn3ag4UjqBCjmU462opy9rEjqCxIHHkhHxwoCX_fZo.
- OXiyDCt4MBi.ZP2CJbtoZtsQQiRzQwyEti8WWIjk9VjQ0YobJACpaOOU1sdu6gTZ7ePyu0O8kNow
- V3Lig6G8U._dmftudzPyrpzVL_y8m7yutL8_cdGZ8D_zXpzbZm53LwBFm2Aomd5Weymgoa3ZLd3c
- mcUXjn5Cr.8LQrlYyqkfhkUP_6yTXLWADJ0v1NyHrkklSpvZHKGnh.2Ut1PUTccByBaNmxYyH5YM
- 4kOBy4dza2rlZJMGs8GosTEX1vJ0jRRzeuWPAamGxU9QMq95CxWYkSS3mGH9C5PrcnuZnNdehQ8S
- BFPEsWs3JdQOjFNANdRoBuLRKu57seuWFpFgzPYC0bq5XjzOLWAqYA4iJsUdckX8kSCzoDZbvGqu
- ir8NIFkDetOHEW02R3WG_1M.nAtJx6JLkfl8E307J0TGQx4H2MpnyBN_3vmmN1qUDw9RgwMKyYzU
- 4ZTzTYp7bf3vIC080.NpxW4qR2sPw32pyRhhioBvdGyUneo5n83HgKhGjMw8H6KCQp4GBGyeH6nr
- Bi10_577Jec6L.8tnatSACF_v5Y8y6LmIggkIkKA6OJnmIzH_QTMUDuyzGeT5ZkbZPlmiSMBU7Ot
- xxtwmlQkLmzoheSIfnPlqOFYhAUM-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 26 Jan 2021 17:01:18 +0000
-Received: by smtp418.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 5b003f5feede445ab75d61c891f68aa8;
-          Tue, 26 Jan 2021 16:51:12 +0000 (UTC)
+        Tue, 26 Jan 2021 12:05:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1611680629; bh=GJ+l4l5eiknIDQDa+slfTq4qg7M4BY/9h0J8g2KV3F8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=AdSeubBlUDnwhMGBB5EgjxKfL6AlxKZFZd+O00hcM1tr/WZHWpcmmiOgJy88W0oItzdNIfLddPQ+kQpsgh2DjtjG+16GlMG+kO+Dm+v17SQH3YiSngKA2he7tacUwi5aoTlkyuupQY+3ayWCXHCCH1VbQD21xYEgzy/OxoyjhbOApQh2zTF9zIivk9OTIvZNOeWuw5QU7phwr5aJNFNs4nzbbBCakuqfVmjP6fJ1oauUzBkiZg/Unm8+iY+Q+mStUYvUHhqtsFNGPlj+KbgrO3PnrrN/bt4w/RdkWgUydKY0esuTff0piT/Kwqklcawb+gLTViA3+sd8fJSDC5p2yw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1611680629; bh=6eV6bWZmYFyVIFMBRWE2i7PApIWzeTihHTO+MktQD/J=; h=From:To:Subject:Date:From:Subject:Reply-To; b=p5A/hNd54f8KlfX7Shi1uUKQdlim0NtCvlUfTPmTY3NqXhb/7boDO0VUDTnsqUz05OIphkrqwq1P2j0acjS+CVzG6m0PHChgUoVtQYVclhHx8qNcxjzK31JiCA8phu+3qIf7A1RAafXNh45CfJPczJdMAQR+6LFImjWug76CfZRK5GZ+6/JyxSC3wFqqkZMLQZa20YEIdIzZsrcAKWsvKGUvLFpgMkecdZ9q55lfwO4f4Dhrb0nf1oNF5uQg4wIfNySUby1OijnFhgoRo8+7svOINnsXQSgkbeVcDN4RYNIoHgMHcAeO++C69DQRhofs+1Vef7G4YDwJoEnLjTj/pg==
+X-YMail-OSG: zy7iHKkVM1mwP4FhLN4FNy9U3jUIg_uuAndzwENnHTgYBCMSORzPAwW4oww6Jmn
+ x6FxAK.CTJ5_NZnF_kps4Tgr3H98lyP4jNhe33wcrEZeUydzSExpcLO3NQZMqdjAHsbHcf5hjykv
+ 3VPhNRk.j50moSlP2m0mY.TQahqC9.ftb4sbpNoPBo7bUjogWdAswdAQ5hRtzV6FNtKV1r9n_6D5
+ hNX2zyfeBImtbtrJAvAQ7WzyRXuPrRhD6ZCuv.eoOz34R_0NoV2heFQsXz6ZZnTP9MnbvtHyFAD2
+ v5I4TVyfSGqDDDNVqi0d7SL_5AR5aupyAVDhvkl3RdL43VP.HqgVe9jm9njrI2AVzgHPV32kqN4Z
+ eFQlTOSR8IUL1otlEgaCmErbM3B5cNgv3Sn73Mk7N_xuKAjm2Yo8HO8UNh4QIkfTl3raPOQoh9S0
+ mL21rCaDktWDndyrE9Zf_C8AA7TiJlfxjsUUzX.9PpZVq1CFClqt8dlwxX9PRqjcJXFQ7UFiMfh5
+ UDqQIMcJyqNKOINwgyE3Do7lqhg6MbYv1xDwRhPlh90jDB1Ibfpy0ounh6LROqEkdRbY1E6baPva
+ xWwgBEcELRUXGeIBCdZ07irX80c54.g8PiTooeMI0nF2vmygPVjJqTfBBUYpwi6A_.29Bo3QldGp
+ 58imH2KzQI9W2cJnYhvsB4naAS84tAWaxvAElqgvA2GagFM8UasVvYbnVB1OO7C4K81xu.GExawz
+ 5hvkpH_4CoaslTkmjm6440P2j7d69K5akWTVuKE00Pf2_7k1Hv6UMOqsqWseE3zCwW0d9uXMttlU
+ Buig_haK5TftEa9_xDRBEd87.B3g0ZIH1OeSfk1nXm.7zDdiRWW42qreuJ3t92gwxDQLIhgbm1g4
+ ZF.WZZdvgk62O0THbWRSz9aIA_DzOtcK_iiuGWTvT5cjdPPspLAr6v5DaSnzcqkgIZt4ew_u8KDg
+ K1WjYKRRTjxEfrXenZuB4_4_gb0TmfK0BvGxY46L9lO8YBFLH4V1G56Y1XNkH9f2DO4b.winnrrY
+ SO9ST_8cIwvkBr5qii2R82SH1ckKcRgQJ1heOmd46bq6aH8QVThMcnV3gs22A7z_5lPKuRjItDMF
+ 6Ip.SpQknSb18Hcp0egH6g62aztR1_jLf5IcJNmAiC04uP9pGoh58neckqLsp_v8FTI76Lq2dCfj
+ M3HukaI76aQ0XSmHuNLgty0vZOW4r9b0M4vnmnlNC78a58XzKeA.5DCS9EuTtTGMfcBq0Wv3ffm4
+ 71JrdfvOcr5KjAyGj5snEL9JtFy9xxAdpfrwU0wO3TJQodetdCahtdYV4jvsC2W2fEAEO17ACWLD
+ W6UsXbxQ6fUo3fbwO1D3VFoxnCPhH.3oJuoqguPvtUvTz_7TLQwEjoZ.884xaE2jiYrUMq_tP2W3
+ tHE84JRctb6VrzwV3ixWKLFhzXFg1g7iXa_bRu4OlCFbcZrtSY7tfo56frpMbPe.BLSE07pUB_Be
+ m4VG5R4lUrVB0fA5kYi5KSIUvPPdtsWTkS8oRkVp.gDK.5Ya4rmMwx_6QzxALPpfmIB2u.FdjZz_
+ hNkiKmkhdA9U3gfuX6Hd7NWea6ZwX.3KJWOQtQ9T5IV4T61VtmwcmapGrmD3mi5WHIHdDggqQIHC
+ E2p.DiVbGKtRVQjLT16HM.C5X_s0GPY76PohiTeJHb4XUrBDkjBO1pytZOQQRGpd.IggGBIZlv.z
+ ahPVKA7a.6qR4cjMvfOWXkUAOlK4VVV26or7qn9dzDa5dU.ClNY0eBlQ8r.VZGYulCM2Oq6EacYT
+ vzb2Wgf6IuQ0rPhFxDZNvMeR7_Nhcx2MjTcaC_TtBPM31ksCBAxJjGmz2dhHYn07BUS2Y9GmsN5Q
+ zr_YbPpUUYLm.YWeupfZqYcbkAx3v1Buui.qiBSKkbQcY9U6cArbA.poYM94h7le9Qx176d6MWyh
+ GazXpx_jWyPFHh.GgSqF5MgLLmbr9a1lg0IM_rXPbPUAUs9F_8Oxz7vgkOJgqx_oLQyTtSpj2U2p
+ 9oiYKWmmncA4uwmQMmBu6ciZNaurFXgqmKvCFWAAMWWlJxhQzVG_QmTuRYnymvZqxYpi5QpO8YZU
+ HgIIJR3EmpqMkdxhtABhVglkAvF2CL0LhgY_Ey1cMsut_wocl3IPJ35LVUKYiwN3MdMCiiUPMr1r
+ viiD1yFD5zTQGHVADLIH13vEYM3XObJUkHXTXXeIvRmsIba1CvP7n32XWOSB8JrHOmOjNYtIoFHE
+ rzNlLYOYob4sJsVOU1Prnw87LN7Dr1qY2zWwZT_g5exk_QWzJ51qVy7pX2upQDspT25QT.2bo6pg
+ .msms.s7KtuG9fdvFAx3V70JLFAUu3D2zuU8sKFe8AwJMlAYRXOx8uJTgd82B9jGIq0IuVS0n1LL
+ .iJOYmiEUaLD9oT7QwsCmWeWdBhiJPZ2JBhz09FTVqwbB9o7caImMp7ez1kAbDLLnc8RMPiQ71aW
+ lELjwIrvoUlJ8GBgGtJQMslTLNo4KDf.Y0Q16QIW1kFuCpy8s.NVdVLS.YUE8Eajusj9RuHa29YG
+ OPo.u7D9hU4v.SRnbye.ItAgOVFsjGz0DaXBkVXxJdjmKfjAOjJmxnrHrRSiPq_lq3dOUYf716M_
+ LFvvMIU4cx49BzPm.rGdFOMB5NtL0DaOd8DojSXZavw4Hm1HshW258_FrY9STPrfG_59E2o5Au54
+ Sh8R9qMjV.pLLpELlDwWHlpsrUXOOxexFWOrsihv5wx1ZEoVA_FXiWEAI_gMOelccN6nh.EoL3Z9
+ Ujlm45sxqHo6VbJvfyOpP_fxr70vLbfxN2YfxRiM2g4dWPXXkd0i9HYm2KioIetgLTTZlcMfLrm.
+ qb2htc5O.CtDavq_h373Me8MU_gRVPA3bsWJSWb.xBTilZ36_XVFgug42k2atoickNI7ImCgwG6o
+ SXI0xrsTQn..jgbGA70U48iiCU8Mxls9Io3eAFeWprk.oadSszwQ6wEZR0EGD.GiAFVfyQPEGmlt
+ W.DAz9JcVa.cDtaa8BvcRCcqMbnHUuhfaEnFYwcWSZG3Hqw6An_dRdjkOqdmQyhF43YDgxTZEVJg
+ DPLTvzVUIH.GynHZPuJ.rYAoUKbXff9gonA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 26 Jan 2021 17:03:49 +0000
+Received: by smtp419.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID a2a8297cbf162325f158e403bf6e2609;
+          Tue, 26 Jan 2021 17:03:46 +0000 (UTC)
 From:   Casey Schaufler <casey@schaufler-ca.com>
 To:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
@@ -75,9 +75,9 @@ Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
         keescook@chromium.org, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
         sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: [PATCH v24 09/25] LSM: Use lsmblob in security_ipc_getsecid
-Date:   Tue, 26 Jan 2021 08:40:52 -0800
-Message-Id: <20210126164108.1958-10-casey@schaufler-ca.com>
+Subject: [PATCH v24 20/25] LSM: Verify LSM display sanity in binder
+Date:   Tue, 26 Jan 2021 08:41:03 -0800
+Message-Id: <20210126164108.1958-21-casey@schaufler-ca.com>
 X-Mailer: git-send-email 2.25.4
 In-Reply-To: <20210126164108.1958-1-casey@schaufler-ca.com>
 References: <20210126164108.1958-1-casey@schaufler-ca.com>
@@ -86,96 +86,62 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-There may be more than one LSM that provides IPC data
-for auditing. Change security_ipc_getsecid() to fill in
-a lsmblob structure instead of the u32 secid. The
-audit data structure containing the secid will be updated
-later, so there is a bit of scaffolding here.
+Verify that the tasks on the ends of a binder transaction
+use the same "display" security module. This prevents confusion
+of security "contexts".
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Reviewed-by: John Johansen <john.johansen@canonical.com>
 Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
 Acked-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-audit@redhat.com
 ---
- include/linux/security.h |  7 ++++---
- kernel/auditsc.c         |  7 ++++++-
- security/security.c      | 12 +++++++++---
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ security/security.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index f786d8833e7d..20a47bd3930b 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -504,7 +504,7 @@ int security_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			unsigned long arg4, unsigned long arg5);
- void security_task_to_inode(struct task_struct *p, struct inode *inode);
- int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
--void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
-+void security_ipc_getsecid(struct kern_ipc_perm *ipcp, struct lsmblob *blob);
- int security_msg_msg_alloc(struct msg_msg *msg);
- void security_msg_msg_free(struct msg_msg *msg);
- int security_msg_queue_alloc(struct kern_ipc_perm *msq);
-@@ -1233,9 +1233,10 @@ static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
- 	return 0;
- }
- 
--static inline void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
-+static inline void security_ipc_getsecid(struct kern_ipc_perm *ipcp,
-+					 struct lsmblob *blob)
- {
--	*secid = 0;
-+	lsmblob_init(blob, 0);
- }
- 
- static inline int security_msg_msg_alloc(struct msg_msg *msg)
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 220b3a7ed326..b3ad40787740 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -2327,11 +2327,16 @@ void __audit_mq_getsetattr(mqd_t mqdes, struct mq_attr *mqstat)
- void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
- {
- 	struct audit_context *context = audit_context();
-+	struct lsmblob blob;
- 	context->ipc.uid = ipcp->uid;
- 	context->ipc.gid = ipcp->gid;
- 	context->ipc.mode = ipcp->mode;
- 	context->ipc.has_perm = 0;
--	security_ipc_getsecid(ipcp, &context->ipc.osid);
-+	security_ipc_getsecid(ipcp, &blob);
-+	/* context->ipc.osid will be changed to a lsmblob later in
-+	 * the patch series. This will allow auditing of all the object
-+	 * labels associated with the ipc object. */
-+	context->ipc.osid = lsmblob_value(&blob);
- 	context->type = AUDIT_IPC;
- }
- 
 diff --git a/security/security.c b/security/security.c
-index 271584938404..197f69780783 100644
+index ba39b9b13e08..03fb8a702f64 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -1928,10 +1928,16 @@ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
- 	return call_int_hook(ipc_permission, 0, ipcp, flag);
+@@ -834,9 +834,38 @@ int security_binder_set_context_mgr(struct task_struct *mgr)
+ 	return call_int_hook(binder_set_context_mgr, 0, mgr);
  }
  
--void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid)
-+void security_ipc_getsecid(struct kern_ipc_perm *ipcp, struct lsmblob *blob)
++/**
++ * security_binder_transaction - Binder driver transaction check
++ * @from: source of the transaction
++ * @to: destination of the transaction
++ *
++ * Verify that the tasks have the same LSM "display", then
++ * call the security module hooks.
++ *
++ * Returns -EINVAL if the displays don't match, or the
++ * result of the security module checks.
++ */
+ int security_binder_transaction(struct task_struct *from,
+ 				struct task_struct *to)
  {
--	*secid = 0;
--	call_void_hook(ipc_getsecid, ipcp, secid);
-+	struct security_hook_list *hp;
++	int from_ilsm = lsm_task_ilsm(from);
++	int to_ilsm = lsm_task_ilsm(to);
 +
-+	lsmblob_init(blob, 0);
-+	hlist_for_each_entry(hp, &security_hook_heads.ipc_getsecid, list) {
-+		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
-+			continue;
-+		hp->hook.ipc_getsecid(ipcp, &blob->secid[hp->lsmid->slot]);
-+	}
++	/*
++	 * If the ilsm is LSMBLOB_INVALID the first module that has
++	 * an entry is used. This will be in the 0 slot.
++	 *
++	 * This is currently only required if the server has requested
++	 * peer contexts, but it would be unwieldly to have too much of
++	 * the binder driver detail here.
++	 */
++	if (from_ilsm == LSMBLOB_INVALID)
++		from_ilsm = 0;
++	if (to_ilsm == LSMBLOB_INVALID)
++		to_ilsm = 0;
++	if (from_ilsm != to_ilsm)
++		return -EINVAL;
++
+ 	return call_int_hook(binder_transaction, 0, from, to);
  }
  
- int security_msg_msg_alloc(struct msg_msg *msg)
 -- 
 2.25.4
 
