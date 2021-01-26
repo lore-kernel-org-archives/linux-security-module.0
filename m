@@ -2,115 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F363CC433E9
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Jan 2021 05:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2811C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Jan 2021 13:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A04FD22ADF
-	for <linux-security-module@archiver.kernel.org>; Tue, 26 Jan 2021 05:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA1602255F
+	for <linux-security-module@archiver.kernel.org>; Tue, 26 Jan 2021 13:55:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbhAZFvd (ORCPT
+        id S2405322AbhAZNxq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:51:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732017AbhAZCDc (ORCPT
+        Tue, 26 Jan 2021 08:53:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51562 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405524AbhAZNxo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 25 Jan 2021 21:03:32 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC619C061756
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Jan 2021 16:14:12 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id o10so582450wmc.1
-        for <linux-security-module@vger.kernel.org>; Mon, 25 Jan 2021 16:14:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vz7Wx3SXxaN+HsWZGzhnHFVDxGZAroM2JwH4bW0nEhM=;
-        b=WulKks/yUSJwwUol1tm6wB9TJkukXvTYKvdB2ceQgXomgHQMSU12Q0ukxoGukdPNr8
-         HGAjlTfWtd5HvJzNWyfyy0crd2HH+/syiXerMgHWpnjKX2vL/MjmxngjAkb9Ff2XGB5O
-         2/Kvk7D9kj7xdMH5EBWmOi+BQjBDhtTEW1Gfpa+yh52P9hNpbK7Lr+NmN28rhnuHGel+
-         dO62MQLsOV4fBk09tq1r4tc2zrJUdUMA+jCyQbkJYdTVuaGSVsKAM9Ytr4Ozzu8qwh3t
-         JdPEfNF7P53HhUk4Nx0zB6G5G3rIGu1xvUCi6Vt61QOVMpU8sH7py/rv4XF0bp+yCvWD
-         rXZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vz7Wx3SXxaN+HsWZGzhnHFVDxGZAroM2JwH4bW0nEhM=;
-        b=tbgSl1CArKvKgA35Ufmz+K9rZu62CrWx8l6qaLyKHJf6ZLF5wGTwSA99lvjiX368Z9
-         6y1QHXWz5TBykQulT5rTAM3RBdMiWSvwCl2ZNFw9e5+9xliLlwquf/+0LDMCvwgH8bsP
-         Vu2+uXUovnejFHfBnUIwWD7GOdPewbwsp+MVhCDXfaTfogAjtfEpih+R734msRZcQQkv
-         Ex/j4yHrd+Q98vvs1qvjBcxCUtwgdrTx330HMPUEY1CDqLJd0coCkw00JVeghoPl4My0
-         0okZH/toyIpB1H83XqQKCY6UfnbfhM3Hfr92CYc05WKk8+n9I16ZRtQ4IpS3WtgPCzHc
-         miMw==
-X-Gm-Message-State: AOAM533ypLahP9Lp68zAkH44QVEvSM1OL2ftOxAEDM3q47rtM0Vt7Ire
-        H7F4OPFM4USd/+liJAzvtDESFxVI7svEXGcY2tXvqA==
-X-Google-Smtp-Source: ABdhPJytUOFxylJO9GQfWCZxkgmC08Bcn5+HCLBHOxR+Vvj6poU2sA/tL72vkNkKpaNCAmBDljbV4s4UOoZM8sJO7UI=
-X-Received: by 2002:a1c:7906:: with SMTP id l6mr2247505wme.22.1611620051415;
- Mon, 25 Jan 2021 16:14:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20210120202337.1481402-1-surenb@google.com> <20210125131935.GI827@dhcp22.suse.cz>
-In-Reply-To: <20210125131935.GI827@dhcp22.suse.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 25 Jan 2021 16:14:00 -0800
-Message-ID: <CAJuCfpGu_x4vxXejTUfD4Mjun=qJOsdoRs42gQhiv30EnED=nA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] process_madvise.2: Add process_madvise man page
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     linux-man@vger.kernel.org,
+        Tue, 26 Jan 2021 08:53:44 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1611669176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Eq0eIxGFaOAtL0zlId1JHPNVaLrojruOSnd68XSBtBQ=;
+        b=CyfrVNC7X2pzMVUtodZD8Q54ECXgj72/vBxcKX6o/p/ycRnIOVXjr9PY7SVSh2qANeS7X8
+        tkNB7fGLi3QHWICIfDRlqoCG22/m9GfM9TnKGLTAXs6AKQerEbtX3eSn2ePgE87q5qKOvg
+        a5PlvteXw8R4Jgyq8X/1YK/mMJkFWkQ=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 72D54AEAC;
+        Tue, 26 Jan 2021 13:52:56 +0000 (UTC)
+Date:   Tue, 26 Jan 2021 14:52:54 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     Jann Horn <jannh@google.com>
+Cc:     Suren Baghdasaryan <surenb@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
         Kees Cook <keescook@chromium.org>,
         Jeffrey Vander Stoep <jeffv@google.com>,
         Minchan Kim <minchan@kernel.org>,
         Shakeel Butt <shakeelb@google.com>,
         David Rientjes <rientjes@google.com>,
-        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
-        Tim Murray <timmurray@google.com>,
+        Edgar Arriaga =?iso-8859-1?Q?Garc=EDa?= 
+        <edgararriaga@google.com>, Tim Murray <timmurray@google.com>,
         linux-mm <linux-mm@kvack.org>,
         SElinux list <selinux@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
         Linux API <linux-api@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+        kernel-team <kernel-team@android.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] mm/madvise: replace ptrace attach requirement for
+ process_madvise
+Message-ID: <20210126135254.GP827@dhcp22.suse.cz>
+References: <20210111170622.2613577-1-surenb@google.com>
+ <20210112074629.GG22493@dhcp22.suse.cz>
+ <20210112174507.GA23780@redhat.com>
+ <CAJuCfpFQz=x-LvONO3c4iqjKP4NKJMgUuiYc8HACKHAv1Omu0w@mail.gmail.com>
+ <20210113142202.GC22493@dhcp22.suse.cz>
+ <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jan 25, 2021 at 5:19 AM 'Michal Hocko' via kernel-team
-<kernel-team@android.com> wrote:
->
-> On Wed 20-01-21 12:23:37, Suren Baghdasaryan wrote:
-> [...]
-> >     MADV_COLD (since Linux 5.4.1)
-> >         Deactivate a given range of pages by moving them from active to
-> >         inactive LRU list. This is done to accelerate the reclaim of these
-> >         pages. The advice might be ignored for some pages in the range when it
-> >         is not applicable.
->
-> I do not think we want to talk about active/inactive LRU lists here.
-> Wouldn't it be sufficient to say
-> Deactive a given range of pages which will make them a more probable
-> reclaim target should there be a memory pressure. This is a
-> non-destructive operation.
+On Wed 20-01-21 14:17:39, Jann Horn wrote:
+> On Wed, Jan 13, 2021 at 3:22 PM Michal Hocko <mhocko@suse.com> wrote:
+> > On Tue 12-01-21 09:51:24, Suren Baghdasaryan wrote:
+> > > On Tue, Jan 12, 2021 at 9:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > >
+> > > > On 01/12, Michal Hocko wrote:
+> > > > >
+> > > > > On Mon 11-01-21 09:06:22, Suren Baghdasaryan wrote:
+> > > > >
+> > > > > > What we want is the ability for one process to influence another process
+> > > > > > in order to optimize performance across the entire system while leaving
+> > > > > > the security boundary intact.
+> > > > > > Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
+> > > > > > and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
+> > > > > > and CAP_SYS_NICE for influencing process performance.
+> > > > >
+> > > > > I have to say that ptrace modes are rather obscure to me. So I cannot
+> > > > > really judge whether MODE_READ is sufficient. My understanding has
+> > > > > always been that this is requred to RO access to the address space. But
+> > > > > this operation clearly has a visible side effect. Do we have any actual
+> > > > > documentation for the existing modes?
+> > > > >
+> > > > > I would be really curious to hear from Jann and Oleg (now Cced).
+> > > >
+> > > > Can't comment, sorry. I never understood these security checks and never tried.
+> > > > IIUC only selinux/etc can treat ATTACH/READ differently and I have no idea what
+> > > > is the difference.
+> 
+> Yama in particular only does its checks on ATTACH and ignores READ,
+> that's the difference you're probably most likely to encounter on a
+> normal desktop system, since some distros turn Yama on by default.
+> Basically the idea there is that running "gdb -p $pid" or "strace -p
+> $pid" as a normal user will usually fail, but reading /proc/$pid/maps
+> still works; so you can see things like detailed memory usage
+> information and such, but you're not supposed to be able to directly
+> peek into a running SSH client and inject data into the existing SSH
+> connection, or steal the cryptographic keys for the current
+> connection, or something like that.
+> 
+> > > I haven't seen a written explanation on ptrace modes but when I
+> > > consulted Jann his explanation was:
+> > >
+> > > PTRACE_MODE_READ means you can inspect metadata about processes with
+> > > the specified domain, across UID boundaries.
+> > > PTRACE_MODE_ATTACH means you can fully impersonate processes with the
+> > > specified domain, across UID boundaries.
+> >
+> > Maybe this would be a good start to document expectations. Some more
+> > practical examples where the difference is visible would be great as
+> > well.
+> 
+> Before documenting the behavior, it would be a good idea to figure out
+> what to do with perf_event_open(). That one's weird in that it only
+> requires PTRACE_MODE_READ, but actually allows you to sample stuff
+> like userspace stack and register contents (if perf_event_paranoid is
+> 1 or 2). Maybe for SELinux things (and maybe also for Yama), there
+> should be a level in between that allows fully inspecting the process
+> (for purposes like profiling) but without the ability to corrupt its
+> memory or registers or things like that. Or maybe perf_event_open()
+> should just use the ATTACH mode.
 
-That sounds better. Will update in the next version.
+Thanks for the clarification. I still cannot say I would have a good
+mental picture. Having something in Documentation/core-api/ sounds
+really needed. Wrt to perf_event_open it sounds really odd it can do
+more than other places restrict indeed. Something for the respective
+maintainer but I strongly suspect people simply copy the pattern from
+other places because the expected semantic is not really clear.
 
->
-> Other than that, looks good to me from the content POV.
->
-> Thanks!
-
-Thanks for the review Michal!
-
-> --
-> Michal Hocko
-> SUSE Labs
->
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
->
+-- 
+Michal Hocko
+SUSE Labs
