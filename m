@@ -2,251 +2,241 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 793AFC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98649C433E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4408164E01
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BC8964E01
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229893AbhA1UVY (ORCPT
+        id S231153AbhA1UcF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jan 2021 15:21:24 -0500
-Received: from out02.mta.xmission.com ([166.70.13.232]:49010 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229830AbhA1UVW (ORCPT
+        Thu, 28 Jan 2021 15:32:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229595AbhA1UcD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jan 2021 15:21:22 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l5DmM-002lXc-25; Thu, 28 Jan 2021 13:20:34 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1l5DmK-00CmNL-O7; Thu, 28 Jan 2021 13:20:33 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-References: <20210119162204.2081137-1-mszeredi@redhat.com>
-        <20210119162204.2081137-3-mszeredi@redhat.com>
-        <8735yw8k7a.fsf@x220.int.ebiederm.org>
-        <20210128165852.GA20974@mail.hallyn.com>
-Date:   Thu, 28 Jan 2021 14:19:13 -0600
-In-Reply-To: <20210128165852.GA20974@mail.hallyn.com> (Serge E. Hallyn's
-        message of "Thu, 28 Jan 2021 10:58:52 -0600")
-Message-ID: <87o8h8x1a6.fsf@x220.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 28 Jan 2021 15:32:03 -0500
+Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A3B2C061573;
+        Thu, 28 Jan 2021 12:31:23 -0800 (PST)
+Received: by mail-wm1-x336.google.com with SMTP id m1so2306860wml.2;
+        Thu, 28 Jan 2021 12:31:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lIO5kM+zDyYDd38SsYlTwtI8yepYfulfKs7DP0doKqU=;
+        b=syRrrZb0JaALX1sz2rUrO22yiN5ffT0thUKVDW7NM/29x5HYSWhgb2aLQhdAO59sYM
+         4nZSHOhVo2UOBYI5cpz5WB09gqJ4MurLALRxR791BzLKluSZUld7QV9H4qSeGrZItMvS
+         Tt79TKd8Ego/XtCAS5Te2sGhJJQ+UG8l/54OukZGuqCxZIB+qi8uh5GieSAFR5ORh8eC
+         Ye7HKwSodsLROPjaJqCwxK5GOXBzKK3DUQ7f50X/4jJ+Bv5SJjMtM8Cuxezo5XUgYAcn
+         q48YAAN+pZcBhUW4rmarBxf2Umk1F4+yRmJPtIIQKx1Z9yuVnONQw3yd2Az0hHDIZJDt
+         2auw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lIO5kM+zDyYDd38SsYlTwtI8yepYfulfKs7DP0doKqU=;
+        b=ccKEOxQCmbqKlpYjZBsVeOVtaJujM5DY24jkJE+2PyrnHWBcINK+KzxPJQtcqriOHK
+         0d9rJNpbtOMVx/UK5fDxGlO2lu4DWMVaclmtrP5JxYmzGa2EsETeyTyBeBcyxvXf7iov
+         w6eHYOWG6ez3MGPTQlGKJt1AA6zmis/U/7qjXEdxM1DNtWyqbXMVIaeimRxUOmNhn1t4
+         wWGDTbRrcSr/R0iTNbCfRd8CqhfkfquPOPSXq16lvnsAkkSzTpLvcGpij4iiN9RPjEBH
+         2GTwkT2qUZZ/ufiv5yiC7rID5V2Yx11OoG2RGX+z6vBVWHEB8Mlk8sei1YNlI4cXhXJk
+         /UYA==
+X-Gm-Message-State: AOAM532ptSiBtWiQHaHydCTVdPq8CyglYtI9hXbfd+Kr91qF3g2EiBBD
+        63K+BvcY2CZSCcIXa2MZr2c=
+X-Google-Smtp-Source: ABdhPJz35IIaCFuBWIp85fYEBgf494zrQNqYq+/SP3Pr7n7zye6oMIunw2HLsGbqqpCO9tQtsuyQrA==
+X-Received: by 2002:a05:600c:24b:: with SMTP id 11mr840992wmj.17.1611865881702;
+        Thu, 28 Jan 2021 12:31:21 -0800 (PST)
+Received: from ?IPv6:2a02:2455:e0:e000:3005:efab:c884:ced0? ([2a02:2455:e0:e000:3005:efab:c884:ced0])
+        by smtp.gmail.com with ESMTPSA id z63sm6975204wme.8.2021.01.28.12.31.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Jan 2021 12:31:20 -0800 (PST)
+Cc:     mtk.manpages@gmail.com, linux-man <linux-man@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?Q?Edgar_Arriaga_Garc=c3=ada?= <edgararriaga@google.com>,
+        Tim Murray <timmurray@google.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Android Kernel Team <kernel-team@android.com>
+Subject: Re: [PATCH 1/1] process_madvise.2: Add process_madvise man page
+To:     Suren Baghdasaryan <surenb@google.com>
+References: <20210120202337.1481402-1-surenb@google.com>
+ <CAKgNAkgsQWL3QAyF6CQU=yifzA1tfp_E5kBBNKuAq_+sB4Amyw@mail.gmail.com>
+ <CAJuCfpEfMgA6z5S5gmHwJB_3KWwmKKp434GeHheUGF3yC7r01w@mail.gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <6cd84701-fb65-7aa0-38db-b69fe5748754@gmail.com>
+Date:   Thu, 28 Jan 2021 21:31:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1l5DmK-00CmNL-O7;;;mid=<87o8h8x1a6.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+HX8zIDa5Ll3ba0CVB+E8Qkp9OORlWPRk=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+In-Reply-To: <CAJuCfpEfMgA6z5S5gmHwJB_3KWwmKKp434GeHheUGF3yC7r01w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-"Serge E. Hallyn" <serge@hallyn.com> writes:
+Hello Suren,
 
-> On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
->> Miklos Szeredi <mszeredi@redhat.com> writes:
->> 
->> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
->> > currently return in v2 format unconditionally.
->> >
->> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
->> > and so the same conversions performed on it.
->> >
->> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
->> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
->> > user namespace in case of v2) cannot be mapped in the current user
->> > namespace.
->> 
->> This looks like a good cleanup.
->
-> Sorry, I'm not following.  Why is this a good cleanup?  Why should
-> the xattr be shown as faked v3 in this case?
+On 1/28/21 7:40 PM, Suren Baghdasaryan wrote:
+> On Thu, Jan 28, 2021 at 4:24 AM Michael Kerrisk (man-pages)
+> <mtk.manpages@gmail.com> wrote:
+>>
+>> Hello Suren,
+>>
+>> Thank you for writing this page! Some comments below.
+> 
+> Thanks for the review!
+> Couple questions below and I'll respin the new version once they are clarified.
 
-If the reader is in &init_user_ns.  If the filesystem was mounted in a
-user namespace.   Then the reader looses the information that the
-capability xattr only applies to a subset of user namespaces.
+Okay. See below.
 
-A trivial place where this would be important is if userspace was to
-copy the file and the associated  capability xattr to another
-filesystem, that is mounted differently.
+>> On Wed, 20 Jan 2021 at 21:36, Suren Baghdasaryan <surenb@google.com> wrote:
+>>>
+
+[...]
+
+Thanks for all the acks. That let's me know that you saw what I said.
+
+>>> RETURN VALUE
+>>>     On success, process_madvise() returns the number of bytes advised. This
+>>>     return value may be less than the total number of requested bytes, if an
+>>>     error occurred. The caller should check return value to determine whether
+>>>     a partial advice occurred.
+>>
+>> So there are three return values possible,
+> 
+> Ok, I think I see your point. How about this instead:
+
+Well, I'm glad you saw it, because I forgot to finish it. But yes,
+you understood what I forgot to say.
+
+> RETURN VALUE
+>      On success, process_madvise() returns the number of bytes advised. This
+>      return value may be less than the total number of requested bytes, if an
+>      error occurred after some iovec elements were already processed. The caller
+>      should check the return value to determine whether a partial
+> advice occurred.
+> 
+>     On error, -1 is returned and errno is set appropriately.
+
+We recently standardized some wording here:
+s/appropriately/to indicate the error/.
 
 
-<aside>
-From our previous discussions I would also argue it would be good
-if there was a bypass that skipped all conversions if the reader
-and the filesystem are in the same user namespace.
-</aside>
+>>> +.PP
+>>> +The pointer
+>>> +.I iovec
+>>> +points to an array of iovec structures, defined in
+>>
+>> "iovec" should be formatted as
+>>
+>> .I iovec
+> 
+> I think it is formatted that way above. What am I missing?
 
+But also in "an array of iovec structures"...
 
-> A separate question below.
->
->> I do wonder how well this works with stacking.  In particular
->> ovl_xattr_set appears to call vfs_getxattr without overriding the creds.
->> What the purpose of that is I haven't quite figured out.  It looks like
->> it is just a probe to see if an xattr is present so maybe it is ok.
->> 
->> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> 
->> >
->> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> > ---
->> >  security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
->> >  1 file changed, 43 insertions(+), 24 deletions(-)
->> >
->> > diff --git a/security/commoncap.c b/security/commoncap.c
->> > index bacc1111d871..c9d99f8f4c82 100644
->> > --- a/security/commoncap.c
->> > +++ b/security/commoncap.c
->> > @@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->> >  {
->> >  	int size, ret;
->> >  	kuid_t kroot;
->> > +	__le32 nsmagic, magic;
->> >  	uid_t root, mappedroot;
->> >  	char *tmpbuf = NULL;
->> >  	struct vfs_cap_data *cap;
->> > -	struct vfs_ns_cap_data *nscap;
->> > +	struct vfs_ns_cap_data *nscap = NULL;
->> >  	struct dentry *dentry;
->> >  	struct user_namespace *fs_ns;
->> >  
->> > @@ -396,46 +397,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->> >  	fs_ns = inode->i_sb->s_user_ns;
->> >  	cap = (struct vfs_cap_data *) tmpbuf;
->> >  	if (is_v2header((size_t) ret, cap)) {
->> > -		/* If this is sizeof(vfs_cap_data) then we're ok with the
->> > -		 * on-disk value, so return that.  */
->> > -		if (alloc)
->> > -			*buffer = tmpbuf;
->> > -		else
->> > -			kfree(tmpbuf);
->> > -		return ret;
->> > -	} else if (!is_v3header((size_t) ret, cap)) {
->> > -		kfree(tmpbuf);
->> > -		return -EINVAL;
->> > +		root = 0;
->> > +	} else if (is_v3header((size_t) ret, cap)) {
->> > +		nscap = (struct vfs_ns_cap_data *) tmpbuf;
->> > +		root = le32_to_cpu(nscap->rootid);
->> > +	} else {
->> > +		size = -EINVAL;
->> > +		goto out_free;
->> >  	}
->> >  
->> > -	nscap = (struct vfs_ns_cap_data *) tmpbuf;
->> > -	root = le32_to_cpu(nscap->rootid);
->> >  	kroot = make_kuid(fs_ns, root);
->> >  
->> >  	/* If the root kuid maps to a valid uid in current ns, then return
->> >  	 * this as a nscap. */
->> >  	mappedroot = from_kuid(current_user_ns(), kroot);
->> >  	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
->> > +		size = sizeof(struct vfs_ns_cap_data);
->> >  		if (alloc) {
->> > -			*buffer = tmpbuf;
->> > +			if (!nscap) {
->> > +				/* v2 -> v3 conversion */
->> > +				nscap = kzalloc(size, GFP_ATOMIC);
->> > +				if (!nscap) {
->> > +					size = -ENOMEM;
->> > +					goto out_free;
->> > +				}
->> > +				nsmagic = VFS_CAP_REVISION_3;
->> > +				magic = le32_to_cpu(cap->magic_etc);
->> > +				if (magic & VFS_CAP_FLAGS_EFFECTIVE)
->> > +					nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
->> > +				memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
->> > +				nscap->magic_etc = cpu_to_le32(nsmagic);
->> > +			} else {
->> > +				/* use allocated v3 buffer */
->> > +				tmpbuf = NULL;
->> > +			}
->> >  			nscap->rootid = cpu_to_le32(mappedroot);
->> > -		} else
->> > -			kfree(tmpbuf);
->> > -		return size;
->> > +			*buffer = nscap;
->> > +		}
->> > +		goto out_free;
->> >  	}
->> >  
->> >  	if (!rootid_owns_currentns(kroot)) {
->> > -		kfree(tmpbuf);
->> > -		return -EOPNOTSUPP;
->> > +		size = -EOVERFLOW;
->
-> Why this change?  Christian (cc:d) noticed that this is a user visible change.
-> Without this change, if you are in a userns which has different rootid, the
-> EOVERFLOW tells vfs_getxattr to vall back to __vfs_getxattr() and so you can
-> see the v3 capability with its rootid.
->
-> With this change, you instead just get EOVERFLOW.
+> BTW, where should I be using .I vs .IR? I was looking for an answer
+> but could not find it.
 
-Returning EOVERFLOW is the desired behavior when the rootid can not be
-represented by the calling userspace.
+.B / .I == bold/italic this line
+.BR / .IR == alternate bold/italic with normal (Roman) font.
 
-Today when you execute such a file from such a namespace the file will
-run without any file capabilities because get_vfs_caps_from_disk
-returns -ENODATA.
+So:
+.I iovec
+.I iovec ,       # so that comma is not italic
+.BR process_madvise ()
+etc.
 
-However today if you copy the file will all of it's xattrs onto another
-filesystem the new file will have a v3 cap that will grant capabilities
-in some contexts.  That mismatch is potentially a security problem.
+[...]
 
-Which means the only sane thing to do is to fail so userspace does not
-think it can safely copy or comprehend all of the xattrs of the file.
+>>> +.I iovec
+>>> +if one of its elements points to an invalid memory
+>>> +region in the remote process. No further elements will be
+>>> +processed beyond that point.
+>>> +.PP
+>>> +Permission to provide a hint to external process is governed by a
+>>> +ptrace access mode
+>>> +.B PTRACE_MODE_READ_REALCREDS
+>>> +check; see
+>>> +.BR ptrace (2)
+>>> +and
+>>> +.B CAP_SYS_ADMIN
+>>> +capability that caller should have in order to affect performance
+>>> +of an external process.
+>>
+>> The preceding sentence is garbled. Missing words?
+> 
+> Maybe I worded it incorrectly. What I need to say here is that the
+> caller should have both PTRACE_MODE_READ_REALCREDS credentials and
+> CAP_SYS_ADMIN capability. The first part I shamelessly copy/pasted
+> from https://man7.org/linux/man-pages/man2/process_vm_readv.2.html and
+> tried adding the second one to it, obviously unsuccessfully. Any
+> advice on how to fix that?
 
->> > +		goto out_free;
->> >  	}
->> >  
->> >  	/* This comes from a parent namespace.  Return as a v2 capability */
->> >  	size = sizeof(struct vfs_cap_data);
->> >  	if (alloc) {
->> > -		*buffer = kmalloc(size, GFP_ATOMIC);
->> > -		if (*buffer) {
->> > -			struct vfs_cap_data *cap = *buffer;
->> > -			__le32 nsmagic, magic;
->> > +		if (nscap) {
->> > +			/* v3 -> v2 conversion */
->> > +			cap = kzalloc(size, GFP_ATOMIC);
->> > +			if (!cap) {
->> > +				size = -ENOMEM;
->> > +				goto out_free;
->> > +			}
->> >  			magic = VFS_CAP_REVISION_2;
->> >  			nsmagic = le32_to_cpu(nscap->magic_etc);
->> >  			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
->> > @@ -443,9 +459,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
->> >  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
->> >  			cap->magic_etc = cpu_to_le32(magic);
->> >  		} else {
->> > -			size = -ENOMEM;
->> > +			/* use unconverted v2 */
->> > +			tmpbuf = NULL;
->> >  		}
->> > +		*buffer = cap;
->> >  	}
->> > +out_free:
->> >  	kfree(tmpbuf);
->> >  	return size;
->> >  }
+I think you already got pretty close. How about:
 
-Eric
+[[
+Permission to provide a hint to another process is governed by a
+ptrace access mode
+.B PTRACE_MODE_READ_REALCREDS
+check (see
+BR ptrace (2));
+in addition, the caller must have the
+.B CAP_SYS_ADMIN
+capability.
+]]
+
+[...]
+
+>>> +.TP
+>>> +.B ESRCH
+>>> +No process with ID
+>>> +.I pidfd
+>>> +exists.
+>>
+>> Should this maybe be:
+>> [[
+>> The target process does not exist (i.e., it has terminated and
+>> been waited on).
+>> ]]
+>>
+>> See pidfd_send_signal(2).
+> 
+> I "borrowed" mine from
+> https://man7.org/linux/man-pages/man2/process_vm_readv.2.html but
+> either one sounds good to me. Maybe for pidfd_send_signal the wording
+> about termination is more important. Anyway, it's up to you. Just let
+> me know which one to use.
+
+I think the pidfd_send_signal(2) wording fits better.
+
+[...]
+
+Thanks,
+
+Michael
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
