@@ -2,271 +2,266 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31674C433E6
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 04:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35C8C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 06:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAF0464DD8
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 04:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0F16146D
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 06:10:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbhA1EuP (ORCPT
+        id S229834AbhA1GKR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 27 Jan 2021 23:50:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:6098 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231147AbhA1EuJ (ORCPT
+        Thu, 28 Jan 2021 01:10:17 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59746 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229791AbhA1GKD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 27 Jan 2021 23:50:09 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10S3X3il002469;
-        Wed, 27 Jan 2021 22:54:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=Glvu/YL3wdHcS0QD4BWVaHN5NqyTXmHKknZ5yG0ZdYE=;
- b=rUw9SOf2822b/Kiduol+LHU/OVfgvC+Ce4i10KzSv7QD0RFfV+duJCLJVL7baXvl9swP
- 4Qu6eiYJ+zu7VSASaGzY4Yuk3hBZvAnI/7t+JMhtHNlHI4Qd8gsVOHiKAfVlK9lYOsaL
- gLdQC0aa+YDH141hEbW9EGaam01+92ArjhzcZRO4HyYp2xqQPRBycWHhL2BGgU/5kyvT
- PDgqCwp1lAGMf+bbo604CU3tigY3GzMWqI0UG1la6Jy52eLbmKGHnFi0xo7FN4iTEYMW
- rcATdxFXjKMjSyvdN0qyplxETk1n1yYLjCFncUoWZa3YtTLMKiJ/BwvRDULcoHFMnX4D dw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36b5brmvdh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Jan 2021 22:54:05 -0500
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10S3XDIO003338;
-        Wed, 27 Jan 2021 22:54:05 -0500
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36b5brmvd0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 27 Jan 2021 22:54:05 -0500
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10S3WtQX026891;
-        Thu, 28 Jan 2021 03:54:03 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma05wdc.us.ibm.com with ESMTP id 36a3qc1mdy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 28 Jan 2021 03:54:03 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10S3s3mx28180858
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Jan 2021 03:54:03 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39BFD124055;
-        Thu, 28 Jan 2021 03:54:03 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE976124052;
-        Thu, 28 Jan 2021 03:54:01 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.65.198.104])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 28 Jan 2021 03:54:01 +0000 (GMT)
-Subject: Re: [PATCH v5 1/4] certs: Add EFI_CERT_X509_GUID support for dbx
- entries
-To:     Eric Snowberg <eric.snowberg@oracle.com>, dhowells@redhat.com,
-        dwmw2@infradead.org, jarkko@kernel.org,
-        James.Bottomley@HansenPartnership.com
-Cc:     masahiroy@kernel.org, michal.lkml@markovi.net, jmorris@namei.org,
-        serge@hallyn.com, ardb@kernel.org, zohar@linux.ibm.com,
-        lszubowi@redhat.com, javierm@redhat.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20210122181054.32635-1-eric.snowberg@oracle.com>
- <20210122181054.32635-2-eric.snowberg@oracle.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <399024a1-59fb-12b8-9ea9-9bbee843dbc8@linux.vnet.ibm.com>
-Date:   Wed, 27 Jan 2021 22:54:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Thu, 28 Jan 2021 01:10:03 -0500
+Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 10S69GZX089344;
+        Thu, 28 Jan 2021 15:09:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp);
+ Thu, 28 Jan 2021 15:09:16 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav401.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 10S69FU5089275
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 28 Jan 2021 15:09:16 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: general protection fault in tomoyo_socket_sendmsg_permission
+To:     Shuah Khan <skhan@linuxfoundation.org>,
+        Hillf Danton <hdanton@sina.com>,
+        syzbot <syzbot+95ce4b142579611ef0a9@syzkaller.appspotmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000647eff05b3f7e0d4@google.com>
+ <20201113120055.11748-1-hdanton@sina.com>
+ <5f71e0c1-d387-6d72-d8e4-edb11cf57f72@linuxfoundation.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <ea4028b7-53f2-aeaf-76e7-69874efcdec5@I-love.SAKURA.ne.jp>
+Date:   Thu, 28 Jan 2021 15:09:14 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-In-Reply-To: <20210122181054.32635-2-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f71e0c1-d387-6d72-d8e4-edb11cf57f72@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.343,18.0.737
- definitions=2021-01-27_10:2021-01-27,2021-01-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0
- adultscore=0 impostorscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2101280014
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 2020/11/14 2:14, Shuah Khan wrote:
+> On 11/13/20 5:00 AM, Hillf Danton wrote:
+>> Thu, 12 Nov 2020 23:21:26 -0800
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    9dbc1c03 Merge tag 'xfs-5.10-fixes-3' of git://git.kernel...
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=10453034500000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=1735b7978b1c3721
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=95ce4b142579611ef0a9
+>>> compiler:       gcc (GCC) 10.1.0-syz 20200507
+>>> userspace arch: i386
+>>>
+>>> Unfortunately, I don't have any reproducer for this issue yet.
+>>>
+> 
+> I would like to see the reproducer for this. I just can't reproduce
+> this problem.
+> 
+>>
+>> Fix 96c2737716d5 ("usbip: move usbip kernel code out of staging")
+>> by closing the race between readers and writer of ud->tcp_socket on
+>> sock shutdown. To do that, add waitqueue for usbip device and make
+>> writer wait for all readers to go home before releasing the socket.
 
-On 1/22/21 1:10 PM, Eric Snowberg wrote:
-> This fixes CVE-2020-26541.
->
-> The Secure Boot Forbidden Signature Database, dbx, contains a list of now
-> revoked signatures and keys previously approved to boot with UEFI Secure
-> Boot enabled.  The dbx is capable of containing any number of
-> EFI_CERT_X509_SHA256_GUID, EFI_CERT_SHA256_GUID, and EFI_CERT_X509_GUID
-> entries.
->
-> Currently when EFI_CERT_X509_GUID are contained in the dbx, the entries are
-> skipped.
->
-> Add support for EFI_CERT_X509_GUID dbx entries. When a EFI_CERT_X509_GUID
-> is found, it is added as an asymmetrical key to the .blacklist keyring.
-> Anytime the .platform keyring is used, the keys in the .blacklist keyring
-> are referenced, if a matching key is found, the key will be rejected.
->
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
-> v5: Function name changes done by David Howells
-> ---
->   certs/blacklist.c                             | 32 +++++++++++++++++++
->   certs/blacklist.h                             | 12 +++++++
->   certs/system_keyring.c                        |  6 ++++
->   include/keys/system_keyring.h                 | 11 +++++++
->   .../platform_certs/keyring_handler.c          | 11 +++++++
->   5 files changed, 72 insertions(+)
->
-> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> index 6514f9ebc943..a7f021878a4b 100644
-> --- a/certs/blacklist.c
-> +++ b/certs/blacklist.c
-> @@ -100,6 +100,38 @@ int mark_hash_blacklisted(const char *hash)
->   	return 0;
->   }
->
-> +int add_key_to_revocation_list(const char *data, size_t size)
-> +{
-> +	key_ref_t key;
-> +
-> +	key = key_create_or_update(make_key_ref(blacklist_keyring, true),
-> +				   "asymmetric",
-> +				   NULL,
-> +				   data,
-> +				   size,
-> +				   ((KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW),
-> +				   KEY_ALLOC_NOT_IN_QUOTA | KEY_ALLOC_BUILT_IN);
-> +
-> +	if (IS_ERR(key)) {
-> +		pr_err("Problem with revocation key (%ld)\n", PTR_ERR(key));
-> +		return PTR_ERR(key);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
-> +{
-> +	int ret;
-> +
-> +	ret = validate_trust(pkcs7, blacklist_keyring);
-> +
-> +	if (ret == 0)
-> +		return -EKEYREJECTED;
-> +
-> +	return -ENOKEY;
-> +}
-> +
->   /**
->    * is_hash_blacklisted - Determine if a hash is blacklisted
->    * @hash: The hash to be checked as a binary blob
-> diff --git a/certs/blacklist.h b/certs/blacklist.h
-> index 1efd6fa0dc60..420bb7c86e07 100644
-> --- a/certs/blacklist.h
-> +++ b/certs/blacklist.h
-> @@ -1,3 +1,15 @@
->   #include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +#include <crypto/pkcs7.h>
->
->   extern const char __initconst *const blacklist_hashes[];
-> +
-> +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> +#define validate_trust pkcs7_validate_trust
-> +#else
-> +static inline int validate_trust(struct pkcs7_message *pkcs7,
-> +				 struct key *trust_keyring)
-> +{
-> +	return -ENOKEY;
-> +}
-> +#endif
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 798291177186..cc165b359ea3 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -241,6 +241,12 @@ int verify_pkcs7_message_sig(const void *data, size_t len,
->   			pr_devel("PKCS#7 platform keyring is not available\n");
->   			goto error;
->   		}
-> +
-> +		ret = is_key_on_revocation_list(pkcs7);
-> +		if (ret != -ENOKEY) {
-> +			pr_devel("PKCS#7 platform key is on revocation list\n");
-> +			goto error;
-> +		}
->   	}
->   	ret = pkcs7_validate_trust(pkcs7, trusted_keys);
->   	if (ret < 0) {
-> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-> index fb8b07daa9d1..61f98739e8b1 100644
-> --- a/include/keys/system_keyring.h
-> +++ b/include/keys/system_keyring.h
-> @@ -31,11 +31,14 @@ extern int restrict_link_by_builtin_and_secondary_trusted(
->   #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_builtin_trusted
->   #endif
->
-> +extern struct pkcs7_message *pkcs7;
->   #ifdef CONFIG_SYSTEM_BLACKLIST_KEYRING
->   extern int mark_hash_blacklisted(const char *hash);
-> +extern int add_key_to_revocation_list(const char *data, size_t size);
->   extern int is_hash_blacklisted(const u8 *hash, size_t hash_len,
->   			       const char *type);
->   extern int is_binary_blacklisted(const u8 *hash, size_t hash_len);
-> +extern int is_key_on_revocation_list(struct pkcs7_message *pkcs7);
->   #else
->   static inline int is_hash_blacklisted(const u8 *hash, size_t hash_len,
->   				      const char *type)
-> @@ -47,6 +50,14 @@ static inline int is_binary_blacklisted(const u8 *hash, size_t hash_len)
->   {
->   	return 0;
->   }
-> +static inline int add_key_to_revocation_list(const char *data, size_t size)
-> +{
-> +	return 0;
-> +}
-> +static inline int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
-> +{
-> +	return -ENOKEY;
-> +}
->   #endif
->
->   #ifdef CONFIG_IMA_BLACKLIST_KEYRING
-> diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
-> index c5ba695c10e3..5604bd57c990 100644
-> --- a/security/integrity/platform_certs/keyring_handler.c
-> +++ b/security/integrity/platform_certs/keyring_handler.c
-> @@ -55,6 +55,15 @@ static __init void uefi_blacklist_binary(const char *source,
->   	uefi_blacklist_hash(source, data, len, "bin:", 4);
->   }
->
-> +/*
-> + * Add an X509 cert to the revocation list.
-> + */
-> +static __init void uefi_revocation_list_x509(const char *source,
-> +					     const void *data, size_t len)
-> +{
-> +	add_key_to_revocation_list(data, len);
-> +}
+Worrysome part for me is vhci_device_reset() which resets ud->tcp_socket to NULL
+without waiting for tx thread to terminate, though I don't know if
+vhci_device_reset() can be called while tx thread is running.
 
-In keeping the naming convention with other functions that blacklist 
-hashes, why can't we call these functions:
+I'd like to try below debug printk() patch on linx-next tree, for this bug is
+reported on linux.git and linux-next.git trees. Which git tree can be used for
+sending this to-be-removed patch to linux-next.git ? I wish there is a kernel
+config for fuzzers in linux.git so that every git tree can carry debug printk()
+patch for syzbot's reports...
 
-* uefi_revocation_list_x509() -> uefi_blacklist_x509_cert()
-* add_key_to_revocation_list() -> uefi_blacklist_cert()
-* is_key_on_revocation_list() -> is_cert_blacklisted()
+Subject: [PATCH] usb: usbip: vhci_hcd: add printk() for debug
 
-Thanks & Regards,
+This is linux-next only patch for examining a bug reported at
+https://syzkaller.appspot.com/bug?id=3e1d941a31361efc4ced2ba8b4af2044d4e43c59 .
 
-      - Nayna
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ drivers/usb/usbip/stub_dev.c   |  6 ++++++
+ drivers/usb/usbip/vhci_hcd.c   | 11 +++++++++++
+ drivers/usb/usbip/vhci_sysfs.c |  4 ++++
+ drivers/usb/usbip/vhci_tx.c    | 12 ++++++++++++
+ drivers/usb/usbip/vudc_dev.c   |  6 ++++++
+ 5 files changed, 39 insertions(+)
 
+diff --git a/drivers/usb/usbip/stub_dev.c b/drivers/usb/usbip/stub_dev.c
+index 2305d425e6c9..627f83c0ebc8 100644
+--- a/drivers/usb/usbip/stub_dev.c
++++ b/drivers/usb/usbip/stub_dev.c
+@@ -131,10 +131,14 @@ static void stub_shutdown_connection(struct usbip_device *ud)
+ 
+ 	/* 1. stop threads */
+ 	if (ud->tcp_rx) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: stop rx %p\n", __func__, ud->tcp_rx);
+ 		kthread_stop_put(ud->tcp_rx);
+ 		ud->tcp_rx = NULL;
+ 	}
+ 	if (ud->tcp_tx) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: stop tx %p\n", __func__, ud->tcp_tx);
+ 		kthread_stop_put(ud->tcp_tx);
+ 		ud->tcp_tx = NULL;
+ 	}
+@@ -146,6 +150,8 @@ static void stub_shutdown_connection(struct usbip_device *ud)
+ 	 * not touch NULL socket.
+ 	 */
+ 	if (ud->tcp_socket) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: close sock %p\n", __func__, ud->tcp_socket);
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
+ 		ud->sockfd = -1;
+diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+index 3209b5ddd30c..9e95bf9330f5 100644
+--- a/drivers/usb/usbip/vhci_hcd.c
++++ b/drivers/usb/usbip/vhci_hcd.c
+@@ -1016,10 +1016,14 @@ static void vhci_shutdown_connection(struct usbip_device *ud)
+ 
+ 	/* kill threads related to this sdev */
+ 	if (vdev->ud.tcp_rx) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: stop rx %p\n", __func__, vdev->ud.tcp_rx);
+ 		kthread_stop_put(vdev->ud.tcp_rx);
+ 		vdev->ud.tcp_rx = NULL;
+ 	}
+ 	if (vdev->ud.tcp_tx) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: stop tx %p\n", __func__, vdev->ud.tcp_tx);
+ 		kthread_stop_put(vdev->ud.tcp_tx);
+ 		vdev->ud.tcp_tx = NULL;
+ 	}
+@@ -1027,6 +1031,8 @@ static void vhci_shutdown_connection(struct usbip_device *ud)
+ 
+ 	/* active connection is closed */
+ 	if (vdev->ud.tcp_socket) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: close sock %p\n", __func__, ud->tcp_socket);
+ 		sockfd_put(vdev->ud.tcp_socket);
+ 		vdev->ud.tcp_socket = NULL;
+ 		vdev->ud.sockfd = -1;
+@@ -1074,6 +1080,11 @@ static void vhci_device_reset(struct usbip_device *ud)
+ 	vdev->udev = NULL;
+ 
+ 	if (ud->tcp_socket) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT)) {
++			pr_info("%s: close sock %p\n", __func__, ud->tcp_socket);
++			BUG_ON(vdev->ud.tcp_tx);
++			BUG_ON(vdev->ud.tcp_rx);
++		}
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
+ 		ud->sockfd = -1;
+diff --git a/drivers/usb/usbip/vhci_sysfs.c b/drivers/usb/usbip/vhci_sysfs.c
+index be37aec250c2..b37e7770aa35 100644
+--- a/drivers/usb/usbip/vhci_sysfs.c
++++ b/drivers/usb/usbip/vhci_sysfs.c
+@@ -390,6 +390,10 @@ static ssize_t attach_store(struct device *dev, struct device_attribute *attr,
+ 
+ 	vdev->ud.tcp_rx = kthread_get_run(vhci_rx_loop, &vdev->ud, "vhci_rx");
+ 	vdev->ud.tcp_tx = kthread_get_run(vhci_tx_loop, &vdev->ud, "vhci_tx");
++	if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT)) {
++		BUG_ON(IS_ERR(vdev->ud.tcp_rx));
++		BUG_ON(IS_ERR(vdev->ud.tcp_tx));
++	}
+ 
+ 	rh_port_connect(vdev, speed);
+ 
+diff --git a/drivers/usb/usbip/vhci_tx.c b/drivers/usb/usbip/vhci_tx.c
+index 0ae40a13a9fe..05da652e7bbe 100644
+--- a/drivers/usb/usbip/vhci_tx.c
++++ b/drivers/usb/usbip/vhci_tx.c
+@@ -63,6 +63,9 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ 	int iovnum;
+ 	int err = -ENOMEM;
+ 	int i;
++#ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
++	struct socket *socket = vdev->ud.tcp_socket;
++#endif
+ 
+ 	while ((priv = dequeue_from_priv_tx(vdev)) != NULL) {
+ 		int ret;
+@@ -135,6 +138,11 @@ static int vhci_send_cmd_submit(struct vhci_device *vdev)
+ 			iovnum++;
+ 			txsize += len;
+ 		}
++#ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
++		if (!socket || socket != vdev->ud.tcp_socket)
++			pr_err("%s: sock changed from %p to %p\n",
++			       __func__, socket, vdev->ud.tcp_socket);
++#endif
+ 
+ 		ret = kernel_sendmsg(vdev->ud.tcp_socket, &msg, iov, iovnum,
+ 				     txsize);
+@@ -237,6 +245,8 @@ int vhci_tx_loop(void *data)
+ 	struct usbip_device *ud = data;
+ 	struct vhci_device *vdev = container_of(ud, struct vhci_device, ud);
+ 
++	if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++		pr_info("%s: thread starting %p\n", __func__, vdev->ud.tcp_tx);
+ 	while (!kthread_should_stop()) {
+ 		if (vhci_send_cmd_submit(vdev) < 0)
+ 			break;
+@@ -251,6 +261,8 @@ int vhci_tx_loop(void *data)
+ 
+ 		usbip_dbg_vhci_tx("pending urbs ?, now wake up\n");
+ 	}
++	if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++		pr_info("%s: thread exiting %p\n", __func__, vdev->ud.tcp_tx);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/usb/usbip/vudc_dev.c b/drivers/usb/usbip/vudc_dev.c
+index c8eeabdd9b56..816cb4b5700b 100644
+--- a/drivers/usb/usbip/vudc_dev.c
++++ b/drivers/usb/usbip/vudc_dev.c
+@@ -437,15 +437,21 @@ static void vudc_shutdown(struct usbip_device *ud)
+ 		kernel_sock_shutdown(ud->tcp_socket, SHUT_RDWR);
+ 
+ 	if (ud->tcp_rx) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: stop rx %p\n", __func__, ud->tcp_rx);
+ 		kthread_stop_put(ud->tcp_rx);
+ 		ud->tcp_rx = NULL;
+ 	}
+ 	if (ud->tcp_tx) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: stop tx %p\n", __func__, ud->tcp_tx);
+ 		kthread_stop_put(ud->tcp_tx);
+ 		ud->tcp_tx = NULL;
+ 	}
+ 
+ 	if (ud->tcp_socket) {
++		if (IS_BUILTIN(CONFIG_DEBUG_AID_FOR_SYZBOT))
++			pr_info("%s: close sock %p\n", __func__, ud->tcp_socket);
+ 		sockfd_put(ud->tcp_socket);
+ 		ud->tcp_socket = NULL;
+ 	}
+-- 
+2.18.4
