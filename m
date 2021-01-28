@@ -2,87 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07905C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 18:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CD6C433E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4D2264E0E
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 18:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AB7764E02
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229785AbhA1SB5 (ORCPT
+        id S231231AbhA1UBP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jan 2021 13:01:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60314 "EHLO
+        Thu, 28 Jan 2021 15:01:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229791AbhA1SBP (ORCPT
+        with ESMTP id S231159AbhA1T7i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jan 2021 13:01:15 -0500
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [IPv6:2001:1600:3:17::1909])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1FDFC061574
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jan 2021 10:00:29 -0800 (PST)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DRSth2VGKzMqm0V;
-        Thu, 28 Jan 2021 19:00:28 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DRStg1w48zlh8TK;
-        Thu, 28 Jan 2021 19:00:27 +0100 (CET)
-Subject: Re: [PATCH v4 00/10] Enable root to update the blacklist keyring
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-References: <20210121155513.539519-1-mic@digikod.net>
- <3613306.1611852751@warthog.procyon.org.uk>
- <03ddd243-db25-a054-489d-e64ead4d6f59@digikod.net>
-Message-ID: <09376843-a55f-476a-7073-91aacc9ebdc8@digikod.net>
-Date:   Thu, 28 Jan 2021 19:00:33 +0100
-User-Agent: 
+        Thu, 28 Jan 2021 14:59:38 -0500
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFBDC061786
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Jan 2021 11:51:32 -0800 (PST)
+Received: by mail-wr1-x436.google.com with SMTP id z6so6582541wrq.10
+        for <linux-security-module@vger.kernel.org>; Thu, 28 Jan 2021 11:51:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EyD3wHKnz4mNZyyvJbfB06klVKrdyE3VJ5F5elJU0p4=;
+        b=dE6DkK29jp1+2E1wW4vsdERPnjCiGfWiDO/sMZTB7Ak26IuFMJQv59WorheyAZjC+A
+         WMGzKQl2IPb8WDCumWHWk0exXWe0DR5W2MXc2boIjmbvsHkTup0MURQuP6O2xaeiaG/i
+         cQwicLWx+9CXz/RGIKJlXjhC+4lDsFMlMuCnpdvB1E5iWsvRwylRX2XGyr03u7bYW/dg
+         aHCQsUX0XfLFEDRER1WS9zZumqHSOUR4kqOcb4e914Uj3aH8XZ3+1aU/+IJ32eTCjPWP
+         7ydfG7rlPVXbzmI7RNdrj/LykQawxAQyc3Bs9MpJaSeLB5oHkOaUbHXgDhkaktLGjFna
+         o2fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EyD3wHKnz4mNZyyvJbfB06klVKrdyE3VJ5F5elJU0p4=;
+        b=KEqn6Uo+ViFOPVOdC/08BIz5RiboJjjgV8+VcLCASRHJ41Wc1EYXz2OvbN9GoaY0+c
+         WC32T8vaBefeOxMJb3FqF3fPg07i68b1r7kVoDhecctCboKasxPK92LKPyI5xjJ/lmxo
+         kmorqHA59X/z4cme/brgzHduuOnWaGbw5Dhs5ih22/I2SGs2wOj6TmtkvY5mbVcCGFsO
+         kiRWr1B4fL4D7FNfjipGb6DLZJgbneupDf0okT7ADzrUid1B8x5GnaUWVEczgrOyWaL9
+         rgX1mlP5zyTFuju7fZeDk3vH4aL766wBtccGJxxONnlsIT0QxDnre+Y6xAnLfCVDHMCA
+         92LQ==
+X-Gm-Message-State: AOAM533MV+eElwwbxF9yFSToo1//a/Z+AUZfQQ7/UAjMWfJLi1mYvwsx
+        ZxD9pSDZP4Nk66Lhc3Eb5ysbSili8C63fwfalkbXwA==
+X-Google-Smtp-Source: ABdhPJxFwy5Z8MQNDvk+8YAnLtFQ3tf9xJlcNP6VxscFRdyqIQPeQC47UCqkw9kazNJmLs+Te6L/YObeg7RsVtG7o9Y=
+X-Received: by 2002:a5d:453b:: with SMTP id j27mr808169wra.92.1611863490625;
+ Thu, 28 Jan 2021 11:51:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <03ddd243-db25-a054-489d-e64ead4d6f59@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210111170622.2613577-1-surenb@google.com> <20210112074629.GG22493@dhcp22.suse.cz>
+ <20210112174507.GA23780@redhat.com> <CAJuCfpFQz=x-LvONO3c4iqjKP4NKJMgUuiYc8HACKHAv1Omu0w@mail.gmail.com>
+ <20210113142202.GC22493@dhcp22.suse.cz> <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
+ <20210126135254.GP827@dhcp22.suse.cz>
+In-Reply-To: <20210126135254.GP827@dhcp22.suse.cz>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 28 Jan 2021 11:51:19 -0800
+Message-ID: <CAJuCfpEnMyo9XAnoF+q1j9EkC0okZfUxxdAFhzhPJi+adJYqjw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mm/madvise: replace ptrace attach requirement for process_madvise
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-mm <linux-mm@kvack.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I noticed that commits in your branch are not up to date with latest
-Jarkoo reviews on my patches (see changes since v2). There is no
-conflict if you replace conflicting patches from your branch by patches
-from this series. Could you replace your duplicate commits with this
-patch series?
+On Tue, Jan 26, 2021 at 5:52 AM 'Michal Hocko' via kernel-team
+<kernel-team@android.com> wrote:
+>
+> On Wed 20-01-21 14:17:39, Jann Horn wrote:
+> > On Wed, Jan 13, 2021 at 3:22 PM Michal Hocko <mhocko@suse.com> wrote:
+> > > On Tue 12-01-21 09:51:24, Suren Baghdasaryan wrote:
+> > > > On Tue, Jan 12, 2021 at 9:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> > > > >
+> > > > > On 01/12, Michal Hocko wrote:
+> > > > > >
+> > > > > > On Mon 11-01-21 09:06:22, Suren Baghdasaryan wrote:
+> > > > > >
+> > > > > > > What we want is the ability for one process to influence another process
+> > > > > > > in order to optimize performance across the entire system while leaving
+> > > > > > > the security boundary intact.
+> > > > > > > Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
+> > > > > > > and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
+> > > > > > > and CAP_SYS_NICE for influencing process performance.
+> > > > > >
+> > > > > > I have to say that ptrace modes are rather obscure to me. So I cannot
+> > > > > > really judge whether MODE_READ is sufficient. My understanding has
+> > > > > > always been that this is requred to RO access to the address space. But
+> > > > > > this operation clearly has a visible side effect. Do we have any actual
+> > > > > > documentation for the existing modes?
+> > > > > >
+> > > > > > I would be really curious to hear from Jann and Oleg (now Cced).
+> > > > >
+> > > > > Can't comment, sorry. I never understood these security checks and never tried.
+> > > > > IIUC only selinux/etc can treat ATTACH/READ differently and I have no idea what
+> > > > > is the difference.
+> >
+> > Yama in particular only does its checks on ATTACH and ignores READ,
+> > that's the difference you're probably most likely to encounter on a
+> > normal desktop system, since some distros turn Yama on by default.
+> > Basically the idea there is that running "gdb -p $pid" or "strace -p
+> > $pid" as a normal user will usually fail, but reading /proc/$pid/maps
+> > still works; so you can see things like detailed memory usage
+> > information and such, but you're not supposed to be able to directly
+> > peek into a running SSH client and inject data into the existing SSH
+> > connection, or steal the cryptographic keys for the current
+> > connection, or something like that.
+> >
+> > > > I haven't seen a written explanation on ptrace modes but when I
+> > > > consulted Jann his explanation was:
+> > > >
+> > > > PTRACE_MODE_READ means you can inspect metadata about processes with
+> > > > the specified domain, across UID boundaries.
+> > > > PTRACE_MODE_ATTACH means you can fully impersonate processes with the
+> > > > specified domain, across UID boundaries.
+> > >
+> > > Maybe this would be a good start to document expectations. Some more
+> > > practical examples where the difference is visible would be great as
+> > > well.
+> >
+> > Before documenting the behavior, it would be a good idea to figure out
+> > what to do with perf_event_open(). That one's weird in that it only
+> > requires PTRACE_MODE_READ, but actually allows you to sample stuff
+> > like userspace stack and register contents (if perf_event_paranoid is
+> > 1 or 2). Maybe for SELinux things (and maybe also for Yama), there
+> > should be a level in between that allows fully inspecting the process
+> > (for purposes like profiling) but without the ability to corrupt its
+> > memory or registers or things like that. Or maybe perf_event_open()
+> > should just use the ATTACH mode.
+>
+> Thanks for the clarification. I still cannot say I would have a good
+> mental picture. Having something in Documentation/core-api/ sounds
+> really needed. Wrt to perf_event_open it sounds really odd it can do
+> more than other places restrict indeed. Something for the respective
+> maintainer but I strongly suspect people simply copy the pattern from
+> other places because the expected semantic is not really clear.
+>
+
+Sorry, back to the matters of this patch. Are there any actionable
+items for me to take care of before it can be accepted? The only
+request from Andrew to write a man page is being worked on at
+https://lore.kernel.org/linux-mm/20210120202337.1481402-1-surenb@google.com/
+and I'll follow up with the next version. I also CC'ed stable@ for
+this to be included into 5.10 per Andrew's request. That CC was lost
+at some point, so CC'ing again.
+
+I do not see anything else on this patch to fix. Please chime in if
+there are any more concerns, otherwise I would ask Andrew to take it
+into mm-tree and stable@ to apply it to 5.10.
+Thanks!
 
 
-On 28/01/2021 18:38, Mickaël Salaün wrote:
-> 
-> 
-> On 28/01/2021 17:52, David Howells wrote:
->>
->> Hi Mickaël,
-> Hi David,
-> 
->>
->> I could pull your patches (unless Jarkko wants to), but can you please drop
->> the patches that are also in my keys-misc branch lest one or other (or both)
->> of our branches get dropped in the next merge window due to conflicts?
->>
->> Ideally, can you base your branch on my keys-misc branch?
-> 
-> Sure, I'm rebasing and testing a new patch series.
-> 
->>
->> Thanks,
->> David
->>
+> --
+> Michal Hocko
+> SUSE Labs
+>
+> --
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>
