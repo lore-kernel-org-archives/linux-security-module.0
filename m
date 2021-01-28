@@ -2,178 +2,251 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CD6C433E6
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 793AFC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB7764E02
-	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4408164E01
+	for <linux-security-module@archiver.kernel.org>; Thu, 28 Jan 2021 20:21:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231231AbhA1UBP (ORCPT
+        id S229893AbhA1UVY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 28 Jan 2021 15:01:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231159AbhA1T7i (ORCPT
+        Thu, 28 Jan 2021 15:21:24 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:49010 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229830AbhA1UVW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 28 Jan 2021 14:59:38 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CFBDC061786
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jan 2021 11:51:32 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id z6so6582541wrq.10
-        for <linux-security-module@vger.kernel.org>; Thu, 28 Jan 2021 11:51:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EyD3wHKnz4mNZyyvJbfB06klVKrdyE3VJ5F5elJU0p4=;
-        b=dE6DkK29jp1+2E1wW4vsdERPnjCiGfWiDO/sMZTB7Ak26IuFMJQv59WorheyAZjC+A
-         WMGzKQl2IPb8WDCumWHWk0exXWe0DR5W2MXc2boIjmbvsHkTup0MURQuP6O2xaeiaG/i
-         cQwicLWx+9CXz/RGIKJlXjhC+4lDsFMlMuCnpdvB1E5iWsvRwylRX2XGyr03u7bYW/dg
-         aHCQsUX0XfLFEDRER1WS9zZumqHSOUR4kqOcb4e914Uj3aH8XZ3+1aU/+IJ32eTCjPWP
-         7ydfG7rlPVXbzmI7RNdrj/LykQawxAQyc3Bs9MpJaSeLB5oHkOaUbHXgDhkaktLGjFna
-         o2fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EyD3wHKnz4mNZyyvJbfB06klVKrdyE3VJ5F5elJU0p4=;
-        b=KEqn6Uo+ViFOPVOdC/08BIz5RiboJjjgV8+VcLCASRHJ41Wc1EYXz2OvbN9GoaY0+c
-         WC32T8vaBefeOxMJb3FqF3fPg07i68b1r7kVoDhecctCboKasxPK92LKPyI5xjJ/lmxo
-         kmorqHA59X/z4cme/brgzHduuOnWaGbw5Dhs5ih22/I2SGs2wOj6TmtkvY5mbVcCGFsO
-         kiRWr1B4fL4D7FNfjipGb6DLZJgbneupDf0okT7ADzrUid1B8x5GnaUWVEczgrOyWaL9
-         rgX1mlP5zyTFuju7fZeDk3vH4aL766wBtccGJxxONnlsIT0QxDnre+Y6xAnLfCVDHMCA
-         92LQ==
-X-Gm-Message-State: AOAM533MV+eElwwbxF9yFSToo1//a/Z+AUZfQQ7/UAjMWfJLi1mYvwsx
-        ZxD9pSDZP4Nk66Lhc3Eb5ysbSili8C63fwfalkbXwA==
-X-Google-Smtp-Source: ABdhPJxFwy5Z8MQNDvk+8YAnLtFQ3tf9xJlcNP6VxscFRdyqIQPeQC47UCqkw9kazNJmLs+Te6L/YObeg7RsVtG7o9Y=
-X-Received: by 2002:a5d:453b:: with SMTP id j27mr808169wra.92.1611863490625;
- Thu, 28 Jan 2021 11:51:30 -0800 (PST)
+        Thu, 28 Jan 2021 15:21:22 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l5DmM-002lXc-25; Thu, 28 Jan 2021 13:20:34 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l5DmK-00CmNL-O7; Thu, 28 Jan 2021 13:20:33 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-3-mszeredi@redhat.com>
+        <8735yw8k7a.fsf@x220.int.ebiederm.org>
+        <20210128165852.GA20974@mail.hallyn.com>
+Date:   Thu, 28 Jan 2021 14:19:13 -0600
+In-Reply-To: <20210128165852.GA20974@mail.hallyn.com> (Serge E. Hallyn's
+        message of "Thu, 28 Jan 2021 10:58:52 -0600")
+Message-ID: <87o8h8x1a6.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20210111170622.2613577-1-surenb@google.com> <20210112074629.GG22493@dhcp22.suse.cz>
- <20210112174507.GA23780@redhat.com> <CAJuCfpFQz=x-LvONO3c4iqjKP4NKJMgUuiYc8HACKHAv1Omu0w@mail.gmail.com>
- <20210113142202.GC22493@dhcp22.suse.cz> <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
- <20210126135254.GP827@dhcp22.suse.cz>
-In-Reply-To: <20210126135254.GP827@dhcp22.suse.cz>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Thu, 28 Jan 2021 11:51:19 -0800
-Message-ID: <CAJuCfpEnMyo9XAnoF+q1j9EkC0okZfUxxdAFhzhPJi+adJYqjw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mm/madvise: replace ptrace attach requirement for process_madvise
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>,
-        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-mm <linux-mm@kvack.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1l5DmK-00CmNL-O7;;;mid=<87o8h8x1a6.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+HX8zIDa5Ll3ba0CVB+E8Qkp9OORlWPRk=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jan 26, 2021 at 5:52 AM 'Michal Hocko' via kernel-team
-<kernel-team@android.com> wrote:
->
-> On Wed 20-01-21 14:17:39, Jann Horn wrote:
-> > On Wed, Jan 13, 2021 at 3:22 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > On Tue 12-01-21 09:51:24, Suren Baghdasaryan wrote:
-> > > > On Tue, Jan 12, 2021 at 9:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > > > >
-> > > > > On 01/12, Michal Hocko wrote:
-> > > > > >
-> > > > > > On Mon 11-01-21 09:06:22, Suren Baghdasaryan wrote:
-> > > > > >
-> > > > > > > What we want is the ability for one process to influence another process
-> > > > > > > in order to optimize performance across the entire system while leaving
-> > > > > > > the security boundary intact.
-> > > > > > > Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
-> > > > > > > and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
-> > > > > > > and CAP_SYS_NICE for influencing process performance.
-> > > > > >
-> > > > > > I have to say that ptrace modes are rather obscure to me. So I cannot
-> > > > > > really judge whether MODE_READ is sufficient. My understanding has
-> > > > > > always been that this is requred to RO access to the address space. But
-> > > > > > this operation clearly has a visible side effect. Do we have any actual
-> > > > > > documentation for the existing modes?
-> > > > > >
-> > > > > > I would be really curious to hear from Jann and Oleg (now Cced).
-> > > > >
-> > > > > Can't comment, sorry. I never understood these security checks and never tried.
-> > > > > IIUC only selinux/etc can treat ATTACH/READ differently and I have no idea what
-> > > > > is the difference.
-> >
-> > Yama in particular only does its checks on ATTACH and ignores READ,
-> > that's the difference you're probably most likely to encounter on a
-> > normal desktop system, since some distros turn Yama on by default.
-> > Basically the idea there is that running "gdb -p $pid" or "strace -p
-> > $pid" as a normal user will usually fail, but reading /proc/$pid/maps
-> > still works; so you can see things like detailed memory usage
-> > information and such, but you're not supposed to be able to directly
-> > peek into a running SSH client and inject data into the existing SSH
-> > connection, or steal the cryptographic keys for the current
-> > connection, or something like that.
-> >
-> > > > I haven't seen a written explanation on ptrace modes but when I
-> > > > consulted Jann his explanation was:
-> > > >
-> > > > PTRACE_MODE_READ means you can inspect metadata about processes with
-> > > > the specified domain, across UID boundaries.
-> > > > PTRACE_MODE_ATTACH means you can fully impersonate processes with the
-> > > > specified domain, across UID boundaries.
-> > >
-> > > Maybe this would be a good start to document expectations. Some more
-> > > practical examples where the difference is visible would be great as
-> > > well.
-> >
-> > Before documenting the behavior, it would be a good idea to figure out
-> > what to do with perf_event_open(). That one's weird in that it only
-> > requires PTRACE_MODE_READ, but actually allows you to sample stuff
-> > like userspace stack and register contents (if perf_event_paranoid is
-> > 1 or 2). Maybe for SELinux things (and maybe also for Yama), there
-> > should be a level in between that allows fully inspecting the process
-> > (for purposes like profiling) but without the ability to corrupt its
-> > memory or registers or things like that. Or maybe perf_event_open()
-> > should just use the ATTACH mode.
->
-> Thanks for the clarification. I still cannot say I would have a good
-> mental picture. Having something in Documentation/core-api/ sounds
-> really needed. Wrt to perf_event_open it sounds really odd it can do
-> more than other places restrict indeed. Something for the respective
-> maintainer but I strongly suspect people simply copy the pattern from
-> other places because the expected semantic is not really clear.
->
+"Serge E. Hallyn" <serge@hallyn.com> writes:
 
-Sorry, back to the matters of this patch. Are there any actionable
-items for me to take care of before it can be accepted? The only
-request from Andrew to write a man page is being worked on at
-https://lore.kernel.org/linux-mm/20210120202337.1481402-1-surenb@google.com/
-and I'll follow up with the next version. I also CC'ed stable@ for
-this to be included into 5.10 per Andrew's request. That CC was lost
-at some point, so CC'ing again.
+> On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
+>> Miklos Szeredi <mszeredi@redhat.com> writes:
+>> 
+>> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+>> > currently return in v2 format unconditionally.
+>> >
+>> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+>> > and so the same conversions performed on it.
+>> >
+>> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+>> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+>> > user namespace in case of v2) cannot be mapped in the current user
+>> > namespace.
+>> 
+>> This looks like a good cleanup.
+>
+> Sorry, I'm not following.  Why is this a good cleanup?  Why should
+> the xattr be shown as faked v3 in this case?
 
-I do not see anything else on this patch to fix. Please chime in if
-there are any more concerns, otherwise I would ask Andrew to take it
-into mm-tree and stable@ to apply it to 5.10.
-Thanks!
+If the reader is in &init_user_ns.  If the filesystem was mounted in a
+user namespace.   Then the reader looses the information that the
+capability xattr only applies to a subset of user namespaces.
+
+A trivial place where this would be important is if userspace was to
+copy the file and the associated  capability xattr to another
+filesystem, that is mounted differently.
 
 
-> --
-> Michal Hocko
-> SUSE Labs
+<aside>
+From our previous discussions I would also argue it would be good
+if there was a bypass that skipped all conversions if the reader
+and the filesystem are in the same user namespace.
+</aside>
+
+
+> A separate question below.
 >
-> --
-> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
+>> I do wonder how well this works with stacking.  In particular
+>> ovl_xattr_set appears to call vfs_getxattr without overriding the creds.
+>> What the purpose of that is I haven't quite figured out.  It looks like
+>> it is just a probe to see if an xattr is present so maybe it is ok.
+>> 
+>> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+>> 
+>> >
+>> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+>> > ---
+>> >  security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
+>> >  1 file changed, 43 insertions(+), 24 deletions(-)
+>> >
+>> > diff --git a/security/commoncap.c b/security/commoncap.c
+>> > index bacc1111d871..c9d99f8f4c82 100644
+>> > --- a/security/commoncap.c
+>> > +++ b/security/commoncap.c
+>> > @@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>> >  {
+>> >  	int size, ret;
+>> >  	kuid_t kroot;
+>> > +	__le32 nsmagic, magic;
+>> >  	uid_t root, mappedroot;
+>> >  	char *tmpbuf = NULL;
+>> >  	struct vfs_cap_data *cap;
+>> > -	struct vfs_ns_cap_data *nscap;
+>> > +	struct vfs_ns_cap_data *nscap = NULL;
+>> >  	struct dentry *dentry;
+>> >  	struct user_namespace *fs_ns;
+>> >  
+>> > @@ -396,46 +397,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>> >  	fs_ns = inode->i_sb->s_user_ns;
+>> >  	cap = (struct vfs_cap_data *) tmpbuf;
+>> >  	if (is_v2header((size_t) ret, cap)) {
+>> > -		/* If this is sizeof(vfs_cap_data) then we're ok with the
+>> > -		 * on-disk value, so return that.  */
+>> > -		if (alloc)
+>> > -			*buffer = tmpbuf;
+>> > -		else
+>> > -			kfree(tmpbuf);
+>> > -		return ret;
+>> > -	} else if (!is_v3header((size_t) ret, cap)) {
+>> > -		kfree(tmpbuf);
+>> > -		return -EINVAL;
+>> > +		root = 0;
+>> > +	} else if (is_v3header((size_t) ret, cap)) {
+>> > +		nscap = (struct vfs_ns_cap_data *) tmpbuf;
+>> > +		root = le32_to_cpu(nscap->rootid);
+>> > +	} else {
+>> > +		size = -EINVAL;
+>> > +		goto out_free;
+>> >  	}
+>> >  
+>> > -	nscap = (struct vfs_ns_cap_data *) tmpbuf;
+>> > -	root = le32_to_cpu(nscap->rootid);
+>> >  	kroot = make_kuid(fs_ns, root);
+>> >  
+>> >  	/* If the root kuid maps to a valid uid in current ns, then return
+>> >  	 * this as a nscap. */
+>> >  	mappedroot = from_kuid(current_user_ns(), kroot);
+>> >  	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
+>> > +		size = sizeof(struct vfs_ns_cap_data);
+>> >  		if (alloc) {
+>> > -			*buffer = tmpbuf;
+>> > +			if (!nscap) {
+>> > +				/* v2 -> v3 conversion */
+>> > +				nscap = kzalloc(size, GFP_ATOMIC);
+>> > +				if (!nscap) {
+>> > +					size = -ENOMEM;
+>> > +					goto out_free;
+>> > +				}
+>> > +				nsmagic = VFS_CAP_REVISION_3;
+>> > +				magic = le32_to_cpu(cap->magic_etc);
+>> > +				if (magic & VFS_CAP_FLAGS_EFFECTIVE)
+>> > +					nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
+>> > +				memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+>> > +				nscap->magic_etc = cpu_to_le32(nsmagic);
+>> > +			} else {
+>> > +				/* use allocated v3 buffer */
+>> > +				tmpbuf = NULL;
+>> > +			}
+>> >  			nscap->rootid = cpu_to_le32(mappedroot);
+>> > -		} else
+>> > -			kfree(tmpbuf);
+>> > -		return size;
+>> > +			*buffer = nscap;
+>> > +		}
+>> > +		goto out_free;
+>> >  	}
+>> >  
+>> >  	if (!rootid_owns_currentns(kroot)) {
+>> > -		kfree(tmpbuf);
+>> > -		return -EOPNOTSUPP;
+>> > +		size = -EOVERFLOW;
 >
+> Why this change?  Christian (cc:d) noticed that this is a user visible change.
+> Without this change, if you are in a userns which has different rootid, the
+> EOVERFLOW tells vfs_getxattr to vall back to __vfs_getxattr() and so you can
+> see the v3 capability with its rootid.
+>
+> With this change, you instead just get EOVERFLOW.
+
+Returning EOVERFLOW is the desired behavior when the rootid can not be
+represented by the calling userspace.
+
+Today when you execute such a file from such a namespace the file will
+run without any file capabilities because get_vfs_caps_from_disk
+returns -ENODATA.
+
+However today if you copy the file will all of it's xattrs onto another
+filesystem the new file will have a v3 cap that will grant capabilities
+in some contexts.  That mismatch is potentially a security problem.
+
+Which means the only sane thing to do is to fail so userspace does not
+think it can safely copy or comprehend all of the xattrs of the file.
+
+>> > +		goto out_free;
+>> >  	}
+>> >  
+>> >  	/* This comes from a parent namespace.  Return as a v2 capability */
+>> >  	size = sizeof(struct vfs_cap_data);
+>> >  	if (alloc) {
+>> > -		*buffer = kmalloc(size, GFP_ATOMIC);
+>> > -		if (*buffer) {
+>> > -			struct vfs_cap_data *cap = *buffer;
+>> > -			__le32 nsmagic, magic;
+>> > +		if (nscap) {
+>> > +			/* v3 -> v2 conversion */
+>> > +			cap = kzalloc(size, GFP_ATOMIC);
+>> > +			if (!cap) {
+>> > +				size = -ENOMEM;
+>> > +				goto out_free;
+>> > +			}
+>> >  			magic = VFS_CAP_REVISION_2;
+>> >  			nsmagic = le32_to_cpu(nscap->magic_etc);
+>> >  			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
+>> > @@ -443,9 +459,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+>> >  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+>> >  			cap->magic_etc = cpu_to_le32(magic);
+>> >  		} else {
+>> > -			size = -ENOMEM;
+>> > +			/* use unconverted v2 */
+>> > +			tmpbuf = NULL;
+>> >  		}
+>> > +		*buffer = cap;
+>> >  	}
+>> > +out_free:
+>> >  	kfree(tmpbuf);
+>> >  	return size;
+>> >  }
+
+Eric
