@@ -2,160 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9F2C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jan 2021 21:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E56C433E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jan 2021 22:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE9F64E00
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jan 2021 21:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B142A64E08
+	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jan 2021 22:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233293AbhA2VSx (ORCPT
+        id S229828AbhA2W5l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Jan 2021 16:18:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44016 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232727AbhA2VSw (ORCPT
+        Fri, 29 Jan 2021 17:57:41 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:37276 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229683AbhA2W5j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Jan 2021 16:18:52 -0500
-Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD954C061573
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Jan 2021 13:18:12 -0800 (PST)
-Received: by mail-ot1-x32a.google.com with SMTP id i30so9993004ota.6
-        for <linux-security-module@vger.kernel.org>; Fri, 29 Jan 2021 13:18:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x+eTXfkl3kwRn2zHA52W//U5DmNK7Dju2RwV9ojfzrs=;
-        b=O3GeKbhgGGB6uJFo9RBCEIsuOvEwL0UQk/Tu6m5naoL4sdAxfnRgy48+kMB2T2TRz9
-         jOX33QBJBM/+JQcz7xTxMrttBvUpPfuoCLGSsKTikKIKz99YYDw4j8mxPP5wT41tP3Ky
-         FCCR+O2eGqErJwGujJ+ft37AMMKVSxoDF8UBc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=x+eTXfkl3kwRn2zHA52W//U5DmNK7Dju2RwV9ojfzrs=;
-        b=BuQ3pB8qrGHvTkqMprCPgVG0reLGyRGx6d+yzcQvsoLnE83tS+cd37Dn9gbLUpLFEa
-         VdD+X2q4mzHwCORcSPRbmGJ4/MbxvdSUseIZbrEceDdNSgZGtkaZ6Cn3SrhPVewiHw5O
-         ITUPJidu0nmCFHjnIbBhzevtbzAM1rBoOQKrWPvvwzAFF9GJa6nn3k5W9mxm6xBmyeTD
-         zGgwXIMkb1mOsBTOV1tbTzt1l+JxCZ9S7NDU4aUBcnIcxkFhd/RGujMCIVIXtDKZc4lF
-         2lUCRWNZ04NUmobHI/Sk/Uglz0H+1Lv8YxzGD9nOmgULuLN5WWf6JUFRQiQIMeCv/2+Y
-         pmxQ==
-X-Gm-Message-State: AOAM531yVMJf92A58tlHSe1FC4cauEr5ryyA1iCV4psyKTLxKQ6YVYDl
-        iZWr+7RkK7k7zm2Lo76khcp9Zw==
-X-Google-Smtp-Source: ABdhPJylVogvgm3PROgXjQqr4Z2rjfGXlE4xhglAyirm227yjrxssh0yib3GTDpkvvBT74WLO4v6tA==
-X-Received: by 2002:a9d:3d66:: with SMTP id a93mr4091552otc.287.1611955092324;
-        Fri, 29 Jan 2021 13:18:12 -0800 (PST)
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
-        by smtp.gmail.com with ESMTPSA id z8sm2609891oon.10.2021.01.29.13.18.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 29 Jan 2021 13:18:11 -0800 (PST)
-Subject: Re: general protection fault in tomoyo_socket_sendmsg_permission
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Hillf Danton <hdanton@sina.com>,
-        syzbot <syzbot+95ce4b142579611ef0a9@syzkaller.appspotmail.com>
-Cc:     linux-kernel@vger.kernel.org,
+        Fri, 29 Jan 2021 17:57:39 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l5ch8-00El2W-7c; Fri, 29 Jan 2021 15:56:50 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l5ch7-002DyO-3c; Fri, 29 Jan 2021 15:56:49 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        syzkaller-bugs@googlegroups.com,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <000000000000647eff05b3f7e0d4@google.com>
- <20201113120055.11748-1-hdanton@sina.com>
- <5f71e0c1-d387-6d72-d8e4-edb11cf57f72@linuxfoundation.org>
- <ea4028b7-53f2-aeaf-76e7-69874efcdec5@I-love.SAKURA.ne.jp>
- <2b70d360-a293-4acb-ea6c-2badda5e8b8b@linuxfoundation.org>
- <9bdd3f10-bddb-bd87-d7ad-b4b706477006@i-love.sakura.ne.jp>
- <6b8da36f-a994-7604-77f4-52e29434605f@linuxfoundation.org>
- <5f9ec159-77d8-ffba-21d1-2810e059f998@i-love.sakura.ne.jp>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <a06093f1-22b3-7d72-bc6c-f99f4e0d0de9@linuxfoundation.org>
-Date:   Fri, 29 Jan 2021 14:18:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-3-mszeredi@redhat.com>
+        <8735yw8k7a.fsf@x220.int.ebiederm.org>
+        <20210128165852.GA20974@mail.hallyn.com>
+        <87o8h8x1a6.fsf@x220.int.ebiederm.org>
+        <20210129154839.GC1130@mail.hallyn.com>
+Date:   Fri, 29 Jan 2021 16:55:29 -0600
+In-Reply-To: <20210129154839.GC1130@mail.hallyn.com> (Serge E. Hallyn's
+        message of "Fri, 29 Jan 2021 09:48:39 -0600")
+Message-ID: <87im7fuzdq.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <5f9ec159-77d8-ffba-21d1-2810e059f998@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1l5ch7-002DyO-3c;;;mid=<87im7fuzdq.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19X3waKsp4zjyMN3J12N2O9HZ4lenytO+A=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 1/29/21 10:08 AM, Tetsuo Handa wrote:
-> On 2021/01/30 1:05, Shuah Khan wrote:
->>> Since "general protection fault in tomoyo_socket_sendmsg_permission" is caused by
->>> unexpectedly resetting ud->tcp_socket to NULL without waiting for tx thread to
->>> terminate, tracing the ordering of events is worth knowing. Even adding
->>> schedule_timeout_uninterruptible() to before kernel_sendmsg() might help.
->>>
->>
->> What about the duplicate bug information that was in my email?
->> Did you take a look at that?
-> 
-> I was not aware of the duplicate bugs. It is interesting that
-> "KASAN: null-ptr-deref Write in event_handler" says that vdev->ud.tcp_tx became NULL at
-> 
-> 	if (vdev->ud.tcp_tx) {
-> 
-> 		/* this location */
-> 
-> 		kthread_stop_put(vdev->ud.tcp_tx);
-> 		vdev->ud.tcp_tx = NULL;
-> 	}
-> 
-> which means that somebody else is unexpectedly resetting vdev->ud.tcp_tx to NULL.
-> 
-> If memset() from vhci_device_init() from vhci_start() were unexpectedly called,
-> all of tcp_socket, tcp_rx, tcp_tx etc. becomes NULL which can explain these bugs ?
-> I'm inclined to report not only tcp_socket but also other fields when kernel_sendmsg()
-> detected that tcp_socket is NULL...
-> 
+"Serge E. Hallyn" <serge@hallyn.com> writes:
 
-In this console log:
+> On Thu, Jan 28, 2021 at 02:19:13PM -0600, Eric W. Biederman wrote:
+>> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>> 
+>> > On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
+>> >> Miklos Szeredi <mszeredi@redhat.com> writes:
+>> >> 
+>> >> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+>> >> > currently return in v2 format unconditionally.
+>> >> >
+>> >> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+>> >> > and so the same conversions performed on it.
+>> >> >
+>> >> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+>> >> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+>> >> > user namespace in case of v2) cannot be mapped in the current user
+>> >> > namespace.
+>> >> 
+>> >> This looks like a good cleanup.
+>> >
+>> > Sorry, I'm not following.  Why is this a good cleanup?  Why should
+>> > the xattr be shown as faked v3 in this case?
+>> 
+>> If the reader is in &init_user_ns.  If the filesystem was mounted in a
+>> user namespace.   Then the reader looses the information that the
+>
+> Can you be more precise about "filesystem was mounted in a user namespace"?
+> Is this a FUSE thing, the fs is marked as being mounted in a non-init userns?
+> If that's a possible case, then yes that must be represented as v3.  Using
+> is_v2header() may be the simpler way to check for that, but the more accurate
+> check would be "is it v2 header and mounted by init_user_ns".
 
-06:57:50 executing program 1:
-socketpair$tipc(0x1e, 0x2, 0x0, &(0x7f00000000c0)={<r0=>0xffffffffffffffff})
-sendmsg$BATADV_CMD_GET_TRANSTABLE_LOCAL(r0, 
-&(0x7f00000002c0)={&(0x7f00000001c0), 0xc, &(0x7f0000000280)={0x0, 
-0xd001010000000000}}, 0x0)
+I think the filesystems current relevant are fuse,overlayfs,ramfs,tmpfs.
 
-[ 1151.090883][T23361] vhci_hcd vhci_hcd.0: pdev(4) rhport(0) sockfd(4)
-[ 1151.097445][T23361] vhci_hcd vhci_hcd.0: devid(0) speed(1) 
-speed_str(low-speed)
-06:57:50 executing program 0:
-r0 = syz_open_dev$binderN(&(0x7f0000000680)='/dev/binder#\x00', 0x0, 0x0)
-ioctl$BINDER_WRITE_READ(r0, 0xc0306201, &(0x7f0000000cc0)={0x88, 0x0, 
-&(0x7f0000000b80)=[@transaction={0x40406300, {0x2, 0x0, 0x0, 0x0, 0x0, 
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}, @transaction={0x40406300, {0x0, 0x0, 
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}], 0x0, 0x0, 0x0})
+> Basically yes, in as many cases as possible we want to just give a v2
+> cap because more userspace knows what to do with that, but a non-init-userns
+> mounted fs which provides a v2 fscap should have it represented as v3 cap
+> with rootid being the kuid that owns the userns.
 
-[ 1151.164402][T23363] vhci_hcd: connection closed
-[ 1151.167346][  T240] vhci_hcd: stop threads
+That is the case we that is being fixed in the patch.
 
+> Or am I still thinking wrongly?  Wouldn't be entirely surprised :)
 
-[ 1151.178329][T26761] usb 17-1: new low-speed USB device number 2 using 
-vhci_hcd
+No you got it.
 
-
-SK: Looking at the console log, it looks like while connection is being
-     torn down,
-
-
-[ 1151.181245][  T240] vhci_hcd: release socket
-
-
-Can you share your your test code for this program:
-"executing program 1"
-
-Also your setup? Do you run usbip_host and vhci_hcd both?
-
-thanks,
--- Shuah
-
-
+Eric
