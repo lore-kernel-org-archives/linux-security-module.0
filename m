@@ -2,101 +2,198 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EF6C43381
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jan 2021 23:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D82BC433DB
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jan 2021 00:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5945264DDB
-	for <linux-security-module@archiver.kernel.org>; Fri, 29 Jan 2021 23:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409AB60234
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jan 2021 00:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232580AbhA2X2J (ORCPT
+        id S232648AbhA3Aui (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 29 Jan 2021 18:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230009AbhA2X2H (ORCPT
+        Fri, 29 Jan 2021 19:50:38 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58302 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232307AbhA3Aro (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Jan 2021 18:28:07 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2C0D564DDB;
-        Fri, 29 Jan 2021 23:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1611962846;
-        bh=nRY2roERXFxon206XTayNLdW3D0tWgBoL27kAm2mJ38=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sObX8n19jS4j1u0y1AoPSVGaWBIc3KYPHKTq3lUMz/O9E0eQb/l6Fzw3cBi9ZSMLP
-         s0R19sYoGde/nkB5AzKCWtpWoIebqObVKtDG6qD7cLIEA1WIdWFp+Xze8jdn+IOnRr
-         eZU/FGbRRjELdFfNuKq5yms5WWvaAfC1lm0aVjVadLMuyP/dOBR8iI5MlcF6+KcVYh
-         MEtTCQloA0foZnXbE0xh5+Yp5f+YHjm8tqzn1tGyw+sLKzgsJnouXrFxTRStCOxJpp
-         V/lgAkI1HJSRIVoUNPbp1oGrFqA5dVFWp/SmqyayLBAcKW227ub/8Ka13THoAZJQhU
-         xvvsEEbBh2Xig==
-Date:   Sat, 30 Jan 2021 01:27:21 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        dwmw2@infradead.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, jmorris@namei.org, serge@hallyn.com,
-        nayna@linux.ibm.com, erichte@linux.ibm.com, mpe@ellerman.id.au,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@hansenpartnership.com
-Subject: Re: [PATCH v4] certs: Add EFI_CERT_X509_GUID support for dbx entries
-Message-ID: <YBSZ2bfYsUo2Y28i@kernel.org>
-References: <1360578.1607593748@warthog.procyon.org.uk>
- <2442460.1610463459@warthog.procyon.org.uk>
- <X/9a8naM8p4tT5sO@linux.intel.com>
- <A05E3573-B1AF-474B-94A5-779E69E5880A@oracle.com>
- <YAFdNiYZSWpB9vOw@kernel.org>
- <CFBF6AEC-2832-44F7-9D7F-F20489498C33@oracle.com>
- <YAgTawk3EENF/P6j@kernel.org>
- <D9F5E0BD-E2FC-428F-91B3-35D2750493A0@oracle.com>
- <3063834.1611747971@warthog.procyon.org.uk>
- <61a0420790250807837b5a701bb52f3d63ff0c84.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <61a0420790250807837b5a701bb52f3d63ff0c84.camel@linux.ibm.com>
+        Fri, 29 Jan 2021 19:47:44 -0500
+Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id C0E1A20B6C41;
+        Fri, 29 Jan 2021 16:45:28 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C0E1A20B6C41
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1611967529;
+        bh=2j8Pk/tJozQLAKykulBJht0UA8oi2+j9h5xFmfPQnxI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K2FGOBBrSEL+7wMIhzX9K3uPjaMIbgGqBp4xPb/CEbRgfFmL5Wh7UAQgUpUOXmzAm
+         X6FqnOEZT3yIjMVKU8u+ORxlU2mbFeSVIcO1pGmAnKFIxS7o1LETLhbxKjCxjdont6
+         cgcXMZXYgVRRR12eq21IacrcmYNzVV66wuLOCwlg=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, paul@paul-moore.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: [PATCH 2/3] IMA: update functions to read allow_dup policy condition
+Date:   Fri, 29 Jan 2021 16:45:18 -0800
+Message-Id: <20210130004519.25106-3-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210130004519.25106-1-tusharsu@linux.microsoft.com>
+References: <20210130004519.25106-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jan 27, 2021 at 09:03:59AM -0500, Mimi Zohar wrote:
-> [Cc'ing linux-integrity]
-> 
-> On Wed, 2021-01-27 at 11:46 +0000, David Howells wrote:
-> > Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > 
-> > > > I suppose a user space tool could be created. But wouldn’t what is
-> > > > currently done in the kernel in this area need to be removed?
-> > > 
-> > > Right. I don't think this was a great idea in the first place to
-> > > do to the kernel but since it exists, I guess the patch does make
-> > > sense.
-> > 
-> > This information needs to be loaded from the UEFI tables before the system
-> > starts loading any kernel modules or running any programs (if we do
-> > verification of such, which I think IMA can do).
-> 
-> There needs to a clear distinction between the pre-boot and post-boot
-> keys.  UEFI has its own trust model, which should be limited to UEFI. 
-> The .platform keyring was upstreamed and limited to verifying the kexec
-> kernel image.   Any other usage of the .platform keyring keys is
-> abusing its intended purpose.
-> 
-> The cover letter says,   "Anytime the .platform keyring is used, the
-> keys in the .blacklist keyring are referenced, if a matching key is
-> found, the key will be rejected."   I don't have a problem with loading
-> the UEFI X509 dbx entries as long as its usage is limited to verifying
-> the kexec kernel image.
-> 
-> Mimi
+IMA functions ima_get_action() and ima_match_policy() do not consume the
+policy condition to allow measuring duplicate entries for integrity
+critical data.
 
-Thanks Mimi, this is a valid argument. I agree.
+Update ima_get_action() and ima_match_policy() to consume the IMA policy
+condition to measure duplicate buffer entries for integrity critical
+data.
 
-/Jarkko
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
+ security/integrity/ima/ima.h          | 4 ++--
+ security/integrity/ima/ima_api.c      | 6 ++++--
+ security/integrity/ima/ima_appraise.c | 2 +-
+ security/integrity/ima/ima_main.c     | 6 +++---
+ security/integrity/ima/ima_policy.c   | 7 ++++++-
+ 5 files changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index aa312472c7c5..59324173497f 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -257,7 +257,7 @@ static inline void ima_process_queued_keys(void) {}
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+ 		   struct ima_template_desc **template_desc,
+-		   const char *func_data);
++		   const char *func_data, bool *allow_dup);
+ int ima_must_measure(struct inode *inode, int mask, enum ima_hooks func);
+ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 			    struct file *file, void *buf, loff_t size,
+@@ -286,7 +286,7 @@ const char *ima_d_path(const struct path *path, char **pathbuf, char *filename);
+ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+ 		     enum ima_hooks func, int mask, int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+-		     const char *func_data);
++		     const char *func_data, bool *allow_dup);
+ void ima_init_policy(void);
+ void ima_update_policy(void);
+ void ima_update_policy_flag(void);
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 1dd70dc68ffd..d273373e6be9 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -171,6 +171,8 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+  * @pcr: pointer filled in if matched measure policy sets pcr=
+  * @template_desc: pointer filled in if matched measure policy sets template=
+  * @func_data: func specific data, may be NULL
++ * @allow_dup: pointer filled in to decide if a duplicate buffer entry
++ *             should be measured
+  *
+  * The policy is defined in terms of keypairs:
+  *		subj=, obj=, type=, func=, mask=, fsmagic=
+@@ -186,14 +188,14 @@ void ima_add_violation(struct file *file, const unsigned char *filename,
+ int ima_get_action(struct inode *inode, const struct cred *cred, u32 secid,
+ 		   int mask, enum ima_hooks func, int *pcr,
+ 		   struct ima_template_desc **template_desc,
+-		   const char *func_data)
++		   const char *func_data, bool *allow_dup)
+ {
+ 	int flags = IMA_MEASURE | IMA_AUDIT | IMA_APPRAISE | IMA_HASH;
+ 
+ 	flags &= ima_policy_flag;
+ 
+ 	return ima_match_policy(inode, cred, secid, func, mask, flags, pcr,
+-				template_desc, func_data);
++				template_desc, func_data, allow_dup);
+ }
+ 
+ /*
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 46ffa38bab12..e317a7698a47 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -77,7 +77,7 @@ int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func)
+ 
+ 	security_task_getsecid(current, &secid);
+ 	return ima_match_policy(inode, current_cred(), secid, func, mask,
+-				IMA_APPRAISE | IMA_HASH, NULL, NULL, NULL);
++				IMA_APPRAISE | IMA_HASH, NULL, NULL, NULL, NULL);
+ }
+ 
+ static int ima_fix_xattr(struct dentry *dentry,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 6a429846f90a..2774139845b6 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -219,7 +219,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
+ 	 * Included is the appraise submask.
+ 	 */
+ 	action = ima_get_action(inode, cred, secid, mask, func, &pcr,
+-				&template_desc, NULL);
++				&template_desc, NULL, NULL);
+ 	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK) &&
+ 			   (ima_policy_flag & IMA_MEASURE));
+ 	if (!action && !violation_check)
+@@ -432,7 +432,7 @@ int ima_file_mprotect(struct vm_area_struct *vma, unsigned long prot)
+ 	security_task_getsecid(current, &secid);
+ 	inode = file_inode(vma->vm_file);
+ 	action = ima_get_action(inode, current_cred(), secid, MAY_EXEC,
+-				MMAP_CHECK, &pcr, &template, 0);
++				MMAP_CHECK, &pcr, &template, 0, NULL);
+ 
+ 	/* Is the mmap'ed file in policy? */
+ 	if (!(action & (IMA_MEASURE | IMA_APPRAISE_SUBMASK)))
+@@ -865,7 +865,7 @@ void process_buffer_measurement(struct inode *inode, const void *buf, int size,
+ 	if (func) {
+ 		security_task_getsecid(current, &secid);
+ 		action = ima_get_action(inode, current_cred(), secid, 0, func,
+-					&pcr, &template, func_data);
++					&pcr, &template, func_data, NULL);
+ 		if (!(action & IMA_MEASURE))
+ 			return;
+ 	}
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index b89eb768dd05..4147c677eb24 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -644,6 +644,8 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+  * @pcr: set the pcr to extend
+  * @template_desc: the template that should be used for this rule
+  * @func_data: func specific data, may be NULL
++ * @allow_dup: pointer filled in to decide if a duplicate buffer entry
++ *             should be measured
+  *
+  * Measure decision based on func/mask/fsmagic and LSM(subj/obj/type)
+  * conditions.
+@@ -655,7 +657,7 @@ static int get_subaction(struct ima_rule_entry *rule, enum ima_hooks func)
+ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+ 		     enum ima_hooks func, int mask, int flags, int *pcr,
+ 		     struct ima_template_desc **template_desc,
+-		     const char *func_data)
++		     const char *func_data, bool *allow_dup)
+ {
+ 	struct ima_rule_entry *entry;
+ 	int action = 0, actmask = flags | (flags << 1);
+@@ -673,6 +675,9 @@ int ima_match_policy(struct inode *inode, const struct cred *cred, u32 secid,
+ 				     func_data))
+ 			continue;
+ 
++		if ((allow_dup) && (func == CRITICAL_DATA))
++			*allow_dup = entry->allow_dup;
++
+ 		action |= entry->flags & IMA_ACTION_FLAGS;
+ 
+ 		action |= entry->action & IMA_DO_MASK;
+-- 
+2.17.1
+
