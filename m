@@ -2,99 +2,177 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F3DCC433E0
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jan 2021 10:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF0BC4332B
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jan 2021 10:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E7CC64DDD
-	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jan 2021 10:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C83864DE4
+	for <linux-security-module@archiver.kernel.org>; Sat, 30 Jan 2021 10:18:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229468AbhA3KJb (ORCPT
+        id S231828AbhA3KSb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 30 Jan 2021 05:09:31 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:45820 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231765AbhA3CJD (ORCPT
+        Sat, 30 Jan 2021 05:18:31 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58290 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231660AbhA3Arn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 29 Jan 2021 21:09:03 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id D174C9AC; Fri, 29 Jan 2021 20:06:52 -0600 (CST)
-Date:   Fri, 29 Jan 2021 20:06:52 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
-Message-ID: <20210130020652.GB7163@mail.hallyn.com>
-References: <20210119162204.2081137-1-mszeredi@redhat.com>
- <20210119162204.2081137-3-mszeredi@redhat.com>
- <8735yw8k7a.fsf@x220.int.ebiederm.org>
- <20210128165852.GA20974@mail.hallyn.com>
- <87o8h8x1a6.fsf@x220.int.ebiederm.org>
- <20210129154839.GC1130@mail.hallyn.com>
- <87im7fuzdq.fsf@x220.int.ebiederm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87im7fuzdq.fsf@x220.int.ebiederm.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 29 Jan 2021 19:47:43 -0500
+Received: from tusharsu-Ubuntu.lan (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 233C620B6C40;
+        Fri, 29 Jan 2021 16:45:28 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 233C620B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1611967528;
+        bh=Qsm5xaSqX4CxWPDSOE+2LngnqgNIktKRGDQRkYEnpr8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ODI6B0nKtYsFP1dkXOyNo9r+auY0UYa99sFNj+F4LCA1ImMY1u6W/QnFvC83nQH2L
+         rMyZUdHxfjAIJpuGLZzXCY/XDYZokfCEqJbVTW1w2H1XbPiOMV0ATrrCGp86kutggT
+         yFEzY8bDR59YM60i0bow4720oUw/mwMlm0Pal5UE=
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+To:     zohar@linux.ibm.com, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, paul@paul-moore.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+Subject: [PATCH 1/3] IMA: add policy condition to measure duplicate critical data
+Date:   Fri, 29 Jan 2021 16:45:17 -0800
+Message-Id: <20210130004519.25106-2-tusharsu@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210130004519.25106-1-tusharsu@linux.microsoft.com>
+References: <20210130004519.25106-1-tusharsu@linux.microsoft.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 29, 2021 at 04:55:29PM -0600, Eric W. Biederman wrote:
-> "Serge E. Hallyn" <serge@hallyn.com> writes:
-> 
-> > On Thu, Jan 28, 2021 at 02:19:13PM -0600, Eric W. Biederman wrote:
-> >> "Serge E. Hallyn" <serge@hallyn.com> writes:
-> >> 
-> >> > On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
-> >> >> Miklos Szeredi <mszeredi@redhat.com> writes:
-> >> >> 
-> >> >> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
-> >> >> > currently return in v2 format unconditionally.
-> >> >> >
-> >> >> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
-> >> >> > and so the same conversions performed on it.
-> >> >> >
-> >> >> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
-> >> >> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
-> >> >> > user namespace in case of v2) cannot be mapped in the current user
-> >> >> > namespace.
-> >> >> 
-> >> >> This looks like a good cleanup.
-> >> >
-> >> > Sorry, I'm not following.  Why is this a good cleanup?  Why should
-> >> > the xattr be shown as faked v3 in this case?
-> >> 
-> >> If the reader is in &init_user_ns.  If the filesystem was mounted in a
-> >> user namespace.   Then the reader looses the information that the
-> >
-> > Can you be more precise about "filesystem was mounted in a user namespace"?
-> > Is this a FUSE thing, the fs is marked as being mounted in a non-init userns?
-> > If that's a possible case, then yes that must be represented as v3.  Using
-> > is_v2header() may be the simpler way to check for that, but the more accurate
-> > check would be "is it v2 header and mounted by init_user_ns".
-> 
-> I think the filesystems current relevant are fuse,overlayfs,ramfs,tmpfs.
-> 
-> > Basically yes, in as many cases as possible we want to just give a v2
-> > cap because more userspace knows what to do with that, but a non-init-userns
-> > mounted fs which provides a v2 fscap should have it represented as v3 cap
-> > with rootid being the kuid that owns the userns.
-> 
-> That is the case we that is being fixed in the patch.
-> 
-> > Or am I still thinking wrongly?  Wouldn't be entirely surprised :)
-> 
-> No you got it.
+IMA needs to support duplicate measurements of integrity
+critical data to accurately determine the current state of that data
+on the system.  Further, since measurement of duplicate data is not
+required for all the use cases, it needs to be policy driven.
 
-So then can we make faking a v3 gated on whether
-    sb->s_user_ns != &init_user_ns ?
+Define "allow_dup", a new IMA policy condition, for the IMA func
+CRITICAL_DATA to allow duplicate buffer measurement of integrity
+critical data.
+
+Limit the ability to measure duplicate buffer data when action is
+"measure" and func is CRITICAL_DATA.
+
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+---
+ Documentation/ABI/testing/ima_policy |  4 +++-
+ security/integrity/ima/ima_policy.c  | 24 ++++++++++++++++++++++--
+ 2 files changed, 25 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+index bc8e1cbe5e61..9598287e3bbf 100644
+--- a/Documentation/ABI/testing/ima_policy
++++ b/Documentation/ABI/testing/ima_policy
+@@ -27,7 +27,7 @@ Description:
+ 			lsm:	[[subj_user=] [subj_role=] [subj_type=]
+ 				 [obj_user=] [obj_role=] [obj_type=]]
+ 			option:	[[appraise_type=]] [template=] [permit_directio]
+-				[appraise_flag=] [keyrings=]
++				[appraise_flag=] [keyrings=] [allow_dup]
+ 		  base:
+ 			func:= [BPRM_CHECK][MMAP_CHECK][CREDS_CHECK][FILE_CHECK]MODULE_CHECK]
+ 			        [FIRMWARE_CHECK]
+@@ -55,6 +55,8 @@ Description:
+ 			label:= [selinux]|[kernel_info]|[data_label]
+ 			data_label:= a unique string used for grouping and limiting critical data.
+ 			For example, "selinux" to measure critical data for SELinux.
++			allow_dup allows measurement of duplicate data.  Only valid
++			when action is "measure" and func is CRITICAL_DATA.
+ 
+ 		  default policy:
+ 			# PROC_SUPER_MAGIC
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 9b45d064a87d..b89eb768dd05 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -35,6 +35,7 @@
+ #define IMA_FSNAME	0x0200
+ #define IMA_KEYRINGS	0x0400
+ #define IMA_LABEL	0x0800
++#define IMA_ALLOW_DUP	0x1000
+ 
+ #define UNKNOWN		0
+ #define MEASURE		0x0001	/* same as IMA_MEASURE */
+@@ -87,6 +88,7 @@ struct ima_rule_entry {
+ 	char *fsname;
+ 	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+ 	struct ima_rule_opt_list *label; /* Measure data grouped under this label */
++	bool allow_dup; /* Allow duplicate buffer entry measurement */
+ 	struct ima_template_desc *template;
+ };
+ 
+@@ -942,7 +944,7 @@ enum {
+ 	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+ 	Opt_appraise_type, Opt_appraise_flag,
+ 	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
+-	Opt_label, Opt_err
++	Opt_label, Opt_allow_dup, Opt_err
+ };
+ 
+ static const match_table_t policy_tokens = {
+@@ -980,6 +982,7 @@ static const match_table_t policy_tokens = {
+ 	{Opt_template, "template=%s"},
+ 	{Opt_keyrings, "keyrings=%s"},
+ 	{Opt_label, "label=%s"},
++	{Opt_allow_dup, "allow_dup"},
+ 	{Opt_err, NULL}
+ };
+ 
+@@ -1148,7 +1151,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
+ 			return false;
+ 
+ 		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
+-				     IMA_LABEL))
++				     IMA_LABEL | IMA_ALLOW_DUP))
+ 			return false;
+ 
+ 		if (ima_rule_contains_lsm_cond(entry))
+@@ -1184,6 +1187,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 	entry->uid_op = &uid_eq;
+ 	entry->fowner_op = &uid_eq;
+ 	entry->action = UNKNOWN;
++	entry->allow_dup = false;
+ 	while ((p = strsep(&rule, " \t")) != NULL) {
+ 		substring_t args[MAX_OPT_ARGS];
+ 		int token;
+@@ -1375,6 +1379,19 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 
+ 			entry->flags |= IMA_LABEL;
+ 			break;
++		case Opt_allow_dup:
++			ima_log_string(ab, "allow_dup", NULL);
++
++			if ((entry->func != CRITICAL_DATA) ||
++			    (entry->action != MEASURE)) {
++				result = -EINVAL;
++				break;
++			}
++
++			entry->allow_dup = true;
++
++			entry->flags |= IMA_ALLOW_DUP;
++			break;
+ 		case Opt_fsuuid:
+ 			ima_log_string(ab, "fsuuid", args[0].from);
+ 
+@@ -1761,6 +1778,9 @@ int ima_policy_show(struct seq_file *m, void *v)
+ 		seq_puts(m, " ");
+ 	}
+ 
++	if (entry->flags & IMA_ALLOW_DUP)
++		seq_puts(m, "allow_dup");
++
+ 	if (entry->flags & IMA_PCR) {
+ 		snprintf(tbuf, sizeof(tbuf), "%d", entry->pcr);
+ 		seq_printf(m, pt(Opt_pcr), tbuf);
+-- 
+2.17.1
 
