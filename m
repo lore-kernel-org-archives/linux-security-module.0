@@ -2,186 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DE3C433E0
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jan 2021 20:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26144C433E0
+	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jan 2021 20:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB5A64E24
-	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jan 2021 20:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE2E64E09
+	for <linux-security-module@archiver.kernel.org>; Sun, 31 Jan 2021 20:29:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231288AbhAaUM3 (ORCPT
+        id S232087AbhAaU3J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 31 Jan 2021 15:12:29 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46452 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231329AbhAaTpX (ORCPT
+        Sun, 31 Jan 2021 15:29:09 -0500
+Received: from out02.mta.xmission.com ([166.70.13.232]:44520 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231420AbhAaU1c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 31 Jan 2021 14:45:23 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 10VI1HwP062940;
-        Sun, 31 Jan 2021 13:10:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=NYwwPXnKTvtbxcHJO8ZCSxE1/bI2BZQ+pSd+KZpx11k=;
- b=c+WnTmaCFyijzidSpXm34w3P25aRIQ/Y+w5VgJY9NXXuh5/NsWwbp+RPNWk07yv45pj6
- w8YmqES50lgVaTMe/D4W6VmwTodcdldGMwykKYGrJ2coeRTP3enA4uSIkLNCABlkSoVs
- B8/0uCaV+zGKdBDTHoCPjulHm8zvNZf4xUsI4rGALuYLJSLCtx5TeNxMUtnUEVYp+lNf
- od+DumpDrkH61M3EJm3OQR5CgXV1+2TfLGKuzxl8Ld/wNeLi1LG1eBv7zHQFbzY/LhpC
- cq0jTWZzLneVH21w4kunmCjT7bQeMHuQUj5iwTlKBAfer3C1jzbfwaGnw+Awo5c5vs0b uw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36dwsubb6c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 31 Jan 2021 13:10:01 -0500
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 10VIA0SM087751;
-        Sun, 31 Jan 2021 13:10:00 -0500
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36dwsubb64-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 31 Jan 2021 13:10:00 -0500
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 10VI6poI025079;
-        Sun, 31 Jan 2021 18:09:59 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma02dal.us.ibm.com with ESMTP id 36cy38kqab-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 31 Jan 2021 18:09:59 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 10VI9ws527525628
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 31 Jan 2021 18:09:58 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 48F9F78060;
-        Sun, 31 Jan 2021 18:09:58 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 94DF97805F;
-        Sun, 31 Jan 2021 18:09:55 +0000 (GMT)
-Received: from jarvis.int.hansenpartnership.com (unknown [9.85.153.205])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Sun, 31 Jan 2021 18:09:55 +0000 (GMT)
-Message-ID: <18529562ed71becf21401ec9fd9d95c4ac44fdc0.camel@linux.ibm.com>
-Subject: Re: Migration to trusted keys: sealing user-provided key?
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel@pengutronix.de
-Date:   Sun, 31 Jan 2021 10:09:54 -0800
-In-Reply-To: <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
-References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
-         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
-         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
-         <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Sun, 31 Jan 2021 15:27:32 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l6HGT-009MEC-Oc; Sun, 31 Jan 2021 11:16:01 -0700
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1l6HGS-007la5-Nm; Sun, 31 Jan 2021 11:16:01 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>
+References: <20210119162204.2081137-1-mszeredi@redhat.com>
+        <20210119162204.2081137-3-mszeredi@redhat.com>
+        <8735yw8k7a.fsf@x220.int.ebiederm.org>
+        <20210128165852.GA20974@mail.hallyn.com>
+        <87o8h8x1a6.fsf@x220.int.ebiederm.org>
+        <20210129154839.GC1130@mail.hallyn.com>
+        <87im7fuzdq.fsf@x220.int.ebiederm.org>
+        <20210130020652.GB7163@mail.hallyn.com>
+Date:   Sun, 31 Jan 2021 12:14:39 -0600
+In-Reply-To: <20210130020652.GB7163@mail.hallyn.com> (Serge E. Hallyn's
+        message of "Fri, 29 Jan 2021 20:06:52 -0600")
+Message-ID: <87h7mxotww.fsf@x220.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-01-31_05:2021-01-29,2021-01-31 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 bulkscore=0 impostorscore=0 mlxlogscore=760 mlxscore=0
- suspectscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2009150000 definitions=main-2101310102
+Content-Type: text/plain
+X-XM-SPF: eid=1l6HGS-007la5-Nm;;;mid=<87h7mxotww.fsf@x220.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+rdqZ6i33bsph+88xrIBEvUyfFA5QciIc=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 2/2] security.capability: fix conversions on getxattr
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2021-01-31 at 15:14 +0100, Jan Lübbe wrote:
-> On Sun, 2021-01-31 at 07:09 -0500, Mimi Zohar wrote:
-> > On Sat, 2021-01-30 at 19:53 +0200, Jarkko Sakkinen wrote:
-> > > On Thu, 2021-01-28 at 18:31 +0100, Ahmad Fatoum wrote:
-> > > > Hello,
-> > > > 
-> > > > I've been looking into how a migration to using
-> > > > trusted/encrypted keys would look like (particularly with dm-
-> > > > crypt).
-> > > > 
-> > > > Currently, it seems the the only way is to re-encrypt the
-> > > > partitions because trusted/encrypted keys always generate their
-> > > > payloads from RNG.
-> > > > 
-> > > > If instead there was a key command to initialize a new
-> > > > trusted/encrypted key with a user provided value, users could
-> > > > use whatever mechanism they used beforehand to get a plaintext
-> > > > key and use that to initialize a new trusted/encrypted key.
-> > > > From there on, the key will be like any other trusted/encrypted
-> > > > key and not be disclosed again to userspace.
-> > > > 
-> > > > What are your thoughts on this? Would an API like
-> > > > 
-> > > >   keyctl add trusted dmcrypt-key 'set <content>' # user-
-> > > > supplied content
-> > > > 
-> > > > be acceptable?
-> > > 
-> > > Maybe it's the lack of knowledge with dm-crypt, but why this
-> > > would be useful? Just want to understand the bottleneck, that's
-> > > all.
-> 
-> Our goal in this case is to move away from having the dm-crypt key
-> material accessible to user-space on embedded devices. For an
-> existing dm-crypt volume, this key is fixed. A key can be loaded into
-> user key type and used by dm-crypt (cryptsetup can already do it this
-> way). But at this point, you can still do 'keyctl read' on that key,
-> exposing the key material to user space.
-> 
-> Currently, with both encrypted and trusted keys, you can only
-> generate new random keys, not import existing key material. 
-> 
-> James Bottomley mentioned in the other reply that the key format will
-> become compatible with the openssl_tpm2_engine, which would provide a
-> workaround. This wouldn't work with OP-TEE-based trusted keys (see
-> Sumit Garg's series), though.
+"Serge E. Hallyn" <serge@hallyn.com> writes:
 
-Assuming OP-TEE has the same use model as the TPM, someone will
-eventually realise the need for interoperable key formats between key
-consumers and then it will work in the same way once the kernel gets
-updated to speak whatever format they come up with.
+> On Fri, Jan 29, 2021 at 04:55:29PM -0600, Eric W. Biederman wrote:
+>> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>> 
+>> > On Thu, Jan 28, 2021 at 02:19:13PM -0600, Eric W. Biederman wrote:
+>> >> "Serge E. Hallyn" <serge@hallyn.com> writes:
+>> >> 
+>> >> > On Tue, Jan 19, 2021 at 07:34:49PM -0600, Eric W. Biederman wrote:
+>> >> >> Miklos Szeredi <mszeredi@redhat.com> writes:
+>> >> >> 
+>> >> >> > If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+>> >> >> > currently return in v2 format unconditionally.
+>> >> >> >
+>> >> >> > This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+>> >> >> > and so the same conversions performed on it.
+>> >> >> >
+>> >> >> > If the rootid cannot be mapped v3 is returned unconverted.  Fix this so
+>> >> >> > that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+>> >> >> > user namespace in case of v2) cannot be mapped in the current user
+>> >> >> > namespace.
+>> >> >> 
+>> >> >> This looks like a good cleanup.
+>> >> >
+>> >> > Sorry, I'm not following.  Why is this a good cleanup?  Why should
+>> >> > the xattr be shown as faked v3 in this case?
+>> >> 
+>> >> If the reader is in &init_user_ns.  If the filesystem was mounted in a
+>> >> user namespace.   Then the reader looses the information that the
+>> >
+>> > Can you be more precise about "filesystem was mounted in a user namespace"?
+>> > Is this a FUSE thing, the fs is marked as being mounted in a non-init userns?
+>> > If that's a possible case, then yes that must be represented as v3.  Using
+>> > is_v2header() may be the simpler way to check for that, but the more accurate
+>> > check would be "is it v2 header and mounted by init_user_ns".
+>> 
+>> I think the filesystems current relevant are fuse,overlayfs,ramfs,tmpfs.
+>> 
+>> > Basically yes, in as many cases as possible we want to just give a v2
+>> > cap because more userspace knows what to do with that, but a non-init-userns
+>> > mounted fs which provides a v2 fscap should have it represented as v3 cap
+>> > with rootid being the kuid that owns the userns.
+>> 
+>> That is the case we that is being fixed in the patch.
+>> 
+>> > Or am I still thinking wrongly?  Wouldn't be entirely surprised :)
+>> 
+>> No you got it.
+>
+> So then can we make faking a v3 gated on whether
+>     sb->s_user_ns != &init_user_ns ?
 
-> > We upstreamed "trusted" & "encrypted" keys together in order to
-> > address this sort of problem.   Instead of directly using a
-> > "trusted" key for persistent file signatures being stored as
-> > xattrs, the "encrypted" key provides one level of
-> > indirection.   The "encrypted" key may be encrypted/decrypted with
-> > either a TPM based "trusted" key or with a "user" type symmetric
-> > key[1].
-> > 
-> > Instead of modifying "trusted" keys, use a "user" type "encrypted"
-> > key.
-> 
-> I don't see how this would help. When using dm-crypt with an
-> encrypted key, I can't use my existing key material.
-> 
-> Except for the migration aspect, trusted keys seem ideal. Only a
-> single exported blob needs to be stored and can only be loaded/used
-> again on the same (trusted) system. Userspace cannot extract the key
-> material. 
+Sort of.
 
-Yes, that's what I was thinking ... especially when you can add policy
-to the keys, which includes PCR locking.  Part of the problem is that
-changing policy, which you have to do if something happens to update
-the PCR values, is technically a migration, so your trusted keys for
-dm-crypt are really going to have to be migrateable.
+What Miklos's patch implements is always treating a v2 cap xattr on disk
+as v3 internally.
 
-> To get to this point on systems in the field without re-encryption of
-> the whole storage, only the initial trusted/encrypted key creation
-> would need to allow passing in existing key material.
+>  	if (is_v2header((size_t) ret, cap)) {
+>  		root = 0;
+>  	} else if (is_v3header((size_t) ret, cap)) {
+>  		nscap = (struct vfs_ns_cap_data *) tmpbuf;
+>  		root = le32_to_cpu(nscap->rootid);
+>  	} else {
+>  		size = -EINVAL;
+>  		goto out_free;
+>  	}
 
-What about a third option: why not make dm-crypt store the master key
-it uses as an encrypted key (if a parent trusted key is available)? 
-That way you'd be able to extract the encrypted form of the key as
-root, but wouldn't be able to extract the actual master key.
+Then v3 is returned if:
+>  	/* If the root kuid maps to a valid uid in current ns, then return
+>  	 * this as a nscap. */
+>  	mappedroot = from_kuid(current_user_ns(), kroot);
+>  	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
 
-James
+After that we verify that the fs capability can be seen by the caller
+as a v2 cap xattr with:
+
+> >  	if (!rootid_owns_currentns(kroot)) {
+> > 		size = -EOVERFLOW;
+> > 		goto out_free;
+
+Anything that passes that test and does not encounter a memory
+allocation error is returned as a v2.
+
+...
+
+Which in practice does mean that if sb->s_user_ns != &init_user_ns, 
+then mappedroot != 0, and is returned as a v3.
+
+The rest of the logic takes care of all of the other crazy silly
+combinations.  Like a user namespace that identity maps uid 0,
+and then mounts a filesystem.
+
+Eric
+
 
 
