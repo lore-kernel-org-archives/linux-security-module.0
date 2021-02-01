@@ -4,83 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C05DFC433E0
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Feb 2021 11:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E785C433DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Feb 2021 13:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA2F64E50
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Feb 2021 11:37:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF54064EA3
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Feb 2021 13:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbhBALhg (ORCPT
+        id S231449AbhBANJA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Feb 2021 06:37:36 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51774 "EHLO
+        Mon, 1 Feb 2021 08:09:00 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:23355 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229502AbhBALhf (ORCPT
+        by vger.kernel.org with ESMTP id S229524AbhBANI7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Feb 2021 06:37:35 -0500
+        Mon, 1 Feb 2021 08:08:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612179369;
+        s=mimecast20190719; t=1612184853;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VTFNHmYMNxGpEuIhBb8TR1rvnZN6QF66geki9lSctnE=;
-        b=S8ZeQHhbP5+auBTWeu/+MLlfprMaS3JRFvyZw4SxLNq/KE+3/ajlgBCWWkaKBFojgw995R
-        832tBaSa+mRumBL4tqSmyupHq9zMusM8te35J3W2TolJjP/UwOsY1cEoBkV419tDUE/zAM
-        YP/5mSkZqX4ZQAPBv8Aki8Bc/BU82Pc=
+        bh=y5Rwaf81e9ocy2MYWY0wjpx5EyFdy6040KY/DyZOVp8=;
+        b=TupKMzQvRHzyFqzMFPnnNr2WrrczA60zrcF6SE1Kc0JdGgPbONDeR0dPQcqXqBwrtxwak7
+        jMzUG8z2OtqvtlQvljOmpTU1L5o7djGb844rRLaGW+EKAwqtcTG3h/B99yEkS6per0R2pf
+        RM4+tJQhnXgcbiaQeREhHT79crpZahM=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-278-65b3QYUnN6WdbbNFkB38Fw-1; Mon, 01 Feb 2021 06:36:05 -0500
-X-MC-Unique: 65b3QYUnN6WdbbNFkB38Fw-1
+ us-mta-543-pfmfFTAqO3euUrWsdsfwvQ-1; Mon, 01 Feb 2021 08:07:31 -0500
+X-MC-Unique: pfmfFTAqO3euUrWsdsfwvQ-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DCE08801817;
-        Mon,  1 Feb 2021 11:36:03 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E0B9D9CC02;
+        Mon,  1 Feb 2021 13:07:28 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D25303AE1;
-        Mon,  1 Feb 2021 11:36:01 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 99176E141;
+        Mon,  1 Feb 2021 13:07:25 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
-References: <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de> <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de> <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org> <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
-To:     Jan =?us-ascii?Q?=3D=3FISO-8859-1=3FQ=3FL=3DFCbbe=3F=3D?= 
-        <jlu@pengutronix.de>
-Cc:     dhowells@redhat.com, Mimi Zohar <zohar@linux.ibm.com>,
+In-Reply-To: <20210128191705.3568820-1-mic@digikod.net>
+References: <20210128191705.3568820-1-mic@digikod.net>
+To:     =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl=3D20Sala=3DC3=3DBCn=3F?=
+         =?us-ascii?Q?=3D?= <mic@digikod.net>
+Cc:     dhowells@redhat.com, David Woodhouse <dwmw2@infradead.org>,
         Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        James Bottomley <jejb@linux.ibm.com>, keyrings@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?us-ascii?Q?=3D=3FUTF-8=3Fq=3FMicka=3DC3=3DABl?=
+         =?us-ascii?Q?=3D20Sala=3DC3=3DBCn=3F=3D?= 
+        <mic@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: Migration to trusted keys: sealing user-provided key?
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 0/5] Enable root to update the blacklist keyring
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 01 Feb 2021 11:36:01 +0000
-Message-ID: <4153718.1612179361@warthog.procyon.org.uk>
+Date:   Mon, 01 Feb 2021 13:07:24 +0000
+Message-ID: <4160652.1612184844@warthog.procyon.org.uk>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Jan L=C3=BCbbe <jlu@pengutronix.de> wrote:
 
-> ... But at this point, you can still do 'keyctl read' on that key, exposi=
-ng
-> the key material to user space.
+Hi Micka=C3=ABl,
 
-I wonder if it would help to provide a keyctl function to mark a key as bei=
-ng
-permanently unreadable - so that it overrides the READ permission bit.
-
-Alternatively, you can disable READ and SETATTR permission - but that then
-prevents you from removing other perms if you want to :-/
+Do you have a public branch somewhere I can pull from?
 
 David
 
