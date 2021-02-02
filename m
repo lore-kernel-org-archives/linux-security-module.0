@@ -2,191 +2,202 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 674A3C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 05:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97953C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 10:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A7D064EAC
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 05:35:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49CB364DCC
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 10:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230168AbhBBFfJ (ORCPT
+        id S229646AbhBBKqD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Feb 2021 00:35:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53888 "EHLO
+        Tue, 2 Feb 2021 05:46:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231667AbhBBFfG (ORCPT
+        with ESMTP id S229441AbhBBKqB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Feb 2021 00:35:06 -0500
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E400C061756
-        for <linux-security-module@vger.kernel.org>; Mon,  1 Feb 2021 21:34:25 -0800 (PST)
-Received: by mail-wm1-x330.google.com with SMTP id m2so1244946wmm.1
-        for <linux-security-module@vger.kernel.org>; Mon, 01 Feb 2021 21:34:25 -0800 (PST)
+        Tue, 2 Feb 2021 05:46:01 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D894EC061573;
+        Tue,  2 Feb 2021 02:45:19 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id p15so19848150wrq.8;
+        Tue, 02 Feb 2021 02:45:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lD+9VdFDDbbGKdh4Zlx/S6kSI7nJIlJMTXOt77nYf50=;
-        b=c6ADmGsDwHXz5pqsJbysFZOPf2sccXandZLMCxhV2SBY5AeEWS9MvAu3A1L3a1CjhL
-         NPCrbMA6t0stZ0Eq6KILOn6lTLJd6/Wparn+DKG1OEOl7DvoDnjdCBw3yGA2b/DkOxFj
-         bDCLUPdLOGT6qFlvKp4N/U8LR5N9kYRS8GlSn6HOoZsKSUBhyH3zg3zWYV6D2hSPkANy
-         sGFrnNBfW/cxZ9vseIaZXp2D8HnVZrLnqj9nGpSdeiw60EG1qr/XVwEcZgcoBSScv83v
-         r+F1d0el8pKgYroBTfOLfgDhOG7Hcutr8ToP92EmfFiSVg75RMkO4dr7oUpoGRoS3wRX
-         HTdg==
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cyJs+3SGCj9XR6rS/VsjsM1IE2RFshzJsPr437bOekg=;
+        b=R8CCZUhvPLE+ptZxc8GsaJl3TmtQXWE+yVmgMvkuloUSR8roQI2BOFKdoCN1Z3/lBd
+         CHJb//Dqnu5oJ8Mg5ryuxRPLl8yF0XgbhVZ/GgFyeUjN2xzvkH1MnMTFC5xEu5n2sqrj
+         yApTNm+noDQvdPwKDq/LGeyFQkMefdCjQZ7MAGJLITogCc+A0SUllzCxBWkKBeoSbojG
+         3Ml0bCa0n46GOYn2spBVqp5JSup/Tu5ibPzLCuYqT7cie8TR63+ojVYxctSjGrBZWt5D
+         g/kFmSNzt8SCTl0DYdrZK27v5RU0rH+kz+yXKtff96mRzwsjNmcEg5H3xnXJY2qdwSPA
+         wekw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lD+9VdFDDbbGKdh4Zlx/S6kSI7nJIlJMTXOt77nYf50=;
-        b=O07hzLgZkdKKWp7Bjgsi4Rqv+xGhT875H2qLL2aqOm0kpzrw/IFV72/qUs+nCX4L1h
-         73Symt8dnWYnNM/fCgqp5Bj08APPaS/cnBSAAheBslBIz0m/aYrwK9M2Nu5dj82TMAYF
-         JRK59lQKVUcBmoenGPhB+4pwTNz7/7ZBaOepokuUB2Mn1xUOyOn+GiiRJlX2uBsdBNcE
-         E9CGzHUnuogcs7ivcv7kFpGHjs+r8EmRKKCLjDn796eCECNZyF1okh2DWhI3l+/j8WEy
-         wojnqp5V9tRL1Iikp16qskcTlPeNQFS5rgxxeEn/W2U4B3s9T2urCJdGYkWeUqzPU1fL
-         ZHiA==
-X-Gm-Message-State: AOAM5336HFHBypUkycIYIL/p4REVSTEysVZVhxRik7ZRn6duPrA7bylJ
-        cZAkHfRT44QlOapv37H4uLzXGYazKpJfV17cmnrkow==
-X-Google-Smtp-Source: ABdhPJz6ttAxWJJKNXWH8Zat2eIPwUyJ+Sf7ECY2vlX2Nz9RgCcMqIkMT272RDNbBCLgqaqpUVLQC9YR8N97KTCll7k=
-X-Received: by 2002:a1c:acc9:: with SMTP id v192mr1888469wme.22.1612244064008;
- Mon, 01 Feb 2021 21:34:24 -0800 (PST)
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cyJs+3SGCj9XR6rS/VsjsM1IE2RFshzJsPr437bOekg=;
+        b=ISFZZCMm3ZqelQ4jvmHEcbR7mid8/pI1QXskYBAKABJsePGQnay9LuAzT44ZHbxYIl
+         WHx8YYXZiMyLVHWLIw8irRynkVuXYanABlD77tV9b5EuX2UxJ6RG2eKCw9nsmO3aZlXV
+         QzU4/xhkFgvGyRYXGTczYWyTkdpRLZ1dN6MYtxtQnZEBU8K85v5BSoJRTEHeSREbtNLl
+         0xnVNADu4yAm4OlElSG91g9yzC+uSkmJvhEbD+rCXYpPAf7A/zxq5DmkTylJPBvuyqaz
+         HJ9/jSFFUOzsQTGyrtqqHIAJ2PnI09MMAxYSFSyUc1haj/csK9wTj+78DM2TPG7FCkyr
+         dTlg==
+X-Gm-Message-State: AOAM5318lgem+lFFb81cgaEW4ALA6ltkp6/gtMuM+7GJaK8WC5i8s15K
+        73vhYrmKj+dDlblAEb+f9gk=
+X-Google-Smtp-Source: ABdhPJwDwlBcePjdaZRYJS1IF8/IBOZLW5rSrIat6PDunt6i+D5zMu2/LoXBqWkb0y8kvKPjbTwFIw==
+X-Received: by 2002:a5d:6c66:: with SMTP id r6mr22537227wrz.86.1612262718594;
+        Tue, 02 Feb 2021 02:45:18 -0800 (PST)
+Received: from ?IPv6:2001:a61:2542:b001:294f:8948:78a8:d929? ([2001:a61:2542:b001:294f:8948:78a8:d929])
+        by smtp.gmail.com with ESMTPSA id b3sm2647400wme.32.2021.02.02.02.45.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 02 Feb 2021 02:45:17 -0800 (PST)
+Cc:     mtk.manpages@gmail.com, akpm@linux-foundation.org,
+        jannh@google.com, keescook@chromium.org, jeffv@google.com,
+        minchan@kernel.org, mhocko@suse.com, shakeelb@google.com,
+        rientjes@google.com, edgararriaga@google.com, timmurray@google.com,
+        linux-mm@kvack.org, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH v3 1/1] process_madvise.2: Add process_madvise man page
+To:     Suren Baghdasaryan <surenb@google.com>, linux-man@vger.kernel.org
+References: <20210202053046.1653012-1-surenb@google.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <079db245-a08c-0dbd-01d4-8065f533652e@gmail.com>
+Date:   Tue, 2 Feb 2021 11:45:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-References: <20210111170622.2613577-1-surenb@google.com> <20210112074629.GG22493@dhcp22.suse.cz>
- <20210112174507.GA23780@redhat.com> <CAJuCfpFQz=x-LvONO3c4iqjKP4NKJMgUuiYc8HACKHAv1Omu0w@mail.gmail.com>
- <20210113142202.GC22493@dhcp22.suse.cz> <CAG48ez0=QSzuj96+5oVQ2qWqfjedv3oKtfEFzw--C8bzfvj7EQ@mail.gmail.com>
- <20210126135254.GP827@dhcp22.suse.cz> <CAJuCfpEnMyo9XAnoF+q1j9EkC0okZfUxxdAFhzhPJi+adJYqjw@mail.gmail.com>
- <CAJuCfpF861zhp8yR_pYx8gb+WMrORAZ0tbzcKtKxaj7L=jzw+Q@mail.gmail.com>
-In-Reply-To: <CAJuCfpF861zhp8yR_pYx8gb+WMrORAZ0tbzcKtKxaj7L=jzw+Q@mail.gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 1 Feb 2021 21:34:12 -0800
-Message-ID: <CAJuCfpFzxiBXp1rdY=H=bX+eOAVGOe72_FxwC-NTWF4fhUO26g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mm/madvise: replace ptrace attach requirement for process_madvise
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Jann Horn <jannh@google.com>, Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>,
-        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-mm <linux-mm@kvack.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210202053046.1653012-1-surenb@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jan 28, 2021 at 11:08 PM Suren Baghdasaryan <surenb@google.com> wrote:
->
-> On Thu, Jan 28, 2021 at 11:51 AM Suren Baghdasaryan <surenb@google.com> wrote:
-> >
-> > On Tue, Jan 26, 2021 at 5:52 AM 'Michal Hocko' via kernel-team
-> > <kernel-team@android.com> wrote:
-> > >
-> > > On Wed 20-01-21 14:17:39, Jann Horn wrote:
-> > > > On Wed, Jan 13, 2021 at 3:22 PM Michal Hocko <mhocko@suse.com> wrote:
-> > > > > On Tue 12-01-21 09:51:24, Suren Baghdasaryan wrote:
-> > > > > > On Tue, Jan 12, 2021 at 9:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> > > > > > >
-> > > > > > > On 01/12, Michal Hocko wrote:
-> > > > > > > >
-> > > > > > > > On Mon 11-01-21 09:06:22, Suren Baghdasaryan wrote:
-> > > > > > > >
-> > > > > > > > > What we want is the ability for one process to influence another process
-> > > > > > > > > in order to optimize performance across the entire system while leaving
-> > > > > > > > > the security boundary intact.
-> > > > > > > > > Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
-> > > > > > > > > and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
-> > > > > > > > > and CAP_SYS_NICE for influencing process performance.
-> > > > > > > >
-> > > > > > > > I have to say that ptrace modes are rather obscure to me. So I cannot
-> > > > > > > > really judge whether MODE_READ is sufficient. My understanding has
-> > > > > > > > always been that this is requred to RO access to the address space. But
-> > > > > > > > this operation clearly has a visible side effect. Do we have any actual
-> > > > > > > > documentation for the existing modes?
-> > > > > > > >
-> > > > > > > > I would be really curious to hear from Jann and Oleg (now Cced).
-> > > > > > >
-> > > > > > > Can't comment, sorry. I never understood these security checks and never tried.
-> > > > > > > IIUC only selinux/etc can treat ATTACH/READ differently and I have no idea what
-> > > > > > > is the difference.
-> > > >
-> > > > Yama in particular only does its checks on ATTACH and ignores READ,
-> > > > that's the difference you're probably most likely to encounter on a
-> > > > normal desktop system, since some distros turn Yama on by default.
-> > > > Basically the idea there is that running "gdb -p $pid" or "strace -p
-> > > > $pid" as a normal user will usually fail, but reading /proc/$pid/maps
-> > > > still works; so you can see things like detailed memory usage
-> > > > information and such, but you're not supposed to be able to directly
-> > > > peek into a running SSH client and inject data into the existing SSH
-> > > > connection, or steal the cryptographic keys for the current
-> > > > connection, or something like that.
-> > > >
-> > > > > > I haven't seen a written explanation on ptrace modes but when I
-> > > > > > consulted Jann his explanation was:
-> > > > > >
-> > > > > > PTRACE_MODE_READ means you can inspect metadata about processes with
-> > > > > > the specified domain, across UID boundaries.
-> > > > > > PTRACE_MODE_ATTACH means you can fully impersonate processes with the
-> > > > > > specified domain, across UID boundaries.
-> > > > >
-> > > > > Maybe this would be a good start to document expectations. Some more
-> > > > > practical examples where the difference is visible would be great as
-> > > > > well.
-> > > >
-> > > > Before documenting the behavior, it would be a good idea to figure out
-> > > > what to do with perf_event_open(). That one's weird in that it only
-> > > > requires PTRACE_MODE_READ, but actually allows you to sample stuff
-> > > > like userspace stack and register contents (if perf_event_paranoid is
-> > > > 1 or 2). Maybe for SELinux things (and maybe also for Yama), there
-> > > > should be a level in between that allows fully inspecting the process
-> > > > (for purposes like profiling) but without the ability to corrupt its
-> > > > memory or registers or things like that. Or maybe perf_event_open()
-> > > > should just use the ATTACH mode.
-> > >
-> > > Thanks for the clarification. I still cannot say I would have a good
-> > > mental picture. Having something in Documentation/core-api/ sounds
-> > > really needed. Wrt to perf_event_open it sounds really odd it can do
-> > > more than other places restrict indeed. Something for the respective
-> > > maintainer but I strongly suspect people simply copy the pattern from
-> > > other places because the expected semantic is not really clear.
-> > >
-> >
-> > Sorry, back to the matters of this patch. Are there any actionable
-> > items for me to take care of before it can be accepted? The only
-> > request from Andrew to write a man page is being worked on at
-> > https://lore.kernel.org/linux-mm/20210120202337.1481402-1-surenb@google.com/
-> > and I'll follow up with the next version. I also CC'ed stable@ for
-> > this to be included into 5.10 per Andrew's request. That CC was lost
-> > at some point, so CC'ing again.
-> >
-> > I do not see anything else on this patch to fix. Please chime in if
-> > there are any more concerns, otherwise I would ask Andrew to take it
-> > into mm-tree and stable@ to apply it to 5.10.
-> > Thanks!
->
-> process_madvise man page V2 is posted at:
-> https://lore.kernel.org/linux-mm/20210129070340.566340-1-surenb@google.com/
+Hello Suren (and Minchan and Michal)
 
-process_madvise man page V3 is posted at:
-https://lore.kernel.org/linux-mm/20210202053046.1653012-1-surenb@google.com/
+Thank you for the revisions!
 
->
-> >
-> >
-> > > --
-> > > Michal Hocko
-> > > SUSE Labs
-> > >
-> > > --
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-team+unsubscribe@android.com.
-> > >
+I've applied this patch, and done a few light edits.
+
+However, I have a questions about undocumented pieces in *madvise(2)*,
+as well as one other question. See below. 
+
+On 2/2/21 6:30 AM, Suren Baghdasaryan wrote:
+> Initial version of process_madvise(2) manual page. Initial text was
+> extracted from [1], amended after fix [2] and more details added using
+> man pages of madvise(2) and process_vm_read(2) as examples. It also
+> includes the changes to required permission proposed in [3].
+> 
+> [1] https://lore.kernel.org/patchwork/patch/1297933/
+> [2] https://lkml.org/lkml/2020/12/8/1282
+> [3] https://patchwork.kernel.org/project/selinux/patch/20210111170622.2613577-1-surenb@google.com/#23888311
+> 
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Reviewed-by: Michal Hocko <mhocko@suse.com>
+> ---
+> changes in v2:
+> - Changed description of MADV_COLD per Michal Hocko's suggestion
+> - Applied fixes suggested by Michael Kerrisk
+> changes in v3:
+> - Added Michal's Reviewed-by
+> - Applied additional fixes suggested by Michael Kerrisk
+> 
+> NAME
+>     process_madvise - give advice about use of memory to a process
+> 
+> SYNOPSIS
+>     #include <sys/uio.h>
+> 
+>     ssize_t process_madvise(int pidfd,
+>                            const struct iovec *iovec,
+>                            unsigned long vlen,
+>                            int advice,
+>                            unsigned int flags);
+> 
+> DESCRIPTION
+>     The process_madvise() system call is used to give advice or directions
+>     to the kernel about the address ranges of another process or the calling
+>     process. It provides the advice to the address ranges described by iovec
+>     and vlen. The goal of such advice is to improve system or application
+>     performance.
+> 
+>     The pidfd argument is a PID file descriptor (see pidfd_open(2)) that
+>     specifies the process to which the advice is to be applied.
+> 
+>     The pointer iovec points to an array of iovec structures, defined in
+>     <sys/uio.h> as:
+> 
+>     struct iovec {
+>         void  *iov_base;    /* Starting address */
+>         size_t iov_len;     /* Number of bytes to transfer */
+>     };
+> 
+>     The iovec structure describes address ranges beginning at iov_base address
+>     and with the size of iov_len bytes.
+> 
+>     The vlen represents the number of elements in the iovec structure.
+> 
+>     The advice argument is one of the values listed below.
+> 
+>   Linux-specific advice values
+>     The following Linux-specific advice values have no counterparts in the
+>     POSIX-specified posix_madvise(3), and may or may not have counterparts
+>     in the madvise(2) interface available on other implementations.
+> 
+>     MADV_COLD (since Linux 5.4.1)
+
+I just noticed these version numbers now, and thought: they can't be
+right (because the system call appeared only in v5.11). So I removed 
+them. But, of course in another sense the version numbers are (nearly)
+right, since these advice values were added for madvise(2) in Linux 5.4.
+However, they are not documented in the madvise(2) manual page. Is it
+correct to assume that MADV_COLD and MADV_PAGEOUT have exactly the same
+meaning in madvise(2) (but just for the calling process, of course)?
+
+>         Deactive a given range of pages which will make them a more probable
+
+I changed: s/Deactive/Deactivate/
+
+>         reclaim target should there be a memory pressure. This is a
+>         nondestructive operation. The advice might be ignored for some pages
+>         in the range when it is not applicable.
+> 
+>     MADV_PAGEOUT (since Linux 5.4.1)
+>         Reclaim a given range of pages. This is done to free up memory occupied
+>         by these pages. If a page is anonymous it will be swapped out. If a
+>         page is file-backed and dirty it will be written back to the backing
+>         storage. The advice might be ignored for some pages in the range when
+>         it is not applicable.
+
+[...]
+
+>     The hint might be applied to a part of iovec if one of its elements points
+>     to an invalid memory region in the remote process. No further elements will
+>     be processed beyond that point.
+
+Is the above scenario the one that leads to the partial advice case described in
+RETURN VALUE? If yes, perhaps I should add some words to make that clearer.
+
+You can see the light edits that I made in
+https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=e3ce016472a1b3ec5dffdeb23c98b9fef618a97b
+and following that I restructured DESCRIPTION a little in
+https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3aac0708a9acee5283e091461de6a8410bc921a6
+
+Thanks,
+
+Michael
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
