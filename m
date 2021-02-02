@@ -2,110 +2,225 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848DEC433DB
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 19:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA30C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 22:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D29A64E38
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 19:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B58E64F7F
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 22:13:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233511AbhBBTgE (ORCPT
+        id S233175AbhBBWNn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Feb 2021 14:36:04 -0500
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:39412
-        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238296AbhBBTex (ORCPT
+        Tue, 2 Feb 2021 17:13:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232882AbhBBWNj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Feb 2021 14:34:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1612294446; bh=ffKmFpWMlYFAPTjEDC3llRKB9Lrhg7fxHnn8+PmK1m0=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=r5HQ1K1QyvrzD13wHJKJ25vkrK22IY3kqRF5/HoKm5jBI0tIzKFL95Bqbk02g+dGH9jkyQQ//5ERzgHneVJ7UKApyyRJqgWA6Dc5sWAj7X5Q+MyaE14R1VlUDFrHiCdtbSipf0gkfHm2lVHwKco/ManTtofxtG2x8R4Czl3hqMSnI/vBaEgfVE/Wge91OSwfsiGFcXuTC9ji/aC4EtKTg598R37r03NqGqI7cqGdMwdxfYBSEc0+bWqvBOikZhMMXxLRgVM5G/7ohFLugcLUZKus6CUPcAY/lhIRXDzyDeePXzdtWHuCb7o7FkX/s226NGfjnG0nxQ7rIG7eXSXZKw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1612294446; bh=mphhD3eVyHt7Z1VyJUmuKI9b7eepkQ/mwIczOWfntjM=; h=Subject:To:From:Date:From:Subject:Reply-To; b=lg8MHYZQaSHmkcgY4ln2IQY09QKzxfoZTE6Jljt9YZmAlSrvhYpi/9birIjYUu+EYDQrE2dqBbrfw4rEv1Tl8yLMNd/KtU8Efd0piEyR0wnDN7kPeru0SdC+laMXqtORrMlS4EDkhI13k0DFUDgiRBUIGnx9L7dAiPqVUeMm6Pc6ZhyI7ubFYpHFten71RlVf0QOP/fBmJtGOIWsqH7Ck4I/01wtk00vJxCbfVDtYrdCuMwQS+GtjTZlaq9wFMfFsi4sV/9+erutDiOaCkdBVyOrfnulkbp3MwY0dzNeBOSNH8QSs/sNXxDYdl6d4DvpLCWpVa4A9NQ39KXLX6rouA==
-X-YMail-OSG: 1oFZJugVM1ljBpgmA3l8tWT.ztvwgeVD3oSCiySgbhK4FE2A9NwuTNei.aRdkmx
- 2OE4J8HBnk84_Fys6oOX0ib778.5S0z8hJIHHksdhYz.H42WtoQk0mKW0xF72WELhqGQXj8N4dlj
- KMZcSxDb2iA0FZzGykgZgDfzuqGa.xwjlkOZBzs0cMEjg8qGN6RXr7vGh3CX6wkegNoZEIAnHJn7
- seH5kHcqX35eC3g2NxkDQB.2dgwGyIGyC96lRbIzsCwWNTefszlDreodR.CQ6GB_ZG5a2aHZzfos
- yt6KtnghBE7aDGo9VUSYZ.rc7wQNWn.bolzG29Y2IpQVr6ABHY0ihG2rGd2ifwNeMDfZLi1n5jQV
- 9ydLRNOEJGg2hO7CUlzkg1vPEckBGJarXQl9szZpHFHPvoXx4X_azZ3ruVIOoSD2EkHDVE9wP99c
- Ef1WMUWKYLSJNxIhfmes5wU80GYluxKoL5C0TByU0Wa7HcxAFkhLsEI8W02L4_UMYT80XsXCZmFP
- 9l9duXpxYY6BezQ.gz1Gm1FEVBGPVn98RdVA7ujKvFO2RN3IyHo58V9y19hykx9Hzd5Xc_6_4emD
- X6JpvjxLsQZ_ddzhJxM6as0TNOcEMjRO_zcH7NFiLa_k1dDCvBX2HOt8qNo5E0n3MztFvRAG7jyR
- ROpIuAqj.AKNn2UP0yTULkafPsfE1sLb9X.hrBjkCyyuXKXp20uOwLSebF9uN0JJx3nadphHKJ_8
- QnGr6EK5gPaEInahKhN5WehcrMHP6QBD66eSsYAIlTaIqMsgV6XhcIJ25d3.KGjRYbRyBL8xTiOk
- TEdpfS.ddgz65UcpWYGk4MnPG.SJ6.YoLfbWnHDaTrZsSHvLZAhjZ._jzQ5lvYg5Y6Yj4Bi67xYj
- vkrgR2s0X2o7vJmWuGPObniuRJbOQaUZqjHCea9I5hU4DVX.QemCib8v1thLd8xTpgxdSPMU.2XS
- lMWJIPxaEZxhxv_BYY8RL8aLKBbEFtl1mXwPzJ9LU5fi1qLG5uJnspgQO6OS1oJ9z_B4K6An4sJv
- c4xeWL7YvlZdwE38rWNGjTMebzJP1p74nBTweZ9fgzx37IyaR2VIXA1Mb0pCm1k0I2rGznCHAJhJ
- fga_czAJVCXkD305RZnY6qSHCvUk8TFq3RLv3s9R7nFbxLRVFJVZ8iIpO4UyS5gGuwBEHjwSbRJx
- XEMVttVmnnwGj5A0.g1mVKoLG50HrzzS4qVxt_7FrBi_q6RAJcjeqoxl4fgSZWf5Ez8LgBFCEWrH
- cCoScuy.tlAXMOa7xZoRrmsOfvQak25lLB9gvXV0qI1.wTRR1jqJOnzJX5CEOwgW.3z9tJYU35Be
- 36oQnxxn5SFzvgi8691.QzJzFeFrbINcIaRbFPJartZA9Ccq7gp2Qgy6nyciLczd9FiHNUU64Twj
- Z7c.SNvzbkEFJqTFM_PfYKw3e0Ar4w_3fiKz3tR62UIvpDuNagP1tJf5B0YurMkKJkdAwAZ6Yx2j
- Cv9gfHnMtbB9gKruRtRGREuh5fOT_6OA3W4G5c8HrWWuUnOL.bksDGO.DtnCUU91oAGbArXRJbgT
- Bn8kbC6zn5zg5DdLWhrRgPSF_QPnKGJ7UHJZfCWy7E8Tkl8m_qup4dhgRLBaCqR9MDPtUULb2Zm.
- 5w87F8isOsYl9TZ2nUDO4h_8KLCOlUz7ITtj9hJXa6HQlwoWfMgVEXBS2FI794uWPrnOV3cIa7aS
- vg5HY9XfATtXkommizxR67Od4TCgmhpaTCZs5ctaqUwCPO1.tXArNqSK7bOxA62d83D_iKWbW92a
- x6s9AFuogcKOxPWkGcW.Uqz__qLOEH5_E6PPeo5wz_bXMBaUIy2wRHQZilc2FqgXpNr_ApFaTXSL
- 2NyIY63AdfIEY3euja1XWYctfqgxmwbI6VU.DFc2YGyqXKQmw46F5nlcbEgVA0JE13EOmAf1h4d5
- I9arHAxki_4d9t3DZr6aY__ASIC_ZG9XUAGwDtjFsJBGwyfgh0ejEvg9.J.SevaH_.0EEggJu._I
- ie_1LwVfVKMn8P.Z.5BmCvd02_4hef_9VKe1ZZm17RcA8_xd3xHa_.dODLITB.VS_DDM.HTdee67
- nyZY7xek5FevkBreYusUOkCGBwWqTUlbvnmbVB6fk.Ez3dOx1LFPSWtuwLxOYeEVMeTb0iau3TDF
- yv1odvYLqLb6CrrlffpJs.HiMw5umwqnAdn0tep.8oFbMMhs1VMACB_MMWYE3wZXcef3KugEZy4a
- 323I8bc2piz2YF2rFTrrkQYIcrLBFXMVzn4NIJggS7F54fDISYL_.63Qg8OMxFQCcggM_IS.UFRR
- JXCjpjKxW1o5GpS4cWIg8okvHu8FZv0Ed9yJKQjaNXYVHbwQ94eZKOpfgeZ0j4RPCfAsRy0bRoMF
- ZxVKtYHFCQxsXpHLWiJYxCeMoxuYB5kOQyNVi0oNQdoVOZRoLoHhc3S7QX7SoQjNh6JthGSUjC3m
- 26hM8g5GuXYv2TlOpnoFTnKK0G.0u88JLM14t.f.NlV..N3x3vqk2XcdH1J8V3HIkYeCqWm8TW5Z
- MytNkUUqdfejApMyUYRixDYHf850bMyfgk15ETESI3AYH1P1pTsKlUr8byNX8qNEM8NOYR.DZEy8
- KOHURxfao0VORIGRiOaIov5lR4lPjsSmjTmsdPQ5.3443vqYFTgRe6V8xwIGf4kiBYQPjy5wmeUM
- 8gkroJBZEWyD_hb3GP5wOoQbY7SMZR7vWmdGhO3si0Gk4nQWSL8YRDLzHfXwKSDA_DMo2De9nATd
- 5F6BUINNaAGIjPT2DM9r7nrodDKi6ORFSr7lG7.4FAUmbXKve0TOAIgZTEfkQOyb7DmKSeZdT5yr
- 9N8IxCQWThs_KkkkIAa_vx68sdAXKRu9NRAenjlLGbsj.6yMHGyMR.QN.3IFsn6qIyntzOr4wE8z
- k0oHV5McxWiANCfxabcRTFOmv3GpYipi1XZ9vMpefrEAgyatzaEDkldw0mdGFSBjqbjLrb4kGZF2
- VL6xrmPTAg6NwlJRkeLtl3r0dM3Tw_zj3lnyAA0xQ2kGXRK.DgsOi7ADPIdWe4CvqolO3J5Xf337
- HAcIyNPrdZLaN.tZwllLUovjlEZKAYSPmnhckO2BT8rfJgmgoWta3RaC45Ndiq3WeJe1Un0.ekD_
- 5wqD6XA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 2 Feb 2021 19:34:06 +0000
-Received: by smtp406.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 7b895dfc98e0e9d57e2350dee38d396b;
-          Tue, 02 Feb 2021 19:34:00 +0000 (UTC)
-Subject: Re: [PATCH v2] smackfs: restrict bytes count in smackfs write
- functions
-To:     Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc:     andreyknvl@google.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mhocko@suse.com,
-        penguin-kernel@i-love.sakura.ne.jp, serge@hallyn.com,
-        syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <d0f9a341-281b-704c-04e4-4304ed17ba23@schaufler-ca.com>
- <20210202191318.1402500-1-snovitoll@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <58e65f92-51ea-2dd0-d7b8-a63019e3dcf0@schaufler-ca.com>
-Date:   Tue, 2 Feb 2021 11:33:58 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Tue, 2 Feb 2021 17:13:39 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB92C06174A
+        for <linux-security-module@vger.kernel.org>; Tue,  2 Feb 2021 14:12:58 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id b3so3947022wrj.5
+        for <linux-security-module@vger.kernel.org>; Tue, 02 Feb 2021 14:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xqP0a66Os6f9sXyF+kMsv13PEbv0LhzI8V6aeWIM0Ok=;
+        b=TPz3NwZfJQX2n8XN2IcK3GG1+YdjmSwEfCGkkfB/R3l9sej3bWUpfbAM6RCQCZ7zSg
+         wtMWuG93czJxsPaqc/vxVW5m5aofw7Xucq73fsummtWKzVU1OcRLPV1d4bpHrkbnQvc4
+         IGVMEw8sSzmZ9C62tJnk3nveiCu7uLVYsZYtvwViU06V6jZ65gHNw7E+q3Wxw3dk6eXe
+         z5op6gObDb+ORYEdWZ3w4BYU3o2SvM5AHHBAGBxccLb/WJ/Qhq7WY8qKqMIPltmMJ5MP
+         z66weUVMT+YCRplS4JltaxL/GEcdZbNO5Nz0syi3n8gD39XWVSSc8FUArjYvPDInNAiR
+         z2yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xqP0a66Os6f9sXyF+kMsv13PEbv0LhzI8V6aeWIM0Ok=;
+        b=YGuvIuN5KBzzBLpqyjeqnax+tu78DU6HjkSC9ebQ1gctoqFGtNwMbU2+VlT/W2HoXi
+         o84FmzrKl6lvqQu4poWab/Yk4rQOVy6OL810NcQHFeuNXbN2tUdxn6ciib6wZrXsbLQk
+         fOdIt96kf20YV9BwLXoYBp6Uzl7Zng0/N4vf1y9uigo861iSs1zXo2xX+n5J6Twp1eeb
+         6uHm8Ky5yreixHLid1jZZ9B/Z0Fo0Admp//A7GFnPkhiRkezkK/xRdJLHxZJEybKcN9j
+         fayS+dmbztuj/O3SFt4un5AyxnupMly2y9IztZNgLNYhi+bImZoVEk+B+FT9QOKA3u2R
+         S9WQ==
+X-Gm-Message-State: AOAM5311EdRBtgO1NHVaKwu1PxCwWzYVMK+sdz8kokmT0yo3Z+isiigf
+        vSsWkO8sY7pACIqZOsqZAeJJNQHgXDlguI299nC6MQ==
+X-Google-Smtp-Source: ABdhPJzXdtevgSVe8n6EmjpNVas/jAjd+jbkaq+OR2OyjZFVqFMgbuoQU4zl5BsooeiKMks3pFo2re/Jz6z7ZkZVsLc=
+X-Received: by 2002:a5d:6884:: with SMTP id h4mr218812wru.106.1612303976784;
+ Tue, 02 Feb 2021 14:12:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210202191318.1402500-1-snovitoll@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.17648 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.8)
+References: <20210202053046.1653012-1-surenb@google.com> <079db245-a08c-0dbd-01d4-8065f533652e@gmail.com>
+In-Reply-To: <079db245-a08c-0dbd-01d4-8065f533652e@gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 2 Feb 2021 14:12:45 -0800
+Message-ID: <CAJuCfpGotx_04Stn5Nw6Au+TVG9LuAJ=CB_s7uxjMLOLerw-GA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] process_madvise.2: Add process_madvise man page
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     linux-man <linux-man@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-mm <linux-mm@kvack.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/2/2021 11:13 AM, Sabyrzhan Tasbolatov wrote:
->> if PAGE_SIZE >= SMK_LOADSIZE all legitimate requests can be made
->> using PAGE_SIZE as a limit. Your example with 19990 spaces before
->> the data demonstrates that the interface is inadequately documented.
->> Tizen and Automotive Grade Linux are going to be fine with a PAGE_SIZE
->> limit. The best way to address this concern is to go ahead with the
->> PAGE_SIZE limit and create ABI documents for the smackfs interfaces.
->> I will take your patch for the former and create a patch for the latter.
-> Please let me know if there is anything else required for this patch.
-> AFAIU, we agreed with PAGE_SIZE as the limit.
+Hi Michael,
 
-I am in the process of adding your patch to smack-next for 5.12.
+On Tue, Feb 2, 2021 at 2:45 AM Michael Kerrisk (man-pages)
+<mtk.manpages@gmail.com> wrote:
+>
+> Hello Suren (and Minchan and Michal)
+>
+> Thank you for the revisions!
+>
+> I've applied this patch, and done a few light edits.
 
-I will have a separate documentation patch. 
+Thanks!
 
+>
+> However, I have a questions about undocumented pieces in *madvise(2)*,
+> as well as one other question. See below.
+>
+> On 2/2/21 6:30 AM, Suren Baghdasaryan wrote:
+> > Initial version of process_madvise(2) manual page. Initial text was
+> > extracted from [1], amended after fix [2] and more details added using
+> > man pages of madvise(2) and process_vm_read(2) as examples. It also
+> > includes the changes to required permission proposed in [3].
+> >
+> > [1] https://lore.kernel.org/patchwork/patch/1297933/
+> > [2] https://lkml.org/lkml/2020/12/8/1282
+> > [3] https://patchwork.kernel.org/project/selinux/patch/20210111170622.2613577-1-surenb@google.com/#23888311
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Reviewed-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> > changes in v2:
+> > - Changed description of MADV_COLD per Michal Hocko's suggestion
+> > - Applied fixes suggested by Michael Kerrisk
+> > changes in v3:
+> > - Added Michal's Reviewed-by
+> > - Applied additional fixes suggested by Michael Kerrisk
+> >
+> > NAME
+> >     process_madvise - give advice about use of memory to a process
+> >
+> > SYNOPSIS
+> >     #include <sys/uio.h>
+> >
+> >     ssize_t process_madvise(int pidfd,
+> >                            const struct iovec *iovec,
+> >                            unsigned long vlen,
+> >                            int advice,
+> >                            unsigned int flags);
+> >
+> > DESCRIPTION
+> >     The process_madvise() system call is used to give advice or directions
+> >     to the kernel about the address ranges of another process or the calling
+> >     process. It provides the advice to the address ranges described by iovec
+> >     and vlen. The goal of such advice is to improve system or application
+> >     performance.
+> >
+> >     The pidfd argument is a PID file descriptor (see pidfd_open(2)) that
+> >     specifies the process to which the advice is to be applied.
+> >
+> >     The pointer iovec points to an array of iovec structures, defined in
+> >     <sys/uio.h> as:
+> >
+> >     struct iovec {
+> >         void  *iov_base;    /* Starting address */
+> >         size_t iov_len;     /* Number of bytes to transfer */
+> >     };
+> >
+> >     The iovec structure describes address ranges beginning at iov_base address
+> >     and with the size of iov_len bytes.
+> >
+> >     The vlen represents the number of elements in the iovec structure.
+> >
+> >     The advice argument is one of the values listed below.
+> >
+> >   Linux-specific advice values
+> >     The following Linux-specific advice values have no counterparts in the
+> >     POSIX-specified posix_madvise(3), and may or may not have counterparts
+> >     in the madvise(2) interface available on other implementations.
+> >
+> >     MADV_COLD (since Linux 5.4.1)
+>
+> I just noticed these version numbers now, and thought: they can't be
+> right (because the system call appeared only in v5.11). So I removed
+> them. But, of course in another sense the version numbers are (nearly)
+> right, since these advice values were added for madvise(2) in Linux 5.4.
+> However, they are not documented in the madvise(2) manual page. Is it
+> correct to assume that MADV_COLD and MADV_PAGEOUT have exactly the same
+> meaning in madvise(2) (but just for the calling process, of course)?
+
+Correct. They should be added in the madvise(2) man page as well IMHO.
+
+>
+> >         Deactive a given range of pages which will make them a more probable
+>
+> I changed: s/Deactive/Deactivate/
+
+thanks!
+
+>
+> >         reclaim target should there be a memory pressure. This is a
+> >         nondestructive operation. The advice might be ignored for some pages
+> >         in the range when it is not applicable.
+> >
+> >     MADV_PAGEOUT (since Linux 5.4.1)
+> >         Reclaim a given range of pages. This is done to free up memory occupied
+> >         by these pages. If a page is anonymous it will be swapped out. If a
+> >         page is file-backed and dirty it will be written back to the backing
+> >         storage. The advice might be ignored for some pages in the range when
+> >         it is not applicable.
+>
+> [...]
+>
+> >     The hint might be applied to a part of iovec if one of its elements points
+> >     to an invalid memory region in the remote process. No further elements will
+> >     be processed beyond that point.
+>
+> Is the above scenario the one that leads to the partial advice case described in
+> RETURN VALUE? If yes, perhaps I should add some words to make that clearer.
+
+Correct. This describes the case when partial advice happens.
+
+>
+> You can see the light edits that I made in
+> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=e3ce016472a1b3ec5dffdeb23c98b9fef618a97b
+> and following that I restructured DESCRIPTION a little in
+> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3aac0708a9acee5283e091461de6a8410bc921a6
+
+The edits LGTM.
+Thanks,
+Suren.
+
+>
+> Thanks,
+>
+> Michael
+>
+>
+> --
+> Michael Kerrisk
+> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+> Linux/UNIX System Programming Training: http://man7.org/training/
