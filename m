@@ -2,193 +2,540 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A23EC433DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Feb 2021 19:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F12C433E9
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 03:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEFB564ECB
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Feb 2021 19:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA7764E9C
+	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 03:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232329AbhBATtp (ORCPT
+        id S230073AbhBBDB7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Feb 2021 14:49:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31684 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232556AbhBATrk (ORCPT
+        Mon, 1 Feb 2021 22:01:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230055AbhBBDBq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Feb 2021 14:47:40 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 111JZIjB058875;
-        Mon, 1 Feb 2021 14:46:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=sKJjfjUqLOlqXtjaN1d9Tjfi7+1WFA92zYmJdaUoOpU=;
- b=IubyAw4X+wxXGlqQI+Bq/cuJHB0zSvWqeiODDOcujpXguo7Zw61CMFG843pdr7ed95TG
- 9DZnkUhtyB/RttjgDc2HiEIH8hZ6glAPgKr+alfveuNcFB+SiezqHAlduoJInberf7hw
- nYjky9Wh21iEKrN2CcaoFsGQlUu4fPjV4lOucBMde0Y+CY2l6m1LT/kHCRTWCGtmTsmG
- 6z7dZfelKbio4D4wGdydV2fcIeF+eJF7nSijQmA4HfEszyis5YAO9NDNGDouzx0ayAAu
- 62/GCBH3afDGwSBLpbGpYStXxDmCiH4EjqAb+Mkzm57l8HOVM+iUrgz6qCteuvt8EJ+4 Ag== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36eqnurk28-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Feb 2021 14:46:53 -0500
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 111JdSKD072829;
-        Mon, 1 Feb 2021 14:46:52 -0500
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36eqnurk1g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Feb 2021 14:46:52 -0500
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 111JhJqF010291;
-        Mon, 1 Feb 2021 19:46:50 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03fra.de.ibm.com with ESMTP id 36cy3894cp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Feb 2021 19:46:50 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 111JkmoV42992000
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 1 Feb 2021 19:46:48 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 548F942047;
-        Mon,  1 Feb 2021 19:46:48 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C2BB4203F;
-        Mon,  1 Feb 2021 19:46:46 +0000 (GMT)
-Received: from sig-9-65-218-191.ibm.com (unknown [9.65.218.191])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Feb 2021 19:46:46 +0000 (GMT)
-Message-ID: <e9e7814c35d9ce5a6351a960081bf3c6b90bdca7.camel@linux.ibm.com>
-Subject: Re: Migration to trusted keys: sealing user-provided key?
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel@pengutronix.de
-Date:   Mon, 01 Feb 2021 14:46:45 -0500
-In-Reply-To: <0be34899c9686b95cd22aa016f466523579cbeed.camel@pengutronix.de>
-References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
-         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
-         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
-         <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
-         <d4eeefa0c13395e91850630e22d0d9e3690f43ac.camel@linux.ibm.com>
-         <64472434a367060ddce6e03425156b8312a5ad6c.camel@pengutronix.de>
-         <bd3246ebb4eae526c84efe2d27c6fadff662b0c8.camel@linux.ibm.com>
-         <0be34899c9686b95cd22aa016f466523579cbeed.camel@pengutronix.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-01_06:2021-01-29,2021-02-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 clxscore=1015
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102010098
+        Mon, 1 Feb 2021 22:01:46 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8970DC0613D6
+        for <linux-security-module@vger.kernel.org>; Mon,  1 Feb 2021 19:01:05 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id c4so16109473wru.9
+        for <linux-security-module@vger.kernel.org>; Mon, 01 Feb 2021 19:01:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=k4mLYCXYVTYBzB1MR9yiBWBMERVQ8QKcwhtLqIPaFyI=;
+        b=F1FrVZv5zOvmb7+UpptgzIC7cSvabISUsYVFH0efe1KzNeyGBduPwwW5q8keRLkorK
+         /25yX9UaEckbUCMZoUD7mHK3n0/VLuqk0l9mvEvhwicSkvErhsZzFc9LVLrO9sW95fRE
+         6LFoCrIY0vSDdIuWVCzrfzAq47rC8sGKCm7eqZoRXKPSPn1fpIBcKVKm4E/o4Vg3aktT
+         N9ispigy9A2N4L6R0lZ63JrqhmJOnUtfmClRN0N2p3dJ6DK1milsK9pJTN0RNku4VXa2
+         JQfbsRlsIJ0rD+t9ap6jPHg45yl4XcVNAHkyXG/pl1d8p2zDJdfOCtVaOIiEYD63owNi
+         b4lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=k4mLYCXYVTYBzB1MR9yiBWBMERVQ8QKcwhtLqIPaFyI=;
+        b=EmJjL0i8G4VAep+/tCiGeIe3dF/aAkx5OEeZ+u5oNZ7ljMcZZZrtH8nVaqx+2rA2KI
+         +oTwL/cm1YlTAnJ9rrndbdcCfIHtcnx1l25CP/gd46KMTacIGF6rQtR3309YiHgIzeYy
+         gUHmwjmvUzr4DlbfXtg6JOw7V6PWh+dgGrP2cvqB5hUB7g/LVVbIY5twYXfaKeIV9J79
+         t9aebhOLYovXgJVp2nPQV1fz2C7rvXJEXO8EXzVJzokXEA4TvRw75bKrjQnNMeFmsLsO
+         w2DzJit7+FpVR4sRIjXDLvYExs5NIIwpitekPUY6eJ3ddhsx8zBmoBsODXHhcm1haixy
+         cooA==
+X-Gm-Message-State: AOAM533TYBJgI8nDmqRTc1YHwSTLT/h6wWkgjXJquZjwqOIDwM0lWOqK
+        Tn5hNlOR/9TM41+lYfqyBi1rdtUKVc0ziaTZ9gUEBg==
+X-Google-Smtp-Source: ABdhPJwhmQOLkigZ/Ew5SIwEpXhCuOj3M6M6EcKElFadI2qV1vVfwzbdRaBbBYRn3NZg6TeVH4Bx0cMQerpGUhR37Y8=
+X-Received: by 2002:adf:e50e:: with SMTP id j14mr21594316wrm.162.1612234863956;
+ Mon, 01 Feb 2021 19:01:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20210129070340.566340-1-surenb@google.com> <09477683-6752-ebac-2a04-53c53e079acd@gmail.com>
+In-Reply-To: <09477683-6752-ebac-2a04-53c53e079acd@gmail.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Mon, 1 Feb 2021 19:00:52 -0800
+Message-ID: <CAJuCfpFzU6Xervpy761yc9iz5fiPX=7uomrTPvP4Fr6QzVzEKw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] process_madvise.2: Add process_madvise man page
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     linux-man <linux-man@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-mm <linux-mm@kvack.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2021-02-01 at 17:38 +0100, Jan Lübbe wrote:
-> On Mon, 2021-02-01 at 11:11 -0500, Mimi Zohar wrote:
-> > On Mon, 2021-02-01 at 16:31 +0100, Jan Lübbe wrote:
-> > > On Sun, 2021-01-31 at 09:29 -0500, Mimi Zohar wrote:
-> <snip>
-> > > > Usage::
-> > > > 
-> > > >     keyctl add encrypted name "new [format] key-type:master-key-name keylen"
-> > > >         ring
-> > > >     keyctl add encrypted name "load hex_blob" ring
-> > > 
-> > > 'load' (as I understand the code) only accepts an encrypted blob.
-> > > 
-> > > So the only way I see to have an encrypted key with a non-random key data would
-> > > be:
-> > > - create a random temporary master key and load a copy as a user key
-> > > - encrypt the chosen key data with the temporary master key (using a new
-> > > userspace reimplementation of the kernel encrypted key blob format)
-> > > - use keyctl add encrypted dmcrypt "load <encrypted blob>" <keyring>
-> > > - create new trusted master key (OP-TEE or CAAM in our case) as 
-> > > - use keyctl update to switch to the new trusted master key
-> > > - use keyctl pipe on the trusted and encrypted keys and store both for loading
-> > > on later boots
-> > > 
-> > > If we'd support importing a pre-existing key into a trusted or encrypted key,
-> > > we'd do instead:
-> > > - use keyctl add trusted dmcrypt "import <unencrypted key data>"
-> > > - use keyctl pipe on the trusted key and store it for loading on later boots
-> > > 
-> > > This way, users wouldn't need to care which backend is used by trusted keys
-> > > (TPM/OP-TEE/CAAM/...). That would make use-cases where a random key is not
-> > > suitable as straight-forward as the those where a random key is OK.
-> > 
-> > As I said above, the "encrypted" key update doesn't change the key data
-> > used for encrypting/decrypting storage in the dm-crypt case, it just
-> > updates the key under which it is encrypted/signed.
-> 
-> Yes, that's clear. I only used it to demonstrate how a workaround for importing
-> key material into an encrypted key could look like.
-> 
-> > Yes, the reason for using an encrypted "trusted" key, as opposed to an
-> > encrypted "user" key, is that the "trusted" key is encrypted/decrypted
-> > by the TPM and never exposed to userspace in the clear.
-> 
-> Yes, and that's the main reason I'd like to use trusted keys with dm-crypt: a
-> much lower chance of exposing this key somewhere it could be extracted.
-> 
-> > It doesn't sound like you're wanting to update the storage key in the
-> > field, just the key used to encrypt/decrypt that key.  So I'm still not
-> > clear as to why you would want an initial non-random encrypted key. 
-> > Providing that key on the command line certaining isn't a good idea.
-> 
-> Some of our customers have systems in the field which use non-mainline patches
-> for access to the CAAM [1], which also have the downside of exposing the
-> decrypted key material directly to userspace. In that thread you suggested to
-> use trusted keys instead. With Sumit's work that rework is finally within reach.
-> :)
-> 
-> 
-> In those systems, we have data that's encrypted with a pre-existing dm-crypt or
-> ecryptfs key. As we update those systems in the field to newer kernels, we want
-> to get rid of those custom patches, but can't reencrypt everything.
-> 
-> So the approach would be to perform a one-time migration when updating a device:
-> - use our old interface to decrypt the key and 'import' it into a trusted key
-> - use keyctl pipe and save the re-encrypted key to disk
-> - destroy the old encrypted key
-> After this migration, the key material is no longer available to userspace (only
-> to dm-crypt).
-> 
-> 
-> Another use-case for supporting key import that we want to support is  analysis
-> of broken devices returned from the field:
-> - generate an encryption key per device in the factory
-> - encrypt it to a private key in escrow and archive it for later use
-> - import it into a trusted key on the device
-> - keyctl pipe it to a file on the device for use on boot
-> 
-> Later, when you need to do an analysis, you can get the key from escrow even if
-> the device cannot boot any longer.
+On Sat, Jan 30, 2021 at 1:34 PM Michael Kerrisk (man-pages)
+<mtk.manpages@gmail.com> wrote:
+>
+> Hello Suren,
+>
+> Thank you for the revisions! Just a few more comments: all pretty small
+> stuff (many points that I overlooked the first time rround), since the
+> page already looks pretty good by now.
+>
+> Again, thanks for the rendered version. As before, I've added my
+> comments to the page source.
 
-The first use case doesn't sound like a valid reason for upstreaming
-such support.  It's a one time update to migrate everyone to a newer
-kernel.  That you can carry independently of upstream.  In terms of the
-second use case, do you really want the ability and the resulting
-responsibility of being able to decrypt user's data?   Please think
-this through carefully, before you decide you really want/need this
-feature.
+Hi Michael,
+Thanks for reviewing!
 
-thanks,
+>
+> On 1/29/21 8:03 AM, Suren Baghdasaryan wrote:
+> > Initial version of process_madvise(2) manual page. Initial text was
+> > extracted from [1], amended after fix [2] and more details added using
+> > man pages of madvise(2) and process_vm_read(2) as examples. It also
+> > includes the changes to required permission proposed in [3].
+> >
+> > [1] https://lore.kernel.org/patchwork/patch/1297933/
+> > [2] https://lkml.org/lkml/2020/12/8/1282
+> > [3] https://patchwork.kernel.org/project/selinux/patch/20210111170622.2613577-1-surenb@google.com/#23888311
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> > changes in v2:
+> > - Changed description of MADV_COLD per Michal Hocko's suggestion
+> > - Appled fixes suggested by Michael Kerrisk
+> >
+> > NAME
+> >     process_madvise - give advice about use of memory to a process
+>
+> s/-/\-/
 
-Mimi
+ack
 
+>
+> >
+> > SYNOPSIS
+> >     #include <sys/uio.h>
+> >
+> >     ssize_t process_madvise(int pidfd,
+> >                            const struct iovec *iovec,
+> >                            unsigned long vlen,
+> >                            int advice,
+> >                            unsigned int flags);
+> >
+> > DESCRIPTION
+> >     The process_madvise() system call is used to give advice or directions
+> >     to the kernel about the address ranges of other process as well as of
+> >     the calling process. It provides the advice to address ranges of process
+> >     described by iovec and vlen. The goal of such advice is to improve system
+> >     or application performance.
+> >
+> >     The pidfd argument is a PID file descriptor (see pidofd_open(2)) that
+> >     specifies the process to which the advice is to be applied.
+> >
+> >     The pointer iovec points to an array of iovec structures, defined in
+> >     <sys/uio.h> as:
+> >
+> >     struct iovec {
+> >         void  *iov_base;    /* Starting address */
+> >         size_t iov_len;     /* Number of bytes to transfer */
+> >     };
+> >
+> >     The iovec structure describes address ranges beginning at iov_base address
+> >     and with the size of iov_len bytes.
+> >
+> >     The vlen represents the number of elements in the iovec structure.
+> >
+> >     The advice argument is one of the values listed below.
+> >
+> >   Linux-specific advice values
+> >     The following Linux-specific advice values have no counterparts in the
+> >     POSIX-specified posix_madvise(3), and may or may not have counterparts
+> >     in the madvise(2) interface available on other implementations.
+> >
+> >     MADV_COLD (since Linux 5.4.1)
+> >         Deactive a given range of pages which will make them a more probable
+> >         reclaim target should there be a memory pressure. This is a non-
+> >         destructive operation. The advice might be ignored for some pages in
+> >         the range when it is not applicable.
+> >
+> >     MADV_PAGEOUT (since Linux 5.4.1)
+> >         Reclaim a given range of pages. This is done to free up memory occupied
+> >         by these pages. If a page is anonymous it will be swapped out. If a
+> >         page is file-backed and dirty it will be written back to the backing
+> >         storage. The advice might be ignored for some pages in the range when
+> >         it is not applicable.
+> >
+> >     The flags argument is reserved for future use; currently, this argument
+> >     must be specified as 0.
+> >
+> >     The value specified in the vlen argument must be less than or equal to
+> >     IOV_MAX (defined in <limits.h> or accessible via the call
+> >     sysconf(_SC_IOV_MAX)).
+> >
+> >     The vlen and iovec arguments are checked before applying any hints. If
+> >     the vlen is too big, or iovec is invalid, an error will be returned
+> >     immediately.
+> >
+> >     The hint might be applied to a part of iovec if one of its elements points
+> >     to an invalid memory region in the remote process. No further elements will
+> >     be processed beyond that point.
+> >
+> >     Permission to provide a hint to another process is governed by a ptrace
+> >     access mode PTRACE_MODE_READ_REALCREDS check (see ptrace(2)); in addition,
+> >     the caller must have the CAP_SYS_ADMIN capability due to performance
+> >     implications of applying the hint.
+> >
+> > RETURN VALUE
+> >     On success, process_madvise() returns the number of bytes advised. This
+> >     return value may be less than the total number of requested bytes, if an
+> >     error occurred after some iovec elements were already processed. The caller
+> >     should check the return value to determine whether a partial advice
+> >     occurred.
+> >
+> >     On error, -1 is returned and errno is set to indicate the error.
+> >
+> > ERRORS
+> >     EFAULT The memory described by iovec is outside the accessible address
+> >            space of the process referred to by pidfd.
+> >     EINVAL flags is not 0.
+> >     EINVAL The sum of the iov_len values of iovec overflows a ssize_t value.
+> >     EINVAL vlen is too large.
+> >     ENOMEM Could not allocate memory for internal copies of the iovec
+> >            structures.
+> >     EPERM The caller does not have permission to access the address space of
+> >           the process pidfd.
+> >     ESRCH The target process does not exist (i.e., it has terminated and been
+> >           waited on).
+> >     EBADF pidfd is not a valid PID file descriptor.
+> >
+> > VERSIONS
+> >     This system call first appeared in Linux 5.10, Support for this system
+> >     call is optional, depending on the setting of the CONFIG_ADVISE_SYSCALLS
+> >     configuration option.
+> >
+> > SEE ALSO
+> >     madvise(2), pidofd_open(2), process_vm_readv(2), process_vm_write(2)
+> >
+> >  man2/process_madvise.2 | 222 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 222 insertions(+)
+> >  create mode 100644 man2/process_madvise.2
+> >
+> > diff --git a/man2/process_madvise.2 b/man2/process_madvise.2
+> > new file mode 100644
+> > index 000000000..07553289f
+> > --- /dev/null
+> > +++ b/man2/process_madvise.2
+> > @@ -0,0 +1,222 @@
+> > +.\" Copyright (C) 2021 Suren Baghdasaryan <surenb@google.com>
+> > +.\" and Copyright (C) 2021 Minchan Kim <minchan@kernel.org>
+> > +.\"
+> > +.\" %%%LICENSE_START(VERBATIM)
+> > +.\" Permission is granted to make and distribute verbatim copies of this
+> > +.\" manual provided the copyright notice and this permission notice are
+> > +.\" preserved on all copies.
+> > +.\"
+> > +.\" Permission is granted to copy and distribute modified versions of this
+> > +.\" manual under the conditions for verbatim copying, provided that the
+> > +.\" entire resulting derived work is distributed under the terms of a
+> > +.\" permission notice identical to this one.
+> > +.\"
+> > +.\" Since the Linux kernel and libraries are constantly changing, this
+> > +.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+> > +.\" responsibility for errors or omissions, or for damages resulting from
+> > +.\" the use of the information contained herein.  The author(s) may not
+> > +.\" have taken the same level of care in the production of this manual,
+> > +.\" which is licensed free of charge, as they might when working
+> > +.\" professionally.
+> > +.\"
+> > +.\" Formatted or processed versions of this manual, if unaccompanied by
+> > +.\" the source, must acknowledge the copyright and authors of this work.
+> > +.\" %%%LICENSE_END
+> > +.\"
+> > +.\" Commit ecb8ac8b1f146915aa6b96449b66dd48984caacc
+> > +.\"
+> > +.TH PROCESS_MADVISE 2 2021-01-12 "Linux" "Linux Programmer's Manual"
+> > +.SH NAME
+> > +process_madvise \- give advice about use of memory to a process
+> > +.SH SYNOPSIS
+> > +.nf
+> > +.B #include <sys/uio.h>
+> > +.PP
+> > +.BI "ssize_t process_madvise(int " pidfd ,
+> > +.BI "                       const struct iovec *" iovec ,
+> > +.BI "                       unsigned long " vlen ,
+> > +.BI "                       int " advice ,
+> > +.BI "                       unsigned int " flags ");"
+> > +.fi
+> > +.SH DESCRIPTION
+> > +The
+> > +.BR process_madvise()
+> > +system call is used to give advice or directions to the kernel about the
+> > +address ranges of other process as well as of the calling process.
+>
+> s/other/another/
+> s/as well as of/or/
+
+ack
+
+>
+> > +It provides the advice to address ranges of process described by
+>
+> s/address ranges of process/the address ranges/
+
+ack
+
+>
+> > +.I iovec
+> > +and
+> > +.IR vlen .
+> > +The goal of such advice is to improve system or application performance.
+> > +.PP
+> > +The
+> > +.I pidfd
+> > +argument is a PID file descriptor (see
+> > +.BR pidofd_open (2))
+>
+> s/pidofd_open/pidfd_open/
+> (I overlooked this last time.)
+
+ack
+
+>
+> > +that specifies the process to which the advice is to be applied.
+> > +.PP
+> > +The pointer
+> > +.I iovec
+> > +points to an array of
+> > +.I iovec
+> > +structures, defined in
+> > +.IR <sys/uio.h>
+> > +as:
+> > +.PP
+> > +.in +4n
+> > +.EX
+> > +struct iovec {
+> > +    void  *iov_base;    /* Starting address */
+> > +    size_t iov_len;     /* Number of bytes to transfer */
+> > +};
+> > +.EE
+> > +.in
+> > +.PP
+> > +The
+> > +.I iovec
+> > +structure describes address ranges beginning at
+> > +.I iov_base
+> > +address and with the size of
+> > +.I iov_len
+> > +bytes.
+> > +.PP
+> > +The
+> > +.I vlen
+> > +represents the number of elements in the
+> > +.I iovec
+> > +structure.
+> > +.PP
+> > +The
+> > +.I advice
+> > +argument is one of the values listed below.
+> > +.\"
+> > +.\" ======================================================================
+> > +.\"
+> > +.SS Linux-specific advice values
+> > +The following Linux-specific
+> > +.I advice
+> > +values have no counterparts in the POSIX-specified
+> > +.BR posix_madvise (3),
+> > +and may or may not have counterparts in the
+> > +.BR madvise (2)
+> > +interface available on other implementations.
+> > +.TP
+> > +.BR MADV_COLD " (since Linux 5.4.1)"
+> > +.\" commit 9c276cc65a58faf98be8e56962745ec99ab87636
+> > +Deactive a given range of pages which will make them a more probable
+> > +reclaim target should there be a memory pressure.
+> > +This is a non-destructive operation.
+>
+> s/non-destructive/nondestructive/
+
+ack
+
+>
+> > +The advice might be ignored for some pages in the range when it is not
+> > +applicable.
+> > +.TP
+> > +.BR MADV_PAGEOUT " (since Linux 5.4.1)"
+> > +.\" commit 1a4e58cce84ee88129d5d49c064bd2852b481357
+> > +Reclaim a given range of pages.
+> > +This is done to free up memory occupied by these pages.
+> > +If a page is anonymous it will be swapped out.
+> > +If a page is file-backed and dirty it will be written back to the backing
+> > +storage.
+> > +The advice might be ignored for some pages in the range when it is not
+> > +applicable.
+> > +.PP
+> > +The
+> > +.I flags
+> > +argument is reserved for future use; currently, this argument must be
+> > +specified as 0.
+> > +.PP
+> > +The value specified in the
+> > +.I vlen
+> > +argument must be less than or equal to
+> > +.BR IOV_MAX
+> > +(defined in
+> > +.I <limits.h>
+> > +or accessible via the call
+> > +.IR sysconf(_SC_IOV_MAX) ).
+> > +.PP
+> > +The
+> > +.I vlen
+> > +and
+> > +.I iovec
+> > +arguments are checked before applying any hints.
+> > +If the
+> > +.I vlen
+> > +is too big, or
+> > +.I iovec
+> > +is invalid, an error will be returned immediately.
+>
+> s/immediately/immediately and no advice will be applied/ ?
+>
+> That's just a guess on my part. Is it correct?
+
+Correct. Will change.
+
+>
+> > +.PP
+> > +The hint might be applied to a part of
+> > +.I iovec
+> > +if one of its elements points to an invalid memory region in the
+> > +remote process.
+> > +No further elements will be processed beyond that point.
+> > +.PP
+> > +Permission to provide a hint to another process is governed by a
+> > +ptrace access mode
+> > +.B PTRACE_MODE_READ_REALCREDS
+> > +check (see
+> > +.BR ptrace (2));
+> > +in addition, the caller must have the
+> > +.B CAP_SYS_ADMIN
+> > +capability due to performance implications of applying the hint.
+>
+> Great addition. Thanks.
+
+ack
+
+>
+> > +.SH RETURN VALUE
+> > +On success, process_madvise() returns the number of bytes advised.
+> > +This return value may be less than the total number of requested bytes,
+> > +if an error occurred after some iovec elements were already processed.
+> > +The caller should check the return value to determine whether a partial
+> > +advice occurred.
+> > +.PP
+> > +On error, \-1 is returned and
+> > +.I errno
+> > +is set to indicate the error.
+>
+> Thanks. That's better!
+
+ack
+
+>
+> > +.SH ERRORS
+>
+> I should have mentioned this last time: could you place the errors
+> in alphabetical order please.
+
+ack
+
+>
+> > +.TP
+> > +.B EFAULT
+> > +The memory described by
+> > +.I iovec
+> > +is outside the accessible address space of the process referred to by
+> > +.IR pidfd .
+> > +.TP
+> > +.B EINVAL
+> > +.I flags
+> > +is not 0.
+> > +.TP
+> > +.B EINVAL
+> > +The sum of the
+> > +.I iov_len
+> > +values of
+> > +.I iovec
+> > +overflows a
+> > +.I ssize_t
+> > +value.
+> > +.TP
+> > +.B EINVAL
+> > +.I vlen
+> > +is too large.
+> > +.TP
+> > +.B ENOMEM
+> > +Could not allocate memory for internal copies of the
+> > +.I iovec
+> > +structures.
+> > +.TP
+> > +.B EPERM
+> > +The caller does not have permission to access the address space of the process
+> > +.IR pidfd .
+> > +.TP
+> > +.B ESRCH
+> > +The target process does not exist (i.e., it has terminated and been waited on).
+> > +.TP
+> > +.B EBADF
+> > +.I pidfd
+> > +is not a valid PID file descriptor.
+> > +.SH VERSIONS
+> > +This system call first appeared in Linux 5.10,
+>
+> s/,/./
+
+ack
+
+>
+> > +.\" commit ecb8ac8b1f146915aa6b96449b66dd48984caacc
+> > +Support for this system call is optional,
+> > +depending on the setting of the
+> > +.B CONFIG_ADVISE_SYSCALLS
+> > +configuration option.
+> > +.SH SEE ALSO
+> > +.BR madvise (2),
+> > +.BR pidofd_open(2),
+>
+> s/pidofd_open/pidfd_open/
+
+ack
+
+>
+> > +.BR process_vm_readv (2),
+> > +.BR process_vm_write (2)
+>
+> Cheers,
+>
+> Michael
+>
+
+I will post v3 with Michal's Reviewed-by and your comments addressed
+later today.
+Thanks again for your time!
+Suren.
+
+>
+> --
+> Michael Kerrisk
+> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+> Linux/UNIX System Programming Training: http://man7.org/training/
