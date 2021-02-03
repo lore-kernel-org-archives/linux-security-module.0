@@ -2,200 +2,441 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75309C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Feb 2021 13:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9431C433E6
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Feb 2021 14:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A4AC64E49
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Feb 2021 13:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70B9C64F92
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Feb 2021 14:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232486AbhBCNxX (ORCPT
+        id S232725AbhBCOWW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Feb 2021 08:53:23 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57713 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232507AbhBCNwn (ORCPT
+        Wed, 3 Feb 2021 09:22:22 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:37244 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232577AbhBCOWU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Feb 2021 08:52:43 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <jlu@pengutronix.de>)
-        id 1l7IUR-0001al-FD; Wed, 03 Feb 2021 14:46:39 +0100
-Received: from localhost ([127.0.0.1])
-        by ptx.hi.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <jlu@pengutronix.de>)
-        id 1l7IUQ-0002BD-Dm; Wed, 03 Feb 2021 14:46:38 +0100
-Message-ID: <1310b10eaaf246c326f8d74bd47c91d738ea976b.camel@pengutronix.de>
-Subject: Re: Migration to trusted keys: sealing user-provided key?
-From:   Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        David Howells <dhowells@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>, kernel@pengutronix.de,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Date:   Wed, 03 Feb 2021 14:46:37 +0100
-In-Reply-To: <CAFA6WYNbf+Jncj0jF4abLhWH8RUWDORf0kcWi021hxBmq-NK=g@mail.gmail.com>
-References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
-         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
-         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
-         <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
-         <18529562ed71becf21401ec9fd9d95c4ac44fdc0.camel@linux.ibm.com>
-         <CAFA6WYMn519aF=uodjnSUZ+kKaRzdoh6Enu0OsRMge=21iBNBA@mail.gmail.com>
-         <2012751fd653c284679aa2c6ac9a56a5edbf1410.camel@pengutronix.de>
-         <CAFA6WYNbf+Jncj0jF4abLhWH8RUWDORf0kcWi021hxBmq-NK=g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.3-1 
+        Wed, 3 Feb 2021 09:22:20 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id E0410646; Wed,  3 Feb 2021 08:21:28 -0600 (CST)
+Date:   Wed, 3 Feb 2021 08:21:28 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v28 01/12] landlock: Add object management
+Message-ID: <20210203142128.GA21770@mail.hallyn.com>
+References: <20210202162710.657398-1-mic@digikod.net>
+ <20210202162710.657398-2-mic@digikod.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: jlu@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+In-Reply-To: <20210202162710.657398-2-mic@digikod.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-02-03 at 17:20 +0530, Sumit Garg wrote:
-> On Tue, 2 Feb 2021 at 18:04, Jan LÃ¼bbe <jlu@pengutronix.de> wrote:
-> > 
-> > On Tue, 2021-02-02 at 17:45 +0530, Sumit Garg wrote:
-> > > Hi Jan,
-> > > 
-> > > On Sun, 31 Jan 2021 at 23:40, James Bottomley <jejb@linux.ibm.com> wrote:
-> > > > 
-> > > > On Sun, 2021-01-31 at 15:14 +0100, Jan LÃ¼bbe wrote:
-> > > > > On Sun, 2021-01-31 at 07:09 -0500, Mimi Zohar wrote:
-> > > > > > On Sat, 2021-01-30 at 19:53 +0200, Jarkko Sakkinen wrote:
-> > > > > > > On Thu, 2021-01-28 at 18:31 +0100, Ahmad Fatoum wrote:
-> > > > > > > > Hello,
-> > > > > > > > 
-> > > > > > > > I've been looking into how a migration to using
-> > > > > > > > trusted/encrypted keys would look like (particularly with dm-
-> > > > > > > > crypt).
-> > > > > > > > 
-> > > > > > > > Currently, it seems the the only way is to re-encrypt the
-> > > > > > > > partitions because trusted/encrypted keys always generate their
-> > > > > > > > payloads from RNG.
-> > > > > > > > 
-> > > > > > > > If instead there was a key command to initialize a new
-> > > > > > > > trusted/encrypted key with a user provided value, users could
-> > > > > > > > use whatever mechanism they used beforehand to get a plaintext
-> > > > > > > > key and use that to initialize a new trusted/encrypted key.
-> > > > > > > > From there on, the key will be like any other trusted/encrypted
-> > > > > > > > key and not be disclosed again to userspace.
-> > > > > > > > 
-> > > > > > > > What are your thoughts on this? Would an API like
-> > > > > > > > 
-> > > > > > > > Â Â keyctl add trusted dmcrypt-key 'set <content>' # user-
-> > > > > > > > supplied content
-> > > > > > > > 
-> > > > > > > > be acceptable?
-> > > > > > > 
-> > > > > > > Maybe it's the lack of knowledge with dm-crypt, but why this
-> > > > > > > would be useful? Just want to understand the bottleneck, that's
-> > > > > > > all.
-> > > > > 
-> > > > > Our goal in this case is to move away from having the dm-crypt key
-> > > > > material accessible to user-space on embedded devices. For an
-> > > > > existing dm-crypt volume, this key is fixed. A key can be loaded into
-> > > > > user key type and used by dm-crypt (cryptsetup can already do it this
-> > > > > way). But at this point, you can still do 'keyctl read' on that key,
-> > > > > exposing the key material to user space.
-> > > > > 
-> > > > > Currently, with both encrypted and trusted keys, you can only
-> > > > > generate new random keys, not import existing key material.
-> > > > > 
-> > > > > James Bottomley mentioned in the other reply that the key format will
-> > > > > become compatible with the openssl_tpm2_engine, which would provide a
-> > > > > workaround. This wouldn't work with OP-TEE-based trusted keys (see
-> > > > > Sumit Garg's series), though.
-> > > > 
-> > > > Assuming OP-TEE has the same use model as the TPM, someone will
-> > > > eventually realise the need for interoperable key formats between key
-> > > > consumers and then it will work in the same way once the kernel gets
-> > > > updated to speak whatever format they come up with.
-> > > 
-> > > IIUC, James re-work for TPM trusted keys is to allow loading of sealed
-> > > trusted keys directly via user-space (with proper authorization) into
-> > > the kernel keyring.
-> > > 
-> > > I think similar should be achievable with OP-TEE (via extending pseudo
-> > > TA [1]) as well to allow restricted user-space access (with proper
-> > > authorization) to generate sealed trusted key blob that should be
-> > > interoperable with the kernel. Currently OP-TEE exposes trusted key
-> > > interfaces for kernel users only.
-> > 
-> > What is the security benefit of having the key blob creation in user-space
-> > instead of in the kernel? Key import is a standard operation in HSMs or PKCS#11
-> > tokens.
+On Tue, Feb 02, 2021 at 05:26:59PM +0100, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> User authentication, AFAIK most of the HSMs or PKCS#11 require that
-> for key import. But IIUC, your suggested approach to load plain key
-> into kernel keyring and say it's *trusted* without any user
-> authentication, would it really be a trusted key? What prevents a
-> rogue user from making his key as the dm-crypt trusted key?
-
-There is user authentication at the level of key rings. So an untrusted user
-cannot load or link keys they have no write permission for.
-
-As we already have user type keys, which don't have these restrictions and are
-accepted by most subsystems, any use of kernel keyrings must already make sure
-that the proper keys are used.
-
-
-With asymmetric keys we have trusted key *rings*:
-# keyctl show %:.secondary_trusted_keys
-Keyring
- 638775388 ---lswrv      0     0  keyring: .secondary_trusted_keys
-1071890135 ---lswrv      0     0   \_ keyring: .builtin_trusted_keys
- 816294887 ---lswrv      0     0       \_ asymmetric: Debian Secure Boot CA: 6ccece7e4c6c0d1f6149f3dd27dfcc5cbb419ea1
- 630436721 ---lswrv      0     0       \_ asymmetric: Debian Secure Boot Signer 2020: 00b55eb3b9
-Here, a key is trusted because of it's presence in a keyring, not because it has
-a specific type. For example, fs-verity uses this mechanism as well.
-
-
-For the trusted key *type*, my understanding is that trusted refers to only
-being able to load and access them in specific "trusted" system states (via TPM
-PRC, TEE initialization via secure boot or SoC specific hardware status checks).
-So for example protecting against loading a data-encryption key into an unsigned
-kernel.
-
-> > I mainly see the downside of having to add another API to access the underlying
-> > functionality (be it trusted key TA or the NXP CAAM HW *) and requiring
-> > platform-specific userspace code.
+> A Landlock object enables to identify a kernel object (e.g. an inode).
+> A Landlock rule is a set of access rights allowed on an object.  Rules
+> are grouped in rulesets that may be tied to a set of processes (i.e.
+> subjects) to enforce a scoped access-control (i.e. a domain).
 > 
-> I am not sure why you would call the standardized TEE interface [1] to
-> be platform-specific, it is meant to be platform agnostic. And I think
-> we can have openssl_tee_engine on similar lines as the
-> openssl_tpm2_engine.
-
-Sorry, I meant platform-specific in the sense that some platforms use TPMs,
-while others use TEEs. The trusted key type was also suggested several times as
-the correct abstraction for SoC-specific key encapsulation hardware (instead of
-custom interfaces), so there will likely be platforms which don't have a TPM or
-TEE, but still trusted keys.
-
-Regards
-Jan
-
-> [1] https://globalplatform.org/specs-library/tee-client-api-specification/
+> Because Landlock's goal is to empower any process (especially
+> unprivileged ones) to sandbox themselves, we cannot rely on a
+> system-wide object identification such as file extended attributes.
+> Indeed, we need innocuous, composable and modular access-controls.
 > 
+> The main challenge with these constraints is to identify kernel objects
+> while this identification is useful (i.e. when a security policy makes
+> use of this object).  But this identification data should be freed once
+> no policy is using it.  This ephemeral tagging should not and may not be
+> written in the filesystem.  We then need to manage the lifetime of a
+> rule according to the lifetime of its objects.  To avoid a global lock,
+> this implementation make use of RCU and counters to safely reference
+> objects.
+> 
+> A following commit uses this generic object management for inodes.
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
 
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Just a few suggestions for the description below.
 
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
+> ---
+> 
+> Changes since v27:
+> * Update Kconfig for landlock_restrict_self(2).
+> * Cosmetic fixes: use 80 columns in Kconfig and align Makefile
+>   declarations.
+> 
+> Changes since v26:
+> * Update Kconfig for landlock_enforce_ruleset_self(2).
+> * Fix spelling.
+> 
+> Changes since v24:
+> * Fix typo in comment (spotted by Jann Horn).
+> * Add Reviewed-by: Jann Horn <jannh@google.com>
+> 
+> Changes since v23:
+> * Update landlock_create_object() to return error codes instead of NULL.
+>   This help error handling in callers.
+> * When using make oldconfig with a previous configuration already
+>   including the CONFIG_LSM variable, no question is asked to update its
+>   content.  Update the Kconfig help to warn about LSM stacking
+>   configuration.
+> * Constify variable (spotted by Vincent Dagonneau).
+> 
+> Changes since v22:
+> * Fix spelling (spotted by Jann Horn).
+> 
+> Changes since v21:
+> * Update Kconfig help.
+> * Clean up comments.
+> 
+> Changes since v18:
+> * Account objects to kmemcg.
+> 
+> Changes since v14:
+> * Simplify the object, rule and ruleset management at the expense of a
+>   less aggressive memory freeing (contributed by Jann Horn, with
+>   additional modifications):
+>   - Remove object->list aggregating the rules tied to an object.
+>   - Remove landlock_get_object(), landlock_drop_object(),
+>     {get,put}_object_cleaner() and landlock_rule_is_disabled().
+>   - Rewrite landlock_put_object() to use a more simple mechanism
+>     (no tricky RCU).
+>   - Replace enum landlock_object_type and landlock_release_object() with
+>     landlock_object_underops->release()
+>   - Adjust unions and Sparse annotations.
+>   Cf. https://lore.kernel.org/lkml/CAG48ez21bEn0wL1bbmTiiu8j9jP5iEWtHOwz4tURUJ+ki0ydYw@mail.gmail.com/
+> * Merge struct landlock_rule into landlock_ruleset_elem to simplify the
+>   rule management.
+> * Constify variables.
+> * Improve kernel documentation.
+> * Cosmetic variable renames.
+> * Remove the "default" in the Kconfig (suggested by Jann Horn).
+> * Only use refcount_inc() through getter helpers.
+> * Update Kconfig description.
+> 
+> Changes since v13:
+> * New dedicated implementation, removing the need for eBPF.
+> 
+> Previous changes:
+> https://lore.kernel.org/lkml/20190721213116.23476-6-mic@digikod.net/
+> ---
+>  MAINTAINERS                | 10 +++++
+>  security/Kconfig           |  1 +
+>  security/Makefile          |  2 +
+>  security/landlock/Kconfig  | 21 +++++++++
+>  security/landlock/Makefile |  3 ++
+>  security/landlock/object.c | 67 ++++++++++++++++++++++++++++
+>  security/landlock/object.h | 91 ++++++++++++++++++++++++++++++++++++++
+>  7 files changed, 195 insertions(+)
+>  create mode 100644 security/landlock/Kconfig
+>  create mode 100644 security/landlock/Makefile
+>  create mode 100644 security/landlock/object.c
+>  create mode 100644 security/landlock/object.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d3e847f7f3dc..a0e57ade0524 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9936,6 +9936,16 @@ F:	net/core/sock_map.c
+>  F:	net/ipv4/tcp_bpf.c
+>  F:	net/ipv4/udp_bpf.c
+>  
+> +LANDLOCK SECURITY MODULE
+> +M:	Mickaël Salaün <mic@digikod.net>
+> +L:	linux-security-module@vger.kernel.org
+> +S:	Supported
+> +W:	https://landlock.io
+> +T:	git https://github.com/landlock-lsm/linux.git
+> +F:	security/landlock/
+> +K:	landlock
+> +K:	LANDLOCK
+> +
+>  LANTIQ / INTEL Ethernet drivers
+>  M:	Hauke Mehrtens <hauke@hauke-m.de>
+>  L:	netdev@vger.kernel.org
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 7561f6f99f1d..15a4342b5d01 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -238,6 +238,7 @@ source "security/loadpin/Kconfig"
+>  source "security/yama/Kconfig"
+>  source "security/safesetid/Kconfig"
+>  source "security/lockdown/Kconfig"
+> +source "security/landlock/Kconfig"
+>  
+>  source "security/integrity/Kconfig"
+>  
+> diff --git a/security/Makefile b/security/Makefile
+> index 3baf435de541..47e432900e24 100644
+> --- a/security/Makefile
+> +++ b/security/Makefile
+> @@ -13,6 +13,7 @@ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+>  subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+>  subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
+>  subdir-$(CONFIG_BPF_LSM)		+= bpf
+> +subdir-$(CONFIG_SECURITY_LANDLOCK)	+= landlock
+>  
+>  # always enable default capabilities
+>  obj-y					+= commoncap.o
+> @@ -32,6 +33,7 @@ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
+>  obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+>  obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
+>  obj-$(CONFIG_BPF_LSM)			+= bpf/
+> +obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
+>  
+>  # Object integrity file lists
+>  subdir-$(CONFIG_INTEGRITY)		+= integrity
+> diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+> new file mode 100644
+> index 000000000000..79b7d0c3b11e
+> --- /dev/null
+> +++ b/security/landlock/Kconfig
+> @@ -0,0 +1,21 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config SECURITY_LANDLOCK
+> +	bool "Landlock support"
+> +	depends on SECURITY
+> +	select SECURITY_PATH
+> +	help
+> +	  Landlock is a safe sandboxing mechanism that enables processes to
+
+"safe" probably doesn't need to be there :)
+
+> +	  restrict themselves (and their future children) by gradually
+> +	  enforcing tailored access control policies.  A security policy is a
+
+You're redefining "security policy" which could be confusing.  How about
+saying "a landlock security policy is a..."?
+
+> +	  set of access rights (e.g. open a file in read-only, make a
+> +	  directory, etc.) tied to a file hierarchy.  Such policy can be
+> +	  configured and enforced by any processes for themselves thanks to
+
+s/thanks to/using the/ ?
+
+> +	  dedicated system calls: landlock_create_ruleset(),
+> +	  landlock_add_rule(), and landlock_restrict_self().
+> +
+> +	  See Documentation/userspace-api/landlock.rst for further information.
+> +
+> +	  If you are unsure how to answer this question, answer N.  Otherwise,
+> +	  you should also prepend "landlock," to the content of CONFIG_LSM to
+> +	  enable Landlock at boot time.
+> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+> new file mode 100644
+> index 000000000000..cb6deefbf4c0
+> --- /dev/null
+> +++ b/security/landlock/Makefile
+> @@ -0,0 +1,3 @@
+> +obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+> +
+> +landlock-y := object.o
+> diff --git a/security/landlock/object.c b/security/landlock/object.c
+> new file mode 100644
+> index 000000000000..d674fdf9ff04
+> --- /dev/null
+> +++ b/security/landlock/object.c
+> @@ -0,0 +1,67 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Landlock LSM - Object management
+> + *
+> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
+> + * Copyright © 2018-2020 ANSSI
+> + */
+> +
+> +#include <linux/bug.h>
+> +#include <linux/compiler_types.h>
+> +#include <linux/err.h>
+> +#include <linux/kernel.h>
+> +#include <linux/rcupdate.h>
+> +#include <linux/refcount.h>
+> +#include <linux/slab.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include "object.h"
+> +
+> +struct landlock_object *landlock_create_object(
+> +		const struct landlock_object_underops *const underops,
+> +		void *const underobj)
+> +{
+> +	struct landlock_object *new_object;
+> +
+> +	if (WARN_ON_ONCE(!underops || !underobj))
+> +		return ERR_PTR(-ENOENT);
+> +	new_object = kzalloc(sizeof(*new_object), GFP_KERNEL_ACCOUNT);
+> +	if (!new_object)
+> +		return ERR_PTR(-ENOMEM);
+> +	refcount_set(&new_object->usage, 1);
+> +	spin_lock_init(&new_object->lock);
+> +	new_object->underops = underops;
+> +	new_object->underobj = underobj;
+> +	return new_object;
+> +}
+> +
+> +/*
+> + * The caller must own the object (i.e. thanks to object->usage) to safely put
+> + * it.
+> + */
+> +void landlock_put_object(struct landlock_object *const object)
+> +{
+> +	/*
+> +	 * The call to @object->underops->release(object) might sleep, e.g.
+> +	 * because of iput().
+> +	 */
+> +	might_sleep();
+> +	if (!object)
+> +		return;
+> +
+> +	/*
+> +	 * If the @object's refcount cannot drop to zero, we can just decrement
+> +	 * the refcount without holding a lock. Otherwise, the decrement must
+> +	 * happen under @object->lock for synchronization with things like
+> +	 * get_inode_object().
+> +	 */
+> +	if (refcount_dec_and_lock(&object->usage, &object->lock)) {
+> +		__acquire(&object->lock);
+> +		/*
+> +		 * With @object->lock initially held, remove the reference from
+> +		 * @object->underobj to @object (if it still exists).
+> +		 */
+> +		object->underops->release(object);
+> +		kfree_rcu(object, rcu_free);
+> +	}
+> +}
+> diff --git a/security/landlock/object.h b/security/landlock/object.h
+> new file mode 100644
+> index 000000000000..56f17c51df01
+> --- /dev/null
+> +++ b/security/landlock/object.h
+> @@ -0,0 +1,91 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Landlock LSM - Object management
+> + *
+> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
+> + * Copyright © 2018-2020 ANSSI
+> + */
+> +
+> +#ifndef _SECURITY_LANDLOCK_OBJECT_H
+> +#define _SECURITY_LANDLOCK_OBJECT_H
+> +
+> +#include <linux/compiler_types.h>
+> +#include <linux/refcount.h>
+> +#include <linux/spinlock.h>
+> +
+> +struct landlock_object;
+> +
+> +/**
+> + * struct landlock_object_underops - Operations on an underlying object
+> + */
+> +struct landlock_object_underops {
+> +	/**
+> +	 * @release: Releases the underlying object (e.g. iput() for an inode).
+> +	 */
+> +	void (*release)(struct landlock_object *const object)
+> +		__releases(object->lock);
+> +};
+> +
+> +/**
+> + * struct landlock_object - Security blob tied to a kernel object
+> + *
+> + * The goal of this structure is to enable to tie a set of ephemeral access
+> + * rights (pertaining to different domains) to a kernel object (e.g an inode)
+> + * in a safe way.  This implies to handle concurrent use and modification.
+> + *
+> + * The lifetime of a &struct landlock_object depends of the rules referring to
+> + * it.
+> + */
+> +struct landlock_object {
+> +	/**
+> +	 * @usage: This counter is used to tie an object to the rules matching
+> +	 * it or to keep it alive while adding a new rule.  If this counter
+> +	 * reaches zero, this struct must not be modified, but this counter can
+> +	 * still be read from within an RCU read-side critical section.  When
+> +	 * adding a new rule to an object with a usage counter of zero, we must
+> +	 * wait until the pointer to this object is set to NULL (or recycled).
+> +	 */
+> +	refcount_t usage;
+> +	/**
+> +	 * @lock: Guards against concurrent modifications.  This lock must be
+> +	 * held from the time @usage drops to zero until any weak references
+> +	 * from @underobj to this object have been cleaned up.
+> +	 *
+> +	 * Lock ordering: inode->i_lock nests inside this.
+> +	 */
+> +	spinlock_t lock;
+> +	/**
+> +	 * @underobj: Used when cleaning up an object and to mark an object as
+> +	 * tied to its underlying kernel structure.  This pointer is protected
+> +	 * by @lock.  Cf. landlock_release_inodes() and release_inode().
+> +	 */
+> +	void *underobj;
+> +	union {
+> +		/**
+> +		 * @rcu_free: Enables lockless use of @usage, @lock and
+> +		 * @underobj from within an RCU read-side critical section.
+> +		 * @rcu_free and @underops are only used by
+> +		 * landlock_put_object().
+> +		 */
+> +		struct rcu_head rcu_free;
+> +		/**
+> +		 * @underops: Enables landlock_put_object() to release the
+> +		 * underlying object (e.g. inode).
+> +		 */
+> +		const struct landlock_object_underops *underops;
+> +	};
+> +};
+> +
+> +struct landlock_object *landlock_create_object(
+> +		const struct landlock_object_underops *const underops,
+> +		void *const underobj);
+> +
+> +void landlock_put_object(struct landlock_object *const object);
+> +
+> +static inline void landlock_get_object(struct landlock_object *const object)
+> +{
+> +	if (object)
+> +		refcount_inc(&object->usage);
+> +}
+> +
+> +#endif /* _SECURITY_LANDLOCK_OBJECT_H */
+> -- 
+> 2.30.0
