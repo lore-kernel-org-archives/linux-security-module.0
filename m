@@ -2,225 +2,205 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA30C433DB
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 22:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDECC433E6
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Feb 2021 11:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B58E64F7F
-	for <linux-security-module@archiver.kernel.org>; Tue,  2 Feb 2021 22:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3895864E34
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Feb 2021 11:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233175AbhBBWNn (ORCPT
+        id S234119AbhBCLvc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Feb 2021 17:13:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42942 "EHLO
+        Wed, 3 Feb 2021 06:51:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232882AbhBBWNj (ORCPT
+        with ESMTP id S234125AbhBCLva (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Feb 2021 17:13:39 -0500
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DB92C06174A
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Feb 2021 14:12:58 -0800 (PST)
-Received: by mail-wr1-x42e.google.com with SMTP id b3so3947022wrj.5
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Feb 2021 14:12:58 -0800 (PST)
+        Wed, 3 Feb 2021 06:51:30 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4601C0613ED
+        for <linux-security-module@vger.kernel.org>; Wed,  3 Feb 2021 03:50:49 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id d3so6907429lfg.10
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Feb 2021 03:50:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xqP0a66Os6f9sXyF+kMsv13PEbv0LhzI8V6aeWIM0Ok=;
-        b=TPz3NwZfJQX2n8XN2IcK3GG1+YdjmSwEfCGkkfB/R3l9sej3bWUpfbAM6RCQCZ7zSg
-         wtMWuG93czJxsPaqc/vxVW5m5aofw7Xucq73fsummtWKzVU1OcRLPV1d4bpHrkbnQvc4
-         IGVMEw8sSzmZ9C62tJnk3nveiCu7uLVYsZYtvwViU06V6jZ65gHNw7E+q3Wxw3dk6eXe
-         z5op6gObDb+ORYEdWZ3w4BYU3o2SvM5AHHBAGBxccLb/WJ/Qhq7WY8qKqMIPltmMJ5MP
-         z66weUVMT+YCRplS4JltaxL/GEcdZbNO5Nz0syi3n8gD39XWVSSc8FUArjYvPDInNAiR
-         z2yg==
+         :cc:content-transfer-encoding;
+        bh=cOD/DHQlOSZ7fugmG47GUh/NK1JYxHNBoQ9+0qs9dMQ=;
+        b=v9jPIxlvxSCQ/bTLzDIx/1JIXSpRw2NXw1XiUkWX7APLSFRqxIQClpxUtc9z1MMUCw
+         ZPdKx1FlIAcSI0NAJLnFrdJNH1xtuZEpF87S0+r/9SupVdk+D7//GDtlhwarTOweA8GY
+         qrcHfVgEhRR3oYBOXwWiv9ABFKzhqOuJAmH1FGs+nO7M4H4nGp3Un4dls3Si5EMtxn/i
+         osB1UvQNexSBq94z3rDkm+U/FKxgBue55d6tY2OK04Ho2HigAG7w4dWebxfkGqLGkOQL
+         okUWHIC+BG5AvkqvylxTWJsrBGUwpb4i6VxsMDgAdxSZBnwGPHIkjcFMQpvlyakitdp1
+         Bj/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xqP0a66Os6f9sXyF+kMsv13PEbv0LhzI8V6aeWIM0Ok=;
-        b=YGuvIuN5KBzzBLpqyjeqnax+tu78DU6HjkSC9ebQ1gctoqFGtNwMbU2+VlT/W2HoXi
-         o84FmzrKl6lvqQu4poWab/Yk4rQOVy6OL810NcQHFeuNXbN2tUdxn6ciib6wZrXsbLQk
-         fOdIt96kf20YV9BwLXoYBp6Uzl7Zng0/N4vf1y9uigo861iSs1zXo2xX+n5J6Twp1eeb
-         6uHm8Ky5yreixHLid1jZZ9B/Z0Fo0Admp//A7GFnPkhiRkezkK/xRdJLHxZJEybKcN9j
-         fayS+dmbztuj/O3SFt4un5AyxnupMly2y9IztZNgLNYhi+bImZoVEk+B+FT9QOKA3u2R
-         S9WQ==
-X-Gm-Message-State: AOAM5311EdRBtgO1NHVaKwu1PxCwWzYVMK+sdz8kokmT0yo3Z+isiigf
-        vSsWkO8sY7pACIqZOsqZAeJJNQHgXDlguI299nC6MQ==
-X-Google-Smtp-Source: ABdhPJzXdtevgSVe8n6EmjpNVas/jAjd+jbkaq+OR2OyjZFVqFMgbuoQU4zl5BsooeiKMks3pFo2re/Jz6z7ZkZVsLc=
-X-Received: by 2002:a5d:6884:: with SMTP id h4mr218812wru.106.1612303976784;
- Tue, 02 Feb 2021 14:12:56 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cOD/DHQlOSZ7fugmG47GUh/NK1JYxHNBoQ9+0qs9dMQ=;
+        b=guESOu1lCkw+QYO2FYRnkWzKJTSnleOv91FmrHGMQQy4bHD6gvMfWvSsHzS8Zj/Hwb
+         b62DIFd9SAJb5gX09AVLOpc2cgh9qiazAn5OuYwVXv2xoyXxtMP5f9AC5HDRbFVljO0i
+         Xz7xJkSv5Rlanw/LHOw0J9RQz9E3K4gzWyjw6yn7CErAcvpfsweMfFYxQr4IWAKn4klb
+         768df7vYl9vWxOVZtYaS7hPiVfK/2ZPy9HhWAay/joFI0FyK4WRBKYdijvBVMbZh0GnN
+         kkeIyzKoX/7q0wvXhMPj9VSlNoeaTP9RWVYbHbUsNN8zktZU0vRTDfOwJFEhJiaiusb7
+         kIHw==
+X-Gm-Message-State: AOAM5305WIf4uU5kEHxuYoJdHk0oglUkydDsudrzlgylEP5ja61AP4l7
+        GWZGwjvwW2jX8+WWBKLcZmo3KbCiovFsfRnwkO/W7A==
+X-Google-Smtp-Source: ABdhPJxm93cdTAPl6mJX4bj/5/52s16IRBAo/arqepqGXR8NM99fuOAxt4ZL1ZDDkNBtyJN3Z/9KJIYLtiamgkgxWDs=
+X-Received: by 2002:ac2:47f8:: with SMTP id b24mr1520091lfp.108.1612353047926;
+ Wed, 03 Feb 2021 03:50:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20210202053046.1653012-1-surenb@google.com> <079db245-a08c-0dbd-01d4-8065f533652e@gmail.com>
-In-Reply-To: <079db245-a08c-0dbd-01d4-8065f533652e@gmail.com>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Tue, 2 Feb 2021 14:12:45 -0800
-Message-ID: <CAJuCfpGotx_04Stn5Nw6Au+TVG9LuAJ=CB_s7uxjMLOLerw-GA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] process_madvise.2: Add process_madvise man page
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Cc:     linux-man <linux-man@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        David Rientjes <rientjes@google.com>,
-        =?UTF-8?Q?Edgar_Arriaga_Garc=C3=ADa?= <edgararriaga@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-mm <linux-mm@kvack.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>
+References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
+ <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
+ <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
+ <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
+ <18529562ed71becf21401ec9fd9d95c4ac44fdc0.camel@linux.ibm.com>
+ <CAFA6WYMn519aF=uodjnSUZ+kKaRzdoh6Enu0OsRMge=21iBNBA@mail.gmail.com> <2012751fd653c284679aa2c6ac9a56a5edbf1410.camel@pengutronix.de>
+In-Reply-To: <2012751fd653c284679aa2c6ac9a56a5edbf1410.camel@pengutronix.de>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 3 Feb 2021 17:20:36 +0530
+Message-ID: <CAFA6WYNbf+Jncj0jF4abLhWH8RUWDORf0kcWi021hxBmq-NK=g@mail.gmail.com>
+Subject: Re: Migration to trusted keys: sealing user-provided key?
+To:     =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        David Howells <dhowells@redhat.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>, kernel@pengutronix.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Michael,
+On Tue, 2 Feb 2021 at 18:04, Jan L=C3=BCbbe <jlu@pengutronix.de> wrote:
+>
+> On Tue, 2021-02-02 at 17:45 +0530, Sumit Garg wrote:
+> > Hi Jan,
+> >
+> > On Sun, 31 Jan 2021 at 23:40, James Bottomley <jejb@linux.ibm.com> wrot=
+e:
+> > >
+> > > On Sun, 2021-01-31 at 15:14 +0100, Jan L=C3=BCbbe wrote:
+> > > > On Sun, 2021-01-31 at 07:09 -0500, Mimi Zohar wrote:
+> > > > > On Sat, 2021-01-30 at 19:53 +0200, Jarkko Sakkinen wrote:
+> > > > > > On Thu, 2021-01-28 at 18:31 +0100, Ahmad Fatoum wrote:
+> > > > > > > Hello,
+> > > > > > >
+> > > > > > > I've been looking into how a migration to using
+> > > > > > > trusted/encrypted keys would look like (particularly with dm-
+> > > > > > > crypt).
+> > > > > > >
+> > > > > > > Currently, it seems the the only way is to re-encrypt the
+> > > > > > > partitions because trusted/encrypted keys always generate the=
+ir
+> > > > > > > payloads from RNG.
+> > > > > > >
+> > > > > > > If instead there was a key command to initialize a new
+> > > > > > > trusted/encrypted key with a user provided value, users could
+> > > > > > > use whatever mechanism they used beforehand to get a plaintex=
+t
+> > > > > > > key and use that to initialize a new trusted/encrypted key.
+> > > > > > > From there on, the key will be like any other trusted/encrypt=
+ed
+> > > > > > > key and not be disclosed again to userspace.
+> > > > > > >
+> > > > > > > What are your thoughts on this? Would an API like
+> > > > > > >
+> > > > > > >   keyctl add trusted dmcrypt-key 'set <content>' # user-
+> > > > > > > supplied content
+> > > > > > >
+> > > > > > > be acceptable?
+> > > > > >
+> > > > > > Maybe it's the lack of knowledge with dm-crypt, but why this
+> > > > > > would be useful? Just want to understand the bottleneck, that's
+> > > > > > all.
+> > > >
+> > > > Our goal in this case is to move away from having the dm-crypt key
+> > > > material accessible to user-space on embedded devices. For an
+> > > > existing dm-crypt volume, this key is fixed. A key can be loaded in=
+to
+> > > > user key type and used by dm-crypt (cryptsetup can already do it th=
+is
+> > > > way). But at this point, you can still do 'keyctl read' on that key=
+,
+> > > > exposing the key material to user space.
+> > > >
+> > > > Currently, with both encrypted and trusted keys, you can only
+> > > > generate new random keys, not import existing key material.
+> > > >
+> > > > James Bottomley mentioned in the other reply that the key format wi=
+ll
+> > > > become compatible with the openssl_tpm2_engine, which would provide=
+ a
+> > > > workaround. This wouldn't work with OP-TEE-based trusted keys (see
+> > > > Sumit Garg's series), though.
+> > >
+> > > Assuming OP-TEE has the same use model as the TPM, someone will
+> > > eventually realise the need for interoperable key formats between key
+> > > consumers and then it will work in the same way once the kernel gets
+> > > updated to speak whatever format they come up with.
+> >
+> > IIUC, James re-work for TPM trusted keys is to allow loading of sealed
+> > trusted keys directly via user-space (with proper authorization) into
+> > the kernel keyring.
+> >
+> > I think similar should be achievable with OP-TEE (via extending pseudo
+> > TA [1]) as well to allow restricted user-space access (with proper
+> > authorization) to generate sealed trusted key blob that should be
+> > interoperable with the kernel. Currently OP-TEE exposes trusted key
+> > interfaces for kernel users only.
+>
+> What is the security benefit of having the key blob creation in user-spac=
+e
+> instead of in the kernel? Key import is a standard operation in HSMs or P=
+KCS#11
+> tokens.
 
-On Tue, Feb 2, 2021 at 2:45 AM Michael Kerrisk (man-pages)
-<mtk.manpages@gmail.com> wrote:
->
-> Hello Suren (and Minchan and Michal)
->
-> Thank you for the revisions!
->
-> I've applied this patch, and done a few light edits.
-
-Thanks!
-
->
-> However, I have a questions about undocumented pieces in *madvise(2)*,
-> as well as one other question. See below.
->
-> On 2/2/21 6:30 AM, Suren Baghdasaryan wrote:
-> > Initial version of process_madvise(2) manual page. Initial text was
-> > extracted from [1], amended after fix [2] and more details added using
-> > man pages of madvise(2) and process_vm_read(2) as examples. It also
-> > includes the changes to required permission proposed in [3].
-> >
-> > [1] https://lore.kernel.org/patchwork/patch/1297933/
-> > [2] https://lkml.org/lkml/2020/12/8/1282
-> > [3] https://patchwork.kernel.org/project/selinux/patch/20210111170622.2613577-1-surenb@google.com/#23888311
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > Reviewed-by: Michal Hocko <mhocko@suse.com>
-> > ---
-> > changes in v2:
-> > - Changed description of MADV_COLD per Michal Hocko's suggestion
-> > - Applied fixes suggested by Michael Kerrisk
-> > changes in v3:
-> > - Added Michal's Reviewed-by
-> > - Applied additional fixes suggested by Michael Kerrisk
-> >
-> > NAME
-> >     process_madvise - give advice about use of memory to a process
-> >
-> > SYNOPSIS
-> >     #include <sys/uio.h>
-> >
-> >     ssize_t process_madvise(int pidfd,
-> >                            const struct iovec *iovec,
-> >                            unsigned long vlen,
-> >                            int advice,
-> >                            unsigned int flags);
-> >
-> > DESCRIPTION
-> >     The process_madvise() system call is used to give advice or directions
-> >     to the kernel about the address ranges of another process or the calling
-> >     process. It provides the advice to the address ranges described by iovec
-> >     and vlen. The goal of such advice is to improve system or application
-> >     performance.
-> >
-> >     The pidfd argument is a PID file descriptor (see pidfd_open(2)) that
-> >     specifies the process to which the advice is to be applied.
-> >
-> >     The pointer iovec points to an array of iovec structures, defined in
-> >     <sys/uio.h> as:
-> >
-> >     struct iovec {
-> >         void  *iov_base;    /* Starting address */
-> >         size_t iov_len;     /* Number of bytes to transfer */
-> >     };
-> >
-> >     The iovec structure describes address ranges beginning at iov_base address
-> >     and with the size of iov_len bytes.
-> >
-> >     The vlen represents the number of elements in the iovec structure.
-> >
-> >     The advice argument is one of the values listed below.
-> >
-> >   Linux-specific advice values
-> >     The following Linux-specific advice values have no counterparts in the
-> >     POSIX-specified posix_madvise(3), and may or may not have counterparts
-> >     in the madvise(2) interface available on other implementations.
-> >
-> >     MADV_COLD (since Linux 5.4.1)
->
-> I just noticed these version numbers now, and thought: they can't be
-> right (because the system call appeared only in v5.11). So I removed
-> them. But, of course in another sense the version numbers are (nearly)
-> right, since these advice values were added for madvise(2) in Linux 5.4.
-> However, they are not documented in the madvise(2) manual page. Is it
-> correct to assume that MADV_COLD and MADV_PAGEOUT have exactly the same
-> meaning in madvise(2) (but just for the calling process, of course)?
-
-Correct. They should be added in the madvise(2) man page as well IMHO.
-
->
-> >         Deactive a given range of pages which will make them a more probable
->
-> I changed: s/Deactive/Deactivate/
-
-thanks!
+User authentication, AFAIK most of the HSMs or PKCS#11 require that
+for key import. But IIUC, your suggested approach to load plain key
+into kernel keyring and say it's *trusted* without any user
+authentication, would it really be a trusted key? What prevents a
+rogue user from making his key as the dm-crypt trusted key?
 
 >
-> >         reclaim target should there be a memory pressure. This is a
-> >         nondestructive operation. The advice might be ignored for some pages
-> >         in the range when it is not applicable.
-> >
-> >     MADV_PAGEOUT (since Linux 5.4.1)
-> >         Reclaim a given range of pages. This is done to free up memory occupied
-> >         by these pages. If a page is anonymous it will be swapped out. If a
-> >         page is file-backed and dirty it will be written back to the backing
-> >         storage. The advice might be ignored for some pages in the range when
-> >         it is not applicable.
->
-> [...]
->
-> >     The hint might be applied to a part of iovec if one of its elements points
-> >     to an invalid memory region in the remote process. No further elements will
-> >     be processed beyond that point.
->
-> Is the above scenario the one that leads to the partial advice case described in
-> RETURN VALUE? If yes, perhaps I should add some words to make that clearer.
+> I mainly see the downside of having to add another API to access the unde=
+rlying
+> functionality (be it trusted key TA or the NXP CAAM HW *) and requiring
+> platform-specific userspace code.
 
-Correct. This describes the case when partial advice happens.
+I am not sure why you would call the standardized TEE interface [1] to
+be platform-specific, it is meant to be platform agnostic. And I think
+we can have openssl_tee_engine on similar lines as the
+openssl_tpm2_engine.
+
+[1] https://globalplatform.org/specs-library/tee-client-api-specification/
+
+-Sumit
 
 >
-> You can see the light edits that I made in
-> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=e3ce016472a1b3ec5dffdeb23c98b9fef618a97b
-> and following that I restructured DESCRIPTION a little in
-> https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3aac0708a9acee5283e091461de6a8410bc921a6
-
-The edits LGTM.
-Thanks,
-Suren.
-
+> This CAAM specific API (in out-of-tree patches) was exactly the part I wa=
+s
+> trying to get rid of. ;)
 >
-> Thanks,
->
-> Michael
->
+> Regards,
+> Jan
 >
 > --
-> Michael Kerrisk
-> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-> Linux/UNIX System Programming Training: http://man7.org/training/
+> Pengutronix e.K.                           |                             =
+|
+> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
+|
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
+>
