@@ -2,286 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864CFC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 05:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A860CC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 08:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 369A664DE7
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 05:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D39560295
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 08:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230037AbhBDFbi (ORCPT
+        id S234927AbhBDI1J (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Feb 2021 00:31:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51866 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbhBDFbg (ORCPT
+        Thu, 4 Feb 2021 03:27:09 -0500
+Received: from smtp-42ad.mail.infomaniak.ch ([84.16.66.173]:35579 "EHLO
+        smtp-42ad.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234916AbhBDI1I (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Feb 2021 00:31:36 -0500
-Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 416B4C0613D6
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Feb 2021 21:30:56 -0800 (PST)
-Received: by mail-lj1-x235.google.com with SMTP id u4so1929194ljh.6
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Feb 2021 21:30:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2uSRokrJ+R6V6ON0IfFPRQWKuZNn7Av5SOzhnWtouhQ=;
-        b=O2tNeL3LdZ+GRpOnLxKGwG7QQOaZCj9MzitgrUevmXaMNhqN4PNcKxZMu4BuGWy3os
-         M3zx/0XOG/MGkb1FbGeBv2qRzgsGxIRWcCiMTtPjFgZ0UcR3r/YxGTZUUo+pbWw/YVY2
-         y4CHzAjoJSXMN+V5STVWn31P/K7JXEoGr9cPvl0dShrAzqbTMUEYTaRliYNckVUq2J41
-         vnZvwhq/eS6IgDbLXjUYyVeIdI1JBeOQBdUe9xe/Yh8CHlEjF8DpY/NiaFTJ/miCr/OR
-         QiwX+vU9G6yR0vzRcYBH8lPtEp9ahVcl+FIJ7sL5zNHFFVZs+THabzK2rRqG9A3sB5pQ
-         Nw7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2uSRokrJ+R6V6ON0IfFPRQWKuZNn7Av5SOzhnWtouhQ=;
-        b=PMzEWr/Nji5NRZp2dG9tY6URvyAg8rNtEtA7Roaa2Krnkn9Mor8iw9HUJJlLrlTz8z
-         IHOT06EsV1JCf11EJwlUvSIYqS1gcKmXapa8cxrnMPAoIAbwzv6yZkRaPOVeVzYOxR0y
-         4hbeVOYgi8P29cfBk5CHk68oUu52/hPLdI1J+MDuAOR+rSklVHkI3fpLLzvSKd2C7JUx
-         3VIQx8TcRDd2f6NROUkCgI44D2yiSIDeSjwb2/gsQMI/bkdRJx2HLk8l5M8zw7Lcm5fG
-         pgToMmy08xYG4qgpLD1LcDqiFADm0/hjWUCle+4Narnw619618C2BlQ7fG7Bq7jN77SH
-         RHGw==
-X-Gm-Message-State: AOAM5313pz0HtnSsIjbeWjxPnu0xOxxVEh8lKvZLeXofiBQWaGoC3b5f
-        OmfAldA1Ia90QL7GMEE/8omzh4qrnnBeeOEH/7EGAA==
-X-Google-Smtp-Source: ABdhPJzsP7qEqW5rTwE/GX3ywp9PCwS0wHO1gQIoUhiXvPxw4thue90Z8q0WVFTbwOYKvwscIkD1CNpkJcS1/bVY+i0=
-X-Received: by 2002:a2e:91d0:: with SMTP id u16mr3828312ljg.480.1612416654551;
- Wed, 03 Feb 2021 21:30:54 -0800 (PST)
+        Thu, 4 Feb 2021 03:27:08 -0500
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DWWpy3ZwNzMqWB2;
+        Thu,  4 Feb 2021 09:26:18 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4DWWpv3gtrzlpq06;
+        Thu,  4 Feb 2021 09:26:15 +0100 (CET)
+Subject: =?UTF-8?Q?Re=3a_Conflict_with_Micka=c3=abl_Sala=c3=bcn=27s_blacklis?=
+ =?UTF-8?Q?t_patches_=5bwas_=5bPATCH_v5_0/4=5d_Add_EFI=5fCERT=5fX509=5fGUID_?=
+ =?UTF-8?Q?support_for_dbx/mokx_entries=5d?=
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     dwmw2@infradead.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        James.Bottomley@HansenPartnership.com, masahiroy@kernel.org,
+        michal.lkml@markovi.net, jmorris@namei.org, serge@hallyn.com,
+        ardb@kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        lszubowi@redhat.com, javierm@redhat.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tyler Hicks <tyhicks@linux.microsoft.com>
+References: <20210122181054.32635-1-eric.snowberg@oracle.com>
+ <1103491.1612369600@warthog.procyon.org.uk>
+ <10e6616e-0598-9f33-2de9-4a5268bba586@digikod.net>
+ <A5B5DEC0-E47A-4C3D-8E79-AF37B6C2E565@oracle.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <7924ce4c-ea94-9540-0730-bddae7c6af07@digikod.net>
+Date:   Thu, 4 Feb 2021 09:26:19 +0100
+User-Agent: 
 MIME-Version: 1.0
-References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
- <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
- <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
- <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
- <18529562ed71becf21401ec9fd9d95c4ac44fdc0.camel@linux.ibm.com>
- <CAFA6WYMn519aF=uodjnSUZ+kKaRzdoh6Enu0OsRMge=21iBNBA@mail.gmail.com>
- <2012751fd653c284679aa2c6ac9a56a5edbf1410.camel@pengutronix.de>
- <CAFA6WYNbf+Jncj0jF4abLhWH8RUWDORf0kcWi021hxBmq-NK=g@mail.gmail.com> <1310b10eaaf246c326f8d74bd47c91d738ea976b.camel@pengutronix.de>
-In-Reply-To: <1310b10eaaf246c326f8d74bd47c91d738ea976b.camel@pengutronix.de>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 4 Feb 2021 11:00:43 +0530
-Message-ID: <CAFA6WYOuG6uy1_T67fvefRaY+YnOz5TDYY9j8fFhM2F=UXmNCg@mail.gmail.com>
-Subject: Re: Migration to trusted keys: sealing user-provided key?
-To:     =?UTF-8?Q?Jan_L=C3=BCbbe?= <jlu@pengutronix.de>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        David Howells <dhowells@redhat.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>, kernel@pengutronix.de,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <A5B5DEC0-E47A-4C3D-8E79-AF37B6C2E565@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 3 Feb 2021 at 19:16, Jan L=C3=BCbbe <jlu@pengutronix.de> wrote:
->
-> On Wed, 2021-02-03 at 17:20 +0530, Sumit Garg wrote:
-> > On Tue, 2 Feb 2021 at 18:04, Jan L=C3=BCbbe <jlu@pengutronix.de> wrote:
-> > >
-> > > On Tue, 2021-02-02 at 17:45 +0530, Sumit Garg wrote:
-> > > > Hi Jan,
-> > > >
-> > > > On Sun, 31 Jan 2021 at 23:40, James Bottomley <jejb@linux.ibm.com> =
-wrote:
-> > > > >
-> > > > > On Sun, 2021-01-31 at 15:14 +0100, Jan L=C3=BCbbe wrote:
-> > > > > > On Sun, 2021-01-31 at 07:09 -0500, Mimi Zohar wrote:
-> > > > > > > On Sat, 2021-01-30 at 19:53 +0200, Jarkko Sakkinen wrote:
-> > > > > > > > On Thu, 2021-01-28 at 18:31 +0100, Ahmad Fatoum wrote:
-> > > > > > > > > Hello,
-> > > > > > > > >
-> > > > > > > > > I've been looking into how a migration to using
-> > > > > > > > > trusted/encrypted keys would look like (particularly with=
- dm-
-> > > > > > > > > crypt).
-> > > > > > > > >
-> > > > > > > > > Currently, it seems the the only way is to re-encrypt the
-> > > > > > > > > partitions because trusted/encrypted keys always generate=
- their
-> > > > > > > > > payloads from RNG.
-> > > > > > > > >
-> > > > > > > > > If instead there was a key command to initialize a new
-> > > > > > > > > trusted/encrypted key with a user provided value, users c=
-ould
-> > > > > > > > > use whatever mechanism they used beforehand to get a plai=
-ntext
-> > > > > > > > > key and use that to initialize a new trusted/encrypted ke=
-y.
-> > > > > > > > > From there on, the key will be like any other trusted/enc=
-rypted
-> > > > > > > > > key and not be disclosed again to userspace.
-> > > > > > > > >
-> > > > > > > > > What are your thoughts on this? Would an API like
-> > > > > > > > >
-> > > > > > > > >   keyctl add trusted dmcrypt-key 'set <content>' # user-
-> > > > > > > > > supplied content
-> > > > > > > > >
-> > > > > > > > > be acceptable?
-> > > > > > > >
-> > > > > > > > Maybe it's the lack of knowledge with dm-crypt, but why thi=
-s
-> > > > > > > > would be useful? Just want to understand the bottleneck, th=
-at's
-> > > > > > > > all.
-> > > > > >
-> > > > > > Our goal in this case is to move away from having the dm-crypt =
-key
-> > > > > > material accessible to user-space on embedded devices. For an
-> > > > > > existing dm-crypt volume, this key is fixed. A key can be loade=
-d into
-> > > > > > user key type and used by dm-crypt (cryptsetup can already do i=
-t this
-> > > > > > way). But at this point, you can still do 'keyctl read' on that=
- key,
-> > > > > > exposing the key material to user space.
-> > > > > >
-> > > > > > Currently, with both encrypted and trusted keys, you can only
-> > > > > > generate new random keys, not import existing key material.
-> > > > > >
-> > > > > > James Bottomley mentioned in the other reply that the key forma=
-t will
-> > > > > > become compatible with the openssl_tpm2_engine, which would pro=
-vide a
-> > > > > > workaround. This wouldn't work with OP-TEE-based trusted keys (=
-see
-> > > > > > Sumit Garg's series), though.
-> > > > >
-> > > > > Assuming OP-TEE has the same use model as the TPM, someone will
-> > > > > eventually realise the need for interoperable key formats between=
- key
-> > > > > consumers and then it will work in the same way once the kernel g=
-ets
-> > > > > updated to speak whatever format they come up with.
-> > > >
-> > > > IIUC, James re-work for TPM trusted keys is to allow loading of sea=
-led
-> > > > trusted keys directly via user-space (with proper authorization) in=
-to
-> > > > the kernel keyring.
-> > > >
-> > > > I think similar should be achievable with OP-TEE (via extending pse=
-udo
-> > > > TA [1]) as well to allow restricted user-space access (with proper
-> > > > authorization) to generate sealed trusted key blob that should be
-> > > > interoperable with the kernel. Currently OP-TEE exposes trusted key
-> > > > interfaces for kernel users only.
-> > >
-> > > What is the security benefit of having the key blob creation in user-=
-space
-> > > instead of in the kernel? Key import is a standard operation in HSMs =
-or PKCS#11
-> > > tokens.
-> >
-> > User authentication, AFAIK most of the HSMs or PKCS#11 require that
-> > for key import. But IIUC, your suggested approach to load plain key
-> > into kernel keyring and say it's *trusted* without any user
-> > authentication, would it really be a trusted key? What prevents a
-> > rogue user from making his key as the dm-crypt trusted key?
->
-> There is user authentication at the level of key rings. So an untrusted u=
-ser
-> cannot load or link keys they have no write permission for.
 
-Here, I meant user authentication to the trust source (TPM or a TEE)
-which provides assurance for a key to be trusted. So what happens in
-case of user-space compromises (an untrusted user gaining root
-access)?
+On 04/02/2021 04:53, Eric Snowberg wrote:
+> 
+>> On Feb 3, 2021, at 11:49 AM, Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> This looks good to me, and it still works for my use case. Eric's
+>> patchset only looks for asymmetric keys in the blacklist keyring, so
+>> even if we use the same keyring we don't look for the same key types. My
+>> patchset only allows blacklist keys (i.e. hashes, not asymmetric keys)
+>> to be added by user space (if authenticated), but because Eric's
+>> asymmetric keys are loaded with KEY_ALLOC_BYPASS_RESTRICTION, it should
+>> be OK for his use case.  There should be no interference between the two
+>> new features, but I find it a bit confusing to have such distinct use of
+>> keys from the same keyring depending on their type.
+> 
+> I agree, it is a bit confusing.  What is the thought of having a dbx 
+> keyring, similar to how the platform keyring works?
+> 
+> https://www.spinics.net/lists/linux-security-module/msg40262.html
+> 
+> 
+>> On 03/02/2021 17:26, David Howells wrote:
+>>>
+>>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
+>>>
+>>>> This is the fifth patch series for adding support for 
+>>>> EFI_CERT_X509_GUID entries [1].  It has been expanded to not only include
+>>>> dbx entries but also entries in the mokx.  Additionally my series to
+>>>> preload these certificate [2] has also been included.
+>>>
+>>> Okay, I've tentatively applied this to my keys-next branch.  However, it
+>>> conflicts minorly with Mickaël Salaün's patches that I've previously merged on
+>>> the same branch.  Can you have a look at the merge commit
+>>>
+>>> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=keys-next&id=fdbbe7ceeb95090d09c33ce0497e0394c82aa33d
+>>>
+>>> 	(the top patch of my keys-next branch)
+>>>
+>>> to see if that is okay by both of you?  If so, can you give it a whirl?
+> 
+> 
+> I’m seeing a build error within blacklist_hashes_checked with
+> one of my configs.
+> 
+> The config is as follows:
+> 
+> $ grep CONFIG_SYSTEM_BLACKLIST_HASH_LIST .config
+> CONFIG_SYSTEM_BLACKLIST_HASH_LIST=“revocation_list"
+> 
+> $ cat certs/revocation_list
+> "tbs:1e125ea4f38acb7b29b0c495fd8e7602c2c3353b913811a9da3a2fb505c08a32”
+> 
+> make[1]: *** No rule to make target 'revocation_list', needed by 'certs/blacklist_hashes_checked'.  Stop.
 
->
-> As we already have user type keys, which don't have these restrictions an=
-d are
-> accepted by most subsystems, any use of kernel keyrings must already make=
- sure
-> that the proper keys are used.
->
+It requires an absolute path. This is to align with other variables
+using the config_filename macro: CONFIG_SYSTEM_TRUSTED_KEYS,
+CONFIG_MODULE_SIG_KEY and now CONFIG_SYSTEM_REVOCATION_KEYS.
+Cf. https://lore.kernel.org/lkml/1221725.1607515111@warthog.procyon.org.uk/
 
-The major value add of trusted keys over user keys is this trust
-assurance provided by the underlying trust source.
-
->
-> With asymmetric keys we have trusted key *rings*:
-> # keyctl show %:.secondary_trusted_keys
-> Keyring
->  638775388 ---lswrv      0     0  keyring: .secondary_trusted_keys
-> 1071890135 ---lswrv      0     0   \_ keyring: .builtin_trusted_keys
->  816294887 ---lswrv      0     0       \_ asymmetric: Debian Secure Boot =
-CA: 6ccece7e4c6c0d1f6149f3dd27dfcc5cbb419ea1
->  630436721 ---lswrv      0     0       \_ asymmetric: Debian Secure Boot =
-Signer 2020: 00b55eb3b9
-> Here, a key is trusted because of it's presence in a keyring, not because=
- it has
-> a specific type. For example, fs-verity uses this mechanism as well.
->
->
-> For the trusted key *type*, my understanding is that trusted refers to on=
-ly
-> being able to load and access them in specific "trusted" system states (v=
-ia TPM
-> PRC, TEE initialization via secure boot or SoC specific hardware status c=
-hecks).
-> So for example protecting against loading a data-encryption key into an u=
-nsigned
-> kernel.
-
-Along with that trusted keys assures protection against any
-unauthorized user access to plain key payload.
-
->
-> > > I mainly see the downside of having to add another API to access the =
-underlying
-> > > functionality (be it trusted key TA or the NXP CAAM HW *) and requiri=
-ng
-> > > platform-specific userspace code.
-> >
-> > I am not sure why you would call the standardized TEE interface [1] to
-> > be platform-specific, it is meant to be platform agnostic. And I think
-> > we can have openssl_tee_engine on similar lines as the
-> > openssl_tpm2_engine.
->
-> Sorry, I meant platform-specific in the sense that some platforms use TPM=
-s,
-> while others use TEEs. The trusted key type was also suggested several ti=
-mes as
-> the correct abstraction for SoC-specific key encapsulation hardware (inst=
-ead of
-> custom interfaces), so there will likely be platforms which don't have a =
-TPM or
-> TEE, but still trusted keys.
->
-
-Agree and for that particular reason we are trying to add an
-abstraction layer in trusted keys subsystem so that other trust
-sources apart from TPM or TEE can be supported as well.
-
--Sumit
-
-> Regards
-> Jan
->
-> > [1] https://globalplatform.org/specs-library/tee-client-api-specificati=
-on/
-> >
->
->
-> --
-> Pengutronix e.K.                           |                             =
-|
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
-|
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
->
+We may want to patch scripts/kconfig/streamline_config.pl for both
+CONFIG_SYSTEM_REVOCATION_KEYS and CONFIG_SYSTEM_BLACKLIST_HASH_LIST, to
+warn user (and exit with an error) if such files are not found.
