@@ -2,363 +2,219 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED62BC433E6
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 03:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0205DC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 03:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A245364F60
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 03:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DEAC64F60
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Feb 2021 03:55:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234451AbhBDDrP (ORCPT
+        id S232132AbhBDDzy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Feb 2021 22:47:15 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:33022 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234209AbhBDDrN (ORCPT
+        Wed, 3 Feb 2021 22:55:54 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:34306 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231949AbhBDDzb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Feb 2021 22:47:13 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 4284922D; Wed,  3 Feb 2021 21:46:28 -0600 (CST)
-Date:   Wed, 3 Feb 2021 21:46:28 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v28 03/12] landlock: Set up the security framework and
- manage credentials
-Message-ID: <20210204034628.GC29022@mail.hallyn.com>
-References: <20210202162710.657398-1-mic@digikod.net>
- <20210202162710.657398-4-mic@digikod.net>
+        Wed, 3 Feb 2021 22:55:31 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1143htZU140853;
+        Thu, 4 Feb 2021 03:53:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ subject : from : in-reply-to : date : cc : content-transfer-encoding :
+ message-id : references : to : mime-version; s=corp-2020-01-29;
+ bh=1iBW/Y9acsypRETfmTIrYxhAxjrtkxoDwvd/9NT/yto=;
+ b=usvI0VfMqet1hYGW3RuaMoV4ei3ibnpfS8MiKNPWuhjtSO/jukO1EiG7AFaxHK7cDI58
+ FZSO5d0qE2kK5UZclhgr7LZty0TpuE85PqrLPHt7M2gs2pkYERilZ1ewS+V+yb4WyXYa
+ wNAF+5EGjK1EMKDmY1Enq8P50CTb70rtvtuzeeg1BIjlitZgLZspLriTK62LPvcVEn41
+ uRNvGEspSKL4nE9q3Zi2q7fRrQZPiBJKY2HO7nKDrA/JLi4o4qP/aj6n6h16hWvVJxF2
+ Q6B72O0+L5nBLd5CJFa4G7b0lzRSzTbttcYo/pf6SUNYGqHPCGKVrFk/Uki6fcf4OoML RQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2130.oracle.com with ESMTP id 36cvyb3ejd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Feb 2021 03:53:57 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1143faa9063279;
+        Thu, 4 Feb 2021 03:53:57 GMT
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2053.outbound.protection.outlook.com [104.47.37.53])
+        by aserp3030.oracle.com with ESMTP id 36dh1rvkug-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 04 Feb 2021 03:53:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hnid1qnvGQOGCyXOiZAEsaaNcaUMSKtZR/O32+eT/fbYHnLvnG9tVjI4gUVrZMEPhp1d5Jn1PstucSno0a05UwpUrSSfe+B9lOUzcvAqHEWRKYMgajiKtwfbjNFwhVQe0ABf6q73AZeRmsr9fmNlxDYFaqxWZQlggWUW+UnQMTT4RE1YhnsVOwWm0e217iPMDd/dZUk0frV6OQnaN1A1ZKICud+crIbqnYq/IAMHYPYboA+G/5KTE9fPRKAKpMsTrJfcBtFaRKCSRxyUYbm1bT7aj8J0W/VHUpYxniNBgwb35hUqEl1XYyhM6JbpWLG/isGhiSLUQgxG0j2mfLLpGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1iBW/Y9acsypRETfmTIrYxhAxjrtkxoDwvd/9NT/yto=;
+ b=WAYceV8xjWTwkbbKuhtHHMW2vaUabhiYNnhh1lz0dx8Uw2Gt/kCfamcRXQ0QOGl53Oh9toZLFuEg0SrMyhbHx0O3iJy4QtVkDbW4IuYH3JSRAlUQ3s4b35qdQutrurdnzDg/4OrUgKGEeXhZ4uSnWafbZ+qzZm5ATF3qVMlGUjqjsTyQxzkaHtu8uBoTFgF0kuQP3D7k1puMHRQTfUUmrHmP2pq1pGJi8ap2r2Vr/Vo34YwMnl2xHEas8nGSAUbbv1QDPnxsWXWfmQpc9QaYbnAEUWaqg3EBkqU39c/YgEss9kUVUUWyX6fGji2zHJmBxzXbNVwIMrVDrZrNAnJ1Jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1iBW/Y9acsypRETfmTIrYxhAxjrtkxoDwvd/9NT/yto=;
+ b=cKsSKyF/FX0qZh2ibJRxjqf/NPtZT2zZHjf3l/gGxKAL66HoCjFJYF7JHrMC0Ouo06iqhq0NJQmzECu6me7j73df5oR08pynZEkZaLuQi0C9mk2UIYfKW2jendKDlEKzgIBnyDZokFw8HX9OCG05UQpW75UNC1wi5TMg0aebDog=
+Authentication-Results: digikod.net; dkim=none (message not signed)
+ header.d=none;digikod.net; dmarc=none action=none header.from=oracle.com;
+Received: from DM6PR10MB3099.namprd10.prod.outlook.com (2603:10b6:5:1ad::18)
+ by DS7PR10MB4975.namprd10.prod.outlook.com (2603:10b6:5:3b1::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3805.24; Thu, 4 Feb
+ 2021 03:53:55 +0000
+Received: from DM6PR10MB3099.namprd10.prod.outlook.com
+ ([fe80::70bf:d626:5218:70e4]) by DM6PR10MB3099.namprd10.prod.outlook.com
+ ([fe80::70bf:d626:5218:70e4%7]) with mapi id 15.20.3825.019; Thu, 4 Feb 2021
+ 03:53:55 +0000
+Content-Type: text/plain; charset=utf-8
+Subject: =?utf-8?Q?Re=3A_Conflict_with_Micka=C3=ABl_Sala=C3=BCn=27s_blackl?=
+ =?utf-8?Q?ist_patches_=5Bwas_=5BPATCH_v5_0/4=5D_Add_EFI=5FCERT=5FX509=5FG?=
+ =?utf-8?Q?UID_support_for_dbx/mokx_entries=5D?=
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <10e6616e-0598-9f33-2de9-4a5268bba586@digikod.net>
+Date:   Wed, 3 Feb 2021 20:53:49 -0700
+Cc:     dwmw2@infradead.org, Jarkko Sakkinen <jarkko@kernel.org>,
+        James.Bottomley@HansenPartnership.com, masahiroy@kernel.org,
+        michal.lkml@markovi.net, jmorris@namei.org, serge@hallyn.com,
+        ardb@kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
+        lszubowi@redhat.com, javierm@redhat.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Tyler Hicks <tyhicks@linux.microsoft.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A5B5DEC0-E47A-4C3D-8E79-AF37B6C2E565@oracle.com>
+References: <20210122181054.32635-1-eric.snowberg@oracle.com>
+ <1103491.1612369600@warthog.procyon.org.uk>
+ <10e6616e-0598-9f33-2de9-4a5268bba586@digikod.net>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        David Howells <dhowells@redhat.com>
+X-Mailer: Apple Mail (2.3273)
+X-Originating-IP: [24.52.35.144]
+X-ClientProxiedBy: BYAPR07CA0047.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::24) To DM6PR10MB3099.namprd10.prod.outlook.com
+ (2603:10b6:5:1ad::18)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210202162710.657398-4-mic@digikod.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.16.177.128] (24.52.35.144) by BYAPR07CA0047.namprd07.prod.outlook.com (2603:10b6:a03:60::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3825.17 via Frontend Transport; Thu, 4 Feb 2021 03:53:53 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a265c3b5-b7cc-4279-7176-08d8c8c07e5c
+X-MS-TrafficTypeDiagnostic: DS7PR10MB4975:
+X-Microsoft-Antispam-PRVS: <DS7PR10MB4975DB814515A411F2A6DFC687B39@DS7PR10MB4975.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: uc3DWfvxzt9GhpFZfXZAVVZt/c0gfcEuxbP0CYPpOZEG++9D4LK4qffjl+VELovpXqmfsM9XDqpszndx0BsmbiqalpD+PSNI5bzq7QZrOowZ4vyPzTlNZGlIn7jQg3cya9LLw/WhW/kjsKfzHRQXe21+24P1apYDuuSWlrHwnxrdZRqnZw729qzewblCAsnLWm5BSZp/5RfUEzYTXLPsIx/mP6iUyY/PEx21TNAyu0OlIaEWDMaUbPrYFIrVbZp5+j71QwxZYXUorQD/KM8wA3vXp5P/UeQFChOrTMuZn5IcK2cx/EgBgsfOIIoOS9q5LGjRtBAKk8pq1YCnfq84TDYfPclgkzuNN9QsicQd6h8e6g4FJK8jcIset33lIHKGfIpLXP6ZOz7MwES/7O1kOnsSOfTasr77DwOD+TvsONOc8oRbIfnyPeoiYgo+dQVrAQDqErUwYcpMzI50ZIG4YeqjehwZO16RhlfUAJGIm7L4CqVt4g0M9YiQSdGkblRBuN3DviGwhYk7uRwsGJJkgt5HiSqAeS9J253jX4e69jQrn7mPrE/O1OmBgSOi9+e4Xh45oN5N74tjZdCux3reaWnVz4DWwP/va9IE1NIhBANbJcwy/fcsV2ijJkKQID8nm993vv1GVlDtg+4PG9jyywJ1BMN6csTadoGcS9WK+gA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB3099.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(39860400002)(366004)(136003)(376002)(346002)(66574015)(2906002)(36756003)(6666004)(966005)(33656002)(66946007)(66476007)(66556008)(53546011)(52116002)(6486002)(7416002)(4326008)(956004)(44832011)(316002)(16576012)(5660300002)(16526019)(224303003)(54906003)(83380400001)(110136005)(86362001)(186003)(8936002)(26005)(478600001)(2616005)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?eUI4TUNLQTBEc21mTHJ6cS9iRkVscjNxSDFiQ1BxczVIOUlIUzd4UGtzdy9w?=
+ =?utf-8?B?ZUhKQWJ0R200UTY0OHdkRmp2RVdmcG5keG1jMWVVazdEeHBJTUZSYzV2b0p6?=
+ =?utf-8?B?YnlZN1pSZmdib1Q4bkhUd1dHM2FOdWZKVVQzME8vazR0K0lpMHJtVlpBQmlP?=
+ =?utf-8?B?T2VzRVNVVFdPWE5FWjUxUkpVa1RlZ1M2V1pBeXN0eE1KRVNyRHdRZ3RIdmV0?=
+ =?utf-8?B?RlIvV3B2YnRTN2VUQ3dMdXBRWXZMR1YzR0dpcWorcTAxZXdBRVAzMWUwaG11?=
+ =?utf-8?B?Mkxrc0dTSHc3b1BmQ2tvdCtCV2FFVXd6UGNvY1RIWGhEN3dsM1B6RjNlOVRO?=
+ =?utf-8?B?MG5NZCt3VUIvWVpLVE5ESHZ1amhFUHhBdStLQXVGVVhLUFp0RE5DME1LOWQ3?=
+ =?utf-8?B?QjdZYkdWZTBpbFNoU1dmQ0wrSFc4enBaWXpkbXp6aXVDakdpL0MxNFljNEp5?=
+ =?utf-8?B?aExkZURWUmhNbU13NW80Y2lSNFhjVWViTGgvK2RXYkFKZEhhSEJwMUdvWU1h?=
+ =?utf-8?B?TVZwM3lpSmo2V0F1bmpKSDR2eVlPdnNRM2J6bURJcWFBeHFNUkUvTWd2Y01O?=
+ =?utf-8?B?TUxxcXJKY201Y3BWMDZhLzJZdUVwZzZSNkVFU2wxYjE5UFExbUIvNkNxZFRG?=
+ =?utf-8?B?MUJOSmdKZTRjcWlwa0pxcWs0Um5BMG4vMyt1bGRDUkVHNTBFcks0S2IxaU5O?=
+ =?utf-8?B?SXh0aCttWTc1cjRKTmZ3Y3JOaTdKUFFjU1JFRzFGQjc5UUhXVVY3eERQbGdx?=
+ =?utf-8?B?TkV2ckJwOGNVSDM2M3FRNExtckhUN2wwcDNmNU5RMityQ1JrM25qS3BZMmdP?=
+ =?utf-8?B?QTZTNitrdFRDM1IrTTg5ek9yMXh4NzF0MFZSVUxGVU1FRUdjQkQ3elRQKzVk?=
+ =?utf-8?B?TXE3QU1aYjBHODhXc2tGMHNkRys0QVlxVUUwd0FKNENhWUZ3OG94Wmp3Lyt3?=
+ =?utf-8?B?V2t3ZU5MNXNKT3BYb20xa0U5aTdFUGkwc0ZTYlVJL3Y4Z2xHMEJtOThKZENw?=
+ =?utf-8?B?R2g0dmU3bmt5Vys5VjNpemhjTDk2aTlXRUdEN3JSUGFMVjRBdSs2V281TEF6?=
+ =?utf-8?B?RVZ4K2YrR3ZxSDlURFBITW9jam5BeUY3dDczN0ZFNy85T2lEVmNtenFhYldW?=
+ =?utf-8?B?WTNER2J0WldaR1lWS1lFajlnSjYrdkF0bWlhY1paNS91TUs1YjZWaS9UdHk1?=
+ =?utf-8?B?Qm9RcHF3RHhBMC9oS2JObmg1TDExM0o0TWFqQWZLOFVjZmhUWmdsSG9aZlhT?=
+ =?utf-8?B?a24zam5tQ3ZFelY4VHFTMkxqSG9ITnVUamg2Mm9NQ3NEdDJ0SWdKelBKTXRp?=
+ =?utf-8?B?b1o1QTJTTWx4b241Y2hPUUw2NFBlbkVGQzB2a2pKc3VvV1N0R1RNeVl0c2hL?=
+ =?utf-8?B?SW14N0I5YmJVL05QU05LQnY1bHhpeVNDUGdjU3NxUDNxRG9ZTk9kSk45Zldu?=
+ =?utf-8?Q?AV/Y1/08?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a265c3b5-b7cc-4279-7176-08d8c8c07e5c
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB3099.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2021 03:53:55.5316
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D75FPFp9Hu/KBrMm/FckZDGtpPWoEEcpDrAQVKOKiVO1Uwly8h/fKc7MyBMS15OUozKfjxNK487py60w4XM73Vg21Cq1YT3+pTV61fCNEWk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB4975
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9884 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2102040020
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9884 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 impostorscore=0
+ mlxscore=0 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102040020
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 02, 2021 at 05:27:01PM +0100, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
-> 
-> Process's credentials point to a Landlock domain, which is underneath
-> implemented with a ruleset.  In the following commits, this domain is
-> used to check and enforce the ptrace and filesystem security policies.
-> A domain is inherited from a parent to its child the same way a thread
-> inherits a seccomp policy.
-> 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+> On Feb 3, 2021, at 11:49 AM, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
+>=20
+> This looks good to me, and it still works for my use case. Eric's
+> patchset only looks for asymmetric keys in the blacklist keyring, so
+> even if we use the same keyring we don't look for the same key types. My
+> patchset only allows blacklist keys (i.e. hashes, not asymmetric keys)
+> to be added by user space (if authenticated), but because Eric's
+> asymmetric keys are loaded with KEY_ALLOC_BYPASS_RESTRICTION, it should
+> be OK for his use case.  There should be no interference between the two
+> new features, but I find it a bit confusing to have such distinct use of
+> keys from the same keyring depending on their type.
 
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Reviewed-by: Jann Horn <jannh@google.com>
-> ---
-> 
-> Changes since v25:
-> * Rename function to landlock_add_cred_hooks().
-> 
-> Changes since v23:
-> * Add an early check for the current domain in hook_cred_free() to avoid
->   superfluous call.
-> * Cosmetic cleanup to make the code more readable.
-> 
-> Changes since v22:
-> * Add Reviewed-by: Jann Horn <jannh@google.com>
-> 
-> Changes since v21:
-> * Fix copyright dates.
-> 
-> Changes since v17:
-> * Constify returned domain pointers from landlock_get_current_domain()
->   and landlock_get_task_domain() helpers.
-> 
-> Changes since v15:
-> * Optimize landlocked() for current thread.
-> * Display the greeting message when everything is initialized.
-> 
-> Changes since v14:
-> * Uses pr_fmt from common.h .
-> * Constify variables.
-> * Remove useless NULL initialization.
-> 
-> Changes since v13:
-> * totally get ride of the seccomp dependency
-> * only keep credential management and LSM setup.
-> 
-> Previous changes:
-> https://lore.kernel.org/lkml/20191104172146.30797-4-mic@digikod.net/
-> ---
->  security/Kconfig           | 10 +++----
->  security/landlock/Makefile |  3 +-
->  security/landlock/common.h | 20 +++++++++++++
->  security/landlock/cred.c   | 46 ++++++++++++++++++++++++++++++
->  security/landlock/cred.h   | 58 ++++++++++++++++++++++++++++++++++++++
->  security/landlock/setup.c  | 31 ++++++++++++++++++++
->  security/landlock/setup.h  | 16 +++++++++++
->  7 files changed, 178 insertions(+), 6 deletions(-)
->  create mode 100644 security/landlock/common.h
->  create mode 100644 security/landlock/cred.c
->  create mode 100644 security/landlock/cred.h
->  create mode 100644 security/landlock/setup.c
->  create mode 100644 security/landlock/setup.h
-> 
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 15a4342b5d01..0ced7fd33e4d 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -278,11 +278,11 @@ endchoice
->  
->  config LSM
->  	string "Ordered list of enabled LSMs"
-> -	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> -	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> -	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> -	default "lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> -	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-> +	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> +	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> +	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> +	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> +	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
->  	help
->  	  A comma-separated list of LSMs, in initialization order.
->  	  Any LSMs left off this list will be ignored. This can be
-> diff --git a/security/landlock/Makefile b/security/landlock/Makefile
-> index d846eba445bb..041ea242e627 100644
-> --- a/security/landlock/Makefile
-> +++ b/security/landlock/Makefile
-> @@ -1,3 +1,4 @@
->  obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
->  
-> -landlock-y := object.o ruleset.o
-> +landlock-y := setup.o object.o ruleset.o \
-> +	cred.o
-> diff --git a/security/landlock/common.h b/security/landlock/common.h
-> new file mode 100644
-> index 000000000000..5dc0fe15707d
-> --- /dev/null
-> +++ b/security/landlock/common.h
-> @@ -0,0 +1,20 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Landlock LSM - Common constants and helpers
-> + *
-> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#ifndef _SECURITY_LANDLOCK_COMMON_H
-> +#define _SECURITY_LANDLOCK_COMMON_H
-> +
-> +#define LANDLOCK_NAME "landlock"
-> +
-> +#ifdef pr_fmt
-> +#undef pr_fmt
-> +#endif
-> +
-> +#define pr_fmt(fmt) LANDLOCK_NAME ": " fmt
-> +
-> +#endif /* _SECURITY_LANDLOCK_COMMON_H */
-> diff --git a/security/landlock/cred.c b/security/landlock/cred.c
-> new file mode 100644
-> index 000000000000..6725af24c684
-> --- /dev/null
-> +++ b/security/landlock/cred.c
-> @@ -0,0 +1,46 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Landlock LSM - Credential hooks
-> + *
-> + * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#include <linux/cred.h>
-> +#include <linux/lsm_hooks.h>
-> +
-> +#include "common.h"
-> +#include "cred.h"
-> +#include "ruleset.h"
-> +#include "setup.h"
-> +
-> +static int hook_cred_prepare(struct cred *const new,
-> +		const struct cred *const old, const gfp_t gfp)
-> +{
-> +	struct landlock_ruleset *const old_dom = landlock_cred(old)->domain;
-> +
-> +	if (old_dom) {
-> +		landlock_get_ruleset(old_dom);
-> +		landlock_cred(new)->domain = old_dom;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void hook_cred_free(struct cred *const cred)
-> +{
-> +	struct landlock_ruleset *const dom = landlock_cred(cred)->domain;
-> +
-> +	if (dom)
-> +		landlock_put_ruleset_deferred(dom);
-> +}
-> +
-> +static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
-> +	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
-> +	LSM_HOOK_INIT(cred_free, hook_cred_free),
-> +};
-> +
-> +__init void landlock_add_cred_hooks(void)
-> +{
-> +	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
-> +			LANDLOCK_NAME);
-> +}
-> diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-> new file mode 100644
-> index 000000000000..5f99d3decade
-> --- /dev/null
-> +++ b/security/landlock/cred.h
-> @@ -0,0 +1,58 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Landlock LSM - Credential hooks
-> + *
-> + * Copyright © 2019-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2019-2020 ANSSI
-> + */
-> +
-> +#ifndef _SECURITY_LANDLOCK_CRED_H
-> +#define _SECURITY_LANDLOCK_CRED_H
-> +
-> +#include <linux/cred.h>
-> +#include <linux/init.h>
-> +#include <linux/rcupdate.h>
-> +
-> +#include "ruleset.h"
-> +#include "setup.h"
-> +
-> +struct landlock_cred_security {
-> +	struct landlock_ruleset *domain;
-> +};
-> +
-> +static inline struct landlock_cred_security *landlock_cred(
-> +		const struct cred *cred)
-> +{
-> +	return cred->security + landlock_blob_sizes.lbs_cred;
-> +}
-> +
-> +static inline const struct landlock_ruleset *landlock_get_current_domain(void)
-> +{
-> +	return landlock_cred(current_cred())->domain;
-> +}
-> +
-> +/*
-> + * The call needs to come from an RCU read-side critical section.
-> + */
-> +static inline const struct landlock_ruleset *landlock_get_task_domain(
-> +		const struct task_struct *const task)
-> +{
-> +	return landlock_cred(__task_cred(task))->domain;
-> +}
-> +
-> +static inline bool landlocked(const struct task_struct *const task)
-> +{
-> +	bool has_dom;
-> +
-> +	if (task == current)
-> +		return !!landlock_get_current_domain();
-> +
-> +	rcu_read_lock();
-> +	has_dom = !!landlock_get_task_domain(task);
-> +	rcu_read_unlock();
-> +	return has_dom;
-> +}
-> +
-> +__init void landlock_add_cred_hooks(void);
-> +
-> +#endif /* _SECURITY_LANDLOCK_CRED_H */
-> diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-> new file mode 100644
-> index 000000000000..8661112fb238
-> --- /dev/null
-> +++ b/security/landlock/setup.c
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Landlock LSM - Security framework setup
-> + *
-> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/lsm_hooks.h>
-> +
-> +#include "common.h"
-> +#include "cred.h"
-> +#include "setup.h"
-> +
-> +struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
-> +	.lbs_cred = sizeof(struct landlock_cred_security),
-> +};
-> +
-> +static int __init landlock_init(void)
-> +{
-> +	landlock_add_cred_hooks();
-> +	pr_info("Up and running.\n");
-> +	return 0;
-> +}
-> +
-> +DEFINE_LSM(LANDLOCK_NAME) = {
-> +	.name = LANDLOCK_NAME,
-> +	.init = landlock_init,
-> +	.blobs = &landlock_blob_sizes,
-> +};
-> diff --git a/security/landlock/setup.h b/security/landlock/setup.h
-> new file mode 100644
-> index 000000000000..9fdbf33fcc33
-> --- /dev/null
-> +++ b/security/landlock/setup.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Landlock LSM - Security framework setup
-> + *
-> + * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
-> + * Copyright © 2018-2020 ANSSI
-> + */
-> +
-> +#ifndef _SECURITY_LANDLOCK_SETUP_H
-> +#define _SECURITY_LANDLOCK_SETUP_H
-> +
-> +#include <linux/lsm_hooks.h>
-> +
-> +extern struct lsm_blob_sizes landlock_blob_sizes;
-> +
-> +#endif /* _SECURITY_LANDLOCK_SETUP_H */
-> -- 
-> 2.30.0
+I agree, it is a bit confusing.  What is the thought of having a dbx=20
+keyring, similar to how the platform keyring works?
+
+https://www.spinics.net/lists/linux-security-module/msg40262.html
+
+
+> On 03/02/2021 17:26, David Howells wrote:
+>>=20
+>> Eric Snowberg <eric.snowberg@oracle.com> wrote:
+>>=20
+>>> This is the fifth patch series for adding support for=20
+>>> EFI_CERT_X509_GUID entries [1].  It has been expanded to not only inclu=
+de
+>>> dbx entries but also entries in the mokx.  Additionally my series to
+>>> preload these certificate [2] has also been included.
+>>=20
+>> Okay, I've tentatively applied this to my keys-next branch.  However, it
+>> conflicts minorly with Micka=C3=ABl Sala=C3=BCn's patches that I've prev=
+iously merged on
+>> the same branch.  Can you have a look at the merge commit
+>>=20
+>> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/c=
+ommit/?h=3Dkeys-next&id=3Dfdbbe7ceeb95090d09c33ce0497e0394c82aa33d
+>>=20
+>> 	(the top patch of my keys-next branch)
+>>=20
+>> to see if that is okay by both of you?  If so, can you give it a whirl?
+
+
+I=E2=80=99m seeing a build error within blacklist_hashes_checked with
+one of my configs.
+
+The config is as follows:
+
+$ grep CONFIG_SYSTEM_BLACKLIST_HASH_LIST .config
+CONFIG_SYSTEM_BLACKLIST_HASH_LIST=3D=E2=80=9Crevocation_list"
+
+$ cat certs/revocation_list
+"tbs:1e125ea4f38acb7b29b0c495fd8e7602c2c3353b913811a9da3a2fb505c08a32=E2=80=
+=9D
+
+make[1]: *** No rule to make target 'revocation_list', needed by 'certs/bla=
+cklist_hashes_checked'.  Stop.
+
+
