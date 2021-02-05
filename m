@@ -2,179 +2,180 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F32C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 18:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3917EC433E9
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 20:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A04B164E43
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 18:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D793364FBF
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 20:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233378AbhBEQXr (ORCPT
+        id S233348AbhBESae (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Feb 2021 11:23:47 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:60652 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233608AbhBEQUP (ORCPT
+        Fri, 5 Feb 2021 13:30:34 -0500
+Received: from mail.hallyn.com ([178.63.66.53]:53330 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233134AbhBEPND (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Feb 2021 11:20:15 -0500
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 1578A205CF84;
-        Fri,  5 Feb 2021 10:01:54 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1578A205CF84
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1612548115;
-        bh=sG8c3V5j/GNMfkgLTSc6ef1pV212YYCAuyDQ9vNbitQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aTJv5WEdDWXiv8DSub2T2iKWOi+ew0aC6UN8s5QsIqPWkvmYtKxOXfQuQE8G3CiOr
-         OlGlTYH021e0UCSihAbUPmTHLnp15ETkiJnV3SnPAldNne5OXhCZcX6lCvBdEhddAJ
-         q16xUifV5+fGOvx3S9QkRJLhHakg0iVshK0Q5rmc=
-Date:   Fri, 5 Feb 2021 12:01:47 -0600
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mark Salyzyn <salyzyn@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-kernel@vger.kernel.org,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        LSM <linux-security-module@vger.kernel.org>,
+        Fri, 5 Feb 2021 10:13:03 -0500
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 30841283; Fri,  5 Feb 2021 08:21:43 -0600 (CST)
+Date:   Fri, 5 Feb 2021 08:21:43 -0600
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>, linux-doc@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>
-Subject: Re: [RESEND PATCH v18 2/4] overlayfs: handle XATTR_NOSECURITY flag
- for get xattr method
-Message-ID: <20210205180131.GA648953@sequoia>
-References: <20201021151903.652827-1-salyzyn@android.com>
- <20201021151903.652827-3-salyzyn@android.com>
- <CAJfpegtMoD85j5namV592sJD23QeUMD=+tq4SvFDqjVxsAszYQ@mail.gmail.com>
- <2fd64e4f-c573-c841-abb6-ec0908f78cdd@android.com>
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v28 06/12] fs,security: Add sb_delete hook
+Message-ID: <20210205142143.GA18451@mail.hallyn.com>
+References: <20210202162710.657398-1-mic@digikod.net>
+ <20210202162710.657398-7-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2fd64e4f-c573-c841-abb6-ec0908f78cdd@android.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210202162710.657398-7-mic@digikod.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2020-10-30 09:00:35, Mark Salyzyn wrote:
-> On 10/30/20 8:07 AM, Miklos Szeredi wrote:
-> > On Wed, Oct 21, 2020 at 5:19 PM Mark Salyzyn <salyzyn@android.com> wrote:
-> > > Because of the overlayfs getxattr recursion, the incoming inode fails
-> > > to update the selinux sid resulting in avc denials being reported
-> > > against a target context of u:object_r:unlabeled:s0.
-> > > 
-> > > Solution is to respond to the XATTR_NOSECURITY flag in get xattr
-> > > method that calls the __vfs_getxattr handler instead so that the
-> > > context can be read in, rather than being denied with an -EACCES
-> > > when vfs_getxattr handler is called.
-> > > 
-> > > For the use case where access is to be blocked by the security layer.
-> > > 
-> > > The path then would be security(dentry) ->
-> > > __vfs_getxattr({dentry...XATTR_NOSECURITY}) ->
-> > > handler->get({dentry...XATTR_NOSECURITY}) ->
-> > > __vfs_getxattr({realdentry...XATTR_NOSECURITY}) ->
-> > > lower_handler->get({realdentry...XATTR_NOSECURITY}) which
-> > > would report back through the chain data and success as expected,
-> > > the logging security layer at the top would have the data to
-> > > determine the access permissions and report back to the logs and
-> > > the caller that the target context was blocked.
-> > > 
-> > > For selinux this would solve the cosmetic issue of the selinux log
-> > > and allow audit2allow to correctly report the rule needed to address
-> > > the access problem.
-> > > 
-> > > Check impure, opaque, origin & meta xattr with no sepolicy audit
-> > > (using __vfs_getxattr) since these operations are internal to
-> > > overlayfs operations and do not disclose any data.  This became
-> > > an issue for credential override off since sys_admin would have
-> > > been required by the caller; whereas would have been inherently
-> > > present for the creator since it performed the mount.
-> > > 
-> > > This is a change in operations since we do not check in the new
-> > > ovl_do_getxattr function if the credential override is off or not.
-> > > Reasoning is that the sepolicy check is unnecessary overhead,
-> > > especially since the check can be expensive.
-> > > 
-> > > Because for override credentials off, this affects _everyone_ that
-> > > underneath performs private xattr calls without the appropriate
-> > > sepolicy permissions and sys_admin capability.  Providing blanket
-> > > support for sys_admin would be bad for all possible callers.
-> > > 
-> > > For the override credentials on, this will affect only the mounter,
-> > > should it lack sepolicy permissions. Not considered a security
-> > > problem since mounting by definition has sys_admin capabilities,
-> > > but sepolicy contexts would still need to be crafted.
-> > This would be a problem when unprivileged mounting of overlay is
-> > introduced.  I'd really like to avoid weakening the current security
-> > model.
+On Tue, Feb 02, 2021 at 05:27:04PM +0100, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
 > 
-> The current security model does not deal with non-overlapping security
-> contexts between init (which on android has MAC permissions only when
-> necessary, only enough permissions to perform the mount and other mundane
-> operations, missing exec and read permissions in key spots) and user calls.
+> The sb_delete security hook is called when shutting down a superblock,
+> which may be useful to release kernel objects tied to the superblock's
+> lifetime (e.g. inodes).
 > 
-> We are only weakening (that is actually an incorrect statement, security is
-> there, just not double security of both mounter and caller) the security
-> around calls that retrieve the xattr for administrative and internal
-> purposes. No data is exposed to the caller that it would not otherwise have
-> permissions for.
+> This new hook is needed by Landlock to release (ephemerally) tagged
+> struct inodes.  This comes from the unprivileged nature of Landlock
+> described in the next commit.
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
 
-We've ran into the same issues that Mark is trying to solve with this
-series. I came across Mark's series while searching around before I
-wrote up a similar patch to Mark's patch #3.
+One note below, but
 
-We have a confined process that sets up Overlayfs mounts, then that process
-starts a service confined by another security context, then that service
-may execute binaries that run under a third security context. In this
-case, I'm talking about SELinux security contexts but it could be
-AppArmor or anything else that you use to separate out
-privileges/permissions at fine-grained detail.
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-We don't want to grant all the privileges/permissions required by the
-service (and its helper utilities) to the process that sets up the
-Overlayfs mounts because we've been very careful in separating them
-apart with security policy. However, we want to make use of Overlayfs
-and adding a mount option to bypass the check on the mounter's cred
-seems like a safe way of using Overlayfs without violating our principle
-of least privilege.
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
+> ---
+> 
+> Changes since v22:
+> * Add Reviewed-by: Jann Horn <jannh@google.com>
+> 
+> Changes since v17:
+> * Initial patch to replace the direct call to landlock_release_inodes()
+>   (requested by James Morris).
+>   https://lore.kernel.org/lkml/alpine.LRH.2.21.2005150536440.7929@namei.org/
+> ---
+>  fs/super.c                    | 1 +
+>  include/linux/lsm_hook_defs.h | 1 +
+>  include/linux/lsm_hooks.h     | 2 ++
+>  include/linux/security.h      | 4 ++++
+>  security/security.c           | 5 +++++
+>  5 files changed, 13 insertions(+)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 2c6cdea2ab2d..c3c5178cde65 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -454,6 +454,7 @@ void generic_shutdown_super(struct super_block *sb)
+>  		evict_inodes(sb);
+>  		/* only nonzero refcount inodes can have marks */
+>  		fsnotify_sb_delete(sb);
+> +		security_sb_delete(sb);
+>  
+>  		if (sb->s_dio_done_wq) {
+>  			destroy_workqueue(sb->s_dio_done_wq);
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 7aaa753b8608..32472b3849bc 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -59,6 +59,7 @@ LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
+>  LSM_HOOK(int, -ENOPARAM, fs_context_parse_param, struct fs_context *fc,
+>  	 struct fs_parameter *param)
+>  LSM_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
+> +LSM_HOOK(void, LSM_RET_VOID, sb_delete, struct super_block *sb)
+>  LSM_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
+>  LSM_HOOK(void, LSM_RET_VOID, sb_free_mnt_opts, void *mnt_opts)
+>  LSM_HOOK(int, 0, sb_eat_lsm_opts, char *orig, void **mnt_opts)
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 970106d98306..e339b201f79b 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -108,6 +108,8 @@
+>   *	allocated.
+>   *	@sb contains the super_block structure to be modified.
+>   *	Return 0 if operation was successful.
+> + * @sb_delete:
+> + *	Release objects tied to a superblock (e.g. inodes).
 
-Tyler
+It's customary here to add the line detailing the @sb argument.
 
-> 
-> This patch becomes necessary when matched with the PATCH v18 3/4 of the
-> series which fixes the user space break introduced in ~4.6 that formerly
-> used the callers credentials for all accesses in all places. Security is
-> weakened already as-is in overlayfs with all the overriding of the
-> credentials for internal accesses to overlayfs mechanics based on the
-> mounter credentials. Using the mounter credentials as a wider security hole
-> is the problem, at least with PATCH v18 3/4 of the series we go back
-> optionally to only using the caller's credentials to perform the operations.
-> Admittedly some of the internal operations like mknod are privileged, but at
-> least in Android's use case we are not using them with callers without the
-> necessary credentials.
-> 
-> Android does not give the mounter more credentials than the callers, there
-> is very little overlap in the MAC security.
-> 
-> > The big API churn in the 1/4 patch also seems excessive considering
-> > that this seems to be mostly a cosmetic issue for android.  Am I
-> > missing something?
-> 
-> Breaks sepolicy, it no longer has access to the context data at the
-> overlayfs security boundary.
-> 
-> unknown is a symptom of being denied based on the denial to xattr data from
-> the underlying filesystem layer. Being denied the security context of the
-> target is not a good thing within the sepolicy security layer.
-> 
-> > 
-> > Thanks,
-> > Miklos
-> 
-> 
+>   * @sb_free_security:
+>   *	Deallocate and clear the sb->s_security field.
+>   *	@sb contains the super_block structure to be modified.
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index c35ea0ffccd9..c41a94e29b62 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -288,6 +288,7 @@ void security_bprm_committed_creds(struct linux_binprm *bprm);
+>  int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
+>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
+>  int security_sb_alloc(struct super_block *sb);
+> +void security_sb_delete(struct super_block *sb);
+>  void security_sb_free(struct super_block *sb);
+>  void security_free_mnt_opts(void **mnt_opts);
+>  int security_sb_eat_lsm_opts(char *options, void **mnt_opts);
+> @@ -620,6 +621,9 @@ static inline int security_sb_alloc(struct super_block *sb)
+>  	return 0;
+>  }
+>  
+> +static inline void security_sb_delete(struct super_block *sb)
+> +{ }
+> +
+>  static inline void security_sb_free(struct super_block *sb)
+>  { }
+>  
+> diff --git a/security/security.c b/security/security.c
+> index 9f979d4afe6c..1b4a73b2549a 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -900,6 +900,11 @@ int security_sb_alloc(struct super_block *sb)
+>  	return rc;
+>  }
+>  
+> +void security_sb_delete(struct super_block *sb)
+> +{
+> +	call_void_hook(sb_delete, sb);
+> +}
+> +
+>  void security_sb_free(struct super_block *sb)
+>  {
+>  	call_void_hook(sb_free_security, sb);
+> -- 
+> 2.30.0
