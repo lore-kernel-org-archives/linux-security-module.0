@@ -2,128 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C9E7C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 22:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B6DC433DB
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 22:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 487BD64FDC
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 22:28:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E28764FF0
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Feb 2021 22:28:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232045AbhBEW1w (ORCPT
+        id S232204AbhBEW15 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Feb 2021 17:27:52 -0500
-Received: from mail.efficios.com ([167.114.26.124]:35742 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232530AbhBEOUL (ORCPT
+        Fri, 5 Feb 2021 17:27:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41414 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232469AbhBEOWY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Feb 2021 09:20:11 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 741BA2F5596;
-        Fri,  5 Feb 2021 10:47:24 -0500 (EST)
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 3ZcViJeHTbM7; Fri,  5 Feb 2021 10:47:24 -0500 (EST)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.efficios.com (Postfix) with ESMTP id 2F9D82F525A;
-        Fri,  5 Feb 2021 10:47:24 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2F9D82F525A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1612540044;
-        bh=ZXtGfhUUpSW4u0bX1WooGA5Q3gzcpG1PUwkvcXyaLTU=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=p+4bYaWCdwfak1HNYVCsqSpeNWi5ovhrvVkrlQteUQRPMq/26Q77BnCjX2vOcLX7r
-         tg35CZviuorDXS+TgFx54FbO1+81gltqXsoEx9sRLGKX1xbxdXBU+cixGHtu1/ZGGk
-         YyKuANv10Eye4N4yHttkG0eMvF9zBOk+abfMwMQNoXUB4Oi03+A1+vuSt/Ki+e72JF
-         zNd0KAxwHStPXfP1FEfE2b1OVnL//uE9wjOERQOHVM4dyHqDzBgJ2LeFHBQ473hpeI
-         SBRRAslWj1gF/0TpKnv1uPTKoHWQp7J3W92SW279rzxUHu84HicwEV8b1sf/XfQDsJ
-         rPu0YtPdhaS7A==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([127.0.0.1])
-        by localhost (mail03.efficios.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id kfv6S17tFsoc; Fri,  5 Feb 2021 10:47:24 -0500 (EST)
-Received: from mail03.efficios.com (mail03.efficios.com [167.114.26.124])
-        by mail.efficios.com (Postfix) with ESMTP id 1B1DD2F5252;
-        Fri,  5 Feb 2021 10:47:24 -0500 (EST)
-Date:   Fri, 5 Feb 2021 10:47:23 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Peter Zijlstra <peterz@infradead.org>
+        Fri, 5 Feb 2021 09:22:24 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C51B8C06121C;
+        Fri,  5 Feb 2021 07:59:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=p8yliEbMqP3V4TzvseSTLJIbhTkc7zBiOssiRDK3Nzk=; b=uwYQHBNsUi+sKrXn/Gp+6afzBg
+        Xns98RH8bmqXcEhJIa8XRSVjoGdo4DpAwHn3yNX/rJ73sh+V204eiqAmvwGalKgqkQAghHOGKBwjN
+        R4Ben6HR849Yd+CPx466InoUjG3/6v6zyhQdt0gzl9V2xt3B9iLCLpEtK0F38gpMavuyO5bW7W0jt
+        ZibdfTAwuLyk6woueT/BIt9iMEdBu7xEkgsboGf0JRhKjXh+ePIbupKU1bJQ4IarZyfibFDRNL4IY
+        Cnt1B3Bg1gfsBKHmBd4wasZGMrJSXKg5kQYzQKEMUjTTz9CXlZ2GUK1kx+VIXf9YdBZKFlhXoNpyv
+        sboo4gUw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94 #2 (Red Hat Linux))
+        id 1l83DR-002Sec-9G; Fri, 05 Feb 2021 15:40:14 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0DB8E3012DF;
+        Fri,  5 Feb 2021 16:40:11 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EAD3D2BC43F6C; Fri,  5 Feb 2021 16:40:10 +0100 (CET)
+Date:   Fri, 5 Feb 2021 16:40:10 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc:     Brendan Jackman <jackmanb@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
         Paul Renauld <renauld@google.com>,
         Alexei Starovoitov <ast@kernel.org>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        James Morris <jmorris@namei.org>, Paul Turner <pjt@google.com>,
-        Jann Horn <jannh@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Kees Cook <keescook@chromium.org>, thgarnie@chromium.org,
-        kpsingh@google.com,
-        paul renauld epfl <paul.renauld.epfl@gmail.com>,
-        Brendan Jackman <jackmanb@google.com>,
-        rostedt <rostedt@goodmis.org>
-Message-ID: <47845502.8614.1612540043986.JavaMail.zimbra@efficios.com>
-In-Reply-To: <YB1m2i6bUM0LO5wS@hirez.programming.kicks-ass.net>
-References: <20200820164753.3256899-1-jackmanb@chromium.org> <20210205150926.GA12608@localhost> <YB1m2i6bUM0LO5wS@hirez.programming.kicks-ass.net>
+        James Morris <jmorris@namei.org>, pjt@google.com,
+        jannh@google.com, rafael.j.wysocki@intel.com,
+        keescook@chromium.org, thgarnie@chromium.org, kpsingh@google.com,
+        paul.renauld.epfl@gmail.com, Brendan Jackman <jackmanb@google.com>,
+        rostedt@goodmis.org
 Subject: Re: [RFC] security: replace indirect calls with static calls
+Message-ID: <YB1m2i6bUM0LO5wS@hirez.programming.kicks-ass.net>
+References: <20200820164753.3256899-1-jackmanb@chromium.org>
+ <20210205150926.GA12608@localhost>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.26.124]
-X-Mailer: Zimbra 8.8.15_GA_3996 (ZimbraWebClient - FF84 (Linux)/8.8.15_GA_3996)
-Thread-Topic: security: replace indirect calls with static calls
-Thread-Index: RuVbmUup0iOFmIVlAbpninCycfmfRw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210205150926.GA12608@localhost>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
------ On Feb 5, 2021, at 10:40 AM, Peter Zijlstra peterz@infradead.org wrote:
-
-> On Fri, Feb 05, 2021 at 10:09:26AM -0500, Mathieu Desnoyers wrote:
->> Then we should be able to generate the following using static keys as a
->> jump table and N static calls:
->> 
->>   jump <static key label target>
->> label_N:
->>   stack setup
->>   call
->> label_N-1:
->>   stack setup
->>   call
->> label_N-2:
->>   stack setup
->>   call
->>   ...
->> label_0:
->>   jump end
->> label_fallback:
->>   <iteration and indirect calls>
->> end:
->> 
->> So the static keys would be used to jump to the appropriate label (using
->> a static branch, which has pretty much 0 overhead). Static calls would
->> be used to implement each of the calls.
->> 
->> Thoughts ?
+On Fri, Feb 05, 2021 at 10:09:26AM -0500, Mathieu Desnoyers wrote:
+> Then we should be able to generate the following using static keys as a
+> jump table and N static calls:
 > 
-> At some point I tried to extend the static_branch infra to do multiple
-> targets and while the low level plumbing is trivial, I ran into trouble
-> trying to get a sane C level API for it.
+>   jump <static key label target>
+> label_N:
+>   stack setup
+>   call
+> label_N-1:
+>   stack setup
+>   call
+> label_N-2:
+>   stack setup
+>   call
+>   ...
+> label_0:
+>   jump end
+> label_fallback:
+>   <iteration and indirect calls>
+> end:
+> 
+> So the static keys would be used to jump to the appropriate label (using
+> a static branch, which has pretty much 0 overhead). Static calls would
+> be used to implement each of the calls.
+> 
+> Thoughts ?
 
-Did you try doing an API for a variable number of targets, or was it for
-a specific number of targets ? It might be easier to just duplicate some
-of the API code for number of targets between 2 and 12, and let the
-users code choose the maximum number of targets they want to accelerate.
-
-Thanks,
-
-Mathieu
+At some point I tried to extend the static_branch infra to do multiple
+targets and while the low level plumbing is trivial, I ran into trouble
+trying to get a sane C level API for it.
 
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
