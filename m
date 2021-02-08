@@ -5,46 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A74C4332D
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A07AC41621
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB0864E7D
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2E2164E28
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235413AbhBHSFv (ORCPT
+        id S232317AbhBHSIa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Feb 2021 13:05:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46608 "EHLO mail.kernel.org"
+        Mon, 8 Feb 2021 13:08:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235224AbhBHSCk (ORCPT
+        id S235029AbhBHSDf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Feb 2021 13:02:40 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0073164E28;
-        Mon,  8 Feb 2021 17:59:07 +0000 (UTC)
+        Mon, 8 Feb 2021 13:03:35 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 950A264EF6;
+        Mon,  8 Feb 2021 17:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612807148;
-        bh=5e4tC4Btutnd/bhQJAS+nr2xqEyU7jDdOuqQ1hKVII8=;
+        s=k20201202; t=1612807173;
+        bh=rVJgB9uoEMske98CMdEnJ6XPfiY1kyWyMRA678gkH4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rX3YUkBIFxZoSiCPCYUPh3jjNitxFNMOp10fkyMZio6zO8Ay3BhO7emlxBkM7UMyZ
-         B7rhePQTvK5eWcTqLmc7GE2YNwctnFL9GuK4NiLFseaC0EpfGU+d5k7EYOJ8MpfSLI
-         kQP7JwqH+TveKW/OA9mjjXTH+FOd07H8Dnjsit4uLJB0akpWgRTp1SSPylnh9LJo8B
-         rV4NGvGnJYXRUWHGNhgleFXtp/bIuhwWcWQpxOEBrtVI7ePIN1BxCM4rsF/imSyAst
-         aHa8WmLGB24S9dUoogVji3ejsEAkB22xcVEVlHiGzN/go+chnmPPIiszCX5FRWzH8z
-         L8h6x0jNaDGpg==
+        b=Uwx5WuD06ppaAUZmlQdPgnbspP6E75C4fboJdMUxCQO3jsdXXE2NwyU6ZevRYxRaq
+         d8ISXrtXq3sZIdBzwlrSnxoVCaaGea74/4SZGrkiAgLoxWU//hepvu8WVctpnwYdg/
+         mUuas1NZq0UVbURRN19kujqHWsmfpZy7Xh0IqflAmNFeg4b956hmk3hEpGvyA1+0b5
+         hTmdFFgt9sE4DUwg88vdOQmN0uVQ6GjoTKx1tqiOxIZh9jNYk9Ckg+K/7H+t0UOA8K
+         0RgUVaxiWn2YsjVRTGbfa0sZ3wZqg4zeRIaUmvMhZrE0WoY30T1d5tJ/vIKJdrMxUr
+         NFAyLLg5wR6Rg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 07/19] cap: fix conversions on getxattr
-Date:   Mon,  8 Feb 2021 12:58:46 -0500
-Message-Id: <20210208175858.2092008-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 05/14] cap: fix conversions on getxattr
+Date:   Mon,  8 Feb 2021 12:59:17 -0500
+Message-Id: <20210208175926.2092211-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210208175858.2092008-1-sashal@kernel.org>
-References: <20210208175858.2092008-1-sashal@kernel.org>
+In-Reply-To: <20210208175926.2092211-1-sashal@kernel.org>
+References: <20210208175926.2092211-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,10 +75,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 43 insertions(+), 24 deletions(-)
 
 diff --git a/security/commoncap.c b/security/commoncap.c
-index 0ca31c8bc0b13..28a6939bcc4e5 100644
+index f86557a8e43f6..a1dee0ab345a2 100644
 --- a/security/commoncap.c
 +++ b/security/commoncap.c
-@@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+@@ -377,10 +377,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
  {
  	int size, ret;
  	kuid_t kroot;
@@ -91,7 +91,7 @@ index 0ca31c8bc0b13..28a6939bcc4e5 100644
  	struct dentry *dentry;
  	struct user_namespace *fs_ns;
  
-@@ -396,46 +397,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+@@ -402,46 +403,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
  	fs_ns = inode->i_sb->s_user_ns;
  	cap = (struct vfs_cap_data *) tmpbuf;
  	if (is_v2header((size_t) ret, cap)) {
@@ -175,7 +175,7 @@ index 0ca31c8bc0b13..28a6939bcc4e5 100644
  			magic = VFS_CAP_REVISION_2;
  			nsmagic = le32_to_cpu(nscap->magic_etc);
  			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
-@@ -443,9 +459,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+@@ -449,9 +465,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
  			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
  			cap->magic_etc = cpu_to_le32(magic);
  		} else {
