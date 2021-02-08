@@ -2,193 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8195C43331
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5D4C433E9
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 20:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84CEE64E28
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:08:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 688D764EBA
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 20:02:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234660AbhBHSIe (ORCPT
+        id S235814AbhBHUBd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Feb 2021 13:08:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46560 "EHLO mail.kernel.org"
+        Mon, 8 Feb 2021 15:01:33 -0500
+Received: from namei.org ([65.99.196.166]:43100 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235194AbhBHSEP (ORCPT
+        id S236506AbhBHUBL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Feb 2021 13:04:15 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 46D4964EF1;
-        Mon,  8 Feb 2021 17:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612807194;
-        bh=OVfDDobJYiOrWYtuDrBEP6uAl6IYNloJlro+QdTzcAA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gg0OkGnUbquPguTZlVwQmGYwjb/qZmXI9YLQ34+QFcSSDYWUbSsj633QUoSwe5KqA
-         2uVsnYrcDkIzV2yAd6n0vwnHt4xmdaA7tDHrVVvnjZhLSmZ7i5eUm3MctE7RRxZErb
-         aOMJck0A4J55Oi9v2a2X9XAL1D1kpmXArKZ4i/gKLVXWGYwpoo22VC5OaCiCmC0POv
-         z8nbchiRuYAgCvgTSWBUbe+odR5yXUx0DFTqU7rdECtUIWCYrGlpCVLsZZhPwXXEXl
-         5xp+mMwkLU5UeKseXwdS+H1k8hBQ1FCP2wUq5/7rkiNAaqVerA4RfsDvZw6+HuzTet
-         SXORQF1H7Q+Bg==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 5/9] cap: fix conversions on getxattr
-Date:   Mon,  8 Feb 2021 12:59:42 -0500
-Message-Id: <20210208175946.2092374-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210208175946.2092374-1-sashal@kernel.org>
-References: <20210208175946.2092374-1-sashal@kernel.org>
+        Mon, 8 Feb 2021 15:01:11 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id C33199C4;
+        Mon,  8 Feb 2021 19:59:01 +0000 (UTC)
+Date:   Tue, 9 Feb 2021 06:59:01 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     linux-security-module@vger.kernel.org
+cc:     linux-kernel@vger.kernel.org, lwn@lwn.net,
+        fedora-selinux-list@redhat.com, linux-crypto@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Audit-ML <linux-audit@redhat.com>, gentoo-hardened@gentoo.org,
+        keyrings@linux-nfs.org, tpmdd-devel@lists.sourceforge.net,
+        Linux Security Summit Program Committee 
+        <lss-pc@lists.linuxfoundation.org>
+Subject: [ANNOUNCE][CFP] Linux Security Summit 2021
+Message-ID: <c244f77-56a1-c089-521d-2e670488c10@namei.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+==============================================================================
+                   ANNOUNCEMENT AND CALL FOR PARTICIPATION
 
-[ Upstream commit f2b00be488730522d0fb7a8a5de663febdcefe0a ]
+                         LINUX SECURITY SUMMIT 2021
+                             
+                              27-29 September
+                              Dublin, Ireland
+==============================================================================
 
-If a capability is stored on disk in v2 format cap_inode_getsecurity() will
-currently return in v2 format unconditionally.
-
-This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
-and so the same conversions performed on it.
-
-If the rootid cannot be mapped, v3 is returned unconverted.  Fix this so
-that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
-user namespace in case of v2) cannot be mapped into the current user
-namespace.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
- 1 file changed, 43 insertions(+), 24 deletions(-)
-
-diff --git a/security/commoncap.c b/security/commoncap.c
-index ac031fa391908..bf689d61b293c 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -378,10 +378,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- {
- 	int size, ret;
- 	kuid_t kroot;
-+	u32 nsmagic, magic;
- 	uid_t root, mappedroot;
- 	char *tmpbuf = NULL;
- 	struct vfs_cap_data *cap;
--	struct vfs_ns_cap_data *nscap;
-+	struct vfs_ns_cap_data *nscap = NULL;
- 	struct dentry *dentry;
- 	struct user_namespace *fs_ns;
+DESCRIPTION
  
-@@ -403,46 +404,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 	fs_ns = inode->i_sb->s_user_ns;
- 	cap = (struct vfs_cap_data *) tmpbuf;
- 	if (is_v2header((size_t) ret, cap)) {
--		/* If this is sizeof(vfs_cap_data) then we're ok with the
--		 * on-disk value, so return that.  */
--		if (alloc)
--			*buffer = tmpbuf;
--		else
--			kfree(tmpbuf);
--		return ret;
--	} else if (!is_v3header((size_t) ret, cap)) {
--		kfree(tmpbuf);
--		return -EINVAL;
-+		root = 0;
-+	} else if (is_v3header((size_t) ret, cap)) {
-+		nscap = (struct vfs_ns_cap_data *) tmpbuf;
-+		root = le32_to_cpu(nscap->rootid);
-+	} else {
-+		size = -EINVAL;
-+		goto out_free;
- 	}
+Linux Security Summit (LSS) is a technical forum for collaboration between
+Linux developers, researchers, and end-users.  Its primary aim is to foster
+community efforts in analyzing and solving Linux security challenges.
+
+ The program committee currently seeks proposals for:
  
--	nscap = (struct vfs_ns_cap_data *) tmpbuf;
--	root = le32_to_cpu(nscap->rootid);
- 	kroot = make_kuid(fs_ns, root);
+   * Refereed Presentations:
+     45 minutes in length.
  
- 	/* If the root kuid maps to a valid uid in current ns, then return
- 	 * this as a nscap. */
- 	mappedroot = from_kuid(current_user_ns(), kroot);
- 	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
-+		size = sizeof(struct vfs_ns_cap_data);
- 		if (alloc) {
--			*buffer = tmpbuf;
-+			if (!nscap) {
-+				/* v2 -> v3 conversion */
-+				nscap = kzalloc(size, GFP_ATOMIC);
-+				if (!nscap) {
-+					size = -ENOMEM;
-+					goto out_free;
-+				}
-+				nsmagic = VFS_CAP_REVISION_3;
-+				magic = le32_to_cpu(cap->magic_etc);
-+				if (magic & VFS_CAP_FLAGS_EFFECTIVE)
-+					nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
-+				memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
-+				nscap->magic_etc = cpu_to_le32(nsmagic);
-+			} else {
-+				/* use allocated v3 buffer */
-+				tmpbuf = NULL;
-+			}
- 			nscap->rootid = cpu_to_le32(mappedroot);
--		} else
--			kfree(tmpbuf);
--		return size;
-+			*buffer = nscap;
-+		}
-+		goto out_free;
- 	}
+   * Panel Discussion Topics:
+     45 minutes in length.
  
- 	if (!rootid_owns_currentns(kroot)) {
--		kfree(tmpbuf);
--		return -EOPNOTSUPP;
-+		size = -EOVERFLOW;
-+		goto out_free;
- 	}
+   * Short Topics:
+     30 minutes in total, including at least 10 minutes discussion.
  
- 	/* This comes from a parent namespace.  Return as a v2 capability */
- 	size = sizeof(struct vfs_cap_data);
- 	if (alloc) {
--		*buffer = kmalloc(size, GFP_ATOMIC);
--		if (*buffer) {
--			struct vfs_cap_data *cap = *buffer;
--			__le32 nsmagic, magic;
-+		if (nscap) {
-+			/* v3 -> v2 conversion */
-+			cap = kzalloc(size, GFP_ATOMIC);
-+			if (!cap) {
-+				size = -ENOMEM;
-+				goto out_free;
-+			}
- 			magic = VFS_CAP_REVISION_2;
- 			nsmagic = le32_to_cpu(nscap->magic_etc);
- 			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
-@@ -450,9 +466,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
- 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
- 			cap->magic_etc = cpu_to_le32(magic);
- 		} else {
--			size = -ENOMEM;
-+			/* use unconverted v2 */
-+			tmpbuf = NULL;
- 		}
-+		*buffer = cap;
- 	}
-+out_free:
- 	kfree(tmpbuf);
- 	return size;
- }
--- 
-2.27.0
+   * Tutorials
+     90 minutes in length.
+ 
+Tutorial sessions should be focused on advanced Linux security defense
+topics within areas such as the kernel, compiler, and security-related
+libraries.  Priority will be given to tutorials created for this conference,
+and those where the presenter a leading subject matter expert on the topic.
+ 
+Topic areas include, but are not limited to:
+ 
+   * Kernel self-protection
+   * Access control
+   * Cryptography and key management
+   * Integrity policy and enforcement
+   * Hardware Security
+   * IoT and embedded security
+   * Virtualization and containers
+   * System-specific system hardening
+   * Case studies
+   * Security tools
+   * Security UX
+   * Emerging technologies, threats & techniques
+
+  Proposals should be submitted via:
+    https://events.linuxfoundation.org/linux-security-summit-europe/program/cfp/
+
+
+** Note that for 2021, the North American and European events are combined into
+a single event planned for Dublin, Ireland. **
+ 
+
+DATES
+ 
+  * CFP close:            June 27
+  * CFP notifications:    July 20
+  * Schedule announced:   July 22
+  * Event:                September 27-29
+
+WHO SHOULD ATTEND
+ 
+We're seeking a diverse range of attendees and welcome participation by
+people involved in Linux security development, operations, and research.
+ 
+LSS is a unique global event that provides the opportunity to present and
+discuss your work or research with key Linux security community members and
+maintainers.  It's also useful for those who wish to keep up with the latest
+in Linux security development and to provide input to the development
+process.
+
+WEB SITE
+
+    https://events.linuxfoundation.org/linux-security-summit-europe/
+
+TWITTER
+
+  For event updates and announcements, follow:
+
+    https://twitter.com/LinuxSecSummit
+  
+    #linuxsecuritysummit
+
+PROGRAM COMMITTEE
+
+  The program committee for LSS 2021 is:
+
+    * James Morris, Microsoft
+    * Serge Hallyn, Cisco
+    * Paul Moore, Cisco
+    * Stephen Smalley, NSA
+    * Elena Reshetova, Intel
+    * John Johansen, Canonical
+    * Kees Cook, Google
+    * Casey Schaufler, Intel
+    * Mimi Zohar, IBM
+    * David A. Wheeler, Institute for Defense Analyses
+
+  The program committee may be contacted as a group via email:
+    lss-pc () lists.linuxfoundation.org
 
