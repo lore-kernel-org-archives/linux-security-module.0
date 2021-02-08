@@ -2,184 +2,193 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A19C433DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 14:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFC5C433DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFBF64DD4
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 14:41:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E15E064DE1
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbhBHOkr (ORCPT
+        id S235220AbhBHSBv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Feb 2021 09:40:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232153AbhBHOjl (ORCPT
+        Mon, 8 Feb 2021 13:01:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235131AbhBHR7r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Feb 2021 09:39:41 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7C48C06178C
-        for <linux-security-module@vger.kernel.org>; Mon,  8 Feb 2021 06:38:47 -0800 (PST)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <jlu@pengutronix.de>)
-        id 1l97gU-0008Bl-Bs; Mon, 08 Feb 2021 15:38:38 +0100
-Received: from localhost ([127.0.0.1])
-        by ptx.hi.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <jlu@pengutronix.de>)
-        id 1l97gT-0007SL-Cu; Mon, 08 Feb 2021 15:38:37 +0100
-Message-ID: <b6ee219924e7195070062b6453931595faa640af.camel@pengutronix.de>
-Subject: Re: Migration to trusted keys: sealing user-provided key?
-From:   Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kernel@pengutronix.de
-Date:   Mon, 08 Feb 2021 15:38:36 +0100
-In-Reply-To: <e9e7814c35d9ce5a6351a960081bf3c6b90bdca7.camel@linux.ibm.com>
-References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
-         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
-         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
-         <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
-         <d4eeefa0c13395e91850630e22d0d9e3690f43ac.camel@linux.ibm.com>
-         <64472434a367060ddce6e03425156b8312a5ad6c.camel@pengutronix.de>
-         <bd3246ebb4eae526c84efe2d27c6fadff662b0c8.camel@linux.ibm.com>
-         <0be34899c9686b95cd22aa016f466523579cbeed.camel@pengutronix.de>
-         <e9e7814c35d9ce5a6351a960081bf3c6b90bdca7.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.3-1 
+        Mon, 8 Feb 2021 12:59:47 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 6808464E92;
+        Mon,  8 Feb 2021 17:58:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612807103;
+        bh=Ffhyf60erkGDMmC/z5vAbbYWcKe61yWtQ4zdQlyeutA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KxSCwN3u1OpWv+MdIYMb3fDSklkUvJcFuXglYy0SUQY7XHYEAhaeg2aITCg/joQHb
+         WLJL+jNRbfXXb0KgayF8Sik0B35YiIZQJ9LvY6z4UwWMgBNk6AZUFRgvIJD2XPPlAq
+         jBz+5ie/ssrFo48/lPslcNwdVyPiUS7AZDxQN0x9wRb12n7970OpKptj01FG1NrUWL
+         ICLgeGQimV+OLcUsmeWfc+xmrvwaBC76rF6mE3v/bfqV2BGvP4ybNVMbSz/ppy2rjf
+         oBAgKfqbmPB6teO6oHHR2bqKQPqJzqFtg9is87gbHrrp5Z8XA8UTYv9B7x8nWo6VSF
+         L2rf3mtkeNJlg==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Miklos Szeredi <mszeredi@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 12/36] cap: fix conversions on getxattr
+Date:   Mon,  8 Feb 2021 12:57:42 -0500
+Message-Id: <20210208175806.2091668-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210208175806.2091668-1-sashal@kernel.org>
+References: <20210208175806.2091668-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: jlu@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2021-02-01 at 14:46 -0500, Mimi Zohar wrote:
-> On Mon, 2021-02-01 at 17:38 +0100, Jan Lübbe wrote:
-> > On Mon, 2021-02-01 at 11:11 -0500, Mimi Zohar wrote:
-> > > On Mon, 2021-02-01 at 16:31 +0100, Jan Lübbe wrote:
-> > > > On Sun, 2021-01-31 at 09:29 -0500, Mimi Zohar wrote:
-> > <snip>
-> > > > > Usage::
-> > > > > 
-> > > > >     keyctl add encrypted name "new [format] key-type:master-key-name keylen"
-> > > > >         ring
-> > > > >     keyctl add encrypted name "load hex_blob" ring
-> > > > 
-> > > > 'load' (as I understand the code) only accepts an encrypted blob.
-> > > > 
-> > > > So the only way I see to have an encrypted key with a non-random key data would
-> > > > be:
-> > > > - create a random temporary master key and load a copy as a user key
-> > > > - encrypt the chosen key data with the temporary master key (using a new
-> > > > userspace reimplementation of the kernel encrypted key blob format)
-> > > > - use keyctl add encrypted dmcrypt "load <encrypted blob>" <keyring>
-> > > > - create new trusted master key (OP-TEE or CAAM in our case) as 
-> > > > - use keyctl update to switch to the new trusted master key
-> > > > - use keyctl pipe on the trusted and encrypted keys and store both for loading
-> > > > on later boots
-> > > > 
-> > > > If we'd support importing a pre-existing key into a trusted or encrypted key,
-> > > > we'd do instead:
-> > > > - use keyctl add trusted dmcrypt "import <unencrypted key data>"
-> > > > - use keyctl pipe on the trusted key and store it for loading on later boots
-> > > > 
-> > > > This way, users wouldn't need to care which backend is used by trusted keys
-> > > > (TPM/OP-TEE/CAAM/...). That would make use-cases where a random key is not
-> > > > suitable as straight-forward as the those where a random key is OK.
-> > > 
-> > > As I said above, the "encrypted" key update doesn't change the key data
-> > > used for encrypting/decrypting storage in the dm-crypt case, it just
-> > > updates the key under which it is encrypted/signed.
-> > 
-> > Yes, that's clear. I only used it to demonstrate how a workaround for importing
-> > key material into an encrypted key could look like.
-> > 
-> > > Yes, the reason for using an encrypted "trusted" key, as opposed to an
-> > > encrypted "user" key, is that the "trusted" key is encrypted/decrypted
-> > > by the TPM and never exposed to userspace in the clear.
-> > 
-> > Yes, and that's the main reason I'd like to use trusted keys with dm-crypt: a
-> > much lower chance of exposing this key somewhere it could be extracted.
-> > 
-> > > It doesn't sound like you're wanting to update the storage key in the
-> > > field, just the key used to encrypt/decrypt that key.  So I'm still not
-> > > clear as to why you would want an initial non-random encrypted key. 
-> > > Providing that key on the command line certaining isn't a good idea.
-> > 
-> > Some of our customers have systems in the field which use non-mainline patches
-> > for access to the CAAM [1], which also have the downside of exposing the
-> > decrypted key material directly to userspace. In that thread you suggested to
-> > use trusted keys instead. With Sumit's work that rework is finally within reach.
-> > :)
-> > 
-> > 
-> > In those systems, we have data that's encrypted with a pre-existing dm-crypt or
-> > ecryptfs key. As we update those systems in the field to newer kernels, we want
-> > to get rid of those custom patches, but can't reencrypt everything.
-> > 
-> > So the approach would be to perform a one-time migration when updating a device:
-> > - use our old interface to decrypt the key and 'import' it into a trusted key
-> > - use keyctl pipe and save the re-encrypted key to disk
-> > - destroy the old encrypted key
-> > After this migration, the key material is no longer available to userspace (only
-> > to dm-crypt).
-> > 
-> > 
-> > Another use-case for supporting key import that we want to support is  analysis
-> > of broken devices returned from the field:
-> > - generate an encryption key per device in the factory
-> > - encrypt it to a private key in escrow and archive it for later use
-> > - import it into a trusted key on the device
-> > - keyctl pipe it to a file on the device for use on boot
-> > 
-> > Later, when you need to do an analysis, you can get the key from escrow even if
-> > the device cannot boot any longer.
-> 
-> The first use case doesn't sound like a valid reason for upstreaming
-> such support.  It's a one time update to migrate everyone to a newer
-> kernel.  That you can carry independently of upstream.  In terms of the
-> second use case, do you really want the ability and the resulting
-> responsibility of being able to decrypt user's data?   Please think
-> this through carefully, before you decide you really want/need this
-> feature.
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-As it seems that this feature would not be appropriate for all use-cases and
-threat models, I wonder if making it optional would be acceptable. Something
-like:
+[ Upstream commit f2b00be488730522d0fb7a8a5de663febdcefe0a ]
 
-config TRUSTED_KEYS_IMPORT
-        bool "Allow creating TRUSTED KEYS from existing key material"
-        depends on TRUSTED_KEYS
-        help
-          This option adds support for creating new trusted keys from existing 
-          key material supplied by userspace, instead of using random numbers.
-          As with random trusted keys, userspace cannot extract the plain-text 
-          key material again and will only ever see encrypted blobs.
-          
-          This option should *only* be enabled for use in a trusted
-          environment (such as during debugging/development or in a secured
-          factory). Also, consider using 'keyctl padd' instead of 'keyctl add' 
-          to avoid exposing the plain-text key on the process command line.
+If a capability is stored on disk in v2 format cap_inode_getsecurity() will
+currently return in v2 format unconditionally.
 
-          If you are unsure as to whether this is required, answer N.
+This is wrong: v2 cap should be equivalent to a v3 cap with zero rootid,
+and so the same conversions performed on it.
 
-Best regards,
-Jan
+If the rootid cannot be mapped, v3 is returned unconverted.  Fix this so
+that both v2 and v3 return -EOVERFLOW if the rootid (or the owner of the fs
+user namespace in case of v2) cannot be mapped into the current user
+namespace.
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/commoncap.c | 67 ++++++++++++++++++++++++++++----------------
+ 1 file changed, 43 insertions(+), 24 deletions(-)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 59bf3c1674c8b..a6c9bb4441d54 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ {
+ 	int size, ret;
+ 	kuid_t kroot;
++	u32 nsmagic, magic;
+ 	uid_t root, mappedroot;
+ 	char *tmpbuf = NULL;
+ 	struct vfs_cap_data *cap;
+-	struct vfs_ns_cap_data *nscap;
++	struct vfs_ns_cap_data *nscap = NULL;
+ 	struct dentry *dentry;
+ 	struct user_namespace *fs_ns;
+ 
+@@ -396,46 +397,61 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ 	fs_ns = inode->i_sb->s_user_ns;
+ 	cap = (struct vfs_cap_data *) tmpbuf;
+ 	if (is_v2header((size_t) ret, cap)) {
+-		/* If this is sizeof(vfs_cap_data) then we're ok with the
+-		 * on-disk value, so return that.  */
+-		if (alloc)
+-			*buffer = tmpbuf;
+-		else
+-			kfree(tmpbuf);
+-		return ret;
+-	} else if (!is_v3header((size_t) ret, cap)) {
+-		kfree(tmpbuf);
+-		return -EINVAL;
++		root = 0;
++	} else if (is_v3header((size_t) ret, cap)) {
++		nscap = (struct vfs_ns_cap_data *) tmpbuf;
++		root = le32_to_cpu(nscap->rootid);
++	} else {
++		size = -EINVAL;
++		goto out_free;
+ 	}
+ 
+-	nscap = (struct vfs_ns_cap_data *) tmpbuf;
+-	root = le32_to_cpu(nscap->rootid);
+ 	kroot = make_kuid(fs_ns, root);
+ 
+ 	/* If the root kuid maps to a valid uid in current ns, then return
+ 	 * this as a nscap. */
+ 	mappedroot = from_kuid(current_user_ns(), kroot);
+ 	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
++		size = sizeof(struct vfs_ns_cap_data);
+ 		if (alloc) {
+-			*buffer = tmpbuf;
++			if (!nscap) {
++				/* v2 -> v3 conversion */
++				nscap = kzalloc(size, GFP_ATOMIC);
++				if (!nscap) {
++					size = -ENOMEM;
++					goto out_free;
++				}
++				nsmagic = VFS_CAP_REVISION_3;
++				magic = le32_to_cpu(cap->magic_etc);
++				if (magic & VFS_CAP_FLAGS_EFFECTIVE)
++					nsmagic |= VFS_CAP_FLAGS_EFFECTIVE;
++				memcpy(&nscap->data, &cap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
++				nscap->magic_etc = cpu_to_le32(nsmagic);
++			} else {
++				/* use allocated v3 buffer */
++				tmpbuf = NULL;
++			}
+ 			nscap->rootid = cpu_to_le32(mappedroot);
+-		} else
+-			kfree(tmpbuf);
+-		return size;
++			*buffer = nscap;
++		}
++		goto out_free;
+ 	}
+ 
+ 	if (!rootid_owns_currentns(kroot)) {
+-		kfree(tmpbuf);
+-		return -EOPNOTSUPP;
++		size = -EOVERFLOW;
++		goto out_free;
+ 	}
+ 
+ 	/* This comes from a parent namespace.  Return as a v2 capability */
+ 	size = sizeof(struct vfs_cap_data);
+ 	if (alloc) {
+-		*buffer = kmalloc(size, GFP_ATOMIC);
+-		if (*buffer) {
+-			struct vfs_cap_data *cap = *buffer;
+-			__le32 nsmagic, magic;
++		if (nscap) {
++			/* v3 -> v2 conversion */
++			cap = kzalloc(size, GFP_ATOMIC);
++			if (!cap) {
++				size = -ENOMEM;
++				goto out_free;
++			}
+ 			magic = VFS_CAP_REVISION_2;
+ 			nsmagic = le32_to_cpu(nscap->magic_etc);
+ 			if (nsmagic & VFS_CAP_FLAGS_EFFECTIVE)
+@@ -443,9 +459,12 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
+ 			memcpy(&cap->data, &nscap->data, sizeof(__le32) * 2 * VFS_CAP_U32);
+ 			cap->magic_etc = cpu_to_le32(magic);
+ 		} else {
+-			size = -ENOMEM;
++			/* use unconverted v2 */
++			tmpbuf = NULL;
+ 		}
++		*buffer = cap;
+ 	}
++out_free:
+ 	kfree(tmpbuf);
+ 	return size;
+ }
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.27.0
 
