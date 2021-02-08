@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-19.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFC5C433DB
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A74C4332D
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E15E064DE1
-	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:02:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EB0864E7D
+	for <linux-security-module@archiver.kernel.org>; Mon,  8 Feb 2021 18:06:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235220AbhBHSBv (ORCPT
+        id S235413AbhBHSFv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 8 Feb 2021 13:01:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46604 "EHLO mail.kernel.org"
+        Mon, 8 Feb 2021 13:05:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235131AbhBHR7r (ORCPT
+        id S235224AbhBHSCk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 8 Feb 2021 12:59:47 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 6808464E92;
-        Mon,  8 Feb 2021 17:58:22 +0000 (UTC)
+        Mon, 8 Feb 2021 13:02:40 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0073164E28;
+        Mon,  8 Feb 2021 17:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612807103;
-        bh=Ffhyf60erkGDMmC/z5vAbbYWcKe61yWtQ4zdQlyeutA=;
+        s=k20201202; t=1612807148;
+        bh=5e4tC4Btutnd/bhQJAS+nr2xqEyU7jDdOuqQ1hKVII8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KxSCwN3u1OpWv+MdIYMb3fDSklkUvJcFuXglYy0SUQY7XHYEAhaeg2aITCg/joQHb
-         WLJL+jNRbfXXb0KgayF8Sik0B35YiIZQJ9LvY6z4UwWMgBNk6AZUFRgvIJD2XPPlAq
-         jBz+5ie/ssrFo48/lPslcNwdVyPiUS7AZDxQN0x9wRb12n7970OpKptj01FG1NrUWL
-         ICLgeGQimV+OLcUsmeWfc+xmrvwaBC76rF6mE3v/bfqV2BGvP4ybNVMbSz/ppy2rjf
-         oBAgKfqbmPB6teO6oHHR2bqKQPqJzqFtg9is87gbHrrp5Z8XA8UTYv9B7x8nWo6VSF
-         L2rf3mtkeNJlg==
+        b=rX3YUkBIFxZoSiCPCYUPh3jjNitxFNMOp10fkyMZio6zO8Ay3BhO7emlxBkM7UMyZ
+         B7rhePQTvK5eWcTqLmc7GE2YNwctnFL9GuK4NiLFseaC0EpfGU+d5k7EYOJ8MpfSLI
+         kQP7JwqH+TveKW/OA9mjjXTH+FOd07H8Dnjsit4uLJB0akpWgRTp1SSPylnh9LJo8B
+         rV4NGvGnJYXRUWHGNhgleFXtp/bIuhwWcWQpxOEBrtVI7ePIN1BxCM4rsF/imSyAst
+         aHa8WmLGB24S9dUoogVji3ejsEAkB22xcVEVlHiGzN/go+chnmPPIiszCX5FRWzH8z
+         L8h6x0jNaDGpg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Miklos Szeredi <mszeredi@redhat.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 12/36] cap: fix conversions on getxattr
-Date:   Mon,  8 Feb 2021 12:57:42 -0500
-Message-Id: <20210208175806.2091668-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 07/19] cap: fix conversions on getxattr
+Date:   Mon,  8 Feb 2021 12:58:46 -0500
+Message-Id: <20210208175858.2092008-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210208175806.2091668-1-sashal@kernel.org>
-References: <20210208175806.2091668-1-sashal@kernel.org>
+In-Reply-To: <20210208175858.2092008-1-sashal@kernel.org>
+References: <20210208175858.2092008-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -75,7 +75,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 43 insertions(+), 24 deletions(-)
 
 diff --git a/security/commoncap.c b/security/commoncap.c
-index 59bf3c1674c8b..a6c9bb4441d54 100644
+index 0ca31c8bc0b13..28a6939bcc4e5 100644
 --- a/security/commoncap.c
 +++ b/security/commoncap.c
 @@ -371,10 +371,11 @@ int cap_inode_getsecurity(struct inode *inode, const char *name, void **buffer,
