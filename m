@@ -2,87 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE38FC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 16:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79367C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 18:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9278664E9D
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 16:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F9D364ECF
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 18:41:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233024AbhBIQx3 (ORCPT
+        id S233329AbhBISjQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Feb 2021 11:53:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233097AbhBIQwj (ORCPT
+        Tue, 9 Feb 2021 13:39:16 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:58424 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233419AbhBIS2k (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Feb 2021 11:52:39 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2E0D864EAC
-        for <linux-security-module@vger.kernel.org>; Tue,  9 Feb 2021 16:51:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612889518;
-        bh=o5DqyL4zi91LkW1Fu/xBEB9kzU++yZy0aSmEmaug1v0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=m1oNE48NfnVuCK0DPSfvfIB8Z5XS6Q7FNNG1uts1ZRg8HtBWkUNOAGEePCX3Dg2xP
-         GWsyY0beeSvQlhubScfPtgw+kZcAQirMeCnz3mdNrmOxTU2Daip9syDGKdzfgTRPTu
-         SbNNVmu7xEmVBqvsFgX3FOBv/MYfBWQjzCOnc6tIfZCPJoP8K+YZWv54DdmLMoa7ip
-         17nEeS58hQHqr6rmv0IMQzVR/vVHV2N5seqnkLqMSZ1YN/+izfDRmEVJ6UPA7VpXom
-         G28Tc7aoqd5rU0In/XoC75LlDRR/ntqs9C9R6nRQnMsVtX10yiw/AXtrKRNq7mGiyd
-         QTx1o1RGhebQQ==
-Received: by mail-oi1-f179.google.com with SMTP id h6so20128314oie.5
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Feb 2021 08:51:58 -0800 (PST)
-X-Gm-Message-State: AOAM533hGJW4fGA+9Wkehe02VqRlOQg1LDUMBOAK30WhYeNfRDmAHrh/
-        KGh10U5TNBaxRdrAzG3XEYPrUT4xafUu2zhNt3c=
-X-Google-Smtp-Source: ABdhPJwFPtcyIScUSyy2e18cwYLXLD3uky3nbf2OZSK/EWz7qQeAlNDHfD/kGX0e4O2ZoGPqPrdkQa8nobndqWnXT+0=
-X-Received: by 2002:aca:b6c1:: with SMTP id g184mr3130630oif.47.1612889517390;
- Tue, 09 Feb 2021 08:51:57 -0800 (PST)
+        Tue, 9 Feb 2021 13:28:40 -0500
+Received: from [192.168.86.31] (c-71-197-163-6.hsd1.wa.comcast.net [71.197.163.6])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 898D520B57A9;
+        Tue,  9 Feb 2021 10:23:38 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 898D520B57A9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1612895019;
+        bh=BESXZxJvRTP0XJydFtfetXw9iD4M1DEAmYDOlwv+xSw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mBhWrHk/7wo96d8XqV4us9msLaz3LnWBSeb57sFI37e43wpqKedzdWnj8CcYoQS9i
+         lP5/x06IxMwFGl+v5oaHHWMk4XiwjAGhwi+CWZNt8exLNX2UpZmVmDDyjwEC3W1/sO
+         bgHouvKqXsPRXnM7j7VI3v+vO91TGzSquO7U0AbU=
+Subject: Re: [PATCH 0/3] support for duplicate measurement of integrity
+ critical data
+To:     Mimi Zohar <zohar@linux.ibm.com>, stephen.smalley.work@gmail.com,
+        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
+        gmazyland@gmail.com, paul@paul-moore.com
+Cc:     tyhicks@linux.microsoft.com, sashal@kernel.org, jmorris@namei.org,
+        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com
+References: <20210130004519.25106-1-tusharsu@linux.microsoft.com>
+ <27f73411fc1d6ce6dd16a29344d729d9aa760250.camel@linux.ibm.com>
+ <27a4592c3b75861d2b9c8fb1511f593aa987222c.camel@linux.ibm.com>
+From:   Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Message-ID: <c5ecccbe-9e23-f297-8a79-2a9dd62a40fb@linux.microsoft.com>
+Date:   Tue, 9 Feb 2021 10:23:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210209164506.54176-1-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20210209164506.54176-1-andriy.shevchenko@linux.intel.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Tue, 9 Feb 2021 17:51:45 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGjoZ4qXxfB-2eH84k9Dg93cWs10DmDkZwv-C3_nKi_Ow@mail.gmail.com>
-Message-ID: <CAMj1kXGjoZ4qXxfB-2eH84k9Dg93cWs10DmDkZwv-C3_nKi_Ow@mail.gmail.com>
-Subject: Re: [PATCH v1] efi: Don't use knowledge about efi_guid_t internals
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <27a4592c3b75861d2b9c8fb1511f593aa987222c.camel@linux.ibm.com>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 9 Feb 2021 at 17:45, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> When print GUIDs supply pointer to the efi_guid_t (guid_t) type rather
-> its internal members.
->
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Thank you Mimi for reviewing this series.
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+On 2021-02-08 1:10 p.m., Mimi Zohar wrote:
+> Hi Tushar,
+> 
+> 
+> On Mon, 2021-02-08 at 15:22 -0500, Mimi Zohar wrote:
+>> On Fri, 2021-01-29 at 16:45 -0800, Tushar Sugandhi wrote:
+>>> IMA does not measure duplicate buffer data since TPM extend is a very
+>>> expensive operation.  However, in some cases for integrity critical
+>>> data, the measurement of duplicate data is necessary to accurately
+>>> determine the current state of the system.  Eg, SELinux state changing
+>>> from 'audit', to 'enforcing', and back to 'audit' again.  In this
+>>> example, currently, IMA will not measure the last state change to
+>>> 'audit'.  This limits the ability of attestation services to accurately
+>>> determine the current state of the integrity critical data on the
+>>> system.
+>>>
+>>> This series addresses this gap by providing the ability to measure
+>>> duplicate entries for integrity critical data, driven by policy.
+>>
+>> The same reason for re-measuring buffer data is equally applicable to
+>> files.  In both cases, the file or the buffer isn't re-measured if it
+>> already exists in the htable.   Please don't limit this patch set to
+>> just buffer data.
+> 
+Agreed.  I wasn't sure if you wanted the support for files, or other 
+buffer measurement scenarios, except critical data.  So I started the 
+implementation with supporting just critical data.  Happy to extend it 
+to files and other buffer measurement scenarios as you suggested.
 
-> ---
->  security/integrity/platform_certs/efi_parser.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/integrity/platform_certs/efi_parser.c b/security/integrity/platform_certs/efi_parser.c
-> index 18f01f36fe6a..d98260f8402a 100644
-> --- a/security/integrity/platform_certs/efi_parser.c
-> +++ b/security/integrity/platform_certs/efi_parser.c
-> @@ -55,7 +55,7 @@ int __init parse_efi_signature_list(
->                 memcpy(&list, data, sizeof(list));
->                 pr_devel("LIST[%04x] guid=%pUl ls=%x hs=%x ss=%x\n",
->                          offs,
-> -                        list.signature_type.b, list.signature_list_size,
-> +                        &list.signature_type, list.signature_list_size,
->                          list.signature_header_size, list.signature_size);
->
->                 lsize = list.signature_list_size;
-> --
-> 2.30.0
->
+> Instead of making the change on a per measurement rule basis, disabling
+> "htable" would be the simplest way of forcing re-measurements.  All
+> that would be needed is a new Kconfig (e.g. CONFIG_IMA_DISABLE_HTABLE)
+> and the associated test in ima_add_template_entry().
+> 
+Agreed.  Earlier I wasn't sure if you wanted allow_dup support for all 
+the scenarios.  Now that it is clear,  I will implement it as you 
+suggested.  Thank you so much for the pointers.  Appreciate it.
+
+Thanks,
+Tushar
+
+> thanks,
+> 
+> Mimi
+> 
