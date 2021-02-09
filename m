@@ -2,89 +2,77 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43257C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 16:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 561E8C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 16:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E114464DDF
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 16:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E3264DDF
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 16:51:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbhBIQtc (ORCPT
+        id S233049AbhBIQux (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Feb 2021 11:49:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34627 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233196AbhBIQrw (ORCPT
+        Tue, 9 Feb 2021 11:50:53 -0500
+Received: from mga06.intel.com ([134.134.136.31]:60761 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233096AbhBIQsv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Feb 2021 11:47:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612889186;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9bKjwgbZ1EP33vL7JsMvHcw8xSOrDL2Zn14AJKji9VU=;
-        b=R+RjCt/NJDlo9uyxze+EHMXseJGc7qULXCph8rscMJv0RJwvefik0Z6VSyjGZ08pBuGv4m
-        kbPAtzWLQppiNwWzt7nlJLyGP8IOTGLppfPWJiW5WyfVe4lwsw6kI8Z4O7JSZ9WtevdCX9
-        aVyl8Z3SXYNj7Af3gfqFAMaY7/0NQK4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-499-alYt63OcOQKjNdkohcNTEQ-1; Tue, 09 Feb 2021 11:46:23 -0500
-X-MC-Unique: alYt63OcOQKjNdkohcNTEQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04A03107ACE8;
-        Tue,  9 Feb 2021 16:46:21 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C58A5D705;
-        Tue,  9 Feb 2021 16:46:14 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <5055b9b4-2808-8816-d50c-e651bd88a7c3@digikod.net>
-References: <5055b9b4-2808-8816-d50c-e651bd88a7c3@digikod.net> <74EC102D-BD18-4863-A7FB-C88439654C8C@oracle.com> <20210122181054.32635-1-eric.snowberg@oracle.com> <1103491.1612369600@warthog.procyon.org.uk> <10e6616e-0598-9f33-2de9-4a5268bba586@digikod.net> <A5B5DEC0-E47A-4C3D-8E79-AF37B6C2E565@oracle.com> <7924ce4c-ea94-9540-0730-bddae7c6af07@digikod.net> <BFC930B3-7994-4C5B-A8EF-1DD1C73F5750@oracle.com> <dc6a4524-3935-fda6-40a8-cebf80942cdf@digikod.net> <188DE1AF-A011-4631-B88A-2C4324DA013B@oracle.com> <99066eb7-53ac-41b0-46cf-36ea3d7f6590@digikod.net> <525705.1612876446@warthog.procyon.org.uk>
-To:     =?us-ascii?Q?=3D=3FUTF-8=3FQ=3FMicka=3Dc3=3Dabl=5FSala=3Dc3=3Dbcn=3F?=
-         =?us-ascii?Q?=3D?= <mic@digikod.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James.Bottomley@HansenPartnership.com, masahiroy@kernel.org,
-        michal.lkml@markovi.net, jmorris@namei.org, serge@hallyn.com,
-        ardb@kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
-        lszubowi@redhat.com, javierm@redhat.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        Tue, 9 Feb 2021 11:48:51 -0500
+IronPort-SDR: +Z8Fj6Z3WzxqWAu0V+F2XPXURXALfcQx3ZIwOwIyXlgTHGURwpVS9dbznZyG6Pu7PNzCV4tIqL
+ Ay/vSbJZB7KA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9890"; a="243407805"
+X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
+   d="scan'208";a="243407805"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Feb 2021 08:45:13 -0800
+IronPort-SDR: /IKosY9bZhDcmdE+JWoWbtT9VPqODlD2tx9Nmp4rHoBvimkPi8Jw27Dl0k9t8N4ku5aUH2M7DH
+ yAaMu0U7jxxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,165,1610438400"; 
+   d="scan'208";a="398836519"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga007.jf.intel.com with ESMTP; 09 Feb 2021 08:45:10 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id B98D11C7; Tue,  9 Feb 2021 18:45:07 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        Tyler Hicks <tyhicks@linux.microsoft.com>
-Subject: Re: Re: Conflict with =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn's?=
- blacklist patches [was [PATCH v5 0/4] Add EFI_CERT_X509_GUID support for
- dbx/mokx entries]
+        Ard Biesheuvel <ardb@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] efi: Don't use knowledge about efi_guid_t internals
+Date:   Tue,  9 Feb 2021 18:45:06 +0200
+Message-Id: <20210209164506.54176-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 09 Feb 2021 16:46:13 +0000
-Message-ID: <595105.1612889173@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wrote:
+When print GUIDs supply pointer to the efi_guid_t (guid_t) type rather
+its internal members.
 
-> The only commit causing issues is commit f78e50c8f750 ("certs: Factor
-> out the blacklist hash creation"). I think my last patch fix the issue,
-> and I'm testing with the UEFI DBX, but I don't understand why this
-> change would have an impact. In the meantime you can push Eric's commits
-> first, I'll adapt my changes.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ security/integrity/platform_certs/efi_parser.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Okay.  In that case, I've dropped your branch from my keys-next branch for =
-the
-moment and remerged Eric's branch.
-
-David
+diff --git a/security/integrity/platform_certs/efi_parser.c b/security/integrity/platform_certs/efi_parser.c
+index 18f01f36fe6a..d98260f8402a 100644
+--- a/security/integrity/platform_certs/efi_parser.c
++++ b/security/integrity/platform_certs/efi_parser.c
+@@ -55,7 +55,7 @@ int __init parse_efi_signature_list(
+ 		memcpy(&list, data, sizeof(list));
+ 		pr_devel("LIST[%04x] guid=%pUl ls=%x hs=%x ss=%x\n",
+ 			 offs,
+-			 list.signature_type.b, list.signature_list_size,
++			 &list.signature_type, list.signature_list_size,
+ 			 list.signature_header_size, list.signature_size);
+ 
+ 		lsize = list.signature_list_size;
+-- 
+2.30.0
 
