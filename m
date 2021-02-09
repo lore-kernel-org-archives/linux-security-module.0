@@ -2,179 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA492C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 06:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79828C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 07:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A403D64E66
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 06:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43A8E64E7A
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Feb 2021 07:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbhBIGxf convert rfc822-to-8bit (ORCPT
+        id S229558AbhBIHR3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Feb 2021 01:53:35 -0500
-Received: from mx1.polytechnique.org ([129.104.30.34]:56878 "EHLO
-        mx1.polytechnique.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbhBIGxP (ORCPT
+        Tue, 9 Feb 2021 02:17:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33116 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229704AbhBIHR2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Feb 2021 01:53:15 -0500
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by ssl.polytechnique.org (Postfix) with ESMTPSA id 1338256486C;
-        Tue,  9 Feb 2021 07:52:28 +0100 (CET)
-Received: by mail-oi1-f172.google.com with SMTP id y199so16382128oia.4;
-        Mon, 08 Feb 2021 22:52:28 -0800 (PST)
-X-Gm-Message-State: AOAM530kKkxucWQyVLNGhwNoF8vLlRmlTIvGwvoVFSlTHVXvl6l2FsBR
-        xQcAAVr1JJwpVqT4sLF848rYtuFVgLwjfDXNpIE=
-X-Google-Smtp-Source: ABdhPJx8AO8l9CO2Qzs97U0gimjdtamIW1c8zjB5I4XoMM0ZOT6QRtBxaKNuyPVCQFRnEuhU4e7HHVXvrmLRSxHt/e4=
-X-Received: by 2002:a05:6808:918:: with SMTP id w24mr1624293oih.20.1612853546989;
- Mon, 08 Feb 2021 22:52:26 -0800 (PST)
-MIME-Version: 1.0
-References: <CAJfZ7=nKqT7mmE73r1K3YjBak=OmPACmDi5ccX=SzKhT9=vJ-g@mail.gmail.com>
- <30320add-03dd-202c-caf4-bf947a7c2bdf@schaufler-ca.com>
-In-Reply-To: <30320add-03dd-202c-caf4-bf947a7c2bdf@schaufler-ca.com>
-From:   Nicolas Iooss <nicolas.iooss@m4x.org>
-Date:   Tue, 9 Feb 2021 07:52:15 +0100
-X-Gmail-Original-Message-ID: <CAJfZ7=nWJisw2RRW2AvFgpYKQK_PghudeBqiTQXNfedS2idP-Q@mail.gmail.com>
-Message-ID: <CAJfZ7=nWJisw2RRW2AvFgpYKQK_PghudeBqiTQXNfedS2idP-Q@mail.gmail.com>
-Subject: Re: Recommended value in CONFIG_LSM option on SELinux system?
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>
+        Tue, 9 Feb 2021 02:17:28 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19900C06178B
+        for <linux-security-module@vger.kernel.org>; Mon,  8 Feb 2021 23:16:44 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1l9NGC-0006mV-H4; Tue, 09 Feb 2021 08:16:32 +0100
+Received: from localhost ([127.0.0.1])
+        by ptx.hi.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <jlu@pengutronix.de>)
+        id 1l9NGB-0000sq-8K; Tue, 09 Feb 2021 08:16:31 +0100
+Message-ID: <e8f149cddce55a4e4615396108e4c900cbec75a8.camel@pengutronix.de>
+Subject: Re: Migration to trusted keys: sealing user-provided key?
+From:   Jan =?ISO-8859-1?Q?L=FCbbe?= <jlu@pengutronix.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        James Bottomley <jejb@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kernel@pengutronix.de
+Date:   Tue, 09 Feb 2021 08:16:30 +0100
+In-Reply-To: <9bd1eaab236f095f1dbdc01752c3c6f487f33525.camel@linux.ibm.com>
+References: <74830d4f-5a76-8ba8-aad0-0d79f7c01af9@pengutronix.de>
+         <6dc99fd9ffbc5f405c5f64d0802d1399fc6428e4.camel@kernel.org>
+         <d1bed49f89495ceb529355cb41655a208fdb2197.camel@linux.ibm.com>
+         <8b9477e150d7c939dc0def3ebb4443efcc83cd85.camel@pengutronix.de>
+         <d4eeefa0c13395e91850630e22d0d9e3690f43ac.camel@linux.ibm.com>
+         <64472434a367060ddce6e03425156b8312a5ad6c.camel@pengutronix.de>
+         <bd3246ebb4eae526c84efe2d27c6fadff662b0c8.camel@linux.ibm.com>
+         <0be34899c9686b95cd22aa016f466523579cbeed.camel@pengutronix.de>
+         <e9e7814c35d9ce5a6351a960081bf3c6b90bdca7.camel@linux.ibm.com>
+         <b6ee219924e7195070062b6453931595faa640af.camel@pengutronix.de>
+         <9bd1eaab236f095f1dbdc01752c3c6f487f33525.camel@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-AV-Checked: ClamAV using ClamSMTP at svoboda.polytechnique.org (Tue Feb  9 07:52:28 2021 +0100 (CET))
-X-Org-Mail: nicolas.iooss.2010@polytechnique.org
+User-Agent: Evolution 3.38.3-1 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: jlu@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 8, 2021 at 10:38 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> On 2/8/2021 12:35 PM, Nicolas Iooss wrote:
-> > Hello,
-> >
-> > Recently there was a bug in Arch Linux where SELinux was no longer
-> > enabled after booting [1], because the default kernel configuration
-> > changed recently [2]:
-> >
-> > -CONFIG_LSM="lockdown,yama"
-> > +CONFIG_LSM="lockdown,yama,bpf"
->
-> Neither of these settings will enable SELinux by default.
->
-> > By doing so, setting "security=selinux" on the kernel command line
-> > seemed to break the system, because reading /proc/$PID/attr/current
-> > resulted in "Invalid argument" errors.
->
-> Is this in addition to an "lsm=" specification on the command line?
+On Mon, 2021-02-08 at 16:50 -0500, Mimi Zohar wrote:
+> On Mon, 2021-02-08 at 15:38 +0100, Jan Lübbe wrote:
+> 
+> > As it seems that this feature would not be appropriate for all use-cases and
+> > threat models, I wonder if making it optional would be acceptable. Something
+> > like:
+> > 
+> > config TRUSTED_KEYS_IMPORT
+> 
+> To me "IMPORT" implies from a trusted source, which this is not. 
+> Perhaps "UNSAFE_IMPORT", "DEBUGGING_IMPORT, "DEVELOPMENT_IMPORT", ...
+> 
+> Defining a Kconfig with any of these names and the other changes below,
+> makes it very clear using predefined key data is not recommended.  My
+> concern with extending trusted keys to new trust sources is the
+> implication that the security/integrity is equivalent to the existing
+> discrete TPM.
+> 
+> >         bool "Allow creating TRUSTED KEYS from existing key material"
+> >         depends on TRUSTED_KEYS
+> 
+> Missing "default n"
 
-My description of the issue was not very clear, my apologies. Here is
-another tentative.
+According to Documentation/kbuild/kconfig-language.rst: "The default value
+deliberately defaults to 'n' in order to avoid bloating the build.". So an
+explicit "default n" should not be needed. I'll add it though, for now.
 
-For some years, Arch Linux developers have been compiling their
-official kernel (https://archlinux.org/packages/core/x86_64/linux/ ;
-https://github.com/archlinux/svntogit-packages/tree/packages/linux/trunk)
-with CONFIG_SECURITY_SELINUX=y even though SELinux was disabled by
-default. In order to use SELinux, users were required to install some
-packages (such as systemd with SELinux support) and to add "selinux=1
-security=selinux" to their kernel command line. Last week, the
-official Arch Linux kernel was updated to use
-CONFIG_LSM="lockdown,yama,bpf". Booting a system with this kernel and
-"selinux=1 security=selinux" was broken (D-Bus refused to start, as
-well as all network services, because systemd failed to get some
-important SELinux contexts through /proc/$PID/attr/... files). But
-using "selinux=1 lsm=selinux,lockdown,yama,bpf" fixed this issue
-(before, there was no lsm= command line).
+> >         help
+> >           This option adds support for creating new trusted keys from
+> > existing 
+> >           key material supplied by userspace, instead of using random
+> > numbers.
+> >           As with random trusted keys, userspace cannot extract the plain-
+> > text 
+> 
+> Once defined, as with random trusted keys, userspace cannot ...
+> 
+> >           key material again and will only ever see encrypted blobs.
+> >           
+> > 
+> >           This option should *only* be enabled for use in a trusted
+> >           environment (such as during debugging/development or in a secured
+> >           factory). Also, consider using 'keyctl padd' instead of 'keyctl
+> > add' 
+> 
+> Even the "secured factory" is not a good idea.  Please limit the usage
+> to debugging/development.
+> 
+> >           to avoid exposing the plain-text key on the process command line.
+> > 
+> >           If you are unsure as to whether this is required, answer N.
+> 
+> The above would be fine.
 
-> > Replacing "security=selinux"
-> > with "lsm=selinux,lockdown,yama,bpf" fixed the issue and everything is
-> > now fine, but now I am wondering: how should CONFIG_LSM (and option
-> > "lsm" on the kernel command line) be set, on a system which is using
-> > SELinux?
->
-> CONFIG_SECURITY_SELINUX=y
-> CONFIG_DEFAULT_SECURITY_SELINUX=y
-> CONFIG_LSM="lockdown,yama,selinux"
->
-> > Such information is lacking from the documentation [3] [4]. Therefore
-> > I took a look at Fedora [5] and RHEL [6]:
-> >
-> > * Fedora uses CONFIG_LSM="yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor",
-> > which was the default value until Linux 5.4 [7].
-> > * RHEL uses CONFIG_LSM="yama,integrity,selinux".
-> >
-> > It seems to be strange to have an "outdated" configuration value in
-> > the configuration file, but this could be fine if the new modules are
-> > not expected to be used without the kernel being booted with a
-> > "lsm=..." option.
->
-> Keeping the "outdated" configuration values is necessary for
-> compatibility. We never intended that specifying either of
-> security= or lsm= on the boot line be required. Because there
-> is no way to maintain the old behavior of security=selinux
-> while allowing security=lockdown,yama,selinux we had to introduce
-> lsm=.
->
-> > But there is something that I did not understand: setting
-> > "lsm=selinux,lockdown,yama,bpf" worked, /sys/kernel/security/lsm
-> > showed "capability,selinux,lockdown,yama,bpf", but this violated what
-> > the documentation stated [3]:
-> > "A list of the active security modules can be found by reading
-> > /sys/kernel/security/lsm. This is a comma separated list, and will
-> > always include the capability module. The list reflects the order in
-> > which checks are made. The capability module will always be first,
-> > followed by any “minor” modules (e.g. Yama) and then the one “major”
-> > module (e.g. SELinux) if there is one configured."
-> >
-> > Is "lsm=selinux,lockdown,yama,bpf" really problematic?
->
-> The documentation is out of date regarding the "major" module
-> having to be last. That was true before the lsm= option was introduced.
->
-> >
-> > TL;DR: It would be very helpful if there were some clear guidelines
-> > which were documented in the kernel documentation about how to
-> > configure CONFIG_LSM on SELinux systems.
->
-> Thanks for the feedback. We are at a mid-point in the development of
-> module stacking. It's not too late to make things better based on your
-> experience.
+OK, that would result in:
 
-Thanks for your quick reply! Anyway it seems that my issue was caused
-by an incompatibility between selinux and bpf LSM. On my test system
-(running Linux 5.10.11):
+config TRUSTED_KEYS_DEVELOPMENT_IMPORT
+        bool "Allow creating TRUSTED KEYS from existing key material for development"
+        depends on TRUSTED_KEYS
+        default n
+        help
+          This option adds support for creating new trusted keys from
+          existing key material supplied by userspace, instead of using
+          random numbers. Once defined,  as with random trusted keys,
+          userspace cannot extract the plain-text key material again
+          and will only ever see encrypted blobs.
+          
+          This option should *only* be enabled for debugging/development.
+          Also, consider using 'keyctl padd' instead of 'keyctl add' to
+          avoid exposing the plain-text key on the process command line.
 
-* Using "lsm=selinux,lockdown,yama,bpf" works (SELinux is functional,
-the system boots fine)
-* Using "lsm=lockdown,yama,selinux,bpf" works too
-* Using "lsm=lockdown,yama,bpf,selinux" does not work
-(/proc/$PID/attr/current raises "Invalid argument")
+          If you are unsure as to whether this is required, answer N.
 
-So it is important that "selinux" comes before "bpf" in CONFIG_LSM
-(and "lsm" parameter). This fact seems to be known, as "bpf" was added
-last in the default values of CONFIG_LSM options
-(https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/security/Kconfig?h=v5.11-rc7#n280).
-Is this documented somewhere? It is neither in
-https://www.kernel.org/doc/html/v5.11-rc7/bpf/bpf_lsm.html nor
-https://www.kernel.org/doc/html/v5.11-rc7/admin-guide/LSM/index.html.
-
-Nicolas
-
-> >
-> > Thanks,
-> > Nicolas
-> >
-> > [1] https://github.com/archlinuxhardened/selinux/issues/81
-> > [2] https://github.com/archlinux/svntogit-packages/commit/69cb8c2d2884181e799e67b09d67fcf7944d8408
-> > [3] https://www.kernel.org/doc/html/v5.11-rc7/admin-guide/LSM/index.html
-> > [4] https://www.kernel.org/doc/html/v5.11-rc7/admin-guide/LSM/SELinux.html
-> > [5] https://src.fedoraproject.org/rpms/kernel/blob/dd9f5d552f96c5171a0f04170dbca7e74e8d13c7/f/kernel-x86_64-fedora.config#_3232
-> > [6] https://src.fedoraproject.org/rpms/kernel/blob/dd9f5d552f96c5171a0f04170dbca7e74e8d13c7/f/kernel-x86_64-rhel.config#_2834
-> > [7] commit https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=000d388ed3bbed745f366ce71b2bb7c2ee70f449
-> >
->
+Thanks,
+Jan
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
