@@ -2,285 +2,195 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CF6C433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 16:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A86C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 14:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 188C16186A
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 16:39:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7A6164E7C
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 14:59:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231139AbhBLQj4 (ORCPT
+        id S231193AbhBJO7P (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Feb 2021 11:39:56 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:33330 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231304AbhBLQh7 (ORCPT
+        Wed, 10 Feb 2021 09:59:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57068 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231784AbhBJO67 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Feb 2021 11:37:59 -0500
-Received: from localhost.localdomain (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 976E120B6C40;
-        Fri, 12 Feb 2021 08:37:15 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 976E120B6C40
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613147835;
-        bh=4dYjaGkqbmN5KWpdXHTWdgYhxKJ8p+ZKniaAve3eISc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=c8KR/MyefO0xSn/gK0vb9c5lXr2Y2Fc2bUVYRAa5E5hQNMqtTze1Fo4KWaMtHVLwz
-         qwmWJhWVQ6MEpeCmbVVkoi4fBBOriTYmL7N1fyKHvX6RAE5u+AXIA26HO+0QoOL2gE
-         oMW3pw71C16b0UncxaJLzAMMzgJkPjr1Bit+1Bak=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com
-Cc:     tusharsu@linux.microsoft.com, tyhicks@linux.microsoft.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, sashal@kernel.org, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] selinux: measure state and policy capabilities
-Date:   Fri, 12 Feb 2021 08:37:09 -0800
-Message-Id: <20210212163709.3139-1-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.30.0
+        Wed, 10 Feb 2021 09:58:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1612969052;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=z2dPGwBXCWSVZ5g1pGm6UIqGI0ADcDy1IxFOAnmlTEE=;
+        b=QzDF3vLj2CQafKLw1NTtknyaRd9MW/8vyDf/KHiFkcfoTdbNg5nEUDTbJ5l59n8qtZVjBy
+        mgShMLmYfcUevpLct+0Ard1IFiSWyTfOTuzcCoYqmWyswOjjUaBeGxP4JVcpDTLKaE9+nA
+        Ilw7pl/awho7Ah6C0gjqvYajMGWAeW4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-505-BUzlBjMCPu-BrVdmGJSJcQ-1; Wed, 10 Feb 2021 09:57:28 -0500
+X-MC-Unique: BUzlBjMCPu-BrVdmGJSJcQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9451C192CC40;
+        Wed, 10 Feb 2021 14:57:24 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 517BE60657;
+        Wed, 10 Feb 2021 14:57:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Alex Shi <alex.shi@linux.alibaba.com>,
+        Ben Boeckel <mathstuf@gmail.com>,
+        Denis Efremov <efremov@linux.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Jann Horn <jannh@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
+        Tom Rix <trix@redhat.com>, YueHaibing <yuehaibing@huawei.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Date:   Wed, 10 Feb 2021 14:57:19 +0000
+Message-ID: <1322700.1612969039@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SELinux stores the configuration state and the policy capabilities
-in kernel memory.  Changes to this data at runtime would have an impact
-on the security guarantees provided by SELinux.  Measuring this data
-through IMA subsystem provides a tamper-resistant way for
-an attestation service to remotely validate it at runtime.
 
-Measure the configuration state and policy capabilities by calling
-the IMA hook ima_measure_critical_data().
+Hi Linus,
 
-To enable SELinux data measurement, the following steps are required:
+Here's a set of minor keyrings fixes/cleanups that I've collected from
+various people for the upcoming merge window.
 
- 1, Add "ima_policy=critical_data" to the kernel command line arguments
-    to enable measuring SELinux data at boot time.
-    For example,
-      BOOT_IMAGE=/boot/vmlinuz-5.11.0-rc3+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
+A couple of them might, in theory, be visible to userspace:
 
- 2, Add the following rule to /etc/ima/ima-policy
-       measure func=CRITICAL_DATA label=selinux
+ (*) Make blacklist_vet_description() reject uppercase letters as they
+     don't match the all-lowercase hex string generated for a blacklist
+     search.
 
-Sample measurement of SELinux state and policy capabilities:
+     This may want reconsideration in the future, but, currently, you can't
+     add to the blacklist keyring from userspace and the only source of
+     blacklist keys generates lowercase descriptions.
 
-10 2122...65d8 ima-buf sha256:13c2...1292 selinux-state 696e...303b
+ (*) Fix blacklist_init() to use a new KEY_ALLOC_* flag to indicate that it
+     wants KEY_FLAG_KEEP to be set rather than passing KEY_FLAG_KEEP into
+     keyring_alloc() as KEY_FLAG_KEEP isn't a valid alloc flag.
 
-Execute the following command to extract the measured data
-from the IMA's runtime measurements list:
+     This isn't currently a problem as the blacklist keyring isn't
+     currently writable by userspace.
 
-  grep "selinux-state" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6 | xxd -r -p
+The rest of the patches are cleanups and I don't think they should have any
+visible effect.
 
-The output should be a list of key-value pairs. For example,
- initialized=1;enforcing=0;checkreqprot=1;network_peer_controls=1;open_perms=1;extended_socket_class=1;always_check_network=0;cgroup_seclabel=1;nnp_nosuid_transition=1;genfs_seclabel_symlinks=0;
+I've fixed the compilation error, added another patch and rebased to
+v5.11-rc4 since the last request.
 
-To verify the measurement is consistent with the current SELinux state
-reported on the system, compare the integer values in the following
-files with those set in the IMA measurement (using the following commands):
-
- - cat /sys/fs/selinux/enforce
- - cat /sys/fs/selinux/checkreqprot
- - cat /sys/fs/selinux/policy_capabilities/[capability_file]
-
-Note that the actual verification would be against an expected state
-and done on a separate system (likely an attestation server) requiring
-"initialized=1;enforcing=1;checkreqprot=0;"
-for a secure state and then whatever policy capabilities are actually
-set in the expected policy (which can be extracted from the policy
-itself via seinfo, for example).
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-Suggested-by: Paul Moore <paul@paul-moore.com>
+David
 ---
- security/selinux/ima.c         | 87 ++++++++++++++++++++++++++++++++--
- security/selinux/include/ima.h |  6 +++
- security/selinux/selinuxfs.c   |  6 +++
- security/selinux/ss/services.c |  2 +-
- 4 files changed, 96 insertions(+), 5 deletions(-)
+The following changes since commit 19c329f6808995b142b3966301f217c831e7cf31:
 
-diff --git a/security/selinux/ima.c b/security/selinux/ima.c
-index 03715893ff97..34d421861bfc 100644
---- a/security/selinux/ima.c
-+++ b/security/selinux/ima.c
-@@ -13,18 +13,83 @@
- #include "ima.h"
- 
- /*
-- * selinux_ima_measure_state - Measure hash of the SELinux policy
-+ * selinux_ima_collect_state - Read selinux configuration settings
-  *
-- * @state: selinux state struct
-+ * @state: selinux_state
-  *
-- * NOTE: This function must be called with policy_mutex held.
-+ * On success returns the configuration settings string.
-+ * On error, returns NULL.
-  */
--void selinux_ima_measure_state(struct selinux_state *state)
-+static char *selinux_ima_collect_state(struct selinux_state *state)
- {
-+	const char *on = "=1;", *off = "=0;";
-+	char *buf;
-+	int buf_len, len, i, rc;
-+
-+	buf_len = strlen("initialized=0;enforcing=0;checkreqprot=0;") + 1;
-+
-+	len = strlen(on);
-+	for (i = 0; i < __POLICYDB_CAPABILITY_MAX; i++)
-+		buf_len += strlen(selinux_policycap_names[i]) + len;
-+
-+	buf = kzalloc(buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return NULL;
-+
-+	rc = strscpy(buf, "initialized", buf_len);
-+	WARN_ON(rc < 0);
-+
-+	rc = strlcat(buf, selinux_initialized(state) ? on : off, buf_len);
-+	WARN_ON(rc >= buf_len);
-+
-+	rc = strlcat(buf, "enforcing", buf_len);
-+	WARN_ON(rc >= buf_len);
-+
-+	rc = strlcat(buf, enforcing_enabled(state) ? on : off, buf_len);
-+	WARN_ON(rc >= buf_len);
-+
-+	rc = strlcat(buf, "checkreqprot", buf_len);
-+	WARN_ON(rc >= buf_len);
-+
-+	rc = strlcat(buf, checkreqprot_get(state) ? on : off, buf_len);
-+	WARN_ON(rc >= buf_len);
-+
-+	for (i = 0; i < __POLICYDB_CAPABILITY_MAX; i++) {
-+		rc = strlcat(buf, selinux_policycap_names[i], buf_len);
-+		WARN_ON(rc >= buf_len);
-+
-+		rc = strlcat(buf, state->policycap[i] ? on : off, buf_len);
-+		WARN_ON(rc >= buf_len);
-+	}
-+
-+	return buf;
-+}
-+
-+/*
-+ * selinux_ima_measure_state_locked - Measure SELinux state and hash of policy
-+ *
-+ * @state: selinux state struct
-+ */
-+void selinux_ima_measure_state_locked(struct selinux_state *state)
-+{
-+	char *state_str = NULL;
- 	void *policy = NULL;
- 	size_t policy_len;
- 	int rc = 0;
- 
-+	WARN_ON(!mutex_is_locked(&state->policy_mutex));
-+
-+	state_str = selinux_ima_collect_state(state);
-+	if (!state_str) {
-+		pr_err("SELinux: %s: failed to read state.\n", __func__);
-+		return;
-+	}
-+
-+	ima_measure_critical_data("selinux", "selinux-state",
-+				  state_str, strlen(state_str), false);
-+
-+	kfree(state_str);
-+
- 	/*
- 	 * Measure SELinux policy only after initialization is completed.
- 	 */
-@@ -42,3 +107,17 @@ void selinux_ima_measure_state(struct selinux_state *state)
- 
- 	vfree(policy);
- }
-+
-+/*
-+ * selinux_ima_measure_state - Measure SELinux state and hash of policy
-+ *
-+ * @state: selinux state struct
-+ */
-+void selinux_ima_measure_state(struct selinux_state *state)
-+{
-+	WARN_ON(mutex_is_locked(&state->policy_mutex));
-+
-+	mutex_lock(&state->policy_mutex);
-+	selinux_ima_measure_state_locked(state);
-+	mutex_unlock(&state->policy_mutex);
-+}
-diff --git a/security/selinux/include/ima.h b/security/selinux/include/ima.h
-index d69c36611423..75ca92b4a462 100644
---- a/security/selinux/include/ima.h
-+++ b/security/selinux/include/ima.h
-@@ -15,10 +15,16 @@
- 
- #ifdef CONFIG_IMA
- extern void selinux_ima_measure_state(struct selinux_state *selinux_state);
-+extern void selinux_ima_measure_state_locked(
-+			struct selinux_state *selinux_state);
- #else
- static inline void selinux_ima_measure_state(struct selinux_state *selinux_state)
- {
- }
-+static inline void selinux_ima_measure_state_locked(
-+			struct selinux_state *selinux_state)
-+{
-+}
- #endif
- 
- #endif	/* _SELINUX_IMA_H_ */
-diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
-index 4bde570d56a2..26ec58593ba1 100644
---- a/security/selinux/selinuxfs.c
-+++ b/security/selinux/selinuxfs.c
-@@ -41,6 +41,7 @@
- #include "security.h"
- #include "objsec.h"
- #include "conditional.h"
-+#include "ima.h"
- 
- enum sel_inos {
- 	SEL_ROOT_INO = 2,
-@@ -182,6 +183,8 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
- 		selinux_status_update_setenforce(state, new_value);
- 		if (!new_value)
- 			call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL);
-+
-+		selinux_ima_measure_state(state);
- 	}
- 	length = count;
- out:
-@@ -762,6 +765,9 @@ static ssize_t sel_write_checkreqprot(struct file *file, const char __user *buf,
- 
- 	checkreqprot_set(fsi->state, (new_value ? 1 : 0));
- 	length = count;
-+
-+	selinux_ima_measure_state(fsi->state);
-+
- out:
- 	kfree(page);
- 	return length;
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 2106b5d383e7..cb2866489363 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -2179,7 +2179,7 @@ static void selinux_notify_policy_change(struct selinux_state *state,
- 	selinux_status_update_policyload(state, seqno);
- 	selinux_netlbl_cache_invalidate();
- 	selinux_xfrm_notify_policyload();
--	selinux_ima_measure_state(state);
-+	selinux_ima_measure_state_locked(state);
- }
- 
- void selinux_policy_commit(struct selinux_state *state,
--- 
-2.30.0
+  Linux 5.11-rc4 (2021-01-17 16:37:05 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
+keys-misc-20210126
+
+for you to fetch changes up to 8f0bfc25c907f38e7f9dc498e8f43000d77327ef:
+
+  watch_queue: rectify kernel-doc for init_watch() (2021-01-26 11:16:34 +00=
+00)
+
+----------------------------------------------------------------
+Keyrings miscellany
+
+----------------------------------------------------------------
+Alex Shi (2):
+      PKCS#7: drop function from kernel-doc pkcs7_validate_trust_one
+      certs/blacklist: fix kernel doc interface issue
+
+Alexander A. Klimov (1):
+      encrypted-keys: Replace HTTP links with HTTPS ones
+
+David Howells (1):
+      certs: Fix blacklist flag type confusion
+
+Denis Efremov (1):
+      security/keys: use kvfree_sensitive()
+
+Gabriel Krisman Bertazi (1):
+      watch_queue: Drop references to /dev/watch_queue
+
+Gustavo A. R. Silva (1):
+      security: keys: Fix fall-through warnings for Clang
+
+Jann Horn (1):
+      keys: Remove outdated __user annotations
+
+Krzysztof Kozlowski (1):
+      KEYS: asymmetric: Fix kerneldoc
+
+Lukas Bulwahn (1):
+      watch_queue: rectify kernel-doc for init_watch()
+
+Micka=C3=ABl Sala=C3=BCn (3):
+      certs: Fix blacklisted hexadecimal hash string check
+      PKCS#7: Fix missing include
+      certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
+
+Randy Dunlap (2):
+      security: keys: delete repeated words in comments
+      crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
+
+Tianjia Zhang (1):
+      crypto: public_key: Remove redundant header file from public_key.h
+
+Tom Rix (2):
+      KEYS: remove redundant memset
+      keys: remove trailing semicolon in macro definition
+
+YueHaibing (1):
+      crypto: pkcs7: Use match_string() helper to simplify the code
+
+ Documentation/security/keys/core.rst     |  4 ++--
+ certs/blacklist.c                        | 10 +++++-----
+ certs/system_keyring.c                   |  5 +++--
+ crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
+ crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
+ crypto/asymmetric_keys/pkcs7_trust.c     |  2 +-
+ crypto/asymmetric_keys/pkcs7_verify.c    |  9 ++++-----
+ include/crypto/public_key.h              |  1 -
+ include/keys/encrypted-type.h            |  2 +-
+ include/linux/key.h                      |  5 +++--
+ include/linux/verification.h             |  2 ++
+ kernel/watch_queue.c                     |  2 +-
+ samples/Kconfig                          |  2 +-
+ samples/watch_queue/watch_test.c         |  2 +-
+ security/integrity/ima/ima_mok.c         |  5 ++---
+ security/keys/Kconfig                    |  8 ++++----
+ security/keys/big_key.c                  |  9 +++------
+ security/keys/key.c                      |  2 ++
+ security/keys/keyctl.c                   |  2 +-
+ security/keys/keyctl_pkey.c              |  2 --
+ security/keys/keyring.c                  | 10 +++++-----
+ security/keys/process_keys.c             |  1 +
+ 22 files changed, 48 insertions(+), 48 deletions(-)
 
