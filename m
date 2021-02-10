@@ -2,77 +2,75 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE77C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 15:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC9BC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 17:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98F9564E38
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 15:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC63964E15
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 17:01:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231326AbhBJPTW (ORCPT
+        id S233026AbhBJRBp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Feb 2021 10:19:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:52792 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231801AbhBJPTE (ORCPT
+        Wed, 10 Feb 2021 12:01:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39236 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232159AbhBJRBg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Feb 2021 10:19:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612970257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mceUppGttM5IRjUjF4Mhgo2zyBFKIwkpPAnlMIu3O04=;
-        b=gtKlt4F4rqrAk8gWqcarKJNq3CBv6XYIRtVxySUD2G9pimTzD4dvsIkQ1idzXTwiBmZoJ7
-        EmQthx2YSMkfcsaCZhS3D01xBZ7vD9sZxIAH3Pj+rUVqg1smJs3t+VLFBTVZuTI+Ox52M/
-        Dga+mHpyeZYj5LghCRLQewE4JTkJu50=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-346-DTjzdxsZMimxHRlugpVajA-1; Wed, 10 Feb 2021 10:17:33 -0500
-X-MC-Unique: DTjzdxsZMimxHRlugpVajA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7DC43100CCDD;
-        Wed, 10 Feb 2021 15:17:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 078C860C0F;
-        Wed, 10 Feb 2021 15:17:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1323922.1612970030@warthog.procyon.org.uk>
-References: <1323922.1612970030@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com, torvalds@linux-foundation.org,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Add EFI_CERT_X509_GUID support for dbx/mokx entries
+        Wed, 10 Feb 2021 12:01:36 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4707564DF6;
+        Wed, 10 Feb 2021 17:00:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612976456;
+        bh=H7GaOW+CiBvaeY1yYaT/BLhAmPmDWl62qWGA8z+LWpE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=moAfNVCjfFxnZKnAhRc+lbDyBoG0CzSSD4svV6t34566SHtjaTQaILzmcSpytKcN6
+         6ZyunSK/Q0VeXwZNg99SMzv4TbQUenOMQ+F2lU+d41OfjFMaMvKYCo0xe/zUdOAOxp
+         aSA6T5N4akhoDz3agOWkj8TtDV9QIL7iUAKGzPY9R2lCbcS9t5bdad5fu9qgKwWjQ1
+         /XtDLtVe7ZjbWJuwuSPvT+JTmZO8w0V9oydRT26oW/RDRzLxxcGGefQKF+CEKtiSbC
+         U0GJpe1dEEhTZ9gLLm8bdLRt1FlI4cnosdVslVSvahasqIQwQffVygPUC9Ec4XVVY0
+         zSbRzHQucknLA==
+Date:   Wed, 10 Feb 2021 19:00:46 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     jarkko.sakkinen@linux.intel.com, zohar@linux.ibm.com,
+        jejb@linux.ibm.com, dhowells@redhat.com, jens.wiklander@linaro.org,
+        corbet@lwn.net, jmorris@namei.org, serge@hallyn.com,
+        casey@schaufler-ca.com, janne.karhunen@gmail.com,
+        daniel.thompson@linaro.org, Markus.Wamser@mixed-mode.de,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        op-tee@lists.trustedfirmware.org
+Subject: Re: [PATCH v8 1/4] KEYS: trusted: Add generic trusted keys framework
+Message-ID: <YCQRPo0o6MZ0pcUa@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1324171.1612970250.1@warthog.procyon.org.uk>
-Date:   Wed, 10 Feb 2021 15:17:30 +0000
-Message-ID: <1324172.1612970250@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604419306-26105-2-git-send-email-sumit.garg@linaro.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-David Howells <dhowells@redhat.com> wrote:
+On Tue, Nov 03, 2020 at 09:31:43PM +0530, Sumit Garg wrote:
+> +	case Opt_new:
+> +		key_len = payload->key_len;
+> +		ret = static_call(trusted_key_get_random)(payload->key,
+> +							  key_len);
+> +		if (ret != key_len) {
+> +			pr_info("trusted_key: key_create failed (%d)\n", ret);
+> +			goto out;
+> +		}
 
-> This set of patches from Eric Snowberg that add support for
-> EFI_CERT_X509_GUID entries in the dbx and mokx UEFI tables (such entries
-> cause matching certificates to be rejected).  These are currently ignored
-> and only the hash entries are made use of.
+This repeats a regression in existing code, i.e. does not check
+"ret < 0" condition. I noticed this now when I rebased the code
+on top of my fixes.
 
-This is aimed at the next merge window.
+I.e. it's fixed in my master branch, which caused a merge conflict,
+and I found this.
 
-David
-
+/Jarkko
