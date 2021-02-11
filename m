@@ -2,209 +2,99 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-25.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC73C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Feb 2021 02:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8940EC433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Feb 2021 10:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E990D64EBC
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Feb 2021 02:05:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3134764E8B
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Feb 2021 10:41:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbhBKCFn (ORCPT
+        id S230038AbhBKKk7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Feb 2021 21:05:43 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:36544 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbhBKCFE (ORCPT
+        Thu, 11 Feb 2021 05:40:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230378AbhBKKig (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Feb 2021 21:05:04 -0500
-Received: from [192.168.0.104] (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 026C520B6C40;
-        Wed, 10 Feb 2021 18:04:21 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 026C520B6C40
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613009062;
-        bh=37UFz6Ghf+G+T4IvQwNmd6crjNckKRJJvv2sj7ZIbXs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=pUpefB0yBI+RA1y6fdGOpp5sJznyho0ZPrLQMRHGNjAEtADFN+Nh3Z8QUAYcPx+KP
-         fHhGfRwPx8Ou29B9YxCgDI3ZqsbqGJfJchsNN3a3mRz0C5kxFggXyNRZYwOFYw4AO8
-         LT+5J0gjGbchmh5NLw1QcxGK6C7AQ6hYmW/DRsu4=
-Subject: Re: [PATCH v2] selinux: measure state and policy capabilities
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     zohar@linux.ibm.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        tusharsu@linux.microsoft.com, tyhicks@linux.microsoft.com,
-        casey@schaufler-ca.com, agk@redhat.com, snitzer@redhat.com,
-        gmazyland@gmail.com, sashal@kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210129164926.3939-1-nramas@linux.microsoft.com>
- <CAHC9VhQR7pq3h2ca28SynkRiT7D-aa=EowPkurci8Nug1W=ySQ@mail.gmail.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <1e92521d-0c5d-6493-74aa-31a187cab4ad@linux.microsoft.com>
-Date:   Wed, 10 Feb 2021 18:04:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 11 Feb 2021 05:38:36 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2BBC0611BE
+        for <linux-security-module@vger.kernel.org>; Thu, 11 Feb 2021 02:34:53 -0800 (PST)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lA9Ip-0004Vc-KZ; Thu, 11 Feb 2021 11:34:27 +0100
+Subject: Re: [PATCH v8 1/4] KEYS: trusted: Add generic trusted keys framework
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Sumit Garg <sumit.garg@linaro.org>
+Cc:     linux-security-module@vger.kernel.org, daniel.thompson@linaro.org,
+        op-tee@lists.trustedfirmware.org, corbet@lwn.net,
+        jejb@linux.ibm.com, janne.karhunen@gmail.com,
+        linux-doc@vger.kernel.org, jmorris@namei.org, zohar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com, Markus.Wamser@mixed-mode.de,
+        casey@schaufler-ca.com, linux-integrity@vger.kernel.org,
+        jens.wiklander@linaro.org, linux-arm-kernel@lists.infradead.org,
+        serge@hallyn.com
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-2-git-send-email-sumit.garg@linaro.org>
+ <YCQRPo0o6MZ0pcUa@kernel.org>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <f51409f7-05b4-31b6-f1c5-d9e6d7c0bb46@pengutronix.de>
+Date:   Thu, 11 Feb 2021 11:34:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhQR7pq3h2ca28SynkRiT7D-aa=EowPkurci8Nug1W=ySQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <YCQRPo0o6MZ0pcUa@kernel.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/10/21 4:25 PM, Paul Moore wrote:
-> On Fri, Jan 29, 2021 at 11:49 AM Lakshmi Ramasubramanian
-> <nramas@linux.microsoft.com> wrote:
->>
->> SELinux stores the configuration state and the policy capabilities
->> in kernel memory.  Changes to this data at runtime would have an impact
->> on the security guarantees provided by SELinux.  Measuring this data
->> through IMA subsystem provides a tamper-resistant way for
->> an attestation service to remotely validate it at runtime.
->>
->> Measure the configuration state and policy capabilities by calling
->> the IMA hook ima_measure_critical_data().
->>
->> To enable SELinux data measurement, the following steps are required:
->>
->>   1, Add "ima_policy=critical_data" to the kernel command line arguments
->>      to enable measuring SELinux data at boot time.
->>      For example,
->>        BOOT_IMAGE=/boot/vmlinuz-5.11.0-rc3+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
->>
->>   2, Add the following rule to /etc/ima/ima-policy
->>         measure func=CRITICAL_DATA label=selinux
->>
->> Sample measurement of SELinux state and policy capabilities:
->>
->> 10 2122...65d8 ima-buf sha256:13c2...1292 selinux-state 696e...303b
->>
->> Execute the following command to extract the measured data
->> from the IMA's runtime measurements list:
->>
->>    grep "selinux-state" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6 | xxd -r -p
->>
->> The output should be a list of key-value pairs. For example,
->>   initialized=1;enforcing=0;checkreqprot=1;network_peer_controls=1;open_perms=1;extended_socket_class=1;always_check_network=0;cgroup_seclabel=1;nnp_nosuid_transition=1;genfs_seclabel_symlinks=0;
->>
->> To verify the measurement is consistent with the current SELinux state
->> reported on the system, compare the integer values in the following
->> files with those set in the IMA measurement (using the following commands):
->>
->>   - cat /sys/fs/selinux/enforce
->>   - cat /sys/fs/selinux/checkreqprot
->>   - cat /sys/fs/selinux/policy_capabilities/[capability_file]
->>
->> Note that the actual verification would be against an expected state
->> and done on a separate system (likely an attestation server) requiring
->> "initialized=1;enforcing=1;checkreqprot=0;"
->> for a secure state and then whatever policy capabilities are actually
->> set in the expected policy (which can be extracted from the policy
->> itself via seinfo, for example).
->>
->> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
->> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->> Suggested-by: Paul Moore <paul@paul-moore.com>
->> ---
->>   security/selinux/ima.c         | 77 ++++++++++++++++++++++++++++++++--
->>   security/selinux/include/ima.h |  6 +++
->>   security/selinux/selinuxfs.c   |  6 +++
->>   security/selinux/ss/services.c |  2 +-
->>   4 files changed, 86 insertions(+), 5 deletions(-)
->>
->> diff --git a/security/selinux/ima.c b/security/selinux/ima.c
->> index 03715893ff97..5c7f73cd1117 100644
->> --- a/security/selinux/ima.c
->> +++ b/security/selinux/ima.c
->> @@ -13,18 +13,73 @@
->>   #include "ima.h"
->>
->>   /*
->> - * selinux_ima_measure_state - Measure hash of the SELinux policy
->> + * selinux_ima_collect_state - Read selinux configuration settings
->>    *
->> - * @state: selinux state struct
->> + * @state: selinux_state
->>    *
->> - * NOTE: This function must be called with policy_mutex held.
->> + * On success returns the configuration settings string.
->> + * On error, returns NULL.
->>    */
->> -void selinux_ima_measure_state(struct selinux_state *state)
->> +static char *selinux_ima_collect_state(struct selinux_state *state)
->> +{
->> +       const char *on = "=1;", *off = "=0;";
->> +       char *buf;
->> +       int buf_len, i;
->> +
->> +       /*
->> +        * Size of the following string including the terminating NULL char
->> +        *    initialized=0;enforcing=0;checkreqprot=0;
->> +        */
->> +       buf_len = 42;
+Hello Jarkko,
+
+On 10.02.21 18:00, Jarkko Sakkinen wrote:
+> On Tue, Nov 03, 2020 at 09:31:43PM +0530, Sumit Garg wrote:
+>> +	case Opt_new:
+>> +		key_len = payload->key_len;
+>> +		ret = static_call(trusted_key_get_random)(payload->key,
+>> +							  key_len);
+>> +		if (ret != key_len) {
+>> +			pr_info("trusted_key: key_create failed (%d)\n", ret);
+>> +			goto out;
+>> +		}
 > 
-> It might be safer over the long term, and self-documenting, to do the
-> following instead:
+> This repeats a regression in existing code, i.e. does not check
+> "ret < 0" condition. I noticed this now when I rebased the code
+> on top of my fixes.
 > 
->    buf_len = strlen("initialized=0;enforcing=0;checkreqprot=0;") + 1;
-Since the string is fixed I hard coded the length to avoid runtime 
-overhead. But I agree on self-documenting and safety. Will update.
+> I.e. it's fixed in my master branch, which caused a merge conflict,
+> and I found this.
+
+Does that mean this series will go out for the next merge window?
+Can you point me where your git tree is, so I can rebase on top?
 
 > 
->> +       for (i = 0; i < __POLICYDB_CAPABILITY_MAX; i++)
->> +               buf_len += strlen(selinux_policycap_names[i]) + 3;
+> /Jarkko
 > 
-> 's/3/strlen(on)/' or is that too much?
-Since this is in a loop, I'll do strlen("on") once outside the loop and 
-use the value instead of hard coded "3".
-
-> 
->> +
->> +       buf = kzalloc(buf_len, GFP_KERNEL);
->> +       if (!buf)
->> +               return NULL;
->> +
->> +       strscpy(buf, "initialized", buf_len);
-> 
-> I wonder if it might be a good idea to add a WARN_ON() to the various
-> copies, e.g.:
-> 
->    rc = strXXX(...);
->    WARN_ON(rc);
-
-Agreed - will do.
-
-> The strscpy/strlcat protections should ensure that nothing terrible
-> happens with respect to wandering off the end of the string, or
-> failing to NUL terminate, but they won't catch a logic error where the
-> string is not allocated correctly (resulting in a truncated buffer).
-
-agreed - Will add WARN_ON(rc) for all the str calls.
-
-thanks,
-  -lakshmi
-
-> 
->> +       strlcat(buf, selinux_initialized(state) ? on : off, buf_len);
->> +
->> +       strlcat(buf, "enforcing", buf_len);
->> +       strlcat(buf, enforcing_enabled(state) ? on : off, buf_len);
->> +
->> +       strlcat(buf, "checkreqprot", buf_len);
->> +       strlcat(buf, checkreqprot_get(state) ? on : off, buf_len);
->> +
->> +       for (i = 0; i < __POLICYDB_CAPABILITY_MAX; i++) {
->> +               strlcat(buf, selinux_policycap_names[i], buf_len);
->> +               strlcat(buf, state->policycap[i] ? on : off, buf_len);
->> +       }
->> +
->> +       return buf;
->> +}
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 > 
 
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
