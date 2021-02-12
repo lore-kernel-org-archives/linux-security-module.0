@@ -2,200 +2,169 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E23C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA9CC433DB
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62CCF64EBB
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:05:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37C3264E2C
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:53:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231348AbhBLTFi (ORCPT
+        id S230351AbhBLTxt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Feb 2021 14:05:38 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:51530 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229980AbhBLTFf (ORCPT
+        Fri, 12 Feb 2021 14:53:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50806 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230286AbhBLTxk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Feb 2021 14:05:35 -0500
-Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 608BF20B6C40;
-        Fri, 12 Feb 2021 11:04:52 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 608BF20B6C40
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1613156693;
-        bh=6YnCV6liH82sConSeIcoMvSWdbV+LrQaalBNmKqtnLk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GITEbyMOWmtO06swLLyzbqAndCL6qYoJwEmT2XhJyRqxT/lw3xpO8LZVsa6FeEhyy
-         Zla+9UCM9aT2VCn9g+XvrcPOq6hrKkSXzExsDCw+BNm3xfc6aB/ucA30hTk8Gslh4D
-         mf9uScKCuHbQdzAFC0IQnNVnowxrfhjH6wwp5mJA=
-Date:   Fri, 12 Feb 2021 13:04:50 -0600
-From:   Tyler Hicks <tyhicks@linux.microsoft.com>
-To:     Mark Salyzyn <salyzyn@android.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-kernel@vger.kernel.org,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Amir Goldstein <amir73il@gmail.com>, linux-doc@vger.kernel.org,
-        SElinux list <selinux@vger.kernel.org>,
-        James Morris <jmorris@namei.org>
-Subject: Re: [RESEND PATCH v18 2/4] overlayfs: handle XATTR_NOSECURITY flag
- for get xattr method
-Message-ID: <20210212190450.GB56839@sequoia>
-References: <20201021151903.652827-1-salyzyn@android.com>
- <20201021151903.652827-3-salyzyn@android.com>
- <CAJfpegtMoD85j5namV592sJD23QeUMD=+tq4SvFDqjVxsAszYQ@mail.gmail.com>
- <2fd64e4f-c573-c841-abb6-ec0908f78cdd@android.com>
- <20210205180131.GA648953@sequoia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210205180131.GA648953@sequoia>
+        Fri, 12 Feb 2021 14:53:40 -0500
+Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E889C0613D6
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Feb 2021 11:53:00 -0800 (PST)
+Received: by mail-pj1-x104a.google.com with SMTP id me5so710955pjb.0
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Feb 2021 11:53:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:cc;
+        bh=i9bXYkYkNrS/myxp10YTd6xQPzarqSevtONWXeGJPlg=;
+        b=CEPFGAAZTn1YBSHByUfgpcddUlDuB43hOXZpOdPUc+0zn3cxDCWnpYIBMPOElNPPLW
+         cIPJ2hF4x195i6fCSs1CWIpOMlYYJx0hpXRU4Y1ennrFKXBMgYS/5gSl11abA8hXM3Uj
+         WvhElyaTAr+5YhBuMjzBs5fMk+8yHPmuKFDhw7ZoQ0GrBmRAI5pj7oW8bwI6ARh0Kn1/
+         v5VwKf+p3vFo+qcUs9UykjlqnA56+Ki4Oczm93zCXA2zfa7ovKXRoJjTaAWyyLCs75x8
+         2ZgJ7qMogVu4vu8BBfJUCJ7YD/G5dEJuhNLufGQQAyJG/8STZNwx0DCPBUl+WixZl4le
+         yh4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=i9bXYkYkNrS/myxp10YTd6xQPzarqSevtONWXeGJPlg=;
+        b=EzAhyZ9+okpFKOQVe++ISdaIPEWw56hVyFhe8TxBE+UgqSUvvF78nC6ekemE4gfsTE
+         5Z7B/1hPCFN2GTJpjfTAm0YxTJiQqEMU2MrXtfm6RnrTkWZIxgUlXG0ApmWlogNIXBSU
+         IYKoqSZPLSfQTytV2QG2XqKaKoYh28bQJc0ek7j87/7Dh3ttCsQNnskSfvxnAI8tMGqM
+         iiw2aGlAxoGEPVJi1sdJlOuq+YW7Boujw4y2uIHj54e5hSXDHIm3g1+iv+w2xUlu7h/D
+         pNDwNjI7CKcbJaU2RS8BS3sMNvATvWpFg8Axr9hHuUyAg5aoYsuOMPz7Uy2UOgRdS2IZ
+         VzaA==
+X-Gm-Message-State: AOAM532WSBNtcrL6JsnXHSE69hoLWJv4V/fOCasGOf81kNqvVtnigiWU
+        6jBCLH4TMuDrt4bgv2icTDM/mo/1xpQr
+X-Google-Smtp-Source: ABdhPJzcLNW+FrrZp7ZKnrKVr8H5UQftS7u7Nn5TK/9khzHO3nQj/KyeiMBomoDzHkeCk9/NPtm2JLlrp5NX
+Sender: "jiancai via sendgmr" <jiancai@jiancai.svl.corp.google.com>
+X-Received: from jiancai.svl.corp.google.com ([2620:15c:2ce:0:8cad:e5dd:2b3c:2e84])
+ (user=jiancai job=sendgmr) by 2002:a62:3852:0:b029:1da:7238:1cb1 with SMTP id
+ f79-20020a6238520000b02901da72381cb1mr4445517pfa.11.1613159579252; Fri, 12
+ Feb 2021 11:52:59 -0800 (PST)
+Date:   Fri, 12 Feb 2021 11:52:53 -0800
+In-Reply-To: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
+Message-Id: <20210212195255.1321544-1-jiancai@google.com>
+Mime-Version: 1.0
+References: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
+X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
+Subject: [PATCH v2] ARM: Implement Clang's SLS mitigation
+From:   Jian Cai <jiancai@google.com>
+Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
+        clang-built-linux@googlegroups.com, Jian Cai <jiancai@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        "=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021-02-05 12:01:55, Tyler Hicks wrote:
-> On 2020-10-30 09:00:35, Mark Salyzyn wrote:
-> > On 10/30/20 8:07 AM, Miklos Szeredi wrote:
-> > > On Wed, Oct 21, 2020 at 5:19 PM Mark Salyzyn <salyzyn@android.com> wrote:
-> > > > Because of the overlayfs getxattr recursion, the incoming inode fails
-> > > > to update the selinux sid resulting in avc denials being reported
-> > > > against a target context of u:object_r:unlabeled:s0.
-> > > > 
-> > > > Solution is to respond to the XATTR_NOSECURITY flag in get xattr
-> > > > method that calls the __vfs_getxattr handler instead so that the
-> > > > context can be read in, rather than being denied with an -EACCES
-> > > > when vfs_getxattr handler is called.
-> > > > 
-> > > > For the use case where access is to be blocked by the security layer.
-> > > > 
-> > > > The path then would be security(dentry) ->
-> > > > __vfs_getxattr({dentry...XATTR_NOSECURITY}) ->
-> > > > handler->get({dentry...XATTR_NOSECURITY}) ->
-> > > > __vfs_getxattr({realdentry...XATTR_NOSECURITY}) ->
-> > > > lower_handler->get({realdentry...XATTR_NOSECURITY}) which
-> > > > would report back through the chain data and success as expected,
-> > > > the logging security layer at the top would have the data to
-> > > > determine the access permissions and report back to the logs and
-> > > > the caller that the target context was blocked.
-> > > > 
-> > > > For selinux this would solve the cosmetic issue of the selinux log
-> > > > and allow audit2allow to correctly report the rule needed to address
-> > > > the access problem.
-> > > > 
-> > > > Check impure, opaque, origin & meta xattr with no sepolicy audit
-> > > > (using __vfs_getxattr) since these operations are internal to
-> > > > overlayfs operations and do not disclose any data.  This became
-> > > > an issue for credential override off since sys_admin would have
-> > > > been required by the caller; whereas would have been inherently
-> > > > present for the creator since it performed the mount.
-> > > > 
-> > > > This is a change in operations since we do not check in the new
-> > > > ovl_do_getxattr function if the credential override is off or not.
-> > > > Reasoning is that the sepolicy check is unnecessary overhead,
-> > > > especially since the check can be expensive.
-> > > > 
-> > > > Because for override credentials off, this affects _everyone_ that
-> > > > underneath performs private xattr calls without the appropriate
-> > > > sepolicy permissions and sys_admin capability.  Providing blanket
-> > > > support for sys_admin would be bad for all possible callers.
-> > > > 
-> > > > For the override credentials on, this will affect only the mounter,
-> > > > should it lack sepolicy permissions. Not considered a security
-> > > > problem since mounting by definition has sys_admin capabilities,
-> > > > but sepolicy contexts would still need to be crafted.
-> > > This would be a problem when unprivileged mounting of overlay is
-> > > introduced.  I'd really like to avoid weakening the current security
-> > > model.
-> > 
-> > The current security model does not deal with non-overlapping security
-> > contexts between init (which on android has MAC permissions only when
-> > necessary, only enough permissions to perform the mount and other mundane
-> > operations, missing exec and read permissions in key spots) and user calls.
-> > 
-> > We are only weakening (that is actually an incorrect statement, security is
-> > there, just not double security of both mounter and caller) the security
-> > around calls that retrieve the xattr for administrative and internal
-> > purposes. No data is exposed to the caller that it would not otherwise have
-> > permissions for.
-> 
-> We've ran into the same issues that Mark is trying to solve with this
-> series. I came across Mark's series while searching around before I
-> wrote up a similar patch to Mark's patch #3.
-> 
-> We have a confined process that sets up Overlayfs mounts, then that process
-> starts a service confined by another security context, then that service
-> may execute binaries that run under a third security context. In this
-> case, I'm talking about SELinux security contexts but it could be
-> AppArmor or anything else that you use to separate out
-> privileges/permissions at fine-grained detail.
-> 
-> We don't want to grant all the privileges/permissions required by the
-> service (and its helper utilities) to the process that sets up the
-> Overlayfs mounts because we've been very careful in separating them
-> apart with security policy. However, we want to make use of Overlayfs
-> and adding a mount option to bypass the check on the mounter's cred
-> seems like a safe way of using Overlayfs without violating our principle
-> of least privilege.
+This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
+-mharden-sls=all, which mitigates the straight-line speculation
+vulnerability, speculative execution of the instruction following some
+unconditional jumps. Notice -mharden-sls= has other options as below,
+and this config turns on the strongest option.
 
-I just realized that I missed one noteworthy aspect of our use case. We
-would be alright if this functionality to bypass the mounter's cred
-checks (conditional, based on a mount option) was only allowed for
-read-only overlays[1].
+all: enable all mitigations against Straight Line Speculation that are implemented.
+none: disable all mitigations against Straight Line Speculation.
+retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
+blr: enable the mitigation against Straight Line Speculation for BLR instructions.
 
-I'm not sure if that would meet the needs of Android. Can you comment on
-that, Mark?
+Link: https://reviews.llvm.org/D93221
+Link: https://reviews.llvm.org/D81404
+Link: https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
+https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
 
-Miklos, would that restriction make this series any more acceptable to
-you?
+Suggested-by: Manoj Gupta <manojgupta@google.com>
+Suggested-by: Nathan Chancellor  <nathan@kernel.org>
+Suggested-by: David Laight <David.Laight@aculab.com>
+Signed-off-by: Jian Cai <jiancai@google.com>
+---
 
-Thanks!
+Changes v1 -> v2:
+ Update the description and patch based on Nathan and David's comments. 
 
-Tyler
+ arch/arm/Makefile          | 4 ++++
+ arch/arm64/Makefile        | 4 ++++
+ security/Kconfig.hardening | 7 +++++++
+ 3 files changed, 15 insertions(+)
 
-[1] https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html#multiple-lower-layers
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 4aaec9599e8a..11d89ef32da9 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -48,6 +48,10 @@ CHECKFLAGS	+= -D__ARMEL__
+ KBUILD_LDFLAGS	+= -EL
+ endif
+ 
++ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
++KBUILD_CFLAGS  += -mharden-sls=all
++endif
++
+ #
+ # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
+ # later may result in code being generated that handles signed short and signed
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 90309208bb28..ca7299b356a9 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
+   endif
+ endif
+ 
++ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
++KBUILD_CFLAGS  += -mharden-sls=all
++endif
++
+ cc_has_k_constraint := $(call try-run,echo				\
+ 	'int main(void) {						\
+ 		asm volatile("and w0, w0, %w0" :: "K" (4294967295));	\
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 269967c4fc1b..9266d8d1f78f 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -121,6 +121,13 @@ choice
+ 
+ endchoice
+ 
++config HARDEN_SLS_ALL
++	bool "enable SLS vulnerability hardening"
++	def_bool $(cc-option,-mharden-sls=all)
++        help
++          Enables straight-line speculation vulnerability hardening
++	  at highest level.
++
+ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+ 	bool "Report forcefully initialized variables"
+ 	depends on GCC_PLUGIN_STRUCTLEAK
+-- 
+2.30.0.478.g8a0d178c01-goog
 
-> 
-> Tyler
-> 
-> > 
-> > This patch becomes necessary when matched with the PATCH v18 3/4 of the
-> > series which fixes the user space break introduced in ~4.6 that formerly
-> > used the callers credentials for all accesses in all places. Security is
-> > weakened already as-is in overlayfs with all the overriding of the
-> > credentials for internal accesses to overlayfs mechanics based on the
-> > mounter credentials. Using the mounter credentials as a wider security hole
-> > is the problem, at least with PATCH v18 3/4 of the series we go back
-> > optionally to only using the caller's credentials to perform the operations.
-> > Admittedly some of the internal operations like mknod are privileged, but at
-> > least in Android's use case we are not using them with callers without the
-> > necessary credentials.
-> > 
-> > Android does not give the mounter more credentials than the callers, there
-> > is very little overlap in the MAC security.
-> > 
-> > > The big API churn in the 1/4 patch also seems excessive considering
-> > > that this seems to be mostly a cosmetic issue for android.  Am I
-> > > missing something?
-> > 
-> > Breaks sepolicy, it no longer has access to the context data at the
-> > overlayfs security boundary.
-> > 
-> > unknown is a symptom of being denied based on the denial to xattr data from
-> > the underlying filesystem layer. Being denied the security context of the
-> > target is not a good thing within the sepolicy security layer.
-> > 
-> > > 
-> > > Thanks,
-> > > Miklos
-> > 
-> > 
