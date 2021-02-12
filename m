@@ -6,79 +6,84 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87148C433E9
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 11:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FD6C433E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 12:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D52264E8D
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 11:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 045BD64E2A
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 12:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230240AbhBLLuA (ORCPT
+        id S231341AbhBLMYb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Feb 2021 06:50:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47058 "EHLO mail.kernel.org"
+        Fri, 12 Feb 2021 07:24:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229650AbhBLLt6 (ORCPT
+        id S230296AbhBLMW4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Feb 2021 06:49:58 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8633964E7D;
-        Fri, 12 Feb 2021 11:49:17 +0000 (UTC)
+        Fri, 12 Feb 2021 07:22:56 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4366364E08;
+        Fri, 12 Feb 2021 12:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613130558;
-        bh=cUvMxzXC600Efy1Ug6l8sauc/4u3co4Gf+va2XshCvE=;
+        s=k20201202; t=1613132535;
+        bh=kL29m8B0BlKb4QIpXdEX+ADv5B/oc9gQuw1FfsQLD9w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aSs13cIq7GuWz4la26g7KDvDns60h8i6TO7pz+crFUB5hiD3sLK03X/gJXxDM5TR8
-         p/Nmqg+vOHdnav/2XRTTI8dijkgjE/DulY1q85tvCeGgaQbTDiziSNRnu4LF/lxS1/
-         1TD8RJDARTHUEWGwLdViOovu/J5qD4I85/ArYXDBfnHNuZJGL/rK+amUGbZOPvUedu
-         WY5OOARHu9RLjqy5HKwn5Z7I5Kj9G38/A5l8uw1TmpKASU2nE3P9TvI6kmygz0VnJ1
-         BacMEZmBIHZoSct8Ii0B0lQnLKaFm5Tr+JcjyvP58CZTjN3yCoagLd/zqJhAKbrZls
-         fVAQkr0JMkaIA==
-Date:   Fri, 12 Feb 2021 13:49:08 +0200
+        b=U+dgREgRgSE8KbbgP9crNtAgqGKxU6y26G/RPkFQlbX0sd1F0ba0mGsQ3NZ+Nh04k
+         pPVOI7qtYe+QKH2I8GwccmNx9iU9wGHr8Xmn+Yku6OD3XBZqCXpOT7aVKHbgeDKnVu
+         V+YzGwm1doa07j7en/GB9Pexa9dwU1jFVD7BZ5rB8Mc18PmgYBRnnqsR27FgA/+7lE
+         wrqrNPBBXHeRZACL7Dgc0e9paAcNgqpAEMgPPg+XQMIO3Kugb+2Si7u+yjKPCzqsO1
+         N0fb5aqh92Gl1y3FJAbbOz7+RwKqKhzxDbMVDK/kMbGsJNz08149OemyiAdZqF7ooX
+         xpwybHFk4/3Gw==
+Date:   Fri, 12 Feb 2021 14:22:06 +0200
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        =?us-ascii?B?PT91dGYtOD9RP01pY2thPUMzPUFCbF9TYWxhPUMzPUJDbj89?= 
-        <mic@digikod.net>, dwmw2@infradead.org,
-        James.Bottomley@hansenpartnership.com, masahiroy@kernel.org,
-        michal.lkml@markovi.net, jmorris@namei.org, serge@hallyn.com,
-        ardb@kernel.org, Mimi Zohar <zohar@linux.ibm.com>,
-        lszubowi@redhat.com, javierm@redhat.com, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Tyler Hicks <tyhicks@linux.microsoft.com>
-Subject: Re: Re: Conflict with =?iso-8859-1?Q?Micka?=
- =?iso-8859-1?Q?=EBl_Sala=FCn's_blacklist_patches_=5Bwas_=5BPATCH_v5_0=2F4?=
- =?iso-8859-1?Q?=5D?= Add EFI_CERT_X509_GUID support for dbx/mokx entries]
-Message-ID: <YCZrNIecWpZGvbaw@kernel.org>
-References: <20210122181054.32635-1-eric.snowberg@oracle.com>
- <1103491.1612369600@warthog.procyon.org.uk>
- <10e6616e-0598-9f33-2de9-4a5268bba586@digikod.net>
- <A5B5DEC0-E47A-4C3D-8E79-AF37B6C2E565@oracle.com>
- <7924ce4c-ea94-9540-0730-bddae7c6af07@digikod.net>
- <BFC930B3-7994-4C5B-A8EF-1DD1C73F5750@oracle.com>
- <dc6a4524-3935-fda6-40a8-cebf80942cdf@digikod.net>
- <188DE1AF-A011-4631-B88A-2C4324DA013B@oracle.com>
- <99066eb7-53ac-41b0-46cf-36ea3d7f6590@digikod.net>
- <525705.1612876446@warthog.procyon.org.uk>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        linux-security-module@vger.kernel.org, daniel.thompson@linaro.org,
+        op-tee@lists.trustedfirmware.org, corbet@lwn.net,
+        jejb@linux.ibm.com, janne.karhunen@gmail.com,
+        linux-doc@vger.kernel.org, jmorris@namei.org, zohar@linux.ibm.com,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        lhinds@redhat.com, keyrings@vger.kernel.org,
+        jarkko.sakkinen@linux.intel.com, Markus.Wamser@mixed-mode.de,
+        casey@schaufler-ca.com, linux-integrity@vger.kernel.org,
+        jens.wiklander@linaro.org, linux-arm-kernel@lists.infradead.org,
+        serge@hallyn.com
+Subject: Re: [PATCH v8 1/4] KEYS: trusted: Add generic trusted keys framework
+Message-ID: <YCZy7mZ0yBPRSm9E@kernel.org>
+References: <1604419306-26105-1-git-send-email-sumit.garg@linaro.org>
+ <1604419306-26105-2-git-send-email-sumit.garg@linaro.org>
+ <YCQRPo0o6MZ0pcUa@kernel.org>
+ <f51409f7-05b4-31b6-f1c5-d9e6d7c0bb46@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <525705.1612876446@warthog.procyon.org.uk>
+In-Reply-To: <f51409f7-05b4-31b6-f1c5-d9e6d7c0bb46@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 09, 2021 at 01:14:06PM +0000, David Howells wrote:
+On Thu, Feb 11, 2021 at 11:34:21AM +0100, Ahmad Fatoum wrote:
+> Hello Jarkko,
 > 
-> Hi Eric, Mickaël,
+> On 10.02.21 18:00, Jarkko Sakkinen wrote:
+> > On Tue, Nov 03, 2020 at 09:31:43PM +0530, Sumit Garg wrote:
+> >> +	case Opt_new:
+> >> +		key_len = payload->key_len;
+> >> +		ret = static_call(trusted_key_get_random)(payload->key,
+> >> +							  key_len);
+> >> +		if (ret != key_len) {
+> >> +			pr_info("trusted_key: key_create failed (%d)\n", ret);
+> >> +			goto out;
+> >> +		}
+> > 
+> > This repeats a regression in existing code, i.e. does not check
+> > "ret < 0" condition. I noticed this now when I rebased the code
+> > on top of my fixes.
+> > 
+> > I.e. it's fixed in my master branch, which caused a merge conflict,
+> > and I found this.
 > 
-> Do we have a consensus on this?  From what's written here, I don't think I can
-> ask Linus to pull the merge of your two branches.  I feel that I probably need
-> to push Eric's first as that fixes a CVE if I can't offer a merge.
-> 
-> David
+> Does that mean this series will go out for the next merge window?
+> Can you point me where your git tree is, so I can rebase on top?
 
-Would it be possible to compose a single unified patch set?
-
-It's also somewhat distracting to review both separately.
+No I mean the bug that is propagated here is fixed in my master
+branch, i.e. get_random() should check also '< 0' condition.
 
 /Jarkko
