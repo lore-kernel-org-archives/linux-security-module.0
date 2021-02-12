@@ -2,195 +2,200 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A86C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 14:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E23C433E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7A6164E7C
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Feb 2021 14:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62CCF64EBB
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231193AbhBJO7P (ORCPT
+        id S231348AbhBLTFi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Feb 2021 09:59:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57068 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231784AbhBJO67 (ORCPT
+        Fri, 12 Feb 2021 14:05:38 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:51530 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229980AbhBLTFf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Feb 2021 09:58:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1612969052;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=z2dPGwBXCWSVZ5g1pGm6UIqGI0ADcDy1IxFOAnmlTEE=;
-        b=QzDF3vLj2CQafKLw1NTtknyaRd9MW/8vyDf/KHiFkcfoTdbNg5nEUDTbJ5l59n8qtZVjBy
-        mgShMLmYfcUevpLct+0Ard1IFiSWyTfOTuzcCoYqmWyswOjjUaBeGxP4JVcpDTLKaE9+nA
-        Ilw7pl/awho7Ah6C0gjqvYajMGWAeW4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-505-BUzlBjMCPu-BrVdmGJSJcQ-1; Wed, 10 Feb 2021 09:57:28 -0500
-X-MC-Unique: BUzlBjMCPu-BrVdmGJSJcQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 9451C192CC40;
-        Wed, 10 Feb 2021 14:57:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-115-23.rdu2.redhat.com [10.10.115.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 517BE60657;
-        Wed, 10 Feb 2021 14:57:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Alex Shi <alex.shi@linux.alibaba.com>,
-        Ben Boeckel <mathstuf@gmail.com>,
-        Denis Efremov <efremov@linux.com>,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Jann Horn <jannh@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        Tom Rix <trix@redhat.com>, YueHaibing <yuehaibing@huawei.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: 
+        Fri, 12 Feb 2021 14:05:35 -0500
+Received: from sequoia (162-237-133-238.lightspeed.rcsntx.sbcglobal.net [162.237.133.238])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 608BF20B6C40;
+        Fri, 12 Feb 2021 11:04:52 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 608BF20B6C40
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1613156693;
+        bh=6YnCV6liH82sConSeIcoMvSWdbV+LrQaalBNmKqtnLk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GITEbyMOWmtO06swLLyzbqAndCL6qYoJwEmT2XhJyRqxT/lw3xpO8LZVsa6FeEhyy
+         Zla+9UCM9aT2VCn9g+XvrcPOq6hrKkSXzExsDCw+BNm3xfc6aB/ucA30hTk8Gslh4D
+         mf9uScKCuHbQdzAFC0IQnNVnowxrfhjH6wwp5mJA=
+Date:   Fri, 12 Feb 2021 13:04:50 -0600
+From:   Tyler Hicks <tyhicks@linux.microsoft.com>
+To:     Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-kernel@vger.kernel.org,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Amir Goldstein <amir73il@gmail.com>, linux-doc@vger.kernel.org,
+        SElinux list <selinux@vger.kernel.org>,
+        James Morris <jmorris@namei.org>
+Subject: Re: [RESEND PATCH v18 2/4] overlayfs: handle XATTR_NOSECURITY flag
+ for get xattr method
+Message-ID: <20210212190450.GB56839@sequoia>
+References: <20201021151903.652827-1-salyzyn@android.com>
+ <20201021151903.652827-3-salyzyn@android.com>
+ <CAJfpegtMoD85j5namV592sJD23QeUMD=+tq4SvFDqjVxsAszYQ@mail.gmail.com>
+ <2fd64e4f-c573-c841-abb6-ec0908f78cdd@android.com>
+ <20210205180131.GA648953@sequoia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date:   Wed, 10 Feb 2021 14:57:19 +0000
-Message-ID: <1322700.1612969039@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210205180131.GA648953@sequoia>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 2021-02-05 12:01:55, Tyler Hicks wrote:
+> On 2020-10-30 09:00:35, Mark Salyzyn wrote:
+> > On 10/30/20 8:07 AM, Miklos Szeredi wrote:
+> > > On Wed, Oct 21, 2020 at 5:19 PM Mark Salyzyn <salyzyn@android.com> wrote:
+> > > > Because of the overlayfs getxattr recursion, the incoming inode fails
+> > > > to update the selinux sid resulting in avc denials being reported
+> > > > against a target context of u:object_r:unlabeled:s0.
+> > > > 
+> > > > Solution is to respond to the XATTR_NOSECURITY flag in get xattr
+> > > > method that calls the __vfs_getxattr handler instead so that the
+> > > > context can be read in, rather than being denied with an -EACCES
+> > > > when vfs_getxattr handler is called.
+> > > > 
+> > > > For the use case where access is to be blocked by the security layer.
+> > > > 
+> > > > The path then would be security(dentry) ->
+> > > > __vfs_getxattr({dentry...XATTR_NOSECURITY}) ->
+> > > > handler->get({dentry...XATTR_NOSECURITY}) ->
+> > > > __vfs_getxattr({realdentry...XATTR_NOSECURITY}) ->
+> > > > lower_handler->get({realdentry...XATTR_NOSECURITY}) which
+> > > > would report back through the chain data and success as expected,
+> > > > the logging security layer at the top would have the data to
+> > > > determine the access permissions and report back to the logs and
+> > > > the caller that the target context was blocked.
+> > > > 
+> > > > For selinux this would solve the cosmetic issue of the selinux log
+> > > > and allow audit2allow to correctly report the rule needed to address
+> > > > the access problem.
+> > > > 
+> > > > Check impure, opaque, origin & meta xattr with no sepolicy audit
+> > > > (using __vfs_getxattr) since these operations are internal to
+> > > > overlayfs operations and do not disclose any data.  This became
+> > > > an issue for credential override off since sys_admin would have
+> > > > been required by the caller; whereas would have been inherently
+> > > > present for the creator since it performed the mount.
+> > > > 
+> > > > This is a change in operations since we do not check in the new
+> > > > ovl_do_getxattr function if the credential override is off or not.
+> > > > Reasoning is that the sepolicy check is unnecessary overhead,
+> > > > especially since the check can be expensive.
+> > > > 
+> > > > Because for override credentials off, this affects _everyone_ that
+> > > > underneath performs private xattr calls without the appropriate
+> > > > sepolicy permissions and sys_admin capability.  Providing blanket
+> > > > support for sys_admin would be bad for all possible callers.
+> > > > 
+> > > > For the override credentials on, this will affect only the mounter,
+> > > > should it lack sepolicy permissions. Not considered a security
+> > > > problem since mounting by definition has sys_admin capabilities,
+> > > > but sepolicy contexts would still need to be crafted.
+> > > This would be a problem when unprivileged mounting of overlay is
+> > > introduced.  I'd really like to avoid weakening the current security
+> > > model.
+> > 
+> > The current security model does not deal with non-overlapping security
+> > contexts between init (which on android has MAC permissions only when
+> > necessary, only enough permissions to perform the mount and other mundane
+> > operations, missing exec and read permissions in key spots) and user calls.
+> > 
+> > We are only weakening (that is actually an incorrect statement, security is
+> > there, just not double security of both mounter and caller) the security
+> > around calls that retrieve the xattr for administrative and internal
+> > purposes. No data is exposed to the caller that it would not otherwise have
+> > permissions for.
+> 
+> We've ran into the same issues that Mark is trying to solve with this
+> series. I came across Mark's series while searching around before I
+> wrote up a similar patch to Mark's patch #3.
+> 
+> We have a confined process that sets up Overlayfs mounts, then that process
+> starts a service confined by another security context, then that service
+> may execute binaries that run under a third security context. In this
+> case, I'm talking about SELinux security contexts but it could be
+> AppArmor or anything else that you use to separate out
+> privileges/permissions at fine-grained detail.
+> 
+> We don't want to grant all the privileges/permissions required by the
+> service (and its helper utilities) to the process that sets up the
+> Overlayfs mounts because we've been very careful in separating them
+> apart with security policy. However, we want to make use of Overlayfs
+> and adding a mount option to bypass the check on the mounter's cred
+> seems like a safe way of using Overlayfs without violating our principle
+> of least privilege.
 
-Hi Linus,
+I just realized that I missed one noteworthy aspect of our use case. We
+would be alright if this functionality to bypass the mounter's cred
+checks (conditional, based on a mount option) was only allowed for
+read-only overlays[1].
 
-Here's a set of minor keyrings fixes/cleanups that I've collected from
-various people for the upcoming merge window.
+I'm not sure if that would meet the needs of Android. Can you comment on
+that, Mark?
 
-A couple of them might, in theory, be visible to userspace:
+Miklos, would that restriction make this series any more acceptable to
+you?
 
- (*) Make blacklist_vet_description() reject uppercase letters as they
-     don't match the all-lowercase hex string generated for a blacklist
-     search.
+Thanks!
 
-     This may want reconsideration in the future, but, currently, you can't
-     add to the blacklist keyring from userspace and the only source of
-     blacklist keys generates lowercase descriptions.
+Tyler
 
- (*) Fix blacklist_init() to use a new KEY_ALLOC_* flag to indicate that it
-     wants KEY_FLAG_KEEP to be set rather than passing KEY_FLAG_KEEP into
-     keyring_alloc() as KEY_FLAG_KEEP isn't a valid alloc flag.
+[1] https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html#multiple-lower-layers
 
-     This isn't currently a problem as the blacklist keyring isn't
-     currently writable by userspace.
-
-The rest of the patches are cleanups and I don't think they should have any
-visible effect.
-
-I've fixed the compilation error, added another patch and rebased to
-v5.11-rc4 since the last request.
-
-David
----
-The following changes since commit 19c329f6808995b142b3966301f217c831e7cf31:
-
-  Linux 5.11-rc4 (2021-01-17 16:37:05 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/=
-keys-misc-20210126
-
-for you to fetch changes up to 8f0bfc25c907f38e7f9dc498e8f43000d77327ef:
-
-  watch_queue: rectify kernel-doc for init_watch() (2021-01-26 11:16:34 +00=
-00)
-
-----------------------------------------------------------------
-Keyrings miscellany
-
-----------------------------------------------------------------
-Alex Shi (2):
-      PKCS#7: drop function from kernel-doc pkcs7_validate_trust_one
-      certs/blacklist: fix kernel doc interface issue
-
-Alexander A. Klimov (1):
-      encrypted-keys: Replace HTTP links with HTTPS ones
-
-David Howells (1):
-      certs: Fix blacklist flag type confusion
-
-Denis Efremov (1):
-      security/keys: use kvfree_sensitive()
-
-Gabriel Krisman Bertazi (1):
-      watch_queue: Drop references to /dev/watch_queue
-
-Gustavo A. R. Silva (1):
-      security: keys: Fix fall-through warnings for Clang
-
-Jann Horn (1):
-      keys: Remove outdated __user annotations
-
-Krzysztof Kozlowski (1):
-      KEYS: asymmetric: Fix kerneldoc
-
-Lukas Bulwahn (1):
-      watch_queue: rectify kernel-doc for init_watch()
-
-Micka=C3=ABl Sala=C3=BCn (3):
-      certs: Fix blacklisted hexadecimal hash string check
-      PKCS#7: Fix missing include
-      certs: Replace K{U,G}IDT_INIT() with GLOBAL_ROOT_{U,G}ID
-
-Randy Dunlap (2):
-      security: keys: delete repeated words in comments
-      crypto: asymmetric_keys: fix some comments in pkcs7_parser.h
-
-Tianjia Zhang (1):
-      crypto: public_key: Remove redundant header file from public_key.h
-
-Tom Rix (2):
-      KEYS: remove redundant memset
-      keys: remove trailing semicolon in macro definition
-
-YueHaibing (1):
-      crypto: pkcs7: Use match_string() helper to simplify the code
-
- Documentation/security/keys/core.rst     |  4 ++--
- certs/blacklist.c                        | 10 +++++-----
- certs/system_keyring.c                   |  5 +++--
- crypto/asymmetric_keys/asymmetric_type.c |  6 ++++--
- crypto/asymmetric_keys/pkcs7_parser.h    |  5 ++---
- crypto/asymmetric_keys/pkcs7_trust.c     |  2 +-
- crypto/asymmetric_keys/pkcs7_verify.c    |  9 ++++-----
- include/crypto/public_key.h              |  1 -
- include/keys/encrypted-type.h            |  2 +-
- include/linux/key.h                      |  5 +++--
- include/linux/verification.h             |  2 ++
- kernel/watch_queue.c                     |  2 +-
- samples/Kconfig                          |  2 +-
- samples/watch_queue/watch_test.c         |  2 +-
- security/integrity/ima/ima_mok.c         |  5 ++---
- security/keys/Kconfig                    |  8 ++++----
- security/keys/big_key.c                  |  9 +++------
- security/keys/key.c                      |  2 ++
- security/keys/keyctl.c                   |  2 +-
- security/keys/keyctl_pkey.c              |  2 --
- security/keys/keyring.c                  | 10 +++++-----
- security/keys/process_keys.c             |  1 +
- 22 files changed, 48 insertions(+), 48 deletions(-)
-
+> 
+> Tyler
+> 
+> > 
+> > This patch becomes necessary when matched with the PATCH v18 3/4 of the
+> > series which fixes the user space break introduced in ~4.6 that formerly
+> > used the callers credentials for all accesses in all places. Security is
+> > weakened already as-is in overlayfs with all the overriding of the
+> > credentials for internal accesses to overlayfs mechanics based on the
+> > mounter credentials. Using the mounter credentials as a wider security hole
+> > is the problem, at least with PATCH v18 3/4 of the series we go back
+> > optionally to only using the caller's credentials to perform the operations.
+> > Admittedly some of the internal operations like mknod are privileged, but at
+> > least in Android's use case we are not using them with callers without the
+> > necessary credentials.
+> > 
+> > Android does not give the mounter more credentials than the callers, there
+> > is very little overlap in the MAC security.
+> > 
+> > > The big API churn in the 1/4 patch also seems excessive considering
+> > > that this seems to be mostly a cosmetic issue for android.  Am I
+> > > missing something?
+> > 
+> > Breaks sepolicy, it no longer has access to the context data at the
+> > overlayfs security boundary.
+> > 
+> > unknown is a symptom of being denied based on the denial to xattr data from
+> > the underlying filesystem layer. Being denied the security context of the
+> > target is not a good thing within the sepolicy security layer.
+> > 
+> > > 
+> > > Thanks,
+> > > Miklos
+> > 
+> > 
