@@ -2,169 +2,161 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA9CC433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F409C433E9
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 21:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37C3264E2C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 19:53:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0603164DB2
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Feb 2021 21:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbhBLTxt (ORCPT
+        id S232076AbhBLVUw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Feb 2021 14:53:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50806 "EHLO
+        Fri, 12 Feb 2021 16:20:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230286AbhBLTxk (ORCPT
+        with ESMTP id S232066AbhBLVUm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Feb 2021 14:53:40 -0500
-Received: from mail-pj1-x104a.google.com (mail-pj1-x104a.google.com [IPv6:2607:f8b0:4864:20::104a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E889C0613D6
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Feb 2021 11:53:00 -0800 (PST)
-Received: by mail-pj1-x104a.google.com with SMTP id me5so710955pjb.0
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Feb 2021 11:53:00 -0800 (PST)
+        Fri, 12 Feb 2021 16:20:42 -0500
+Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 374B8C061756;
+        Fri, 12 Feb 2021 13:20:02 -0800 (PST)
+Received: by mail-il1-x134.google.com with SMTP id y15so449762ilj.11;
+        Fri, 12 Feb 2021 13:20:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=sender:date:in-reply-to:message-id:mime-version:references:subject
-         :from:cc;
-        bh=i9bXYkYkNrS/myxp10YTd6xQPzarqSevtONWXeGJPlg=;
-        b=CEPFGAAZTn1YBSHByUfgpcddUlDuB43hOXZpOdPUc+0zn3cxDCWnpYIBMPOElNPPLW
-         cIPJ2hF4x195i6fCSs1CWIpOMlYYJx0hpXRU4Y1ennrFKXBMgYS/5gSl11abA8hXM3Uj
-         WvhElyaTAr+5YhBuMjzBs5fMk+8yHPmuKFDhw7ZoQ0GrBmRAI5pj7oW8bwI6ARh0Kn1/
-         v5VwKf+p3vFo+qcUs9UykjlqnA56+Ki4Oczm93zCXA2zfa7ovKXRoJjTaAWyyLCs75x8
-         2ZgJ7qMogVu4vu8BBfJUCJ7YD/G5dEJuhNLufGQQAyJG/8STZNwx0DCPBUl+WixZl4le
-         yh4A==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZFoPlC9Ox6zK6lUP8unB6mEMSEpKmVAmcqkIvxGgLK4=;
+        b=hSZZOE71IN3CjEqQK8VS+pu+X1LbA62C3V5J62sXSKRYcLrCn3Oh85hNVOm8EsdyS9
+         vC8VQUXGEuGAgL6mI07S5XX2nfihYT5SVhk8xvPJ6xMbeGqU4UyfCniJH6JliaVTX0uw
+         ie1ajml3LQtblOCBIIKu37P+sJhdql0jeTvID7XxGjj39i+x7IYiEWsMFBWtZDN1br6x
+         bcHX1Da7Xf4aSWH36njxcQIbPWZUkie0/v2MGKW+HN9oiJ4BSOBHZ9VI3Yxv1xX7o9rn
+         oykr0o2fJHXvTtx+f5wC9xaui6msMMBsa2opR+y4ReRMX46ndC8xeKlVlVQElqVJVhoS
+         vnng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
-         :references:subject:from:cc;
-        bh=i9bXYkYkNrS/myxp10YTd6xQPzarqSevtONWXeGJPlg=;
-        b=EzAhyZ9+okpFKOQVe++ISdaIPEWw56hVyFhe8TxBE+UgqSUvvF78nC6ekemE4gfsTE
-         5Z7B/1hPCFN2GTJpjfTAm0YxTJiQqEMU2MrXtfm6RnrTkWZIxgUlXG0ApmWlogNIXBSU
-         IYKoqSZPLSfQTytV2QG2XqKaKoYh28bQJc0ek7j87/7Dh3ttCsQNnskSfvxnAI8tMGqM
-         iiw2aGlAxoGEPVJi1sdJlOuq+YW7Boujw4y2uIHj54e5hSXDHIm3g1+iv+w2xUlu7h/D
-         pNDwNjI7CKcbJaU2RS8BS3sMNvATvWpFg8Axr9hHuUyAg5aoYsuOMPz7Uy2UOgRdS2IZ
-         VzaA==
-X-Gm-Message-State: AOAM532WSBNtcrL6JsnXHSE69hoLWJv4V/fOCasGOf81kNqvVtnigiWU
-        6jBCLH4TMuDrt4bgv2icTDM/mo/1xpQr
-X-Google-Smtp-Source: ABdhPJzcLNW+FrrZp7ZKnrKVr8H5UQftS7u7Nn5TK/9khzHO3nQj/KyeiMBomoDzHkeCk9/NPtm2JLlrp5NX
-Sender: "jiancai via sendgmr" <jiancai@jiancai.svl.corp.google.com>
-X-Received: from jiancai.svl.corp.google.com ([2620:15c:2ce:0:8cad:e5dd:2b3c:2e84])
- (user=jiancai job=sendgmr) by 2002:a62:3852:0:b029:1da:7238:1cb1 with SMTP id
- f79-20020a6238520000b02901da72381cb1mr4445517pfa.11.1613159579252; Fri, 12
- Feb 2021 11:52:59 -0800 (PST)
-Date:   Fri, 12 Feb 2021 11:52:53 -0800
-In-Reply-To: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
-Message-Id: <20210212195255.1321544-1-jiancai@google.com>
-Mime-Version: 1.0
-References: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
-X-Mailer: git-send-email 2.30.0.478.g8a0d178c01-goog
-Subject: [PATCH v2] ARM: Implement Clang's SLS mitigation
-From:   Jian Cai <jiancai@google.com>
-Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
-        clang-built-linux@googlegroups.com, Jian Cai <jiancai@google.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ZFoPlC9Ox6zK6lUP8unB6mEMSEpKmVAmcqkIvxGgLK4=;
+        b=YM1tFcbkMNXvWRG9LwOQmZ3QCMov6EA4XucIrE5dLdbjnPURnnlx7XH+Vu2bBnWyKT
+         fserhgXyOsgu8Nmzif2p8AMtTQrD5YoEzYJGjRyF1korwysPIBVGeZeY0atbBz2dCyc4
+         JJieNtzDbNGNt/8N7RsELxuWFsxfwchP5+aVglALdPSiFIKvwfdgGsqvqzUnlH9f++5U
+         R6ibTR2wMlwgH0+Dv8WwtgIZ/uPo73chobBz19BXaGrxGYRmZaEBZDt7hYTsCkA+XOuc
+         sAXxym58viJ4Jp8dSm7Dih3BLKrFfhMcsEAGCRg/qrpetplsyIADIVd5S8sQ+y/wcRuT
+         N68w==
+X-Gm-Message-State: AOAM5322/DwmWWuObMHeF5N3oCPURM86wvkGOO3dgHlQMlFcNl2B9Srr
+        qfWDCBrZLyM9KKT1PjxY72oTrb/pH2o7VA==
+X-Google-Smtp-Source: ABdhPJzx5eE7PXldjvPvTehXqaQjzJe+J+I412FXoSM0yb9Rigf4AwDhoWZzAaty1HH0zxlA2I5VTQ==
+X-Received: by 2002:a92:870d:: with SMTP id m13mr3878147ild.104.1613164801697;
+        Fri, 12 Feb 2021 13:20:01 -0800 (PST)
+Received: from Olgas-MBP-444.attlocal.net (172-10-226-31.lightspeed.livnmi.sbcglobal.net. [172.10.226.31])
+        by smtp.gmail.com with ESMTPSA id k11sm4685570iop.45.2021.02.12.13.20.00
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Fri, 12 Feb 2021 13:20:01 -0800 (PST)
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: [PATCH 2/2] NFSv4 account for selinux security context when deciding to share superblock
+Date:   Fri, 12 Feb 2021 16:19:55 -0500
+Message-Id: <20210212211955.11239-2-olga.kornievskaia@gmail.com>
+X-Mailer: git-send-email 2.10.1 (Apple Git-78)
+In-Reply-To: <20210212211955.11239-1-olga.kornievskaia@gmail.com>
+References: <20210212211955.11239-1-olga.kornievskaia@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
--mharden-sls=all, which mitigates the straight-line speculation
-vulnerability, speculative execution of the instruction following some
-unconditional jumps. Notice -mharden-sls= has other options as below,
-and this config turns on the strongest option.
+From: Olga Kornievskaia <kolga@netapp.com>
 
-all: enable all mitigations against Straight Line Speculation that are implemented.
-none: disable all mitigations against Straight Line Speculation.
-retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
-blr: enable the mitigation against Straight Line Speculation for BLR instructions.
+Keep track of whether or not there was an selinux context mount
+options during the mount. While deciding if the superblock can be
+shared for the new mount, check for if we had selinux context on
+the existing mount and call into selinux to tell if new passed
+in selinux context is compatible with the existing mount's options.
 
-Link: https://reviews.llvm.org/D93221
-Link: https://reviews.llvm.org/D81404
-Link: https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
-https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
+Previously, NFS wasn't able to do the following 2mounts:
+mount -o vers=4.2,sec=sys,context=system_u:object_r:root_t:s0
+<serverip>:/ /mnt
+mount -o vers=4.2,sec=sys,context=system_u:object_r:swapfile_t:s0
+<serverip>:/scratch /scratch
 
-Suggested-by: Manoj Gupta <manojgupta@google.com>
-Suggested-by: Nathan Chancellor  <nathan@kernel.org>
-Suggested-by: David Laight <David.Laight@aculab.com>
-Signed-off-by: Jian Cai <jiancai@google.com>
+2nd mount would fail with "mount.nfs: an incorrect mount option was
+specified" and var log messages would have:
+"SElinux: mount invalid. Same superblock, different security
+settings for.."
+
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
 ---
+ fs/nfs/fs_context.c       | 3 +++
+ fs/nfs/internal.h         | 1 +
+ fs/nfs/super.c            | 4 ++++
+ include/linux/nfs_fs_sb.h | 1 +
+ 4 files changed, 9 insertions(+)
 
-Changes v1 -> v2:
- Update the description and patch based on Nathan and David's comments. 
-
- arch/arm/Makefile          | 4 ++++
- arch/arm64/Makefile        | 4 ++++
- security/Kconfig.hardening | 7 +++++++
- 3 files changed, 15 insertions(+)
-
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 4aaec9599e8a..11d89ef32da9 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -48,6 +48,10 @@ CHECKFLAGS	+= -D__ARMEL__
- KBUILD_LDFLAGS	+= -EL
- endif
+diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+index 06894bcdea2d..8067f055d842 100644
+--- a/fs/nfs/fs_context.c
++++ b/fs/nfs/fs_context.c
+@@ -448,6 +448,9 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
+ 	if (opt < 0)
+ 		return ctx->sloppy ? 1 : opt;
  
-+ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-+KBUILD_CFLAGS  += -mharden-sls=all
-+endif
++	if (fc->security)
++		ctx->has_sec_mnt_opts = 1;
 +
- #
- # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
- # later may result in code being generated that handles signed short and signed
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 90309208bb28..ca7299b356a9 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
-   endif
- endif
+ 	switch (opt) {
+ 	case Opt_source:
+ 		if (fc->source)
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index 62d3189745cd..08f4f34e8cf5 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -96,6 +96,7 @@ struct nfs_fs_context {
+ 	char			*fscache_uniq;
+ 	unsigned short		protofamily;
+ 	unsigned short		mountfamily;
++	bool			has_sec_mnt_opts;
  
-+ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-+KBUILD_CFLAGS  += -mharden-sls=all
-+endif
-+
- cc_has_k_constraint := $(call try-run,echo				\
- 	'int main(void) {						\
- 		asm volatile("and w0, w0, %w0" :: "K" (4294967295));	\
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index 269967c4fc1b..9266d8d1f78f 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -121,6 +121,13 @@ choice
+ 	struct {
+ 		union {
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 4034102010f0..ea4e5252a1f0 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1058,6 +1058,7 @@ static void nfs_fill_super(struct super_block *sb, struct nfs_fs_context *ctx)
+ 						 &sb->s_blocksize_bits);
  
- endchoice
+ 	nfs_super_set_maxbytes(sb, server->maxfilesize);
++	server->has_sec_mnt_opts = ctx->has_sec_mnt_opts;
+ }
  
-+config HARDEN_SLS_ALL
-+	bool "enable SLS vulnerability hardening"
-+	def_bool $(cc-option,-mharden-sls=all)
-+        help
-+          Enables straight-line speculation vulnerability hardening
-+	  at highest level.
-+
- config GCC_PLUGIN_STRUCTLEAK_VERBOSE
- 	bool "Report forcefully initialized variables"
- 	depends on GCC_PLUGIN_STRUCTLEAK
+ static int nfs_compare_mount_options(const struct super_block *s, const struct nfs_server *b,
+@@ -1174,6 +1175,9 @@ static int nfs_compare_super(struct super_block *sb, struct fs_context *fc)
+ 		return 0;
+ 	if (!nfs_compare_userns(old, server))
+ 		return 0;
++	if ((old->has_sec_mnt_opts || fc->security) &&
++			!security_sb_do_mnt_opts_match(sb, fc->security))
++		return 0;
+ 	return nfs_compare_mount_options(sb, server, fc);
+ }
+ 
+diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+index 38e60ec742df..3f0acada5794 100644
+--- a/include/linux/nfs_fs_sb.h
++++ b/include/linux/nfs_fs_sb.h
+@@ -254,6 +254,7 @@ struct nfs_server {
+ 
+ 	/* User namespace info */
+ 	const struct cred	*cred;
++	bool			has_sec_mnt_opts;
+ };
+ 
+ /* Server capabilities */
 -- 
-2.30.0.478.g8a0d178c01-goog
+2.27.0
 
