@@ -2,139 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45874C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Feb 2021 13:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA4DC433DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Feb 2021 14:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F100F64E26
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Feb 2021 13:28:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99B8E64DE0
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Feb 2021 14:21:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230328AbhBON2s (ORCPT
+        id S229811AbhBOOVh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Feb 2021 08:28:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:28312 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229936AbhBON16 (ORCPT
+        Mon, 15 Feb 2021 09:21:37 -0500
+Received: from codesynthesis.com ([188.40.148.39]:52120 "EHLO
+        codesynthesis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229816AbhBOOVg (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Feb 2021 08:27:58 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 11FD3Gch155296;
-        Mon, 15 Feb 2021 08:27:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=PjXolwIlShtKDbNKhuhK4DaY0JwMHRasy/IXPyZfFpY=;
- b=o0Q/kpjvrTLYWX6+yzFkUWHSoR2Tam2SL4hi5hDeWEJPozdCTHIFyD/lNcda8W0o2oAy
- vNnpyp67o6I6TU1nbDFvY1lpA89RmxqcZ1xWSz0jfbBZdeQ8t+GmJfWiUqp1jXwBB+ak
- vxsMcGeZVOOjVPKHnuJXe5UTfhVubcGStDa/hG8+bqXttdLcozwWZj4XwqvcsdGU4cS3
- 3dVfXvuPIN/vgmyg25Xn4F/T545faEOJ1jRbVQkRUA4oQNQlCSqBoKxEmw9pOMgdMWsM
- VhH8PjxKro+qrMxBn4miZjXrui/LKa5BIi8ygotm+Du1S25TSfpBVpVLFS1/PUtstc5r UQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36qrbw46mt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Feb 2021 08:27:04 -0500
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 11FD3hIa157570;
-        Mon, 15 Feb 2021 08:27:04 -0500
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36qrbw46kx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Feb 2021 08:27:03 -0500
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11FDNRxP031630;
-        Mon, 15 Feb 2021 13:27:02 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 36p61h9vga-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 15 Feb 2021 13:27:02 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11FDQxcs63766796
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 15 Feb 2021 13:27:00 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D38035204F;
-        Mon, 15 Feb 2021 13:26:59 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.59.188])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 45DF752050;
-        Mon, 15 Feb 2021 13:26:58 +0000 (GMT)
-Message-ID: <fe83fb7572e0eea7a9a9981a15c63f1f7709d714.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity/ima: Provide Kconfig option for ima-modsig
- template
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Michael =?ISO-8859-1?Q?Wei=DF?= 
-        <michael.weiss@aisec.fraunhofer.de>
-Cc:     linux-integrity@vger.kernel.org,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 15 Feb 2021 08:26:57 -0500
-In-Reply-To: <20210215102305.10722-1-michael.weiss@aisec.fraunhofer.de>
-References: <20210215102305.10722-1-michael.weiss@aisec.fraunhofer.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
+        Mon, 15 Feb 2021 09:21:36 -0500
+X-Greylist: delayed 434 seconds by postgrey-1.27 at vger.kernel.org; Mon, 15 Feb 2021 09:21:35 EST
+Received: from brak.codesynthesis.com (unknown [105.186.239.143])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by codesynthesis.com (Postfix) with ESMTPSA id A9B3E5EDB5;
+        Mon, 15 Feb 2021 14:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codesynthesis.com;
+        s=mail1; t=1613398415;
+        bh=QZ52mYrWtYrNNz5G+n8kvOcR+EaCKc16WZHazAaMjvc=;
+        h=Date:From:To:Subject:Message-ID:MIME-Version:From;
+        b=SUdkJitfu+StrsGa3uf+D2eMzqiQv5E3bdMR5I3xFKY+kf6Kv977jYfCfxI24q+gR
+         Bzw4ZBxgiZ8rCaC+rLlCOlByuoAYcGgNaCQ7rDUR4nw4w9R1KuYzb+Q0ihcbB37gC4
+         7/FIORv7+buxfxFROjN0FyaEttVN/WxvrS04vnmk/e3ugOT75T5MglKwDzoc5Vr8KK
+         Cd3oRLEn6S0Yk6K2VxWSjJQNJKq4aT82tt/tvhRAggTRVaTEYdnK9v7oyyEpotB7Kv
+         5H3QtTrytlCzxjAbvZyHXUoXH105uhcVsJ51IRlnKGsfkKXKbQDDDm6U1LtpktPFIa
+         7XKrpRMzn3H1g==
+Received: by brak.codesynthesis.com (Postfix, from userid 1000)
+        id 0427F1A800A2; Mon, 15 Feb 2021 16:13:29 +0200 (SAST)
+Date:   Mon, 15 Feb 2021 16:13:28 +0200
+From:   Boris Kolpackov <boris@codesynthesis.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Nicolas Iooss <nicolas.iooss@m4x.org>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v1 2/3] kconfig: Ask user if string needs to be changed
+ when dependency changed
+Message-ID: <boris.20210215155804@codesynthesis.com>
+References: <20210215122513.1773897-1-mic@digikod.net>
+ <20210215122513.1773897-3-mic@digikod.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.737
- definitions=2021-02-15_06:2021-02-12,2021-02-15 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- phishscore=0 clxscore=1011 bulkscore=0 adultscore=0 spamscore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102150104
+In-Reply-To: <20210215122513.1773897-3-mic@digikod.net>
+Organization: Code Synthesis
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Michael,
+Mickaël Salaün <mic@digikod.net> writes:
 
-On Mon, 2021-02-15 at 11:23 +0100, Michael Weiß wrote:
-> 'ima-modsig' was not in the list of selectable templates in Kconfig.
-> The missing Kconfig options were added to support the ima-modsig
-> template as default template.
-> 
-> Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
+> Content of string configuration may depend on related kernel
+> configurations.  Modify oldconfig and syncconfig to inform users about
+> possible required configuration update and give them the opportunity to
+> update it:
+> * if dependencies of this string has changed (e.g. enabled or disabled),
+> * and if the current value of this string is different than the (new)
+>   default one.
 
-Since 'ima-modsig' is only needed for appended signatures (e.g. kexec
-kernel image on powerpc, kernel modules) a per policy rule "template="
-option was defined.  There's also the 'ima_template=' boot command line
-option.   Between these two options, I didn't see the need for making
-it a build time default option.  Do you?
+I have a number of questions:
 
-The patch itself looks good. 
+1. Why is a change in dependencies necessarily means that the dependent's
+   value must be revised? Here is a specific example (to make sure we are
+   talking about the same things):
 
-thanks,
+   config FOO
+     string "Foo value"
+     depends on BAR || BAZ
 
-Mimi
+   Why, in the general case, when I disable BAR and enable BAZ I must
+   also revise the value of FOO?
 
-> ---
->  security/integrity/ima/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-> index 12e9250c1bec..32b9325f49bf 100644
-> --- a/security/integrity/ima/Kconfig
-> +++ b/security/integrity/ima/Kconfig
-> @@ -78,6 +78,8 @@ choice
->  		bool "ima-ng (default)"
->  	config IMA_SIG_TEMPLATE
->  		bool "ima-sig"
-> +	config IMA_MODSIG_TEMPLATE
-> +		bool "ima-modsig"
->  endchoice
->  
->  config IMA_DEFAULT_TEMPLATE
-> @@ -86,6 +88,7 @@ config IMA_DEFAULT_TEMPLATE
->  	default "ima" if IMA_TEMPLATE
->  	default "ima-ng" if IMA_NG_TEMPLATE
->  	default "ima-sig" if IMA_SIG_TEMPLATE
-> +	default "ima-modsig" if IMA_MODSIG_TEMPLATE
->  
->  choice
->  	prompt "Default integrity hash algorithm"
+2. How do you know that what's in the user's .config is the old default
+   and in Kconfig -- the new default value? What if in the user's .config
+   is a custom value (with which the user is perfectly happy) and what's
+   in Kconfig is the old default (which the user has already seen)?
+
+3. Why limit this to strings only?
 
 
+> This is particularly relevant for CONFIG_LSM which contains a list of
+> LSMs enabled at boot, but users will not have a chance to update this
+> list with a make oldconfig.
+
+If my understanding above is correct, this feels like it's been purpose-
+made to address whatever issue you are having with CONFIG_LSM. If so,
+what about potential numerous other options that don't have this issue
+but will now be presented to the user for modification?
