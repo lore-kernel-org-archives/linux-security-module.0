@@ -2,140 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1C0C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Feb 2021 09:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4EBC433E9
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Feb 2021 09:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7B1164D9A
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Feb 2021 09:50:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB5DF64E33
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Feb 2021 09:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230472AbhBQJts (ORCPT
+        id S231998AbhBQJy0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Feb 2021 04:49:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54196 "EHLO mail.kernel.org"
+        Wed, 17 Feb 2021 04:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229659AbhBQJts (ORCPT
+        id S231470AbhBQJyX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Feb 2021 04:49:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B9EEF64D9A;
-        Wed, 17 Feb 2021 09:49:03 +0000 (UTC)
+        Wed, 17 Feb 2021 04:54:23 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4828464E4D;
+        Wed, 17 Feb 2021 09:53:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613555347;
-        bh=Xt/pQSPwnxdeV+GK8xvNK5JorjBJhSGXtix1A7YYkHs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=cmHOlOJSrtLNdApKnF1/VctQ8ghvtak+WGJq46qyDCg5JefXgafmbZC9mDPfSd3KB
-         rhv+okJgtmULUfVaMG8fgTlLK430NC94GnMK5If9O72D1lwBcaBhNbmP+9EWoL8g8w
-         h1QTXkhPytla+f17A6on0yqlagF1AB9V/CzBtPpasiojS0pliXVG/OaXDjWY7DMSIx
-         GgBX8fhfwU8RloN2syZjG7CaBizB5Yqc/cJjGsEC0OWGe+gpus6TUKIv1Ej17XKokh
-         Aq16i9tFXzN1gNGaLRjiES3MHp3c3SXgDWimMtsZBfDFRkpvXyltTZThaaecwuq+eJ
-         U92mKBijH3UdA==
-Date:   Wed, 17 Feb 2021 09:49:00 +0000
-From:   Will Deacon <will@kernel.org>
-To:     Jian Cai <jiancai@google.com>
-Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: Implement Clang's SLS mitigation
-Message-ID: <20210217094859.GA3706@willie-the-truck>
-References: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
- <20210212195255.1321544-1-jiancai@google.com>
+        s=k20201202; t=1613555622;
+        bh=CgXcHKRXVYWgDN5c1aovy77k1sIjrNo4aZnzk8WhiT8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YKaji88WGO9BFl3vOG1I0wjGNtd0di4z0oQep8ecPaJ0JMt3gtebwTUr8WiCFnunA
+         awpjd/8BgZ23ziJZEGsgxbafjglafDR0f4WjxvtuI+lOsBP7zS8/PSslihD/MXF3nt
+         m5D/rVSMcoE/7Cmm/ejwsRHTV4G6Uzig7STAT6xWaY8mCzjmIHKSfSlqKaFFpRRJTN
+         P9yVicllYajRvchbzuc0w5o4tEsHyepCsOPhXPWqgeRcATeSLHKsytfjCeMLdA7qDc
+         Cf7mxGjoOM8Qg6xuorf2fZNAFqC+IBJ+iG9KrVYyRp9VwC9xIj2/uF32EvM1c9e688
+         Cb3XnJ7cfjtqg==
+Received: by mail-ot1-f49.google.com with SMTP id b8so6882113oti.7;
+        Wed, 17 Feb 2021 01:53:42 -0800 (PST)
+X-Gm-Message-State: AOAM532ZVLcOwJUCxrxhVJ74m27hQ8Z4Pl+lLJq5GlMgvu4XqatFzTlr
+        T2shY7SbhHyDHSqURFypdiFL3l7z6RZ/mcX9/l8=
+X-Google-Smtp-Source: ABdhPJyAwX1ht2yJsPiM0RRWhFBxpQtYScwps8LtrDmJX+rnOJQC3FM2JzdKQsLVQ5QzdSqBazft+Kpaw/9EAQU5iG0=
+X-Received: by 2002:a05:6830:13ce:: with SMTP id e14mr16736073otq.108.1613555621320;
+ Wed, 17 Feb 2021 01:53:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210212195255.1321544-1-jiancai@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1613470672-3069-1-git-send-email-pnagar@codeaurora.org> <20210217094205.GA3570@willie-the-truck>
+In-Reply-To: <20210217094205.GA3570@willie-the-truck>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Wed, 17 Feb 2021 10:53:30 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXG_qj0A5r+rRnGdcwjomqJUSQPw6aNYyPbSVA8Fr=RjyA@mail.gmail.com>
+Message-ID: <CAMj1kXG_qj0A5r+rRnGdcwjomqJUSQPw6aNYyPbSVA8Fr=RjyA@mail.gmail.com>
+Subject: Re: [PATCH] RTIC: selinux: ARM64: Move selinux_state to a separate page
+To:     Will Deacon <will@kernel.org>
+Cc:     Preeti Nagar <pnagar@codeaurora.org>,
+        Marc Zyngier <maz@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-arch <linux-arch@vger.kernel.org>, casey@schaufler-ca.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        David Howells <dhowells@redhat.com>, ojeda@kernel.org,
+        Prasad Sodagudi <psodagud@codeaurora.org>,
+        nmardana@codeaurora.org, rkavati@codeaurora.org,
+        vsekhar@codeaurora.org, mreichar@codeaurora.org, johan@kernel.org,
+        Joe Perches <joe@perches.com>, Jessica Yu <jeyu@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 12, 2021 at 11:52:53AM -0800, Jian Cai wrote:
-> This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
-> -mharden-sls=all, which mitigates the straight-line speculation
-> vulnerability, speculative execution of the instruction following some
-> unconditional jumps. Notice -mharden-sls= has other options as below,
-> and this config turns on the strongest option.
-> 
-> all: enable all mitigations against Straight Line Speculation that are implemented.
-> none: disable all mitigations against Straight Line Speculation.
-> retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
-> blr: enable the mitigation against Straight Line Speculation for BLR instructions.
+On Wed, 17 Feb 2021 at 10:42, Will Deacon <will@kernel.org> wrote:
+>
+> [Please include arm64 and kvm folks for threads involving the stage-2 MMU]
+>
+> On Tue, Feb 16, 2021 at 03:47:52PM +0530, Preeti Nagar wrote:
+> > The changes introduce a new security feature, RunTime Integrity Check
+> > (RTIC), designed to protect Linux Kernel at runtime. The motivation
+> > behind these changes is:
+> > 1. The system protection offered by Security Enhancements(SE) for
+> > Android relies on the assumption of kernel integrity. If the kernel
+> > itself is compromised (by a perhaps as yet unknown future vulnerability),
+> > SE for Android security mechanisms could potentially be disabled and
+> > rendered ineffective.
+> > 2. Qualcomm Snapdragon devices use Secure Boot, which adds cryptographic
+> > checks to each stage of the boot-up process, to assert the authenticity
+> > of all secure software images that the device executes.  However, due to
+> > various vulnerabilities in SW modules, the integrity of the system can be
+> > compromised at any time after device boot-up, leading to un-authorized
+> > SW executing.
+> >
+> > The feature's idea is to move some sensitive kernel structures to a
+> > separate page and monitor further any unauthorized changes to these,
+> > from higher Exception Levels using stage 2 MMU. Moving these to a
+> > different page will help avoid getting page faults from un-related data.
+> > The mechanism we have been working on removes the write permissions for
+> > HLOS in the stage 2 page tables for the regions to be monitored, such
+> > that any modification attempts to these will lead to faults being
+> > generated and handled by handlers. If the protected assets are moved to
+> > a separate page, faults will be generated corresponding to change attempts
+> > to these assets only. If not moved to a separate page, write attempts to
+> > un-related data present on the monitored pages will also be generated.
+> >
+> > Using this feature, some sensitive variables of the kernel which are
+> > initialized after init or are updated rarely can also be protected from
+> > simple overwrites and attacks trying to modify these.
+>
+> Although I really like the idea of using stage-2 to protect the kernel, I
+> think the approach you outline here is deeply flawed. Identifying "sensitive
+> variables" of the kernel to protect is subjective and doesn't scale.
+> Furthermore, the triaging of what constitues a valid access is notably
+> absent from your description and is assumedly implemented in an opaque blob
+> at EL2.
+>
+> I think a better approach would be along the lines of:
+>
+>   1. Introduce the protection at stage-1 (like we already have for mapping
+>      e.g. the kernel text R/O)
+>
+>   2. Implement the handlers in the kernel, so the heuristics are clear.
+>
+>   3. Extend this to involve KVM, so that the host can manage its own
+>      stage-2 to firm-up the stage-1 protections.
+>
 
-What exactly does this mitigation do? This should be documented somewhere,
-maybe in the Kconfig text?
+Agree here. Making an arbitrary set of data structures r/o behind the
+OS's back doesn't seem like an easy thing to maintain or reason about,
+especially if this r/o-ness is only enforced on a tiny subset of
+devices. If something needs to be writable only at boot, we have
+__ro_after_init, and having hypervisor assisted enforcement of /that/
+might be a worthwhile thing to consider, including perhaps ways to do
+controlled patching of this region at runtime.
 
-> Link: https://reviews.llvm.org/D93221
-> Link: https://reviews.llvm.org/D81404
-> Link: https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
-> https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
-> 
-> Suggested-by: Manoj Gupta <manojgupta@google.com>
-> Suggested-by: Nathan Chancellor  <nathan@kernel.org>
-> Suggested-by: David Laight <David.Laight@aculab.com>
-> Signed-off-by: Jian Cai <jiancai@google.com>
-> ---
-> 
-> Changes v1 -> v2:
->  Update the description and patch based on Nathan and David's comments. 
-> 
->  arch/arm/Makefile          | 4 ++++
->  arch/arm64/Makefile        | 4 ++++
->  security/Kconfig.hardening | 7 +++++++
->  3 files changed, 15 insertions(+)
-> 
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index 4aaec9599e8a..11d89ef32da9 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -48,6 +48,10 @@ CHECKFLAGS	+= -D__ARMEL__
->  KBUILD_LDFLAGS	+= -EL
->  endif
->  
-> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-> +KBUILD_CFLAGS  += -mharden-sls=all
-> +endif
-> +
->  #
->  # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
->  # later may result in code being generated that handles signed short and signed
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 90309208bb28..ca7299b356a9 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
->    endif
->  endif
->  
-> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-> +KBUILD_CFLAGS  += -mharden-sls=all
-> +endif
-
-The big problem I have with this is that it's a compile-time decision.
-For the other spectre crap we have a combination of the "mitigations=off"
-command-line and CPU detection to avoid the cost of the mitigation where
-it is not deemed necessary.
-
-So I think that either we enable this unconditionally, or we don't enable it
-at all (and people can hack their CFLAGS themselves if they want to). It
-would be helpful for one of the Arm folks to chime in, as I'm yet to see any
-evidence that this is actually exploitable. Is it any worse that Spectre-v1,
-where we _don't_ have a compiler mitigation?
-
-Finally, do we have to worry about our assembly code?
-
-Will
+> I also think we should avoid tying this to specific data structures.
+> Rather, we should introduce a mechanism to make arbitrary data read-only.
+>
+> I've CC'd Ard and Marc, as I think they've both been thinking about this
+> sort of thing recently as well.
+>
+> Will
