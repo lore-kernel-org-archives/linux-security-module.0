@@ -7,166 +7,193 @@ X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39665C433E0
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Feb 2021 22:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE71C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Feb 2021 22:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB1C564EB3
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Feb 2021 22:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A85E64EB4
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Feb 2021 22:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229889AbhBRWEA (ORCPT
+        id S230180AbhBRWIJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Feb 2021 17:04:00 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54318 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229681AbhBRWD6 (ORCPT
+        Thu, 18 Feb 2021 17:08:09 -0500
+Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:42400
+        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230200AbhBRWH7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Feb 2021 17:03:58 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 11IM3EHb041452;
-        Thu, 18 Feb 2021 17:03:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=rYEWiDhJo8xqBxtCjR7vOI84a6AhNxwReSQB5H6lFk8=;
- b=aBLepCMdtd8aDWCbXa4JTnLXAr4OEs2PFpmX+WScnapFhWPMBUi1BreJ2Oj1k11nG+gk
- RZZYvD8j7I2PnRAjVoYFyJ9jlxVxPVUQAjWlta2vs/mku8cZxuqboxwgTddPAYyoscue
- 7dQkjhPgJNjGyHaDZhSKkAI0EsN02LYvoXsjqK0A1/ZXhNa6m8MNSWeWsFQAeGv6kr9H
- nqFnCtvBteLj5yMP+ozBLUIL3fl6TZrtZjs1PWiaCuEygriRrYyMMNuGDbXf0seWxoq8
- i/7p+U9QyMNehX5j6tOm+3b0F5pzYq/Pu3QTs+P1c6xiF8Ux2F696exADYgS06dhVJKN 2g== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36sy3atmpk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Feb 2021 17:03:14 -0500
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 11IM3Dk7041347;
-        Thu, 18 Feb 2021 17:03:13 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36sy3atme8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Feb 2021 17:03:13 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11ILpqRg006684;
-        Thu, 18 Feb 2021 22:02:55 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma04wdc.us.ibm.com with ESMTP id 36p6d9h5rb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 18 Feb 2021 22:02:55 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11IM2sjI22544720
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 18 Feb 2021 22:02:54 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A8306E05F;
-        Thu, 18 Feb 2021 22:02:54 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7F7F76E05E;
-        Thu, 18 Feb 2021 22:02:53 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.211.90.194])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 18 Feb 2021 22:02:53 +0000 (GMT)
-Subject: Re: [PATCH 2/5] keys: generate self-signed module signing key using
- CSR
-To:     Stefan Berger <stefanb@linux.ibm.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210211195435.135582-1-nayna@linux.ibm.com>
- <20210211195435.135582-3-nayna@linux.ibm.com>
- <c9e509fb-59df-28b4-654c-543cd922239c@linux.ibm.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <92dcd8a4-4cb8-e0d0-56cb-e3c0736278ce@linux.vnet.ibm.com>
-Date:   Thu, 18 Feb 2021 17:02:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Thu, 18 Feb 2021 17:07:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1613686032; bh=UDt0yL5IIM5sD7BMK5vHVep3dYdjNgdwJDnUv1zVBwA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=jWK5CnSrOLmXJPADf5HVGYQB6IxAAjY9/1ZDDhKRJe5T3NfiHCaqGj5GL4xy0uDOhGbXn9liCzyFuws0FyrEEm5+r1kb546PBX8JhqvjPpODkg5S1/xm1CmnAyZdVQS5R6oCFMSfg3OuU7TQrD+rPBJfQd344HjTUvUxMy5XOPklZ5VX8gzmPlc6oKGrKGtGzI27vCfDU0cinXlxiAf37NanGR1KrRM4JePyTwYuKYHuUQmJZPFgz/GbT71GAxHC/gHlOdSPPpMt4/Xo0WczNf8d/vH45mmegny2WGG3bS0Hq2F+LbkyezmPYUtj/g44NS57UigRezpObaxoOTzUQQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1613686032; bh=vlihK3jzkFvpsFTesEazUFjeHlpjZwq7B8dWlImLaW7=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=tvGK/30KeavpZcqAwKJtybkePt5crf8a8Q2r6/RIACE0CBUpNwR3pDwP8Q/GtgOihzAz8DjFFB8/eKYSq+54CKcsy+J/hR+3NAHA92mo2g1ndcPfoMonfZ8wikiFFA8Y3QOn7HORUC687ZvS/hqSVjnw/rYCaLawe7XycGmwFBR+f6gxq9Ve3fEW0b+vDBZfHLlo7QUJrZQiP3e+AQBcSYguV8sMYKkQrwdex73p/kW3tVJZSHoZ4ZPLBS4UjBk20NOiVxs3F9e4jqo8JmM4fS2Loy8LiMcDKhXD9xTuPDPKt8HlnwtosKwhwdXT7QAcO91Spw6PCbEjWv6ecKThGQ==
+X-YMail-OSG: GscAUIUVM1kx7G_uB9tbm8muG96RWNnwPCDZzAx2l0avIScGwmD2mwwQDhKo3nX
+ 2a1eNZRfcr0Vb3bKrU9cMirt8KaGtbaE6L8WywYyrZMrQtdto3Z_ZPnbqnXCMxjFmMtGtDcVEuSt
+ uEoxP2oS7N1WkvASH0k32KjWQVgOyv02Q4lUY9.TCDvxWwLsTGb_HjhKSplPTTAOlUpxCYy25HQt
+ N1bJxyXymxwBKGKXpdPbYX16Ez4tTdc9d7c_c7smGDDGCdwQiZeKJeX279hw.8d0ysVzaJqK1gQ9
+ 2E8G3pzvdnHZKbEwXExjsY2O3imxi_.m.ZWvsUUpRlffJ7bPkQfBKguoFo5keJqqnkfi4MJc8qDx
+ ApS6AzhL3C72zPmbrH8svkO2tzDwWKar_zw_y5DdAfMiqKLCvMjcCq4.qzJAbzMxH2qhBfW_Mi4A
+ LvA_Jn1a1UrU.mQWP05pXKWtR8nF4TnrZ72JkReZDLS7tkRhXM9tweaSSxtAIypyT3C5z5FSG4Uw
+ 7XHO06c0CKtR2HoMC_V0iM59GMxS1wkcpY.9yNmzbNfRFiP1kvWOnj21syQU4c6Uo1TgQ7Xxwn7Q
+ Z5POwVBteUIjeODdGXtLKyU6znefoQDpISo921hrx.DmS95ls1iKllYLWDBqiEpg0J72fSQRZgRL
+ 3qt7mUwCbU4Tz67Ls0sli4oBDpEGRrjBHvoTOEjC8.5tyKTyHeTbfRwTFocOzEWuc6AhMUfGl8C8
+ D7pBX0eOfOxR7jUjpxRzkNoniDNC1_3h2YEMaXDvc.1RaTZ6hHiPxNInvPBjNuWvTFn4gzy9B45q
+ 8DU7CZaV7GjQ9o.u.L2DTDzsfSPq2tIPMgSiZJBz.DQuHDnXvqCQUEkzvCXckC63B_xx8iHyYRac
+ MZvwH81Zm7mzDW5AXh7mlPnKX7a0DOzL6xktwiF2Q_sQs1W67scpM7i4zFBwdjKKzqCHZ5dzOVpE
+ PC_Zlx7s1tDZre3LWrfJCpVM3lIa1dpDOyx87DCfHpdvoM_MMaRPnAb.PL7gmqDuP4VpO.l.llMN
+ K_ppCf.3ZLgYIsJ4p2zJT2qNKWhRaQmbEz2NbdrRgqxo_5GuYlPdah59YOerjp7kwNtZTpG7e.pa
+ MlFsXXDvyRxy48aNfn3Lb6D3q9EnbVleOlUDfY89xKa5nS3jqWDxhtlZRtT8fuOyNndA3kvnMVM5
+ 1_ms_gsSnlKHrc7Jc16F7SnfVrLZoncLAVeQPjpcCOQnGBAH7tmlUk_vZraxwW9MpBxYw2U.R3W0
+ Lzip4Fs.l4hydfz_6mQaHci.XTRdfzB.A.3OPsu5V5VAALuMThR8GcgCzqzDM.R4CprOQrMWFN1g
+ lEvpHZfUaKDZbQcMwWQdyvXz9FI9hR4AugBpAyngLPzQ47RwDg4a_awFkvQRx7DpmIIncRRGXJud
+ GLX2XIgnVhGIC98fmsZSN86OhtkmLd89mrWIPNQkMXM5WJNQiZ8VuOBhsP4vMHY4T9wn5bPmiGWY
+ pvU.i2DDWcynLXc8gCVBGPhrJyZjdm8KABCx3bxOCC6IeDvxm.4kRAJhm0ZyDtb0MTh41YXYE2bM
+ IDilPkv7AGIHpXwtR2VpY9QXRNVS7KT2n985ed3O1mHECd8V.nBv58R4FhrOIvWR9ThFZOHd2t8c
+ m_Q7c5Yg4s8Y13rmCDEnQG5vSWMq1Xcp1nCFz8BE_XIO0mrZeuVZhBN5rZOLCCMRkwNwtR9PPMa0
+ NIIRl9WtcAZQ7nf422upHlUvREdVBjetnjVYJ5JTReDXVr1PmpancvKFzcvTeDlxrFApX3UUPHg_
+ kqpokMqFZnZUBZkH263qmgse0T212885fZk80HkUFwWPXDRwVxWNEMkjOczVzw2eZtlctij1Hd2w
+ lV7S.Y3hNFlA3eK9_DFwzFV8AYM_gnqTRiN4FEGuI.WCAtbchY8DTPz.1QKYJ_QpYf8giUgD4jwC
+ yWu4j3ox27iQvOwBnAZohYtIBsn59sf46hC9ITrthWKFluueljMjfNXy21Efi6Mq44HCUfLwPIXU
+ fFhmQDTz5xJJ6wYCO4veeIqvaqiWYrlB1ns9NuENYCKeH6C0VvWybzfuJUbTx6uKSaOaDfX9cNg8
+ xmjD.jR_PFvvzOysCZ0tLlAKyLxlEVIML9xIdnHMfJQS7qDKmhslJ8kTGWL2sORynYz_K30jPk_I
+ A_fyya8yKqT.biUV2REHHvwzAKu4eQsVapOsxGruAFNYPKNX4vQZn.m.WSS6Uzw01.AywUvei2xo
+ 6FzsguWcUS9EN.ClMK.n5CETwGJAC1QxQq8ps7lDnK1J96Qf.4qf.rLBZzqCLHm5HhcSx4e8UI.E
+ i6JipX8mKObkKsI9TCZ908wHV3aupeU7Ed5.11BskTyitjG2q5By.1Y_3GJ.4A2GcHPoFd.OHoB5
+ Eoaa56nibP16IV_Vh6YPvR9O5QGpW7Dt_mHyscSeATXf7uyM_zyHXlRfyTzCKinmBvYXkva2KNd7
+ q4aOKZvPrlIvrmEboWgzPCr.e1as79C3y85BqArdiyq3ZvYGQ6XpuGc3XFwdPtMp5vE5E7GcxQ14
+ .oZPKB9wQGY8uiqoTRVswJEM4cTQuwxpQ0Zib0cAgFaayjlTJRTQ7TrDOFjBL7wXw2LTxdsCl7yt
+ roFTl_jJohMKMhssyPbJHM56nY7kqAlIg5AqNeBu7AOb0FE9VXHH.yNwcl9TIkKP_bzsPQJ6Cr5g
+ FEHunGSkFhkkETIIOuOiqDnkfHMSd.bb.A0hAc5NIIsZxo.rwFmN6amJMaaXpoq24vhmFDl.JPdW
+ dEX4Nju5LfNu62CxvBa2JYOLE8HXqAubuMMgxVhHsFVELff2_mLt48hBciV4Gqx0U9Ro2rj8BFnz
+ s8hoewt7sXR2Z6REvInZ7rnTCyCqppIc5lPT410cV7mHgldjd2m67OnB05yg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 18 Feb 2021 22:07:12 +0000
+Received: by smtp404.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 99ad47f80beab95263c5c047547ac38f;
+          Thu, 18 Feb 2021 22:07:07 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] NFSv4 account for selinux security context when
+ deciding to share superblock
+To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20210218195046.19280-1-olga.kornievskaia@gmail.com>
+ <20210218195046.19280-2-olga.kornievskaia@gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <7587df15-6f6f-3581-8bae-a648315cfae9@schaufler-ca.com>
+Date:   Thu, 18 Feb 2021 14:07:05 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <c9e509fb-59df-28b4-654c-543cd922239c@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210218195046.19280-2-olga.kornievskaia@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-02-18_09:2021-02-18,2021-02-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- adultscore=0 spamscore=0 mlxscore=0 mlxlogscore=999 priorityscore=1501
- clxscore=1015 impostorscore=0 suspectscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102180182
+X-Mailer: WebService/1.1.17712 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 2/11/21 5:01 PM, Stefan Berger wrote:
-> On 2/11/21 2:54 PM, Nayna Jain wrote:
->> Loading a key on the IMA trusted keyring requires the key be signed
->> by an existing key on the builtin or secondary trusted keyring.
->> Creating a Certificate Signing Request (CSR) allows the certificate
->> to be self-signed or signed by a CA.
->>
->> This patch generates a self-signed module signing key using CSR.
->>
->> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
->> ---
->>   Makefile       |  3 ++-
->>   certs/Makefile | 15 +++++++++++----
->>   2 files changed, 13 insertions(+), 5 deletions(-)
->>
->> diff --git a/Makefile b/Makefile
->> index af18aab6bbee..9c87fdd600d8 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -1473,7 +1473,8 @@ MRPROPER_FILES += include/config 
->> include/generated          \
->>             .config .config.old .version \
->>             Module.symvers \
->>             certs/signing_key.pem certs/signing_key.x509 \
->> -          certs/x509.genkey \
->> +          certs/x509.genkey certs/signing_key.key \
->> +          certs/signing_key.crt certs/signing_key.csr \
->>             vmlinux-gdb.py \
->>             *.spec
->>   diff --git a/certs/Makefile b/certs/Makefile
->> index f4c25b67aad9..b2be7eb413d3 100644
->> --- a/certs/Makefile
->> +++ b/certs/Makefile
->> @@ -60,11 +60,18 @@ $(obj)/signing_key.pem: $(obj)/x509.genkey
->>       @$(kecho) "### needs to be run as root, and uses a hardware 
->> random"
->>       @$(kecho) "### number generator if one is available."
->>       @$(kecho) "###"
->> -    $(Q)openssl req -new -nodes -utf8 -$(CONFIG_MODULE_SIG_HASH) 
->> -days 36500 \
->> -        -batch -x509 -config $(obj)/x509.genkey \
->> -        -outform PEM -out $(obj)/signing_key.pem \
->> -        -keyout $(obj)/signing_key.pem \
->> +    $(Q)openssl req -new -nodes -utf8 \
->> +        -batch -config $(obj)/x509.genkey \
->> +        -outform PEM -out $(obj)/signing_key.csr \
->> +        -keyout $(obj)/signing_key.key -extensions myexts \
->>           $($(quiet)redirect_openssl)
->> +    $(Q)openssl x509 -req -days 36500 -in $(obj)/signing_key.csr \
->> +        -outform PEM -out $(obj)/signing_key.crt \
->> +        -signkey $(obj)/signing_key.key \
->> +        -$(CONFIG_MODULE_SIG_HASH) -extensions myexts \
->> +        -extfile $(obj)/x509.genkey \
->> +        $($(quiet)redirect_openssl)
->> +    @cat $(obj)/signing_key.key $(obj)/signing_key.crt >> 
->> $(obj)/signing_key.pem
+On 2/18/2021 11:50 AM, Olga Kornievskaia wrote:
+> From: Olga Kornievskaia <kolga@netapp.com>
 >
+> Keep track of whether or not there was an selinux context mount
+> options during the mount.
+
+This may be the intention, but it's not what the change you're
+introducing here does.
+
+
+>  While deciding if the superblock can be
+> shared for the new mount, check for if we had selinux context on
+> the existing mount and call into selinux to tell if new passed
+> in selinux context is compatible with the existing mount's options.
+
+You're describing how you expect the change to be used, not
+what it does. If I am the author of a security module other
+than SELinux (which, it turns out, I am) what would I use this
+for? How might this change interact with my security module?
+Is this something I might exploit? If I am the author of a
+filesystem other than NFS (which I am not) should I be doing
+the same thing?
+
 >
-> Could you not just rename signing_key.key to signing_key.pem (as it 
-> was before) and that would be it? Why do you need the .crt in that pem 
-> bundle?
+> Previously, NFS wasn't able to do the following 2mounts:
+> mount -o vers=3D4.2,sec=3Dsys,context=3Dsystem_u:object_r:root_t:s0
+> <serverip>:/ /mnt
+> mount -o vers=3D4.2,sec=3Dsys,context=3Dsystem_u:object_r:swapfile_t:s0=
 
-I had also thought so, but the PEM file contains both the private key 
-and the certificate. I found the reasoning in the commit "fb1179499134 
-modsign: Use single PEM file for autogenerated key". I addressed your 
-other feedback in v2, posted just now.
-
-Thanks & Regards,
-
-       - Nayna
+> <serverip>:/scratch /scratch
+>
+> 2nd mount would fail with "mount.nfs: an incorrect mount option was
+> specified" and var log messages would have:
+> "SElinux: mount invalid. Same superblock, different security
+> settings for.."
+>
+> Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+> ---
+>  fs/nfs/fs_context.c       | 3 +++
+>  fs/nfs/internal.h         | 1 +
+>  fs/nfs/super.c            | 4 ++++
+>  include/linux/nfs_fs_sb.h | 1 +
+>  4 files changed, 9 insertions(+)
+>
+> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+> index 06894bcdea2d..8067f055d842 100644
+> --- a/fs/nfs/fs_context.c
+> +++ b/fs/nfs/fs_context.c
+> @@ -448,6 +448,9 @@ static int nfs_fs_context_parse_param(struct fs_con=
+text *fc,
+>  	if (opt < 0)
+>  		return ctx->sloppy ? 1 : opt;
+> =20
+> +	if (fc->security)
+> +		ctx->has_sec_mnt_opts =3D 1;
+> +
+>  	switch (opt) {
+>  	case Opt_source:
+>  		if (fc->source)
+> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> index 62d3189745cd..08f4f34e8cf5 100644
+> --- a/fs/nfs/internal.h
+> +++ b/fs/nfs/internal.h
+> @@ -96,6 +96,7 @@ struct nfs_fs_context {
+>  	char			*fscache_uniq;
+>  	unsigned short		protofamily;
+>  	unsigned short		mountfamily;
+> +	bool			has_sec_mnt_opts;
+> =20
+>  	struct {
+>  		union {
+> diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+> index 4034102010f0..0a2d252cf90f 100644
+> --- a/fs/nfs/super.c
+> +++ b/fs/nfs/super.c
+> @@ -1058,6 +1058,7 @@ static void nfs_fill_super(struct super_block *sb=
+, struct nfs_fs_context *ctx)
+>  						 &sb->s_blocksize_bits);
+> =20
+>  	nfs_super_set_maxbytes(sb, server->maxfilesize);
+> +	server->has_sec_mnt_opts =3D ctx->has_sec_mnt_opts;
+>  }
+> =20
+>  static int nfs_compare_mount_options(const struct super_block *s, cons=
+t struct nfs_server *b,
+> @@ -1174,6 +1175,9 @@ static int nfs_compare_super(struct super_block *=
+sb, struct fs_context *fc)
+>  		return 0;
+>  	if (!nfs_compare_userns(old, server))
+>  		return 0;
+> +	if ((old->has_sec_mnt_opts || fc->security) &&
+> +			security_sb_mnt_opts_compat(sb, fc->security))
+> +		return 0;
+>  	return nfs_compare_mount_options(sb, server, fc);
+>  }
+> =20
+> diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
+> index 38e60ec742df..3f0acada5794 100644
+> --- a/include/linux/nfs_fs_sb.h
+> +++ b/include/linux/nfs_fs_sb.h
+> @@ -254,6 +254,7 @@ struct nfs_server {
+> =20
+>  	/* User namespace info */
+>  	const struct cred	*cred;
+> +	bool			has_sec_mnt_opts;
+>  };
+> =20
+>  /* Server capabilities */
 
