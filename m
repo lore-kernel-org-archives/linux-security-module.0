@@ -2,221 +2,226 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C101C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Feb 2021 18:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D525DC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Feb 2021 07:59:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 579E164E5F
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Feb 2021 18:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834B764E15
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Feb 2021 07:59:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233476AbhBQSVH (ORCPT
+        id S229767AbhBRH6S (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Feb 2021 13:21:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41764 "EHLO
+        Thu, 18 Feb 2021 02:58:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233631AbhBQSVA (ORCPT
+        with ESMTP id S230321AbhBRH4R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Feb 2021 13:21:00 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3440C061574
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Feb 2021 10:20:19 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id f1so23267835lfu.3
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Feb 2021 10:20:19 -0800 (PST)
+        Thu, 18 Feb 2021 02:56:17 -0500
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20656C061574;
+        Wed, 17 Feb 2021 23:55:37 -0800 (PST)
+Received: by mail-wm1-x32f.google.com with SMTP id m1so2109288wml.2;
+        Wed, 17 Feb 2021 23:55:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y8i0g9QG9GcfcjV4SfK9KOZfpjS43yyxo3Zx1FaTpHg=;
-        b=h7iUpSow9k12uVMOboB5Bjv17rWg/6jjYDY14S/c9H+JtKhmOqzKKU0SXNql5LMSHo
-         5QUI6VYKH41Q7OVNhB/oRl8/+8YHm/LpjROCeDAL45ObLLq2hUNpbu9IH/1Wm79tGcHw
-         7I/VLgzKKpQBdyOWC/bbaetILYY449szZWMu2hzrd6QIXUK6Su4OEsgmGEEmv+khIr+Z
-         iv34uRIonT6ZvmaYzrb5/yPNbO6L3PG9NpOnmHBmEj/cnRPa0FJ9d3QXdUsaW3FPBHHs
-         7RXQ0sx29ZzqUml1Qp9wzvoD0y+zw1iV0vedpNOeo9itpeCTUZGdnKWeiE2ri6WPbIvE
-         hnEA==
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8VuOr5IRYyD3SOn+5chtalvwQdWPMiTxF9JpEV7axuU=;
+        b=DiTZz/4gmJZPeTC5pv54B/6ep6c4fIy5ngNCoDUIRkkmLho2VvinhJ1mkzcRljbaKw
+         4CJD0yTXHFFSnmhiyBYE4ydfNjhRNJHQ7mYNnqhSS4DeCt4/9PaUd6u48IsL5Qz6nf6p
+         oMrgW9xB+Beq4LiN/xmy0zmV9bThfFonj9oyYnhz1l3I6zmyitlpj6ICdRhN45uMJceG
+         ZvyAVZh9LRLDdbBcH3Bxtk0I3pVm76joUGkkd+A/fglhVxxMtSX5FgisfOVSdQEfXn3Z
+         KOySjv69SsVPdtmtkvy1STkomL3q3xgkqmu9JXTlujoSfZLAH7l9BUcwEH7mjpWdIHVS
+         LN5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y8i0g9QG9GcfcjV4SfK9KOZfpjS43yyxo3Zx1FaTpHg=;
-        b=Qd1J+4IfDJvbAi35qGmHFH5HxYtcg1yZfTFSoi2vW2JzCh7lKSseuOMNXrz68PhPk/
-         3U/t8WCI6xtTGxQA5+2fyJ/Ium14p0+FjRde+KLTuMOhc4AVXwnclHSginCvE2wHA/Pr
-         bUI0oHZMAXJMvkIbeOT8lUPyJT5sHjRfcv95U4ogobdyuqqLdDM0tU0ZpQPxM/waS2Kl
-         6V8hqGMgWvcOj24RoHszfHWTaP/QIGACGnAEIiguyxkGvof37UoBEdhh5BRx5anVm1Np
-         M/lwUpz09+Umb8fExEhad7ypvU9efkafpeBhxr0IhgumWwKLv/0zEUEktFmczueCbrAy
-         LUxQ==
-X-Gm-Message-State: AOAM530QVwpY1FDHKxuTMwoXxx7Qt8GS3sCvRDsVXK0s/gssS0Veo5GX
-        DhlTmObCth2u5qbVLQoFgqQ7qJZN00PMpCDOv+eFMg==
-X-Google-Smtp-Source: ABdhPJxMOLeAZPfh9/xXXXpTBjyQSpSyJvRHbhY5s0MXSFezU+L7QBkjMpxGQPfs6EC3HXmAYL8YPvDdUF5+IFW0YzQ=
-X-Received: by 2002:a19:4013:: with SMTP id n19mr89135lfa.543.1613586018064;
- Wed, 17 Feb 2021 10:20:18 -0800 (PST)
-MIME-Version: 1.0
-References: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com> <20210212195255.1321544-1-jiancai@google.com>
-In-Reply-To: <20210212195255.1321544-1-jiancai@google.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 17 Feb 2021 10:20:06 -0800
-Message-ID: <CAKwvOdn7N9dRfjrR0NiE6Dc_f_6PU-_4g1G5uRcoAvnob51ZfA@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: Implement Clang's SLS mitigation
-To:     Jian Cai <jiancai@google.com>
-Cc:     Manoj Gupta <manojgupta@google.com>,
-        Luis Lozano <llozano@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8VuOr5IRYyD3SOn+5chtalvwQdWPMiTxF9JpEV7axuU=;
+        b=UarYHgzkbK38jENeWSluZ3kIAxrrobOl+LDH24zCUg3bVhAqrUnFIduMI0AExeik2j
+         46b8X0nXkC+RBFpbGIlf0YJaI1yu9EcJzVWpLlSo1S0qzTeDWmqk7T9ljgCJSmnGjPMe
+         CzoIVVoB8rkbqx0oi4IOgHbA62VIhIDDq/RKNjOtb1LucO1Q3OaNPuK3+wiUdSwZ3jd4
+         R0+HIzsQnZgXdW2rXwcuMJQJ1OWn9ytHSvjgbHU8H2dPMIc1cV5bmlElAoVzoSP2ZE1V
+         PEoQxOy9HT9wolB2g4eX2rgQLvHGFm6XBboCEE3n7gzNMfCZP0Yl4M8EyCGIROPAID9y
+         OrDA==
+X-Gm-Message-State: AOAM533VdgLyAZINtcNTJJcIougqIGnWf/Gbiesh9zOxObpsqZKgHJt6
+        /Xa0XC+Z6Unt6dDDYXK1epY=
+X-Google-Smtp-Source: ABdhPJzB2TIsvhv0bBBak6Op7cXkJ1RH2wz0nb5/aO3RSIANbztDN+kcjVRGxzqpkXPSK0o0IJh9YA==
+X-Received: by 2002:a7b:c2a9:: with SMTP id c9mr2443813wmk.116.1613634935639;
+        Wed, 17 Feb 2021 23:55:35 -0800 (PST)
+Received: from ?IPv6:2001:a61:3a2d:1d01:99ab:4f20:ed7f:402b? ([2001:a61:3a2d:1d01:99ab:4f20:ed7f:402b])
+        by smtp.gmail.com with ESMTPSA id t9sm7401393wrw.76.2021.02.17.23.55.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Feb 2021 23:55:35 -0800 (PST)
+Cc:     mtk.manpages@gmail.com, linux-man <linux-man@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
         Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Jeffrey Vander Stoep <jeffv@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        David Rientjes <rientjes@google.com>,
+        =?UTF-8?Q?Edgar_Arriaga_Garc=c3=ada?= <edgararriaga@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-mm <linux-mm@kvack.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        kernel-team <kernel-team@android.com>
+Subject: Re: [PATCH v3 1/1] process_madvise.2: Add process_madvise man page
+To:     Suren Baghdasaryan <surenb@google.com>
+References: <20210202053046.1653012-1-surenb@google.com>
+ <079db245-a08c-0dbd-01d4-8065f533652e@gmail.com>
+ <CAJuCfpGotx_04Stn5Nw6Au+TVG9LuAJ=CB_s7uxjMLOLerw-GA@mail.gmail.com>
+ <2d303517-cdcd-9ec8-e57d-3d065edb573c@gmail.com>
+ <CAJuCfpFC0B=jXFEuPYYBZAjgx1B6S8vG-i7_0iBc_RHeWynyzw@mail.gmail.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <7fb20d93-92d0-14b3-f7f9-8b9af4ebb584@gmail.com>
+Date:   Thu, 18 Feb 2021 08:55:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAJuCfpFC0B=jXFEuPYYBZAjgx1B6S8vG-i7_0iBc_RHeWynyzw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 12, 2021 at 11:53 AM 'Jian Cai' via Clang Built Linux
-<clang-built-linux@googlegroups.com> wrote:
+Hello Suren,
 
-The oneline of the commit is "ARM: Implement Clang's SLS mitigation,"
-but that's not precise. GCC implements the same flag with the same
-arguments.  There is nothing compiler specific about this patch.
-(Though perhaps different section names are used, see below).
+>> Thanks. I added a few words to clarify this.>
+> Any link where I can see the final version?
 
->
-> This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
-> -mharden-sls=all, which mitigates the straight-line speculation
-> vulnerability, speculative execution of the instruction following some
-> unconditional jumps. Notice -mharden-sls= has other options as below,
-> and this config turns on the strongest option.
->
-> all: enable all mitigations against Straight Line Speculation that are implemented.
-> none: disable all mitigations against Straight Line Speculation.
-> retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
-> blr: enable the mitigation against Straight Line Speculation for BLR instructions.
->
-> Link: https://reviews.llvm.org/D93221
-> Link: https://reviews.llvm.org/D81404
-> Link: https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
-> https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
->
-> Suggested-by: Manoj Gupta <manojgupta@google.com>
-> Suggested-by: Nathan Chancellor  <nathan@kernel.org>
-> Suggested-by: David Laight <David.Laight@aculab.com>
-> Signed-off-by: Jian Cai <jiancai@google.com>
+Sure:
+https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/man2/process_madvise.2
 
-I observe lots of linker warnings with this applied on linux-next:
-ld.lld: warning:
-init/built-in.a(main.o):(.text.__llvm_slsblr_thunk_x0) is being placed
-in '.text.__llvm_slsblr_thunk_x0'
-You need to modify arch/arm64/kernel/vmlinux.lds.S and
-arch/arm/kernel/vmlinux.lds.S (and possibly
-arch/arm/boot/compressed/vmlinux.lds.S as well) to add these sections
-back into .text so that the linkers don't place these orphaned
-sections in wild places.  The resulting aarch64 kernel image doesn't
-even boot (under emulation).
+Also rendered below.
 
-For 32b ARM:
-ld.lld: warning:
-init/built-in.a(main.o):(.text.__llvm_slsblr_thunk_arm_r0) is being
-placed in '.text.__llvm_slsblr_thunk_arm_r0'
-...
-ld.lld: warning:
-init/built-in.a(main.o):(.text.__llvm_slsblr_thunk_thumb_r0) is being
-placed in '.text.__llvm_slsblr_thunk_thumb_r0'
-...
-<trimmed, but there's close to 60 of these>
+Thanks,
 
-And the image doesn't boot (under emulation).
+Michael
 
-> ---
->
-> Changes v1 -> v2:
->  Update the description and patch based on Nathan and David's comments.
->
->  arch/arm/Makefile          | 4 ++++
->  arch/arm64/Makefile        | 4 ++++
->  security/Kconfig.hardening | 7 +++++++
->  3 files changed, 15 insertions(+)
->
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index 4aaec9599e8a..11d89ef32da9 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -48,6 +48,10 @@ CHECKFLAGS   += -D__ARMEL__
->  KBUILD_LDFLAGS += -EL
->  endif
->
-> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-> +KBUILD_CFLAGS  += -mharden-sls=all
-> +endif
-> +
->  #
->  # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
->  # later may result in code being generated that handles signed short and signed
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 90309208bb28..ca7299b356a9 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
->    endif
->  endif
->
-> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-> +KBUILD_CFLAGS  += -mharden-sls=all
-> +endif
-> +
->  cc_has_k_constraint := $(call try-run,echo                             \
->         'int main(void) {                                               \
->                 asm volatile("and w0, w0, %w0" :: "K" (4294967295));    \
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index 269967c4fc1b..9266d8d1f78f 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -121,6 +121,13 @@ choice
->
->  endchoice
->
-> +config HARDEN_SLS_ALL
-> +       bool "enable SLS vulnerability hardening"
-> +       def_bool $(cc-option,-mharden-sls=all)
+NAME
+       process_madvise - give advice about use of memory to a process
 
-This fails to set CONFIG_HARDEN_SLS_ALL for me with:
-$ ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- make LLVM=1 LLVM_IAS=1
--j72 defconfig
-$ grep SLS_ALL .config
-# CONFIG_HARDEN_SLS_ALL is not set
+SYNOPSIS
+       #include <sys/uio.h>
 
-but it's flipped on there for arm64 defconfig:
-$ ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make LLVM=1 LLVM_IAS=1
--j72 defconfig
-$ grep SLS_ALL .config
-CONFIG_HARDEN_SLS_ALL=y
+       ssize_t process_madvise(int pidfd, const struct iovec *iovec,
+                               size_t vlen, int advice,
+                               unsigned int flags);
 
-What's going on there?  Is the cc-option Kconfig macro broken for
-Clang when cross compiling 32b ARM?  I can still enable
-CONFIG_HARDEN_SLS_ALL via menuconfig, but I wonder if the default
-value is funny because the cc-option check is failing?
+       Note: There is no glibc wrapper for this system call; see NOTES.
 
-> +        help
-> +          Enables straight-line speculation vulnerability hardening
-> +         at highest level.
-> +
->  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
->         bool "Report forcefully initialized variables"
->         depends on GCC_PLUGIN_STRUCTLEAK
-> --
+DESCRIPTION
+       The process_madvise() system call is used to give advice or direc‐
+       tions to the kernel about the address ranges of another process or
+       of  the  calling  process.  It provides the advice for the address
+       ranges described by iovec and vlen.  The goal of such advice is to
+       improve system or application performance.
+
+       The  pidfd  argument  is a PID file descriptor (see pidfd_open(2))
+       that specifies the process to which the advice is to be applied.
+
+       The pointer iovec points to an array of iovec structures,  defined
+       in <sys/uio.h> as:
+
+           struct iovec {
+               void  *iov_base;    /* Starting address */
+               size_t iov_len;     /* Length of region */
+           };
+
+       The iovec structure describes address ranges beginning at iov_base
+       address and with the size of iov_len bytes.
+
+       The vlen specifies the number of elements in the iovec  structure.
+       This value must be less than or equal to IOV_MAX (defined in <lim‐
+       its.h> or accessible via the call sysconf(_SC_IOV_MAX)).
+
+       The advice argument is one of the following values:
+
+       MADV_COLD
+              See madvise(2).
+
+       MADV_PAGEOUT
+              See madvise(2).
+
+       The flags argument is reserved for future use; currently, this ar‐
+       gument must be specified as 0.
+
+       The  vlen  and iovec arguments are checked before applying any ad‐
+       vice.  If vlen is too big, or iovec is invalid, then an error will
+       be returned immediately and no advice will be applied.
+
+       The  advice might be applied to only a part of iovec if one of its
+       elements points to an invalid memory region in the remote process.
+       No further elements will be processed beyond that point.  (See the
+       discussion regarding partial advice in RETURN VALUE.)
+
+       Permission to apply advice to another process  is  governed  by  a
+       ptrace   access   mode   PTRACE_MODE_READ_REALCREDS   check   (see
+       ptrace(2)); in addition, because of the  performance  implications
+       of applying the advice, the caller must have the CAP_SYS_ADMIN ca‐
+       pability.
+
+RETURN VALUE
+       On success, process_madvise() returns the number of bytes advised.
+       This  return  value may be less than the total number of requested
+       bytes, if an error occurred after some iovec elements were already
+       processed.   The caller should check the return value to determine
+       whether a partial advice occurred.
+
+       On error, -1 is returned and errno is set to indicate the error.
+
+ERRORS
+       EBADF  pidfd is not a valid PID file descriptor.
+
+       EFAULT The memory described by iovec is outside the accessible ad‐
+              dress space of the process referred to by pidfd.
+
+       EINVAL flags is not 0.
+
+       EINVAL The  sum of the iov_len values of iovec overflows a ssize_t
+              value.
+
+       EINVAL vlen is too large.
+
+       ENOMEM Could not allocate memory for internal copies of the  iovec
+              structures.
+
+       EPERM  The  caller  does not have permission to access the address
+              space of the process pidfd.
+
+       ESRCH  The target process does not exist (i.e., it has  terminated
+              and been waited on).
+
+VERSIONS
+       This  system  call first appeared in Linux 5.10.  Support for this
+       system call is optional, depending on  the  setting  of  the  CON‐
+       FIG_ADVISE_SYSCALLS configuration option.
+
+CONFORMING TO
+       The process_madvise() system call is Linux-specific.
+
+NOTES
+       Glibc does not provide a wrapper for this system call; call it us‐
+       ing syscall(2).
+
+SEE ALSO
+       madvise(2),          pidfd_open(2),           process_vm_readv(2),
+       process_vm_write(2)
+
 
 -- 
-Thanks,
-~Nick Desaulniers
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
