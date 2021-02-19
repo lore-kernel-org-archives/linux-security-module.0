@@ -2,102 +2,197 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A720AC4332B
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 15:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9019C433E9
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 15:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 766DA64EB7
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 15:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E6464DFD
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 15:42:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbhBSPfI (ORCPT
+        id S229652AbhBSPmN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Feb 2021 10:35:08 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:51598 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229824AbhBSPfE (ORCPT
+        Fri, 19 Feb 2021 10:42:13 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48608 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229800AbhBSPmG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Feb 2021 10:35:04 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 679722BF; Fri, 19 Feb 2021 09:34:14 -0600 (CST)
-Date:   Fri, 19 Feb 2021 09:34:14 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v28 07/12] landlock: Support filesystem access-control
-Message-ID: <20210219153414.GA18061@mail.hallyn.com>
-References: <20210202162710.657398-1-mic@digikod.net>
- <20210202162710.657398-8-mic@digikod.net>
- <20210210193624.GA29893@mail.hallyn.com>
- <aeba97b6-37cd-4870-0a40-3e7aa84ebd36@digikod.net>
+        Fri, 19 Feb 2021 10:42:06 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 11JFUkv8051856;
+        Fri, 19 Feb 2021 10:41:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=W/3NgxUmfYxZtO+paNk0oK9prvw2sBrJNHkEhc2t+mU=;
+ b=pYXP/XYz7ev9yp4dtLlabathFttlN1apW02qsInLJ+QvWFR88MHJgKkHVPtyOn5dJxbN
+ EkFmWvPsy3TMxH7SviXK8o4bs8FuMkjS3acQu8JImIR4Ny+H1dMf+0NaHLNcDK2ozjCL
+ LGaJ94l45fuBhpE3j4+IcrORdsMPCL32bA+aYkkGMc9XzCe1zWe5O6b5pj54XgJoTNL2
+ SZI/5GQa8bWHGKKURfeVvHMrZvh4kJTQgyGZiBjMnUmiFG1Dd3l4sVtvncSjvRqU/CqZ
+ mjRNrkM+Whxy0qD1E0A7Y30EE1MBBCvxaorJOLpGMm/K8JTMYWMo5dLuvF55BY6lAcQU Vw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 36tfy8gh0y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Feb 2021 10:41:19 -0500
+Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 11JFV53w053798;
+        Fri, 19 Feb 2021 10:41:18 -0500
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 36tfy8gh0t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Feb 2021 10:41:18 -0500
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11JFRt6t015687;
+        Fri, 19 Feb 2021 15:41:18 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma04wdc.us.ibm.com with ESMTP id 36p6d9pfgp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Feb 2021 15:41:18 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11JFfHQ521758238
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Feb 2021 15:41:17 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C198F28058;
+        Fri, 19 Feb 2021 15:41:17 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A6A2E28059;
+        Fri, 19 Feb 2021 15:41:17 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 19 Feb 2021 15:41:17 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     keyrings@vger.kernel.org, dhowells@redhat.com, dwmw2@infradead.org,
+        linux-security-module@vger.kernel.org
+Cc:     zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org, nayna@linux.ibm.com,
+        saulo.alessandre@gmail.com, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH] certs: Add support for using elliptic curve keys for signing modules
+Date:   Fri, 19 Feb 2021 10:41:14 -0500
+Message-Id: <20210219154114.2416778-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aeba97b6-37cd-4870-0a40-3e7aa84ebd36@digikod.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-02-19_07:2021-02-18,2021-02-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
+ lowpriorityscore=0 clxscore=1011 suspectscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102190123
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Feb 10, 2021 at 09:17:25PM +0100, Mickaël Salaün wrote:
-> 
-> On 10/02/2021 20:36, Serge E. Hallyn wrote:
-> > On Tue, Feb 02, 2021 at 05:27:05PM +0100, Mickaël Salaün wrote:
-> >> From: Mickaël Salaün <mic@linux.microsoft.com>
-> >>
-> >> Thanks to the Landlock objects and ruleset, it is possible to identify
-> >> inodes according to a process's domain.  To enable an unprivileged
-> > 
-> > This throws me off a bit.  "identify inodes according to a process's domain".
-> > What exactly does it mean?  "identify" how ?
-> 
-> A domain is a set of rules (i.e. layers of rulesets) enforced on a set
-> of threads. Inodes are tagged per domain (i.e. not system-wide) and
-> actions are restricted thanks to these tags, which form rules. It means
-> that the created access-controls are scoped to a set of threads.
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Thanks, that's helpful.  To me it would be much clearer if you used the word
-'tagged' :
+This patch adds support for using elliptic curve keys for signing
+modules. It uses a NIST P256 (prime256v1) key if the user chooses an
+elliptic curve key.
 
-  Using the Landlock objects and ruleset, it is possible to tag inodes
-  according to a process's domain.
+A developer choosing an ECDSA key for signing modules has to manually
+delete the signing key (rm certs/signing_key.*) when falling back to
+an older version of a kernel that only supports RSA key since otherwise
+ECDSA-signed modules will not be usable when that older kernel runs.
 
-> >> process to express a file hierarchy, it first needs to open a directory
-> >> (or a file) and pass this file descriptor to the kernel through
-> >> landlock_add_rule(2).  When checking if a file access request is
-> >> allowed, we walk from the requested dentry to the real root, following
-> >> the different mount layers.  The access to each "tagged" inodes are
-> >> collected according to their rule layer level, and ANDed to create
-> >> access to the requested file hierarchy.  This makes possible to identify
-> >> a lot of files without tagging every inodes nor modifying the
-> >> filesystem, while still following the view and understanding the user
-> >> has from the filesystem.
-> >>
-> >> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
-> >> keep the same struct inodes for the same inodes whereas these inodes are
-> >> in use.
-> > 
-> > -serge
-> > 
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
+---
+
+This patch builds on top of my ECDSA patch series and Nayna's
+series for 'kernel build support for loading the kernel module
+signing key'.
+- https://lkml.org/lkml/2021/2/15/766
+- https://lkml.org/lkml/2021/2/18/856
+---
+ certs/Kconfig                         | 17 +++++++++++++++++
+ certs/Makefile                        | 14 ++++++++++++++
+ crypto/asymmetric_keys/pkcs7_parser.c |  4 ++++
+ 3 files changed, 35 insertions(+)
+
+diff --git a/certs/Kconfig b/certs/Kconfig
+index 48675ad319db..5e2dd5c24d31 100644
+--- a/certs/Kconfig
++++ b/certs/Kconfig
+@@ -15,6 +15,23 @@ config MODULE_SIG_KEY
+          then the kernel will automatically generate the private key and
+          certificate as described in Documentation/admin-guide/module-signing.rst
+ 
++choice
++       prompt "Type of module signing key to be generated"
++       default MODULE_SIG_KEY_TYPE_RSA
++       help
++         The type of module signing key type to generated. This option
++         does not apply if a #PKCS11 URI is used.
++
++config MODULE_SIG_KEY_TYPE_RSA
++       bool "RSA"
++       depends on MODULE_SIG || IMA_APPRAISE_MODSIG
++
++config MODULE_SIG_KEY_TYPE_ECDSA
++       bool "ECDSA"
++       depends on (MODULE_SIG || IMA_APPRAISE_MODSIG) && CRYPTO_ECDSA
++
++endchoice
++
+ config SYSTEM_TRUSTED_KEYRING
+ 	bool "Provide system-wide ring of trusted keys"
+ 	depends on KEYS
+diff --git a/certs/Makefile b/certs/Makefile
+index 3fe6b73786fa..2d5fd4720d07 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -69,6 +69,18 @@ else
+ SIGNER = -signkey $(obj)/signing_key.key
+ endif # CONFIG_IMA_APPRAISE_MODSIG
+ 
++X509TEXT=$(shell openssl x509 -in $(CONFIG_MODULE_SIG_KEY) -text)
++
++# Support user changing key type
++ifdef CONFIG_MODULE_SIG_KEY_TYPE_ECDSA
++keytype_openssl = -newkey ec -pkeyopt ec_paramgen_curve:prime256v1
++$(if $(findstring ecdsa-with-,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
++endif
++
++ifdef CONFIG_MODULE_SIG_KEY_TYPE_RSA
++$(if $(findstring rsaEncryption,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
++endif
++
+ $(obj)/signing_key.pem: $(obj)/x509.genkey
+ 	@$(kecho) "###"
+ 	@$(kecho) "### Now generating an X.509 key pair to be used for signing modules."
+@@ -86,12 +98,14 @@ ifeq ($(CONFIG_IMA_APPRAISE_MODSIG),y)
+ 		-batch -x509 -config $(obj)/x509.genkey \
+ 		-outform PEM -out $(CA_KEY) \
+ 		-keyout $(CA_KEY) -extensions ca_ext \
++		$(keytype_openssl) \
+ 		$($(quiet)redirect_openssl)
+ endif # CONFIG_IMA_APPRAISE_MODSIG
+ 	$(Q)openssl req -new -nodes -utf8 \
+ 		-batch -config $(obj)/x509.genkey \
+ 		-outform PEM -out $(obj)/signing_key.csr \
+ 		-keyout $(obj)/signing_key.key -extensions myexts \
++		$(keytype_openssl) \
+ 		$($(quiet)redirect_openssl)
+ 	$(Q)openssl x509 -req -days 36500 -in $(obj)/signing_key.csr \
+ 		-outform PEM -out $(obj)/signing_key.crt $(SIGNER) \
+diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
+index 967329e0a07b..2546ec6a0505 100644
+--- a/crypto/asymmetric_keys/pkcs7_parser.c
++++ b/crypto/asymmetric_keys/pkcs7_parser.c
+@@ -269,6 +269,10 @@ int pkcs7_sig_note_pkey_algo(void *context, size_t hdrlen,
+ 		ctx->sinfo->sig->pkey_algo = "rsa";
+ 		ctx->sinfo->sig->encoding = "pkcs1";
+ 		break;
++	case OID_id_ecdsa_with_sha256:
++		ctx->sinfo->sig->pkey_algo = "ecdsa";
++		ctx->sinfo->sig->encoding = "x962";
++		break;
+ 	default:
+ 		printk("Unsupported pkey algo: %u\n", ctx->last_oid);
+ 		return -ENOPKG;
+-- 
+2.29.2
+
