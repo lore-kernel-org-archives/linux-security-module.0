@@ -2,233 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CABCC433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 20:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54247C433E9
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 22:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30F1C64EC7
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 20:31:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A5464E12
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 22:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbhBSUbh (ORCPT
+        id S229725AbhBSWXQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Feb 2021 15:31:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37114 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229683AbhBSUbh (ORCPT
+        Fri, 19 Feb 2021 17:23:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59816 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229689AbhBSWXN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Feb 2021 15:31:37 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0FF7164EBF;
-        Fri, 19 Feb 2021 20:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613766655;
-        bh=t60MtijxFQRBj7x3qDETkxU78fn61+W8UwCXWCiwnQY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xb+ScodtC5g1cJwFwirDpie276j9W21+W9T9eLgOfC1SHJHdUX8DF1ZTbCMDDl2b1
-         CtXaFvrALlvelQT3VHb1fb1I86UFmxhQJyn5fh0c5IL6LWz6mIIwNz+tYoqzxdOJCy
-         6d+orlD4NDIUUVKmW0I/71fEFGtMTUbKQZ5aFKuMbZsoy2xe+LETtfBDJfJx7Akyt6
-         B4/WgocoAhw4iwSgoLn7iqvcsyLrqgMXRTbsL4BkCDMasEqQH5I1SXRzoM8xQ9zOkA
-         tbpYniBMZUEMcoUiVFHqZS0Tz2GL7muRsPcEn1dxAxfQEk+fPjQ7WLqspYcsb7Nrs3
-         Mdc9Pm/eMthbg==
-Date:   Fri, 19 Feb 2021 13:30:53 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Jian Cai <jiancai@google.com>
-Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
-        clang-built-linux@googlegroups.com,
-        David Laight <David.Laight@aculab.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Olof Johansson <olof@lixom.net>, Marc Zyngier <maz@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        David Brazdil <dbrazdil@google.com>,
-        James Morse <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3] ARM: Implement SLS mitigation
-Message-ID: <20210219203053.GA53507@24bbad8f3778>
-References: <20210212195255.1321544-1-jiancai@google.com>
- <20210219201852.3213914-1-jiancai@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210219201852.3213914-1-jiancai@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 19 Feb 2021 17:23:13 -0500
+Received: from mail-il1-x12e.google.com (mail-il1-x12e.google.com [IPv6:2607:f8b0:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B573C06178A;
+        Fri, 19 Feb 2021 14:22:33 -0800 (PST)
+Received: by mail-il1-x12e.google.com with SMTP id e2so5814372ilu.0;
+        Fri, 19 Feb 2021 14:22:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=tUiXt38vszTo/8I4Tq05S3DKXWtyC93gf//69MCl9bI=;
+        b=WmUBk1i1WxpKzqh/WrjSTcH2JYceqpG2GkbZmLLj5LnN4S+lj2KbHF4iWF2zpDBG/m
+         x4VE+XrmKOO/OMzP3QS7T+lizbjJCJ2w6D2zx0V21YrjHlMMfHX0nNQr+arBgUSLg3B1
+         lWbpALH3uD2JAAqRYfv1HTQDAuAfrl/4+0rqfByael5ypUdwaDmTbco2W1Wztn2Bapr7
+         FHbdDo4xeYIJiHNFdB0rLnagg3FziBNQaiiRX4K2yu2sgBh8x6Uepi88mrsOf1VyQTUf
+         XjDPZyYPmjPep0z8DAMkX0gnjt3pAyrUbhu+8fDh/UgaDJ4c2AMB/6EBWKYiypL7I/1i
+         8XqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=tUiXt38vszTo/8I4Tq05S3DKXWtyC93gf//69MCl9bI=;
+        b=SlqnnaOeui7lIZNLIRonrHwLsDEn/Oss2w0A1VfR3AZ7LKbu4CFmz1XeabtdXI4kBg
+         wWqGBxKKKvV0fl4iaIJYbAipiecgcpbVAsAktNrLKEBfhsMpYp89x/Gq/8DsVzmUI9nb
+         iCw6TWKZn/ttRYXA5359exYqfoDz8/x+AhHtR+hsBxNECpU1Rc+XJazg6xrHDPylLeDK
+         0YWVNVCIoKmm1k4U1tEHqUNw5y3XDgAu15ogVCMhHXS8nJ0byWj4NImJG0SYC7yx7xuf
+         +eA7Rt1sEPUn6TgIknZBT+n56w++NYgon78fHbRV//2J3BNGTd5UuwlGYP9k/KemeiQ9
+         g7Vg==
+X-Gm-Message-State: AOAM533NGSDxGmGwOcjIH0VvkfYUR4zSmAzEI6u0wvK+VJBFYNr07KEZ
+        mX3khNhcdmwmVupEQrDBTnbOj6OJW4lPxPjD
+X-Google-Smtp-Source: ABdhPJxTF2eOPiEl6F/rr9pQp0bg1FYrCXk7F6h87MBYJtpsmB9Y7beiMatGH4ghXMNRjFP5Ar7plw==
+X-Received: by 2002:a92:cd8a:: with SMTP id r10mr5614069ilb.110.1613773352889;
+        Fri, 19 Feb 2021 14:22:32 -0800 (PST)
+Received: from Olgas-MBP-470.attlocal.net (172-10-226-31.lightspeed.livnmi.sbcglobal.net. [172.10.226.31])
+        by smtp.gmail.com with ESMTPSA id b19sm8456290ioj.50.2021.02.19.14.22.32
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Fri, 19 Feb 2021 14:22:32 -0800 (PST)
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: [PATCH v3 2/3] [NFS] cleanup: remove unneeded null check in nfs_fill_super()
+Date:   Fri, 19 Feb 2021 17:22:32 -0500
+Message-Id: <20210219222233.20748-2-olga.kornievskaia@gmail.com>
+X-Mailer: git-send-email 2.10.1 (Apple Git-78)
+In-Reply-To: <20210219222233.20748-1-olga.kornievskaia@gmail.com>
+References: <20210219222233.20748-1-olga.kornievskaia@gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jian,
+From: Olga Kornievskaia <kolga@netapp.com>
 
-On Fri, Feb 19, 2021 at 12:18:40PM -0800, 'Jian Cai' via Clang Built Linux wrote:
-> This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
-> -mharden-sls=all, which mitigates the straight-line speculation
-> vulnerability, speculative execution of the instruction following some
-> unconditional jumps. Notice -mharden-sls= has other options as below,
-> and this config turns on the strongest option.
-> 
-> all: enable all mitigations against Straight Line Speculation that are implemented.
-> none: disable all mitigations against Straight Line Speculation.
-> retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
-> blr: enable the mitigation against Straight Line Speculation for BLR instructions.
-> 
-> Links:
-> https://reviews.llvm.org/D93221
-> https://reviews.llvm.org/D81404
-> https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
-> https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
-> 
-> Suggested-by: Manoj Gupta <manojgupta@google.com>
-> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> Suggested-by: Nathan Chancellor  <nathan@kernel.org>
-> Suggested-by: David Laight <David.Laight@aculab.com>
-> Suggested-by: Will Deacon <will@kernel.org>
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+In nfs_fill_super() passed in nfs_fs_context can never be NULL.
 
-My review still stands but in the future, if you significantly change
-how a patch is structured or works, please drop my tag and let me re-add
-it.
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+---
+ fs/nfs/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-One comment below.
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 4034102010f0..59d846d7830f 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1026,7 +1026,7 @@ static void nfs_fill_super(struct super_block *sb, struct nfs_fs_context *ctx)
+ 	sb->s_blocksize = 0;
+ 	sb->s_xattr = server->nfs_client->cl_nfs_mod->xattr;
+ 	sb->s_op = server->nfs_client->cl_nfs_mod->sops;
+-	if (ctx && ctx->bsize)
++	if (ctx->bsize)
+ 		sb->s_blocksize = nfs_block_size(ctx->bsize, &sb->s_blocksize_bits);
+ 
+ 	if (server->nfs_client->rpc_ops->version != 2) {
+-- 
+2.27.0
 
-> Signed-off-by: Jian Cai <jiancai@google.com>
-> ---
-> 
-> Changes v2 -> v3:
->   Modify linker scripts as Nick suggested to address boot failure
->   (verified with qemu). Added more details in Kconfig.hardening
->   description. Disable the config by default.
-> 
->  arch/arm/Makefile                  |  4 ++++
->  arch/arm/include/asm/vmlinux.lds.h |  4 ++++
->  arch/arm/kernel/vmlinux.lds.S      |  1 +
->  arch/arm64/Makefile                |  4 ++++
->  arch/arm64/kernel/vmlinux.lds.S    |  5 +++++
->  security/Kconfig.hardening         | 10 ++++++++++
->  6 files changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index 4aaec9599e8a..11d89ef32da9 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -48,6 +48,10 @@ CHECKFLAGS	+= -D__ARMEL__
->  KBUILD_LDFLAGS	+= -EL
->  endif
->  
-> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-> +KBUILD_CFLAGS  += -mharden-sls=all
-> +endif
-> +
->  #
->  # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
->  # later may result in code being generated that handles signed short and signed
-> diff --git a/arch/arm/include/asm/vmlinux.lds.h b/arch/arm/include/asm/vmlinux.lds.h
-> index 4a91428c324d..c7f9717511ca 100644
-> --- a/arch/arm/include/asm/vmlinux.lds.h
-> +++ b/arch/arm/include/asm/vmlinux.lds.h
-> @@ -145,3 +145,7 @@
->  		__edtcm_data = .;					\
->  	}								\
->  	. = __dtcm_start + SIZEOF(.data_dtcm);
-> +
-> +#define SLS_TEXT							\
-> +		ALIGN_FUNCTION();					\
-> +		*(.text.__llvm_slsblr_thunk_*)
-> diff --git a/arch/arm/kernel/vmlinux.lds.S b/arch/arm/kernel/vmlinux.lds.S
-> index f7f4620d59c3..e71f2bc97bae 100644
-> --- a/arch/arm/kernel/vmlinux.lds.S
-> +++ b/arch/arm/kernel/vmlinux.lds.S
-> @@ -63,6 +63,7 @@ SECTIONS
->  	.text : {			/* Real text segment		*/
->  		_stext = .;		/* Text and read-only data	*/
->  		ARM_TEXT
-> +		SLS_TEXT
->  	}
->  
->  #ifdef CONFIG_DEBUG_ALIGN_RODATA
-> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-> index 90309208bb28..ca7299b356a9 100644
-> --- a/arch/arm64/Makefile
-> +++ b/arch/arm64/Makefile
-> @@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
->    endif
->  endif
->  
-> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
-> +KBUILD_CFLAGS  += -mharden-sls=all
-> +endif
-> +
->  cc_has_k_constraint := $(call try-run,echo				\
->  	'int main(void) {						\
->  		asm volatile("and w0, w0, %w0" :: "K" (4294967295));	\
-> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-> index 4c0b0c89ad59..f8912e42ffcd 100644
-> --- a/arch/arm64/kernel/vmlinux.lds.S
-> +++ b/arch/arm64/kernel/vmlinux.lds.S
-> @@ -93,6 +93,10 @@ jiffies = jiffies_64;
->  #define TRAMP_TEXT
->  #endif
->  
-> +#define SLS_TEXT					\
-> +	ALIGN_FUNCTION();				\
-> +	*(.text.__llvm_slsblr_thunk_*)
-> +
->  /*
->   * The size of the PE/COFF section that covers the kernel image, which
->   * runs from _stext to _edata, must be a round multiple of the PE/COFF
-> @@ -144,6 +148,7 @@ SECTIONS
->  			HIBERNATE_TEXT
->  			TRAMP_TEXT
->  			*(.fixup)
-> +			SLS_TEXT
->  			*(.gnu.warning)
->  		. = ALIGN(16);
->  		*(.got)			/* Global offset table		*/
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index 269967c4fc1b..e70f227019e1 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -121,6 +121,16 @@ choice
->  
->  endchoice
->  
-> +config HARDEN_SLS_ALL
-> +	bool "enable SLS vulnerability hardening"
-> +	default n
-> +	def_bool $(cc-option,-mharden-sls=all)
-
-This is a much more convoluted way of writing:
-
-depends on $(cc-option,-mharden-sls=all)
-
-"default n" is the default and "def_bool" is short for:
-
-bool
-default <expr>
-
-which is defeated by the "default n".
-
-> +	help
-> +	  Enables straight-line speculation vulnerability hardening on ARM and ARM64
-> +	  architectures. It inserts speculation barrier sequences (SB or DSB+ISB
-> +	  depending on the target architecture) after RET and BR, and replacing
-> +	  BLR with BL+BR sequence.
-> +
->  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
->  	bool "Report forcefully initialized variables"
->  	depends on GCC_PLUGIN_STRUCTLEAK
-> -- 
-> 2.30.0.617.g56c4b15f3c-goog
-> 
