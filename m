@@ -2,197 +2,279 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9019C433E9
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 15:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D082C433DB
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 16:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74E6464DFD
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 15:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D2C764E44
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 16:26:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229652AbhBSPmN (ORCPT
+        id S229649AbhBSQ0y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Feb 2021 10:42:13 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48608 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229800AbhBSPmG (ORCPT
+        Fri, 19 Feb 2021 11:26:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40302 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229555AbhBSQ0x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Feb 2021 10:42:06 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 11JFUkv8051856;
-        Fri, 19 Feb 2021 10:41:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=W/3NgxUmfYxZtO+paNk0oK9prvw2sBrJNHkEhc2t+mU=;
- b=pYXP/XYz7ev9yp4dtLlabathFttlN1apW02qsInLJ+QvWFR88MHJgKkHVPtyOn5dJxbN
- EkFmWvPsy3TMxH7SviXK8o4bs8FuMkjS3acQu8JImIR4Ny+H1dMf+0NaHLNcDK2ozjCL
- LGaJ94l45fuBhpE3j4+IcrORdsMPCL32bA+aYkkGMc9XzCe1zWe5O6b5pj54XgJoTNL2
- SZI/5GQa8bWHGKKURfeVvHMrZvh4kJTQgyGZiBjMnUmiFG1Dd3l4sVtvncSjvRqU/CqZ
- mjRNrkM+Whxy0qD1E0A7Y30EE1MBBCvxaorJOLpGMm/K8JTMYWMo5dLuvF55BY6lAcQU Vw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36tfy8gh0y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Feb 2021 10:41:19 -0500
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 11JFV53w053798;
-        Fri, 19 Feb 2021 10:41:18 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36tfy8gh0t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Feb 2021 10:41:18 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11JFRt6t015687;
-        Fri, 19 Feb 2021 15:41:18 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma04wdc.us.ibm.com with ESMTP id 36p6d9pfgp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Feb 2021 15:41:18 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11JFfHQ521758238
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Feb 2021 15:41:17 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C198F28058;
-        Fri, 19 Feb 2021 15:41:17 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A6A2E28059;
-        Fri, 19 Feb 2021 15:41:17 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 19 Feb 2021 15:41:17 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     keyrings@vger.kernel.org, dhowells@redhat.com, dwmw2@infradead.org,
-        linux-security-module@vger.kernel.org
-Cc:     zohar@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, nayna@linux.ibm.com,
-        saulo.alessandre@gmail.com, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH] certs: Add support for using elliptic curve keys for signing modules
-Date:   Fri, 19 Feb 2021 10:41:14 -0500
-Message-Id: <20210219154114.2416778-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.26.2
+        Fri, 19 Feb 2021 11:26:53 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 229D9C061574;
+        Fri, 19 Feb 2021 08:26:12 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id j9so10979129edp.1;
+        Fri, 19 Feb 2021 08:26:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zBveBH4iWWPEmL1QkOi4J0Nhc0g/tqtS/bENktZlMMI=;
+        b=hpY/PQwQnolM6ZbD+8dD/myTkqnyJfyyI+yxLlKoyv2dSIr2WSafuJp+IycAPyEa9i
+         6fimoylNLRFdlFhqEqS9Ekm8NJd86UUrgMINIYmAGqm4P7hmbruiqAoTMR3pUbRI7slu
+         u5luUgte1JGg0I5jB4DUi2IV7gqkwixZmY5sb/IXeJddMPyUQGQLIjvvzvLvf7tLZKAU
+         RY7zs0Z0HeNnJMRlNXLJEDbHKqohL+lBt7Z7hHZQsEVLxMdQiaLnSuEg8wbm/6KznhBY
+         m4/wHvxG9yXsH1JlsPQCKRMP/JMNdnVfCQ9Xbyw9W1o6C8cDSxx3BCEEcriDAXRTvUdF
+         rR9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zBveBH4iWWPEmL1QkOi4J0Nhc0g/tqtS/bENktZlMMI=;
+        b=aRh4jUL54rsPKLe+L7VOqqcmYG9FBebAG6NxAjAb9GVGDhGwv2FIg+da/q8vqMf5WA
+         ptlKoLd0HV3nfKRKQw3cSyDxW805Fw7XG2gPOEq9wkOvoE84qL/rlQnaV97zn/LC+8kg
+         YazfVnUb9XiwvZIewbwYmuOP+oGrg6zoosQYIUehxuqX3uQo/FW9+QFd3GH2cQ3Kk1da
+         +Ff6tJZhoo5vVw+Vuzkyz/Rmyhw5nUiG8FJZrG1AG76Q11o01u4FNcmF/9m29E+/M4Mg
+         u1BGiriBRXyS0DBjFxZwFy42FHhM2HHkFDxcIS2LjwJPBixlXaF9rWWCxW+O1NZvIPjy
+         kyIg==
+X-Gm-Message-State: AOAM531mQLK/kRMQYRluhLvynFtfRv55Su7FqiZp5ZPXt0IsHVM4KVn7
+        HCnk7yPViEeuHLAwQ/5xQZ+Z4TgUuEkeTN1p2pc=
+X-Google-Smtp-Source: ABdhPJzXhP9to2K4bPPKLQXaL4EnvZPcXM0m83TXmqca3RPU9TMS4+3wc4+romWiX+HMFfT3Ine+0/zEIn1dzer44EE=
+X-Received: by 2002:aa7:dc17:: with SMTP id b23mr10151895edu.139.1613751970736;
+ Fri, 19 Feb 2021 08:26:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-02-19_07:2021-02-18,2021-02-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- lowpriorityscore=0 clxscore=1011 suspectscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 mlxlogscore=999 spamscore=0 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102190123
+References: <20210218195046.19280-1-olga.kornievskaia@gmail.com> <5742cb0f-cd47-4406-928a-0b5b4063c480@schaufler-ca.com>
+In-Reply-To: <5742cb0f-cd47-4406-928a-0b5b4063c480@schaufler-ca.com>
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+Date:   Fri, 19 Feb 2021 11:25:59 -0500
+Message-ID: <CAN-5tyHDmbJkNV-f-CaONV5PKbhFk0qxC+XSJ21mZJkO9A-87g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] [security] Add new hook to compare new mount to an
+ existing mount
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Thu, Feb 18, 2021 at 4:57 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 2/18/2021 11:50 AM, Olga Kornievskaia wrote:
+> > From: Olga Kornievskaia <kolga@netapp.com>
+> >
+> > Add a new hook that takes an existing super block and a new mount
+> > with new options and determines if new options confict with an
+> > existing mount or not.
+> >
+> > Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+> > `
+> > ---
+> >  include/linux/lsm_hook_defs.h |  1 +
+> >  include/linux/lsm_hooks.h     |  6 ++++
+> >  include/linux/security.h      |  8 ++++++
+> >  security/security.c           |  7 +++++
+> >  security/selinux/hooks.c      | 54 +++++++++++++++++++++++++++++++++++
+> >  5 files changed, 76 insertions(+)
+> >
+> > diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> > index 7aaa753b8608..1b12a5266a51 100644
+> > --- a/include/linux/lsm_hook_defs.h
+> > +++ b/include/linux/lsm_hook_defs.h
+> > @@ -62,6 +62,7 @@ LSM_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
+> >  LSM_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
+> >  LSM_HOOK(void, LSM_RET_VOID, sb_free_mnt_opts, void *mnt_opts)
+> >  LSM_HOOK(int, 0, sb_eat_lsm_opts, char *orig, void **mnt_opts)
+> > +LSM_HOOK(int, 0, sb_mnt_opts_compat, struct super_block *sb, void *mnt_opts)
+> >  LSM_HOOK(int, 0, sb_remount, struct super_block *sb, void *mnt_opts)
+> >  LSM_HOOK(int, 0, sb_kern_mount, struct super_block *sb)
+> >  LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, struct super_block *sb)
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index a19adef1f088..77c1e9cdeaca 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -142,6 +142,12 @@
+> >   *   @orig the original mount data copied from userspace.
+> >   *   @copy copied data which will be passed to the security module.
+> >   *   Returns 0 if the copy was successful.
+> > + * @sb_mnt_opts_compat:
+> > + *   Determine if the existing mount options are compatible with the new
+> > + *   mount options being used.
+> > + *   @sb superblock being compared
+> > + *   @mnt_opts new mount options
+> > + *   Return 0 if options are the same.
+>
+> s/the same/compatible/
+>
+> >   * @sb_remount:
+> >   *   Extracts security system specific mount options and verifies no changes
+> >   *   are being made to those options.
+> > diff --git a/include/linux/security.h b/include/linux/security.h
+> > index c35ea0ffccd9..50db3d5d1608 100644
+> > --- a/include/linux/security.h
+> > +++ b/include/linux/security.h
+> > @@ -291,6 +291,7 @@ int security_sb_alloc(struct super_block *sb);
+> >  void security_sb_free(struct super_block *sb);
+> >  void security_free_mnt_opts(void **mnt_opts);
+> >  int security_sb_eat_lsm_opts(char *options, void **mnt_opts);
+> > +int security_sb_mnt_opts_compat(struct super_block *sb, void *mnt_opts);
+> >  int security_sb_remount(struct super_block *sb, void *mnt_opts);
+> >  int security_sb_kern_mount(struct super_block *sb);
+> >  int security_sb_show_options(struct seq_file *m, struct super_block *sb);
+> > @@ -635,6 +636,13 @@ static inline int security_sb_remount(struct super_block *sb,
+> >       return 0;
+> >  }
+> >
+> > +static inline int security_sb_mnt_opts_compat(struct super_block *sb,
+> > +                                           void *mnt_opts)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +
+> >  static inline int security_sb_kern_mount(struct super_block *sb)
+> >  {
+> >       return 0;
+> > diff --git a/security/security.c b/security/security.c
+> > index 7b09cfbae94f..56cf5563efde 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -890,6 +890,13 @@ int security_sb_eat_lsm_opts(char *options, void **mnt_opts)
+> >  }
+> >  EXPORT_SYMBOL(security_sb_eat_lsm_opts);
+> >
+> > +int security_sb_mnt_opts_compat(struct super_block *sb,
+> > +                             void *mnt_opts)
+> > +{
+> > +     return call_int_hook(sb_mnt_opts_compat, 0, sb, mnt_opts);
+> > +}
+> > +EXPORT_SYMBOL(security_sb_mnt_opts_compat);
+> > +
+> >  int security_sb_remount(struct super_block *sb,
+> >                       void *mnt_opts)
+> >  {
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 644b17ec9e63..f0b8ebc1e2c2 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -2656,6 +2656,59 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+> >       return rc;
+> >  }
+> >
+> > +static int selinux_sb_mnt_opts_compat(struct super_block *sb, void *mnt_opts)
+> > +{
+> > +     struct selinux_mnt_opts *opts = mnt_opts;
+> > +     struct superblock_security_struct *sbsec = sb->s_security;
+> > +     u32 sid;
+> > +     int rc;
+> > +
+> > +     /* superblock not initialized (i.e. no options) - reject if any
+>
+> Please maintain the existing comment style used in this file.
 
-This patch adds support for using elliptic curve keys for signing
-modules. It uses a NIST P256 (prime256v1) key if the user chooses an
-elliptic curve key.
+I'm again not sure what exactly is the style used in this file and how
+is this inconsistent?
 
-A developer choosing an ECDSA key for signing modules has to manually
-delete the signing key (rm certs/signing_key.*) when falling back to
-an older version of a kernel that only supports RSA key since otherwise
-ECDSA-signed modules will not be usable when that older kernel runs.
+Here's one example from this file:
+        /* Wake up the parent if it is waiting so that it can recheck
+         * wait permission to the new task SID. */
+this is another example from this file:
+        /* Check whether the new SID can inherit signal state from the old SID.
+         * If not, clear itimers to avoid subsequent signal generation and
+         * flush and unblock signals.
+         *
+         * This must occur _after_ the task SID has been updated so that any
+         * kill done after the flush will be checked against the new SID.
+         */
+Here's another:
+                       /* strip quotes */
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+What exactly is not correct about the new comment?
+        /* superblock not initialized (i.e. no options) - reject if any
+         * options specified, otherwise accept
+         */
+It uses "/*" and has a space after. It starts each new line with "*"
+and a space. And ends with a new line. This is consistent with the
+general kernel style. Actually example 1 is not following kernel style
+by not ending on the new line.
 
----
+Is the objection that it's perhaps not a sentence that starts with a
+capital letter and ends with a period? Not all comments are sentences.
+If so please specify. Otherwise, I'm just guessing what you are
+expecting.
 
-This patch builds on top of my ECDSA patch series and Nayna's
-series for 'kernel build support for loading the kernel module
-signing key'.
-- https://lkml.org/lkml/2021/2/15/766
-- https://lkml.org/lkml/2021/2/18/856
----
- certs/Kconfig                         | 17 +++++++++++++++++
- certs/Makefile                        | 14 ++++++++++++++
- crypto/asymmetric_keys/pkcs7_parser.c |  4 ++++
- 3 files changed, 35 insertions(+)
 
-diff --git a/certs/Kconfig b/certs/Kconfig
-index 48675ad319db..5e2dd5c24d31 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -15,6 +15,23 @@ config MODULE_SIG_KEY
-          then the kernel will automatically generate the private key and
-          certificate as described in Documentation/admin-guide/module-signing.rst
- 
-+choice
-+       prompt "Type of module signing key to be generated"
-+       default MODULE_SIG_KEY_TYPE_RSA
-+       help
-+         The type of module signing key type to generated. This option
-+         does not apply if a #PKCS11 URI is used.
-+
-+config MODULE_SIG_KEY_TYPE_RSA
-+       bool "RSA"
-+       depends on MODULE_SIG || IMA_APPRAISE_MODSIG
-+
-+config MODULE_SIG_KEY_TYPE_ECDSA
-+       bool "ECDSA"
-+       depends on (MODULE_SIG || IMA_APPRAISE_MODSIG) && CRYPTO_ECDSA
-+
-+endchoice
-+
- config SYSTEM_TRUSTED_KEYRING
- 	bool "Provide system-wide ring of trusted keys"
- 	depends on KEYS
-diff --git a/certs/Makefile b/certs/Makefile
-index 3fe6b73786fa..2d5fd4720d07 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -69,6 +69,18 @@ else
- SIGNER = -signkey $(obj)/signing_key.key
- endif # CONFIG_IMA_APPRAISE_MODSIG
- 
-+X509TEXT=$(shell openssl x509 -in $(CONFIG_MODULE_SIG_KEY) -text)
-+
-+# Support user changing key type
-+ifdef CONFIG_MODULE_SIG_KEY_TYPE_ECDSA
-+keytype_openssl = -newkey ec -pkeyopt ec_paramgen_curve:prime256v1
-+$(if $(findstring ecdsa-with-,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+endif
-+
-+ifdef CONFIG_MODULE_SIG_KEY_TYPE_RSA
-+$(if $(findstring rsaEncryption,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+endif
-+
- $(obj)/signing_key.pem: $(obj)/x509.genkey
- 	@$(kecho) "###"
- 	@$(kecho) "### Now generating an X.509 key pair to be used for signing modules."
-@@ -86,12 +98,14 @@ ifeq ($(CONFIG_IMA_APPRAISE_MODSIG),y)
- 		-batch -x509 -config $(obj)/x509.genkey \
- 		-outform PEM -out $(CA_KEY) \
- 		-keyout $(CA_KEY) -extensions ca_ext \
-+		$(keytype_openssl) \
- 		$($(quiet)redirect_openssl)
- endif # CONFIG_IMA_APPRAISE_MODSIG
- 	$(Q)openssl req -new -nodes -utf8 \
- 		-batch -config $(obj)/x509.genkey \
- 		-outform PEM -out $(obj)/signing_key.csr \
- 		-keyout $(obj)/signing_key.key -extensions myexts \
-+		$(keytype_openssl) \
- 		$($(quiet)redirect_openssl)
- 	$(Q)openssl x509 -req -days 36500 -in $(obj)/signing_key.csr \
- 		-outform PEM -out $(obj)/signing_key.crt $(SIGNER) \
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-index 967329e0a07b..2546ec6a0505 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.c
-+++ b/crypto/asymmetric_keys/pkcs7_parser.c
-@@ -269,6 +269,10 @@ int pkcs7_sig_note_pkey_algo(void *context, size_t hdrlen,
- 		ctx->sinfo->sig->pkey_algo = "rsa";
- 		ctx->sinfo->sig->encoding = "pkcs1";
- 		break;
-+	case OID_id_ecdsa_with_sha256:
-+		ctx->sinfo->sig->pkey_algo = "ecdsa";
-+		ctx->sinfo->sig->encoding = "x962";
-+		break;
- 	default:
- 		printk("Unsupported pkey algo: %u\n", ctx->last_oid);
- 		return -ENOPKG;
--- 
-2.29.2
-
+>         /*
+>          * superblock not initialized (i.e. no options) - reject if any
+>
+> > +      * options specified, otherwise accept
+> > +      */
+> > +     if (!(sbsec->flags & SE_SBINITIALIZED))
+> > +             return opts ? 1 : 0;
+> > +
+> > +     /* superblock initialized and no options specified - reject if
+> > +      * superblock has any options set, otherwise accept
+> > +      */
+> > +     if (!opts)
+> > +             return (sbsec->flags & SE_MNTMASK) ? 1 : 0;
+> > +
+> > +     if (opts->fscontext) {
+> > +             rc = parse_sid(sb, opts->fscontext, &sid);
+> > +             if (rc)
+> > +                     return 1;
+> > +             if (bad_option(sbsec, FSCONTEXT_MNT, sbsec->sid, sid))
+> > +                     return 1;
+> > +     }
+> > +     if (opts->context) {
+> > +             rc = parse_sid(sb, opts->context, &sid);
+> > +             if (rc)
+> > +                     return 1;
+> > +             if (bad_option(sbsec, CONTEXT_MNT, sbsec->mntpoint_sid, sid))
+> > +                     return 1;
+> > +     }
+> > +     if (opts->rootcontext) {
+> > +             struct inode_security_struct *root_isec;
+> > +
+> > +             root_isec = backing_inode_security(sb->s_root);
+> > +             rc = parse_sid(sb, opts->rootcontext, &sid);
+> > +             if (rc)
+> > +                     return 1;
+> > +             if (bad_option(sbsec, ROOTCONTEXT_MNT, root_isec->sid, sid))
+> > +                     return 1;
+> > +     }
+> > +     if (opts->defcontext) {
+> > +             rc = parse_sid(sb, opts->defcontext, &sid);
+> > +             if (rc)
+> > +                     return 1;
+> > +             if (bad_option(sbsec, DEFCONTEXT_MNT, sbsec->def_sid, sid))
+> > +                     return 1;
+> > +     }
+> > +     return 0;
+> > +}
+> > +
+> >  static int selinux_sb_remount(struct super_block *sb, void *mnt_opts)
+> >  {
+> >       struct selinux_mnt_opts *opts = mnt_opts;
+> > @@ -6984,6 +7037,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+> >
+> >       LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+> >       LSM_HOOK_INIT(sb_free_mnt_opts, selinux_free_mnt_opts),
+> > +     LSM_HOOK_INIT(sb_mnt_opts_compat, selinux_sb_mnt_opts_compat),
+> >       LSM_HOOK_INIT(sb_remount, selinux_sb_remount),
+> >       LSM_HOOK_INIT(sb_kern_mount, selinux_sb_kern_mount),
+> >       LSM_HOOK_INIT(sb_show_options, selinux_sb_show_options),
