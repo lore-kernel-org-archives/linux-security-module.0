@@ -2,116 +2,236 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6BD5C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 16:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBFBC433E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 16:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A412664E57
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 16:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E9DB64E67
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 16:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbhBSQxZ (ORCPT
+        id S229952AbhBSQ54 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Feb 2021 11:53:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229890AbhBSQxZ (ORCPT
+        Fri, 19 Feb 2021 11:57:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46938 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229734AbhBSQ5z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Feb 2021 11:53:25 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 11JGYdxj117101;
-        Fri, 19 Feb 2021 11:52:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=kaAqwSwiV9bHR5MZ/ojgaoy1ShCOB01Lxp/uWhkct/8=;
- b=kr+AbqfQfzTQFmwWaRc08BbeXQz306Oo60AzwZVJDBPoaxyhSAqQVeIrJbZcNGjxkl/m
- G/3vOvxqg2HZ0DE25t0LKxWMtbKukp3JePmCh+2Kdp2pjSgud7LP3iHdhxE0xpxXkcYb
- uhlG2eaOhhOS9hIE5u8gK0huaOhfGp1CgdqL3jndRruFVf9bgxZ/aYtarHUfNS/VPfls
- 6Vi/tgxs/dxk/RYOQansX7eaYfsPcGCCZQn+9D+E7f3Rd8GvKxCu3V16+KjrO/ZQo4Wh
- oGFUEr2NQwtgf06lTRBX1Qw0WDtpF3ZhNATzwTvde8Msbala8eOSVfmkLSoky4R3zhak lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36tgna1am2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Feb 2021 11:52:39 -0500
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 11JGZHU9120830;
-        Fri, 19 Feb 2021 11:52:39 -0500
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 36tgna1ak1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Feb 2021 11:52:39 -0500
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11JGm6c6028923;
-        Fri, 19 Feb 2021 16:52:37 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma01fra.de.ibm.com with ESMTP id 36spsn8mk1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Feb 2021 16:52:36 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11JGqYKq48103746
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Feb 2021 16:52:34 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09EF6AE058;
-        Fri, 19 Feb 2021 16:52:34 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8ED08AE045;
-        Fri, 19 Feb 2021 16:52:31 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.144.116])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 19 Feb 2021 16:52:31 +0000 (GMT)
-Message-ID: <0e2a789456a970ebdde9a65717b15d478af73ae3.camel@linux.ibm.com>
-Subject: Re: [PATCH] certs: Add support for using elliptic curve keys for
- signing modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        keyrings@vger.kernel.org, dhowells@redhat.com, dwmw2@infradead.org,
-        linux-security-module@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        nayna@linux.ibm.com, saulo.alessandre@gmail.com,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Fri, 19 Feb 2021 11:52:30 -0500
-In-Reply-To: <20210219154114.2416778-1-stefanb@linux.vnet.ibm.com>
-References: <20210219154114.2416778-1-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-02-19_07:2021-02-18,2021-02-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- phishscore=0 malwarescore=0 impostorscore=0 suspectscore=0 clxscore=1015
- spamscore=0 adultscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2102190126
+        Fri, 19 Feb 2021 11:57:55 -0500
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F675C061574;
+        Fri, 19 Feb 2021 08:57:15 -0800 (PST)
+Received: by mail-io1-xd29.google.com with SMTP id f6so6310443ioz.5;
+        Fri, 19 Feb 2021 08:57:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=D3F3taZlJUSn5V/f9dCAzLIlaPHlCOcZIBWnJiBY/YA=;
+        b=k6u2Y04j64Os602s5w7KcztshZ1k5mWJJHLRw1TbAJasWL9ehqJ5E1VSeJR613aj/O
+         J30WJxgb1gI37bZNBH2Xrl5dkylGjuIYBpB8X7Qm9WfnX5O9823QUfLQe9MWGTGzGdJS
+         LJes25J142CC4yMD21KxLgYT4PVc152LEfppOiiV6Chsi+kxKbE+6w1BPmFqUqUr20bU
+         1cgxgZpaPh2aoc3pVdCHRdDfYOV3EKkhxOcVhs2nLy6hnYPQ7Uqdv2NYuvjhHuh6bUBv
+         TRUIeW2kP1QBR9zzaZ1UVUOCTfz3s4qUA+pj5SBnQ4oEbEnbr0SxSYHI++2oiTp+qvCy
+         QahA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=D3F3taZlJUSn5V/f9dCAzLIlaPHlCOcZIBWnJiBY/YA=;
+        b=SQbpZcjy1KcySNEiDcxNMWD1ZytCe7rlCXPB0ZUvO1fJMB6h5DTALaObY8yaChTVHP
+         8m0FQYHuCM6Ma6OfqHKCZt3R8fiPq+1VvfwW1oSGuxNLBnbJmlIsRaHrBskzIG6FkbX2
+         gfr4ASObKELy/qsXViNhftzoQqerkcqr26N16LIgGrIxVPTLzOEpsL84g5KbKMgPl0az
+         rKDUvcZfdMDiL1r07bz8C16Bypd0WgUJezC2075enjxGM1Nfgu1pL0Ng3IFTZD3xOb+f
+         xMczuVG4JN5hVY56ZY429vQInkQp2/AIPAOfgjXo3scS7+7AiDGS1v0Rv5ekcy89/t/1
+         1Lhw==
+X-Gm-Message-State: AOAM533i9bRd55xaZjX/SJPeVQHHcbTywWLCqJ1sKdmgmewIbAZH9vrm
+        rkc+bCh+0lSxyIq6iikoQNlEbkBTiKVQ2Q==
+X-Google-Smtp-Source: ABdhPJzkO8KUsqTRUeQEbP6A/0dUNPOdoRhyoetZOdADp1F4DWdMY/wtGjh3SNudMdvGKhumCorKtQ==
+X-Received: by 2002:a02:449:: with SMTP id 70mr10432185jab.137.1613753834588;
+        Fri, 19 Feb 2021 08:57:14 -0800 (PST)
+Received: from Olgas-MBP-470.attlocal.net (172-10-226-31.lightspeed.livnmi.sbcglobal.net. [172.10.226.31])
+        by smtp.gmail.com with ESMTPSA id i6sm6749814ilu.70.2021.02.19.08.57.13
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Fri, 19 Feb 2021 08:57:13 -0800 (PST)
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Subject: [PATCH v3 1/2] [security] Add new hook to compare new mount to an existing mount
+Date:   Fri, 19 Feb 2021 11:57:14 -0500
+Message-Id: <20210219165715.20324-1-olga.kornievskaia@gmail.com>
+X-Mailer: git-send-email 2.10.1 (Apple Git-78)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2021-02-19 at 10:41 -0500, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> This patch adds support for using elliptic curve keys for signing
-> modules. It uses a NIST P256 (prime256v1) key if the user chooses an
-> elliptic curve key.
-> 
-> A developer choosing an ECDSA key for signing modules has to manually
-> delete the signing key (rm certs/signing_key.*) when falling back to
-> an older version of a kernel that only supports RSA key since otherwise
-> ECDSA-signed modules will not be usable when that older kernel runs.
-> 
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+From: Olga Kornievskaia <kolga@netapp.com>
 
-Thanks, Stefan!
+Add a new hook that takes an existing super block and a new mount
+with new options and determines if new options confict with an
+existing mount or not.
 
-Tested with this patch applied on top of "[PATCH v8 0/4] Add support
-for x509 certs with NIST p256 and p192" and "[PATCH v2 0/5] ima: kernel
-build support for loading the kernel module" patch sets.
+A filesystem can use this new hook to determine if it can share
+the an existing superblock with a new superblock for the new mount.
 
-Tested-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+---
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/lsm_hooks.h     |  6 ++++
+ include/linux/security.h      |  8 +++++
+ security/security.c           |  7 +++++
+ security/selinux/hooks.c      | 56 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 78 insertions(+)
+
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 7aaa753b8608..1b12a5266a51 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -62,6 +62,7 @@ LSM_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
+ LSM_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
+ LSM_HOOK(void, LSM_RET_VOID, sb_free_mnt_opts, void *mnt_opts)
+ LSM_HOOK(int, 0, sb_eat_lsm_opts, char *orig, void **mnt_opts)
++LSM_HOOK(int, 0, sb_mnt_opts_compat, struct super_block *sb, void *mnt_opts)
+ LSM_HOOK(int, 0, sb_remount, struct super_block *sb, void *mnt_opts)
+ LSM_HOOK(int, 0, sb_kern_mount, struct super_block *sb)
+ LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, struct super_block *sb)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index a19adef1f088..e2519adccb74 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -142,6 +142,12 @@
+  *	@orig the original mount data copied from userspace.
+  *	@copy copied data which will be passed to the security module.
+  *	Returns 0 if the copy was successful.
++ * @sb_mnt_opts_compat:
++ *	Determine if the existing mount options are compatible with the new
++ *	mount options being used.
++ *	@sb superblock being compared
++ *	@mnt_opts new mount options
++ *	Return 0 if options are the compatible.
+  * @sb_remount:
+  *	Extracts security system specific mount options and verifies no changes
+  *	are being made to those options.
+diff --git a/include/linux/security.h b/include/linux/security.h
+index c35ea0ffccd9..50db3d5d1608 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -291,6 +291,7 @@ int security_sb_alloc(struct super_block *sb);
+ void security_sb_free(struct super_block *sb);
+ void security_free_mnt_opts(void **mnt_opts);
+ int security_sb_eat_lsm_opts(char *options, void **mnt_opts);
++int security_sb_mnt_opts_compat(struct super_block *sb, void *mnt_opts);
+ int security_sb_remount(struct super_block *sb, void *mnt_opts);
+ int security_sb_kern_mount(struct super_block *sb);
+ int security_sb_show_options(struct seq_file *m, struct super_block *sb);
+@@ -635,6 +636,13 @@ static inline int security_sb_remount(struct super_block *sb,
+ 	return 0;
+ }
+ 
++static inline int security_sb_mnt_opts_compat(struct super_block *sb,
++					      void *mnt_opts)
++{
++	return 0;
++}
++
++
+ static inline int security_sb_kern_mount(struct super_block *sb)
+ {
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 7b09cfbae94f..56cf5563efde 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -890,6 +890,13 @@ int security_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ }
+ EXPORT_SYMBOL(security_sb_eat_lsm_opts);
+ 
++int security_sb_mnt_opts_compat(struct super_block *sb,
++				void *mnt_opts)
++{
++	return call_int_hook(sb_mnt_opts_compat, 0, sb, mnt_opts);
++}
++EXPORT_SYMBOL(security_sb_mnt_opts_compat);
++
+ int security_sb_remount(struct super_block *sb,
+ 			void *mnt_opts)
+ {
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 644b17ec9e63..afee3a222a0e 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -2656,6 +2656,61 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
+ 	return rc;
+ }
+ 
++static int selinux_sb_mnt_opts_compat(struct super_block *sb, void *mnt_opts)
++{
++	struct selinux_mnt_opts *opts = mnt_opts;
++	struct superblock_security_struct *sbsec = sb->s_security;
++	u32 sid;
++	int rc;
++
++	/*
++	 * Superblock not initialized (i.e. no options) - reject if any
++	 * options specified, otherwise accept.
++	 */
++	if (!(sbsec->flags & SE_SBINITIALIZED))
++		return opts ? 1 : 0;
++
++	/*
++	 * Superblock initialized and no options specified - reject if
++	 * superblock has any options set, otherwise accept.
++	 */
++	if (!opts)
++		return (sbsec->flags & SE_MNTMASK) ? 1 : 0;
++
++	if (opts->fscontext) {
++		rc = parse_sid(sb, opts->fscontext, &sid);
++		if (rc)
++			return 1;
++		if (bad_option(sbsec, FSCONTEXT_MNT, sbsec->sid, sid))
++			return 1;
++	}
++	if (opts->context) {
++		rc = parse_sid(sb, opts->context, &sid);
++		if (rc)
++			return 1;
++		if (bad_option(sbsec, CONTEXT_MNT, sbsec->mntpoint_sid, sid))
++			return 1;
++	}
++	if (opts->rootcontext) {
++		struct inode_security_struct *root_isec;
++
++		root_isec = backing_inode_security(sb->s_root);
++		rc = parse_sid(sb, opts->rootcontext, &sid);
++		if (rc)
++			return 1;
++		if (bad_option(sbsec, ROOTCONTEXT_MNT, root_isec->sid, sid))
++			return 1;
++	}
++	if (opts->defcontext) {
++		rc = parse_sid(sb, opts->defcontext, &sid);
++		if (rc)
++			return 1;
++		if (bad_option(sbsec, DEFCONTEXT_MNT, sbsec->def_sid, sid))
++			return 1;
++	}
++	return 0;
++}
++
+ static int selinux_sb_remount(struct super_block *sb, void *mnt_opts)
+ {
+ 	struct selinux_mnt_opts *opts = mnt_opts;
+@@ -6984,6 +7039,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 
+ 	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
+ 	LSM_HOOK_INIT(sb_free_mnt_opts, selinux_free_mnt_opts),
++	LSM_HOOK_INIT(sb_mnt_opts_compat, selinux_sb_mnt_opts_compat),
+ 	LSM_HOOK_INIT(sb_remount, selinux_sb_remount),
+ 	LSM_HOOK_INIT(sb_kern_mount, selinux_sb_kern_mount),
+ 	LSM_HOOK_INIT(sb_show_options, selinux_sb_show_options),
+-- 
+2.27.0
 
