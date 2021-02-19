@@ -2,257 +2,233 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43241C433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 20:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CABCC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 20:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 191DB64EB8
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 20:27:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30F1C64EC7
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 20:31:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbhBSU07 (ORCPT
+        id S229720AbhBSUbh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Feb 2021 15:26:59 -0500
-Received: from sonic303-28.consmr.mail.ne1.yahoo.com ([66.163.188.154]:40023
-        "EHLO sonic303-28.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229931AbhBSU06 (ORCPT
+        Fri, 19 Feb 2021 15:31:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229683AbhBSUbh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Feb 2021 15:26:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1613766371; bh=IKuo6OOdcvCBqIRNFVpCh2aYhI2cAAckb5YXBk5ByP4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=WnSnhU0p+Nqxw60pGyjYDg97PdBSLaW503MQ6hhgdlwEUWxgeaPHEaUULIWvDpznSZARu95j705+ijyyb49tDWjNRi9tH5VCrOY8Bh7UrYyUEpbM4wyHl0/RphlbFAjSVUDxNe3pQMjx8ZOp5G/CD+kpkVTgCJmwxgbuz9zFnAHR3TGVyBZx2py4sL/oCpLxiCX+u66OuGJlCQlysESIDQxfr0FrA+GP1ohS4Tm7U3JbAw7ZfWKolq1AEJ0EF+CoBW2xpxYkHAUT/Gx8RHcRzKfa5qxsLD5xYvK+1R0dxWPiMXUKTa/n8RkvNoIBWebyFw9iUB9o1GpoPFghiLYhqg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1613766371; bh=EhlzZ2mabVIucQIUaWkqNtaBlg4yTUx0j1jToKtlXbp=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=NYB8y9C9w93NAmtMVAdxo/ygHIuASfSrp5b5Mk6BSU9cjEpS/yiM9Ktb6elkp6q3+4rbuZ5xAfWA4HvRkAwnswk+Zmt82LpSqCaBwXipkoJFusq2U7A9/8nQ07/zK+BPUU3F253eFm9rT642xkJ2diGsGhdp2Kb96ypgZDTKigxIg61iv9w722SWtJ7DCtZRbMDNgd+KfZuB7aF651+iZq5pHHI99Bhj4d3ucVI3UnarjS/C1x/D2w2dMRnYY00oj1+WGcg/xK9E3xL/eo2DSmLV6njzu3nxCvPk3I7P1NkZeXfTof9mdo+XVv0IcjV7NMWKpnjARfyvEEDLI/3+hg==
-X-YMail-OSG: 0TKq0g4VM1nLfAIDEPFHpOSrVU3F4rLWeWjzU6tQQ19iUC0YNGTzxdnh_5hfSiR
- oCEHTaXbt3bokIDrI3OKq58wcEpGpTcFhzudKIKcxSuZWwJAqa0kNY8UmC0mWevWWDABAR5sQW4M
- FskvdyrhpYNXUOvdXZl4Ne_BqIEr4tlNJoh_lw8E8Y5ZdEwwCZvmzs2dH234uVehW_Pp7HBiYXEk
- ueVdZhxSlumTZcmpLnrlq4z_j4VTodtzL94H8WVbvE2T5GzFp12ykn4HRzPeqV_ZkQiXZzDHkGPN
- baLDPKKkjdbhS4EMtn9E9Jd2Xm8WL7VDp2Yu9oHzEaGTDcUtAcgdFH6QT0yz0XayUeifAs98yV18
- u6lyRYRBl.2nw0IWJarwX0ao.SpH4sOCmaYsq2yTDw6KG_gQbRTylodOmY92GWhrYRGo3.Xc4wfI
- RC6diQKBQgQCCJEDk5HroLGb0Po6u8dm5Q.NMP_eLfv1JI6yK2KAFpJTs6q2IVv8glIwDhtMoKWi
- 6SRAhE33wRMP2RYhyR3y.kVwll4h8Icm_wf.KhzI2_ehMjRFN7fIYokH8B3mW6a6FcQokJf9hIoD
- fh0.8IrqB30OoZLbIbNT7TLL6Ym7GytKU.uB01S0_nOa3EK8kl6qusP5.wo6XXt.yJ.Mbr46VeYh
- Ivabdg7w0hqCIjZ.Vcy3GX0C4mn1O8nmTu1e04nYtEDLn2zkUqf66llW4VFBUWYFGFef0WZmc1y4
- zkHMkTakAoD5z3f8sMODEl5QvTg_i2BwGW7bMHvCGw3EQdDAPjPaIeUxoF3IM3n5n7irOqcORlmS
- 64oSEormRqAaDhzNiSTaYmZ5uhZV39Msv8bs4TpKjD2U_DRuCFKX9HZCAv4btXITmKEvxIrUTkP9
- 0ycqw4P0s8ecn4gDowFPvhSC3425N9XFSlsEb2lEbsD3H5fIjA73LbRircwFkXtdEAdm3dsX5KdR
- hfNLBhpgw17lehFk5OPiWHW30Q9eFK5kdYtOfFAbm_mvp3bzAYCspajVAo6UwNsfw2lE.xFCvp_p
- Lo5i1ZZpNKTPaA26KMHqnEmZzx7vjzpPlpWAL6n.YPN8Bzox0.vJ..gRUuBBp5l7UNad3O5EhjiI
- aC6p1qSNBduAnDzpoe7c6TrlciBC39lFevSLA_gUEv3VDdgc_voCjIAVb1rY9EKpNI3sXrrYcfPi
- KLzQdEwvvQQ0_xDx79zP8eGYLfusAXH_47_JIWj7_UNcaU41L0mNZuH5vGlO_EqiFw0xT.ysOpVk
- RkyQ.khQRVniy03ejmnmViFSQhqkQxAlKCcvHrRxs01kRpEm38E90WEPQd2N8bQJvgO26T0f5qy1
- 4dnpvzPnJQJrsDThUrhehGeVTzjNDzm1viMjCgizUbPdrJnjPfFNlBVc_6yeMTSiUgEOzIEg6ggn
- NQ20RIa39P8Po9gAsq1hlyygwMVx4h9_8q5dwv8ngYGX6eeNeKtgKWsF3WaLaVCjQIGAjuv167MW
- mzXETHgbzzNpoOVJ5B7J75lwN89pIZeo8vA5xKNWUnZGt3nqpvnggiTXtEmIknrxiAXz4NOouK.V
- ix0uSIpkxqpznMm4hJVUE9hHNsNDHm83cX3FKaOBlnRmcNnzgkvmL7m0_MdyCl8BttEl2PUx4Lzy
- RlBrtEo6Tnv.2lUD2ou.aWOstYq.LWnRhnw_0r5i15Q98HDJApOeVjRnXil1BEYPMdG53rYr4rDJ
- 48qLT4HdJQ1QLIiU9_hDkdMUeN1v7FeGylFNWakrnnlHtDajJBhaW.ZMbzTVqIzkCtOnrKJGsCyt
- KCsjZ9uPhGt8tDj._GPUVpY0oDHqC4ERWgll_pseM94aSFAREWS5c5UQjziWZMdYnh4GO7YexO7G
- lsxSFkQrdUR91UMSFmZvKFPJ79xBlKY3HQdKddrHezMapfmM1xKg_bCXE_crRYTiAW.5oNSKkv1D
- MrSk.smEIBgaUan6R2rnawYMwkZoA0v.DEwI8t1xHCCVuhVNIKTDm1iAOx.k3vL.sUKF1TzBUFpi
- OKYjyR0NxFoUONzi2u_v2EO6wnI8KfbI1L.3YpL0CBb6FhNvzlJCF4F7wqCpJ.cuz.3og8_Ssn34
- v86Bm4iIP258YlNWJh5jxzlyaqMXWuOLnDcxhAUSy4oFgGTzFMzncB9PvGZrmj_QXTq9JiaE_UBi
- 4fsra3Fwc43fdX2vNdb0BnJj1UfJ.iCtpp4AhqBvyb7GZ7K47wde7FIaoROoSacSGKsYG.2Zz6iA
- 3bPgCEAeq9XOLN0RBLg.4tvk0LY3So7K7bXdz6v5O9pLj9mhRB3EMHPPOyZMXZw9oRPMFTuFrSAJ
- 7UzKxyEfSvKOVxCpbO1UOYsEWFb8xbJ9MwAOV3UwlvAef3MIg2mm9YU4iVGcsq55OA.L7XtCGDgP
- Rr6IiSR1tUkk_spqr1S1K4NUqGIW1eEK_kIj1UVIUvh.VK51qwZdPn2SwPStCv5MLDROKL5IMU23
- bIrS1ZnyFQTVamfmiRAKv2MKQYwz2icjkGlCwNth1Ioud83A0ssVEtaOOkY0TwSEM.rJe_pZ_LaI
- P2ZldfV.34lDEIECFswrwyMX7fKzyqMymKLR9A6p.0U7eJPQhxWMVmtid3.qTge7cbNcyPr3WRx6
- l4NUV_WfE_prRjKPfYCVJ6KgAfr3ugkBBm_LBEdLbUNXLk.gNjtr.tlQXlsZPUEyKzuG4.szhw18
- uqQyMVnbziDtUegClKaKuDvZ_ceAkygfXPpdBoRQk0PwHBu2jjGFX_foHjl7.goNtevgDiZ7clru
- HL61X4OyqSAddN91t77L.nZRUC5Bh90njwwjTduFC8ONEZKUIuSWJDicXvVouRyUFl6GTOSdzAO0
- WOwUQHjd7LTBtamA__N2S0qolojNAQjzEjwURFXEhms1h
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Fri, 19 Feb 2021 20:26:11 +0000
-Received: by smtp418.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID e32411f50db2e330209c3093d2d00d84;
-          Fri, 19 Feb 2021 20:26:09 +0000 (UTC)
-Subject: Re: [PATCH v3 1/2] [security] Add new hook to compare new mount to an
- existing mount
-To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
-Cc:     linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20210219165715.20324-1-olga.kornievskaia@gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <86bcc61a-fdd6-1a6a-d478-c8ce2bc01aa7@schaufler-ca.com>
-Date:   Fri, 19 Feb 2021 12:26:07 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Fri, 19 Feb 2021 15:31:37 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0FF7164EBF;
+        Fri, 19 Feb 2021 20:30:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613766655;
+        bh=t60MtijxFQRBj7x3qDETkxU78fn61+W8UwCXWCiwnQY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Xb+ScodtC5g1cJwFwirDpie276j9W21+W9T9eLgOfC1SHJHdUX8DF1ZTbCMDDl2b1
+         CtXaFvrALlvelQT3VHb1fb1I86UFmxhQJyn5fh0c5IL6LWz6mIIwNz+tYoqzxdOJCy
+         6d+orlD4NDIUUVKmW0I/71fEFGtMTUbKQZ5aFKuMbZsoy2xe+LETtfBDJfJx7Akyt6
+         B4/WgocoAhw4iwSgoLn7iqvcsyLrqgMXRTbsL4BkCDMasEqQH5I1SXRzoM8xQ9zOkA
+         tbpYniBMZUEMcoUiVFHqZS0Tz2GL7muRsPcEn1dxAxfQEk+fPjQ7WLqspYcsb7Nrs3
+         Mdc9Pm/eMthbg==
+Date:   Fri, 19 Feb 2021 13:30:53 -0700
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     Jian Cai <jiancai@google.com>
+Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
+        clang-built-linux@googlegroups.com,
+        David Laight <David.Laight@aculab.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Olof Johansson <olof@lixom.net>, Marc Zyngier <maz@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        David Brazdil <dbrazdil@google.com>,
+        James Morse <james.morse@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3] ARM: Implement SLS mitigation
+Message-ID: <20210219203053.GA53507@24bbad8f3778>
+References: <20210212195255.1321544-1-jiancai@google.com>
+ <20210219201852.3213914-1-jiancai@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20210219165715.20324-1-olga.kornievskaia@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.17712 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210219201852.3213914-1-jiancai@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/19/2021 8:57 AM, Olga Kornievskaia wrote:
-> From: Olga Kornievskaia <kolga@netapp.com>
->
-> Add a new hook that takes an existing super block and a new mount
-> with new options and determines if new options confict with an
-> existing mount or not.
->
-> A filesystem can use this new hook to determine if it can share
-> the an existing superblock with a new superblock for the new mount.
->
-> Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+Hi Jian,
+
+On Fri, Feb 19, 2021 at 12:18:40PM -0800, 'Jian Cai' via Clang Built Linux wrote:
+> This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
+> -mharden-sls=all, which mitigates the straight-line speculation
+> vulnerability, speculative execution of the instruction following some
+> unconditional jumps. Notice -mharden-sls= has other options as below,
+> and this config turns on the strongest option.
+> 
+> all: enable all mitigations against Straight Line Speculation that are implemented.
+> none: disable all mitigations against Straight Line Speculation.
+> retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
+> blr: enable the mitigation against Straight Line Speculation for BLR instructions.
+> 
+> Links:
+> https://reviews.llvm.org/D93221
+> https://reviews.llvm.org/D81404
+> https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
+> https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
+> 
+> Suggested-by: Manoj Gupta <manojgupta@google.com>
+> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> Suggested-by: Nathan Chancellor  <nathan@kernel.org>
+> Suggested-by: David Laight <David.Laight@aculab.com>
+> Suggested-by: Will Deacon <will@kernel.org>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+My review still stands but in the future, if you significantly change
+how a patch is structured or works, please drop my tag and let me re-add
+it.
+
+One comment below.
+
+> Signed-off-by: Jian Cai <jiancai@google.com>
 > ---
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/lsm_hooks.h     |  6 ++++
->  include/linux/security.h      |  8 +++++
->  security/security.c           |  7 +++++
->  security/selinux/hooks.c      | 56 +++++++++++++++++++++++++++++++++++
->  5 files changed, 78 insertions(+)
->
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 7aaa753b8608..1b12a5266a51 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -62,6 +62,7 @@ LSM_HOOK(int, 0, sb_alloc_security, struct super_block *sb)
->  LSM_HOOK(void, LSM_RET_VOID, sb_free_security, struct super_block *sb)
->  LSM_HOOK(void, LSM_RET_VOID, sb_free_mnt_opts, void *mnt_opts)
->  LSM_HOOK(int, 0, sb_eat_lsm_opts, char *orig, void **mnt_opts)
-> +LSM_HOOK(int, 0, sb_mnt_opts_compat, struct super_block *sb, void *mnt_opts)
->  LSM_HOOK(int, 0, sb_remount, struct super_block *sb, void *mnt_opts)
->  LSM_HOOK(int, 0, sb_kern_mount, struct super_block *sb)
->  LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, struct super_block *sb)
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index a19adef1f088..e2519adccb74 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -142,6 +142,12 @@
->   *	@orig the original mount data copied from userspace.
->   *	@copy copied data which will be passed to the security module.
->   *	Returns 0 if the copy was successful.
-> + * @sb_mnt_opts_compat:
-> + *	Determine if the existing mount options are compatible with the new
-> + *	mount options being used.
-> + *	@sb superblock being compared
-> + *	@mnt_opts new mount options
-> + *	Return 0 if options are the compatible.
+> 
+> Changes v2 -> v3:
+>   Modify linker scripts as Nick suggested to address boot failure
+>   (verified with qemu). Added more details in Kconfig.hardening
+>   description. Disable the config by default.
+> 
+>  arch/arm/Makefile                  |  4 ++++
+>  arch/arm/include/asm/vmlinux.lds.h |  4 ++++
+>  arch/arm/kernel/vmlinux.lds.S      |  1 +
+>  arch/arm64/Makefile                |  4 ++++
+>  arch/arm64/kernel/vmlinux.lds.S    |  5 +++++
+>  security/Kconfig.hardening         | 10 ++++++++++
+>  6 files changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index 4aaec9599e8a..11d89ef32da9 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -48,6 +48,10 @@ CHECKFLAGS	+= -D__ARMEL__
+>  KBUILD_LDFLAGS	+= -EL
+>  endif
+>  
+> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
+> +KBUILD_CFLAGS  += -mharden-sls=all
+> +endif
+> +
+>  #
+>  # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
+>  # later may result in code being generated that handles signed short and signed
+> diff --git a/arch/arm/include/asm/vmlinux.lds.h b/arch/arm/include/asm/vmlinux.lds.h
+> index 4a91428c324d..c7f9717511ca 100644
+> --- a/arch/arm/include/asm/vmlinux.lds.h
+> +++ b/arch/arm/include/asm/vmlinux.lds.h
+> @@ -145,3 +145,7 @@
+>  		__edtcm_data = .;					\
+>  	}								\
+>  	. = __dtcm_start + SIZEOF(.data_dtcm);
+> +
+> +#define SLS_TEXT							\
+> +		ALIGN_FUNCTION();					\
+> +		*(.text.__llvm_slsblr_thunk_*)
+> diff --git a/arch/arm/kernel/vmlinux.lds.S b/arch/arm/kernel/vmlinux.lds.S
+> index f7f4620d59c3..e71f2bc97bae 100644
+> --- a/arch/arm/kernel/vmlinux.lds.S
+> +++ b/arch/arm/kernel/vmlinux.lds.S
+> @@ -63,6 +63,7 @@ SECTIONS
+>  	.text : {			/* Real text segment		*/
+>  		_stext = .;		/* Text and read-only data	*/
+>  		ARM_TEXT
+> +		SLS_TEXT
+>  	}
+>  
+>  #ifdef CONFIG_DEBUG_ALIGN_RODATA
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index 90309208bb28..ca7299b356a9 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
+>    endif
+>  endif
+>  
+> +ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
+> +KBUILD_CFLAGS  += -mharden-sls=all
+> +endif
+> +
+>  cc_has_k_constraint := $(call try-run,echo				\
+>  	'int main(void) {						\
+>  		asm volatile("and w0, w0, %w0" :: "K" (4294967295));	\
+> diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+> index 4c0b0c89ad59..f8912e42ffcd 100644
+> --- a/arch/arm64/kernel/vmlinux.lds.S
+> +++ b/arch/arm64/kernel/vmlinux.lds.S
+> @@ -93,6 +93,10 @@ jiffies = jiffies_64;
+>  #define TRAMP_TEXT
+>  #endif
+>  
+> +#define SLS_TEXT					\
+> +	ALIGN_FUNCTION();				\
+> +	*(.text.__llvm_slsblr_thunk_*)
+> +
+>  /*
+>   * The size of the PE/COFF section that covers the kernel image, which
+>   * runs from _stext to _edata, must be a round multiple of the PE/COFF
+> @@ -144,6 +148,7 @@ SECTIONS
+>  			HIBERNATE_TEXT
+>  			TRAMP_TEXT
+>  			*(.fixup)
+> +			SLS_TEXT
+>  			*(.gnu.warning)
+>  		. = ALIGN(16);
+>  		*(.got)			/* Global offset table		*/
+> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+> index 269967c4fc1b..e70f227019e1 100644
+> --- a/security/Kconfig.hardening
+> +++ b/security/Kconfig.hardening
+> @@ -121,6 +121,16 @@ choice
+>  
+>  endchoice
+>  
+> +config HARDEN_SLS_ALL
+> +	bool "enable SLS vulnerability hardening"
+> +	default n
+> +	def_bool $(cc-option,-mharden-sls=all)
 
-s/the //
+This is a much more convoluted way of writing:
 
->   * @sb_remount:
->   *	Extracts security system specific mount options and verifies no changes
->   *	are being made to those options.
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index c35ea0ffccd9..50db3d5d1608 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -291,6 +291,7 @@ int security_sb_alloc(struct super_block *sb);
->  void security_sb_free(struct super_block *sb);
->  void security_free_mnt_opts(void **mnt_opts);
->  int security_sb_eat_lsm_opts(char *options, void **mnt_opts);
-> +int security_sb_mnt_opts_compat(struct super_block *sb, void *mnt_opts);
->  int security_sb_remount(struct super_block *sb, void *mnt_opts);
->  int security_sb_kern_mount(struct super_block *sb);
->  int security_sb_show_options(struct seq_file *m, struct super_block *sb);
-> @@ -635,6 +636,13 @@ static inline int security_sb_remount(struct super_block *sb,
->  	return 0;
->  }
->  
-> +static inline int security_sb_mnt_opts_compat(struct super_block *sb,
-> +					      void *mnt_opts)
-> +{
-> +	return 0;
-> +}
+depends on $(cc-option,-mharden-sls=all)
+
+"default n" is the default and "def_bool" is short for:
+
+bool
+default <expr>
+
+which is defeated by the "default n".
+
+> +	help
+> +	  Enables straight-line speculation vulnerability hardening on ARM and ARM64
+> +	  architectures. It inserts speculation barrier sequences (SB or DSB+ISB
+> +	  depending on the target architecture) after RET and BR, and replacing
+> +	  BLR with BL+BR sequence.
 > +
-> +
->  static inline int security_sb_kern_mount(struct super_block *sb)
->  {
->  	return 0;
-> diff --git a/security/security.c b/security/security.c
-> index 7b09cfbae94f..56cf5563efde 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -890,6 +890,13 @@ int security_sb_eat_lsm_opts(char *options, void **mnt_opts)
->  }
->  EXPORT_SYMBOL(security_sb_eat_lsm_opts);
->  
-> +int security_sb_mnt_opts_compat(struct super_block *sb,
-> +				void *mnt_opts)
-> +{
-> +	return call_int_hook(sb_mnt_opts_compat, 0, sb, mnt_opts);
-> +}
-> +EXPORT_SYMBOL(security_sb_mnt_opts_compat);
-> +
->  int security_sb_remount(struct super_block *sb,
->  			void *mnt_opts)
->  {
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index 644b17ec9e63..afee3a222a0e 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -2656,6 +2656,61 @@ static int selinux_sb_eat_lsm_opts(char *options, void **mnt_opts)
->  	return rc;
->  }
->  
-> +static int selinux_sb_mnt_opts_compat(struct super_block *sb, void *mnt_opts)
-> +{
-> +	struct selinux_mnt_opts *opts = mnt_opts;
-> +	struct superblock_security_struct *sbsec = sb->s_security;
-> +	u32 sid;
-> +	int rc;
-> +
-> +	/*
-> +	 * Superblock not initialized (i.e. no options) - reject if any
-> +	 * options specified, otherwise accept.
-> +	 */
-> +	if (!(sbsec->flags & SE_SBINITIALIZED))
-> +		return opts ? 1 : 0;
-> +
-> +	/*
-> +	 * Superblock initialized and no options specified - reject if
-> +	 * superblock has any options set, otherwise accept.
-> +	 */
-> +	if (!opts)
-> +		return (sbsec->flags & SE_MNTMASK) ? 1 : 0;
-> +
-> +	if (opts->fscontext) {
-> +		rc = parse_sid(sb, opts->fscontext, &sid);
-> +		if (rc)
-> +			return 1;
-> +		if (bad_option(sbsec, FSCONTEXT_MNT, sbsec->sid, sid))
-> +			return 1;
-> +	}
-> +	if (opts->context) {
-> +		rc = parse_sid(sb, opts->context, &sid);
-> +		if (rc)
-> +			return 1;
-> +		if (bad_option(sbsec, CONTEXT_MNT, sbsec->mntpoint_sid, sid))
-> +			return 1;
-> +	}
-> +	if (opts->rootcontext) {
-> +		struct inode_security_struct *root_isec;
-> +
-> +		root_isec = backing_inode_security(sb->s_root);
-> +		rc = parse_sid(sb, opts->rootcontext, &sid);
-> +		if (rc)
-> +			return 1;
-> +		if (bad_option(sbsec, ROOTCONTEXT_MNT, root_isec->sid, sid))
-> +			return 1;
-> +	}
-> +	if (opts->defcontext) {
-> +		rc = parse_sid(sb, opts->defcontext, &sid);
-> +		if (rc)
-> +			return 1;
-> +		if (bad_option(sbsec, DEFCONTEXT_MNT, sbsec->def_sid, sid))
-> +			return 1;
-> +	}
-> +	return 0;
-> +}
-> +
->  static int selinux_sb_remount(struct super_block *sb, void *mnt_opts)
->  {
->  	struct selinux_mnt_opts *opts = mnt_opts;
-> @@ -6984,6 +7039,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
->  
->  	LSM_HOOK_INIT(sb_free_security, selinux_sb_free_security),
->  	LSM_HOOK_INIT(sb_free_mnt_opts, selinux_free_mnt_opts),
-> +	LSM_HOOK_INIT(sb_mnt_opts_compat, selinux_sb_mnt_opts_compat),
->  	LSM_HOOK_INIT(sb_remount, selinux_sb_remount),
->  	LSM_HOOK_INIT(sb_kern_mount, selinux_sb_kern_mount),
->  	LSM_HOOK_INIT(sb_show_options, selinux_sb_show_options),
+>  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+>  	bool "Report forcefully initialized variables"
+>  	depends on GCC_PLUGIN_STRUCTLEAK
+> -- 
+> 2.30.0.617.g56c4b15f3c-goog
+> 
