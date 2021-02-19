@@ -2,113 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59870C433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 17:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC12C433E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 19:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2CE1A64E33
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 17:39:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2166064EB8
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Feb 2021 19:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbhBSRjm (ORCPT
+        id S229989AbhBSTSH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Feb 2021 12:39:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229762AbhBSRjf (ORCPT
+        Fri, 19 Feb 2021 14:18:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230101AbhBSTSD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Feb 2021 12:39:35 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id E198564E33;
-        Fri, 19 Feb 2021 17:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613756334;
-        bh=PRgn0JzVqMdEHk5W3ypxrOZxNdNz397PLJzB5TG1AAA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HCV6yJFnmUoT+eR0dyO4NfUS0Gyf6WxtsYM91leQ7Z/454zAT5YAPJ/ayy73d6luq
-         yqupfoQV7sAvuwsemTTiD4wg+5v9M6R44rA7xmw5a6SswRytBhWgkN9/2PYBC7GWIR
-         MtmVkV+TEClY90CL1WvuJnvklNp1jOkGiWTJYgAMWhCnUu63CpjHslJC+XiUlmlE32
-         6hHp97Z2tCgrnyG7KANtJAxTiHJ53UqclrmBAI7pkxxeleOyHQh+eS/uYsJ/gthfcY
-         I60XhUH3XRfrcptCliNZP3a1ozYrz2EG0cpPjlBoWJKCAnzTFKd/nqc2u3PQjiplnN
-         M26Bx33pMxE/Q==
-Date:   Fri, 19 Feb 2021 19:38:39 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Palash Oswal <hello@oswalpalash.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ima: Replacing deprecated strlcpy with strscpy ~~~~~~~~~
- Replace
-Message-ID: <YC/3n585TNJ500Ps@kernel.org>
+        Fri, 19 Feb 2021 14:18:03 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1015AC061574
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Feb 2021 11:17:23 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id bl23so15530993ejb.5
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Feb 2021 11:17:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nZs1wSdgL/SgoAFkReiUr/6KBmirZDSjcDrTj7CIg3Q=;
+        b=ua2occSxmZ9pUaLq1SZ0Sz170vvJnrhM34LPqSndWBqBxPuodbAEB7iSwTWJz8SwYK
+         aWF7e82VnwiJe+RSkTDh3XYbQGUk5DxCnqF7d5cPe4PJRgH4JaLfOh4RdmSdeX4dVHGg
+         m3WN77Lm16C+0C7NrOcp7ngfZEA2WvSUG/eULV4sWMa1Hr1WIf87PaJaBMO9tYxeQQyd
+         ASQrD9bcqa2i5Au7lg4W5kNtMXbx7/uiieipnmULzSWXFVbmamCdmSvuhcCNo3a4OG6h
+         gKhrxD2DTjIv92/nGe8K1A5TVGPlDZwZ/grsfs8qjTiQzLlYg0IZc3xD/8MtfH21SOu6
+         cx3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nZs1wSdgL/SgoAFkReiUr/6KBmirZDSjcDrTj7CIg3Q=;
+        b=TBkRg3J8PJB5iF2FPPOOK1CJfCNZhShmoS5/C9jvj6IZe1N8YTSK++zUg7AxpOxF95
+         4sjTA9ZWnkLtCSvYjRURLYYrk6ZHEoAhtbNZfKEZy1q1rRCqK80FSjLpdZDvAY5q9zXL
+         Ba+WH2rc76+t0O85VfSWH4gCsJ+oJBf8FhyoPbJIh5l9w9qVCJ+RjpdUn5LsOeozpDLK
+         gYSS2D5UJ0pi4ard9UsHAFp7j24r4GOBkKK/bihdbzqw3QYnL2Q0uUr63n2qMYygnbNE
+         ZH7880WsWgANrdmd10QYPT6EYzeNcv92h4q5+BEyhICr/UaqcVbZWKpeELMHtLPJCDg+
+         EUeg==
+X-Gm-Message-State: AOAM5334I8LMINLugqJj5pMnegOvgZB4MZRKIsf0Jqd2igEoZO0fIoiA
+        bCyern9lhSPBv0nGGAirWyM+XpPsEho9EdAojo40qPmkEKda
+X-Google-Smtp-Source: ABdhPJw+gZP/nDPCsSBenWAkB0SKtr5q8oled0F3cbjP7gQRq9BHgZ9B/kJBuy5LKnJX9UA8ax3dR7wXijdM4FThhI4=
+X-Received: by 2002:a17:906:c28e:: with SMTP id r14mr7665056ejz.546.1613762241659;
+ Fri, 19 Feb 2021 11:17:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAHC9VhSiq5gqY1bfouia4GwYsE9MGGXnUOqwEtHi2u0-1=8aZQ@mail.gmail.com>
+ <a38955de-1a71-ab0c-0cff-d63ea258ca81@schaufler-ca.com>
+In-Reply-To: <a38955de-1a71-ab0c-0cff-d63ea258ca81@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 19 Feb 2021 14:17:10 -0500
+Message-ID: <CAHC9VhQcDbitpkWXoY5xU+Hmqv5PHKFS+An402gzDT71dUmPfA@mail.gmail.com>
+Subject: Re: security_task_getsecid() and subjective vs objective task creds
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Reply-To: 
-In-Reply-To: <20210219084038.GA7564@g3.oswalpalash.com>
+On Thu, Feb 18, 2021 at 4:40 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 2/18/2021 11:34 AM, Paul Moore wrote:
 
-On Fri, Feb 19, 2021 at 02:10:38PM +0530, Palash Oswal wrote:
-> The strlcpy() function is unsafe in that the source buffer length
-> is unbounded or possibly be non NULL terminated. This can cause
-> memory over-reads, crashes, etc.
-> 
-> Link: https://github.com/KSPP/linux/issues/89
-> Signed-off-by: Palash Oswal <hello@oswalpalash.com>
+...
 
-The long description does not explain what the commit does, and
-does not include any details about deprecation of strlcpy(), which
-at least I'm not aware of.
+> > How do we want to fix this?  The obvious fix is to change the SELinux,
+> > AppArmor, and Smack security_task_getsecid() implementations to return
+> > the subjective security ID (->cred), and likely make a note in
+> > lsm_hooks.h,
+>
+> That would be my choice.
 
-I don't think *length* ever is NULL terminated. The first sentence
-is somewhat weird. Also strlcpy() does have a bounds check.
+As I've dug into this more, it does look like that is closest to being
+correct, but there are still a few callers where it looks like the
+objective creds are needed.  I think the correct thing to do is
+convert the existing hook to use the subjective creds and add a
+"_subj" at the end, while also creating a new
+security_task_getsecid_obj() hook to return the objective cred and
+updating those few callers that need it.
 
-Generally, the description and reasoning is sloppy to say the
-least.
+I'll see about making the associated changes to the Smack and AppArmor
+code too, but that will obviously need some heavy review by you and
+John.
 
-/Jarkko
-
-
-> ---
->  security/integrity/ima/ima_api.c    | 2 +-
->  security/integrity/ima/ima_policy.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
-> index 1dd70dc68ffd..2f3b8257181d 100644
-> --- a/security/integrity/ima/ima_api.c
-> +++ b/security/integrity/ima/ima_api.c
-> @@ -399,7 +399,7 @@ const char *ima_d_path(const struct path *path, char **pathbuf, char *namebuf)
->  	}
->  
->  	if (!pathname) {
-> -		strlcpy(namebuf, path->dentry->d_name.name, NAME_MAX);
-> +		strscpy(namebuf, path->dentry->d_name.name, NAME_MAX);
->  		pathname = namebuf;
->  	}
->  
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 9b45d064a87d..010839aef6ba 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -791,7 +791,7 @@ static int __init ima_init_arch_policy(void)
->  		char rule[255];
->  		int result;
->  
-> -		result = strlcpy(rule, *rules, sizeof(rule));
-> +		strscpy(rule, *rules, sizeof(rule));
->  
->  		INIT_LIST_HEAD(&arch_policy_entry[i].list);
->  		result = ima_parse_rule(rule, &arch_policy_entry[i]);
-> 
-> base-commit: f6692213b5045dc461ce0858fb18cf46f328c202
-> -- 
-> 2.27.0
-> 
-> 
+--
+paul moore
+www.paul-moore.com
