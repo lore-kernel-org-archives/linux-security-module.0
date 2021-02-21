@@ -2,198 +2,234 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 541FAC433DB
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 14:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9B7C433E9
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 15:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 267E1601FB
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 14:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36D7964EF2
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 15:52:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230079AbhBUOrQ (ORCPT
+        id S229974AbhBUPwG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Feb 2021 09:47:16 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:64427 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbhBUOrO (ORCPT
+        Sun, 21 Feb 2021 10:52:06 -0500
+Received: from mout.gmx.net ([212.227.17.22]:60717 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229663AbhBUPwG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Feb 2021 09:47:14 -0500
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 11LEkEJw018830;
-        Sun, 21 Feb 2021 23:46:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 11LEkEJw018830
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1613918775;
-        bh=jpeCrPBkpqDTRmJNiKNUkX+1VgE88GRr1ejOnJsXFaY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=HAyL7AkohPuL4yy2HMBIdsu5SUvn1dvwYlxH/bL7qO/Vcwa/6lM+gcYNUzRnzDgSc
-         tCNCcfuwHGcAlK6IT9aoZ3usZ5hiod3kbu1MAlLl3168IpWqRg6xPattT4RIoQnXOX
-         buBy6JSgqZbzZ2sSvI+msSDCPh3s5NLJk7fDl5ZaJ2+H3cE4BfBo5fEi4RY/MpOVE+
-         WQBsOTq0ziwdKAi3APXk9ZfBdsn4NGTArQ9pE0hyZbSW4hXFTSH8Y3ki2REA/0ya1p
-         DDxKCBhW5PnVekvqahP1bYO46rSzl8I1n87ngbUTIOkuOeB00kb51wEZAiLctQEll3
-         7V7myLRS7zKSw==
-X-Nifty-SrcIP: [209.85.215.182]
-Received: by mail-pg1-f182.google.com with SMTP id a4so8453360pgc.11;
-        Sun, 21 Feb 2021 06:46:15 -0800 (PST)
-X-Gm-Message-State: AOAM530hOATVVNF9kraYMFShceLMp83BdgpOIiJkhY28ifXb0RBrhlhH
-        +dRaXaoROBM5zzHtfslsBwjfSE8ambW7aiSC/xQ=
-X-Google-Smtp-Source: ABdhPJxma72dHfe9EEP25keVH9m43oNbIOaTLqkU9zVQyOC0KMwzA1NH/8Cl6Gk80jnpK8xgGwb5fbOUFUoteHKaFSk=
-X-Received: by 2002:a62:d454:0:b029:1ed:a6d6:539d with SMTP id
- u20-20020a62d4540000b02901eda6d6539dmr792619pfl.63.1613918774514; Sun, 21 Feb
- 2021 06:46:14 -0800 (PST)
+        Sun, 21 Feb 2021 10:52:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1613922599;
+        bh=Bbi8D9zimrBxrToyY2cmCuzduWBv7NSyYLuDnJH9sAo=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=e2CQYgvDFsIWTTa+5nOrljkJjJ/IaUUr7dfBxKEewpRP273HL5xLU7zbBWXg9H/Kh
+         CyWbeg7tkUMr0A/6COgWTvAGMpFtM/NSjdYAyrWQGb0XVhlpYX4Eccgvrjb04C/ROG
+         hzGlZkAbFJCbKoBvq/Zby2HrDMCuW2HEaWURAudc=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([83.52.229.153]) by mail.gmx.net
+ (mrgmx105 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 1MQ5vc-1lR8go2wUq-00M85s; Sun, 21 Feb 2021 16:49:58 +0100
+From:   John Wood <john.wood@gmx.com>
+To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>, Shuah Khan <shuah@kernel.org>
+Cc:     John Wood <john.wood@gmx.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH v3 0/8] Fork brute force attack mitigation
+Date:   Sun, 21 Feb 2021 16:49:11 +0100
+Message-Id: <20210221154919.68050-1-john.wood@gmx.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210215181511.2840674-1-mic@digikod.net> <20210215181511.2840674-4-mic@digikod.net>
- <CAFqZXNsvqx-pbC+wzHB4aXX6h=buU3csM_a=By-zCOmx0n-xCQ@mail.gmail.com>
- <CAK7LNAQDWxGJU41D4+AbjFiX63BiA+bsNzTHZsKKc-LPyO7oCQ@mail.gmail.com> <8809a929-980a-95d1-42dc-576ff54e2923@digikod.net>
-In-Reply-To: <8809a929-980a-95d1-42dc-576ff54e2923@digikod.net>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Sun, 21 Feb 2021 23:45:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARq3YneLCVReHf8z34T7VKfv5zmkqwSiNZwgQGD64VMtA@mail.gmail.com>
-Message-ID: <CAK7LNARq3YneLCVReHf8z34T7VKfv5zmkqwSiNZwgQGD64VMtA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] security: Add LSMs dependencies to CONFIG_LSM
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Nicolas Iooss <nicolas.iooss@m4x.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OhAf9XvO+sZYfuIy60MlI1jlL30B6+bmI4NFG9TAaaqwkmcMkdm
+ S3GLYv+QOvuXyVkf27DRvsH+0L8iMQdmmtTYTm3YCB5QBxRXZ51pO08O9H7ag3UfDOgmhxs
+ IKTQrbdPt1J6Ca8Uqmud3O6KRKpsioYXmE7tG7P6U337GlPI8tpFTHs7ctEiS+Kzhs5fI4X
+ kzn5Dnhj6EPNPxLhkyvJg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DZMiibCW060=:3tj82Nk20Etv0D/iyR3ot3
+ Ij4L9Afd6/Z4dbMrhEqAb82q0cldoS4PnhesJ4zzUbOORCq1H5U+P26FnE5fr0Fk4uKecjIFY
+ 7QTOAGkvMQHdpttSU4RPLnDnBwgGbBZ0Rcifx4wpByLGbxeX9MNCT4eicDsnl676moQpHu0OZ
+ JKw63APKRIz1J+VY3o4w7OGW3RfBykrNpO4An2VtE7EP17HKu3YrxfOADM7ZzcoRKdfPmk1Mf
+ 0QPo57td9WDYsSZBG+KETxZy4mSP9vGr5sz4y1mIaqjp1RG4419UzZB8dC7uRiV7c6gE2D9f0
+ LWlIcyl2O/7QDXM41kmq6J8JfAWWm1UxuV7g03YwHS6J5hBYAQTlr9iAq6FxuHsHZx5KS4Eas
+ 8v0OdUj66xNlD0pwk43GqhkrNR45atmCujXatdMZwPMMlkppDKeVOKrx+ae7YY09tKMOWyECx
+ rqCVvIrQT3ZImcuhvljPthHBYsoMyByoze4XlSe4MNxxKvtF8u5+X81UCabTD+FLrMUUB+mcy
+ EDmKSmyta7Ef5mjmMXce0Rd03fNgB/CGTqB4bMS+MtFnUHZ+UeQ1Up7jyinvwY3zD7lbdJEYf
+ mb6nNbYJhTQhZ6/LdDpeqn1QhNNJL621aYCwQu91Ynhi4pJXjlWCMvcjXyLs2p8QaByyUlnhx
+ F8+F379ioZsagDTRIiD6/lYfCt1z1uXRD3RLbWxPGwSiT90CuyuLsArfnqofmCZc/KUFB7wZ2
+ Re6Qv/5XG3gOy6sgjH8bjqQ+rSb9xo7LjnTHcIVwjbikLcuBLYCmasZymYVw6erUSZgZDyitf
+ WVIJU6VaYKRiuUjYxInIcm2ElNZcfA0+EZAHQ/1yV4MtBRZpl2pmg0evacOInmHI9hT6qgNr2
+ hx9uxBCh66IrW+ZR9xqQ==
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, Feb 21, 2021 at 8:11 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
->
->
-> On 21/02/2021 09:50, Masahiro Yamada wrote:
-> > On Tue, Feb 16, 2021 at 4:03 AM Ondrej Mosnacek <omosnace@redhat.com> w=
-rote:
-> >>
-> >> On Mon, Feb 15, 2021 at 7:17 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.=
-net> wrote:
-> >>> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >>>
-> >>> Thanks to the previous commit, this gives the opportunity to users, w=
-hen
-> >>> running make oldconfig, to update the list of enabled LSMs at boot ti=
-me
-> >>> if an LSM has just been enabled or disabled in the build.  Moreover,
-> >>> this list only makes sense if at least one LSM is enabled.
-> >>>
-> >>> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> >>> Cc: James Morris <jmorris@namei.org>
-> >>> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> >>> Cc: Serge E. Hallyn <serge@hallyn.com>
-> >>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >>> Link: https://lore.kernel.org/r/20210215181511.2840674-4-mic@digikod.=
-net
-> >>> ---
-> >>>
-> >>> Changes since v1:
-> >>> * Add CONFIG_SECURITY as a dependency of CONFIG_LSM.  This prevent an
-> >>>   error when building without any LSMs.
-> >>> ---
-> >>>  security/Kconfig | 4 ++++
-> >>>  1 file changed, 4 insertions(+)
-> >>>
-> >>> diff --git a/security/Kconfig b/security/Kconfig
-> >>> index 7561f6f99f1d..addcc1c04701 100644
-> >>> --- a/security/Kconfig
-> >>> +++ b/security/Kconfig
-> >>> @@ -277,6 +277,10 @@ endchoice
-> >>>
-> >>>  config LSM
-> >>>         string "Ordered list of enabled LSMs"
-> >>> +       depends on SECURITY || SECURITY_LOCKDOWN_LSM || SECURITY_YAMA=
- || \
-> >>> +               SECURITY_LOADPIN || SECURITY_SAFESETID || INTEGRITY |=
-| \
-> >>> +               SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO=
- || \
-> >>> +               SECURITY_APPARMOR || BPF_LSM
-> >>
-> >> This looks really awkward, since all of these already depend on
-> >> SECURITY (if not, it's a bug)... I guarantee you that after some time
-> >> someone will come, see that the weird boolean expression is equivalent
-> >> to just SECURITY, and simplify it.
-> >
-> >
-> > Currently, LSM does not depend on SECURITY.
-> > So you can always define LSM irrespective of SECURITY,
-> > which seems a bug.
-> >
-> > So, I agree with adding 'depends on SECURITY'.
-> >
-> > What he is trying to achieve in this series
-> > seems wrong, of course.
->
-> This may be wrong in the general case, but not for CONFIG_LSM.
->
-> >
-> >
-> >> I assume the new mechanism wouldn't work as intended if there is just
-> >> SECURITY? If not, then maybe you should rather specify this value
-> >> dependency via some new  field rather than abusing "depends on" (say,
-> >> "value depends on"?). The fact that a seemingly innocent change to the
-> >> config definition breaks your mechanism suggests that the design is
-> >> flawed.
->
-> Masahiro, what do you think about this suggested "value depends on"?
+Attacks against vulnerable userspace applications with the purpose to brea=
+k
+ASLR or bypass canaries traditionally use some level of brute force with
+the help of the fork system call. This is possible since when creating a
+new process using fork its memory contents are the same as those of the
+parent process (the process that called the fork system call). So, the
+attacker can test the memory infinite times to find the correct memory
+values or the correct memory addresses without worrying about crashing the
+application.
 
+Based on the above scenario it would be nice to have this detected and
+mitigated, and this is the goal of this patch serie. Specifically the
+following attacks are expected to be detected:
 
-Of course, no.
+1.- Launching (fork()/exec()) a setuid/setgid process repeatedly until a
+    desirable memory layout is got (e.g. Stack Clash).
+2.- Connecting to an exec()ing network daemon (e.g. xinetd) repeatedly
+    until a desirable memory layout is got (e.g. what CTFs do for simple
+    network service).
+3.- Launching processes without exec() (e.g. Android Zygote) and exposing
+    state to attack a sibling.
+4.- Connecting to a fork()ing network daemon (e.g. apache) repeatedly unti=
+l
+    the previously shared memory layout of all the other children is
+    exposed (e.g. kind of related to HeartBleed).
 
+In each case, a privilege boundary has been crossed:
 
-See the help text in init/Kconfig:
+Case 1: setuid/setgid process
+Case 2: network to local
+Case 3: privilege changes
+Case 4: network to local
 
-          This choice is there only for converting CONFIG_DEFAULT_SECURITY
-          in old kernel configs to CONFIG_LSM in new kernel configs. Don't
-          change this choice unless you are creating a fresh kernel config,
-          for this choice will be ignored after CONFIG_LSM has been set.
+So, what will really be detected are fork/exec brute force attacks that
+cross any of the commented bounds.
 
+The implementation details and comparison against other existing
+implementations can be found in the "Documentation" patch.
 
-When CONFIG_LSM is already set in the .config,
-this choice is just ignored.
-So, oldconfig is working as the help message says.
+This v3 version has changed a lot from the v2. Basically the application
+crash period is now compute on an on-going basis using an exponential
+moving average (EMA), a detection of a brute force attack through the
+"execve" system call has been added and the crossing of the commented
+privilege bounds are taken into account. Also, the fine tune has also been
+removed and now, all this kind of attacks are detected without
+administrator intervention.
 
-If you think 2623c4fbe2ad1341ff2d1e12410d0afdae2490ca
-is a pointless commit, you should ask Kees about it.
+In the v2 version Kees Cook suggested to study if the statistical data
+shared by all the fork hierarchy processes can be tracked in some other
+way. Specifically the question was if this info can be hold by the family
+hierarchy of the mm struct. After studying this hierarchy I think it is no=
+t
+suitable for the Brute LSM since they are totally copied on fork() and in
+this case we want that they are shared. So I leave this road.
 
+So, knowing all this information I will explain now the different patches:
 
+The 1/8 patch defines a new LSM hook to get the fatal signal of a task.
+This will be useful during the attack detection phase.
 
+The 2/8 patch defines a new LSM and manages the statistical data shared by
+all the fork hierarchy processes.
 
+The 3/8 patch detects a fork/exec brute force attack.
 
+The 4/8 patch narrows the detection taken into account the privilege
+boundary crossing.
 
-> >>
-> >> I do think this would be a useful feature, but IMHO shouldn't be
-> >> implemented like this.
-> >>
-> >>>         default "lockdown,yama,loadpin,safesetid,integrity,smack,seli=
-nux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> >>>         default "lockdown,yama,loadpin,safesetid,integrity,apparmor,s=
-elinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> >>>         default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf=
-" if DEFAULT_SECURITY_TOMOYO
-> >>> --
-> >>> 2.30.0
-> >>>
-> >>
-> >> --
-> >> Ondrej Mosnacek
-> >> Software Engineer, Linux Security - SELinux kernel
-> >> Red Hat, Inc.
-> >>
-> >
-> >
---
-Best Regards
-Masahiro Yamada
+The 5/8 patch mitigates a brute force attack.
+
+The 6/8 patch adds self-tests to validate the Brute LSM expectations.
+
+The 7/8 patch adds the documentation to explain this implementation.
+
+The 8/8 patch updates the maintainers file.
+
+This patch serie is a task of the KSPP [1] and can also be accessed from m=
+y
+github tree [2] in the "brute_v3" branch.
+
+[1] https://github.com/KSPP/linux/issues/39
+[2] https://github.com/johwood/linux/
+
+The previous versions can be found in:
+
+https://lore.kernel.org/kernel-hardening/20200910202107.3799376-1-keescook=
+@chromium.org/
+https://lore.kernel.org/kernel-hardening/20201025134540.3770-1-john.wood@g=
+mx.com/
+
+Changelog RFC -> v2
+=2D------------------
+- Rename this feature with a more suitable name (Jann Horn, Kees Cook).
+- Convert the code to an LSM (Kees Cook).
+- Add locking  to avoid data races (Jann Horn).
+- Add a new LSM hook to get the fatal signal of a task (Jann Horn, Kees
+  Cook).
+- Add the last crashes timestamps list to avoid false positives in the
+  attack detection (Jann Horn).
+- Use "period" instead of "rate" (Jann Horn).
+- Other minor changes suggested (Jann Horn, Kees Cook).
+
+Changelog v2 -> v3
+=2D-----------------
+- Compute the application crash period on an on-going basis (Kees Cook).
+- Detect a brute force attack through the execve system call (Kees Cook).
+- Detect an slow brute force attack (Randy Dunlap).
+- Fine tuning the detection taken into account privilege boundary crossing
+  (Kees Cook).
+- Taken into account only fatal signals delivered by the kernel (Kees
+  Cook).
+- Remove the sysctl attributes to fine tuning the detection (Kees Cook).
+- Remove the prctls to allow per process enabling/disabling (Kees Cook).
+- Improve the documentation (Kees Cook).
+- Fix some typos in the documentation (Randy Dunlap).
+- Add self-test to validate the expectations (Kees Cook).
+
+John Wood (8):
+  security: Add LSM hook at the point where a task gets a fatal signal
+  security/brute: Define a LSM and manage statistical data
+  securtiy/brute: Detect a brute force attack
+  security/brute: Fine tuning the attack detection
+  security/brute: Mitigate a brute force attack
+  selftests/brute: Add tests for the Brute LSM
+  Documentation: Add documentation for the Brute LSM
+  MAINTAINERS: Add a new entry for the Brute LSM
+
+ Documentation/admin-guide/LSM/Brute.rst  |  224 +++++
+ Documentation/admin-guide/LSM/index.rst  |    1 +
+ MAINTAINERS                              |    7 +
+ include/linux/lsm_hook_defs.h            |    1 +
+ include/linux/lsm_hooks.h                |    4 +
+ include/linux/security.h                 |    4 +
+ kernel/signal.c                          |    1 +
+ security/Kconfig                         |   11 +-
+ security/Makefile                        |    4 +
+ security/brute/Kconfig                   |   13 +
+ security/brute/Makefile                  |    2 +
+ security/brute/brute.c                   | 1102 ++++++++++++++++++++++
+ security/security.c                      |    5 +
+ tools/testing/selftests/Makefile         |    1 +
+ tools/testing/selftests/brute/.gitignore |    2 +
+ tools/testing/selftests/brute/Makefile   |    5 +
+ tools/testing/selftests/brute/config     |    1 +
+ tools/testing/selftests/brute/exec.c     |   44 +
+ tools/testing/selftests/brute/test.c     |  507 ++++++++++
+ tools/testing/selftests/brute/test.sh    |  226 +++++
+ 20 files changed, 2160 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/Brute.rst
+ create mode 100644 security/brute/Kconfig
+ create mode 100644 security/brute/Makefile
+ create mode 100644 security/brute/brute.c
+ create mode 100644 tools/testing/selftests/brute/.gitignore
+ create mode 100644 tools/testing/selftests/brute/Makefile
+ create mode 100644 tools/testing/selftests/brute/config
+ create mode 100644 tools/testing/selftests/brute/exec.c
+ create mode 100644 tools/testing/selftests/brute/test.c
+ create mode 100755 tools/testing/selftests/brute/test.sh
+
+=2D-
+2.25.1
+
