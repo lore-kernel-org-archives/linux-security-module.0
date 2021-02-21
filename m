@@ -3,142 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3288C433DB
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 11:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B146C433E6
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 11:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A5EB64F00
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 11:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E2DA64EB3
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 11:17:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbhBULMU (ORCPT
+        id S229907AbhBULRe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Feb 2021 06:12:20 -0500
-Received: from smtp-bc08.mail.infomaniak.ch ([45.157.188.8]:44099 "EHLO
-        smtp-bc08.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229903AbhBULMU (ORCPT
+        Sun, 21 Feb 2021 06:17:34 -0500
+Received: from smtp-42ab.mail.infomaniak.ch ([84.16.66.171]:59591 "EHLO
+        smtp-42ab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229902AbhBULRc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Feb 2021 06:12:20 -0500
+        Sun, 21 Feb 2021 06:17:32 -0500
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Dk2gn0S83zMq6CJ;
-        Sun, 21 Feb 2021 12:11:33 +0100 (CET)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Dk2nm4X2pzMqFPR;
+        Sun, 21 Feb 2021 12:16:44 +0100 (CET)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Dk2gl6mnVzlh8TG;
-        Sun, 21 Feb 2021 12:11:31 +0100 (CET)
-Subject: Re: [PATCH v2 3/3] security: Add LSMs dependencies to CONFIG_LSM
-To:     Masahiro Yamada <masahiroy@kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Dk2nj6xrTzlh8T8;
+        Sun, 21 Feb 2021 12:16:41 +0100 (CET)
+Subject: Re: [PATCH v6 0/5] Enable root to update the blacklist keyring
+To:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Nicolas Iooss <nicolas.iooss@m4x.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210215181511.2840674-1-mic@digikod.net>
- <20210215181511.2840674-4-mic@digikod.net>
- <CAFqZXNsvqx-pbC+wzHB4aXX6h=buU3csM_a=By-zCOmx0n-xCQ@mail.gmail.com>
- <CAK7LNAQDWxGJU41D4+AbjFiX63BiA+bsNzTHZsKKc-LPyO7oCQ@mail.gmail.com>
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <20210210120410.471693-1-mic@digikod.net>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <8809a929-980a-95d1-42dc-576ff54e2923@digikod.net>
-Date:   Sun, 21 Feb 2021 12:12:44 +0100
+Message-ID: <132a6049-e91b-3922-cd3f-89574dd049fe@digikod.net>
+Date:   Sun, 21 Feb 2021 12:17:54 +0100
 User-Agent: 
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQDWxGJU41D4+AbjFiX63BiA+bsNzTHZsKKc-LPyO7oCQ@mail.gmail.com>
+In-Reply-To: <20210210120410.471693-1-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+David, Eric, what is the status of this patch series?
 
-On 21/02/2021 09:50, Masahiro Yamada wrote:
-> On Tue, Feb 16, 2021 at 4:03 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->>
->> On Mon, Feb 15, 2021 at 7:17 PM Mickaël Salaün <mic@digikod.net> wrote:
->>> From: Mickaël Salaün <mic@linux.microsoft.com>
->>>
->>> Thanks to the previous commit, this gives the opportunity to users, when
->>> running make oldconfig, to update the list of enabled LSMs at boot time
->>> if an LSM has just been enabled or disabled in the build.  Moreover,
->>> this list only makes sense if at least one LSM is enabled.
->>>
->>> Cc: Casey Schaufler <casey@schaufler-ca.com>
->>> Cc: James Morris <jmorris@namei.org>
->>> Cc: Masahiro Yamada <masahiroy@kernel.org>
->>> Cc: Serge E. Hallyn <serge@hallyn.com>
->>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->>> Link: https://lore.kernel.org/r/20210215181511.2840674-4-mic@digikod.net
->>> ---
->>>
->>> Changes since v1:
->>> * Add CONFIG_SECURITY as a dependency of CONFIG_LSM.  This prevent an
->>>   error when building without any LSMs.
->>> ---
->>>  security/Kconfig | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/security/Kconfig b/security/Kconfig
->>> index 7561f6f99f1d..addcc1c04701 100644
->>> --- a/security/Kconfig
->>> +++ b/security/Kconfig
->>> @@ -277,6 +277,10 @@ endchoice
->>>
->>>  config LSM
->>>         string "Ordered list of enabled LSMs"
->>> +       depends on SECURITY || SECURITY_LOCKDOWN_LSM || SECURITY_YAMA || \
->>> +               SECURITY_LOADPIN || SECURITY_SAFESETID || INTEGRITY || \
->>> +               SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO || \
->>> +               SECURITY_APPARMOR || BPF_LSM
->>
->> This looks really awkward, since all of these already depend on
->> SECURITY (if not, it's a bug)... I guarantee you that after some time
->> someone will come, see that the weird boolean expression is equivalent
->> to just SECURITY, and simplify it.
+On 10/02/2021 13:04, Mickaël Salaün wrote:
+> This new patch series is a rebase on David Howells's keys-misc branch.
+> This mainly fixes UEFI DBX and the new Eric Snowberg's feature to import
+> asymmetric keys to the blacklist keyring.
+> I successfully tested this patch series with the 186 entries from
+> https://uefi.org/sites/default/files/resources/dbxupdate_x64.bin (184
+> binary hashes and 2 certificates).
+> 
+> The goal of these patches is to add a new configuration option to enable the
+> root user to load signed keys in the blacklist keyring.  This keyring is useful
+> to "untrust" certificates or files.  Enabling to safely update this keyring
+> without recompiling the kernel makes it more usable.
+> 
+> This can be applied on top of David Howells's keys-next branch:
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-next
+> Git commits can be found in https://github.com/l0kod/linux branch
+> dyn-auth-blacklist-v6 commit fcf976b74ffcd4551683e6b70dbf5fb102cf9906 .
+> 
+> Previous patch series:
+> https://lore.kernel.org/lkml/20210128191705.3568820-1-mic@digikod.net/
+> 
+> Regards,
+> 
+> Mickaël Salaün (5):
+>   tools/certs: Add print-cert-tbs-hash.sh
+>   certs: Check that builtin blacklist hashes are valid
+>   certs: Make blacklist_vet_description() more strict
+>   certs: Factor out the blacklist hash creation
+>   certs: Allow root user to append signed hashes to the blacklist
+>     keyring
+> 
+>  MAINTAINERS                                   |   2 +
+>  certs/.gitignore                              |   1 +
+>  certs/Kconfig                                 |  17 +-
+>  certs/Makefile                                |  17 +-
+>  certs/blacklist.c                             | 218 ++++++++++++++----
+>  crypto/asymmetric_keys/x509_public_key.c      |   3 +-
+>  include/keys/system_keyring.h                 |  14 +-
+>  scripts/check-blacklist-hashes.awk            |  37 +++
+>  .../platform_certs/keyring_handler.c          |  26 +--
+>  tools/certs/print-cert-tbs-hash.sh            |  91 ++++++++
+>  10 files changed, 346 insertions(+), 80 deletions(-)
+>  create mode 100755 scripts/check-blacklist-hashes.awk
+>  create mode 100755 tools/certs/print-cert-tbs-hash.sh
 > 
 > 
-> Currently, LSM does not depend on SECURITY.
-> So you can always define LSM irrespective of SECURITY,
-> which seems a bug.
-> 
-> So, I agree with adding 'depends on SECURITY'.
-> 
-> What he is trying to achieve in this series
-> seems wrong, of course.
-
-This may be wrong in the general case, but not for CONFIG_LSM.
-
-> 
-> 
->> I assume the new mechanism wouldn't work as intended if there is just
->> SECURITY? If not, then maybe you should rather specify this value
->> dependency via some new  field rather than abusing "depends on" (say,
->> "value depends on"?). The fact that a seemingly innocent change to the
->> config definition breaks your mechanism suggests that the design is
->> flawed.
-
-Masahiro, what do you think about this suggested "value depends on"?
-
-
->>
->> I do think this would be a useful feature, but IMHO shouldn't be
->> implemented like this.
->>
->>>         default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
->>>         default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
->>>         default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
->>> --
->>> 2.30.0
->>>
->>
->> --
->> Ondrej Mosnacek
->> Software Engineer, Linux Security - SELinux kernel
->> Red Hat, Inc.
->>
-> 
+> base-commit: 5bcd72358a7d7794ade0452ed12919b8c4d6ffc7
 > 
