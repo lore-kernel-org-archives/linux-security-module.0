@@ -2,114 +2,168 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3F1C433DB
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 10:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 352FCC433DB
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 11:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9CBEA64ED6
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 10:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F033064EB2
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 11:10:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229879AbhBUKOX (ORCPT
+        id S230015AbhBULJz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Feb 2021 05:14:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36554 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229502AbhBUKOW (ORCPT
+        Sun, 21 Feb 2021 06:09:55 -0500
+Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:52293 "EHLO
+        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229717AbhBULJx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Feb 2021 05:14:22 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D61C061574;
-        Sun, 21 Feb 2021 02:13:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hcq3wt5qS99lFcdtQEki70DkgteFRHHdLhomfjlqf0A=; b=d9BmVzeMt89rCXwVLeKlwPtHG
-        2BNk+iWh/L0CsP42TqedSeGrmfDsxu4ckY9qOc6ml4YSXe7ocS2VmYqTdpsflYZ5KXY61rBG+Rd3C
-        ak55BBcZmcE3iw7hxjb6nDM/coJQH9po0P6r+Vq70oEVXerNc+lLm2VWZ4J6ijxQddMUw7x2oycoW
-        ushzuWhMycc9J5pOfsJXQSIBZHmkGfB70a2jKKEZSQaDdtUJlvxCPR+pQ6t8neNP+u62ehJLQW2qa
-        dPt5YWVNsfvbKX0YaqpEI7RhM+jpVkWItrx1qgHUKOzxrfQuCkUBUXwO8GMmoFhCGDUwtK8FMk8wZ
-        Av6+zio3g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46232)
-        by pandora.armlinux.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1lDljt-0005aH-Cr; Sun, 21 Feb 2021 10:13:21 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1lDljp-00012f-NP; Sun, 21 Feb 2021 10:13:17 +0000
-Date:   Sun, 21 Feb 2021 10:13:17 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Jian Cai <jiancai@google.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        James Morris <jmorris@namei.org>, manojgupta@google.com,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        clang-built-linux@googlegroups.com, llozano@google.com,
-        David Brazdil <dbrazdil@google.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <nathan@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, ndesaulniers@google.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        David Laight <David.Laight@aculab.com>,
-        James Morse <james.morse@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
-        Mike Rapoport <rppt@kernel.org>
-Subject: Re: [PATCH v4] ARM: Implement SLS mitigation
-Message-ID: <20210221101317.GN1463@shell.armlinux.org.uk>
-References: <20210219201852.3213914-1-jiancai@google.com>
- <20210219230841.875875-1-jiancai@google.com>
+        Sun, 21 Feb 2021 06:09:53 -0500
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Dk2cv5VJPzMqJfj;
+        Sun, 21 Feb 2021 12:09:03 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Dk2cs5QSGzlh8TL;
+        Sun, 21 Feb 2021 12:09:01 +0100 (CET)
+Subject: Re: [PATCH v2 2/3] kconfig: Ask user if string needs to be changed
+ when dependency changed
+To:     Masahiro Yamada <masahiroy@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Nicolas Iooss <nicolas.iooss@m4x.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210215181511.2840674-1-mic@digikod.net>
+ <20210215181511.2840674-3-mic@digikod.net>
+ <CAK7LNAS54Zw7d8Lp5BNs1JVktSLTFx0dNbLMA7W0U_sH2712_A@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <b3ea85ca-5c49-61ab-4769-f2e4557df3c7@digikod.net>
+Date:   Sun, 21 Feb 2021 12:10:14 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210219230841.875875-1-jiancai@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-Sender: Russell King - ARM Linux admin <linux@armlinux.org.uk>
+In-Reply-To: <CAK7LNAS54Zw7d8Lp5BNs1JVktSLTFx0dNbLMA7W0U_sH2712_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 19, 2021 at 03:08:13PM -0800, Jian Cai wrote:
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index 269967c4fc1b..146b75a79d9e 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -121,6 +121,16 @@ choice
->  
->  endchoice
->  
-> +config HARDEN_SLS_ALL
-> +	bool "enable SLS vulnerability hardening"
-> +	default n
 
-Please get rid of this useless "default n"
+On 21/02/2021 09:47, Masahiro Yamada wrote:
+> On Tue, Feb 16, 2021 at 3:14 AM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> Content of string configuration may depend on related kernel
+>> configurations.  Modify oldconfig and syncconfig to inform users about
+>> possible required configuration update and give them the opportunity to
+>> update it:
+>> * if dependencies of this string has changed (e.g. enabled or disabled),
+>> * and if the current value of this string is different than the (new)
+>>   default one.
+>>
+>> This is particularly relevant for CONFIG_LSM which contains a list of
+>> LSMs enabled at boot, but users will not have a chance to update this
+>> list with a make oldconfig.
+> 
+> If CONFIG_LSM already exists in the .config,
+> oldconfig does not show a prompt.
+> This is the expected behavior.
 
-> +	depends on $(cc-option,-mharden-sls=all)
-> +	help
-> +	  Enables straight-line speculation vulnerability hardening on ARM and ARM64
-> +	  architectures. It inserts speculation barrier sequences (SB or DSB+ISB
-> +	  depending on the target architecture) after RET and BR, and replacing
-> +	  BLR with BL+BR sequence.
+It is not the behavior wished for LSM stacking.
 
-Given that this is in an architecture independent Kconfig file, and it
-detects support in CC for this feature, why should this help text be
-written to be specific to a couple of architectures? Will this feature
-only ever be available on these two architectures? What if someone adds
-support for another architecture?
+> 
+> You are trying to fix your problem in a wrong way.
+> NACK.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+What do you suggest to ensure that users will be asked to update the
+CONFIG_LSM string if they add or remove an LSM?
+
+
+
+> 
+> 
+> 
+>>
+>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: James Morris <jmorris@namei.org>
+>> Cc: Masahiro Yamada <masahiroy@kernel.org>
+>> Cc: Serge E. Hallyn <serge@hallyn.com>
+>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+>> Link: https://lore.kernel.org/r/20210215181511.2840674-3-mic@digikod.net
+>> ---
+>>  scripts/kconfig/conf.c | 37 ++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 34 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+>> index 18a233d27a8d..8633dacd39a9 100644
+>> --- a/scripts/kconfig/conf.c
+>> +++ b/scripts/kconfig/conf.c
+>> @@ -82,6 +82,26 @@ static void xfgets(char *str, int size, FILE *in)
+>>                 printf("%s", str);
+>>  }
+>>
+>> +static bool may_need_string_update(struct symbol *sym, const char *def)
+>> +{
+>> +       const struct symbol *dep_sym;
+>> +       const struct expr *e;
+>> +
+>> +       if (sym->type != S_STRING)
+>> +               return false;
+>> +       if (strcmp(def, sym_get_string_default(sym)) == 0)
+>> +               return false;
+>> +       /*
+>> +        * The user may want to synchronize the content of a string related to
+>> +        * changed dependencies (e.g. CONFIG_LSM).
+>> +        */
+>> +       expr_list_for_each_sym(sym->dir_dep.expr, e, dep_sym) {
+>> +               if (dep_sym->flags & SYMBOL_CHANGED)
+>> +                       return true;
+>> +       }
+>> +       return false;
+>> +}
+>> +
+>>  static int conf_askvalue(struct symbol *sym, const char *def)
+>>  {
+>>         enum symbol_type type = sym_get_type(sym);
+>> @@ -102,7 +122,7 @@ static int conf_askvalue(struct symbol *sym, const char *def)
+>>         switch (input_mode) {
+>>         case oldconfig:
+>>         case syncconfig:
+>> -               if (sym_has_value(sym)) {
+>> +               if (sym_has_value(sym) && !may_need_string_update(sym, def)) {
+>>                         printf("%s\n", def);
+>>                         return 0;
+>>                 }
+>> @@ -137,8 +157,19 @@ static int conf_string(struct menu *menu)
+>>                 printf("%*s%s ", indent - 1, "", menu->prompt->text);
+>>                 printf("(%s) ", sym->name);
+>>                 def = sym_get_string_value(sym);
+>> -               if (def)
+>> -                       printf("[%s] ", def);
+>> +               if (def) {
+>> +                       if (may_need_string_update(sym, def)) {
+>> +                               indent += 2;
+>> +                               printf("\n%*sDefault value is [%s]\n",
+>> +                                               indent - 1, "",
+>> +                                               sym_get_string_default(sym));
+>> +                               printf("%*sCurrent value is [%s] ",
+>> +                                               indent - 1, "", def);
+>> +                               indent -= 2;
+>> +                       } else {
+>> +                               printf("[%s] ", def);
+>> +                       }
+>> +               }
+>>                 if (!conf_askvalue(sym, def))
+>>                         return 0;
+>>                 switch (line[0]) {
+>> --
+>> 2.30.0
+>>
+> 
+> 
