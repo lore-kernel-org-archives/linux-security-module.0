@@ -2,90 +2,109 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58899C433E6
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Feb 2021 14:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE12C433E0
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 08:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C719614A7
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Feb 2021 14:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B01B064F04
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Feb 2021 08:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229543AbhBTOvS (ORCPT
+        id S229826AbhBUIyZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Feb 2021 09:51:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbhBTOvP (ORCPT
+        Sun, 21 Feb 2021 03:54:25 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:51096 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229502AbhBUIyV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Feb 2021 09:51:15 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E68C061786
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Feb 2021 06:50:33 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id h10so15887129edl.6
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Feb 2021 06:50:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g9x+oRQ4dxdX/Lcd7XzVC8mAPWvFSQ3BbpYDOmT75qU=;
-        b=i1GvJWnnZAmMYuZbNa5SxOkH0LNxxBrMyouPhWfS2CgRWKPx1K1SsgK/q4TcmiLgaz
-         XM8jCX60i599PSPWcd2ecI6TxjeeF7LlcymqdkKntxfLjq5gYh4+S6W7qEURIROkL3m0
-         JwM+2iQzu4ecyYXjddKkeCkV6ZuBx9/BSFMOc8c8AN3rvqwLAy/BCjD2hLQf412U1Tpu
-         L2vWHeTAZeGCYrluhzIm9MAziLEFqq/wdC9nRxtpQRLFwBi/djVoxC3rSsv6umkZzB9W
-         u3msz0I5d7i74DZao+ZbUQ7ee13P3y/wDkc5cs+xcnmqgT2p9ogCWRR4DSlt8J+deGmk
-         OlzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g9x+oRQ4dxdX/Lcd7XzVC8mAPWvFSQ3BbpYDOmT75qU=;
-        b=kp9ZxhPrRqdLgi3cVojfekrIvapM/hc0v5ubU/kDl82rakQ5m6TptaNKRM+XCHlZUQ
-         89xpuYtvf8svP3L+jPHv0PnrKv2uEzcXKJyOTKt+sSPvWcfX4hfSKwen/847/sCgmv2R
-         Dw0vYTtiC3oXFdZLCap3UH8ijD1XUi2JvDA92hfbGAoCXICWya1CoccPAFilkmNkof2f
-         kkcQgZ2K2sgdhUNfqYb7ufe6WhyHfeDjPM57t1rqvG242Nyh/5j1Ei8iwAyISWbOhoV+
-         6QeodOOdIXTJbGtepri8wQ05WgAzsShejDsDQ+RtMPsBipjfs/SuGjqiqJ8y44cAN3YM
-         Z3sA==
-X-Gm-Message-State: AOAM533LjhJWyLwQK25JMQgej0haQRntQPzAmy1s9BIIoIPbSyKq7cdH
-        T4DDbbABLqTe99crgwgVhzVc5amPTck4vc+XP/IsSlpNU/K+
-X-Google-Smtp-Source: ABdhPJxDoQDl1riak88nhmzRFC5m+4Ns2U3daQUcXKO4UHBPAml5XfjQwYfQDJVh7yqcBX+pQqn608ufvJbf4pPLn4Y=
-X-Received: by 2002:a05:6402:438d:: with SMTP id o13mr14030563edc.135.1613832632309;
- Sat, 20 Feb 2021 06:50:32 -0800 (PST)
+        Sun, 21 Feb 2021 03:54:21 -0500
+X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Sun, 21 Feb 2021 03:54:20 EST
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id 11L8r0CO004841;
+        Sun, 21 Feb 2021 17:53:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com 11L8r0CO004841
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1613897581;
+        bh=u37K3+qAwR0sUTzWOWIwPsO25Vh/vdCNmym9gGt+TM0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1MzDHxMDnrEeNiUTmrhliQTe/oiWbM2HjMxw/DI2Ti3IvBcL0nuRrQNTYE4d0rgop
+         GSrGJvilNhN8AWbCGTAY+5XFNRdSWzLAKVl60IxKDsFxxeoEPgsyFw+uScDy82NUxY
+         WiRvcFLva5T9VsaXpPVKVpMjsqpm+WjLTy1HGQSRrZGetoHCyRcjbNWfwgidFR2nEe
+         J/L3nD1jl7taB11DAHShYbLZ/RiTXP5NDpsKVwLADEsyF9Pf6ObPkZvzNQoFsH57SJ
+         zP4ShjjIL5rzp8qmL5zA0c0XvrCTBIqnCMGp9t3SQgRuNAEFpt9I5KUNPSYpu5wQlK
+         n+x6S2XcME8Uw==
+X-Nifty-SrcIP: [209.85.215.175]
+Received: by mail-pg1-f175.google.com with SMTP id n10so8181090pgl.10;
+        Sun, 21 Feb 2021 00:53:01 -0800 (PST)
+X-Gm-Message-State: AOAM530ID7HFA/k7EgdGKeqayy1Ak52D/+Bcon2xwjuG6TuGaFJIxBE8
+        IPs3n9DX34eqZCSPA7DfFtwigOm5EpDYcjt8+L0=
+X-Google-Smtp-Source: ABdhPJwCYDuoHAzYbJO1A2ugunCCef/tJuG6TpI0QILuNu4F4QtCv7Swfe+SSXIg/Yyz3udjxxuF6swSgyd6RWcHhZ0=
+X-Received: by 2002:a63:34c9:: with SMTP id b192mr15845885pga.175.1613897580356;
+ Sun, 21 Feb 2021 00:53:00 -0800 (PST)
 MIME-Version: 1.0
-References: <CAHC9VhSiq5gqY1bfouia4GwYsE9MGGXnUOqwEtHi2u0-1=8aZQ@mail.gmail.com>
- <67cacc61-4d6a-39d5-f2c0-5530e8d1e39@namei.org>
-In-Reply-To: <67cacc61-4d6a-39d5-f2c0-5530e8d1e39@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 20 Feb 2021 09:50:21 -0500
-Message-ID: <CAHC9VhRmFFqiF8oW_K_Rm3cKS9iEE97pjHeiTDcnYxR-HrpbeQ@mail.gmail.com>
-Subject: Re: security_task_getsecid() and subjective vs objective task creds
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com
+References: <20210215181511.2840674-1-mic@digikod.net> <20210215181511.2840674-2-mic@digikod.net>
+In-Reply-To: <20210215181511.2840674-2-mic@digikod.net>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Sun, 21 Feb 2021 17:52:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR+vDUg-_9LiasvpuJi2BqkNOz+ufNFErHL-nQrFTixeg@mail.gmail.com>
+Message-ID: <CAK7LNAR+vDUg-_9LiasvpuJi2BqkNOz+ufNFErHL-nQrFTixeg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] kconfig: Remove duplicate call to sym_get_string_value()
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Nicolas Iooss <nicolas.iooss@m4x.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 19, 2021 at 9:55 PM James Morris <jmorris@namei.org> wrote:
-> On Thu, 18 Feb 2021, Paul Moore wrote:
+On Tue, Feb 16, 2021 at 3:15 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
 >
-> > Hi all,
-> >
-> > When looking into a problem I noticed that audit was recording the
-> > wrong subject label for a process.
+> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
-> Is this a public bug? It would be good to know what the extent of this
-> issue may be and whether it warrants a CVE.
+> Use the saved returned value of sym_get_string_value() instead of
+> calling it twice.
+>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> Link: https://lore.kernel.org/r/20210215181511.2840674-2-mic@digikod.net
+> ---
 
-Let me rephrase, "When looking into a problem with some new patches
-that I am working on I noticed ...".
 
-I am not aware of any public bugs relating to this subj/obj confusion,
-this was simply something I noticed while doing some new work.  I
-would post those patches now, but they are still incomplete.
-Regardless, this subj/obj confusion is something we should resolve.
+Applied to linux-kbuild. Thanks.
 
--- 
-paul moore
-www.paul-moore.com
+
+
+>  scripts/kconfig/conf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+> index db03e2f45de4..18a233d27a8d 100644
+> --- a/scripts/kconfig/conf.c
+> +++ b/scripts/kconfig/conf.c
+> @@ -137,7 +137,7 @@ static int conf_string(struct menu *menu)
+>                 printf("%*s%s ", indent - 1, "", menu->prompt->text);
+>                 printf("(%s) ", sym->name);
+>                 def =3D sym_get_string_value(sym);
+> -               if (sym_get_string_value(sym))
+> +               if (def)
+>                         printf("[%s] ", def);
+>                 if (!conf_askvalue(sym, def))
+>                         return 0;
+> --
+> 2.30.0
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
