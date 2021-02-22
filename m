@@ -2,242 +2,230 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23050C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 16:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21883C433DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 17:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D972F64F04
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 16:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B317564E77
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 17:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231263AbhBVQw6 (ORCPT
+        id S231621AbhBVRmm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Feb 2021 11:52:58 -0500
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com ([66.163.188.153]:33469
-        "EHLO sonic303-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231411AbhBVQwz (ORCPT
+        Mon, 22 Feb 2021 12:42:42 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57710 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230443AbhBVRmi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Feb 2021 11:52:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1614012728; bh=GHEJp+l5Sm051cmDlRcixOhX3PsUeZfZCgvBk2MPgcU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=uPlthhmvJJbr4+hIJgNj5pErVIH7Na/hJ+NGu/Sv7RiNq1Qq92vn9+1egCd/ED8N28M1iVXArfq3nttpyLgAQ+abCG78CLa9Fnu1vOddai7w0mGBhGIrRHYo8/k3ETuRNYYUf7QdQzf2Yw3Eo6sTVjAhstrVJLPMrsAGG3umBh/K8fj3FMyvq9SqvDgiEzkMY57OgnJBaBBeIauVv6/b8p2nZNoMAtiuBZ0M1d117xD2eExW6NOS35e4D0XMQUfeEB1JWtMOCemmTuUySdLLBawZteP6i3H/7ZEohEMD2HXnJ++c7uf3ADn8QKBdxY6uW8+ipf4RNiUYsG5O59eRdQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1614012728; bh=dSdbTimGn20V1VAtwlMI45proqUMFLSwsyAC09fL01X=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=hsEhNYabCmrqOjJRA+dlsittD2RM4xG33RW7WVa52KxmcbvHF4o82/QH/9NXX88l0PXBMSI6Cql/oCCzFPkVHhlvoJ8uE/1z4Pc1Fn94G+ZnXYzWpXQreHa33hW2w/i+NFPE72yDpaGR53TfO6J1KkdJxJO3h5MxSevi3riPVZGO8FrUkwk375ajLa4oG5F/+aw4lFkYd52k3QXCRj8/iNf/kSVj17BZmxhHsqeMQA1mKCQDBbK07psStWuNDjXcyyCu3/UeiP1xneGmCxpGrYY0Uz3erue/cNv21+W1U/PQL76MpKZo3tyIyv6A3PMUwymSinyVUsdZGN5OOGlBeg==
-X-YMail-OSG: 1roy8AsVM1nQu1RbPNX2ZibfRqLd65iJ9A.xTHq5AeKA1Kz0ocFNNYOHIR6WfwG
- lwEhShGZWOVs5ZBXWJyfMqpeC9iTEGtbrSnScZ4Gd1nN.JpJzVXactH_VAlbOOITkXUjVrWI4.7_
- zx5EN78HlpQ286N9tVcCzGeGz7Tfd0XOM7FsgzS9hIaVDdOhfpKVVE05hk5H7GmyPoQ6j9pk_Gbn
- MgvdjkM1K_y5szyJi7NL0wj_sZpSErdD7O1P3iUB8JFdBY7hMJjWR0DXhSL0VEbOpraNv8uMEbfG
- nCNVPITXnaQyUXrQnM069MVhMta_xl2f.eTFMbb_DlyFfhmmzcnxOm_Nye7HRGWALq2JT6IStLgC
- Zr_trqyCTc0qb2apXeuktaOUDbLYcD7LCs1jpbKZ7RBSfc_0ujyZCZOxSs0Xf_bTeZ0LlCH_GdmK
- 2f7J47jbCXvubDYUENq0QhtSvoQ9XhveZCig6j8Tm_kjhrGlf5IPmaX8ZG9U0ZCAeWZj.vvEfud3
- oIRZSCbbCI_bjl4KUr6006.tFtulgTLim4EC8IPS_Rqb1XWYicUZMDfSUizsKHgKY0AXrg6BK_Ej
- 4Rn0Soau3ya_Qv0Ah84aXX08U0aAwM6Pwsspel4qj4v4FX8Zvp8AxNBMWwW5g.O0borJv6HS.4R8
- R0aSWhMw0tJEaGx5vQeoQY2F3k1fYiY6rxrPaH8HT0IOlxaEu.TNZ0csQuPaCbVeWCTfDtyFXvS8
- 19eQX66oO9VVEYuc6As.cbQHh1KHWBKMOX_N2Ao2RmGK9r5K.6zfFK7Nu7ti3ZM7CNYfyEXsZqaO
- 5NQ0zJjcL.TWMLEN9S_Bg8__LDFgQX2CqhUkGujn71.49IfSySTSanguS2rYP4o1t5eijA_SU_Ol
- 0znzX9K9Tc_GZpNPQ_GtdmemDcTADKdAR0cTRBNs5yu62YVJHwzSRIifzDM_wqT5lbdeSIjx1ANN
- iipMasmas4uF7ZmTq1lHrOKXAO_M7mU6oke_qxqg6Co9Lwft.txFEcDuogwSp5o13dGgDlhKfD3j
- Eyb.QpxIBArfYPvHQr1nZX8mtw2p6SmaTWHvVMBw6a2JexrQv_MBskaMyYuqLocXqek1tv9yC_5q
- OUMAdeEiraCSoZifl8RqetGIy3iuyAtTbfQmFKOhGnNSeAjcy9ctjtwUBRx3h2FuIk6lBD8GKRqT
- HZaEhCnGvGGU9GXo6E.UizKW7vr6JyZ7QbPEWPPKhxF_UPcPefiSukewi2tUfoOYeMzfUV7VVyOa
- A5B8xyr5OKnHuVfQbzTrbVHj0x1WvenZdRDJkBnM_jMYXhjFMwUy3JVtSCLpxsMCUPztq4GMiU1x
- RT59NHtKPmh377H4qvpzV_OoceEApnk6.get2pbVPcxmJsCmb6JkPGKkcNHmSI1NbaJQ8jjlutQu
- 9juoqS.Qm1A_nLkfKdxTppA68pDGZpv_PhVWLId0jozqnkjMpD1U.IZajdLJi.AZpX3fBipcQNnt
- SwliKcswSAPLeYCJHyLWcWHo913QnYx5cqWbyo.GJeqOZm_WnGZsG2jcNDF_5CZxA4pN2BA9.07C
- _4D.LZbViObXeRbeYk1NCRJbVQi46dDjmMtNOyIyDOM22Rz7sDVFCB4Vb3QMy4WwyooxvA.cOjFn
- 0RDlKe.jsm3Y7bzDOsHLIuUy3EmFS8KDMrrMeBcSBlv14Ptci7vWc98ymwPIcGAwjRu975CTpqwl
- 2Rwi4YRrebBOHqli4rMWM7XIJoZXgNpKJfUJNpk9.YB9odYijmBSjK6la5jHb9QRtTSbu73cvobY
- z_cV6qnKbLGiPUuIloTIlbrZgD7vL14lCnGna24Z73Nd0iEG3KV58TeZbqN_HM8sujH0bngpR_aO
- k_jtKt0GUvdt_x3OsFxAJNOczy6MkZI9TQJh_wxsrU7WlqRMmyhzs8fy_5rkTaNkVgSrFQYc19Zf
- 1sfl7yAYnfGV_T6WSAGz2Q9P.FHMXdOhgDE5X32ok1octo0PdFS718C_m6kY.ieC7S9vznRi_QWv
- gUVTSxiFHYqYEVlTtvQ1uGwwNqTYu7Y3wj5d5QC63.3cXpTzPqI76ooq4mVFpQO9vkC3_yrH0puN
- ARIkX9qek_Py5oNSstNlALB.Ag2dIDLUSNgcSmxF94QInheUT6xZ62ymp0f2rvmBEwM2vlgL0dY1
- 6JaSFG2jKBv.fjOjjOd4qDuOKQxYnmXrfryx2ARp5nckNv7N4MK3aoE6odpuykrXf.ZVsR.JvGmq
- T9hoYlikUQ4e2_rrHtoNwBu0wKkkr7kv.G816PsGtIPdq0Q3XKrvINpm8SYd6RjUI9rw7_A_wGZm
- fBwPACPmnokTkBbWfXpss63Ch2NYTG_TSUOKy7cU5RqKJ_Ck9.UG8rVQ.hcjZ7fJ8OuHKdtvDCgf
- _vFspw_06ql5MhLT69zgdpcuwTJXX59bfAgBQQYd73v6yolfu08ZyeM_sS0g96F6TP.zUFRiRXg2
- kiJY2wuoy1TpK4rWZgl1enM6BKzM58SkzD0NKOUrvN_9GWV2oAJuZXa24JbKk7uN37A3tW5_1apY
- cggcfVzyWyiTBSgwj_1W28hgVj3cviqeFRWeT.tqbqy8tugAieGuUj17NjwXQvvLEWcAGOFWwwlT
- .7oIjssyTnIpMevC6BGtLNu_ijulH5ODmOa3zlENXJ82GSVlaYk3igcPAF32QZo35f0DIcbqy7bK
- j0zaM9S.qYVduQqpybD610P9UsTldKAAomIBRY5Cm_151aAJXi1i8Vh6SuWmfkcMvky4rfgPvr6a
- TW2F_uX.yoN63_a40MIDIy27Z2CwMjpSghMqchttxRQVzXSv4_uV02vHTCIlMt0qV2tCjVNc_enl
- vH5dI.alFr2id_0nanfvnOPVo1miHtaoA0h0mTlfzEdJx4ysOIJ6bQ5AML2N6VSQ2qSDLD..pM3T
- OU0m8gLR3geEbF28Sq017yg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Mon, 22 Feb 2021 16:52:08 +0000
-Received: by smtp412.mail.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID d2c841c384566721a026918cf0385760;
-          Mon, 22 Feb 2021 16:52:03 +0000 (UTC)
-Subject: Re: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default
- LSM stack ordering
-To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210222150608.808146-1-mic@digikod.net>
- <20210222150608.808146-2-mic@digikod.net>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <51725b44-bc40-0205-8583-285d3b35b5ca@schaufler-ca.com>
-Date:   Mon, 22 Feb 2021 08:51:59 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
-MIME-Version: 1.0
-In-Reply-To: <20210222150608.808146-2-mic@digikod.net>
+        Mon, 22 Feb 2021 12:42:38 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11MHVBDv189995;
+        Mon, 22 Feb 2021 17:41:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ subject : from : in-reply-to : date : cc : content-transfer-encoding :
+ message-id : references : to : mime-version; s=corp-2020-01-29;
+ bh=tgZgzefRhC+4CvKoLZc454CwBmOFmlLryME3AixTMS8=;
+ b=hw2AVjM6yjmSzSjYjVlKQdSAxSlRyecwc96ZYqg/ex0HrkFMLgXsFwcO+h758SgsbTe5
+ K4HIYbFmHYV8PWVSpwTL2YKOUgA3XvKer4+Exy2tgQM3As4ZHqgh0IP28zsQRA28j/mr
+ t52AT8twziAYNS1blVwCnW6pjjy/5NuD7wRL/4pXUOep5C5KTdoC+eTmxJf0/R5v68hd
+ 8lCFduXZ0V8ntUhRToGuopqgcoOj77ZIR71tgDi4ATUyGlm46bv0M/9KGDuFl+kULS6/
+ PsX66yVMVbAImpaTh0X2kDt6rIFG78eiBQqnsauc186Cv9SfsDMR8p9b023JRT0YCFMm JA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 36ugq3bcqt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 17:41:14 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 11MHUQSH034639;
+        Mon, 22 Feb 2021 17:41:14 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2173.outbound.protection.outlook.com [104.47.55.173])
+        by userp3030.oracle.com with ESMTP id 36ucbwdek4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Feb 2021 17:41:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Jbt3b74KO8TD2A1oDBsAqNNXw881aHf1T9IFDObdkB10rgF6/s1cmV3MIVGhBthY2n1xa3VIC6tOwH+FPLBczsOZaucUQkzU6Z5ZvbDLNF8KR12407UxeGQ0Cz8AThz1/KE1/b2bkK/2Is5Yb3QxdRrTjS0eRBUC4plUxH/z5JKjuckYnjrS9o7m5wVAX0O5vClqLBCPr+4Fbm/bKxjQVvIYHt5fPSb57xzBqcT4PJggnbsMZnQx59nIaM5fe/O5CpxvXQ6BjH5Rk++Dg0qX5+S2Ceb4n2tIsodNpsKbaKKBtb3TwqSeSBnKyKcr6oGDZtEwrhaKFQj7C5kk8tlnhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tgZgzefRhC+4CvKoLZc454CwBmOFmlLryME3AixTMS8=;
+ b=h2jyCyT0RoYlyaoF1D4wJD2DdDelNW3NIsBLYPT/EWtXzbGmjVdDZCPSsR4a3hXp/hvSQiefY1a95YqFIjFxg9Iw814yq/7LCNAQ5+Q4NhjKuY3KVz5ge3gzMf3rRe0mtdhcmoFyYp8N9XtbfxmgxKugbdRhP06R17Jd7UUgG+nv6kj3iLmRSRjnPUkYEhnHfOx6qsgZVhVeP61APm2RpUvHYfadAbwk2yA0gd6KDiA4IFFzCCzELeDyaZ0d7Xm9t61TJDK4acVP5aolXwOpw7mFpzKeqsp+NZvHXHQO1tiLsk53uhs8qY7lG7B5bWB3nznXKr3D7MOXIgh+NfuLZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tgZgzefRhC+4CvKoLZc454CwBmOFmlLryME3AixTMS8=;
+ b=XgCUv2ae78vkic42PT5Y919Bic1aGSzyP6x4n8YS+UDUQJLogAckQX5gkO8NMZJsvduHnWc8zb26zWW5bij/9gYW9T4c5ZSh3FTPFiY20w/PlJS8ohHA6OZ7AXMLzBQUsvC8aCKqSAhnEnGc4zbMQy7Lkhf5ylqrMR5RzN9dsJ0=
+Authentication-Results: digikod.net; dkim=none (message not signed)
+ header.d=none;digikod.net; dmarc=none action=none header.from=oracle.com;
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by CH2PR10MB4389.namprd10.prod.outlook.com (2603:10b6:610:a9::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3868.32; Mon, 22 Feb
+ 2021 17:41:11 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::95df:950e:af4c:a5df]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::95df:950e:af4c:a5df%9]) with mapi id 15.20.3868.032; Mon, 22 Feb 2021
+ 17:41:11 +0000
 Content-Type: text/plain; charset=utf-8
+Subject: Re: [PATCH v6 0/5] Enable root to update the blacklist keyring
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+In-Reply-To: <132a6049-e91b-3922-cd3f-89574dd049fe@digikod.net>
+Date:   Mon, 22 Feb 2021 10:41:04 -0700
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Eric Snowberg <eric.snowberg@oracle.com>
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.17712 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
+Message-Id: <E00A6ADE-5634-4E75-8892-FF99AD77EA39@oracle.com>
+References: <20210210120410.471693-1-mic@digikod.net>
+ <132a6049-e91b-3922-cd3f-89574dd049fe@digikod.net>
+To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+X-Mailer: Apple Mail (2.3273)
+X-Originating-IP: [24.52.35.144]
+X-ClientProxiedBy: SJ0PR05CA0030.namprd05.prod.outlook.com
+ (2603:10b6:a03:33b::35) To CH2PR10MB4150.namprd10.prod.outlook.com
+ (2603:10b6:610:ac::13)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.16.177.128] (24.52.35.144) by SJ0PR05CA0030.namprd05.prod.outlook.com (2603:10b6:a03:33b::35) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3890.12 via Frontend Transport; Mon, 22 Feb 2021 17:41:09 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 32b87e72-5001-40e1-b319-08d8d7590ae1
+X-MS-TrafficTypeDiagnostic: CH2PR10MB4389:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CH2PR10MB4389ECFB2A8B3AE3633B29D887819@CH2PR10MB4389.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:800;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 4yEBgweGLdLJV5bcYkkeAq7A0nLcwMLpJB13/D/NtVYJKiCvSOvn26QgNtLQ64pcq9IpW6YlH/zGJ8VKsu97eSMa8S5djxNnBffD050qapqjJRceiovL25jFVAf3n+xupHetxeYG87k7yZuqwIxZQlGec7wODWL0FddxKaYtAulgEDmjj+Tal+Upv2F7Oy08QZY95vGFGUjNgFmxu73eUl6BptxfhyWGMU6RfOZbP2MAfB9kpY6+WHvd2El4sVl2NFCrgRfEhXYKtpqw2gZ2fWPMhGEGpLWwPJAbcZfICzmY8HFSrMxnvsm7F/UIkd8Te9rYzEo35dhGWPIyVFveIInDoY/j82mSe5v2CnZwxOZAR19ZJ4ucBAFbw4cYk5UZoRIWmkragRvj6XwcTjTT4zCxOINb1moBMvKpd2y+BFL64w4OONKK0saAmBCsvZvlsx9AVUCKtj4yhBp0q++uJ/pEBAkwDSghD8MZt9cPz/am/uGzyi1njNMdDoK7osMB3wS23coOOuI60JAWGzzacO4Wc+oSeDyPYPGr9gpi7rN3yOQcvvXVOv8WKxso++x80Ca5ubiSEweVhMphDblT1sKmLxjhUWCHwxCzlOMjF4X36b4dciR7rpmTkef1NuR+VteI8fBqGkzAxCGBv4AJC+ZP/Jlb+5p+vrHgTGqnhrc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(376002)(396003)(366004)(136003)(39860400002)(83380400001)(107886003)(66556008)(66574015)(36756003)(6666004)(33656002)(6486002)(316002)(16576012)(8936002)(478600001)(8676002)(966005)(956004)(52116002)(186003)(54906003)(26005)(53546011)(66946007)(5660300002)(16526019)(2906002)(6916009)(66476007)(4326008)(2616005)(15650500001)(44832011)(7416002)(86362001)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?NHY1SkN2Vk1lMlJaalhmQXF2TjQ2R1JnMjg5cXMzZzBLU3JkUmNFL3g3bnlR?=
+ =?utf-8?B?ZlFvczc2NG5sa0FMUmpNYmN5RWV4TFdjSC9UNjBmOWhMWkQvS1JHTWRlQ2JY?=
+ =?utf-8?B?alZCa3A2TmxETUlQb2VXWFVrd1BNVTJ3M3NMODJaK1NGUFhreFJvdDVzbFp2?=
+ =?utf-8?B?NkFNUFNQcmhOdWdSSGt1V210b3E4dkVsaDRDWGIvaTBtSW9SeVdJaHh4TmV1?=
+ =?utf-8?B?VW1ZeTBZbVBLeDVacnZ1NmVKOFltendFbkxpWjR3alZUelpld204d1JSbVRD?=
+ =?utf-8?B?Qk5KVUlNd3lPRU8rM3dZWkppUVhvNWtFdXhudXJVMUhlaitxakxwZHpnTlZq?=
+ =?utf-8?B?V0ZVckpFcU1peVJHNE5uUy8vNlhLTVFCWFRPbFBmV1VNT0JwN1F0VjN0WXdm?=
+ =?utf-8?B?Z0s5SHRwSzBhMkwxaEtBZ0NoWEJJa1lqdkNOcnBPUVhKNEJVOHhyV3pIbGNy?=
+ =?utf-8?B?QXp4ZzE4UEJ3SzM0QnRlSHNna1FYK2J3eTh3Wnl6YU1aQURGL2VRaDJkeHRK?=
+ =?utf-8?B?NjJxS05GTnZJRTZwMHpMSzdmZU11Mjg0TU1iSHJTZTYxVVVnQ0tsdUJuS0dj?=
+ =?utf-8?B?WDVPV3RER1Bwd3R5RVNTMUIxNkVGSTJvMmtvNCt6SnJOdnpFeXZDMTk3ZEs1?=
+ =?utf-8?B?OS9yRXdITWF0QU0rQjhURDk3UUFjcEM5S2JIR1BzSDFEZG01UlgzSktiRG8z?=
+ =?utf-8?B?VHplR2c1NTdVK3puVDFSVjVtU3FUMUJkc3ZWa05pNUtIYWk1Y1F4QjBwUW5W?=
+ =?utf-8?B?dVdBMy9TTEVQOVFsVmlBVFdCOTlUQ2ZOTUlUMTN4ODkrKzlUYUFEWXJSR1l0?=
+ =?utf-8?B?WTR4OEt1L1d2WXpGNkcvNDk4UUlxZ212NHVIdXBZend5dXl2cHNMVlVGaWw5?=
+ =?utf-8?B?YXV0TnR6YVRtekR2VXVhMUJsL20wbU9uWm1KeitneTVUaDE0STZoUDlNVVFE?=
+ =?utf-8?B?ekFzWTNNUkJZMGVtQ0tJT041dkRpaWppUUpRL0w5M1U1THIxRXE5cHlNQ2lL?=
+ =?utf-8?B?dVFTNG9iU2Q3Wi9tUjRGbE1DUDJxaHJ1dG9zWWNuU2lqL1RQY2hrN3k1N21T?=
+ =?utf-8?B?QmEwb3NTK1p1RTRmY0VrbjRYQ1JhS3FZazZXOUIyR3RqTHNjU0E3UXNIeVZM?=
+ =?utf-8?B?d3pNYW40Y0cwS0hDUU44SU9IdHBGZ3FsYUpRMHg0V0RxQWo5eXJLemFxcmlw?=
+ =?utf-8?B?MWE0S292QkNVNDRxa0xXdzRiRHFOUEpURmpBL3dydVhYa1lEMktHZFpuZ3dW?=
+ =?utf-8?B?dWJFMFV5ZndHOXBXY0Y3aWJJZ1VpcTNyckFOYXROdnN2YjE5NTkvMTNseVA2?=
+ =?utf-8?B?bDZ4OTBEdjlwb3RVQjVVOVl1UWtmcXhTdmdnc3JqeGlXenVQV3dpZ2ZVZ1BO?=
+ =?utf-8?B?QXhYNzEzbnVNRyt2ZWNzdFNMN1FMV0RSTCtpeUVaeU1qRWNZYU9Tc3V5bExv?=
+ =?utf-8?B?c3Zvb3AyZytnanN0TDdYYlpMVklwV1diSHZwR2dDbVVYQjNGdkhyOVYxUlBu?=
+ =?utf-8?B?YWdld2xUcTcrSWFHd2RLVG9zcXpRLzYzM0hqbm1uWCt4NnNGeS9vMGV5dkNX?=
+ =?utf-8?B?SHFqV3N5WitkQmpMSlFFUThoc3FDdWpkY3VGa1pTbDJ4YklvNTZoRTdIS0s3?=
+ =?utf-8?B?VXJIMnBkc3M5SzlEOE5rYXFHeFhBMG9zdG5Ob0oyc2lrckEvSjF6bGpWSGh6?=
+ =?utf-8?B?eGQzTmZPSUtVNkFudVFjQU5zRDFPek0yVE9uSURQYmVHUlUwMEh5VkE0RWJC?=
+ =?utf-8?Q?WcWbQgrHRjq9I/5GOekHMHw2canjw3Wx8E2pCPx?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32b87e72-5001-40e1-b319-08d8d7590ae1
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Feb 2021 17:41:11.1552
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6TnTP0u0gNhJa/YVwlM2yEUTNTjS0clVCO3p2RbkikvviJXjedLVXYEhpfHyfiZ3YuBpBXDmnk5WZp357B/ejXlnhvkW7eaCtbPhStUYRDY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4389
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9903 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ phishscore=0 spamscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102220157
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9903 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ malwarescore=0 spamscore=0 mlxscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 impostorscore=0 lowpriorityscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2102220157
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/22/2021 7:06 AM, Micka=C3=ABl Sala=C3=BCn wrote:
-> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
->
-> Add a new option CONFIG_LSM_AUTO to enable users to delegate default LS=
-M
-> stacking order to kernel developers.  This enable to keep a consistent
-> order of enabled LSM when changing the LSM selection, especially when a=
 
-> new LSM is added to the kernel.
+> On Feb 21, 2021, at 4:17 AM, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> w=
+rote:
+>=20
+> David, Eric, what is the status of this patch series?
 
-TL;DR - NAK
+All the previous issues I had identified have been resolved, so LGTM.
 
-Do you think that we might have considered this when stacking was
-introduced? Did you even consider the implications before sending
-the patch? This only makes any sense if you want to compile in
-AppArmor and/or Smack but always use SELinux. The existing Kconfig
-model handles that perfectly well. Also, this will break when the
-next phase of module stacking comes in, and all of a sudden
-systems will automatically get AppArmor in addition to SELinux
-or Smack.
-
-I know that the CONFIG_LSM/lsm=3D mechanism is clumsy. But we spent
-about a year discussing, proposing and implementing alternatives,
-and if there's a better mechanism, we couldn't find it. Of course
-we considered "just use the kernel order". It doesn't work for
-generic kernels. I understand that adding a new LSM that you want
-to be included by default is a tough problem. I also suggest
-that silently adding an LSM to an existing configuration is likely
-to violate the principle of least astonishment.
-
->
-> CONFIG_LSM depends on !CONFIG_LSM_AUTO, which is backward compatible an=
-d
-> gives the opportunity to users to select CONFIG_LSM_AUTO with a make
-> oldconfig.
->
-> CONFIG_LSM and CONFIG_LSM_AUTO depend on CONFIG_SECURITY, which makes
-> sense because an LSM depends on the security framework.
->
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20210222150608.808146-2-mic@digikod.net=
-
-> ---
->
-> Changes since v2:
-> * Revamp without virtual dependencies but a new option to automatically=
-
->   enable all selected LSMs.
->
-> Changes since v1:
-> * Add CONFIG_SECURITY as a dependency of CONFIG_LSM.  This prevent an
->   error when building without any LSMs.
-> ---
->  security/Kconfig    | 19 +++++++++++++++++++
->  security/security.c | 26 +++++++++++++++++++++++++-
->  2 files changed, 44 insertions(+), 1 deletion(-)
->
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 7561f6f99f1d..fae083e9867d 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -243,6 +243,7 @@ source "security/integrity/Kconfig"
-> =20
->  choice
->  	prompt "First legacy 'major LSM' to be initialized"
-> +	depends on SECURITY
->  	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
->  	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
->  	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
-> @@ -275,8 +276,26 @@ choice
-> =20
->  endchoice
-> =20
-> +config LSM_AUTO
-> +	bool "Automatically enable all selected LSMs at boot"
-> +	depends on SECURITY
-> +	default y
-> +	help
-> +	  This automatically configure the build-time selected LSMs to be
-> +	  enabled at boot unless the "lsm=3D" parameter is provided.
-> +
-> +	  If this option is not selected, it will be required to configure an=
-d
-> +	  maintained a static list of enabled LSMs that may become inconsiste=
-nt
-> +	  with future user configuration.  Indeed, this list will not be
-> +	  automatically upgraded when selecting a new (future) LSM, e.g. with=
-
-> +	  make oldconfig.
-> +
-> +	  If you are unsure how to answer this question, answer Y.
-> +
-> +# This lists should be synchronized with LSM_ORDER defined in security=
-/security.c .
->  config LSM
->  	string "Ordered list of enabled LSMs"
-> +	depends on SECURITY && !LSM_AUTO
->  	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomo=
-yo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
->  	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,s=
-mack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
->  	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEF=
-AULT_SECURITY_TOMOYO
-> diff --git a/security/security.c b/security/security.c
-> index 401663b5b70e..defa1d2c40a3 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -82,7 +82,31 @@ static struct lsm_blob_sizes blob_sizes __lsm_ro_aft=
-er_init;
->  static __initdata const char *chosen_lsm_order;
->  static __initdata const char *chosen_major_lsm;
-> =20
-> -static __initconst const char * const builtin_lsm_order =3D CONFIG_LSM=
-;
-> +#ifdef CONFIG_LSM
-> +#define LSM_ORDER	CONFIG_LSM
-> +#else
-> +
-> +/*
-> + * This lists should be synchronized with the default values of CONFIG=
-_LSM
-> + * defined in security/Kconfig .
-> + */
-> +#define LSM_ORDER_PRE	"lockdown,yama,loadpin,safesetid,integrity,"
-> +
-> +#if defined(CONFIG_DEFAULT_SECURITY_SMACK)
-> +#define LSM_ORDER	LSM_ORDER_PRE "smack,selinux,tomoyo,apparmor,bpf"
-> +#elif defined(CONFIG_DEFAULT_SECURITY_APPARMOR)
-> +#define LSM_ORDER	LSM_ORDER_PRE "apparmor,selinux,smack,tomoyo,bpf"
-> +#elif defined(CONFIG_DEFAULT_SECURITY_TOMOYO)
-> +#define LSM_ORDER	LSM_ORDER_PRE "tomoyo,bpf"
-> +#elif defined(CONFIG_DEFAULT_SECURITY_DAC)
-> +#define LSM_ORDER	LSM_ORDER_PRE "bpf"
-> +#else
-> +#define LSM_ORDER	LSM_ORDER_PRE "selinux,smack,tomoyo,apparmor,bpf"
-> +#endif
-> +
-> +#endif /* CONFIG_LSM */
-> +
-> +static __initconst const char * const builtin_lsm_order =3D LSM_ORDER;=
-
-> =20
->  /* Ordered list of LSMs to initialize. */
->  static __initdata struct lsm_info **ordered_lsms;
+> On 10/02/2021 13:04, Micka=C3=ABl Sala=C3=BCn wrote:
+>> This new patch series is a rebase on David Howells's keys-misc branch.
+>> This mainly fixes UEFI DBX and the new Eric Snowberg's feature to import
+>> asymmetric keys to the blacklist keyring.
+>> I successfully tested this patch series with the 186 entries from
+>> https://uefi.org/sites/default/files/resources/dbxupdate_x64.bin (184
+>> binary hashes and 2 certificates).
+>>=20
+>> The goal of these patches is to add a new configuration option to enable=
+ the
+>> root user to load signed keys in the blacklist keyring.  This keyring is=
+ useful
+>> to "untrust" certificates or files.  Enabling to safely update this keyr=
+ing
+>> without recompiling the kernel makes it more usable.
+>>=20
+>> This can be applied on top of David Howells's keys-next branch:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
+g/?h=3Dkeys-next
+>> Git commits can be found in https://github.com/l0kod/linux branch
+>> dyn-auth-blacklist-v6 commit fcf976b74ffcd4551683e6b70dbf5fb102cf9906 .
+>>=20
+>> Previous patch series:
+>> https://lore.kernel.org/lkml/20210128191705.3568820-1-mic@digikod.net/
+>>=20
+>> Regards,
+>>=20
+>> Micka=C3=ABl Sala=C3=BCn (5):
+>>  tools/certs: Add print-cert-tbs-hash.sh
+>>  certs: Check that builtin blacklist hashes are valid
+>>  certs: Make blacklist_vet_description() more strict
+>>  certs: Factor out the blacklist hash creation
+>>  certs: Allow root user to append signed hashes to the blacklist
+>>    keyring
+>>=20
+>> MAINTAINERS                                   |   2 +
+>> certs/.gitignore                              |   1 +
+>> certs/Kconfig                                 |  17 +-
+>> certs/Makefile                                |  17 +-
+>> certs/blacklist.c                             | 218 ++++++++++++++----
+>> crypto/asymmetric_keys/x509_public_key.c      |   3 +-
+>> include/keys/system_keyring.h                 |  14 +-
+>> scripts/check-blacklist-hashes.awk            |  37 +++
+>> .../platform_certs/keyring_handler.c          |  26 +--
+>> tools/certs/print-cert-tbs-hash.sh            |  91 ++++++++
+>> 10 files changed, 346 insertions(+), 80 deletions(-)
+>> create mode 100755 scripts/check-blacklist-hashes.awk
+>> create mode 100755 tools/certs/print-cert-tbs-hash.sh
+>>=20
+>>=20
+>> base-commit: 5bcd72358a7d7794ade0452ed12919b8c4d6ffc7
+>>=20
 
