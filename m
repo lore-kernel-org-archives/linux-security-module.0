@@ -2,162 +2,197 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7C1C433DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 15:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D3FC433E0
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 15:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50AC064E83
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 15:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6416A64E2F
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 15:08:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230133AbhBVPFr (ORCPT
+        id S230084AbhBVPIi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Feb 2021 10:05:47 -0500
-Received: from smtp-42ab.mail.infomaniak.ch ([84.16.66.171]:44131 "EHLO
-        smtp-42ab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230215AbhBVPFp (ORCPT
+        Mon, 22 Feb 2021 10:08:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38838 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231255AbhBVPIT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Feb 2021 10:05:45 -0500
+        Mon, 22 Feb 2021 10:08:19 -0500
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [IPv6:2001:1600:3:17::190d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6213C061574
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 07:07:32 -0800 (PST)
 Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Dklpb3pLxzMppP0;
-        Mon, 22 Feb 2021 16:04:55 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Dklpb0tVvzlh8TH;
-        Mon, 22 Feb 2021 16:04:55 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4DklsQ6vvXzMqXJk;
+        Mon, 22 Feb 2021 16:07:22 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4DklsP6SCPzlh8Tg;
+        Mon, 22 Feb 2021 16:07:21 +0100 (CET)
+Subject: Re: [PATCH v2 3/3] security: Add LSMs dependencies to CONFIG_LSM
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default LSM stack ordering
-Date:   Mon, 22 Feb 2021 16:06:08 +0100
-Message-Id: <20210222150608.808146-2-mic@digikod.net>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210222150608.808146-1-mic@digikod.net>
-References: <20210222150608.808146-1-mic@digikod.net>
+        Nicolas Iooss <nicolas.iooss@m4x.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20210215181511.2840674-1-mic@digikod.net>
+ <20210215181511.2840674-4-mic@digikod.net>
+ <CAFqZXNsvqx-pbC+wzHB4aXX6h=buU3csM_a=By-zCOmx0n-xCQ@mail.gmail.com>
+ <CAK7LNAQDWxGJU41D4+AbjFiX63BiA+bsNzTHZsKKc-LPyO7oCQ@mail.gmail.com>
+ <8809a929-980a-95d1-42dc-576ff54e2923@digikod.net>
+ <CAK7LNARq3YneLCVReHf8z34T7VKfv5zmkqwSiNZwgQGD64VMtA@mail.gmail.com>
+ <12b27829-5db0-e9a4-0c74-896c53445da4@digikod.net>
+Message-ID: <d37f9242-b4b4-f4fb-a0b9-8908c0ff027a@digikod.net>
+Date:   Mon, 22 Feb 2021 16:08:39 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <12b27829-5db0-e9a4-0c74-896c53445da4@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Add a new option CONFIG_LSM_AUTO to enable users to delegate default LSM
-stacking order to kernel developers.  This enable to keep a consistent
-order of enabled LSM when changing the LSM selection, especially when a
-new LSM is added to the kernel.
+On 22/02/2021 11:47, Mickaël Salaün wrote:
+> 
+> On 21/02/2021 15:45, Masahiro Yamada wrote:
+>> On Sun, Feb 21, 2021 at 8:11 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>
+>>>
+>>> On 21/02/2021 09:50, Masahiro Yamada wrote:
+>>>> On Tue, Feb 16, 2021 at 4:03 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>>>>>
+>>>>> On Mon, Feb 15, 2021 at 7:17 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>>>>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>>>>>
+>>>>>> Thanks to the previous commit, this gives the opportunity to users, when
+>>>>>> running make oldconfig, to update the list of enabled LSMs at boot time
+>>>>>> if an LSM has just been enabled or disabled in the build.  Moreover,
+>>>>>> this list only makes sense if at least one LSM is enabled.
+>>>>>>
+>>>>>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+>>>>>> Cc: James Morris <jmorris@namei.org>
+>>>>>> Cc: Masahiro Yamada <masahiroy@kernel.org>
+>>>>>> Cc: Serge E. Hallyn <serge@hallyn.com>
+>>>>>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+>>>>>> Link: https://lore.kernel.org/r/20210215181511.2840674-4-mic@digikod.net
+>>>>>> ---
+>>>>>>
+>>>>>> Changes since v1:
+>>>>>> * Add CONFIG_SECURITY as a dependency of CONFIG_LSM.  This prevent an
+>>>>>>   error when building without any LSMs.
+>>>>>> ---
+>>>>>>  security/Kconfig | 4 ++++
+>>>>>>  1 file changed, 4 insertions(+)
+>>>>>>
+>>>>>> diff --git a/security/Kconfig b/security/Kconfig
+>>>>>> index 7561f6f99f1d..addcc1c04701 100644
+>>>>>> --- a/security/Kconfig
+>>>>>> +++ b/security/Kconfig
+>>>>>> @@ -277,6 +277,10 @@ endchoice
+>>>>>>
+>>>>>>  config LSM
+>>>>>>         string "Ordered list of enabled LSMs"
+>>>>>> +       depends on SECURITY || SECURITY_LOCKDOWN_LSM || SECURITY_YAMA || \
+>>>>>> +               SECURITY_LOADPIN || SECURITY_SAFESETID || INTEGRITY || \
+>>>>>> +               SECURITY_SELINUX || SECURITY_SMACK || SECURITY_TOMOYO || \
+>>>>>> +               SECURITY_APPARMOR || BPF_LSM
+>>>>>
+>>>>> This looks really awkward, since all of these already depend on
+>>>>> SECURITY (if not, it's a bug)... I guarantee you that after some time
+>>>>> someone will come, see that the weird boolean expression is equivalent
+>>>>> to just SECURITY, and simplify it.
+>>>>
+>>>>
+>>>> Currently, LSM does not depend on SECURITY.
+>>>> So you can always define LSM irrespective of SECURITY,
+>>>> which seems a bug.
+>>>>
+>>>> So, I agree with adding 'depends on SECURITY'.
+>>>>
+>>>> What he is trying to achieve in this series
+>>>> seems wrong, of course.
+>>>
+>>> This may be wrong in the general case, but not for CONFIG_LSM.
+>>>
+>>>>
+>>>>
+>>>>> I assume the new mechanism wouldn't work as intended if there is just
+>>>>> SECURITY? If not, then maybe you should rather specify this value
+>>>>> dependency via some new  field rather than abusing "depends on" (say,
+>>>>> "value depends on"?). The fact that a seemingly innocent change to the
+>>>>> config definition breaks your mechanism suggests that the design is
+>>>>> flawed.
+>>>
+>>> Masahiro, what do you think about this suggested "value depends on"?
+>>
+>>
+>> Of course, no.
+>>
+>>
+>> See the help text in init/Kconfig:
+>>
+>>           This choice is there only for converting CONFIG_DEFAULT_SECURITY
+>>           in old kernel configs to CONFIG_LSM in new kernel configs. Don't
+>>           change this choice unless you are creating a fresh kernel config,
+>>           for this choice will be ignored after CONFIG_LSM has been set.
+>>
+>>
+>> When CONFIG_LSM is already set in the .config,
+>> this choice is just ignored.
+>> So, oldconfig is working as the help message says.
+>>
+>> If you think 2623c4fbe2ad1341ff2d1e12410d0afdae2490ca
+>> is a pointless commit, you should ask Kees about it.
+> 
+> This commit was for backward compatibility to not change the configured
+> system behavior because of a new default configuration.
+> Here I want to address a forward compatibility issue: when users want to
+> enable an LSM, give them the opportunity to enable it at boot time too
+> instead of silently ignoring this new configuration at boot time.
+> Indeed, there is two kind of configurations: built time configuration
+> with Kconfig, and boot time configuration with the content of
+> CONFIG_LSM. However, there is no direct dependency between LSM toggles
+> and CONFIG_LSM once it is set.
+> 
+> I think a better solution would be to add a new CONFIG_LSM_AUTO boolean
+> to automatically generate the content of CONFIG_LSM according to the
+> (build/kconfig) enabled LSMs, while letting users the ability to
+> manually configure CONFIG_LSM otherwise. What do you think?
 
-CONFIG_LSM depends on !CONFIG_LSM_AUTO, which is backward compatible and
-gives the opportunity to users to select CONFIG_LSM_AUTO with a make
-oldconfig.
+I sent a new patch series dedicated to the LSM issue:
+https://lore.kernel.org/linux-security-module/20210222150608.808146-1-mic@digikod.net/
 
-CONFIG_LSM and CONFIG_LSM_AUTO depend on CONFIG_SECURITY, which makes
-sense because an LSM depends on the security framework.
-
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20210222150608.808146-2-mic@digikod.net
----
-
-Changes since v2:
-* Revamp without virtual dependencies but a new option to automatically
-  enable all selected LSMs.
-
-Changes since v1:
-* Add CONFIG_SECURITY as a dependency of CONFIG_LSM.  This prevent an
-  error when building without any LSMs.
----
- security/Kconfig    | 19 +++++++++++++++++++
- security/security.c | 26 +++++++++++++++++++++++++-
- 2 files changed, 44 insertions(+), 1 deletion(-)
-
-diff --git a/security/Kconfig b/security/Kconfig
-index 7561f6f99f1d..fae083e9867d 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -243,6 +243,7 @@ source "security/integrity/Kconfig"
- 
- choice
- 	prompt "First legacy 'major LSM' to be initialized"
-+	depends on SECURITY
- 	default DEFAULT_SECURITY_SELINUX if SECURITY_SELINUX
- 	default DEFAULT_SECURITY_SMACK if SECURITY_SMACK
- 	default DEFAULT_SECURITY_TOMOYO if SECURITY_TOMOYO
-@@ -275,8 +276,26 @@ choice
- 
- endchoice
- 
-+config LSM_AUTO
-+	bool "Automatically enable all selected LSMs at boot"
-+	depends on SECURITY
-+	default y
-+	help
-+	  This automatically configure the build-time selected LSMs to be
-+	  enabled at boot unless the "lsm=" parameter is provided.
-+
-+	  If this option is not selected, it will be required to configure and
-+	  maintained a static list of enabled LSMs that may become inconsistent
-+	  with future user configuration.  Indeed, this list will not be
-+	  automatically upgraded when selecting a new (future) LSM, e.g. with
-+	  make oldconfig.
-+
-+	  If you are unsure how to answer this question, answer Y.
-+
-+# This lists should be synchronized with LSM_ORDER defined in security/security.c .
- config LSM
- 	string "Ordered list of enabled LSMs"
-+	depends on SECURITY && !LSM_AUTO
- 	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
- 	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
- 	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-diff --git a/security/security.c b/security/security.c
-index 401663b5b70e..defa1d2c40a3 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -82,7 +82,31 @@ static struct lsm_blob_sizes blob_sizes __lsm_ro_after_init;
- static __initdata const char *chosen_lsm_order;
- static __initdata const char *chosen_major_lsm;
- 
--static __initconst const char * const builtin_lsm_order = CONFIG_LSM;
-+#ifdef CONFIG_LSM
-+#define LSM_ORDER	CONFIG_LSM
-+#else
-+
-+/*
-+ * This lists should be synchronized with the default values of CONFIG_LSM
-+ * defined in security/Kconfig .
-+ */
-+#define LSM_ORDER_PRE	"lockdown,yama,loadpin,safesetid,integrity,"
-+
-+#if defined(CONFIG_DEFAULT_SECURITY_SMACK)
-+#define LSM_ORDER	LSM_ORDER_PRE "smack,selinux,tomoyo,apparmor,bpf"
-+#elif defined(CONFIG_DEFAULT_SECURITY_APPARMOR)
-+#define LSM_ORDER	LSM_ORDER_PRE "apparmor,selinux,smack,tomoyo,bpf"
-+#elif defined(CONFIG_DEFAULT_SECURITY_TOMOYO)
-+#define LSM_ORDER	LSM_ORDER_PRE "tomoyo,bpf"
-+#elif defined(CONFIG_DEFAULT_SECURITY_DAC)
-+#define LSM_ORDER	LSM_ORDER_PRE "bpf"
-+#else
-+#define LSM_ORDER	LSM_ORDER_PRE "selinux,smack,tomoyo,apparmor,bpf"
-+#endif
-+
-+#endif /* CONFIG_LSM */
-+
-+static __initconst const char * const builtin_lsm_order = LSM_ORDER;
- 
- /* Ordered list of LSMs to initialize. */
- static __initdata struct lsm_info **ordered_lsms;
--- 
-2.30.0
-
+> 
+>>
+>>>>>
+>>>>> I do think this would be a useful feature, but IMHO shouldn't be
+>>>>> implemented like this.
+>>>>>
+>>>>>>         default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+>>>>>>         default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+>>>>>>         default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+>>>>>> --
+>>>>>> 2.30.0
+>>>>>>
+>>>>>
+>>>>> --
+>>>>> Ondrej Mosnacek
+>>>>> Software Engineer, Linux Security - SELinux kernel
+>>>>> Red Hat, Inc.
+>>>>>
+>>>>
+>>>>
+>> --
+>> Best Regards
+>> Masahiro Yamada
+>>
