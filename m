@@ -2,132 +2,169 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7081AC433DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 02:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B2BC433DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 04:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 339F564EE6
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 02:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E693164EB4
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 04:59:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231872AbhBVCsL (ORCPT
+        id S230090AbhBVE7b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Feb 2021 21:48:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50236 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231871AbhBVCsG (ORCPT
+        Sun, 21 Feb 2021 23:59:31 -0500
+Received: from z11.mailgun.us ([104.130.96.11]:59469 "EHLO z11.mailgun.us"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230044AbhBVE7a (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Feb 2021 21:48:06 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BD12C061574;
-        Sun, 21 Feb 2021 18:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=5fFHNeJ8nqeNMa0DGHcRPcH+3cOuL7XbveGYEMFXDD0=; b=zv4edCC+GUZ4S1hKw2n1qVccHA
-        SyAdKzZ7/YhO7qCGFXhKPPMOylEbFxDAr3gyFcD+aWyX7xIx/6p393eHfreBW3ie4QmMpK/fm81Bn
-        VZg+wbJHlpaMhy/OexPEqs2ay95PZ97d006cElTeOeBdu50B12NLBz3h+Gl0Q54P4S2AQ4Cuq9yE8
-        BnfK+54Y9cUu52AYwqTyGiyPerKvaKwtu4W9BqkMib187LitIbX5AWpKuN8nhXdNCISllSyZV3nw0
-        RcPrJWAo0C5WilVYiksG1s7MyFmNEyhvjkZFw5dYkxLNaT+C6UTobqz3cDtYT2UmpB5ffJ3KahLbz
-        EwpxiH5Q==;
-Received: from [2601:1c0:6280:3f0::d05b]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1lE1Fq-0001g8-QV; Mon, 22 Feb 2021 02:47:23 +0000
-Subject: Re: [PATCH v3 3/8] securtiy/brute: Detect a brute force attack
-To:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>, Shuah Khan <shuah@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-References: <20210221154919.68050-1-john.wood@gmx.com>
- <20210221154919.68050-4-john.wood@gmx.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f4fd9e44-539e-279e-a3a6-8af39f863f73@infradead.org>
-Date:   Sun, 21 Feb 2021 18:47:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Sun, 21 Feb 2021 23:59:30 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1613969951; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=eMp/Oi18EvtK5YOknhy++/LedAfl59fyqLiaB5bvtI4=;
+ b=kVna8xnlQIC2dIfySXDmbIpMJjxJ8mNhnBN8opNYlx9kcvU3cmOls9GgkOhtlrtfP8SdKD8o
+ pamX7H6vQraBKYHoiDILT/zU7FkUmZsSpj/1scFUB9Jthx6lSthyVn84PT+dWG5+eMQKd7S3
+ Zw8SdpEofYYYcWH0uOHsVR3zb9s=
+X-Mailgun-Sending-Ip: 104.130.96.11
+X-Mailgun-Sid: WyJkN2ViYyIsICJsaW51eC1zZWN1cml0eS1tb2R1bGVAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 60333a027237f827dcf20c3f (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 22 Feb 2021 04:58:42
+ GMT
+Sender: pnagar=codeaurora.org@mg.codeaurora.org
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 94EF4C43468; Mon, 22 Feb 2021 04:58:42 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pnagar)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 517FEC433CA;
+        Mon, 22 Feb 2021 04:58:41 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <20210221154919.68050-4-john.wood@gmx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 22 Feb 2021 10:28:41 +0530
+From:   pnagar@codeaurora.org
+To:     Marc Zyngier <maz@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+        Will Deacon <will@kernel.org>
+Cc:     Will Deacon <will@kernel.org>, ardb@kernel.org, arnd@arndb.de,
+        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-arch@vger.kernel.org, casey@schaufler-ca.com,
+        ndesaulniers@google.com, dhowells@redhat.com, ojeda@kernel.org,
+        psodagud@codeaurora.org, nmardana@codeaurora.org, johan@kernel.org,
+        joe@perches.com, jeyu@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] RTIC: selinux: ARM64: Move selinux_state to a separate
+ page
+In-Reply-To: <09bd49a4d8fcb1bebaa4f40fd5c6eac3@kernel.org>
+References: <1613470672-3069-1-git-send-email-pnagar@codeaurora.org>
+ <20210217094205.GA3570@willie-the-truck>
+ <09bd49a4d8fcb1bebaa4f40fd5c6eac3@kernel.org>
+Message-ID: <5f33e59bf9c01ed5c33a9c3cbe277615@codeaurora.org>
+X-Sender: pnagar@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi--
-
-scripts/kernel-doc does not like these items to be marked
-as being in kernel-doc notation. scripts/kernel-doc does not
-recognize them as one of: struct, union, enum, typedef, so it
-defaults to trying to interpret these as functions, and then
-says:
-
-(I copied these blocks to my test megatest.c source file.)
-
-
-../src/megatest.c:1214: warning: cannot understand function prototype: 'const u64 BRUTE_EMA_WEIGHT_NUMERATOR = 7; '
-../src/megatest.c:1219: warning: cannot understand function prototype: 'const u64 BRUTE_EMA_WEIGHT_DENOMINATOR = 10; '
-../src/megatest.c:1228: warning: cannot understand function prototype: 'const unsigned char BRUTE_MAX_FAULTS = 200; '
-../src/megatest.c:1239: warning: cannot understand function prototype: 'const unsigned char BRUTE_MIN_FAULTS = 5; '
-../src/megatest.c:1249: warning: cannot understand function prototype: 'const u64 BRUTE_CRASH_PERIOD_THRESHOLD = 30000; '
-
-
-On 2/21/21 7:49 AM, John Wood wrote:
+On 2021-02-17 15:45, Marc Zyngier wrote:
+> On 2021-02-17 09:42, Will Deacon wrote:
+>> [Please include arm64 and kvm folks for threads involving the stage-2 
+>> MMU]
+>> 
+>> On Tue, Feb 16, 2021 at 03:47:52PM +0530, Preeti Nagar wrote:
+>>> The changes introduce a new security feature, RunTime Integrity Check
+>>> (RTIC), designed to protect Linux Kernel at runtime. The motivation
+>>> behind these changes is:
+>>> 1. The system protection offered by Security Enhancements(SE) for
+>>> Android relies on the assumption of kernel integrity. If the kernel
+>>> itself is compromised (by a perhaps as yet unknown future 
+>>> vulnerability),
+>>> SE for Android security mechanisms could potentially be disabled and
+>>> rendered ineffective.
+>>> 2. Qualcomm Snapdragon devices use Secure Boot, which adds 
+>>> cryptographic
+>>> checks to each stage of the boot-up process, to assert the 
+>>> authenticity
+>>> of all secure software images that the device executes.  However, due 
+>>> to
+>>> various vulnerabilities in SW modules, the integrity of the system 
+>>> can be
+>>> compromised at any time after device boot-up, leading to 
+>>> un-authorized
+>>> SW executing.
+>>> 
+>>> The feature's idea is to move some sensitive kernel structures to a
+>>> separate page and monitor further any unauthorized changes to these,
+>>> from higher Exception Levels using stage 2 MMU. Moving these to a
+>>> different page will help avoid getting page faults from un-related 
+>>> data.
+>>> The mechanism we have been working on removes the write permissions 
+>>> for
+>>> HLOS in the stage 2 page tables for the regions to be monitored, such
+>>> that any modification attempts to these will lead to faults being
+>>> generated and handled by handlers. If the protected assets are moved 
+>>> to
+>>> a separate page, faults will be generated corresponding to change 
+>>> attempts
+>>> to these assets only. If not moved to a separate page, write attempts 
+>>> to
+>>> un-related data present on the monitored pages will also be 
+>>> generated.
+>>> 
+>>> Using this feature, some sensitive variables of the kernel which are
+>>> initialized after init or are updated rarely can also be protected 
+>>> from
+>>> simple overwrites and attacks trying to modify these.
+>> 
+>> Although I really like the idea of using stage-2 to protect the 
+>> kernel, I
+>> think the approach you outline here is deeply flawed. Identifying 
+>> "sensitive
+>> variables" of the kernel to protect is subjective and doesn't scale.
+>> Furthermore, the triaging of what constitues a valid access is notably
+>> absent from your description and is assumedly implemented in an opaque 
+>> blob
+>> at EL2.
+>> 
+>> I think a better approach would be along the lines of:
+>> 
+>>   1. Introduce the protection at stage-1 (like we already have for 
+>> mapping
+>>      e.g. the kernel text R/O)
+>> 
+>>   2. Implement the handlers in the kernel, so the heuristics are 
+>> clear.
+>> 
+>>   3. Extend this to involve KVM, so that the host can manage its own
+>>      stage-2 to firm-up the stage-1 protections.
 > 
-> +/**
-> + * brute_stats_ptr_lock - Lock to protect the brute_stats structure pointer.
-> + */
-> +static DEFINE_RWLOCK(brute_stats_ptr_lock);
+> +1 on that. Even if, as I suspect, this is targeting some unspecified
+> hypervisor that is not KVM, the first course of action should be for
+> this to be implemented in the kernel's own hypervisor first so that
+> anyone can review understand what is at play.
+> 
+> Thanks,
+> 
+>          M.
 
-> +/**
-> + * BRUTE_EMA_WEIGHT_NUMERATOR - Weight's numerator of EMA.
-> + */
-> +static const u64 BRUTE_EMA_WEIGHT_NUMERATOR = 7;
+Thank you for your comments. The key value add of the feature is a third
+party independent entity keeping a watch on crucial kernel assets, such 
+that
+in case the kernel itself is compromised, still, the protection can 
+remain intact.
+Can this be achieved if the implementation is done in KVM? I've limited 
+knowledge
+of KVM currently, can surely look into more details for a better 
+understanding.
 
-> +/**
-> + * BRUTE_EMA_WEIGHT_DENOMINATOR - Weight's denominator of EMA.
-> + */
-> +static const u64 BRUTE_EMA_WEIGHT_DENOMINATOR = 10;
-
-> +/**
-> + * BRUTE_MAX_FAULTS - Maximum number of faults.
-> + *
-> + * If a brute force attack is running slowly for a long time, the application
-> + * crash period's EMA is not suitable for the detection. This type of attack
-> + * must be detected using a maximum number of faults.
-> + */
-> +static const unsigned char BRUTE_MAX_FAULTS = 200;
-
-> +/**
-> + * BRUTE_MIN_FAULTS - Minimum number of faults.
-> + *
-> + * The application crash period's EMA cannot be used until a minimum number of
-> + * data has been applied to it. This constraint allows getting a trend when this
-> + * moving average is used. Moreover, it avoids the scenario where an application
-> + * fails quickly from execve system call due to reasons unrelated to a real
-> + * attack.
-> + */
-> +static const unsigned char BRUTE_MIN_FAULTS = 5;
-
-> +/**
-> + * BRUTE_CRASH_PERIOD_THRESHOLD - Application crash period threshold.
-> + *
-> + * The units are expressed in milliseconds.
-> + *
-> + * A fast brute force attack is detected when the application crash period falls
-> + * below this threshold.
-> + */
-> +static const u64 BRUTE_CRASH_PERIOD_THRESHOLD = 30000;
-
-Basically we don't support scalars in kernel-doc notation...
-
--- 
-~Randy
-
+Agree that the mechanism for triaging what constitutes valid access 
+needs a clear
+approach. We will discuss your suggestions internally if we can use them 
+to improve
+the overall feature design and share updated patches. Thank you!
