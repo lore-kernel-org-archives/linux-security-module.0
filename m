@@ -2,67 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 560FFC43381
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 01:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33791C433E9
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 02:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F70C64F09
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 01:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E89C364EF2
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Feb 2021 02:27:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230224AbhBVBVf (ORCPT
+        id S231510AbhBVC0p (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Feb 2021 20:21:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230186AbhBVBVc (ORCPT
+        Sun, 21 Feb 2021 21:26:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45662 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229895AbhBVC0n (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Feb 2021 20:21:32 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id E015C64ED6;
-        Mon, 22 Feb 2021 01:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1613956851;
-        bh=GHzQgAZYqyh+zIBNuWaiu+W+uV9SXp/fN01OGtvmryQ=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=u/iuagqLphNQLM05hdL4UMK7jQ1tD03l7EBjaHEoqtHRfPgTRfb1+KlV5GZp27xqt
-         JrtAhS5oBQQAKF0IF8uExMwO4PjQIxOLhfN/Atm+mIgtR54IlDFsFLvrOON4UQW+HR
-         JIhdPjZAoDVU4dx+RUoN5bOwGjw0r6IpG90m7+gAuW9fBvuBg5GXGxmr86l1+1GcAO
-         dz3wrDccSEcnY1IRPfE02Wylt1w66cGnw+xOXZcNhhHr/vKMyQY49fmmRagcVegSH+
-         GG12CxFGRHk8ybVZjrsKuMwsu2rWuDUGjuL0HZ69TJlgPJsey1ZJMDbbzJ+i+Tkgx3
-         6W/pqFMslv6Cg==
-Subject: Re: [GIT PULL] Smack patches for v5.12
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <7fc1be79-b611-24e9-f2fb-282dd061d755@schaufler-ca.com>
-References: <7fc1be79-b611-24e9-f2fb-282dd061d755.ref@schaufler-ca.com> <7fc1be79-b611-24e9-f2fb-282dd061d755@schaufler-ca.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <7fc1be79-b611-24e9-f2fb-282dd061d755@schaufler-ca.com>
-X-PR-Tracked-Remote: https://github.com/cschaufler/smack-next tags/Smack-for-v5.12
-X-PR-Tracked-Commit-Id: 7ef4c19d245f3dc233fd4be5acea436edd1d83d8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 92ae63c07b8fba40f960c7286403bbdc90e46655
-Message-Id: <161395685188.836.16504244911447964533.pr-tracker-bot@kernel.org>
-Date:   Mon, 22 Feb 2021 01:20:51 +0000
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
+        Sun, 21 Feb 2021 21:26:43 -0500
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713C3C061574;
+        Sun, 21 Feb 2021 18:26:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description;
+        bh=SgDyTF6te7DXNOCVKjo1ENIP+yb2tE5tKrG6fzvV48A=; b=d3gAn8tmpmoO8+BYMVc8MSNBlO
+        ptbHm8IWEbjsn3ShJKhmDjLA9bXZ05G2jAq0fh2z0YEskL/Nv7PmKahwIf8QctnTzKCOcINUN781f
+        YsMy3YsCBlksoJsfNFd6q7HaT7O9rU2nHws4oEfKzPkzZ9I6NCc21KlZ2cZvy7qgmsRvTP1S8inb0
+        g2mAKWcegynrKxMPN7OFRWe/WJmZV1V0Jq1/rvKLWwHTS3X8Y5PcdUyxnTF1o8aYvshT+LX1CG3/w
+        +aNbFoLERm3Gv7OEMzcgI9SWYCTdgVcyXh+PccTtacBFPowiQPH3T4sBREoqXtF3z8yyMGbfwLSmM
+        NdOLpk9w==;
+Received: from [2601:1c0:6280:3f0::d05b]
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1lE0v6-0000iD-Vd; Mon, 22 Feb 2021 02:25:57 +0000
+Subject: Re: [PATCH v3 3/8] securtiy/brute: Detect a brute force attack
+To:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>, Shuah Khan <shuah@kernel.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <20210221154919.68050-1-john.wood@gmx.com>
+ <20210221154919.68050-4-john.wood@gmx.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <085f8f05-243e-fbf0-3f9c-ea011511a296@infradead.org>
+Date:   Sun, 21 Feb 2021 18:25:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <20210221154919.68050-4-john.wood@gmx.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Tue, 16 Feb 2021 14:06:51 -0800:
+Hi--
 
-> https://github.com/cschaufler/smack-next tags/Smack-for-v5.12
+On 2/21/21 7:49 AM, John Wood wrote:
+> 
+> Signed-off-by: John Wood <john.wood@gmx.com>
+> ---
+>  security/brute/brute.c | 488 +++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 474 insertions(+), 14 deletions(-)
+> 
+> diff --git a/security/brute/brute.c b/security/brute/brute.c
+> index 70f812bb7763..645bd6e02638 100644
+> --- a/security/brute/brute.c
+> +++ b/security/brute/brute.c
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/92ae63c07b8fba40f960c7286403bbdc90e46655
 
-Thank you!
+> +/**
+> + * print_fork_attack_running() - Warn about a fork brute force attack.
+> + */
+> +static inline void print_fork_attack_running(void)
+> +{
+> +	pr_warn("Fork brute force attack detected [%s]\n", current->comm);
+> +}
 
+Do these pr_warn() calls need to be rate-limited so that they don't
+flood the kernel log?
+
+
+> +/**
+> + * print_exec_attack_running() - Warn about an exec brute force attack.
+> + * @stats: Statistical data shared by all the fork hierarchy processes.
+> + *
+> + * The statistical data shared by all the fork hierarchy processes cannot be
+> + * NULL.
+> + *
+> + * Before showing the process name it is mandatory to find a process that holds
+> + * a pointer to the exec statistics.
+> + *
+> + * Context: Must be called with tasklist_lock and brute_stats_ptr_lock held.
+> + */
+> +static void print_exec_attack_running(const struct brute_stats *stats)
+> +{
+> +	struct task_struct *p;
+> +	struct brute_stats **p_stats;
+> +	bool found = false;
+> +
+> +	for_each_process(p) {
+> +		p_stats = brute_stats_ptr(p);
+> +		if (*p_stats == stats) {
+> +			found = true;
+> +			break;
+> +		}
+>  	}
+> +
+> +	if (WARN(!found, "No exec process\n"))
+> +		return;
+> +
+> +	pr_warn("Exec brute force attack detected [%s]\n", p->comm);
+> +}
+
+
+thanks.
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+~Randy
+
