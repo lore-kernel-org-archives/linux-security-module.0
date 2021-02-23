@@ -8,59 +8,59 @@ X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA99DC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 02:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A75C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 02:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D65D64E41
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 02:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55A3464E41
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 02:36:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230209AbhBWCc0 (ORCPT
+        id S230099AbhBWCga (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Feb 2021 21:32:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45186 "EHLO
+        Mon, 22 Feb 2021 21:36:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229991AbhBWCcZ (ORCPT
+        with ESMTP id S230415AbhBWCg1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Feb 2021 21:32:25 -0500
-Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4D5C061786
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 18:31:45 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id l3so18970851ybf.17
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 18:31:45 -0800 (PST)
+        Mon, 22 Feb 2021 21:36:27 -0500
+Received: from mail-pf1-x449.google.com (mail-pf1-x449.google.com [IPv6:2607:f8b0:4864:20::449])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBA4FC06178A
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 18:35:46 -0800 (PST)
+Received: by mail-pf1-x449.google.com with SMTP id 185so5688226pfx.5
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 18:35:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=sender:date:in-reply-to:message-id:mime-version:references:subject
          :from:cc;
-        bh=Q1j93qwuy/J16VYdZY9OwcszBQob8ihsmTijrh0rYD4=;
-        b=DVElnxie0yaEXCS7ca25i9lmUVZhtZ4x2QRALHD8pmEq45Y8JrUrAOVroI/Kheq9hK
-         v8AMU7lNenLwIeE7TBqbCZhmiY9h8BKLC1nnjDpyJgj4pcFhPl4zvVifRdtpPLjlylI/
-         ezLYkKqbiM8/ghryZuBss1/wmACnj6lo28XKrKLQqPROxffxNnVAOQwVCyl8dgSFV3+u
-         7RxCarhish8ysaUXMUEP+OqepKRIwxzTGv4KgJI7XA3EwpaO3u9spReDNcoKok4c1T2r
-         VRvSzg0JbQL4EU1GZKXmcmy+BackzruQTuebrlsMoWpZvcZPGQWQO283uxAk/2yfW1hx
-         8c+A==
+        bh=PGrLnEq5sje+DbyVyjyk9DtPrIKTxkj/GFVaSNwb+20=;
+        b=lQPJcLW5Zj/rVq/5KMZi6Bk5Gxp9bi/jqYNJj/hkmFM6gzte6FNZy8pUhQPuF48DW5
+         rgdLyFQsyQ6U4RJUQqukWwxkSjocc0fLx+yt1DM01Qk39F7C/1AXZh+zjBdJxQ/3G0By
+         9Q1STBNlBg5Q7c+WlQM3qRq5jdlJ/xEHfGwh+b+RySqJGyYgto60gGTcmqgVTnskcTia
+         voGzzLmvFVyrWpAvMnajOE6rcF29MHLzcWao+b+LIqDC6xm2dNFZctXjqUO3V/BvFPkl
+         xIDw2+GeuCSLwm+cSUCmzXDs9pW4C7jufUXw/nbxuMFcESLv2rHy/6q1Bho4udqCsDPz
+         0t3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
          :references:subject:from:cc;
-        bh=Q1j93qwuy/J16VYdZY9OwcszBQob8ihsmTijrh0rYD4=;
-        b=DPsoUbVA2J2AdSQeptkHB6aNXuNlvgn8LgMTicHqrGeYvCOO9HpM/qo9ESaYxR9opS
-         UIfZgxAKistQtkc9M/aA/of05U6WU10jcTfsKKIdhgFH8ic9rYdm78TKjlhmhVM/ZeW1
-         tVSP2EKmUt9Vo7oq66ubGMd0YSIQpqBS/1cosLrKyasIMEiyDKIvor+8hMpYOkowJSME
-         VzF0zSJ87yslKHDv+Vas0fgzbfiY/f55XBOIi3gX4OdgViL06EEvrETJl2L/naFuSJ1W
-         aV38y9VjF7KY1WNo/A2jaZeAfRwI5ydRm/GoXiN/DUorKWhdqpVSUeegivklE2+uVPhJ
-         OE8g==
-X-Gm-Message-State: AOAM533o8P1KSHPw51//gFo2P8closMEVY384juP4Dz487lRW0hhltLm
-        qVkWt2xvgsx12Argzk7MXWweX4k0Q6tI
-X-Google-Smtp-Source: ABdhPJzdESPMYVkuKRp46z6k/1HyWow5PI6VIDHD9DSx2dJLwqSBnc6LDFRg9huHcQPGORE8+ydqlstwhrZh
+        bh=PGrLnEq5sje+DbyVyjyk9DtPrIKTxkj/GFVaSNwb+20=;
+        b=qjKN4jMEFXOH50yKN2sMt5FQ7TktuxMHW+GVgkKBfsK7nydjm3qMEpThZ0y6PamaWJ
+         jbqsKZVfH78aHgezc3YJtxmV3XIQ1HZDJmgNgcyQm8Kh1lhinIlVazNBtIhPxbggxAKp
+         o/jh2BBUnZMjtxsW/aBb9FcB6PzQ5nJbfzr3teI0iaRpcAiyxlhN85n1XTEsx8GOdkmv
+         U+ZV3HSXkvAprU1cd9xfTSiJsiNGyz8HVfubM4FLqYAxei2oeCPaCBu8K86cMDamfqj7
+         y+sHDa9W58YesxLLLg4DpvLfIvSYvtahpuwn2HBagUv7/hOEOLpIOxmG3s3R3Hbmy247
+         TupA==
+X-Gm-Message-State: AOAM531Eb5WrFmtGTStG56rOMy1Lu45D7TRoeEVKmM71LMkAoQZ97SSN
+        xyGTXh58i5aui95vFcnPwyCT93kEnEhy
+X-Google-Smtp-Source: ABdhPJwpIgoHP79+CAP1cZb8niAgyx2loeUCwl0+OoIAPkr358YzHC0nbYkhT6jM2oeR9Nm6NApKoYyBPvq+
 Sender: "jiancai via sendgmr" <jiancai@jiancai.svl.corp.google.com>
 X-Received: from jiancai.svl.corp.google.com ([2620:15c:2ce:0:7985:60cc:661a:9692])
- (user=jiancai job=sendgmr) by 2002:a25:da0e:: with SMTP id
- n14mr37389154ybf.356.1614047504192; Mon, 22 Feb 2021 18:31:44 -0800 (PST)
-Date:   Mon, 22 Feb 2021 18:31:07 -0800
-In-Reply-To: <20210219230841.875875-1-jiancai@google.com>
-Message-Id: <20210223023125.2265845-1-jiancai@google.com>
+ (user=jiancai job=sendgmr) by 2002:a17:90a:8e83:: with SMTP id
+ f3mr27877234pjo.70.1614047746241; Mon, 22 Feb 2021 18:35:46 -0800 (PST)
+Date:   Mon, 22 Feb 2021 18:35:28 -0800
+In-Reply-To: <20210223023125.2265845-1-jiancai@google.com>
+Message-Id: <20210223023542.2287529-1-jiancai@google.com>
 Mime-Version: 1.0
-References: <20210219230841.875875-1-jiancai@google.com>
+References: <20210223023125.2265845-1-jiancai@google.com>
 X-Mailer: git-send-email 2.30.0.617.g56c4b15f3c-goog
 Subject: [PATCH v5] ARM: Implement SLS mitigation
 From:   Jian Cai <jiancai@google.com>
@@ -77,13 +77,13 @@ Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
         Arnd Bergmann <arnd@arndb.de>,
         Masahiro Yamada <masahiroy@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
         Kees Cook <keescook@chromium.org>,
         "=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>,
+        Ard Biesheuvel <ardb@kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Fangrui Song <maskray@google.com>,
-        Marc Zyngier <maz@kernel.org>, Mike Rapoport <rppt@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         David Brazdil <dbrazdil@google.com>,
         James Morse <james.morse@arm.com>,
@@ -120,19 +120,18 @@ Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
 Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 Signed-off-by: Jian Cai <jiancai@google.com>
 ---
-
 Changes v4->v5:
   Removed "default n" and made the description target indepdent in
-  Kconfig.hardening.
+  Kconfig.hardening. Please ignore my last email, it did not include the
+  changes.
 
-
- arch/arm/Makefile                  |  4 ++++
- arch/arm/include/asm/vmlinux.lds.h |  4 ++++
- arch/arm/kernel/vmlinux.lds.S      |  1 +
- arch/arm64/Makefile                |  4 ++++
- arch/arm64/kernel/vmlinux.lds.S    |  5 +++++
- security/Kconfig.hardening         | 10 ++++++++++
- 6 files changed, 28 insertions(+)
+ arch/arm/Makefile                  | 4 ++++
+ arch/arm/include/asm/vmlinux.lds.h | 4 ++++
+ arch/arm/kernel/vmlinux.lds.S      | 1 +
+ arch/arm64/Makefile                | 4 ++++
+ arch/arm64/kernel/vmlinux.lds.S    | 5 +++++
+ security/Kconfig.hardening         | 8 ++++++++
+ 6 files changed, 26 insertions(+)
 
 diff --git a/arch/arm/Makefile b/arch/arm/Makefile
 index 4aaec9599e8a..11d89ef32da9 100644
@@ -212,22 +211,20 @@ index 4c0b0c89ad59..f8912e42ffcd 100644
  		. = ALIGN(16);
  		*(.got)			/* Global offset table		*/
 diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index 269967c4fc1b..146b75a79d9e 100644
+index 269967c4fc1b..db76ad732c14 100644
 --- a/security/Kconfig.hardening
 +++ b/security/Kconfig.hardening
-@@ -121,6 +121,16 @@ choice
+@@ -121,6 +121,14 @@ choice
  
  endchoice
  
 +config HARDEN_SLS_ALL
 +	bool "enable SLS vulnerability hardening"
-+	default n
 +	depends on $(cc-option,-mharden-sls=all)
 +	help
-+	  Enables straight-line speculation vulnerability hardening on ARM and ARM64
-+	  architectures. It inserts speculation barrier sequences (SB or DSB+ISB
-+	  depending on the target architecture) after RET and BR, and replacing
-+	  BLR with BL+BR sequence.
++	  Enables straight-line speculation vulnerability hardening. This inserts
++	  speculation barrier instruction sequences after certain unconditional jumps
++	  to prevent speculative execution past those barriers.
 +
  config GCC_PLUGIN_STRUCTLEAK_VERBOSE
  	bool "Report forcefully initialized variables"
