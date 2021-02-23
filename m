@@ -2,170 +2,151 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C41C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 06:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739DCC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 10:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FEBF64DA3
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 06:23:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18C526148E
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 10:06:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229823AbhBWGXI convert rfc822-to-8bit (ORCPT
+        id S230386AbhBWKFo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Feb 2021 01:23:08 -0500
-Received: from mx1.polytechnique.org ([129.104.30.34]:55321 "EHLO
-        mx1.polytechnique.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231785AbhBWGWI (ORCPT
+        Tue, 23 Feb 2021 05:05:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230142AbhBWKFm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Feb 2021 01:22:08 -0500
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by ssl.polytechnique.org (Postfix) with ESMTPSA id 1CEE6564E08;
-        Tue, 23 Feb 2021 07:21:19 +0100 (CET)
-Received: by mail-ot1-f48.google.com with SMTP id d9so390787ote.12;
-        Mon, 22 Feb 2021 22:21:18 -0800 (PST)
-X-Gm-Message-State: AOAM53128Q62lzVkktKznPuzWuzeQ4aUaxse48XdJBgcAXmzbln42Omo
-        nGmF9QJbAIe+Tc5eYPXdP0bqGZVpFeZMLXLajb8=
-X-Google-Smtp-Source: ABdhPJwfVvUyAYF7jvfPMHbDtpYxK7VJPG1FiU1BvYhjPT5npoJy+c43+4etOLGaia6bdyAEHSwqdLWZrxFE+qJSAnM=
-X-Received: by 2002:a05:6830:115:: with SMTP id i21mr19340481otp.96.1614061277868;
- Mon, 22 Feb 2021 22:21:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20210222150608.808146-1-mic@digikod.net> <20210222150608.808146-2-mic@digikod.net>
- <51725b44-bc40-0205-8583-285d3b35b5ca@schaufler-ca.com> <ee461f8d-a02d-0782-8f31-691853a57f00@digikod.net>
- <7b67163a-9de1-313f-5b5a-8c720cef9b73@schaufler-ca.com> <CAJfZ7=n5FOxHXMLRrDQ3F-kDqbYngNoYKcz6_PWi1rPa0_8WpA@mail.gmail.com>
- <3b97e25b-303c-d732-3e5d-f1b1a446e090@schaufler-ca.com>
-In-Reply-To: <3b97e25b-303c-d732-3e5d-f1b1a446e090@schaufler-ca.com>
-From:   Nicolas Iooss <nicolas.iooss@m4x.org>
-Date:   Tue, 23 Feb 2021 07:21:07 +0100
-X-Gmail-Original-Message-ID: <CAJfZ7=ny5xon0qX9_KPu12Ntdef9NfvjHWBow8q-yvjVhfdt0g@mail.gmail.com>
-Message-ID: <CAJfZ7=ny5xon0qX9_KPu12Ntdef9NfvjHWBow8q-yvjVhfdt0g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] security: Add CONFIG_LSM_AUTO to handle default
- LSM stack ordering
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Tue, 23 Feb 2021 05:05:42 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 389EE64E22;
+        Tue, 23 Feb 2021 10:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614074701;
+        bh=Wei69MTAw3cAoHZzehtkt6nVDExu19SQg53rlhzIYkc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WZOqzYAfqkinjCDFARp7S1HJXXBR9/a5BpaM0vR+ODhDKzZDPfF/ye7XjKQMUez35
+         gNYf4tHz2dZXzh6zzeOdB4V3qV1z9r5sgXIXTCI0aO5M02BEsGDwODUFLCu1Lt0bOf
+         0DK9G68zNyFKRYC1hCUEsoWO6316kYRolzd+VXquDUZT8xx0YR4ZC9pYlEAwapnwSR
+         iFZl+6xr5ZixbyOTXA4xJh9vWEFM0si3FfsI5NrErO2BOcvcjSnsbqxWi1qJke/gga
+         uJI0eyUbRiuqihtgi0hZ2CyAWZ72G2AC/8FGKqtO9r7yqQCxJpGGZu4aJGwqnQT86v
+         k3LlYOeONI6cg==
+Date:   Tue, 23 Feb 2021 10:04:53 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Jian Cai <jiancai@google.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Luis Lozano <llozano@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-AV-Checked: ClamAV using ClamSMTP at svoboda.polytechnique.org (Tue Feb 23 07:21:20 2021 +0100 (CET))
-X-Org-Mail: nicolas.iooss.2010@polytechnique.org
+        Ard Biesheuvel <ardb@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Brazdil <dbrazdil@google.com>,
+        James Morse <james.morse@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4] ARM: Implement SLS mitigation
+Message-ID: <20210223100453.GB10254@willie-the-truck>
+References: <20210219201852.3213914-1-jiancai@google.com>
+ <20210219230841.875875-1-jiancai@google.com>
+ <20210222115816.GA8605@willie-the-truck>
+ <CA+SOCLJVGJSn67VU24wPDdsOVeHhGe+KO5ekOCusano=bhn1Mg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+SOCLJVGJSn67VU24wPDdsOVeHhGe+KO5ekOCusano=bhn1Mg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Feb 22, 2021 at 11:46 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->
-> On 2/22/2021 1:12 PM, Nicolas Iooss wrote:
-> > On Mon, Feb 22, 2021 at 9:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 2/22/2021 10:31 AM, Mickaël Salaün wrote:
-> >>> On 22/02/2021 17:51, Casey Schaufler wrote:
-> >>>> On 2/22/2021 7:06 AM, Mickaël Salaün wrote:
-> >>>>> From: Mickaël Salaün <mic@linux.microsoft.com>
-> >>>>>
-> >>>>> Add a new option CONFIG_LSM_AUTO to enable users to delegate default LSM
-> >>>>> stacking order to kernel developers.  This enable to keep a consistent
-> >>>>> order of enabled LSM when changing the LSM selection, especially when a
-> >>>>> new LSM is added to the kernel.
-> >>>> TL;DR - NAK
-> >>>>
-> >>>> Do you think that we might have considered this when stacking was
-> >>>> introduced?
-> >>> I didn't dig the detailed history of LSM stacking, but you are in Cc
-> >>> because I know that you know. I may have though that the main goal of
-> >>> the current LSM stacking implementation was to enable to stack existing
-> >>> LSMs, which works well with this CONFIG_LSM list, but doesn't work as
-> >>> well for new LSMs.
-> >> It works just fine for new LSMs if you treat them as significant
-> >> features which may have significant impact on the behavior of the
-> >> system.
-> >>
-> >>>> Did you even consider the implications before sending
-> >>>> the patch?
-> >>> Yes, and it doesn't change much the current behavior without user
-> >>> interaction. However, it gives the choice to users to choose how they
-> >>> want their configuration to evolve.
-> >> Automatic inclusions of new LSMs would be counter to existing practice.
-> >> It won't work for "major" LSMs.
-> >>
-> >>
-> >>>> This only makes any sense if you want to compile in
-> >>>> AppArmor and/or Smack but always use SELinux. The existing Kconfig
-> >>>> model handles that perfectly well.
-> >>> This patch series doesn't change this behavior if the user doesn't want
-> >>> it to change.
-> >> Well, there's the question. If a distribution/system uses the new scheme
-> >> "users" are going to get new LSMs spontaniously. If they don't it's up to
-> >> the "user". Unsophisticated users won't want this, and the others don't
-> >> need it.
-> > Hello, sorry if I missed something simple but I did not understand
-> > what "Automatic inclusions of new LSMs " and "get new LSMs
-> > spontaniously" is about. If I understood the kernel practice
-> > development correctly, when a new LSM will be included, it will have a
-> > dedicated "config SECURITY_MYNEWLSM" which will be default to "n" in
-> > order to respect the "principle of least astonishment". How could such
-> > a new LSM be automatically/spontaneously added to the LSM list?
->
-> It wouldn't. But compiling the new LSM mynewlsm doesn't add it to
-> the list, either. Today no one should expect a LSM to be active if
-> it hasn't been added to the CONFIG_LSM list. The proposed addition
-> of CONFIG_LSM_AUTO would change that. "make oldconfig" would add
-> security modules that are built to the list. This is unnecessary
-> since whoever changed CONFIG_SECURITY_MYNEWLSM to "y" could easily
-> have added it to CONFIG_LSM. In the right place.
->
-> > I understand that this is a tough issue and that the subject might
-> > have been discussed a few years ago, and if that's the case, it would
-> > be nice to have pointers to some clear documentation or past emails
-> > (and it would be very very nice if the kernel documentation was
-> > updated to document the current state of LSM stacking:
->
-> I'm not going to argue against that.
->
-> >  for example
-> > https://www.kernel.org/doc/html/v5.11/admin-guide/LSM/index.html still
-> > documents the "security=" kernel parameter even though it conflicts
-> > with CONFIG_LSM and can be ignored by the kernel in practise).
->
-> You can still select one "major" module using security= if you
-> don't use lsm= to specify a full list. We put real effort into
-> being backward compatible.
+On Mon, Feb 22, 2021 at 01:50:06PM -0800, Jian Cai wrote:
+> Please see my comments inlined below.
+> 
+> Thanks,
+> Jian
+> 
+> On Mon, Feb 22, 2021 at 3:58 AM Will Deacon <will@kernel.org> wrote:
+> >
+> > On Fri, Feb 19, 2021 at 03:08:13PM -0800, Jian Cai wrote:
+> > > This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
+> > > -mharden-sls=all, which mitigates the straight-line speculation
+> > > vulnerability, speculative execution of the instruction following some
+> > > unconditional jumps. Notice -mharden-sls= has other options as below,
+> > > and this config turns on the strongest option.
+> > >
+> > > all: enable all mitigations against Straight Line Speculation that are implemented.
+> > > none: disable all mitigations against Straight Line Speculation.
+> > > retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
+> > > blr: enable the mitigation against Straight Line Speculation for BLR instructions.
+> > >
+> > > Links:
+> > > https://reviews.llvm.org/D93221
+> > > https://reviews.llvm.org/D81404
+> > > https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
+> > > https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
+> > >
+> > > Suggested-by: Manoj Gupta <manojgupta@google.com>
+> > > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > Suggested-by: Nathan Chancellor  <nathan@kernel.org>
+> > > Suggested-by: David Laight <David.Laight@aculab.com>
+> > > Suggested-by: Will Deacon <will@kernel.org>
+> > > Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> > > Signed-off-by: Jian Cai <jiancai@google.com>
+> > > ---
+> >
+> > Please can you reply to my previous questions?
+> >
+> > https://lore.kernel.org/linux-arm-kernel/20210217094859.GA3706@willie-the-truck/
+> >
+> > (apologies if you did, but I don't see them in the archive or my inbox)
+> 
+> I should have clarified the suggested-by tag was in regard to the
+> Kconfig text change. Regarding your earlier questions, please see my
+> comments below.
+> 
+> > So I think that either we enable this unconditionally, or we don't enable it
+> > at all (and people can hack their CFLAGS themselves if they want to).
+> 
+> Not sure if this answers your question but this config should provide
+> a way for people to turn on the mitigation at their own risk.
 
-No, this is not true. If CONFIG_LSM is defined to "lockdown,yama,bpf"
-and if the kernel command line contains "security=selinux" without any
-"lsm" parameter, then SELinux is not enabled properly.
+I'm not sure I see the point; either it's needed or its not. I wonder if
+there's a plan to fix this in future CPUs (another question for the Arm
+folks).
 
-This broke the configuration of several Arch Linux users (cf.
-https://bbs.archlinux.org/viewtopic.php?id=263360 and
-https://github.com/archlinuxhardened/selinux/issues/81) and I reported
-this on some kernel mailing lists a few days ago
-(https://lore.kernel.org/linux-security-module/CAJfZ7=nWJisw2RRW2AvFgpYKQK_PghudeBqiTQXNfedS2idP-Q@mail.gmail.com/).
-Your answer to this issue was very clear (and thank you for explaining
-this):
+> > It would be helpful for one of the Arm folks to chime in, as I'm yet to see any
+> > evidence that this is actually exploitable. Is it any worse that Spectre-v1,
+> > where we _don't_ have a compiler mitigation?
+> 
+> > Finally, do we have to worry about our assembly code?
+> 
+> I am not sure if there are any plans to protect assembly code and I
+> will leave it to the Arm folks since they know a whole lot better. But
+> even without that part, we should still have better protection,
+> especially when overhead does not look too bad: I did some preliminary
+> experiments on ChromeOS, code size of vmlinux increased 3%, and there
+> were no noticeable changes to run-time performance of the benchmarks I
+> used.
 
-« You can't (currently) use SELinux and BPF at the same time. This is
-because the infrastructure does not support multiple secid<->secctx
-translation hooks. You get the first one in the list. BPF provides all
-hooks, so the SELinux hooks aren't reached and the secid to secctx
-translation fails in the "bpf,selinux" case. »
+If the mitigation is required, I'm not sure I see a lot of point in only
+doing a half-baked job of it. It feels a bit like a box-ticking exercise,
+in which case any overhead is too much.
 
-Anyway, this means that using "security=..." does not work if
-CONFIG_LSM contains the BPF LSM module, so no: you *cannot* select one
-major module using security=, when the kernel is compiled with
-CONFIG_LSM="lockdown,yama,bpf".
-
-Backward compatibility was broken and Arch Linux users were required
-to switch to lsm= in order to use AppArmor, SELinux, etc. (and the
-documentation of this distribution got updated:
-https://wiki.archlinux.org/index.php/AppArmor,
-https://wiki.archlinux.org/index.php/SELinux, etc.).
-
-Nicolas
-
+Will
