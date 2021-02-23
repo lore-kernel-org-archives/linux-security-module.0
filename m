@@ -2,131 +2,236 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
+X-Spam-Status: No, score=-26.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA533C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 00:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA99DC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 02:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A778764E41
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 00:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D65D64E41
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 02:32:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbhBWA2M (ORCPT
+        id S230209AbhBWCc0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Feb 2021 19:28:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17346 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229902AbhBWA2M (ORCPT
+        Mon, 22 Feb 2021 21:32:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45186 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229991AbhBWCcZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Feb 2021 19:28:12 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 11N03u8t080253;
-        Mon, 22 Feb 2021 19:27:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=5J1oNfAJAZAWoxjtw2qcZ2zBoDJIV8/0RoNc1tVrOmU=;
- b=TuaJ0zDVYIg4AY90MBndgHRlYvzfK4jqgc1ESE1iyR8uvrJ/GoI6ngmI1q9M0WS2DAjE
- Lr9oTlDH4U+L9r7yseWCriPaycgoYIbqaAU8Q4NlKG5yPkg6wMjQba8ZSIr/GB1DRIc9
- 7ktZjt5jITTiDDui4Gy8dcX7FZM4m1j6vcun7GAAUP5qXknNWXujDz1OX9p4WLs+ha1p
- +OWpEXU859OTC3D9DjzPfoBbMEZNmEdvX3YfGVyKz3J4W1H0rhDoFiau+HV7QtaJUA6V
- ty3WJbQlDMWQnOoP+oN4Umq/hZCa5NWMOeC53Zr6/m8eHuIHpJI4H9gySmyCYljGs92N BQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36vkehyd7g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Feb 2021 19:27:16 -0500
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 11N04Hin082615;
-        Mon, 22 Feb 2021 19:27:16 -0500
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 36vkehyd75-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 22 Feb 2021 19:27:16 -0500
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 11N0CAcv005954;
-        Tue, 23 Feb 2021 00:27:14 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma02fra.de.ibm.com with ESMTP id 36tt2893mj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Feb 2021 00:27:14 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 11N0RC7l43319652
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Feb 2021 00:27:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F07384C044;
-        Tue, 23 Feb 2021 00:27:11 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 030404C040;
-        Tue, 23 Feb 2021 00:27:09 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.63.56])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Feb 2021 00:27:08 +0000 (GMT)
-Message-ID: <3862fed24a1265611f71327ddb444e52557bdc7c.camel@linux.ibm.com>
-Subject: Re: [PATCH v24 04/25] IMA: avoid label collisions with stacked LSMs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        paul@paul-moore.com, sds@tycho.nsa.gov,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 22 Feb 2021 19:27:07 -0500
-In-Reply-To: <77ebed19-2912-d8f2-cb4d-3f782c8e7f18@schaufler-ca.com>
-References: <20210126164108.1958-1-casey@schaufler-ca.com>
-         <20210126164108.1958-5-casey@schaufler-ca.com>
-         <693f81d9d2f50a920cafbbc8d1d634598b99081a.camel@linux.ibm.com>
-         <77ebed19-2912-d8f2-cb4d-3f782c8e7f18@schaufler-ca.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+        Mon, 22 Feb 2021 21:32:25 -0500
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C4D5C061786
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 18:31:45 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id l3so18970851ybf.17
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Feb 2021 18:31:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=sender:date:in-reply-to:message-id:mime-version:references:subject
+         :from:cc;
+        bh=Q1j93qwuy/J16VYdZY9OwcszBQob8ihsmTijrh0rYD4=;
+        b=DVElnxie0yaEXCS7ca25i9lmUVZhtZ4x2QRALHD8pmEq45Y8JrUrAOVroI/Kheq9hK
+         v8AMU7lNenLwIeE7TBqbCZhmiY9h8BKLC1nnjDpyJgj4pcFhPl4zvVifRdtpPLjlylI/
+         ezLYkKqbiM8/ghryZuBss1/wmACnj6lo28XKrKLQqPROxffxNnVAOQwVCyl8dgSFV3+u
+         7RxCarhish8ysaUXMUEP+OqepKRIwxzTGv4KgJI7XA3EwpaO3u9spReDNcoKok4c1T2r
+         VRvSzg0JbQL4EU1GZKXmcmy+BackzruQTuebrlsMoWpZvcZPGQWQO283uxAk/2yfW1hx
+         8c+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:in-reply-to:message-id:mime-version
+         :references:subject:from:cc;
+        bh=Q1j93qwuy/J16VYdZY9OwcszBQob8ihsmTijrh0rYD4=;
+        b=DPsoUbVA2J2AdSQeptkHB6aNXuNlvgn8LgMTicHqrGeYvCOO9HpM/qo9ESaYxR9opS
+         UIfZgxAKistQtkc9M/aA/of05U6WU10jcTfsKKIdhgFH8ic9rYdm78TKjlhmhVM/ZeW1
+         tVSP2EKmUt9Vo7oq66ubGMd0YSIQpqBS/1cosLrKyasIMEiyDKIvor+8hMpYOkowJSME
+         VzF0zSJ87yslKHDv+Vas0fgzbfiY/f55XBOIi3gX4OdgViL06EEvrETJl2L/naFuSJ1W
+         aV38y9VjF7KY1WNo/A2jaZeAfRwI5ydRm/GoXiN/DUorKWhdqpVSUeegivklE2+uVPhJ
+         OE8g==
+X-Gm-Message-State: AOAM533o8P1KSHPw51//gFo2P8closMEVY384juP4Dz487lRW0hhltLm
+        qVkWt2xvgsx12Argzk7MXWweX4k0Q6tI
+X-Google-Smtp-Source: ABdhPJzdESPMYVkuKRp46z6k/1HyWow5PI6VIDHD9DSx2dJLwqSBnc6LDFRg9huHcQPGORE8+ydqlstwhrZh
+Sender: "jiancai via sendgmr" <jiancai@jiancai.svl.corp.google.com>
+X-Received: from jiancai.svl.corp.google.com ([2620:15c:2ce:0:7985:60cc:661a:9692])
+ (user=jiancai job=sendgmr) by 2002:a25:da0e:: with SMTP id
+ n14mr37389154ybf.356.1614047504192; Mon, 22 Feb 2021 18:31:44 -0800 (PST)
+Date:   Mon, 22 Feb 2021 18:31:07 -0800
+In-Reply-To: <20210219230841.875875-1-jiancai@google.com>
+Message-Id: <20210223023125.2265845-1-jiancai@google.com>
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-02-22_08:2021-02-22,2021-02-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- clxscore=1015 bulkscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2102220208
+References: <20210219230841.875875-1-jiancai@google.com>
+X-Mailer: git-send-email 2.30.0.617.g56c4b15f3c-goog
+Subject: [PATCH v5] ARM: Implement SLS mitigation
+From:   Jian Cai <jiancai@google.com>
+Cc:     ndesaulniers@google.com, manojgupta@google.com, llozano@google.com,
+        clang-built-linux@googlegroups.com, Jian Cai <jiancai@google.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "=?UTF-8?q?Andreas=20F=C3=A4rber?=" <afaerber@suse.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Fangrui Song <maskray@google.com>,
+        Marc Zyngier <maz@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Brazdil <dbrazdil@google.com>,
+        James Morse <james.morse@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2021-02-22 at 15:45 -0800, Casey Schaufler wrote:
-> On 2/14/2021 10:21 AM, Mimi Zohar wrote:
-> 
-> Would these changes match your suggestion?
-> 
->  security/integrity/ima/ima_policy.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 9ac673472781..e80956548243 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -78,11 +78,11 @@ struct ima_rule_entry {
->  	bool (*uid_op)(kuid_t, kuid_t);    /* Handlers for operators       */
->  	bool (*fowner_op)(kuid_t, kuid_t); /* uid_eq(), uid_gt(), uid_lt() */
->  	int pcr;
-> +	int which_lsm; /* which of the rules to use */
->  	struct {
->  		void *rules[LSMBLOB_ENTRIES]; /* LSM file metadata specific */
+This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
+-mharden-sls=all, which mitigates the straight-line speculation
+vulnerability, speculative execution of the instruction following some
+unconditional jumps. Notice -mharden-sls= has other options as below,
+and this config turns on the strongest option.
 
-If each IMA policy rule may only contain a single LSM specific
-LSM_OBJ_{USER | ROLE | TYPE} and LSM_SUBJ_{USER | ROLE | TYPE}, then
-there is no need for rules[LSMBLOB_ENTRIES].  Leave it as "*rule".
+all: enable all mitigations against Straight Line Speculation that are implemented.
+none: disable all mitigations against Straight Line Speculation.
+retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
+blr: enable the mitigation against Straight Line Speculation for BLR instructions.
 
-Otherwise it looks good.
+Links:
+https://reviews.llvm.org/D93221
+https://reviews.llvm.org/D81404
+https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/downloads/straight-line-speculation
+https://developer.arm.com/support/arm-security-updates/speculative-processor-vulnerability/frequently-asked-questions#SLS2
 
-Mimi
+Suggested-by: Manoj Gupta <manojgupta@google.com>
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
+Suggested-by: David Laight <David.Laight@aculab.com>
+Suggested-by: Will Deacon <will@kernel.org>
+Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Jian Cai <jiancai@google.com>
+---
 
->  		char *args_p;	/* audit value */
->  		int type;	/* audit type */
-> -		int which_lsm; /* which of the rules to use */
->  	} lsm[MAX_LSM_RULES];
->  	char *fsname;
->  	struct ima_rule_opt_list *keyrings; /* Measure keys added to these keyrings */
+Changes v4->v5:
+  Removed "default n" and made the description target indepdent in
+  Kconfig.hardening.
+
+
+ arch/arm/Makefile                  |  4 ++++
+ arch/arm/include/asm/vmlinux.lds.h |  4 ++++
+ arch/arm/kernel/vmlinux.lds.S      |  1 +
+ arch/arm64/Makefile                |  4 ++++
+ arch/arm64/kernel/vmlinux.lds.S    |  5 +++++
+ security/Kconfig.hardening         | 10 ++++++++++
+ 6 files changed, 28 insertions(+)
+
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 4aaec9599e8a..11d89ef32da9 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -48,6 +48,10 @@ CHECKFLAGS	+= -D__ARMEL__
+ KBUILD_LDFLAGS	+= -EL
+ endif
+ 
++ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
++KBUILD_CFLAGS  += -mharden-sls=all
++endif
++
+ #
+ # The Scalar Replacement of Aggregates (SRA) optimization pass in GCC 4.9 and
+ # later may result in code being generated that handles signed short and signed
+diff --git a/arch/arm/include/asm/vmlinux.lds.h b/arch/arm/include/asm/vmlinux.lds.h
+index 4a91428c324d..c7f9717511ca 100644
+--- a/arch/arm/include/asm/vmlinux.lds.h
++++ b/arch/arm/include/asm/vmlinux.lds.h
+@@ -145,3 +145,7 @@
+ 		__edtcm_data = .;					\
+ 	}								\
+ 	. = __dtcm_start + SIZEOF(.data_dtcm);
++
++#define SLS_TEXT							\
++		ALIGN_FUNCTION();					\
++		*(.text.__llvm_slsblr_thunk_*)
+diff --git a/arch/arm/kernel/vmlinux.lds.S b/arch/arm/kernel/vmlinux.lds.S
+index f7f4620d59c3..e71f2bc97bae 100644
+--- a/arch/arm/kernel/vmlinux.lds.S
++++ b/arch/arm/kernel/vmlinux.lds.S
+@@ -63,6 +63,7 @@ SECTIONS
+ 	.text : {			/* Real text segment		*/
+ 		_stext = .;		/* Text and read-only data	*/
+ 		ARM_TEXT
++		SLS_TEXT
+ 	}
+ 
+ #ifdef CONFIG_DEBUG_ALIGN_RODATA
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 90309208bb28..ca7299b356a9 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -34,6 +34,10 @@ $(warning LSE atomics not supported by binutils)
+   endif
+ endif
+ 
++ifeq ($(CONFIG_HARDEN_SLS_ALL), y)
++KBUILD_CFLAGS  += -mharden-sls=all
++endif
++
+ cc_has_k_constraint := $(call try-run,echo				\
+ 	'int main(void) {						\
+ 		asm volatile("and w0, w0, %w0" :: "K" (4294967295));	\
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 4c0b0c89ad59..f8912e42ffcd 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -93,6 +93,10 @@ jiffies = jiffies_64;
+ #define TRAMP_TEXT
+ #endif
+ 
++#define SLS_TEXT					\
++	ALIGN_FUNCTION();				\
++	*(.text.__llvm_slsblr_thunk_*)
++
+ /*
+  * The size of the PE/COFF section that covers the kernel image, which
+  * runs from _stext to _edata, must be a round multiple of the PE/COFF
+@@ -144,6 +148,7 @@ SECTIONS
+ 			HIBERNATE_TEXT
+ 			TRAMP_TEXT
+ 			*(.fixup)
++			SLS_TEXT
+ 			*(.gnu.warning)
+ 		. = ALIGN(16);
+ 		*(.got)			/* Global offset table		*/
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 269967c4fc1b..146b75a79d9e 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -121,6 +121,16 @@ choice
+ 
+ endchoice
+ 
++config HARDEN_SLS_ALL
++	bool "enable SLS vulnerability hardening"
++	default n
++	depends on $(cc-option,-mharden-sls=all)
++	help
++	  Enables straight-line speculation vulnerability hardening on ARM and ARM64
++	  architectures. It inserts speculation barrier sequences (SB or DSB+ISB
++	  depending on the target architecture) after RET and BR, and replacing
++	  BLR with BL+BR sequence.
++
+ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
+ 	bool "Report forcefully initialized variables"
+ 	depends on GCC_PLUGIN_STRUCTLEAK
+-- 
+2.30.0.617.g56c4b15f3c-goog
 
