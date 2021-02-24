@@ -5,47 +5,46 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B88EBC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 13:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 441DCC4360C
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 14:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED5664F00
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 13:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 113CC64F08
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 14:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232296AbhBXNIk (ORCPT
+        id S234988AbhBXOZN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Feb 2021 08:08:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58406 "EHLO mail.kernel.org"
+        Wed, 24 Feb 2021 09:25:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235779AbhBXNGo (ORCPT
+        id S234112AbhBXNIk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Feb 2021 08:06:44 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 5F33864F6F;
-        Wed, 24 Feb 2021 12:54:18 +0000 (UTC)
+        Wed, 24 Feb 2021 08:08:40 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5D93464F10;
+        Wed, 24 Feb 2021 12:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614171259;
-        bh=aILvyt+thfgO51TYEgG0XK1pq4MMRzLdDyiGFATa0g8=;
+        s=k20201202; t=1614171300;
+        bh=rxFk4IJfwyIsOo132xiwLCKmsrp6jZ81JqfH0aKVHcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X0YUz9bBsD/IQnTXsbnlOGH3N6GMi+kvDlLClmT/A2GKFaR1xmXH/Q9nVuiMU9KeD
-         Mp8cBS191WAuhwc6Wcr2Qe7cgNmCxWM6977ZQHDQz5QE1AiHIpfTdkwZomADZ5ASY7
-         iWEaFW8s0R5ykeAZgwOYBp5DF78vY07Twxq0UwsVWu2VJWXhoFdnC1dwqMmEmO8hIu
-         gijt64NpimTbxSUKY9Otel0rDDLVgy4O0bb0pkooPXiXQKd/4xLpxOMlbemQtwNpGo
-         mFJLRUICrkPzGohtNCBt/W8hcjt7tUQAMKfmbMQoQtXlPVj37LGneZ7cWUOcbjk8v1
-         ZnuHBwGe4Gf/Q==
+        b=OXeLHB4WptHYyg5ZQLg6530y+VmCiPT8snj8mJ2t7b8YR3ortOGoImrt2ldEQyVh6
+         VTQdl0wmg0wU9lzVYCXTsXgDhmjFdXCww4qudAvPI6a7YOOqvFDTM3v7tCNTRkcQAa
+         k3wwPlNru8O2QAbeESufr8w8D24C8Oqx9Dp9CLSFdLtIc7OpNl3/pVVwQLHu/RfHrR
+         dP+K0gQNGmnmKMqTPqQMeglNwz4mOLrd2556MJgNaX94HbaIb6tf1xphqiBPmho7y5
+         Us44VgFrFsL6SB7Q5Ar+Vg11yn1pZntsuAuYcj6zAiRLsO32gTNDjsksq65QW4H9xS
+         ZXLpuF2QrE/ag==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
-        syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com,
-        Casey Schaufler <casey@schaufler-ca.com>,
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+0789a72b46fd91431bd8@syzkaller.appspotmail.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 29/40] smackfs: restrict bytes count in smackfs write functions
-Date:   Wed, 24 Feb 2021 07:53:29 -0500
-Message-Id: <20210224125340.483162-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 19/26] tomoyo: ignore data race while checking quota
+Date:   Wed, 24 Feb 2021 07:54:27 -0500
+Message-Id: <20210224125435.483539-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210224125340.483162-1-sashal@kernel.org>
-References: <20210224125340.483162-1-sashal@kernel.org>
+In-Reply-To: <20210224125435.483539-1-sashal@kernel.org>
+References: <20210224125435.483539-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -53,111 +52,180 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 7ef4c19d245f3dc233fd4be5acea436edd1d83d8 ]
+[ Upstream commit 5797e861e402fff2bedce4ec8b7c89f4248b6073 ]
 
-syzbot found WARNINGs in several smackfs write operations where
-bytes count is passed to memdup_user_nul which exceeds
-GFP MAX_ORDER. Check count size if bigger than PAGE_SIZE.
+syzbot is reporting that tomoyo's quota check is racy [1]. But this check
+is tolerant of some degree of inaccuracy. Thus, teach KCSAN to ignore
+this data race.
 
-Per smackfs doc, smk_write_net4addr accepts any label or -CIPSO,
-smk_write_net6addr accepts any label or -DELETE. I couldn't find
-any general rule for other label lengths except SMK_LABELLEN,
-SMK_LONGLABEL, SMK_CIPSOMAX which are documented.
+[1] https://syzkaller.appspot.com/bug?id=999533deec7ba6337f8aa25d8bd1a4d5f7e50476
 
-Let's constrain, in general, smackfs label lengths for PAGE_SIZE.
-Although fuzzer crashes write to smackfs/netlabel on 0x400000 length.
-
-Here is a quick way to reproduce the WARNING:
-python -c "print('A' * 0x400000)" > /sys/fs/smackfs/netlabel
-
-Reported-by: syzbot+a71a442385a0b2815497@syzkaller.appspotmail.com
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Reported-by: syzbot <syzbot+0789a72b46fd91431bd8@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smackfs.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ security/tomoyo/file.c    | 16 ++++++++--------
+ security/tomoyo/network.c |  8 ++++----
+ security/tomoyo/util.c    | 24 ++++++++++++------------
+ 3 files changed, 24 insertions(+), 24 deletions(-)
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 9c4308077574c..5e75ff2e1b14f 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -1163,7 +1163,7 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
- 		return -EPERM;
- 	if (*ppos != 0)
- 		return -EINVAL;
--	if (count < SMK_NETLBLADDRMIN)
-+	if (count < SMK_NETLBLADDRMIN || count > PAGE_SIZE - 1)
- 		return -EINVAL;
+diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
+index 2a374b4da8f5c..cbe0dc87bb919 100644
+--- a/security/tomoyo/file.c
++++ b/security/tomoyo/file.c
+@@ -356,13 +356,13 @@ static bool tomoyo_merge_path_acl(struct tomoyo_acl_info *a,
+ {
+ 	u16 * const a_perm = &container_of(a, struct tomoyo_path_acl, head)
+ 		->perm;
+-	u16 perm = *a_perm;
++	u16 perm = READ_ONCE(*a_perm);
+ 	const u16 b_perm = container_of(b, struct tomoyo_path_acl, head)->perm;
+ 	if (is_delete)
+ 		perm &= ~b_perm;
+ 	else
+ 		perm |= b_perm;
+-	*a_perm = perm;
++	WRITE_ONCE(*a_perm, perm);
+ 	return !perm;
+ }
  
- 	data = memdup_user_nul(buf, count);
-@@ -1423,7 +1423,7 @@ static ssize_t smk_write_net6addr(struct file *file, const char __user *buf,
- 		return -EPERM;
- 	if (*ppos != 0)
- 		return -EINVAL;
--	if (count < SMK_NETLBLADDRMIN)
-+	if (count < SMK_NETLBLADDRMIN || count > PAGE_SIZE - 1)
- 		return -EINVAL;
+@@ -428,14 +428,14 @@ static bool tomoyo_merge_mkdev_acl(struct tomoyo_acl_info *a,
+ {
+ 	u8 *const a_perm = &container_of(a, struct tomoyo_mkdev_acl,
+ 					 head)->perm;
+-	u8 perm = *a_perm;
++	u8 perm = READ_ONCE(*a_perm);
+ 	const u8 b_perm = container_of(b, struct tomoyo_mkdev_acl, head)
+ 		->perm;
+ 	if (is_delete)
+ 		perm &= ~b_perm;
+ 	else
+ 		perm |= b_perm;
+-	*a_perm = perm;
++	WRITE_ONCE(*a_perm, perm);
+ 	return !perm;
+ }
  
- 	data = memdup_user_nul(buf, count);
-@@ -1830,6 +1830,10 @@ static ssize_t smk_write_ambient(struct file *file, const char __user *buf,
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
+@@ -505,13 +505,13 @@ static bool tomoyo_merge_path2_acl(struct tomoyo_acl_info *a,
+ {
+ 	u8 * const a_perm = &container_of(a, struct tomoyo_path2_acl, head)
+ 		->perm;
+-	u8 perm = *a_perm;
++	u8 perm = READ_ONCE(*a_perm);
+ 	const u8 b_perm = container_of(b, struct tomoyo_path2_acl, head)->perm;
+ 	if (is_delete)
+ 		perm &= ~b_perm;
+ 	else
+ 		perm |= b_perm;
+-	*a_perm = perm;
++	WRITE_ONCE(*a_perm, perm);
+ 	return !perm;
+ }
  
-+	/* Enough data must be present */
-+	if (count == 0 || count > PAGE_SIZE)
-+		return -EINVAL;
-+
- 	data = memdup_user_nul(buf, count);
- 	if (IS_ERR(data))
- 		return PTR_ERR(data);
-@@ -2001,6 +2005,9 @@ static ssize_t smk_write_onlycap(struct file *file, const char __user *buf,
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
+@@ -640,14 +640,14 @@ static bool tomoyo_merge_path_number_acl(struct tomoyo_acl_info *a,
+ {
+ 	u8 * const a_perm = &container_of(a, struct tomoyo_path_number_acl,
+ 					  head)->perm;
+-	u8 perm = *a_perm;
++	u8 perm = READ_ONCE(*a_perm);
+ 	const u8 b_perm = container_of(b, struct tomoyo_path_number_acl, head)
+ 		->perm;
+ 	if (is_delete)
+ 		perm &= ~b_perm;
+ 	else
+ 		perm |= b_perm;
+-	*a_perm = perm;
++	WRITE_ONCE(*a_perm, perm);
+ 	return !perm;
+ }
  
-+	if (count > PAGE_SIZE)
-+		return -EINVAL;
-+
- 	data = memdup_user_nul(buf, count);
- 	if (IS_ERR(data))
- 		return PTR_ERR(data);
-@@ -2088,6 +2095,9 @@ static ssize_t smk_write_unconfined(struct file *file, const char __user *buf,
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
+diff --git a/security/tomoyo/network.c b/security/tomoyo/network.c
+index 9094f4b3b367b..2ea0da6e5180f 100644
+--- a/security/tomoyo/network.c
++++ b/security/tomoyo/network.c
+@@ -233,14 +233,14 @@ static bool tomoyo_merge_inet_acl(struct tomoyo_acl_info *a,
+ {
+ 	u8 * const a_perm =
+ 		&container_of(a, struct tomoyo_inet_acl, head)->perm;
+-	u8 perm = *a_perm;
++	u8 perm = READ_ONCE(*a_perm);
+ 	const u8 b_perm = container_of(b, struct tomoyo_inet_acl, head)->perm;
  
-+	if (count > PAGE_SIZE)
-+		return -EINVAL;
-+
- 	data = memdup_user_nul(buf, count);
- 	if (IS_ERR(data))
- 		return PTR_ERR(data);
-@@ -2643,6 +2653,10 @@ static ssize_t smk_write_syslog(struct file *file, const char __user *buf,
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
+ 	if (is_delete)
+ 		perm &= ~b_perm;
+ 	else
+ 		perm |= b_perm;
+-	*a_perm = perm;
++	WRITE_ONCE(*a_perm, perm);
+ 	return !perm;
+ }
  
-+	/* Enough data must be present */
-+	if (count == 0 || count > PAGE_SIZE)
-+		return -EINVAL;
-+
- 	data = memdup_user_nul(buf, count);
- 	if (IS_ERR(data))
- 		return PTR_ERR(data);
-@@ -2735,10 +2749,13 @@ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
- 		return -EPERM;
+@@ -259,14 +259,14 @@ static bool tomoyo_merge_unix_acl(struct tomoyo_acl_info *a,
+ {
+ 	u8 * const a_perm =
+ 		&container_of(a, struct tomoyo_unix_acl, head)->perm;
+-	u8 perm = *a_perm;
++	u8 perm = READ_ONCE(*a_perm);
+ 	const u8 b_perm = container_of(b, struct tomoyo_unix_acl, head)->perm;
  
- 	/*
-+	 * No partial write.
- 	 * Enough data must be present.
- 	 */
- 	if (*ppos != 0)
- 		return -EINVAL;
-+	if (count == 0 || count > PAGE_SIZE)
-+		return -EINVAL;
+ 	if (is_delete)
+ 		perm &= ~b_perm;
+ 	else
+ 		perm |= b_perm;
+-	*a_perm = perm;
++	WRITE_ONCE(*a_perm, perm);
+ 	return !perm;
+ }
  
- 	data = memdup_user_nul(buf, count);
- 	if (IS_ERR(data))
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index d3d9d9f1edb04..16d488f963b12 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -1020,30 +1020,30 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r)
+ 		u8 i;
+ 		if (ptr->is_deleted)
+ 			continue;
++		/*
++		 * Reading perm bitmap might race with tomoyo_merge_*() because
++		 * caller does not hold tomoyo_policy_lock mutex. But exceeding
++		 * max_learning_entry parameter by a few entries does not harm.
++		 */
+ 		switch (ptr->type) {
+ 		case TOMOYO_TYPE_PATH_ACL:
+-			perm = container_of(ptr, struct tomoyo_path_acl, head)
+-				->perm;
++			data_race(perm = container_of(ptr, struct tomoyo_path_acl, head)->perm);
+ 			break;
+ 		case TOMOYO_TYPE_PATH2_ACL:
+-			perm = container_of(ptr, struct tomoyo_path2_acl, head)
+-				->perm;
++			data_race(perm = container_of(ptr, struct tomoyo_path2_acl, head)->perm);
+ 			break;
+ 		case TOMOYO_TYPE_PATH_NUMBER_ACL:
+-			perm = container_of(ptr, struct tomoyo_path_number_acl,
+-					    head)->perm;
++			data_race(perm = container_of(ptr, struct tomoyo_path_number_acl, head)
++				  ->perm);
+ 			break;
+ 		case TOMOYO_TYPE_MKDEV_ACL:
+-			perm = container_of(ptr, struct tomoyo_mkdev_acl,
+-					    head)->perm;
++			data_race(perm = container_of(ptr, struct tomoyo_mkdev_acl, head)->perm);
+ 			break;
+ 		case TOMOYO_TYPE_INET_ACL:
+-			perm = container_of(ptr, struct tomoyo_inet_acl,
+-					    head)->perm;
++			data_race(perm = container_of(ptr, struct tomoyo_inet_acl, head)->perm);
+ 			break;
+ 		case TOMOYO_TYPE_UNIX_ACL:
+-			perm = container_of(ptr, struct tomoyo_unix_acl,
+-					    head)->perm;
++			data_race(perm = container_of(ptr, struct tomoyo_unix_acl, head)->perm);
+ 			break;
+ 		case TOMOYO_TYPE_MANUAL_TASK_ACL:
+ 			perm = 0;
 -- 
 2.27.0
 
