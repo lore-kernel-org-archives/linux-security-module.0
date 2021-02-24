@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D08C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 14:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA54C433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 14:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D98464F00
+	by mail.kernel.org (Postfix) with ESMTP id D624864F00
 	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 14:32:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234906AbhBXO0l (ORCPT
+        id S235189AbhBXO1K (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Feb 2021 09:26:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59904 "EHLO mail.kernel.org"
+        Wed, 24 Feb 2021 09:27:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236031AbhBXNL0 (ORCPT
+        id S236137AbhBXNOA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Feb 2021 08:11:26 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 175AF64F9A;
-        Wed, 24 Feb 2021 12:55:32 +0000 (UTC)
+        Wed, 24 Feb 2021 08:14:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id D44FD64FB5;
+        Wed, 24 Feb 2021 12:55:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614171332;
-        bh=d+pnYoD9pnmVHjio02s/0OG0i3lMIpPT+tZE/Hi8ttY=;
+        s=k20201202; t=1614171356;
+        bh=5VmWWceF1TbTD1rVIItF0Gcu6QVggeJ57R1GjusCtR4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VcJxoZf4UeNzjaI260+lf4ynZ/RbTWEYnPSA1XfucVh8i6bV7GX/44Wf6KByNOVKc
-         e9xnztsmQnjnEsImnTcWiQtov7Wm9M1OburiGnRQL3UeY6f0ecgXaYskYPKKJ2JySk
-         xE2nhSWwTEgz/QqvMFXMT4qXvvExso+X8rt2HkMSGkP0ePLvaOUNYH6fpzNj4/BVOi
-         Fx7KqG/H27WTDt+QS5saMS89DtazSEGAHR2qCDkoh/SCiOsnCzEH8Gq0ut9EHgTt94
-         kQoU9ZCjCt7V/sHNFW7DHdtMtVARt0/FYHVNwGxRu1ewzqx4JvUNDngoNlsXLUUium
-         zaXTeeIjvSYEg==
+        b=SEhiw6cxqAC2VxQXkMMRtHhx4BF7PoBUzk5BFrZBMLVC3iq0lQtOJokqgvecdKiVu
+         EBmda6dhhdQmOfZaE9KJIZZn7ACEU1ItYaBz/mEM0j221inFrLz/tZvTTGUs162n2v
+         eI+j76JQP5/tIvuNY6w3tOkZwxN9JzIw4Qc66stojRH4WeJP8+1Wmbwp1Ekzf06yao
+         0323K+8TZmmUiEarq7qh6nbxAY4RbCfvpaGD8VVqWT5YD7galMEePZaV45xMVS7kIy
+         oDGboYgycIYi3njAU4HTEMvNlDXNa8mSP9LTPdHhPGvRhV8qvV9oHlsyCXUxI2nbhb
+         X9LzjlJpUYEkg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
@@ -40,12 +40,12 @@ Cc:     Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/16] smackfs: restrict bytes count in smackfs write functions
-Date:   Wed, 24 Feb 2021 07:55:11 -0500
-Message-Id: <20210224125514.483935-14-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 12/12] smackfs: restrict bytes count in smackfs write functions
+Date:   Wed, 24 Feb 2021 07:55:40 -0500
+Message-Id: <20210224125540.484221-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210224125514.483935-1-sashal@kernel.org>
-References: <20210224125514.483935-1-sashal@kernel.org>
+In-Reply-To: <20210224125540.484221-1-sashal@kernel.org>
+References: <20210224125540.484221-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index accd3846f1e3e..4f8c1a272df07 100644
+index 4aecdc8f74b2a..04a53cdb409fa 100644
 --- a/security/smack/smackfs.c
 +++ b/security/smack/smackfs.c
-@@ -1191,7 +1191,7 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
+@@ -1186,7 +1186,7 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
  		return -EPERM;
  	if (*ppos != 0)
  		return -EINVAL;
@@ -93,7 +93,7 @@ index accd3846f1e3e..4f8c1a272df07 100644
  		return -EINVAL;
  
  	data = memdup_user_nul(buf, count);
-@@ -1451,7 +1451,7 @@ static ssize_t smk_write_net6addr(struct file *file, const char __user *buf,
+@@ -1446,7 +1446,7 @@ static ssize_t smk_write_net6addr(struct file *file, const char __user *buf,
  		return -EPERM;
  	if (*ppos != 0)
  		return -EINVAL;
@@ -102,7 +102,7 @@ index accd3846f1e3e..4f8c1a272df07 100644
  		return -EINVAL;
  
  	data = memdup_user_nul(buf, count);
-@@ -1858,6 +1858,10 @@ static ssize_t smk_write_ambient(struct file *file, const char __user *buf,
+@@ -1853,6 +1853,10 @@ static ssize_t smk_write_ambient(struct file *file, const char __user *buf,
  	if (!smack_privileged(CAP_MAC_ADMIN))
  		return -EPERM;
  
@@ -113,7 +113,7 @@ index accd3846f1e3e..4f8c1a272df07 100644
  	data = memdup_user_nul(buf, count);
  	if (IS_ERR(data))
  		return PTR_ERR(data);
-@@ -2029,6 +2033,9 @@ static ssize_t smk_write_onlycap(struct file *file, const char __user *buf,
+@@ -2024,6 +2028,9 @@ static ssize_t smk_write_onlycap(struct file *file, const char __user *buf,
  	if (!smack_privileged(CAP_MAC_ADMIN))
  		return -EPERM;
  
@@ -123,7 +123,7 @@ index accd3846f1e3e..4f8c1a272df07 100644
  	data = memdup_user_nul(buf, count);
  	if (IS_ERR(data))
  		return PTR_ERR(data);
-@@ -2116,6 +2123,9 @@ static ssize_t smk_write_unconfined(struct file *file, const char __user *buf,
+@@ -2111,6 +2118,9 @@ static ssize_t smk_write_unconfined(struct file *file, const char __user *buf,
  	if (!smack_privileged(CAP_MAC_ADMIN))
  		return -EPERM;
  
@@ -133,7 +133,7 @@ index accd3846f1e3e..4f8c1a272df07 100644
  	data = memdup_user_nul(buf, count);
  	if (IS_ERR(data))
  		return PTR_ERR(data);
-@@ -2669,6 +2679,10 @@ static ssize_t smk_write_syslog(struct file *file, const char __user *buf,
+@@ -2664,6 +2674,10 @@ static ssize_t smk_write_syslog(struct file *file, const char __user *buf,
  	if (!smack_privileged(CAP_MAC_ADMIN))
  		return -EPERM;
  
@@ -144,7 +144,7 @@ index accd3846f1e3e..4f8c1a272df07 100644
  	data = memdup_user_nul(buf, count);
  	if (IS_ERR(data))
  		return PTR_ERR(data);
-@@ -2761,10 +2775,13 @@ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
+@@ -2756,10 +2770,13 @@ static ssize_t smk_write_relabel_self(struct file *file, const char __user *buf,
  		return -EPERM;
  
  	/*
