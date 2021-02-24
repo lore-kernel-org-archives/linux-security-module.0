@@ -2,149 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384B2C433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 20:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AEDC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 01:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1116564E24
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Feb 2021 20:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 342E764E09
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 01:08:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbhBWUpM (ORCPT
+        id S232806AbhBXBGg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Feb 2021 15:45:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53516 "EHLO
+        Tue, 23 Feb 2021 20:06:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234403AbhBWUpE (ORCPT
+        with ESMTP id S234702AbhBXAF7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Feb 2021 15:45:04 -0500
-Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87428C061574;
-        Tue, 23 Feb 2021 12:44:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description;
-        bh=l5UvSZQBGxOmQXzZ6VSoS/UKjlC4X1+BkU4mQVd80w4=; b=0g6OjLI3dVsGvfbNA+i0UInTwN
-        fW8P+kjwabvUYxrfx/CxyP8w/uAyI7/ag4no66N7J1V50IUlaWc1rfgpQsyQIF+xdXL7hA/qs9l6d
-        QHqSSKPNo+Hk5xA7thfD2uFPsIqXmVR32bOacovC/CEaoaZXjuY8XhW2CpeCPQAXuc/6aUr8EOxiO
-        bO+lzAUlkTbQAjIerrLU6Jtw5hakG3v3jOxjRRQ+iJXX6RQ84YNl3JsC5U2glaASOQcbLh8/Upyju
-        jWnOQDaks9FZgYBeccj3tf434NgeQCSF8jNkOnb1Zh06ALBfIQFWBlcON5GtFvsFKHXuTnMSzDa46
-        IIwivqaQ==;
-Received: from [2601:1c0:6280:3f0::d05b]
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1lEeXb-0004DS-UY; Tue, 23 Feb 2021 20:44:20 +0000
-Subject: Re: [PATCH v3 3/8] securtiy/brute: Detect a brute force attack
-To:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>, Shuah Khan <shuah@kernel.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-References: <20210221154919.68050-1-john.wood@gmx.com>
- <20210221154919.68050-4-john.wood@gmx.com>
- <f4fd9e44-539e-279e-a3a6-8af39f863f73@infradead.org>
- <20210223182054.GB3068@ubuntu>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <a0134e04-213f-2440-6d0b-adb018e49083@infradead.org>
-Date:   Tue, 23 Feb 2021 12:44:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Tue, 23 Feb 2021 19:05:59 -0500
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F97C06178C
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Feb 2021 16:04:06 -0800 (PST)
+Received: by mail-ej1-x630.google.com with SMTP id lr13so224781ejb.8
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Feb 2021 16:04:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ujaSmRZsBwxy7ijiic2DjRlFM+Lo7XjiktoksGBmZgU=;
+        b=MXPvsr/Zq3sNjA2W5lZe7IVflfhgQurENqiXsHQYmttYRBz5dw1hZ/ed7IovhkrcRt
+         7TwYNnOWrwiQnZlXQb0GA15n/O6naKhHtEfr3AgQU+KPS7tUWsZfKFs0ej55icBMTvxJ
+         5Zzd8n2tLorAzM0mgGDLWE3VJgk3K1Z0Aomsr3+fPC0vKlmNeG1k1vgPHxH3cGvq3TnJ
+         SM2hhPOiilYIb/SNeL+BSfwj25eJRdCerMoX51gyPrzlPtzBWuQUwdT/LTDEVqoIlUlv
+         80KgVIaot5po/5jpVwdOR7urqFAuszD47Kzyb6Pp2a3Eiqm2U0iE6nuAYeugvtypHQwX
+         4YuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ujaSmRZsBwxy7ijiic2DjRlFM+Lo7XjiktoksGBmZgU=;
+        b=q5H5H6jvd1/3fWtisw6mOBJzluWAr2rcw7Vnxu/Xz3Po+cA8nHPJnejrqQk+keRl10
+         rXNk8Y0PkxUvdxQSC/XOWUe0/6dleFyu6zrcxOmUAjspL2J0SOo9IvkSqvEwcWKh16O/
+         yVShFfrOYuMs2kkunVgUTagzIzUqE7tgLhrvEufphkqwhOBAsCHvm52x0m4FLoxxr/6o
+         qswYXCO8zgfgOF/QsDkMI+fGl5jwYD0abUH5sQ3kamMScTbYveB3owXz7s2yNAdqlaDU
+         X96xzxTQEqamtE+68gFRbYnfH5OqIfpsaoqyRx30yYvvB3CSCB/FNl+XJqkQ+tXnq4zs
+         aOGA==
+X-Gm-Message-State: AOAM532JO/YBnO8cs5L1dnwCrRNZiS211phs4Cq99tgH1HXBsK1AuaZ7
+        OnX26SgpfEBKcuCbmAYrFrtGO/8nVPj6qUN4uI9U
+X-Google-Smtp-Source: ABdhPJw7wLn61yBHi1fjBNwK7jx6HvQKpbr/Lp7IKALGN+KVnBhrQW3vKurixFkk+NIXSNeZw2lwjYObNn8YYQZEqx4=
+X-Received: by 2002:a17:906:a443:: with SMTP id cb3mr13393865ejb.542.1614125043313;
+ Tue, 23 Feb 2021 16:04:03 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210223182054.GB3068@ubuntu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <161377712068.87807.12246856567527156637.stgit@sifl>
+ <9ea5259b-fd84-e176-c042-c52a1c4fcc27@schaufler-ca.com> <CAHC9VhQBbep2WkD6JkCemtcXFLq7j5=AQeM9vVJ4_gmvi7hPQA@mail.gmail.com>
+ <1ab6d635-53af-6dd9-fc29-482723c80c6a@schaufler-ca.com> <e03dedaf6f3fc439d1d2240e6c6d5e66301441fd.camel@linux.ibm.com>
+In-Reply-To: <e03dedaf6f3fc439d1d2240e6c6d5e66301441fd.camel@linux.ibm.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 23 Feb 2021 19:03:52 -0500
+Message-ID: <CAHC9VhTQ0uerosmEBTSdH6qNCZ9Z7kt21S3N8XVdRHzwV_kiqQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] Split security_task_getsecid() into subj and obj variants
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/23/21 10:20 AM, John Wood wrote:
-> Hi,
-> 
-> On Sun, Feb 21, 2021 at 06:47:16PM -0800, Randy Dunlap wrote:
->> Hi--
->>
->> scripts/kernel-doc does not like these items to be marked
->> as being in kernel-doc notation. scripts/kernel-doc does not
->> recognize them as one of: struct, union, enum, typedef, so it
->> defaults to trying to interpret these as functions, and then
->> says:
->>
->> (I copied these blocks to my test megatest.c source file.)
->>
->>
->> ../src/megatest.c:1214: warning: cannot understand function prototype: 'const u64 BRUTE_EMA_WEIGHT_NUMERATOR = 7; '
->> ../src/megatest.c:1219: warning: cannot understand function prototype: 'const u64 BRUTE_EMA_WEIGHT_DENOMINATOR = 10; '
->> ../src/megatest.c:1228: warning: cannot understand function prototype: 'const unsigned char BRUTE_MAX_FAULTS = 200; '
->> ../src/megatest.c:1239: warning: cannot understand function prototype: 'const unsigned char BRUTE_MIN_FAULTS = 5; '
->> ../src/megatest.c:1249: warning: cannot understand function prototype: 'const u64 BRUTE_CRASH_PERIOD_THRESHOLD = 30000; '
->>
->>
->> On 2/21/21 7:49 AM, John Wood wrote:
->>>
->>> +/**
->>> + * brute_stats_ptr_lock - Lock to protect the brute_stats structure pointer.
->>> + */
->>> +static DEFINE_RWLOCK(brute_stats_ptr_lock);
->>
->>> +/**
->>> + * BRUTE_EMA_WEIGHT_NUMERATOR - Weight's numerator of EMA.
->>> + */
->>> +static const u64 BRUTE_EMA_WEIGHT_NUMERATOR = 7;
->>
->>> +/**
->>> + * BRUTE_EMA_WEIGHT_DENOMINATOR - Weight's denominator of EMA.
->>> + */
->>> +static const u64 BRUTE_EMA_WEIGHT_DENOMINATOR = 10;
->>
->>> +/**
->>> + * BRUTE_MAX_FAULTS - Maximum number of faults.
->>> + *
->>> + * If a brute force attack is running slowly for a long time, the application
->>> + * crash period's EMA is not suitable for the detection. This type of attack
->>> + * must be detected using a maximum number of faults.
->>> + */
->>> +static const unsigned char BRUTE_MAX_FAULTS = 200;
->>
->>> +/**
->>> + * BRUTE_MIN_FAULTS - Minimum number of faults.
->>> + *
->>> + * The application crash period's EMA cannot be used until a minimum number of
->>> + * data has been applied to it. This constraint allows getting a trend when this
->>> + * moving average is used. Moreover, it avoids the scenario where an application
->>> + * fails quickly from execve system call due to reasons unrelated to a real
->>> + * attack.
->>> + */
->>> +static const unsigned char BRUTE_MIN_FAULTS = 5;
->>
->>> +/**
->>> + * BRUTE_CRASH_PERIOD_THRESHOLD - Application crash period threshold.
->>> + *
->>> + * The units are expressed in milliseconds.
->>> + *
->>> + * A fast brute force attack is detected when the application crash period falls
->>> + * below this threshold.
->>> + */
->>> +static const u64 BRUTE_CRASH_PERIOD_THRESHOLD = 30000;
->>
->> Basically we don't support scalars in kernel-doc notation...
-> 
-> So, to keep it commented it would be better to use a normal comment block?
-> 
-> /*
->  * Documentation here
->  */
-> 
-> What do you think?
+On Tue, Feb 23, 2021 at 9:14 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> On Mon, 2021-02-22 at 15:58 -0800, Casey Schaufler wrote:
+> > On 2/20/2021 6:41 AM, Paul Moore wrote:
+> > > On Fri, Feb 19, 2021 at 8:49 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > >> On 2/19/2021 3:28 PM, Paul Moore wrote:
+> > >>> As discussed briefly on the list (lore link below), we are a little
+> > >>> sloppy when it comes to using task credentials, mixing both the
+> > >>> subjective and object credentials.  This patch set attempts to fix
+> > >>> this by replacing security_task_getsecid() with two new hooks that
+> > >>> return either the subjective (_subj) or objective (_obj) credentials.
+> > >>>
+> > >>> https://lore.kernel.org/linux-security-module/806848326.0ifERbkFSE@x2/T/
+> > >>>
+> > >>> Casey and John, I made a quick pass through the Smack and AppArmor
+> > >>> code in an effort to try and do the right thing, but I will admit
+> > >>> that I haven't tested those changes, just the SELinux code.  I
+> > >>> would really appreciate your help in reviewing those changes.  If
+> > >>> you find it easier, feel free to wholesale replace my Smack/AppArmor
+> > >>> patch with one of your own.
+> > >> A quick test pass didn't show up anything obviously
+> > >> amiss with the Smack changes. I have will do some more
+> > >> through inspection, but they look fine so far.
+> > > Thanks for testing it out and giving it a look.  Beyond the Smack
+> > > specific changes, I'm also interested in making sure all the hook
+> > > callers are correct; I believe I made the correct substitutions, but a
+> > > second (or third (or fourth ...)) set of eyes is never a bad idea.
+> >
+> > I'm still not seeing anything that looks wrong. I'd suggest that Mimi
+> > have a look at the IMA bits.
+>
+> Thanks, Casey, Paul.  The IMA changes look fine.  IMA policy rules are
+> normally written in terms of a file's LSM labels, the obj_type, so
+> hopefully this change has minimal, if any, impact.
 
-Yes, please, just a normal /* comment block.
+Thanks Mimi I appreciate the additional review.  Would you mind
+sending your ACK for the IMA related patches in the patchset?
 
-thanks.
 -- 
-~Randy
-
+paul moore
+www.paul-moore.com
