@@ -2,131 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3006BC433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 21:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 582A9C433E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Feb 2021 17:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFE1664F03
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Feb 2021 21:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D84C64DE8
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Feb 2021 17:55:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236149AbhBXV6B (ORCPT
+        id S232538AbhBYRzS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Feb 2021 16:58:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58541 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236144AbhBXV57 (ORCPT
+        Thu, 25 Feb 2021 12:55:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41058 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233067AbhBYRy2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Feb 2021 16:57:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1614203793;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=Y2xtIg1rSurBFwpghTPTPH96YSTByMFiJ7edqAoGTLA=;
-        b=RvgpqwqRMP1BFWytjjWcffg/vbl/HIOGQX2ehJMChUbJiZxNeMaKttFm5kidhjzqgCyjcB
-        fTChQDjyk8CcrzPEsAiIWNXai/Rg+MWz77um0VpbhtXkmA+g/ynl10GFMPQVFYanItpMSj
-        01NG1y6kQqiATVB9RWyjlibyNzrLQBI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-385-XiWJM3GqP5mC18zF3-6CBQ-1; Wed, 24 Feb 2021 16:56:31 -0500
-X-MC-Unique: XiWJM3GqP5mC18zF3-6CBQ-1
-Received: by mail-ej1-f69.google.com with SMTP id h8so822321ejx.12
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Feb 2021 13:56:31 -0800 (PST)
+        Thu, 25 Feb 2021 12:54:28 -0500
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2921EC061786
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Feb 2021 09:53:48 -0800 (PST)
+Received: by mail-ed1-x531.google.com with SMTP id h10so8005132edl.6
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Feb 2021 09:53:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IgNSI6OFSfnppaC+GMrdAWjNalo2gYA8gIH9UOQ8AyI=;
+        b=EInhMibNQy7yoPTPdzoBOkEWw/tMNCXklzkCg9G6gGpqiKFEvNk1t3g3PlWN9ABngP
+         95lwEZ2BIvfh1UgOe+RbVF8gfaj7tKOQVRp9lVvC/Duz7MAR5LoZLY63eZxkZizfiam/
+         wnhMpzaHUWqfFGEAeuFG0tDiuB2HLTXENPGGhrWVQa8vNECb/88YYB9ckUs5b8N/PgGb
+         m9lUbKUwMX1pGUZLoqvT9/VWmGIHcwwwnnCS930jFrJHeNBoiDwLVknudEBYZJnBt9T0
+         FiV0AF8Mz6UkS8kmqtNooPwefwQ51D8dVFPTqgxrFuKsHO1A4VC4NZBWFvm2+RWNBGez
+         WdTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Y2xtIg1rSurBFwpghTPTPH96YSTByMFiJ7edqAoGTLA=;
-        b=LnW19B95FROYBgnYRuMk55s8fWfJYjae+9F8lO9VvP9dMBd7XnsfxO2XNhVrg/MDNh
-         4GbqhkihhiuQDxFUNxIRwdvvbXrOx3XQ/Ejev3jYI3y2ZHhGTBahIv0ytmsfE25oscG/
-         CiPPsGWTsG5RPHFHVMfJBql1rkgN2aqry4+RzcW75eVnuLAh+7uE/aEA5rStlwyMd3sq
-         sia1G2AewzbTP/xWsJCe8RCJ2/ZZYyKcZklMU7UOOWYZywiVu28OiVBRhKB/7g4KNS4o
-         6304D9z9hs/6UGwDz9VALR3iFzKulxvRis0MCmCBcsamGZNZmx9z1hYkA/s72fPNaxR3
-         SuwA==
-X-Gm-Message-State: AOAM530KijujJxhKJNQXfMysqbA/34L4Nqeb1knMFEK4pIPxRsSDUbVD
-        OJl9hVC+OYGHvwljJY3ikslhc+5PHwqkZgNoNjkfcBR96KbBkKiYUuaT2WiIHx3zuHaGNh+SImN
-        5zRm3b9C94H9rLeZOAEa2ZD0Jd2lV5HceUIA1
-X-Received: by 2002:aa7:cb49:: with SMTP id w9mr31759124edt.375.1614203790234;
-        Wed, 24 Feb 2021 13:56:30 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwh03A/SHGL6oyftkfM/eugp4Q9CGTSQ5JvfkSISyNIsGpcDjf/MK7OUy1ujdf7OnQU+FFQhw==
-X-Received: by 2002:aa7:cb49:: with SMTP id w9mr31759113edt.375.1614203790041;
-        Wed, 24 Feb 2021 13:56:30 -0800 (PST)
-Received: from omos.redhat.com ([2a02:8308:b105:dd00:277b:6436:24db:9466])
-        by smtp.gmail.com with ESMTPSA id gx16sm2045794ejb.56.2021.02.24.13.56.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 13:56:29 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: [PATCH] perf/core: fix unconditional security_locked_down() call
-Date:   Wed, 24 Feb 2021 22:56:28 +0100
-Message-Id: <20210224215628.192519-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.29.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IgNSI6OFSfnppaC+GMrdAWjNalo2gYA8gIH9UOQ8AyI=;
+        b=K2AR6p80hqqq7DEWFLKQkJoWKvAswZqRqVlOAk///2NzNTIPWJASiskeFEFwvMMrWi
+         STEdKORNvEoyUYd4if7EKKAFIDvt8vWmGV570JUrNvaeE0aUjM4O4uFn6iYoqEcfVSrh
+         o+f5qxGu5jKmiMHr4DCYUvkWc/il3KN8TdCoNqM4oeugxO7fYxzh+aRS8E0skJ2fV92x
+         8q+shvX29YF9H2fp7so94mnkIsXzVUvR6Zsa7d40amnQJhebBq15A/qpv+/LO5aYC+qK
+         0Ch2jmPf3adP71QiD5IR/LeKlU7tmpxLoWnWG02FNNLQPKoAcP88RVz68Ew5SS/2k6T4
+         /+5g==
+X-Gm-Message-State: AOAM532Fbg3yZdWTWi/9bSeTrCXpPdjAklEAeEFGTA0O74LCS5iDhFGD
+        qrUu7UeKx1s0FvYQM9osQ6IZOttLZhzQFCFOUrRx
+X-Google-Smtp-Source: ABdhPJz/O6xMq/eAU3Tt16scLm3nsGPZAvfSl4Uf27U//Dy+Smsnb0KhHRqVnGVDWvdz90JjpiBiPNMoSidkS4U1Rss=
+X-Received: by 2002:aa7:c410:: with SMTP id j16mr4097065edq.135.1614275626835;
+ Thu, 25 Feb 2021 09:53:46 -0800 (PST)
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"
+References: <20210219222233.20748-1-olga.kornievskaia@gmail.com>
+In-Reply-To: <20210219222233.20748-1-olga.kornievskaia@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 25 Feb 2021 12:53:35 -0500
+Message-ID: <CAHC9VhRKLBNNfUE0FMgGJBR5eBQ+Et=oK1rcErUU_i62AGhfsQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] [security] Add new hook to compare new mount to an
+ existing mount
+To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>
+Cc:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently, the lockdown state is queried unconditionally, even though
-its result is used only if the PERF_SAMPLE_REGS_INTR bit is set in
-attr.sample_type. While that doesn't matter in case of the Lockdown LSM,
-it causes trouble with the SELinux's lockdown hook implementation.
+On Fri, Feb 19, 2021 at 5:25 PM Olga Kornievskaia
+<olga.kornievskaia@gmail.com> wrote:
+>
+> From: Olga Kornievskaia <kolga@netapp.com>
+>
+> Add a new hook that takes an existing super block and a new mount
+> with new options and determines if new options confict with an
+> existing mount or not.
+>
+> A filesystem can use this new hook to determine if it can share
+> the an existing superblock with a new superblock for the new mount.
+>
+> Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+> ---
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/lsm_hooks.h     |  6 ++++
+>  include/linux/security.h      |  8 +++++
+>  security/security.c           |  7 +++++
+>  security/selinux/hooks.c      | 56 +++++++++++++++++++++++++++++++++++
+>  5 files changed, 78 insertions(+)
 
-SELinux implements the locked_down hook with a check whether the current
-task's type has the corresponding "lockdown" class permission
-("integrity" or "confidentiality") allowed in the policy. This means
-that calling the hook when the access control decision would be ignored
-generates a bogus permission check and audit record.
+...
 
-Fix this by checking sample_type first and only calling the hook when
-its result would be honored.
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index a19adef1f088..d76aaecfdf0f 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -142,6 +142,12 @@
+>   *     @orig the original mount data copied from userspace.
+>   *     @copy copied data which will be passed to the security module.
+>   *     Returns 0 if the copy was successful.
+> + * @sb_mnt_opts_compat:
+> + *     Determine if the existing mount options are compatible with the new
+> + *     mount options being used.
 
-Fixes: b0c8fdc7fdb7 ("lockdown: Lock down perf when in confidentiality mode")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- kernel/events/core.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Full disclosure: I'm a big fan of good documentation, regardless of if
+it lives in comments or a separate dedicated resource.  Looking at the
+comment above, and the SELinux implementation of this hook below, it
+appears that the comment is a bit vague; specifically the use of
+"compatible".  Based on the SELinux implementation, "compatible" would
+seem to equal, do you envision that to be the case for every
+LSM/security-model?  If the answer is yes, then let's say that (and
+possibly rename the hook to "sb_mnt_opts_equal").  If the answer is
+no, then I think we need to do a better job explaining what
+compatibility really means; put yourself in the shoes of someone
+writing a LSM, what would they need to know to write an implementation
+for this hook?
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 129dee540a8b..0f857307e9bd 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11796,12 +11796,12 @@ SYSCALL_DEFINE5(perf_event_open,
- 			return err;
- 	}
- 
--	err = security_locked_down(LOCKDOWN_PERF);
--	if (err && (attr.sample_type & PERF_SAMPLE_REGS_INTR))
--		/* REGS_INTR can leak data, lockdown must prevent this */
--		return err;
--
--	err = 0;
-+	/* REGS_INTR can leak data, lockdown must prevent this */
-+	if (attr.sample_type & PERF_SAMPLE_REGS_INTR) {
-+		err = security_locked_down(LOCKDOWN_PERF);
-+		if (err)
-+			return err;
-+	}
- 
- 	/*
- 	 * In cgroup mode, the pid argument is used to pass the fd
+> + *     @sb superblock being compared
+> + *     @mnt_opts new mount options
+> + *     Return 0 if options are compatible.
+
 -- 
-2.29.2
-
+paul moore
+www.paul-moore.com
