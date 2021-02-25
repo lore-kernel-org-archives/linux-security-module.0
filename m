@@ -2,178 +2,294 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6501C43381
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Feb 2021 18:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F78FC433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Feb 2021 19:06:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DB7B64E28
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Feb 2021 18:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4005864F1A
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Feb 2021 19:06:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbhBYSXx (ORCPT
+        id S233615AbhBYTGR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Feb 2021 13:23:53 -0500
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:40997
-        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232203AbhBYSXw (ORCPT
+        Thu, 25 Feb 2021 14:06:17 -0500
+Received: from smtp-1909.mail.infomaniak.ch ([185.125.25.9]:47883 "EHLO
+        smtp-1909.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233688AbhBYTGA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Feb 2021 13:23:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1614277385; bh=0T4peUwcbcwEgXjJS2/jAD5HegUaEJlGpMurREimV7Q=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=kKQZ/X2TmDpRAPhkDhQ3y5G4sYAvPm/9AEOcq7WCJrPouTy19Mwgcz9fJMj59FMf0lrdM8UBfv9yjilmzoHOHY4NLIu8XFQsFRje4u7GvVuGCe84u1XNVJMGWj39lmEm2Uo22cWcNs03NGTNq6dzen+ikDpGaOCV9S57+Q7On36yREljgZgfNd8r29tQDBjIU/mr3Ayhn+82wy4jQhUOpf+jeYnCXwRR+6eNsEQH7nTSaWuC05MXCSNjy+glrPik+Kae9R6/enPZo4qqiuBx/pxv975NXv7z3nWQ4RzJL+euScvSBvjxlBAA+6gyN2bOI9iSpK9ZYzaCpq68NauOsw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1614277385; bh=2dqj5ffl+kRXYra7gY0ezrNQSfi6O2tJoMHs9IPJ64B=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=kEYtq0F1KT3CqhOJNgmGOHSikvVNRnXC9Zf4G4MbDt1o9CIANTDnuPdeT6Ena50YLhZegflvjX2+l5oGjtWDhAbk+90c22bYv5Re6lnWnAwdFVzghKYOh/mqHj1wU/Q88toEiKjw+w2BNfpi8UEZlLisWkww1I4kaDOaELQswv/fEmoFsD3AV7LhTnYsc6xbxINdA7ZWik4wcaV7/wJAzw9tN+il/dOnLOPU10PMd9DAKUfgBWU+DgwMGpnOn9o9FZdbuHKyJaLktpg32l03hDiDqY9/q95zzxHxZ5/NuMT0MnmifUhf5uUAEMnK8Rfb49O2vGcd46sOtP4VqXsNig==
-X-YMail-OSG: lEIUr_8VM1kHZU6VkH6eftpFgwZCN78NOVdk1SotisZ8NRqi5lgAq6QPj5uRMba
- JN42ijohlBdpNGQhx0a1Ea4MbpygHSilvTTszVuYO9qSb4IpHsIn1wHu_.PiZNM2XYmoQuXFuryp
- 5Ouv9BUqIj5ayet7tdhvUN8pcq46sIhF7I6K7CN2Sl2o9CdyAyxqGo.Khj7nF46FGf429lFXBu1_
- 8QDxDWcr1TMU0PjdJQnp6CR83WAZzui4cL9F7c3CqrFkrNuUv6Hs9tBtDpA_9ey.UV4FpY1BOo.o
- Af0xsESxnCX2k6i8xcYYRkKEpoqqKXpq0bB4A3hXeyoThZzItZQmhrzFYlzOjc52KzuQBwRXfmD3
- PnQorTGX9cuFkXCYOc_ZCvJkyfaX_E.6uAdUH0..EToM7vc88OEiM4kCxiOUdIT8YzjRrsDbesZr
- RB6.vSvnCByou_r2ZTiMPfSEchQ4wdl_ip4R9NV8PvpTCaz7X5Tkt.CSZkikk0jn24q315obCyoa
- 9CgmZou0iyRiPUeiqY8DPt22Vmp4fEH8OBqETu1RVRj5yfdLUTYbo4la1RlHrvUZUghb0oVBU.q6
- hNc2xzYkA6S6QlGtEQuLocz6BIkr0xm1pT0_GyfQ6J9tjuWOc3_AZaNzpbxDWoG2KJCoZ4dhsfHe
- 4aXm8P8JmXYozj4edsFdDWdZKhfy5r3nF8gzS4wyP5mJPLYpeyXqXQ2R0ftdNCaNf6qBOOUZv7NV
- bEl6cjBFLvKjDa4PKPg0ZANVnW7TKHZ7iX1hepSWYBEqhFICEEOXrzPCpz_0VPHkdioK5lNumi.O
- CMJkmnlhzpeKsYoLTpInUuoC92dzB_sbBVyqd1SbrsNEolqblMMaoae2Ul0zKmgggVfH32.Qxoxq
- oC9QVabe1wvgE5d3COtXko3159qPOtAaLzRx5u_eOdIM2VtLxozNN7UbKkuhBurex3bRo5Zv0CYN
- nqQ5bpm__XuFN4G0BCRvGzUjAjMKHF9nz4zPDRVQN6GEd.MY5ZQRcjAovQSaAwcxtZroehm4BiBx
- MP1gxbzyWs0Svyet8at6c_kITl7MSIYrnKFaIghoW.uDq1W6l6b1L5d4ArxO.Zx3E8_0ktvZ4FXw
- WCpUALsikBFs0W0nzDrOnhL6xpjpI0W1sChaBr8UjptZIfrrAiT3ZOaZhpg9TeXw1fv09LPxEdMN
- DbKNI3QCyCww2ts6aVpUcSOUcrfUqGSFXMxqlGg3wY3lraRrVrdVM2UiWEODIbwNLyaWDCdpYnQ8
- lYXBzM8nkEjfFcLXK3rrZLPfhq1G9thfFhbcEa2LIIYA5TerH1DZloVqO0jSTIOOpdZDI45iB4YX
- xKDVmee.y_VBpeP_knfw_MXfG7Z3uY3aqeKzZRBwT_lwQ0FJbv3VfVXcKB8tUVhvk16QuNFUM8Sx
- Cyr6f0xjcDufvMEvD78MWpTLTNh2004VgKsdI6TRD1v4L7dnGKKS5GzMTPl9MO8SSLNrJWEvIcKL
- YmOz.ameeMWbN7JEKoFab70vGiZI_TtD9p0FsC5seUPqPXtrRsxNwjPROz7MqOovM1tRNUrVn2pL
- scf1Tu7N4BQK4YD9_TIp3QwsehsMIcyenALYnZOVC0UGVdzQ8c7cVMJYEXRFJO_W7nd_PwM4bwV_
- hgnUXjit_ar2Fl6JcLakR8rdAC54AFIlDOmSk0mcWjFTl_3EnvK3bulVnUvDpEXli4otTGSefhvo
- x0xS94TPiFJ6rax5jXwV0QFf.vKD6CDhz6R0cVaZaVfg_HoYbtZdwrdj0pNhnvCTDB6eAE9aWBaa
- hxzD.NdYNCkcYnSa5363aKHqGK2w2KEcPBn9.HfTnBXxf5A5_oLVkpTlB7PtE2OiJQxnTwD_W0nA
- XPB_MGdGmHQQpUw.HwI0GloCbdC5M2p1ZdooWH2CqF1JvD8bSi1886cJIjJxWfcraareh0bbnuAp
- c8USlJcVMXEUzJ6.FckBaFoAVFbjOVULC9Pku9rKePj8vrvMZVlOH.c7l.S_ZJ975c1p9p6c2yld
- F8zHIGet8ExPqNvbXhyZkcBL.0raZg125JrxNw_m5BWJSSu8xJUNZe0MgqhMJUGMaPF69ISIhn5S
- zUbZIFIFbfMi5npsNDZwmo1o4OHeC.2OUAIBf84YzyVIhrpHSzyailypn.qA_o2X7cDQ_NjJJmHM
- upkDgsJ4SdFxeCKMP9ylizIA1SBk4S0RCI92DbOjUzlM6u0DqvLtkrkH7yfqeBHXU7XVx7WppkF7
- YQS5u_g0oyGuPuQfv21DDA3_81zHFAtTzyl4gRyD9Pp3OVsKUtDB8Tig6mKbLvFlZn7IlX3alQb3
- mDZaUu_I8Ui3rMDtnfJp_hMFSfS7u.ZaaQOnNNx8Py.SuuWZdYi5VH0vLZO.U0fjqiplYKDbSZBE
- YBGbKWuaIHLxxYJOm9jUpP_dBzHEsFRCey_smHfVAIGcG6pvFl6YYL_gnTrvWIZiwUm.Kn3r6FHg
- z8amEm1.6sa6I4efGX4pcXHc_yyNVbM_bgLSR163B8boooKWYTbMrk42kmDckXLoNPr6_RZgCW9b
- aMB2gm_lHvFSlz4M2XJtQQ72T8AwVyB4Jhzdl8YnolMfFbJ4RgU5aCr_j_nc4OGQfpwmargba48P
- 3AOl3dPX2GkGq5xG0h1hau0BHUTJ76qRsIyRtBg.emFOhIQ020QjReX.ENgwIufdTfRLp3azINOy
- xDvFYwQbNFQNn_D5utVmbJX.9VvI308mVZwlRNd5J64zct0DTr9.qSjvhcegZnQsRV_FbFx_kH0b
- iH8L1UogDXlkt3UN2fp.HwOTtp8mJWaBPu2t_O9ttvMbcp7OGvEnLQyBSGVm42zfp3g9HbclO6Ea
- h1E8KnkQOHxVv1QwOtnn7hD4QgQof8yWW.6obTq85ky3_et45yiPnjrp9RnqerHe7fClg84wOORv
- VYEyELEHxuRBlT_L36LjWOvCilqhpmKKR8GUMfu.Pcjj9TWnixuFrX5HGiCFztQO6HqqWwllqStx
- dFDWWpT6jGX8wUvVzcxgHJmtxmNhDRvVlz3wQ04bf8JxGpeMdI4uIH8eIUrNfJPEEWdtmS4CUxct
- Vnet2rjJo8YVX6USzISuGYhpJH8P5Un_l9y4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 25 Feb 2021 18:23:05 +0000
-Received: by smtp419.mail.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 7335e4c492cab86f3c4354ecc11c8f05;
-          Thu, 25 Feb 2021 18:22:59 +0000 (UTC)
-Subject: Re: [PATCH v3 1/3] [security] Add new hook to compare new mount to an
- existing mount
-To:     Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210219222233.20748-1-olga.kornievskaia@gmail.com>
- <CAHC9VhRKLBNNfUE0FMgGJBR5eBQ+Et=oK1rcErUU_i62AGhfsQ@mail.gmail.com>
- <CAN-5tyGuV-gs0KzVbKSj42ZMx553zy9wOfVb1SoHoE-WCoN1_w@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <e6d315d6-ee07-bde3-8d87-acff38d43b53@schaufler-ca.com>
-Date:   Thu, 25 Feb 2021 10:22:58 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Thu, 25 Feb 2021 14:06:00 -0500
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Dmj0B4hDKzMqQm2;
+        Thu, 25 Feb 2021 20:04:58 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Dmj0B2HKhzlh8T9;
+        Thu, 25 Feb 2021 20:04:58 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v29 04/12] landlock: Add ptrace restrictions
+Date:   Thu, 25 Feb 2021 20:06:06 +0100
+Message-Id: <20210225190614.2181147-5-mic@digikod.net>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210225190614.2181147-1-mic@digikod.net>
+References: <20210225190614.2181147-1-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <CAN-5tyGuV-gs0KzVbKSj42ZMx553zy9wOfVb1SoHoE-WCoN1_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.17828 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2/25/2021 10:03 AM, Olga Kornievskaia wrote:
-> On Thu, Feb 25, 2021 at 12:53 PM Paul Moore <paul@paul-moore.com> wrote=
-:
->> On Fri, Feb 19, 2021 at 5:25 PM Olga Kornievskaia
->> <olga.kornievskaia@gmail.com> wrote:
->>> From: Olga Kornievskaia <kolga@netapp.com>
->>>
->>> Add a new hook that takes an existing super block and a new mount
->>> with new options and determines if new options confict with an
->>> existing mount or not.
->>>
->>> A filesystem can use this new hook to determine if it can share
->>> the an existing superblock with a new superblock for the new mount.
->>>
->>> Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
->>> ---
->>>  include/linux/lsm_hook_defs.h |  1 +
->>>  include/linux/lsm_hooks.h     |  6 ++++
->>>  include/linux/security.h      |  8 +++++
->>>  security/security.c           |  7 +++++
->>>  security/selinux/hooks.c      | 56 +++++++++++++++++++++++++++++++++=
-++
->>>  5 files changed, 78 insertions(+)
->> ...
->>
->>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
->>> index a19adef1f088..d76aaecfdf0f 100644
->>> --- a/include/linux/lsm_hooks.h
->>> +++ b/include/linux/lsm_hooks.h
->>> @@ -142,6 +142,12 @@
->>>   *     @orig the original mount data copied from userspace.
->>>   *     @copy copied data which will be passed to the security module=
-=2E
->>>   *     Returns 0 if the copy was successful.
->>> + * @sb_mnt_opts_compat:
->>> + *     Determine if the existing mount options are compatible with t=
-he new
->>> + *     mount options being used.
->> Full disclosure: I'm a big fan of good documentation, regardless of if=
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
->> it lives in comments or a separate dedicated resource.  Looking at the=
+Using ptrace(2) and related debug features on a target process can lead
+to a privilege escalation.  Indeed, ptrace(2) can be used by an attacker
+to impersonate another task and to remain undetected while performing
+malicious activities.  Thanks to  ptrace_may_access(), various part of
+the kernel can check if a tracer is more privileged than a tracee.
 
->> comment above, and the SELinux implementation of this hook below, it
->> appears that the comment is a bit vague; specifically the use of
->> "compatible".  Based on the SELinux implementation, "compatible" would=
+A landlocked process has fewer privileges than a non-landlocked process
+and must then be subject to additional restrictions when manipulating
+processes. To be allowed to use ptrace(2) and related syscalls on a
+target process, a landlocked process must have a subset of the target
+process's rules (i.e. the tracee must be in a sub-domain of the tracer).
 
->> seem to equal, do you envision that to be the case for every
->> LSM/security-model?
+Cc: James Morris <jmorris@namei.org>
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Acked-by: Serge Hallyn <serge@hallyn.com>
+Link: https://lore.kernel.org/r/20210225190614.2181147-5-mic@digikod.net
+---
 
-The original implementation did use sb_mnt_opts_equal(). The
-change to "compatible" was my suggestion. Smack has multiple
-mount options, and while I haven't actually delved into how
-you would have compatible but different mount options, I
-think it's possible. That's why I think that "equal" isn't
-a good name for the function.
+Changes since v28:
+* Add Acked-by Serge Hallyn.
 
->>   If the answer is yes, then let's say that (and
->> possibly rename the hook to "sb_mnt_opts_equal").  If the answer is
->> no, then I think we need to do a better job explaining what
->> compatibility really means; put yourself in the shoes of someone
->> writing a LSM, what would they need to know to write an implementation=
+Changes since v25:
+* Rename function to landlock_add_ptrace_hooks().
 
->> for this hook?
-> That's is tough to do as it is vague. All I was doing was fixing a
-> bug. Selinux didn't allow a new mount because it had a different
-> security context. What that translates to for the new hook, is up to
-> the LSM module whether it would need the options to be exactly the
-> same or if they can be slightly different but yet compatible this is
-> really up to the LSM.
->
-> Do you care to suggest wording to use? It is hard to find words that
-> somebody else is looking for but one is unable to provide them.
->
->>> + *     @sb superblock being compared
->>> + *     @mnt_opts new mount options
->>> + *     Return 0 if options are compatible.
->> --
->> paul moore
->> www.paul-moore.com
+Changes since v22:
+* Add Reviewed-by: Jann Horn <jannh@google.com>
+
+Changes since v21:
+* Fix copyright dates.
+
+Changes since v14:
+* Constify variables.
+
+Changes since v13:
+* Make the ptrace restriction mandatory, like in the v10.
+* Remove the eBPF dependency.
+
+Previous changes:
+https://lore.kernel.org/lkml/20191104172146.30797-5-mic@digikod.net/
+---
+ security/landlock/Makefile |   2 +-
+ security/landlock/ptrace.c | 120 +++++++++++++++++++++++++++++++++++++
+ security/landlock/ptrace.h |  14 +++++
+ security/landlock/setup.c  |   2 +
+ 4 files changed, 137 insertions(+), 1 deletion(-)
+ create mode 100644 security/landlock/ptrace.c
+ create mode 100644 security/landlock/ptrace.h
+
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index 041ea242e627..f1d1eb72fa76 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -1,4 +1,4 @@
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
+ 
+ landlock-y := setup.o object.o ruleset.o \
+-	cred.o
++	cred.o ptrace.o
+diff --git a/security/landlock/ptrace.c b/security/landlock/ptrace.c
+new file mode 100644
+index 000000000000..f55b82446de2
+--- /dev/null
++++ b/security/landlock/ptrace.c
+@@ -0,0 +1,120 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Ptrace hooks
++ *
++ * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019-2020 ANSSI
++ */
++
++#include <asm/current.h>
++#include <linux/cred.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/lsm_hooks.h>
++#include <linux/rcupdate.h>
++#include <linux/sched.h>
++
++#include "common.h"
++#include "cred.h"
++#include "ptrace.h"
++#include "ruleset.h"
++#include "setup.h"
++
++/**
++ * domain_scope_le - Checks domain ordering for scoped ptrace
++ *
++ * @parent: Parent domain.
++ * @child: Potential child of @parent.
++ *
++ * Checks if the @parent domain is less or equal to (i.e. an ancestor, which
++ * means a subset of) the @child domain.
++ */
++static bool domain_scope_le(const struct landlock_ruleset *const parent,
++		const struct landlock_ruleset *const child)
++{
++	const struct landlock_hierarchy *walker;
++
++	if (!parent)
++		return true;
++	if (!child)
++		return false;
++	for (walker = child->hierarchy; walker; walker = walker->parent) {
++		if (walker == parent->hierarchy)
++			/* @parent is in the scoped hierarchy of @child. */
++			return true;
++	}
++	/* There is no relationship between @parent and @child. */
++	return false;
++}
++
++static bool task_is_scoped(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	bool is_scoped;
++	const struct landlock_ruleset *dom_parent, *dom_child;
++
++	rcu_read_lock();
++	dom_parent = landlock_get_task_domain(parent);
++	dom_child = landlock_get_task_domain(child);
++	is_scoped = domain_scope_le(dom_parent, dom_child);
++	rcu_read_unlock();
++	return is_scoped;
++}
++
++static int task_ptrace(const struct task_struct *const parent,
++		const struct task_struct *const child)
++{
++	/* Quick return for non-landlocked tasks. */
++	if (!landlocked(parent))
++		return 0;
++	if (task_is_scoped(parent, child))
++		return 0;
++	return -EPERM;
++}
++
++/**
++ * hook_ptrace_access_check - Determines whether the current process may access
++ *			      another
++ *
++ * @child: Process to be accessed.
++ * @mode: Mode of attachment.
++ *
++ * If the current task has Landlock rules, then the child must have at least
++ * the same rules.  Else denied.
++ *
++ * Determines whether a process may access another, returning 0 if permission
++ * granted, -errno if denied.
++ */
++static int hook_ptrace_access_check(struct task_struct *const child,
++		const unsigned int mode)
++{
++	return task_ptrace(current, child);
++}
++
++/**
++ * hook_ptrace_traceme - Determines whether another process may trace the
++ *			 current one
++ *
++ * @parent: Task proposed to be the tracer.
++ *
++ * If the parent has Landlock rules, then the current task must have the same
++ * or more rules.  Else denied.
++ *
++ * Determines whether the nominated task is permitted to trace the current
++ * process, returning 0 if permission is granted, -errno if denied.
++ */
++static int hook_ptrace_traceme(struct task_struct *const parent)
++{
++	return task_ptrace(parent, current);
++}
++
++static struct security_hook_list landlock_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(ptrace_access_check, hook_ptrace_access_check),
++	LSM_HOOK_INIT(ptrace_traceme, hook_ptrace_traceme),
++};
++
++__init void landlock_add_ptrace_hooks(void)
++{
++	security_add_hooks(landlock_hooks, ARRAY_SIZE(landlock_hooks),
++			LANDLOCK_NAME);
++}
+diff --git a/security/landlock/ptrace.h b/security/landlock/ptrace.h
+new file mode 100644
+index 000000000000..265b220ae3bf
+--- /dev/null
++++ b/security/landlock/ptrace.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Ptrace hooks
++ *
++ * Copyright © 2017-2019 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2019 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_PTRACE_H
++#define _SECURITY_LANDLOCK_PTRACE_H
++
++__init void landlock_add_ptrace_hooks(void);
++
++#endif /* _SECURITY_LANDLOCK_PTRACE_H */
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index 8661112fb238..a5d6ef334991 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -11,6 +11,7 @@
+ 
+ #include "common.h"
+ #include "cred.h"
++#include "ptrace.h"
+ #include "setup.h"
+ 
+ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+@@ -20,6 +21,7 @@ struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
+ static int __init landlock_init(void)
+ {
+ 	landlock_add_cred_hooks();
++	landlock_add_ptrace_hooks();
+ 	pr_info("Up and running.\n");
+ 	return 0;
+ }
+-- 
+2.30.0
 
