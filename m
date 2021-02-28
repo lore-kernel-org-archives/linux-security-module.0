@@ -2,78 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70650C433E9
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Feb 2021 18:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B781C433E6
+	for <linux-security-module@archiver.kernel.org>; Sun, 28 Feb 2021 18:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F12D64E7A
-	for <linux-security-module@archiver.kernel.org>; Sat, 27 Feb 2021 18:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2956A64DD3
+	for <linux-security-module@archiver.kernel.org>; Sun, 28 Feb 2021 18:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230234AbhB0Ssx (ORCPT
+        id S231376AbhB1S6d (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 27 Feb 2021 13:48:53 -0500
-Received: from mout.gmx.net ([212.227.15.18]:32995 "EHLO mout.gmx.net"
+        Sun, 28 Feb 2021 13:58:33 -0500
+Received: from mga07.intel.com ([134.134.136.100]:56460 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230041AbhB0Sss (ORCPT
+        id S231308AbhB1S6c (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 27 Feb 2021 13:48:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1614451609;
-        bh=J/2b6NEYhEHBGcmytB/YTbgIH5/VXzloVXnWUStq1M4=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=As5Uu47gsXR4tZZ/erDuXq1HoXroXexuc0bzMPjp3SRoSnF2xg6b4VtERW6j56FXD
-         bTAuRqTXtaWYCpoRoe1jXRPa2fki1tRn4WfOKhnFx/OnqN+9zPGEmTBwoq6or2LJXj
-         NTRLbXC8asAWglMxFpX4/tu129ohhO++8Ff87ki4=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.229.153]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1M4JqV-1lGLay0mkT-000OCf; Sat, 27
- Feb 2021 19:46:49 +0100
-Date:   Sat, 27 Feb 2021 19:46:46 +0100
-From:   John Wood <john.wood@gmx.com>
-To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+        Sun, 28 Feb 2021 13:58:32 -0500
+IronPort-SDR: MfbyOPu0Yx+WHZxJ4WLyRmdzYnfL6K7KwEyugnR/mBM71IAw1+8FcUcZKvjWmFt2up4BPNMavj
+ XluFkyBADXbA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9909"; a="250344198"
+X-IronPort-AV: E=Sophos;i="5.81,213,1610438400"; 
+   d="scan'208";a="250344198"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Feb 2021 10:56:45 -0800
+IronPort-SDR: xO1quA5tSkLr7Wa+aYfB/kLKW49fcvhM94c931ze3tJs/vunXvX5r099AOLt2c3f4sxun4b6LN
+ d6gKQrkop9Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,213,1610438400"; 
+   d="scan'208";a="368370565"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.74.11])
+  by orsmga006.jf.intel.com with ESMTP; 28 Feb 2021 10:56:45 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 7FB5E3015E2; Sun, 28 Feb 2021 10:56:45 -0800 (PST)
+From:   Andi Kleen <ak@linux.intel.com>
+To:     John Wood <john.wood@gmx.com>
+Cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
         Randy Dunlap <rdunlap@infradead.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>, Shuah Khan <shuah@kernel.org>
-Cc:     John Wood <john.wood@gmx.com>,
+        James Morris <jmorris@namei.org>,
+        Shuah Khan <shuah@kernel.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kselftest@vger.kernel.org,
         kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v4 0/8] Fork brute force attack mitigation
-Message-ID: <20210227184646.GB9641@ubuntu>
-References: <20210227150956.6022-1-john.wood@gmx.com>
+Subject: Re: [PATCH v5 7/8] Documentation: Add documentation for the Brute LSM
+References: <20210227153013.6747-1-john.wood@gmx.com>
+        <20210227153013.6747-8-john.wood@gmx.com>
+Date:   Sun, 28 Feb 2021 10:56:45 -0800
+In-Reply-To: <20210227153013.6747-8-john.wood@gmx.com> (John Wood's message of
+        "Sat, 27 Feb 2021 16:30:12 +0100")
+Message-ID: <878s78dnrm.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210227150956.6022-1-john.wood@gmx.com>
-X-Provags-ID: V03:K1:SJwNcWrWbYXbNCBYNMBy4exbK5hFoif3xaEWjQVjyL073jTJhl6
- WObAEsvgABv/Fhh2/eqdE2Yj1+f2Sy4NaFZy9u+weiugOqPHWEGwcKC+oeGiaTxa7v9oUYO
- efv+ggc3tpOSjd0Ukjo8zJ3YkoQKxlkeiHGMxOBpik+G1FmYnsHevV7VSVwLtvtSqLVsHcb
- NGHwE8ljEiVLTL2jngk0w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ShESOMNlNjI=:naVNAx9F4lNCq5p0LzpgrA
- P5Ojg/56wmthBB1B8JsfIbPJwp+GQJzKgoOU0zDkT+88VXLssYwLL28EYy5CwQsikmEN6b5Kp
- xY0lyyTp6W+vBVkwMtZPcfhOMCSXno4vviqRkpNhouohAW9sbN5Eu33UvkMqmKE74LIiNJI7+
- GqdTQfbeVQLttM6tTWJV69qQVfcTEKddPAA/FR5MzuHmCj+2iDTnf0e956bd6FZkawxOhawa+
- YSJPE8dG4yHLIx5QpEeBTkU62xMPsFVuykAKu+lF+7fagY0UA9RL9WAe/3zASzqj+T7VBbPFX
- OkxqCW11Uwky5kR+/RUH19WbTTG0FUGVfGEbQKpo5Uw5yHZt7kGZO7dnBcJqnsmGNkWNqV2xl
- ljoQCnL3aqx+JBtNF9e6wwbGOM52yh65C53kR+shnuhCo6wW7cgft3SYlvyz0dVliOeZglm9J
- xdSS0M6o5iAUAyRtU7VW+wOEmGZTxj90YssvM41LutFqADVscf3ttkoBLck5j4P1ypbhhJqhH
- PjinG64J/eQJiKGxFB+HeUl3J0AEXfQSghKMEIHoq/+05i/BPQ9+rjx8+3tJO5g0oAXpF7wvN
- 5OI8LlsgMLH3jsqvqLaCl9ua/XFizmAnngrAznO0YY6rNbuOuifgXYV6/um1+9xxoJEKtJQXN
- mAf7goEq62024sRaQO01Qnnu6TbGG9JKUXtineSquDDuu9FZno9AXvVTH20bGGWCPkRRpmKJH
- H4k6bQ1dzuLXSguZ99a7dS3M4U/EYnND7QrfUGe0d2tdo89zNZhk7T0QDKAtIEbX+5NE7DQin
- ixcbhgpya7o75m1xch2fy97K1xu/of92BHukKUaQT6eabYfOZAqOhm6MiQ/rcmnVfysl0VJKy
- 9JwtKnOzt0io9AsCnWVA==
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Sorry. Drop this patch serie.
+John Wood <john.wood@gmx.com> writes:
+> +
+> +To detect a brute force attack it is necessary that the statistics shared by all
+> +the fork hierarchy processes be updated in every fatal crash and the most
+> +important data to update is the application crash period.
 
-Thanks,
-John Wood
+So I haven't really followed the discussion and also not completely read
+the patches (so apologies if that was already explained or is documented
+somewhere else).
+
+But what I'm missing here is some indication how much
+memory these statistics can use up and how are they limited.
+
+How much is the worst case extra memory consumption?
+
+If there is no limit how is DoS prevented?
+
+If there is a limit, there likely needs to be a way to throw out
+information, and so the attack would just shift to forcing the kernel
+to throw out this information before retrying.
+
+e.g. if the data is hold for the parent shell: restart the parent
+shell all the time.
+e.g. if the data is hold for the sshd daemon used to log in:
+Somehow cause sshd to respawn to discard the statistics.
+
+Do I miss something here? How is that mitigated?
+
+Instead of discussing all the low level tedious details of the
+statistics it would be better to focus on these "high level"
+problems here.
+
+-Andi
+
