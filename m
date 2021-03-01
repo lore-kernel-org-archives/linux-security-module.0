@@ -2,132 +2,210 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0059EC433E9
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Mar 2021 18:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E05C433DB
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Mar 2021 20:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D28B6652BD
-	for <linux-security-module@archiver.kernel.org>; Mon,  1 Mar 2021 18:10:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1B8C601FA
+	for <linux-security-module@archiver.kernel.org>; Mon,  1 Mar 2021 20:50:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238819AbhCASKN (ORCPT
+        id S243603AbhCAUtj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 1 Mar 2021 13:10:13 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26650 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239176AbhCASHc (ORCPT
+        Mon, 1 Mar 2021 15:49:39 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56669 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S243656AbhCAUrZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 1 Mar 2021 13:07:32 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 121I5EXG066483;
-        Mon, 1 Mar 2021 13:06:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=QRfwyov4tdGnAwz8cU/ex+kzIeddUMeBq24T0KutDYA=;
- b=SKs8M5bDVZqVGMpp+Adqq1gShCr3DlMbLablmetxMymKLcKYF6k66j0fQr3yCRzHHe8/
- aU8wDhR8A7OtTxHhsuLbUxiikOG9p+CIpPiw+SLfY8pOubqrRNk7BattW4uDLxr38ij6
- pIsI9+1EjiK7Wf3ohnPEUHFPkRxk+WlY+gRQZvJMEubvJMyLMVtNLn0wGvBNhbuC8SRZ
- Qb70Dmmg/qXsZGbTwvHMQLEsFlMqEtWGWT5IqVedJwSgX6aibTxJeE2n68fuGZV9wdIh
- Bg+p+YQYJuIgRsefj3xVO0dSMJr1TPaWPu2dzRN9XT+cPCYmeMDlDrTlLklTs9ppbP+3 Nw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3713w7tvch-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Mar 2021 13:06:39 -0500
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 121I6caG077482;
-        Mon, 1 Mar 2021 13:06:38 -0500
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3713w7tvbj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Mar 2021 13:06:38 -0500
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 121I36lI015679;
-        Mon, 1 Mar 2021 18:06:36 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma01fra.de.ibm.com with ESMTP id 370atn0m4h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 01 Mar 2021 18:06:36 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 121I6X2L38797700
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 1 Mar 2021 18:06:33 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7461AE057;
-        Mon,  1 Mar 2021 18:06:33 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 363B0AE04D;
-        Mon,  1 Mar 2021 18:06:32 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.103.165])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  1 Mar 2021 18:06:32 +0000 (GMT)
-Message-ID: <58c23338f15ea13278f275832ac35eeff875daad.camel@linux.ibm.com>
-Subject: Re: [PATCH v3 02/11] evm: Load EVM key in ima_load_x509() to avoid
- appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        silviu.vlasceanu@huawei.com
-Date:   Mon, 01 Mar 2021 13:06:31 -0500
-In-Reply-To: <20201111092302.1589-3-roberto.sassu@huawei.com>
-References: <20201111092302.1589-1-roberto.sassu@huawei.com>
-         <20201111092302.1589-3-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-01_12:2021-03-01,2021-03-01 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
- spamscore=0 clxscore=1011 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 adultscore=0 bulkscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103010146
+        Mon, 1 Mar 2021 15:47:25 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lGpQg-000669-3l; Mon, 01 Mar 2021 20:46:10 +0000
+Date:   Mon, 1 Mar 2021 21:46:08 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 39/40] xfs: support idmapped mounts
+Message-ID: <20210301204608.ip7nowqh6fpztkhr@wittgenstein>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-40-christian.brauner@ubuntu.com>
+ <20210301200520.GK7272@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210301200520.GK7272@magnolia>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
-
-On Wed, 2020-11-11 at 10:22 +0100, Roberto Sassu wrote:
-> Public keys do not need to be appraised by IMA as the restriction on the
-> IMA/EVM keyrings ensures that a key can be loaded only if it is signed with
-> a key in the primary or secondary keyring.
+On Mon, Mar 01, 2021 at 12:05:20PM -0800, Darrick J. Wong wrote:
+> On Thu, Jan 21, 2021 at 02:19:58PM +0100, Christian Brauner wrote:
+> > From: Christoph Hellwig <hch@lst.de>
+> > 
+> > Enable idmapped mounts for xfs. This basically just means passing down
+> > the user_namespace argument from the VFS methods down to where it is
+> > passed to the relevant helpers.
+> > 
+> > Note that full-filesystem bulkstat is not supported from inside idmapped
+> > mounts as it is an administrative operation that acts on the whole file
+> > system. The limitation is not applied to the bulkstat single operation
+> > that just operates on a single inode.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > ---
+> > /* v2 */
+> > 
+> > /* v3 */
+> > 
+> > /* v4 */
+> > 
+> > /* v5 */
+> > base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+> > 
+> > /* v6 */
+> > unchanged
+> > base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+> > ---
+> >  fs/xfs/xfs_acl.c     |  3 +--
+> >  fs/xfs/xfs_file.c    |  4 +++-
+> >  fs/xfs/xfs_inode.c   | 26 +++++++++++++++--------
+> >  fs/xfs/xfs_inode.h   | 16 +++++++++------
+> >  fs/xfs/xfs_ioctl.c   | 35 ++++++++++++++++++-------------
+> >  fs/xfs/xfs_ioctl32.c |  6 ++++--
+> >  fs/xfs/xfs_iops.c    | 49 +++++++++++++++++++++++++-------------------
+> >  fs/xfs/xfs_iops.h    |  3 ++-
+> >  fs/xfs/xfs_itable.c  | 17 +++++++++++----
+> >  fs/xfs/xfs_itable.h  |  1 +
+> >  fs/xfs/xfs_qm.c      |  3 ++-
+> >  fs/xfs/xfs_super.c   |  2 +-
+> >  fs/xfs/xfs_symlink.c |  5 +++--
+> >  fs/xfs/xfs_symlink.h |  5 +++--
+> >  14 files changed, 110 insertions(+), 65 deletions(-)
 > 
-> However, when evm_load_x509() is called, appraisal is already enabled and
-> a valid IMA signature must be added to the EVM key to pass verification.
+> <snip> Sorry for not noticing until after this went upstream, but...
+
+No problem at all.
+
 > 
-> Since the restriction is applied on both IMA and EVM keyrings, it is safe
-> to disable appraisal also when the EVM key is loaded. This patch calls
-> evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is defined.
+> > diff --git a/fs/xfs/xfs_itable.c b/fs/xfs/xfs_itable.c
+> > index 16ca97a7ff00..ca310a125d1e 100644
+> > --- a/fs/xfs/xfs_itable.c
+> > +++ b/fs/xfs/xfs_itable.c
+> > @@ -54,10 +54,12 @@ struct xfs_bstat_chunk {
+> >  STATIC int
+> >  xfs_bulkstat_one_int(
+> >  	struct xfs_mount	*mp,
+> > +	struct user_namespace	*mnt_userns,
+> >  	struct xfs_trans	*tp,
+> >  	xfs_ino_t		ino,
+> >  	struct xfs_bstat_chunk	*bc)
+> >  {
+> > +	struct user_namespace	*sb_userns = mp->m_super->s_user_ns;
+> >  	struct xfs_icdinode	*dic;		/* dinode core info pointer */
+> >  	struct xfs_inode	*ip;		/* incore inode pointer */
+> >  	struct inode		*inode;
+> > @@ -86,8 +88,8 @@ xfs_bulkstat_one_int(
+> >  	 */
+> >  	buf->bs_projectid = ip->i_d.di_projid;
+> >  	buf->bs_ino = ino;
+> > -	buf->bs_uid = i_uid_read(inode);
+> > -	buf->bs_gid = i_gid_read(inode);
+> > +	buf->bs_uid = from_kuid(sb_userns, i_uid_into_mnt(mnt_userns, inode));
+> > +	buf->bs_gid = from_kgid(sb_userns, i_gid_into_mnt(mnt_userns, inode));
+> >  	buf->bs_size = dic->di_size;
+> >  
+> >  	buf->bs_nlink = inode->i_nlink;
+> > @@ -173,7 +175,8 @@ xfs_bulkstat_one(
+> >  	if (!bc.buf)
+> >  		return -ENOMEM;
+> >  
+> > -	error = xfs_bulkstat_one_int(breq->mp, NULL, breq->startino, &bc);
+> > +	error = xfs_bulkstat_one_int(breq->mp, breq->mnt_userns, NULL,
+> > +				     breq->startino, &bc);
+> >  
+> >  	kmem_free(bc.buf);
+> >  
+> > @@ -194,9 +197,10 @@ xfs_bulkstat_iwalk(
+> >  	xfs_ino_t		ino,
+> >  	void			*data)
+> >  {
+> > +	struct xfs_bstat_chunk	*bc = data;
+> >  	int			error;
+> >  
+> > -	error = xfs_bulkstat_one_int(mp, tp, ino, data);
+> > +	error = xfs_bulkstat_one_int(mp, bc->breq->mnt_userns, tp, ino, data);
+> >  	/* bulkstat just skips over missing inodes */
+> >  	if (error == -ENOENT || error == -EINVAL)
+> >  		return 0;
+> > @@ -239,6 +243,11 @@ xfs_bulkstat(
+> >  	};
+> >  	int			error;
+> >  
+> > +	if (breq->mnt_userns != &init_user_ns) {
+> > +		xfs_warn_ratelimited(breq->mp,
+> > +			"bulkstat not supported inside of idmapped mounts.");
+> > +		return -EINVAL;
 > 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  security/integrity/iint.c         | 2 ++
->  security/integrity/ima/ima_init.c | 4 ++++
->  2 files changed, 6 insertions(+)
+> Shouldn't this be -EPERM?
 > 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 1d20003243c3..7d08c31c612f 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -200,7 +200,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
->  void __init integrity_load_keys(void)
->  {
->  	ima_load_x509();
-> +#ifndef CONFIG_IMA_LOAD_X509
->  	evm_load_x509();
-> +#endif
+> Or -EOPNOTSUPP?
 
-Please replace the ifdef with the IS_ENABLED() equivalent.
+EOPNOTSUPP seems a good choice. Whether or not it's better than EINVAL I
+don't know. With my userspace maintainer hat on I would probably say
+that EOPNOTSUPP feels a bit more natural and might have the advantage
+that it is less overloaded then EINVAL.
 
-thanks,
+> 
+> Also, I'm not sure why bulkstat won't work in an idmapped mount but
+> bulkstat_single does?  You can use the singleton version to stat inodes
+> that aren't inside the submount.
 
-Mimi
+Christoph will very likely have a better informed opinion than I have
+but as long as bulkstat is able to discern inodes that need to be
+reported idmapped and inodes that don't then I see no reason why this
+shouldn't work (at least for privileged users on the host which I think
+is the case already).
 
+In any case these changes, if any, aren't vfs changes and so you can
+just take them as bugfixes through the xfs tree anyway. So no harm done
+in you not spotting it earlier. :)
+
+Thanks for taking another look!
+Christian
