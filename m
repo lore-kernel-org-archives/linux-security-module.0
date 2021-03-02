@@ -2,338 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A774C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Mar 2021 03:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77A4C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Mar 2021 03:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB30064ECF
-	for <linux-security-module@archiver.kernel.org>; Wed,  3 Mar 2021 03:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7515F64EA4
+	for <linux-security-module@archiver.kernel.org>; Wed,  3 Mar 2021 03:00:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232561AbhCCCtx (ORCPT
+        id S234529AbhCCCuK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 2 Mar 2021 21:49:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383234AbhCBLFZ (ORCPT
+        Tue, 2 Mar 2021 21:50:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38674 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1578525AbhCBPYn (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 2 Mar 2021 06:05:25 -0500
-Received: from mail-qt1-x833.google.com (mail-qt1-x833.google.com [IPv6:2607:f8b0:4864:20::833])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E032C061756
-        for <linux-security-module@vger.kernel.org>; Tue,  2 Mar 2021 03:03:36 -0800 (PST)
-Received: by mail-qt1-x833.google.com with SMTP id 2so5322962qtw.1
-        for <linux-security-module@vger.kernel.org>; Tue, 02 Mar 2021 03:03:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J3ikdx4bgEoWr60N8YJM/UFK+GXVchd7MQyf1W8dD6Y=;
-        b=rCOHlbYVsUFJ5jCO915/sp407cuKNrvUL5Fhj1ov/u19LqijjyUtbQGTcECLpgPmD2
-         R4rDKNpn+BLxS1XWWAGP10LmUD01/8SbCQ4LWrOVgwp3YJp36HHLDapkHHKN9AR4E1Pt
-         HV6rFiCokKvEWqIjuBVlBRCM4zK70bWgSCN+6bf5UgEbIlGBBTubyoYHN32vsR3iSF/m
-         VzVwjKNp5Yoz6ti6Z1wBqBRQMNWf2E7+P18FTqK6s7nhpFp0Cfjd7v0SAxX48WNLdNba
-         71P97h7tr5Dai8AcVnn9gNBqEgSF805R0Ip9EebHG3sRm2fZmd4iqC5C7IgzUArTO7jl
-         qr+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J3ikdx4bgEoWr60N8YJM/UFK+GXVchd7MQyf1W8dD6Y=;
-        b=YTpK2ER+GsYwzAVMh4sg7Z18NM8G0of80DAZyAmc7oGwztIyBRWuCt5EdL+fWIU0gy
-         r6Cey09iE2sC8Af4kav59fEwTIUINK0DFwnumU1lxd7VF51fVONJLBcKvfh8H1+doeQ5
-         2eaML5cLpVb/ZPv3+aKq9uG48mZNMZdAURSzIDn5QQWGVxVVx8/S5yJGaI5RsCjQlHcU
-         XtXXyhxlax5xIcWIIg0AxpP/6qAm08oMINdxerKstwAkv7vu0dycSDOYm0I8nzhuMbNt
-         aOh7+je/TTwzV+fwcd9eBx5JaC5oJm4ThetxNui+it+i9sPFPqKb8xtP7aBCtekRajwC
-         qYsw==
-X-Gm-Message-State: AOAM533kkuk7z5V4CSigfVgBZauK0qJfmnXaxuI18wj7sn3rJX2J5i6E
-        e7IQgQm/9vCYBppx8XpDnR3o6Kl+dqnKbJBAxCR9dA==
-X-Google-Smtp-Source: ABdhPJzWywaMfVhojw89uFC60fs7zk9QZs52P/3Dp2N/80gWfTXl+6FdInmMZMcHcbq7Oj5F02J73116l8slUYX8r+g=
-X-Received: by 2002:a05:622a:c9:: with SMTP id p9mr16969500qtw.337.1614683015042;
- Tue, 02 Mar 2021 03:03:35 -0800 (PST)
+        Tue, 2 Mar 2021 10:24:43 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id ECFEE64F2F;
+        Tue,  2 Mar 2021 15:24:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1614698642;
+        bh=IrNN0AID3YGfmGdzydEWNqVZIr3VxKBZ4AD1PLT3A54=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s9alLJsicIDJdy9j3gC3rcF92phcwBEE0otKMBxcTzov/+uV+UUdUAUC/rHGWL3el
+         BLkYQdW2zLBep7Ck9vg456yF8Epr7GhUUcc4CRPMcJGKdCv2ifTTMbsoTIMXRQ+Flj
+         FXmydfQo+FrIWuLrVKHQxIsLTZS4cnqz6kCnasmGh0OcynAZYQq3VAJVK9LQwQ/lTF
+         8cxMw2jYEg6RN8dE1VJpo7fIUFHaA7b+KeQwJkCgZofLhR3gtdy9IIzIOBvyPWw/rp
+         MrYwrHnMb/YZPhTkTS1RfTY565RjDOgxgo+dhJQCoogHMhxhjDQDw3AlvwKAxehPKy
+         eLf08y8HCMDAw==
+Date:   Tue, 2 Mar 2021 17:23:43 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] integrity: Load mokx variables into the blacklist
+ keyring
+Message-ID: <YD5Yf1gqvoKKRL+C@kernel.org>
+References: <161433310139.902181.11787442834918634133.stgit@warthog.procyon.org.uk>
+ <161433313205.902181.2502803393898221637.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-References: <0000000000006305c005bc8ba7f0@google.com>
-In-Reply-To: <0000000000006305c005bc8ba7f0@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 2 Mar 2021 12:03:24 +0100
-Message-ID: <CACT4Y+YFtUHzWcU3VBvxsdq-V_4hN_ZDs4riZiHPt4f0cy8ryA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in cipso_v4_genopt
-To:     syzbot <syzbot+9ec037722d2603a9f52e@syzkaller.appspotmail.com>
-Cc:     David Miller <davem@davemloft.net>, dsahern@kernel.org,
-        Jakub Kicinski <kuba@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161433313205.902181.2502803393898221637.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 2, 2021 at 12:01 PM syzbot
-<syzbot+9ec037722d2603a9f52e@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    5695e516 Merge tag 'io_uring-worker.v3-2021-02-25' of git:..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=168c27f2d00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e33ab2de74f48295
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9ec037722d2603a9f52e
-> compiler:       Debian clang version 11.0.1-2
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+9ec037722d2603a9f52e@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: use-after-free in cipso_v4_genopt+0x1078/0x1700 net/ipv4/cipso_ipv4.c:1784
-> Read of size 1 at addr ffff888017bba510 by task kworker/1:3/4821
->
-> CPU: 1 PID: 4821 Comm: kworker/1:3 Not tainted 5.11.0-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Workqueue: events p9_write_work
-> Call Trace:
->  __dump_stack lib/dump_stack.c:79 [inline]
->  dump_stack+0x125/0x19e lib/dump_stack.c:120
->  print_address_description+0x5f/0x3a0 mm/kasan/report.c:232
->  __kasan_report mm/kasan/report.c:399 [inline]
->  kasan_report+0x15e/0x210 mm/kasan/report.c:416
->  cipso_v4_genopt+0x1078/0x1700 net/ipv4/cipso_ipv4.c:1784
->  cipso_v4_sock_setattr+0x7c/0x460 net/ipv4/cipso_ipv4.c:1866
->  netlbl_sock_setattr+0x28e/0x2f0 net/netlabel/netlabel_kapi.c:995
->  smack_netlbl_add security/smack/smack_lsm.c:2404 [inline]
->  smack_socket_post_create+0x13b/0x280 security/smack/smack_lsm.c:2774
->  security_socket_post_create+0x6f/0xd0 security/security.c:2122
->  __sock_create+0x62f/0x8c0 net/socket.c:1424
->  udp_sock_create4+0x73/0x5f0 net/ipv4/udp_tunnel_core.c:20
->  udp_sock_create include/net/udp_tunnel.h:59 [inline]
->  rxrpc_open_socket net/rxrpc/local_object.c:129 [inline]
->  rxrpc_lookup_local+0xd54/0x14d0 net/rxrpc/local_object.c:226
->  rxrpc_sendmsg+0x481/0x8a0 net/rxrpc/af_rxrpc.c:541
->  sock_sendmsg_nosec net/socket.c:654 [inline]
->  sock_sendmsg net/socket.c:674 [inline]
->  sock_write_iter+0x31a/0x470 net/socket.c:1001
->  __kernel_write+0x52c/0x990 fs/read_write.c:550
->  kernel_write+0x63/0x80 fs/read_write.c:579
->  p9_fd_write net/9p/trans_fd.c:430 [inline]
->  p9_write_work+0x5ed/0xd20 net/9p/trans_fd.c:481
->  process_one_work+0x789/0xfd0 kernel/workqueue.c:2275
->  worker_thread+0xac1/0x1300 kernel/workqueue.c:2421
->  kthread+0x39a/0x3c0 kernel/kthread.c:292
->  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
->
-> Allocated by task 4802:
->  kasan_save_stack mm/kasan/common.c:38 [inline]
->  kasan_set_track mm/kasan/common.c:46 [inline]
->  set_alloc_info mm/kasan/common.c:427 [inline]
->  ____kasan_kmalloc+0xc2/0xf0 mm/kasan/common.c:506
->  kasan_kmalloc include/linux/kasan.h:233 [inline]
->  __kmalloc+0xb4/0x370 mm/slub.c:4055
->  kmalloc include/linux/slab.h:559 [inline]
->  kzalloc include/linux/slab.h:684 [inline]
->  tomoyo_encode2+0x25a/0x560 security/tomoyo/realpath.c:45
->  tomoyo_encode security/tomoyo/realpath.c:80 [inline]
->  tomoyo_realpath_from_path+0x5c3/0x610 security/tomoyo/realpath.c:288
->  tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
->  tomoyo_path_perm+0x191/0x570 security/tomoyo/file.c:822
->  security_inode_getattr+0xc0/0x140 security/security.c:1288
->  vfs_getattr fs/stat.c:131 [inline]
->  vfs_statx+0xe8/0x320 fs/stat.c:199
->  vfs_fstatat fs/stat.c:217 [inline]
->  vfs_lstat include/linux/fs.h:3240 [inline]
->  __do_sys_newlstat fs/stat.c:372 [inline]
->  __se_sys_newlstat fs/stat.c:366 [inline]
->  __x64_sys_newlstat+0x81/0xd0 fs/stat.c:366
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
->
-> Freed by task 4802:
->  kasan_save_stack mm/kasan/common.c:38 [inline]
->  kasan_set_track+0x3d/0x70 mm/kasan/common.c:46
->  kasan_set_free_info+0x1f/0x40 mm/kasan/generic.c:357
->  ____kasan_slab_free+0x100/0x140 mm/kasan/common.c:360
->  kasan_slab_free include/linux/kasan.h:199 [inline]
->  slab_free_hook mm/slub.c:1562 [inline]
->  slab_free_freelist_hook+0x13a/0x200 mm/slub.c:1600
->  slab_free mm/slub.c:3161 [inline]
->  kfree+0xcf/0x2b0 mm/slub.c:4213
->  tomoyo_path_perm+0x447/0x570 security/tomoyo/file.c:842
->  security_inode_getattr+0xc0/0x140 security/security.c:1288
->  vfs_getattr fs/stat.c:131 [inline]
->  vfs_statx+0xe8/0x320 fs/stat.c:199
->  vfs_fstatat fs/stat.c:217 [inline]
->  vfs_lstat include/linux/fs.h:3240 [inline]
->  __do_sys_newlstat fs/stat.c:372 [inline]
->  __se_sys_newlstat fs/stat.c:366 [inline]
->  __x64_sys_newlstat+0x81/0xd0 fs/stat.c:366
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
->
-> Last potentially related work creation:
->  kasan_save_stack+0x27/0x50 mm/kasan/common.c:38
->  kasan_record_aux_stack+0xee/0x120 mm/kasan/generic.c:345
->  __call_rcu kernel/rcu/tree.c:3039 [inline]
->  call_rcu+0x12f/0x8a0 kernel/rcu/tree.c:3114
->  cipso_v4_doi_remove+0x2e2/0x310 net/ipv4/cipso_ipv4.c:531
->  netlbl_cipsov4_remove+0x219/0x390 net/netlabel/netlabel_cipso_v4.c:715
->  genl_family_rcv_msg_doit net/netlink/genetlink.c:739 [inline]
->  genl_family_rcv_msg net/netlink/genetlink.c:783 [inline]
->  genl_rcv_msg+0xe4e/0x1280 net/netlink/genetlink.c:800
->  netlink_rcv_skb+0x190/0x3a0 net/netlink/af_netlink.c:2502
->  genl_rcv+0x24/0x40 net/netlink/genetlink.c:811
->  netlink_unicast_kernel net/netlink/af_netlink.c:1312 [inline]
->  netlink_unicast+0x786/0x940 net/netlink/af_netlink.c:1338
->  netlink_sendmsg+0x9ae/0xd50 net/netlink/af_netlink.c:1927
->  sock_sendmsg_nosec net/socket.c:654 [inline]
->  sock_sendmsg net/socket.c:674 [inline]
->  ____sys_sendmsg+0x519/0x800 net/socket.c:2350
->  ___sys_sendmsg net/socket.c:2404 [inline]
->  __sys_sendmsg+0x2bf/0x370 net/socket.c:2433
->  do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
->
-> The buggy address belongs to the object at ffff888017bba500
->  which belongs to the cache kmalloc-64 of size 64
-> The buggy address is located 16 bytes inside of
->  64-byte region [ffff888017bba500, ffff888017bba540)
-> The buggy address belongs to the page:
-> page:000000004f188e85 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x17bba
-> flags: 0xfff00000000200(slab)
-> raw: 00fff00000000200 dead000000000100 dead000000000122 ffff888010841640
-> raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->  ffff888017bba400: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
->  ffff888017bba480: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
-> >ffff888017bba500: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
->                          ^
->  ffff888017bba580: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
->  ffff888017bba600: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
+On Fri, Feb 26, 2021 at 09:52:12AM +0000, David Howells wrote:
+> From: Eric Snowberg <eric.snowberg@oracle.com>
+> 
+> During boot the Secure Boot Forbidden Signature Database, dbx,
+> is loaded into the blacklist keyring.  Systems booted with shim
+> have an equivalent Forbidden Signature Database called mokx.
+> Currently mokx is only used by shim and grub, the contents are
+> ignored by the kernel.
+> 
+> Add the ability to load mokx into the blacklist keyring during boot.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Link: https://lore.kernel.org/r/20210122181054.32635-5-eric.snowberg@oracle.com/ # v5
+> Link: https://lore.kernel.org/r/c33c8e3839a41e9654f41cc92c7231104931b1d7.camel@HansenPartnership.com/
+> Link: ohttps://lore.kernel.org/r/161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk/
 
+For all:
 
-Besides these 2 crashes, we've also seen one on a 4.19 based kernel, see below.
-Based on the reports with mismatching stacks, it looks like
-cipso_v4_genopt is doing some kind of wild pointer access (uninit
-pointer?).
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
+/Jarkko
 
-netlink: 'syz-executor.0': attribute type 4 has an invalid length.
-==================================================================
-BUG: KASAN: use-after-free in
-cipso_v4_genopt.part.0.constprop.0+0x11f3/0x1400
-net/ipv4/cipso_ipv4.c:1795
-Read of size 1 at addr ffff8881f41bb790 by task syz-executor.1/7116
-
-CPU: 0 PID: 7116 Comm: syz-executor.1 Not tainted
-4.19.121-syzkaller-00217-g3b679299c55f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine,
-BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x10d/0x199 lib/dump_stack.c:118
- print_address_description.cold+0x54/0x204 mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.part.0.cold+0x187/0x2db mm/kasan/report.c:412
- cipso_v4_genopt.part.0.constprop.0+0x11f3/0x1400 net/ipv4/cipso_ipv4.c:1795
- cipso_v4_genopt net/ipv4/cipso_ipv4.c:1786 [inline]
- cipso_v4_sock_setattr+0x7b/0x450 net/ipv4/cipso_ipv4.c:1877
- netlbl_sock_setattr+0x1cd/0x2a0 net/netlabel/netlabel_kapi.c:1003
- smack_netlabel+0x13a/0x180 security/smack/smack_lsm.c:2511
- smack_socket_post_create security/smack/smack_lsm.c:2852 [inline]
- smack_socket_post_create+0xd0/0x190 security/smack/smack_lsm.c:2830
- security_socket_post_create+0x69/0xc0 security/security.c:1381
- __sock_create+0x5ba/0x740 net/socket.c:1292
- sock_create net/socket.c:1316 [inline]
- __sys_socket+0xf4/0x200 net/socket.c:1346
- __do_sys_socket net/socket.c:1355 [inline]
- __se_sys_socket net/socket.c:1353 [inline]
- __x64_sys_socket+0x74/0xb0 net/socket.c:1353
- do_syscall_64+0xbc/0x130 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x465ef9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4fc3392188 EFLAGS: 00000246 ORIG_RAX: 0000000000000029
-RAX: ffffffffffffffda RBX: 000000000056bf60 RCX: 0000000000465ef9
-RDX: 0000000000000002 RSI: 0000000000000003 RDI: 0000040000000002
-RBP: 00000000004bd8bc R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000000056bf60
-R13: 00007ffdccf28b3f R14: 00007f4fc3392300 R15: 0000000000022000
-
-Allocated by task 397:
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc2/0xe0 mm/kasan/kasan.c:553
- kmem_cache_alloc_node_trace+0x129/0x210 mm/slub.c:2769
- kmalloc_node include/linux/slab.h:553 [inline]
- kzalloc_node include/linux/slab.h:720 [inline]
- __get_vm_area_node+0x12d/0x3b0 mm/vmalloc.c:1394
- __vmalloc_node_range mm/vmalloc.c:1748 [inline]
- __vmalloc_node mm/vmalloc.c:1804 [inline]
- __vmalloc_node_flags mm/vmalloc.c:1818 [inline]
- vzalloc+0xeb/0x1a0 mm/vmalloc.c:1857
- do_ipt_get_ctl+0x4f2/0x8e0 net/ipv4/netfilter/ip_tables.c:803
- nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
- nf_getsockopt+0x77/0xd0 net/netfilter/nf_sockopt.c:122
- ip_getsockopt net/ipv4/ip_sockglue.c:1574 [inline]
- ip_getsockopt+0x16c/0x1c0 net/ipv4/ip_sockglue.c:1554
- tcp_getsockopt+0x8b/0xd0 net/ipv4/tcp.c:3605
- __sys_getsockopt+0x13a/0x220 net/socket.c:1938
- __do_sys_getsockopt net/socket.c:1949 [inline]
- __se_sys_getsockopt net/socket.c:1946 [inline]
- __x64_sys_getsockopt+0xbf/0x160 net/socket.c:1946
- do_syscall_64+0xbc/0x130 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 397:
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x11f/0x160 mm/kasan/kasan.c:521
- slab_free_hook mm/slub.c:1371 [inline]
- slab_free_freelist_hook+0x5a/0x110 mm/slub.c:1398
- slab_free mm/slub.c:2963 [inline]
- kfree+0xc7/0x2a0 mm/slub.c:3928
- __vunmap+0x3da/0x550 mm/vmalloc.c:1537
- vfree+0x6a/0x100 mm/vmalloc.c:1598
- copy_entries_to_user net/ipv4/netfilter/ip_tables.c:870 [inline]
- get_entries net/ipv4/netfilter/ip_tables.c:1027 [inline]
- do_ipt_get_ctl+0x6ed/0x8e0 net/ipv4/netfilter/ip_tables.c:1703
- nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
- nf_getsockopt+0x77/0xd0 net/netfilter/nf_sockopt.c:122
- ip_getsockopt net/ipv4/ip_sockglue.c:1574 [inline]
- ip_getsockopt+0x16c/0x1c0 net/ipv4/ip_sockglue.c:1554
- tcp_getsockopt+0x8b/0xd0 net/ipv4/tcp.c:3605
- __sys_getsockopt+0x13a/0x220 net/socket.c:1938
- __do_sys_getsockopt net/socket.c:1949 [inline]
- __se_sys_getsockopt net/socket.c:1946 [inline]
- __x64_sys_getsockopt+0xbf/0x160 net/socket.c:1946
- do_syscall_64+0xbc/0x130 arch/x86/entry/common.c:293
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881f41bb780
- which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 16 bytes inside of
- 64-byte region [ffff8881f41bb780, ffff8881f41bb7c0)
-The buggy address belongs to the page:
-page:ffffea0007d06ec0 count:1 mapcount:0 mapping:ffff8881f6c03600 index:0x0
-flags: 0x200000000000100(slab)
-raw: 0200000000000100 dead000000000100 dead000000000200 ffff8881f6c03600
-raw: 0000000000000000 00000000002a002a 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff8881f41bb680: 00 fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
- ffff8881f41bb700: fc fc fc fc 00 00 00 00 00 fc fc fc fc fc fc fc
->ffff8881f41bb780: fb fb fb fb fb fb fb fb fc fc fc fc 00 00 00 00
-                         ^
- ffff8881f41bb800: 00 00 fc fc fc fc fc fc 00 00 00 00 00 00 fc fc
- ffff8881f41bb880: fc fc fc fc 00 00 00 00 00 00 fc fc fc fc fc fc
-==================================================================
+> ---
+> 
+>  security/integrity/platform_certs/load_uefi.c |   20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> index ee4b4c666854..f290f78c3f30 100644
+> --- a/security/integrity/platform_certs/load_uefi.c
+> +++ b/security/integrity/platform_certs/load_uefi.c
+> @@ -132,8 +132,9 @@ static int __init load_moklist_certs(void)
+>  static int __init load_uefi_certs(void)
+>  {
+>  	efi_guid_t secure_var = EFI_IMAGE_SECURITY_DATABASE_GUID;
+> -	void *db = NULL, *dbx = NULL;
+> -	unsigned long dbsize = 0, dbxsize = 0;
+> +	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
+> +	void *db = NULL, *dbx = NULL, *mokx = NULL;
+> +	unsigned long dbsize = 0, dbxsize = 0, mokxsize = 0;
+>  	efi_status_t status;
+>  	int rc = 0;
+>  
+> @@ -175,6 +176,21 @@ static int __init load_uefi_certs(void)
+>  		kfree(dbx);
+>  	}
+>  
+> +	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
+> +	if (!mokx) {
+> +		if (status == EFI_NOT_FOUND)
+> +			pr_debug("mokx variable wasn't found\n");
+> +		else
+> +			pr_info("Couldn't get mokx list\n");
+> +	} else {
+> +		rc = parse_efi_signature_list("UEFI:MokListXRT",
+> +					      mokx, mokxsize,
+> +					      get_handler_for_dbx);
+> +		if (rc)
+> +			pr_err("Couldn't parse mokx signatures %d\n", rc);
+> +		kfree(mokx);
+> +	}
+> +
+>  	/* Load the MokListRT certs */
+>  	rc = load_moklist_certs();
+>  
+> 
+> 
