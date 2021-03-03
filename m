@@ -2,112 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F54C4332B
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C840C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B62F64F47
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3698564F91
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:08:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231534AbhCCX7s (ORCPT
+        id S231612AbhCCX7t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Mar 2021 18:59:48 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:27937 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1379852AbhCCPbz (ORCPT
+        Wed, 3 Mar 2021 18:59:49 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41600 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242918AbhCCQQo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:31:55 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-129-p7FEIIrCNG6cb_3HeC64uw-1; Wed, 03 Mar 2021 15:29:45 +0000
-X-MC-Unique: p7FEIIrCNG6cb_3HeC64uw-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 3 Mar 2021 15:29:37 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 3 Mar 2021 15:29:37 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Linus Walleij' <linus.walleij@linaro.org>,
-        Will Deacon <will@kernel.org>
-CC:     Jian Cai <jiancai@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Luis Lozano <llozano@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Wed, 3 Mar 2021 11:16:44 -0500
+Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1lHU9p-00030o-EU; Wed, 03 Mar 2021 16:15:29 +0000
+Date:   Wed, 3 Mar 2021 16:15:28 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Tycho Andersen <tycho@tycho.pizza>,
+        Tycho Andersen <tycho@tycho.ws>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>,
-        "Ingo Molnar" <mingo@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Brazdil <dbrazdil@google.com>,
-        James Morse <james.morse@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: RE: [PATCH v4] ARM: Implement SLS mitigation
-Thread-Topic: [PATCH v4] ARM: Implement SLS mitigation
-Thread-Index: AQHXEECBQRoTQnOC90iuKvtWWC/yz6pyYx/A
-Date:   Wed, 3 Mar 2021 15:29:37 +0000
-Message-ID: <49e8725f29ab4ecda6d669e9216bca29@AcuMS.aculab.com>
-References: <20210219201852.3213914-1-jiancai@google.com>
- <20210219230841.875875-1-jiancai@google.com>
- <20210222115816.GA8605@willie-the-truck>
- <CA+SOCLJVGJSn67VU24wPDdsOVeHhGe+KO5ekOCusano=bhn1Mg@mail.gmail.com>
- <20210223100453.GB10254@willie-the-truck>
- <CACRpkdYaSEb8bAztR-s_K17K+Zqusiofwa_dSjz-cwM2+N=57A@mail.gmail.com>
-In-Reply-To: <CACRpkdYaSEb8bAztR-s_K17K+Zqusiofwa_dSjz-cwM2+N=57A@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        linux-fsdevel@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/40] xattr: handle idmapped mounts
+Message-ID: <20210303161528.n3jzg66ou2wa43qb@wittgenstein>
+References: <20210303140522.jwlzrmhhho3lvpmv@wittgenstein>
+ <20210121131959.646623-10-christian.brauner@ubuntu.com>
+ <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <2129497.1614777842@warthog.procyon.org.uk>
+ <2203252.1614782707@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2203252.1614782707@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-RnJvbTogTGludXMgV2FsbGVpag0KPiBTZW50OiAwMyBNYXJjaCAyMDIxIDE1OjE5DQo+IA0KPiBP
-biBUdWUsIEZlYiAyMywgMjAyMSBhdCAxMTowNSBBTSBXaWxsIERlYWNvbiA8d2lsbEBrZXJuZWwu
-b3JnPiB3cm90ZToNCj4gPiBPbiBNb24sIEZlYiAyMiwgMjAyMSBhdCAwMTo1MDowNlBNIC0wODAw
-LCBKaWFuIENhaSB3cm90ZToNCj4gPiA+IEkgYW0gbm90IHN1cmUgaWYgdGhlcmUgYXJlIGFueSBw
-bGFucyB0byBwcm90ZWN0IGFzc2VtYmx5IGNvZGUgYW5kIEkNCj4gPiA+IHdpbGwgbGVhdmUgaXQg
-dG8gdGhlIEFybSBmb2xrcyBzaW5jZSB0aGV5IGtub3cgYSB3aG9sZSBsb3QgYmV0dGVyLiBCdXQN
-Cj4gPiA+IGV2ZW4gd2l0aG91dCB0aGF0IHBhcnQsIHdlIHNob3VsZCBzdGlsbCBoYXZlIGJldHRl
-ciBwcm90ZWN0aW9uLA0KPiA+ID4gZXNwZWNpYWxseSB3aGVuIG92ZXJoZWFkIGRvZXMgbm90IGxv
-b2sgdG9vIGJhZDogSSBkaWQgc29tZSBwcmVsaW1pbmFyeQ0KPiA+ID4gZXhwZXJpbWVudHMgb24g
-Q2hyb21lT1MsIGNvZGUgc2l6ZSBvZiB2bWxpbnV4IGluY3JlYXNlZCAzJSwgYW5kIHRoZXJlDQo+
-ID4gPiB3ZXJlIG5vIG5vdGljZWFibGUgY2hhbmdlcyB0byBydW4tdGltZSBwZXJmb3JtYW5jZSBv
-ZiB0aGUgYmVuY2htYXJrcyBJDQo+ID4gPiB1c2VkLg0KPiA+DQo+ID4gSWYgdGhlIG1pdGlnYXRp
-b24gaXMgcmVxdWlyZWQsIEknbSBub3Qgc3VyZSBJIHNlZSBhIGxvdCBvZiBwb2ludCBpbiBvbmx5
-DQo+ID4gZG9pbmcgYSBoYWxmLWJha2VkIGpvYiBvZiBpdC4gSXQgZmVlbHMgYSBiaXQgbGlrZSBh
-IGJveC10aWNraW5nIGV4ZXJjaXNlLA0KPiA+IGluIHdoaWNoIGNhc2UgYW55IG92ZXJoZWFkIGlz
-IHRvbyBtdWNoLg0KPiANCj4gSSB3cm90ZSBzb21lIHN1Z2dlc3Rpb25zIG9uIGZvbGxvdy11cHMg
-aW4gbXkgcmVwbHksIGFuZCBJIGNhbg0KPiBoZWxwIG91dCBkb2luZyBzb21lIG9mIHRoZSBwYXRj
-aGVzLCBJIHRoaW5rLg0KPiANCj4gU2luY2UgQVJNMzIgUkVUIGlzIG1vdiBwYywgPD4NCj4gZ2l0
-IGdyZXAgJ21vdi4qcGMsJyB8IHdjIC1sIGdpdmVzIDkzIHNpdGVzIGluIGFyY2gvYXJtLg0KPiBJ
-IHN1cHBvc2UgdGhlc2UgbmVlZCB0byBjb21lIG91dDoNCj4gDQo+IG1vdiBwYywgbHINCj4gZHNi
-KG5zaCk7DQo+IGlzYigpOw0KDQpXb24ndCB0aGF0IGdvIGhvcnJpYmx5IHdyb25nIGZvciBjb25k
-aXRpb25hbCByZXR1cm5zPw0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2Vz
-aWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVL
-DQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On Wed, Mar 03, 2021 at 02:45:07PM +0000, David Howells wrote:
+> Christian Brauner <christian.brauner@ubuntu.com> wrote:
+> 
+> > In order to answer this more confidently I need to know a bit more about
+> > how cachefiles are supposed to work.
+> > 
+> > From what I gather here it seemed what this code is trying to set here
+> > is an internal "CacheFiles.cache" extended attribute on the indode. This
+> > extended attribute doesn't store any uids and gids or filesystem
+> > capabilities so the user namespace isn't relevant for that since there
+> > doesn't need to be any conversion.
+> > 
+> > What I need to know is what information do you use for cachefiles to
+> > determine whether someone can set that "Cachefiles.cache" extended
+> > attribute on the inode:
+> > - Is it the mnt_userns of a/the mount of the filesystem you're caching for?
+> > - The mnt_userns of the mnt of struct cachefiles_cache?
+> > - Or the stashed or current creds of the caller?
+> 
+> Mostly it's about permission checking.  The cache driver wants to do accesses
+> onto the files in cache using the context of whatever process writes the
+> "bind" command to /dev/cachefiles, not the context of whichever process issued
+> a read or write, say, on an NFS file that is being cached.
+> 
+> This causes standard UNIX perm checking, SELinux checking, etc. all to be
+> switched to the appropriate context.  It also controls what appears in the
+> audit logs.
 
+(Audit always translates from and to init_user_ns. The changes to make
+it aware of user namespaces proper are delayed until the audit id thing
+is merged as Paul pointed out to me.)
+
+> 
+> There is an exception to this: It also governs the ownership of new files and
+> directories created in the cache and what security labels will be set on them.
+
+So from our offline discussion I gather that cachefilesd creates a cache
+on a local filesystem (ext4, xfs etc.) for a network filesystem. The way
+this is done is by writing "bind" to /dev/cachefiles and pointing it to
+a directory to use as the cache.
+
+This directory can currently also be an idmapped mount, say:
+
+mount --bind --idmap /mnt /mnt
+
+and then pointing cachefilesd via a "bind" operation to
+
+/mnt
+
+What I would expect is for cachefilesd to now take that idmapping into
+account when creating files in /mnt but as it stands now, it doesn't.
+This could leave users confused as the ownership of the files wouldn't
+match to what they expressed in the idmapping. Since you're reworking
+cachefilesd currently anyway, I would suggest we port cachefilesd to
+support idmapped mounts once as part of your rework. I can help there
+and until then we do:
+
+
+diff --git a/fs/cachefiles/bind.c b/fs/cachefiles/bind.c
+index dfb14dbddf51..51f21beafad9 100644
+--- a/fs/cachefiles/bind.c
++++ b/fs/cachefiles/bind.c
+@@ -115,6 +115,12 @@ static int cachefiles_daemon_add_cache(struct cachefiles_cache *cache)
+        if (ret < 0)
+                goto error_open_root;
+
++       if (mnt_user_ns(path.mnt) != &init_user_ns) {
++               ret = -EPERM;
++               pr_err("Caches on idmapped mounts are currently not supported\n");
++               goto error_open_root;
++       }
++
+        cache->mnt = path.mnt;
+        root = path.dentry;
+
+This is safe to do because if a mount is visible in the filesystem it
+can't change it's idmapping.
+
+(Might even be worth if you add a helper at this point:
+
+static inline bool mnt_is_idmapped(struct vfsmount *mnt)
+{
+	return mnt_user_ns(mnt) != &init_user_ns;
+}
+)
+
+Christian
