@@ -2,103 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-28.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73867C43331
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62119C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4BD64E56
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BE2E64F09
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:59:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231432AbhCCX7r (ORCPT
+        id S232281AbhCDA7j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Mar 2021 18:59:47 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36438 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235447AbhCCOGi (ORCPT
+        Wed, 3 Mar 2021 19:59:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44256 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1352948AbhCDACq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Mar 2021 09:06:38 -0500
-Received: from ip5f5af0a0.dynamic.kabel-deutschland.de ([95.90.240.160] helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1lHS7v-0001mB-LN; Wed, 03 Mar 2021 14:05:23 +0000
-Date:   Wed, 3 Mar 2021 14:05:22 +0000
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Tycho Andersen <tycho@tycho.pizza>,
-        Tycho Andersen <tycho@tycho.ws>,
-        James Morris <jmorris@namei.org>,
-        linux-fsdevel@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/40] xattr: handle idmapped mounts
-Message-ID: <20210303140522.jwlzrmhhho3lvpmv@wittgenstein>
-References: <20210121131959.646623-10-christian.brauner@ubuntu.com>
- <20210121131959.646623-1-christian.brauner@ubuntu.com>
- <2129497.1614777842@warthog.procyon.org.uk>
+        Wed, 3 Mar 2021 19:02:46 -0500
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4005AC0613DA
+        for <linux-security-module@vger.kernel.org>; Wed,  3 Mar 2021 15:17:46 -0800 (PST)
+Received: by mail-lf1-x12f.google.com with SMTP id u4so39984581lfs.0
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Mar 2021 15:17:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bJioWY2SyxYVyQ6HbJCASiO240osNAH7hbvsbBMN9q8=;
+        b=FoRQIWOrOSWpnQbeeOXEI0flZTsv0PV0p6wcI8b93AXHcM1gZ9aSnR1JoGSQ7lgbr2
+         kqVLxVWd6pXmGnnj6l3QenA5IzsbN0UptJpSd2tLC9BrhNhfIQJZg9nB5Uj2nGB1bY8D
+         eDxdv3YfhpMCGKxTMQbxtC6iSYy0t+VepEzieFcHY/2yYJ2YLCgecFfgiDt0F9Hm0jk9
+         O7MVXDHKDSSsq0dj8J/OQcQNe0x8KFa6yLZ2DYMjQDjsp728TzXjhJkTby2uUZRcUhTv
+         EFhOCncRRxDkD4iVeoGMRenftxA9y/iA12zP7+x7Bgg9/08hogDFwBNfHnJQEFzROPTL
+         41KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bJioWY2SyxYVyQ6HbJCASiO240osNAH7hbvsbBMN9q8=;
+        b=Zhr+B2epy7Apjep/hTAwGfL6sGWcSbrbbpVtVaHUPVGRI9lSWHsaM2CRZJBDhZtlRg
+         KHLmXUl9mz9xwXPjryuee0zoKaUIrUM6iTMSIzpXRcB8sgkeyP47EFXxKVfH06RiVK+V
+         6MmUk/1uqnnaG8YvDoRdhlziLXdBYqlpUWuXqfBtxv5VTAIoxtocaTgfxQo+b5tyUtcH
+         769F/vGo8pqSVU3EoB+mMBhU5ZVgjC+Ps9zkKA751cLY2a9gMoYcEisnm9DtnzUr7F27
+         D4flE/nBw5zDmNo4JX6Jr6R6y38LgCpje43JqbKxP1s0uQjlfSXrDCt+0aaaiYVaYQYm
+         s6LA==
+X-Gm-Message-State: AOAM532xDbRIKEgyszfunupMFamadp++UL/cI0p3PJYzkjCTYhB6vzGj
+        8t+J0eLSa/7Jq9SgylvH2+Dwc2n9PNbrM20HOH2Q2g==
+X-Google-Smtp-Source: ABdhPJwSap1Hmdo4W6UsN9k0+5d5TjS6UvplVqmtOBVMz5oOgVSyMr6q/AHiggxT/mVjyVJIN+BjMLUH/Vf8V/n18TQ=
+X-Received: by 2002:a05:6512:10c8:: with SMTP id k8mr587955lfg.299.1614813464307;
+ Wed, 03 Mar 2021 15:17:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2129497.1614777842@warthog.procyon.org.uk>
+References: <20210303185807.2160264-1-surenb@google.com>
+In-Reply-To: <20210303185807.2160264-1-surenb@google.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Wed, 3 Mar 2021 15:17:30 -0800
+Message-ID: <CALvZod73Uem8jzP3QQdQ6waXbx80UUOTJQS7WBwnmaCdq++8xw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] mm/madvise: replace ptrace attach requirement for process_madvise
+To:     Suren Baghdasaryan <surenb@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, jeffv@google.com,
+        Minchan Kim <minchan@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>, edgararriaga@google.com,
+        Tim Murray <timmurray@google.com>, fweimer@redhat.com,
+        oleg@redhat.com, jmorris@namei.org, Linux MM <linux-mm@kvack.org>,
+        selinux@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 03, 2021 at 01:24:02PM +0000, David Howells wrote:
-> Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> 
-> > diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
-> > index 72e42438f3d7..a591b5e09637 100644
-> > --- a/fs/cachefiles/xattr.c
-> > +++ b/fs/cachefiles/xattr.c
-> > @@ -39,8 +39,8 @@ int cachefiles_check_object_type(struct cachefiles_object *object)
-> >  	_enter("%p{%s}", object, type);
-> >  
-> >  	/* attempt to install a type label directly */
-> > -	ret = vfs_setxattr(dentry, cachefiles_xattr_cache, type, 2,
-> > -			   XATTR_CREATE);
-> > +	ret = vfs_setxattr(&init_user_ns, dentry, cachefiles_xattr_cache, type,
-> > +			   2, XATTR_CREATE);
-> 
+On Wed, Mar 3, 2021 at 10:58 AM Suren Baghdasaryan <surenb@google.com> wrote:
+>
+> process_madvise currently requires ptrace attach capability.
+> PTRACE_MODE_ATTACH gives one process complete control over another
+> process. It effectively removes the security boundary between the
+> two processes (in one direction). Granting ptrace attach capability
+> even to a system process is considered dangerous since it creates an
+> attack surface. This severely limits the usage of this API.
+> The operations process_madvise can perform do not affect the correctness
+> of the operation of the target process; they only affect where the data
+> is physically located (and therefore, how fast it can be accessed).
+> What we want is the ability for one process to influence another process
+> in order to optimize performance across the entire system while leaving
+> the security boundary intact.
+> Replace PTRACE_MODE_ATTACH with a combination of PTRACE_MODE_READ
+> and CAP_SYS_NICE. PTRACE_MODE_READ to prevent leaking ASLR metadata
+> and CAP_SYS_NICE for influencing process performance.
+>
+> Cc: stable@vger.kernel.org # 5.10+
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Acked-by: Minchan Kim <minchan@kernel.org>
+> Acked-by: David Rientjes <rientjes@google.com>
+> ---
+> changes in v3
+> - Added Reviewed-by: Kees Cook <keescook@chromium.org>
+> - Created man page for process_madvise per Andrew's request: https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=a144f458bad476a3358e3a45023789cb7bb9f993
+> - cc'ed stable@vger.kernel.org # 5.10+ per Andrew's request
+> - cc'ed linux-security-module@vger.kernel.org per James Morris's request
+>
+>  mm/madvise.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index df692d2e35d4..01fef79ac761 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1198,12 +1198,22 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
+>                 goto release_task;
+>         }
+>
+> -       mm = mm_access(task, PTRACE_MODE_ATTACH_FSCREDS);
+> +       /* Require PTRACE_MODE_READ to avoid leaking ASLR metadata. */
+> +       mm = mm_access(task, PTRACE_MODE_READ_FSCREDS);
+>         if (IS_ERR_OR_NULL(mm)) {
+>                 ret = IS_ERR(mm) ? PTR_ERR(mm) : -ESRCH;
+>                 goto release_task;
+>         }
+>
+> +       /*
+> +        * Require CAP_SYS_NICE for influencing process performance. Note that
+> +        * only non-destructive hints are currently supported.
 
-Hey David,
+How is non-destructive defined? Is MADV_DONTNEED non-destructive?
 
-(Ok, recovered from my run-in with the swapfile bug. I even managed to
-get my emails back.)
-
-> Actually, on further consideration, this might be the wrong thing to do in
-> cachefiles.  The creds are (or should be) overridden when accesses to the
-> underlying filesystem are being made.
-> 
-> I wonder if this should be using current_cred()->user_ns or
-> cache->cache_cred->user_ns instead.
-
-Before I go into the second question please note that this is a no-op
-change. So if this is wrong it was wrong before. Which is your point, I
-guess.
-
-Please also note that the mnt_userns is _never_ used for (capability)
-permission checking, only for idmapping vfs objects and permission
-checks based on the i_uid and i_gid. So if your argument about passing
-one of those two user namespaces above has anything to do with
-permission checking on caps it's most likely wrong. :)
-
-In order to answer this more confidently I need to know a bit more about
-how cachefiles are supposed to work.
-
-From what I gather here it seemed what this code is trying to set here
-is an internal "CacheFiles.cache" extended attribute on the indode. This
-extended attribute doesn't store any uids and gids or filesystem
-capabilities so the user namespace isn't relevant for that since there
-doesn't need to be any conversion.
-
-What I need to know is what information do you use for cachefiles to
-determine whether someone can set that "Cachefiles.cache" extended
-attribute on the inode:
-- Is it the mnt_userns of a/the mount of the filesystem you're caching for?
-- The mnt_userns of the mnt of struct cachefiles_cache?
-- Or the stashed or current creds of the caller?
-
-Christian
+> +        */
+> +       if (!capable(CAP_SYS_NICE)) {
+> +               ret = -EPERM;
+> +               goto release_mm;
+> +       }
+> +
+>         total_len = iov_iter_count(&iter);
+>
+>         while (iov_iter_count(&iter)) {
+> @@ -1218,6 +1228,7 @@ SYSCALL_DEFINE5(process_madvise, int, pidfd, const struct iovec __user *, vec,
+>         if (ret == 0)
+>                 ret = total_len - iov_iter_count(&iter);
+>
+> +release_mm:
+>         mmput(mm);
+>  release_task:
+>         put_task_struct(task);
+> --
+> 2.30.1.766.gb4fecdf3b7-goog
+>
