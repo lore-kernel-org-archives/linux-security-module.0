@@ -2,233 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA17C433E9
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6298EC43333
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0127164F49
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28DC064F4D
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231674AbhCCX7t (ORCPT
+        id S231556AbhCCX7s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Mar 2021 18:59:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48118 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S244887AbhCCSNS (ORCPT
+        Wed, 3 Mar 2021 18:59:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48344 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1383656AbhCCPdD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Mar 2021 13:13:18 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4469C60295;
-        Wed,  3 Mar 2021 18:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614795086;
-        bh=JFreicAS3kHza1sZEPHAWrMrSGHusltAns/J69KXcT8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=maGIUbKpXP7ECKXOzOoIXooEr2OWZSa407UoqMLlrH4Rsqix9sEqdUEnGsXpRMEdM
-         eYkeAVL22TkW9jJRyilv9irGH8rf1hU5iP2NVfhgELSgDR0mm4a+mCZMH40PyGZgTQ
-         hx5UROe9Bl6+xIJWCH5dKkZ41GrNICAP3g/GqxllbrjiN600/4dlzK8Mj9OWpGhOKG
-         +6eyk+zNmKaRezour52JuUKQLqljOfnR95cgRNwq14lzpsta1b5qF8dlrbg/ZhikrR
-         +UnJ5mxcyCTDFUtK6j5FlzZCm9+Wcv5YA0Y6aYV2JL6TJfCuXMPs7zcy3pVr8avgxG
-         UiNOzlZCAU7rw==
-Date:   Wed, 3 Mar 2021 11:11:21 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] certs: Add ability to preload revocation certs
-Message-ID: <20210303181121.ii7ofii65lh337ln@archlinux-ax161>
-References: <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
- <161428673564.677100.4112098280028451629.stgit@warthog.procyon.org.uk>
+        Wed, 3 Mar 2021 10:33:03 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3745DC06175F
+        for <linux-security-module@vger.kernel.org>; Wed,  3 Mar 2021 07:31:55 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id y12so16288631ljj.12
+        for <linux-security-module@vger.kernel.org>; Wed, 03 Mar 2021 07:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q7aMRHBSl7NHJrCVQqtGWHia3CjmS5YDu6hw58y3144=;
+        b=hkdy5FBkaxL7oFI9pp6BeMVjXk1o2Zt23WsIuuhAsSqtfX/Lkdh5QXZgzfKaUqS23u
+         K1jHi7CUCZWk0Tkq6ilWcqzhkppJcMDQOoYIxXUmwHI2+IaLdiUHbPxeswfkA7qqhSpS
+         pKYdrnKYGY5zt2oWiN6416OdUPfJu0fiXi//jCyntJwgs/F1zHyBTUmwr/An0H1g3sMV
+         oJZt/kEFBbGvwmrsSdX3jRgJWTFiUjUTu25FSHX53XSGUD5hVjhAwZSTTuH+ALJIyY0M
+         cN/yOfXiA+5ZEUP7GtBNG6upTHFbP7F3jvQDN5n5C09CWxqFX03vtp9XWckYZv0S1u+e
+         aPaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q7aMRHBSl7NHJrCVQqtGWHia3CjmS5YDu6hw58y3144=;
+        b=WTlYCP1z9ncztyhhTGvqCQuCKz3ikxn6lzsu/u/RHyR/ZSTt7eJbS1k61AemDkiKpX
+         4ub54ACTfB9M0oOC5i3gB+HjVOVC6Zrs9ciLvgxtcZfbIuNrsVuvbXWodK9URp4cAHNO
+         b05Jk+6zIgAHBjHl5h01kNLvX3+Y9EzLsyuxxgrhmakmlwXnQO6wP6MEsMMQXpU4CEEv
+         0YfJ6o1wMRsf1+Y14a0vlQuP+eFJHvFEv52zRBWJq3olJnUQ7s/+2Iw3XnFC100+zb43
+         X/3Mae0la7lahx/erPMN5V99uQJT+kOayUrMUAGHo1O3txo9JKP0TKzcHLIYle2S8e7U
+         dUhA==
+X-Gm-Message-State: AOAM5304+WpKJ1pwrYeV7utLt+/Opr1W0hue0H0BTd8GsX4ALPMetPjv
+        rCoYhfl3tBxv31DvE6M3asDAB97X7xel+aGi9qiggg==
+X-Google-Smtp-Source: ABdhPJzAav+i0MnJO4TXhlAbYWsXCSj1Sqlgf1GE1KDm/iMLl0vYd0ihsE6lM2OO6Q6m4gLeLJTMLiHnS0JztKnAFus=
+X-Received: by 2002:a2e:864a:: with SMTP id i10mr14866199ljj.467.1614785512273;
+ Wed, 03 Mar 2021 07:31:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161428673564.677100.4112098280028451629.stgit@warthog.procyon.org.uk>
+References: <20210219201852.3213914-1-jiancai@google.com> <20210219230841.875875-1-jiancai@google.com>
+ <20210222115816.GA8605@willie-the-truck> <CA+SOCLJVGJSn67VU24wPDdsOVeHhGe+KO5ekOCusano=bhn1Mg@mail.gmail.com>
+ <20210223100453.GB10254@willie-the-truck> <CACRpkdYaSEb8bAztR-s_K17K+Zqusiofwa_dSjz-cwM2+N=57A@mail.gmail.com>
+ <49e8725f29ab4ecda6d669e9216bca29@AcuMS.aculab.com>
+In-Reply-To: <49e8725f29ab4ecda6d669e9216bca29@AcuMS.aculab.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 3 Mar 2021 16:31:41 +0100
+Message-ID: <CACRpkdYM3x6pJU3Vi+EEHtC3wD1DkrtVbGDd3PFHWL0fxjSA9g@mail.gmail.com>
+Subject: Re: [PATCH v4] ARM: Implement SLS mitigation
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Will Deacon <will@kernel.org>, Jian Cai <jiancai@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Luis Lozano <llozano@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Ingo Molnar <mingo@kernel.org>, Marc Zyngier <maz@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Brazdil <dbrazdil@google.com>,
+        James Morse <james.morse@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Feb 25, 2021 at 08:58:55PM +0000, David Howells wrote:
-> From: Eric Snowberg <eric.snowberg@oracle.com>
-> 
-> Add a new Kconfig option called SYSTEM_REVOCATION_KEYS. If set,
-> this option should be the filename of a PEM-formated file containing
-> X.509 certificates to be included in the default blacklist keyring.
-> 
-> [DH: Changed this to make the new Kconfig option depend on the option to
-> enable the facility.]
-> 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Link: https://lore.kernel.org/r/20200930201508.35113-3-eric.snowberg@oracle.com/
-> Link: https://lore.kernel.org/r/20210122181054.32635-4-eric.snowberg@oracle.com/ # v5
-> ---
-> 
->  certs/Kconfig                   |    8 ++++++++
->  certs/Makefile                  |   18 ++++++++++++++++--
->  certs/blacklist.c               |   17 +++++++++++++++++
->  certs/revocation_certificates.S |   21 +++++++++++++++++++++
->  scripts/Makefile                |    1 +
->  5 files changed, 63 insertions(+), 2 deletions(-)
->  create mode 100644 certs/revocation_certificates.S
-> 
-> diff --git a/certs/Kconfig b/certs/Kconfig
-> index 76e469b56a77..ab88d2a7f3c7 100644
-> --- a/certs/Kconfig
-> +++ b/certs/Kconfig
-> @@ -92,4 +92,12 @@ config SYSTEM_REVOCATION_LIST
->  	  blacklist keyring and implements a hook whereby a PKCS#7 message can
->  	  be checked to see if it matches such a certificate.
->  
-> +config SYSTEM_REVOCATION_KEYS
-> +	string "X.509 certificates to be preloaded into the system blacklist keyring"
-> +	depends on SYSTEM_REVOCATION_LIST
-> +	help
-> +	  If set, this option should be the filename of a PEM-formatted file
-> +	  containing X.509 certificates to be included in the default blacklist
-> +	  keyring.
-> +
->  endmenu
-> diff --git a/certs/Makefile b/certs/Makefile
-> index f4b90bad8690..e3f4926fd21e 100644
-> --- a/certs/Makefile
-> +++ b/certs/Makefile
-> @@ -4,7 +4,7 @@
->  #
->  
->  obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o common.o
-> -obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o
-> +obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o revocation_certificates.o common.o
->  ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
->  obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_hashes.o
->  else
-> @@ -29,7 +29,7 @@ $(obj)/x509_certificate_list: scripts/extract-cert $(SYSTEM_TRUSTED_KEYS_SRCPREF
->  	$(call if_changed,extract_certs,$(SYSTEM_TRUSTED_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_TRUSTED_KEYS))
->  endif # CONFIG_SYSTEM_TRUSTED_KEYRING
->  
-> -clean-files := x509_certificate_list .x509.list
-> +clean-files := x509_certificate_list .x509.list x509_revocation_list
->  
->  ifeq ($(CONFIG_MODULE_SIG),y)
->  ###############################################################################
-> @@ -104,3 +104,17 @@ targets += signing_key.x509
->  $(obj)/signing_key.x509: scripts/extract-cert $(X509_DEP) FORCE
->  	$(call if_changed,extract_certs,$(MODULE_SIG_KEY_SRCPREFIX)$(CONFIG_MODULE_SIG_KEY))
->  endif # CONFIG_MODULE_SIG
-> +
-> +ifeq ($(CONFIG_SYSTEM_BLACKLIST_KEYRING),y)
-> +
-> +$(eval $(call config_filename,SYSTEM_REVOCATION_KEYS))
-> +
-> +$(obj)/revocation_certificates.o: $(obj)/x509_revocation_list
-> +
-> +quiet_cmd_extract_certs  = EXTRACT_CERTS   $(patsubst "%",%,$(2))
-> +      cmd_extract_certs  = scripts/extract-cert $(2) $@
-> +
-> +targets += x509_revocation_list
-> +$(obj)/x509_revocation_list: scripts/extract-cert $(SYSTEM_REVOCATION_KEYS_SRCPREFIX)$(SYSTEM_REVOCATION_KEYS_FILENAME) FORCE
-> +	$(call if_changed,extract_certs,$(SYSTEM_REVOCATION_KEYS_SRCPREFIX)$(CONFIG_SYSTEM_REVOCATION_KEYS))
-> +endif
-> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> index 2b8644123d5f..723b19c96256 100644
-> --- a/certs/blacklist.c
-> +++ b/certs/blacklist.c
-> @@ -17,9 +17,13 @@
->  #include <linux/uidgid.h>
->  #include <keys/system_keyring.h>
->  #include "blacklist.h"
-> +#include "common.h"
->  
->  static struct key *blacklist_keyring;
->  
-> +extern __initconst const u8 revocation_certificate_list[];
-> +extern __initconst const unsigned long revocation_certificate_list_size;
-> +
->  /*
->   * The description must be a type prefix, a colon and then an even number of
->   * hex digits.  The hash is kept in the description.
-> @@ -220,3 +224,16 @@ static int __init blacklist_init(void)
->   * Must be initialised before we try and load the keys into the keyring.
->   */
->  device_initcall(blacklist_init);
-> +
-> +/*
-> + * Load the compiled-in list of revocation X.509 certificates.
-> + */
-> +static __init int load_revocation_certificate_list(void)
-> +{
-> +	if (revocation_certificate_list_size)
-> +		pr_notice("Loading compiled-in revocation X.509 certificates\n");
-> +
-> +	return load_certificate_list(revocation_certificate_list, revocation_certificate_list_size,
-> +				     blacklist_keyring);
-> +}
-> +late_initcall(load_revocation_certificate_list);
-> diff --git a/certs/revocation_certificates.S b/certs/revocation_certificates.S
-> new file mode 100644
-> index 000000000000..f21aae8a8f0e
-> --- /dev/null
-> +++ b/certs/revocation_certificates.S
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <linux/export.h>
-> +#include <linux/init.h>
-> +
-> +	__INITRODATA
-> +
-> +	.align 8
-> +	.globl revocation_certificate_list
-> +revocation_certificate_list:
-> +__revocation_list_start:
-> +	.incbin "certs/x509_revocation_list"
-> +__revocation_list_end:
-> +
-> +	.align 8
-> +	.globl revocation_certificate_list_size
-> +revocation_certificate_list_size:
-> +#ifdef CONFIG_64BIT
-> +	.quad __revocation_list_end - __revocation_list_start
-> +#else
-> +	.long __revocation_list_end - __revocation_list_start
-> +#endif
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index b5418ec587fb..983b785f13cb 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -11,6 +11,7 @@ hostprogs-always-$(CONFIG_ASN1)				+= asn1_compiler
->  hostprogs-always-$(CONFIG_MODULE_SIG_FORMAT)		+= sign-file
->  hostprogs-always-$(CONFIG_SYSTEM_TRUSTED_KEYRING)	+= extract-cert
->  hostprogs-always-$(CONFIG_SYSTEM_EXTRA_CERTIFICATE)	+= insert-sys-cert
-> + hostprogs-always-$(CONFIG_SYSTEM_BLACKLIST_KEYRING)	+= extract-cert
->  
->  HOSTCFLAGS_sorttable.o = -I$(srctree)/tools/include
->  HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
-> 
-> 
+On Wed, Mar 3, 2021 at 4:29 PM David Laight <David.Laight@aculab.com> wrote:
+> > On Tue, Feb 23, 2021 at 11:05 AM Will Deacon <will@kernel.org> wrote:
 
-This patch is broken when CONFIG_SYSTEM_BLACKLIST_KEYRING is set but
-CONFIG_SYSTEM_REVOCATION_LIST is unset, meaning that
-CONFIG_SYSTEM_REVOCATION_KEYS is not defined at all. This is very easy
-to reproduce with x86_64_defconfig.
+> > I wrote some suggestions on follow-ups in my reply, and I can
+> > help out doing some of the patches, I think.
+> >
+> > Since ARM32 RET is mov pc, <>
+> > git grep 'mov.*pc,' | wc -l gives 93 sites in arch/arm.
+> > I suppose these need to come out:
+> >
+> > mov pc, lr
+> > dsb(nsh);
+> > isb();
+>
+> Won't that go horribly wrong for conditional returns?
 
-$ make -skj"$(nproc)" O=build/x86_64 defconfig
+It will so I would not insert it after those. It has to be
+on a case-by-base basis, I am not planning any
+search and replace operations.
 
-$ scripts/config --file build/x86_64/.config -e SYSTEM_BLACKLIST_KEYRING
-
-$ make -skj"$(nproc)" O=build/x86_64 olddefconfig certs/
-At main.c:154:
-- SSL error:0909006C:PEM routines:get_name:no start line: crypto/pem/pem_lib.c:745
-extract-cert: /home/nathan/cbl/src/linux-next/: Is a directory
-make[3]: *** [/home/nathan/cbl/src/linux-next/certs/Makefile:119: certs/x509_revocation_list] Error 1
-...
-
-This happens with every single distribution configuration that I test.
-
-Cheers,
-Nathan
+Yours,
+Linus Walleij
