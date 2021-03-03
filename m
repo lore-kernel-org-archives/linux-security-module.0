@@ -2,149 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B05E8C41620
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8342FC43381
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87F3F64F10
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5016264EC0
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 00:17:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231473AbhCCX7r (ORCPT
+        id S231389AbhCCX7q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 3 Mar 2021 18:59:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42490 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231923AbhCCPFw (ORCPT
+        Wed, 3 Mar 2021 18:59:46 -0500
+Received: from verein.lst.de ([213.95.11.211]:35428 "EHLO verein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1355863AbhCCHCF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 3 Mar 2021 10:05:52 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B491C06175F
-        for <linux-security-module@vger.kernel.org>; Wed,  3 Mar 2021 07:04:55 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id v9so19804730lfa.1
-        for <linux-security-module@vger.kernel.org>; Wed, 03 Mar 2021 07:04:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RAU+oF5abLpOatKR6GoNs0xhW7zYpMa0vIglwnJvvdg=;
-        b=TXjhTZG7o4n5bxO+2rz3ZIatg4fz7wrYFZRfWehMJbbvQvWXqTzvq7Yyxc/V+rxHSP
-         fLDpnURO2RHIGMA0mJnT2UfCmKwc152iZKeIXdKhkO2ZKVx0F7067lsAeLTrO+wteFXE
-         h2C7EnX3ZjEudvNE1bIupubFD88jPsxE+uh8vr5zD8wBjFtgE/hgCEdlCVdsrYs7KwaS
-         6V7VVBhAky65ZFa+aKvy9i8fNgIgTe6ZVsDBYWpjblE++wUpIA+YWuUOf1Uu9dx/qkUW
-         8UDFtPLiF/Vd1jHQnjnJB6FGzbw+gvB1PQB3CC4npvI0IMcllIhbZO7wZytSfUDf38Oe
-         wvUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RAU+oF5abLpOatKR6GoNs0xhW7zYpMa0vIglwnJvvdg=;
-        b=fRD7sk38x/qQbZmMVwlt9FR1K5UgGQ1Nfg4i/btPkNm/ZBy/iLshU1c45baq1LtWV6
-         84MFySixmewRnStHJtpa69dsRwFmDOC1FPqYQSRu4d98Yrl2sbCovfFvDRQgHqoPxzDj
-         DZs13q77gsZ4/Tn2Us5HVioRqkpQ0VkzvINYQW9RCVZAqn0upWX3KUp3uaHKzr1PexFM
-         3sjw5geuzx8gqoIC9zByCNYENzfbAA/Ttjj4kVj+BY6CJUT0YRqkDAs5CgQeTJqEtcaM
-         MvPPvt1n2CxiAZMi2nxLrv0/4/3L8aCAANHDnKphaCzhn/oRs4yBWKCxGSQEEpZcaedn
-         4qmQ==
-X-Gm-Message-State: AOAM533e6gdjr/Ol4hacG5hC62F6X+ihbqS0vQykhJpPWT4LanuBs8Df
-        rGTzt6KoAgEUXNzdtSBCOZ3kP/pSOlZjU8KyGYARXg==
-X-Google-Smtp-Source: ABdhPJzhn3AMqF86AcKRF6zE/lHio+2SRjlvtPdzQzkcMe7iFMLKCCIbtQi+Q4Qq7MhFPtEH8qf3gLsz5rcxlUqR6Yw=
-X-Received: by 2002:ac2:4d95:: with SMTP id g21mr16105295lfe.29.1614783893687;
- Wed, 03 Mar 2021 07:04:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20210223023125.2265845-1-jiancai@google.com> <20210223023542.2287529-1-jiancai@google.com>
-In-Reply-To: <20210223023542.2287529-1-jiancai@google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 3 Mar 2021 16:04:42 +0100
-Message-ID: <CACRpkdYC3iDD23SESM0j2=f56kr6ByKeedDQvkGwXbUC0br0fw@mail.gmail.com>
-Subject: Re: [PATCH v5] ARM: Implement SLS mitigation
-To:     Jian Cai <jiancai@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, manojgupta@google.com,
-        llozano@google.com,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        Wed, 3 Mar 2021 02:02:05 -0500
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 16AAD68CFC; Wed,  3 Mar 2021 08:01:06 +0100 (CET)
+Date:   Wed, 3 Mar 2021 08:01:03 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
         Kees Cook <keescook@chromium.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Brazdil <dbrazdil@google.com>,
-        James Morse <james.morse@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 39/40] xfs: support idmapped mounts
+Message-ID: <20210303070103.GA7866@lst.de>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com> <20210121131959.646623-40-christian.brauner@ubuntu.com> <20210301200520.GK7272@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210301200520.GK7272@magnolia>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 23, 2021 at 3:36 AM Jian Cai <jiancai@google.com> wrote:
+On Mon, Mar 01, 2021 at 12:05:20PM -0800, Darrick J. Wong wrote:
+> > +	if (breq->mnt_userns != &init_user_ns) {
+> > +		xfs_warn_ratelimited(breq->mp,
+> > +			"bulkstat not supported inside of idmapped mounts.");
+> > +		return -EINVAL;
+> 
+> Shouldn't this be -EPERM?
+> 
+> Or -EOPNOTSUPP?
 
-> This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
-> -mharden-sls=all, which mitigates the straight-line speculation
-> vulnerability, speculative execution of the instruction following some
-> unconditional jumps. Notice -mharden-sls= has other options as below,
-> and this config turns on the strongest option.
->
-> all: enable all mitigations against Straight Line Speculation that are implemented.
-> none: disable all mitigations against Straight Line Speculation.
-> retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
-> blr: enable the mitigation against Straight Line Speculation for BLR instructions.
+-EINVAL is what we return for all our nor suppored ioctls, so I think it
+is the right choice here, and should generally trigger the right
+fallbacks.
 
-I heard about compiler protection for this, so nice to see it happening!
+> Also, I'm not sure why bulkstat won't work in an idmapped mount but
+> bulkstat_single does?  You can use the singleton version to stat inodes
+> that aren't inside the submount.
 
-Would you happen to know if there is any plan to do the same for GCC?
-I know you folks at Google like LLVM, but if you know let us know.
-
-> +config HARDEN_SLS_ALL
-> +       bool "enable SLS vulnerability hardening"
-
-I would go in and also edit arch/arm/mm/Kconfig under:
-config HARDEN_BRANCH_PREDICTOR add
-select HARDEN_SLS_ALL
-
-Because if the user wants hardening for branch prediction
-in general then the user certainly wants this as well, if
-available. The help text for that option literally says:
-
- "This config option will take CPU-specific actions to harden
-   the branch predictor against aliasing attacks and may rely on
-   specific instruction sequences or control bits being set by
-   the system firmware."
-
-Notice this only turns on for CPUs with CPU_SPECTRE
-defined which makes sense. Also it is default y which fulfils
-Will's request that it be turned on by default where
-applicable. Notably it will not be turned on for pre-v7 silicon
-which would be unhelpful as they don't suffer from
-these bugs.
-
-Reading Kristofs compiler patch here:
-https://reviews.llvm.org/rG195f44278c4361a4a32377a98a1e3a15203d3647
-
-I take it that for affected CPUs we should also patch all assembly
-in the kernel containing a RET, BR or BLR with
-DSB SYS followed by ISB?
-
-I suppose we would also need to look for any mov PC, <>
-code...
-
-I guess we can invent a "SB" macro to mimic what Aarch64 is
-doing so the code is easy to read. (Thinking aloud.)
-
-Yours,
-Linus Walleij
+Looking at it again I think we should fail BULKSTAT_SINGLE as well.
+I had somehow assumed BULKSTAT_SINGLE would operate on the inode of
+the open file, in which case it would be fine.  But it doesn't so that
+argument doesn't count.
