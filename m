@@ -7,100 +7,103 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C623EC433E0
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 21:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 591BDC433DB
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 21:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A2AD64FF1
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 21:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F4C764FF1
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 21:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232155AbhCDVd5 (ORCPT
+        id S233540AbhCDVqR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Mar 2021 16:33:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41966 "EHLO
+        Thu, 4 Mar 2021 16:46:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233973AbhCDVdq (ORCPT
+        with ESMTP id S237781AbhCDVqJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Mar 2021 16:33:46 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB688C061756
-        for <linux-security-module@vger.kernel.org>; Thu,  4 Mar 2021 13:33:05 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id v13so20465354edw.9
-        for <linux-security-module@vger.kernel.org>; Thu, 04 Mar 2021 13:33:05 -0800 (PST)
+        Thu, 4 Mar 2021 16:46:09 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DDD6C061574
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Mar 2021 13:45:29 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id dx17so24782647ejb.2
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Mar 2021 13:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0qROWWTNz36x2w3xcMbLyxyZ1xmwI8HYrEV2dBDfDzY=;
-        b=0CwLBLNiLo1fwP/msdddCOm2cYa8rCYq+oioL39s+Ms2gEcWumQYr6RHjPmlol2qeP
-         2nFi9aY60gAzKw6DdGMiElgkFSUlJImhpqX2AWYL9Gu+0NUz3ausXJ+EH0VeU4/UcIFr
-         t4V3y3rstumz/CmV6XfGE6pD7hYZeirlPf5f3tJaoKB/2q0xA7fFheimMomFlcGVteQK
-         pKXkVWWHVW+/Irc5dzzHPgLeYvW+Dwe6v69wHNXQ5L87aPBEodOgrB6cd8wTaAKNlYN2
-         o4YQq92KLZ3GNRLO3FL3Bebp2WLws+zAWXQ3oQDqAswonyuJgx5FsxMMoY45jSWBsclo
-         7zbw==
+        bh=j/jIt2s7Q0eFHgHDjIsWzLDkXQSa4GDJusn0w6/VBWs=;
+        b=swnDs4vCPHoHZHuQLS0U2qI0CZQTG1t3aWZiS+iWzbdE2jTP6zVgdfli7+qdEryy59
+         IM7pfwi0RsKGYYNeecreyiWzw7I87qj2GNu+MtvFblLOFrBTVr00hsBoKiqpD6HyotoN
+         Nidpc+WE/oxBPAXjOi9OfhrEMIXIeH5ZLhYxFpb/7p3J7yoPN0w9bGXW6TFTPrXIHsAD
+         HVZrUMjap/6MHl43Ixe84rrPKQpiUVtvJ7tKaqdV7fbRSnfbwy65a+0yghpuZOIN3G3W
+         EnAwohwsOCH3/xpuPHL59SC59LgD36IHxnwjYyClScyl5gzhXlbYAn230pFRMPjFYvIt
+         lriw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0qROWWTNz36x2w3xcMbLyxyZ1xmwI8HYrEV2dBDfDzY=;
-        b=Lmutjk+WM7fCW6+S8BL+jYS8tWsTK9tQTuDp9Mue9ysAfy92/qsjaMVrgT/0iTLBoR
-         3Bx2YdWv8WVxF29ePOddKr2gtuf4tr2qwCAhK0258rIEprFZWRaWFrNVcmaxlCG3qDvo
-         S0LPfg1Qe3Y9ybXPJBuq43atgn4YUPymOqjoRwxbI+0Vfn7aeVddu5rjm5h024xcCLtE
-         RF8/aqDMBbHDt7tt1UBv7Fu+jQJBm0pYocU14MgVdNFsg2K5NNzKYhFV9xA54I7JqWXV
-         YjFIZruSDbG99l0df+r2wz1SaYPbnPC1w/MgT3kHHzY0gsy7rp36qoR9SPoiVqO9H0DE
-         TXiQ==
-X-Gm-Message-State: AOAM531j1blCrQz/TbgTsKqORqB+EkQvrGp92ecpNK3ArbNGy2flqzps
-        qfsnILFn1r8l8s4hgU37QN34kBCYPh/DyqXfdwAQ
-X-Google-Smtp-Source: ABdhPJzy4UbgOeVcYyn5pg7jcVZivwdX/+HaoAbCbn+pN9b29g6mYvb4yXwZjhuGJ7rLq53LL8NlW7vQ6Lj3YqLwJKU=
-X-Received: by 2002:a05:6402:3c7:: with SMTP id t7mr6651176edw.196.1614893584307;
- Thu, 04 Mar 2021 13:33:04 -0800 (PST)
+        bh=j/jIt2s7Q0eFHgHDjIsWzLDkXQSa4GDJusn0w6/VBWs=;
+        b=nRmIPIgd8ITdp3U7f4KI3HnDlhydhbv34jNhN/Ljc0gmRvzc/bDaun51+fJnrFWHOO
+         7tFnES8OHLPnp2oGyc1mMezIMK4HxetHPeH5QqIyaOds50NL/QDDVNaZlNQnfqEoBLA6
+         4t+D1nQ07Jm0oA98cjbxmFTfmfMBZY9UjEYiftDeXeDtMbLNc5sFSUp73bN1SyUlbc5g
+         YNdJmf4jwgDqT/dn+9QAt1tU1ESahxTDrEeXWEe5oP292zmHGizGe2F8O29etCPa98Kv
+         sPwOFJCkVRHxd7Tir7BIZYT0wGCmEwjkzIrr8kgCV35VI28UuO9PjKrpYpVdyjkhVPLP
+         +oag==
+X-Gm-Message-State: AOAM530uLxRfDk7wzwbpZPX00EwAxdYRYoeqApmmH4ZVupN3uNQdpLSq
+        xlQ8GoRwRCLMkWyoPjVKzriZ7YJ0w44iLZQQts8frbuhZEkdvhw=
+X-Google-Smtp-Source: ABdhPJwNCi+6ZEkX7Lzsf81G0Z8WRmGKJmmTen5edPYi1Q2f4I8B0ODZHl5deTZWgsoFeaTCq9rRP43YAPLUJLUyTu0=
+X-Received: by 2002:a17:906:3ac3:: with SMTP id z3mr6616321ejd.106.1614894328178;
+ Thu, 04 Mar 2021 13:45:28 -0800 (PST)
 MIME-Version: 1.0
-References: <161489339182.63157.2775083878484465675.stgit@olly>
-In-Reply-To: <161489339182.63157.2775083878484465675.stgit@olly>
+References: <a93d1b4c1d027d037ec341eabfc8e7920e589a49.camel@yandex.ru> <CAFqZXNsgVFCa-DnG5G_Ceu+oHsFszt-TQP27Wur_RJg8bG-wMQ@mail.gmail.com>
+In-Reply-To: <CAFqZXNsgVFCa-DnG5G_Ceu+oHsFszt-TQP27Wur_RJg8bG-wMQ@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 4 Mar 2021 16:32:53 -0500
-Message-ID: <CAHC9VhQuNf-PjxdHj2CkfVCZwFfucR_+5Xvr=OahkfXNPKgTmQ@mail.gmail.com>
-Subject: Re: [PATCH] cipso,calipso: resolve a number of problems with the DOI refcounts
-To:     netdev@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Date:   Thu, 4 Mar 2021 16:45:17 -0500
+Message-ID: <CAHC9VhSRKwiDB0Ekffs3DWWC6hzZy=2Nazzfg_UdE9vhffbv=g@mail.gmail.com>
+Subject: Re: [PATCH] CIPSO: Fix unaligned memory access in cipso_v4_gentag_hdr
+To:     Seergey Nazarov <s-nazarov@yandex.ru>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 4, 2021 at 4:29 PM Paul Moore <paul@paul-moore.com> wrote:
+On Thu, Mar 4, 2021 at 4:17 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Thu, Mar 4, 2021 at 10:09 PM Seergey Nazarov <s-nazarov@yandex.ru> wrote:
+> > We need to use put_unaligned when writing 32-bit DOI value
+> > in cipso_v4_gentag_hdr to avoid unaligned memory access.
+> >
+> > Signed-off-by: Sergey Nazarov <s-nazarov@yandex.ru>
+> > ---
+> >  net/ipv4/cipso_ipv4.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> > index 471d33a..28dfe40 100644
+> > --- a/net/ipv4/cipso_ipv4.c
+> > +++ b/net/ipv4/cipso_ipv4.c
+> > @@ -1162,7 +1162,7 @@ static void cipso_v4_gentag_hdr(const struct
+> > cipso_v4_doi *doi_def,
+> >  {
+> >         buf[0] = IPOPT_CIPSO;
+> >         buf[1] = CIPSO_V4_HDR_LEN + len;
+> > -       *(__be32 *)&buf[2] = htonl(doi_def->doi);
+> > +       put_unaligned_be32(doi_def->doi, (__be32 *)&buf[2]);
 >
-> The current CIPSO and CALIPSO refcounting scheme for the DOI
-> definitions is a bit flawed in that we:
->
-> 1. Don't correctly match gets/puts in netlbl_cipsov4_list().
-> 2. Decrement the refcount on each attempt to remove the DOI from the
->    DOI list, only removing it from the list once the refcount drops
->    to zero.
->
-> This patch fixes these problems by adding the missing "puts" to
-> netlbl_cipsov4_list() and introduces a more conventional, i.e.
-> not-buggy, refcounting mechanism to the DOI definitions.  Upon the
-> addition of a DOI to the DOI list, it is initialized with a refcount
-> of one, removing a DOI from the list removes it from the list and
-> drops the refcount by one; "gets" and "puts" behave as expected with
-> respect to refcounts, increasing and decreasing the DOI's refcount by
-> one.
->
-> Fixes: b1edeb102397 ("netlabel: Replace protocol/NetLabel linking with refrerence counts")
-> Fixes: d7cce01504a0 ("netlabel: Add support for removing a CALIPSO DOI.")
-> Reported-by: syzbot+9ec037722d2603a9f52e@syzkaller.appspotmail.com
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  net/ipv4/cipso_ipv4.c            |   11 +----------
->  net/ipv6/calipso.c               |   14 +++++---------
->  net/netlabel/netlabel_cipso_v4.c |    3 +++
->  3 files changed, 9 insertions(+), 19 deletions(-)
+> I think you can now also drop the cast, since put_unaligned_be32()
+> expects a void *.
 
-As a FYI, this patch has been tested by looping through a number of
-NetLabel/CALIPSO/CIPSO tests overnight, a reproducer from one of the
-syzbot reports (multiple times), and the selinux-testsuite tests;
-everything looked good at the end of the testing.
+Yes, it shouldn't be necessary.
 
-Thanks to syzbot and Dmitry for finding and reporting the bug.
+You should also send this to netdev as NetLabel code lives under net/
+and goes to Linus via the netdev tree.
+
+Also, looking at the code, there are a few similar spots you should
+probably fix while you are revising this patch:
+
+* the short/__be16 assignment in cipso_v4_map_cat_enum_hton()
+* the short/__be16 assignments in cipso_v4_map_cat_rng_hton()
+* the long/__be32 assignment in calipso_genopt()
 
 -- 
 paul moore
