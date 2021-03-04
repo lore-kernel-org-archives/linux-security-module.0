@@ -2,74 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA5BC433DB
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 23:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5D2C433E6
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 23:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97CC865004
-	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 23:30:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 301E964FDD
+	for <linux-security-module@archiver.kernel.org>; Thu,  4 Mar 2021 23:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231143AbhCDXaH (ORCPT
+        id S233233AbhCDXmM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 4 Mar 2021 18:30:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229570AbhCDXaH (ORCPT
+        Thu, 4 Mar 2021 18:42:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41708 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233196AbhCDXmM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 4 Mar 2021 18:30:07 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id 2F1C464FFF;
-        Thu,  4 Mar 2021 23:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1614900607;
-        bh=mYItgB5OF8Z9/8sUYGC32ZVGnESrOA82MM7IhaZdjag=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=HUGXa6UPgn9A7+CT4kwKLTaEhzT0qKe/S/j2M6QDZ3amPCoYDCfwG8A+oH8RE61GB
-         RKUiQ4RwqKLwpQxrEs/oT5asH7YEIvCl/0NVhqqFGAjDFjIq/Uoi4XYyM3hZTxHMXm
-         7OS3LqN/kOmuFp/OXpPTnnHNhFyZoyOx/a+19dNQpCYgrmMs/rJzLUZll6t/tJIHXL
-         w7dP16AxYKnSj88ywCXFIX9VK7xb57dGwAOov5seHwsDxb4IxSdQ+YfpxWWO3mJNNW
-         WbnS+AV2L/fiWpFY702ic6WNEbnJoebf2AlN6QEVe6gdx+/aRXQMWTUCjfydB+sPw0
-         EAYul4AukY9Tw==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 4 Mar 2021 18:42:12 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1C4C061756
+        for <linux-security-module@vger.kernel.org>; Thu,  4 Mar 2021 15:42:11 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id w1so52918203ejf.11
+        for <linux-security-module@vger.kernel.org>; Thu, 04 Mar 2021 15:42:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q5EDf9ncNuU6Gr96EZPTVT0fXM6QXMRjDMEHVuOqfDg=;
+        b=zE2xlDIuD0pCnfhboV1yiP2xkWpEu9cJ2W2pQup7RtDY05ZIEB1LIUh847iBcvJ0tS
+         k+DhhU8lXsvP1RSJ8joLIVXcw/znVQOuv7j/dqJJbQpCITaw9U7OxT/UvrWSl+eePfG+
+         Jldv/oJWKkPeHIWKuHbLe7LlaQ7A3bPRoa7jlVLO1zCsNZK4SHs+WYlvMrKxea2JNZTU
+         kLnrKLcp605qbU/ks2QN/balNme9p0/DJPZKQjiD/d0u+hPKDOI0La5uAuU4ytNwvLMg
+         40INVyc6uHTjW+FoB/689mIcqbTgwAM2hGyWWhN6h2i/GQeFMavxmPK3V9Ml6cN5bwuG
+         rYwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q5EDf9ncNuU6Gr96EZPTVT0fXM6QXMRjDMEHVuOqfDg=;
+        b=a+KHyxk88ODvGpAXotcsoIHCDN6T9yXyq4F8suh+mFy7xL0zFyLa+P4QDFrMfOCG5a
+         b+bvbIIZbxunyUG5ccR+ZSrTsz7eKe486qcVeQ3ZFmtqVNRK22BMxk7AifG2piV0zUmv
+         HCQ6ierJDy0rzQNtT5R96SfkBcqKjKCDywHfQ4ecdHpqnVBa2HesYgr6K64aqDY44Joo
+         CPuLr8U+qj8un0/7ktB7LtO4U8sjSbw5qukfwKAJwTAaczDVL+wLdY8p3cY/S5rTmI6A
+         obi8qbyO+zXaCcUGTeWcehQ9CuUOhB93rMKUsSgZ86YTalCgpYbNk+FSCF9ug1C0r7E1
+         IfDA==
+X-Gm-Message-State: AOAM533/jHItGtedsO3frlh0RbQMJMDo5w4y+0F56U2aSBazrATD3U/Y
+        cxF4A12zjD6RDIHDx/YhpWuTg8JVetriU/LIrQSm6iAWGS/I
+X-Google-Smtp-Source: ABdhPJw4Kmqx3AHQrHGHaRoum3GAWUxNj073/4lUV0foGYaoZpybwLKPT5KVSGG88SX9+dXmFgblQgmO2g/3aPW4zcA=
+X-Received: by 2002:a17:906:2314:: with SMTP id l20mr3527eja.178.1614901330585;
+ Thu, 04 Mar 2021 15:42:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] cipso,calipso: resolve a number of problems with the DOI
- refcounts
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <161490060714.7752.4115541555811956751.git-patchwork-notify@kernel.org>
-Date:   Thu, 04 Mar 2021 23:30:07 +0000
-References: <161489339182.63157.2775083878484465675.stgit@olly>
-In-Reply-To: <161489339182.63157.2775083878484465675.stgit@olly>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, dvyukov@google.com
+References: <161377712068.87807.12246856567527156637.stgit@sifl>
+ <9ea5259b-fd84-e176-c042-c52a1c4fcc27@schaufler-ca.com> <CAHC9VhQBbep2WkD6JkCemtcXFLq7j5=AQeM9vVJ4_gmvi7hPQA@mail.gmail.com>
+ <1ab6d635-53af-6dd9-fc29-482723c80c6a@schaufler-ca.com> <CAHC9VhR3=dNpxHXSo7TgJD6bCezgzfS-iT32f-jAZJgzCsNA3w@mail.gmail.com>
+ <ac0bf135-a103-57a7-f358-d54219749768@schaufler-ca.com>
+In-Reply-To: <ac0bf135-a103-57a7-f358-d54219749768@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 4 Mar 2021 18:41:59 -0500
+Message-ID: <CAHC9VhSy929orY1vCGbXC5qVWOqT6KSmK5VnNuD5vD+JywQEOA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] Split security_task_getsecid() into subj and obj variants
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, Mimi Zohar <zohar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
+On Wed, Mar 3, 2021 at 9:21 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 3/3/2021 4:46 PM, Paul Moore wrote:
 
-This patch was applied to netdev/net.git (refs/heads/master):
+...
 
-On Thu, 04 Mar 2021 16:29:51 -0500 you wrote:
-> The current CIPSO and CALIPSO refcounting scheme for the DOI
-> definitions is a bit flawed in that we:
-> 
-> 1. Don't correctly match gets/puts in netlbl_cipsov4_list().
-> 2. Decrement the refcount on each attempt to remove the DOI from the
->    DOI list, only removing it from the list once the refcount drops
->    to zero.
-> 
-> [...]
+> > Assuming you are still good with these changes Casey, any chance I can
+> > get an ACK on the LSM and Smack patches?
+>
+> Yes. You can add my:
+>
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+>
+> to both.
 
-Here is the summary with links:
-  - cipso,calipso: resolve a number of problems with the DOI refcounts
-    https://git.kernel.org/netdev/net/c/ad5d07f4a9cd
+Done, thanks Casey.
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+I talked to John and he is working on the AppArmor tweaks so I'll hold
+off reposting until I see an update from him (nothing beyond the ACKs
+has changed anyway).
 
-
+-- 
+paul moore
+www.paul-moore.com
