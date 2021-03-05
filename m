@@ -2,65 +2,58 @@ Return-Path: <SRS0=aNh/=ID=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02D4C4332D
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 17:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE75BC433E0
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 17:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97B8B650A5
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 17:53:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C5D96506A
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 17:58:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229526AbhCERxJ (ORCPT
+        id S229690AbhCER6A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Mar 2021 12:53:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49892 "EHLO
+        Fri, 5 Mar 2021 12:58:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229591AbhCERwv (ORCPT
+        with ESMTP id S229576AbhCER5p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 5 Mar 2021 12:52:51 -0500
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF547C061756
-        for <linux-security-module@vger.kernel.org>; Fri,  5 Mar 2021 09:52:50 -0800 (PST)
-Received: by mail-ed1-x535.google.com with SMTP id v13so3768688edw.9
-        for <linux-security-module@vger.kernel.org>; Fri, 05 Mar 2021 09:52:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9cy6NY2NneFUb+ai21Mer/bJAl+1fOEOH5Xn9JUNG4w=;
-        b=M9iU8Hx8FsBg3SEJvJ/21kHhWBt5rp2CgMqle7NuC5OBFVe2oGQ9SQasL3gILMCMA2
-         uD3OxosJLHMAEeYUlK2woG20Ck5JkBv1jdv2LNDWyOJJEp9NAgKajeSjXQnIGur7zrPI
-         DHFKH+DwiTEZOtzsA2WF0yW4HKrGiGXqAevdSlryAMyuQyb45w7H6W8ZD+hjqAITLJrq
-         tgNhi21v+U2FbLu4WMDpHXXLnaijE1rBsR2W1SwPWFmuMLd34ZH6GdrEK9ltgtqrqu4y
-         u1xBnTnWTM3879W8b7j6MLhih0uRFIg2StKV+DwicGMnw7wSqm+dcs8AV9qsLKSZSqT/
-         ZkQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9cy6NY2NneFUb+ai21Mer/bJAl+1fOEOH5Xn9JUNG4w=;
-        b=Gwp+5DF8IT8UTXSuObGQlWy+7Kh6UhmY5slzP0s8+wVkTmQLFEJgGpQCodQ4hIm6iX
-         wKSbA2XRYuiNOs3E46exEAx+7mE2FpxGm6VRJrJ1JZJDU9R5BqXu0AaYzq0dG96TO+2G
-         kyOjfRFIHBViBH84R4AXmD6kDf3Ex9pW3QycYXJiNBQctSLRNte4QrXaSB9aYpLg84jE
-         GuNRSHO6afy087WV7iLQxvg73OlxbRAPFL4ovywupVTSxeea3QkG9qMuXzJw1/dM3LBT
-         yG4Arg9G0zgaMI1QMHfud2JfKq+Y1Fs9XscWG3sf7DEKsSKAY6zMebqsXmGCHvEszlEJ
-         9Jlw==
-X-Gm-Message-State: AOAM531KBAy31AFW1gwZ7uxwLBc5M/RV9PbPBO68NOZi80dlKDNpSh22
-        NBx/3eaNN+AjJoee7pDEG5q00UE537gqBUcaaFOe
-X-Google-Smtp-Source: ABdhPJwOI0lS36GAS0Qm3uPRAj87oRmnPCRoE0yZWekW+QEZ0i+1DFUufde+BDoBg2RYBnPYm4uJRenmSYQP12YxeUE=
-X-Received: by 2002:aa7:db4f:: with SMTP id n15mr10224074edt.12.1614966769368;
- Fri, 05 Mar 2021 09:52:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20210212163709.3139-1-nramas@linux.microsoft.com>
-In-Reply-To: <20210212163709.3139-1-nramas@linux.microsoft.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 5 Mar 2021 12:52:38 -0500
-Message-ID: <CAHC9VhSMz8FtK5HMPA1+FMeU0cs4vfCCaimxb-J+VDj_Dyk-nA@mail.gmail.com>
+        Fri, 5 Mar 2021 12:57:45 -0500
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26E9C061574;
+        Fri,  5 Mar 2021 09:57:45 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id C8D791280557;
+        Fri,  5 Mar 2021 09:57:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1614967064;
+        bh=I12qLg9Cwserkp5Y2dm2OSRdMTJvsQsUwHpn6DZphVo=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=HOVc499lijkDdTOqaUgES5NwYDqdRrMroJVLkIwh9RbwMbWm7DAkgJA47Zd2pPboR
+         1/MiiB5ca3cUAN48bPkaR1QtDnEVeHVxk6Qy2ZwiSCFQSj1+zHqtIqXvmVJJOOo1pY
+         6N0yglQoKMJdbxcZ8RSwQEnilHoli6AJJHCB8t9A=
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id FpH8EscH_1PE; Fri,  5 Mar 2021 09:57:44 -0800 (PST)
+Received: from jarvis.int.hansenpartnership.com (unknown [IPv6:2601:600:8280:66d1::527])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B0F2A1280555;
+        Fri,  5 Mar 2021 09:57:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=hansenpartnership.com; s=20151216; t=1614967064;
+        bh=I12qLg9Cwserkp5Y2dm2OSRdMTJvsQsUwHpn6DZphVo=;
+        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+        b=HOVc499lijkDdTOqaUgES5NwYDqdRrMroJVLkIwh9RbwMbWm7DAkgJA47Zd2pPboR
+         1/MiiB5ca3cUAN48bPkaR1QtDnEVeHVxk6Qy2ZwiSCFQSj1+zHqtIqXvmVJJOOo1pY
+         6N0yglQoKMJdbxcZ8RSwQEnilHoli6AJJHCB8t9A=
+Message-ID: <af0f2d60c6584b613172b08e4fcea4119e231e93.camel@HansenPartnership.com>
 Subject: Re: [PATCH v3] selinux: measure state and policy capabilities
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 Cc:     zohar@linux.ibm.com,
         Stephen Smalley <stephen.smalley.work@gmail.com>,
         tusharsu@linux.microsoft.com, tyhicks@linux.microsoft.com,
@@ -69,85 +62,45 @@ Cc:     zohar@linux.ibm.com,
         James Morris <jmorris@namei.org>,
         linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 05 Mar 2021 09:57:42 -0800
+In-Reply-To: <CAHC9VhSMz8FtK5HMPA1+FMeU0cs4vfCCaimxb-J+VDj_Dyk-nA@mail.gmail.com>
+References: <20210212163709.3139-1-nramas@linux.microsoft.com>
+         <CAHC9VhSMz8FtK5HMPA1+FMeU0cs4vfCCaimxb-J+VDj_Dyk-nA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Feb 12, 2021 at 11:37 AM Lakshmi Ramasubramanian
-<nramas@linux.microsoft.com> wrote:
->
-> SELinux stores the configuration state and the policy capabilities
-> in kernel memory.  Changes to this data at runtime would have an impact
-> on the security guarantees provided by SELinux.  Measuring this data
-> through IMA subsystem provides a tamper-resistant way for
-> an attestation service to remotely validate it at runtime.
->
-> Measure the configuration state and policy capabilities by calling
-> the IMA hook ima_measure_critical_data().
->
-> To enable SELinux data measurement, the following steps are required:
->
->  1, Add "ima_policy=critical_data" to the kernel command line arguments
->     to enable measuring SELinux data at boot time.
->     For example,
->       BOOT_IMAGE=/boot/vmlinuz-5.11.0-rc3+ root=UUID=fd643309-a5d2-4ed3-b10d-3c579a5fab2f ro nomodeset security=selinux ima_policy=critical_data
->
->  2, Add the following rule to /etc/ima/ima-policy
->        measure func=CRITICAL_DATA label=selinux
->
-> Sample measurement of SELinux state and policy capabilities:
->
-> 10 2122...65d8 ima-buf sha256:13c2...1292 selinux-state 696e...303b
->
-> Execute the following command to extract the measured data
-> from the IMA's runtime measurements list:
->
->   grep "selinux-state" /sys/kernel/security/integrity/ima/ascii_runtime_measurements | tail -1 | cut -d' ' -f 6 | xxd -r -p
->
-> The output should be a list of key-value pairs. For example,
->  initialized=1;enforcing=0;checkreqprot=1;network_peer_controls=1;open_perms=1;extended_socket_class=1;always_check_network=0;cgroup_seclabel=1;nnp_nosuid_transition=1;genfs_seclabel_symlinks=0;
->
-> To verify the measurement is consistent with the current SELinux state
-> reported on the system, compare the integer values in the following
-> files with those set in the IMA measurement (using the following commands):
->
->  - cat /sys/fs/selinux/enforce
->  - cat /sys/fs/selinux/checkreqprot
->  - cat /sys/fs/selinux/policy_capabilities/[capability_file]
->
-> Note that the actual verification would be against an expected state
-> and done on a separate system (likely an attestation server) requiring
-> "initialized=1;enforcing=1;checkreqprot=0;"
-> for a secure state and then whatever policy capabilities are actually
-> set in the expected policy (which can be extracted from the policy
-> itself via seinfo, for example).
->
-> Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> Suggested-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> ---
->  security/selinux/ima.c         | 87 ++++++++++++++++++++++++++++++++--
->  security/selinux/include/ima.h |  6 +++
->  security/selinux/selinuxfs.c   |  6 +++
->  security/selinux/ss/services.c |  2 +-
->  4 files changed, 96 insertions(+), 5 deletions(-)
+On Fri, 2021-03-05 at 12:52 -0500, Paul Moore wrote:
+[...]
+> This draft seems fine to me, but there is a small logistical blocker
+> at the moment which means I can't merge this until -rc2 is released,
+> which likely means this coming Monday.  The problem is that this
+> patch relies on code that went upstream via in the last merge window
+> via the IMA tree, not the SELinux tree; normally that wouldn't be a
+> problem as I typically rebase the selinux/next to Linus' -rc1 tag
+> once the merge window is closed, but in this particular case the -rc1
+> tag is dangerously broken for some system configurations (the tag has
+> since been renamed) so I'm not rebasing onto -rc1 this time around.
+> 
+> Assuming that -rc2 fixes the swapfile/fs-corruption problem, early
+> next week I'll rebase selinux/next to -rc2 and merge this patch.
+> However, if the swapfile bug continues past -rc2 we can consider
+> merging this via the IMA tree, but I'd assume not do that if possible
+> due to merge conflict and testing reasons.
 
-This draft seems fine to me, but there is a small logistical blocker
-at the moment which means I can't merge this until -rc2 is released,
-which likely means this coming Monday.  The problem is that this patch
-relies on code that went upstream via in the last merge window via the
-IMA tree, not the SELinux tree; normally that wouldn't be a problem as
-I typically rebase the selinux/next to Linus' -rc1 tag once the merge
-window is closed, but in this particular case the -rc1 tag is
-dangerously broken for some system configurations (the tag has since
-been renamed) so I'm not rebasing onto -rc1 this time around.
+If it helps, we rebased the SCSI tree on top of the merge for the
+swapfile fix which is this one, without waiting for -rc2:
 
-Assuming that -rc2 fixes the swapfile/fs-corruption problem, early
-next week I'll rebase selinux/next to -rc2 and merge this patch.
-However, if the swapfile bug continues past -rc2 we can consider
-merging this via the IMA tree, but I'd assume not do that if possible
-due to merge conflict and testing reasons.
+commit f69d02e37a85645aa90d18cacfff36dba370f797
+Merge: 7a7fd0de4a98 caf6912f3f4a
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue Mar 2 18:18:17 2021 -0800
 
--- 
-paul moore
-www.paul-moore.com
+    Merge tag 'misc-5.12-2021-03-02' of git://git.kernel.dk/linux-block
+ 
+James
+
+
