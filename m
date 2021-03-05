@@ -2,44 +2,41 @@ Return-Path: <SRS0=aNh/=ID=vger.kernel.org=linux-security-module-owner@kernel.or
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A067C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A236C4332B
 	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 15:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06A8D64F27
-	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 15:21:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 284B265092
+	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 15:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230396AbhCEPUh (ORCPT
+        id S230405AbhCEPUi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Mar 2021 10:20:37 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2625 "EHLO
+        Fri, 5 Mar 2021 10:20:38 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2623 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbhCEPUE (ORCPT
+        with ESMTP id S230109AbhCEPUE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 5 Mar 2021 10:20:04 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWV848kcz67vwn;
-        Fri,  5 Mar 2021 23:14:08 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWV73FxLz67vx9;
+        Fri,  5 Mar 2021 23:14:07 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2106.2; Fri, 5 Mar 2021 16:19:55 +0100
+ 15.1.2106.2; Fri, 5 Mar 2021 16:19:54 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v4 02/11] evm: Load EVM key in ima_load_x509() to avoid appraisal
-Date:   Fri, 5 Mar 2021 16:19:14 +0100
-Message-ID: <20210305151923.29039-3-roberto.sassu@huawei.com>
+Subject: [PATCH v4 00/11] evm: Improve usability of portable signatures
+Date:   Fri, 5 Mar 2021 16:19:12 +0100
+Message-ID: <20210305151923.29039-1-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20210305151923.29039-1-roberto.sassu@huawei.com>
-References: <20210305151923.29039-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -50,56 +47,92 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The public builtin keys do not need to be appraised by IMA as the
-restriction on the IMA/EVM trusted keyrings ensures that a key can be
-loaded only if it is signed with a key on the builtin or secondary
-keyrings.
+EVM portable signatures are particularly suitable for the protection of
+metadata of immutable files where metadata is signed by a software vendor.
+They can be used for example in conjunction with an IMA policy that
+appraises only executed and memory mapped files.
 
-However, when evm_load_x509() is called, appraisal is already enabled and
-a valid IMA signature must be added to the EVM key to pass verification.
+However, some usability issues are still unsolved, especially when EVM is
+used without loading an HMAC key. This patch set attempts to fix the open
+issues.
 
-Since the restriction is applied on both IMA and EVM trusted keyrings, it
-is safe to disable appraisal also when the EVM key is loaded. This patch
-calls evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is
-enabled, which crosses the normal IMA and EVM boundary.
+Patch 1 allows EVM to be used without loading an HMAC key. Patch 2 avoids
+appraisal verification of public keys (they are already verified by the key
+subsystem).
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/iint.c         | 4 +++-
- security/integrity/ima/ima_init.c | 4 ++++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+Patches 3-5 allow metadata verification to be turned off when no HMAC key
+is loaded and to use this mode in a safe way (by ensuring that IMA
+revalidates metadata when there is a change).
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 1d20003243c3..c487e74a35fb 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -200,7 +200,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- void __init integrity_load_keys(void)
- {
- 	ima_load_x509();
--	evm_load_x509();
-+
-+	if (!IS_ENABLED(CONFIG_IMA_LOAD_X509))
-+		evm_load_x509();
- }
- 
- static int __init integrity_fs_init(void)
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 6e8742916d1d..5076a7d9d23e 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -108,6 +108,10 @@ void __init ima_load_x509(void)
- 
- 	ima_policy_flag &= ~unset_flags;
- 	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
-+
-+	/* load also EVM key to avoid appraisal */
-+	evm_load_x509();
-+
- 	ima_policy_flag |= unset_flags;
- }
- #endif
+Patches 6-8 make portable signatures more usable if metadata verification
+is not turned off, by ignoring the INTEGRITY_NOLABEL and INTEGRITY_NOXATTS
+errors when possible, by accepting any metadata modification until
+signature verification succeeds (useful when xattrs/attrs are copied
+sequentially from a source) and by allowing operations that don't change
+metadata.
+
+Patch 9 makes it possible to use portable signatures when the IMA policy
+requires file signatures and patch 10 shows portable signatures in the
+measurement list when the ima-sig template is selected.
+
+Lastly, patch 11 avoids undesired removal of security.ima when a file is
+not selected by the IMA policy.
+
+Changelog
+
+v3:
+- introduce evm_ignore_error_safe() to correctly ignore INTEGRITY_NOLABEL
+  and INTEGRITY_NOXATTRS errors
+- fix an error in evm_xattr_acl_change()
+- replace #ifndef with !IS_ENABLED() in integrity_load_keys()
+- reintroduce ima_inode_removexattr()
+- adapt patches to apply on top of the idmapped mounts patch set
+
+v2:
+- replace EVM_RESET_STATUS flag with evm_status_revalidate()
+- introduce IMA post hooks ima_inode_post_setxattr() and
+  ima_inode_post_removexattr()
+- remove ima_inode_removexattr()
+- ignore INTEGRITY_NOLABEL error if the HMAC key is not loaded
+
+v1:
+- introduce EVM_RESET_STATUS integrity flag instead of clearing IMA flag
+- introduce new template field evmsig
+- add description of evm_xattr_acl_change() and evm_xattr_change()
+
+Roberto Sassu (11):
+  evm: Execute evm_inode_init_security() only when an HMAC key is loaded
+  evm: Load EVM key in ima_load_x509() to avoid appraisal
+  evm: Refuse EVM_ALLOW_METADATA_WRITES only if an HMAC key is loaded
+  ima: Move ima_reset_appraise_flags() call to post hooks
+  evm: Introduce evm_status_revalidate()
+  evm: Ignore INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are
+    safe
+  evm: Allow xattr/attr operations for portable signatures
+  evm: Allow setxattr() and setattr() for unmodified metadata
+  ima: Allow imasig requirement to be satisfied by EVM portable
+    signatures
+  ima: Introduce template field evmsig and write to field sig as
+    fallback
+  ima: Don't remove security.ima if file must not be appraised
+
+ Documentation/ABI/testing/evm             |   5 +-
+ Documentation/security/IMA-templates.rst  |   4 +-
+ fs/xattr.c                                |   2 +
+ include/linux/evm.h                       |   6 +
+ include/linux/ima.h                       |  18 +++
+ include/linux/integrity.h                 |   1 +
+ security/integrity/evm/evm_main.c         | 188 ++++++++++++++++++++--
+ security/integrity/evm/evm_secfs.c        |   4 +-
+ security/integrity/iint.c                 |   4 +-
+ security/integrity/ima/ima_appraise.c     |  55 +++++--
+ security/integrity/ima/ima_init.c         |   4 +
+ security/integrity/ima/ima_template.c     |   2 +
+ security/integrity/ima/ima_template_lib.c |  33 +++-
+ security/integrity/ima/ima_template_lib.h |   2 +
+ security/security.c                       |   1 +
+ 15 files changed, 297 insertions(+), 32 deletions(-)
+
 -- 
 2.26.2
 
