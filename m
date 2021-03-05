@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D82C43331
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA300C432C3
 	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 15:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EE666509A
+	by mail.kernel.org (Postfix) with ESMTP id C670D65017
 	for <linux-security-module@archiver.kernel.org>; Fri,  5 Mar 2021 15:21:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230416AbhCEPUk (ORCPT
+        id S230440AbhCEPUm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 5 Mar 2021 10:20:40 -0500
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2627 "EHLO
+        Fri, 5 Mar 2021 10:20:42 -0500
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2624 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbhCEPUE (ORCPT
+        with ESMTP id S230098AbhCEPUE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Fri, 5 Mar 2021 10:20:04 -0500
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWRs000Dz67tqR;
-        Fri,  5 Mar 2021 23:12:08 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4DsWV80Jksz67vvy;
+        Fri,  5 Mar 2021 23:14:08 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.1.2106.2; Fri, 5 Mar 2021 16:19:56 +0100
+ 15.1.2106.2; Fri, 5 Mar 2021 16:19:54 +0100
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to post hooks
-Date:   Fri, 5 Mar 2021 16:19:16 +0100
-Message-ID: <20210305151923.29039-5-roberto.sassu@huawei.com>
+        <stable@vger.kernel.org>
+Subject: [PATCH v4 01/11] evm: Execute evm_inode_init_security() only when an HMAC key is loaded
+Date:   Fri, 5 Mar 2021 16:19:13 +0100
+Message-ID: <20210305151923.29039-2-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210305151923.29039-1-roberto.sassu@huawei.com>
 References: <20210305151923.29039-1-roberto.sassu@huawei.com>
@@ -51,146 +51,55 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ima_inode_setxattr() and ima_inode_removexattr() hooks are called before an
-operation is performed. Thus, ima_reset_appraise_flags() should not be
-called there, as flags might be unnecessarily reset if the operation is
-denied.
+evm_inode_init_security() requires an HMAC key to calculate the HMAC on
+initial xattrs provided by LSMs. However, it checks generically whether a
+key has been loaded, including also public keys, which is not correct as
+public keys are not suitable to calculate the HMAC.
 
-This patch introduces the post hooks ima_inode_post_setxattr() and
-ima_inode_post_removexattr(), and adds the call to
-ima_reset_appraise_flags() in the new functions.
+Originally, support for signature verification was introduced to verify a
+possibly immutable initial ram disk, when no new files are created, and to
+switch to HMAC for the root filesystem. By that time, an HMAC key should
+have been loaded and usable to calculate HMACs for new files.
 
-Cc: Casey Schaufler <casey@schaufler-ca.com>
+More recently support for requiring an HMAC key was removed from the
+kernel, so that signature verification can be used alone. Since this is a
+legitimate use case, evm_inode_init_security() should not return an error
+when no HMAC key has been loaded.
+
+This patch fixes this problem by replacing the evm_key_loaded() check with
+a check of the EVM_INIT_HMAC flag in evm_initialized.
+
+Cc: stable@vger.kernel.org # 4.5.x
+Fixes: 26ddabfe96b ("evm: enable EVM when X509 certificate is loaded")
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- fs/xattr.c                            |  2 ++
- include/linux/ima.h                   | 18 ++++++++++++++++++
- security/integrity/ima/ima_appraise.c | 25 ++++++++++++++++++++++---
- security/security.c                   |  1 +
- 4 files changed, 43 insertions(+), 3 deletions(-)
+ security/integrity/evm/evm_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index b3444e06cded..81847f132d26 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -16,6 +16,7 @@
- #include <linux/namei.h>
- #include <linux/security.h>
- #include <linux/evm.h>
-+#include <linux/ima.h>
- #include <linux/syscalls.h>
- #include <linux/export.h>
- #include <linux/fsnotify.h>
-@@ -502,6 +503,7 @@ __vfs_removexattr_locked(struct user_namespace *mnt_userns,
- 
- 	if (!error) {
- 		fsnotify_xattr(dentry);
-+		ima_inode_post_removexattr(dentry, name);
- 		evm_inode_post_removexattr(dentry, name);
- 	}
- 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 61d5723ec303..5e059da43857 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -171,7 +171,13 @@ extern void ima_inode_post_setattr(struct user_namespace *mnt_userns,
- 				   struct dentry *dentry);
- extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		       const void *xattr_value, size_t xattr_value_len);
-+extern void ima_inode_post_setxattr(struct dentry *dentry,
-+				    const char *xattr_name,
-+				    const void *xattr_value,
-+				    size_t xattr_value_len);
- extern int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name);
-+extern void ima_inode_post_removexattr(struct dentry *dentry,
-+				       const char *xattr_name);
- #else
- static inline bool is_ima_appraise_enabled(void)
- {
-@@ -192,11 +198,23 @@ static inline int ima_inode_setxattr(struct dentry *dentry,
- 	return 0;
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 0de367aaa2d3..7ac5204c8d1f 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -521,7 +521,7 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
  }
  
-+static inline void ima_inode_post_setxattr(struct dentry *dentry,
-+					   const char *xattr_name,
-+					   const void *xattr_value,
-+					   size_t xattr_value_len)
-+{
-+}
-+
- static inline int ima_inode_removexattr(struct dentry *dentry,
- 					const char *xattr_name)
- {
- 	return 0;
- }
-+
-+static inline void ima_inode_post_removexattr(struct dentry *dentry,
-+					      const char *xattr_name)
-+{
-+}
- #endif /* CONFIG_IMA_APPRAISE */
+ /*
+- * evm_inode_init_security - initializes security.evm
++ * evm_inode_init_security - initializes security.evm HMAC value
+  */
+ int evm_inode_init_security(struct inode *inode,
+ 				 const struct xattr *lsm_xattr,
+@@ -530,7 +530,8 @@ int evm_inode_init_security(struct inode *inode,
+ 	struct evm_xattr *xattr_data;
+ 	int rc;
  
- #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 565e33ff19d0..1f029e4c8d7f 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -577,21 +577,40 @@ int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 	if (result == 1) {
- 		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
- 			return -EINVAL;
--		ima_reset_appraise_flags(d_backing_inode(dentry),
--			xvalue->type == EVM_IMA_XATTR_DIGSIG);
- 		result = 0;
- 	}
- 	return result;
- }
+-	if (!evm_key_loaded() || !evm_protected_xattr(lsm_xattr->name))
++	if (!(evm_initialized & EVM_INIT_HMAC) ||
++	    !evm_protected_xattr(lsm_xattr->name))
+ 		return 0;
  
-+void ima_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
-+			     const void *xattr_value, size_t xattr_value_len)
-+{
-+	const struct evm_ima_xattr_data *xvalue = xattr_value;
-+	int result;
-+
-+	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
-+				   xattr_value_len);
-+	if (result == 1)
-+		ima_reset_appraise_flags(d_backing_inode(dentry),
-+			xvalue->type == EVM_IMA_XATTR_DIGSIG);
-+}
-+
- int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
- {
- 	int result;
- 
- 	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
- 	if (result == 1) {
--		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
- 		result = 0;
- 	}
- 	return result;
- }
-+
-+void ima_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
-+{
-+	int result;
-+
-+	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
-+	if (result == 1)
-+		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-+}
-diff --git a/security/security.c b/security/security.c
-index 5ac96b16f8fa..efb1f874dc41 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1319,6 +1319,7 @@ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return;
- 	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
-+	ima_inode_post_setxattr(dentry, name, value, size);
- 	evm_inode_post_setxattr(dentry, name, value, size);
- }
- 
+ 	xattr_data = kzalloc(sizeof(*xattr_data), GFP_NOFS);
 -- 
 2.26.2
 
