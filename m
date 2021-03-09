@@ -2,127 +2,119 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F2FC433E9
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 09:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346FAC433E6
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 10:08:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 79A1865149
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 09:11:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 014BF65268
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 10:08:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229684AbhCIJKt (ORCPT
+        id S230122AbhCIKIZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Mar 2021 04:10:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229637AbhCIJKV (ORCPT
+        Tue, 9 Mar 2021 05:08:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27847 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230033AbhCIKIP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Mar 2021 04:10:21 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96E6C061761
-        for <linux-security-module@vger.kernel.org>; Tue,  9 Mar 2021 01:10:20 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id k9so25795831lfo.12
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Mar 2021 01:10:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wKD+yQjGrl7OUNRHRyxFsQZJDZyYo41ddQeYWHD+EP0=;
-        b=HTohe6xlqSsa9ysdqGaDx/LKiLgeY77hqdlLI5nZOMc7bJyltab5PD7dPzX7NKciVI
-         CiR0s2nUBmoC8xS7Fx4FxibTJ6bZfsYvhj45Fgg3+IADOfkL5vNu6q4PmCDEYnN4eGiW
-         MVh2GdGnAqFUnHDgWXCDI/GUauwAnCR8CqsK+Y5A1lu3sqYOd1P63aWs0Sw6kQRAlQ/J
-         sWj1qF4z5PALe45obJIuGKem1TrGlbvLr2Lvd6d2kEnUqnjaIjdQeR3PBK9qMETa/XGv
-         w1WiD1gwAN6H+FW6uZfkVLEnlnB+w9D61pMvCAVVj5ZrgusV7trTi5Pt3J0lrw8Igz5m
-         MzVw==
+        Tue, 9 Mar 2021 05:08:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615284494;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=SYm0kgjRA7W0E7Yr2IJisxrxfRrnBadUrxfwPSBbTRk=;
+        b=fP1WhAXasJkHPQZSrv01h0/EdXVa+L2W5wb7zMiEje0tc512FPz/vTxw1uaTMhI++adC+D
+        5K/PpvHSFmbquW8PHoqAFc0NJPxp/brMr++QJaBic/85jj0IuoMhO1aZHUS1a1CBhXASF/
+        mdXZsudsU39/T2wHfaygJ/r34b9bWQw=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-304-Sg4xSvcfMuam2ZK-WTQ-Sw-1; Tue, 09 Mar 2021 05:08:13 -0500
+X-MC-Unique: Sg4xSvcfMuam2ZK-WTQ-Sw-1
+Received: by mail-yb1-f197.google.com with SMTP id g17so16550821ybh.4
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Mar 2021 02:08:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wKD+yQjGrl7OUNRHRyxFsQZJDZyYo41ddQeYWHD+EP0=;
-        b=MzB868YtfDI+hjC+V4sq67ppOFh6yyLn4C8rfnFiNBBauvJphsplDgOPfN0uFQNsNu
-         Ra/kAmpJB3oFhMOgRv3p6uZ088H0HanydD3XNH5WPEUGJ6C1Klhy9/ZIpPSHHBZUpjKV
-         +yIETQxatcRCUUcn3Sq2WAC7wPW5J3nIYfF93YneITB/artQx/gg246/JOizucRI+Xiv
-         MTyamJQOhONI+Y45igmJC9yc3yYZti6aJcxY35ihqmtgzs2UGr+FmgnZcN72W2+FDEOj
-         cLnzXNSpH6wrBWVowaaM2Ut58aLKyfVEfshGIqlNd129d54Nx7lmzeZwMhrY58hvlOTv
-         IVZw==
-X-Gm-Message-State: AOAM532rZ49l9arBcgiO9Ps2XlzH+Z0teYaZc4wgz7mgvVb745uqqi2p
-        VI8RDyfxCGfjPsN8MtuyHk9HKi6PbxCmfCpJtdie5w==
-X-Google-Smtp-Source: ABdhPJwsYPinGD4rPMc2OYJcBuXtSZFtl07YktW+xNb1utv1lOShAxTn8gj6iLPahmv3R1yl8oBj1yKfBXITAAXQeCU=
-X-Received: by 2002:ac2:46db:: with SMTP id p27mr16853964lfo.396.1615281018970;
- Tue, 09 Mar 2021 01:10:18 -0800 (PST)
+        bh=SYm0kgjRA7W0E7Yr2IJisxrxfRrnBadUrxfwPSBbTRk=;
+        b=p3Vspm2CYDOErdLRdIdrpZXwuHxlrrvo5ZVSNofeh6TeaSpjkup1i3eKlVxbKZVsR6
+         Zvdehv/I/l5uaomSLf3067j/dYjgw6Y9ehU7IWAyf5L2bIoTXDumxHOzlYo2NDvgAUiR
+         p2i7gIjFoGrLS5DW/GMc5+b/dl2u+sSivMohd0k+yVG//+F4NeTnF6WS2h5jXuk74bsv
+         bh0a+Z7VCgh2jJjcK0Qo0J1czrClFPszuMzQLL7rqII5cOdfe9kCCUaeEceqlDKd+T6+
+         mfM6Uz4GbavznjpnZLORTIbxv1HWwxC7rIisLcbjNaggc9nboFRgmj6F6uKBIOt3wcQd
+         ap9g==
+X-Gm-Message-State: AOAM531i7N45JwMblEU0AfeAB8jCOrBBo42tWuohloho9iliJSvTPNqS
+        wTTVjUJZ3I1YmCGAuz9YiYBGhOJZ8PTeXKSHy8nAFbGqqnLZqXB9szPAOShCksz+z0NzwluFjV/
+        AiV7nyh9Q+hKvf7J9T0EMqz3dRIpzSXmpPP4+QJ/8g5NVV/qHVjPh
+X-Received: by 2002:a25:ad67:: with SMTP id l39mr40282822ybe.172.1615284492512;
+        Tue, 09 Mar 2021 02:08:12 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyOdXiOr+CcTEln+8TZ0CZvuB0W0M+aAg2Wavc5dcrB2nfJuV742vWVQiWOrCjwyEKAIQngbWmatIoZcEM8YyI=
+X-Received: by 2002:a25:ad67:: with SMTP id l39mr40282799ybe.172.1615284492300;
+ Tue, 09 Mar 2021 02:08:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20210301131127.793707-1-sumit.garg@linaro.org>
- <CAFA6WYO4HHhtymaUzmkuaCZybTAWBQ=4K9Dez1pe1kqo3AJhuA@mail.gmail.com> <YEEANW+khw3nJtcQ@kernel.org>
-In-Reply-To: <YEEANW+khw3nJtcQ@kernel.org>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 9 Mar 2021 14:40:07 +0530
-Message-ID: <CAFA6WYOxsYin8wBB_yU=S-bnqM-g5TFnTU_KXxc3wSBfx_N_6A@mail.gmail.com>
-Subject: Re: [PATCH v9 0/4] Introduce TEE based Trusted Keys support
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        "open list:SECURITY SUBSYSTEM" 
+References: <20210115174356.408688-1-omosnace@redhat.com>
+In-Reply-To: <20210115174356.408688-1-omosnace@redhat.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 9 Mar 2021 11:08:01 +0100
+Message-ID: <CAFqZXNtssgDmhMS+p6+F2zC=ka3=bM22GpNQLO2NbSLWQroYFg@mail.gmail.com>
+Subject: Re: [PATCH] NFSv4.2: fix return value of _nfs4_get_security_label()
+To:     linux-nfs <linux-nfs@vger.kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>
+Cc:     Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
+        SElinux list <selinux@vger.kernel.org>,
+        David Quigley <dpquigl@davequigley.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 4 Mar 2021 at 21:14, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+On Fri, Jan 15, 2021 at 6:43 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> An xattr 'get' handler is expected to return the length of the value on
+> success, yet _nfs4_get_security_label() (and consequently also
+> nfs4_xattr_get_nfs4_label(), which is used as an xattr handler) returns
+> just 0 on success.
 >
-> On Thu, Mar 04, 2021 at 03:30:18PM +0530, Sumit Garg wrote:
-> > Hi Jarkko,
-> >
-> > On Mon, 1 Mar 2021 at 18:41, Sumit Garg <sumit.garg@linaro.org> wrote:
-> > >
-> > > Add support for TEE based trusted keys where TEE provides the functionality
-> > > to seal and unseal trusted keys using hardware unique key. Also, this is
-> > > an alternative in case platform doesn't possess a TPM device.
-> > >
-> > > This patch-set has been tested with OP-TEE based early TA which is already
-> > > merged in upstream [1].
-> > >
-> > > [1] https://github.com/OP-TEE/optee_os/commit/f86ab8e7e0de869dfa25ca05a37ee070d7e5b86b
-> > >
-> > > Changes in v9:
-> > > 1. Rebased to latest tpmdd/master.
-> > > 2. Defined pr_fmt() and removed redundant tags.
-> > > 3. Patch #2: incorporated misc. comments.
-> > > 4. Patch #3: incorporated doc changes from Elaine and misc. comments
-> > >    from Randy.
-> > > 5. Patch #4: reverted to separate maintainer entry as per request from
-> > >    Jarkko.
-> > > 6. Added Jarkko's Tested-by: tag on patch #2.
-> >
-> > It looks like we don't have any further comments on this patch-set. So
-> > would you be able to pick up this patch-set?
+> Fix this by returning label.len instead, which contains the length of
+> the result.
 >
-> I'm cool with that - I can pick this for 5.13.
+> Fixes: aa9c2669626c ("NFS: Client implementation of Labeled-NFS")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  fs/nfs/nfs4proc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 2f4679a62712a..28465d8aada64 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -5971,7 +5971,7 @@ static int _nfs4_get_security_label(struct inode *inode, void *buf,
+>                 return ret;
+>         if (!(fattr.valid & NFS_ATTR_FATTR_V4_SECURITY_LABEL))
+>                 return -ENOENT;
+> -       return 0;
+> +       return label.len;
+>  }
+>
+>  static int nfs4_get_security_label(struct inode *inode, void *buf,
+> --
+> 2.29.2
 >
 
-Thanks.
+Ping. It's been almost 2 months now, and I can't see the patch applied
+anywhere, nor has it received any feedback from the NFS maintainers...
+Trond? Anna?
 
--Sumit
+-- 
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-> /Jarkko
