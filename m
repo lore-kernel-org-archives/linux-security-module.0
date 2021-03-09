@@ -2,962 +2,1536 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAD9C433E6
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 14:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BC1C43381
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 14:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 620316524C
+	by mail.kernel.org (Postfix) with ESMTP id EBEE16523A
 	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 14:46:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231140AbhCIOpi (ORCPT
+        id S231571AbhCIOpj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Mar 2021 09:45:38 -0500
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com ([66.163.184.152]:39490
-        "EHLO sonic309-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231512AbhCIOpG (ORCPT
+        Tue, 9 Mar 2021 09:45:39 -0500
+Received: from mailomta11-sa.btinternet.com ([213.120.69.17]:55243 "EHLO
+        sa-prd-fep-046.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231634AbhCIOpb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Mar 2021 09:45:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1615301105; bh=/k7uyb5fK62jTwLqIfBQVlLrX16uNJ4UV73JM/eKHwg=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=jFPevFo9hkU2ZJoDdwzz0Rh0zv4sToouNG7PvW3/pGn7IJilpnXu3/yvMCgRhXDOeRS9TXYV/WzYFnkQoNg1pTSR+yB1cbHFO5OnCLum4pw/xKoc4nMW+jvRQ6tlJ8/VGZ5x8s/f2tH0xFMjcCkBJriysSB5i/2GMeStE5G2XTKO/Ens+hIV1sgYq/8tgdu5dBerziE9EHyUmyAj/lAvzlsciQsazFR1Q8njUOnz6obY9nt1xuiY2T15yh8uCEN/hHdlJWcE33TUyvF6AsmdXUaVXOPVnDbEC1vAcRm8wNz9T86ptieaXH+/b7xaqlRMje6N9/lLWmmLxkHEU9D8mw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1615301105; bh=KorX8u8vw4If2S6TXpc6WyEtevnCkZu5UUVtLm+TE25=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=JoXOJ7esJvr/AhQgOour0TRnCrIEbVyk1g2g59KPizYeWaDoZZdDH5dTCv4TJxCeUxIUEhphV3AWYN1tGoznmwTDttwkVyeNsiy7aQSgd9ThfcGSElDfBdh8ADf1lf/Oe3RHjbvE+qb4nIZ9jfjBEH4CHGXJzDs/Vd4aysszMrNQITKhxt63XKZzy/0auc+2+J/QsrL83x4oM/zMuzDa2QsPX3gBM4VLoqmX53Zo6Xh30NX4rrdM6qnSAX9CjgZCsZNAjQDQGmfptqCeyJd5DRFk3UO80wDZUSjocBthtrTLr6BXrb5t0odkgNKmYCtEwS3P3Y74csEg5/iit2GbDw==
-X-YMail-OSG: T6gN1WYVM1nUjC0snd99bTJ6YIxnIj5eklzLnqmcomnkrdI2iM9z1xrROoGAS.6
- tdOn2U5mloI_6jHUZTfAxvNnCFaM9MEcsipgVW8b1xdx840Rq4TiFymwJ3Q3RlsUJoUPgRQ2CZRk
- X3oWFw2omWWIElRVFcIJ8fdh2pWF2oj5k0zjOxkdN9M7V1KCSMIEqt3tow0WKnWxT0wEjyDZWCz3
- m.j8oHJbafpMuRHLi6HzPJUyaJ3zM9WS6_u.k2Azy.Bcqcx6aNTgtY8vaBOQ1xwRbSrTvgOhGDbn
- rcjIxoget_wA._Tu5tIL1xIcZkKx1z3zHx4B5kkRSHXhpISomNanJfqehKn3sF24laF1lDxyrWON
- h8iW1jR6Egn.pdPlHNYzjGMscnqu3tP0YLuW6EVnY_NzpgjJEzhXcKbR9fYOP8HQQ1zCJw2iGt7v
- vdxBL5NwmHdV3DrB47DuopmdsE.uDttfaTcihp9dFoetUbyEv5ntIWpAjUdrGNX1fTlHl8RsoAlr
- GMFlRHZFZpD1zrqlERAqXoiLi6FDV2TKQPQjZ7MbXdG.z.jM6s.3GyPC.GLPUFaZwBIQZgptZDGm
- p.bXcrM5qeVMtLl2SAdBn7aTlltYFM7bsrlQZGiuAhDWPMsE5wIU_AFRqLSecn8cWEoOrEyJAQOD
- WZCmcK6Foa5C70Vh8uwKpEWeCW5svUGhAaxUbasFl6IbNlkt99Vui6mf8yh3Uzks30AXrtfggDNV
- 0wIz81tNHdkE1Jm1fQWQksIhpMWdQ7xy5oyokjOErtEQ1.eyEthttgMA6nx_byxp6sI9FRBbrR2_
- kB8Bn7UwxN6dPq9qYFvq8deosdtA8zbO5zQF7FoLyjBMcRHdOoH.oXJKOAJp1UkW0t7LwzWsD1Sy
- aRZjbWkg.6FePra26Ptjtfp8r2u2aN3Ghuyx35Z5tF6cnV3v80Ic6Ly1IR.HQmBXjLLg.hJj5EPf
- nQ8GbFhxPRagKo7L8j5B.jI5LzQ0R0TjiTG4XnJqtxJrrOWWylehaD0RUPgWTB9MaT0Pm9DmsN3W
- 9KXRTdxxJ9T1Mxl7NlRHe991ENda9Ijsu.d.QxmpCoN7e9MCuQnhNwGG3axPjq5vM8OkuepOCg00
- xi38SmbpPPIVOZHv7UWHHYXX1EFby1rjXxj2VSoLQF7c3FAQ84m4GG8K81yS7UEe6u6v656GdGfO
- R4ev30hAPIyOjvqr.2IGVruTrykpTwZNv9bvTIC6Vx2BMU819QK3b_rmn4ZTcPvWfRVoHF8qMdtD
- LB_W6e5u3oDDUjX_D.VXjwDJWn.nMxnjrgRa.FM4Tcpc5Xk_1lXK34.e9IFroDgFWuOILyjT9yX7
- Hxf3YyKi3IXJio2HcIDAzVqY9d_Zrm071M6CL3mIJlqPqEDprpNISAvRLsHEW09WG4bY99xqwclr
- 3T9H0iZjvHwnvXxvUDmJ9CL6QIUW_m74aZy5DDbSb2xubUhOx3vNfnvN1mIiksDQBhhBYrWTyjkP
- YyWFQEx2cucKidubjBIjuZGla0qwnoV8ao61pKKqF09DJNmHYeXOhKMcMBd51eq.Xpk6W2lQJMbX
- Logvn9rTMnca7waadIMSZloQ4XlZy5_y7Ung2FkEC_W72zWc2NFqDohZ6AP_6NB01GIj94_M8vHu
- spMJxlpeWmR46cqored5O9ZG4eI.VmuO.X3hzQeZZEfjiYKFiunTqAGl_E1wVaMLQIicttKqnNrW
- LYvpu59M3zvPyGHCVVwiphIWXAjLEXSkr4RpSK_A9xCGX5yEWb72P.oIIApJAMm8KDurlpMexUqh
- XswOWiaVTKPNb_ckDdvV6Ptyv.YoJeqazYOxnKEiPdlFP6cI2xGJQ07uKQXBE3NaTuI1c5ZhwI65
- v2Pvs94JpenRYYwLGRv0ospGNS82v8OYRuA05qZVESMOevriqi3dT8xGhBCjdsQ1GI0TOMJ9daF8
- zgbHvUzWv_nsnk9QpPMhf74Ic3MfkqRTylAHeW9w1QeWpR4PKBm79PYz5V1zJYTscbz5wTroEyRv
- HstTfZCSPdogLBfJUsmqjdoJTuu9tkbDdkdVwHPwTLdl9Zy7gJaHqgYKXfhgOMbYHnNFfyerBA79
- JRqFoh4a2.BYqaOBR7DW7vgLn1IdkXFHrQmICtugugvJU.fp5br2aEQ4gKvWElDsZ9A_wnBPuSGO
- FK8XGk.dfmSgsljO8CYTcVD5Nt8To.Ye8RBVKZVwTjdc3j1G1phZI4DHq4Str8NKRLOJrdQOoo0M
- 2S6BJyaFgCgaofYgU5MUrtajx5lxwTiClE.c0aUSqJ5jRv4bNYQ1K_fGVlydT4aT6grXm4eW.Nt3
- 0QXebtYjn.Jvp48pXK70.b4fLExKA1kflrceNjij3Cssh6b8yPCx0HEorr_ZkWnY3_kpyqH_5rcA
- PZ0rwVcu1iEJ2CgY.mqwTKkoMstJeRyEnE54z0dAWBFkfCRfCQ7ub6ksqvpd6FXhYzQ5zoxMRKFB
- ekbUx9W3ChFRVNyBUlz5gK4vi8JJo9wfDxBsh8MVA1Xeobxqn7BpPjI2rPj6yZUAk3IOusSK2NNX
- hdUktL.NIgQ_NNO7SW68i0xagb25cO5J452Zvof0zD0yIcbrH_PlbLi0v9n41Vq_6RcudaK1wjhN
- Vl5KRLDfVEKLZfZXsdxKw_A.Q0WZrtn7KWIzXXvToMBnpwrJdSTlttQ9ToEQINbXOs5V0v.sfqYS
- 8HYSftLJj.WmT5njcT4A6DjxEQ5BUSDEm1AKPV8eLig1llF0VYiimpU_zddI5m3V2RVChGBjj4Pr
- 68E74VPo27n3kcM6yP2D0o6ERERoo7m8eh5x9pzf4vJ23pVSaD01qV07847fkJbHQrsmzJ6hdfaW
- Tzsdw5U_wbJWIpcEfu09GyqmKKhy3LmN63WHP3FAGNAiXTG.Rg9sE5Ohsp6IYy4SNTPnNzCSG4Ix
- suvyEz8MOfeCfksFA28QarYzg0xv7WpVfLzxVWhNS4wRLJZ4iwzKMA83aY6ZwxphGDwRIC5gQYr2
- lfOuDhS8kQ1xen4cCL2TuoRaJG00QfxI4x2iHEliqCTVJQvJf6LBkYDU68C46llU9zLDjGTrfW8H
- wWXptbDRpbXyNtPsN.zE4Tb6p72IBi1sAqCJ2r9FWaFuc4sne_4DJDfOiWrLVVDPy2DAmEc6oNJm
- NOTiEcnAJFfi0OwFvgjO2asEFkd0henGwgA--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 9 Mar 2021 14:45:05 +0000
-Received: by smtp406.mail.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 47620f72e0a0257e3bb54eb01a3bbb85;
-          Tue, 09 Mar 2021 14:45:04 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org
-Subject: [PATCH v25 02/25] LSM: Add the lsmblob data structure.
-Date:   Tue,  9 Mar 2021 06:42:20 -0800
-Message-Id: <20210309144243.12519-3-casey@schaufler-ca.com>
+        Tue, 9 Mar 2021 09:45:31 -0500
+Received: from sa-prd-rgout-002.btmx-prd.synchronoss.net ([10.2.38.5])
+          by sa-prd-fep-048.btinternet.com with ESMTP
+          id <20210309144006.DASK760.sa-prd-fep-048.btinternet.com@sa-prd-rgout-002.btmx-prd.synchronoss.net>;
+          Tue, 9 Mar 2021 14:40:06 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1615300806; 
+        bh=Zk2bK93qcw8teNqSosr9yQUpTUZJ6610DCnpIkUyUs8=;
+        h=From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:References:MIME-Version;
+        b=ArwWY+p2/DBfBrGO33vX8r6K/CajW/QxL1UxRDe4mXpDC7s75iCoiLOVfuE4enfq2NcdgFoBrYiMIJuX0cZ9VnDhyA5W6foeSlyBwCsPndVk5GCj+2h0fRweOLtUvxnLQ1U3d/tWtOKdImfxhRZIMl0FjYvrgmb6ToQWYA/mi51HPBd7owJ1Rmygj9OfQ/9cGMuH/kuthp19fj4GUY4XTWD2ugUJr/Y2T76bVegOxeWOIXcRSqNDsRzWg631BJ7tDIuTpnSISH8yTRSzoL/dH5mdo2Q6LBef7JLej1zi9bQ7cWKrPAeeQxpwOKecuXCQjgi2qTg8okfJbPupLjq4pg==
+Authentication-Results: btinternet.com; none
+X-SNCR-Rigid: 6038718301A653D1
+X-Originating-IP: [86.133.207.84]
+X-OWM-Source-IP: 86.133.207.84 (GB)
+X-OWM-Env-Sender: richard_c_haines@btinternet.com
+X-VadeSecure-score: verdict=clean score=0/300, class=clean
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeduledrudduiedgieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuueftkffvkffujffvgffngfevqffopdfqfgfvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeftihgthhgrrhguucfjrghinhgvshcuoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucggtffrrghtthgvrhhnpeeutddtleelheeugefgiefhiedtheeukeffveeitdffgeffieeugeeljeegvefgieenucfkphepkeeirddufeefrddvtdejrdekgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhephhgvlhhopehlohgtrghlhhhoshhtrdhlohgtrghlughomhgrihhnpdhinhgvthepkeeirddufeefrddvtdejrdekgedpmhgrihhlfhhrohhmpeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqpdhrtghpthhtohepoegtrghsvgihsehstghhrghufhhlvghrqdgtrgdrtghomheqpdhrtghpthhtohepoegtohhrsggvtheslhifnhdrnhgvtheqpdhrtghpthhtohepoehjmhhorhhrihhssehnrghmvghirdhorhhgqedprhgtphhtthhopeeolhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhn
+        vghlrdhorhhgqedprhgtphhtthhopeeophgruhhlsehprghulhdqmhhoohhrvgdrtghomheqpdhrtghpthhtohepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqecuqfftvefrvfeprhhftgekvddvnehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmpdhrtghpthhtohepoehsvghrghgvsehhrghllhihnhdrtghomheq
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+X-SNCR-hdrdom: btinternet.com
+Received: from localhost.localdomain (86.133.207.84) by sa-prd-rgout-002.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
+        id 6038718301A653D1; Tue, 9 Mar 2021 14:40:05 +0000
+From:   Richard Haines <richard_c_haines@btinternet.com>
+To:     linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     corbet@lwn.net, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [RFC PATCH 3/3] include/linux: Update LSM hook text part2
+Date:   Tue,  9 Mar 2021 14:39:53 +0000
+Message-Id: <20210309143953.142341-4-richard_c_haines@btinternet.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210309144243.12519-1-casey@schaufler-ca.com>
-References: <20210309144243.12519-1-casey@schaufler-ca.com>
+In-Reply-To: <20210309143953.142341-1-richard_c_haines@btinternet.com>
+References: <20210309143953.142341-1-richard_c_haines@btinternet.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When more than one security module is exporting data to
-audit and networking sub-systems a single 32 bit integer
-is no longer sufficient to represent the data. Add a
-structure to be used instead.
+No hook definitions have been updated, only formatting to render
+in kernel_docs.
 
-The lsmblob structure is currently an array of
-u32 "secids". There is an entry for each of the
-security modules built into the system that would
-use secids if active. The system assigns the module
-a "slot" when it registers hooks. If modules are
-compiled in but not registered there will be unused
-slots.
-
-A new lsm_id structure, which contains the name
-of the LSM and its slot number, is created. There
-is an instance for each LSM, which assigns the name
-and passes it to the infrastructure to set the slot.
-
-The audit rules data is expanded to use an array of
-security module data rather than a single instance.
-Because IMA uses the audit rule functions it is
-affected as well.
-
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: <bpf@vger.kernel.org>
-Cc: linux-audit@redhat.com
-Cc: linux-security-module@vger.kernel.org
-Cc: selinux@vger.kernel.org
-To: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Richard Haines <richard_c_haines@btinternet.com>
 ---
- include/linux/audit.h               |  4 +-
- include/linux/lsm_hooks.h           | 12 ++++-
- include/linux/security.h            | 67 +++++++++++++++++++++++++--
- kernel/auditfilter.c                | 24 +++++-----
- kernel/auditsc.c                    | 12 ++---
- security/apparmor/lsm.c             |  7 ++-
- security/bpf/hooks.c                | 12 ++++-
- security/commoncap.c                |  7 ++-
- security/integrity/ima/ima_policy.c | 40 +++++++++++-----
- security/loadpin/loadpin.c          |  8 +++-
- security/lockdown/lockdown.c        |  7 ++-
- security/safesetid/lsm.c            |  8 +++-
- security/security.c                 | 72 ++++++++++++++++++++++++-----
- security/selinux/hooks.c            |  8 +++-
- security/smack/smack_lsm.c          |  7 ++-
- security/tomoyo/tomoyo.c            |  8 +++-
- security/yama/yama_lsm.c            |  7 ++-
- 17 files changed, 254 insertions(+), 56 deletions(-)
+ include/linux/lsm_hooks.h | 1192 +++++++++++++++++++++----------------
+ 1 file changed, 683 insertions(+), 509 deletions(-)
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 82b7c1116a85..418a485af114 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/sched.h>
- #include <linux/ptrace.h>
-+#include <linux/security.h>
- #include <uapi/linux/audit.h>
- #include <uapi/linux/netfilter/nf_tables.h>
- 
-@@ -65,8 +66,9 @@ struct audit_field {
- 		kuid_t			uid;
- 		kgid_t			gid;
- 		struct {
-+			bool		lsm_isset;
- 			char		*lsm_str;
--			void		*lsm_rule;
-+			void		*lsm_rules[LSMBLOB_ENTRIES];
- 		};
- 	};
- 	u32				op;
 diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 00d155d32ff3..5509e4ed9829 100644
+index b7fdab1e9..75f97c5b9 100644
 --- a/include/linux/lsm_hooks.h
 +++ b/include/linux/lsm_hooks.h
-@@ -1555,6 +1555,14 @@ struct security_hook_heads {
- 	#undef LSM_HOOK
- } __randomize_layout;
- 
-+/*
-+ * Information that identifies a security module.
-+ */
-+struct lsm_id {
-+	const char	*lsm;	/* Name of the LSM */
-+	int		slot;	/* Slot in lsmblob if one is allocated */
-+};
-+
- /*
-  * Security module hook list structure.
-  * For use with generic list macros for common operations.
-@@ -1563,7 +1571,7 @@ struct security_hook_list {
- 	struct hlist_node		list;
- 	struct hlist_head		*head;
- 	union security_list_options	hook;
--	char				*lsm;
-+	struct lsm_id			*lsmid;
- } __randomize_layout;
- 
- /*
-@@ -1598,7 +1606,7 @@ extern struct security_hook_heads security_hook_heads;
- extern char *lsm_names;
- 
- extern void security_add_hooks(struct security_hook_list *hooks, int count,
--				char *lsm);
-+			       struct lsm_id *lsmid);
- 
- #define LSM_FLAG_LEGACY_MAJOR	BIT(0)
- #define LSM_FLAG_EXCLUSIVE	BIT(1)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 8aeebd6646dc..0be689d0fd69 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -133,6 +133,65 @@ enum lockdown_reason {
- 
- extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
- 
-+/*
-+ * Data exported by the security modules
+@@ -950,71 +950,79 @@
+  *	* @sig contains the signal value.
+  *	* @cred contains the cred of the process where the signal originated, or %NULL if the current task is the originator.
+  *	* Return %0 if permission is granted.
+- * @task_prctl:
 + *
-+ * Any LSM that provides secid or secctx based hooks must be included.
-+ */
-+#define LSMBLOB_ENTRIES ( \
-+	(IS_ENABLED(CONFIG_SECURITY_SELINUX) ? 1 : 0) + \
-+	(IS_ENABLED(CONFIG_SECURITY_SMACK) ? 1 : 0) + \
-+	(IS_ENABLED(CONFIG_SECURITY_APPARMOR) ? 1 : 0) + \
-+	(IS_ENABLED(CONFIG_BPF_LSM) ? 1 : 0))
-+
-+struct lsmblob {
-+	u32     secid[LSMBLOB_ENTRIES];
-+};
-+
-+#define LSMBLOB_INVALID		-1	/* Not a valid LSM slot number */
-+#define LSMBLOB_NEEDED		-2	/* Slot requested on initialization */
-+#define LSMBLOB_NOT_NEEDED	-3	/* Slot not requested */
-+
-+/**
-+ * lsmblob_init - initialize an lsmblob structure
-+ * @blob: Pointer to the data to initialize
-+ * @secid: The initial secid value
++ * int task_prctl(int option, unsigned long arg2, unsigned long arg3, unsigned long arg4, unsigned long arg5)
+  *	Check permission before performing a process control operation on the
+  *	current process.
+- *	@option contains the operation.
+- *	@arg2 contains a argument.
+- *	@arg3 contains a argument.
+- *	@arg4 contains a argument.
+- *	@arg5 contains a argument.
+- *	Return -ENOSYS if no-one wanted to handle this op, any other value to
+- *	cause prctl() to return immediately with that value.
+- * @task_to_inode:
 + *
-+ * Set all secid for all modules to the specified value.
-+ */
-+static inline void lsmblob_init(struct lsmblob *blob, u32 secid)
-+{
-+	int i;
-+
-+	for (i = 0; i < LSMBLOB_ENTRIES; i++)
-+		blob->secid[i] = secid;
-+}
-+
-+/**
-+ * lsmblob_is_set - report if there is an value in the lsmblob
-+ * @blob: Pointer to the exported LSM data
++ *	* @option contains the operation.
++ *	* @arg2 contains a argument.
++ *	* @arg3 contains a argument.
++ *	* @arg4 contains a argument.
++ *	* @arg5 contains a argument.
++ *	* Return %-ENOSYS if no-one wanted to handle this op, any other value to cause @prctl() to return immediately with that value.
 + *
-+ * Returns true if there is a secid set, false otherwise
-+ */
-+static inline bool lsmblob_is_set(struct lsmblob *blob)
-+{
-+	struct lsmblob empty = {};
-+
-+	return !!memcmp(blob, &empty, sizeof(*blob));
-+}
-+
-+/**
-+ * lsmblob_equal - report if the two lsmblob's are equal
-+ * @bloba: Pointer to one LSM data
-+ * @blobb: Pointer to the other LSM data
-+ *
-+ * Returns true if all entries in the two are equal, false otherwise
-+ */
-+static inline bool lsmblob_equal(struct lsmblob *bloba, struct lsmblob *blobb)
-+{
-+	return !memcmp(bloba, blobb, sizeof(*bloba));
-+}
-+
- /* These functions are in security/commoncap.c */
- extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
- 		       int cap, unsigned int opts);
-@@ -1863,8 +1922,8 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
- #ifdef CONFIG_SECURITY
- int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
- int security_audit_rule_known(struct audit_krule *krule);
--int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
--void security_audit_rule_free(void *lsmrule);
-+int security_audit_rule_match(u32 secid, u32 field, u32 op, void **lsmrule);
-+void security_audit_rule_free(void **lsmrule);
- 
- #else
- 
-@@ -1880,12 +1939,12 @@ static inline int security_audit_rule_known(struct audit_krule *krule)
- }
- 
- static inline int security_audit_rule_match(u32 secid, u32 field, u32 op,
--					    void *lsmrule)
-+					    void **lsmrule)
- {
- 	return 0;
- }
- 
--static inline void security_audit_rule_free(void *lsmrule)
-+static inline void security_audit_rule_free(void **lsmrule)
- { }
- 
- #endif /* CONFIG_SECURITY */
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index 333b3bcfc545..45da229f9f1f 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -74,7 +74,7 @@ static void audit_free_lsm_field(struct audit_field *f)
- 	case AUDIT_OBJ_LEV_LOW:
- 	case AUDIT_OBJ_LEV_HIGH:
- 		kfree(f->lsm_str);
--		security_audit_rule_free(f->lsm_rule);
-+		security_audit_rule_free(f->lsm_rules);
- 	}
- }
- 
-@@ -519,9 +519,10 @@ static struct audit_entry *audit_data_to_entry(struct audit_rule_data *data,
- 				goto exit_free;
- 			}
- 			entry->rule.buflen += f_val;
-+			f->lsm_isset = true;
- 			f->lsm_str = str;
- 			err = security_audit_rule_init(f->type, f->op, str,
--						       (void **)&f->lsm_rule);
-+						       f->lsm_rules);
- 			/* Keep currently invalid fields around in case they
- 			 * become valid after a policy reload. */
- 			if (err == -EINVAL) {
-@@ -774,7 +775,7 @@ static int audit_compare_rule(struct audit_krule *a, struct audit_krule *b)
- 	return 0;
- }
- 
--/* Duplicate LSM field information.  The lsm_rule is opaque, so must be
-+/* Duplicate LSM field information.  The lsm_rules is opaque, so must be
-  * re-initialized. */
- static inline int audit_dupe_lsm_field(struct audit_field *df,
- 					   struct audit_field *sf)
-@@ -788,9 +789,9 @@ static inline int audit_dupe_lsm_field(struct audit_field *df,
- 		return -ENOMEM;
- 	df->lsm_str = lsm_str;
- 
--	/* our own (refreshed) copy of lsm_rule */
-+	/* our own (refreshed) copy of lsm_rules */
- 	ret = security_audit_rule_init(df->type, df->op, df->lsm_str,
--				       (void **)&df->lsm_rule);
-+				       df->lsm_rules);
- 	/* Keep currently invalid fields around in case they
- 	 * become valid after a policy reload. */
- 	if (ret == -EINVAL) {
-@@ -842,7 +843,7 @@ struct audit_entry *audit_dupe_rule(struct audit_krule *old)
- 	new->tree = old->tree;
- 	memcpy(new->fields, old->fields, sizeof(struct audit_field) * fcount);
- 
--	/* deep copy this information, updating the lsm_rule fields, because
-+	/* deep copy this information, updating the lsm_rules fields, because
- 	 * the originals will all be freed when the old rule is freed. */
- 	for (i = 0; i < fcount; i++) {
- 		switch (new->fields[i].type) {
-@@ -1358,10 +1359,11 @@ int audit_filter(int msgtype, unsigned int listtype)
- 			case AUDIT_SUBJ_TYPE:
- 			case AUDIT_SUBJ_SEN:
- 			case AUDIT_SUBJ_CLR:
--				if (f->lsm_rule) {
-+				if (f->lsm_isset) {
- 					security_task_getsecid(current, &sid);
- 					result = security_audit_rule_match(sid,
--						   f->type, f->op, f->lsm_rule);
-+						   f->type, f->op,
-+						   f->lsm_rules);
- 				}
- 				break;
- 			case AUDIT_EXE:
-@@ -1388,7 +1390,7 @@ int audit_filter(int msgtype, unsigned int listtype)
- 	return ret;
- }
- 
--static int update_lsm_rule(struct audit_krule *r)
-+static int update_lsm_rules(struct audit_krule *r)
- {
- 	struct audit_entry *entry = container_of(r, struct audit_entry, rule);
- 	struct audit_entry *nentry;
-@@ -1420,7 +1422,7 @@ static int update_lsm_rule(struct audit_krule *r)
- 	return err;
- }
- 
--/* This function will re-initialize the lsm_rule field of all applicable rules.
-+/* This function will re-initialize the lsm_rules field of all applicable rules.
-  * It will traverse the filter lists serarching for rules that contain LSM
-  * specific filter fields.  When such a rule is found, it is copied, the
-  * LSM field is re-initialized, and the old rule is replaced with the
-@@ -1435,7 +1437,7 @@ int audit_update_lsm_rules(void)
- 
- 	for (i = 0; i < AUDIT_NR_FILTERS; i++) {
- 		list_for_each_entry_safe(r, n, &audit_rules_list[i], list) {
--			int res = update_lsm_rule(r);
-+			int res = update_lsm_rules(r);
- 			if (!err)
- 				err = res;
- 		}
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 47fb48f42c93..385f7769ae5b 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -665,14 +665,14 @@ static int audit_filter_rules(struct task_struct *tsk,
- 			   match for now to avoid losing information that
- 			   may be wanted.   An error message will also be
- 			   logged upon error */
--			if (f->lsm_rule) {
-+			if (f->lsm_isset) {
- 				if (need_sid) {
- 					security_task_getsecid(tsk, &sid);
- 					need_sid = 0;
- 				}
- 				result = security_audit_rule_match(sid, f->type,
- 								   f->op,
--								   f->lsm_rule);
-+								   f->lsm_rules);
- 			}
- 			break;
- 		case AUDIT_OBJ_USER:
-@@ -682,21 +682,21 @@ static int audit_filter_rules(struct task_struct *tsk,
- 		case AUDIT_OBJ_LEV_HIGH:
- 			/* The above note for AUDIT_SUBJ_USER...AUDIT_SUBJ_CLR
- 			   also applies here */
--			if (f->lsm_rule) {
-+			if (f->lsm_isset) {
- 				/* Find files that match */
- 				if (name) {
- 					result = security_audit_rule_match(
- 								name->osid,
- 								f->type,
- 								f->op,
--								f->lsm_rule);
-+								f->lsm_rules);
- 				} else if (ctx) {
- 					list_for_each_entry(n, &ctx->names_list, list) {
- 						if (security_audit_rule_match(
- 								n->osid,
- 								f->type,
- 								f->op,
--								f->lsm_rule)) {
-+								f->lsm_rules)) {
- 							++result;
- 							break;
- 						}
-@@ -707,7 +707,7 @@ static int audit_filter_rules(struct task_struct *tsk,
- 					break;
- 				if (security_audit_rule_match(ctx->ipc.osid,
- 							      f->type, f->op,
--							      f->lsm_rule))
-+							      f->lsm_rules))
- 					++result;
- 			}
- 			break;
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 028b5a5c4468..7d5559b4c417 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1161,6 +1161,11 @@ struct lsm_blob_sizes apparmor_blob_sizes __lsm_ro_after_init = {
- 	.lbs_sock = sizeof(struct aa_sk_ctx),
- };
- 
-+static struct lsm_id apparmor_lsmid __lsm_ro_after_init = {
-+	.lsm  = "apparmor",
-+	.slot = LSMBLOB_NEEDED
-+};
-+
- static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_access_check, apparmor_ptrace_access_check),
- 	LSM_HOOK_INIT(ptrace_traceme, apparmor_ptrace_traceme),
-@@ -1861,7 +1866,7 @@ static int __init apparmor_init(void)
- 		goto buffers_out;
- 	}
- 	security_add_hooks(apparmor_hooks, ARRAY_SIZE(apparmor_hooks),
--				"apparmor");
-+				&apparmor_lsmid);
- 
- 	/* Report that AppArmor successfully initialized */
- 	apparmor_initialized = 1;
-diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-index e5971fa74fd7..7a58fe9ab8c4 100644
---- a/security/bpf/hooks.c
-+++ b/security/bpf/hooks.c
-@@ -15,9 +15,19 @@ static struct security_hook_list bpf_lsm_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(task_free, bpf_task_storage_free),
- };
- 
-+/*
-+ * slot has to be LSMBLOB_NEEDED because some of the hooks
-+ * supplied by this module require a slot.
-+ */
-+struct lsm_id bpf_lsmid __lsm_ro_after_init = {
-+	.lsm = "bpf",
-+	.slot = LSMBLOB_NEEDED
-+};
-+
- static int __init bpf_lsm_init(void)
- {
--	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks), "bpf");
-+	security_add_hooks(bpf_lsm_hooks, ARRAY_SIZE(bpf_lsm_hooks),
-+			   &bpf_lsmid);
- 	pr_info("LSM support for eBPF active\n");
- 	return 0;
- }
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 28f4d25480df..776b90420f7d 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1437,6 +1437,11 @@ int cap_mmap_file(struct file *file, unsigned long reqprot,
- 
- #ifdef CONFIG_SECURITY
- 
-+static struct lsm_id capability_lsmid __lsm_ro_after_init = {
-+	.lsm  = "capability",
-+	.slot = LSMBLOB_NOT_NEEDED
-+};
-+
- static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(capable, cap_capable),
- 	LSM_HOOK_INIT(settime, cap_settime),
-@@ -1461,7 +1466,7 @@ static struct security_hook_list capability_hooks[] __lsm_ro_after_init = {
- static int __init capability_init(void)
- {
- 	security_add_hooks(capability_hooks, ARRAY_SIZE(capability_hooks),
--				"capability");
-+			   &capability_lsmid);
- 	return 0;
- }
- 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4f8cb155e4fd..ce4b8a70ca43 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -80,7 +80,7 @@ struct ima_rule_entry {
- 	bool (*fowner_op)(kuid_t, kuid_t); /* uid_eq(), uid_gt(), uid_lt() */
- 	int pcr;
- 	struct {
--		void *rule;	/* LSM file metadata specific */
-+		void *rules[LSMBLOB_ENTRIES]; /* LSM file metadata specific */
- 		char *args_p;	/* audit value */
- 		int type;	/* audit type */
- 	} lsm[MAX_LSM_RULES];
-@@ -90,6 +90,22 @@ struct ima_rule_entry {
- 	struct ima_template_desc *template;
- };
- 
-+/**
-+ * ima_lsm_isset - Is a rule set for any of the active security modules
-+ * @rules: The set of IMA rules to check
-+ *
-+ * If a rule is set for any LSM return true, otherwise return false.
-+ */
-+static inline bool ima_lsm_isset(void *rules[])
-+{
-+	int i;
-+
-+	for (i = 0; i < LSMBLOB_ENTRIES; i++)
-+		if (rules[i])
-+			return true;
-+	return false;
-+}
-+
- /*
-  * Without LSM specific knowledge, the default policy can only be
-  * written in terms of .action, .func, .mask, .fsmagic, .uid, and .fowner
-@@ -335,9 +351,11 @@ static void ima_free_rule_opt_list(struct ima_rule_opt_list *opt_list)
- static void ima_lsm_free_rule(struct ima_rule_entry *entry)
- {
- 	int i;
-+	int r;
- 
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
--		ima_filter_rule_free(entry->lsm[i].rule);
-+		for (r = 0; r < LSMBLOB_ENTRIES; r++)
-+			ima_filter_rule_free(entry->lsm[i].rules[r]);
- 		kfree(entry->lsm[i].args_p);
- 	}
- }
-@@ -388,8 +406,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
- 
- 		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
- 				     nentry->lsm[i].args_p,
--				     &nentry->lsm[i].rule);
--		if (!nentry->lsm[i].rule)
-+				     &nentry->lsm[i].rules[0]);
-+		if (!ima_lsm_isset(nentry->lsm[i].rules))
- 			pr_warn("rule for LSM \'%s\' is undefined\n",
- 				nentry->lsm[i].args_p);
- 	}
-@@ -578,7 +596,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 		int rc = 0;
- 		u32 osid;
- 
--		if (!rule->lsm[i].rule) {
-+		if (!ima_lsm_isset(rule->lsm[i].rules)) {
- 			if (!rule->lsm[i].args_p)
- 				continue;
- 			else
-@@ -591,14 +609,14 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 			security_inode_getsecid(inode, &osid);
- 			rc = ima_filter_rule_match(osid, rule->lsm[i].type,
- 						   Audit_equal,
--						   rule->lsm[i].rule);
-+						   rule->lsm[i].rules);
- 			break;
- 		case LSM_SUBJ_USER:
- 		case LSM_SUBJ_ROLE:
- 		case LSM_SUBJ_TYPE:
- 			rc = ima_filter_rule_match(secid, rule->lsm[i].type,
- 						   Audit_equal,
--						   rule->lsm[i].rule);
-+						   rule->lsm[i].rules);
- 		default:
- 			break;
- 		}
-@@ -992,7 +1010,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- {
- 	int result;
- 
--	if (entry->lsm[lsm_rule].rule)
-+	if (ima_lsm_isset(entry->lsm[lsm_rule].rules))
- 		return -EINVAL;
- 
- 	entry->lsm[lsm_rule].args_p = match_strdup(args);
-@@ -1002,8 +1020,8 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
- 	entry->lsm[lsm_rule].type = audit_type;
- 	result = ima_filter_rule_init(entry->lsm[lsm_rule].type, Audit_equal,
- 				      entry->lsm[lsm_rule].args_p,
--				      &entry->lsm[lsm_rule].rule);
--	if (!entry->lsm[lsm_rule].rule) {
-+				      &entry->lsm[lsm_rule].rules[0]);
-+	if (!ima_lsm_isset(entry->lsm[lsm_rule].rules)) {
- 		pr_warn("rule for LSM \'%s\' is undefined\n",
- 			entry->lsm[lsm_rule].args_p);
- 
-@@ -1810,7 +1828,7 @@ int ima_policy_show(struct seq_file *m, void *v)
- 	}
- 
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
--		if (entry->lsm[i].rule) {
-+		if (ima_lsm_isset(entry->lsm[i].rules)) {
- 			switch (i) {
- 			case LSM_OBJ_USER:
- 				seq_printf(m, pt(Opt_obj_user),
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index b12f7d986b1e..b569f3bc170b 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -192,6 +192,11 @@ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
- 	return loadpin_read_file(NULL, (enum kernel_read_file_id) id, contents);
- }
- 
-+static struct lsm_id loadpin_lsmid __lsm_ro_after_init = {
-+	.lsm  = "loadpin",
-+	.slot = LSMBLOB_NOT_NEEDED
-+};
-+
- static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
- 	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
-@@ -239,7 +244,8 @@ static int __init loadpin_init(void)
- 	pr_info("ready to pin (currently %senforcing)\n",
- 		enforce ? "" : "not ");
- 	parse_exclude();
--	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks), "loadpin");
-+	security_add_hooks(loadpin_hooks, ARRAY_SIZE(loadpin_hooks),
-+			   &loadpin_lsmid);
- 	return 0;
- }
- 
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 87cbdc64d272..4e24ea3f7b7e 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -75,6 +75,11 @@ static struct security_hook_list lockdown_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
- };
- 
-+static struct lsm_id lockdown_lsmid __lsm_ro_after_init = {
-+	.lsm = "lockdown",
-+	.slot = LSMBLOB_NOT_NEEDED
-+};
-+
- static int __init lockdown_lsm_init(void)
- {
- #if defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY)
-@@ -83,7 +88,7 @@ static int __init lockdown_lsm_init(void)
- 	lock_kernel_down("Kernel configuration", LOCKDOWN_CONFIDENTIALITY_MAX);
- #endif
- 	security_add_hooks(lockdown_hooks, ARRAY_SIZE(lockdown_hooks),
--			   "lockdown");
-+			   &lockdown_lsmid);
- 	return 0;
- }
- 
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index 8a176b6adbe5..7c7ac9bfe5cd 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -244,6 +244,11 @@ static int safesetid_task_fix_setgid(struct cred *new,
- 	return -EACCES;
- }
- 
-+static struct lsm_id safesetid_lsmid __lsm_ro_after_init = {
-+	.lsm  = "safesetid",
-+	.slot = LSMBLOB_NOT_NEEDED
-+};
-+
- static struct security_hook_list safesetid_security_hooks[] = {
- 	LSM_HOOK_INIT(task_fix_setuid, safesetid_task_fix_setuid),
- 	LSM_HOOK_INIT(task_fix_setgid, safesetid_task_fix_setgid),
-@@ -253,7 +258,8 @@ static struct security_hook_list safesetid_security_hooks[] = {
- static int __init safesetid_security_init(void)
- {
- 	security_add_hooks(safesetid_security_hooks,
--			   ARRAY_SIZE(safesetid_security_hooks), "safesetid");
-+			   ARRAY_SIZE(safesetid_security_hooks),
-+			   &safesetid_lsmid);
- 
- 	/* Report that SafeSetID successfully initialized */
- 	safesetid_initialized = 1;
-diff --git a/security/security.c b/security/security.c
-index 59e1509c76d9..2d780e82b527 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -342,6 +342,7 @@ static void __init ordered_lsm_init(void)
- 	init_debug("msg_msg blob size  = %d\n", blob_sizes.lbs_msg_msg);
- 	init_debug("sock blob size     = %d\n", blob_sizes.lbs_sock);
- 	init_debug("task blob size     = %d\n", blob_sizes.lbs_task);
-+	init_debug("lsmblob size       = %zu\n", sizeof(struct lsmblob));
- 
- 	/*
- 	 * Create any kmem_caches needed for blobs
-@@ -469,21 +470,36 @@ static int lsm_append(const char *new, char **result)
- 	return 0;
- }
- 
-+/*
-+ * Current index to use while initializing the lsmblob secid list.
-+ */
-+static int lsm_slot __lsm_ro_after_init;
-+
- /**
-  * security_add_hooks - Add a modules hooks to the hook lists.
-  * @hooks: the hooks to add
-  * @count: the number of hooks to add
-- * @lsm: the name of the security module
-+ * @lsmid: the identification information for the security module
++ * void task_to_inode(struct task_struct \*p, struct inode \*inode)
+  *	Set the security attributes for an inode based on an associated task's
+  *	security attributes, e.g. for /proc/pid inodes.
+- *	@p contains the task_struct for the task.
+- *	@inode contains the inode structure for the inode.
   *
-  * Each LSM has to register its hooks with the infrastructure.
-+ * If the LSM is using hooks that export secids allocate a slot
-+ * for it in the lsmblob.
+- * Security hooks for Netlink messaging.
++ *	* @p contains the task_struct for the task.
++ *	* @inode contains the inode structure for the inode.
++ *
++ * **Security hooks for Netlink messaging:**
+  *
+- * @netlink_send:
++ * int netlink_send(struct sock \*sk, struct sk_buff \*skb)
+  *	Save security information for a netlink message so that permission
+  *	checking can be performed when the message is processed.  The security
+- *	information can be saved using the eff_cap field of the
+- *	netlink_skb_parms structure.  Also may be used to provide fine
++ *	information can be saved using the %eff_cap field of the
++ *	@netlink_skb_parms structure.  Also may be used to provide fine
+  *	grained control over message transmission.
+- *	@sk associated sock of task sending the message.
+- *	@skb contains the sk_buff structure for the netlink message.
+- *	Return 0 if the information was successfully saved and message
+- *	is allowed to be transmitted.
+  *
+- * Security hooks for Unix domain networking.
++ *	* @sk associated sock of task sending the message.
++ *	* @skb contains the sk_buff structure for the netlink message.
++ *	* Return %0 if the information was successfully saved and message is allowed to be transmitted.
+  *
+- * @unix_stream_connect:
++ * **Security hooks for Unix domain networking:**
++ *
++ * int unix_stream_connect(struct sock \*sock, struct sock \*other, struct sock \*newsk)
+  *	Check permissions before establishing a Unix domain stream connection
+  *	between @sock and @other.
+- *	@sock contains the sock structure.
+- *	@other contains the peer sock structure.
+- *	@newsk contains the new sock structure.
+- *	Return 0 if permission is granted.
+- * @unix_may_send:
++ *
++ *	* @sock contains the sock structure.
++ *	* @other contains the peer sock structure.
++ *	* @newsk contains the new sock structure.
++ *	* Return %0 if permission is granted.
++ *
++ * int unix_may_send(struct socket \*sock, struct socket \*other)
+  *	Check permissions before connecting or sending datagrams from @sock to
+  *	@other.
+- *	@sock contains the socket structure.
+- *	@other contains the peer socket structure.
+- *	Return 0 if permission is granted.
+  *
+- * The @unix_stream_connect and @unix_may_send hooks were necessary because
++ *	* @sock contains the socket structure.
++ *	* @other contains the peer socket structure.
++ *	* Return %0 if permission is granted.
++ *
++ * The @unix_stream_connect() and @unix_may_send() hooks were necessary because
+  * Linux provides an alternative to the conventional file name space for Unix
+  * domain sockets.  Whereas binding and connecting to sockets in the file name
+- * space is mediated by the typical file permissions (and caught by the mknod
+- * and permission hooks in inode_security_ops), binding and connecting to
++ * space is mediated by the typical file permissions (and caught by the @mknod
++ * and permission hooks in @inode_security_ops()), binding and connecting to
+  * sockets in the abstract name space is completely unmediated.  Sufficient
+  * control of Unix domain sockets in the abstract name space isn't possible
+  * using only the socket layer hooks, since we need to know the actual target
+- * socket, which is not looked up until we are inside the af_unix code.
++ * socket, which is not looked up until we are inside the @af_unix code.
+  *
+- * Security hooks for socket operations.
++ * **Security hooks for socket operations:**
+  *
+- * @socket_create:
++ * int socket_create(int family, int type, int protocol, int kern)
+  *	Check permissions prior to creating a new socket.
+- *	@family contains the requested protocol family.
+- *	@type contains the requested communications type.
+- *	@protocol contains the requested protocol.
+- *	@kern set to 1 if a kernel socket.
+- *	Return 0 if permission is granted.
+- * @socket_post_create:
++ *
++ *	* @family contains the requested protocol family.
++ *	* @type contains the requested communications type.
++ *	* @protocol contains the requested protocol.
++ *	* @kern set to %1 if a kernel socket.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_post_create(struct socket \*sock, int family, int type, int protocol, int kern)
+  *	This hook allows a module to update or allocate a per-socket security
+  *	structure. Note that the security field was not added directly to the
+  *	socket structure, but rather, the socket security information is stored
+@@ -1023,706 +1031,872 @@
+  *	SOCK_INODE(sock)->i_security.  This hook may be used to update the
+  *	SOCK_INODE(sock)->i_security field with additional information that
+  *	wasn't available when the inode was allocated.
+- *	@sock contains the newly created socket structure.
+- *	@family contains the requested protocol family.
+- *	@type contains the requested communications type.
+- *	@protocol contains the requested protocol.
+- *	@kern set to 1 if a kernel socket.
+- * @socket_socketpair:
++ *
++ *	* @sock contains the newly created socket structure.
++ *	* @family contains the requested protocol family.
++ *	* @type contains the requested communications type.
++ *	* @protocol contains the requested protocol.
++ *	* @kern set to %1 if a kernel socket.
++ *
++ * int socket_socketpair(struct socket \*socka, struct socket \*sockb)
+  *	Check permissions before creating a fresh pair of sockets.
+- *	@socka contains the first socket structure.
+- *	@sockb contains the second socket structure.
+- *	Return 0 if permission is granted and the connection was established.
+- * @socket_bind:
++ *
++ *	* @socka contains the first socket structure.
++ *	* @sockb contains the second socket structure.
++ *	* Return %0 if permission is granted and the connection was established.
++ *
++ * int socket_bind(struct socket \*sock, struct sockaddr \*address, int addrlen)
+  *	Check permission before socket protocol layer bind operation is
+  *	performed and the socket @sock is bound to the address specified in the
+  *	@address parameter.
+- *	@sock contains the socket structure.
+- *	@address contains the address to bind to.
+- *	@addrlen contains the length of address.
+- *	Return 0 if permission is granted.
+- * @socket_connect:
++ *
++ *	* @sock contains the socket structure.
++ *	* @address contains the address to bind to.
++ *	* @addrlen contains the length of address.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_connect(struct socket \*sock, struct sockaddr \*address, int addrlen)
+  *	Check permission before socket protocol layer connect operation
+  *	attempts to connect socket @sock to a remote address, @address.
+- *	@sock contains the socket structure.
+- *	@address contains the address of remote endpoint.
+- *	@addrlen contains the length of address.
+- *	Return 0 if permission is granted.
+- * @socket_listen:
++ *
++ *	* @sock contains the socket structure.
++ *	* @address contains the address of remote endpoint.
++ *	* @addrlen contains the length of address.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_listen(struct socket \*sock, int backlog)
+  *	Check permission before socket protocol layer listen operation.
+- *	@sock contains the socket structure.
+- *	@backlog contains the maximum length for the pending connection queue.
+- *	Return 0 if permission is granted.
+- * @socket_accept:
++ *
++ *	* @sock contains the socket structure.
++ *	* @backlog contains the maximum length for the pending connection queue.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_accept(struct socket \*sock, struct socket \*newsock)
+  *	Check permission before accepting a new connection.  Note that the new
+  *	socket, @newsock, has been created and some information copied to it,
+  *	but the accept operation has not actually been performed.
+- *	@sock contains the listening socket structure.
+- *	@newsock contains the newly created server socket for connection.
+- *	Return 0 if permission is granted.
+- * @socket_sendmsg:
++ *
++ *	* @sock contains the listening socket structure.
++ *	* @newsock contains the newly created server socket for connection.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_sendmsg(struct socket \*sock, struct msghdr \*msg, int size)
+  *	Check permission before transmitting a message to another socket.
+- *	@sock contains the socket structure.
+- *	@msg contains the message to be transmitted.
+- *	@size contains the size of message.
+- *	Return 0 if permission is granted.
+- * @socket_recvmsg:
++ *
++ *	* @sock contains the socket structure.
++ *	* @msg contains the message to be transmitted.
++ *	* @size contains the size of message.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_recvmsg(struct socket \*sock, struct msghdr \*msg, int size, int flags)
+  *	Check permission before receiving a message from a socket.
+- *	@sock contains the socket structure.
+- *	@msg contains the message structure.
+- *	@size contains the size of message structure.
+- *	@flags contains the operational flags.
+- *	Return 0 if permission is granted.
+- * @socket_getsockname:
++ *
++ *	* @sock contains the socket structure.
++ *	* @msg contains the message structure.
++ *	* @size contains the size of message structure.
++ *	* @flags contains the operational flags.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_getsockname(struct socket \*sock)
+  *	Check permission before the local address (name) of the socket object
+  *	@sock is retrieved.
+- *	@sock contains the socket structure.
+- *	Return 0 if permission is granted.
+- * @socket_getpeername:
++ *
++ *	* @sock contains the socket structure.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_getpeername(struct socket \*sock)
+  *	Check permission before the remote address (name) of a socket object
++ *
+  *	@sock is retrieved.
+  *	@sock contains the socket structure.
+- *	Return 0 if permission is granted.
+- * @socket_getsockopt:
++ *	Return %0 if permission is granted.
++ *
++ * int socket_getsockopt(struct socket \*sock, int level, int optname)
+  *	Check permissions before retrieving the options associated with socket
+  *	@sock.
+- *	@sock contains the socket structure.
+- *	@level contains the protocol level to retrieve option from.
+- *	@optname contains the name of option to retrieve.
+- *	Return 0 if permission is granted.
+- * @socket_setsockopt:
++ *
++ *	* @sock contains the socket structure.
++ *	* @level contains the protocol level to retrieve option from.
++ *	* @optname contains the name of option to retrieve.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_setsockopt(struct socket \*sock, int level, int optname)
+  *	Check permissions before setting the options associated with socket
++ *
+  *	@sock.
+  *	@sock contains the socket structure.
+  *	@level contains the protocol level to set options for.
+  *	@optname contains the name of the option to set.
+- *	Return 0 if permission is granted.
+- * @socket_shutdown:
++ *	Return %0 if permission is granted.
++ *
++ * int socket_shutdown(struct socket \*sock, int how)
+  *	Checks permission before all or part of a connection on the socket
+  *	@sock is shut down.
+- *	@sock contains the socket structure.
+- *	@how contains the flag indicating how future sends and receives
+- *	are handled.
+- *	Return 0 if permission is granted.
+- * @socket_sock_rcv_skb:
++ *
++ *	* @sock contains the socket structure.
++ *	* @how contains the flag indicating how future sends and receives are handled.
++ *	* Return %0 if permission is granted.
++ *
++ * int socket_sock_rcv_skb(struct sock \*sk, struct sk_buff \*skb)
+  *	Check permissions on incoming network packets.  This hook is distinct
+  *	from Netfilter's IP input hooks since it is the first time that the
+- *	incoming sk_buff @skb has been associated with a particular socket, @sk.
++ *	incoming @sk_buff @skb has been associated with a particular socket, @sk.
+  *	Must not sleep inside this hook because some callers hold spinlocks.
+- *	@sk contains the sock (not socket) associated with the incoming sk_buff.
+- *	@skb contains the incoming network data.
+- * @socket_getpeersec_stream:
++ *
++ *	* @sk contains the sock (not socket) associated with the incoming sk_buff.
++ *	* @skb contains the incoming network data.
++ *
++ * int socket_getpeersec_stream(struct socket \*sock, char __user \*optval, int __user \*optlen, unsigned len)
+  *	This hook allows the security module to provide peer socket security
+- *	state for unix or connected tcp sockets to userspace via getsockopt
+- *	SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
++ *	state for unix or connected tcp sockets to userspace via @getsockopt()
++ *	%SO_GETPEERSEC.  For tcp sockets this can be meaningful if the
+  *	socket is associated with an ipsec SA.
+- *	@sock is the local socket.
+- *	@optval userspace memory where the security state is to be copied.
+- *	@optlen userspace int where the module should copy the actual length
+- *	of the security state.
+- *	@len as input is the maximum length to copy to userspace provided
+- *	by the caller.
+- *	Return 0 if all is well, otherwise, typical getsockopt return
+- *	values.
+- * @socket_getpeersec_dgram:
++ *
++ *	* @sock is the local socket.
++ *	* @optval userspace memory where the security state is to be copied.
++ *	* @optlen userspace int where the module should copy the actual length of the security state.
++ *	* @len as input is the maximum length to copy to userspace provided by the caller.
++ *	* Return %0 if all is well, otherwise, typical @getsockopt() return values.
++ *
++ * int socket_getpeersec_dgram(struct socket \*sock, struct sk_buff \*skb, u32 \*secid)
+  *	This hook allows the security module to provide peer socket security
+  *	state for udp sockets on a per-packet basis to userspace via
+- *	getsockopt SO_GETPEERSEC. The application must first have indicated
+- *	the IP_PASSSEC option via getsockopt. It can then retrieve the
+- *	security state returned by this hook for a packet via the SCM_SECURITY
++ *	getsockopt %SO_GETPEERSEC. The application must first have indicated
++ *	the %IP_PASSSEC option via @getsockopt(). It can then retrieve the
++ *	security state returned by this hook for a packet via the %SCM_SECURITY
+  *	ancillary message type.
+- *	@sock contains the peer socket. May be NULL.
+- *	@skb is the sk_buff for the packet being queried. May be NULL.
+- *	@secid pointer to store the secid of the packet.
+- *	Return 0 on success, error on failure.
+- * @sk_alloc_security:
+- *	Allocate and attach a security structure to the sk->sk_security field,
++ *
++ *	* @sock contains the peer socket. May be %NULL.
++ *	* @skb is the @sk_buff for the packet being queried. May be %NULL.
++ *	* @secid pointer to store the @secid of the packet.
++ *	* Return %0 on success, error on failure.
++ *
++ * int sk_alloc_security(struct sock \*sk, int family, gfp_t priority)
++ *	Allocate and attach a security structure to the @sk->sk_security field,
+  *	which is used to copy security attributes between local stream sockets.
+- * @sk_free_security:
++ *
++ * void sk_free_security(struct sock \*sk)
+  *	Deallocate security structure.
+- * @sk_clone_security:
++ *
++ * void sk_clone_security(const struct sock \*sk, struct sock \*newsk)
+  *	Clone/copy security structure.
+- * @sk_getsecid:
++ *
++ * void sk_getsecid(struct sock \*sk, u32 \*secid)
+  *	Retrieve the LSM-specific secid for the sock to enable caching
+  *	of network authorizations.
+- * @sock_graft:
++ *
++ * void sock_graft(struct sock \*sk, struct socket \*parent)
+  *	Sets the socket's isec sid to the sock's sid.
+- * @inet_conn_request:
++ *
++ * int inet_conn_request(const struct sock \*sk, struct sk_buff \*skb, struct request_sock \*req)
+  *	Sets the openreq's sid to socket's sid with MLS portion taken
+  *	from peer sid.
+- * @inet_csk_clone:
++ *
++ * void inet_csk_clone(struct sock \*newsk, const struct request_sock \*req)
+  *	Sets the new child socket's sid to the openreq sid.
+- * @inet_conn_established:
++ *
++ * void inet_conn_established(struct sock \*sk, struct sk_buff \*skb)
+  *	Sets the connection's peersid to the secmark on skb.
+- * @secmark_relabel_packet:
++ *
++ * int secmark_relabel_packet(u32 secid)
+  *	check if the process should be allowed to relabel packets to
+- *	the given secid
+- * @secmark_refcount_inc:
++ *	the given @secid
++ *
++ * void secmark_refcount_inc(void)
+  *	tells the LSM to increment the number of secmark labeling rules loaded
+- * @secmark_refcount_dec:
++ *
++ * void secmark_refcount_dec(void)
+  *	tells the LSM to decrement the number of secmark labeling rules loaded
+- * @req_classify_flow:
++ *
++ * void req_classify_flow(const struct request_sock \*req, struct flowi_common \*flic)
+  *	Sets the flow's sid to the openreq sid.
+- * @tun_dev_alloc_security:
++ *
++ * **Security hooks for TUN device:**
++ *
++ * int tun_dev_alloc_security(void \*\*security)
+  *	This hook allows a module to allocate a security structure for a TUN
+  *	device.
+- *	@security pointer to a security structure pointer.
+- *	Returns a zero on success, negative values on failure.
+- * @tun_dev_free_security:
++ *
++ *	* @security pointer to a security structure pointer.
++ *	* Returns a zero on success, negative values on failure.
++ *
++ * void tun_dev_free_security(void \*security)
+  *	This hook allows a module to free the security structure for a TUN
+  *	device.
+- *	@security pointer to the TUN device's security structure
+- * @tun_dev_create:
++ *
++ *	* @security pointer to the TUN device's security structure
++ *
++ * int tun_dev_create(void)
+  *	Check permissions prior to creating a new TUN device.
+- * @tun_dev_attach_queue:
++ *
++ * int tun_dev_attach_queue(void \*security)
+  *	Check permissions prior to attaching to a TUN device queue.
+- *	@security pointer to the TUN device's security structure.
+- * @tun_dev_attach:
++ *
++ *	* @security pointer to the TUN device's security structure.
++ *
++ * int tun_dev_attach(struct sock \*sk, void \*security)
+  *	This hook can be used by the module to update any security state
+  *	associated with the TUN device's sock structure.
+- *	@sk contains the existing sock structure.
+- *	@security pointer to the TUN device's security structure.
+- * @tun_dev_open:
++ *
++ *	* @sk contains the existing sock structure.
++ *	* @security pointer to the TUN device's security structure.
++ *
++ * int tun_dev_open(void \*security)
+  *	This hook can be used by the module to update any security state
+  *	associated with the TUN device's security structure.
+- *	@security pointer to the TUN devices's security structure.
+  *
+- * Security hooks for SCTP
++ *	* @security pointer to the TUN devices's security structure.
+  *
+- * @sctp_assoc_request:
+- *	Passes the @ep and @chunk->skb of the association INIT packet to
++ * **Security hooks for SCTP:**
++ *
++ * int sctp_assoc_request(struct sctp_endpoint \*ep, struct sk_buff \*skb)
++ *	Passes the @ep and @chunk->skb of the association %INIT packet to
+  *	the security module.
+- *	@ep pointer to sctp endpoint structure.
+- *	@skb pointer to skbuff of association packet.
+- *	Return 0 on success, error on failure.
+- * @sctp_bind_connect:
++ *
++ *	* @ep pointer to sctp endpoint structure.
++ *	* @skb pointer to @skbuff of association packet.
++ *	* Return %0 on success, error on failure.
++ *
++ * int sctp_bind_connect(struct sock \*sk, int optname, struct sockaddr \*address, int addrlen)
+  *	Validiate permissions required for each address associated with sock
+  *	@sk. Depending on @optname, the addresses will be treated as either
+  *	for a connect or bind service. The @addrlen is calculated on each
+  *	ipv4 and ipv6 address using sizeof(struct sockaddr_in) or
+  *	sizeof(struct sockaddr_in6).
+- *	@sk pointer to sock structure.
+- *	@optname name of the option to validate.
+- *	@address list containing one or more ipv4/ipv6 addresses.
+- *	@addrlen total length of address(s).
+- *	Return 0 on success, error on failure.
+- * @sctp_sk_clone:
++ *
++ *	* @sk pointer to sock structure.
++ *	* @optname name of the option to validate.
++ *	* @address list containing one or more ipv4/ipv6 addresses.
++ *	* @addrlen total length of address(s).
++ *	* Return %0 on success, error on failure.
++ *
++ * void sctp_sk_clone(struct sctp_endpoint \*ep, struct sock \*sk, struct sock \*newsk)
+  *	Called whenever a new socket is created by accept(2) (i.e. a TCP
+  *	style socket) or when a socket is 'peeled off' e.g userspace
+  *	calls sctp_peeloff(3).
+- *	@ep pointer to current sctp endpoint structure.
+- *	@sk pointer to current sock structure.
+- *	@sk pointer to new sock structure.
+  *
+- * Security hooks for Infiniband
++ *	* @ep pointer to current sctp endpoint structure.
++ *	* @sk pointer to current sock structure.
++ *	* @sk pointer to new sock structure.
+  *
+- * @ib_pkey_access:
++ * **Security hooks for Infiniband:**
++ *
++ * int ib_pkey_access(void \*sec, u64 subnet_prefix, u16 pkey)
+  *	Check permission to access a pkey when modifing a QP.
+- *	@subnet_prefix the subnet prefix of the port being used.
+- *	@pkey the pkey to be accessed.
+- *	@sec pointer to a security structure.
+- * @ib_endport_manage_subnet:
++ *
++ *	* @subnet_prefix the subnet prefix of the port being used.
++ *	* @pkey the pkey to be accessed.
++ *	* @sec pointer to a security structure.
++ *
++ * int ib_endport_manage_subnet(void \*sec, const char \*dev_name, u8 port_num)
+  *	Check permissions to send and receive SMPs on a end port.
+- *	@dev_name the IB device name (i.e. mlx4_0).
+- *	@port_num the port number.
+- *	@sec pointer to a security structure.
+- * @ib_alloc_security:
++ *
++ *	* @sec pointer to a security structure.
++ *	* @dev_name the IB device name (i.e. mlx4_0).
++ *	* @port_num the port number.
++ *
++ * int ib_alloc_security(void \*\*sec)
+  *	Allocate a security structure for Infiniband objects.
+- *	@sec pointer to a security structure pointer.
+- *	Returns 0 on success, non-zero on failure
+- * @ib_free_security:
++ *
++ *	* @sec pointer to a security structure pointer.
++ *	* Returns %0 on success, non-zero on failure
++ *
++ * void ib_free_security(void \*sec)
+  *	Deallocate an Infiniband security structure.
+- *	@sec contains the security structure to be freed.
+  *
+- * Security hooks for XFRM operations.
++ *	* @sec contains the security structure to be freed.
++ *
++ * **Security hooks for XFRM operations:**
+  *
+- * @xfrm_policy_alloc_security:
+- *	@ctxp is a pointer to the xfrm_sec_ctx being added to Security Policy
+- *	Database used by the XFRM system.
+- *	@sec_ctx contains the security context information being provided by
+- *	the user-level policy update program (e.g., setkey).
++ * int xfrm_policy_alloc_security(struct xfrm_sec_ctx \*\*ctxp, struct xfrm_user_sec_ctx \*sec_ctx, gfp_t gfp)
+  *	Allocate a security structure to the xp->security field; the security
+- *	field is initialized to NULL when the xfrm_policy is allocated.
+- *	Return 0 if operation was successful (memory to allocate, legal context)
+- *	@gfp is to specify the context for the allocation
+- * @xfrm_policy_clone_security:
+- *	@old_ctx contains an existing xfrm_sec_ctx.
+- *	@new_ctxp contains a new xfrm_sec_ctx being cloned from old.
++ *	field is initialized to %NULL when the @xfrm_policy is allocated.
++ *
++ *	* @ctxp is a pointer to the xfrm_sec_ctx being added to Security Policy Database used by the XFRM system.
++ *	* @sec_ctx contains the security context information being provided by the user-level policy update program (e.g., setkey).
++ *	* @gfp is to specify the context for the allocation
++ *	* Return %0 if operation was successful (memory to allocate, legal context)
++ *
++ * int xfrm_policy_clone_security(struct xfrm_sec_ctx \*old_ctx, struct xfrm_sec_ctx \*\*new_ctx)
+  *	Allocate a security structure in new_ctxp that contains the
+- *	information from the old_ctx structure.
+- *	Return 0 if operation was successful (memory to allocate).
+- * @xfrm_policy_free_security:
+- *	@ctx contains the xfrm_sec_ctx
+- *	Deallocate xp->security.
+- * @xfrm_policy_delete_security:
+- *	@ctx contains the xfrm_sec_ctx.
+- *	Authorize deletion of xp->security.
+- * @xfrm_state_alloc:
+- *	@x contains the xfrm_state being added to the Security Association
+- *	Database by the XFRM system.
+- *	@sec_ctx contains the security context information being provided by
+- *	the user-level SA generation program (e.g., setkey or racoon).
+- *	Allocate a security structure to the x->security field; the security
+- *	field is initialized to NULL when the xfrm_state is allocated. Set the
+- *	context to correspond to sec_ctx. Return 0 if operation was successful
+- *	(memory to allocate, legal context).
+- * @xfrm_state_alloc_acquire:
+- *	@x contains the xfrm_state being added to the Security Association
+- *	Database by the XFRM system.
+- *	@polsec contains the policy's security context.
+- *	@secid contains the secid from which to take the mls portion of the
+- *	context.
+- *	Allocate a security structure to the x->security field; the security
+- *	field is initialized to NULL when the xfrm_state is allocated. Set the
+- *	context to correspond to secid. Return 0 if operation was successful
+- *	(memory to allocate, legal context).
+- * @xfrm_state_free_security:
+- *	@x contains the xfrm_state.
++ *	information from the @old_ctx structure.
++ *
++ *	* @old_ctx contains an existing @xfrm_sec_ctx.
++ *	* @new_ctxp contains a new @xfrm_sec_ctx being cloned from old.
++ *	* Return %0 if operation was successful (memory to allocate).
++ *
++ * void xfrm_policy_free_security(struct xfrm_sec_ctx \*ctx)
++ *	Deallocate @xp->security.
++ *
++ *	@ctx contains the @xfrm_sec_ctx
++ *
++ * int xfrm_policy_delete_security(struct xfrm_sec_ctx \*ctx)
++ *	Authorize deletion of @xp->security.
++ *
++ *	* @ctx contains the @xfrm_sec_ctx.
++ *
++ * int xfrm_state_alloc(struct xfrm_state \*x, struct xfrm_user_sec_ctx \*sec_ctx)
++ *	Allocate a security structure to the @x->security field; the security
++ *	field is initialized to %NULL when the @xfrm_state is allocated. Set the
++ *	context to correspond to @sec_ctx.
++ *
++ *	* @x contains the xfrm_state being added to the Security Association Database by the XFRM system.
++ *	* @sec_ctx contains the security context information being provided by the user-level SA generation program (e.g., setkey or racoon).
++ *	* Return %0 if operation was successful (memory to allocate, legal context).
++ *
++ * int xfrm_state_alloc_acquire(struct xfrm_state \*x, struct xfrm_sec_ctx \*polsec, u32 secid)
++ *	Allocate a security structure to the @x->security field; the security
++ *	field is initialized to %NULL when the @xfrm_state is allocated. Set the
++ *	context to correspond to @secid.
++ *
++ *	* @x contains the xfrm_state being added to the Security Association Database by the XFRM system.
++ *	* @polsec contains the policy's security context.
++ *	* @secid contains the @secid from which to take the mls portion of the context.
++ *	* Return %0 if operation was successful (memory to allocate, legal context).
++ *
++ * void xfrm_state_free_security(struct xfrm_state \*x)
+  *	Deallocate x->security.
+- * @xfrm_state_delete_security:
+- *	@x contains the xfrm_state.
+- *	Authorize deletion of x->security.
+- * @xfrm_policy_lookup:
+- *	@ctx contains the xfrm_sec_ctx for which the access control is being
+- *	checked.
+- *	@fl_secid contains the flow security label that is used to authorize
+- *	access to the policy xp.
+- *	@dir contains the direction of the flow (input or output).
+- *	Check permission when a flow selects a xfrm_policy for processing
++ *
++ *	* @x contains the @xfrm_state.
++ *
++ * int xfrm_state_delete_security(struct xfrm_state \*x)
++ *	Authorize deletion of @x->security.
++ *
++ *	* @x contains the @xfrm_state.
++ *
++ * int xfrm_policy_lookup(struct xfrm_sec_ctx \*ctx, u32 fl_secid, u8 dir)
++ *	Check permission when a flow selects a @xfrm_policy for processing
+  *	XFRMs on a packet.  The hook is called when selecting either a
+  *	per-socket policy or a generic xfrm policy.
+- *	Return 0 if permission is granted, -ESRCH otherwise, or -errno
+- *	on other errors.
+- * @xfrm_state_pol_flow_match:
+- *	@x contains the state to match.
+- *	@xp contains the policy to check for a match.
+- *	@flic contains the flowi_common struct to check for a match.
+- *	Return 1 if there is a match.
+- * @xfrm_decode_session:
+- *	@skb points to skb to decode.
+- *	@secid points to the flow key secid to set.
+- *	@ckall says if all xfrms used should be checked for same secid.
+- *	Return 0 if ckall is zero or all xfrms used have the same secid.
+- *
+- * Security hooks affecting all Key Management operations
+- *
+- * @key_alloc:
++ *
++ *	* @ctx contains the @xfrm_sec_ctx for which the access control is being checked.
++ *	* @fl_secid contains the flow security label that is used to authorize access to the policy xp.
++ *	* @dir contains the direction of the flow (input or output).
++ *	* Return %0 if permission is granted, %-ESRCH otherwise, or %-errno on other errors.
++ *
++ * int xfrm_state_pol_flow_match(struct xfrm_state \*x, struct xfrm_policy \*xp, const struct flowi_common \*flic)
++ *	TODO Add function definition to correctly format kernel doc.
++ *
++ *	* @x contains the state to match.
++ *	* @xp contains the policy to check for a match.
++ *	* @flic contains the @flowi_common struct to check for a match.
++ *	* Return %1 if there is a match.
++ *
++ * int xfrm_decode_session(struct sk_buff \*skb, u32 \*secid, int ckall)
++ *	TODO Add function definition to correctly format kernel doc.
++ *
++ *	* @skb points to skb to decode.
++ *	* @secid points to the flow key @secid to set.
++ *	* @ckall says if all xfrms used should be checked for same @secid.
++ *	* Return %0 if @ckall is zero or all xfrms used have the same @secid.
++ *
++ * **Security hooks affecting all Key Management operations:**
++ *
++ * int key_alloc(struct key \*key, const struct cred \*cred, unsigned long flags)
+  *	Permit allocation of a key and assign security data. Note that key does
+  *	not have a serial number assigned at this point.
+- *	@key points to the key.
+- *	@flags is the allocation flags
+- *	Return 0 if permission is granted, -ve error otherwise.
+- * @key_free:
++ *
++ *	* @key points to the key.
++ *	* @flags is the allocation flags
++ *	* Return %0 if permission is granted, %-ve error otherwise.
++ *
++ * void key_free(struct key \*key)
+  *	Notification of destruction; free security data.
+- *	@key points to the key.
+- *	No return value.
+- * @key_permission:
++ *
++ *	* @key points to the key.
++ *	* No return value.
++ *
++ * int key_permission(key_ref_t key_ref, const struct cred \*cred, enum key_need_perm need_perm)
+  *	See whether a specific operational right is granted to a process on a
+  *	key.
+- *	@key_ref refers to the key (key pointer + possession attribute bit).
+- *	@cred points to the credentials to provide the context against which to
+- *	evaluate the security data on the key.
+- *	@perm describes the combination of permissions required of this key.
+- *	Return 0 if permission is granted, -ve error otherwise.
+- * @key_getsecurity:
++ *
++ *	* @key_ref refers to the key (key pointer + possession attribute bit).
++ *	* @cred points to the credentials to provide the context against which to evaluate the security data on the key.
++ *	* @perm describes the combination of permissions required of this key.
++ *	* Return %0 if permission is granted, %-ve error otherwise.
++ *
++ * int key_getsecurity(struct key \*key, char \*\*_buffer)
+  *	Get a textual representation of the security context attached to a key
+- *	for the purposes of honouring KEYCTL_GETSECURITY.  This function
+- *	allocates the storage for the NUL-terminated string and the caller
++ *	for the purposes of honouring %KEYCTL_GETSECURITY.  This function
++ *	allocates the storage for the %NUL terminated string and the caller
+  *	should free it.
+- *	@key points to the key to be queried.
+- *	@_buffer points to a pointer that should be set to point to the
+- *	resulting string (if no label or an error occurs).
+- *	Return the length of the string (including terminating NUL) or -ve if
+- *	an error.
+- *	May also return 0 (and a NULL buffer pointer) if there is no label.
+  *
+- * Security hooks affecting all System V IPC operations.
++ *	* @key points to the key to be queried.
++ *	* @_buffer points to a pointer that should be set to point to the resulting string (if no label or an error occurs).
++ *	* Return the length of the string (including terminating %NUL) or %-ve if an error.
++ *	* May also Return %0 (and a %NULL buffer pointer) if there is no label.
++ *
++ * **Security hooks affecting all System V IPC operations:**
+  *
+- * @ipc_permission:
++ * int ipc_permission(struct kern_ipc_perm \*ipcp, short flag)
+  *	Check permissions for access to IPC
+- *	@ipcp contains the kernel IPC permission structure
+- *	@flag contains the desired (requested) permission set
+- *	Return 0 if permission is granted.
+- * @ipc_getsecid:
++ *
++ *	* @ipcp contains the kernel IPC permission structure
++ *	* @flag contains the desired (requested) permission set
++ *	* Return %0 if permission is granted.
++ *
++ * void ipc_getsecid(struct kern_ipc_perm \*ipcp, u32 \*secid)
+  *	Get the secid associated with the ipc object.
+- *	@ipcp contains the kernel IPC permission structure.
+- *	@secid contains a pointer to the location where result will be saved.
+- *	In case of failure, @secid will be set to zero.
+  *
+- * Security hooks for individual messages held in System V IPC message queues
++ *	* @ipcp contains the kernel IPC permission structure.
++ *	* @secid contains a pointer to the location where result will be saved.
++ *	* In case of failure, @secid will be set to zero.
++ *
++ * **Security hooks for individual messages held in System V IPC message queues:**
+  *
+- * @msg_msg_alloc_security:
+- *	Allocate and attach a security structure to the msg->security field.
+- *	The security field is initialized to NULL when the structure is first
++ * int msg_msg_alloc_security(struct msg_msg \*msg)
++ *	Allocate and attach a security structure to the @msg->security field.
++ *	The security field is initialized to %NULL when the structure is first
+  *	created.
+- *	@msg contains the message structure to be modified.
+- *	Return 0 if operation was successful and permission is granted.
+- * @msg_msg_free_security:
++ *
++ *	* @msg contains the message structure to be modified.
++ *	* Return %0 if operation was successful and permission is granted.
++ *
++ * void msg_msg_free_security(struct msg_msg \*msg)
+  *	Deallocate the security structure for this message.
+- *	@msg contains the message structure to be modified.
+  *
+- * Security hooks for System V IPC Message Queues
++ *	* @msg contains the message structure to be modified.
++ *
++ * **Security hooks for System V IPC Message Queues:**
+  *
+- * @msg_queue_alloc_security:
++ * int msg_queue_alloc_security(struct kern_ipc_perm \*perm)
+  *	Allocate and attach a security structure to the
+  *	@perm->security field. The security field is initialized to
+- *	NULL when the structure is first created.
+- *	@perm contains the IPC permissions of the message queue.
+- *	Return 0 if operation was successful and permission is granted.
+- * @msg_queue_free_security:
++ *	%NULL when the structure is first created.
++ *
++ *	* @perm contains the IPC permissions of the message queue.
++ *	* Return %0 if operation was successful and permission is granted.
++ *
++ * void msg_queue_free_security(struct kern_ipc_perm \*perm)
+  *	Deallocate security field @perm->security for the message queue.
+- *	@perm contains the IPC permissions of the message queue.
+- * @msg_queue_associate:
++ *
++ *	* @perm contains the IPC permissions of the message queue.
++ *
++ * int msg_queue_associate(struct kern_ipc_perm \*perm, int msqflg)
+  *	Check permission when a message queue is requested through the
+  *	msgget system call. This hook is only called when returning the
+  *	message queue identifier for an existing message queue, not when a
+  *	new message queue is created.
+- *	@perm contains the IPC permissions of the message queue.
+- *	@msqflg contains the operation control flags.
+- *	Return 0 if permission is granted.
+- * @msg_queue_msgctl:
++ *
++ *	* @perm contains the IPC permissions of the message queue.
++ *	* @msqflg contains the operation control flags.
++ *	* Return %0 if permission is granted.
++ *
++ * int msg_queue_msgctl(struct kern_ipc_perm \*perm, int cmd)
+  *	Check permission when a message control operation specified by @cmd
+  *	is to be performed on the message queue with permissions @perm.
+- *	The @perm may be NULL, e.g. for IPC_INFO or MSG_INFO.
+- *	@perm contains the IPC permissions of the msg queue. May be NULL.
+- *	@cmd contains the operation to be performed.
+- *	Return 0 if permission is granted.
+- * @msg_queue_msgsnd:
++ *	The @perm may be %NULL, e.g. for %IPC_INFO or %MSG_INFO.
++ *
++ *	* @perm contains the IPC permissions of the msg queue. May be %NULL.
++ *	* @cmd contains the operation to be performed.
++ *	* Return %0 if permission is granted.
++ *
++ * int msg_queue_msgsnd(struct kern_ipc_perm \*perm, struct msg_msg \*msg, int msqflg)
+  *	Check permission before a message, @msg, is enqueued on the message
+  *	queue with permissions @perm.
+- *	@perm contains the IPC permissions of the message queue.
+- *	@msg contains the message to be enqueued.
+- *	@msqflg contains operational flags.
+- *	Return 0 if permission is granted.
+- * @msg_queue_msgrcv:
++ *
++ *	* @perm contains the IPC permissions of the message queue.
++ *	* @msg contains the message to be enqueued.
++ *	* @msqflg contains operational flags.
++ *	* Return %0 if permission is granted.
++ *
++ * int msg_queue_msgrcv(struct kern_ipc_perm \*perm, struct msg_msg \*msg, struct task_struct \*target, long type, int mode)
+  *	Check permission before a message, @msg, is removed from the message
+  *	queue. The @target task structure contains a pointer to the
+  *	process that will be receiving the message (not equal to the current
+  *	process when inline receives are being performed).
+- *	@perm contains the IPC permissions of the message queue.
+- *	@msg contains the message destination.
+- *	@target contains the task structure for recipient process.
+- *	@type contains the type of message requested.
+- *	@mode contains the operational flags.
+- *	Return 0 if permission is granted.
+  *
+- * Security hooks for System V Shared Memory Segments
++ *	* @perm contains the IPC permissions of the message queue.
++ *	* @msg contains the message destination.
++ *	* @target contains the task structure for recipient process.
++ *	* @type contains the type of message requested.
++ *	* @mode contains the operational flags.
++ *	* Return %0 if permission is granted.
++ *
++ * **Security hooks for System V Shared Memory Segments:**
+  *
+- * @shm_alloc_security:
++ * int shm_alloc_security(struct kern_ipc_perm \*perm)
+  *	Allocate and attach a security structure to the @perm->security
+- *	field. The security field is initialized to NULL when the structure is
++ *	field. The security field is initialized to %NULL when the structure is
+  *	first created.
+- *	@perm contains the IPC permissions of the shared memory structure.
+- *	Return 0 if operation was successful and permission is granted.
+- * @shm_free_security:
++ *
++ *	* @perm contains the IPC permissions of the shared memory structure.
++ *	* Return %0 if operation was successful and permission is granted.
++ *
++ * void shm_free_security(struct kern_ipc_perm \*perm)
+  *	Deallocate the security structure @perm->security for the memory segment.
+- *	@perm contains the IPC permissions of the shared memory structure.
+- * @shm_associate:
++ *
++ *	* @perm contains the IPC permissions of the shared memory structure.
++ *
++ * int shm_associate(struct kern_ipc_perm \*perm, int shmflg)
+  *	Check permission when a shared memory region is requested through the
+- *	shmget system call. This hook is only called when returning the shared
++ *	@shmget() system call. This hook is only called when returning the shared
+  *	memory region identifier for an existing region, not when a new shared
+  *	memory region is created.
+- *	@perm contains the IPC permissions of the shared memory structure.
+- *	@shmflg contains the operation control flags.
+- *	Return 0 if permission is granted.
+- * @shm_shmctl:
++ *
++ *	* @perm contains the IPC permissions of the shared memory structure.
++ *	* @shmflg contains the operation control flags.
++ *	* Return %0 if permission is granted.
++ *
++ * int shm_shmctl(struct kern_ipc_perm \*perm, int cmd)
+  *	Check permission when a shared memory control operation specified by
+  *	@cmd is to be performed on the shared memory region with permissions @perm.
+- *	The @perm may be NULL, e.g. for IPC_INFO or SHM_INFO.
+- *	@perm contains the IPC permissions of the shared memory structure.
+- *	@cmd contains the operation to be performed.
+- *	Return 0 if permission is granted.
+- * @shm_shmat:
++ *	The @perm may be %NULL, e.g. for %IPC_INFO or %SHM_INFO.
++ *
++ *	* @perm contains the IPC permissions of the shared memory structure.
++ *	* @cmd contains the operation to be performed.
++ *	* Return %0 if permission is granted.
++ *
++ * int shm_shmat(struct kern_ipc_perm \*perm, char __user \*shmaddr, int shmflg)
+  *	Check permissions prior to allowing the shmat system call to attach the
+  *	shared memory segment with permissions @perm to the data segment of the
+  *	calling process. The attaching address is specified by @shmaddr.
+- *	@perm contains the IPC permissions of the shared memory structure.
+- *	@shmaddr contains the address to attach memory region to.
+- *	@shmflg contains the operational flags.
+- *	Return 0 if permission is granted.
+  *
+- * Security hooks for System V Semaphores
++ *	* @perm contains the IPC permissions of the shared memory structure.
++ *	* @shmaddr contains the address to attach memory region to.
++ *	* @shmflg contains the operational flags.
++ *	* Return %0 if permission is granted.
++ *
++ * **Security hooks for System V Semaphores:**
+  *
+- * @sem_alloc_security:
++ * int sem_alloc_security(struct kern_ipc_perm \*perm)
+  *	Allocate and attach a security structure to the @perm->security
+- *	field. The security field is initialized to NULL when the structure is
++ *	field. The security field is initialized to %NULL when the structure is
+  *	first created.
+- *	@perm contains the IPC permissions of the semaphore.
+- *	Return 0 if operation was successful and permission is granted.
+- * @sem_free_security:
++ *
++ *	* @perm contains the IPC permissions of the semaphore.
++ *	* Return %0 if operation was successful and permission is granted.
++ *
++ * void sem_free_security(struct kern_ipc_perm \*perm)
+  *	Deallocate security structure @perm->security for the semaphore.
+- *	@perm contains the IPC permissions of the semaphore.
+- * @sem_associate:
+- *	Check permission when a semaphore is requested through the semget
++ *
++ *	* @perm contains the IPC permissions of the semaphore.
++ *
++ * int sem_associate(struct kern_ipc_perm \*perm, int semflg)
++ *	Check permission when a semaphore is requested through the @semget()
+  *	system call. This hook is only called when returning the semaphore
+  *	identifier for an existing semaphore, not when a new one must be
+  *	created.
+- *	@perm contains the IPC permissions of the semaphore.
+- *	@semflg contains the operation control flags.
+- *	Return 0 if permission is granted.
+- * @sem_semctl:
++ *
++ *	* @perm contains the IPC permissions of the semaphore.
++ *	* @semflg contains the operation control flags.
++ *	* Return %0 if permission is granted.
++ *
++ * int sem_semctl(struct kern_ipc_perm \*perm, int cmd)
+  *	Check permission when a semaphore operation specified by @cmd is to be
+- *	performed on the semaphore. The @perm may be NULL, e.g. for
+- *	IPC_INFO or SEM_INFO.
+- *	@perm contains the IPC permissions of the semaphore. May be NULL.
+- *	@cmd contains the operation to be performed.
+- *	Return 0 if permission is granted.
+- * @sem_semop:
++ *	performed on the semaphore. The @perm may be %NULL, e.g. for
++ *	%IPC_INFO or %SEM_INFO.
++ *
++ *	* @perm contains the IPC permissions of the semaphore. May be %NULL.
++ *	* @cmd contains the operation to be performed.
++ *	* Return %0 if permission is granted.
++ *
++ * int sem_semop(struct kern_ipc_perm \*perm, struct sembuf \*sops, unsigned nsops, int alter)
+  *	Check permissions before performing operations on members of the
+  *	semaphore set. If the @alter flag is nonzero, the semaphore set
+  *	may be modified.
+- *	@perm contains the IPC permissions of the semaphore.
+- *	@sops contains the operations to perform.
+- *	@nsops contains the number of operations to perform.
+- *	@alter contains the flag indicating whether changes are to be made.
+- *	Return 0 if permission is granted.
+  *
+- * @binder_set_context_mgr:
++ *	* @perm contains the IPC permissions of the semaphore.
++ *	* @sops contains the operations to perform.
++ *	* @nsops contains the number of operations to perform.
++ *	* @alter contains the flag indicating whether changes are to be made.
++ *	* Return %0 if permission is granted.
++ *
++ * **Security hooks for Binder device:**
++ *
++ * int binder_set_context_mgr(struct task_struct \*mgr)
+  *	Check whether @mgr is allowed to be the binder context manager.
+- *	@mgr contains the task_struct for the task being registered.
+- *	Return 0 if permission is granted.
+- * @binder_transaction:
++ *
++ *	* @mgr contains the @task_struct for the task being registered.
++ *	* Return %0 if permission is granted.
++ *
++ * int binder_transaction(struct task_struct \*from, struct task_struct \*to)
+  *	Check whether @from is allowed to invoke a binder transaction call
+  *	to @to.
+- *	@from contains the task_struct for the sending task.
+- *	@to contains the task_struct for the receiving task.
+- * @binder_transfer_binder:
++ *
++ *	* @from contains the @task_struct for the sending task.
++ *	* @to contains the @task_struct for the receiving task.
++ *
++ * int binder_transfer_binder(struct task_struct \*from, struct task_struct \*to)
+  *	Check whether @from is allowed to transfer a binder reference to @to.
+- *	@from contains the task_struct for the sending task.
+- *	@to contains the task_struct for the receiving task.
+- * @binder_transfer_file:
++ *
++ *	* @from contains the @task_struct for the sending task.
++ *	* @to contains the @task_struct for the receiving task.
++ *
++ * int binder_transfer_file(struct task_struct \*from, struct task_struct \*to, struct file \*file)
+  *	Check whether @from is allowed to transfer @file to @to.
+- *	@from contains the task_struct for the sending task.
+- *	@file contains the struct file being transferred.
+- *	@to contains the task_struct for the receiving task.
+  *
+- * @ptrace_access_check:
++ *	* @from contains the @task_struct for the sending task.
++ *	* @file contains the struct file being transferred.
++ *	* @to contains the @task_struct for the receiving task.
++ *
++ * **Security hooks for ptrace:**
++ *
++ * int ptrace_access_check(struct task_struct \*child, unsigned int mode)
+  *	Check permission before allowing the current process to trace the
+  *	@child process.
+  *	Security modules may also want to perform a process tracing check
+- *	during an execve in the set_security or apply_creds hooks of
+- *	tracing check during an execve in the bprm_set_creds hook of
+- *	binprm_security_ops if the process is being traced and its security
+- *	attributes would be changed by the execve.
+- *	@child contains the task_struct structure for the target process.
+- *	@mode contains the PTRACE_MODE flags indicating the form of access.
+- *	Return 0 if permission is granted.
+- * @ptrace_traceme:
++ *	during an @execve in the set_security or @apply_creds() hooks of
++ *	tracing check during an @execve in the @bprm_set_creds() hook of
++ *	@binprm_security_ops() if the process is being traced and its security
++ *	attributes would be changed by the @execve.
++ *
++ *	* @child contains the @task_struct structure for the target process.
++ *	* @mode contains the %PTRACE_MODE flags indicating the form of access.
++ *	* Return %0 if permission is granted.
++ *
++ * int ptrace_traceme(struct task_struct \*parent)
+  *	Check that the @parent process has sufficient permission to trace the
+  *	current process before allowing the current process to present itself
+  *	to the @parent process for tracing.
+- *	@parent contains the task_struct structure for debugger process.
+- *	Return 0 if permission is granted.
+- * @capget:
++ *
++ *	* @parent contains the @task_struct structure for debugger process.
++ *	* Return %0 if permission is granted.
++ *
++ * int capget(struct task_struct \*target, kernel_cap_t \*effective, kernel_cap_t \*inheritable, kernel_cap_t \*permitted)
+  *	Get the @effective, @inheritable, and @permitted capability sets for
+  *	the @target process.  The hook may also perform permission checking to
+  *	determine if the current process is allowed to see the capability sets
+  *	of the @target process.
+- *	@target contains the task_struct structure for target process.
+- *	@effective contains the effective capability set.
+- *	@inheritable contains the inheritable capability set.
+- *	@permitted contains the permitted capability set.
+- *	Return 0 if the capability sets were successfully obtained.
+- * @capset:
++ *
++ *	* @target contains the @task_struct structure for target process.
++ *	* @effective contains the effective capability set.
++ *	* @inheritable contains the inheritable capability set.
++ *	* @permitted contains the permitted capability set.
++ *	* Return %0 if the capability sets were successfully obtained.
++ *
++ * int capset(struct cred \*new, const struct cred \*old, const kernel_cap_t \*effective, const kernel_cap_t \*inheritable, const kernel_cap_t \*permitted)
+  *	Set the @effective, @inheritable, and @permitted capability sets for
+  *	the current process.
+- *	@new contains the new credentials structure for target process.
+- *	@old contains the current credentials structure for target process.
+- *	@effective contains the effective capability set.
+- *	@inheritable contains the inheritable capability set.
+- *	@permitted contains the permitted capability set.
+- *	Return 0 and update @new if permission is granted.
+- * @capable:
++ *
++ *	* @new contains the new credentials structure for target process.
++ *	* @old contains the current credentials structure for target process.
++ *	* @effective contains the effective capability set.
++ *	* @inheritable contains the inheritable capability set.
++ *	* @permitted contains the permitted capability set.
++ *	* Return %0 and update @new if permission is granted.
++ *
++ * int capable(const struct cred \*cred, struct user_namespace \*ns, int cap, unsigned int opts)
+  *	Check whether the @tsk process has the @cap capability in the indicated
+  *	credentials.
+- *	@cred contains the credentials to use.
+- *	@ns contains the user namespace we want the capability in
+- *	@cap contains the capability <include/linux/capability.h>.
+- *	@opts contains options for the capable check <include/linux/security.h>
+- *	Return 0 if the capability is granted for @tsk.
+- * @quotactl:
+- * 	Check whether the quotactl syscall is allowed for this @sb.
+- * @quota_on:
+- * 	Check whether QUOTAON is allowed for this @dentry.
+- * @syslog:
++ *
++ *	* @cred contains the credentials to use.
++ *	* @ns contains the user namespace we want the capability in
++ *	* @cap contains the capability <include/linux/capability.h>.
++ *	* @opts contains options for the capable check <include/linux/security.h>
++ *	* Return %0 if the capability is granted for @tsk.
++ *
++ * int quotactl(int cmds, int type, int id, struct super_block \*sb)
++ * 	Check whether the @quotactl syscall is allowed for this @sb.
++ *
++ * int quota_on(struct dentry \*dentry)
++ *	Check whether %QUOTAON is allowed for this @dentry.
++ *
++ * int syslog(int type)
+  *	Check permission before accessing the kernel message ring or changing
+  *	logging to the console.
+  *	See the syslog(2) manual page for an explanation of the @type values.
+- *	@type contains the SYSLOG_ACTION_* constant from <include/linux/syslog.h>
+- *	Return 0 if permission is granted.
+- * @settime:
++ *
++ *	* @type contains the %SYSLOG_ACTION_\* constant from <include/linux/syslog.h>
++ *	* Return %0 if permission is granted.
++ *
++ * int settime(const struct timespec64 \*ts, const struct timezone \*tz)
+  *	Check permission to change the system time.
+  *	struct timespec64 is defined in <include/linux/time64.h> and timezone
+  *	is defined in <include/linux/time.h>
+- *	@ts contains new time
+- *	@tz contains new timezone
+- *	Return 0 if permission is granted.
+- * @vm_enough_memory:
++ *
++ *	* @ts contains new time
++ *	* @tz contains new timezone
++ *	* Return %0 if permission is granted.
++ *
++ * int vm_enough_memory(struct mm_struct \*mm, long pages)
+  *	Check permissions for allocating a new virtual mapping.
+- *	@mm contains the mm struct it is being added to.
+- *	@pages contains the number of pages.
+- *	Return 0 if permission is granted.
+  *
+- * @ismaclabel:
++ *	* @mm contains the mm struct it is being added to.
++ *	* @pages contains the number of pages.
++ *	* Return %0 if permission is granted.
++ *
++ * int ismaclabel(const char \*name)
+  *	Check if the extended attribute specified by @name
+- *	represents a MAC label. Returns 1 if name is a MAC
+- *	attribute otherwise returns 0.
+- *	@name full extended attribute name to check against
+- *	LSM as a MAC label.
+- *
+- * @secid_to_secctx:
+- *	Convert secid to security context.  If secdata is NULL the length of
+- *	the result will be returned in seclen, but no secdata will be returned.
++ *	represents a MAC label. Returns %1 if name is a MAC
++ *	attribute otherwise returns %0.
++ *
++ *	* @name full extended attribute name to check against LSM as a MAC label.
++ *
++ * **Security hooks for managing security blobs:**
++ *
++ * int secid_to_secctx(u32 secid, char \*\*secdata, u32 \*seclen)
++ *	Convert @secid to security context.  If @secdata is %NULL the length of
++ *	the result will be returned in @seclen, but no @secdata will be returned.
+  *	This does mean that the length could change between calls to check the
+  *	length and the next call which actually allocates and returns the
+- *	secdata.
+- *	@secid contains the security ID.
+- *	@secdata contains the pointer that stores the converted security
+- *	context.
+- *	@seclen pointer which contains the length of the data
+- * @secctx_to_secid:
+- *	Convert security context to secid.
+- *	@secid contains the pointer to the generated security ID.
+- *	@secdata contains the security context.
+- *
+- * @release_secctx:
++ *	@secdata.
++ *
++ *	* @secid contains the security ID.
++ *	* @secdata contains the pointer that stores the converted security context.
++ *	* @seclen pointer which contains the length of the data
++ *
++ * int secctx_to_secid(const char \*secdata, u32 seclen, u32 \*secid)
++ *	Convert security context to @secid.
++ *
++ *	* @secid contains the pointer to the generated security ID.
++ *	* @secdata contains the security context.
++ *
++ * void release_secctx(char \*secdata, u32 seclen)
+  *	Release the security context.
+- *	@secdata contains the security context.
+- *	@seclen contains the length of the security context.
+  *
+- * Security hooks for Audit
++ *	* @secdata contains the security context.
++ *	* @seclen contains the length of the security context.
+  *
+- * @audit_rule_init:
++ * **Security hooks for Audit:**
++ *
++ * int audit_rule_init(u32 field, u32 op, char \*rulestr, void \*\*lsmrule)
+  *	Allocate and initialize an LSM audit rule structure.
+- *	@field contains the required Audit action.
+- *	Fields flags are defined in <include/linux/audit.h>
+- *	@op contains the operator the rule uses.
+- *	@rulestr contains the context where the rule will be applied to.
+- *	@lsmrule contains a pointer to receive the result.
+- *	Return 0 if @lsmrule has been successfully set,
+- *	-EINVAL in case of an invalid rule.
+- *
+- * @audit_rule_known:
++ *
++ *	* @field contains the required Audit action. Fields flags are defined in <include/linux/audit.h>
++ *	* @op contains the operator the rule uses.
++ *	* @rulestr contains the context where the rule will be applied to.
++ *	* @lsmrule contains a pointer to receive the result.
++ *	* Return %0 if @lsmrule has been successfully set,
++ *	* %-EINVAL in case of an invalid rule.
++ *
++ * int audit_rule_known(struct audit_krule \*krule)
+  *	Specifies whether given @krule contains any fields related to
+  *	current LSM.
+- *	@krule contains the audit rule of interest.
+- *	Return 1 in case of relation found, 0 otherwise.
+  *
+- * @audit_rule_match:
++ *	* @krule contains the audit rule of interest.
++ *	* Return %1 in case of relation found, 0 otherwise.
++ *
++ * int audit_rule_match(u32 secid, u32 field, u32 op, void \*lsmrule)
+  *	Determine if given @secid matches a rule previously approved
+  *	by @audit_rule_known.
+- *	@secid contains the security id in question.
+- *	@field contains the field which relates to current LSM.
+- *	@op contains the operator that will be used for matching.
+- *	@lrule points to the audit rule that will be checked against.
+- *	Return 1 if secid matches the rule, 0 if it does not, -ERRNO on failure.
+  *
+- * @audit_rule_free:
++ *	* @secid contains the security id in question.
++ *	* @field contains the field which relates to current LSM.
++ *	* @op contains the operator that will be used for matching.
++ *	* @lsmrule points to the audit rule that will be checked against.
++ *	* Return %1 if @secid matches the rule, %0 if it does not, %-ERRNO on failure.
++ *
++ * void audit_rule_free(void \*lsmrule)
+  *	Deallocate the LSM audit rule structure previously allocated by
+- *	audit_rule_init.
+- *	@lsmrule contains the allocated rule
++ *	@audit_rule_init().
++ *
++ *	* @lsmrule contains the allocated rule
++ *
++ * **Security hooks for more inode services:**
+  *
+- * @inode_invalidate_secctx:
++ * void inode_invalidate_secctx(struct inode \*inode)
+  *	Notify the security module that it must revalidate the security context
+  *	of an inode.
+  *
+- * @inode_notifysecctx:
++ * int inode_notifysecctx(struct inode \*inode, void \*ctx, u32 ctxlen)
+  *	Notify the security module of what the security context of an inode
+  *	should be.  Initializes the incore security context managed by the
+  *	security module for this inode.  Example usage:  NFS client invokes
+  *	this hook to initialize the security context in its incore inode to the
+  *	value provided by the server for the file when the server returned the
+  *	file's attributes to the client.
+- *	Must be called with inode->i_mutex locked.
+- *	@inode we wish to set the security context of.
+- *	@ctx contains the string which we wish to set in the inode.
+- *	@ctxlen contains the length of @ctx.
++ *	Must be called with @inode->i_mutex locked.
+  *
+- * @inode_setsecctx:
++ *	* @inode we wish to set the security context of.
++ *	* @ctx contains the string which we wish to set in the inode.
++ *	* @ctxlen contains the length of @ctx.
++ *
++ * int inode_setsecctx(struct dentry \*dentry, void \*ctx, u32 ctxlen)
+  *	Change the security context of an inode.  Updates the
+  *	incore security context managed by the security module and invokes the
+- *	fs code as needed (via __vfs_setxattr_noperm) to update any backing
+- *	xattrs that represent the context.  Example usage:  NFS server invokes
++ *	fs code as needed (via @__vfs_setxattr_noperm()) to update any backing
++ *	@xattrs that represent the context.  Example usage:  NFS server invokes
+  *	this hook to change the security context in its incore inode and on the
+- *	backing filesystem to a value provided by the client on a SETATTR
++ *	backing filesystem to a value provided by the client on a %SETATTR
+  *	operation.
+- *	Must be called with inode->i_mutex locked.
+- *	@dentry contains the inode we wish to set the security context of.
+- *	@ctx contains the string which we wish to set in the inode.
+- *	@ctxlen contains the length of @ctx.
++ *	Must be called with @inode->i_mutex locked.
++ *
++ *	* @dentry contains the inode we wish to set the security context of.
++ *	* @ctx contains the string which we wish to set in the inode.
++ *	* @ctxlen contains the length of @ctx.
+  *
+- * @inode_getsecctx:
+- *	On success, returns 0 and fills out @ctx and @ctxlen with the security
++ * int inode_getsecctx(struct inode \*inode, void \*\*ctx, u32 \*ctxlen)
++ *	On success, returns %0 and fills out @ctx and @ctxlen with the security
+  *	context for the given @inode.
+- *	@inode we wish to get the security context of.
+- *	@ctx is a pointer in which to place the allocated security context.
+- *	@ctxlen points to the place to put the length of @ctx.
+  *
+- * Security hooks for the general notification queue:
++ *	* @inode we wish to get the security context of.
++ *	* @ctx is a pointer in which to place the allocated security context.
++ *	* @ctxlen points to the place to put the length of @ctx.
++ *
++ * **Security hooks for the general notification queue:**
+  *
+- * @post_notification:
++ * int post_notification(const struct cred \*w_cred, const struct cred \*cred, struct watch_notification \*n)
+  *	Check to see if a watch notification can be posted to a particular
+  *	queue.
+- *	@w_cred: The credentials of the whoever set the watch.
+- *	@cred: The event-triggerer's credentials
+- *	@n: The notification being posted
+  *
+- * @watch_key:
++ *	* @w_cred The credentials of the whoever set the watch.
++ *	* @cred The event-triggerer's credentials
++ *	* @n The notification being posted
++ *
++ * int watch_key(struct key \*key)
+  *	Check to see if a process is allowed to watch for event notifications
+  *	from a key or keyring.
+- *	@key: The key to watch.
+  *
+- * Security hooks for using the eBPF maps and programs functionalities through
+- * eBPF syscalls.
++ *	* @key The key to watch.
++ *
++ * **Security hooks for using the eBPF maps and programs functionalities**
++ * **through eBPF syscalls:**
+  *
+- * @bpf:
+- *	Do a initial check for all bpf syscalls after the attribute is copied
++ * int bpf(int cmd, union bpf_attr \*attr, unsigned int size)
++ *	Do a initial check for all @bpf syscalls after the attribute is copied
+  *	into the kernel. The actual security module can implement their own
+  *	rules to check the specific cmd they need.
+  *
+- * @bpf_map:
++ * int bpf_map(struct bpf_map \*map, fmode_t fmode)
+  *	Do a check when the kernel generate and return a file descriptor for
+  *	eBPF maps.
+  *
+- *	@map: bpf map that we want to access
+- *	@mask: the access flags
++ *	* @map bpf map that we want to access
++ *	* @mask the access flags
+  *
+- * @bpf_prog:
++ * int bpf_prog(struct bpf_prog \*prog)
+  *	Do a check when the kernel generate and return a file descriptor for
+  *	eBPF programs.
+  *
+- *	@prog: bpf prog that userspace want to use.
++ *	* @prog bpf prog that userspace want to use.
+  *
+- * @bpf_map_alloc_security:
++ * int bpf_map_alloc_security(struct bpf_map \*map)
+  *	Initialize the security field inside bpf map.
+  *
+- * @bpf_map_free_security:
++ * void bpf_map_free_security((struct bpf_map \*map)
+  *	Clean up the security information stored inside bpf map.
+  *
+- * @bpf_prog_alloc_security:
++ * int bpf_prog_alloc_security(struct bpf_prog_aux \*aux)
+  *	Initialize the security field inside bpf program.
+  *
+- * @bpf_prog_free_security:
++ * void bpf_prog_free_security(struct bpf_prog_aux \*aux)
+  *	Clean up the security information stored inside bpf prog.
+  *
+- * @locked_down:
++ * **Security hooks for lockdown:**
++ *
++ * int locked_down(enum lockdown_reason what)
+  *     Determine whether a kernel feature that potentially enables arbitrary
+  *     code execution in kernel space should be permitted.
+  *
+- *     @what: kernel feature being accessed
++ *	* @what kernel feature being accessed
++ *
++ * **Security hooks for perf events:**
++ *
++ * int perf_event_open(struct perf_event_attr \*attr, int type)
++ *	Check whether the @type of @perf_event_open() @syscall() is allowed.
++ *
++ * int perf_event_alloc(struct perf_event \*event)
++ *	Allocate and save @perf_event security info.
++ *
++ * void perf_event_free(struct perf_event \*event)
++ *	Release (free) @perf_event security info.
+  *
+- * Security hooks for perf events
++ * int perf_event_read(struct perf_event \*event)
++ *	Read @perf_event security info if allowed.
+  *
+- * @perf_event_open:
+- * 	Check whether the @type of perf_event_open syscall is allowed.
+- * @perf_event_alloc:
+- * 	Allocate and save perf_event security info.
+- * @perf_event_free:
+- * 	Release (free) perf_event security info.
+- * @perf_event_read:
+- * 	Read perf_event security info if allowed.
+- * @perf_event_write:
+- * 	Write perf_event security info if allowed.
++ * int perf_event_write(struct perf_event \event)
++ *	Write @perf_event security info if allowed.
   */
- void __init security_add_hooks(struct security_hook_list *hooks, int count,
--				char *lsm)
-+			       struct lsm_id *lsmid)
- {
- 	int i;
- 
-+	if (lsmid->slot == LSMBLOB_NEEDED) {
-+		if (lsm_slot >= LSMBLOB_ENTRIES)
-+			panic("%s Too many LSMs registered.\n", __func__);
-+		lsmid->slot = lsm_slot++;
-+		init_debug("%s assigned lsmblob slot %d\n", lsmid->lsm,
-+			   lsmid->slot);
-+	}
-+
- 	for (i = 0; i < count; i++) {
--		hooks[i].lsm = lsm;
-+		hooks[i].lsmid = lsmid;
- 		hlist_add_tail_rcu(&hooks[i].list, hooks[i].head);
- 	}
- 
-@@ -492,7 +508,7 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 	 * and fix this up afterwards.
- 	 */
- 	if (slab_is_available()) {
--		if (lsm_append(lsm, &lsm_names) < 0)
-+		if (lsm_append(lsmid->lsm, &lsm_names) < 0)
- 			panic("%s - Cannot get early memory.\n", __func__);
- 	}
- }
-@@ -2019,7 +2035,7 @@ int security_getprocattr(struct task_struct *p, const char *lsm, char *name,
- 	struct security_hook_list *hp;
- 
- 	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
--		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
- 			continue;
- 		return hp->hook.getprocattr(p, name, value);
- 	}
-@@ -2032,7 +2048,7 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
- 	struct security_hook_list *hp;
- 
- 	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
--		if (lsm != NULL && strcmp(lsm, hp->lsm))
-+		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
- 			continue;
- 		return hp->hook.setprocattr(name, value, size);
- 	}
-@@ -2525,7 +2541,24 @@ int security_key_getsecurity(struct key *key, char **_buffer)
- 
- int security_audit_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
- {
--	return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
-+	struct security_hook_list *hp;
-+	bool one_is_good = false;
-+	int rc = 0;
-+	int trc;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.audit_rule_init, list) {
-+		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
-+			continue;
-+		trc = hp->hook.audit_rule_init(field, op, rulestr,
-+					       &lsmrule[hp->lsmid->slot]);
-+		if (trc == 0)
-+			one_is_good = true;
-+		else
-+			rc = trc;
-+	}
-+	if (one_is_good)
-+		return 0;
-+	return rc;
- }
- 
- int security_audit_rule_known(struct audit_krule *krule)
-@@ -2533,14 +2566,31 @@ int security_audit_rule_known(struct audit_krule *krule)
- 	return call_int_hook(audit_rule_known, 0, krule);
- }
- 
--void security_audit_rule_free(void *lsmrule)
-+void security_audit_rule_free(void **lsmrule)
- {
--	call_void_hook(audit_rule_free, lsmrule);
-+	struct security_hook_list *hp;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.audit_rule_free, list) {
-+		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
-+			continue;
-+		hp->hook.audit_rule_free(lsmrule[hp->lsmid->slot]);
-+	}
- }
- 
--int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
-+int security_audit_rule_match(u32 secid, u32 field, u32 op, void **lsmrule)
- {
--	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
-+	struct security_hook_list *hp;
-+	int rc;
-+
-+	hlist_for_each_entry(hp, &security_hook_heads.audit_rule_match, list) {
-+		if (WARN_ON(hp->lsmid->slot < 0 || hp->lsmid->slot >= lsm_slot))
-+			continue;
-+		rc = hp->hook.audit_rule_match(secid, field, op,
-+					       &lsmrule[hp->lsmid->slot]);
-+		if (rc)
-+			return rc;
-+	}
-+	return 0;
- }
- #endif /* CONFIG_AUDIT */
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 57b8a07bef96..96c560760c4c 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7034,6 +7034,11 @@ static int selinux_perf_event_write(struct perf_event *event)
- }
- #endif
- 
-+static struct lsm_id selinux_lsmid __lsm_ro_after_init = {
-+	.lsm  = "selinux",
-+	.slot = LSMBLOB_NEEDED
-+};
-+
- /*
-  * IMPORTANT NOTE: When adding new hooks, please be careful to keep this order:
-  * 1. any hooks that don't belong to (2.) or (3.) below,
-@@ -7346,7 +7351,8 @@ static __init int selinux_init(void)
- 
- 	hashtab_cache_init();
- 
--	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks), "selinux");
-+	security_add_hooks(selinux_hooks, ARRAY_SIZE(selinux_hooks),
-+			   &selinux_lsmid);
- 
- 	if (avc_add_callback(selinux_netcache_avc_callback, AVC_CALLBACK_RESET))
- 		panic("SELinux: Unable to register AVC netcache callback\n");
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 112c2c03c70b..023876c3f3a3 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4696,6 +4696,11 @@ struct lsm_blob_sizes smack_blob_sizes __lsm_ro_after_init = {
- 	.lbs_sock = sizeof(struct socket_smack),
- };
- 
-+static struct lsm_id smack_lsmid __lsm_ro_after_init = {
-+	.lsm  = "smack",
-+	.slot = LSMBLOB_NEEDED
-+};
-+
- static struct security_hook_list smack_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_access_check, smack_ptrace_access_check),
- 	LSM_HOOK_INIT(ptrace_traceme, smack_ptrace_traceme),
-@@ -4895,7 +4900,7 @@ static __init int smack_init(void)
- 	/*
- 	 * Register with LSM
- 	 */
--	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), "smack");
-+	security_add_hooks(smack_hooks, ARRAY_SIZE(smack_hooks), &smack_lsmid);
- 	smack_enabled = 1;
- 
- 	pr_info("Smack:  Initializing.\n");
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 1f3cd432d830..22f62c67f2ec 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -523,6 +523,11 @@ static void tomoyo_task_free(struct task_struct *task)
- 	}
- }
- 
-+static struct lsm_id tomoyo_lsmid __lsm_ro_after_init = {
-+	.lsm  = "tomoyo",
-+	.slot = LSMBLOB_NOT_NEEDED
-+};
-+
- /*
-  * tomoyo_security_ops is a "struct security_operations" which is used for
-  * registering TOMOYO.
-@@ -575,7 +580,8 @@ static int __init tomoyo_init(void)
- 	struct tomoyo_task *s = tomoyo_task(current);
- 
- 	/* register ourselves with the security framework */
--	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks), "tomoyo");
-+	security_add_hooks(tomoyo_hooks, ARRAY_SIZE(tomoyo_hooks),
-+			   &tomoyo_lsmid);
- 	pr_info("TOMOYO Linux initialized\n");
- 	s->domain_info = &tomoyo_kernel_domain;
- 	atomic_inc(&tomoyo_kernel_domain.users);
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 06e226166aab..a9639ea541f7 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -421,6 +421,11 @@ static int yama_ptrace_traceme(struct task_struct *parent)
- 	return rc;
- }
- 
-+static struct lsm_id yama_lsmid __lsm_ro_after_init = {
-+	.lsm  = "yama",
-+	.slot = LSMBLOB_NOT_NEEDED
-+};
-+
- static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
- 	LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
-@@ -477,7 +482,7 @@ static inline void yama_init_sysctl(void) { }
- static int __init yama_init(void)
- {
- 	pr_info("Yama: becoming mindful.\n");
--	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), "yama");
-+	security_add_hooks(yama_hooks, ARRAY_SIZE(yama_hooks), &yama_lsmid);
- 	yama_init_sysctl();
- 	return 0;
- }
+ union security_list_options {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
 -- 
 2.29.2
 
