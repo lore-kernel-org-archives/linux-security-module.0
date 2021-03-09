@@ -4,117 +4,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346FAC433E6
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 10:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF2BC43381
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 13:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 014BF65268
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 10:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E829E65173
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 13:21:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbhCIKIZ (ORCPT
+        id S230503AbhCINU4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Mar 2021 05:08:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:27847 "EHLO
+        Tue, 9 Mar 2021 08:20:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41688 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230033AbhCIKIP (ORCPT
+        by vger.kernel.org with ESMTP id S230372AbhCINUv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Mar 2021 05:08:15 -0500
+        Tue, 9 Mar 2021 08:20:51 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615284494;
+        s=mimecast20190719; t=1615296050;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=SYm0kgjRA7W0E7Yr2IJisxrxfRrnBadUrxfwPSBbTRk=;
-        b=fP1WhAXasJkHPQZSrv01h0/EdXVa+L2W5wb7zMiEje0tc512FPz/vTxw1uaTMhI++adC+D
-        5K/PpvHSFmbquW8PHoqAFc0NJPxp/brMr++QJaBic/85jj0IuoMhO1aZHUS1a1CBhXASF/
-        mdXZsudsU39/T2wHfaygJ/r34b9bWQw=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-304-Sg4xSvcfMuam2ZK-WTQ-Sw-1; Tue, 09 Mar 2021 05:08:13 -0500
-X-MC-Unique: Sg4xSvcfMuam2ZK-WTQ-Sw-1
-Received: by mail-yb1-f197.google.com with SMTP id g17so16550821ybh.4
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Mar 2021 02:08:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SYm0kgjRA7W0E7Yr2IJisxrxfRrnBadUrxfwPSBbTRk=;
-        b=p3Vspm2CYDOErdLRdIdrpZXwuHxlrrvo5ZVSNofeh6TeaSpjkup1i3eKlVxbKZVsR6
-         Zvdehv/I/l5uaomSLf3067j/dYjgw6Y9ehU7IWAyf5L2bIoTXDumxHOzlYo2NDvgAUiR
-         p2i7gIjFoGrLS5DW/GMc5+b/dl2u+sSivMohd0k+yVG//+F4NeTnF6WS2h5jXuk74bsv
-         bh0a+Z7VCgh2jJjcK0Qo0J1czrClFPszuMzQLL7rqII5cOdfe9kCCUaeEceqlDKd+T6+
-         mfM6Uz4GbavznjpnZLORTIbxv1HWwxC7rIisLcbjNaggc9nboFRgmj6F6uKBIOt3wcQd
-         ap9g==
-X-Gm-Message-State: AOAM531i7N45JwMblEU0AfeAB8jCOrBBo42tWuohloho9iliJSvTPNqS
-        wTTVjUJZ3I1YmCGAuz9YiYBGhOJZ8PTeXKSHy8nAFbGqqnLZqXB9szPAOShCksz+z0NzwluFjV/
-        AiV7nyh9Q+hKvf7J9T0EMqz3dRIpzSXmpPP4+QJ/8g5NVV/qHVjPh
-X-Received: by 2002:a25:ad67:: with SMTP id l39mr40282822ybe.172.1615284492512;
-        Tue, 09 Mar 2021 02:08:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyOdXiOr+CcTEln+8TZ0CZvuB0W0M+aAg2Wavc5dcrB2nfJuV742vWVQiWOrCjwyEKAIQngbWmatIoZcEM8YyI=
-X-Received: by 2002:a25:ad67:: with SMTP id l39mr40282799ybe.172.1615284492300;
- Tue, 09 Mar 2021 02:08:12 -0800 (PST)
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oqjFmXr7Z0U4gVq3pN5bRJg7YwywfJ8dExoMh5aIhRc=;
+        b=Yo44m4vA98fXB9O8EXxWm3QDbah4v6sP8KSshet1tElvuIY8NtUz2U0dkuZasT4ymxEqrR
+        qNfuZYet4LYUaPVi93I2lCcgpXoA+JsGHOGdHUT/l8N+XF70VkoU09liDk6Y0A72rFey98
+        GvPGIenIX5aQ56ujd0t2XyM8gf2vk20=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-298-nPDBKQ41PQKmVf1mjW6jMw-1; Tue, 09 Mar 2021 08:20:47 -0500
+X-MC-Unique: nPDBKQ41PQKmVf1mjW6jMw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 80582881D4D;
+        Tue,  9 Mar 2021 13:20:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1417B1001901;
+        Tue,  9 Mar 2021 13:20:42 +0000 (UTC)
+Subject: [PATCH v3 0/4] keys: Add EFI_CERT_X509_GUID support for dbx/mokx
+ entries
+From:   David Howells <dhowells@redhat.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        Arnd Bergmann <arnd@kernel.org>, keyrings@vger.kernel.org,
+        dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 09 Mar 2021 13:20:42 +0000
+Message-ID: <161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-References: <20210115174356.408688-1-omosnace@redhat.com>
-In-Reply-To: <20210115174356.408688-1-omosnace@redhat.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 9 Mar 2021 11:08:01 +0100
-Message-ID: <CAFqZXNtssgDmhMS+p6+F2zC=ka3=bM22GpNQLO2NbSLWQroYFg@mail.gmail.com>
-Subject: Re: [PATCH] NFSv4.2: fix return value of _nfs4_get_security_label()
-To:     linux-nfs <linux-nfs@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        David Quigley <dpquigl@davequigley.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jan 15, 2021 at 6:43 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> An xattr 'get' handler is expected to return the length of the value on
-> success, yet _nfs4_get_security_label() (and consequently also
-> nfs4_xattr_get_nfs4_label(), which is used as an xattr handler) returns
-> just 0 on success.
->
-> Fix this by returning label.len instead, which contains the length of
-> the result.
->
-> Fixes: aa9c2669626c ("NFS: Client implementation of Labeled-NFS")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  fs/nfs/nfs4proc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 2f4679a62712a..28465d8aada64 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -5971,7 +5971,7 @@ static int _nfs4_get_security_label(struct inode *inode, void *buf,
->                 return ret;
->         if (!(fattr.valid & NFS_ATTR_FATTR_V4_SECURITY_LABEL))
->                 return -ENOENT;
-> -       return 0;
-> +       return label.len;
->  }
->
->  static int nfs4_get_security_label(struct inode *inode, void *buf,
-> --
-> 2.29.2
->
 
-Ping. It's been almost 2 months now, and I can't see the patch applied
-anywhere, nor has it received any feedback from the NFS maintainers...
-Trond? Anna?
+Here's my take on v5 of Eric Snowberg's patches[1]:
 
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+This series of patches adds support for EFI_CERT_X509_GUID entries [2].  It has
+been expanded to not only include dbx entries but also entries in the mokx.
+Additionally Eric included his patches to preload these certificate [3].
+
+The patches can be found on the following branch:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-cve-2020-26541-branch
+
+Changes:
+
+ver #3:
+ - Rolled in changes from Eric to fix conditional building issues[7].
+
+ver #2:
+ - Rolled in a fix to the second patch to include certs/common.h in
+   certs/common.c[6].
+
+ver #1:
+ - I've modified the first patch in the series to fix a configuration
+   problem[4][5], to move the added functions to a more logical place
+   within thefile and to add kerneldoc comments.
+
+Link: https://lore.kernel.org/r/20210122181054.32635-1-eric.snowberg@oracle.com [1]
+Link: https://patchwork.kernel.org/project/linux-security-module/patch/20200916004927.64276-1-eric.snowberg@oracle.com/ [2]
+Link: https://lore.kernel.org/patchwork/cover/1315485/ [3]
+Link: https://lore.kernel.org/r/bc2c24e3-ed68-2521-0bf4-a1f6be4a895d@infradead.org/ [4]
+Link: https://lore.kernel.org/r/20210225125638.1841436-1-arnd@kernel.org/ [5]
+Link: https://lore.kernel.org/r/EDA280F9-F72D-4181-93C7-CDBE95976FF7@oracle.com/ [6]
+Link: https://lore.kernel.org/r/161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk/ # v1 posting
+Link: https://lore.kernel.org/r/161433310139.902181.11787442834918634133.stgit@warthog.procyon.org.uk/ # v2 posting
+Link: https://lore.kernel.org/r/20210304175030.184131-1-eric.snowberg@oracle.com/ [7]
+
+David
+---
+Eric Snowberg (4):
+      certs: Add EFI_CERT_X509_GUID support for dbx entries
+      certs: Move load_system_certificate_list to a common function
+      certs: Add ability to preload revocation certs
+      integrity: Load mokx variables into the blacklist keyring
+
+
+ certs/Kconfig                                 |  8 +++
+ certs/Makefile                                | 21 ++++++-
+ certs/blacklist.c                             | 21 +++++++
+ certs/common.c                                | 57 +++++++++++++++++++
+ certs/common.h                                |  9 +++
+ certs/revocation_certificates.S               | 21 +++++++
+ certs/system_keyring.c                        | 49 +---------------
+ scripts/Makefile                              |  1 +
+ security/integrity/platform_certs/load_uefi.c | 20 ++++++-
+ 9 files changed, 156 insertions(+), 51 deletions(-)
+ create mode 100644 certs/common.c
+ create mode 100644 certs/common.h
+ create mode 100644 certs/revocation_certificates.S
+
 
