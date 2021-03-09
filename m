@@ -4,124 +4,257 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF2BC43381
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 13:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B292C433E6
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 13:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E829E65173
-	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 13:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 389ED650F5
+	for <linux-security-module@archiver.kernel.org>; Tue,  9 Mar 2021 13:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230503AbhCINU4 (ORCPT
+        id S231201AbhCINV2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Mar 2021 08:20:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:41688 "EHLO
+        Tue, 9 Mar 2021 08:21:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:51276 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230372AbhCINUv (ORCPT
+        by vger.kernel.org with ESMTP id S231338AbhCINVH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Mar 2021 08:20:51 -0500
+        Tue, 9 Mar 2021 08:21:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615296050;
+        s=mimecast20190719; t=1615296067;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=oqjFmXr7Z0U4gVq3pN5bRJg7YwywfJ8dExoMh5aIhRc=;
-        b=Yo44m4vA98fXB9O8EXxWm3QDbah4v6sP8KSshet1tElvuIY8NtUz2U0dkuZasT4ymxEqrR
-        qNfuZYet4LYUaPVi93I2lCcgpXoA+JsGHOGdHUT/l8N+XF70VkoU09liDk6Y0A72rFey98
-        GvPGIenIX5aQ56ujd0t2XyM8gf2vk20=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GOx9vcuQlJdenHGKhCAwQ2lNLGlZPZhdSztRH2hfQ4o=;
+        b=XXti2jclykZxISEC0CWq+TXsAN7DbQhkQtF2Dk8Ns5FRWCaALViTbtAYeBorpnw7jSdd/n
+        eDuI4fciQ96N7so4+E2AJ9aYd6cJol0mETW/zB5uDWLyRHNcot8677lXjmV39xg5vbQdlD
+        SvhrUSoJw03UpAyJCx2ZJh/YbBZig9Y=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-298-nPDBKQ41PQKmVf1mjW6jMw-1; Tue, 09 Mar 2021 08:20:47 -0500
-X-MC-Unique: nPDBKQ41PQKmVf1mjW6jMw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+ us-mta-568-MphrHMeDNr2OheUVK2yaow-1; Tue, 09 Mar 2021 08:21:02 -0500
+X-MC-Unique: MphrHMeDNr2OheUVK2yaow-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 80582881D4D;
-        Tue,  9 Mar 2021 13:20:45 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C1E71084D68;
+        Tue,  9 Mar 2021 13:21:01 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1417B1001901;
-        Tue,  9 Mar 2021 13:20:42 +0000 (UTC)
-Subject: [PATCH v3 0/4] keys: Add EFI_CERT_X509_GUID support for dbx/mokx
- entries
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 461385C233;
+        Tue,  9 Mar 2021 13:20:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH v3 2/4] certs: Move load_system_certificate_list to a common
+ function
 From:   David Howells <dhowells@redhat.com>
 To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Arnd Bergmann <arnd@kernel.org>, keyrings@vger.kernel.org,
-        dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        keyrings@vger.kernel.org, dhowells@redhat.com,
+        Jarkko Sakkinen <jarkko@kernel.org>,
         =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
         keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Tue, 09 Mar 2021 13:20:42 +0000
-Message-ID: <161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk>
+Date:   Tue, 09 Mar 2021 13:20:58 +0000
+Message-ID: <161529605850.163428.7786675680201528556.stgit@warthog.procyon.org.uk>
+In-Reply-To: <161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk>
+References: <161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.23
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Eric Snowberg <eric.snowberg@oracle.com>
 
-Here's my take on v5 of Eric Snowberg's patches[1]:
+Move functionality within load_system_certificate_list to a common
+function, so it can be reused in the future.
 
-This series of patches adds support for EFI_CERT_X509_GUID entries [2].  It has
-been expanded to not only include dbx entries but also entries in the mokx.
-Additionally Eric included his patches to preload these certificate [3].
+DH Changes:
+ - Added inclusion of common.h to common.c (Eric [1]).
 
-The patches can be found on the following branch:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-cve-2020-26541-branch
-
-Changes:
-
-ver #3:
- - Rolled in changes from Eric to fix conditional building issues[7].
-
-ver #2:
- - Rolled in a fix to the second patch to include certs/common.h in
-   certs/common.c[6].
-
-ver #1:
- - I've modified the first patch in the series to fix a configuration
-   problem[4][5], to move the added functions to a more logical place
-   within thefile and to add kerneldoc comments.
-
-Link: https://lore.kernel.org/r/20210122181054.32635-1-eric.snowberg@oracle.com [1]
-Link: https://patchwork.kernel.org/project/linux-security-module/patch/20200916004927.64276-1-eric.snowberg@oracle.com/ [2]
-Link: https://lore.kernel.org/patchwork/cover/1315485/ [3]
-Link: https://lore.kernel.org/r/bc2c24e3-ed68-2521-0bf4-a1f6be4a895d@infradead.org/ [4]
-Link: https://lore.kernel.org/r/20210225125638.1841436-1-arnd@kernel.org/ [5]
-Link: https://lore.kernel.org/r/EDA280F9-F72D-4181-93C7-CDBE95976FF7@oracle.com/ [6]
-Link: https://lore.kernel.org/r/161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk/ # v1 posting
-Link: https://lore.kernel.org/r/161433310139.902181.11787442834918634133.stgit@warthog.procyon.org.uk/ # v2 posting
-Link: https://lore.kernel.org/r/20210304175030.184131-1-eric.snowberg@oracle.com/ [7]
-
-David
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: keyrings@vger.kernel.org
+Link: https://lore.kernel.org/r/20200930201508.35113-2-eric.snowberg@oracle.com/
+Link: https://lore.kernel.org/r/20210122181054.32635-3-eric.snowberg@oracle.com/ # v5
+Link: https://lore.kernel.org/r/EDA280F9-F72D-4181-93C7-CDBE95976FF7@oracle.com/ [1]
+Link: https://lore.kernel.org/r/161428672825.677100.7545516389752262918.stgit@warthog.procyon.org.uk/
+Link: https://lore.kernel.org/r/161433311696.902181.3599366124784670368.stgit@warthog.procyon.org.uk/ # v2
 ---
-Eric Snowberg (4):
-      certs: Add EFI_CERT_X509_GUID support for dbx entries
-      certs: Move load_system_certificate_list to a common function
-      certs: Add ability to preload revocation certs
-      integrity: Load mokx variables into the blacklist keyring
 
-
- certs/Kconfig                                 |  8 +++
- certs/Makefile                                | 21 ++++++-
- certs/blacklist.c                             | 21 +++++++
- certs/common.c                                | 57 +++++++++++++++++++
- certs/common.h                                |  9 +++
- certs/revocation_certificates.S               | 21 +++++++
- certs/system_keyring.c                        | 49 +---------------
- scripts/Makefile                              |  1 +
- security/integrity/platform_certs/load_uefi.c | 20 ++++++-
- 9 files changed, 156 insertions(+), 51 deletions(-)
+ certs/Makefile         |    2 +-
+ certs/common.c         |   57 ++++++++++++++++++++++++++++++++++++++++++++++++
+ certs/common.h         |    9 ++++++++
+ certs/system_keyring.c |   49 +++--------------------------------------
+ 4 files changed, 70 insertions(+), 47 deletions(-)
  create mode 100644 certs/common.c
  create mode 100644 certs/common.h
- create mode 100644 certs/revocation_certificates.S
+
+diff --git a/certs/Makefile b/certs/Makefile
+index f4c25b67aad9..f4b90bad8690 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -3,7 +3,7 @@
+ # Makefile for the linux kernel signature checking certificates.
+ #
+ 
+-obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o
++obj-$(CONFIG_SYSTEM_TRUSTED_KEYRING) += system_keyring.o system_certificates.o common.o
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist.o
+ ifneq ($(CONFIG_SYSTEM_BLACKLIST_HASH_LIST),"")
+ obj-$(CONFIG_SYSTEM_BLACKLIST_KEYRING) += blacklist_hashes.o
+diff --git a/certs/common.c b/certs/common.c
+new file mode 100644
+index 000000000000..16a220887a53
+--- /dev/null
++++ b/certs/common.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include <linux/kernel.h>
++#include <linux/key.h>
++#include "common.h"
++
++int load_certificate_list(const u8 cert_list[],
++			  const unsigned long list_size,
++			  const struct key *keyring)
++{
++	key_ref_t key;
++	const u8 *p, *end;
++	size_t plen;
++
++	p = cert_list;
++	end = p + list_size;
++	while (p < end) {
++		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
++		 * than 256 bytes in size.
++		 */
++		if (end - p < 4)
++			goto dodgy_cert;
++		if (p[0] != 0x30 &&
++		    p[1] != 0x82)
++			goto dodgy_cert;
++		plen = (p[2] << 8) | p[3];
++		plen += 4;
++		if (plen > end - p)
++			goto dodgy_cert;
++
++		key = key_create_or_update(make_key_ref(keyring, 1),
++					   "asymmetric",
++					   NULL,
++					   p,
++					   plen,
++					   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
++					   KEY_USR_VIEW | KEY_USR_READ),
++					   KEY_ALLOC_NOT_IN_QUOTA |
++					   KEY_ALLOC_BUILT_IN |
++					   KEY_ALLOC_BYPASS_RESTRICTION);
++		if (IS_ERR(key)) {
++			pr_err("Problem loading in-kernel X.509 certificate (%ld)\n",
++			       PTR_ERR(key));
++		} else {
++			pr_notice("Loaded X.509 cert '%s'\n",
++				  key_ref_to_ptr(key)->description);
++			key_ref_put(key);
++		}
++		p += plen;
++	}
++
++	return 0;
++
++dodgy_cert:
++	pr_err("Problem parsing in-kernel X.509 certificate list\n");
++	return 0;
++}
+diff --git a/certs/common.h b/certs/common.h
+new file mode 100644
+index 000000000000..abdb5795936b
+--- /dev/null
++++ b/certs/common.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++
++#ifndef _CERT_COMMON_H
++#define _CERT_COMMON_H
++
++int load_certificate_list(const u8 cert_list[], const unsigned long list_size,
++			  const struct key *keyring);
++
++#endif
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index ed98754d5795..0c9a4795e847 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -16,6 +16,7 @@
+ #include <keys/asymmetric-type.h>
+ #include <keys/system_keyring.h>
+ #include <crypto/pkcs7.h>
++#include "common.h"
+ 
+ static struct key *builtin_trusted_keys;
+ #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+@@ -137,54 +138,10 @@ device_initcall(system_trusted_keyring_init);
+  */
+ static __init int load_system_certificate_list(void)
+ {
+-	key_ref_t key;
+-	const u8 *p, *end;
+-	size_t plen;
+-
+ 	pr_notice("Loading compiled-in X.509 certificates\n");
+ 
+-	p = system_certificate_list;
+-	end = p + system_certificate_list_size;
+-	while (p < end) {
+-		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
+-		 * than 256 bytes in size.
+-		 */
+-		if (end - p < 4)
+-			goto dodgy_cert;
+-		if (p[0] != 0x30 &&
+-		    p[1] != 0x82)
+-			goto dodgy_cert;
+-		plen = (p[2] << 8) | p[3];
+-		plen += 4;
+-		if (plen > end - p)
+-			goto dodgy_cert;
+-
+-		key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
+-					   "asymmetric",
+-					   NULL,
+-					   p,
+-					   plen,
+-					   ((KEY_POS_ALL & ~KEY_POS_SETATTR) |
+-					   KEY_USR_VIEW | KEY_USR_READ),
+-					   KEY_ALLOC_NOT_IN_QUOTA |
+-					   KEY_ALLOC_BUILT_IN |
+-					   KEY_ALLOC_BYPASS_RESTRICTION);
+-		if (IS_ERR(key)) {
+-			pr_err("Problem loading in-kernel X.509 certificate (%ld)\n",
+-			       PTR_ERR(key));
+-		} else {
+-			pr_notice("Loaded X.509 cert '%s'\n",
+-				  key_ref_to_ptr(key)->description);
+-			key_ref_put(key);
+-		}
+-		p += plen;
+-	}
+-
+-	return 0;
+-
+-dodgy_cert:
+-	pr_err("Problem parsing in-kernel X.509 certificate list\n");
+-	return 0;
++	return load_certificate_list(system_certificate_list, system_certificate_list_size,
++				     builtin_trusted_keys);
+ }
+ late_initcall(load_system_certificate_list);
+ 
 
 
