@@ -2,236 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAD_ENC_HEADER,BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9656C433E6
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 313DBC433E6
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0E664FD8
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7C8E64FD2
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:33:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232613AbhCJTYP convert rfc822-to-8bit (ORCPT
+        id S232616AbhCJTdV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Mar 2021 14:24:15 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:45748 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232676AbhCJTXi (ORCPT
+        Wed, 10 Mar 2021 14:33:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233942AbhCJTdU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Mar 2021 14:23:38 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lK4Qe-004tqH-NV; Wed, 10 Mar 2021 12:23:32 -0700
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95] helo=fess.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lK4Qc-000rmA-Vd; Wed, 10 Mar 2021 12:23:32 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>
-References: <20210310181857.401675-1-mic@digikod.net>
-        <20210310181857.401675-2-mic@digikod.net>
-Date:   Wed, 10 Mar 2021 13:23:35 -0600
-In-Reply-To: <20210310181857.401675-2-mic@digikod.net> (=?utf-8?Q?=22Micka?=
- =?utf-8?Q?=C3=ABl_Sala=C3=BCn=22's?=
-        message of "Wed, 10 Mar 2021 19:18:57 +0100")
-Message-ID: <m17dmeq0co.fsf@fess.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 10 Mar 2021 14:33:20 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id BDA0564FB2;
+        Wed, 10 Mar 2021 19:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615404800;
+        bh=HSKJm/eop7og5BaIReOnqWqOik9WWlx22NnmsHLVihY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oZOTDRKn+Tj787FecJjq3VI/Dei6KMXECNi0da8WYHvBYG7p78WCLP0VTjaN6LHpz
+         SIALime9msIZkUsgCN5wRPyvzqQcQT++oebwPji1on3KqmeIAvqkCS3LTUweaB9/MW
+         z8K3OY9Zof7NG0da35FMfArutjvvJrdWW7owSRlWjmdEMwCJXT8ExQzYlxGoINxACq
+         hAomrQzt/iUUByOUGMYguT+R13Llf1CdB/6P2AZn9q6/ie1kRnvKPD00zz5LHeM9wB
+         KP7fthHUwruPtQ/ozi7u5+NP0tSvm8ogv/NvABl0qrbVeEvb8+xFH/NbmIsWAGRTo/
+         qNiSbS7biX3+A==
+Date:   Wed, 10 Mar 2021 21:32:56 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Arnd Bergmann <arnd@kernel.org>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] keys: Add EFI_CERT_X509_GUID support for dbx/mokx
+ entries
+Message-ID: <YEke6BU5QshCDA2C@kernel.org>
+References: <161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1lK4Qc-000rmA-Vd;;;mid=<m17dmeq0co.fsf@fess.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX19S/7ngoYSiqgP0zhuPuu98BieLUm0rlgg=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2 1/1] fs: Allow no_new_privs tasks to call chroot(2)
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Mickaël Salaün <mic@digikod.net> writes:
-
-> From: Mickaël Salaün <mic@linux.microsoft.com>
->
-> Being able to easily change root directories enable to ease some
-> development workflow and can be used as a tool to strengthen
-> unprivileged security sandboxes.  chroot(2) is not an access-control
-> mechanism per se, but it can be used to limit the absolute view of the
-> filesystem, and then limit ways to access data and kernel interfaces
-> (e.g. /proc, /sys, /dev, etc.).
->
-> Users may not wish to expose namespace complexity to potentially
-> malicious processes, or limit their use because of limited resources.
-> The chroot feature is much more simple (and limited) than the mount
-> namespace, but can still be useful.  As for containers, users of
-> chroot(2) should take care of file descriptors or data accessible by
-> other means (e.g. current working directory, leaked FDs, passed FDs,
-> devices, mount points, etc.).  There is a lot of literature that discuss
-> the limitations of chroot, and users of this feature should be aware of
-> the multiple ways to bypass it.  Using chroot(2) for security purposes
-> can make sense if it is combined with other features (e.g. dedicated
-> user, seccomp, LSM access-controls, etc.).
->
-> One could argue that chroot(2) is useless without a properly populated
-> root hierarchy (i.e. without /dev and /proc).  However, there are
-> multiple use cases that don't require the chrooting process to create
-> file hierarchies with special files nor mount points, e.g.:
-> * A process sandboxing itself, once all its libraries are loaded, may
->   not need files other than regular files, or even no file at all.
-> * Some pre-populated root hierarchies could be used to chroot into,
->   provided for instance by development environments or tailored
->   distributions.
-> * Processes executed in a chroot may not require access to these special
->   files (e.g. with minimal runtimes, or by emulating some special files
->   with a LD_PRELOADed library or seccomp).
->
-> Allowing a task to change its own root directory is not a threat to the
-> system if we can prevent confused deputy attacks, which could be
-> performed through execution of SUID-like binaries.  This can be
-> prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
-> prctl(2).  To only affect this task, its filesystem information must not
-> be shared with other tasks, which can be achieved by not passing
-> CLONE_FS to clone(2).  A similar no_new_privs check is already used by
-> seccomp to avoid the same kind of security issues.  Furthermore, because
-> of its security use and to avoid giving a new way for attackers to get
-> out of a chroot (e.g. using /proc/<pid>/root), an unprivileged chroot is
-> only allowed if the new root directory is the same or beneath the
-> current one.  This still allows a process to use a subset of its
-> legitimate filesystem to chroot into and then further reduce its view of
-> the filesystem.
->
-> This change may not impact systems relying on other permission models
-> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
-> such systems may require to update their security policies.
->
-> Only the chroot system call is relaxed with this no_new_privs check; the
-> init_chroot() helper doesn't require such change.
->
-> Allowing unprivileged users to use chroot(2) is one of the initial
-> objectives of no_new_privs:
-> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
-> This patch is a follow-up of a previous one sent by Andy Lutomirski, but
-> with less limitations:
-> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
->
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Andy Lutomirski <luto@amacapital.net>
-> Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20210310181857.401675-2-mic@digikod.net
+On Tue, Mar 09, 2021 at 01:20:42PM +0000, David Howells wrote:
+> 
+> Here's my take on v5 of Eric Snowberg's patches[1]:
+> 
+> This series of patches adds support for EFI_CERT_X509_GUID entries [2].  It has
+> been expanded to not only include dbx entries but also entries in the mokx.
+> Additionally Eric included his patches to preload these certificate [3].
+> 
+> The patches can be found on the following branch:
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-cve-2020-26541-branch
+> 
+> Changes:
+> 
+> ver #3:
+>  - Rolled in changes from Eric to fix conditional building issues[7].
+> 
+> ver #2:
+>  - Rolled in a fix to the second patch to include certs/common.h in
+>    certs/common.c[6].
+> 
+> ver #1:
+>  - I've modified the first patch in the series to fix a configuration
+>    problem[4][5], to move the added functions to a more logical place
+>    within thefile and to add kerneldoc comments.
+> 
+> Link: https://lore.kernel.org/r/20210122181054.32635-1-eric.snowberg@oracle.com [1]
+> Link: https://patchwork.kernel.org/project/linux-security-module/patch/20200916004927.64276-1-eric.snowberg@oracle.com/ [2]
+> Link: https://lore.kernel.org/patchwork/cover/1315485/ [3]
+> Link: https://lore.kernel.org/r/bc2c24e3-ed68-2521-0bf4-a1f6be4a895d@infradead.org/ [4]
+> Link: https://lore.kernel.org/r/20210225125638.1841436-1-arnd@kernel.org/ [5]
+> Link: https://lore.kernel.org/r/EDA280F9-F72D-4181-93C7-CDBE95976FF7@oracle.com/ [6]
+> Link: https://lore.kernel.org/r/161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk/ # v1 posting
+> Link: https://lore.kernel.org/r/161433310139.902181.11787442834918634133.stgit@warthog.procyon.org.uk/ # v2 posting
+> Link: https://lore.kernel.org/r/20210304175030.184131-1-eric.snowberg@oracle.com/ [7]
+> 
+> David
 > ---
->
-> Changes since v1:
-> * Replace custom is_path_beneath() with existing path_is_under().
+> Eric Snowberg (4):
+>       certs: Add EFI_CERT_X509_GUID support for dbx entries
+>       certs: Move load_system_certificate_list to a common function
+>       certs: Add ability to preload revocation certs
+>       integrity: Load mokx variables into the blacklist keyring
+> 
+> 
+>  certs/Kconfig                                 |  8 +++
+>  certs/Makefile                                | 21 ++++++-
+>  certs/blacklist.c                             | 21 +++++++
+>  certs/common.c                                | 57 +++++++++++++++++++
+>  certs/common.h                                |  9 +++
+>  certs/revocation_certificates.S               | 21 +++++++
+>  certs/system_keyring.c                        | 49 +---------------
+>  scripts/Makefile                              |  1 +
+>  security/integrity/platform_certs/load_uefi.c | 20 ++++++-
+>  9 files changed, 156 insertions(+), 51 deletions(-)
+>  create mode 100644 certs/common.c
+>  create mode 100644 certs/common.h
+>  create mode 100644 certs/revocation_certificates.S
+> 
+> 
+> 
 
-Neither is_path_beneath nor path_is_under really help prevent escapes,
-as except for open files and files accessible from proc chroot already
-disallows going up.  The reason is the path is resolved with the current
-root before switching to it.
+Looks good to me.
 
-My brain was fuzzy.  I had the classic escape scenario confused.
-It isn't chroot("../../..");
-
-The actual classic chroot escape is.
-chdir("/");
-chroot("/somedir");
-chdir("../../../..");
-
-Your change would disallow changing the root directory, but it doesn't
-much help as all files in the mount namespace are visible anyway.
-
-Furthermore changing chdir to ensure it's path is at or beneath the
-current root would cause regressions in existing userspace programs
-so we can't do that.
-
-Plus you are trying to rely on changing the definition of chroot to make
-it safe (not just changing the permission checks).  That is also
-confusing and makes it difficult to analyze because people's previous
-analysis gets confused.
-
-
-Eric
-
-> ---
->  fs/open.c | 23 ++++++++++++++++++++---
->  1 file changed, 20 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/open.c b/fs/open.c
-> index e53af13b5835..280dbff25b25 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -22,6 +22,7 @@
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
->  #include <linux/fs.h>
-> +#include <linux/path.h>
->  #include <linux/personality.h>
->  #include <linux/pagemap.h>
->  #include <linux/syscalls.h>
-> @@ -546,15 +547,31 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
->  	if (error)
->  		goto dput_and_out;
->  
-> +	/*
-> +	 * Changing the root directory for the calling task (and its future
-> +	 * children) requires that this task has CAP_SYS_CHROOT in its
-> +	 * namespace, or be running with no_new_privs and not sharing its
-> +	 * fs_struct and not escaping its current root directory.  As for
-> +	 * seccomp, checking no_new_privs avoids scenarios where unprivileged
-> +	 * tasks can affect the behavior of privileged children.  Lock the path
-> +	 * to protect against TOCTOU race between path_is_under() and
-> +	 * set_fs_root().  No need to lock the root because it is not possible
-> +	 * to rename it beneath itself.
-> +	 */
->  	error = -EPERM;
-> -	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT))
-> -		goto dput_and_out;
-> +	inode_lock(d_inode(path.dentry));
-> +	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT) &&
-> +			!(task_no_new_privs(current) && current->fs->users == 1
-> +				&& path_is_under(&path, &current->fs->root)))
-> +		goto unlock_and_out;
->  	error = security_path_chroot(&path);
->  	if (error)
-> -		goto dput_and_out;
-> +		goto unlock_and_out;
->  
->  	set_fs_root(current->fs, &path);
->  	error = 0;
-> +unlock_and_out:
-> +	inode_unlock(d_inode(path.dentry));
->  dput_and_out:
->  	path_put(&path);
->  	if (retry_estale(error, lookup_flags)) {
+/Jarkko
