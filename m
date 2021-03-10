@@ -2,145 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCBFC433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 04:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF6AC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 06:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F55E64FE8
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 04:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 860E564FC8
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 06:53:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232300AbhCJEoE (ORCPT
+        id S229632AbhCJGw5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Mar 2021 23:44:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45690 "EHLO
+        Wed, 10 Mar 2021 01:52:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231135AbhCJEnk (ORCPT
+        with ESMTP id S229441AbhCJGw1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Mar 2021 23:43:40 -0500
-Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97BFEC06174A
-        for <linux-security-module@vger.kernel.org>; Tue,  9 Mar 2021 20:43:40 -0800 (PST)
-Received: by mail-ot1-x32c.google.com with SMTP id t16so15171672ott.3
-        for <linux-security-module@vger.kernel.org>; Tue, 09 Mar 2021 20:43:40 -0800 (PST)
+        Wed, 10 Mar 2021 01:52:27 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE00DC06174A
+        for <linux-security-module@vger.kernel.org>; Tue,  9 Mar 2021 22:52:27 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id bt4so1047935pjb.5
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Mar 2021 22:52:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9sVW/yEh768vDJxep1QYojM5RquL8YGeRAgcKVSj11Q=;
-        b=tQoIjHIjxlyxEXvV1M3f7zlUJ0EJ6iuPzwotpyuWgFl3QSRHEI/bk0ZGiM7zP0WHTe
-         IxNVgTaEfb12GuNXnQ/GGGAZzzRnWFennElHJ1uxROn337JWx0RvEYIQzDBMIaSoEMsP
-         Dqjs+FvtrSNT72rmcwHLgyxfa+CLqBvGXwGRw6J3p7SGgEyzO9lkA/K6No3i9Zuc46fa
-         MQRy2hcY16n4Yowp/8mbuiPCZ76oh4O+vh8FkWitoQqcm82eRlLCAkwqjWVtwupZnv+m
-         Li15kvDeZ3AE3HrfIpV2Ijlg67tEdxHj4EinK2P9c7l22vScMGm3tYlRwg4gYVhvYeIJ
-         ujBA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zIcfFT367IDJKZN6LRt8pfpB8CHdlGVvwi8FF8cmlqE=;
+        b=DfDNEyWMqiiBTNQtU5OnDDS+b27Dh1uR0+gmqHNpKfiJs4CIxc6goRyC7kKzZ3Lxt4
+         saTWIY+WuNZ+U09WNQD1hgQKan/233ShIkIgStvyC98vgRDLScWQ9d3LBb9kkvJFiPZA
+         uaKhV+kNj6+DSTVcXNWC+TTq7L1qpxi6C/1xaMrXGiqtFEzqPmyzGflohO3dEZsNoIjN
+         K0PKvFYnOdua8xtdsLdS1JkL6QpLiVA0E9Z/U5hqR+hgodoT/Xs8S3ytvfcBcqpgoanf
+         9yHROA7vkNeZ2XxyHbbwa+TTTJST6AvXvq8q5N4NNnJJZp44cj7nabNUcZPN8xXnCap2
+         XYfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9sVW/yEh768vDJxep1QYojM5RquL8YGeRAgcKVSj11Q=;
-        b=q2/BNI5udEvrDoV3A3rULvOS5k5jugpyKNPGDVE2FBii+8gcSIw0SeyZohiOlpPc1O
-         GAJAGkgn4iIXUjRww9L8rLVjBwGzs6JaeLF411+rOyLwidZ/hqa0mzJolcsQTuPGCwJ0
-         noTmeyD3Rv5HXEaEZ9AoK54kGooGtKmAAsXIJrtA7syd4GE/kyxnltjvyflYD4v5BL6/
-         IYXLsBUQzwonFYlPFL1ecOC+WXUkFDK8lv6dmt8t7TYQzgQ60KDP4iIrCJLip0lY1Do4
-         TbM1nxO0xzH3lINqrPLugrBmE/h0RUl+jGefjcAeswKh5Y2Xz3iVcevAXpEy4EdDNtwj
-         CWnQ==
-X-Gm-Message-State: AOAM533NmHZ4sPWqQQCwTdRWg+J5Wvj1mdQ8TwzvQEkT+P2mawGw5w9c
-        HsOMFAcfd/xdZNZtE2EfXeorCVoo3XSS64t3yBcPww==
-X-Google-Smtp-Source: ABdhPJyOGjWtX6nB6q1KbIXqVa//GzzWHXB0cMKYBQljKwpdoINAclycVgplnf2W/5qj7af9/axzpZKFK9esTSwpeJc=
-X-Received: by 2002:a9d:66c9:: with SMTP id t9mr1219555otm.111.1615351419664;
- Tue, 09 Mar 2021 20:43:39 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zIcfFT367IDJKZN6LRt8pfpB8CHdlGVvwi8FF8cmlqE=;
+        b=kf8CwO8iIlQFrLgDIAp0iS2j1z2bJKbf/REfDWVeC+15dI5YHwKFsaCx9qUWD1v4hZ
+         sx3GW7/ofMprWWvibqshvn4aarevrsLfqQIODKffoIzd/STJaY+WVeQtaHojthbsAxDW
+         OnCCtdNngTXXukqWrfx4O5zDI0IYH6PgYExt6th7siieCs3rDbnOihyRkWi7B3ULIhIs
+         ECjHIcSz6g5u+DNEfMUasWF5sJvuJZEnWvilQO2nALFnu491lbV3k4cJertg2cwk0kBU
+         l2YhBCOYVqWwkNN1TWTFzxeMLrrafR43983XdqrI060dRA4/IyVgXqJn+hzokMnxO4mX
+         PKFg==
+X-Gm-Message-State: AOAM5323awBkwcfiutXw8cZvNZRPiqeyej9vvPM5k19f3J3ioAqtgwCZ
+        ALWtkT6FgoA344tSDo1q2wQ=
+X-Google-Smtp-Source: ABdhPJxcsOE2s0rFnIZgl+Sa10N/Ut0ywb8ZK3b91gu/P5l8yPJ2Qda18lMNFwU57IoUC81v2+gD3w==
+X-Received: by 2002:a17:902:f1c2:b029:e4:6c23:489f with SMTP id e2-20020a170902f1c2b02900e46c23489fmr1785590plc.62.1615359147372;
+        Tue, 09 Mar 2021 22:52:27 -0800 (PST)
+Received: from localhost.localdomain ([103.114.158.1])
+        by smtp.gmail.com with ESMTPSA id e11sm8191362pfm.24.2021.03.09.22.52.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Mar 2021 22:52:27 -0800 (PST)
+From:   Yanwei Gao <gaoyanwei.tx@gmail.com>
+To:     mortonm@chromium.org, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        Yanwei Gao <gaoyanwei.tx@gmail.com>
+Subject: [PATCH] LSM: SafeSetID: Fix code specification by scripts/checkpatch.pl
+Date:   Wed, 10 Mar 2021 06:52:12 +0000
+Message-Id: <20210310065212.174567-1-gaoyanwei.tx@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20210223023125.2265845-1-jiancai@google.com> <20210223023542.2287529-1-jiancai@google.com>
- <CACRpkdYC3iDD23SESM0j2=f56kr6ByKeedDQvkGwXbUC0br0fw@mail.gmail.com>
- <CA+SOCL+M5YfhygG=ogqvqp7y40v+32RiteGr=53THzwvdGugyA@mail.gmail.com> <CACRpkdYrqy78EfB_+UY0QtA0v0tD+_+O09Pod8-1Vd-p-VyMWA@mail.gmail.com>
-In-Reply-To: <CACRpkdYrqy78EfB_+UY0QtA0v0tD+_+O09Pod8-1Vd-p-VyMWA@mail.gmail.com>
-From:   Jian Cai <jiancai@google.com>
-Date:   Tue, 9 Mar 2021 20:43:28 -0800
-Message-ID: <CA+SOCLLo2MdxCH3gFONHsKdvmGGm2vZuML9QdQfWuX2--qFEOA@mail.gmail.com>
-Subject: Re: [PATCH v5] ARM: Implement SLS mitigation
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Luis Lozano <llozano@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Brazdil <dbrazdil@google.com>,
-        James Morse <james.morse@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Mar 6, 2021 at 4:25 AM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> On Fri, Mar 5, 2021 at 12:23 AM Jian Cai <jiancai@google.com> wrote:
-> > On Wed, Mar 3, 2021 at 7:04 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > >
-> > > On Tue, Feb 23, 2021 at 3:36 AM Jian Cai <jiancai@google.com> wrote:
-> > >
-> > > > This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
-> > > > -mharden-sls=all, which mitigates the straight-line speculation
-> > > > vulnerability, speculative execution of the instruction following some
-> > > > unconditional jumps. Notice -mharden-sls= has other options as below,
-> > > > and this config turns on the strongest option.
-> > > >
-> > > > all: enable all mitigations against Straight Line Speculation that are implemented.
-> > > > none: disable all mitigations against Straight Line Speculation.
-> > > > retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
-> > > > blr: enable the mitigation against Straight Line Speculation for BLR instructions.
-> > >
-> > > I heard about compiler protection for this, so nice to see it happening!
-> > >
-> > > Would you happen to know if there is any plan to do the same for GCC?
-> > > I know you folks at Google like LLVM, but if you know let us know.
-> >
-> > I think gcc also has these options.
-> > https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
->
-> And how does that work with this part of your patch:
->
-> +#define SLS_TEXT                                       \
-> +       ALIGN_FUNCTION();                              \
-> +       *(.text.__llvm_slsblr_thunk_*)
->
-> This does not look compiler agnostic?
->
+First, the code is found to be irregular through checkpatch.pl.
+Then I found break is really useless here.
 
-You are right, GCC does generate different oraphan section names. I
-will address it in the next version of the patch. Also it seems only
-arm64 gcc supports -mharden-sls=* at this moment, arm32 gcc does not
-support it yet. I don't know if there is any plan to implement it for
-32-bit gcc, but should we patch arm32 linker script preemptively,
-assuming the sections will be named with the same pattern like how
-clang does so the kernel would not fail to boot when the flag is
-implemented?
+Signed-off-by: Yanwei Gao <gaoyanwei.tx@gmail.com>
+---
+ security/safesetid/lsm.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Thanks,
-Jian
+diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
+index 8a176b6adbe5..1079c6d54784 100644
+--- a/security/safesetid/lsm.c
++++ b/security/safesetid/lsm.c
+@@ -125,7 +125,6 @@ static int safesetid_security_capable(const struct cred *cred,
+ 		pr_warn("Operation requires CAP_SETUID, which is not available to UID %u for operations besides approved set*uid transitions\n",
+ 			__kuid_val(cred->uid));
+ 		return -EPERM;
+-		break;
+ 	case CAP_SETGID:
+ 		/*
+ 		* If no policy applies to this task, allow the use of CAP_SETGID for
+@@ -140,11 +139,9 @@ static int safesetid_security_capable(const struct cred *cred,
+ 		pr_warn("Operation requires CAP_SETGID, which is not available to GID %u for operations besides approved set*gid transitions\n",
+ 			__kuid_val(cred->uid));
+ 		return -EPERM;
+-		break;
+ 	default:
+ 		/* Error, the only capabilities were checking for is CAP_SETUID/GID */
+ 		return 0;
+-		break;
+ 	}
+ 	return 0;
+ }
+-- 
+2.27.0
 
-> Yours,
-> Linus Walleij
