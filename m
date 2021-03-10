@@ -2,180 +2,143 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D09C433E9
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14ADCC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64C1264FD7
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:34:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB4F664FD4
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 19:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230173AbhCJTdy (ORCPT
+        id S233249AbhCJTrv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Mar 2021 14:33:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41330 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233950AbhCJTdl (ORCPT
+        Wed, 10 Mar 2021 14:47:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51102 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232828AbhCJTr2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Mar 2021 14:33:41 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6B2CC061761
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Mar 2021 11:33:40 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id q14so27141672ljp.4
-        for <linux-security-module@vger.kernel.org>; Wed, 10 Mar 2021 11:33:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=C0lOxwjMEr6SWX1hFkOaQGtQdtdGB5FiXwich6XA348=;
-        b=NM0J3hx50vHdC/p5h3lzfZtYNUEYEEEUohjNigiA0KbbFneszGz381/p3GLd6yhcWu
-         1KuK6TsD+n34eVK+nnQVCLf7Ie1gBju2CVq9ZLZdvETqSzALoCaMBhnofjKv/3sNUuYN
-         Q+U9UAUcm9S3x+gB24/4Dfqmv17Vzecl9QcOThzFQv18IpgBij82+yGRMQkEuNTIH62P
-         CHqkLGTcxXMX4XVmnYWQNqi/lUVZXi/3hSoVBkV7dSo11C67xn4g9eGuGxYzntTDETq0
-         gZmbcBXsEeXMzgX7wVy0G9U7fO0WveTk3yR14wSE1t3VhTeVYQHPwgmWcjKqCHW98c+d
-         QxrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=C0lOxwjMEr6SWX1hFkOaQGtQdtdGB5FiXwich6XA348=;
-        b=iuvZyklEkpy2/OYbXKvdxtX5VgaiL/bUd0xziNmuda6f6MuPXJOQg8nKbRZG42LApS
-         kS9J9FY2HPIor5sIDmdNIMxFWdlGBiyHCATvGiZt7tlYIE8C2EEB7t+1Vm0FwJugqSEW
-         d46JHBYzJbryH+CZYpy3jAou9pCSUxxrhGyM3lYyZAAuow67BchIvhFsbq04Ic5mU5Hc
-         UvbGXvGBVUOfKH/thrOG2S7FWfeY5TDUP/l/znBrYxvb/BsVdXZhq0AQWu3cojfkJ1xD
-         MuGA0D4/i2935QyIEXiRjXlJioYQGTGGSRlgHZYackszrJg9dnLW6X5viO0TPyGE3laO
-         qedA==
-X-Gm-Message-State: AOAM532ZcPTY++VDgJVymbrhYke1H1DczjBgOJFUcATb3eq38mq4yYUi
-        UOvDXN9DywEHUaKKEk6mk3lCw6OuSFujrgtu2n1yDQ==
-X-Google-Smtp-Source: ABdhPJywfvsHOIz0NkR2nMiYoKEhfTkPo9yaeevm6MgBPXJj4NmO1bY3FBXA9+0DF6QnwYxqUt/SZcMZ24QK6nH4d6g=
-X-Received: by 2002:a2e:9bcd:: with SMTP id w13mr2643039ljj.43.1615404819005;
- Wed, 10 Mar 2021 11:33:39 -0800 (PST)
+        Wed, 10 Mar 2021 14:47:28 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1D07464F3D;
+        Wed, 10 Mar 2021 19:47:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615405648;
+        bh=6QaKgAtYloRRvL6YH9byGT9vss6DmvYiz83jBAE+D7c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=E7CUHqd9pTe2+Tq+I/evX/WY2cg6iv8+5DGjl871GYXPZSY5mRUCU6+ZbCH5oWKAm
+         vMsv3nlx/XAItx2sYSmX7faut/7NTKPDP211Kbw/38mFz2KwYyiobln2uI/Ue8Isrb
+         fDbKR9ne1sjWRaU6DG415IPgtLtlLaaaVPB5IV/AtsnT4bRQ5mtsMdtiYtlc26lTrF
+         5TwhL1MmF57pOWlS0KYrP70/4tLdpziUhGCRdVKDOlOnNQufM/WVesvH+rU8vJUOC5
+         0MqBLQMdNqAps7kc5lQiIJG/RV6SVZQtQ9FFEJPqb1NWA7TVF84GJipDCRWkR5dYyC
+         45MncULytz1vg==
+Date:   Wed, 10 Mar 2021 21:47:04 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] tpm: efi: Use local variable for calculating final
+ log size
+Message-ID: <YEkiONI7P32bH29i@kernel.org>
+References: <20210309031954.6232-1-stefanb@linux.ibm.com>
+ <20210309031954.6232-2-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-References: <20210310181857.401675-1-mic@digikod.net> <20210310181857.401675-2-mic@digikod.net>
- <m17dmeq0co.fsf@fess.ebiederm.org>
-In-Reply-To: <m17dmeq0co.fsf@fess.ebiederm.org>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 10 Mar 2021 20:33:12 +0100
-Message-ID: <CAG48ez2gVdyFT3r_wVuqePWGQAi6YuYYXZcRJ7ENNdnpfpvkuw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] fs: Allow no_new_privs tasks to call chroot(2)
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210309031954.6232-2-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 10, 2021 at 8:23 PM Eric W. Biederman <ebiederm@xmission.com> w=
-rote:
->
-> Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> writes:
->
-> > From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> >
-> > Being able to easily change root directories enable to ease some
-> > development workflow and can be used as a tool to strengthen
-> > unprivileged security sandboxes.  chroot(2) is not an access-control
-> > mechanism per se, but it can be used to limit the absolute view of the
-> > filesystem, and then limit ways to access data and kernel interfaces
-> > (e.g. /proc, /sys, /dev, etc.).
-> >
-> > Users may not wish to expose namespace complexity to potentially
-> > malicious processes, or limit their use because of limited resources.
-> > The chroot feature is much more simple (and limited) than the mount
-> > namespace, but can still be useful.  As for containers, users of
-> > chroot(2) should take care of file descriptors or data accessible by
-> > other means (e.g. current working directory, leaked FDs, passed FDs,
-> > devices, mount points, etc.).  There is a lot of literature that discus=
-s
-> > the limitations of chroot, and users of this feature should be aware of
-> > the multiple ways to bypass it.  Using chroot(2) for security purposes
-> > can make sense if it is combined with other features (e.g. dedicated
-> > user, seccomp, LSM access-controls, etc.).
-> >
-> > One could argue that chroot(2) is useless without a properly populated
-> > root hierarchy (i.e. without /dev and /proc).  However, there are
-> > multiple use cases that don't require the chrooting process to create
-> > file hierarchies with special files nor mount points, e.g.:
-> > * A process sandboxing itself, once all its libraries are loaded, may
-> >   not need files other than regular files, or even no file at all.
-> > * Some pre-populated root hierarchies could be used to chroot into,
-> >   provided for instance by development environments or tailored
-> >   distributions.
-> > * Processes executed in a chroot may not require access to these specia=
-l
-> >   files (e.g. with minimal runtimes, or by emulating some special files
-> >   with a LD_PRELOADed library or seccomp).
-> >
-> > Allowing a task to change its own root directory is not a threat to the
-> > system if we can prevent confused deputy attacks, which could be
-> > performed through execution of SUID-like binaries.  This can be
-> > prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
-> > prctl(2).  To only affect this task, its filesystem information must no=
-t
-> > be shared with other tasks, which can be achieved by not passing
-> > CLONE_FS to clone(2).  A similar no_new_privs check is already used by
-> > seccomp to avoid the same kind of security issues.  Furthermore, becaus=
-e
-> > of its security use and to avoid giving a new way for attackers to get
-> > out of a chroot (e.g. using /proc/<pid>/root), an unprivileged chroot i=
-s
-> > only allowed if the new root directory is the same or beneath the
-> > current one.  This still allows a process to use a subset of its
-> > legitimate filesystem to chroot into and then further reduce its view o=
-f
-> > the filesystem.
-> >
-> > This change may not impact systems relying on other permission models
-> > than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
-> > such systems may require to update their security policies.
-> >
-> > Only the chroot system call is relaxed with this no_new_privs check; th=
-e
-> > init_chroot() helper doesn't require such change.
-> >
-> > Allowing unprivileged users to use chroot(2) is one of the initial
-> > objectives of no_new_privs:
-> > https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
-> > This patch is a follow-up of a previous one sent by Andy Lutomirski, bu=
-t
-> > with less limitations:
-> > https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1=
-327858005.git.luto@amacapital.net/
-[...]
-> Neither is_path_beneath nor path_is_under really help prevent escapes,
-> as except for open files and files accessible from proc chroot already
-> disallows going up.  The reason is the path is resolved with the current
-> root before switching to it.
+On Mon, Mar 08, 2021 at 10:19:52PM -0500, Stefan Berger wrote:
+> When tpm_read_log_efi was called multiple times, which happens when one
+> loads and unloads a TPM2 driver multiple times, then the global variable
+> efi_tpm_final_log_size will at some point become a negative number due
+> to the subtraction of final_events_preboot_size occurring each time. Use
+> a local_efi_tpm_final_log_size to avoid this integer underflow.
+> 
+> The following issue is now resolved:
+> 
+> Mar  8 15:35:12 hibinst kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+> Mar  8 15:35:12 hibinst kernel: Workqueue: tpm-vtpm vtpm_proxy_work [tpm_vtpm_proxy]
+> Mar  8 15:35:12 hibinst kernel: RIP: 0010:__memcpy+0x12/0x20
+> Mar  8 15:35:12 hibinst kernel: Code: 00 b8 01 00 00 00 85 d2 74 0a c7 05 44 7b ef 00 0f 00 00 00 c3 cc cc cc 66 66 90 66 90 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 <f3> 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 f3 a4
+> Mar  8 15:35:12 hibinst kernel: RSP: 0018:ffff9ac4c0fcfde0 EFLAGS: 00010206
+> Mar  8 15:35:12 hibinst kernel: RAX: ffff88f878cefed5 RBX: ffff88f878ce9000 RCX: 1ffffffffffffe0f
+> Mar  8 15:35:12 hibinst kernel: RDX: 0000000000000003 RSI: ffff9ac4c003bff9 RDI: ffff88f878cf0e4d
+> Mar  8 15:35:12 hibinst kernel: RBP: ffff9ac4c003b000 R08: 0000000000001000 R09: 000000007e9d6073
+> Mar  8 15:35:12 hibinst kernel: R10: ffff9ac4c003b000 R11: ffff88f879ad3500 R12: 0000000000000ed5
+> Mar  8 15:35:12 hibinst kernel: R13: ffff88f878ce9760 R14: 0000000000000002 R15: ffff88f77de7f018
+> Mar  8 15:35:12 hibinst kernel: FS:  0000000000000000(0000) GS:ffff88f87bd00000(0000) knlGS:0000000000000000
+> Mar  8 15:35:12 hibinst kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> Mar  8 15:35:12 hibinst kernel: CR2: ffff9ac4c003c000 CR3: 00000001785a6004 CR4: 0000000000060ee0
+> Mar  8 15:35:12 hibinst kernel: Call Trace:
+> Mar  8 15:35:12 hibinst kernel: tpm_read_log_efi+0x152/0x1a7
+> Mar  8 15:35:12 hibinst kernel: tpm_bios_log_setup+0xc8/0x1c0
+> Mar  8 15:35:12 hibinst kernel: tpm_chip_register+0x8f/0x260
+> Mar  8 15:35:12 hibinst kernel: vtpm_proxy_work+0x16/0x60 [tpm_vtpm_proxy]
+> Mar  8 15:35:12 hibinst kernel: process_one_work+0x1b4/0x370
+> Mar  8 15:35:12 hibinst kernel: worker_thread+0x53/0x3e0
+> Mar  8 15:35:12 hibinst kernel: ? process_one_work+0x370/0x370
+> 
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/eventlog/efi.c | 10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/eventlog/efi.c b/drivers/char/tpm/eventlog/efi.c
+> index 35229e5143ca..b6ffb5faf416 100644
+> --- a/drivers/char/tpm/eventlog/efi.c
+> +++ b/drivers/char/tpm/eventlog/efi.c
+> @@ -18,6 +18,7 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+>  
+>  	struct efi_tcg2_final_events_table *final_tbl = NULL;
+>  	struct linux_efi_tpm_eventlog *log_tbl;
+> +	int local_efi_tpm_final_log_size;
+>  	struct tpm_bios_log *log;
+>  	u32 log_size;
+>  	u8 tpm_log_version;
+> @@ -80,10 +81,11 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+>  		goto out;
+>  	}
+>  
+> -	efi_tpm_final_log_size -= log_tbl->final_events_preboot_size;
+> +	local_efi_tpm_final_log_size = efi_tpm_final_log_size -
+> +					log_tbl->final_events_preboot_size;
 
-Yeah, this probably should use the same check as the CLONE_NEWUSER
-logic, current_chrooted() from CLONE_NEWUSER; that check is already
-used for guarding against the following syscall sequence, which has
-similar security properties:
-unshare(CLONE_NEWUSER); // gives the current process namespaced CAP_SYS_ADM=
-IN
-chroot("<...>"); // succeeds because of namespaced CAP_SYS_ADMIN
+This starts to have so many weird locals that an inline comment here
+in plain Enlighs would be nice explaining the calculation.
 
-The current_chrooted() check in create_user_ns() is for the same
-purpose as the check you're introducing here, so they should use the
-same logic.
+>  
+>  	tmp = krealloc(log->bios_event_log,
+> -		       log_size + efi_tpm_final_log_size,
+> +		       log_size + local_efi_tpm_final_log_size,
+
+Ditto.
+
+>  		       GFP_KERNEL);
+>  	if (!tmp) {
+>  		kfree(log->bios_event_log);
+> @@ -100,9 +102,9 @@ int tpm_read_log_efi(struct tpm_chip *chip)
+>  	 */
+>  	memcpy((void *)log->bios_event_log + log_size,
+>  	       final_tbl->events + log_tbl->final_events_preboot_size,
+> -	       efi_tpm_final_log_size);
+> +	       local_efi_tpm_final_log_size);
+>  	log->bios_event_log_end = log->bios_event_log +
+> -		log_size + efi_tpm_final_log_size;
+> +		log_size + local_efi_tpm_final_log_size;
+
+Ditto.
+
+>  
+>  out:
+>  	memunmap(final_tbl);
+> -- 
+> 2.29.2
+> 
+> 
+
+I think this is good chance to improve the documentation a bit.
+
+/Jarkko
