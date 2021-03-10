@@ -2,172 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A44DC432C3
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 22:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74FDC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 22:28:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2C8F64FDC
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 22:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7941B64FBB
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 22:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbhCJWTv (ORCPT
+        id S232250AbhCJW2Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 10 Mar 2021 17:19:51 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18292 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232966AbhCJWTe (ORCPT
+        Wed, 10 Mar 2021 17:28:25 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35555 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231919AbhCJW2C (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 10 Mar 2021 17:19:34 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12AMJV77081017;
-        Wed, 10 Mar 2021 17:19:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=wp/1c5NfMQfPydumePHhOuQQCmguw6uJmxK59NQNMnY=;
- b=baw+OEcxKGWKd+5Tc25jUfb6faVvpZEHJhBLRTbjqfZlDCfhZYGfcZL2+adUXNGo6lZZ
- uwbzF8+fjrXTIficXWt7Lu25AoCCSynW/5St7/821IFX236Nh/4lVgJUVDpEc8+UFnC9
- KxgKFhBuUVFGw2rO6+Tu68Fip5mCe/LwraLJ+Qh+pmXSq9gdoFcN0i080kJNwXVsIu7k
- uZnN6UfaInqN9m3DvDLkk55JtPbiASbOV6I4wWHvtleuCov1/fagRuQM/QmxXtXWFnYU
- JQAP8CSwuxUI+k6akcrWZ2JTRCfD8kbVtjAaT6fywFf1UHPUM8ux7FIYNcEr790esmV5 Sg== 
+        Wed, 10 Mar 2021 17:28:02 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12AMPKBt166470;
+        Wed, 10 Mar 2021 17:26:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : reply-to : to : cc : date : in-reply-to : references : content-type
+ : mime-version : content-transfer-encoding; s=pp1;
+ bh=tgKrZU7i0iMMBLUU8hg/UFd8eVIHr1j57T93sj+SGVs=;
+ b=CnDAsvqWNBQXYKQaMBLiFq+tiUERksythCoLFGcxt2OTuVDoNuk6XFrVXRwdHnhV2GII
+ Htb4pnTtGVlon56/J9I54P3igySOCyNM4/c1oVSTaKl2bXalrOQdRz2OogelZa+LdLei
+ g8BzYcD/VlCH8H6GAOtPGCSwzHkmQSZI64D/kl3KNlLKc6IveTlfX0eAIqwHWGXqcVvM
+ i88WIAdPc5Lx2Rde1szIs3sgDXNOMb5de1xcD/7jP4lCsHczFs5ghhHD+PNqykbMK/xu
+ tRESW9IkK+82582uQUPC1DCiEiyWhNkSsvxYhWWDHRD7ApLhYWQq9JX1Bu8uoqRUdcpi Uw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3774mduumm-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3774m8c313-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Mar 2021 17:19:33 -0500
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12AMJXWf081172;
-        Wed, 10 Mar 2021 17:19:33 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3774mduuhn-1
+        Wed, 10 Mar 2021 17:26:35 -0500
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12AMPLa2166575;
+        Wed, 10 Mar 2021 17:26:35 -0500
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3774m8c30u-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Mar 2021 17:19:32 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12AMH8Up021205;
-        Wed, 10 Mar 2021 22:19:19 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma04wdc.us.ibm.com with ESMTP id 3768n4k8w1-1
+        Wed, 10 Mar 2021 17:26:35 -0500
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12AMGdW2030361;
+        Wed, 10 Mar 2021 22:26:34 GMT
+Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
+        by ppma04dal.us.ibm.com with ESMTP id 3768rcp05s-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 10 Mar 2021 22:19:19 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12AMJJMO27066708
+        Wed, 10 Mar 2021 22:26:34 +0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12AMQWja17236380
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 10 Mar 2021 22:19:19 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7A5E9AE062;
-        Wed, 10 Mar 2021 22:19:19 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6284DAE06B;
-        Wed, 10 Mar 2021 22:19:19 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.47.158.152])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 10 Mar 2021 22:19:19 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     peterhuewe@gmx.de, jarkko@kernel.org
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 2/3] tpm: acpi: Check eventlog signature before using it
-Date:   Wed, 10 Mar 2021 17:19:15 -0500
-Message-Id: <20210310221916.356716-3-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210310221916.356716-1-stefanb@linux.ibm.com>
-References: <20210310221916.356716-1-stefanb@linux.ibm.com>
+        Wed, 10 Mar 2021 22:26:33 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CABA87806D;
+        Wed, 10 Mar 2021 22:26:32 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2031C7805C;
+        Wed, 10 Mar 2021 22:26:29 +0000 (GMT)
+Received: from jarvis.int.hansenpartnership.com (unknown [9.80.211.242])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 10 Mar 2021 22:26:28 +0000 (GMT)
+Message-ID: <9aa3173ab46b0aa7edb8146ffd3df05c1f74207e.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 0/4] Introduce TEE based Trusted Keys support
+From:   James Bottomley <jejb@linux.ibm.com>
+Reply-To: jejb@linux.ibm.com
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Sumit Garg <sumit.garg@linaro.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Janne Karhunen <janne.karhunen@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Markus Wamser <Markus.Wamser@mixed-mode.de>,
+        Luke Hinds <lhinds@redhat.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        op-tee@lists.trustedfirmware.org
+Date:   Wed, 10 Mar 2021 14:26:27 -0800
+In-Reply-To: <YEkkXbWrYBTcGXEd@kernel.org>
+References: <20210301131127.793707-1-sumit.garg@linaro.org>
+         <CAFA6WYO4HHhtymaUzmkuaCZybTAWBQ=4K9Dez1pe1kqo3AJhuA@mail.gmail.com>
+         <YEEANW+khw3nJtcQ@kernel.org>
+         <CAFA6WYOxsYin8wBB_yU=S-bnqM-g5TFnTU_KXxc3wSBfx_N_6A@mail.gmail.com>
+         <YEkkXbWrYBTcGXEd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
  definitions=2021-03-10_12:2021-03-10,2021-03-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- spamscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999
- bulkscore=0 malwarescore=0 clxscore=1015 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103100105
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 priorityscore=1501 impostorscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103100105
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Check the eventlog signature before using it. This avoids using an
-empty log, as may be the case when QEMU created the ACPI tables,
-rather than probing the EFI log next. This resolves an issue where
-the EFI log was empty since an empty ACPI log was used.
+On Wed, 2021-03-10 at 21:56 +0200, Jarkko Sakkinen wrote:
+[...]
+> I also need to apply 
+> 
+> https://lore.kernel.org/linux-integrity/20210127190617.17564-1-James.Bottomley@HansenPartnership.com/
+> 
+> and I would like to do both while I'm at it.
+> 
+> James, there was one patch that needed fixing but I cannot find
+> lore.kernel.org link. Can you point me to that so that we
+> can proceed?
 
-Fixes: 85467f63a05c ("tpm: Add support for event log pointer found in TPM2 ACPI table")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/eventlog/acpi.c | 33 +++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+I think you mean this one observing a missing space in the commit
+message:
 
-diff --git a/drivers/char/tpm/eventlog/acpi.c b/drivers/char/tpm/eventlog/acpi.c
-index 3633ed70f48f..1b18ce5ebab1 100644
---- a/drivers/char/tpm/eventlog/acpi.c
-+++ b/drivers/char/tpm/eventlog/acpi.c
-@@ -41,6 +41,27 @@ struct acpi_tcpa {
- 	};
- };
- 
-+/* Check that the given log is indeed a TPM2 log. */
-+static bool tpm_is_tpm2_log(void *bios_event_log, u64 len)
-+{
-+	struct tcg_efi_specid_event_head *efispecid;
-+	struct tcg_pcr_event *event_header;
-+	int n;
-+
-+	if (len < sizeof(*event_header))
-+		return false;
-+	len -= sizeof(*event_header);
-+	event_header = bios_event_log;
-+
-+	if (len < sizeof(*efispecid))
-+		return false;
-+	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
-+
-+	n = memcmp(efispecid->signature, TCG_SPECID_SIG,
-+		   sizeof(TCG_SPECID_SIG));
-+	return n == 0;
-+}
-+
- /* read binary bios log */
- int tpm_read_log_acpi(struct tpm_chip *chip)
- {
-@@ -52,6 +73,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	struct acpi_table_tpm2 *tbl;
- 	struct acpi_tpm2_phy *tpm2_phy;
- 	int format;
-+	int ret;
- 
- 	log = &chip->log;
- 
-@@ -112,6 +134,7 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 
- 	log->bios_event_log_end = log->bios_event_log + len;
- 
-+	ret = -EIO;
- 	virt = acpi_os_map_iomem(start, len);
- 	if (!virt)
- 		goto err;
-@@ -119,11 +142,19 @@ int tpm_read_log_acpi(struct tpm_chip *chip)
- 	memcpy_fromio(log->bios_event_log, virt, len);
- 
- 	acpi_os_unmap_iomem(virt, len);
-+
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2 &&
-+	    !tpm_is_tpm2_log(log->bios_event_log, len)) {
-+		/* try EFI log next */
-+		ret = -ENODEV;
-+		goto err;
-+	}
-+
- 	return format;
- 
- err:
- 	kfree(log->bios_event_log);
- 	log->bios_event_log = NULL;
--	return -EIO;
-+	return ret;
- 
- }
--- 
-2.29.2
+https://lore.kernel.org/keyrings/1327393.1612972717@warthog.procyon.org.uk/
+
+James
+
 
