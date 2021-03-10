@@ -2,180 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4B2C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 03:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCBFC433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 04:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 852EB64FEC
-	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 03:09:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F55E64FE8
+	for <linux-security-module@archiver.kernel.org>; Wed, 10 Mar 2021 04:45:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232131AbhCJDJT (ORCPT
+        id S232300AbhCJEoE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 9 Mar 2021 22:09:19 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:60910 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231894AbhCJDJH (ORCPT
+        Tue, 9 Mar 2021 23:44:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45690 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231135AbhCJEnk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 9 Mar 2021 22:09:07 -0500
-Received: from [50.53.41.238] (helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1lJpDe-0002FI-DM; Wed, 10 Mar 2021 03:09:06 +0000
-Subject: Re: [RFC PATCH 1/4] lsm: separate security_task_getsecid() into
- subjective and objective variants
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com
-References: <161377712068.87807.12246856567527156637.stgit@sifl>
- <161377734508.87807.8537642254664217815.stgit@sifl>
- <b2f85cf5-a110-68ae-47b6-276dd8062be7@canonical.com>
- <CAHC9VhTn33cSX=n7a6kr-5=TKeEx8iRbTY8-2XGxG0YC+GhvaA@mail.gmail.com>
- <CAHC9VhRVxFiMTzrdtNzKy=1KN10JXU=JC-rohTNH1bGSNj9K_w@mail.gmail.com>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
- azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
- NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
- L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
- YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
- UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
- dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
- OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
- OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
- V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
- MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
- NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
- ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
- d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
- S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
- d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
- WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
- ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
- SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
- bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
- WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
- NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
- NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
- cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
- ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
- QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
- dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
- OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
- NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
- cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
- bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
- V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
- TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
- QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
- OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
- SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
- VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
- QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
- CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
- RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
- T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
- N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
- TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
- L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
- Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
- ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
- dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
- a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
- V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
- aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
- SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
- SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
- SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
- M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
- cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
- TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
- aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
- RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
- Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
- a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
- RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
- VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
- U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
- Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
- ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
- WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
- Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
- Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
- enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
- WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
- NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
- MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
- RVkgQkxPQ0stLS0tLQo=
-Organization: Canonical
-Message-ID: <a03d801e-75cf-a964-ad90-eb620998cd9a@canonical.com>
-Date:   Tue, 9 Mar 2021 19:09:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 9 Mar 2021 23:43:40 -0500
+Received: from mail-ot1-x32c.google.com (mail-ot1-x32c.google.com [IPv6:2607:f8b0:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97BFEC06174A
+        for <linux-security-module@vger.kernel.org>; Tue,  9 Mar 2021 20:43:40 -0800 (PST)
+Received: by mail-ot1-x32c.google.com with SMTP id t16so15171672ott.3
+        for <linux-security-module@vger.kernel.org>; Tue, 09 Mar 2021 20:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9sVW/yEh768vDJxep1QYojM5RquL8YGeRAgcKVSj11Q=;
+        b=tQoIjHIjxlyxEXvV1M3f7zlUJ0EJ6iuPzwotpyuWgFl3QSRHEI/bk0ZGiM7zP0WHTe
+         IxNVgTaEfb12GuNXnQ/GGGAZzzRnWFennElHJ1uxROn337JWx0RvEYIQzDBMIaSoEMsP
+         Dqjs+FvtrSNT72rmcwHLgyxfa+CLqBvGXwGRw6J3p7SGgEyzO9lkA/K6No3i9Zuc46fa
+         MQRy2hcY16n4Yowp/8mbuiPCZ76oh4O+vh8FkWitoQqcm82eRlLCAkwqjWVtwupZnv+m
+         Li15kvDeZ3AE3HrfIpV2Ijlg67tEdxHj4EinK2P9c7l22vScMGm3tYlRwg4gYVhvYeIJ
+         ujBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9sVW/yEh768vDJxep1QYojM5RquL8YGeRAgcKVSj11Q=;
+        b=q2/BNI5udEvrDoV3A3rULvOS5k5jugpyKNPGDVE2FBii+8gcSIw0SeyZohiOlpPc1O
+         GAJAGkgn4iIXUjRww9L8rLVjBwGzs6JaeLF411+rOyLwidZ/hqa0mzJolcsQTuPGCwJ0
+         noTmeyD3Rv5HXEaEZ9AoK54kGooGtKmAAsXIJrtA7syd4GE/kyxnltjvyflYD4v5BL6/
+         IYXLsBUQzwonFYlPFL1ecOC+WXUkFDK8lv6dmt8t7TYQzgQ60KDP4iIrCJLip0lY1Do4
+         TbM1nxO0xzH3lINqrPLugrBmE/h0RUl+jGefjcAeswKh5Y2Xz3iVcevAXpEy4EdDNtwj
+         CWnQ==
+X-Gm-Message-State: AOAM533NmHZ4sPWqQQCwTdRWg+J5Wvj1mdQ8TwzvQEkT+P2mawGw5w9c
+        HsOMFAcfd/xdZNZtE2EfXeorCVoo3XSS64t3yBcPww==
+X-Google-Smtp-Source: ABdhPJyOGjWtX6nB6q1KbIXqVa//GzzWHXB0cMKYBQljKwpdoINAclycVgplnf2W/5qj7af9/axzpZKFK9esTSwpeJc=
+X-Received: by 2002:a9d:66c9:: with SMTP id t9mr1219555otm.111.1615351419664;
+ Tue, 09 Mar 2021 20:43:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRVxFiMTzrdtNzKy=1KN10JXU=JC-rohTNH1bGSNj9K_w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210223023125.2265845-1-jiancai@google.com> <20210223023542.2287529-1-jiancai@google.com>
+ <CACRpkdYC3iDD23SESM0j2=f56kr6ByKeedDQvkGwXbUC0br0fw@mail.gmail.com>
+ <CA+SOCL+M5YfhygG=ogqvqp7y40v+32RiteGr=53THzwvdGugyA@mail.gmail.com> <CACRpkdYrqy78EfB_+UY0QtA0v0tD+_+O09Pod8-1Vd-p-VyMWA@mail.gmail.com>
+In-Reply-To: <CACRpkdYrqy78EfB_+UY0QtA0v0tD+_+O09Pod8-1Vd-p-VyMWA@mail.gmail.com>
+From:   Jian Cai <jiancai@google.com>
+Date:   Tue, 9 Mar 2021 20:43:28 -0800
+Message-ID: <CA+SOCLLo2MdxCH3gFONHsKdvmGGm2vZuML9QdQfWuX2--qFEOA@mail.gmail.com>
+Subject: Re: [PATCH v5] ARM: Implement SLS mitigation
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Luis Lozano <llozano@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Brazdil <dbrazdil@google.com>,
+        James Morse <james.morse@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/9/21 4:28 PM, Paul Moore wrote:
-> On Wed, Mar 3, 2021 at 7:44 PM Paul Moore <paul@paul-moore.com> wrote:
->> On Sun, Feb 21, 2021 at 7:51 AM John Johansen
->> <john.johansen@canonical.com> wrote:
->>> On 2/19/21 3:29 PM, Paul Moore wrote:
->>>> Of the three LSMs that implement the security_task_getsecid() LSM
->>>> hook, all three LSMs provide the task's objective security
->>>> credentials.  This turns out to be unfortunate as most of the hook's
->>>> callers seem to expect the task's subjective credentials, although
->>>> a small handful of callers do correctly expect the objective
->>>> credentials.
->>>>
->>>> This patch is the first step towards fixing the problem: it splits
->>>> the existing security_task_getsecid() hook into two variants, one
->>>> for the subjective creds, one for the objective creds.
->>>>
->>>>   void security_task_getsecid_subj(struct task_struct *p,
->>>>                                  u32 *secid);
->>>>   void security_task_getsecid_obj(struct task_struct *p,
->>>>                                 u32 *secid);
->>>>
->>>> While this patch does fix all of the callers to use the correct
->>>> variant, in order to keep this patch focused on the callers and to
->>>> ease review, the LSMs continue to use the same implementation for
->>>> both hooks.  The net effect is that this patch should not change
->>>> the behavior of the kernel in any way, it will be up to the latter
->>>> LSM specific patches in this series to change the hook
->>>> implementations and return the correct credentials.
->>>>
->>>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>
->>> So far this looks good. I want to take another stab at it and give
->>> it some testing
->>
->> Checking in as I know you said you needed to fix/release the AppArmor
->> patch in this series ... is this patch still looking okay to you?  If
->> so, can I get an ACK at least on this patch?
-> 
-> Hi John,
-> 
-> Any objections if I merge the LSM, SELinux, and Smack patches into the
-> selinux/next tree so that we can start getting some wider testing?  If
-> I leave out my poor attempt at an AppArmor patch, the current in-tree
-> AppArmor code should behave exactly as it does today with the
-> apparmor_task_getsecid() function handling both the subjective and
-> objective creds.  I can always merge the AppArmor patch later when you
-> have it ready, or you can merge it via your AppArmor tree at a later
-> date.
-> 
+On Sat, Mar 6, 2021 at 4:25 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Fri, Mar 5, 2021 at 12:23 AM Jian Cai <jiancai@google.com> wrote:
+> > On Wed, Mar 3, 2021 at 7:04 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > >
+> > > On Tue, Feb 23, 2021 at 3:36 AM Jian Cai <jiancai@google.com> wrote:
+> > >
+> > > > This patch adds CONFIG_HARDEN_SLS_ALL that can be used to turn on
+> > > > -mharden-sls=all, which mitigates the straight-line speculation
+> > > > vulnerability, speculative execution of the instruction following some
+> > > > unconditional jumps. Notice -mharden-sls= has other options as below,
+> > > > and this config turns on the strongest option.
+> > > >
+> > > > all: enable all mitigations against Straight Line Speculation that are implemented.
+> > > > none: disable all mitigations against Straight Line Speculation.
+> > > > retbr: enable the mitigation against Straight Line Speculation for RET and BR instructions.
+> > > > blr: enable the mitigation against Straight Line Speculation for BLR instructions.
+> > >
+> > > I heard about compiler protection for this, so nice to see it happening!
+> > >
+> > > Would you happen to know if there is any plan to do the same for GCC?
+> > > I know you folks at Google like LLVM, but if you know let us know.
+> >
+> > I think gcc also has these options.
+> > https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
+>
+> And how does that work with this part of your patch:
+>
+> +#define SLS_TEXT                                       \
+> +       ALIGN_FUNCTION();                              \
+> +       *(.text.__llvm_slsblr_thunk_*)
+>
+> This does not look compiler agnostic?
+>
 
-I have some questions around selinux and binder but I don't have any
-objections to you merging, we can always drop fixes on top if they
-are necessary
+You are right, GCC does generate different oraphan section names. I
+will address it in the next version of the patch. Also it seems only
+arm64 gcc supports -mharden-sls=* at this moment, arm32 gcc does not
+support it yet. I don't know if there is any plan to implement it for
+32-bit gcc, but should we patch arm32 linker script preemptively,
+assuming the sections will be named with the same pattern like how
+clang does so the kernel would not fail to boot when the flag is
+implemented?
 
+Thanks,
+Jian
+
+> Yours,
+> Linus Walleij
