@@ -2,148 +2,161 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29824C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 14:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F956C4332D
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 17:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE78964FEF
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 14:03:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7574B64FFB
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 17:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233784AbhCKODC (ORCPT
+        id S229702AbhCKRFV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Mar 2021 09:03:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36536 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232893AbhCKOCr (ORCPT
+        Thu, 11 Mar 2021 12:05:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53035 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229998AbhCKRFO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Mar 2021 09:02:47 -0500
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12BDWdlZ113553;
-        Thu, 11 Mar 2021 09:02:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=ZQy2UK7TDDAPhQ/gJj/WhYvmNG5h42YrwOCdwC+eoWs=;
- b=mZdHA6u6DgWrM/atqNDbTeILNhYaaKrn4t+8Q/pnvd72VNoR67Sew8zd+O0d+qe4zxTw
- r+WQ+7aAI4R4R420FNu/1hqpKFBTXh3cvTZviHnf958s2cIzZF15apB0cMleYCc2vynb
- q2qjgEuk2actmncxm9tv2Du73gYI9n4bSS0DvQCPK1ObTB60zEcphj788ncqgTUa0v89
- cyBNTiCy6HsWRw7rAFgz12HEF9x4bNeA0kHlMyTWAAm3/SInEYRt/2Zve3JPL1OWWYf7
- T+MLWqR6CnuQkpnqgunzpzRWl029cY48+gNuo5tKaMWbXmCJfp+LuKoqAml/TysptmiL 6w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3774m7xs10-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 09:02:43 -0500
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12BDWgDJ113664;
-        Thu, 11 Mar 2021 09:02:42 -0500
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3774m7xrym-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 09:02:42 -0500
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12BDrVjF027596;
-        Thu, 11 Mar 2021 14:02:40 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma04wdc.us.ibm.com with ESMTP id 3768n4r55n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 11 Mar 2021 14:02:40 +0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12BE2drc10879636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 11 Mar 2021 14:02:39 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 045966E04C;
-        Thu, 11 Mar 2021 14:02:39 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 997696E052;
-        Thu, 11 Mar 2021 14:02:38 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 11 Mar 2021 14:02:38 +0000 (GMT)
-Subject: Re: [PATCH v2 1/3] tpm: efi: Use local variable for calculating final
- log size
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mjg59@google.com
-References: <20210310221916.356716-1-stefanb@linux.ibm.com>
- <20210310221916.356716-2-stefanb@linux.ibm.com> <YElUiIFkyf6txZoV@kernel.org>
- <YElVN0kwMIyeF9gQ@kernel.org>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <39ea4fef-0a21-ad06-118f-dbdf01cd5c61@linux.ibm.com>
-Date:   Thu, 11 Mar 2021 09:02:38 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.0
+        Thu, 11 Mar 2021 12:05:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615482314;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=psOPtICF11pXofHXlU7Z/Nk2n88gRhtlSBfRfAKoCVk=;
+        b=VTo6LqPWgpDdJ/DAR8hZ00ZequBUSN7jwHdZb58GAoFeIWEPbxDA2Ig0iuWnp7idDYsrPc
+        +KI8hZJ6i1Sl0oZM3YLFpzra8zI3uevxQayMV5hBbL1qCBa46paARCiQn6UmoD0So3hfN4
+        BOpaE2C0Hx54H825Xq+FT1CMIcljDp4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-29-KeXUfcKpNEWteOEHWTYlUg-1; Thu, 11 Mar 2021 12:05:10 -0500
+X-MC-Unique: KeXUfcKpNEWteOEHWTYlUg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AEB85100C661;
+        Thu, 11 Mar 2021 17:05:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E91AE10023AF;
+        Thu, 11 Mar 2021 17:05:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Add EFI_CERT_X509_GUID support for dbx/mokx entries
 MIME-Version: 1.0
-In-Reply-To: <YElVN0kwMIyeF9gQ@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-11_04:2021-03-10,2021-03-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 bulkscore=0 clxscore=1015 malwarescore=0 suspectscore=0
- adultscore=0 phishscore=0 impostorscore=0 priorityscore=1501 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
- definitions=main-2103110073
+Content-Type: text/plain
+Date:   Thu, 11 Mar 2021 17:05:06 +0000
+Message-ID: <1884195.1615482306@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-On 3/10/21 6:24 PM, Jarkko Sakkinen wrote:
-> On Thu, Mar 11, 2021 at 01:21:47AM +0200, Jarkko Sakkinen wrote:
->> On Wed, Mar 10, 2021 at 05:19:14PM -0500, Stefan Berger wrote:
->>> When tpm_read_log_efi is called multiple times, which happens when
->>> one loads and unloads a TPM2 driver multiple times, then the global
->>> variable efi_tpm_final_log_size will at some point become a negative
->>> number due to the subtraction of final_events_preboot_size occurring
->>> each time. Use a local variable to avoid this integer underflow.
->>>
->>> The following issue is now resolved:
->>>
->>> Mar  8 15:35:12 hibinst kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
->>> Mar  8 15:35:12 hibinst kernel: Workqueue: tpm-vtpm vtpm_proxy_work [tpm_vtpm_proxy]
->>> Mar  8 15:35:12 hibinst kernel: RIP: 0010:__memcpy+0x12/0x20
->>> Mar  8 15:35:12 hibinst kernel: Code: 00 b8 01 00 00 00 85 d2 74 0a c7 05 44 7b ef 00 0f 00 00 00 c3 cc cc cc 66 66 90 66 90 48 89 f8 48 89 d1 48 c1 e9 03 83 e2 07 <f3> 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1 f3 a4
->>> Mar  8 15:35:12 hibinst kernel: RSP: 0018:ffff9ac4c0fcfde0 EFLAGS: 00010206
->>> Mar  8 15:35:12 hibinst kernel: RAX: ffff88f878cefed5 RBX: ffff88f878ce9000 RCX: 1ffffffffffffe0f
->>> Mar  8 15:35:12 hibinst kernel: RDX: 0000000000000003 RSI: ffff9ac4c003bff9 RDI: ffff88f878cf0e4d
->>> Mar  8 15:35:12 hibinst kernel: RBP: ffff9ac4c003b000 R08: 0000000000001000 R09: 000000007e9d6073
->>> Mar  8 15:35:12 hibinst kernel: R10: ffff9ac4c003b000 R11: ffff88f879ad3500 R12: 0000000000000ed5
->>> Mar  8 15:35:12 hibinst kernel: R13: ffff88f878ce9760 R14: 0000000000000002 R15: ffff88f77de7f018
->>> Mar  8 15:35:12 hibinst kernel: FS:  0000000000000000(0000) GS:ffff88f87bd00000(0000) knlGS:0000000000000000
->>> Mar  8 15:35:12 hibinst kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> Mar  8 15:35:12 hibinst kernel: CR2: ffff9ac4c003c000 CR3: 00000001785a6004 CR4: 0000000000060ee0
->>> Mar  8 15:35:12 hibinst kernel: Call Trace:
->>> Mar  8 15:35:12 hibinst kernel: tpm_read_log_efi+0x152/0x1a7
->>> Mar  8 15:35:12 hibinst kernel: tpm_bios_log_setup+0xc8/0x1c0
->>> Mar  8 15:35:12 hibinst kernel: tpm_chip_register+0x8f/0x260
->>> Mar  8 15:35:12 hibinst kernel: vtpm_proxy_work+0x16/0x60 [tpm_vtpm_proxy]
->>> Mar  8 15:35:12 hibinst kernel: process_one_work+0x1b4/0x370
->>> Mar  8 15:35:12 hibinst kernel: worker_thread+0x53/0x3e0
->>> Mar  8 15:35:12 hibinst kernel: ? process_one_work+0x370/0x370
->>>
->>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
->> Fixes tag for this one?
-> Or just sanity check, I think it is:
->
-> Fixes: 166a2809d65b ("tpm: Don't duplicate events from the final event log in the TCG2 log")
-Looks good.
->
-> Also, I guess all of the patches ought to have stable cc, right?
+Hi Linus,
 
-Yes, please. I think the maintainer has to add this 'at some point'.
+Here's a set of patches from Eric Snowberg[1] that add support for
+EFI_CERT_X509_GUID entries in the dbx and mokx UEFI tables (such entries
+cause matching certificates to be rejected).  These are currently ignored
+and only the hash entries are made use of.  Additionally Eric included his
+patches to allow such certificates to be preloaded.
 
-Since you queued them already I won't send a v3.
+These patches deal with CVE-2020-26541.
 
+To quote Eric:
 
-Thanks!
+	This is the fifth patch series for adding support for
+	EFI_CERT_X509_GUID entries [2].  It has been expanded to not only
+	include dbx entries but also entries in the mokx.  Additionally my
+	series to preload these certificate [3] has also been included.
 
-    Stefan
+	This series is based on v5.11-rc4.
 
+Notes:
+
+ (*) These patches fix a security loophole rather than actual fixing kernel
+     breakage, so they could theoretically wait for the next merge window
+     if you prefer.
+
+ (*) Patch 3 adds the extract-cert target a second time.  I think make
+     should just handle this, though it could be better to add a config
+     option specifically for building that program (it's used by multiple
+     options).
+
+Changes:
+ - Changed Jarkko's acks to his kernel.org address.
+
+ver #3:
+ - Rolled in changes from Eric to fix conditional building issues[7].
+
+ver #2:
+ - Rolled in a fix to the second patch to include certs/common.h in
+   certs/common.c[6].
+
+ver #1:
+ - I've modified the first patch in the series to fix a configuration
+   problem[4][5], to move the added functions to a more logical place
+   within thefile and to add kerneldoc comments.
+
+Link: https://lore.kernel.org/r/20210122181054.32635-1-eric.snowberg@oracle.com [1]
+Link: https://patchwork.kernel.org/project/linux-security-module/patch/20200916004927.64276-1-eric.snowberg@oracle.com/ [2]
+Link: https://lore.kernel.org/patchwork/cover/1315485/ [3]
+Link: https://lore.kernel.org/r/bc2c24e3-ed68-2521-0bf4-a1f6be4a895d@infradead.org/ [4]
+Link: https://lore.kernel.org/r/20210225125638.1841436-1-arnd@kernel.org/ [5]
+Link: https://lore.kernel.org/r/EDA280F9-F72D-4181-93C7-CDBE95976FF7@oracle.com/ [6]
+Link: https://lore.kernel.org/r/161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/161433310139.902181.11787442834918634133.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/20210304175030.184131-1-eric.snowberg@oracle.com/ [7]
+
+David
+---
+The following changes since commit 8f0bfc25c907f38e7f9dc498e8f43000d77327ef:
+
+  watch_queue: rectify kernel-doc for init_watch() (2021-01-26 11:16:34 +0000)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-cve-2020-26541-v3
+
+for you to fetch changes up to ebd9c2ae369a45bdd9f8615484db09be58fc242b:
+
+  integrity: Load mokx variables into the blacklist keyring (2021-03-11 16:34:48 +0000)
+
+----------------------------------------------------------------
+Fix CVE-2020-26541
+
+----------------------------------------------------------------
+Eric Snowberg (4):
+      certs: Add EFI_CERT_X509_GUID support for dbx entries
+      certs: Move load_system_certificate_list to a common function
+      certs: Add ability to preload revocation certs
+      integrity: Load mokx variables into the blacklist keyring
+
+ certs/Kconfig                                      | 17 ++++++
+ certs/Makefile                                     | 21 ++++++-
+ certs/blacklist.c                                  | 64 ++++++++++++++++++++++
+ certs/blacklist.h                                  |  2 +
+ certs/common.c                                     | 57 +++++++++++++++++++
+ certs/common.h                                     |  9 +++
+ certs/revocation_certificates.S                    | 21 +++++++
+ certs/system_keyring.c                             | 55 +++----------------
+ include/keys/system_keyring.h                      | 15 +++++
+ scripts/Makefile                                   |  1 +
+ .../integrity/platform_certs/keyring_handler.c     | 11 ++++
+ security/integrity/platform_certs/load_uefi.c      | 20 ++++++-
+ 12 files changed, 242 insertions(+), 51 deletions(-)
+ create mode 100644 certs/common.c
+ create mode 100644 certs/common.h
+ create mode 100644 certs/revocation_certificates.S
 
