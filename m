@@ -2,161 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F956C4332D
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 17:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3BFC433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 18:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7574B64FFB
-	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 17:05:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9DC364FCE
+	for <linux-security-module@archiver.kernel.org>; Thu, 11 Mar 2021 18:24:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbhCKRFV (ORCPT
+        id S230143AbhCKSYH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 11 Mar 2021 12:05:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53035 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229998AbhCKRFO (ORCPT
+        Thu, 11 Mar 2021 13:24:07 -0500
+Received: from mout.gmx.net ([212.227.15.15]:41513 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229883AbhCKSXl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 11 Mar 2021 12:05:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1615482314;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=psOPtICF11pXofHXlU7Z/Nk2n88gRhtlSBfRfAKoCVk=;
-        b=VTo6LqPWgpDdJ/DAR8hZ00ZequBUSN7jwHdZb58GAoFeIWEPbxDA2Ig0iuWnp7idDYsrPc
-        +KI8hZJ6i1Sl0oZM3YLFpzra8zI3uevxQayMV5hBbL1qCBa46paARCiQn6UmoD0So3hfN4
-        BOpaE2C0Hx54H825Xq+FT1CMIcljDp4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-29-KeXUfcKpNEWteOEHWTYlUg-1; Thu, 11 Mar 2021 12:05:10 -0500
-X-MC-Unique: KeXUfcKpNEWteOEHWTYlUg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AEB85100C661;
-        Thu, 11 Mar 2021 17:05:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-118-152.rdu2.redhat.com [10.10.118.152])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E91AE10023AF;
-        Thu, 11 Mar 2021 17:05:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Add EFI_CERT_X509_GUID support for dbx/mokx entries
+        Thu, 11 Mar 2021 13:23:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1615486987;
+        bh=SpnCU8DF8fceQcBGatEhurYgUxXjyn+Yh3rMYnZtpBw=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=EJGVOIR575wXcr5c6RRSlrapvOBsan8L+f6g86Oe6pPunBUxgE4Uxr3yKQsYvuF55
+         Fk+OhstRBVDUiL5BP9azSbnTEAJAaL2YDxrGXgYab5j1zM1tCwPHuho67fkGJFNRny
+         I3CMBI7vURJKEGu4DCemsRLl20UpoLgYi+fcWYn0=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([83.52.229.153]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MatRZ-1lrI4P44J1-00cOpP; Thu, 11
+ Mar 2021 19:23:07 +0100
+Date:   Thu, 11 Mar 2021 19:22:52 +0100
+From:   John Wood <john.wood@gmx.com>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v5 7/8] Documentation: Add documentation for the Brute LSM
+Message-ID: <20210311182252.GA3349@ubuntu>
+References: <20210227153013.6747-1-john.wood@gmx.com>
+ <20210227153013.6747-8-john.wood@gmx.com>
+ <878s78dnrm.fsf@linux.intel.com>
+ <20210302183032.GA3049@ubuntu>
+ <20210307151920.GR472138@tassilo.jf.intel.com>
+ <20210307164520.GA16296@ubuntu>
+ <20210307172540.GS472138@tassilo.jf.intel.com>
+ <20210307180541.GA17108@ubuntu>
+ <20210307224927.GT472138@tassilo.jf.intel.com>
+ <20210309184054.GA3058@ubuntu>
 MIME-Version: 1.0
-Content-Type: text/plain
-Date:   Thu, 11 Mar 2021 17:05:06 +0000
-Message-ID: <1884195.1615482306@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210309184054.GA3058@ubuntu>
+X-Provags-ID: V03:K1:G8f/cmLbzHC0nvOAJdH8LHg1kBQt5faDFzmpqz5385toUzzE7T/
+ aBAqokU4PkqDSQJV80GvLHFPwvw5izfUOdKZo0dRxlGYKGeLzprDF4za3AuKGiSftYOsWZA
+ miE6mjre9ithdQuNaeNBsIShWd524U0NwGLtlI/0nLPgFY3Gnem7CNFokvucxf3g7qGtR3L
+ dYo6zcVtd9Nhoy9g6b9tA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:IuvjmF4wvE8=:k+Np5YEJ/gTxWhv5RAx2aR
+ Naxj9IijaZ8D19fjm+4yscaHdBgu7pWkS0syoMyl5PgbGlKIHME1MWaLDyHw+nTW5ev4o28gM
+ n82pmgZHDVYWbpfGjmWnQ31+Mej/j868cvItrSX00RjPyaCpDcRbzJ3K+rOcjtQnGlGcrA/qs
+ HF1X+Yo9P7S4UsSvO9p9CKACZVZLqdzSrXJ5mDZ+gKxLu9IzN4bd8NvVoAOSz6Bo/ZDfav5pP
+ 7KJLAH0fA9FqQF4lU+r4LEnMU+3cJL01dswzOfE4LOOlZitGV830gVLIzKZ4zrw6Sm/Sb11Dz
+ 5p/AJbOWpeiuIFw9aByBtBhIQq/pTCxQNaj3Ex9eP2RlUCQXAe4Q6BwljSxyTcrRsMKgijXoL
+ Qa634MLCQLMjBuuzoLgiZlHRN+nqmzw6aNw32B+CS1GIXD8yOye3v4Bu9azwDeM4uwY0kn2Mo
+ dOVF7vKPAc7rU/tVFds+vkBP5bxemL7pU/YVEHZgxB1GXXR1IDfYL6ku7kpNzlnc+Bw0f7qiD
+ 0BELxF7+QUvGlepuAFeUO5AO257g4cTKcTK1n6FmQ6rg4TQkMwMtt9GfZWWKfrSLng6h4ICQ9
+ TiSeezx3n/+kze3B9lSg4zQv2SumZB2qOIEn649sZUMFJXfcSRVL3cb2mYpYv7oMjde6z5a0Z
+ 42Y+SuykritmMsZhHreEx0fSuRr54R00t2sQd7kC9YblMm2Yy2mKLLFRvAQRWl0nKeMlsfJcu
+ 9HkF6CgCtD68r1MU2s0bK+FV3cWvICtDu/6hMHkS0DmsWgo7ZX/zsmhtfG/duSyluefLHUGAM
+ HwJwt1O/E8L0NihOxV8aNOfKusr6CnHZ2tfnvoJu/lHuuVuMBVqD8m37xgUI7jWbDe1td8OQC
+ DILVp6PlvjR8m/sRveeg==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi,
 
-Hi Linus,
+On Tue, Mar 09, 2021 at 07:40:54PM +0100, John Wood wrote:
+> On Sun, Mar 07, 2021 at 02:49:27PM -0800, Andi Kleen wrote:
+>
+> > So I think it needs more work on the user space side for most usages.
+>
+> Anyway, in the case that the supervisor is init then the system will pan=
+ic. So,
+> I think that we can add a prctl to avoid kill the parent task (the task =
+that
+> exec) and only block new fork system calls from this task. When this boo=
+lean is
+> set, any parent task that is involved in the attack will not be killed. =
+In this
+> case, any following forks will be blocked. This way the system will not =
+crash.
 
-Here's a set of patches from Eric Snowberg[1] that add support for
-EFI_CERT_X509_GUID entries in the dbx and mokx UEFI tables (such entries
-cause matching certificates to be rejected).  These are currently ignored
-and only the hash entries are made use of.  Additionally Eric included his
-patches to allow such certificates to be preloaded.
+Another proposal that I think suits better:
 
-These patches deal with CVE-2020-26541.
+When a brute force attack is detected through the fork or execve system ca=
+ll,
+all the tasks involved in the attack will be killed with the exception of =
+the
+init task (task with pid equal to zero). Now, and only if the init task is
+involved in the attack, block the fork system call from the init process d=
+uring
+a user defined time (using a sysctl attribute). This way the brute force a=
+ttack
+is mitigated and the system does not panic.
 
-To quote Eric:
+I think that this is a better solution than the other one since this is a =
+per
+system solution. And I believe that with a default value for the blocking =
+time
+(sysctl attribute) could be useful in a generic way (for most usages).
 
-	This is the fifth patch series for adding support for
-	EFI_CERT_X509_GUID entries [2].  It has been expanded to not only
-	include dbx entries but also entries in the mokx.  Additionally my
-	series to preload these certificate [3] has also been included.
+The proposal using prctl will need more actions from userspace and it is n=
+ot a
+generic one due to it is a per process solution.
 
-	This series is based on v5.11-rc4.
+> What do you think?
 
-Notes:
-
- (*) These patches fix a security loophole rather than actual fixing kernel
-     breakage, so they could theoretically wait for the next merge window
-     if you prefer.
-
- (*) Patch 3 adds the extract-cert target a second time.  I think make
-     should just handle this, though it could be better to add a config
-     option specifically for building that program (it's used by multiple
-     options).
-
-Changes:
- - Changed Jarkko's acks to his kernel.org address.
-
-ver #3:
- - Rolled in changes from Eric to fix conditional building issues[7].
-
-ver #2:
- - Rolled in a fix to the second patch to include certs/common.h in
-   certs/common.c[6].
-
-ver #1:
- - I've modified the first patch in the series to fix a configuration
-   problem[4][5], to move the added functions to a more logical place
-   within thefile and to add kerneldoc comments.
-
-Link: https://lore.kernel.org/r/20210122181054.32635-1-eric.snowberg@oracle.com [1]
-Link: https://patchwork.kernel.org/project/linux-security-module/patch/20200916004927.64276-1-eric.snowberg@oracle.com/ [2]
-Link: https://lore.kernel.org/patchwork/cover/1315485/ [3]
-Link: https://lore.kernel.org/r/bc2c24e3-ed68-2521-0bf4-a1f6be4a895d@infradead.org/ [4]
-Link: https://lore.kernel.org/r/20210225125638.1841436-1-arnd@kernel.org/ [5]
-Link: https://lore.kernel.org/r/EDA280F9-F72D-4181-93C7-CDBE95976FF7@oracle.com/ [6]
-Link: https://lore.kernel.org/r/161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/161433310139.902181.11787442834918634133.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/161529604216.163428.4905283330048991183.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/20210304175030.184131-1-eric.snowberg@oracle.com/ [7]
-
-David
----
-The following changes since commit 8f0bfc25c907f38e7f9dc498e8f43000d77327ef:
-
-  watch_queue: rectify kernel-doc for init_watch() (2021-01-26 11:16:34 +0000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/keys-cve-2020-26541-v3
-
-for you to fetch changes up to ebd9c2ae369a45bdd9f8615484db09be58fc242b:
-
-  integrity: Load mokx variables into the blacklist keyring (2021-03-11 16:34:48 +0000)
-
-----------------------------------------------------------------
-Fix CVE-2020-26541
-
-----------------------------------------------------------------
-Eric Snowberg (4):
-      certs: Add EFI_CERT_X509_GUID support for dbx entries
-      certs: Move load_system_certificate_list to a common function
-      certs: Add ability to preload revocation certs
-      integrity: Load mokx variables into the blacklist keyring
-
- certs/Kconfig                                      | 17 ++++++
- certs/Makefile                                     | 21 ++++++-
- certs/blacklist.c                                  | 64 ++++++++++++++++++++++
- certs/blacklist.h                                  |  2 +
- certs/common.c                                     | 57 +++++++++++++++++++
- certs/common.h                                     |  9 +++
- certs/revocation_certificates.S                    | 21 +++++++
- certs/system_keyring.c                             | 55 +++----------------
- include/keys/system_keyring.h                      | 15 +++++
- scripts/Makefile                                   |  1 +
- .../integrity/platform_certs/keyring_handler.c     | 11 ++++
- security/integrity/platform_certs/load_uefi.c      | 20 ++++++-
- 12 files changed, 242 insertions(+), 51 deletions(-)
- create mode 100644 certs/common.c
- create mode 100644 certs/common.h
- create mode 100644 certs/revocation_certificates.S
-
+Thanks,
+John Wood
