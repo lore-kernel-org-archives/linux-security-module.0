@@ -2,144 +2,238 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD99C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 22:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68D7C433E6
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 23:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B695D64F6B
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 22:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A740864F6A
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 23:54:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235591AbhCLWfS (ORCPT
+        id S235694AbhCLXyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Mar 2021 17:35:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235585AbhCLWfE (ORCPT
+        Fri, 12 Mar 2021 18:54:14 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55970 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235897AbhCLXx7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Mar 2021 17:35:04 -0500
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE012C061574;
-        Fri, 12 Mar 2021 14:35:03 -0800 (PST)
-Received: by mail-ej1-x629.google.com with SMTP id mm21so56228445ejb.12;
-        Fri, 12 Mar 2021 14:35:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XWpIBx1l9eSZdSwA4taVa5NCupfCLbCXfPtWL5IZLkU=;
-        b=H/uOGulMLF9lC+6AmvRl8HfVRAJIZoI+nJpcEA6Qxcex/nog4hUkkIqY8jd/AuQH25
-         RMSsG6xzDdSw/maF9GCVEc12UthelIpUj3WY0xI5X8u5JjizWidTmzWPQsSMXEJX8dZi
-         gmuX7dk1Ks32wmkHLPBoPLIAk9IBuYZc4iNqmn7P/hiYu0+7v/ilkEBL9BNjcJaLB3eR
-         VJ9UwR1gJ33ii05u8GaHuanai3WCUBkdz+d2IyZEjCu2tUEkSpti/cKkcgcKB5v05z2A
-         oO+aeLSPK5FRyWVtj0v49RXOKn/buSv9+JpUN0HnnUHjv+P2hujYz31qhkggkUVj/6us
-         E5rQ==
+        Fri, 12 Mar 2021 18:53:59 -0500
+Received: from mail-wr1-f72.google.com ([209.85.221.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <dimitri.ledkov@canonical.com>)
+        id 1lKrbR-000771-Qn
+        for linux-security-module@vger.kernel.org; Fri, 12 Mar 2021 23:53:57 +0000
+Received: by mail-wr1-f72.google.com with SMTP id z6so11829746wrh.11
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Mar 2021 15:53:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XWpIBx1l9eSZdSwA4taVa5NCupfCLbCXfPtWL5IZLkU=;
-        b=mI1cwLaU6LLsVI1H3slvJP+peSi1QbMij0PIAtC2oQgT3euANE/UFzSHSXf6Fl59Vi
-         MY5m3PDgNe2bsVf5PWhVoLGYitflLcpMJ8AZ0MJaGnzPDfSgeIYTPiZippHRD7qukDy3
-         0PATIutAxufh5AjZ/zqUSxycax108f5obkaV7bUI3eYCGg6rRvmn5wi3FJLdpMSPoJqT
-         Vor9pk5012u/tvqR2e7mYoMS3cHU27Vj9C21yUZvQ9BjMHkqGSIfFFZzMp2u4cUT9OyC
-         o//ApES4TSNW4pxyS8WuCwMQag9DJnNR3YOOQ49JrvjIDHydBKtBhKZnEdRCiBQ+ugyK
-         /YmA==
-X-Gm-Message-State: AOAM530Hja/MW5XKCJ72IG/xWpBlAEyDsxQZ6eTf7vYp4Wiysb2uHcVs
-        ySdbQ2q2Wh3jgX61SxWQYzYLRlDZXNiKz3AdR73zb23D
-X-Google-Smtp-Source: ABdhPJy17V0HTw4HcJfBA2lUUw2Z9yxw0+4VblM4Gn8m2qFT3INS8U0nmvAjhGpuxnJ14jdpOwwvOIfyq2dv2awnaJ4=
-X-Received: by 2002:a17:906:18aa:: with SMTP id c10mr10993588ejf.248.1615588502425;
- Fri, 12 Mar 2021 14:35:02 -0800 (PST)
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to;
+        bh=7ZCZm1oAiUrgwSQnZnDLOJiP4+DsfLQzqupcIwXbELU=;
+        b=kg4WPn/FxJLRagzumrHXAcHs2LAdJlAMqbtEmKbQHsjX+Rj4u61dtOLsixSimIAl/r
+         TUvcQ3NkwFsyFb9EseAvYnzNLCzdld88fO02vVUML7ez6VF8h0Z+lpQgBBTbm/z/iVVJ
+         KYZXAk5k5FdROVIwklfVAII7e9JwFic5D/XbL5/o1gYklaisTBK0HXC/8pAkFTZyqcFc
+         nylfpqW4mD/AwNFQSA2Ybg2NPO7b9HEyHPkn6x9C7dQNpEsfpvLEDtEiMsnkdFkY2yXM
+         09ptq0mXtkbUmNjMs6Iz46YkPAxbg3+6x+SR9vM4OdfNdN6BqydaSiskhXDvuxTBkhdN
+         IZCA==
+X-Gm-Message-State: AOAM531Ro22gA3MsGcHiwdivDSgqA2zhl+cCgDNykXuaDZPGPB9pyLaX
+        qvGsBg8Me6zIjd0ISqE4CaQUV/VhD4iss812NQAoGwUU6zgMx8a6koh4yNHQD8irTwk1Ko/GSu8
+        yLf9tRLPkl8fd43TR7UHIRIbROWkTM3BeIoMESsZRHVii9cq7wjjxHQ==
+X-Received: by 2002:a5d:6602:: with SMTP id n2mr16545574wru.262.1615593237075;
+        Fri, 12 Mar 2021 15:53:57 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwGXE6jQhAZ+V//927u6nMp5SR8npIGGiyqbB6+rvIDzIn2QXmFdXRd+GDjto+AigW+B+V9eQ==
+X-Received: by 2002:a5d:6602:: with SMTP id n2mr16545559wru.262.1615593236796;
+        Fri, 12 Mar 2021 15:53:56 -0800 (PST)
+Received: from ?IPv6:2a01:4b00:85fd:d700:32b0:795:72f:7832? ([2a01:4b00:85fd:d700:32b0:795:72f:7832])
+        by smtp.gmail.com with ESMTPSA id n6sm11304469wrw.63.2021.03.12.15.53.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Mar 2021 15:53:56 -0800 (PST)
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
+ <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
+ <4b275a33-28ac-78c2-e075-ea2eda4f13a8@canonical.com>
+ <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
+From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+Subject: Re: [PATCH 4/4] integrity: Load mokx variables into the blacklist
+ keyring
+Message-ID: <b10f51dc-b9d7-e84d-3a52-438ebd358a7d@canonical.com>
+Date:   Fri, 12 Mar 2021 23:53:53 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-References: <CAN-5tyGuV-gs0KzVbKSj42ZMx553zy9wOfVb1SoHoE-WCoN1_w@mail.gmail.com>
- <20210227033755.24460-1-olga.kornievskaia@gmail.com> <CAFX2Jfk--KwkAss1gqTPnQt-bKvUUapNdHbuicu=m+jOtjrMyQ@mail.gmail.com>
- <f8f5323c-cdfd-92e8-b359-43caaf9d7490@schaufler-ca.com> <CAHC9VhR=+uwN8U17JhYWKcXSc9=ExCrG4O9-y+DPJg6xZ=WoYA@mail.gmail.com>
- <CAFX2JfnT49o-CkaAE3=c0KW9SDS1U+scP0RD++nmWwyKoBDWkA@mail.gmail.com> <CAHC9VhQNp-GQ6SMABNdN00RcDz30Os5SK217W-5swS8quakxPA@mail.gmail.com>
-In-Reply-To: <CAHC9VhQNp-GQ6SMABNdN00RcDz30Os5SK217W-5swS8quakxPA@mail.gmail.com>
-From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
-Date:   Fri, 12 Mar 2021 17:34:51 -0500
-Message-ID: <CAN-5tyG95bL8vbkG5B9OmAAXremJ-X5z09f+0ekLyigzibsZ5A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] [security] Add new hook to compare new mount to an
- existing mount
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 12, 2021 at 4:55 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Fri, Mar 12, 2021 at 10:45 AM Anna Schumaker
-> <anna.schumaker@netapp.com> wrote:
-> > On Thu, Mar 4, 2021 at 8:34 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > On Tue, Mar 2, 2021 at 10:53 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > > > On 3/2/2021 10:20 AM, Anna Schumaker wrote:
-> > > > > Hi Casey,
-> > > > >
-> > > > > On Fri, Feb 26, 2021 at 10:40 PM Olga Kornievskaia
-> > > > > <olga.kornievskaia@gmail.com> wrote:
-> > > > >> From: Olga Kornievskaia <kolga@netapp.com>
-> > > > >>
-> > > > >> Add a new hook that takes an existing super block and a new mount
-> > > > >> with new options and determines if new options confict with an
-> > > > >> existing mount or not.
-> > > > >>
-> > > > >> A filesystem can use this new hook to determine if it can share
-> > > > >> the an existing superblock with a new superblock for the new mount.
-> > > > >>
-> > > > >> Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
-> > > > > Do you have any other thoughts on this patch? I'm also wondering how
-> > > > > you want to handle sending it upstream.
-> > > >
-> > > > James Morris is the maintainer for the security sub-system,
-> > > > so you'll want to send this through him. He will want you to
-> > > > have an ACK from Paul Moore, who is the SELinux maintainer.
-> > >
-> > > In the past I've pulled patches such as this (new LSM hook, with only
-> > > a SELinux implementation of the new hook) in via the selinux/next tree
-> > > after the other LSMs have ACK'd the new hook.  This helps limit merge
-> > > problems with other SELinux changes and allows us (the SELinux folks)
-> > > to include it in the ongoing testing that we do during the -rcX
-> > > releases.
-> > >
-> > > So Anna, if you or anyone else on the NFS side of the house want to
-> > > add your ACKs/REVIEWs/etc. please do so as I don't like merging
-> > > patches that cross subsystem boundaries without having all the
-> > > associated ACKs.  Casey, James, and other LSM folks please do the
-> > > same.
-> >
-> > Sure:
-> > Acked-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
-> >
-> > Are you also going to take patch 3/3 that uses the new hook, or should
-> > that go through the NFS tree? Patch 2/3 is a cleanup that can go
-> > through the NFS tree.
->
-> Generally when patches are posted as patchsets I would apply the whole
-> patchset assuming they patches were all good, however it does seem
-> like patch 2/3 is not strictly related to the other two?  That said,
-> as long as your ACK applies to all three patches in the patchset I
-> have no problem applying all of them to the selinux/next tree once
-> some of the other LSM maintainers provide their ACKs (while there may
-> only a SELinux implementation of the hook at the moment, we need to
-> make sure the other LSMs are okay with the basic hook concept).
->
-> Also, did the v4 posting only include patch 1/3?  I see v3 postings
-> for the other two patches, but the only v4 patch I see is 1/3 ... ?
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT
+Content-Type: multipart/mixed; boundary="8zzh5UaugWrxeINg04AAMy3u0zIVsWadb";
+ protected-headers="v1"
+From: Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: David Howells <dhowells@redhat.com>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>, =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=
+ <mic@digikod.net>, keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-ID: <b10f51dc-b9d7-e84d-3a52-438ebd358a7d@canonical.com>
+Subject: Re: [PATCH 4/4] integrity: Load mokx variables into the blacklist
+ keyring
+References: <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
+ <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
+ <4b275a33-28ac-78c2-e075-ea2eda4f13a8@canonical.com>
+ <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
+In-Reply-To: <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
 
-I didn't not repost patches that didn't change.
+--8zzh5UaugWrxeINg04AAMy3u0zIVsWadb
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
->
-> --
-> paul moore
-> www.paul-moore.com
+On 12/03/2021 21:49, Eric Snowberg wrote:
+>=20
+>> On Mar 12, 2021, at 11:39 AM, Dimitri John Ledkov <dimitri.ledkov@cano=
+nical.com> wrote:
+>>
+>> On 25/02/2021 20:59, David Howells wrote:
+>>> From: Eric Snowberg <eric.snowberg@oracle.com>
+>>>
+>>> During boot the Secure Boot Forbidden Signature Database, dbx,
+>>> is loaded into the blacklist keyring.  Systems booted with shim
+>>> have an equivalent Forbidden Signature Database called mokx.
+>>> Currently mokx is only used by shim and grub, the contents are
+>>> ignored by the kernel.
+>>>
+>>> Add the ability to load mokx into the blacklist keyring during boot.
+>>>
+>>> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+>>> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>=
+
+>>> Signed-off-by: David Howells <dhowells@redhat.com>
+>>> cc: Jarkko Sakkinen <jarkko@kernel.org>
+>>> Link: https://lore.kernel.org/r/20210122181054.32635-5-eric.snowberg@=
+oracle.com/ # v5
+>>> Link: https://lore.kernel.org/r/c33c8e3839a41e9654f41cc92c7231104931b=
+1d7.camel@HansenPartnership.com/
+>>> ---
+>>>
+>>> security/integrity/platform_certs/load_uefi.c |   20 ++++++++++++++++=
+++--
+>>> 1 file changed, 18 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/security/integrity/platform_certs/load_uefi.c b/security=
+/integrity/platform_certs/load_uefi.c
+>>> index ee4b4c666854..f290f78c3f30 100644
+>>> --- a/security/integrity/platform_certs/load_uefi.c
+>>> +++ b/security/integrity/platform_certs/load_uefi.c
+>>> @@ -132,8 +132,9 @@ static int __init load_moklist_certs(void)
+>>> static int __init load_uefi_certs(void)
+>>> {
+>>> 	efi_guid_t secure_var =3D EFI_IMAGE_SECURITY_DATABASE_GUID;
+>>> -	void *db =3D NULL, *dbx =3D NULL;
+>>> -	unsigned long dbsize =3D 0, dbxsize =3D 0;
+>>> +	efi_guid_t mok_var =3D EFI_SHIM_LOCK_GUID;
+>>> +	void *db =3D NULL, *dbx =3D NULL, *mokx =3D NULL;
+>>> +	unsigned long dbsize =3D 0, dbxsize =3D 0, mokxsize =3D 0;
+>>> 	efi_status_t status;
+>>> 	int rc =3D 0;
+>>>
+>>> @@ -175,6 +176,21 @@ static int __init load_uefi_certs(void)
+>>> 		kfree(dbx);
+>>> 	}
+>>>
+>>> +	mokx =3D get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status)=
+;
+>>> +	if (!mokx) {
+>>> +		if (status =3D=3D EFI_NOT_FOUND)
+>>> +			pr_debug("mokx variable wasn't found\n");
+>>> +		else
+>>> +			pr_info("Couldn't get mokx list\n");
+>>> +	} else {
+>>> +		rc =3D parse_efi_signature_list("UEFI:MokListXRT",
+>>> +					      mokx, mokxsize,
+>>> +					      get_handler_for_dbx);
+>>> +		if (rc)
+>>> +			pr_err("Couldn't parse mokx signatures %d\n", rc);
+>>> +		kfree(mokx);
+>>> +	}
+>>> +
+>>
+>>
+>> My preference would be if the above hunk was moved into the
+>> load_moklist_certs() function which is called just below. Such that
+>> loading of MokListRT & MOkListXRT are done next to each other.
+>>
+>> And also implement loading the same way it is done for MokListRT -
+>> specifically via the EFI MOKvar config table & then via a variable.
+>>
+>> See 726bd8965a5f112d9601f7ce68effa1e46e02bf2 otherwise large MokListXR=
+T
+>> will fail to parse.
+>=20
+> Is this support available from shim now?  Previously I thought only
+> MOK could be loaded from the config table, not MOKx.
+>=20
+
+It is about to become available across all distributions with the next
+shim as everyone is about to ship SBAT capable shims.
+
+=46rom my system with the next shim & 5.10 kernel I have:
+
+$ ls /sys/firmware/efi/mok-variables/
+MokIgnoreDB  MokListRT  MokListXRT  MokSBStateRT  SbatRT
+
+It's not just a single Mok variable, but _all_ mok variables are
+available from the mok-table that are used to determine mok state.
+Including whether or not db should be ignored, whether or not signature
+verification is turned off, and what are the SBAT generation revocations
+are, in addition to MokListRT & MokListXRT.
+
+For example, kernel could gain further functionality to honor the user
+choices and disable loading db controlled by MokIgnoreDB especially
+since shim chooses to not consider db certificates & hashes as trust-wort=
+hy.
+
+Regards,
+
+Dimitri.
+
+
+--8zzh5UaugWrxeINg04AAMy3u0zIVsWadb--
+
+--gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE7iQKBSojGtiSWEHXm47ISdXvcO0FAmBL/xIACgkQm47ISdXv
+cO1Hew/+JJxsy8gCfVJE1ODcQKECvIstvSuJGFnmsIsqjZP5AnvmtteKUpO2JIO9
+ASLPAJOmRbBh+y7at6D8g5fi/T1zsp9By+T+yk+XzmzKwdIiuQ9IzcAF8QDsXnro
+N06N77bXnRNVaLxx0K4/ASLqLWru8S4S3Y0PbHSjd3k9DmYC73sXlMTgjWiNHToU
+q+2Ykb94Iz1nKPCl8Z6J7qhL1oFU1BXesz7ZKcXaEdRwDvmHlVfRex8SU5ggYqHH
+bPZ23qS3SU/Bh1ytTpGkSMTZmkaL2Cg6x9m4chKdZ1c9YTdv8yZjQtAgaWjCjX92
+7Y8szmvsmBCntiwz9YdTQ5T54cJXZCc+LGAWEIa2EALQZK1ub4NdDEPTrlkd4Ny0
+fTKfxbyxrWL/+pB9jiG8Q7+U9cpGJ7Fa/hfS0t07UGqtmW5WCgyjlhUKVMMsHum4
+XbbXt/K8s8E9dRBxEN7tZtwOs97tkvnzGFhsVgAVz8LjG3XoY2qVRd48YbFk6kBy
+4EKgJ6QpktuGPkfEc5ijtGNGMU+iYTcQZN13e57SGvcwDnINaBxfh/J4nDgmZAJ/
+Z5yDqgUBu53UBmakzpyilYjMALWwacIt63s3hBWvl0+FcsEyldv1em2zSceShKz5
+feaYEeDFROD9c8SHwy7oAi4lKKzUaqoLvkn25PSJxN/Jkm1ZY5M=
+=oaZ7
+-----END PGP SIGNATURE-----
+
+--gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT--
