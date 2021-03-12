@@ -2,106 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE96C433E0
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 17:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E95C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 18:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5FCB164F2C
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 17:56:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8582764F6A
+	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 18:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232553AbhCLRzm (ORCPT
+        id S233679AbhCLSjt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Mar 2021 12:55:42 -0500
-Received: from mout.gmx.net ([212.227.17.22]:46415 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232229AbhCLRzT (ORCPT
+        Fri, 12 Mar 2021 13:39:49 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50206 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233633AbhCLSje (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Mar 2021 12:55:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1615571687;
-        bh=5zvDdlBOTpGmg8SYWvlilFo6X3L3cFtO5aKa0CwJZc4=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=H2qPS5OMh+GAQjEPyXw7WHk3to0jYJ7sDl4tsYsXBZIWamCr2BW3Qrbg+JHG7GLpW
-         KzhLxagtJzjy1tyniaT4eP/Usxbgx9kB+XdCopLHZovz2yHUieSsG/4+p9nv1FV800
-         7A628qswk5DAsHm7U/eRWYrCcxiQIVEVoFFUzPj0=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.229.153]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MxUnp-1leElK1mH3-00xtL2; Fri, 12
- Mar 2021 18:54:47 +0100
-Date:   Fri, 12 Mar 2021 18:54:44 +0100
-From:   John Wood <john.wood@gmx.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v5 7/8] Documentation: Add documentation for the Brute LSM
-Message-ID: <20210312175444.GC3103@ubuntu>
-References: <20210227153013.6747-8-john.wood@gmx.com>
- <878s78dnrm.fsf@linux.intel.com>
- <20210302183032.GA3049@ubuntu>
- <20210307151920.GR472138@tassilo.jf.intel.com>
- <20210307164520.GA16296@ubuntu>
- <20210307172540.GS472138@tassilo.jf.intel.com>
- <20210307180541.GA17108@ubuntu>
- <20210307224927.GT472138@tassilo.jf.intel.com>
- <20210309184054.GA3058@ubuntu>
- <20210311200517.GG203350@tassilo.jf.intel.com>
+        Fri, 12 Mar 2021 13:39:34 -0500
+Received: from mail-wr1-f72.google.com ([209.85.221.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <dimitri.ledkov@canonical.com>)
+        id 1lKmhB-00088y-Rp
+        for linux-security-module@vger.kernel.org; Fri, 12 Mar 2021 18:39:33 +0000
+Received: by mail-wr1-f72.google.com with SMTP id n17so11561687wrq.5
+        for <linux-security-module@vger.kernel.org>; Fri, 12 Mar 2021 10:39:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LrjNNl1HaKs81EwyUtlVbxVaHe5LD/KaCHpzeDYGj+o=;
+        b=HgvLoa+QB7/tQjc9orqcaTFFGJVlcYKjvQwkPUyyHLjerTq/b1KtyZwRrKMQ5wa5p3
+         cnyniLA0/2RyvKc8smncmgMFZULpDFwwuZnYtCBMWWivOpfZZCgehoJwxZOTYFdetshW
+         fSwynsXGNTFfqvZJVJhwcqk0D68jxyH31SwKfk2TG/HDlBX6knFqdXtNfXh+Rz6pxfYi
+         P6B5BG8Rh3LdjN6SKa6Rvvf/Xxit72V5bwwebaEUMjiKvbJkZMqf8GSehweGdPJNW7ZJ
+         81nOGPYDMEpDuHjM7QEmQAYa9fHJ+pZ85uCPv2TQwiUkG0+EZTEbo3es4a/odajbtSrh
+         2uKA==
+X-Gm-Message-State: AOAM5303bgfMPCUTLFh6Qz0Qg+9zlPf2QMBobwToQMI+KXns+cjsCyDL
+        n2KitPeDpuvx6U9JVU59ciAeb8xLOdzW2U2zLOG7xvxXV5ebHEt3LFXw2V9NaeCgd54t0yAPLMt
+        G+OmfdmivtcRNTdryTem5dZbJCyEBQ824tD3D04xtqld1N2j3D1AEjA==
+X-Received: by 2002:a1c:a745:: with SMTP id q66mr14496830wme.21.1615574372795;
+        Fri, 12 Mar 2021 10:39:32 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzh1ffwB1Uew4hafYvV0CTsLEim5/cOL5h+Fe/qbWWW0iWFNrKSI/8eqeeu4xEez9yaC1IRwQ==
+X-Received: by 2002:a1c:a745:: with SMTP id q66mr14496817wme.21.1615574372517;
+        Fri, 12 Mar 2021 10:39:32 -0800 (PST)
+Received: from ?IPv6:2a01:4b00:85fd:d700:32b0:795:72f:7832? ([2a01:4b00:85fd:d700:32b0:795:72f:7832])
+        by smtp.gmail.com with ESMTPSA id s23sm2959737wmc.35.2021.03.12.10.39.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Mar 2021 10:39:32 -0800 (PST)
+To:     David Howells <dhowells@redhat.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
+ <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
+From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
+Subject: Re: [PATCH 4/4] integrity: Load mokx variables into the blacklist
+ keyring
+Message-ID: <4b275a33-28ac-78c2-e075-ea2eda4f13a8@canonical.com>
+Date:   Fri, 12 Mar 2021 18:39:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210311200517.GG203350@tassilo.jf.intel.com>
-X-Provags-ID: V03:K1:SuNaC8l4ofMz5PeVWxAj2Ub9Iy1nxdyzxd1L6V/gtgj5gnFLD1S
- I5L/bUQtKOVdCBxKBO/ZP7Ncca+0qE8R3yw3fhaopP1rEuS5z8BzijroK8maIG7T6YhP+NZ
- z1VOvu+civtZqHxFIQLRLgTi7vErnDtFx9VwG5ckyMVuHs2NwPNZn2Te+26cCuctNXPpOCW
- 9tg918q9c3iomwA9F5b1A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:2g/OjCOku7o=:a+cdNEVUGAIPK9zpYFpOP9
- TCWcVVVEzGCwEteqlEZcE7eWU/SLIKQHwRiNlS/duxRoTowXyMbY2AbfxUpp7lEImTUiF8WvC
- Ccxpi0oKPnIVJF7ZyexplRm5MsO0HGkA275ksMn92E23nIwzLA+bXIzwwX3CUL3dOBfitpIq+
- cwOhS3UxNcIo8I8oUo+y2KXmOMef/sYHlNKZyyp+oWLcv1T2aHGQJHGU11JEDEXeowj5d18H4
- mkGAuCOCCtCaeiHoaAqr8enyrjp/K3O95QROMvycy1hjBzVRm5dux5b7bDNOGfXN0rahVjamD
- lA4NSYsuwX0DhXIwKdobgJOJ6JwRsu9EJHx9m5iwGvlY+eBNRKgLsuNQ1etPpJqGBDIcLMf1b
- TLALI1YKZaEciWdYO+gUv59qBXbctxwUBfPxvO4MKNJWfm9etplamNUI/xCl1MVs0n1d434h4
- x+BslsfjnmmcFtfB83/3nusuqtL0sDmOkzmPps/53CJw2XZPa0c5Ig6GyvVR99bBxtb823jcR
- ULVMMpVE4ogc0OIPhOpFygvVTIeXQ2HeIh+G2a1ncuPaQLMj4LfwNTBsPRQx/YqKYV3xdKmAz
- KMjQwau3Hn30MVTMR9NUAiihKug/crLomVAW2oM4OWdsbPbP9NlBleIEVNBKXtMPu+EFuEY+k
- 30SyxfjHNAk7HAeDi04qnrDt6Ph8NVmi0+lbq/OehAQeJ5OOKNa60YtzLVRQQxu7NXeid8Y/b
- HFIKdUCtfYW1cwDLiFHtHxtBQzKLxXZO0SJPgQG7vvCwcIEBx46/c6xhMC6snSlktztnS44OE
- MPyFUBi2P7FdyycZV+QxmZZB9SlbM1On+dXSO6/1Ltgp60vhRJozmQUyw2D92Izn4t9PafMja
- BvyOzBBZiOelJTgq7PSg==
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 11, 2021 at 12:05:17PM -0800, Andi Kleen wrote:
->
-> Okay but that means that the brute force attack can just continue
-> because the attacked daemon will be respawned?
->
-> You need some way to stop the respawning, otherwise the
-> mitigation doesn't work for daemons.
->
-I will work on your solution regarding respawned daemons (use wait*() to i=
-nform
-userspace that the offending processes killed by the mitigation exited due=
- to
-this mitigation -> then the supervisor can adopt their own policy).
+On 25/02/2021 20:59, David Howells wrote:
+> From: Eric Snowberg <eric.snowberg@oracle.com>
+> 
+> During boot the Secure Boot Forbidden Signature Database, dbx,
+> is loaded into the blacklist keyring.  Systems booted with shim
+> have an equivalent Forbidden Signature Database called mokx.
+> Currently mokx is only used by shim and grub, the contents are
+> ignored by the kernel.
+> 
+> Add the ability to load mokx into the blacklist keyring during boot.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Link: https://lore.kernel.org/r/20210122181054.32635-5-eric.snowberg@oracle.com/ # v5
+> Link: https://lore.kernel.org/r/c33c8e3839a41e9654f41cc92c7231104931b1d7.camel@HansenPartnership.com/
+> ---
+> 
+>  security/integrity/platform_certs/load_uefi.c |   20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
+> index ee4b4c666854..f290f78c3f30 100644
+> --- a/security/integrity/platform_certs/load_uefi.c
+> +++ b/security/integrity/platform_certs/load_uefi.c
+> @@ -132,8 +132,9 @@ static int __init load_moklist_certs(void)
+>  static int __init load_uefi_certs(void)
+>  {
+>  	efi_guid_t secure_var = EFI_IMAGE_SECURITY_DATABASE_GUID;
+> -	void *db = NULL, *dbx = NULL;
+> -	unsigned long dbsize = 0, dbxsize = 0;
+> +	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
+> +	void *db = NULL, *dbx = NULL, *mokx = NULL;
+> +	unsigned long dbsize = 0, dbxsize = 0, mokxsize = 0;
+>  	efi_status_t status;
+>  	int rc = 0;
+>  
+> @@ -175,6 +176,21 @@ static int __init load_uefi_certs(void)
+>  		kfree(dbx);
+>  	}
+>  
+> +	mokx = get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status);
+> +	if (!mokx) {
+> +		if (status == EFI_NOT_FOUND)
+> +			pr_debug("mokx variable wasn't found\n");
+> +		else
+> +			pr_info("Couldn't get mokx list\n");
+> +	} else {
+> +		rc = parse_efi_signature_list("UEFI:MokListXRT",
+> +					      mokx, mokxsize,
+> +					      get_handler_for_dbx);
+> +		if (rc)
+> +			pr_err("Couldn't parse mokx signatures %d\n", rc);
+> +		kfree(mokx);
+> +	}
+> +
 
->
-> -Andi
->
 
-Thank you very much,
-John Wood
+My preference would be if the above hunk was moved into the
+load_moklist_certs() function which is called just below. Such that
+loading of MokListRT & MOkListXRT are done next to each other.
+
+And also implement loading the same way it is done for MokListRT -
+specifically via the EFI MOKvar config table & then via a variable.
+
+See 726bd8965a5f112d9601f7ce68effa1e46e02bf2 otherwise large MokListXRT
+will fail to parse.
+
+>  	/* Load the MokListRT certs */
+>  	rc = load_moklist_certs();
+>  
+> 
+> 
+> 
+
