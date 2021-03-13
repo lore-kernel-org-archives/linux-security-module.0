@@ -2,238 +2,226 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68D7C433E6
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 23:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08F6C4332B
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Mar 2021 00:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A740864F6A
-	for <linux-security-module@archiver.kernel.org>; Fri, 12 Mar 2021 23:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C243C64F70
+	for <linux-security-module@archiver.kernel.org>; Sat, 13 Mar 2021 00:06:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235694AbhCLXyO (ORCPT
+        id S229465AbhCMAF6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 12 Mar 2021 18:54:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55970 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235897AbhCLXx7 (ORCPT
+        Fri, 12 Mar 2021 19:05:58 -0500
+Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:24261 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235918AbhCMAFm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 12 Mar 2021 18:53:59 -0500
-Received: from mail-wr1-f72.google.com ([209.85.221.72])
-        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <dimitri.ledkov@canonical.com>)
-        id 1lKrbR-000771-Qn
-        for linux-security-module@vger.kernel.org; Fri, 12 Mar 2021 23:53:57 +0000
-Received: by mail-wr1-f72.google.com with SMTP id z6so11829746wrh.11
-        for <linux-security-module@vger.kernel.org>; Fri, 12 Mar 2021 15:53:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to;
-        bh=7ZCZm1oAiUrgwSQnZnDLOJiP4+DsfLQzqupcIwXbELU=;
-        b=kg4WPn/FxJLRagzumrHXAcHs2LAdJlAMqbtEmKbQHsjX+Rj4u61dtOLsixSimIAl/r
-         TUvcQ3NkwFsyFb9EseAvYnzNLCzdld88fO02vVUML7ez6VF8h0Z+lpQgBBTbm/z/iVVJ
-         KYZXAk5k5FdROVIwklfVAII7e9JwFic5D/XbL5/o1gYklaisTBK0HXC/8pAkFTZyqcFc
-         nylfpqW4mD/AwNFQSA2Ybg2NPO7b9HEyHPkn6x9C7dQNpEsfpvLEDtEiMsnkdFkY2yXM
-         09ptq0mXtkbUmNjMs6Iz46YkPAxbg3+6x+SR9vM4OdfNdN6BqydaSiskhXDvuxTBkhdN
-         IZCA==
-X-Gm-Message-State: AOAM531Ro22gA3MsGcHiwdivDSgqA2zhl+cCgDNykXuaDZPGPB9pyLaX
-        qvGsBg8Me6zIjd0ISqE4CaQUV/VhD4iss812NQAoGwUU6zgMx8a6koh4yNHQD8irTwk1Ko/GSu8
-        yLf9tRLPkl8fd43TR7UHIRIbROWkTM3BeIoMESsZRHVii9cq7wjjxHQ==
-X-Received: by 2002:a5d:6602:: with SMTP id n2mr16545574wru.262.1615593237075;
-        Fri, 12 Mar 2021 15:53:57 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwGXE6jQhAZ+V//927u6nMp5SR8npIGGiyqbB6+rvIDzIn2QXmFdXRd+GDjto+AigW+B+V9eQ==
-X-Received: by 2002:a5d:6602:: with SMTP id n2mr16545559wru.262.1615593236796;
-        Fri, 12 Mar 2021 15:53:56 -0800 (PST)
-Received: from ?IPv6:2a01:4b00:85fd:d700:32b0:795:72f:7832? ([2a01:4b00:85fd:d700:32b0:795:72f:7832])
-        by smtp.gmail.com with ESMTPSA id n6sm11304469wrw.63.2021.03.12.15.53.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Mar 2021 15:53:56 -0800 (PST)
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
- <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
- <4b275a33-28ac-78c2-e075-ea2eda4f13a8@canonical.com>
- <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
-From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
-Subject: Re: [PATCH 4/4] integrity: Load mokx variables into the blacklist
- keyring
-Message-ID: <b10f51dc-b9d7-e84d-3a52-438ebd358a7d@canonical.com>
-Date:   Fri, 12 Mar 2021 23:53:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.1
+        Fri, 12 Mar 2021 19:05:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615593941;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mVXvmcYP1sSR9GWfD7PGzVWbpYUCA5Ac+5UF3mw/8Ks=;
+        b=en25UQwrJkeJku5zlYHghg+cRQDUgKlT1EQkPYv59oW0lRnGkTBYPO1lZ3gRyLAzfLRi+Y
+        TEVLWuy5mZh/vAgjSD8xBHPycXYa1eN/2EFxKpUmEXOazpYI8Gu0V/T+uOJfw3LVcsEEiB
+        dbsTJ7+c2MT61fH/gnBqBNHNeUtxGfQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-488-GopGBo6-M_m5rNeEHuJOdg-1; Fri, 12 Mar 2021 19:05:39 -0500
+X-MC-Unique: GopGBo6-M_m5rNeEHuJOdg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1783939382;
+        Sat, 13 Mar 2021 00:05:34 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-2.rdu2.redhat.com [10.10.114.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B94811F065;
+        Sat, 13 Mar 2021 00:05:29 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 49B3622054F; Fri, 12 Mar 2021 19:05:29 -0500 (EST)
+Date:   Fri, 12 Mar 2021 19:05:29 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Geoffrey Thomas <geofft@ldpreload.com>,
+        Mrunal Patel <mpatel@redhat.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Theodore Tso <tytso@mit.edu>, Alban Crequy <alban@kinvolk.io>,
+        Tycho Andersen <tycho@tycho.ws>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, smbarber@chromium.org,
+        Phil Estes <estesp@gmail.com>, Serge Hallyn <serge@hallyn.com>,
+        Kees Cook <keescook@chromium.org>,
+        Todd Kjos <tkjos@google.com>, Paul Moore <paul@paul-moore.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        containers@lists.linux-foundation.org,
+        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v6 02/40] fs: add id translation helpers
+Message-ID: <20210313000529.GA181317@redhat.com>
+References: <20210121131959.646623-1-christian.brauner@ubuntu.com>
+ <20210121131959.646623-3-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-In-Reply-To: <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210121131959.646623-3-christian.brauner@ubuntu.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT
-Content-Type: multipart/mixed; boundary="8zzh5UaugWrxeINg04AAMy3u0zIVsWadb";
- protected-headers="v1"
-From: Dimitri John Ledkov <dimitri.ledkov@canonical.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: David Howells <dhowells@redhat.com>,
- James Bottomley <James.Bottomley@HansenPartnership.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?=
- <mic@digikod.net>, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <b10f51dc-b9d7-e84d-3a52-438ebd358a7d@canonical.com>
-Subject: Re: [PATCH 4/4] integrity: Load mokx variables into the blacklist
- keyring
-References: <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
- <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
- <4b275a33-28ac-78c2-e075-ea2eda4f13a8@canonical.com>
- <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
-In-Reply-To: <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
+On Thu, Jan 21, 2021 at 02:19:21PM +0100, Christian Brauner wrote:
+> Add simple helpers to make it easy to map kuids into and from idmapped
+> mounts. We provide simple wrappers that filesystems can use to e.g.
+> initialize inodes similar to i_{uid,gid}_read() and i_{uid,gid}_write().
+> Accessing an inode through an idmapped mount maps the i_uid and i_gid of
+> the inode to the mount's user namespace. If the fsids are used to
+> initialize inodes they are unmapped according to the mount's user
+> namespace. Passing the initial user namespace to these helpers makes
+> them a nop and so any non-idmapped paths will not be impacted.
+> 
+> Link: https://lore.kernel.org/r/20210112220124.837960-9-christian.brauner@ubuntu.com
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+> /* v2 */
+> - Christoph Hellwig <hch@lst.de>:
+>   - Get rid of the ifdefs and the config option that hid idmapped mounts.
+> 
+> /* v3 */
+> unchanged
+> 
+> /* v4 */
+> - Serge Hallyn <serge@hallyn.com>:
+>   - Use "mnt_userns" to refer to a vfsmount's userns everywhere to make
+>     terminology consistent.
+> 
+> /* v5 */
+> unchanged
+> base-commit: 7c53f6b671f4aba70ff15e1b05148b10d58c2837
+> 
+> /* v6 */
+> unchanged
+> base-commit: 19c329f6808995b142b3966301f217c831e7cf31
+> ---
+>  include/linux/fs.h | 47 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 47 insertions(+)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index fd0b80e6361d..3165998e2294 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -40,6 +40,7 @@
+>  #include <linux/build_bug.h>
+>  #include <linux/stddef.h>
+>  #include <linux/mount.h>
+> +#include <linux/cred.h>
+>  
+>  #include <asm/byteorder.h>
+>  #include <uapi/linux/fs.h>
+> @@ -1573,6 +1574,52 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
+>  	inode->i_gid = make_kgid(inode->i_sb->s_user_ns, gid);
+>  }
+>  
+> +static inline kuid_t kuid_into_mnt(struct user_namespace *mnt_userns,
+> +				   kuid_t kuid)
+> +{
+> +	return make_kuid(mnt_userns, __kuid_val(kuid));
+> +}
+> +
 
---8zzh5UaugWrxeINg04AAMy3u0zIVsWadb
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Hi Christian,
 
-On 12/03/2021 21:49, Eric Snowberg wrote:
->=20
->> On Mar 12, 2021, at 11:39 AM, Dimitri John Ledkov <dimitri.ledkov@cano=
-nical.com> wrote:
->>
->> On 25/02/2021 20:59, David Howells wrote:
->>> From: Eric Snowberg <eric.snowberg@oracle.com>
->>>
->>> During boot the Secure Boot Forbidden Signature Database, dbx,
->>> is loaded into the blacklist keyring.  Systems booted with shim
->>> have an equivalent Forbidden Signature Database called mokx.
->>> Currently mokx is only used by shim and grub, the contents are
->>> ignored by the kernel.
->>>
->>> Add the ability to load mokx into the blacklist keyring during boot.
->>>
->>> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->>> Suggested-by: James Bottomley <James.Bottomley@HansenPartnership.com>=
+I am having little trouble w.r.t function names and trying to figure
+out whether they are mapping id down or up.
 
->>> Signed-off-by: David Howells <dhowells@redhat.com>
->>> cc: Jarkko Sakkinen <jarkko@kernel.org>
->>> Link: https://lore.kernel.org/r/20210122181054.32635-5-eric.snowberg@=
-oracle.com/ # v5
->>> Link: https://lore.kernel.org/r/c33c8e3839a41e9654f41cc92c7231104931b=
-1d7.camel@HansenPartnership.com/
->>> ---
->>>
->>> security/integrity/platform_certs/load_uefi.c |   20 ++++++++++++++++=
-++--
->>> 1 file changed, 18 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/security/integrity/platform_certs/load_uefi.c b/security=
-/integrity/platform_certs/load_uefi.c
->>> index ee4b4c666854..f290f78c3f30 100644
->>> --- a/security/integrity/platform_certs/load_uefi.c
->>> +++ b/security/integrity/platform_certs/load_uefi.c
->>> @@ -132,8 +132,9 @@ static int __init load_moklist_certs(void)
->>> static int __init load_uefi_certs(void)
->>> {
->>> 	efi_guid_t secure_var =3D EFI_IMAGE_SECURITY_DATABASE_GUID;
->>> -	void *db =3D NULL, *dbx =3D NULL;
->>> -	unsigned long dbsize =3D 0, dbxsize =3D 0;
->>> +	efi_guid_t mok_var =3D EFI_SHIM_LOCK_GUID;
->>> +	void *db =3D NULL, *dbx =3D NULL, *mokx =3D NULL;
->>> +	unsigned long dbsize =3D 0, dbxsize =3D 0, mokxsize =3D 0;
->>> 	efi_status_t status;
->>> 	int rc =3D 0;
->>>
->>> @@ -175,6 +176,21 @@ static int __init load_uefi_certs(void)
->>> 		kfree(dbx);
->>> 	}
->>>
->>> +	mokx =3D get_cert_list(L"MokListXRT", &mok_var, &mokxsize, &status)=
-;
->>> +	if (!mokx) {
->>> +		if (status =3D=3D EFI_NOT_FOUND)
->>> +			pr_debug("mokx variable wasn't found\n");
->>> +		else
->>> +			pr_info("Couldn't get mokx list\n");
->>> +	} else {
->>> +		rc =3D parse_efi_signature_list("UEFI:MokListXRT",
->>> +					      mokx, mokxsize,
->>> +					      get_handler_for_dbx);
->>> +		if (rc)
->>> +			pr_err("Couldn't parse mokx signatures %d\n", rc);
->>> +		kfree(mokx);
->>> +	}
->>> +
->>
->>
->> My preference would be if the above hunk was moved into the
->> load_moklist_certs() function which is called just below. Such that
->> loading of MokListRT & MOkListXRT are done next to each other.
->>
->> And also implement loading the same way it is done for MokListRT -
->> specifically via the EFI MOKvar config table & then via a variable.
->>
->> See 726bd8965a5f112d9601f7ce68effa1e46e02bf2 otherwise large MokListXR=
-T
->> will fail to parse.
->=20
-> Is this support available from shim now?  Previously I thought only
-> MOK could be loaded from the config table, not MOKx.
->=20
+For example, kuid_into_mnt() ultimately calls map_id_down(). That is,
+id visible inside user namespace is mapped to host
+(if observer is in init_user_ns, IIUC).
 
-It is about to become available across all distributions with the next
-shim as everyone is about to ship SBAT capable shims.
+But fsuid_into_mnt() ultimately calls map_id_up(). That's take a kuid
+and map it into the user_namespace.
 
-=46rom my system with the next shim & 5.10 kernel I have:
+So both the helpers end with into_mnt() but one maps id down and
+other maps id up. I found this confusing and was wondering how
+should I visualize it. So thought of asking you.
 
-$ ls /sys/firmware/efi/mok-variables/
-MokIgnoreDB  MokListRT  MokListXRT  MokSBStateRT  SbatRT
+Is this intentional or can naming be improved so that *_into_mnt()
+means one thing (Either map_id_up() or map_id_down()). And vice-a-versa
+for *_from_mnt().
 
-It's not just a single Mok variable, but _all_ mok variables are
-available from the mok-table that are used to determine mok state.
-Including whether or not db should be ignored, whether or not signature
-verification is turned off, and what are the SBAT generation revocations
-are, in addition to MokListRT & MokListXRT.
+Thanks
+Vivek
 
-For example, kernel could gain further functionality to honor the user
-choices and disable loading db controlled by MokIgnoreDB especially
-since shim chooses to not consider db certificates & hashes as trust-wort=
-hy.
+> +static inline kgid_t kgid_into_mnt(struct user_namespace *mnt_userns,
+> +				   kgid_t kgid)
+> +{
+> +	return make_kgid(mnt_userns, __kgid_val(kgid));
+> +}
+> +
+> +static inline kuid_t i_uid_into_mnt(struct user_namespace *mnt_userns,
+> +				    const struct inode *inode)
+> +{
+> +	return kuid_into_mnt(mnt_userns, inode->i_uid);
+> +}
+> +
+> +static inline kgid_t i_gid_into_mnt(struct user_namespace *mnt_userns,
+> +				    const struct inode *inode)
+> +{
+> +	return kgid_into_mnt(mnt_userns, inode->i_gid);
+> +}
+> +
+> +static inline kuid_t kuid_from_mnt(struct user_namespace *mnt_userns,
+> +				   kuid_t kuid)
+> +{
+> +	return KUIDT_INIT(from_kuid(mnt_userns, kuid));
+> +}
+> +
+> +static inline kgid_t kgid_from_mnt(struct user_namespace *mnt_userns,
+> +				   kgid_t kgid)
+> +{
+> +	return KGIDT_INIT(from_kgid(mnt_userns, kgid));
+> +}
+> +
+> +static inline kuid_t fsuid_into_mnt(struct user_namespace *mnt_userns)
+> +{
+> +	return kuid_from_mnt(mnt_userns, current_fsuid());
+> +}
+> +
+> +static inline kgid_t fsgid_into_mnt(struct user_namespace *mnt_userns)
+> +{
+> +	return kgid_from_mnt(mnt_userns, current_fsgid());
+> +}
+> +
+>  extern struct timespec64 current_time(struct inode *inode);
+>  
+>  /*
+> -- 
+> 2.30.0
+> 
 
-Regards,
-
-Dimitri.
-
-
---8zzh5UaugWrxeINg04AAMy3u0zIVsWadb--
-
---gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE7iQKBSojGtiSWEHXm47ISdXvcO0FAmBL/xIACgkQm47ISdXv
-cO1Hew/+JJxsy8gCfVJE1ODcQKECvIstvSuJGFnmsIsqjZP5AnvmtteKUpO2JIO9
-ASLPAJOmRbBh+y7at6D8g5fi/T1zsp9By+T+yk+XzmzKwdIiuQ9IzcAF8QDsXnro
-N06N77bXnRNVaLxx0K4/ASLqLWru8S4S3Y0PbHSjd3k9DmYC73sXlMTgjWiNHToU
-q+2Ykb94Iz1nKPCl8Z6J7qhL1oFU1BXesz7ZKcXaEdRwDvmHlVfRex8SU5ggYqHH
-bPZ23qS3SU/Bh1ytTpGkSMTZmkaL2Cg6x9m4chKdZ1c9YTdv8yZjQtAgaWjCjX92
-7Y8szmvsmBCntiwz9YdTQ5T54cJXZCc+LGAWEIa2EALQZK1ub4NdDEPTrlkd4Ny0
-fTKfxbyxrWL/+pB9jiG8Q7+U9cpGJ7Fa/hfS0t07UGqtmW5WCgyjlhUKVMMsHum4
-XbbXt/K8s8E9dRBxEN7tZtwOs97tkvnzGFhsVgAVz8LjG3XoY2qVRd48YbFk6kBy
-4EKgJ6QpktuGPkfEc5ijtGNGMU+iYTcQZN13e57SGvcwDnINaBxfh/J4nDgmZAJ/
-Z5yDqgUBu53UBmakzpyilYjMALWwacIt63s3hBWvl0+FcsEyldv1em2zSceShKz5
-feaYEeDFROD9c8SHwy7oAi4lKKzUaqoLvkn25PSJxN/Jkm1ZY5M=
-=oaZ7
------END PGP SIGNATURE-----
-
---gXb40WsqiDhPW5FJqKAHLdZ82XXr2FLWT--
