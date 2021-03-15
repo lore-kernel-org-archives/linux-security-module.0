@@ -2,146 +2,163 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDFCC433DB
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Mar 2021 13:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D53C433E9
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Mar 2021 15:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE8B64E31
-	for <linux-security-module@archiver.kernel.org>; Mon, 15 Mar 2021 13:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D4664ED2
+	for <linux-security-module@archiver.kernel.org>; Mon, 15 Mar 2021 15:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbhCONHx (ORCPT
+        id S230125AbhCOPbL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 15 Mar 2021 09:07:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33358 "EHLO
+        Mon, 15 Mar 2021 11:31:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229889AbhCONHh (ORCPT
+        with ESMTP id S231598AbhCOPbE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:07:37 -0400
-Received: from mail-qv1-xf2a.google.com (mail-qv1-xf2a.google.com [IPv6:2607:f8b0:4864:20::f2a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E75BC06174A
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Mar 2021 06:07:37 -0700 (PDT)
-Received: by mail-qv1-xf2a.google.com with SMTP id j17so7677327qvo.13
-        for <linux-security-module@vger.kernel.org>; Mon, 15 Mar 2021 06:07:37 -0700 (PDT)
+        Mon, 15 Mar 2021 11:31:04 -0400
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675C6C06174A;
+        Mon, 15 Mar 2021 08:31:04 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id c10so66866539ejx.9;
+        Mon, 15 Mar 2021 08:31:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IM3zY04AmOlCtvAVnSd9iG5x1ewD+6ByijIwRWgL5V8=;
-        b=BnYqxhM866S7OSAVje66mLcPnSbKq7XImiRkeGfZno3pjvUPnBR1MrMA6PinWYBy8M
-         sQFlHjlzpygxq21VMvPDvfuEwdyEwNqhlhFPJS7qUSJQzOEzQ7Ci0xafNzFFmVmWzc9f
-         fftSeKpcP7DJ4/SPdSpB5X1H/wCZwAFYJHD0cHhdBs6GMEVCw5XdluJhJ2twOeRlKsWo
-         6oLJXmXOnA/CyGjDKmRHpb0KjxJzb3wwMk0cDl/pv0Bq6Sgsr4MNNsxaffg3TxdXza01
-         OTCum00SOZT2gC+PZfH5cihdqejRaIbFRS9wFRZMIA5wN8uZo4a3s2EFyZysRWK/m8ew
-         c1hA==
+        bh=64X34bhEu2CD4Cj0a1kh10CwAhIg45vGeoEortJGqEI=;
+        b=pdeyMiPqUWXw0wj4NTdwpSsQuWE/eNpD+xq9PLRjaShfJOr4j8o4/Sw1ZI6JLIAnBw
+         caaaprG7KzEZYaTbQN+fN2Z2PelKUzf69fTjg69SGKIjB5VZeKQGzI4tcJmJUAbQSgr2
+         GsJHyrgO7dg7JKarzOHQUULOHth1hpdNBBqQAl2K+YXveqowqFiwUiXuCsm0EvFZayYj
+         kH1mMHLvYn0SnLvNCdiqfUD1cEIWJBc2gPv03bvhCH08ljRfBLKFab9IvZwswre2BynU
+         SQf8ypBxMhi9BDXlJ8rl0nJwjdek0SLUKc1D7a3PTarHw4e7tdofImRiTxHzMUcA55Zo
+         ODEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IM3zY04AmOlCtvAVnSd9iG5x1ewD+6ByijIwRWgL5V8=;
-        b=BM3P8VEMknclDhmFam9yt6tAa6kriuZQ+hb8v4S83xu750Ev30k2dlAbjeUlJj0yMj
-         qbNyt/xm5c6lzFNW009k8SGJ8Y5UQLRX4wmPZMaxXO7u5tkph0NG5Op8vx1vu1PRFEm8
-         EINeUcX/qLbwUzWuuEojmZpYCuWMB8BV7oz1FToiCRRjFz/VNW7AsyRC5IBdeWxf5na2
-         LCRyLkWTK3oinv+ZlMGZ0O4AEBhbEwgHBBAenYGxfX452eMnSeoa1pwoqmcC1/oPItQY
-         /0PsuqLF+BXHUhHbRwqcSfHf0as6+9/aGjWNw1v9Njb5LdalYScVf4Vg/XGU7UPQesD6
-         7PWg==
-X-Gm-Message-State: AOAM531Gui4LqYxNVAiwcSKpqZYUz8sbsS4ZcoB63WOgQ/UVuzF7T9ym
-        pGoMrvTewPbRWIa9f9MlxBtSCxiNwI4NduJohkkeGr+66qA=
-X-Google-Smtp-Source: ABdhPJwJbYDM4vf8RRkgFjAw/ezp5E66jTEphKKfCiWUo2N3D3fQbX/zuAV4uxWssANVFHhV8Z2wCW6vutN8X3C2YCU=
-X-Received: by 2002:a05:6214:326:: with SMTP id j6mr10679488qvu.13.1615813656317;
- Mon, 15 Mar 2021 06:07:36 -0700 (PDT)
+        bh=64X34bhEu2CD4Cj0a1kh10CwAhIg45vGeoEortJGqEI=;
+        b=iAIq0Rs+eQ6Z7OQUmj9qZW113snzvRf0yYdfH6YQuaB29sSSkUTmzF762I6q86GG/1
+         uoJPF7OYEOAfGBlT7Wt+HtnBqV4Ku6oVr7dHeDo7tn4e02NrflG6svHb8+0yEbLJ9paX
+         sYRvhV3ojCEeuohtQSRTk13Lcpq0PRsoqC+1eY//zdkRkDYWNbxSU1C27vSbVM3NhGB2
+         JRa3eSbdujZ0jZsipkbFerzJhaaYV9VQXAKFsflaOJ/7LeNLzAYDdWF5JkERSzvdBfwF
+         9/mU/z8C7swzz+PalgiyUdb192RKukOEf366n/gjvI4z6spxnnGe7/YYZnSSsk1TsmPU
+         Z2gQ==
+X-Gm-Message-State: AOAM530mphQFcZp7e4CEB41dib6149ZUoTxzSTK/MvjgcAwQ+4i8aAEW
+        Ciu8rIS0JZs2ZQMox4XrblzgulVftnl2jMz00PA=
+X-Google-Smtp-Source: ABdhPJxcge7lnTHMouIBxSQoPnrryLugp62QtIQuXmZVtKNqbqTHBdXvJvWz9OvlmUnTTs6CFORClbYDvG5PTEeIEd8=
+X-Received: by 2002:a17:906:b20b:: with SMTP id p11mr24674890ejz.0.1615822263078;
+ Mon, 15 Mar 2021 08:31:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <CACT4Y+YBXLi=quMEyBHtLO3-Ef6E3CAN7toFUdTFJWeH+5Y7kg@mail.gmail.com>
- <31c4e1863a561c47d38b8e547ec38a0a713bdadc.camel@linux.ibm.com>
-In-Reply-To: <31c4e1863a561c47d38b8e547ec38a0a713bdadc.camel@linux.ibm.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 15 Mar 2021 14:07:23 +0100
-Message-ID: <CACT4Y+b8cNr1zv=RFPLXf9vY==BSktM1vb9gOfcWyBEaojZ1-A@mail.gmail.com>
-Subject: Re: NULL deref in integrity_inode_get
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, d.kasatkin@samsung.com,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Eric Biggers <ebiggers@kernel.org>
+References: <CAN-5tyGuV-gs0KzVbKSj42ZMx553zy9wOfVb1SoHoE-WCoN1_w@mail.gmail.com>
+ <20210227033755.24460-1-olga.kornievskaia@gmail.com> <CAFX2Jfk--KwkAss1gqTPnQt-bKvUUapNdHbuicu=m+jOtjrMyQ@mail.gmail.com>
+ <f8f5323c-cdfd-92e8-b359-43caaf9d7490@schaufler-ca.com> <CAHC9VhR=+uwN8U17JhYWKcXSc9=ExCrG4O9-y+DPJg6xZ=WoYA@mail.gmail.com>
+ <CAFX2JfnT49o-CkaAE3=c0KW9SDS1U+scP0RD++nmWwyKoBDWkA@mail.gmail.com>
+ <CAHC9VhQNp-GQ6SMABNdN00RcDz30Os5SK217W-5swS8quakxPA@mail.gmail.com>
+ <CAN-5tyG95bL8vbkG5B9OmAAXremJ-X5z09f+0ekLyigzibsZ5A@mail.gmail.com> <CAHC9VhTwqt0TDEWV97GaM8B5m4qmEwo+BYXYDeMs2D1LtZzUFg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTwqt0TDEWV97GaM8B5m4qmEwo+BYXYDeMs2D1LtZzUFg@mail.gmail.com>
+From:   Olga Kornievskaia <olga.kornievskaia@gmail.com>
+Date:   Mon, 15 Mar 2021 11:30:51 -0400
+Message-ID: <CAN-5tyHdiuiOBX2bkZBGOTK-AMOccm27=qE-AZ_J9QQ00P91-Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] [security] Add new hook to compare new mount to an
+ existing mount
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 15, 2021 at 1:41 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Sun, Mar 14, 2021 at 9:44 PM Paul Moore <paul@paul-moore.com> wrote:
 >
-> Hi Dmitry,
+> On Fri, Mar 12, 2021 at 5:35 PM Olga Kornievskaia
+> <olga.kornievskaia@gmail.com> wrote:
+> > On Fri, Mar 12, 2021 at 4:55 PM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > On Fri, Mar 12, 2021 at 10:45 AM Anna Schumaker
+> > > <anna.schumaker@netapp.com> wrote:
+> > > > On Thu, Mar 4, 2021 at 8:34 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > > On Tue, Mar 2, 2021 at 10:53 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > > > On 3/2/2021 10:20 AM, Anna Schumaker wrote:
+> > > > > > > Hi Casey,
+> > > > > > >
+> > > > > > > On Fri, Feb 26, 2021 at 10:40 PM Olga Kornievskaia
+> > > > > > > <olga.kornievskaia@gmail.com> wrote:
+> > > > > > >> From: Olga Kornievskaia <kolga@netapp.com>
+> > > > > > >>
+> > > > > > >> Add a new hook that takes an existing super block and a new mount
+> > > > > > >> with new options and determines if new options confict with an
+> > > > > > >> existing mount or not.
+> > > > > > >>
+> > > > > > >> A filesystem can use this new hook to determine if it can share
+> > > > > > >> the an existing superblock with a new superblock for the new mount.
+> > > > > > >>
+> > > > > > >> Signed-off-by: Olga Kornievskaia <kolga@netapp.com>
+> > > > > > > Do you have any other thoughts on this patch? I'm also wondering how
+> > > > > > > you want to handle sending it upstream.
+> > > > > >
+> > > > > > James Morris is the maintainer for the security sub-system,
+> > > > > > so you'll want to send this through him. He will want you to
+> > > > > > have an ACK from Paul Moore, who is the SELinux maintainer.
+> > > > >
+> > > > > In the past I've pulled patches such as this (new LSM hook, with only
+> > > > > a SELinux implementation of the new hook) in via the selinux/next tree
+> > > > > after the other LSMs have ACK'd the new hook.  This helps limit merge
+> > > > > problems with other SELinux changes and allows us (the SELinux folks)
+> > > > > to include it in the ongoing testing that we do during the -rcX
+> > > > > releases.
+> > > > >
+> > > > > So Anna, if you or anyone else on the NFS side of the house want to
+> > > > > add your ACKs/REVIEWs/etc. please do so as I don't like merging
+> > > > > patches that cross subsystem boundaries without having all the
+> > > > > associated ACKs.  Casey, James, and other LSM folks please do the
+> > > > > same.
+> > > >
+> > > > Sure:
+> > > > Acked-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+> > > >
+> > > > Are you also going to take patch 3/3 that uses the new hook, or should
+> > > > that go through the NFS tree? Patch 2/3 is a cleanup that can go
+> > > > through the NFS tree.
+> > >
+> > > Generally when patches are posted as patchsets I would apply the whole
+> > > patchset assuming they patches were all good, however it does seem
+> > > like patch 2/3 is not strictly related to the other two?  That said,
+> > > as long as your ACK applies to all three patches in the patchset I
+> > > have no problem applying all of them to the selinux/next tree once
+> > > some of the other LSM maintainers provide their ACKs (while there may
+> > > only a SELinux implementation of the hook at the moment, we need to
+> > > make sure the other LSMs are okay with the basic hook concept).
+> > >
+> > > Also, did the v4 posting only include patch 1/3?  I see v3 postings
+> > > for the other two patches, but the only v4 patch I see is 1/3 ... ?
+> >
+> > I didn't not repost patches that didn't change.
 >
-> On Mon, 2021-03-15 at 11:58 +0100, Dmitry Vyukov wrote:
-> > Hi,
-> >
-> > I am trying to boot 5.12-rc3 with this config:
-> > https://github.com/google/syzkaller/blob/cc1cff8f1e1a585894796d6eae8c51eef98037e6/dashboard/config/linux/upstream-smack-kasan.config
-> >
-> > in qemu:
-> > qemu-system-x86_64       -enable-kvm     -machine q35,nvdimm -cpu
-> > max,migratable=off -smp 4       -m 4G,slots=4,maxmem=16G        -hda
-> > wheezy.img      -kernel arch/x86/boot/bzImage   -nographic -vga std
-> >  -soundhw all     -usb -usbdevice tablet  -bt hci -bt device:keyboard
-> >    -net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net
-> > nic,model=virtio-net-pci   -object
-> > memory-backend-file,id=pmem1,share=off,mem-path=/dev/zero,size=64M
-> >   -device nvdimm,id=nvdimm1,memdev=pmem1  -append "console=ttyS0
-> > root=/dev/sda earlyprintk=serial rodata=n oops=panic panic_on_warn=1
-> > panic=86400 lsm=smack numa=fake=2 nopcid dummy_hcd.num=8"   -pidfile
-> > vm_pid -m 2G -cpu host
-> >
-> > But it crashes on NULL deref in integrity_inode_get during boot:
-> >
-> > Run /sbin/init as init process
-> > BUG: kernel NULL pointer dereference, address: 000000000000001c
-> > #PF: supervisor read access in kernel mode
-> > #PF: error_code(0x0000) - not-present page
-> > PGD 0 P4D 0
-> > Oops: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.12.0-rc2+ #97
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> > rel-1.13.0-44-g88ab0c15525c-prebuilt.qemu.org 04/01/2014
-> > RIP: 0010:kmem_cache_alloc+0x2b/0x370 mm/slub.c:2920
-> > Code: 57 41 56 41 55 41 54 41 89 f4 55 48 89 fd 53 48 83 ec 10 44 8b
-> > 3d d9 1f 90 0b 65 48 8b 04 25 28 00 00 00 48 89 44 24 08 31 c0 <8b> 5f
-> > 1c 4cf
-> > RSP: 0000:ffffc9000032f9d8 EFLAGS: 00010246
-> > RAX: 0000000000000000 RBX: ffff888017fc4f00 RCX: 0000000000000000
-> > RDX: ffff888040220000 RSI: 0000000000000c40 RDI: 0000000000000000
-> > RBP: 0000000000000000 R08: 0000000000000000 R09: ffff888019263627
-> > R10: ffffffff83937cd1 R11: 0000000000000000 R12: 0000000000000c40
-> > R13: ffff888019263538 R14: 0000000000000000 R15: 0000000000ffffff
-> > FS:  0000000000000000(0000) GS:ffff88802d180000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000000000001c CR3: 000000000b48e000 CR4: 0000000000750ee0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > PKRU: 55555554
-> > Call Trace:
-> >  integrity_inode_get+0x47/0x260 security/integrity/iint.c:105
-> >  process_measurement+0x33d/0x17e0 security/integrity/ima/ima_main.c:237
-> >  ima_bprm_check+0xde/0x210 security/integrity/ima/ima_main.c:474
-> >  security_bprm_check+0x7d/0xa0 security/security.c:845
-> >  search_binary_handler fs/exec.c:1708 [inline]
-> >  exec_binprm fs/exec.c:1761 [inline]
-> >  bprm_execve fs/exec.c:1830 [inline]
-> >  bprm_execve+0x764/0x19a0 fs/exec.c:1792
-> >  kernel_execve+0x370/0x460 fs/exec.c:1973
-> >  try_to_run_init_process+0x14/0x4e init/main.c:1366
-> >  kernel_init+0x11d/0x1b8 init/main.c:1477
-> >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> > Modules linked in:
-> > CR2: 000000000000001c
-> > ---[ end trace 22d601a500de7d79 ]---
+> Okay, so I'm guessing that means path 2/3 and 3/3 didn't change?
 >
-> It looks like integrity_inode_get() fails to alloc memory.   Only on
-> failure to verify the integrity of a file would an error be returned.
-> I think that is what you would want to happen.  Without an "appraise"
-> policy, this shouldn't happen.
+> While I suppose there are cases where people do not do this, it has
+> been my experience that if someone posts a patchset and some portion
+> of the patchset changes, due to feedback or other factors, the entire
+> patchset is reposted under the new version number.  If nothing else
+> this helps ensure people are always looking at the latest draft of a
+> particular patch instead of having to dig through the list to
+> determine which patch is the most recent.
 
-It happens at the very boot. I think the cache is NULL.
+Correct, patches 2&3 didn't change and selinux patch generated several
+iterations. Would you like me to repost a series? I'm not sure what
+I'm supposed to do at this point.
+
+>
+> --
+> paul moore
+> www.paul-moore.com
