@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3262FC2BA1E
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0C0C2BB1F
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F61964F8F
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BE4F64FB3
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:08:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232446AbhCPVIT (ORCPT
+        id S232489AbhCPVIV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 17:08:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31718 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231637AbhCPVIF (ORCPT
+        Tue, 16 Mar 2021 17:08:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49576 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231907AbhCPVIH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 17:08:05 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12GL3xME088307;
-        Tue, 16 Mar 2021 17:07:59 -0400
+        Tue, 16 Mar 2021 17:08:07 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12GL4kFl079083;
+        Tue, 16 Mar 2021 17:07:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=bZNfzwg0HLbPIyIeLJh/4+HqQLwJNrPUav2V/TkNJWQ=;
- b=rhkMCkrfWa5Z0++xDm1lf3X2yjsm4KJbiNDVU/8li9kTzwIaMvAIQ11LkUV+fkMPdn3U
- Iv2CFdK02V55QKkR1EeNNh6TUhzXMvHkusJ3uq6v5nXQyRlvvyajORxhb874bzydKzUo
- yXbERW+1E7f25T1Kf+tmHad2E63S4ROKxFFNS2mGJYfF/m4gNp8zYrYMQXcEQe3nlWSH
- VCfF/yVeVLAzBiI0dPbqtE0iEVWJUgOmrJsdDboukWkiT6B6dfMoCJF9w7hKZea7jweQ
- u5htuqm+qOV3E1eQcrszQ0qRvYrpp9vjLObYTRtE1eozfjjYqtGRIvtRGzABfU5AONR6 xQ== 
+ bh=5sJ3USGhI8ahnQIzdDx2iXzHJ4odYoT/NhbTZi259l4=;
+ b=JVk/ujSnm7eZO6+ZoIOrVBKidmtljr/9ltFD82Qazc+d87d8QVUFgr+1FRECGFrmR7D+
+ uqT0aPBkTcJ9NeQJ/KWL9RaDSvVQ+66oLFKbCqkTBaDxrlSOMSfsxStHbQPfIkwDv24L
+ z5C01E4beQcOXKcOVLTwL72N57LC3e8v4oWg+YeMdU5GCMY63n0aCUhR1h3/0k0mUucz
+ OF826a0OUOehSWj84G3y7BbngsT0SCQllYI7qbRBQKF+3bVuy5dWXBhMw2R1cUKDdV34
+ W1MEUTE8Ox09fWncn3gGK9/Owg3QtbHue0CAN3jzjxe/MOhyxZNAljHQOnmYiV1h1OAg 2Q== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37b0rcdyub-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37b0rvwsgu-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Mar 2021 17:07:59 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12GL4Ljs092796;
-        Tue, 16 Mar 2021 17:07:59 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37b0rcdyu2-1
+        Tue, 16 Mar 2021 17:07:56 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12GL4v9T079561;
+        Tue, 16 Mar 2021 17:07:55 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37b0rvwsgg-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Mar 2021 17:07:59 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12GKpoMk020779;
-        Tue, 16 Mar 2021 21:07:58 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma01wdc.us.ibm.com with ESMTP id 378n1924n2-1
+        Tue, 16 Mar 2021 17:07:55 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12GL76rj024923;
+        Tue, 16 Mar 2021 21:07:55 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04dal.us.ibm.com with ESMTP id 37a3gcfn5r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 16 Mar 2021 21:07:58 +0000
+        Tue, 16 Mar 2021 21:07:55 +0000
 Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12GL7vtf11207082
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12GL7rEK31457762
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 16 Mar 2021 21:07:57 GMT
+        Tue, 16 Mar 2021 21:07:53 GMT
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 148E313604F;
-        Tue, 16 Mar 2021 21:07:57 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 399A8136051;
+        Tue, 16 Mar 2021 21:07:53 +0000 (GMT)
 Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46C4913605D;
-        Tue, 16 Mar 2021 21:07:56 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 5DEB7136055;
+        Tue, 16 Mar 2021 21:07:52 +0000 (GMT)
 Received: from localhost.localdomain (unknown [9.47.158.152])
         by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 16 Mar 2021 21:07:56 +0000 (GMT)
+        Tue, 16 Mar 2021 21:07:52 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.ibm.com>
 To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
         davem@davemloft.net, herbert@gondor.apana.org.au,
@@ -71,10 +71,11 @@ To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
 Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, patrick@puiterwijk.org,
+        Saulo Alessandre <saulo.alessandre@tse.jus.br>,
         Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v12 07/10] x509: Add support for parsing x509 certs with ECDSA keys
-Date:   Tue, 16 Mar 2021 17:07:37 -0400
-Message-Id: <20210316210740.1592994-8-stefanb@linux.ibm.com>
+Subject: [PATCH v12 03/10] crypto: Add NIST P384 curve parameters
+Date:   Tue, 16 Mar 2021 17:07:33 -0400
+Message-Id: <20210316210740.1592994-4-stefanb@linux.ibm.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210316210740.1592994-1-stefanb@linux.ibm.com>
 References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
@@ -83,150 +84,105 @@ Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
  definitions=2021-03-16_08:2021-03-16,2021-03-16 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 spamscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 phishscore=0 bulkscore=0 adultscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ adultscore=0 suspectscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
+ impostorscore=0 spamscore=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2009150000 definitions=main-2103160135
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add support for parsing of x509 certificates that contain ECDSA keys,
-such as NIST P256, that have been signed by a CA using any of the
-current SHA hash algorithms.
+From: Saulo Alessandre <saulo.alessandre@tse.jus.br>
 
-Cc: David Howells <dhowells@redhat.com>
-Cc: keyrings@vger.kernel.org
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Add the parameters for the NIST P384 curve and define a new curve ID
+for it. Make the curve available in ecc_get_curve.
 
+Summary of changes:
+
+* crypto/ecc_curve_defs.h
+  - add nist_p384 params
+
+* include/crypto/ecdh.h
+  - add ECC_CURVE_NIST_P384
+
+* crypto/ecc.c
+  - change ecc_get_curve to accept nist_p384
+
+Signed-off-by: Saulo Alessandre <saulo.alessandre@tse.jus.br>
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
+ crypto/ecc.c            |  2 ++
+ crypto/ecc_curve_defs.h | 32 ++++++++++++++++++++++++++++++++
+ include/crypto/ecdh.h   |  1 +
+ 3 files changed, 35 insertions(+)
 
-v7->v8:
- - do not detect key algo using parse_OID() in public_key.c but set
-   pkey_algo to the key type 'ecdsa-nist-p192/256' when parsing cert
----
- crypto/asymmetric_keys/public_key.c       |  4 ++-
- crypto/asymmetric_keys/x509_cert_parser.c | 34 ++++++++++++++++++++++-
- crypto/asymmetric_keys/x509_public_key.c  |  4 ++-
- include/linux/oid_registry.h              |  2 ++
- 4 files changed, 41 insertions(+), 3 deletions(-)
-
-diff --git a/crypto/asymmetric_keys/public_key.c b/crypto/asymmetric_keys/public_key.c
-index 788a4ba1e2e7..4fefb219bfdc 100644
---- a/crypto/asymmetric_keys/public_key.c
-+++ b/crypto/asymmetric_keys/public_key.c
-@@ -14,6 +14,7 @@
- #include <linux/slab.h>
- #include <linux/seq_file.h>
- #include <linux/scatterlist.h>
-+#include <linux/asn1.h>
- #include <keys/asymmetric-subtype.h>
- #include <crypto/public_key.h>
- #include <crypto/akcipher.h>
-@@ -85,7 +86,8 @@ int software_key_determine_akcipher(const char *encoding,
- 		return n >= CRYPTO_MAX_ALG_NAME ? -EINVAL : 0;
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index 25e79fd70566..f6cef5a7942d 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -50,6 +50,8 @@ const struct ecc_curve *ecc_get_curve(unsigned int curve_id)
+ 		return fips_enabled ? NULL : &nist_p192;
+ 	case ECC_CURVE_NIST_P256:
+ 		return &nist_p256;
++	case ECC_CURVE_NIST_P384:
++		return &nist_p384;
+ 	default:
+ 		return NULL;
  	}
+diff --git a/crypto/ecc_curve_defs.h b/crypto/ecc_curve_defs.h
+index 69be6c7d228f..b327732f6ef5 100644
+--- a/crypto/ecc_curve_defs.h
++++ b/crypto/ecc_curve_defs.h
+@@ -54,4 +54,36 @@ static struct ecc_curve nist_p256 = {
+ 	.b = nist_p256_b
+ };
  
--	if (strcmp(encoding, "raw") == 0) {
-+	if (strcmp(encoding, "raw") == 0 ||
-+	    strcmp(encoding, "x962") == 0) {
- 		strcpy(alg_name, pkey->pkey_algo);
- 		return 0;
- 	}
-diff --git a/crypto/asymmetric_keys/x509_cert_parser.c b/crypto/asymmetric_keys/x509_cert_parser.c
-index 1621ceaf5c95..f5d547c6dfb5 100644
---- a/crypto/asymmetric_keys/x509_cert_parser.c
-+++ b/crypto/asymmetric_keys/x509_cert_parser.c
-@@ -227,6 +227,26 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
- 		ctx->cert->sig->hash_algo = "sha224";
- 		goto rsa_pkcs1;
- 
-+	case OID_id_ecdsa_with_sha1:
-+		ctx->cert->sig->hash_algo = "sha1";
-+		goto ecdsa;
++/* NIST P-384 */
++static u64 nist_p384_g_x[] = { 0x3A545E3872760AB7ull, 0x5502F25DBF55296Cull,
++				0x59F741E082542A38ull, 0x6E1D3B628BA79B98ull,
++				0x8Eb1C71EF320AD74ull, 0xAA87CA22BE8B0537ull };
++static u64 nist_p384_g_y[] = { 0x7A431D7C90EA0E5Full, 0x0A60B1CE1D7E819Dull,
++				0xE9DA3113B5F0B8C0ull, 0xF8F41DBD289A147Cull,
++				0x5D9E98BF9292DC29ull, 0x3617DE4A96262C6Full };
++static u64 nist_p384_p[] = { 0x00000000FFFFFFFFull, 0xFFFFFFFF00000000ull,
++				0xFFFFFFFFFFFFFFFEull, 0xFFFFFFFFFFFFFFFFull,
++				0xFFFFFFFFFFFFFFFFull, 0xFFFFFFFFFFFFFFFFull };
++static u64 nist_p384_n[] = { 0xECEC196ACCC52973ull, 0x581A0DB248B0A77Aull,
++				0xC7634D81F4372DDFull, 0xFFFFFFFFFFFFFFFFull,
++				0xFFFFFFFFFFFFFFFFull, 0xFFFFFFFFFFFFFFFFull };
++static u64 nist_p384_a[] = { 0x00000000FFFFFFFCull, 0xFFFFFFFF00000000ull,
++				0xFFFFFFFFFFFFFFFEull, 0xFFFFFFFFFFFFFFFFull,
++				0xFFFFFFFFFFFFFFFFull, 0xFFFFFFFFFFFFFFFFull };
++static u64 nist_p384_b[] = { 0x2a85c8edd3ec2aefull, 0xc656398d8a2ed19dull,
++				0x0314088f5013875aull, 0x181d9c6efe814112ull,
++				0x988e056be3f82d19ull, 0xb3312fa7e23ee7e4ull };
++static struct ecc_curve nist_p384 = {
++	.name = "nist_384",
++	.g = {
++		.x = nist_p384_g_x,
++		.y = nist_p384_g_y,
++		.ndigits = 6,
++	},
++	.p = nist_p384_p,
++	.n = nist_p384_n,
++	.a = nist_p384_a,
++	.b = nist_p384_b
++};
 +
-+	case OID_id_ecdsa_with_sha224:
-+		ctx->cert->sig->hash_algo = "sha224";
-+		goto ecdsa;
-+
-+	case OID_id_ecdsa_with_sha256:
-+		ctx->cert->sig->hash_algo = "sha256";
-+		goto ecdsa;
-+
-+	case OID_id_ecdsa_with_sha384:
-+		ctx->cert->sig->hash_algo = "sha384";
-+		goto ecdsa;
-+
-+	case OID_id_ecdsa_with_sha512:
-+		ctx->cert->sig->hash_algo = "sha512";
-+		goto ecdsa;
-+
- 	case OID_gost2012Signature256:
- 		ctx->cert->sig->hash_algo = "streebog256";
- 		goto ecrdsa;
-@@ -255,6 +275,11 @@ int x509_note_pkey_algo(void *context, size_t hdrlen,
- 	ctx->cert->sig->encoding = "raw";
- 	ctx->algo_oid = ctx->last_oid;
- 	return 0;
-+ecdsa:
-+	ctx->cert->sig->pkey_algo = "ecdsa";
-+	ctx->cert->sig->encoding = "x962";
-+	ctx->algo_oid = ctx->last_oid;
-+	return 0;
- }
+ #endif
+diff --git a/include/crypto/ecdh.h b/include/crypto/ecdh.h
+index a5b805b5526d..e4ba1de961e4 100644
+--- a/include/crypto/ecdh.h
++++ b/include/crypto/ecdh.h
+@@ -25,6 +25,7 @@
+ /* Curves IDs */
+ #define ECC_CURVE_NIST_P192	0x0001
+ #define ECC_CURVE_NIST_P256	0x0002
++#define ECC_CURVE_NIST_P384	0x0003
  
- /*
-@@ -276,7 +301,8 @@ int x509_note_signature(void *context, size_t hdrlen,
- 
- 	if (strcmp(ctx->cert->sig->pkey_algo, "rsa") == 0 ||
- 	    strcmp(ctx->cert->sig->pkey_algo, "ecrdsa") == 0 ||
--	    strcmp(ctx->cert->sig->pkey_algo, "sm2") == 0) {
-+	    strcmp(ctx->cert->sig->pkey_algo, "sm2") == 0 ||
-+	    strcmp(ctx->cert->sig->pkey_algo, "ecdsa") == 0) {
- 		/* Discard the BIT STRING metadata */
- 		if (vlen < 1 || *(const u8 *)value != 0)
- 			return -EBADMSG;
-@@ -478,6 +504,12 @@ int x509_extract_key_data(void *context, size_t hdrlen,
- 		case OID_sm2:
- 			ctx->cert->pub->pkey_algo = "sm2";
- 			break;
-+		case OID_id_prime192v1:
-+			ctx->cert->pub->pkey_algo = "ecdsa-nist-p192";
-+			break;
-+		case OID_id_prime256v1:
-+			ctx->cert->pub->pkey_algo = "ecdsa-nist-p256";
-+			break;
- 		default:
- 			return -ENOPKG;
- 		}
-diff --git a/crypto/asymmetric_keys/x509_public_key.c b/crypto/asymmetric_keys/x509_public_key.c
-index ae450eb8be14..3d45161b271a 100644
---- a/crypto/asymmetric_keys/x509_public_key.c
-+++ b/crypto/asymmetric_keys/x509_public_key.c
-@@ -129,7 +129,9 @@ int x509_check_for_self_signed(struct x509_certificate *cert)
- 	}
- 
- 	ret = -EKEYREJECTED;
--	if (strcmp(cert->pub->pkey_algo, cert->sig->pkey_algo) != 0)
-+	if (strcmp(cert->pub->pkey_algo, cert->sig->pkey_algo) != 0 &&
-+	    (strncmp(cert->pub->pkey_algo, "ecdsa-", 6) != 0 ||
-+	     strcmp(cert->sig->pkey_algo, "ecdsa") != 0))
- 		goto out;
- 
- 	ret = public_key_verify_signature(cert->pub, cert->sig);
-diff --git a/include/linux/oid_registry.h b/include/linux/oid_registry.h
-index f32d91895e4d..3583908cf1ca 100644
---- a/include/linux/oid_registry.h
-+++ b/include/linux/oid_registry.h
-@@ -20,6 +20,8 @@ enum OID {
- 	OID_id_dsa_with_sha1,		/* 1.2.840.10030.4.3 */
- 	OID_id_dsa,			/* 1.2.840.10040.4.1 */
- 	OID_id_ecPublicKey,		/* 1.2.840.10045.2.1 */
-+	OID_id_prime192v1,		/* 1.2.840.10045.3.1.1 */
-+	OID_id_prime256v1,		/* 1.2.840.10045.3.1.7 */
- 	OID_id_ecdsa_with_sha1,		/* 1.2.840.10045.4.1 */
- 	OID_id_ecdsa_with_sha224,	/* 1.2.840.10045.4.3.1 */
- 	OID_id_ecdsa_with_sha256,	/* 1.2.840.10045.4.3.2 */
+ /**
+  * struct ecdh - define an ECDH private key
 -- 
 2.29.2
 
