@@ -2,272 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AD0C4361A
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:03:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 842A6C433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCA56511A
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:03:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F1B6511D
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:33:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238959AbhCPRCr (ORCPT
+        id S229559AbhCPRct (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 13:02:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238970AbhCPRCQ (ORCPT
+        Tue, 16 Mar 2021 13:32:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:48550 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238794AbhCPRcc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 13:02:16 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B23C061762
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 10:02:16 -0700 (PDT)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1lMD4c-0000Nu-4G; Tue, 16 Mar 2021 18:01:38 +0100
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1lMD4Y-0000Vo-Ji; Tue, 16 Mar 2021 18:01:34 +0100
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@penutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
-Date:   Tue, 16 Mar 2021 18:01:18 +0100
-Message-Id: <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
-References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+        Tue, 16 Mar 2021 13:32:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1615915951;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=5AId5vG2TVOeo8m549ZwO+E0JsBnovD7rLmlFTc7A5s=;
+        b=Y23PPJ703Tw8r6zHod5MO65J9hrsGHmYzHvfehJ5YIS8xhl8HrIhVvjWOG/Lxvet0apufa
+        vzf8CzZAegp8t4K7IW4T+l/nZXJLEJBf7HV+/tl6cVMxkCo+lOK8h8oN4p/QzkdW3e3GpA
+        Uo7iI5XFLYXfr8pVwC3BO0IXUDoPb68=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-537-vqM_UV6jOGi4HMLVUdQejQ-1; Tue, 16 Mar 2021 13:32:30 -0400
+X-MC-Unique: vqM_UV6jOGi4HMLVUdQejQ-1
+Received: by mail-ed1-f72.google.com with SMTP id y10so5679155edr.20
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 10:32:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5AId5vG2TVOeo8m549ZwO+E0JsBnovD7rLmlFTc7A5s=;
+        b=oLdtMRjk3qc8BE29m2HM0i8uByfT6U7oRTmWnPMBj63xazCtCHGYXt0D+HlQiDLr+D
+         P7t1LPjRjQ5ShSBkHYKNnafoA3fmafT1GfDctq2654orr2GzjYUaY89WYqF6mGwESsTb
+         UEFOPQJdnamCCpWxS9TShUIIswiuSW7rNNEqQQyYoFUah2nlNWwOxzvr+etfMz6JB8aT
+         mcsbokuARaA2X+Gv5zQY6xVhHeOYsyBqyRY55ebzbhtgVrI/Lk5RTDYIDTmyhZj9FJe0
+         ibWgHIzyK+Q7geJNAYrpnwcRDq6S6kQuGReL1S5b+GLyZYdCZ/MqmXiSYJe9Hj+tBJe/
+         uokA==
+X-Gm-Message-State: AOAM532ft2IkMQVORxPknmivDRoAIrOweoxXuWOr/bHNN3KtCDazY1Yi
+        7Row81n+6kQNsyjO+qGNNtzBJ8/qFjd0VRmnP+TLF9k4VUiLz0JFbYmfjxPn6efZdnFeyv3LZRO
+        ZBoz8t1WPlzF8YHqcHoa8F8KSeyF5zmC0Z/rF
+X-Received: by 2002:a17:906:4107:: with SMTP id j7mr14812376ejk.185.1615915948780;
+        Tue, 16 Mar 2021 10:32:28 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxy72OaCt395g1j1vbcWykD2mZ7XNXhxeIpmOZq445d0B0Zjj/QF98NlqH/ld16pJ+Jex7WpA==
+X-Received: by 2002:a17:906:4107:: with SMTP id j7mr14812361ejk.185.1615915948621;
+        Tue, 16 Mar 2021 10:32:28 -0700 (PDT)
+Received: from omos.redhat.com ([2a02:8308:b105:dd00:277b:6436:24db:9466])
+        by smtp.gmail.com with ESMTPSA id bt14sm11175862edb.92.2021.03.16.10.32.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Mar 2021 10:32:28 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [PATCH] xfs: use has_capability_noaudit() instead of capable() where appropriate
+Date:   Tue, 16 Mar 2021 18:32:26 +0100
+Message-Id: <20210316173226.2220046-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The Cryptographic Acceleration and Assurance Module (CAAM) is an IP core
-built into many newer i.MX and QorIQ SoCs by NXP.
+In cases when a negative result of a capability check doesn't lead to an
+immediate, user-visible error, only a subtle difference in behavior, it
+is better to use has_capability_noaudit(current, ...), so that LSMs
+(e.g. SELinux) don't generate a denial record in the audit log each time
+the capability status is queried. This patch should cover all such cases
+in fs/xfs/.
 
-The CAAM does crypto acceleration, hardware number generation and
-has a blob mechanism for encapsulation/decapsulation of sensitive material.
+Note that I kept the capable(CAP_FSETID) checks, since these will only
+be executed if the user explicitly tries to set the SUID/SGID bit, and
+it likely makes sense to log such attempts even if the syscall doesn't
+fail and just ignores the bits.
 
-This blob mechanism depends on a device specific random 256-bit One Time
-Programmable Master Key that is fused in each SoC at manufacturing
-time. This key is unreadable and can only be used by the CAAM for AES
-encryption/decryption of user data.
-
-This makes it a suitable backend (source) for kernel trusted keys.
-
-Previous commits generalized trusted keys to support multiple backends
-and added an API to access the CAAM blob mechanism. Based on these,
-provide the necessary glue to use the CAAM for trusted keys.
-
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
-To: Jonathan Corbet <corbet@lwn.net>
-To: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <jejb@linux.ibm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: "Horia Geantă" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Udit Agarwal <udit.agarwal@nxp.com>
-Cc: Jan Luebbe <j.luebbe@penutronix.de>
-Cc: David Gstir <david@sigma-star.at>
-Cc: Franck LENORMAND <franck.lenormand@nxp.com>
-Cc: Sumit Garg <sumit.garg@linaro.org>
-Cc: keyrings@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-doc@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
----
- Documentation/admin-guide/kernel-parameters.txt |  1 +-
- include/keys/trusted_caam.h                     | 11 +++-
- security/keys/trusted-keys/Makefile             |  1 +-
- security/keys/trusted-keys/trusted_caam.c       | 74 ++++++++++++++++++-
- security/keys/trusted-keys/trusted_core.c       |  6 +-
- 5 files changed, 92 insertions(+), 1 deletion(-)
- create mode 100644 include/keys/trusted_caam.h
- create mode 100644 security/keys/trusted-keys/trusted_caam.c
+ fs/xfs/xfs_fsmap.c | 4 ++--
+ fs/xfs/xfs_ioctl.c | 5 ++++-
+ fs/xfs/xfs_iops.c  | 6 ++++--
+ fs/xfs/xfs_xattr.c | 2 +-
+ 4 files changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c8bad1762cba..382e911389aa 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5469,6 +5469,7 @@
- 			sources:
- 			- "tpm"
- 			- "tee"
-+			- "caam"
- 			If not specified then it defaults to iterating through
- 			the trust source list starting with TPM and assigns the
- 			first trust source as a backend which is initialized
-diff --git a/include/keys/trusted_caam.h b/include/keys/trusted_caam.h
-new file mode 100644
-index 000000000000..2fba0996b0b0
---- /dev/null
-+++ b/include/keys/trusted_caam.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2021 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
-+ */
-+
-+#ifndef __CAAM_TRUSTED_KEY_H
-+#define __CAAM_TRUSTED_KEY_H
-+
-+extern struct trusted_key_ops caam_trusted_key_ops;
-+
-+#endif
-diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
-index feb8b6c3cc79..050370690abd 100644
---- a/security/keys/trusted-keys/Makefile
-+++ b/security/keys/trusted-keys/Makefile
-@@ -12,3 +12,4 @@ trusted-y += trusted_tpm2.o
- trusted-y += tpm2key.asn1.o
+diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
+index 9ce5e7d5bf8f..14672e7ee535 100644
+--- a/fs/xfs/xfs_fsmap.c
++++ b/fs/xfs/xfs_fsmap.c
+@@ -842,8 +842,8 @@ xfs_getfsmap(
+ 	    !xfs_getfsmap_is_valid_device(mp, &head->fmh_keys[1]))
+ 		return -EINVAL;
  
- trusted-$(CONFIG_TEE) += trusted_tee.o
-+trusted-$(CONFIG_CRYPTO_DEV_FSL_CAAM_BLOB_GEN) += trusted_caam.o
-diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
-new file mode 100644
-index 000000000000..fc2e3dde9e06
---- /dev/null
-+++ b/security/keys/trusted-keys/trusted_caam.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2021 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
-+ */
-+
-+#include <keys/trusted_caam.h>
-+#include <keys/trusted-type.h>
-+#include <linux/build_bug.h>
-+#include <linux/key-type.h>
-+#include <soc/fsl/caam-blob.h>
-+
-+struct caam_blob_priv *blobifier;
-+
-+#define KEYMOD "kernel:trusted"
-+
-+static_assert(MAX_KEY_SIZE + CAAM_BLOB_OVERHEAD <= CAAM_BLOB_MAX_LEN);
-+static_assert(MAX_BLOB_SIZE <= CAAM_BLOB_MAX_LEN);
-+
-+static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
-+{
-+	int length = p->key_len + CAAM_BLOB_OVERHEAD;
-+	int ret;
-+
-+	ret = caam_encap_blob(blobifier, KEYMOD, p->key, p->blob, length);
-+	if (ret)
-+		return ret;
-+
-+	p->blob_len = length;
-+	return 0;
-+}
-+
-+static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
-+{
-+	int length = p->blob_len;
-+	int ret;
-+
-+	ret = caam_decap_blob(blobifier, KEYMOD, p->blob, p->key, length);
-+	if (ret)
-+		return ret;
-+
-+	p->key_len = length - CAAM_BLOB_OVERHEAD;
-+	return 0;
-+}
-+
-+static int trusted_caam_init(void)
-+{
-+	int ret;
-+
-+	blobifier = caam_blob_gen_init();
-+	if (IS_ERR(blobifier)) {
-+		pr_err("Job Ring Device allocation for transform failed\n");
-+		return PTR_ERR(blobifier);
-+	}
-+
-+	ret = register_key_type(&key_type_trusted);
-+	if (ret)
-+		caam_blob_gen_exit(blobifier);
-+
-+	return ret;
-+}
-+
-+static void trusted_caam_exit(void)
-+{
-+	unregister_key_type(&key_type_trusted);
-+	caam_blob_gen_exit(blobifier);
-+}
-+
-+struct trusted_key_ops caam_trusted_key_ops = {
-+	.migratable = 0, /* non-migratable */
-+	.init = trusted_caam_init,
-+	.seal = trusted_caam_seal,
-+	.unseal = trusted_caam_unseal,
-+	.exit = trusted_caam_exit,
-+};
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index 5f92323efedf..e9bfb1bbc014 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -9,6 +9,7 @@
- #include <keys/user-type.h>
- #include <keys/trusted-type.h>
- #include <keys/trusted_tee.h>
-+#include <keys/trusted_caam.h>
- #include <keys/trusted_tpm.h>
- #include <linux/capability.h>
- #include <linux/err.h>
-@@ -25,7 +26,7 @@
+-	use_rmap = capable(CAP_SYS_ADMIN) &&
+-		   xfs_sb_version_hasrmapbt(&mp->m_sb);
++	use_rmap = xfs_sb_version_hasrmapbt(&mp->m_sb) &&
++		   has_capability_noaudit(current, CAP_SYS_ADMIN);
+ 	head->fmh_entries = 0;
  
- static char *trusted_key_source;
- module_param_named(source, trusted_key_source, charp, 0);
--MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
-+MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee or caam)");
+ 	/* Set up our device handlers. */
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index 3fbd98f61ea5..3cfc1a25069c 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1470,8 +1470,11 @@ xfs_ioctl_setattr(
  
- static const struct trusted_key_source trusted_key_sources[] = {
- #if defined(CONFIG_TCG_TPM)
-@@ -34,6 +35,9 @@ static const struct trusted_key_source trusted_key_sources[] = {
- #if defined(CONFIG_TEE)
- 	{ "tee", &trusted_key_tee_ops },
- #endif
-+#if defined(CONFIG_CRYPTO_DEV_FSL_CAAM_BLOB_GEN)
-+	{ "caam", &caam_trusted_key_ops },
-+#endif
- };
+ 	if (XFS_IS_QUOTA_RUNNING(mp) && XFS_IS_PQUOTA_ON(mp) &&
+ 	    ip->i_d.di_projid != fa->fsx_projid) {
++		int flags = has_capability_noaudit(current, CAP_FOWNER) ?
++			XFS_QMOPT_FORCE_RES : 0;
++
+ 		code = xfs_qm_vop_chown_reserve(tp, ip, NULL, NULL, pdqp,
+-				capable(CAP_FOWNER) ?  XFS_QMOPT_FORCE_RES : 0);
++				flags);
+ 		if (code)	/* out of quota */
+ 			goto error_trans_cancel;
+ 	}
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 67c8dc9de8aa..abbb417c4fbd 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -729,10 +729,12 @@ xfs_setattr_nonsize(
+ 		if (XFS_IS_QUOTA_RUNNING(mp) &&
+ 		    ((XFS_IS_UQUOTA_ON(mp) && !uid_eq(iuid, uid)) ||
+ 		     (XFS_IS_GQUOTA_ON(mp) && !gid_eq(igid, gid)))) {
++			int flags = has_capability_noaudit(current, CAP_FOWNER) ?
++				XFS_QMOPT_FORCE_RES : 0;
++
+ 			ASSERT(tp);
+ 			error = xfs_qm_vop_chown_reserve(tp, ip, udqp, gdqp,
+-						NULL, capable(CAP_FOWNER) ?
+-						XFS_QMOPT_FORCE_RES : 0);
++						NULL, flags);
+ 			if (error)	/* out of quota */
+ 				goto out_cancel;
+ 		}
+diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+index bca48b308c02..a99d19c2c11f 100644
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@ -164,7 +164,7 @@ xfs_xattr_put_listent(
+ 		 * Only show root namespace entries if we are actually allowed to
+ 		 * see them.
+ 		 */
+-		if (!capable(CAP_SYS_ADMIN))
++		if (!has_capability_noaudit(current, CAP_SYS_ADMIN))
+ 			return;
  
- DEFINE_STATIC_CALL_NULL(trusted_key_init, *trusted_key_sources[0].ops->init);
+ 		prefix = XATTR_TRUSTED_PREFIX;
 -- 
-git-series 0.9.1
+2.30.2
+
