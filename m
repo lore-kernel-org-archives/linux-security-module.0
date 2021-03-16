@@ -7,208 +7,156 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3646C433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:02:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CC0C43332
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D098F65114
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:02:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DCF465127
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 17:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237145AbhCPRCV (ORCPT
+        id S237480AbhCPRCn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 13:02:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56660 "EHLO
+        Tue, 16 Mar 2021 13:02:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237252AbhCPRBo (ORCPT
+        with ESMTP id S238961AbhCPRCP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 13:01:44 -0400
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [IPv6:2001:1600:3:17::190f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48122C06175F
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 10:01:43 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F0KM94sN1zMqKRj;
-        Tue, 16 Mar 2021 18:01:41 +0100 (CET)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F0KM9254Gzlh8TH;
-        Tue, 16 Mar 2021 18:01:41 +0100 (CET)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Tue, 16 Mar 2021 13:02:15 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C561CC061756
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 10:02:13 -0700 (PDT)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1lMD4c-0000Nt-4E; Tue, 16 Mar 2021 18:01:38 +0100
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1lMD4Y-0000Vi-IM; Tue, 16 Mar 2021 18:01:34 +0100
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
         James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v4 1/1] fs: Allow no_new_privs tasks to call chroot(2)
-Date:   Tue, 16 Mar 2021 18:01:35 +0100
-Message-Id: <20210316170135.226381-2-mic@digikod.net>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210316170135.226381-1-mic@digikod.net>
-References: <20210316170135.226381-1-mic@digikod.net>
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@penutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [PATCH v1 2/3] KEYS: trusted: implement fallback to kernel RNG
+Date:   Tue, 16 Mar 2021 18:01:17 +0100
+Message-Id: <a5c2a1507cf2bd1b5b6531ce2c0d9d496b8d3d7e.1615914058.git-series.a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+For cases a trusted key source already sources the kernel RNG, we can
+use get_random_bytes_wait to get the random data for key material.
 
-Being able to easily change root directories enables to ease some
-development workflow and can be used as a tool to strengthen
-unprivileged security sandboxes.  chroot(2) is not an access-control
-mechanism per se, but it can be used to limit the absolute view of the
-filesystem, and then limit ways to access data and kernel interfaces
-(e.g. /proc, /sys, /dev, etc.).
+Make the get_random callback optional to allow sources to make use of
+this.
 
-Users may not wish to expose namespace complexity to potentially
-malicious processes, or limit their use because of limited resources.
-The chroot feature is much more simple (and limited) than the mount
-namespace, but can still be useful.  As for containers, users of
-chroot(2) should take care of file descriptors or data accessible by
-other means (e.g. current working directory, leaked FDs, passed FDs,
-devices, mount points, etc.).  There is a lot of literature that discuss
-the limitations of chroot, and users of this feature should be aware of
-the multiple ways to bypass it.  Using chroot(2) for security purposes
-can make sense if it is combined with other features (e.g. dedicated
-user, seccomp, LSM access-controls, etc.).
-
-One could argue that chroot(2) is useless without a properly populated
-root hierarchy (i.e. without /dev and /proc).  However, there are
-multiple use cases that don't require the chrooting process to create
-file hierarchies with special files nor mount points, e.g.:
-* A process sandboxing itself, once all its libraries are loaded, may
-  not need files other than regular files, or even no file at all.
-* Some pre-populated root hierarchies could be used to chroot into,
-  provided for instance by development environments or tailored
-  distributions.
-* Processes executed in a chroot may not require access to these special
-  files (e.g. with minimal runtimes, or by emulating some special files
-  with a LD_PRELOADed library or seccomp).
-
-Unprivileged chroot is especially interesting for userspace developers
-wishing to harden their applications.  For instance, chroot(2) and Yama
-enable to build a capability-based security (i.e. remove filesystem
-ambient accesses) by calling chroot/chdir with an empty directory and
-accessing data through dedicated file descriptors obtained with
-openat2(2) and RESOLVE_BENEATH/RESOLVE_IN_ROOT/RESOLVE_NO_MAGICLINKS.
-
-Allowing a task to change its own root directory is not a threat to the
-system if we can prevent confused deputy attacks, which could be
-performed through execution of SUID-like binaries.  This can be
-prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
-prctl(2).  To only affect this task, its filesystem information must not
-be shared with other tasks, which can be achieved by not passing
-CLONE_FS to clone(2).  A similar no_new_privs check is already used by
-seccomp to avoid the same kind of security issues.  Furthermore, because
-of its security use and to avoid giving a new way for attackers to get
-out of a chroot (e.g. using /proc/<pid>/root, or chroot/chdir), an
-unprivileged chroot is only allowed if the calling process is not
-already chrooted.  This limitation is the same as for creating user
-namespaces.
-
-This change may not impact systems relying on other permission models
-than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
-such systems may require to update their security policies.
-
-Only the chroot system call is relaxed with this no_new_privs check; the
-init_chroot() helper doesn't require such change.
-
-Allowing unprivileged users to use chroot(2) is one of the initial
-objectives of no_new_privs:
-https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
-This patch is a follow-up of a previous one sent by Andy Lutomirski:
-https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
-
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+To: James Bottomley <jejb@linux.ibm.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: David Howells <dhowells@redhat.com>
 Cc: James Morris <jmorris@namei.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20210316170135.226381-2-mic@digikod.net
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: "Horia Geantă" <horia.geanta@nxp.com>
+Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Udit Agarwal <udit.agarwal@nxp.com>
+Cc: Jan Luebbe <j.luebbe@penutronix.de>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
 ---
+ include/keys/trusted-type.h               |  2 +-
+ security/keys/trusted-keys/trusted_core.c | 11 ++++++++++-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-Changes since v3:
-* Move the new permission checks to a dedicated helper
-  current_chroot_allowed() to make the code easier to read and align
-  with user_path_at(), path_permission() and security_path_chroot()
-  calls (suggested by Kees Cook).
-* Remove now useless included file.
-* Extend commit description.
-* Rebase on v5.12-rc3 .
-
-Changes since v2:
-* Replace path_is_under() check with current_chrooted() to gain the same
-  protection as create_user_ns() (suggested by Jann Horn). See commit
-  3151527ee007 ("userns:  Don't allow creation if the user is chrooted")
-
-Changes since v1:
-* Replace custom is_path_beneath() with existing path_is_under().
----
- fs/open.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index e53af13b5835..da46eb28a3a6 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -532,6 +532,24 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
- 	return error;
- }
+diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+index d89fa2579ac0..4eb64548a74f 100644
+--- a/include/keys/trusted-type.h
++++ b/include/keys/trusted-type.h
+@@ -64,7 +64,7 @@ struct trusted_key_ops {
+ 	/* Unseal a key. */
+ 	int (*unseal)(struct trusted_key_payload *p, char *datablob);
  
-+static inline int current_chroot_allowed(void)
+-	/* Get a randomized key. */
++	/* Optional: Get a randomized key. */
+ 	int (*get_random)(unsigned char *key, size_t key_len);
+ 
+ 	/* Exit key interface. */
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index ec3a066a4b42..5f92323efedf 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -16,6 +16,7 @@
+ #include <linux/key-type.h>
+ #include <linux/module.h>
+ #include <linux/parser.h>
++#include <linux/random.h>
+ #include <linux/rcupdate.h>
+ #include <linux/slab.h>
+ #include <linux/static_call.h>
+@@ -310,8 +311,14 @@ struct key_type key_type_trusted = {
+ };
+ EXPORT_SYMBOL_GPL(key_type_trusted);
+ 
++static int kernel_get_random(unsigned char *key, size_t key_len)
 +{
-+	/*
-+	 * Changing the root directory for the calling task (and its future
-+	 * children) requires that this task has CAP_SYS_CHROOT in its
-+	 * namespace, or be running with no_new_privs and not sharing its
-+	 * fs_struct and not escaping its current root (cf. create_user_ns()).
-+	 * As for seccomp, checking no_new_privs avoids scenarios where
-+	 * unprivileged tasks can affect the behavior of privileged children.
-+	 */
-+	if (task_no_new_privs(current) && current->fs->users == 1 &&
-+			!current_chrooted())
-+		return 0;
-+	if (ns_capable(current_user_ns(), CAP_SYS_CHROOT))
-+		return 0;
-+	return -EPERM;
++	return get_random_bytes_wait(key, key_len) ?: key_len;
 +}
 +
- SYSCALL_DEFINE1(chroot, const char __user *, filename)
+ static int __init init_trusted(void)
  {
- 	struct path path;
-@@ -546,9 +564,10 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
- 	if (error)
- 		goto dput_and_out;
++	int (*get_random)(unsigned char *key, size_t key_len);
+ 	int i, ret = 0;
  
--	error = -EPERM;
--	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT))
-+	error = current_chroot_allowed();
-+	if (error)
- 		goto dput_and_out;
+ 	for (i = 0; i < ARRAY_SIZE(trusted_key_sources); i++) {
+@@ -320,6 +327,8 @@ static int __init init_trusted(void)
+ 			    strlen(trusted_key_sources[i].name)))
+ 			continue;
+ 
++		get_random = trusted_key_sources[i].ops->get_random ?: kernel_get_random;
 +
- 	error = security_path_chroot(&path);
- 	if (error)
- 		goto dput_and_out;
+ 		static_call_update(trusted_key_init,
+ 				   trusted_key_sources[i].ops->init);
+ 		static_call_update(trusted_key_seal,
+@@ -327,7 +336,7 @@ static int __init init_trusted(void)
+ 		static_call_update(trusted_key_unseal,
+ 				   trusted_key_sources[i].ops->unseal);
+ 		static_call_update(trusted_key_get_random,
+-				   trusted_key_sources[i].ops->get_random);
++				   get_random);
+ 		static_call_update(trusted_key_exit,
+ 				   trusted_key_sources[i].ops->exit);
+ 		migratable = trusted_key_sources[i].ops->migratable;
 -- 
-2.30.2
-
+git-series 0.9.1
