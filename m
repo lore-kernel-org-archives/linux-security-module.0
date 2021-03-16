@@ -2,185 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEF8C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 18:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD0FC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 18:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F35A865114
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 18:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC276503E
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 18:44:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240008AbhCPSWO (ORCPT
+        id S234259AbhCPSne (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 14:22:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46050 "EHLO
+        Tue, 16 Mar 2021 14:43:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236799AbhCPSWA (ORCPT
+        with ESMTP id S234508AbhCPSnL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 14:22:00 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58DAFC061756
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 11:21:58 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id lr13so73842938ejb.8
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 11:21:58 -0700 (PDT)
+        Tue, 16 Mar 2021 14:43:11 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E269C06175F
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 11:43:08 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id e2so12117661pld.9
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 11:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ATABy9zC/tpLcxYv7za8wFx5cG2fi4BhjQqu6fqauiE=;
-        b=WOvMvJ1w4n0kwkZkiSBl+DIH+994/5gt2UqnTHqURDX1c/7qeYwKaPxxig788s704v
-         Fgy88286V76RbS20ulEx9KrYgyKPqAlGoAlAY+CvVxipGnvExtDxgpSgxcTHS2BTNT85
-         LC6zNyJsfbKczUmSaLJQ6Fo+z94JOQsYPmX9zZXyN8BXCdYsNy3lDElEBKBstCQFHGcE
-         3AUXlu+WakebXWpjomCzCx5TIYpo4VBYX+aCaGnKVBcYJe8R3J+gh4HIcfM95X6FMySi
-         jElbrnixG4bxtVKqDSeN6sBv5SAm4FK0/HlMMMf1AzXMCCp2+8KgbCLbqHRDF89fft8o
-         eIPw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=OptPjRnwjXC7zKbUBkw8dw6CLa96GSPlm9wOKUYzD7E=;
+        b=dCguvI+VWcGOGobPRiPVUdxUKgZvETSN+uJx0tokpIzqQM7+LmH15/c5uSWcXJmc0e
+         +x08CsN0VFPVtk/HBfRMKXWIPypf+5ywRpGhkC173FdfoKCV/OVegFVHgMF4tVUEw2Rr
+         zWV2O615wxmjD8JuHbVV4hcka6k1YXb+hR0Jg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ATABy9zC/tpLcxYv7za8wFx5cG2fi4BhjQqu6fqauiE=;
-        b=FwhXCeGzkqghE9L764PyOnRvUXjGCcDadjIyyppTG9PbAruCRRUBqqY+QOcVs97HoA
-         5Vw+bh+1Z3/Z8lDE9fmxyPWyvk2K1dg/dtoE9oBROxe6esBFjr858Ps1oLvOvMQ1Otuj
-         XN0dSyWFP+01UfbSq4ITYM2SS3lALZGQzIMZtgh477KFj4GV3rVNc9jTZieHOnNfHCT+
-         NzeYghRHtE4cEOorTpxK82Xcz22/gze1x1xSa2DIgKx373QRSId2XpB1bVWQfVIo5gaH
-         /5Wkuxno86mpnzFiLncDqZI940ygc4EPYXLGBdeGQug7xe5A/IOmx23l5fLBSUPpjerm
-         WeEA==
-X-Gm-Message-State: AOAM530lwIEqtNtxvloJmnogaGX/7umJWPvJzcTRscvdHRTlo4k9VPPm
-        QLyuqeA85SsPx5lMxM8ePrG9TbsXGUyyThvBYAph
-X-Google-Smtp-Source: ABdhPJytMntTpbhMGOMIpQmZ7H1iaR8dMCR2XbneRFjMaW2Nb4vDQR2cNklasjGICk7QZmWfC9NBqS17BujPWyf99o0=
-X-Received: by 2002:a17:906:edca:: with SMTP id sb10mr14495392ejb.398.1615918916813;
- Tue, 16 Mar 2021 11:21:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=OptPjRnwjXC7zKbUBkw8dw6CLa96GSPlm9wOKUYzD7E=;
+        b=EuXfFkIgyUny9aM2xrKbO+gOOALmcW5TK7MOystpaktyFTdDkCxlNq1HX/RbWTIDOH
+         ToOHKSwfsHJacUic2AvY4uLm+dp4TgpQKIXpuPr7XSpSzZ/+OeadQmMWMGmwd5KGl/bV
+         Ay1jnxa538WuWFbWAUGgnAaLkA2wBvfFo/ToXQvi3adTJKrZ7R7C7zPnqzFp12fr/Nw2
+         mCx1XakieJegXtIT1zGdU4IsIzrgCkNakSpPaoWPNLprQIEyamXoOdj/UjWTBokhDSqW
+         2SGl7XjcHGUGDfLF+TRhvEgjPo/J6eHzzH7Te4tq+d5hyHVqEbdfVJD+3exzRYGyhtfK
+         f3pg==
+X-Gm-Message-State: AOAM530JfTTtnuL1Hy4G08tmfnO4aL1uU38opqJ0qm1z8MBv1gJoZOGj
+        foS09uCPTQvsmOu9V33UdEhCcg==
+X-Google-Smtp-Source: ABdhPJwzSyncb7aVwdO7wN2RK69tEVNBlE46/Vv8k3A1+x6MrWslekElUXeJaOlfySU5pV7XBEELzg==
+X-Received: by 2002:a17:902:bb8e:b029:e6:3b2:5834 with SMTP id m14-20020a170902bb8eb02900e603b25834mr869082pls.38.1615920187759;
+        Tue, 16 Mar 2021 11:43:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q5sm16729260pfk.219.2021.03.16.11.43.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Mar 2021 11:43:07 -0700 (PDT)
+Date:   Tue, 16 Mar 2021 11:43:06 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v4 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+Message-ID: <202103161142.87100A8133@keescook>
+References: <20210316170135.226381-1-mic@digikod.net>
+ <20210316170135.226381-2-mic@digikod.net>
 MIME-Version: 1.0
-References: <20210316144823.2188946-1-omosnace@redhat.com>
-In-Reply-To: <20210316144823.2188946-1-omosnace@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 16 Mar 2021 14:21:45 -0400
-Message-ID: <CAHC9VhRoTjimpKrrQ5f04SE7AOcGv6p5iBgSnoSRgtiUP47rRg@mail.gmail.com>
-Subject: Re: [PATCH v2] vfs: fix fsconfig(2) LSM mount option handling for btrfs
-To:     linux-btrfs@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210316170135.226381-2-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 16, 2021 at 10:48 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> When SELinux security options are passed to btrfs via fsconfig(2) rather
-> than via mount(2), the operation aborts with an error. What happens is
-> roughly this sequence:
->
-> 1. vfs_parse_fs_param() eats away the LSM options and parses them into
->    fc->security.
-> 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
->    nothing to btrfs.
-> [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
->  that for simplicity]
-> 3. btrfs calls security_sb_set_mnt_opts() with empty options.
-> 4. vfs_get_tree() then calls its own security_sb_set_mnt_opts() with the
->    options stashed in fc->security.
-> 5. SELinux doesn't like that different options were used for the same
->    superblock and returns -EINVAL.
->
-> In the case of mount(2), the options are parsed by
-> legacy_parse_monolithic(), which skips the eating away of security
-> opts because of the FS_BINARY_MOUNTDATA flag, so they are passed to the
-> FS via ctx->legacy_data. The second call to security_sb_set_mnt_opts()
-> (from vfs_get_tree()) now passes empty opts, but the non-empty -> empty
-> sequence is allowed by SELinux for the FS_BINARY_MOUNTDATA case.
->
-> It is a total mess, but the only sane fix for now seems to be to skip
-> processing the security opts in vfs_parse_fs_param() if the fc has
-> legacy opts set AND the fs specfies the FS_BINARY_MOUNTDATA flag. This
-> combination currently matches only btrfs and coda. For btrfs this fixes
-> the fsconfig(2) behavior, and for coda it makes setting security opts
-> via fsconfig(2) fail the same way as it would with mount(2) (because
-> FS_BINARY_MOUNTDATA filesystems are expected to call the mount opts LSM
-> hooks themselves, but coda never cared enough to do that). I believe
-> that is an acceptable state until both filesystems (or at least btrfs)
-> are converted to the new mount API (at which point btrfs won't need to
-> pretend it takes binary mount data any more and also won't need to call
-> the LSM hooks itself, assuming it will pass the fc->security information
-> properly).
->
-> Note that we can't skip LSM opts handling in vfs_parse_fs_param() solely
-> based on FS_BINARY_MOUNTDATA because that would break NFS.
->
-> See here for the original report and reproducer:
-> https://lore.kernel.org/selinux/c02674c970fa292610402aa866c4068772d9ad4e.camel@btinternet.com/
->
-> Reported-by: Richard Haines <richard_c_haines@btinternet.com>
-> Tested-by: Richard Haines <richard_c_haines@btinternet.com>
-> Fixes: 3e1aeb00e6d1 ("vfs: Implement a filesystem superblock creation/configuration context")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->
-> Trying to revive this patch... Sending v2 with style tweaks as suggested
-> by David Sterba.
->
-> v2:
-> - split the if condition over two lines (David Sterba)
-> - fix comment style in the comment being reindented (David Sterba)
->
->  fs/fs_context.c | 30 ++++++++++++++++++++++++------
->  1 file changed, 24 insertions(+), 6 deletions(-)
+On Tue, Mar 16, 2021 at 06:01:35PM +0100, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
+> 
+> Being able to easily change root directories enables to ease some
+> development workflow and can be used as a tool to strengthen
+> unprivileged security sandboxes.  chroot(2) is not an access-control
+> mechanism per se, but it can be used to limit the absolute view of the
+> filesystem, and then limit ways to access data and kernel interfaces
+> (e.g. /proc, /sys, /dev, etc.).
+> 
+> Users may not wish to expose namespace complexity to potentially
+> malicious processes, or limit their use because of limited resources.
+> The chroot feature is much more simple (and limited) than the mount
+> namespace, but can still be useful.  As for containers, users of
+> chroot(2) should take care of file descriptors or data accessible by
+> other means (e.g. current working directory, leaked FDs, passed FDs,
+> devices, mount points, etc.).  There is a lot of literature that discuss
+> the limitations of chroot, and users of this feature should be aware of
+> the multiple ways to bypass it.  Using chroot(2) for security purposes
+> can make sense if it is combined with other features (e.g. dedicated
+> user, seccomp, LSM access-controls, etc.).
+> 
+> One could argue that chroot(2) is useless without a properly populated
+> root hierarchy (i.e. without /dev and /proc).  However, there are
+> multiple use cases that don't require the chrooting process to create
+> file hierarchies with special files nor mount points, e.g.:
+> * A process sandboxing itself, once all its libraries are loaded, may
+>   not need files other than regular files, or even no file at all.
+> * Some pre-populated root hierarchies could be used to chroot into,
+>   provided for instance by development environments or tailored
+>   distributions.
+> * Processes executed in a chroot may not require access to these special
+>   files (e.g. with minimal runtimes, or by emulating some special files
+>   with a LD_PRELOADed library or seccomp).
+> 
+> Unprivileged chroot is especially interesting for userspace developers
+> wishing to harden their applications.  For instance, chroot(2) and Yama
+> enable to build a capability-based security (i.e. remove filesystem
+> ambient accesses) by calling chroot/chdir with an empty directory and
+> accessing data through dedicated file descriptors obtained with
+> openat2(2) and RESOLVE_BENEATH/RESOLVE_IN_ROOT/RESOLVE_NO_MAGICLINKS.
+> 
+> Allowing a task to change its own root directory is not a threat to the
+> system if we can prevent confused deputy attacks, which could be
+> performed through execution of SUID-like binaries.  This can be
+> prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
+> prctl(2).  To only affect this task, its filesystem information must not
+> be shared with other tasks, which can be achieved by not passing
+> CLONE_FS to clone(2).  A similar no_new_privs check is already used by
+> seccomp to avoid the same kind of security issues.  Furthermore, because
+> of its security use and to avoid giving a new way for attackers to get
+> out of a chroot (e.g. using /proc/<pid>/root, or chroot/chdir), an
+> unprivileged chroot is only allowed if the calling process is not
+> already chrooted.  This limitation is the same as for creating user
+> namespaces.
+> 
+> This change may not impact systems relying on other permission models
+> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
+> such systems may require to update their security policies.
+> 
+> Only the chroot system call is relaxed with this no_new_privs check; the
+> init_chroot() helper doesn't require such change.
+> 
+> Allowing unprivileged users to use chroot(2) is one of the initial
+> objectives of no_new_privs:
+> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
+> This patch is a follow-up of a previous one sent by Andy Lutomirski:
+> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 
-VFS folks, can we get a verdict/feedback on this patch?  The v1 draft
-of this patch was posted almost four months ago with no serious
-comments/feedback.  It's a bit ugly, but it does appear to work and at
-the very least SELinux needs this to handle btrfs properly, other LSMs
-may need this too.
+Thanks for the updates! I find this version much easier to read. :)
 
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index 2834d1afa6e8..e6575102bbbd 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -106,12 +106,30 @@ int vfs_parse_fs_param(struct fs_context *fc, struct fs_parameter *param)
->         if (ret != -ENOPARAM)
->                 return ret;
->
-> -       ret = security_fs_context_parse_param(fc, param);
-> -       if (ret != -ENOPARAM)
-> -               /* Param belongs to the LSM or is disallowed by the LSM; so
-> -                * don't pass to the FS.
-> -                */
-> -               return ret;
-> +       /*
-> +        * In the legacy+binary mode, skip the security_fs_context_parse_param()
-> +        * call and let the legacy handler process also the security options.
-> +        * It will format them into the monolithic string, where the FS can
-> +        * process them (with FS_BINARY_MOUNTDATA it is expected to do it).
-> +        *
-> +        * Currently, this matches only btrfs and coda. Coda is broken with
-> +        * fsconfig(2) anyway, because it does actually take binary data. Btrfs
-> +        * only *pretends* to take binary data to work around the SELinux's
-> +        * no-remount-with-different-options check, so this allows it to work
-> +        * with fsconfig(2) properly.
-> +        *
-> +        * Once btrfs is ported to the new mount API, this hack can be reverted.
-> +        */
-> +       if (fc->ops != &legacy_fs_context_ops ||
-> +           !(fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)) {
-> +               ret = security_fs_context_parse_param(fc, param);
-> +               if (ret != -ENOPARAM)
-> +                       /*
-> +                        * Param belongs to the LSM or is disallowed by the LSM;
-> +                        * so don't pass to the FS.
-> +                        */
-> +                       return ret;
-> +       }
->
->         if (fc->ops->parse_param) {
->                 ret = fc->ops->parse_param(fc, param);
-> --
-> 2.30.2
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
