@@ -2,168 +2,276 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFFBC433E6
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 19:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F88C43381
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 19:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7CD6514B
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 19:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A226765090
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 19:23:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240256AbhCPTE4 (ORCPT
+        id S240340AbhCPTWs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 15:04:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55222 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236645AbhCPTEi (ORCPT
+        Tue, 16 Mar 2021 15:22:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234990AbhCPTWk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 15:04:38 -0400
-Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB2D1C061756
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 12:04:37 -0700 (PDT)
-Received: by mail-lj1-x232.google.com with SMTP id a1so142116ljp.2
-        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 12:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=4xmctPJghbzCxK0UlOH+Mq1rZavHE0MB6cGIt7/nfNk=;
-        b=Fvq3zYIWJXqeliEpcPw2DlNd4Z7cuzmPSXt5zH7IOtyT/4qCHkCM2dQv/y3Pg7SCE+
-         4fVIx1+gg2iqyDqKxbYreKbYwuAFUwcQCCfb4rwfKEPe1n4XNUFRrJI8fcrdQlE+H9zH
-         5+4OO7YkHLl0ikW3SmS5/GqFseKPGqkKzafSDtVFeURjUbqMK+DW56fyPKUQ5IMboY82
-         x3JzGW+Oy76GhErg03A187ggg/ZAdsMbNoIxe+HVyi4lXCn0+3q2EalQBlrhGdYx5hxz
-         SYyZeuVlO7rUzqKw0jFxB1Pwt6DkBDK6+wvFOkr7GGiSd9iAdQIIh+dlEAyKxYAQfTPd
-         UPxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=4xmctPJghbzCxK0UlOH+Mq1rZavHE0MB6cGIt7/nfNk=;
-        b=qn0gVjcn7zxSkKbRzf8PHd4jFflm+fKEG9ahh3G8Lgv7QgQULrkjsxqacVwZoZRQBB
-         QQuwu8AgSp/YbnioyhGJe5PwCs9ahkbT3owU0RTIiTvv5MjEONKJQD5/Nspu0Vy+o/U3
-         RwzebAzzSBy/HIeo34Mz5oIQoNhWgy4YiZYzG1eTSt6dEwoF2+xa1nv02zrOwPxDlIwj
-         krEvroM/0p3huJYVz70303NuAe4aomYapacyXSeQ5bLezwZaWFMKU0GAxUwLWoM0h1yt
-         EJoKV+xuGyEONoDQ8xPpiPwyxt3EaqRQ8nJacvrYt4GakiQNERVipn+Rw/+luU1ztRNI
-         zMgg==
-X-Gm-Message-State: AOAM533lYPfdIPOAirPsyApGcjGeAoWHPYhWHnBZ4pEr/FzSqsJZ+dMY
-        HxqzrIa34NHBZrb1X+ubF48aas7NC0fWsIgQLN8sOg==
-X-Google-Smtp-Source: ABdhPJyrmH/LPRVMNYATc6gz2AQWx1xdP/yG9jsDmCICyaqlhjb5tCgnL8iOgRomqeM5yTRgmisqkZy0ib5HNjKNj5M=
-X-Received: by 2002:a05:651c:1134:: with SMTP id e20mr76134ljo.385.1615921475761;
- Tue, 16 Mar 2021 12:04:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210316170135.226381-1-mic@digikod.net> <20210316170135.226381-2-mic@digikod.net>
-In-Reply-To: <20210316170135.226381-2-mic@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 16 Mar 2021 20:04:09 +0100
-Message-ID: <CAG48ez3=M-5WT73HqmFJr6UHwO0+2FJXxcAgRzp6wcd0P3TN=Q@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] fs: Allow no_new_privs tasks to call chroot(2)
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
+        Tue, 16 Mar 2021 15:22:40 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E870D65061;
+        Tue, 16 Mar 2021 19:22:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1615922559;
+        bh=zg65Pn1r3cXmZ68Zj9qDDZ2iLpobA6DjNNZemVWYfXg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HpoautR6qNDWPE2QlXP5cZF13tXQgMfXBEoaqM/R32UyMWeeuXXUGEoQz85frM8GG
+         ebu0MBOo1S8ciNndBDKlI26RwrhnBv4fhnktaQoWISiVL6Mx8fMJnYFyTVHjdi+YYi
+         zdxRn0pNDuTAzSUzzVv3T5JI9rhcLSV1pFPVsorfyDWDMxUkwZdfBGqTIXRJj02SCV
+         S0IBACa7l3uqHAk+CdOoOpadvNkP+1lRUIVu9OIkyuH0XvOPMxDM4q3wdKON03HIxT
+         RkK0nZrnUqjGeHNhdhQYnCwB9aL7mEph5OhSCIWXRY/uKmDvDbGAd6iQR4R024Kdgo
+         PNP2TdxzKrpgw==
+Date:   Tue, 16 Mar 2021 21:22:14 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
         David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>, kernel@pengutronix.de,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@penutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+Message-ID: <YFEFZujgsMpX7VbU@kernel.org>
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+ <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 16, 2021 at 6:02 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> One could argue that chroot(2) is useless without a properly populated
-> root hierarchy (i.e. without /dev and /proc).  However, there are
-> multiple use cases that don't require the chrooting process to create
-> file hierarchies with special files nor mount points, e.g.:
-> * A process sandboxing itself, once all its libraries are loaded, may
->   not need files other than regular files, or even no file at all.
-> * Some pre-populated root hierarchies could be used to chroot into,
->   provided for instance by development environments or tailored
->   distributions.
-> * Processes executed in a chroot may not require access to these special
->   files (e.g. with minimal runtimes, or by emulating some special files
->   with a LD_PRELOADed library or seccomp).
->
-> Unprivileged chroot is especially interesting for userspace developers
-> wishing to harden their applications.  For instance, chroot(2) and Yama
-> enable to build a capability-based security (i.e. remove filesystem
-> ambient accesses) by calling chroot/chdir with an empty directory and
-> accessing data through dedicated file descriptors obtained with
-> openat2(2) and RESOLVE_BENEATH/RESOLVE_IN_ROOT/RESOLVE_NO_MAGICLINKS.
-
-I don't entirely understand. Are you writing this with the assumption
-that a future change will make it possible to set these RESOLVE flags
-process-wide, or something like that?
-
-
-As long as that doesn't exist, I think that to make this safe, you'd
-have to do something like the following - let a child process set up a
-new mount namespace for you, and then chroot() into that namespace's
-root:
-
-struct shared_data {
-  int root_fd;
-};
-int helper_fn(void *args) {
-  struct shared_data *shared =3D args;
-  mount("none", "/tmp", "tmpfs", MS_NOSUID|MS_NODEV, "");
-  mkdir("/tmp/old_root", 0700);
-  pivot_root("/tmp", "/tmp/old_root");
-  umount("/tmp/old_root", "");
-  shared->root_fd =3D open("/", O_PATH);
-}
-void setup_chroot() {
-  struct shared_data shared =3D {};
-  prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-  clone(helper_fn, my_stack,
-CLONE_VFORK|CLONE_VM|CLONE_FILES|CLONE_NEWUSER|CLONE_NEWNS|SIGCHLD,
-NULL);
-  fchdir(shared.root_fd);
-  chroot(".");
-}
-
-[...]
-> diff --git a/fs/open.c b/fs/open.c
-[...]
-> +static inline int current_chroot_allowed(void)
+On Tue, Mar 16, 2021 at 06:01:18PM +0100, Ahmad Fatoum wrote:
+> The Cryptographic Acceleration and Assurance Module (CAAM) is an IP core
+> built into many newer i.MX and QorIQ SoCs by NXP.
+> 
+> The CAAM does crypto acceleration, hardware number generation and
+> has a blob mechanism for encapsulation/decapsulation of sensitive material.
+> 
+> This blob mechanism depends on a device specific random 256-bit One Time
+> Programmable Master Key that is fused in each SoC at manufacturing
+> time. This key is unreadable and can only be used by the CAAM for AES
+> encryption/decryption of user data.
+> 
+> This makes it a suitable backend (source) for kernel trusted keys.
+> 
+> Previous commits generalized trusted keys to support multiple backends
+> and added an API to access the CAAM blob mechanism. Based on these,
+> provide the necessary glue to use the CAAM for trusted keys.
+> 
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+> To: Jonathan Corbet <corbet@lwn.net>
+> To: David Howells <dhowells@redhat.com>
+> To: Jarkko Sakkinen <jarkko@kernel.org>
+> To: James Bottomley <jejb@linux.ibm.com>
+> To: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: "Horia Geantă" <horia.geanta@nxp.com>
+> Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Udit Agarwal <udit.agarwal@nxp.com>
+> Cc: Jan Luebbe <j.luebbe@penutronix.de>
+> Cc: David Gstir <david@sigma-star.at>
+> Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+> Cc: Sumit Garg <sumit.garg@linaro.org>
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-doc@vger.kernel.org
+> Cc: linux-integrity@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  1 +-
+>  include/keys/trusted_caam.h                     | 11 +++-
+>  security/keys/trusted-keys/Makefile             |  1 +-
+>  security/keys/trusted-keys/trusted_caam.c       | 74 ++++++++++++++++++-
+>  security/keys/trusted-keys/trusted_core.c       |  6 +-
+>  5 files changed, 92 insertions(+), 1 deletion(-)
+>  create mode 100644 include/keys/trusted_caam.h
+>  create mode 100644 security/keys/trusted-keys/trusted_caam.c
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index c8bad1762cba..382e911389aa 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -5469,6 +5469,7 @@
+>  			sources:
+>  			- "tpm"
+>  			- "tee"
+> +			- "caam"
+>  			If not specified then it defaults to iterating through
+>  			the trust source list starting with TPM and assigns the
+>  			first trust source as a backend which is initialized
+> diff --git a/include/keys/trusted_caam.h b/include/keys/trusted_caam.h
+> new file mode 100644
+> index 000000000000..2fba0996b0b0
+> --- /dev/null
+> +++ b/include/keys/trusted_caam.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (C) 2021 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
+> + */
+> +
+> +#ifndef __CAAM_TRUSTED_KEY_H
+> +#define __CAAM_TRUSTED_KEY_H
+> +
+> +extern struct trusted_key_ops caam_trusted_key_ops;
+> +
+> +#endif
+> diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+> index feb8b6c3cc79..050370690abd 100644
+> --- a/security/keys/trusted-keys/Makefile
+> +++ b/security/keys/trusted-keys/Makefile
+> @@ -12,3 +12,4 @@ trusted-y += trusted_tpm2.o
+>  trusted-y += tpm2key.asn1.o
+>  
+>  trusted-$(CONFIG_TEE) += trusted_tee.o
+> +trusted-$(CONFIG_CRYPTO_DEV_FSL_CAAM_BLOB_GEN) += trusted_caam.o
+> diff --git a/security/keys/trusted-keys/trusted_caam.c b/security/keys/trusted-keys/trusted_caam.c
+> new file mode 100644
+> index 000000000000..fc2e3dde9e06
+> --- /dev/null
+> +++ b/security/keys/trusted-keys/trusted_caam.c
+> @@ -0,0 +1,74 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2021 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
+> + */
+> +
+> +#include <keys/trusted_caam.h>
+> +#include <keys/trusted-type.h>
+> +#include <linux/build_bug.h>
+> +#include <linux/key-type.h>
+> +#include <soc/fsl/caam-blob.h>
+> +
+> +struct caam_blob_priv *blobifier;
+> +
+> +#define KEYMOD "kernel:trusted"
+> +
+> +static_assert(MAX_KEY_SIZE + CAAM_BLOB_OVERHEAD <= CAAM_BLOB_MAX_LEN);
+> +static_assert(MAX_BLOB_SIZE <= CAAM_BLOB_MAX_LEN);
+> +
+> +static int trusted_caam_seal(struct trusted_key_payload *p, char *datablob)
 > +{
-> +       /*
-> +        * Changing the root directory for the calling task (and its futu=
-re
-> +        * children) requires that this task has CAP_SYS_CHROOT in its
-> +        * namespace, or be running with no_new_privs and not sharing its
-> +        * fs_struct and not escaping its current root (cf. create_user_n=
-s()).
-> +        * As for seccomp, checking no_new_privs avoids scenarios where
-> +        * unprivileged tasks can affect the behavior of privileged child=
-ren.
-> +        */
-> +       if (task_no_new_privs(current) && current->fs->users =3D=3D 1 &&
-
-this read of current->fs->users should be using READ_ONCE()
-
-> +                       !current_chrooted())
-> +               return 0;
-> +       if (ns_capable(current_user_ns(), CAP_SYS_CHROOT))
-> +               return 0;
-> +       return -EPERM;
+> +	int length = p->key_len + CAAM_BLOB_OVERHEAD;
+> +	int ret;
+> +
+> +	ret = caam_encap_blob(blobifier, KEYMOD, p->key, p->blob, length);
+> +	if (ret)
+> +		return ret;
+> +
+> +	p->blob_len = length;
+> +	return 0;
 > +}
-[...]
+> +
+> +static int trusted_caam_unseal(struct trusted_key_payload *p, char *datablob)
+> +{
+> +	int length = p->blob_len;
+> +	int ret;
+> +
+> +	ret = caam_decap_blob(blobifier, KEYMOD, p->blob, p->key, length);
+> +	if (ret)
+> +		return ret;
+> +
+> +	p->key_len = length - CAAM_BLOB_OVERHEAD;
+> +	return 0;
+> +}
+> +
+> +static int trusted_caam_init(void)
+> +{
+> +	int ret;
+> +
+> +	blobifier = caam_blob_gen_init();
+> +	if (IS_ERR(blobifier)) {
+> +		pr_err("Job Ring Device allocation for transform failed\n");
+> +		return PTR_ERR(blobifier);
+> +	}
+> +
+> +	ret = register_key_type(&key_type_trusted);
+> +	if (ret)
+> +		caam_blob_gen_exit(blobifier);
+> +
+> +	return ret;
+> +}
+> +
+> +static void trusted_caam_exit(void)
+> +{
+> +	unregister_key_type(&key_type_trusted);
+> +	caam_blob_gen_exit(blobifier);
+> +}
+> +
+> +struct trusted_key_ops caam_trusted_key_ops = {
+> +	.migratable = 0, /* non-migratable */
+> +	.init = trusted_caam_init,
+> +	.seal = trusted_caam_seal,
+> +	.unseal = trusted_caam_unseal,
+> +	.exit = trusted_caam_exit,
+> +};
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+> index 5f92323efedf..e9bfb1bbc014 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -9,6 +9,7 @@
+>  #include <keys/user-type.h>
+>  #include <keys/trusted-type.h>
+>  #include <keys/trusted_tee.h>
+> +#include <keys/trusted_caam.h>
+>  #include <keys/trusted_tpm.h>
+>  #include <linux/capability.h>
+>  #include <linux/err.h>
+> @@ -25,7 +26,7 @@
+>  
+>  static char *trusted_key_source;
+>  module_param_named(source, trusted_key_source, charp, 0);
+> -MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+> +MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee or caam)");
+>  
+>  static const struct trusted_key_source trusted_key_sources[] = {
+>  #if defined(CONFIG_TCG_TPM)
+> @@ -34,6 +35,9 @@ static const struct trusted_key_source trusted_key_sources[] = {
+>  #if defined(CONFIG_TEE)
+>  	{ "tee", &trusted_key_tee_ops },
+>  #endif
+> +#if defined(CONFIG_CRYPTO_DEV_FSL_CAAM_BLOB_GEN)
+> +	{ "caam", &caam_trusted_key_ops },
+> +#endif
+>  };
+>  
+>  DEFINE_STATIC_CALL_NULL(trusted_key_init, *trusted_key_sources[0].ops->init);
+> -- 
+> git-series 0.9.1
+> 
 
-Overall I think this change is a good idea.
+Too early to ack, as I've not included the TEE thing to any PR yet.
+
+/Jarkko
