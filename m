@@ -2,148 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB243C433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 08:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1729C433E6
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 13:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C01CA64FEA
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 08:17:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0A596506A
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 13:54:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234382AbhCPIRT (ORCPT
+        id S235545AbhCPNxm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 04:17:19 -0400
-Received: from smtp-190a.mail.infomaniak.ch ([185.125.25.10]:36907 "EHLO
-        smtp-190a.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234380AbhCPIRO (ORCPT
+        Tue, 16 Mar 2021 09:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43582 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235109AbhCPNxe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 04:17:14 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F05jz237PzMq183;
-        Tue, 16 Mar 2021 09:17:11 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F05js6zP4zlpq06;
-        Tue, 16 Mar 2021 09:17:05 +0100 (CET)
-Subject: Re: [PATCH v3 1/1] fs: Allow no_new_privs tasks to call chroot(2)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210311105242.874506-1-mic@digikod.net>
- <20210311105242.874506-2-mic@digikod.net> <202103151405.88334370F@keescook>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <041935de-83fb-5651-73d9-2ea88d4d84cc@digikod.net>
-Date:   Tue, 16 Mar 2021 09:17:08 +0100
-User-Agent: 
+        Tue, 16 Mar 2021 09:53:34 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52EC9C061756
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 06:53:34 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id mj10so72289279ejb.5
+        for <linux-security-module@vger.kernel.org>; Tue, 16 Mar 2021 06:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HsGWHsTvYwMR82bTvfNdLbbIbfKOfHw4CYRAXVbE8Fw=;
+        b=Gm5DDSaKkpIPhLLuie0RMdn+O4VA7RAjjsKEhMso61GFPo0Itmhg+IS0DALd88dbst
+         /iO9jH0yiab7aUEmjNoWBuOONp0Vx0HnMtpeJWXMzhUVT09KQdJH6OBAuW+23AXvm/IY
+         RxXJK0v+4TulkZ10oSSPrexAeW3Fu/OIpHzn7HykWYiL10f1RowuTwAAQxr4rJlEWCmF
+         KXX/qyQU4n0EbQcRyL2wrIf3ImtQPga33WyQvxm9u8dMRSWgx0h376ceM+eyJkVLw6us
+         2YKqp8iu0Rx9QTzmZtWkIoiwJG0ezB2eRhzyM+s21Ugq41Ns4p+U6GRqbArNXNgG8VAu
+         UWtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HsGWHsTvYwMR82bTvfNdLbbIbfKOfHw4CYRAXVbE8Fw=;
+        b=a31lj4JC5QVUQ/PbG5yCxoeH1+KZ9n/MxqW9Uw5zhMQko4erfSxhXq6hR1TNAouB0Q
+         0LvliafFXIblV/iTuChy5/jjOdJHHqVHhJwY1YnZz9wf2bvq97Nue+UqcUE4+QKkz0Pr
+         xVJg+Ae3bIi49HXI1iT3DwMuFIVCdDsvHqjPVvjlYqNt6YUq7QDaHCKuko/Voo6lFjYd
+         GlA2iFtdplkkg2pr6KaquiLtiN9S/GcFn9D55j+TH+FvnQfurijk2gq3s2NlWtgpXP0Z
+         BC7hqyZw71EvzO7iphi/Gt4s1YCkRZsAdORY1pbVlBMjXyepvuWibURj+/p2I36jij32
+         UjDA==
+X-Gm-Message-State: AOAM532UtQ7JWgurfyYqSn/Cbl1YyfEXcNq0ATt9N5ATA1AiTm0ViySF
+        n7KBsdQzcfWvLbR07ihMh3cwiCsYc0ZfKGFcRsWr
+X-Google-Smtp-Source: ABdhPJycpYUdq1CIWkYyGRMDcTGwm0DwqutnqizGHmg/ogGbNt8mki9NMZ9iFXdWVg1jGNwu2OKCRH2GwBwDVM/kYMM=
+X-Received: by 2002:a17:906:edca:: with SMTP id sb10mr13156854ejb.398.1615902812834;
+ Tue, 16 Mar 2021 06:53:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <202103151405.88334370F@keescook>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210224215628.192519-1-omosnace@redhat.com>
+In-Reply-To: <20210224215628.192519-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 16 Mar 2021 09:53:21 -0400
+Message-ID: <CAHC9VhQHrmKHxYuTBOy-JHTXHjGTU9UX-AWk3jbiaNfSkZ+N1A@mail.gmail.com>
+Subject: Re: [PATCH] perf/core: fix unconditional security_locked_down() call
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>, selinux@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Wed, Feb 24, 2021 at 4:59 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Currently, the lockdown state is queried unconditionally, even though
+> its result is used only if the PERF_SAMPLE_REGS_INTR bit is set in
+> attr.sample_type. While that doesn't matter in case of the Lockdown LSM,
+> it causes trouble with the SELinux's lockdown hook implementation.
+>
+> SELinux implements the locked_down hook with a check whether the current
+> task's type has the corresponding "lockdown" class permission
+> ("integrity" or "confidentiality") allowed in the policy. This means
+> that calling the hook when the access control decision would be ignored
+> generates a bogus permission check and audit record.
+>
+> Fix this by checking sample_type first and only calling the hook when
+> its result would be honored.
+>
+> Fixes: b0c8fdc7fdb7 ("lockdown: Lock down perf when in confidentiality mode")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  kernel/events/core.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-On 15/03/2021 22:17, Kees Cook wrote:
-> On Thu, Mar 11, 2021 at 11:52:42AM +0100, Mickaël Salaün wrote:
->> [...]
->> This change may not impact systems relying on other permission models
->> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
->> such systems may require to update their security policies.
->>
->> Only the chroot system call is relaxed with this no_new_privs check; the
->> init_chroot() helper doesn't require such change.
->>
->> Allowing unprivileged users to use chroot(2) is one of the initial
->> objectives of no_new_privs:
->> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
->> This patch is a follow-up of a previous one sent by Andy Lutomirski:
->> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
-> 
-> I liked it back when Andy first suggested it, and I still like it now.
-> :) I'm curious, do you have a specific user in mind for this feature?
+Perf/core folks, do you want to pull this in via your tree?  If I
+don't hear anything in the next day I'll pull this in via the
+selinux/next tree.
 
-Except for development and test purposes, being able to use root
-(without CAP_SYS_CHROOT) would now enable to easily remove ambient
-filesystem access. Indeed, thanks to openat2 with RESOLVE_BENEATH or
-RESOLVE_IN_ROOT, it would be simple for most processes to chroot/chdir
-into an empty directory after opening (or being given) file descriptors
-opened with RESOLVE_BENEATH (e.g. configuration directory, cache
-directory, data directory, etc.). We can get something really close to a
-security capability system (different than POSIX capabilities), which
-wasn't possible when Andy posted the previous patches, and can help
-improve the state of userspace security.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-It is already possible to limit ptrace-like attacks, even when multiple
-processes are running with the same UID, with the help of SELinux, or
-even simply with Yama. This already enables sysadmins or distros to
-harden their system, and this kind of restrictions (with additional
-access-control bits) will be available to userspace developers thanks to
-Landlock.
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 129dee540a8b..0f857307e9bd 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -11796,12 +11796,12 @@ SYSCALL_DEFINE5(perf_event_open,
+>                         return err;
+>         }
+>
+> -       err = security_locked_down(LOCKDOWN_PERF);
+> -       if (err && (attr.sample_type & PERF_SAMPLE_REGS_INTR))
+> -               /* REGS_INTR can leak data, lockdown must prevent this */
+> -               return err;
+> -
+> -       err = 0;
+> +       /* REGS_INTR can leak data, lockdown must prevent this */
+> +       if (attr.sample_type & PERF_SAMPLE_REGS_INTR) {
+> +               err = security_locked_down(LOCKDOWN_PERF);
+> +               if (err)
+> +                       return err;
+> +       }
+>
+>         /*
+>          * In cgroup mode, the pid argument is used to pass the fd
+> --
+> 2.29.2
 
-> 
->> [...]
->> @@ -546,8 +547,18 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
->>  	if (error)
->>  		goto dput_and_out;
->>  
->> +	/*
->> +	 * Changing the root directory for the calling task (and its future
->> +	 * children) requires that this task has CAP_SYS_CHROOT in its
->> +	 * namespace, or be running with no_new_privs and not sharing its
->> +	 * fs_struct and not escaping its current root (cf. create_user_ns()).
->> +	 * As for seccomp, checking no_new_privs avoids scenarios where
->> +	 * unprivileged tasks can affect the behavior of privileged children.
->> +	 */
->>  	error = -EPERM;
->> -	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT))
->> +	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT) &&
->> +			!(task_no_new_privs(current) && current->fs->users == 1
->> +				&& !current_chrooted()))
->>  		goto dput_and_out;
->>  	error = security_path_chroot(&path);
->>  	if (error)
-> 
-> I think the logic here needs to be rearranged to avoid setting
-> PF_SUPERPRIV, and I find the many negations hard to read. Perhaps:
-> 
-> static inline int current_chroot_allowed(void)
-> {
-> 	/* comment here */
-> 	if (task_no_new_privs(current) && current->fs->users == 1 &&
-> 	    !current_chrooted())
-> 		return 0;
-> 
-> 	if (ns_capable(current_user_ns(), CAP_SYS_CHROOT))
-> 		return 0;
-> 
-> 	return -EPERM;
-> }
-> 
-> ...
-> 
-> 	error = current_chroot_allowed();
-> 	if (error)
-> 		goto dput_and_out;
-> 
-> 
-> I can't think of a way to race current->fs->users ...
-> 
-
-OK, I would be a bit bigger patch but easier to read.
+-- 
+paul moore
+www.paul-moore.com
