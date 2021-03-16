@@ -2,192 +2,245 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3034C433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8D1C4332D
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97D9064F64
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5368864FA6
+	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 21:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232905AbhCPVKY (ORCPT
+        id S232788AbhCPVQU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 17:10:24 -0400
-Received: from mail108.syd.optusnet.com.au ([211.29.132.59]:50587 "EHLO
-        mail108.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232758AbhCPVJR (ORCPT
+        Tue, 16 Mar 2021 17:16:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232312AbhCPVQL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 17:09:17 -0400
-X-Greylist: delayed 1140 seconds by postgrey-1.27 at vger.kernel.org; Tue, 16 Mar 2021 17:09:16 EDT
-Received: from dread.disaster.area (pa49-181-239-12.pa.nsw.optusnet.com.au [49.181.239.12])
-        by mail108.syd.optusnet.com.au (Postfix) with ESMTPS id 3A42F1AE113;
-        Wed, 17 Mar 2021 07:50:14 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1lMGdm-003JC5-RA; Wed, 17 Mar 2021 07:50:10 +1100
-Date:   Wed, 17 Mar 2021 07:50:10 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH] xfs: use has_capability_noaudit() instead of capable()
- where appropriate
-Message-ID: <20210316205010.GN63242@dread.disaster.area>
-References: <20210316173226.2220046-1-omosnace@redhat.com>
+        Tue, 16 Mar 2021 17:16:11 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12GL3YsQ110195;
+        Tue, 16 Mar 2021 17:16:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=jDhcUxUBA+1jZUH7Ci97Hm4C5PT0ru3IyiJgwKrKpgQ=;
+ b=Ql99LFvtU31FP9uJYPnCSE9TYxfQsdoNL+80XnV6mw++XubaQvLEBHQUSoClIdd+0PPu
+ psn18xuTFPD6NU2p4dmChyEs13wqEdhpf/UbkzUepUNZn5rSTorBR7O+YwGDXuK/sHEB
+ OzaFV9rj56VtTzSQoAZGh3OBsh2+jgLWaU8arINy9iSI58C9yY0Al9fKBD3tqc3JfZC2
+ LXGPdNdoERlSqxwIp/1oIp33sBWKzNSaTsTGNaGdqOJeLZ2D0B87nalxhRXj4lluTPpL
+ AirQlecH2DbUxfepixg66xiecvI+pVFlUj7XMofgbAdgdiYLCKyoyULHudyfBrXXj1T7 KQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37b0aw7cau-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Mar 2021 17:16:06 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12GL4QnT112755;
+        Tue, 16 Mar 2021 17:16:05 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37b0aw7caa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Mar 2021 17:16:05 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12GLDmY9024499;
+        Tue, 16 Mar 2021 21:16:04 GMT
+Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
+        by ppma04wdc.us.ibm.com with ESMTP id 378n1925d9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 16 Mar 2021 21:16:04 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12GLG3cf29557060
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 16 Mar 2021 21:16:03 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 351076E04E;
+        Tue, 16 Mar 2021 21:16:03 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 803C36E059;
+        Tue, 16 Mar 2021 21:16:02 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 16 Mar 2021 21:16:02 +0000 (GMT)
+Subject: Re: [PATCH v12 00/10] Add support for x509 certs with NIST
+ P384/256/192 keys
+To:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        davem@davemloft.net, herbert@gondor.apana.org.au,
+        dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patrick@puiterwijk.org
+References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <4657d697-7b5d-569f-aa8c-9277d69f76e4@linux.ibm.com>
+Date:   Tue, 16 Mar 2021 17:16:02 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210316173226.2220046-1-omosnace@redhat.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.3 cv=F8MpiZpN c=1 sm=1 tr=0 cx=a_idp_d
-        a=gO82wUwQTSpaJfP49aMSow==:117 a=gO82wUwQTSpaJfP49aMSow==:17
-        a=kj9zAlcOel0A:10 a=dESyimp9J3IA:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=2x_0iWG2yc6BsuJkHo8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20210316210740.1592994-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-16_08:2021-03-16,2021-03-16 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 mlxscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2103160130
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 16, 2021 at 06:32:26PM +0100, Ondrej Mosnacek wrote:
-> In cases when a negative result of a capability check doesn't lead to an
-> immediate, user-visible error, only a subtle difference in behavior, it
-> is better to use has_capability_noaudit(current, ...), so that LSMs
-> (e.g. SELinux) don't generate a denial record in the audit log each time
-> the capability status is queried. This patch should cover all such cases
-> in fs/xfs/.
+Herbert,
 
-Is this something new? I only see 4 calls to
-has_capability_noaudit() in 5.12-rc3...
+   if you could queue patches 1-9 in a topic branch, that would be great!
 
-Also, has_capability_noaudit() is an awful name. capable_noaudit()
-would actually be self explanatory to anyone who is used to doing
-capability checks via capable(), ns_capable(), ns_capable_noaudit(),
-inode_owner_or_capable(), capable_wrt_inode_uidgid(), etc...
+Regards,
 
-Please fix the name of this function to be consistent with the
-existing capability APIs before propagating it further into the
-kernel.
+    Stefan
 
-> Note that I kept the capable(CAP_FSETID) checks, since these will only
-> be executed if the user explicitly tries to set the SUID/SGID bit, and
-> it likely makes sense to log such attempts even if the syscall doesn't
-> fail and just ignores the bits.
 
-So how on earth are we supposed to maintain this code correctly?
-These are undocumented rules that seemingly are applied to random
-subsystems and to seemingly random capable() calls in those
-subsystems. ANd you don't even document it in this code where there
-are other capable(...) checks that will generate audit records...
-
-How are we supposed to know when an audit record should be emitted
-or not by some unknown LSM when we do a capability check?
-Capabilities are already an awful nightmare maze of similar but
-slightly different capability checks, and this doesn't improve the
-situation at all.
-
-Please make this easier to get right iand maintain correctly (an
-absolute, non-negotiable requirement for anything security related)
-before you spray yet another poorly documented capability function
-into the wider kernel.
-
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  fs/xfs/xfs_fsmap.c | 4 ++--
->  fs/xfs/xfs_ioctl.c | 5 ++++-
->  fs/xfs/xfs_iops.c  | 6 ++++--
->  fs/xfs/xfs_xattr.c | 2 +-
->  4 files changed, 11 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
-> index 9ce5e7d5bf8f..14672e7ee535 100644
-> --- a/fs/xfs/xfs_fsmap.c
-> +++ b/fs/xfs/xfs_fsmap.c
-> @@ -842,8 +842,8 @@ xfs_getfsmap(
->  	    !xfs_getfsmap_is_valid_device(mp, &head->fmh_keys[1]))
->  		return -EINVAL;
->  
-> -	use_rmap = capable(CAP_SYS_ADMIN) &&
-> -		   xfs_sb_version_hasrmapbt(&mp->m_sb);
-> +	use_rmap = xfs_sb_version_hasrmapbt(&mp->m_sb) &&
-> +		   has_capability_noaudit(current, CAP_SYS_ADMIN);
->  	head->fmh_entries = 0;
->  
->  	/* Set up our device handlers. */
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index 3fbd98f61ea5..3cfc1a25069c 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -1470,8 +1470,11 @@ xfs_ioctl_setattr(
->  
->  	if (XFS_IS_QUOTA_RUNNING(mp) && XFS_IS_PQUOTA_ON(mp) &&
->  	    ip->i_d.di_projid != fa->fsx_projid) {
-> +		int flags = has_capability_noaudit(current, CAP_FOWNER) ?
-> +			XFS_QMOPT_FORCE_RES : 0;
-> +
->  		code = xfs_qm_vop_chown_reserve(tp, ip, NULL, NULL, pdqp,
-> -				capable(CAP_FOWNER) ?  XFS_QMOPT_FORCE_RES : 0);
-> +				flags);
->  		if (code)	/* out of quota */
->  			goto error_trans_cancel;
->  	}
-
-You missed a capable() call here - see the call to
-xfs_trans_alloc_ichange( ... capabale(CAP_FOWNER), ...); in
-xfs_ioctl_setattr_get_trans().
-
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 67c8dc9de8aa..abbb417c4fbd 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -729,10 +729,12 @@ xfs_setattr_nonsize(
->  		if (XFS_IS_QUOTA_RUNNING(mp) &&
->  		    ((XFS_IS_UQUOTA_ON(mp) && !uid_eq(iuid, uid)) ||
->  		     (XFS_IS_GQUOTA_ON(mp) && !gid_eq(igid, gid)))) {
-> +			int flags = has_capability_noaudit(current, CAP_FOWNER) ?
-> +				XFS_QMOPT_FORCE_RES : 0;
-> +
->  			ASSERT(tp);
->  			error = xfs_qm_vop_chown_reserve(tp, ip, udqp, gdqp,
-> -						NULL, capable(CAP_FOWNER) ?
-> -						XFS_QMOPT_FORCE_RES : 0);
-> +						NULL, flags);
->  			if (error)	/* out of quota */
->  				goto out_cancel;
->  		}
-
-You missed a capable() call here - see the call to
-xfs_trans_alloc_ichange( ... capabale(CAP_FOWNER), ...); in this
-function.
-
-I think this demonstrates just how fragile and hard to maintain the
-approach being taken here is.
-
-> diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
-> index bca48b308c02..a99d19c2c11f 100644
-> --- a/fs/xfs/xfs_xattr.c
-> +++ b/fs/xfs/xfs_xattr.c
-> @@ -164,7 +164,7 @@ xfs_xattr_put_listent(
->  		 * Only show root namespace entries if we are actually allowed to
->  		 * see them.
->  		 */
-> -		if (!capable(CAP_SYS_ADMIN))
-> +		if (!has_capability_noaudit(current, CAP_SYS_ADMIN))
->  			return;
->  
->  		prefix = XATTR_TRUSTED_PREFIX;
-
-This one should absolutely report a denial - someone has tried to
-read the trusted xattr namespace without permission to do so. That's
-exactly the sort of thing I'd want to see in an audit log - just
-because we just elide the xattrs rather than return an error doesn't
-mean we should not leave an audit trail from the attempted access
-of kernel trusted attributes...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+On 3/16/21 5:07 PM, Stefan Berger wrote:
+> This series of patches adds support for x509 certificates signed by a CA
+> that uses NIST P384, P256 or P192 keys for signing. It also adds support for
+> certificates where the public key is one of this type of a key. The math
+> for ECDSA signature verification is also added as well as the math for fast
+> mmod operation for NIST P384.
+>
+> Since self-signed certificates are verified upon loading, the following
+> script can be used for testing of NIST P256 keys:
+>
+> k=$(keyctl newring test @u)
+>
+> while :; do
+> 	for hash in sha1 sha224 sha256 sha384 sha512; do
+> 		openssl req \
+> 			-x509 \
+> 			-${hash} \
+> 			-newkey ec \
+> 			-pkeyopt ec_paramgen_curve:prime256v1 \
+> 			-keyout key.pem \
+> 			-days 365 \
+> 			-subj '/CN=test' \
+> 			-nodes \
+> 			-outform der \
+> 			-out cert.der
+> 		keyctl padd asymmetric testkey $k < cert.der
+> 		if [ $? -ne 0 ]; then
+> 			echo "ERROR"
+> 			exit 1
+> 		fi
+> 	done
+> done
+>
+> Ecdsa support also works with restricted keyrings where an RSA key is used
+> to sign a NIST P384/256/192 key. Scripts for testing are here:
+>
+> https://github.com/stefanberger/eckey-testing
+>
+> The ECDSA signature verification will be used by IMA Appraisal where ECDSA
+> file signatures stored in RPM packages will use substantially less space
+> than if RSA signatures were to be used.
+>
+> Further, a patch is added that allows kernel modules to be signed with a NIST
+> P384 key.
+>
+> Testing was also done with a Pkcs11 device using an ECC key for module
+> signing:
+>    https://github.com/stefanberger/eckey-testing/wiki/Using-Pkcs11-Device-(SoftHSM)-for-Signing-Linux-Kernel-Modules
+>
+>     Stefan and Saulo
+>
+> v11->v12:
+>    - Added Jarkko's Acked-by's
+>
+> v10->v11:
+>    - Addressed Jarkko's comments
+>    - Split off OID definitions from first patch into own patch
+>    - Renamed OID_id_secp384r1 to OID_id_ansip384r1 (spec name) in 09/10
+>
+> v9->v10:
+>    - rearranged order of patches to have crypto patches first
+>    - moved hunk from patch 3 to patch 2 to avoid compilation warning due to
+>      unused symbol
+>
+> v8->v9:
+>    - Appended Saulo's patches
+>    - Appended patch to support kernel modules signed with NIST p384 key. This
+>      patch requires Nayna's series here: https://lkml.org/lkml/2021/2/18/856
+>
+> v7->v8:
+>    - patch 3/4: Do not determine key algo using parse_OID in public_key.c
+>      but do this when parsing the certificate. This addresses an issue
+>      with certain build configurations where OID_REGISTRY is not available
+>      as 'Reported-by: kernel test robot <lkp@intel.com>'.
+>
+> v6->v7:
+>    - Moved some OID defintions to patch 1 for bisectability
+>    - Applied R-b's
+>    
+> v5->v6:
+>    - moved ecdsa code into its own module ecdsa_generic built from ecdsa.c
+>    - added script-generated test vectors for NIST P256 & P192 and all hashes
+>    - parsing of OID that contain header with new parse_oid()
+>
+> v4->v5:
+>    - registering crypto support under names ecdsa-nist-p256/p192 following
+>      Hubert Xu's suggestion in other thread
+>    - appended IMA ECDSA support patch
+>
+> v3->v4:
+>    - split off of ecdsa crypto part; registering akcipher as "ecdsa" and
+>      deriving used curve from digits in parsed key
+>
+> v2->v3:
+>    - patch 2 now includes linux/scatterlist.h
+>
+> v1->v2:
+>    - using faster vli_sub rather than newly added vli_mod_fast to 'reduce'
+>      result
+>    - rearranged switch statements to follow after RSA
+>    - 3rd patch from 1st posting is now 1st patch
+>
+>
+> Saulo Alessandre (4):
+>    crypto: Add NIST P384 curve parameters
+>    crypto: Add math to support fast NIST P384
+>    ecdsa: Register NIST P384 and extend test suite
+>    x509: Add OID for NIST P384 and extend parser for it
+>
+> Stefan Berger (6):
+>    oid_registry: Add OIDs for ECDSA with SHA224/256/384/512
+>    crypto: Add support for ECDSA signature verification
+>    x509: Detect sm2 keys by their parameters OID
+>    x509: Add support for parsing x509 certs with ECDSA keys
+>    ima: Support EC keys for signature verification
+>    certs: Add support for using elliptic curve keys for signing modules
+>
+>   certs/Kconfig                             |  22 ++
+>   certs/Makefile                            |  14 +
+>   crypto/Kconfig                            |  10 +
+>   crypto/Makefile                           |   6 +
+>   crypto/asymmetric_keys/pkcs7_parser.c     |   4 +
+>   crypto/asymmetric_keys/public_key.c       |   4 +-
+>   crypto/asymmetric_keys/x509_cert_parser.c |  49 ++-
+>   crypto/asymmetric_keys/x509_public_key.c  |   4 +-
+>   crypto/ecc.c                              | 281 +++++++++-----
+>   crypto/ecc.h                              |  28 +-
+>   crypto/ecc_curve_defs.h                   |  32 ++
+>   crypto/ecdsa.c                            | 376 +++++++++++++++++++
+>   crypto/ecdsasignature.asn1                |   4 +
+>   crypto/testmgr.c                          |  18 +
+>   crypto/testmgr.h                          | 424 ++++++++++++++++++++++
+>   include/crypto/ecdh.h                     |   1 +
+>   include/keys/asymmetric-type.h            |   6 +
+>   include/linux/oid_registry.h              |  10 +-
+>   lib/oid_registry.c                        |  24 ++
+>   security/integrity/digsig_asymmetric.c    |  30 +-
+>   20 files changed, 1240 insertions(+), 107 deletions(-)
+>   create mode 100644 crypto/ecdsa.c
+>   create mode 100644 crypto/ecdsasignature.asn1
+>
