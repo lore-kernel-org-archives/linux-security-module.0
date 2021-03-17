@@ -2,66 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0314C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 21:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C27CC433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 22:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74C5064E64
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 21:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0F864F07
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 22:57:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbhCQV6W (ORCPT
+        id S229545AbhCQW46 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Mar 2021 17:58:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46786 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229460AbhCQV6F (ORCPT
+        Wed, 17 Mar 2021 18:56:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51816 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229537AbhCQW43 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Mar 2021 17:58:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AD8F964E64;
-        Wed, 17 Mar 2021 21:58:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616018285;
-        bh=1JkZ0vyLQz4PnX/wS0fY7/yww7iJrPMI9VFzJtNzYvg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=d3+K4AL3RC19gKUG3ADG3J/gblosuycyOP7LZktGsbJUPqC0TvFFIG8yDxhKJLI0t
-         k10dPxkr9wlN8u+kNfqnq/jcO146D+KMMxx4wYIZ7FlEg23QnsVOyyb73WUUJmWpIe
-         3P8idSid6qPJvo1HpJ5j2sWGOSrwz182fiDrcAnbg41IsPXTAIIDDOiC06o7DUlTw+
-         OSF9Mxe9zwJbhPA4thq/KqdXdwaze9nmrY6pPzd70uBT/q5Of/neWNmMvMrRCYAFob
-         +EMAMUGU+8fHMFFmt7A3tTyCUITwbeQECgp3+hnSF4c3INaHgMtN1VuZlolOod1EbF
-         7yq/EnblNk1Ig==
-Date:   Wed, 17 Mar 2021 23:57:36 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Sumit Garg <sumit.garg@linaro.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>, kernel@pengutronix.de,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: trusted: tee: fix build error due to missing
- include
-Message-ID: <YFJ7UOagBgm5Fn0/@kernel.org>
-References: <20210317142904.27855-1-a.fatoum@pengutronix.de>
+        Wed, 17 Mar 2021 18:56:29 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3634C06175F
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 15:56:28 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id w3so926524ejc.4
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 15:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a+08TCMXZyjlZrUSLxo3iiA6zUw9BGeYa2hlwFsECIY=;
+        b=t11two/QxA5RIKVR27oCZ44kE2UoHAGFyECntvDL8K6Xmd5Fg/CLAIU2akBPdDsxQS
+         bqbapnCnu3vl9bgwlT49abRo2lo70BZzk5aKv5xO0flvdI8enW08GUv8vpndhUb0L/sq
+         cPWlYXH9Z0Fb8OKs5aU5l4zWvDQpBiO2fw9+r264W65CIGnYKXaoL3rbC+NzZg7xxytq
+         CrPWw9tRlgKBeXkaSKkIDkQTzRXzTAd0cyi4NrcaD/wrc0blqSsBMlZbI1NYqIO068h1
+         lb1acxj7XvtNlmHn9PMtla4PzreA82UyciHX0PSvZHedakgwPpXRvSn0mNXUo6f5wjPm
+         mSjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a+08TCMXZyjlZrUSLxo3iiA6zUw9BGeYa2hlwFsECIY=;
+        b=L+5lz6VHVaokJ1Q81dn/dp8g56EvsiQKujlJ3kUcST8n31w9bTZue0jMjWLtEpxuIH
+         iQ/1w8txuVQqCEnn5UWrl2BVXbKIHvgnqqRUNDzj86oOjVIdwrVkBPIdwLOndv2SW/tO
+         yYaBHJq7uwirIK7BVdNx6cS+GgPTKF1ggqxnW927zljOUvo6NxEg0PXSPZoRM/tzl70I
+         gKVwPDyrAY4iH1tkHrP/K/7HB2a7AbVAh2Yk82t/moKLfP8X50A7MvaznfSLp2Xx9CYg
+         Q/zEWmd7U+51MtmQ8V1/UE4i6cBJVhww6+Zpr5kqhvQZUNlmffaTksAZgrUkwMzafy2Q
+         EPhA==
+X-Gm-Message-State: AOAM532JMXd6hQAxTQcKw0Fwmfst3+wFXOgPhdz5AVp76dh4uogCtAXl
+        YaLyrDKJn7z7bjiEK2XzvjiqMxi1QxWMYfrN2Bkp
+X-Google-Smtp-Source: ABdhPJwQ6DhvzGENYehzx0SNW4HCm0PCWmztvPNIkgcIJ3iZTziPQupBbExCf+lV7Fg3ZHzMlKrtUDUImmoF8nDBLek=
+X-Received: by 2002:a17:906:a443:: with SMTP id cb3mr37538189ejb.542.1616021787231;
+ Wed, 17 Mar 2021 15:56:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210317142904.27855-1-a.fatoum@pengutronix.de>
+References: <161377712068.87807.12246856567527156637.stgit@sifl>
+ <161377735153.87807.7492842242100187888.stgit@sifl> <b27662cf-4bcf-ec23-92f5-49a5b2f8c119@canonical.com>
+ <CAHC9VhQmwFHFYZ2yCPDLWanjc1hzof7G3XO4fqPEX2ykiHCN3g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQmwFHFYZ2yCPDLWanjc1hzof7G3XO4fqPEX2ykiHCN3g@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 17 Mar 2021 18:56:16 -0400
+Message-ID: <CAHC9VhR5_Fd_vCFME-zZJuap1rSpc5hEBGjK8p10QnaXiGrBug@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] selinux: clarify task subjective and objective credentials
+To:     John Johansen <john.johansen@canonical.com>,
+        Jeffrey Vander Stoep <jeffv@google.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 17, 2021 at 03:29:05PM +0100, Ahmad Fatoum wrote:
-> MODULE_DEVICE_TABLE is defined in <linux/module.h>, which is not
-> included. Add the include to fix the build error its lack caused.
-> 
-> Cc: Sumit Garg <sumit.garg@linaro.org>
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+On Wed, Mar 10, 2021 at 11:32 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Tue, Mar 9, 2021 at 10:06 PM John Johansen
+> <john.johansen@canonical.com> wrote:
+> > On 2/19/21 3:29 PM, Paul Moore wrote:
 
-Hi, I appreciate your work, thanks for taking action, but unfortunately
-I already incorporated this fix to the original patch.
+...
 
-/Jarkko
+> > > @@ -2034,11 +2047,8 @@ static inline u32 open_file_to_av(struct file *file)
+> > >
+> > >  static int selinux_binder_set_context_mgr(struct task_struct *mgr)
+> > >  {
+> > > -     u32 mysid = current_sid();
+> > > -     u32 mgrsid = task_sid(mgr);
+> > > -
+> > >       return avc_has_perm(&selinux_state,
+> > > -                         mysid, mgrsid, SECCLASS_BINDER,
+> > > +                         current_sid(), task_sid_obj(mgr), SECCLASS_BINDER,
+> > >                           BINDER__SET_CONTEXT_MGR, NULL);
+> > >  }
+> > >
+> > > @@ -2046,8 +2056,8 @@ static int selinux_binder_transaction(struct task_struct *from,
+> > >                                     struct task_struct *to)
+> > >  {
+> > >       u32 mysid = current_sid();
+> > > -     u32 fromsid = task_sid(from);
+> > > -     u32 tosid = task_sid(to);
+> > > +     u32 fromsid = task_sid_subj(from);
+> >
+> > fromsid potentially gets used as both the subject and the object the following
+> > permission checks. It makes sense to use the same cred for both checks but
+> > what I am not sure about yet is whether its actually safe to use the subject
+> > sid when the task isn't current.
+> >
+> > ie. I am still trying to determine if there is a race here between the transaction
+> > request and the permission check.
+>
+> Okay, I see what you are concerned about now ... and unfortunately I'm
+> not seeing a lot of precedence in the kernel for this type of usage
+> either; the closest I can find is something like task_lock(), but that
+> doesn't seem to cover the subjective creds.  In fact, looking at
+> override_creds(), there is nothing preventing a task from changing
+> it's subjective creds at any point in time.
+>
+> Beyond the task_sid_subj() code here, looking back at patch 1 and the
+> use of security_task_getsecid_subj() we look to be mostly safe (where
+> safe means we are only inspecting the current task) with the exception
+> of the binder code once again.  There are some other exceptions but
+> they are in the ptrace and audit code, both of which should be okay
+> given the nature and calling context of the code.
+>
+> The problem really does seem to be just binder, and as I look at
+> binder userspace example code, I'm starting to wonder if binder is
+> setup properly to operate sanely in a situation where a process
+> overrides its subject creds.  It may be that we always need to use the
+> objective/real creds with binder.  Jeff, any binder insight here you
+> can share with us?
+>
+> > > +     u32 tosid = task_sid_subj(to);
+> > its not clear to me that using the subj for to is correct
+>
+> Yes, I believe you are correct.  Jeff, I know you looked at this code
+> already, but I'm guessing you may have missed this (just as I did when
+> I wrote it); are you okay with changing 'tosid' in
+> selinux_binder_transaction() to the task's objective credentials?
+
+Hearing no comments from the Android/binder folks, I'm in the process
+of switching this patchset to always use the objective creds in the
+case of binder.  It's safe and I'm not sure binder is really prepared
+for the idea of a task changing it's creds anyway.
+
+Once the kernel builds and passes some basic sanity checks I'll repost
+the patches for review and inclusion, minus the AppArmor patch.
+
+-- 
+paul moore
+www.paul-moore.com
