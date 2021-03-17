@@ -2,68 +2,69 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B6BC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 23:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BEEBC4332D
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 07:41:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D62E264F51
-	for <linux-security-module@archiver.kernel.org>; Tue, 16 Mar 2021 23:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F39D664FAC
+	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 07:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229524AbhCPXPZ (ORCPT
+        id S229978AbhCQHk3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 16 Mar 2021 19:15:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52914 "EHLO
+        Wed, 17 Mar 2021 03:40:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbhCPXPC (ORCPT
+        with ESMTP id S230021AbhCQHkR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 16 Mar 2021 19:15:02 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8B0C06174A;
-        Tue, 16 Mar 2021 16:15:01 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id m7so109832qtq.11;
-        Tue, 16 Mar 2021 16:15:01 -0700 (PDT)
+        Wed, 17 Mar 2021 03:40:17 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73408C061764
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 00:40:06 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id s17so1940153ljc.5
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 00:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qdxv2gEJ6NgRGsYoTFeE+bXdNCpfPV/ug1iqUQGuyWs=;
-        b=I+Juq/fA7D46g+cZuc71bhSV0g0OVRQu1A93eJc+s8DYgtXURo9Mv47FobjHzYthC2
-         csQrEUlxfCxMyAzaPhssL3tuKHz8iRoghRqENHS61qdMGCgU/JQ7m/gGD+AbJ67C4Ym+
-         x37zGDX0Gdi7xWlYnx8+7Vi/QWHyRcQ/3RoEG51ZjMcTCPx+E+H2MpCXLYx892MSM0Z3
-         bFSWCg2VqQy769wdZ829cDzcGDxd6FGmuRKpwzNfOxq8gfSChrc13wxnT1Gh5vpXJ29P
-         D8f3PKvsxlWm1JTg3CF1Z9J76d49C42Dy9ia42dILj5pEAHwqJxHXLmw+hcL+1ZOo8un
-         tdSQ==
+        bh=iObzIxFvftTdKH1/yXifJjIJYlGMiIva4oZnIqTHzmM=;
+        b=ZX9iixsaVwsqr/Cn1A2WeoWoFrumH7sNtxSYawUL91Lphse0MaPfjacqjM1FDqo5NV
+         bAiKDQJaSGz8eQYBN13LKfX3quYfLXHo06AKoEXrU/lwTNqcjKeZJITR936O79VQUhI6
+         wobMISUTMmR4vRvl+SKxW9AWPCf4zKqBsL+w/IbYyVN/yTUpMOLeId+WA+mlkBmeuAfT
+         SR6z4Mx3EcIwnv9OPgV9OMrbBmDQxsgYRPycRLcC3dtH0VHkmwD+z9Zc6xICnfWyuCGQ
+         b3W1JCznoQqe9WgRzA4SyoIn3U+7fBtfqpAO6ndTTp+GB7kTenXE1vAdmc5JnfW18Ni6
+         Usog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qdxv2gEJ6NgRGsYoTFeE+bXdNCpfPV/ug1iqUQGuyWs=;
-        b=WmA9PITm8OGVF9V2ffUPD/xaX2okedqh0vwweS0K3g7tOsLSbPWwYMAgoi67/iiw6d
-         WIO0cdK/NkHGekjUW/tVG+siJn8cpnHWwsnjkiGsuLNODdLspgrIoCLW8VID1tnE76AM
-         XlDueAt8/sSP02+ln/Cz6A7Veab00brv4dqfJIMiRFsyaD6I4H7CUrQtChVWJ1KiNNOL
-         3WneWDjE7grbOzgz8egqOXhbNxC34vjb6WBE0AYvFK+BxtmyaqrODnZpOwEdRIdZmJ92
-         usGvDMwbio2fWnFYO6G3FFzm4nl2d/stnzk/WBjEBWn5iJhxwMOKT87MZV5i5403Kcto
-         jaig==
-X-Gm-Message-State: AOAM532XYQ+UBL9Mf7pRXwt/CBwDdrYbSEqp8+WeM4/SCY4WeQkU59ga
-        gWX2Y10QhI9H7mhlDazv7KFJ+w9MTrTvm1s4Ex8=
-X-Google-Smtp-Source: ABdhPJwSFSqoHDR8eyiSz11ijj/2UuGYRbaQnoudReFeMhDR6IrY2/TG4DcGrS0dkJAifeY0YoopbnEbIffDmuGrwPk=
-X-Received: by 2002:ac8:4d59:: with SMTP id x25mr1251534qtv.82.1615936500550;
- Tue, 16 Mar 2021 16:15:00 -0700 (PDT)
+        bh=iObzIxFvftTdKH1/yXifJjIJYlGMiIva4oZnIqTHzmM=;
+        b=rDt4+Et0nWht+vLhprfTCFBC0JYwnTKhe8wG/cpStbaioUfV3b/PkGCCPQXsZneKDi
+         hQOkWdgrLSCthLZsI3Hu/rs1iM5rHhu+Z6smoafcr9wtXSSw/1wy6S3bp3sgTPNvsi/9
+         0ryuaX539R02FsgZbIGAd2BM63hbi7bKNqwWbD0wO4sYNh7QmkWfx2GMsLp7RvBMW+ay
+         WYL41YAVTT5O5hJ15W5dET8/NTIwHRGS87sAWnQ2RanT1FO4WlYXVg2Qypb6XKh8ldTp
+         yEMKVqSLWQuKDCqFWvyru8WiVuJWExOibhaJ60bUJpFiAIYKbH+lrwRSgobMK6gkdYOh
+         ATpw==
+X-Gm-Message-State: AOAM531NFPQkamzsIGSlFRIhTDEYEqDIHxN0W5J9S56qY/rT3qkwTzgk
+        Gyl78BOsvR4QxPRGjwGfWb5s9NUgn011V1Dit+Gt4g==
+X-Google-Smtp-Source: ABdhPJxkZg9XDXYoY6hqQYdLLQExVMsp4ITka98+Ps8S1hFlsNeIPJBrvg4kY7aeSo/+tIGP5LduAXhwxBknckTLNck=
+X-Received: by 2002:a05:651c:481:: with SMTP id s1mr1539339ljc.152.1615966804665;
+ Wed, 17 Mar 2021 00:40:04 -0700 (PDT)
 MIME-Version: 1.0
 References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
  <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
-In-Reply-To: <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Wed, 17 Mar 2021 00:14:49 +0100
-Message-ID: <CAFLxGvxmRcvkweGSRSLGEm5MJDM4M7nzkp9FwOwmhZ+h2RE0vA@mail.gmail.com>
+ <CAFLxGvxmRcvkweGSRSLGEm5MJDM4M7nzkp9FwOwmhZ+h2RE0vA@mail.gmail.com>
+In-Reply-To: <CAFLxGvxmRcvkweGSRSLGEm5MJDM4M7nzkp9FwOwmhZ+h2RE0vA@mail.gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Wed, 17 Mar 2021 13:09:53 +0530
+Message-ID: <CAFA6WYNyMzQJNhGds2Ff9waF6mAr_0E-izXA2GBooTJgVDp-3A@mail.gmail.com>
 Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
  CAAM-based trusted keys
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Jonathan Corbet <corbet@lwn.net>,
         David Howells <dhowells@redhat.com>,
         Jarkko Sakkinen <jarkko@kernel.org>,
         James Bottomley <jejb@linux.ibm.com>,
@@ -78,37 +79,50 @@ Cc:     Jonathan Corbet <corbet@lwn.net>,
         Jan Luebbe <j.luebbe@penutronix.de>,
         David Gstir <david@sigma-star.at>,
         Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
         Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
         LKML <linux-kernel@vger.kernel.org>,
         LSM <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Ahmad,
+Hi Richard,
 
-On Tue, Mar 16, 2021 at 6:24 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
-> +#include <keys/trusted_caam.h>
-> +#include <keys/trusted-type.h>
-> +#include <linux/build_bug.h>
-> +#include <linux/key-type.h>
-> +#include <soc/fsl/caam-blob.h>
-> +
-> +struct caam_blob_priv *blobifier;
+On Wed, 17 Mar 2021 at 04:45, Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> Ahmad,
+>
+> On Tue, Mar 16, 2021 at 6:24 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+> > +#include <keys/trusted_caam.h>
+> > +#include <keys/trusted-type.h>
+> > +#include <linux/build_bug.h>
+> > +#include <linux/key-type.h>
+> > +#include <soc/fsl/caam-blob.h>
+> > +
+> > +struct caam_blob_priv *blobifier;
+>
+> Who is using this pointer too?
+> Otherwise I'd suggest marking it static.
+>
+> >  module_param_named(source, trusted_key_source, charp, 0);
+> > -MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+> > +MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee or caam)");
+>
+> I didn't closely follow the previous discussions, but is a module
+> parameter really the right approach?
+> Is there also a way to set it via something like device tree?
+>
 
-Who is using this pointer too?
-Otherwise I'd suggest marking it static.
+It's there to support a platform which possesses multiple trusted keys
+backends. So that a user is able to select during boot which one to
+use as a backend.
 
->  module_param_named(source, trusted_key_source, charp, 0);
-> -MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
-> +MODULE_PARM_DESC(source, "Select trusted keys source (tpm, tee or caam)");
+-Sumit
 
-I didn't closely follow the previous discussions, but is a module
-parameter really the right approach?
-Is there also a way to set it via something like device tree?
-
--- 
-Thanks,
-//richard
+> --
+> Thanks,
+> //richard
