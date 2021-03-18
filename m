@@ -2,147 +2,98 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C27CC433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 22:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7FBC433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 01:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D0F864F07
-	for <linux-security-module@archiver.kernel.org>; Wed, 17 Mar 2021 22:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA14364F53
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 01:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229545AbhCQW46 (ORCPT
+        id S229946AbhCRBWu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 17 Mar 2021 18:56:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51816 "EHLO
+        Wed, 17 Mar 2021 21:22:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbhCQW43 (ORCPT
+        with ESMTP id S229702AbhCRBWe (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 17 Mar 2021 18:56:29 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3634C06175F
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 15:56:28 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id w3so926524ejc.4
-        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 15:56:28 -0700 (PDT)
+        Wed, 17 Mar 2021 21:22:34 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4541DC06175F
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 18:22:34 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id v186so363687pgv.7
+        for <linux-security-module@vger.kernel.org>; Wed, 17 Mar 2021 18:22:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a+08TCMXZyjlZrUSLxo3iiA6zUw9BGeYa2hlwFsECIY=;
-        b=t11two/QxA5RIKVR27oCZ44kE2UoHAGFyECntvDL8K6Xmd5Fg/CLAIU2akBPdDsxQS
-         bqbapnCnu3vl9bgwlT49abRo2lo70BZzk5aKv5xO0flvdI8enW08GUv8vpndhUb0L/sq
-         cPWlYXH9Z0Fb8OKs5aU5l4zWvDQpBiO2fw9+r264W65CIGnYKXaoL3rbC+NzZg7xxytq
-         CrPWw9tRlgKBeXkaSKkIDkQTzRXzTAd0cyi4NrcaD/wrc0blqSsBMlZbI1NYqIO068h1
-         lb1acxj7XvtNlmHn9PMtla4PzreA82UyciHX0PSvZHedakgwPpXRvSn0mNXUo6f5wjPm
-         mSjw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=EalAswFOAcFp0mMFCKv9AaiQ3ouyPCG+tDog26PGvcI=;
+        b=TSffuJwrnV2vab8/yGoahUmuVCMDXKwUtsys3/bDoxiRWc2F+tAbiwWP2aKGYHhGV8
+         gzbjPnRuubA6uxOalwf/Z67un8+OC/fwBeJ8Upsa2Pv1pu1E+PVITOIEVPFFO+PQW43A
+         yV0DB8OU4s1DHxtjiTSy0K6Yf3Xh0c37cc+7Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a+08TCMXZyjlZrUSLxo3iiA6zUw9BGeYa2hlwFsECIY=;
-        b=L+5lz6VHVaokJ1Q81dn/dp8g56EvsiQKujlJ3kUcST8n31w9bTZue0jMjWLtEpxuIH
-         iQ/1w8txuVQqCEnn5UWrl2BVXbKIHvgnqqRUNDzj86oOjVIdwrVkBPIdwLOndv2SW/tO
-         yYaBHJq7uwirIK7BVdNx6cS+GgPTKF1ggqxnW927zljOUvo6NxEg0PXSPZoRM/tzl70I
-         gKVwPDyrAY4iH1tkHrP/K/7HB2a7AbVAh2Yk82t/moKLfP8X50A7MvaznfSLp2Xx9CYg
-         Q/zEWmd7U+51MtmQ8V1/UE4i6cBJVhww6+Zpr5kqhvQZUNlmffaTksAZgrUkwMzafy2Q
-         EPhA==
-X-Gm-Message-State: AOAM532JMXd6hQAxTQcKw0Fwmfst3+wFXOgPhdz5AVp76dh4uogCtAXl
-        YaLyrDKJn7z7bjiEK2XzvjiqMxi1QxWMYfrN2Bkp
-X-Google-Smtp-Source: ABdhPJwQ6DhvzGENYehzx0SNW4HCm0PCWmztvPNIkgcIJ3iZTziPQupBbExCf+lV7Fg3ZHzMlKrtUDUImmoF8nDBLek=
-X-Received: by 2002:a17:906:a443:: with SMTP id cb3mr37538189ejb.542.1616021787231;
- Wed, 17 Mar 2021 15:56:27 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=EalAswFOAcFp0mMFCKv9AaiQ3ouyPCG+tDog26PGvcI=;
+        b=l5bEQ9ycczvgAb9ePZ9fwXo9S/iv2F5aBQfsGTlZZrm6f2yWOm92c4OXBXyveu/75w
+         /nykntXlUCVSkgcdnS3wOiLRUtXb0fEtZ7ibn12XkRD3b2PkWvqyOoEMvK0LZphFK1qX
+         nBNwxINoBvy7nWhCF/AxnWq1ZiVW0KUBCzDBOgJnALy4uMasYhG8Ik3bzIU8qhcbFRri
+         ekGLK5h1TaOBE9yaPKybUAB30p/5sUUtgWj5ooQYBR6t+dxe/p0NPsPj4YQhj4KTqH7l
+         GXlw3zjdc5F0+boBb011GKQ90Y6GR/se+JMZvpp6oRJzWds3dLAO4iGiKgAbUXC8No6D
+         5QVQ==
+X-Gm-Message-State: AOAM532N+q3BTjd4+hsNlh5aOiFzb7BHW1tTbiwUxufUUi9p7014NKEh
+        BlVbRB1+axev7ZwnNOsB/nDkVg==
+X-Google-Smtp-Source: ABdhPJyrmCLmGW63fx9n1OC+yYNO5rjvfb0Ce9xQhK2RMb98xMDnfa90K4TsbnB5zAo7scdsUzAUcw==
+X-Received: by 2002:aa7:81cb:0:b029:1ee:5346:8f1d with SMTP id c11-20020aa781cb0000b02901ee53468f1dmr1683154pfn.4.1616030553695;
+        Wed, 17 Mar 2021 18:22:33 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c1sm272445pfn.131.2021.03.17.18.22.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 18:22:33 -0700 (PDT)
+Date:   Wed, 17 Mar 2021 18:22:31 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     John Wood <john.wood@gmx.com>
+Cc:     Jann Horn <jannh@google.com>, Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        kernel test robot <oliver.sang@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v6 1/8] security: Add LSM hook at the point where a task
+ gets a fatal signal
+Message-ID: <202103171821.C851A2D189@keescook>
+References: <20210307113031.11671-1-john.wood@gmx.com>
+ <20210307113031.11671-2-john.wood@gmx.com>
 MIME-Version: 1.0
-References: <161377712068.87807.12246856567527156637.stgit@sifl>
- <161377735153.87807.7492842242100187888.stgit@sifl> <b27662cf-4bcf-ec23-92f5-49a5b2f8c119@canonical.com>
- <CAHC9VhQmwFHFYZ2yCPDLWanjc1hzof7G3XO4fqPEX2ykiHCN3g@mail.gmail.com>
-In-Reply-To: <CAHC9VhQmwFHFYZ2yCPDLWanjc1hzof7G3XO4fqPEX2ykiHCN3g@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 17 Mar 2021 18:56:16 -0400
-Message-ID: <CAHC9VhR5_Fd_vCFME-zZJuap1rSpc5hEBGjK8p10QnaXiGrBug@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] selinux: clarify task subjective and objective credentials
-To:     John Johansen <john.johansen@canonical.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210307113031.11671-2-john.wood@gmx.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 10, 2021 at 11:32 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Tue, Mar 9, 2021 at 10:06 PM John Johansen
-> <john.johansen@canonical.com> wrote:
-> > On 2/19/21 3:29 PM, Paul Moore wrote:
+On Sun, Mar 07, 2021 at 12:30:24PM +0100, John Wood wrote:
+> Add a security hook that allows a LSM to be notified when a task gets a
+> fatal signal. This patch is a previous step on the way to compute the
+> task crash period by the "brute" LSM (linux security module to detect
+> and mitigate fork brute force attack against vulnerable userspace
+> processes).
+> 
+> Signed-off-by: John Wood <john.wood@gmx.com>
 
-...
+I continue to really like that this entire thing can be done from an LSM
+with just this one extra hook. :)
 
-> > > @@ -2034,11 +2047,8 @@ static inline u32 open_file_to_av(struct file *file)
-> > >
-> > >  static int selinux_binder_set_context_mgr(struct task_struct *mgr)
-> > >  {
-> > > -     u32 mysid = current_sid();
-> > > -     u32 mgrsid = task_sid(mgr);
-> > > -
-> > >       return avc_has_perm(&selinux_state,
-> > > -                         mysid, mgrsid, SECCLASS_BINDER,
-> > > +                         current_sid(), task_sid_obj(mgr), SECCLASS_BINDER,
-> > >                           BINDER__SET_CONTEXT_MGR, NULL);
-> > >  }
-> > >
-> > > @@ -2046,8 +2056,8 @@ static int selinux_binder_transaction(struct task_struct *from,
-> > >                                     struct task_struct *to)
-> > >  {
-> > >       u32 mysid = current_sid();
-> > > -     u32 fromsid = task_sid(from);
-> > > -     u32 tosid = task_sid(to);
-> > > +     u32 fromsid = task_sid_subj(from);
-> >
-> > fromsid potentially gets used as both the subject and the object the following
-> > permission checks. It makes sense to use the same cred for both checks but
-> > what I am not sure about yet is whether its actually safe to use the subject
-> > sid when the task isn't current.
-> >
-> > ie. I am still trying to determine if there is a race here between the transaction
-> > request and the permission check.
->
-> Okay, I see what you are concerned about now ... and unfortunately I'm
-> not seeing a lot of precedence in the kernel for this type of usage
-> either; the closest I can find is something like task_lock(), but that
-> doesn't seem to cover the subjective creds.  In fact, looking at
-> override_creds(), there is nothing preventing a task from changing
-> it's subjective creds at any point in time.
->
-> Beyond the task_sid_subj() code here, looking back at patch 1 and the
-> use of security_task_getsecid_subj() we look to be mostly safe (where
-> safe means we are only inspecting the current task) with the exception
-> of the binder code once again.  There are some other exceptions but
-> they are in the ptrace and audit code, both of which should be okay
-> given the nature and calling context of the code.
->
-> The problem really does seem to be just binder, and as I look at
-> binder userspace example code, I'm starting to wonder if binder is
-> setup properly to operate sanely in a situation where a process
-> overrides its subject creds.  It may be that we always need to use the
-> objective/real creds with binder.  Jeff, any binder insight here you
-> can share with us?
->
-> > > +     u32 tosid = task_sid_subj(to);
-> > its not clear to me that using the subj for to is correct
->
-> Yes, I believe you are correct.  Jeff, I know you looked at this code
-> already, but I'm guessing you may have missed this (just as I did when
-> I wrote it); are you okay with changing 'tosid' in
-> selinux_binder_transaction() to the task's objective credentials?
-
-Hearing no comments from the Android/binder folks, I'm in the process
-of switching this patchset to always use the objective creds in the
-case of binder.  It's safe and I'm not sure binder is really prepared
-for the idea of a task changing it's creds anyway.
-
-Once the kernel builds and passes some basic sanity checks I'll repost
-the patches for review and inclusion, minus the AppArmor patch.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-paul moore
-www.paul-moore.com
+Kees Cook
