@@ -2,86 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56402C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 07:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C4CC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 09:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 253D464F21
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 07:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C0064E04
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 09:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbhCRHHE (ORCPT
+        id S229710AbhCRJnf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Mar 2021 03:07:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbhCRHHB (ORCPT
+        Thu, 18 Mar 2021 05:43:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:32010 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229803AbhCRJnO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Mar 2021 03:07:01 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12308C06174A
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 00:07:01 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1lMmkF-0004vU-6M; Thu, 18 Mar 2021 08:06:59 +0100
-Subject: Re: [PATCH] KEYS: trusted: tee: fix build error due to missing
- include
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Sumit Garg <sumit.garg@linaro.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>, kernel@pengutronix.de,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210317142904.27855-1-a.fatoum@pengutronix.de>
- <YFJ7UOagBgm5Fn0/@kernel.org>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <94f5e918-21d4-ddbb-1db5-35c7f8be347a@pengutronix.de>
-Date:   Thu, 18 Mar 2021 08:06:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Thu, 18 Mar 2021 05:43:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1616060593;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vR/zt2s7jmFTmNYSYREs6HOTCms/TVsSgO4RcvUd91E=;
+        b=eHmlWUwi8h2lFL7esIjK3qjocSw0tvKmAf2U8XF9kdvxRfTcu17gpz2epE5X12URja35Ml
+        9rOvHkoJFGqrueJc8VhpZHZFfIZO5fKan0Zj7+RLJD9iyJamB4Wu/o1Jgokue4C+Trzmoa
+        Ux4sE1G8swpNM6+4c79pbj7StKNXCuU=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-179-ZyNM7ZF-OQ2isZmMFIGnwA-1; Thu, 18 Mar 2021 05:43:09 -0400
+X-MC-Unique: ZyNM7ZF-OQ2isZmMFIGnwA-1
+Received: by mail-yb1-f198.google.com with SMTP id o9so47558821yba.18
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 02:43:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vR/zt2s7jmFTmNYSYREs6HOTCms/TVsSgO4RcvUd91E=;
+        b=aSWcH5bnHMM9SDr7oQeRxDR/+BJWm41IN6NnUlq5fQDR+atNF2zEaAOTnft5NPEqh+
+         +jLF7Ivn9m40UjGdpWCJNw5/IgDl6d3S8r4ueXybTh5y0EYRNMqYvafjv/IrrNfaTHBP
+         BJXu4ao6e/e4P73V7GekPX9p2fbrBOVFJ8LRoexoJtC3g9B+aWXcCN2I6PKME2yyBhik
+         px7f3s5Q8XD8iaZ49K+7zURM/Q9psVMMgClxVyQtQ9n/C05swziGWSP1OBme448k1TpS
+         uuB8RBNlVcOraatkWnrnw0GLCL6dS+5i8NCjk4QGcbemteqLJ+/uwa8G/JAZlH8BQEKe
+         vP3w==
+X-Gm-Message-State: AOAM533uN42LdVEsxYP344Ltji1g9EU0wUdDo0y6AKB+KzEFEBfHO7cs
+        124EGgfTHwDel2dUHUM3Q8JZe75/1eWjE/NEp6HslDAknWKGjuQOp+avmAeMMruYGI63Pt9kQPm
+        yH+l0ZNJGliMi/MNDdMf7dhsxpY32+R/j5ROvsBjkiJJoWcKYlRfw
+X-Received: by 2002:a5b:4a:: with SMTP id e10mr10655653ybp.436.1616060589341;
+        Thu, 18 Mar 2021 02:43:09 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7teWrEEwVymwJ1Z9H+EJZJa3vqMjyeSJinwGp6eJiV+YryR1PGYF1CfUr33dHWjIUEYwiFVCq1qKIL0SqkwE=
+X-Received: by 2002:a5b:4a:: with SMTP id e10mr10655630ybp.436.1616060589138;
+ Thu, 18 Mar 2021 02:43:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YFJ7UOagBgm5Fn0/@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+References: <20210316144823.2188946-1-omosnace@redhat.com> <CAHC9VhRoTjimpKrrQ5f04SE7AOcGv6p5iBgSnoSRgtiUP47rRg@mail.gmail.com>
+ <YFEAD9UClhwxErgj@zeniv-ca.linux.org.uk>
+In-Reply-To: <YFEAD9UClhwxErgj@zeniv-ca.linux.org.uk>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Thu, 18 Mar 2021 10:42:57 +0100
+Message-ID: <CAFqZXNukusUPp+kO7vxPZBt5ehkpH6EUZ5e8XwUq9adOQHdMkQ@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: fix fsconfig(2) LSM mount option handling for btrfs
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Paul Moore <paul@paul-moore.com>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jarkko,
+On Tue, Mar 16, 2021 at 8:25 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Tue, Mar 16, 2021 at 02:21:45PM -0400, Paul Moore wrote:
+> > On Tue, Mar 16, 2021 at 10:48 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > >
+> > > When SELinux security options are passed to btrfs via fsconfig(2) rather
+> > > than via mount(2), the operation aborts with an error. What happens is
+> > > roughly this sequence:
+> > >
+> > > 1. vfs_parse_fs_param() eats away the LSM options and parses them into
+> > >    fc->security.
+> > > 2. legacy_get_tree() finds nothing in ctx->legacy_data, passes this
+> > >    nothing to btrfs.
+> > > [here btrfs calls another layer of vfs_kern_mount(), but let's ignore
+> > >  that for simplicity]
+>
+> Let's not.  This is where the root of the problem actually lies.  Take a look
+> at that sucker:
+>
+>         struct fs_context *fc;
+>         struct vfsmount *mnt;
+>         int ret = 0;
+>
+>         if (!type)
+>                 return ERR_PTR(-EINVAL);
+>
+>         fc = fs_context_for_mount(type, flags);
+>         if (IS_ERR(fc))
+>                 return ERR_CAST(fc);
+>
+>         if (name)
+>                 ret = vfs_parse_fs_string(fc, "source",
+>                                           name, strlen(name));
+>         if (!ret)
+>                 ret = parse_monolithic_mount_data(fc, data);
+>         if (!ret)
+>                 mnt = fc_mount(fc);
+>         else
+>                 mnt = ERR_PTR(ret);
+>
+>         put_fs_context(fc);
+>         return mnt;
+>
+> That's where the problem comes - you've lost the original context's ->security.
+> Note that there's such thing as security_fs_context_dup(), so you can bloody
+> well either
+>         * provide a variant of vfs_kern_mount() that would take 'base' fc to
+> pick security options from or
+>         * do all options parsing on btrfs fc and then do fs_context_for_mount +
+> security_fs_context_dup + copy (parsed) options to whatever private data you
+> use for btrfs_root context + fc_mount + put_fs_context yourself.
+>
+> My preference would be the latter, but I have *not* looked at btrfs mount options
+> handling in any details.
 
-On 17.03.21 22:57, Jarkko Sakkinen wrote:
-> On Wed, Mar 17, 2021 at 03:29:05PM +0100, Ahmad Fatoum wrote:
->> MODULE_DEVICE_TABLE is defined in <linux/module.h>, which is not
->> included. Add the include to fix the build error its lack caused.
->>
->> Cc: Sumit Garg <sumit.garg@linaro.org>
->> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> 
-> Hi, I appreciate your work, thanks for taking action, but unfortunately
-> I already incorporated this fix to the original patch.
+Ack, I'll look into that. I didn't dare to try to touch btrfs mount
+handling (if it was straightforward, someone would've already done it,
+right? :), but it sounds like converting just this one
+vfs_kern_mount() could be relatively easy, would fix the bug, and
+would be an incremental improvement.
 
-Nothing unfortunate about this! :)
+>
+> > VFS folks, can we get a verdict/feedback on this patch?  The v1 draft
+> > of this patch was posted almost four months ago with no serious
+> > comments/feedback.  It's a bit ugly, but it does appear to work and at
+> > the very least SELinux needs this to handle btrfs properly, other LSMs
+> > may need this too.
+>
+> It's more than a bit ugly; it perpetuates the use of FS_BINARY_MOUNTDATA,
+> and the semantics it gets is quite counterintuitive at that.
 
-Cheers,
-Ahmad
+Fair enough.
 
-> 
-> /Jarkko
-> 
+Thank you for the feedback and hints!
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
