@@ -8,66 +8,65 @@ X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1E9C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 11:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E66C0C433E9
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 12:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 898DC6186A
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 11:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51DD64F2A
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 12:01:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230169AbhCRLKp (ORCPT
+        id S230041AbhCRMAd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Mar 2021 07:10:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39750 "EHLO
+        Thu, 18 Mar 2021 08:00:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230352AbhCRLKc (ORCPT
+        with ESMTP id S229939AbhCRMAY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Mar 2021 07:10:32 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD656C06174A;
-        Thu, 18 Mar 2021 04:10:31 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id kk2-20020a17090b4a02b02900c777aa746fso2927272pjb.3;
-        Thu, 18 Mar 2021 04:10:31 -0700 (PDT)
+        Thu, 18 Mar 2021 08:00:24 -0400
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B678CC06174A;
+        Thu, 18 Mar 2021 05:00:23 -0700 (PDT)
+Received: by mail-pj1-x1041.google.com with SMTP id kr3-20020a17090b4903b02900c096fc01deso2995019pjb.4;
+        Thu, 18 Mar 2021 05:00:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/3GlBYsBWOhEfNPMOeTbEC02ssqJu4/v6tbUqIoSloE=;
-        b=Y9XyPVonavaqGn3DG9TZ6/5z6hluRApj9hDpub0BdswGVts3ZzqjaLX4WbnRSiJbyj
-         4pgeG5IDNQK47DnEy6Bgkn55WhppmFd1XnzTRwwXM64hBpAIA6UwsWcHTMiBI+u8Ygcz
-         ow/xVf/I4XGs/hZlFCEHgIvwbizpPAHPGDPOSYKmtPp4rYQBvdkKGikGJ+OCE/NSplXi
-         KCpJ0r6hCY75WfVVL6KGnNnPYlv8ukSidfyBAMQpgxVVRXVWxM0Xq4BF/Qbco8M8ADTh
-         egSw96cRW0jiqCw2fihPBtBjMVz7Qtno6fhIAuIBEVs/314Pw73XoyItH/fdacIehDOi
-         RSpw==
+        bh=1n8VJuZ5LIE4mmJ/U2z0wAE75pe1NtOJnkRjFceP1Kk=;
+        b=m4V3qJNHV9zTfL7enYp6wXNqSlwWJomDx4t3Wujdgv21iRwuycSuE1JVg1okpiRFPz
+         rWhmXvBMSNgaaxYXigQpPeOCxnS/XKwm/2EeR/BAZ6tLHUTJiA5epBEB41DZsb6f+qz4
+         AIavO7aqmwI+qH01JpWoAu7HdGNvqSwZmSyaQJENoJyXIuyWnCYFbNbjOLsJkbWAAOga
+         DYatKwz9XWOlwhsx6T6j8YcYmWOD2TPIE8sclPipGs3A1zRh+ojqDjFE2p2p1yKA7mFe
+         xC7kNd7YtE7vxlZdKB9YNkgz2Q5SnSlyEYdOjk+D/m8my0x40LZiHeS0pIH1DsNzYM3l
+         kd0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=/3GlBYsBWOhEfNPMOeTbEC02ssqJu4/v6tbUqIoSloE=;
-        b=SXApmKoT0ZpuAFq5KcEshEybfkKhFCf9d7aRyY+JgOSkwAhzZh9r01SVLCHih7D+Ur
-         kBXEDVUeqFwtCLowY8+IHhxVUWzHMGz+WrDtldpKpSuoOZprU55HR9JEENOw2ux7vDJa
-         m317Yi+uWZZkogP0Jup9g2msPHbHXqaMbay0Msdk90dEnXGO9v2St74QpKQUELDKqg/Z
-         WYO796plH6ZzFX4uE+myeED1TzKib5IHcUnuD7LQpWTi1sf0f6UWMl/B7vrbfYrL1Way
-         NaQZU9Ih7K9DJcCG99DUERZdD3B6B7snvphd4tNH2ESHs/9eCwKmsuxlJ9D/YrOBeG1J
-         Gagw==
-X-Gm-Message-State: AOAM530tHTAktkBRLk5LEKipY0HoBk3XwKz7e4JGhfCXAgCw2GJZogZH
-        gjHjsjnX/rqhWTyHzBYUMnWGIOY9gWA=
-X-Google-Smtp-Source: ABdhPJyGAfoYt6G5NxRT8JMFrZjtBOzEX8gJC3mkiNyp0nf6kO6CX+gul00HdvNfPy7A4bZKiHcUGA==
-X-Received: by 2002:a17:902:b908:b029:e6:3e0a:b3cc with SMTP id bf8-20020a170902b908b02900e63e0ab3ccmr9295452plb.68.1616065831326;
-        Thu, 18 Mar 2021 04:10:31 -0700 (PDT)
+        bh=1n8VJuZ5LIE4mmJ/U2z0wAE75pe1NtOJnkRjFceP1Kk=;
+        b=XjLseCyIKVvL21oA1TAIhmgtubWOBeoNSFrAI8POdoVWREQ9Ng00J2NdchXd+ipUVe
+         Cne7RPKrxFsspmBCHxqjNj9NLR3fOagqOSEVZqxsqvtkz+s8pwPZ4wuUzqJB8XDvXGAo
+         mvoyg9ffW75uHLRROGLoiSK6ubXUvAc0V5PVbDmtc1xjjR0fK2EbJvWaHHs8tT8RF38Y
+         3+ps+b8ySRodRu/KcTlW8CGSbAm7T1qUjXczai3vMmh7MGfqMMx9v+B5qn27TD2BDV3m
+         3U0p6rkdBLgaZOm+C7FEZKbtFhy9E1RjuEGF6Hdt7tMUMeJsu4tucUlO/ojZuCbNXLDJ
+         gm7A==
+X-Gm-Message-State: AOAM530U0ERMWwyPlVUB/K3grt0tEUBKZvFB5Iu/6c9FqHYiGTcPvC+2
+        PPziVrqflFvTF9zN5frpApQ=
+X-Google-Smtp-Source: ABdhPJwbLHvhlpx4bOM/CtfIq5YILHJVbBrUCFKjLqHnGjDt6Ff9/F1f8yHL8EXRQdD1epOncqOUOA==
+X-Received: by 2002:a17:90b:1c0e:: with SMTP id oc14mr3986655pjb.188.1616068823294;
+        Thu, 18 Mar 2021 05:00:23 -0700 (PDT)
 Received: from localhost.localdomain ([178.236.46.205])
-        by smtp.gmail.com with ESMTPSA id t22sm2128707pjo.45.2021.03.18.04.10.29
+        by smtp.gmail.com with ESMTPSA id a20sm2456176pfl.97.2021.03.18.05.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Mar 2021 04:10:30 -0700 (PDT)
+        Thu, 18 Mar 2021 05:00:22 -0700 (PDT)
 From:   menglong8.dong@gmail.com
 X-Google-Original-From: xiong.zhenwu@zte.com.cn
-To:     casey@schaufler-ca.com
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
+To:     serge@hallyn.com
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Xiong Zhenwu <xiong.zhenwu@zte.com.cn>
-Subject: [PATCH] security/smack: fix misspellings using codespell tool
-Date:   Thu, 18 Mar 2021 04:10:24 -0700
-Message-Id: <20210318111024.472126-1-xiong.zhenwu@zte.com.cn>
+Subject: [PATCH] security: fix misspellings using codespell tool
+Date:   Thu, 18 Mar 2021 05:00:17 -0700
+Message-Id: <20210318120017.474770-1-xiong.zhenwu@zte.com.cn>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,31 +75,32 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 From: Xiong Zhenwu <xiong.zhenwu@zte.com.cn>
 
-A typo is found out by codespell tool in 116th line of smackfs.c:
+A typo is found out by codespell tool:
 
-$ codespell ./security/smack
-./smackfs.c:116: lables  ==> labels
+$ codespell ./security
+
+./security/commoncap.c:1135: capabilties  ==> capabilities
 
 Fix a typo found by codespell.
 
 Signed-off-by: Xiong Zhenwu <xiong.zhenwu@zte.com.cn>
 ---
- security/smack/smackfs.c | 2 +-
+ security/commoncap.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 22ded2c26089..ef8625cb3f2a 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -113,7 +113,7 @@ struct smack_known *smack_syslog_label;
-  * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
-  * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
-  *			   CAP_SYS_PTRACE
-- * SMACK_PTRACE_DRACONIAN  lables must match, CAP_SYS_PTRACE has no effect
-+ * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
-  */
- int smack_ptrace_rule = SMACK_PTRACE_DEFAULT;
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 1c519c875217..598d077572c0 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1132,7 +1132,7 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
+ 		break;
  
+ 	case LSM_SETID_FS:
+-		/* juggle the capabilties to follow FSUID changes, unless
++		/* juggle the capabilities to follow FSUID changes, unless
+ 		 * otherwise suppressed
+ 		 *
+ 		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
 -- 
 2.25.1
 
