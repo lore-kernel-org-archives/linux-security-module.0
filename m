@@ -2,70 +2,73 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C735C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 20:43:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C978CC43331
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 20:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2B364F2B
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 20:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E8F64F53
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 20:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233087AbhCRUmh (ORCPT
+        id S233098AbhCRUmj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Mar 2021 16:42:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51532 "EHLO
+        Thu, 18 Mar 2021 16:42:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232707AbhCRUmT (ORCPT
+        with ESMTP id S231696AbhCRUmc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Mar 2021 16:42:19 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1261C06175F
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 13:42:19 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id x2so664309qkd.9
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 13:42:19 -0700 (PDT)
+        Thu, 18 Mar 2021 16:42:32 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F924C06175F
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 13:42:32 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id dc12so3033770qvb.4
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 13:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:date:message-id:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=hVRkW0Gn2RwcsEdRmxlDCP7u6XEAIJBBsmJA2mDGmoA=;
-        b=eUvgs5edB+Sb7qUz3Ih5ve0g2Gyj2+3dG5KVDCftQJ+WrzuZ5p5Hb3q8jiZR31y8Nb
-         5xxFj8mCst906Fd052MojHC1OyOKjeCI+v0nei2JXR5BQf6PzKQoqm725GrFXGg3++QZ
-         MOjmGbbDnmLTZX3q0c/nuhNa2/6VzOD3xnk3s9CWNK9BGHpbHQK2iHyAqV2NrzQKO8Dz
-         CAAYcPvkKtWEqja0XKpFlO1P1a5FHNCrFv1VNezRUpdAzQ5mRWgMYXBPfCSCuE2ob51d
-         gAEj4BODP/LEnQbIWvGsceXLQnn3B8DaRgEHcKNWKZuXgF/+K7zm8E81/53j3q520nJX
-         GW9g==
+        h=subject:from:to:cc:date:message-id:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=tBNS9rivP7Xv1VpsrX/MYeb12WoZu7yJMD0Mcu5oDSw=;
+        b=EAI6gUOBQc1tRdQ1pn8vA8wAIBOfTlk3JwZuWWUq8TeXGJ1Us+lHXzTMy8H2udFooK
+         48+MnCObObJ9LOmtUZuu1JnSHMDjTQQC5KfCTLsfOP7bTaldvA09QhH/CdszMXMKw8p3
+         PpYgf82J77GHqwoBE0cumboBwrRIo7TBTv/gB+5/F5mvAh0ddCS4L//USQQ5y+cWrAuV
+         Yrb0mQD29jeBEDf9OagLhje1gLZYfluaQjQPSmMe45+uShO7IK2mopNIwtmwsVIr5u/H
+         b6m74GPz5a3+Qi4VNsaQNeUclbGibp/wRBm+jFWVbRlgRWWsV2ESYmMSG2vt+t+V9NFe
+         iCDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:date:message-id:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=hVRkW0Gn2RwcsEdRmxlDCP7u6XEAIJBBsmJA2mDGmoA=;
-        b=BdLyfBLK57uv1Yg8Cj2hzrwtRyZ0j+Fxaff+doGppbrMPr9/m8tGccsJ3cMRGlqNxx
-         1u0vQw+BFa4uisvQ0qYfebqe4GYrZ5MfNTpbEEHWOZeABsYDzf2Y0ZqltqsPh75RU8SX
-         t8FsUxrsWLv8/ukcpB5t3SGWK+WStMcvr++uO/qaIZuDDXU6f4Y5iUizNHabIofxoHpe
-         Rj+0/F/zy1jYbtpq3L4H/fOWbyyYFkamM8s9PXW/5mGVRbkaH5Evujo1EX5Vlgm8L2LG
-         eUG8qkDlfvUABjYD6HDEbSTzXuU/MTT37U/cAB3j199MSUiST0if6QitaWY1G8hz8o2u
-         SURw==
-X-Gm-Message-State: AOAM5331y1l33nqxG0yWat94fDiWFiuVVSj41NifX4W6Wj3s8Rj6fqJB
-        zvyv18OBTgCcZRP8lwS5g0T/gy8HFKFd9qE=
-X-Google-Smtp-Source: ABdhPJwenk7fJBQr5Nfw7WoERzjivuHjcoFuJIlXZqBlELE/wGdGBJFSzAg/xmJov59TJPkAhbtQKQ==
-X-Received: by 2002:a37:83c6:: with SMTP id f189mr6307118qkd.260.1616100138461;
-        Thu, 18 Mar 2021 13:42:18 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=tBNS9rivP7Xv1VpsrX/MYeb12WoZu7yJMD0Mcu5oDSw=;
+        b=YReapeqdAVb5NMya5z9yJ0jAkXntvN5A0diVZQlMoJrUZcaQYoBJLSKPBSpvXUeM1z
+         5yT5PyxWOglwqXdgjRR1cKCW7RDQvCToR6bsrFyteuA/rISCMzaW5BtAndE+VsjSkT4K
+         CWQA6W4FcybD9KQjm52Qw0mE83FDbNsisr7XShU7bH4Z77NwSkqkpCYQCsvPwzg4FXU3
+         opgQ+URqligHmREoHsuv6uQcIvQHoDWN7UJN7fPIJ5uHr44ocxxNzT5WP9G4HD5hKreD
+         mAV/b85YqYuDBLFLOog0s/9FlOctrBWtJ3FttREqKG8YwYr1tv8rJMK85JSzXvhSHYnt
+         GOeA==
+X-Gm-Message-State: AOAM532RkD92tPKQUS/SRHyzLC6mT4wYNPFrpT+0Jcvy2DOJsY0N/Opi
+        LfjXtFPH0RbiiYaBV4YVXHaytzy4/Cqgp4w=
+X-Google-Smtp-Source: ABdhPJwtZ/2y9zGKSjRyb/5w9R0SydixhwTvpA2Urk0sU5glXyXEH9TaU4UPesTuJ14QReVYix9N0Q==
+X-Received: by 2002:ad4:510d:: with SMTP id g13mr6357990qvp.3.1616100150924;
+        Thu, 18 Mar 2021 13:42:30 -0700 (PDT)
 Received: from localhost (pool-72-74-249-41.bstnma.fios.verizon.net. [72.74.249.41])
-        by smtp.gmail.com with ESMTPSA id r133sm2722067qke.20.2021.03.18.13.42.17
+        by smtp.gmail.com with ESMTPSA id u11sm2124350qta.91.2021.03.18.13.42.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Mar 2021 13:42:18 -0700 (PDT)
-Subject: [PATCH v2 0/3] Split security_task_getsecid() into subj and obj
- variants
+        Thu, 18 Mar 2021 13:42:30 -0700 (PDT)
+Subject: [PATCH v2 2/3] selinux: clarify task subjective and objective
+ credentials
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org, linux-audit@redhat.com,
         selinux@vger.kernel.org
 Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         John Johansen <john.johansen@canonical.com>,
         Richard Guy Briggs <rgb@redhat.com>
-Date:   Thu, 18 Mar 2021 16:42:17 -0400
-Message-ID: <161609713992.55424.6906498317563652734.stgit@olly>
+Date:   Thu, 18 Mar 2021 16:42:29 -0400
+Message-ID: <161610014979.55424.673449459081578214.stgit@olly>
+In-Reply-To: <161609713992.55424.6906498317563652734.stgit@olly>
+References: <161609713992.55424.6906498317563652734.stgit@olly>
 User-Agent: StGit/1.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -73,34 +76,322 @@ Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-An update on the previous RFC patchset found here:
+SELinux has a function, task_sid(), which returns the task's
+objective credentials, but unfortunately is used in a few places
+where the subjective task credentials should be used.  Most notably
+in the new security_task_getsecid_subj() LSM hook.
 
-https://lore.kernel.org/linux-security-module/161377712068.87807.12246856567527156637.stgit@sifl/
+This patch fixes this and attempts to make things more obvious by
+introducing a new function, task_sid_subj(), and renaming the
+existing task_sid() function to task_sid_obj().
 
-Aside from being rebased to the current SELinux next branch (which
-in turn is based on v5.12-rc2), this revision changes the binder
-related code to always use the objective credentials as discussed
-in the thread above.  I've also dropped the AppArmor patch as John
-has a better version in progress; in the meantime AppArmor should
-continue to work exactly as it did before this patchset so there
-is no harm in merging this without the AppArmor patch.
+This patch also adds an interesting function in task_sid_binder().
+The task_sid_binder() function has a comment which hopefully
+describes it's reason for being, but it basically boils down to the
+simple fact that we can't safely access another task's subjective
+credentials so in the case of binder we need to stick with the
+objective credentials regardless.
 
-Casey, John, and Richard; I dropped your ACKs, Reviewed-by, etc.
-tags as the binder changes seemed substantial enough to not
-carryover your tags.  I would appreciate it if you could re-review
-this revision; the changes should be minimal.  I did leave Mimi's
-tag on this revision as she qualified it for IMA and that code
-didn't change.
-
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
+ security/selinux/hooks.c |  112 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 73 insertions(+), 39 deletions(-)
 
-Paul Moore (3):
-      lsm: separate security_task_getsecid() into subjective and objective variants
-      selinux: clarify task subjective and objective credentials
-      smack: differentiate between subjective and objective task credentials
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 24ca545c6e1b..901a3ce453f1 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -229,10 +229,23 @@ static inline u32 cred_sid(const struct cred *cred)
+ 	return tsec->sid;
+ }
+ 
++/*
++ * get the subjective security ID of a task
++ */
++static inline u32 task_sid_subj(const struct task_struct *task)
++{
++	u32 sid;
++
++	rcu_read_lock();
++	sid = cred_sid(rcu_dereference(task->cred));
++	rcu_read_unlock();
++	return sid;
++}
++
+ /*
+  * get the objective security ID of a task
+  */
+-static inline u32 task_sid(const struct task_struct *task)
++static inline u32 task_sid_obj(const struct task_struct *task)
+ {
+ 	u32 sid;
+ 
+@@ -242,6 +255,29 @@ static inline u32 task_sid(const struct task_struct *task)
+ 	return sid;
+ }
+ 
++/*
++ * get the security ID of a task for use with binder
++ */
++static inline u32 task_sid_binder(const struct task_struct *task)
++{
++	/*
++	 * In many case where this function is used we should be using the
++	 * task's subjective SID, but we can't reliably access the subjective
++	 * creds of a task other than our own so we must use the objective
++	 * creds/SID, which are safe to access.  The downside is that if a task
++	 * is temporarily overriding it's creds it will not be reflected here;
++	 * however, it isn't clear that binder would handle that case well
++	 * anyway.
++	 *
++	 * If this ever changes and we can safely reference the subjective
++	 * creds/SID of another task, this function will make it easier to
++	 * identify the various places where we make use of the task SIDs in
++	 * the binder code.  It is also likely that we will need to adjust
++	 * the main drivers/android binder code as well.
++	 */
++	return task_sid_obj(task);
++}
++
+ static int inode_doinit_with_dentry(struct inode *inode, struct dentry *opt_dentry);
+ 
+ /*
+@@ -2035,11 +2071,8 @@ static inline u32 open_file_to_av(struct file *file)
+ 
+ static int selinux_binder_set_context_mgr(struct task_struct *mgr)
+ {
+-	u32 mysid = current_sid();
+-	u32 mgrsid = task_sid(mgr);
+-
+ 	return avc_has_perm(&selinux_state,
+-			    mysid, mgrsid, SECCLASS_BINDER,
++			    current_sid(), task_sid_binder(mgr), SECCLASS_BINDER,
+ 			    BINDER__SET_CONTEXT_MGR, NULL);
+ }
+ 
+@@ -2047,8 +2080,7 @@ static int selinux_binder_transaction(struct task_struct *from,
+ 				      struct task_struct *to)
+ {
+ 	u32 mysid = current_sid();
+-	u32 fromsid = task_sid(from);
+-	u32 tosid = task_sid(to);
++	u32 fromsid = task_sid_binder(from);
+ 	int rc;
+ 
+ 	if (mysid != fromsid) {
+@@ -2059,19 +2091,16 @@ static int selinux_binder_transaction(struct task_struct *from,
+ 			return rc;
+ 	}
+ 
+-	return avc_has_perm(&selinux_state,
+-			    fromsid, tosid, SECCLASS_BINDER, BINDER__CALL,
+-			    NULL);
++	return avc_has_perm(&selinux_state, fromsid, task_sid_binder(to),
++			    SECCLASS_BINDER, BINDER__CALL, NULL);
+ }
+ 
+ static int selinux_binder_transfer_binder(struct task_struct *from,
+ 					  struct task_struct *to)
+ {
+-	u32 fromsid = task_sid(from);
+-	u32 tosid = task_sid(to);
+-
+ 	return avc_has_perm(&selinux_state,
+-			    fromsid, tosid, SECCLASS_BINDER, BINDER__TRANSFER,
++			    task_sid_binder(from), task_sid_binder(to),
++			    SECCLASS_BINDER, BINDER__TRANSFER,
+ 			    NULL);
+ }
+ 
+@@ -2079,7 +2108,7 @@ static int selinux_binder_transfer_file(struct task_struct *from,
+ 					struct task_struct *to,
+ 					struct file *file)
+ {
+-	u32 sid = task_sid(to);
++	u32 sid = task_sid_binder(to);
+ 	struct file_security_struct *fsec = selinux_file(file);
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	struct inode_security_struct *isec;
+@@ -2115,10 +2144,10 @@ static int selinux_binder_transfer_file(struct task_struct *from,
+ }
+ 
+ static int selinux_ptrace_access_check(struct task_struct *child,
+-				     unsigned int mode)
++				       unsigned int mode)
+ {
+ 	u32 sid = current_sid();
+-	u32 csid = task_sid(child);
++	u32 csid = task_sid_obj(child);
+ 
+ 	if (mode & PTRACE_MODE_READ)
+ 		return avc_has_perm(&selinux_state,
+@@ -2131,15 +2160,15 @@ static int selinux_ptrace_access_check(struct task_struct *child,
+ static int selinux_ptrace_traceme(struct task_struct *parent)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    task_sid(parent), current_sid(), SECCLASS_PROCESS,
+-			    PROCESS__PTRACE, NULL);
++			    task_sid_subj(parent), task_sid_obj(current),
++			    SECCLASS_PROCESS, PROCESS__PTRACE, NULL);
+ }
+ 
+ static int selinux_capget(struct task_struct *target, kernel_cap_t *effective,
+ 			  kernel_cap_t *inheritable, kernel_cap_t *permitted)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(target), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(target), SECCLASS_PROCESS,
+ 			    PROCESS__GETCAP, NULL);
+ }
+ 
+@@ -2264,7 +2293,7 @@ static u32 ptrace_parent_sid(void)
+ 	rcu_read_lock();
+ 	tracer = ptrace_parent(current);
+ 	if (tracer)
+-		sid = task_sid(tracer);
++		sid = task_sid_obj(tracer);
+ 	rcu_read_unlock();
+ 
+ 	return sid;
+@@ -3921,7 +3950,7 @@ static int selinux_file_send_sigiotask(struct task_struct *tsk,
+ 				       struct fown_struct *fown, int signum)
+ {
+ 	struct file *file;
+-	u32 sid = task_sid(tsk);
++	u32 sid = task_sid_obj(tsk);
+ 	u32 perm;
+ 	struct file_security_struct *fsec;
+ 
+@@ -4140,47 +4169,52 @@ static int selinux_kernel_load_data(enum kernel_load_data_id id, bool contents)
+ static int selinux_task_setpgid(struct task_struct *p, pid_t pgid)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__SETPGID, NULL);
+ }
+ 
+ static int selinux_task_getpgid(struct task_struct *p)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__GETPGID, NULL);
+ }
+ 
+ static int selinux_task_getsid(struct task_struct *p)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__GETSESSION, NULL);
+ }
+ 
+-static void selinux_task_getsecid(struct task_struct *p, u32 *secid)
++static void selinux_task_getsecid_subj(struct task_struct *p, u32 *secid)
++{
++	*secid = task_sid_subj(p);
++}
++
++static void selinux_task_getsecid_obj(struct task_struct *p, u32 *secid)
+ {
+-	*secid = task_sid(p);
++	*secid = task_sid_obj(p);
+ }
+ 
+ static int selinux_task_setnice(struct task_struct *p, int nice)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__SETSCHED, NULL);
+ }
+ 
+ static int selinux_task_setioprio(struct task_struct *p, int ioprio)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__SETSCHED, NULL);
+ }
+ 
+ static int selinux_task_getioprio(struct task_struct *p)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__GETSCHED, NULL);
+ }
+ 
+@@ -4211,7 +4245,7 @@ static int selinux_task_setrlimit(struct task_struct *p, unsigned int resource,
+ 	   upon context transitions.  See selinux_bprm_committing_creds. */
+ 	if (old_rlim->rlim_max != new_rlim->rlim_max)
+ 		return avc_has_perm(&selinux_state,
+-				    current_sid(), task_sid(p),
++				    current_sid(), task_sid_obj(p),
+ 				    SECCLASS_PROCESS, PROCESS__SETRLIMIT, NULL);
+ 
+ 	return 0;
+@@ -4220,21 +4254,21 @@ static int selinux_task_setrlimit(struct task_struct *p, unsigned int resource,
+ static int selinux_task_setscheduler(struct task_struct *p)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__SETSCHED, NULL);
+ }
+ 
+ static int selinux_task_getscheduler(struct task_struct *p)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__GETSCHED, NULL);
+ }
+ 
+ static int selinux_task_movememory(struct task_struct *p)
+ {
+ 	return avc_has_perm(&selinux_state,
+-			    current_sid(), task_sid(p), SECCLASS_PROCESS,
++			    current_sid(), task_sid_obj(p), SECCLASS_PROCESS,
+ 			    PROCESS__SETSCHED, NULL);
+ }
+ 
+@@ -4253,14 +4287,14 @@ static int selinux_task_kill(struct task_struct *p, struct kernel_siginfo *info,
+ 	else
+ 		secid = cred_sid(cred);
+ 	return avc_has_perm(&selinux_state,
+-			    secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
++			    secid, task_sid_obj(p), SECCLASS_PROCESS, perm, NULL);
+ }
+ 
+ static void selinux_task_to_inode(struct task_struct *p,
+ 				  struct inode *inode)
+ {
+ 	struct inode_security_struct *isec = selinux_inode(inode);
+-	u32 sid = task_sid(p);
++	u32 sid = task_sid_obj(p);
+ 
+ 	spin_lock(&isec->lock);
+ 	isec->sclass = inode_mode_to_security_class(inode->i_mode);
+@@ -6153,7 +6187,7 @@ static int selinux_msg_queue_msgrcv(struct kern_ipc_perm *msq, struct msg_msg *m
+ 	struct ipc_security_struct *isec;
+ 	struct msg_security_struct *msec;
+ 	struct common_audit_data ad;
+-	u32 sid = task_sid(target);
++	u32 sid = task_sid_subj(target);
+ 	int rc;
+ 
+ 	isec = selinux_ipc(msq);
+@@ -7149,8 +7183,8 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
+ 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
+ 	LSM_HOOK_INIT(task_getsid, selinux_task_getsid),
+-	LSM_HOOK_INIT(task_getsecid_subj, selinux_task_getsecid),
+-	LSM_HOOK_INIT(task_getsecid_obj, selinux_task_getsecid),
++	LSM_HOOK_INIT(task_getsecid_subj, selinux_task_getsecid_subj),
++	LSM_HOOK_INIT(task_getsecid_obj, selinux_task_getsecid_obj),
+ 	LSM_HOOK_INIT(task_setnice, selinux_task_setnice),
+ 	LSM_HOOK_INIT(task_setioprio, selinux_task_setioprio),
+ 	LSM_HOOK_INIT(task_getioprio, selinux_task_getioprio),
 
-
- security/selinux/hooks.c   | 112 ++++++++++++++++++++++++-------------
- security/smack/smack.h     |  18 +++++-
- security/smack/smack_lsm.c |  40 ++++++++-----
- 3 files changed, 117 insertions(+), 53 deletions(-)
