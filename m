@@ -2,131 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E1CC433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 18:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A75F1C433E6
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 19:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC2D464F2A
-	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 18:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A59764F11
+	for <linux-security-module@archiver.kernel.org>; Thu, 18 Mar 2021 19:13:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229958AbhCRST1 (ORCPT
+        id S232680AbhCRTNT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 18 Mar 2021 14:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48556 "EHLO
+        Thu, 18 Mar 2021 15:13:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232557AbhCRSTT (ORCPT
+        with ESMTP id S232836AbhCRTMz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 18 Mar 2021 14:19:19 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F9AC061760
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 11:19:19 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id b7so5468949ejv.1
-        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 11:19:19 -0700 (PDT)
+        Thu, 18 Mar 2021 15:12:55 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 475DFC06174A
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 12:12:55 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id ce10so5695075ejb.6
+        for <linux-security-module@vger.kernel.org>; Thu, 18 Mar 2021 12:12:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7sse64bqIOWwkx9kqYUy4ajU7Bzc2Pb4HNGntqpA0mM=;
-        b=1WNUJrDfvEhcj70yijsJeUt9Yq8eCTCc2Xlu19qqYJiwqfU18DiPMLx1LVkoxxkDhh
-         NtJMzw/0gCG2gAfazKZktFJTCyOZaj4gV1+R5WiMhF4ggQG3NDbwQ9th9mqNHmam56nw
-         6TC5HQcry7vhch0Nh1tXa70Z7QLJ7XJ+ocYeTLhspTTOBtKz+3tmyky/BcAhO9OL1RVD
-         qP4VrSOyIP/wnSHzeA4o8TJjFinF6WSvyr5qON1JKvWpLGq9FqZwM2kQJa8dkTcrDxpD
-         xtQsKpv1xgFbGdfYwjJ0aHt/y+T6Gs8gul6AVt+5t7yu/mEbXWCUTqknt6NZPSP5VBRZ
-         ko4g==
+        bh=DyMaGr4z+lqJaWQXGZcY57W7iKUSlvKLVnUF6SKnlnE=;
+        b=QvI5Q9WzLrcKPBzjLOroHzNYk8q0/VER36IcDGrmQuzyqdzS6XeagMn1N/NydZptx9
+         OKB3vjUNw4WST8Al/y0D32h90aiD9HduUjVjEy8bdWr0D1HNzqhxRCFttcBQS1SPrH4E
+         IlO64STuUNFnbpGZWLzZS4M4cNA8AjmuJ+9orwEgE0QII+6deQlgJJ7Ow8gUYxoEj6LQ
+         aJ+PYW5L4gQEeZNPOw2R1nP3dbamDxoBS7jMrObAzLUc0x1S4Hfy/dOXaFHPHVc0A/OV
+         PXFaTKjF6c07RlwjZ39PdKtD/XYqh52mwUmhtpPApxWPSD5ol9bE/GqcYZGy/ouJxHiO
+         J+fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7sse64bqIOWwkx9kqYUy4ajU7Bzc2Pb4HNGntqpA0mM=;
-        b=cwu9ZHHxsQf50r/z9j+V2S5hputWQZXx0B7L4Pn1MhE88UOujNhizSBzj2w5cpONst
-         6qoZdBfX0lbz0AXZHJ9f8fBX3OBRCAuH9YRsw2u6N/PxnZkSfkNlyLH4qyi8ZVtCRUQ4
-         gw+cjqAVt3Z98Ej50rH4S1+wKy0OBvWOxWvKKrrqLUN9rP/6OfBP0TvvM+F4eeVuKPmT
-         NRUz1o9DT5QJcUx23KJ5ogbjzfAHZpntt5u1D8NKkoZvqjsTAF/J12Qhpd+g741k59Rz
-         UCGnZl2lmdji9E8+Hg1uf0Z42PeZq587J6+brkNIymQjuSmBcLxuiy3XJTrjICO3elsb
-         u9AQ==
-X-Gm-Message-State: AOAM532ngRVpdY9TFxQPAdGySLByOXNhEsmNSQAWbBrGrV9pwf7OD6EV
-        TpZzLNW/gooHYImVzyz8JQZdc0urvo23rODQLIAz
-X-Google-Smtp-Source: ABdhPJz3ZhyPn56X7wMia/HfV+uHSUf5OdJlPqCXRQwY+sZNLIXnrBAWLfGC9myUp3XOXqFIONy9n0/+0d2i9slNCo0=
-X-Received: by 2002:a17:906:3d62:: with SMTP id r2mr41708535ejf.488.1616091557890;
- Thu, 18 Mar 2021 11:19:17 -0700 (PDT)
+        bh=DyMaGr4z+lqJaWQXGZcY57W7iKUSlvKLVnUF6SKnlnE=;
+        b=D3Qm4Luyt4xyRiC1kkt3yrHMrDk6d1uS0CC+kNVbrYnkjpjxDQv+hJXAN+81phulUm
+         S/t8+TUtr9Hzq9AFITC8cwomn+0hFcJiE+eTh4LfWg/grfJRiEBEPwx+8cOBsEzNZwTt
+         YWWVFg0yfkJ57HFsU1HiB1+2CCwSjLRwPzwcpG49PabtT8QFjzRqUkd/ktrdqUL5S2ly
+         rZC/zSr1C3RJnbLXKOUkBLN6zLkFlLU9sZ8n4jzoDaKouylxrUIKAe32YdHexp8PWvRZ
+         09a0DQAI/adx0B6jyKeTdt8ZfpJgAKBXPCM2adN/iwUruNRuBXQtUnqvo7yTnVdq5DQF
+         tlvQ==
+X-Gm-Message-State: AOAM531mJ8vTHGnQQ64IcNSIeBtF3b11IkH8Y7bRfgmMLc+tQoqbnBKo
+        3dURr6nbrZn1M/n0fhta0KtBj2SqfmWxzMWKO6TSkeg6ds/a
+X-Google-Smtp-Source: ABdhPJyAOajd2udCvFqcI5sISt04jpYbTdwWQhWG7jzxuJiGigP2Hj0LVcUKlOb5xeUGZ/xFdHRzkvlNFKWQ/uDoztE=
+X-Received: by 2002:a17:906:2314:: with SMTP id l20mr129150eja.178.1616094773311;
+ Thu, 18 Mar 2021 12:12:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <2ed7a55e-7def-7faf-fc47-991b867bff9e@iogearbox.net>
- <CANYvDQOfygmqv0V-1PuzXV8ZFzk0uD566oEF3v9uX21G4fSFKg@mail.gmail.com>
- <1e410caf-019a-ade7-465d-3d936d2f7dc6@iogearbox.net> <5845cef9-5aaf-f85e-8280-472f61ddaeed@iogearbox.net>
- <CANYvDQNCKmEy9ZzPRvhNYvK0=TKk1pRS=seUuAkby92ic8tVqw@mail.gmail.com>
- <f97bd923-bf12-69a0-f0a8-c9a764abbed2@iogearbox.net> <YFIwzhE00OpU1zro@krava>
- <ff0db44e-aa55-da94-785f-ba10792a5ae1@iogearbox.net> <YFKOeGqUwBPTkPzT@krava>
- <61494cfb-1ceb-4886-3023-1ac0b35697d6@iogearbox.net> <YFM+Ijeu4bN4IzH1@krava>
- <CANYvDQN7H5tVp47fbYcRasv4XF07eUbsDwT_eDCHXJUj43J7jQ@mail.gmail.com>
- <CANYvDQOH5ZDpQBAHtz13YNiJ2Bhd56wnoas71UdYco62g-xBDg@mail.gmail.com>
- <CAHC9VhRMsWJmRr=OZ7FSj2sBmNRJHKNGMPv5nLY6RGX_dxroPA@mail.gmail.com> <CAHC9VhQQ48yDLWObTjO0Su6mQ2R0QgAWqnuWCb2cZC5qUp_Fqg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQQ48yDLWObTjO0Su6mQ2R0QgAWqnuWCb2cZC5qUp_Fqg@mail.gmail.com>
+References: <CAN-5tyGuV-gs0KzVbKSj42ZMx553zy9wOfVb1SoHoE-WCoN1_w@mail.gmail.com>
+ <20210227033755.24460-1-olga.kornievskaia@gmail.com> <CAFX2Jfk--KwkAss1gqTPnQt-bKvUUapNdHbuicu=m+jOtjrMyQ@mail.gmail.com>
+ <f8f5323c-cdfd-92e8-b359-43caaf9d7490@schaufler-ca.com> <CAHC9VhR=+uwN8U17JhYWKcXSc9=ExCrG4O9-y+DPJg6xZ=WoYA@mail.gmail.com>
+ <CAFX2JfnT49o-CkaAE3=c0KW9SDS1U+scP0RD++nmWwyKoBDWkA@mail.gmail.com>
+ <CAHC9VhQNp-GQ6SMABNdN00RcDz30Os5SK217W-5swS8quakxPA@mail.gmail.com>
+ <CAN-5tyG95bL8vbkG5B9OmAAXremJ-X5z09f+0ekLyigzibsZ5A@mail.gmail.com>
+ <CAHC9VhTwqt0TDEWV97GaM8B5m4qmEwo+BYXYDeMs2D1LtZzUFg@mail.gmail.com>
+ <CAN-5tyHdiuiOBX2bkZBGOTK-AMOccm27=qE-AZ_J9QQ00P91-Q@mail.gmail.com> <CAHC9VhTZe0azgqt_OSk0cy-nM+upz9z2_i0j1wQQLD8UgbX9+Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhTZe0azgqt_OSk0cy-nM+upz9z2_i0j1wQQLD8UgbX9+Q@mail.gmail.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 18 Mar 2021 14:19:05 -0400
-Message-ID: <CAHC9VhTD3+-tvC2Nxj0bpmcK2SaS50wUQmKtqQ1FSPcO1a-P3A@mail.gmail.com>
-Subject: Re: deadlock bug related to bpf,audit subsystems
-To:     Serhei Makarov <smakarov@redhat.com>
-Cc:     linux-audit@redhat.com, bpf@vger.kernel.org,
-        Jerome Marchand <jmarchan@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org,
-        Frank Eigler <fche@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        guro@fb.com, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+Date:   Thu, 18 Mar 2021 15:12:42 -0400
+Message-ID: <CAHC9VhQyck5HKGKBcv-q70fv6zwTHD2hdfJ3e3SnjqoVty6inA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] [security] Add new hook to compare new mount to an
+ existing mount
+To:     Linux Security Module list <linux-security-module@vger.kernel.org>
+Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 18, 2021 at 1:45 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, Mar 18, 2021 at 1:44 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Thu, Mar 18, 2021 at 12:57 PM Serhei Makarov <smakarov@redhat.com> wrote:
-> > > On Thu, Mar 18, 2021 at 10:43 AM Serhei Makarov <smakarov@redhat.com> wrote:
-> > > > Jiri Olsa also reports seeing a similar deadlock at v5.10. I'm in the
-> > > > middle of double-checking my bisection which ended up at a
-> > > > seemingly-unrelated commit [2]
-> > > >
-> > > > [1] https://bugzilla.redhat.com/show_bug.cgi?id=1938312
-> > > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.11-rc7&id=2dcb3964544177c51853a210b6ad400de78ef17d
-> > >
-> > > I've confirmed that my first bisection was incorrect by testing
-> > > @1c2f67308af4 mm: thp: fix MADV_REMOVE deadlock on shmem THP
-> > > and reproducing the deadlock. Previously this commit was marked as
-> > > good, so it seems a kernel with the bug can sometimes pass the test.
-> > >
-> > > I'll double check rc6 next since I have the kernel handy. If
-> > > 5.11.0-rc6 can also be made to fail, with Jiri Olsa's report it'd be
-> > > necessary to do a wider search.
-> > > There may be commits with intent similar to
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8d92db5c04d103
-> > > which tightened some of the behaviour of kernel reads, but affecting
-> > > the audit subsystem?
-> > > The actual stack trace that leads to deadlock goes through
-> > > security_locked_down() which was present since the original patch
-> > > reworking probe_read into separate probe_read_{user,kernel} helpers
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?h=v5.11-rc7&id=6ae08ae3dea2
-> >
-> > Added thee SELinux list to the To/CC line; they should really be
-> > involved.  I'm also CC'ing the LSM list for good measure as there may
-> > be other people that care about this.
->
-> Argh, hit send a bit too quickly :/
->
-> > FYI, the first instance of this thread that I saw can be found here
-> > via the linux-audit list:
-> >
-> > https://lore.kernel.org/linux-audit/CANYvDQN7H5tVp47fbYcRasv4XF07eUbsDwT_eDCHXJUj43J7jQ@mail.gmail.com/
+On Mon, Mar 15, 2021 at 12:15 PM Paul Moore <paul@paul-moore.com> wrote:
+> As long as we are clear that the latest draft of patch 1/3 is to be
+> taken from the v4 patch{set} and patches 2/3 and 3/3 are to be taken
+> from v3 of the patchset I don't think you need to do anything further.
+> The important bit is for the other LSM folks to ACK the new hook; if I
+> don't see anything from them, either positive or negative, I'll merge
+> it towards the end of this week or early next.
 
-Previously in the thread there was a question about why audit events
-are being generated inside bpf_probe_read_compat(); the answer is
-pretty simple, we do an access check in the security_locked_down()
-hook, inside the call to bpf_probe_read_kernel_common(), and that can
-result in an audit event depending on the LSM and it's policy.
-Skipping the audit event in the case of a LSM access denial, e.g. a
-SELinux AVC denial, could result in a silent access denial which can
-be maddening both to users and admins.
+LSM folks, this is a reminder that if you want to object you've got
+until Monday morning to do so :)
 
 -- 
 paul moore
