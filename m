@@ -2,202 +2,481 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD00C433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 20:23:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C84E8C433DB
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 21:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC86F61949
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 20:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AADD61976
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 21:54:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230092AbhCSUXP (ORCPT
+        id S230084AbhCSVxb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Mar 2021 16:23:15 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:17908 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229974AbhCSUWu (ORCPT
+        Fri, 19 Mar 2021 17:53:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38402 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230229AbhCSVxY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Mar 2021 16:22:50 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12JK2nQc039737;
-        Fri, 19 Mar 2021 16:22:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=fvDOE5GPv+JKcowSF8ox2nWujEkH+8ZN2jopckY08Hc=;
- b=B5GEMDykYvb+LkBj3fjkj4QAWBDH6Fbm1yBkb5zTR7Mu6OBo2A9/0TpP6SfE5ru/IYes
- GtPYE36fO/uO3890Gm4YjsIsW48FICjpX+IDtH02055qEq+ciP9dJCR5ily4IG6H6pts
- afg8yfvTLQFClzAcHBsSocvspG5VPBkFJoqtZStSAr+yqkWdKCIX2kxh2rF0asjAeLjM
- 8IQBQhohcw+gq9c5eDpMjJuIMpNRnzlyX5zSHouXd9VCfbO7u0I9jvQD2mhbq7GKZ/B6
- ykv1YnV8/xkGZLFlFy00fetmnJKDqDP8t+WbPqXLESYs3eZcuDrFl7ifWpXFc87xF+cb jQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37cw5at1pw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Mar 2021 16:22:43 -0400
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12JKLeX4111818;
-        Fri, 19 Mar 2021 16:22:43 -0400
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37cw5at1ny-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Mar 2021 16:22:43 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12JKInmC026509;
-        Fri, 19 Mar 2021 20:22:41 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma01fra.de.ibm.com with ESMTP id 378n18b769-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 19 Mar 2021 20:22:40 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12JKMLW837093676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 19 Mar 2021 20:22:21 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59F8B42045;
-        Fri, 19 Mar 2021 20:22:38 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39D654203F;
-        Fri, 19 Mar 2021 20:22:36 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.66.110])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 19 Mar 2021 20:22:35 +0000 (GMT)
-Message-ID: <e804b6031eea8c35a71f39c44d409c902a6e2e8b.camel@linux.ibm.com>
-Subject: Re: NULL deref in integrity_inode_get
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, d.kasatkin@samsung.com,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Date:   Fri, 19 Mar 2021 16:22:35 -0400
-In-Reply-To: <CACT4Y+YCJ3CPR4LHqY8j_g3=vM6-iKoCc96d8OJuZ-N9KKeZkg@mail.gmail.com>
-References: <CACT4Y+YBXLi=quMEyBHtLO3-Ef6E3CAN7toFUdTFJWeH+5Y7kg@mail.gmail.com>
-         <31c4e1863a561c47d38b8e547ec38a0a713bdadc.camel@linux.ibm.com>
-         <CACT4Y+b8cNr1zv=RFPLXf9vY==BSktM1vb9gOfcWyBEaojZ1-A@mail.gmail.com>
-         <dbf9e31ca38b36b757c71bcc8fa17cb1ae392f1c.camel@linux.ibm.com>
-         <CACT4Y+YCJ3CPR4LHqY8j_g3=vM6-iKoCc96d8OJuZ-N9KKeZkg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-19_10:2021-03-19,2021-03-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 impostorscore=0
- clxscore=1015 suspectscore=0 phishscore=0 mlxlogscore=999
- priorityscore=1501 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2009150000 definitions=main-2103190135
+        Fri, 19 Mar 2021 17:53:24 -0400
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C987CC061760;
+        Fri, 19 Mar 2021 14:53:23 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F2HhL0SLdzMqNhY;
+        Fri, 19 Mar 2021 22:53:22 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F2HhB6LQyzlh8T8;
+        Fri, 19 Mar 2021 22:53:14 +0100 (CET)
+Subject: Re: [PATCH v30 08/12] landlock: Add syscall implementations
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316204252.427806-1-mic@digikod.net>
+ <20210316204252.427806-9-mic@digikod.net> <202103191157.CF13C34@keescook>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <380d65b2-f515-f3f5-5d57-7f99c528e5c7@digikod.net>
+Date:   Fri, 19 Mar 2021 22:53:31 +0100
+User-Agent: 
+MIME-Version: 1.0
+In-Reply-To: <202103191157.CF13C34@keescook>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-03-18 at 07:53 +0100, Dmitry Vyukov wrote:
-> On Thu, Mar 18, 2021 at 3:18 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> >
-> > Hi Dmitry,
-> >
-> > On Mon, 2021-03-15 at 14:07 +0100, Dmitry Vyukov wrote:
-> > > On Mon, Mar 15, 2021 at 1:41 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > >
-> > > > On Mon, 2021-03-15 at 11:58 +0100, Dmitry Vyukov wrote:
-> > > > > Hi,
-> > > > >
-> > > > > I am trying to boot 5.12-rc3 with this config:
-> > > > > https://github.com/google/syzkaller/blob/cc1cff8f1e1a585894796d6eae8c51eef98037e6/dashboard/config/linux/upstream-smack-kasan.config
-> > > > >
-> > > > > in qemu:
-> > > > > qemu-system-x86_64       -enable-kvm     -machine q35,nvdimm -cpu
-> > > > > max,migratable=off -smp 4       -m 4G,slots=4,maxmem=16G        -hda
-> > > > > wheezy.img      -kernel arch/x86/boot/bzImage   -nographic -vga std
-> > > > >  -soundhw all     -usb -usbdevice tablet  -bt hci -bt device:keyboard
-> > > > >    -net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net
-> > > > > nic,model=virtio-net-pci   -object
-> > > > > memory-backend-file,id=pmem1,share=off,mem-path=/dev/zero,size=64M
-> > > > >   -device nvdimm,id=nvdimm1,memdev=pmem1  -append "console=ttyS0
-> > > > > root=/dev/sda earlyprintk=serial rodata=n oops=panic panic_on_warn=1
-> > > > > panic=86400 lsm=smack numa=fake=2 nopcid dummy_hcd.num=8"   -pidfile
-> > > > > vm_pid -m 2G -cpu host
-> > > > >
-> > > > > But it crashes on NULL deref in integrity_inode_get during boot:
-> > > > >
-> > > > > Run /sbin/init as init process
-> > > > > BUG: kernel NULL pointer dereference, address: 000000000000001c
-> > > > > #PF: supervisor read access in kernel mode
-> > > > > #PF: error_code(0x0000) - not-present page
-> > > > > PGD 0 P4D 0
-> > > > > Oops: 0000 [#1] PREEMPT SMP KASAN
-> > > > > CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.12.0-rc2+ #97
-> > > > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> > > > > rel-1.13.0-44-g88ab0c15525c-prebuilt.qemu.org 04/01/2014
-> > > > > RIP: 0010:kmem_cache_alloc+0x2b/0x370 mm/slub.c:2920
-> > > > > Code: 57 41 56 41 55 41 54 41 89 f4 55 48 89 fd 53 48 83 ec 10 44 8b
-> > > > > 3d d9 1f 90 0b 65 48 8b 04 25 28 00 00 00 48 89 44 24 08 31 c0 <8b> 5f
-> > > > > 1c 4cf
-> > > > > RSP: 0000:ffffc9000032f9d8 EFLAGS: 00010246
-> > > > > RAX: 0000000000000000 RBX: ffff888017fc4f00 RCX: 0000000000000000
-> > > > > RDX: ffff888040220000 RSI: 0000000000000c40 RDI: 0000000000000000
-> > > > > RBP: 0000000000000000 R08: 0000000000000000 R09: ffff888019263627
-> > > > > R10: ffffffff83937cd1 R11: 0000000000000000 R12: 0000000000000c40
-> > > > > R13: ffff888019263538 R14: 0000000000000000 R15: 0000000000ffffff
-> > > > > FS:  0000000000000000(0000) GS:ffff88802d180000(0000) knlGS:0000000000000000
-> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > CR2: 000000000000001c CR3: 000000000b48e000 CR4: 0000000000750ee0
-> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > > PKRU: 55555554
-> > > > > Call Trace:
-> > > > >  integrity_inode_get+0x47/0x260 security/integrity/iint.c:105
-> > > > >  process_measurement+0x33d/0x17e0 security/integrity/ima/ima_main.c:237
-> > > > >  ima_bprm_check+0xde/0x210 security/integrity/ima/ima_main.c:474
-> > > > >  security_bprm_check+0x7d/0xa0 security/security.c:845
-> > > > >  search_binary_handler fs/exec.c:1708 [inline]
-> > > > >  exec_binprm fs/exec.c:1761 [inline]
-> > > > >  bprm_execve fs/exec.c:1830 [inline]
-> > > > >  bprm_execve+0x764/0x19a0 fs/exec.c:1792
-> > > > >  kernel_execve+0x370/0x460 fs/exec.c:1973
-> > > > >  try_to_run_init_process+0x14/0x4e init/main.c:1366
-> > > > >  kernel_init+0x11d/0x1b8 init/main.c:1477
-> > > > >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> > > > > Modules linked in:
-> > > > > CR2: 000000000000001c
-> > > > > ---[ end trace 22d601a500de7d79 ]---
-> > > >
-> > > > It looks like integrity_inode_get() fails to alloc memory.   Only on
-> > > > failure to verify the integrity of a file would an error be returned.
-> > > > I think that is what you would want to happen.  Without an "appraise"
-> > > > policy, this shouldn't happen.
-> > >
-> > > It happens at the very boot. I think the cache is NULL.
-> >
-> > An IMA policy had to have been loaded in order for
-> > integrity_inode_get() to have been called.   If this is happening on
-> > boot, it's too early for a custom policy to have been loaded by
-> > userspace, but I don't see the builtin policy defined on the boot
-> > command line either.
-> >
-> > Any additional information would be much appreciated.
+
+On 19/03/2021 20:06, Kees Cook wrote:
+> On Tue, Mar 16, 2021 at 09:42:48PM +0100, Mickaël Salaün wrote:
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> These 3 system calls are designed to be used by unprivileged processes
+>> to sandbox themselves:
+>> * landlock_create_ruleset(2): Creates a ruleset and returns its file
+>>   descriptor.
+>> * landlock_add_rule(2): Adds a rule (e.g. file hierarchy access) to a
+>>   ruleset, identified by the dedicated file descriptor.
+>> * landlock_restrict_self(2): Enforces a ruleset on the calling thread
+>>   and its future children (similar to seccomp).  This syscall has the
+>>   same usage restrictions as seccomp(2): the caller must have the
+>>   no_new_privs attribute set or have CAP_SYS_ADMIN in the current user
+>>   namespace.
+>>
+>> All these syscalls have a "flags" argument (not currently used) to
+>> enable extensibility.
 > 
-> Hi Mimi,
+> For the new-style extensible syscalls, you want only a "size" argument;
+> "flags" should be within the argument structure.
+
+Not necessarily, we should avoid complexity as much as possible. A flag
+argument is simple, and extensible arguments should be avoided as much
+as possible. Here it is only used for an extensible list of properties
+that can't be expressed otherwise.
+
 > 
-> I provided kernel config and qemu command line. What other information
-> are you looking for? Can you reproduce it on your side?
+> (And to this end, why 3 syscalls instead of 1, if you're going to use
+> extensibility anyway?)
 
-Yes, finally I was able to reproduce the NULL deref.  I just posted two
-patches as an RFC.  As described in the 2/2 patch description, it's
-unclear why the iint_cache would not be initialized, yet an IMA policy
-is loaded.  If the kmem_cache_alloc() for the iint_cache failed, it
-would have panic'ed.  Perhaps you have some insights as to how this
-might happen.
+This was discussed with people such as Arnd and Jann. Multiplexer
+syscalls should be avoided. Here are some background:
+https://lore.kernel.org/lkml/CAG48ez2V-eSH2+HL9zrYYD4QMpP4a5y8=mTQtk20PB0wUz_4Tw@mail.gmail.com/
 
-Once reviewed/tested, I'll re-post a proper patch (fixing the patch
-author).
+> 
+>> +/**
+>> + * copy_min_struct_from_user - Safe future-proof argument copying
+>> + *
+>> + * Extend copy_struct_from_user() to check for consistent user buffer.
+>> + *
+>> + * @dst: Kernel space pointer or NULL.
+>> + * @ksize: Actual size of the data pointed to by @dst.
+>> + * @ksize_min: Minimal required size to be copied.
+>> + * @src: User space pointer or NULL.
+>> + * @usize: (Alleged) size of the data pointed to by @src.
+>> + */
+>> +static __always_inline int copy_min_struct_from_user(void *const dst,
+>> +		const size_t ksize, const size_t ksize_min,
+>> +		const void __user *const src, const size_t usize)
+>> +{
+>> +	/* Checks buffer inconsistencies. */
+>> +	BUILD_BUG_ON(!dst);
+>> +	if (!src)
+>> +		return -EFAULT;
+>> +
+>> +	/* Checks size ranges. */
+>> +	BUILD_BUG_ON(ksize <= 0);
+>> +	BUILD_BUG_ON(ksize < ksize_min);
+>> +	if (usize < ksize_min)
+>> +		return -EINVAL;
+>> +	if (usize > PAGE_SIZE)
+>> +		return -E2BIG;
+>> +
+>> +	/* Copies user buffer and fills with zeros. */
+>> +	return copy_struct_from_user(dst, ksize, src, usize);
+>> +}
+> 
+> I still wish this was built into copy_struct_from_user(). :) But yes,
+> this appears to be the way to protect one's self when using
+> copy_struct_from_user().
+> 
+>> +/**
+>> + * sys_landlock_create_ruleset - Create a new ruleset
+>> + *
+>> + * @attr: Pointer to a &struct landlock_ruleset_attr identifying the scope of
+>> + *        the new ruleset.
+>> + * @size: Size of the pointed &struct landlock_ruleset_attr (needed for
+>> + *        backward and forward compatibility).
+>> + * @flags: Must be 0.
+>> + *
+>> + * This system call enables to create a new Landlock ruleset, and returns the
+>> + * related file descriptor on success.
+>> + *
+>> + * Possible returned errors are:
+>> + *
+>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>> + * - EINVAL: @flags is not 0, or unknown access, or too small @size;
+>> + * - E2BIG or EFAULT: @attr or @size inconsistencies;
+>> + * - ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
+>> + */
+>> +SYSCALL_DEFINE3(landlock_create_ruleset,
+>> +		const struct landlock_ruleset_attr __user *const, attr,
+>> +		const size_t, size, const __u32, flags)
+>> +{
+>> +	struct landlock_ruleset_attr ruleset_attr;
+>> +	struct landlock_ruleset *ruleset;
+>> +	int err, ruleset_fd;
+>> +
+>> +	/* Build-time checks. */
+>> +	build_check_abi();
+>> +
+>> +	if (!landlock_initialized)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* No flag for now. */
+>> +	if (flags)
+>> +		return -EINVAL;
+>> +
+>> +	/* Copies raw user space buffer. */
+>> +	err = copy_min_struct_from_user(&ruleset_attr, sizeof(ruleset_attr),
+>> +			offsetofend(typeof(ruleset_attr), handled_access_fs),
+> 
+> The use of offsetofend() here appears to be kind of the "V1", "V2", ...
+> sizes used in other extensible syscall implementations?
 
-thanks,
+ruleset_attr is an extensible argument.
 
-Mimi
+> 
+>> +			attr, size);
+>> +	if (err)
+>> +		return err;
+>> +
+>> +	/* Checks content (and 32-bits cast). */
+>> +	if ((ruleset_attr.handled_access_fs | LANDLOCK_MASK_ACCESS_FS) !=
+>> +			LANDLOCK_MASK_ACCESS_FS)
+>> +		return -EINVAL;
+>> +
+>> +	/* Checks arguments and transforms to kernel struct. */
+>> +	ruleset = landlock_create_ruleset(ruleset_attr.handled_access_fs);
+>> +	if (IS_ERR(ruleset))
+>> +		return PTR_ERR(ruleset);
+>> +
+>> +	/* Creates anonymous FD referring to the ruleset. */
+>> +	ruleset_fd = anon_inode_getfd("landlock-ruleset", &ruleset_fops,
+>> +			ruleset, O_RDWR | O_CLOEXEC);
+>> +	if (ruleset_fd < 0)
+>> +		landlock_put_ruleset(ruleset);
+>> +	return ruleset_fd;
+>> +}
+>> +
+>> +/*
+>> + * Returns an owned ruleset from a FD. It is thus needed to call
+>> + * landlock_put_ruleset() on the return value.
+>> + */
+>> +static struct landlock_ruleset *get_ruleset_from_fd(const int fd,
+>> +		const fmode_t mode)
+>> +{
+>> +	struct fd ruleset_f;
+>> +	struct landlock_ruleset *ruleset;
+>> +
+>> +	ruleset_f = fdget(fd);
+>> +	if (!ruleset_f.file)
+>> +		return ERR_PTR(-EBADF);
+>> +
+>> +	/* Checks FD type and access right. */
+>> +	if (ruleset_f.file->f_op != &ruleset_fops) {
+>> +		ruleset = ERR_PTR(-EBADFD);
+>> +		goto out_fdput;
+>> +	}
+>> +	if (!(ruleset_f.file->f_mode & mode)) {
+>> +		ruleset = ERR_PTR(-EPERM);
+>> +		goto out_fdput;
+>> +	}
+>> +	ruleset = ruleset_f.file->private_data;
+>> +	if (WARN_ON_ONCE(ruleset->num_layers != 1)) {
+>> +		ruleset = ERR_PTR(-EINVAL);
+>> +		goto out_fdput;
+>> +	}
+>> +	landlock_get_ruleset(ruleset);
+>> +
+>> +out_fdput:
+>> +	fdput(ruleset_f);
+>> +	return ruleset;
+>> +}
+>> +
+>> +/* Path handling */
+>> +
+>> +/*
+>> + * @path: Must call put_path(@path) after the call if it succeeded.
+>> + */
+>> +static int get_path_from_fd(const s32 fd, struct path *const path)
+>> +{
+>> +	struct fd f;
+>> +	int err = 0;
+>> +
+>> +	BUILD_BUG_ON(!__same_type(fd,
+>> +		((struct landlock_path_beneath_attr *)NULL)->parent_fd));
+>> +
+>> +	/* Handles O_PATH. */
+>> +	f = fdget_raw(fd);
+>> +	if (!f.file)
+>> +		return -EBADF;
+>> +	/*
+>> +	 * Only allows O_PATH file descriptor: enables to restrict ambient
+>> +	 * filesystem access without requiring to open and risk leaking or
+>> +	 * misusing a file descriptor.  Forbids ruleset FDs, internal
+>> +	 * filesystems (e.g. nsfs), including pseudo filesystems that will
+>> +	 * never be mountable (e.g. sockfs, pipefs).
+>> +	 */
+>> +	if (!(f.file->f_mode & FMODE_PATH) ||
+>> +			(f.file->f_op == &ruleset_fops) ||
+>> +			(f.file->f_path.mnt->mnt_flags & MNT_INTERNAL) ||
+>> +			(f.file->f_path.dentry->d_sb->s_flags & SB_NOUSER) ||
+>> +			d_is_negative(f.file->f_path.dentry) ||
+>> +			IS_PRIVATE(d_backing_inode(f.file->f_path.dentry))) {
+>> +		err = -EBADFD;
+>> +		goto out_fdput;
+>> +	}
+>> +	*path = f.file->f_path;
+>> +	path_get(path);
+>> +
+>> +out_fdput:
+>> +	fdput(f);
+>> +	return err;
+>> +}
+>> +
+>> +/**
+>> + * sys_landlock_add_rule - Add a new rule to a ruleset
+>> + *
+>> + * @ruleset_fd: File descriptor tied to the ruleset that should be extended
+>> + *		with the new rule.
+>> + * @rule_type: Identify the structure type pointed to by @rule_attr (only
+>> + *             LANDLOCK_RULE_PATH_BENEATH for now).
+>> + * @rule_attr: Pointer to a rule (only of type &struct
+>> + *             landlock_path_beneath_attr for now).
+>> + * @flags: Must be 0.
+>> + *
+>> + * This system call enables to define a new rule and add it to an existing
+>> + * ruleset.
+>> + *
+>> + * Possible returned errors are:
+>> + *
+>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>> + * - EINVAL: @flags is not 0, or inconsistent access in the rule (i.e.
+>> + *   &landlock_path_beneath_attr.allowed_access is not a subset of the rule's
+>> + *   accesses);
+>> + * - ENOMSG: Empty accesses (e.g. &landlock_path_beneath_attr.allowed_access);
+>> + * - EBADF: @ruleset_fd is not a file descriptor for the current thread, or a
+>> + *   member of @rule_attr is not a file descriptor as expected;
+>> + * - EBADFD: @ruleset_fd is not a ruleset file descriptor, or a member of
+>> + *   @rule_attr is not the expected file descriptor type (e.g. file open
+>> + *   without O_PATH);
+>> + * - EPERM: @ruleset_fd has no write access to the underlying ruleset;
+>> + * - EFAULT: @rule_attr inconsistency.
+>> + */
+>> +SYSCALL_DEFINE4(landlock_add_rule,
+>> +		const int, ruleset_fd, const enum landlock_rule_type, rule_type,
+>> +		const void __user *const, rule_attr, const __u32, flags)
+>> +{
+> 
+> If this is an extensible syscall, I'd expect a structure holding
+> rule_type, rule_attr, and flags.
 
+This does not use an extensible argument. rule_type specifies a type and
+rule_attr specifies the content of this type. This is simpler and
+sufficient.
+
+> 
+>> +	struct landlock_path_beneath_attr path_beneath_attr;
+>> +	struct path path;
+>> +	struct landlock_ruleset *ruleset;
+>> +	int res, err;
+>> +
+>> +	if (!landlock_initialized)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* No flag for now. */
+>> +	if (flags)
+>> +		return -EINVAL;
+>> +
+>> +	if (rule_type != LANDLOCK_RULE_PATH_BENEATH)
+>> +		return -EINVAL;
+>> +
+>> +	/* Copies raw user space buffer, only one type for now. */
+>> +	res = copy_from_user(&path_beneath_attr, rule_attr,
+>> +			sizeof(path_beneath_attr));
+>> +	if (res)
+>> +		return -EFAULT;
+>> +
+>> +	/* Gets and checks the ruleset. */
+>> +	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_WRITE);
+>> +	if (IS_ERR(ruleset))
+>> +		return PTR_ERR(ruleset);
+>> +
+>> +	/*
+>> +	 * Informs about useless rule: empty allowed_access (i.e. deny rules)
+>> +	 * are ignored in path walks.
+>> +	 */
+>> +	if (!path_beneath_attr.allowed_access) {
+>> +		err = -ENOMSG;
+>> +		goto out_put_ruleset;
+>> +	}
+>> +	/*
+>> +	 * Checks that allowed_access matches the @ruleset constraints
+>> +	 * (ruleset->fs_access_masks[0] is automatically upgraded to 64-bits).
+>> +	 */
+>> +	if ((path_beneath_attr.allowed_access | ruleset->fs_access_masks[0]) !=
+>> +			ruleset->fs_access_masks[0]) {
+>> +		err = -EINVAL;
+>> +		goto out_put_ruleset;
+>> +	}
+>> +
+>> +	/* Gets and checks the new rule. */
+>> +	err = get_path_from_fd(path_beneath_attr.parent_fd, &path);
+>> +	if (err)
+>> +		goto out_put_ruleset;
+>> +
+>> +	/* Imports the new rule. */
+>> +	err = landlock_append_fs_rule(ruleset, &path,
+>> +			path_beneath_attr.allowed_access);
+>> +	path_put(&path);
+>> +
+>> +out_put_ruleset:
+>> +	landlock_put_ruleset(ruleset);
+>> +	return err;
+>> +}
+>> +
+>> +/* Enforcement */
+>> +
+>> +/**
+>> + * sys_landlock_restrict_self - Enforce a ruleset on the calling thread
+>> + *
+>> + * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
+>> + * @flags: Must be 0.
+>> + *
+>> + * This system call enables to enforce a Landlock ruleset on the current
+>> + * thread.  Enforcing a ruleset requires that the task has CAP_SYS_ADMIN in its
+>> + * namespace or is running with no_new_privs.  This avoids scenarios where
+>> + * unprivileged tasks can affect the behavior of privileged children.
+>> + *
+>> + * Possible returned errors are:
+>> + *
+>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>> + * - EINVAL: @flags is not 0.
+>> + * - EBADF: @ruleset_fd is not a file descriptor for the current thread;
+>> + * - EBADFD: @ruleset_fd is not a ruleset file descriptor;
+>> + * - EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
+>> + *   current thread is not running with no_new_privs, or it doesn't have
+>> + *   CAP_SYS_ADMIN in its namespace.
+>> + * - E2BIG: The maximum number of stacked rulesets is reached for the current
+>> + *   thread.
+>> + */
+>> +SYSCALL_DEFINE2(landlock_restrict_self,
+>> +		const int, ruleset_fd, const __u32, flags)
+>> +{
+> 
+> Same observation about new style syscalls.
+
+This design is simpler.
+
+> 
+>> +	struct landlock_ruleset *new_dom, *ruleset;
+>> +	struct cred *new_cred;
+>> +	struct landlock_cred_security *new_llcred;
+>> +	int err;
+>> +
+>> +	if (!landlock_initialized)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* No flag for now. */
+>> +	if (flags)
+>> +		return -EINVAL;
+>> +
+>> +	/*
+>> +	 * Similar checks as for seccomp(2), except that an -EPERM may be
+>> +	 * returned.
+>> +	 */
+>> +	if (!task_no_new_privs(current) &&
+>> +			!ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
+>> +		return -EPERM;
+>> +
+>> +	/* Gets and checks the ruleset. */
+>> +	ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
+>> +	if (IS_ERR(ruleset))
+>> +		return PTR_ERR(ruleset);
+>> +
+>> +	/* Prepares new credentials. */
+>> +	new_cred = prepare_creds();
+>> +	if (!new_cred) {
+>> +		err = -ENOMEM;
+>> +		goto out_put_ruleset;
+>> +	}
+>> +	new_llcred = landlock_cred(new_cred);
+>> +
+>> +	/*
+>> +	 * There is no possible race condition while copying and manipulating
+>> +	 * the current credentials because they are dedicated per thread.
+>> +	 */
+>> +	new_dom = landlock_merge_ruleset(new_llcred->domain, ruleset);
+>> +	if (IS_ERR(new_dom)) {
+>> +		err = PTR_ERR(new_dom);
+>> +		goto out_put_creds;
+>> +	}
+>> +
+>> +	/* Replaces the old (prepared) domain. */
+>> +	landlock_put_ruleset(new_llcred->domain);
+>> +	new_llcred->domain = new_dom;
+>> +
+>> +	landlock_put_ruleset(ruleset);
+>> +	return commit_creds(new_cred);
+>> +
+>> +out_put_creds:
+>> +	abort_creds(new_cred);
+>> +
+>> +out_put_ruleset:
+>> +	landlock_put_ruleset(ruleset);
+>> +	return err;
+>> +}
+>> -- 
+>> 2.30.2
+>>
+> 
