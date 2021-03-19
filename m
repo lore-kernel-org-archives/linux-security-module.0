@@ -2,234 +2,188 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3783C433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 19:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DBDC433C1
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 20:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D75E6197D
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 19:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B28C61976
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 20:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbhCSTUS (ORCPT
+        id S229974AbhCSUE6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Mar 2021 15:20:18 -0400
-Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:41915 "EHLO
-        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230281AbhCSTTk (ORCPT
+        Fri, 19 Mar 2021 16:04:58 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:3928 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229990AbhCSUE0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Mar 2021 15:19:40 -0400
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F2DGy5XxbzMqdQq;
-        Fri, 19 Mar 2021 20:19:38 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F2DGt2NL9zlh8T2;
-        Fri, 19 Mar 2021 20:19:34 +0100 (CET)
-Subject: Re: [PATCH v30 07/12] landlock: Support filesystem access-control
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Fri, 19 Mar 2021 16:04:26 -0400
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12JK2m6r039592;
+        Fri, 19 Mar 2021 16:04:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=VQUD4EeWcha/VtA8fn0+ri1PGYKy2heQhdvdPogGXPs=;
+ b=DuHzJ42nzB+NwvpciVqEMdx5apDB7EY82K0TUxJ+VuDOKAdVFnxPkeCQj2XlhgUAKcWp
+ DN8BUQB2PKbKWL3Wy0NPqtVtca/K+g2ZE35g8TvMtrWvkImUiFjuG2P3zl1x2N+N78K1
+ mkHbW7M+iA78Z3FnNuvzvu3MdEWYcaNR+utjsaED6ZKJgYH1gzOWPaJu2Fewrb2H8uDp
+ 2C1Tb/GOxDfyEzIHdikqw+OrZ8CnSPt4XDmXehk/P9Dh5EfBXB7yM1Gq2N7/FjbgCXOx
+ 7hQOtmBFrQWrDbrd83NukKTuNQ4bpqgh3DnnKKXo/n1d1kvJI2m5tYIN5GDdI5WyTiB0 qA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37cw5asmnv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Mar 2021 16:04:16 -0400
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12JK3FUQ041020;
+        Fri, 19 Mar 2021 16:04:16 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37cw5asmn1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Mar 2021 16:04:15 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12JJxIYB016949;
+        Fri, 19 Mar 2021 20:04:13 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma03fra.de.ibm.com with ESMTP id 378n18b6gk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 19 Mar 2021 20:04:13 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12JK3rqo22938016
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 19 Mar 2021 20:03:54 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 110D552052;
+        Fri, 19 Mar 2021 20:04:11 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.ibmuc.com (unknown [9.211.66.110])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id ACDE852050;
+        Fri, 19 Mar 2021 20:04:08 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     linux-integrity@vger.kernel.org, Test <test@localhost.localdomain>,
+        James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210316204252.427806-1-mic@digikod.net>
- <20210316204252.427806-8-mic@digikod.net> <202103191148.6E819426D@keescook>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <f705f7e8-3ee3-bae9-c283-174fab41629a@digikod.net>
-Date:   Fri, 19 Mar 2021 20:19:50 +0100
-User-Agent: 
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Subject: [RFC PATCH 2/2] integrity: double check iint_cache was initialized
+Date:   Fri, 19 Mar 2021 16:03:58 -0400
+Message-Id: <20210319200358.22816-2-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210319200358.22816-1-zohar@linux.ibm.com>
+References: <20210319200358.22816-1-zohar@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <202103191148.6E819426D@keescook>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-19_10:2021-03-19,2021-03-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 spamscore=0 bulkscore=0 impostorscore=0
+ clxscore=1015 suspectscore=0 phishscore=0 mlxlogscore=907
+ priorityscore=1501 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2103190135
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+From: Test <test@localhost.localdomain>
 
-On 19/03/2021 19:57, Kees Cook wrote:
-> On Tue, Mar 16, 2021 at 09:42:47PM +0100, Mickaël Salaün wrote:
->> From: Mickaël Salaün <mic@linux.microsoft.com>
->>
->> Using Landlock objects and ruleset, it is possible to tag inodes
->> according to a process's domain.  To enable an unprivileged process to
->> express a file hierarchy, it first needs to open a directory (or a file)
->> and pass this file descriptor to the kernel through
->> landlock_add_rule(2).  When checking if a file access request is
->> allowed, we walk from the requested dentry to the real root, following
->> the different mount layers.  The access to each "tagged" inodes are
->> collected according to their rule layer level, and ANDed to create
->> access to the requested file hierarchy.  This makes possible to identify
->> a lot of files without tagging every inodes nor modifying the
->> filesystem, while still following the view and understanding the user
->> has from the filesystem.
->>
->> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
->> keep the same struct inodes for the same inodes whereas these inodes are
->> in use.
->>
->> This commit adds a minimal set of supported filesystem access-control
->> which doesn't enable to restrict all file-related actions.  This is the
->> result of multiple discussions to minimize the code of Landlock to ease
->> review.  Thanks to the Landlock design, extending this access-control
->> without breaking user space will not be a problem.  Moreover, seccomp
->> filters can be used to restrict the use of syscall families which may
->> not be currently handled by Landlock.
->>
->> Cc: Al Viro <viro@zeniv.linux.org.uk>
->> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: Jann Horn <jannh@google.com>
->> Cc: Jeff Dike <jdike@addtoit.com>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Richard Weinberger <richard@nod.at>
->> Cc: Serge E. Hallyn <serge@hallyn.com>
->> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->> Link: https://lore.kernel.org/r/20210316204252.427806-8-mic@digikod.net
->> [...]
->> +	spin_lock(&sb->s_inode_list_lock);
->> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
->> +		struct landlock_object *object;
->> +
->> +		/* Only handles referenced inodes. */
->> +		if (!atomic_read(&inode->i_count))
->> +			continue;
->> +
->> +		/*
->> +		 * Checks I_FREEING and I_WILL_FREE  to protect against a race
->> +		 * condition when release_inode() just called iput(), which
->> +		 * could lead to a NULL dereference of inode->security or a
->> +		 * second call to iput() for the same Landlock object.  Also
->> +		 * checks I_NEW because such inode cannot be tied to an object.
->> +		 */
->> +		spin_lock(&inode->i_lock);
->> +		if (inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW)) {
->> +			spin_unlock(&inode->i_lock);
->> +			continue;
->> +		}
-> 
-> This (and elsewhere here) seems like a lot of inode internals getting
-> exposed. Can any of this be repurposed into helpers? I see this test
-> scattered around the kernel a fair bit:
-> 
-> $ git grep I_FREEING | grep I_WILL_FREE | grep I_NEW | wc -l
-> 9
+The integrity's "iint_cache" is initialized at security_init().  Only
+after an IMA policy is loaded, which is initialized at late_initcall,
+is a file's integrity status stored in the "iint_cache".
 
-Dealing with the filesystem is complex. Some helpers could probably be
-added, but with a series dedicated to the filesystem. I can work on that
-once this series is merged.
+All integrity_inode_get() callers first verify that the IMA policy has
+been loaded, before calling it.  Yet for some reason, it is still being
+called, causing a NULL pointer dereference.
 
-> 
->> +static inline u32 get_mode_access(const umode_t mode)
->> +{
->> +	switch (mode & S_IFMT) {
->> +	case S_IFLNK:
->> +		return LANDLOCK_ACCESS_FS_MAKE_SYM;
->> +	case 0:
->> +		/* A zero mode translates to S_IFREG. */
->> +	case S_IFREG:
->> +		return LANDLOCK_ACCESS_FS_MAKE_REG;
->> +	case S_IFDIR:
->> +		return LANDLOCK_ACCESS_FS_MAKE_DIR;
->> +	case S_IFCHR:
->> +		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
->> +	case S_IFBLK:
->> +		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
->> +	case S_IFIFO:
->> +		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
->> +	case S_IFSOCK:
->> +		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
->> +	default:
->> +		WARN_ON_ONCE(1);
->> +		return 0;
->> +	}
-> 
-> I'm assuming this won't be reachable from userspace.
+As reported by Dmitry Vyukov:
+in qemu:
+qemu-system-x86_64       -enable-kvm     -machine q35,nvdimm -cpu
+max,migratable=off -smp 4       -m 4G,slots=4,maxmem=16G        -hda
+wheezy.img      -kernel arch/x86/boot/bzImage   -nographic -vga std
+ -soundhw all     -usb -usbdevice tablet  -bt hci -bt device:keyboard
+   -net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net
+nic,model=virtio-net-pci   -object
+memory-backend-file,id=pmem1,share=off,mem-path=/dev/zero,size=64M
+  -device nvdimm,id=nvdimm1,memdev=pmem1  -append "console=ttyS0
+root=/dev/sda earlyprintk=serial rodata=n oops=panic panic_on_warn=1
+panic=86400 lsm=smack numa=fake=2 nopcid dummy_hcd.num=8"   -pidfile
+vm_pid -m 2G -cpu host
 
-It should not, only a bogus kernel code could.
+But it crashes on NULL deref in integrity_inode_get during boot:
 
-> 
->> [...]
->> index a5d6ef334991..f8e8e980454c 100644
->> --- a/security/landlock/setup.c
->> +++ b/security/landlock/setup.c
->> @@ -11,17 +11,24 @@
->>  
->>  #include "common.h"
->>  #include "cred.h"
->> +#include "fs.h"
->>  #include "ptrace.h"
->>  #include "setup.h"
->>  
->> +bool landlock_initialized __lsm_ro_after_init = false;
->> +
->>  struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
->>  	.lbs_cred = sizeof(struct landlock_cred_security),
->> +	.lbs_inode = sizeof(struct landlock_inode_security),
->> +	.lbs_superblock = sizeof(struct landlock_superblock_security),
->>  };
->>  
->>  static int __init landlock_init(void)
->>  {
->>  	landlock_add_cred_hooks();
->>  	landlock_add_ptrace_hooks();
->> +	landlock_add_fs_hooks();
->> +	landlock_initialized = true;
-> 
-> I think this landlock_initialized is logically separate from the optional
-> DEFINE_LSM "enabled" variable, but I thought I'd double check. :)
+Run /sbin/init as init process
+BUG: kernel NULL pointer dereference, address: 000000000000001c
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.12.0-rc2+ #97
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
+rel-1.13.0-44-g88ab0c15525c-prebuilt.qemu.org 04/01/2014
+RIP: 0010:kmem_cache_alloc+0x2b/0x370 mm/slub.c:2920
+Code: 57 41 56 41 55 41 54 41 89 f4 55 48 89 fd 53 48 83 ec 10 44 8b
+3d d9 1f 90 0b 65 48 8b 04 25 28 00 00 00 48 89 44 24 08 31 c0 <8b> 5f
+1c 4cf
+RSP: 0000:ffffc9000032f9d8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff888017fc4f00 RCX: 0000000000000000
+RDX: ffff888040220000 RSI: 0000000000000c40 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: ffff888019263627
+R10: ffffffff83937cd1 R11: 0000000000000000 R12: 0000000000000c40
+R13: ffff888019263538 R14: 0000000000000000 R15: 0000000000ffffff
+FS:  0000000000000000(0000) GS:ffff88802d180000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000000001c CR3: 000000000b48e000 CR4: 0000000000750ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+PKRU: 55555554
+Call Trace:
+ integrity_inode_get+0x47/0x260 security/integrity/iint.c:105
+ process_measurement+0x33d/0x17e0 security/integrity/ima/ima_main.c:237
+ ima_bprm_check+0xde/0x210 security/integrity/ima/ima_main.c:474
+ security_bprm_check+0x7d/0xa0 security/security.c:845
+ search_binary_handler fs/exec.c:1708 [inline]
+ exec_binprm fs/exec.c:1761 [inline]
+ bprm_execve fs/exec.c:1830 [inline]
+ bprm_execve+0x764/0x19a0 fs/exec.c:1792
+ kernel_execve+0x370/0x460 fs/exec.c:1973
+ try_to_run_init_process+0x14/0x4e init/main.c:1366
+ kernel_init+0x11d/0x1b8 init/main.c:1477
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
+Modules linked in:
+CR2: 000000000000001c
+---[ end trace 22d601a500de7d79 ]---
 
-An LSM can be marked as enabled (at boot) but not yet initialized.
+Before calling kmem_cache_alloc(), check that the iint_cache has
+been initialized.
 
-> 
-> It seems like it's used here to avoid releasing superblocks before
-> landlock_init() is called? What is the scenario where that happens?
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ security/integrity/iint.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-It is a condition for LSM hooks, syscalls and superblock management.
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 1d20003243c3..80b5ae7bb712 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -97,6 +97,15 @@ struct integrity_iint_cache *integrity_inode_get(struct inode *inode)
+ 	struct rb_node **p;
+ 	struct rb_node *node, *parent = NULL;
+ 	struct integrity_iint_cache *iint, *test_iint;
++	static int once = 0;
++
++	if (!iint_cache) { /* shouldn't get here */
++		if (!once) {
++			dump_stack();
++			once = 1;
++		}
++		return NULL;
++	}
+ 
+ 	iint = integrity_iint_find(inode);
+ 	if (iint)
+-- 
+2.27.0
 
-> 
->>  	pr_info("Up and running.\n");
->>  	return 0;
->>  }
->> diff --git a/security/landlock/setup.h b/security/landlock/setup.h
->> index 9fdbf33fcc33..1daffab1ab4b 100644
->> --- a/security/landlock/setup.h
->> +++ b/security/landlock/setup.h
->> @@ -11,6 +11,8 @@
->>  
->>  #include <linux/lsm_hooks.h>
->>  
->> +extern bool landlock_initialized;
->> +
->>  extern struct lsm_blob_sizes landlock_blob_sizes;
->>  
->>  #endif /* _SECURITY_LANDLOCK_SETUP_H */
->> -- 
->> 2.30.2
->>
-> 
-> The locking and inode semantics are pretty complex, but since, again,
-> it's got significant test and syzkaller coverage, it looks good to me.
-> 
-> With the inode helper cleanup:
-> 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
