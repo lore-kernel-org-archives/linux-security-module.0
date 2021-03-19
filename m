@@ -2,179 +2,129 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA3EC433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 09:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA714C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 12:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 983D564F72
-	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 09:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A30764EED
+	for <linux-security-module@archiver.kernel.org>; Fri, 19 Mar 2021 12:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229524AbhCSJb1 (ORCPT
+        id S229927AbhCSM5s (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 19 Mar 2021 05:31:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([63.128.21.124]:48761 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230024AbhCSJbI (ORCPT
+        Fri, 19 Mar 2021 08:57:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229964AbhCSM5X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 19 Mar 2021 05:31:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1616146268;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=JWPYl+scBvanEZlNPOls+Aq3GI5Pv240j8HlXxWUWlg=;
-        b=JsEs76wFW6RLbGa1ayytu55Bft/y0rIagkYI5K1qEFx2rd8VdLiROlcrFyMdgPXZ7+h6qZ
-        aYjg5DlF19s9MYESIru5d4WUPvCJiB/AVt1P3VolUkYqizc30hHu7x6HoVOeDyv6BpZgcL
-        1oC6vmgoueaqDEmFgn/Sbdy37uQhVqk=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-520-RFnztywAPs2Hk5yHP21sBA-1; Fri, 19 Mar 2021 05:31:06 -0400
-X-MC-Unique: RFnztywAPs2Hk5yHP21sBA-1
-Received: by mail-yb1-f197.google.com with SMTP id p136so51924267ybc.21
-        for <linux-security-module@vger.kernel.org>; Fri, 19 Mar 2021 02:31:06 -0700 (PDT)
+        Fri, 19 Mar 2021 08:57:23 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49B11C061764
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Mar 2021 05:57:23 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id j4-20020a05600c4104b029010c62bc1e20so5183215wmi.3
+        for <linux-security-module@vger.kernel.org>; Fri, 19 Mar 2021 05:57:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=XpPGUE6BByswa3Ep4l8WzlVumVFkgxbvdRbN1GhWJbU=;
+        b=eQ2OMBnwvXNj4Zdcbf4Hf8XhhOBTeJwVU8tZfivPCrGq/tqqyHwo+0+7sVu6f/FsOF
+         2OxuJiRcYb+ik93a+6pEZWp7tjd8+5ZGYphQIC53Le4n8JIjcX44lFddF1HSGvwZed2B
+         Kdty/Fkttsnba/u2wxbAW5PS5T45tIkJ0NOMrBS5T1OqETZjK5ywTXFrxyTHOnG0UEDs
+         YwqAQK/gQEYhzSjBYukkAxpoaF+2mwqUDnY9us+Z2wK1PX5EK6/psOtGTwp+gwxvvLao
+         0b4J3h/UircWR7ovcTz20HRQhi0PF74RiV9kaVNlVJ+dVdgg+O5M2++cy91mMuVOguqX
+         kI7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JWPYl+scBvanEZlNPOls+Aq3GI5Pv240j8HlXxWUWlg=;
-        b=COGjujANNJLKFQt/9DxJA1Gm99JPYUCGj1A7s9Mq1YsTZExL6RZ/0uu39hxsxchJ7Q
-         Ss39XDYqlL4Dn3OC6dcE2+Hs3GwfRF5VAZgAydfWP4IgprJ0PWlV/aZupzBrJzqWR8El
-         vBZncLqiSr5O5qQE/bK2J0hf5119DuQXPbKpDi7vlXZHqKV3DNxeyW4bni8h8IyWKAIO
-         UI0qCwSk0UtxJMS205ZIAdp0y7dLFF4xDN3ytlEgq0Xeat3YCmNeVrcMm2ShOBF14sZh
-         3fkkZ+2kqmLL/xNmws0DeEcdmRB2eNBkJBSUjJ7VvFgtBUteyYzDz9l1AHDlXi+9nC8s
-         fp7g==
-X-Gm-Message-State: AOAM533AVIRWg20tUdPenPARXK56M5wTqhbq7Bl21SXBw1Qx+/y8I+Qi
-        UHO1XWUFCnUo2PzTfEnp86MB7SDxXRPz8wnsz+BWANOFsr0b0PI3G+PTG37qKeHaAjsjrtAEdoj
-        p5XaJn1n9B9Cq5h3O4sBm2K9uZ5Zxc38muZg6DbXiYqnbjYEpdqLp
-X-Received: by 2002:a5b:d43:: with SMTP id f3mr5186034ybr.81.1616146265858;
-        Fri, 19 Mar 2021 02:31:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyDppFo8vSEmUFgrFmiHiXu1JlZwnIrVJYqN77n7RIDRHmo/1KHxeAq7W2sJEhhWSsmWvEqQu9sieiW2yieISI=
-X-Received: by 2002:a5b:d43:: with SMTP id f3mr5186011ybr.81.1616146265623;
- Fri, 19 Mar 2021 02:31:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=XpPGUE6BByswa3Ep4l8WzlVumVFkgxbvdRbN1GhWJbU=;
+        b=SPbvNklyhcOvm4/DHxgfZz3RdA7t6G/A8l0MB/cbrbRXT0SopntnnNzMgnoBjz/CS3
+         bD+g0i8o4NXS2TUHSQJkherx7JvtGUlwDFCQhqrHeBEUUSzltzw0iFuILCxn2eiMHPFd
+         a6Mtb1/5AtTlxAhU85dRdb4qZAwsreD5q1M3PSMhG0GDPYW+rEN9jwOSUM3piADiHwGL
+         Zc9wWwjtu5ANWWhfGmpFsyoJ9GFZLamBu4xKJjctOjaSm0qAoFOEv3GN+7X9x3C6/CYS
+         fIwII4+Nj1r3OPFpWYPeocYMyS7vB4TPqIFyPx87E95yvoyuzSAhWVGgOMCB6lSnIAKr
+         C8Rg==
+X-Gm-Message-State: AOAM530mLSyYrmfKzRmyf8eC2DJek4K6CP1Imc8U1ZkcpLBpr7kxp1V0
+        wjT1qUbJvBto3MtZ5qUSOo4fsA==
+X-Google-Smtp-Source: ABdhPJwFVAyOf6DKJnWgPfK9dHaCFpWzGKth3FaOBlGYV9sO/L5kI4EXuCeCC1XVjuYkH/4Z1drgHQ==
+X-Received: by 2002:a1c:448a:: with SMTP id r132mr3621997wma.157.1616158641830;
+        Fri, 19 Mar 2021 05:57:21 -0700 (PDT)
+Received: from google.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
+        by smtp.gmail.com with ESMTPSA id s84sm6605286wme.11.2021.03.19.05.57.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Mar 2021 05:57:21 -0700 (PDT)
+Date:   Fri, 19 Mar 2021 12:57:16 +0000
+From:   David Brazdil <dbrazdil@google.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jeff Vander Stoep <jeffv@google.com>,
+        Alistair Delva <adelva@google.com>
+Subject: Re: [PATCH] selinux: vsock: Set SID for socket returned by accept()
+Message-ID: <YFSfrIZAz6zHENT7@google.com>
+References: <20210317154448.1034471-1-dbrazdil@google.com>
+ <CAHC9VhT_+i9V9N7NAdCCUgO5xBZpffvVPeh=jK8weZr3WzZ4Bw@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAFqZXNvotgdUEvLBfbUNsU1ZNLYvrjO3N8ygyLo45-336u4=ZA@mail.gmail.com>
- <CAN-5tyGz2HRq9Y7OcBDLQ4K+=d_oPe4nOQ+VM7QGU27ksJi6EQ@mail.gmail.com> <CAFqZXNucLwmqLA1doWp+0hnz1oTCoaNEb-jorAjpUurAu-Jf9Q@mail.gmail.com>
-In-Reply-To: <CAFqZXNucLwmqLA1doWp+0hnz1oTCoaNEb-jorAjpUurAu-Jf9Q@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 19 Mar 2021 10:30:53 +0100
-Message-ID: <CAFqZXNsg=OKTrfmj3_JxevJ7nzCkNBBHHcxR6bQJDP2L4qhWvw@mail.gmail.com>
-Subject: Re: Weird bug in NFS/SELinux
-To:     Olga Kornievskaia <aglo@umich.edu>
-Cc:     linux-nfs <linux-nfs@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhT_+i9V9N7NAdCCUgO5xBZpffvVPeh=jK8weZr3WzZ4Bw@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 18, 2021 at 2:57 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Thu, Mar 18, 2021 at 2:43 PM Olga Kornievskaia <aglo@umich.edu> wrote:
-> > On Thu, Mar 18, 2021 at 5:59 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > While trying to figure out why the NFS tests in the selinux-testsuite
-> > > [1] are failing, I ran into this strange bug: When I mount an NFS
-> > > filesystem on some directory, and then immediately attempt to create
-> > > exactly the same mount on the same directory (fails with -EBUSY as
-> > > expected per mount(2)), then all the entries inside the mount (but not
-> > > the root node) show up as unlabeled
-> > > (system_u:object_r:unlabeled_t:s0). For some reason this doesn't
-> > > happen if I list the directory contents between the two mounts.
-> > >
-> > > It happens at least with kernels 5.12-rc2 and 5.8.6, so it's likely an old bug.
-> > >
-> > > Minimal reproducer (assumes an SELinux-enabled system and that nothing
-> > > is mounted at /etc):
-> > > ```
-> > > # set up a trivial NFS export
-> > > systemctl start nfs-server
-> > > exportfs -o rw,no_root_squash,security_label localhost:/
-> > >
-> > > #
-> > > # reference scenario - single mount
-> > > #
-> > > mount -t nfs -o "nfsvers=4.2" localhost:/etc /mnt
-> > >
-> > > ls -lZ /mnt    # labels are correct
-> > > ls -lZd /mnt   # label is correct
-> > >
-> > > #
-> > > # double mount - BUG
-> > > #
-> > > mount -t nfs -o "nfsvers=4.2" localhost:/etc /mnt
-> > > mount -t nfs -o "nfsvers=4.2" localhost:/etc /mnt
-> > >
-> > > ls -lZ /mnt    # all labels are system_u:object_r:unlabeled_t:s0
-> > > ls -lZd /mnt   # label is correct
-> > >
-> > > #
-> > > # double mount with ls in between - OK
-> > > #
-> > > mount -t nfs -o "nfsvers=4.2" localhost:/etc /mnt
-> > > ls -lZ /mnt    # labels are correct
-> > > ls -lZd /mnt   # label is correct
-> > > mount -t nfs -o "nfsvers=4.2" localhost:/etc /mnt
-> > >
-> > > ls -lZ /mnt    # labels are correct
-> > > ls -lZd /mnt   # label is correct
-> >
-> > Hi Ondrej, a couple of questions about the reproducer. (1) are you
-> > saying that only "mount, mount, ls" sequence is problematic as you
-> > write "mount, ls, mount, ls" is correct? (2) what is your selinux
-> > configuration. I can't reproduce it on my setup. I get the same labels
-> > regardless of how many times I mount.
->
-> (1) Yes, exactly.
-> (2) I reproduced it reliably on clean Fedora VM images (e.g. Fedora 33
-> or Rawhide, both showed this bug).
+Hi Paul,
 
-(Adding also linux-security-module@, since this affects the LSM interface.)
+I'll post a v2 shortly but will address your comments here.
 
-After some off-list exchange trying to get the bug to reproduce on
-Olga's side, we have made some progress, so let me summarize our
-findings here.
+> >  include/linux/lsm_hooks.h     |  7 +++++++
+> >  include/linux/security.h      |  5 +++++
+> >  net/vmw_vsock/af_vsock.c      |  1 +
+> >  security/security.c           |  5 +++++
+> >  security/selinux/hooks.c      | 10 ++++++++++
+> >  6 files changed, 29 insertions(+)
+> 
+> Additional comments below, but I think it would be a good idea for you
+> to test your patches on a more traditional Linux distribution as well
+> as Android.
+> 
 
-First, the issue only appears when you export the root directory, not
-just some path underneath. I suspect that it could be any directory
-with a mount on it rather than just the root dir, but I haven't
-verified that...
+No problem, I was going to add a test case into selinux-testsuite
+anyway. Done now (link in v2) and tested on Fedora 33 with v5.12-rc3.
 
-Second, as Olga found out, the issue stems from the call to
-security_sb_set_mnt_opts() (from nfs_get_root()) on an already
-initialized superblock (AFAIK it is needed so that the LSM can check
-if the security mount options match (and error out the mount if they
-don't), where NFS processes the SECURITY_LSM_NATIVE_LABELS flag the
-same way as on the first mount, but SELinux ignores it on the repeated
-mount. Thus NFS turns off the NFS_CAP_SECURITY_LABEL flag and stops
-fetching labels from the server, so fresh inodes then show up as
-unlabeled.
+> > diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+> > index 5546710d8ac1..a9bf3b90cb2f 100644
+> > --- a/net/vmw_vsock/af_vsock.c
+> > +++ b/net/vmw_vsock/af_vsock.c
+> > @@ -755,6 +755,7 @@ static struct sock *__vsock_create(struct net *net,
+> >                 vsk->buffer_size = psk->buffer_size;
+> >                 vsk->buffer_min_size = psk->buffer_min_size;
+> >                 vsk->buffer_max_size = psk->buffer_max_size;
+> > +               security_vsock_sk_clone(parent, sk);
+> 
+> Did you try calling the existing security_sk_clone() hook here?  I
+> would be curious to hear why it doesn't work in this case.
+> 
+> Feel free to educate me on AF_VSOCK, it's entirely possible I'm
+> misunderstanding something here :)
+> 
 
-So I think there are two options how to fix it:
-1) Require filesystems to always pass (0, NULL) as kern_flags when
-calling it on already initialized superblock - turning the labeling
-support on/off for an existing superblock wouldn't work with SELinux
-anyway.
-2) When selinux_set_mnt_opts() is called again on a superblock,
-validate that the passed kern_flags match the expected value (i.e. the
-FS isn't trying to set an incompatible SECURITY_LSM_NATIVE_LABELS
-setting) and also return back the same flags as on the first call.
+No, you're completely right. security_sk_clone does what's needed here.
+Adding a new hook was me trying to mimic other socket families going via
+selinux_conn_sid. Happy to reuse the existing hook - makes this a nice
+oneliner. :)
 
-It seems doing 1) would make the code in nfs_get_root() a bit ugly
-(and it might require some changes in VFS, too), so I think I like 2)
-more... SELinux/LSM folks, any thoughts?
+Please note that I'm marking v2 with 'Fixes' for backporting. This does
+feel to me like a bug, an integration that was never considered. Please
+shout if you disagree.
 
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+-David
