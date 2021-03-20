@@ -2,188 +2,413 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B02C433DB
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Mar 2021 11:19:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45990C433DB
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Mar 2021 15:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD665619C0
-	for <linux-security-module@archiver.kernel.org>; Sat, 20 Mar 2021 11:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E3A761574
+	for <linux-security-module@archiver.kernel.org>; Sat, 20 Mar 2021 15:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbhCTLSw (ORCPT
+        id S229618AbhCTPDH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Mar 2021 07:18:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40732 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229640AbhCTLS3 (ORCPT
+        Sat, 20 Mar 2021 11:03:07 -0400
+Received: from mout.gmx.net ([212.227.15.19]:35291 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229564AbhCTPCz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Mar 2021 07:18:29 -0400
-Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379CDC06178A
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Mar 2021 04:18:29 -0700 (PDT)
-Received: by mail-qt1-x829.google.com with SMTP id h7so8813536qtx.3
-        for <linux-security-module@vger.kernel.org>; Sat, 20 Mar 2021 04:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jzaitIYzt4EYWT0hFyc7GOXcnZDTJ2OyrTKLNlgku54=;
-        b=AslwDNE1y4xOM3m4Uvb6qxiFsb6nKP01uOVfNMemzyKUJzTtkcDhwQO7n6Uv7lFTE0
-         me3ttvzLhIKz6kEm7SXwiM+z+o2s6Dr8159XMIc+zBPOuNTJ83l0rmwt3uC68x58DhIZ
-         Ru1BuFxGAUCTnXtkoNg8DsbvBRF2pQ62pYUCu9C7Ky85gpDV0c0IRh2W3i8sjDIMMA0g
-         h+aIburKhKx7zgvjey7ki+8HspXdX2Hiy+TObti5vDj/fdpL276w7HhBh4ZasX9M1rre
-         Ad4KpGhYcdK1Pzs1E+hx+1yhPm8BLL/+tEJxVaH8u0xnZCXmzDTJq6Lo6UKTDoOXyrWb
-         vkLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jzaitIYzt4EYWT0hFyc7GOXcnZDTJ2OyrTKLNlgku54=;
-        b=RDc8HmJ2f/zQLc4fkbYZpTcsRzVtze5/hP0tU9TqIbpuzkLhiP3BI8PT0YCnWTo7ts
-         4OcEs/enFeoN3l2DW6+ThBIrWBLScA70MMzE5KFvBk3PQ/+VxCECgm1OJ4RCdirey/1T
-         XEapRvxq2Mu5g+J3CSyvZ1gUuDQUavAIDSz9C4WGSvWKhQ6gGvGZuI2MfysgG/KTo24K
-         Z76XN/esV61/bq5qXi1sKirdotpJ/IQluohNTpIk72C88cLv6+gEWjfNr+Obfcp+FxMU
-         m26aBHbLwHxKu83Y8eIn4HV82GsunLdX4SYH4958udirrsiFreOXxhBR9aqMXLE5GLRT
-         /l0w==
-X-Gm-Message-State: AOAM532Auf8pIXp8Fcc5FJIopGfYUGoVz7wqjV/lX1Ehcg4guqQoJFg/
-        d34tYoy/eIAyNzonGgydiAe0upQ8+J5N15nN16EDOEsltmfKYw==
-X-Google-Smtp-Source: ABdhPJyGU5CsAKvcZ19uEzmr1/FDp60gyDwEKKJjTfa4dbYQxjeMyFeJ/hs9aIQtJGiEltzZve+X6TleTNCBFYcqpIo=
-X-Received: by 2002:ac8:6696:: with SMTP id d22mr1954545qtp.67.1616224405467;
- Sat, 20 Mar 2021 00:13:25 -0700 (PDT)
-MIME-Version: 1.0
-References: <CACT4Y+YBXLi=quMEyBHtLO3-Ef6E3CAN7toFUdTFJWeH+5Y7kg@mail.gmail.com>
- <31c4e1863a561c47d38b8e547ec38a0a713bdadc.camel@linux.ibm.com>
- <CACT4Y+b8cNr1zv=RFPLXf9vY==BSktM1vb9gOfcWyBEaojZ1-A@mail.gmail.com>
- <dbf9e31ca38b36b757c71bcc8fa17cb1ae392f1c.camel@linux.ibm.com>
- <CACT4Y+YCJ3CPR4LHqY8j_g3=vM6-iKoCc96d8OJuZ-N9KKeZkg@mail.gmail.com> <e804b6031eea8c35a71f39c44d409c902a6e2e8b.camel@linux.ibm.com>
-In-Reply-To: <e804b6031eea8c35a71f39c44d409c902a6e2e8b.camel@linux.ibm.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sat, 20 Mar 2021 08:13:14 +0100
-Message-ID: <CACT4Y+b=vui-QJPxy_E0xFaK3S2CPmB+AQFV0MEXdH31Vg0mgw@mail.gmail.com>
-Subject: Re: NULL deref in integrity_inode_get
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     James Morris <jmorris@namei.org>,
+        Sat, 20 Mar 2021 11:02:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1616252530;
+        bh=Qyy316MMRLCeGzcR94PAqHg48ZDAQa0fq9Q52i0Shv4=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=HHm76Nxr7kXuOksjq0yHaPoZzQUcews5agadFz9TNWK9FhZYGxzh9emiG7lpNBQXp
+         esGuXlJjYQp/VJJCjo5X/EwQHTnqr3AiCxt4ifJEi5fUt4b9gtkbokMY8hpb9MquUX
+         FfmJtiEcHSM+ah+nq4AOpmmLnyWRutgn6wg8bTPU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([83.52.229.153]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1M1HZo-1lPGkC2SmA-002nOF; Sat, 20
+ Mar 2021 16:02:10 +0100
+Date:   Sat, 20 Mar 2021 16:01:53 +0100
+From:   John Wood <john.wood@gmx.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     John Wood <john.wood@gmx.com>, Jann Horn <jannh@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        Shuah Khan <shuah@kernel.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, d.kasatkin@samsung.com,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        kernel test robot <oliver.sang@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v6 2/8] security/brute: Define a LSM and manage
+ statistical data
+Message-ID: <20210320150153.GA3023@ubuntu>
+References: <20210307113031.11671-1-john.wood@gmx.com>
+ <20210307113031.11671-3-john.wood@gmx.com>
+ <202103171823.E7F64A593@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202103171823.E7F64A593@keescook>
+X-Provags-ID: V03:K1:N3kDi3fcr7BY5jsLXEhpPT5eZCaHx6vuob6jMA+RdTaGjh8x9VS
+ hV87Ez7R08B5a/LV4rUuS+sNRxEb0rRx9YG2RV+GiHLEyMffLwDJoqHDDtbHZme0X7p/ut0
+ fALzuLGYUv3x79dHwdPPAU/s3LXWcFANyklULIR94sta/QDX8kUIAzk0Rg5JIBQHkNMSy1u
+ ffOa76sdUHRXUIcjhEtVw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:znyhYE+hPho=:4IpP/8ClXstsl4SruKeZN+
+ QBRMjJyTtACcGbLZY1iLRJA7wipKvsAez6Wxl0QsHTOEp4CjrLaf9zCxkM3+5qO91f0tIvD3q
+ uoFVuR/e0xie6uXyLlVX7U44aprQ8JtF7YdOhta42A4pVijYKqz5kVdaxZfFSg231iqeNUCeJ
+ ohTdH2mYstSXwpDLKbGFq6kdRUvTn1mskkPOM70kaoqDLWYJH2/hHIfm/SbNi0KPkMBkVzjo8
+ 21zXP53PeLQa+1AYoK4Yi1h0f//PsJfaE53v0C67pX5GiAdbZlyj0xFcX+x6/N/BjKZyb46iA
+ 9ydBQMVIpj1KTANBZLSPR1v6Q8vkwTAxiutsSxhHIlp6t0or/dhBH6bfHxzgFsSNhfsK2hV7X
+ AOd2kcb9jksY+/pDCNlYbNpZaV9za0/myw0ghISjpdXNyAIaiH4JLdVdPWix13Pba9GXAKlry
+ MkkjcA/oTvoS6zz7Ae34+vzhksKRte4DKnwvCLJudMs0Tsr6ZLnAOJK+yGGUdJF/PmOEmAZuG
+ vKtVFVjRjqHE08Q5yD7cmQtdXvZAQds5eF7QSNNRrFZD/h4egly+AzviUZWM2DI+HIoGeDsZW
+ XgjxIpz8Gnyfeoj+uPVjhBxfkCRFK/BJHnIUED4JLCVIxfPprj6DUEwAXXU4DQ4dOBrbHmiJ2
+ 8L49dfglgJnAetJYIV3lvji50TjLsFtrfJ2NA682Nzr8c3wk4zyOJ6W/QqbBnytSJF/m6zJch
+ BerqnhrhLJEZ1KOD1If6tf/zOq5S/X1afd50Ht7Dg7wAQoAgs4gFEEXSG8DK99qc+ok/pzh5U
+ 2FfjyJdmPIibEVNOSZZGQ1HQURy5CVzsmQL29jk5gBxDnTUU3rTjEe9VvUZA2yqmLxkMlU1Ro
+ CZBBwWM/EB8E2VB/BtEQ==
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Mar 19, 2021 at 9:22 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
->
-> On Thu, 2021-03-18 at 07:53 +0100, Dmitry Vyukov wrote:
-> > On Thu, Mar 18, 2021 at 3:18 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > >
-> > > Hi Dmitry,
-> > >
-> > > On Mon, 2021-03-15 at 14:07 +0100, Dmitry Vyukov wrote:
-> > > > On Mon, Mar 15, 2021 at 1:41 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > >
-> > > > > On Mon, 2021-03-15 at 11:58 +0100, Dmitry Vyukov wrote:
-> > > > > > Hi,
-> > > > > >
-> > > > > > I am trying to boot 5.12-rc3 with this config:
-> > > > > > https://github.com/google/syzkaller/blob/cc1cff8f1e1a585894796d6eae8c51eef98037e6/dashboard/config/linux/upstream-smack-kasan.config
-> > > > > >
-> > > > > > in qemu:
-> > > > > > qemu-system-x86_64       -enable-kvm     -machine q35,nvdimm -cpu
-> > > > > > max,migratable=off -smp 4       -m 4G,slots=4,maxmem=16G        -hda
-> > > > > > wheezy.img      -kernel arch/x86/boot/bzImage   -nographic -vga std
-> > > > > >  -soundhw all     -usb -usbdevice tablet  -bt hci -bt device:keyboard
-> > > > > >    -net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net
-> > > > > > nic,model=virtio-net-pci   -object
-> > > > > > memory-backend-file,id=pmem1,share=off,mem-path=/dev/zero,size=64M
-> > > > > >   -device nvdimm,id=nvdimm1,memdev=pmem1  -append "console=ttyS0
-> > > > > > root=/dev/sda earlyprintk=serial rodata=n oops=panic panic_on_warn=1
-> > > > > > panic=86400 lsm=smack numa=fake=2 nopcid dummy_hcd.num=8"   -pidfile
-> > > > > > vm_pid -m 2G -cpu host
-> > > > > >
-> > > > > > But it crashes on NULL deref in integrity_inode_get during boot:
-> > > > > >
-> > > > > > Run /sbin/init as init process
-> > > > > > BUG: kernel NULL pointer dereference, address: 000000000000001c
-> > > > > > #PF: supervisor read access in kernel mode
-> > > > > > #PF: error_code(0x0000) - not-present page
-> > > > > > PGD 0 P4D 0
-> > > > > > Oops: 0000 [#1] PREEMPT SMP KASAN
-> > > > > > CPU: 3 PID: 1 Comm: swapper/0 Not tainted 5.12.0-rc2+ #97
-> > > > > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS
-> > > > > > rel-1.13.0-44-g88ab0c15525c-prebuilt.qemu.org 04/01/2014
-> > > > > > RIP: 0010:kmem_cache_alloc+0x2b/0x370 mm/slub.c:2920
-> > > > > > Code: 57 41 56 41 55 41 54 41 89 f4 55 48 89 fd 53 48 83 ec 10 44 8b
-> > > > > > 3d d9 1f 90 0b 65 48 8b 04 25 28 00 00 00 48 89 44 24 08 31 c0 <8b> 5f
-> > > > > > 1c 4cf
-> > > > > > RSP: 0000:ffffc9000032f9d8 EFLAGS: 00010246
-> > > > > > RAX: 0000000000000000 RBX: ffff888017fc4f00 RCX: 0000000000000000
-> > > > > > RDX: ffff888040220000 RSI: 0000000000000c40 RDI: 0000000000000000
-> > > > > > RBP: 0000000000000000 R08: 0000000000000000 R09: ffff888019263627
-> > > > > > R10: ffffffff83937cd1 R11: 0000000000000000 R12: 0000000000000c40
-> > > > > > R13: ffff888019263538 R14: 0000000000000000 R15: 0000000000ffffff
-> > > > > > FS:  0000000000000000(0000) GS:ffff88802d180000(0000) knlGS:0000000000000000
-> > > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > > > CR2: 000000000000001c CR3: 000000000b48e000 CR4: 0000000000750ee0
-> > > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > > > > PKRU: 55555554
-> > > > > > Call Trace:
-> > > > > >  integrity_inode_get+0x47/0x260 security/integrity/iint.c:105
-> > > > > >  process_measurement+0x33d/0x17e0 security/integrity/ima/ima_main.c:237
-> > > > > >  ima_bprm_check+0xde/0x210 security/integrity/ima/ima_main.c:474
-> > > > > >  security_bprm_check+0x7d/0xa0 security/security.c:845
-> > > > > >  search_binary_handler fs/exec.c:1708 [inline]
-> > > > > >  exec_binprm fs/exec.c:1761 [inline]
-> > > > > >  bprm_execve fs/exec.c:1830 [inline]
-> > > > > >  bprm_execve+0x764/0x19a0 fs/exec.c:1792
-> > > > > >  kernel_execve+0x370/0x460 fs/exec.c:1973
-> > > > > >  try_to_run_init_process+0x14/0x4e init/main.c:1366
-> > > > > >  kernel_init+0x11d/0x1b8 init/main.c:1477
-> > > > > >  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:294
-> > > > > > Modules linked in:
-> > > > > > CR2: 000000000000001c
-> > > > > > ---[ end trace 22d601a500de7d79 ]---
-> > > > >
-> > > > > It looks like integrity_inode_get() fails to alloc memory.   Only on
-> > > > > failure to verify the integrity of a file would an error be returned.
-> > > > > I think that is what you would want to happen.  Without an "appraise"
-> > > > > policy, this shouldn't happen.
-> > > >
-> > > > It happens at the very boot. I think the cache is NULL.
-> > >
-> > > An IMA policy had to have been loaded in order for
-> > > integrity_inode_get() to have been called.   If this is happening on
-> > > boot, it's too early for a custom policy to have been loaded by
-> > > userspace, but I don't see the builtin policy defined on the boot
-> > > command line either.
-> > >
-> > > Any additional information would be much appreciated.
-> >
-> > Hi Mimi,
-> >
-> > I provided kernel config and qemu command line. What other information
-> > are you looking for? Can you reproduce it on your side?
->
-> Yes, finally I was able to reproduce the NULL deref.  I just posted two
-> patches as an RFC.  As described in the 2/2 patch description, it's
-> unclear why the iint_cache would not be initialized, yet an IMA policy
-> is loaded.  If the kmem_cache_alloc() for the iint_cache failed, it
-> would have panic'ed.  Perhaps you have some insights as to how this
-> might happen.
->
-> Once reviewed/tested, I'll re-post a proper patch (fixing the patch
-> author).
+Hi,
+First of all thanks for the review. More info and questions inline.
 
-Hi Mimi,
+On Wed, Mar 17, 2021 at 07:00:56PM -0700, Kees Cook wrote:
+> On Sun, Mar 07, 2021 at 12:30:25PM +0100, John Wood wrote:
+> >
+> >  config LSM
+> >  	string "Ordered list of enabled LSMs"
+> > -	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tom=
+oyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+> > -	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,=
+smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+> > -	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DE=
+FAULT_SECURITY_TOMOYO
+> > -	default "lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_S=
+ECURITY_DAC
+> > -	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tom=
+oyo,apparmor,bpf"
+> > +	default "brute,lockdown,yama,loadpin,safesetid,integrity,smack,selin=
+ux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+> > +	default "brute,lockdown,yama,loadpin,safesetid,integrity,apparmor,se=
+linux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+> > +	default "brute,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf"=
+ if DEFAULT_SECURITY_TOMOYO
+> > +	default "brute,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEF=
+AULT_SECURITY_DAC
+> > +	default "brute,lockdown,yama,loadpin,safesetid,integrity,selinux,sma=
+ck,tomoyo,apparmor,bpf"
+>
+> It probably doesn't matter much, but I think brute should be added
+> between lockdown and yama.
 
-I know almost nothing about the security subsystem in general and
-integrity subsystem in particular. I think you are much better
-equipped to answer these questions.
-You said you can reproduce it, doesn't it allow you to understand what
-happens? E.g. by adding maybe some additional printf's to trace
-execution of some key initialization points.
+What is the rationale for the stacking order (in relation with brute and
+lockdown)?
+
+> > diff --git a/security/Makefile b/security/Makefile
+> > index 3baf435de541..1236864876da 100644
+> > --- a/security/Makefile
+> > +++ b/security/Makefile
+> > @@ -36,3 +36,7 @@ obj-$(CONFIG_BPF_LSM)			+=3D bpf/
+> >  # Object integrity file lists
+> >  subdir-$(CONFIG_INTEGRITY)		+=3D integrity
+> >  obj-$(CONFIG_INTEGRITY)			+=3D integrity/
+> > +
+> > +# Object brute file lists
+> > +subdir-$(CONFIG_SECURITY_FORK_BRUTE)	+=3D brute
+> > +obj-$(CONFIG_SECURITY_FORK_BRUTE)	+=3D brute/
+>
+> I don't think subdir is needed here? I think you can use obj-... like
+> loadpin, etc.
+
+loadpin also uses subdir just like selinux, smack, tomoyo, etc.. So, why
+is it not necessary for brute?
+
+> > +#include <asm/current.h>
+>
+> Why is this needed?
+
+IIUC, the "current" macro is defined in this header. I try to include the
+appropiate header for every macro and function used.
+
+> > +/**
+> > + * struct brute_stats - Fork brute force attack statistics.
+> > + * @lock: Lock to protect the brute_stats structure.
+> > + * @refc: Reference counter.
+> > + * @faults: Number of crashes.
+> > + * @jiffies: Last crash timestamp.
+> > + * @period: Crash period's moving average.
+> > + *
+> > + * This structure holds the statistical data shared by all the fork h=
+ierarchy
+> > + * processes.
+> > + */
+> > +struct brute_stats {
+> > +	spinlock_t lock;
+> > +	refcount_t refc;
+> > +	unsigned char faults;
+> > +	u64 jiffies;
+> > +	u64 period;
+> > +};
+>
+> I assume the max-255 "faults" will be explained... why is this so small?
+
+If a brute force attack is running slowly for a long time, the application
+crash period's EMA is not suitable for the detection. This type of attack
+must be detected using a maximum number of faults. In this case, the
+BRUTE_MAX_FAULTS is defined as 200.
+
+> > [...]
+> > +static struct brute_stats *brute_new_stats(void)
+> > +{
+> > +	struct brute_stats *stats;
+> > +
+> > +	stats =3D kmalloc(sizeof(struct brute_stats), GFP_KERNEL);
+> > +	if (!stats)
+> > +		return NULL;
+>
+> Since this is tied to process creation, I think it might make sense to
+> have a dedicated kmem cache for this (instead of using the "generic"
+> kmalloc). See kmem_cache_{create,*alloc,free}
+
+Thanks, I will work on it for the next version.
+>
+> > +
+> > +	spin_lock_init(&stats->lock);
+> > +	refcount_set(&stats->refc, 1);
+> > +	stats->faults =3D 0;
+> > +	stats->jiffies =3D get_jiffies_64();
+> > +	stats->period =3D 0;
+>
+> And either way, I'd recommend using the "z" variant of the allocator
+> (kmem_cache_zalloc, kzalloc) to pre-zero everything (and then you can
+> drop the "=3D 0" lines here).
+
+Understood.
+
+>
+> > +
+> > +	return stats;
+> > +}
+> > +
+> > +/**
+> > + * brute_share_stats() - Share the statistical data between processes=
+.
+> > + * @src: Source of statistics to be shared.
+> > + * @dst: Destination of statistics to be shared.
+> > + *
+> > + * Copy the src's pointer to the statistical data structure to the ds=
+t's pointer
+> > + * to the same structure. Since there is a new process that shares th=
+e same
+> > + * data, increase the reference counter. The src's pointer cannot be =
+NULL.
+> > + *
+> > + * It's mandatory to disable interrupts before acquiring the brute_st=
+ats::lock
+> > + * since the task_free hook can be called from an IRQ context during =
+the
+> > + * execution of the task_alloc hook.
+> > + */
+> > +static void brute_share_stats(struct brute_stats *src,
+> > +			      struct brute_stats **dst)
+> > +{
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&src->lock, flags);
+> > +	refcount_inc(&src->refc);
+> > +	*dst =3D src;
+> > +	spin_unlock_irqrestore(&src->lock, flags);
+> > +}
+> > +
+> > +/**
+> > + * brute_task_alloc() - Target for the task_alloc hook.
+> > + * @task: Task being allocated.
+> > + * @clone_flags: Contains the flags indicating what should be shared.
+> > + *
+> > + * For a correct management of a fork brute force attack it is necess=
+ary that
+> > + * all the tasks hold statistical data. The same statistical data nee=
+ds to be
+> > + * shared between all the tasks that hold the same memory contents or=
+ in other
+> > + * words, between all the tasks that have been forked without any exe=
+cve call.
+> > + *
+> > + * To ensure this, if the current task doesn't have statistical data =
+when forks,
+> > + * it is mandatory to allocate a new statistics structure and share i=
+t between
+> > + * this task and the new one being allocated. Otherwise, share the st=
+atistics
+> > + * that the current task already has.
+> > + *
+> > + * Return: -ENOMEM if the allocation of the new statistics structure =
+fails. Zero
+> > + *         otherwise.
+> > + */
+> > +static int brute_task_alloc(struct task_struct *task, unsigned long c=
+lone_flags)
+> > +{
+> > +	struct brute_stats **stats, **p_stats;
+> > +
+> > +	stats =3D brute_stats_ptr(task);
+> > +	p_stats =3D brute_stats_ptr(current);
+> > +
+> > +	if (likely(*p_stats)) {
+> > +		brute_share_stats(*p_stats, stats);
+> > +		return 0;
+> > +	}
+> > +
+> > +	*stats =3D brute_new_stats();
+> > +	if (!*stats)
+> > +		return -ENOMEM;
+> > +
+> > +	brute_share_stats(*stats, p_stats);
+> > +	return 0;
+> > +}
+>
+> During the task_alloc hook, aren't both "current" and "task" already
+> immutable (in the sense that no lock needs to be held for
+> brute_share_stats())?
+
+I will work on it.
+
+> And what is the case where brute_stats_ptr(current) returns NULL?
+
+Sorry, but I don't understand what you are trying to explain me.
+brute_stats_ptr(current) returns a pointer to a pointer. So, I think
+your question is: What's the purpose of the "if (likely(*p_stats))"
+check? If it is the case, this check is to guarantee that all the tasks
+have statistical data. If some task has been allocated prior the brute
+LSM initialization, this task doesn't have stats. So, with this check
+all the tasks that fork have stats.
+
+> > +
+> > +/**
+> > + * brute_task_execve() - Target for the bprm_committing_creds hook.
+> > + * @bprm: Points to the linux_binprm structure.
+> > + *
+> > + * When a forked task calls the execve system call, the memory conten=
+ts are set
+> > + * with new values. So, in this scenario the parent's statistical dat=
+a no need
+> > + * to be shared. Instead, a new statistical data structure must be al=
+located to
+> > + * start a new hierarchy. This condition is detected when the statist=
+ics
+> > + * reference counter holds a value greater than or equal to two (a fo=
+rk always
+> > + * sets the statistics reference counter to a minimum of two since th=
+e parent
+> > + * and the child task are sharing the same data).
+> > + *
+> > + * However, if the execve function is called immediately after anothe=
+r execve
+> > + * call, althought the memory contents are reset, there is no need to=
+ allocate
+> > + * a new statistical data structure. This is possible because at this=
+ moment
+> > + * only one task (the task that calls the execve function) points to =
+the data.
+> > + * In this case, the previous allocation is used but the statistics a=
+re reset.
+> > + *
+> > + * It's mandatory to disable interrupts before acquiring the brute_st=
+ats::lock
+> > + * since the task_free hook can be called from an IRQ context during =
+the
+> > + * execution of the bprm_committing_creds hook.
+> > + */
+> > +static void brute_task_execve(struct linux_binprm *bprm)
+> > +{
+> > +	struct brute_stats **stats;
+> > +	unsigned long flags;
+> > +
+> > +	stats =3D brute_stats_ptr(current);
+> > +	if (WARN(!*stats, "No statistical data\n"))
+> > +		return;
+> > +
+> > +	spin_lock_irqsave(&(*stats)->lock, flags);
+> > +
+> > +	if (!refcount_dec_not_one(&(*stats)->refc)) {
+> > +		/* execve call after an execve call */
+> > +		(*stats)->faults =3D 0;
+> > +		(*stats)->jiffies =3D get_jiffies_64();
+> > +		(*stats)->period =3D 0;
+> > +		spin_unlock_irqrestore(&(*stats)->lock, flags);
+> > +		return;
+> > +	}
+> > +
+> > +	/* execve call after a fork call */
+> > +	spin_unlock_irqrestore(&(*stats)->lock, flags);
+> > +	*stats =3D brute_new_stats();
+> > +	WARN(!*stats, "Cannot allocate statistical data\n");
+> > +}
+>
+> I don't think any of this locking is needed -- you're always operating
+> on "current", so its brute_stats will always be valid.
+
+But another process (that share the same stats) could be modifying this
+concurrently.
+
+Scenario 1: cpu 1 writes stats and cpu 2 writes stats.
+Scenario 2: cpu 1 writes stats, then IRQ on the same cpu writes stats.
+
+I think it is possible. So AFAIK we need locking. Sorry if I am wrong.
+
+> > +
+> > +/**
+> > + * brute_task_free() - Target for the task_free hook.
+> > + * @task: Task about to be freed.
+> > + *
+> > + * The statistical data that is shared between all the fork hierarchy=
+ processes
+> > + * needs to be freed when this hierarchy disappears.
+> > + *
+> > + * It's mandatory to disable interrupts before acquiring the brute_st=
+ats::lock
+> > + * since the task_free hook can be called from an IRQ context during =
+the
+> > + * execution of the task_free hook.
+> > + */
+> > +static void brute_task_free(struct task_struct *task)
+> > +{
+> > +	struct brute_stats **stats;
+> > +	unsigned long flags;
+> > +	bool refc_is_zero;
+> > +
+> > +	stats =3D brute_stats_ptr(task);
+> > +	if (WARN(!*stats, "No statistical data\n"))
+> > +		return;
+> > +
+> > +	spin_lock_irqsave(&(*stats)->lock, flags);
+> > +	refc_is_zero =3D refcount_dec_and_test(&(*stats)->refc);
+> > +	spin_unlock_irqrestore(&(*stats)->lock, flags);
+> > +
+> > +	if (refc_is_zero) {
+> > +		kfree(*stats);
+> > +		*stats =3D NULL;
+> > +	}
+> > +}
+>
+> Same thing -- this is what dec_and_test is for: it's atomic, so no
+> locking needed.
+
+Ok, in this case I can see that the locking is not necessary due to the
+stats::refc is atomic. But in the previous case, faults, jiffies and
+period are not atomic. So I think the lock is necessary. If not, what am
+I missing?
+
+Thanks,
+John Wood
