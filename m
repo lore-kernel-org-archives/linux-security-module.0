@@ -8,63 +8,63 @@ X-Spam-Status: No, score=-15.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,RDNS_NONE,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (unknown [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1608CC433E0
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 03:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA7DC433C1
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 03:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCC2C6194D
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 03:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 838DF619A4
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 03:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbhCUDeb (ORCPT
+        id S229815AbhCUDj1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 20 Mar 2021 23:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51166 "EHLO
+        Sat, 20 Mar 2021 23:39:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229805AbhCUDeV (ORCPT
+        with ESMTP id S229787AbhCUDi7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 20 Mar 2021 23:34:21 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF6EDC061574;
-        Sat, 20 Mar 2021 20:34:20 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id f12so9942232qtq.4;
-        Sat, 20 Mar 2021 20:34:20 -0700 (PDT)
+        Sat, 20 Mar 2021 23:38:59 -0400
+Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F39FBC061574;
+        Sat, 20 Mar 2021 20:38:58 -0700 (PDT)
+Received: by mail-qv1-xf2e.google.com with SMTP id by2so7054925qvb.11;
+        Sat, 20 Mar 2021 20:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n8w1eH7eROhNtrsz0SZcF8+sLNNFxSNw1Hceyzky/t4=;
-        b=R5+MEtSUCDqdcrKGdHzcgi6ku/Rn8hyn2UCzIpi+JgFHAfXswAU+dNk0GTYL5PH8XQ
-         t2X3JPW7bz9iW9FpZXJKHr4GYx9qvxrjYAaceCTQcT63gHe3tTXOhiNOcH/OtO/3klwH
-         ygyAgfl6McZcGui8KRRkNIE0xkEJrvmg3Dd+2U3j4qVC3aWgnW+5BV0fOhsLMBR4nJI+
-         rSimDsD2co2P9w7wjtJmBPkA1SnD5cX75hY7I+9gEtwzabszu+6NqvZ67dtJwS0mAjSN
-         PY30Zchse7+S/Uki/1K094EZWEgSwxV/G6aRdRRzcnToU5QuPj6lhmgaUF0/t/Km9391
-         PHpw==
+        bh=12bQcQuei9qklDt8Bo8n+CvJwVqQA6Mw+S2p2jEoi9w=;
+        b=mMItgp5lkSLaFidNBahvvYY3fcLp+rpJSquUyuMd7D7n5Ys5Pyt5FuJUHxETJT/+Ln
+         IKQRqJhC0GFx/YyXxAHzjOeS0suPHM+JD/jsBoraLRwZlrTbIBuAKxE4jTIJko7A8JUw
+         o1dGsI1JVSP52v2RaZIKWJ+/JPV8mSKgVNYNwSZ9UBmI8BmVX+BjeK5MP9N/JilUQPD/
+         /BdU/PcS2fLFiz+g+7r06H+vtVm3hrrgUJ8l/kMUhEbxaKrMVWQK/PiT2fw84UhD+YuL
+         vrEJExdkj+IOCJbxPo9dbCwA20bgsl1T7i4q9jb2pWNWw3gSHvuUKexmvi59kcbr3OEJ
+         TVjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=n8w1eH7eROhNtrsz0SZcF8+sLNNFxSNw1Hceyzky/t4=;
-        b=jnHJXbcJYN1NX1baSxDDa5kAZKWPbHuUSbuq8X1d9pf916j3d48iKWVa7hjIXmhcai
-         SvzJk0P0UDT4ZwqTcz3615O5temsHHGDdhhJZNEBQzZ9utsofUonU669p/aQCpKgRTwK
-         2XcDCloFKV/JMNChyp6X2PUhRYBdSxbzphREHXgUImVcGSbsehO/3JE46oCujTxT42sZ
-         FJLafThYYOzGTKESWTZK3u0Pz7tbTpuDSKjZQVmjLi6SI/b5r3myn1/2bXvhrR7SJ28u
-         WEcJtGvE/4K8ZG84SaHOoOLB/yVPe5ASgaPFxc/VJgssN9nd8AiEDdLOND3KlD9IK/Z8
-         7/EQ==
-X-Gm-Message-State: AOAM5319jo8o2i10no44Lv2lLRQPAnHgAGWSq4N/qqHmBTRMZtisB/Hi
-        pRlwndbZKqvmZ8CfgS48rj4=
-X-Google-Smtp-Source: ABdhPJxumIiSFoPb6T4PHuSC26JVlRP0hVOqFKo6qRJv4mvLmUXPZ8ZlryfBiJF7HFshd2FRnTd/ow==
-X-Received: by 2002:aed:2ce3:: with SMTP id g90mr4873757qtd.308.1616297660114;
-        Sat, 20 Mar 2021 20:34:20 -0700 (PDT)
+        bh=12bQcQuei9qklDt8Bo8n+CvJwVqQA6Mw+S2p2jEoi9w=;
+        b=XycVIHfGrL+CEXCI09eG1dHCG5ty2FWCkdprwIHlAxKYmBtzlGpCp++WR0oUDYUQzp
+         WI4I7i6d67yXCP2shm0zEvS8T6G6A+6oDEfzCyBhCwx48OcGaa/Sn5OT8bIFo3QlfauM
+         IQetgoY7vqeLmhgFQ2qIFnumAGli5hck3Jh0Hqf1fzioI4RleI7sClsCniUqJruL1R3D
+         GnXnkMiOyP0bHq8hnBA8jZuPFNVgya+5kfe5Vazj3Yujfmm5NWFWoo31KhyOBz0H1IWZ
+         tmICpcxfEJs/71YBCtFsdvLPwGR5ddYrB0Pw3O8msmKUbkKpChlpLdCimDvKIcUOPDYt
+         GL8A==
+X-Gm-Message-State: AOAM530ozi0yDRZx99OQYAhryY+KNk/XzcoXhcSgY5eujyIF/Riuz6i2
+        amzWkNn/b7vxLoHbDi1eNZY64mO4BWIeIEh4
+X-Google-Smtp-Source: ABdhPJxHAYsNSc0XEoBlU7v0LcNlAKceSzmO4eRTcT9oQPGS0OAczY6pB/zNs/54FmGQs/moce5E6w==
+X-Received: by 2002:ad4:470c:: with SMTP id k12mr15916617qvz.9.1616297938305;
+        Sat, 20 Mar 2021 20:38:58 -0700 (PDT)
 Received: from localhost.localdomain ([156.146.54.26])
-        by smtp.gmail.com with ESMTPSA id r133sm8200442qke.20.2021.03.20.20.34.16
+        by smtp.gmail.com with ESMTPSA id z5sm6881661qtc.42.2021.03.20.20.38.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Mar 2021 20:34:19 -0700 (PDT)
+        Sat, 20 Mar 2021 20:38:57 -0700 (PDT)
 From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     serge@hallyn.com, jmorris@namei.org,
+To:     jmorris@namei.org, serge@hallyn.com,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH] cap: Trivial spelling fixes throughout the file
-Date:   Sun, 21 Mar 2021 09:04:02 +0530
-Message-Id: <20210321033402.5728-1-unixbhaskar@gmail.com>
+Subject: [PATCH] security: A typo fix
+Date:   Sun, 21 Mar 2021 09:08:45 +0530
+Message-Id: <20210321033845.13735-1-unixbhaskar@gmail.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -72,85 +72,26 @@ Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 
-Mundane spelling fixes throughout the file.
+s/programers/programmers/
 
 Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 ---
- security/commoncap.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ security/lsm_audit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 1c519c875217..d4bb6d619200 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -83,7 +83,7 @@ int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
- 		if (ns->level <= cred->user_ns->level)
- 			return -EPERM;
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 82ce14933513..ddcf572105be 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -212,7 +212,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 	char comm[sizeof(current->comm)];
 
--		/*
-+		/*
- 		 * The owner of the user namespace in the parent of the
- 		 * user namespace has all caps.
- 		 */
-@@ -842,7 +842,7 @@ static inline bool __is_setgid(struct cred *new, const struct cred *old)
-  *   1) cap_effective has all caps
-  *   2) we became root *OR* are were already root
-  *   3) root is supposed to have all caps (SECURE_NOROOT)
-- * Since this is just a normal root execing a process.
-+ * Since this is just a normal root executing a process.
-  *
-  * Number 1 above might fail if you don't have a full bset, but I think
-  * that is interesting information to audit.
-@@ -1132,7 +1132,7 @@ int cap_task_fix_setuid(struct cred *new, const struct cred *old, int flags)
- 		break;
-
- 	case LSM_SETID_FS:
--		/* juggle the capabilties to follow FSUID changes, unless
-+		/* juggle the capabilities to follow FSUID changes, unless
- 		 * otherwise suppressed
- 		 *
- 		 * FIXME - is fsuser used for all CAP_FS_MASK capabilities?
-@@ -1183,10 +1183,10 @@ static int cap_safe_nice(struct task_struct *p)
- }
-
- /**
-- * cap_task_setscheduler - Detemine if scheduler policy change is permitted
-+ * cap_task_setscheduler - Determine if scheduler policy change is permitted
-  * @p: The task to affect
-  *
-- * Detemine if the requested scheduler policy change is permitted for the
-+ * Determine if the requested scheduler policy change is permitted for the
-  * specified task, returning 0 if permission is granted, -ve if denied.
-  */
- int cap_task_setscheduler(struct task_struct *p)
-@@ -1195,11 +1195,11 @@ int cap_task_setscheduler(struct task_struct *p)
- }
-
- /**
-- * cap_task_ioprio - Detemine if I/O priority change is permitted
-+ * cap_task_ioprio - Determine if I/O priority change is permitted
-  * @p: The task to affect
-  * @ioprio: The I/O priority to set
-  *
-- * Detemine if the requested I/O priority change is permitted for the specified
-+ * Determine if the requested I/O priority change is permitted for the specified
-  * task, returning 0 if permission is granted, -ve if denied.
-  */
- int cap_task_setioprio(struct task_struct *p, int ioprio)
-@@ -1208,11 +1208,11 @@ int cap_task_setioprio(struct task_struct *p, int ioprio)
- }
-
- /**
-- * cap_task_ioprio - Detemine if task priority change is permitted
-+ * cap_task_ioprio - Determine if task priority change is permitted
-  * @p: The task to affect
-  * @nice: The nice value to set
-  *
-- * Detemine if the requested task priority change is permitted for the
-+ * Determine if the requested task priority change is permitted for the
-  * specified task, returning 0 if permission is granted, -ve if denied.
-  */
- int cap_task_setnice(struct task_struct *p, int nice)
+ 	/*
+-	 * To keep stack sizes in check force programers to notice if they
++	 * To keep stack sizes in check force programmers to notice if they
+ 	 * start making this union too large!  See struct lsm_network_audit
+ 	 * as an example of how to deal with large data.
+ 	 */
 --
 2.20.1
 
