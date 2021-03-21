@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2424AC433DB
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 05:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1E1C433C1
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 05:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D248561929
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 05:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3CB861930
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 05:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbhCUFrq (ORCPT
+        id S229941AbhCUFt6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Mar 2021 01:47:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51192 "EHLO
+        Sun, 21 Mar 2021 01:49:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbhCUFr1 (ORCPT
+        with ESMTP id S229894AbhCUFtd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Mar 2021 01:47:27 -0400
+        Sun, 21 Mar 2021 01:49:33 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A63C061574;
-        Sat, 20 Mar 2021 22:47:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0588C061574;
+        Sat, 20 Mar 2021 22:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
         References:Message-ID:In-Reply-To:Subject:cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2rYY5m91Uk0WpY8ivu01sa3Z6BkSgmUTA+3bdWhH+cA=; b=zqSX3zxAC+R45kNnjXAceCvsNx
-        9JSetYSeBm9xwcD5HoLGW2qR/gxLt/StPV0wCcj28cXsKODtB5h/nVIxGY/MlY+sHzHSPyLL6twcU
-        ledKGXVUAULqTKIy+9MEky7k/RIo3xSQAyjeJKGMJrCtJlymDdspgHuGWduQfVmNdZiMy96PpUlf/
-        uhtXu7kA1ttG3R0s2Rs1G+ncPRG4TfeUhB5qOk+RjmOLr18pxWzyXE7WM7pWPEh85sOSIGuQzCIef
-        5bWSKGFZuBC1ZYf4cuw87RYTlQiM5ZEfBH8MM3EiDLVgmyCee58o+zCqof3xlNocsjV+Q5HgEi1pW
-        vMgRW02g==;
+        bh=uXfNM/aoeG0C6gMF2mOkomBH0iMI0iTCKPtZRtjZo54=; b=CQ3ja5rnjOK0ctPu5BYb+tsWNJ
+        w3clZjo3ohAuviNYExObS3l7zUO9Zn7tq3bmlqEz/1ia4LQjrkrP4eAAo13/Hvr1xRT82xq/jQ/Ui
+        gQgKbxgGtO414OpzqSMOWGv0EpCmN2/d+6+zKXXlB8Cj9vUboONO7jXI9PB2lrOHKBWkbENJjyJgy
+        9vWlIMpRjE5VinDtwmM57N7DTzBXOHq5TohXB+lNS4KavqgIbZC0K69BwszVJZDmvvXNtJ8s6IA/7
+        Is4HagethxKXWTJ44DrJuNZADa4AsvmREPoVNgfYC80nvc10O+zpWMD/TzjopEn4WtW6pd1OtAPga
+        QgYVq9FQ==;
 Received: from rdunlap (helo=localhost)
         by bombadil.infradead.org with local-esmtp (Exim 4.94 #2 (Red Hat Linux))
-        id 1lNqvj-002BWW-7Q; Sun, 21 Mar 2021 05:47:16 +0000
-Date:   Sat, 20 Mar 2021 22:47:15 -0700 (PDT)
+        id 1lNqxu-002BZH-UV; Sun, 21 Mar 2021 05:49:32 +0000
+Date:   Sat, 20 Mar 2021 22:49:30 -0700 (PDT)
 From:   Randy Dunlap <rdunlap@bombadil.infradead.org>
 To:     Bhaskar Chowdhury <unixbhaskar@gmail.com>
 cc:     jmorris@namei.org, serge@hallyn.com,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security: A typo fix
-In-Reply-To: <20210321033845.13735-1-unixbhaskar@gmail.com>
-Message-ID: <1bc3b0b4-667b-399c-9ada-cea689101d5d@bombadil.infradead.org>
-References: <20210321033845.13735-1-unixbhaskar@gmail.com>
+Subject: Re: [PATCH V2] device_cgroup: A typo fix
+In-Reply-To: <20210321040941.31973-1-unixbhaskar@gmail.com>
+Message-ID: <1f7b653a-3e15-eea4-9128-402b2ed28b@bombadil.infradead.org>
+References: <20210321040941.31973-1-unixbhaskar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: Randy Dunlap <rdunlap@infradead.org>
 X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-646709E3 
-X-CRM114-CacheID: sfid-20210320_224715_291244_D5CFB8B1 
-X-CRM114-Status: GOOD (  11.44  )
+X-CRM114-CacheID: sfid-20210320_224931_005385_32AD44C1 
+X-CRM114-Status: GOOD (  12.79  )
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
@@ -60,30 +60,37 @@ List-ID: <linux-security-module.vger.kernel.org>
 On Sun, 21 Mar 2021, Bhaskar Chowdhury wrote:
 
 >
-> s/programers/programmers/
+> s/acessed/accessed/
+>
 >
 > Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
 
 Acked-by: Randy Dunlap <rdunlap@infradead.org>
 
+although I still don't care for the $Subject.
+
 
 > ---
-> security/lsm_audit.c | 2 +-
+> Changes from V1:
+>  Getting rid of unwanted comment delimeter addition
+>  Subject line missed propper commit subject labeling
+>
+> security/device_cgroup.c | 2 +-
 > 1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-> index 82ce14933513..ddcf572105be 100644
-> --- a/security/lsm_audit.c
-> +++ b/security/lsm_audit.c
-> @@ -212,7 +212,7 @@ static void dump_common_audit_data(struct audit_buffer *ab,
-> 	char comm[sizeof(current->comm)];
->
-> 	/*
-> -	 * To keep stack sizes in check force programers to notice if they
-> +	 * To keep stack sizes in check force programmers to notice if they
-> 	 * start making this union too large!  See struct lsm_network_audit
-> 	 * as an example of how to deal with large data.
-> 	 */
+> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+> index 04375df52fc9..30b3083276df 100644
+> --- a/security/device_cgroup.c
+> +++ b/security/device_cgroup.c
+> @@ -409,7 +409,7 @@ static bool verify_new_ex(struct dev_cgroup *dev_cgroup,
+> 		} else {
+> 			/*
+> 			 * new exception in the child will add more devices
+> -			 * that can be acessed, so it can't match any of
+> +			 * that can be accessed, so it can't match any of
+> 			 * parent's exceptions, even slightly
+> 			 */
+> 			match = match_exception_partial(&dev_cgroup->exceptions,
 > --
 > 2.20.1
 >
