@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D902C433E0
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 18:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D131EC433C1
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 18:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13DD661937
-	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 18:01:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C9061943
+	for <linux-security-module@archiver.kernel.org>; Sun, 21 Mar 2021 18:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbhCUSBR (ORCPT
+        id S230134AbhCUSHS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 21 Mar 2021 14:01:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37766 "EHLO
+        Sun, 21 Mar 2021 14:07:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbhCUSBR (ORCPT
+        with ESMTP id S229879AbhCUSG7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 21 Mar 2021 14:01:17 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B23DC061762
-        for <linux-security-module@vger.kernel.org>; Sun, 21 Mar 2021 11:01:05 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id mz6-20020a17090b3786b02900c16cb41d63so7351530pjb.2
-        for <linux-security-module@vger.kernel.org>; Sun, 21 Mar 2021 11:01:05 -0700 (PDT)
+        Sun, 21 Mar 2021 14:06:59 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B82C8C061574
+        for <linux-security-module@vger.kernel.org>; Sun, 21 Mar 2021 11:06:58 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id v3so7160371pgq.2
+        for <linux-security-module@vger.kernel.org>; Sun, 21 Mar 2021 11:06:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=iBrKCN7co0fN6DQ3Z7oVF42ggkUDpYbjPmhV3o6bWXE=;
-        b=cCKPMhwksUZ+yG1vaCu6wa8LkufPS1iF7vvliCffs1hluULxo1HADGt4q9mvtjBqIR
-         U1ubZko3f81D30hNlvfAjNKNIaI/FvSlsAfUF32Cr2jNM/Z3Uvzr6yN9spxjY+SqBjwB
-         ZW++v4cMTbXPBele8dErnlXmZCdJPemi1xzbo=
+        bh=GQKgsW9PSdNVPIehSolNc4zFTAKkCmZGwQWUb20126U=;
+        b=I0PKXyTMkIEt+LniN9TDiR4PCxmqN6nDda6NF8aRRqORq412FXzDgofgs7FTdzKEph
+         vtaZ9FoaIP3Bo4WolyFquZvViXjHm4OBIhWkdNdl9gsNA4/raot78SoLh3nBZ2vRd+Cu
+         i8rt+lblIxqxP3fW9eBvzDKw6lp2xA6hNKM3o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=iBrKCN7co0fN6DQ3Z7oVF42ggkUDpYbjPmhV3o6bWXE=;
-        b=RZGduL8xwnymvFRrH92Xxj2XJI2g7AF7jFThl4QlbgSAqANs2CS3Z/qxoZ6Pw0eYOl
-         qQ8UqAruqCaYl5TNCxLSquFzyOyVtIrv0GKXqyh2YtcLyLzxjpAkXNcBXaDjGE2nw2Ak
-         IUMLnXDpUE1fwfSYXeDgSdvEgtqixuOUEO7DtSlQnDtB8DvyfGZVzu/RNMW3vmfnKIXA
-         pLvXwV5U9gXNv1DrF/6aJzWN+sgXwdBaztwgn1oxI36YHSHilwxiuPKOhT3tCgHJpA/c
-         YSNtmZSm8wh75JGdMlqz7TT1cM3og//EyJb7lK/KrPc3bpVVw5axFNr35zXuLXVGkX4L
-         eTvw==
-X-Gm-Message-State: AOAM531twanJfSVKuf8rykiXai9etx324IYSDgA6yhe6KsylLllSFDbN
-        ts/WjuYWKMXfT71CDLw3YY9zGw==
-X-Google-Smtp-Source: ABdhPJzKcyFhLu+VVYrkrgFkX1seObKVaaqxd2+uvQ/k/gufXuSV0xwmK/GIaFl5VVtZ13L/Yakkaw==
-X-Received: by 2002:a17:90b:116:: with SMTP id p22mr9044261pjz.161.1616349664842;
-        Sun, 21 Mar 2021 11:01:04 -0700 (PDT)
+        bh=GQKgsW9PSdNVPIehSolNc4zFTAKkCmZGwQWUb20126U=;
+        b=ivprclCQc7t1cLNexkyaii89II1Up0FRsMElO6Px0IwjtOTVuTlzjPLHVl06jni2Jd
+         HeUVcOq/zy0D9vv0wFmh17BHKMtyCgCFLtzizW+fw3OVpbcgz7kBwDgr+h8H35NdsQ1i
+         QUsamdZl/qXrRcbIKKHDLxegUZmb70YL1GQOoL++9VWiXk2APVxk6fXdc74gSGGLHEYE
+         sc+9fwNntGjhv+9EYfsiudeD0kzWSPDPcRMKH48t2WSiOlHT5DN2PE8lNL+HDsxPQAPl
+         ECZ9FoikJEK2GINLdvdoARom5uWk7mujLO/md5BVrJ6ihr3kDwrH6p2ig3uejwRdahQJ
+         vs5Q==
+X-Gm-Message-State: AOAM53326cPIZdeLHspNxTCQwJOo7ArXwscZZ4YcGuM3xcmoVtab7daf
+        SdZ5oCf6p8U0uZJaLV65tvg19g==
+X-Google-Smtp-Source: ABdhPJwaCJxQVGsaQYkSzRn4/xLdt/W/sHHH5c87r+rTURI2OY10XACg+Pnz+H2j9RROjlYdd/UVjA==
+X-Received: by 2002:a63:4753:: with SMTP id w19mr19247458pgk.394.1616350018234;
+        Sun, 21 Mar 2021 11:06:58 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id l190sm11312520pfl.73.2021.03.21.11.01.03
+        by smtp.gmail.com with ESMTPSA id w189sm11012549pfw.86.2021.03.21.11.06.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Mar 2021 11:01:04 -0700 (PDT)
-Date:   Sun, 21 Mar 2021 11:01:03 -0700
+        Sun, 21 Mar 2021 11:06:57 -0700 (PDT)
+Date:   Sun, 21 Mar 2021 11:06:56 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     John Wood <john.wood@gmx.com>
 Cc:     Jann Horn <jannh@google.com>, Randy Dunlap <rdunlap@infradead.org>,
@@ -69,124 +69,122 @@ Cc:     Jann Horn <jannh@google.com>, Randy Dunlap <rdunlap@infradead.org>,
         linux-security-module@vger.kernel.org,
         linux-kselftest@vger.kernel.org,
         kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v6 4/8] security/brute: Fine tuning the attack detection
-Message-ID: <202103211038.99C87F12@keescook>
+Subject: Re: [PATCH v6 5/8] security/brute: Mitigate a brute force attack
+Message-ID: <202103211101.F3CD3A84@keescook>
 References: <20210307113031.11671-1-john.wood@gmx.com>
- <20210307113031.11671-5-john.wood@gmx.com>
- <202103171957.16C0560D@keescook>
- <20210320154648.GC3023@ubuntu>
+ <20210307113031.11671-6-john.wood@gmx.com>
+ <202103172102.03F172613@keescook>
+ <20210320154847.GD3023@ubuntu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210320154648.GC3023@ubuntu>
+In-Reply-To: <20210320154847.GD3023@ubuntu>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Mar 20, 2021 at 04:46:48PM +0100, John Wood wrote:
-> On Wed, Mar 17, 2021 at 09:00:51PM -0700, Kees Cook wrote:
-> > On Sun, Mar 07, 2021 at 12:30:27PM +0100, John Wood wrote:
+On Sat, Mar 20, 2021 at 04:48:47PM +0100, John Wood wrote:
+> On Wed, Mar 17, 2021 at 09:04:15PM -0700, Kees Cook wrote:
+> > On Sun, Mar 07, 2021 at 12:30:28PM +0100, John Wood wrote:
 > > > +/**
-> > > + * brute_reset_stats() - Reset the statistical data.
-> > > + * @stats: Statistics to be reset.
-> > > + * @is_setid: The executable file has the setid flags set.
+> > > + * brute_kill_offending_tasks() - Kill the offending tasks.
+> > > + * @attack_type: Brute force attack type.
+> > > + * @stats: Statistical data shared by all the fork hierarchy processes.
 > > > + *
-> > > + * Reset the faults and period and set the last crash timestamp to now. This
-> > > + * way, it is possible to compute the application crash period at the next
-> > > + * fault. Also, save the credentials of the current task and update the
-> > > + * bounds_crossed flag based on a previous network activity and the is_setid
-> > > + * parameter.
+> > > + * When a brute force attack is detected all the offending tasks involved in the
+> > > + * attack must be killed. In other words, it is necessary to kill all the tasks
+> > > + * that share the same statistical data. Moreover, if the attack happens through
+> > > + * the fork system call, the processes that have the same group_leader that the
+> > > + * current task must be avoided since they are in the path to be killed.
 > > > + *
-> > > + * The statistics to be reset cannot be NULL.
-> > > + *
-> > > + * Context: Must be called with interrupts disabled and brute_stats_ptr_lock
-> > > + *          and brute_stats::lock held.
-> > > + */
-> > > +static void brute_reset_stats(struct brute_stats *stats, bool is_setid)
-> > > +{
-> > > +	const struct cred *cred = current_cred();
-> > > +
-> > > +	stats->faults = 0;
-> > > +	stats->jiffies = get_jiffies_64();
-> > > +	stats->period = 0;
-> > > +	stats->saved_cred.uid = cred->uid;
-> > > +	stats->saved_cred.gid = cred->gid;
-> > > +	stats->saved_cred.suid = cred->suid;
-> > > +	stats->saved_cred.sgid = cred->sgid;
-> > > +	stats->saved_cred.euid = cred->euid;
-> > > +	stats->saved_cred.egid = cred->egid;
-> > > +	stats->saved_cred.fsuid = cred->fsuid;
-> > > +	stats->saved_cred.fsgid = cred->fsgid;
-> > > +	stats->bounds_crossed = stats->network || is_setid;
-> > > +}
+> > > + * When the SIGKILL signal is sent to the offending tasks, this function will be
+> > > + * called again from the task_fatal_signal hook due to a small crash period. So,
+> > > + * to avoid kill again the same tasks due to a recursive call of this function,
+> > > + * it is necessary to disable the attack detection for this fork hierarchy.
 > >
-> > I would include brute_reset_stats() in the first patch (and add to it as
-> > needed). To that end, it can start with a memset(stats, 0, sizeof(*stats));
+> > Hah. Interesting. I wonder if there is a better way to handle this. Hmm.
 > 
-> So, need all the struct fields to be introduced in the initial patch?
-> Even if they are not needed in the initial patch? I'm confused.
+> If your comment is related to disable the detection:
+> 
+> I think it's no problematic to disable the attack detection for this fork
+> hierarchy since all theirs tasks will be removed. Also, I think that the disable
+> mark can help in the path to use the wait*() functions to notify userspace that
+> a task has been killed by the brute mitigation. Is a work in progress now.
+> 
+> If your comment is related to kill all the tasks:
+> 
+> In the previous version I have a useful discussion with Andi Kleen where a
+> proposal to block the fork system call during a time was made. He explains me
+> the cons of this method and proposes that if the mitigation works as now we can
+> use the wait*() functions to notify userspace that the tasks has been killed
+> by the brute mitigation. This way other problems related with the supervisors
+> and respawned processes could be handled.
+> 
+> Anyway, new points of view are also welcome.
 
-No, I meant try to introduce as much infrastructure as possible early in
-the series. In this case, I was suggesting having introduced
-brute_reset_stats() at the start, so that in this patch you'd just be
-adding the new fields to the function. (Instead of both adding new
-fields and changing the execution pattern.)
+I was just amused by my realizing that the brute mitigation could
+trigger itself. I was just glad you had a comment about the
+situation -- I hadn't thought about that case yet. :)
 
-> > > +/**
-> > > + * brute_network() - Target for the socket_sock_rcv_skb hook.
-> > > + * @sk: Contains the sock (not socket) associated with the incoming sk_buff.
-> > > + * @skb: Contains the incoming network data.
+> 
 > > > + *
-> > > + * A previous step to detect that a network to local boundary has been crossed
-> > > + * is to detect if there is network activity. To do this, it is only necessary
-> > > + * to check if there are data packets received from a network device other than
-> > > + * loopback.
+> > > + * The statistical data shared by all the fork hierarchy processes cannot be
+> > > + * NULL.
 > > > + *
-> > > + * It's mandatory to disable interrupts before acquiring brute_stats_ptr_lock
-> > > + * and brute_stats::lock since the task_free hook can be called from an IRQ
-> > > + * context during the execution of the socket_sock_rcv_skb hook.
+> > > + * It's mandatory to disable interrupts before acquiring the brute_stats::lock
+> > > + * since the task_free hook can be called from an IRQ context during the
+> > > + * execution of the task_fatal_signal hook.
 > > > + *
-> > > + * Return: -EFAULT if the current task doesn't have statistical data. Zero
-> > > + *         otherwise.
+> > > + * Context: Must be called with interrupts disabled and tasklist_lock and
+> > > + *          brute_stats_ptr_lock held.
 > > > + */
-> > > +static int brute_network(struct sock *sk, struct sk_buff *skb)
+> > > +static void brute_kill_offending_tasks(enum brute_attack_type attack_type,
+> > > +				       struct brute_stats *stats)
 > > > +{
-> > > +	struct brute_stats **stats;
-> > > +	unsigned long flags;
+> > > +	struct task_struct *p;
+> > > +	struct brute_stats **p_stats;
 > > > +
-> > > +	if (!skb->dev || (skb->dev->flags & IFF_LOOPBACK))
-> > > +		return 0;
-
-I wonder if you need to also ignore netlink, unix sockets, etc, or does
-the IFF_LOOPBACK cover those too?
-
+> > > +	spin_lock(&stats->lock);
 > > > +
-> > > +	stats = brute_stats_ptr(current);
+> > > +	if (attack_type == BRUTE_ATTACK_TYPE_FORK &&
+> > > +	    refcount_read(&stats->refc) == 1) {
+> > > +		spin_unlock(&stats->lock);
+> > > +		return;
+> > > +	}
 > >
-> > Uhh, is "current" valid here? I actually don't know this hook very well.
+> > refcount_read() isn't a safe way to check that there is only 1
+> > reference. What's this trying to do?
 > 
-> I think so, but I will try to study it. Thanks for noted this.
+> If a fork brute force attack has been detected is due to a new fatal crash.
+> Under this scenario, if there is only one reference of these stats, it is
+> not necessary to kill any other tasks since the stats are not shared with
+> another process. Moreover, if this task has failed in a fatal way, is in
+> the path to be killed. So, no action is required.
+> 
+> How can I make this check in a safe way?
 
-I think you might need to track the mapping of task to sock via
-security_socket_post_create(), security_socket_accept(),
-and/or security_socket_connect()?
-
-Perhaps just mark it once with security_socket_post_create(), instead of
-running a hook on every incoming network packet, too?
+I think you can just skip the optimization -- killing off threads isn't
+going to be a fast path.
 
 -Kees
 
-> > > +	read_lock_irqsave(&brute_stats_ptr_lock, flags);
+> 
 > > > +
-> > > +	if (!*stats) {
-> > > +		read_unlock_irqrestore(&brute_stats_ptr_lock, flags);
-> > > +		return -EFAULT;
+> > > +	brute_disable(stats);
+> > > +	spin_unlock(&stats->lock);
+> > > +
+> > > +	for_each_process(p) {
+> > > +		if (attack_type == BRUTE_ATTACK_TYPE_FORK &&
+> > > +		    p->group_leader == current->group_leader)
+> > > +			continue;
+> > > +
+> > > +		p_stats = brute_stats_ptr(p);
+> > > +		if (*p_stats != stats)
+> > > +			continue;
+> > > +
+> > > +		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_PID);
+> > > +		pr_warn_ratelimited("Offending process %d [%s] killed\n",
+> > > +				    p->pid, p->comm);
 > > > +	}
-> > > +
-> > > +	spin_lock(&(*stats)->lock);
-> > > +	(*stats)->network = true;
-> > > +	spin_unlock(&(*stats)->lock);
-> > > +	read_unlock_irqrestore(&brute_stats_ptr_lock, flags);
-> > > +	return 0;
 > > > +}
 > 
 > Thanks,
