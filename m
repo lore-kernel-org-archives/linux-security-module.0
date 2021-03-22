@@ -2,141 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE10C433C1
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 11:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E21C433E1
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 15:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9440261974
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 11:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B28F2619A8
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 15:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbhCVLqN (ORCPT
+        id S230084AbhCVPnK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 07:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42078 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229893AbhCVLp7 (ORCPT
+        Mon, 22 Mar 2021 11:43:10 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35308 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230034AbhCVPmk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 07:45:59 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA051C061574
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 04:45:58 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id o126so11259487lfa.0
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 04:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wRuJKDLONwqvRSEZw7q4XL+dQi5no/glykgD4QfcHoc=;
-        b=P9wPcvkHTDs1x5aCD8ZWEAWDiHPlrSVjFG0tZV2TfulePyEkQ6FYDKFVNHR6Ba67JP
-         +H1qdwoME5OWNcW8CR860GNbI4yTWPM4F38y+Qspah6LrVzJbg2URQH7AQkh/n8Nrd+u
-         75kTundK0bGBQWyzxgfo4/sPM5u8o9bnRP3Mg8pVx7w/PkkwGy9B7uwE75ypeSpiqDc4
-         vZNiuAxUb38EJR50GOUr5lEySgXSaMMvVRltUk4fJzdmzrMb/RG9VRDkCx7PlzPRBlHf
-         w7Tg0Jv89mm5EnWdjrnl2kNdb2GCGWSV3pR3ULzG+Tk3zRwXI63yTjFI7bOfs5DUTIrR
-         azeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wRuJKDLONwqvRSEZw7q4XL+dQi5no/glykgD4QfcHoc=;
-        b=RyoFqQT3U5x69UZ0/xv4EwNPefa0J91gemOkohBIfg/QABCtyEFBNwGghZCesgXaVp
-         c9Q5E+XE+H9q024n0Iq9BUyWtzQ9ZfoOAdYzzCo9AOi9wF4OCY+5/5UBBsfLDDuFKxNa
-         GgAjh44KzjcYyBD72dg8yhApHNHWZBxMA30lRB0eyyghQdf3Cj/xKtfO+KjV9EnF9i4y
-         C+vPVrl9xJvo20a24jL8v24xGQsIA+vlKsp6RlOGx+A0ErJJm7jkWOJfcXICCtKByM+p
-         O5LQfzIip1s0v30wC0hRTSQniEa0gfhTZL6YY1OhRRxxuJmP+odwpbnv2afB+/IfMu/V
-         JPxw==
-X-Gm-Message-State: AOAM530Dtn0ajZxWQQfpsku3UaTMVxbz9np2xUsViqKISzrmTdaRgufI
-        gB3dL3GwWWje/hgDHC+WaDAVjS0R6rkGL4eueUUhow==
-X-Google-Smtp-Source: ABdhPJys1oU0GEM6faShhioXUDfwSD5LX0IoMQgOqke2KKHhM6OxUhkzXyD0wPqFp09wOreA6rq0SxHKh/GVYbssc/g=
-X-Received: by 2002:a19:6b13:: with SMTP id d19mr8543421lfa.291.1616413557065;
- Mon, 22 Mar 2021 04:45:57 -0700 (PDT)
+        Mon, 22 Mar 2021 11:42:40 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12MFYCQb050623;
+        Mon, 22 Mar 2021 11:42:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=JSGjVlSecphP6Rjd5Yu8JmkAMUWPNySTAdpd2p4Iy40=;
+ b=WmG9LedD/nB60DmtYU1RcobF8drhFu6Vo3N/rpDEGJnVTpR4NgTtYq/sxCfJdqds+9zZ
+ D4hLG168AupmirTihXJOQ9J55IJKEfw7SbpdhSB7qEjYslImm7sQaYFvQN0vWuhbRX+q
+ Ylqaf31ncJPeuJMw1yd6ENd5dW33jm8g6BDy9TLt9iYJ4CGo40Wj6bfczvVOZZImoOM/
+ IChgSY6cFG3kfTqxi/d8N7lkl6GdQYJ+At9BD/riXk2hicCpRHOf8TX0ttU5b+7D3oU+
+ soJKUsrv7eJoiXoEylJ2Q5j50tJFa6qawOrXRiJUk2Ydjpwg25Dsx57c8sN5+SpdLsA4 UQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37dwy5nede-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Mar 2021 11:42:30 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12MFai07061716;
+        Mon, 22 Mar 2021 11:42:29 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37dwy5nebs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Mar 2021 11:42:29 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12MFdP38005787;
+        Mon, 22 Mar 2021 15:42:27 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma04ams.nl.ibm.com with ESMTP id 37d99rag6u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Mar 2021 15:42:27 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12MFgPDM40567134
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Mar 2021 15:42:25 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1EC24C046;
+        Mon, 22 Mar 2021 15:42:24 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 718874C052;
+        Mon, 22 Mar 2021 15:42:22 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.ibmuc.com (unknown [9.211.152.56])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 22 Mar 2021 15:42:22 +0000 (GMT)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH 1/2] ima: don't access a file's integrity status before an IMA policy is loaded
+Date:   Mon, 22 Mar 2021 11:42:06 -0400
+Message-Id: <20210322154207.6802-1-zohar@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20210223023125.2265845-1-jiancai@google.com> <20210223023542.2287529-1-jiancai@google.com>
- <CACRpkdYC3iDD23SESM0j2=f56kr6ByKeedDQvkGwXbUC0br0fw@mail.gmail.com>
- <CA+SOCL+M5YfhygG=ogqvqp7y40v+32RiteGr=53THzwvdGugyA@mail.gmail.com>
- <CACRpkdYrqy78EfB_+UY0QtA0v0tD+_+O09Pod8-1Vd-p-VyMWA@mail.gmail.com> <CA+SOCLLo2MdxCH3gFONHsKdvmGGm2vZuML9QdQfWuX2--qFEOA@mail.gmail.com>
-In-Reply-To: <CA+SOCLLo2MdxCH3gFONHsKdvmGGm2vZuML9QdQfWuX2--qFEOA@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 22 Mar 2021 12:45:45 +0100
-Message-ID: <CACRpkdbF43_CjSFNu_4FUCEqOB8CebrpXJpkzeW8TnPpRELBtg@mail.gmail.com>
-Subject: Re: [PATCH v5] ARM: Implement SLS mitigation
-To:     Jian Cai <jiancai@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Luis Lozano <llozano@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Brazdil <dbrazdil@google.com>,
-        James Morse <james.morse@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-22_08:2021-03-22,2021-03-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 suspectscore=0 clxscore=1015 phishscore=0
+ impostorscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2009150000 definitions=main-2103220111
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 10, 2021 at 5:43 AM Jian Cai <jiancai@google.com> wrote:
-> On Sat, Mar 6, 2021 at 4:25 AM Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Fri, Mar 5, 2021 at 12:23 AM Jian Cai <jiancai@google.com> wrote:
-> > > On Wed, Mar 3, 2021 at 7:04 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+Only after an IMA policy is loaded, check, save, or update the cached
+file's integrity status.
 
-> > > I think gcc also has these options.
-> > > https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
-> >
-> > And how does that work with this part of your patch:
-> >
-> > +#define SLS_TEXT                                       \
-> > +       ALIGN_FUNCTION();                              \
-> > +       *(.text.__llvm_slsblr_thunk_*)
-> >
-> > This does not look compiler agnostic?
->
-> You are right, GCC does generate different oraphan section names. I
-> will address it in the next version of the patch. Also it seems only
-> arm64 gcc supports -mharden-sls=* at this moment, arm32 gcc does not
-> support it yet. I don't know if there is any plan to implement it for
-> 32-bit gcc, but should we patch arm32 linker script preemptively,
-> assuming the sections will be named with the same pattern like how
-> clang does so the kernel would not fail to boot when the flag is
-> implemented?
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ security/integrity/ima/ima_main.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-I think the best thing is to have something like this:
-Implement a macro such as this in
-include/linux/compiler-clang.h
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9ef748ea829f..9d1196f712e1 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -606,6 +606,9 @@ void ima_post_create_tmpfile(struct user_namespace *mnt_userns,
+ 	struct integrity_iint_cache *iint;
+ 	int must_appraise;
+ 
++	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
++		return;
++
+ 	must_appraise = ima_must_appraise(mnt_userns, inode, MAY_ACCESS,
+ 					  FILE_CHECK);
+ 	if (!must_appraise)
+@@ -636,6 +639,9 @@ void ima_post_path_mknod(struct user_namespace *mnt_userns,
+ 	struct inode *inode = dentry->d_inode;
+ 	int must_appraise;
+ 
++	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
++		return;
++
+ 	must_appraise = ima_must_appraise(mnt_userns, inode, MAY_ACCESS,
+ 					  FILE_CHECK);
+ 	if (!must_appraise)
+-- 
+2.27.0
 
-#define SLS_TEXT_SECTION *(.text.__llvm_slsblr_thunk_*)
-
-then the corresponding in include/linux/compiler-gcc.h
-but here also add a
-
-#define SLS_TEXT_SECTION #error "no compiler support"
-
-if the compiler version does not have this.
-
-I don't know the exact best approach sadly, as the patch
-looks now it seems a bit fragile, I wonder if you get linker
-warnings when this section is unused?
-
-Yours,
-Linus Walleij
