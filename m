@@ -2,110 +2,197 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EC9C433C1
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 19:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D56C433DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 20:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1F86199F
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 19:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78D2861992
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 20:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbhCVTaD (ORCPT
+        id S231605AbhCVUaO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 15:30:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57976 "EHLO
+        Mon, 22 Mar 2021 16:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbhCVT3q (ORCPT
+        with ESMTP id S231506AbhCVUaD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 15:29:46 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 863DAC061574
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 12:29:45 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id y6so20801314eds.1
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 12:29:45 -0700 (PDT)
+        Mon, 22 Mar 2021 16:30:03 -0400
+Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36B7DC061574;
+        Mon, 22 Mar 2021 13:30:03 -0700 (PDT)
+Received: by mail-ed1-x534.google.com with SMTP id j3so20927381edp.11;
+        Mon, 22 Mar 2021 13:30:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y5r8vrk0RmFcttAb72LWQcbklz+HCMJrxiDMKZwe4wg=;
-        b=p5erR9PEGFp1swe2diXRMbGO9r+wTbNT2PF+f2EAt7hbHnNgUQvv+xkP+6S2EL1GnR
-         U+Uzw6p9rh4c/04ULDSEkp9sv0gcB1BqwkdJqEeoF0z9/AvBcL7A9SY4Oule9LFFQi0F
-         hN4ygjX6VidadiMWzgWpnyH+DaEj1rtJnuH+Lt1a8PRyGrx8nGIfjHQF03vhuI0QhVa+
-         K0K3RO+w2VtikIWCHOsN4xlP+ThA3c4nluCb+xhRZF7rbQXl/9Mr9OnVnOLaUGGtzlPS
-         0/kVpEDakFfd3WGTC+h7HtKhn6xip28qFIbwV1aopml7+ci9Bv8p4EwpUkIW3CqhhPLw
-         svPg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=7QH2qH8OXw7astC9J+hBZNIvd5jFa6HOZzbSlRf+8Ek=;
+        b=T8MfESZQxe3NObZ/7MqvvJi28NxxdFf3ab07gERPhzLT804c2DkkhJkBMdizuiX7N5
+         CHF46uFWWZ0cEHLJOYnXTiyTVv5tLvjO1lmS5Ohg2XPP88nZmWW9F5ARG6cD601rZ5/K
+         zoiBTqPm5H0nLHbAPcra7yZ3RbLdPm8oZKbWma9nQPHRlRk5CMs6B2AjWWGtpKPrvkGd
+         rL5fFWVmWmq+K/IWUKd2YrrT8XNdUQvFpqJ+tfEUQNjkhvUoBFoAG9jEiozLdABWs7F1
+         P6ZC1gmMny9VZsWnwgXXF/Dsydybb92YeAKNqz04oOvYAWJ3XKyrs6O1pidMSVkxvnmE
+         iM1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y5r8vrk0RmFcttAb72LWQcbklz+HCMJrxiDMKZwe4wg=;
-        b=ZYhEiRjRJAnKrPU7Vpji6m18J8gZL2ql6qYPxpeDvfTpQwD+k+vPWjsGn8HpLYke8e
-         rxozqXgB65A8DR0C3fgucihIwDW5DNGFSkSrZ7zJ+JcFA4+AAz7JB6g1DZUcvGyuufFk
-         b1nZwnH/YU+EYt9J5bL5OBgA5NgPohLWO6NsUyFgTSJfLX8klQzVmIvczbcJC5f736PE
-         pj/7Ok1PJ47AkUm1zOBlA3hCGID42nwtoqDFyT8wO2tyxIb2Ygc2LY0WoBvLC7IoTKm5
-         /8xMFZCwwdTOjw9i4YAKFwD1QW2Y4sFUg1hZ3XODdJd4MfBP2XEcEGaqGaF3f6ix5YvK
-         uAfw==
-X-Gm-Message-State: AOAM533rJD2RgIFTxaSxPhcCGZXdZU2P9ac85EAmQo5cQBysi/T7O1o6
-        BarTichYF81D6eRB/6veqOzoJNNMlcKG77rnNGVDYm+pKU4f
-X-Google-Smtp-Source: ABdhPJzGU/T9xoph1YWbf4mgQ+693uVmIILpwh/6TNc6el91BsI8BWGqoAEachuvH9/dsXb8UJ6Y+Polb/dHCDpGtRw=
-X-Received: by 2002:aa7:db4f:: with SMTP id n15mr1227097edt.12.1616441382025;
- Mon, 22 Mar 2021 12:29:42 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=7QH2qH8OXw7astC9J+hBZNIvd5jFa6HOZzbSlRf+8Ek=;
+        b=leNPY43U+GP3bVKZwkB+lJg2KyM9KE3J2BFaL8GyBbtK5FxkdvSf+O+fr0RWMe3JBd
+         J7pP+6GAbA+ttwYqzvfe5+RYYtWD1pM01ZARcqk0btY2WCJiNCPFuC0laaXjjVFH09Py
+         ubBTXmpqEEOMZ8KePXTQTSV3vAyBWlsigmNBoEOHhkFE2B8OFPKIE4dl6iUCSj8A8foG
+         G1eG3/aJkkn+TJlbpoZssdMKGsnjJcJTlO9zI2eELfmnhvJdvsKnaXzdbDm3d630n6/T
+         WldJsHY4wqV54f6O95BiFajQOa6pNIMMhqwGcg2vfF+wP8w/6cJxlS00s9lFIe/Eigpc
+         0hQQ==
+X-Gm-Message-State: AOAM532Pysb8L0q7VJmQYDTpgC9fAhOi7Ab3X/7FI4p5/vspOoI7oA7t
+        8M2UPdz24vWHYaXoLgOFcP4=
+X-Google-Smtp-Source: ABdhPJwU1mWLXQUCBk/cr2I4/KV5sNA0QBX6NdJBSPel6aICLgwoK3n4c4u3DzEAz75RN+WAzRwu0Q==
+X-Received: by 2002:aa7:c447:: with SMTP id n7mr1365222edr.171.1616445001869;
+        Mon, 22 Mar 2021 13:30:01 -0700 (PDT)
+Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
+        by smtp.gmail.com with ESMTPSA id x1sm10321496eji.8.2021.03.22.13.30.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Mar 2021 13:30:01 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date:   Mon, 22 Mar 2021 21:29:58 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Martin Sebor <msebor@gcc.gnu.org>,
+        Ning Sun <ning.sun@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
+Message-ID: <20210322202958.GA1955909@gmail.com>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-3-arnd@kernel.org>
 MIME-Version: 1.0
-References: <161609713992.55424.6906498317563652734.stgit@olly>
-In-Reply-To: <161609713992.55424.6906498317563652734.stgit@olly>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 22 Mar 2021 15:29:31 -0400
-Message-ID: <CAHC9VhRF4xRQiu+iww=G3FkY2vcjFuPAj4=5yVW4dxCYSnF1NA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] Split security_task_getsecid() into subj and obj variants
-To:     linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        selinux@vger.kernel.org
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322160253.4032422-3-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 18, 2021 at 4:42 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> An update on the previous RFC patchset found here:
->
-> https://lore.kernel.org/linux-security-module/161377712068.87807.12246856567527156637.stgit@sifl/
->
-> Aside from being rebased to the current SELinux next branch (which
-> in turn is based on v5.12-rc2), this revision changes the binder
-> related code to always use the objective credentials as discussed
-> in the thread above.  I've also dropped the AppArmor patch as John
-> has a better version in progress; in the meantime AppArmor should
-> continue to work exactly as it did before this patchset so there
-> is no harm in merging this without the AppArmor patch.
->
-> Casey, John, and Richard; I dropped your ACKs, Reviewed-by, etc.
-> tags as the binder changes seemed substantial enough to not
-> carryover your tags.  I would appreciate it if you could re-review
-> this revision; the changes should be minimal.  I did leave Mimi's
-> tag on this revision as she qualified it for IMA and that code
-> didn't change.
->
+
+* Arnd Bergmann <arnd@kernel.org> wrote:
+
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> gcc-11 warns about using string operations on pointers that are
+> defined at compile time as offsets from a NULL pointer. Unfortunately
+> that also happens on the result of fix_to_virt(), which is a
+> compile-time constant for a constantn input:
+> 
+> arch/x86/kernel/tboot.c: In function 'tboot_probe':
+> arch/x86/kernel/tboot.c:70:13: error: '__builtin_memcmp_eq' specified bound 16 exceeds source size 0 [-Werror=stringop-overread]
+>    70 |         if (memcmp(&tboot_uuid, &tboot->uuid, sizeof(tboot->uuid))) {
+>       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> I hope this can get addressed in gcc-11 before the release.
+> 
+> As a workaround, split up the tboot_probe() function in two halves
+> to separate the pointer generation from the usage. This is a bit
+> ugly, and hopefully gcc understands that the code is actually correct
+> before it learns to peek into the noinline function.
+> 
+> Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99578
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->
-> Paul Moore (3):
->       lsm: separate security_task_getsecid() into subjective and objective variants
->       selinux: clarify task subjective and objective credentials
->       smack: differentiate between subjective and objective task credentials
->
->
->  security/selinux/hooks.c   | 112 ++++++++++++++++++++++++-------------
->  security/smack/smack.h     |  18 +++++-
->  security/smack/smack_lsm.c |  40 ++++++++-----
->  3 files changed, 117 insertions(+), 53 deletions(-)
+>  arch/x86/kernel/tboot.c | 44 ++++++++++++++++++++++++-----------------
+>  1 file changed, 26 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/tboot.c b/arch/x86/kernel/tboot.c
+> index 4c09ba110204..f9af561c3cd4 100644
+> --- a/arch/x86/kernel/tboot.c
+> +++ b/arch/x86/kernel/tboot.c
+> @@ -49,6 +49,30 @@ bool tboot_enabled(void)
+>  	return tboot != NULL;
+>  }
+>  
+> +/* noinline to prevent gcc from warning about dereferencing constant fixaddr */
+> +static noinline __init bool check_tboot_version(void)
+> +{
+> +	if (memcmp(&tboot_uuid, &tboot->uuid, sizeof(tboot->uuid))) {
+> +		pr_warn("tboot at 0x%llx is invalid\n", boot_params.tboot_addr);
+> +		return false;
+> +	}
+> +
+> +	if (tboot->version < 5) {
+> +		pr_warn("tboot version is invalid: %u\n", tboot->version);
+> +		return false;
+> +	}
+> +
+> +	pr_info("found shared page at phys addr 0x%llx:\n",
+> +		boot_params.tboot_addr);
+> +	pr_debug("version: %d\n", tboot->version);
+> +	pr_debug("log_addr: 0x%08x\n", tboot->log_addr);
+> +	pr_debug("shutdown_entry: 0x%x\n", tboot->shutdown_entry);
+> +	pr_debug("tboot_base: 0x%08x\n", tboot->tboot_base);
+> +	pr_debug("tboot_size: 0x%x\n", tboot->tboot_size);
+> +
+> +	return true;
+> +}
+> +
+>  void __init tboot_probe(void)
+>  {
+>  	/* Look for valid page-aligned address for shared page. */
+> @@ -66,25 +90,9 @@ void __init tboot_probe(void)
+>  
+>  	/* Map and check for tboot UUID. */
+>  	set_fixmap(FIX_TBOOT_BASE, boot_params.tboot_addr);
+> -	tboot = (struct tboot *)fix_to_virt(FIX_TBOOT_BASE);
+> -	if (memcmp(&tboot_uuid, &tboot->uuid, sizeof(tboot->uuid))) {
+> -		pr_warn("tboot at 0x%llx is invalid\n", boot_params.tboot_addr);
+> +	tboot = (void *)fix_to_virt(FIX_TBOOT_BASE);
+> +	if (!check_tboot_version())
+>  		tboot = NULL;
+> -		return;
+> -	}
+> -	if (tboot->version < 5) {
+> -		pr_warn("tboot version is invalid: %u\n", tboot->version);
+> -		tboot = NULL;
+> -		return;
+> -	}
+> -
+> -	pr_info("found shared page at phys addr 0x%llx:\n",
+> -		boot_params.tboot_addr);
+> -	pr_debug("version: %d\n", tboot->version);
+> -	pr_debug("log_addr: 0x%08x\n", tboot->log_addr);
+> -	pr_debug("shutdown_entry: 0x%x\n", tboot->shutdown_entry);
+> -	pr_debug("tboot_base: 0x%08x\n", tboot->tboot_base);
+> -	pr_debug("tboot_size: 0x%x\n", tboot->tboot_size);
 
-All three patches have been merged into selinux/next, thanks for the
-help/review everyone!
+This is indeed rather ugly - and the other patch that removes a debug 
+check seems counterproductive as well.
 
--- 
-paul moore
-www.paul-moore.com
+Do we know how many genuine bugs -Wstringop-overread-warning has 
+caught or is about to catch?
+
+I.e. the real workaround might be to turn off the -Wstringop-overread-warning,
+until GCC-11 gets fixed?
+
+Thanks,
+
+	Ingo
