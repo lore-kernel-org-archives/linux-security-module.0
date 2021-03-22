@@ -2,39 +2,73 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA510C433E0
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 16:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B76C433DB
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 18:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 828846198E
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 16:53:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E60F36198E
+	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 18:03:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229943AbhCVQxP (ORCPT
+        id S230517AbhCVSDG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 12:53:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38072 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229467AbhCVQwp (ORCPT
+        Mon, 22 Mar 2021 14:03:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11170 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231278AbhCVSCq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 12:52:45 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B640361972;
-        Mon, 22 Mar 2021 16:52:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616431965;
-        bh=hv13RER2/qk3O2HqxVq4E/GeB8/0gpsY1ckngPzOo5U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rSvk6kD43Cv4W6nYmtyZRTY2K80Q7SbqIa4Cfna/cyTBPtfOZY8HoR62foC+1/Z8j
-         Xy3JeTENbHosJ5Bugr2C5LUNivA2EkwFlbTlvGuS8QKIAOvikQavTP5Wf1o7dMCeRk
-         /22W0j+10QHwTxkdz3YA6MAPjiC8I00zKGTSLv2dAmagI77Nq8G4gTggHkj0I7go7p
-         O3gc88shlYwWZAo8raWIYApolyREfaXOcxFur84t7UbGMsWiFD19HQKX+BbGCc5IJA
-         tcQaiM4UDEd/SDwCB+NQmk7n1mJ70UWR3livycg02PwGvtgfVWi0GsI0FDoOM41//v
-         vYiJy4b9UnmrQ==
-Date:   Mon, 22 Mar 2021 09:52:43 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
+        Mon, 22 Mar 2021 14:02:46 -0400
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12MHXUVC189913;
+        Mon, 22 Mar 2021 14:02:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=5BgpEm/KgpyLlQ/FXu7QQDWMHNtP+UQkOBNYj4Q1nkI=;
+ b=P2Nfq0QnqP/Xa0G5kouusJ8r7yFLFiq5IxBVkbSWTZkUYRE2rF1X019U/JSvlterYdJD
+ ZXd9OTB/f+y4XTOj7KZr9j/E58OFE2vQNoxnipzQzASvg7KMzE1gAmf05qRZYvltqQfY
+ 9izA2dTuLjr1Js4ZUc3WS8qcvsiIN0PNIkEHX+DWgQjA8uza59djTAT5Htjvd0VzoItV
+ d8VBPKpxRDxIQVGajgC0ns8d+czZc7cBGLtVg+Jy3bMmTkotrhllkUM5C0zI81pcFC8d
+ 9BkAcnE8bZGwfCBTrr8PJlV5m4THl7c4oGTPsPF88Ue7VwwvFLVQaTEH1Wp5sdsU8MSJ fQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37dx9xsevm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Mar 2021 14:02:35 -0400
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12MHXbdC190233;
+        Mon, 22 Mar 2021 14:02:35 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37dx9xsev0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Mar 2021 14:02:34 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12MHwwXX021270;
+        Mon, 22 Mar 2021 18:02:33 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 37d99rakbu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 22 Mar 2021 18:02:33 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12MI2Va138994384
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 22 Mar 2021 18:02:31 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E51DE4C040;
+        Mon, 22 Mar 2021 18:02:30 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C35084C04A;
+        Mon, 22 Mar 2021 18:02:28 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.152.56])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 22 Mar 2021 18:02:28 +0000 (GMT)
+Message-ID: <92d2e1860d209fe22f8ae5696fc9496e15dd2b31.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/2] ima: don't access a file's integrity status before
+ an IMA policy is loaded
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     Dmitry Vyukov <dvyukov@google.com>,
         James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -42,23 +76,38 @@ Cc:     Dmitry Vyukov <dvyukov@google.com>,
         linux-security-module <linux-security-module@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 2/2] integrity: double check iint_cache was initialized
-Message-ID: <YFjLWywyF8TYZHxP@gmail.com>
+Date:   Mon, 22 Mar 2021 14:02:27 -0400
+In-Reply-To: <YFjLG7+mhDgsQOYu@gmail.com>
 References: <20210322154207.6802-1-zohar@linux.ibm.com>
- <20210322154207.6802-2-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210322154207.6802-2-zohar@linux.ibm.com>
+         <YFjLG7+mhDgsQOYu@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-22_09:2021-03-22,2021-03-22 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 suspectscore=0 mlxlogscore=999 bulkscore=0
+ adultscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103220127
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 22, 2021 at 11:42:07AM -0400, Mimi Zohar wrote:
+On Mon, 2021-03-22 at 09:51 -0700, Eric Biggers wrote:
+> On Mon, Mar 22, 2021 at 11:42:06AM -0400, Mimi Zohar wrote:
+> > Only after an IMA policy is loaded, check, save, or update the cached
+> > file's integrity status.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
 > 
-> Reported-by: Dmitry Vyukov <dvyukov@google.com>
-> Fixes: 79f7865d844c ("LSM: Introduce "lsm=" for boottime LSM selection")
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> This commit message doesn't describe what the actual effect of this change is.
+> Is it fixing something?
 
-Missing Cc stable?
+No, it's just short circuiting out even earlier, but isn't needed.
 
-- Eric
+Mimi
+
+
+
