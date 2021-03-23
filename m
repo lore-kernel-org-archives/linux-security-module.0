@@ -2,118 +2,92 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A81FC433E1
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 16:14:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC25BC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 16:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0523619BD
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 16:14:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D81619C0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 16:35:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233085AbhCWQN4 (ORCPT
+        id S233224AbhCWQf0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Mar 2021 12:13:56 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15446 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233048AbhCWQNp (ORCPT
+        Tue, 23 Mar 2021 12:35:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48086 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233276AbhCWQey (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Mar 2021 12:13:45 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12NG3KPO059534;
-        Tue, 23 Mar 2021 12:13:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=gjvixOOjton7uGSXPkTWvW3pgeVJJycqi6LeokrLI8Y=;
- b=H3N9kxk3EMZx5/3tuxdT0noHWKi5L8O0vrRzBLQ2OzSu2nfcb38eTT4cDqPOirOFip9e
- hFzmdsb6ppYnnkl7iUKHBycTL+8cEJEI5zh+NXlC4e7l3iZcafJ9QnbGX4wmz50tu2j9
- 27cJeR4FC3vDgY08TH6JLlNV8H7oGag1qE5nBg18hsYSWAMOk3z0cYyfjszKuiqRxBdv
- 8s8KYTpIqmf37pALHGScoCRKx3IEeSZ4+EknhEKQQVhhyof0CiwzAqW/DJU5ydaAs8Zr
- 6FS4CHu86ZZeuYOqaUkRhpmFwsO5Aib0OOmE/Mg8kFqcNDZfeQgzsxx3Vx7ZHXvZmwAl DA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37fkaxhaf5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Mar 2021 12:13:32 -0400
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12NG3IW5059450;
-        Tue, 23 Mar 2021 12:13:32 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37fkaxhae3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Mar 2021 12:13:32 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12NG37di015056;
-        Tue, 23 Mar 2021 16:13:29 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma05fra.de.ibm.com with ESMTP id 37d9a6httt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 23 Mar 2021 16:13:29 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12NGDRjl44630326
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 23 Mar 2021 16:13:27 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2C68142041;
-        Tue, 23 Mar 2021 16:13:27 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F4A542045;
-        Tue, 23 Mar 2021 16:13:25 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.41.170])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 23 Mar 2021 16:13:24 +0000 (GMT)
-Message-ID: <721b4f8d38b014babb0f4ae829d76014bbf7734e.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH 2/2] integrity: double check iint_cache was
- initialized
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>
-Date:   Tue, 23 Mar 2021 12:13:22 -0400
-In-Reply-To: <cc01e7b7-d685-289c-a792-fc76fabba807@i-love.sakura.ne.jp>
-References: <20210319200358.22816-1-zohar@linux.ibm.com>
-         <20210319200358.22816-2-zohar@linux.ibm.com>
-         <8450c80a-104a-3f36-0963-0ae8fa69e0f2@i-love.sakura.ne.jp>
-         <CACT4Y+bvakfNhVs29QvbY6Z8Pw0zmAUKGWM-DD5DcPZW5ny90A@mail.gmail.com>
-         <1a2245c6-3cab-7085-83d3-55b083619303@i-love.sakura.ne.jp>
-         <8039976be3df9bd07374fe4f1931b8ce28b89dab.camel@linux.ibm.com>
-         <cde00350-2a18-1759-d53b-2e7489b6cc0e@i-love.sakura.ne.jp>
-         <8a8763a7-eeeb-3578-d50c-c15919fbe1f9@i-love.sakura.ne.jp>
-         <3ed2004413e0ac07c7bd6f10294d6b6fac6fdbf3.camel@linux.ibm.com>
-         <cc01e7b7-d685-289c-a792-fc76fabba807@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-23_07:2021-03-22,2021-03-23 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0 adultscore=0
- suspectscore=0 mlxlogscore=885 spamscore=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2009150000 definitions=main-2103230118
+        Tue, 23 Mar 2021 12:34:54 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7784C061763
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Mar 2021 09:34:53 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lOjzY-0004l1-9D; Tue, 23 Mar 2021 17:34:52 +0100
+Subject: Re: [PATCH v1 0/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+To:     =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+ <f0f43b30-3dfb-c2a0-7f69-6e5488f871cd@nxp.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <8b72335f-6ecd-3683-af82-ab5ca96d9528@pengutronix.de>
+Date:   Tue, 23 Mar 2021 17:34:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
+MIME-Version: 1.0
+In-Reply-To: <f0f43b30-3dfb-c2a0-7f69-6e5488f871cd@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-03-24 at 00:14 +0900, Tetsuo Handa wrote:
-> On 2021/03/23 23:47, Mimi Zohar wrote:
-> > Initially I also questioned making "integrity" an LSM.  Perhaps it's
-> > time to reconsider.   For now, it makes sense to just fix the NULL
-> > pointer dereferencing.
-> 
-> Do we think calling panic() as "fix the NULL pointer dereferencing" ?
+Hello Horia,
 
-Not supplying "integrity" as an "lsm=" option is a user error.  There
-are only two options - allow or deny the caller to proceed.   If the
-user is expecting the integrity subsystem to be properly working,
-returning a NULL and allowing the system to boot (RFC patch version)
-does not make sense.   Better to fail early.
+On 21.03.21 21:01, Horia Geantă wrote:
+> On 3/16/2021 7:02 PM, Ahmad Fatoum wrote:
+>> This patch series builds on top of Sumit's rework to have the CAAM as yet another
+>> trusted key backend.
+>>
+> Shouldn't the description under TRUSTED_KEYS (in security/keys/Kconfig)
+> be updated to reflect the availability of multiple backends?
 
-Mimi
+This is indeed no longer correct. It also depends on TCG_TPM, which AFAIU
+is not really needed for the new TEE backend.
 
+@Sumit, can you confirm?
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
