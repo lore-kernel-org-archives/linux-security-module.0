@@ -2,97 +2,83 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 682CBC433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 01:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C12B0C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 01:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2267E619A1
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 01:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C30461992
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 01:47:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231371AbhCWBeH (ORCPT
+        id S231289AbhCWBrP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 21:34:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51304 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231152AbhCWBdk (ORCPT
+        Mon, 22 Mar 2021 21:47:15 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:54767 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231476AbhCWBrO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 21:33:40 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58AD0C061574;
-        Mon, 22 Mar 2021 18:33:40 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id u19so10093852pgh.10;
-        Mon, 22 Mar 2021 18:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qiLpwxPjK3YlrcimrTkNb9ZY7dWb+03A9YHQCUOSfQM=;
-        b=YWBETTwFuZSjRMjn/jEwQwYr7Wi37lw5iU9f4tmGbmAFXv0A9/1W9D6PYDHqTmJ9id
-         p22dYhltzQa/TZd2B1aw1ci7eWlnj9aOmGeimDWafCboUTsdjJKERjMJ+TJAX968sphB
-         vOZ0UnKUKy7jdLreOJAenY10LbK5tFSuJRPTQTqfzRTKubKlGTPljO/Q8Zo4feok7BvC
-         q434FpmJjCakyZjosx4zxsLpNdEJ0LPxsCdaGt2MpnoDjhxycjA58Dg18Hd+1xSahPvu
-         wPaVrhWpjWYXXd1nLshsY3piYQ1mzNgBDqqQT3RhGlSQwNQ2sexSfrfoQQ6wBayFiqTn
-         5WeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qiLpwxPjK3YlrcimrTkNb9ZY7dWb+03A9YHQCUOSfQM=;
-        b=ESSUvz0fHcsYRnnpeGK/zzjns+hsRNFBg3BuGnOFz/a74mdQ4ImeGY5YatLksEAtue
-         f4RjfhHRf6/SOYVihpqCRTTPaFPkTH4Tjr3tUiSx5+bhdQe+R6hjGFUEap+QHxLOu+V+
-         STpvYUsqL0NiMb99dMQUXjiPKVyOVKkmmjdfdRCAx1/Apo6mPCkj7tGyvNpd3EezmQOj
-         ZwUuPxy2Zz0PoNHSYm+kzSGqaeR51XHZizeii/AQVCLSoc6iM33PZyLsC02Wng8503Sj
-         hkSNOHgFHZAtmc8ExFJhOQc33bRAhjLVRPho4SWG8R2Z5ZQhio/Gp0tUPpjNGyzqYe6p
-         fsIw==
-X-Gm-Message-State: AOAM5318DQzyrRITrRFxnnJMAk7UxtBUt1B38OHFrO6z0VfXwI6BJ1H2
-        FOZuUqEd4WXXX8iDs4qkN0c=
-X-Google-Smtp-Source: ABdhPJzxu9KP57zznqjvE/9DQXCKLdF0/eqrBsL4BO7SnNrrpNxl8+TRqhoOsR7e5UhkSFlXywTaJQ==
-X-Received: by 2002:a17:902:eb11:b029:e4:a5c3:4328 with SMTP id l17-20020a170902eb11b02900e4a5c34328mr2496472plb.7.1616463219963;
-        Mon, 22 Mar 2021 18:33:39 -0700 (PDT)
-Received: from localhost.localdomain ([103.114.158.1])
-        by smtp.gmail.com with ESMTPSA id i1sm14998509pfo.160.2021.03.22.18.33.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 18:33:39 -0700 (PDT)
-From:   Jiele Zhao <unclexiaole@gmail.com>
-To:     serge@hallyn.com, jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jiele Zhao <unclexiaole@gmail.com>
-Subject: [PATCH] integrity/ima: Add declarations to init_once void arguments.
-Date:   Tue, 23 Mar 2021 01:33:18 +0000
-Message-Id: <20210323013318.296993-1-unclexiaole@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 22 Mar 2021 21:47:14 -0400
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 12N1kuPx046795;
+        Tue, 23 Mar 2021 10:46:56 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav104.sakura.ne.jp);
+ Tue, 23 Mar 2021 10:46:56 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav104.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 12N1kt3L046787
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 23 Mar 2021 10:46:55 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [RFC PATCH 2/2] integrity: double check iint_cache was
+ initialized
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Eric Biggers <ebiggers@kernel.org>
+References: <20210319200358.22816-1-zohar@linux.ibm.com>
+ <20210319200358.22816-2-zohar@linux.ibm.com>
+ <8450c80a-104a-3f36-0963-0ae8fa69e0f2@i-love.sakura.ne.jp>
+ <CACT4Y+bvakfNhVs29QvbY6Z8Pw0zmAUKGWM-DD5DcPZW5ny90A@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <1a2245c6-3cab-7085-83d3-55b083619303@i-love.sakura.ne.jp>
+Date:   Tue, 23 Mar 2021 10:46:52 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACT4Y+bvakfNhVs29QvbY6Z8Pw0zmAUKGWM-DD5DcPZW5ny90A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-init_once is a callback to kmem_cache_create. The parameter
-type of this function is void *, so it's better to give a
-explicit cast here.
+On 2021/03/20 5:03, Mimi Zohar wrote:
+> The integrity's "iint_cache" is initialized at security_init().  Only
+> after an IMA policy is loaded, which is initialized at late_initcall,
+> is a file's integrity status stored in the "iint_cache".
+> 
+> All integrity_inode_get() callers first verify that the IMA policy has
+> been loaded, before calling it.  Yet for some reason, it is still being
+> called, causing a NULL pointer dereference.
+> 
+> qemu-system-x86_64 (...snipped...) lsm=smack (...snipped...)
 
-Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
----
- security/integrity/iint.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hmm, why are you using lsm=smack instead of security=smack ?
+Since use of lsm= overrides CONFIG_LSM="lockdown,yama,safesetid,integrity,tomoyo,smack,bpf" settings,
+only smack is activated, which means that integrity_iintcache_init() will not be called by
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 1d20003243c3..5f3f2de997e1 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -152,7 +152,7 @@ void integrity_inode_free(struct inode *inode)
- 
- static void init_once(void *foo)
- {
--	struct integrity_iint_cache *iint = foo;
-+	struct integrity_iint_cache *iint = (struct integrity_iint_cache *)foo;
- 
- 	memset(iint, 0, sizeof(*iint));
- 	iint->ima_file_status = INTEGRITY_UNKNOWN;
--- 
-2.25.1
+  DEFINE_LSM(integrity) = {
+  	.name = "integrity",
+  	.init = integrity_iintcache_init,
+  };
+
+declaration. That's the reason iint_cache == NULL when integrity_inode_get() is called.
 
