@@ -2,151 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6397EC433C1
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 23:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AE4C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 00:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29E336199F
-	for <linux-security-module@archiver.kernel.org>; Mon, 22 Mar 2021 23:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3AAE619A9
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 00:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230313AbhCVXOA (ORCPT
+        id S230473AbhCWAOV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 19:14:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49412 "EHLO
+        Mon, 22 Mar 2021 20:14:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230286AbhCVXNh (ORCPT
+        with ESMTP id S231270AbhCWAN6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 19:13:37 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 070BAC061574;
-        Mon, 22 Mar 2021 16:13:37 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id x16so18864450wrn.4;
-        Mon, 22 Mar 2021 16:13:36 -0700 (PDT)
+        Mon, 22 Mar 2021 20:13:58 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E01FC061762
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 17:13:56 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id 15so23396793ljj.0
+        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 17:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=tYvb3I5DkX3N6jN+5U7mg9SkFokyTC7DYO1POXsmyXA=;
-        b=JAukgRqBFlBqYxoTg07QIe3L0u4Zd4pnU8/KawSiQ9CobCuM3gzIOiljfx6LuzgDWA
-         UowTprAJ6pvQSXvs4KSQRoxyhk97bRV/HvA6p2Z7/U2jyU55VRoMchp/WW94qOWwfctx
-         xjztqDCBK6KyOMwxPOwi4e26tFik5N8gD8ME46WI4P9N9+IGYjmYXftjUoCOmT9YRUhI
-         oxS7NQe6LKxh0Fe3YkrHljuKHXVZGAd59GORjepGb1sCy/oTzRkzKEYxW8PIJ/sFr1d6
-         zI5HyhOjX7JC0HU1eEG4mNxiJ04gBc9w35eUnfsZO8LW67/ihxMVwREYJPst2Xb0XGu3
-         JGJw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=0Zv/Nh1NwdjT4vNoEgAKJF0+3Ir6H8KTDS01ZyTPf3o=;
+        b=MYfMpOlaWILZRe1pDeuZweAI3vdknsgeo67laT+dKd7DkSPJ3kqkICjvz6DoYVVnHZ
+         16OeAVHxuQfaEw3tjPMoe7QoNfBgXwLH10I06HQvLQrqH5L2JNBJAwiEQ2JR4BIEX+9S
+         mKRD0C7UQTjhxOy/6H8fA1YjCpW2EGV+O/1qAjuqnz/pmrLszTPkOjvS0yYpv/ZZ/qEF
+         lAjiGv9YsocO9v0uFbeqK3kItyVLmzZ8XbFjbvISEZUv72q4Dv/aYT92AgSreyZJuLpZ
+         d2c1Ghef/K4UviwHxjZHI5pznTsVIQq7ZchuSPAoEZC7/qFfjBKUTKzfd7IBKdOJs9LE
+         ySlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=tYvb3I5DkX3N6jN+5U7mg9SkFokyTC7DYO1POXsmyXA=;
-        b=YWEIQudAlD8UPdpfZbMw7eFHAPO4URDrfWpUqcL/ddYKm4xwcS86t5pnE+Fa0yyTLY
-         uRFMFx9nzVj4tAEp88qh4eei9VlLkTJTU3e3bq1FCItb3W+4ity+WGwQs1ewiFJOPcMd
-         8rwojnFSaozI5v7OFW+Qhf69y8zmNbnlVWtiQL338fUQwiK+/FB2APQ8Alg0crLkMMpM
-         LtKepgiTCrvRJsAv8J9RTsW8qxCXL31kKfvDGhJ3/dOdzHu0plT6oeFIDr16DEe+l7Zh
-         2TKcDfWVQ8reCNgb976fsOQa6oXA8+Jf2OiTF66fuixeTWxPdX9/cpk1/+pMCP/rxFO9
-         PeKQ==
-X-Gm-Message-State: AOAM531LI619K+9GVV7hIhi5qgtJ3KmDtV6vICLoPzaykVQP8ZtGzJuJ
-        aUsOe7PtC1Ri7DNmu9B5NpA=
-X-Google-Smtp-Source: ABdhPJwD5sKWkDZI+WUiEv9LaU8t0tl7e3Sco91hCCQ6VjFxt+KbUyFjpi5+6SIPcvWKZoMwC1DUgg==
-X-Received: by 2002:adf:b642:: with SMTP id i2mr867183wre.8.1616454815721;
-        Mon, 22 Mar 2021 16:13:35 -0700 (PDT)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id w6sm20916828wrl.49.2021.03.22.16.13.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Mar 2021 16:13:35 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date:   Tue, 23 Mar 2021 00:13:32 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Martin Sebor <msebor@gmail.com>
-Cc:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Ning Sun <ning.sun@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Simon Kelley <simon@thekelleys.org.uk>,
-        James Smart <james.smart@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Imre Deak <imre.deak@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
-Message-ID: <20210322231332.GA1984184@gmail.com>
-References: <20210322160253.4032422-1-arnd@kernel.org>
- <20210322160253.4032422-3-arnd@kernel.org>
- <20210322202958.GA1955909@gmail.com>
- <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=0Zv/Nh1NwdjT4vNoEgAKJF0+3Ir6H8KTDS01ZyTPf3o=;
+        b=MusBkDLHkPd6uOE+RG84BtGZsyxnSZNyATp3YXYY9z8N8EXMVt0HZ2r125FyPcrVs1
+         h+SbH17+880qRdnuc93yJosJNLOKifTMtoJPyWYm8Hpu5pD6mMF+ZpFqcnbO50xXwXVc
+         yXa8nqCnB+Yx1J0o7DgWMCs1hurCo7CWFCwIloTk8GM5nsEBNyfBtSGkF/sJ6kdTJmAq
+         +JWdNXXPybP3miY7kFnmGv117+zJy7BJmJW3tKSyWgkyVp0FgNrJ2WPuEFG06wQiH5oY
+         FWc1SAAx5pe4cAUCUiddU33OURcQYDrTyLfkYy+zzw++vbeBi5MQZNB8UZdu1dYjdElD
+         5PGg==
+X-Gm-Message-State: AOAM532Z+Kf9yIvrCJEnYCsess6jQZ48ebqwvEEx6Lack6n5WZWAF59M
+        fy0EBOXEDk3k+fk7R57MtD5fms3QOFuVN5qc1xw+VQ==
+X-Google-Smtp-Source: ABdhPJywL/8xL+s/Wz9PYQqACsNKJlIixpOZzrkkMLprtEmtD0taXBt0RZSmBTlrPE/s8ZHyKoeWgqn3ctd+1W/a4Oo=
+X-Received: by 2002:a2e:9bcd:: with SMTP id w13mr1219196ljj.43.1616458434230;
+ Mon, 22 Mar 2021 17:13:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
+References: <20210316204252.427806-1-mic@digikod.net> <20210316204252.427806-3-mic@digikod.net>
+In-Reply-To: <20210316204252.427806-3-mic@digikod.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Tue, 23 Mar 2021 01:13:27 +0100
+Message-ID: <CAG48ez3v44du6_qVLa25SOdfLsr5+z-=a0pUP63d=qHP2tf4Pg@mail.gmail.com>
+Subject: Re: [PATCH v30 02/12] landlock: Add ruleset and domain management
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Tue, Mar 16, 2021 at 9:43 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
+> A Landlock ruleset is mainly a red-black tree with Landlock rules as
+> nodes.  This enables quick update and lookup to match a requested
+> access, e.g. to a file.  A ruleset is usable through a dedicated file
+> descriptor (cf. following commit implementing syscalls) which enables a
+> process to create and populate a ruleset with new rules.
+>
+> A domain is a ruleset tied to a set of processes.  This group of rules
+> defines the security policy enforced on these processes and their future
+> children.  A domain can transition to a new domain which is the
+> intersection of all its constraints and those of a ruleset provided by
+> the current process.  This modification only impact the current process.
+> This means that a process can only gain more constraints (i.e. lose
+> accesses) over time.
+>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> Link: https://lore.kernel.org/r/20210316204252.427806-3-mic@digikod.net
 
-* Martin Sebor <msebor@gmail.com> wrote:
-
-> > I.e. the real workaround might be to turn off the -Wstringop-overread-warning,
-> > until GCC-11 gets fixed?
-> 
-> In GCC 10 -Wstringop-overread is a subset of -Wstringop-overflow.
-> GCC 11 breaks it out as a separate warning to make it easier to
-> control.  Both warnings have caught some real bugs but they both
-> have a nonzero rate of false positives.  Other than bug reports
-> we don't have enough data to say what their S/N ratio might be
-> but my sense is that it's fairly high in general.
-> 
->   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=wstringop-overread
->   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=wstringop-overflow
-> 
-> In GCC 11, all access warnings expect objects to be either declared
-> or allocated.  Pointers with constant values are taken to point to
-> nothing valid (as Arnd mentioned above, this is to detect invalid
-> accesses to members of structs at address zero).
-> 
-> One possible solution to the known address problem is to extend GCC
-> attributes address and io that pin an object to a hardwired address
-> to all targets (at the moment they're supported on just one or two
-> targets).  I'm not sure this can still happen before GCC 11 releases
-> sometime in April or May.
-> 
-> Until then, another workaround is to convert the fixed address to
-> a volatile pointer before using it for the access, along the lines
-> below.  It should have only a negligible effect on efficiency.
-
-Thank you for the detailed answer!
-
-I think I'll go with Arnd's original patch - which makes the code a 
-slightly bit cleaner by separating out the check_tboot_version() check 
-into a standalone function.
-
-The only ugly aspect is the global nature of the 'tboot' pointer - but 
-that's a self-inflicted wound.
-
-I'd also guess that the S/N ratio somewhat unfairly penalizes this 
-warning right now, because the kernel had a decade of growing real 
-fixes via other efforts such as static and dynamic instrumentation as 
-well.
-
-So the probability of false positive remaining is in fact higher, and 
-going forward we should see a better S/N ratio of this warning. Most 
-of which will never be seen by upstream maintainers, as the mishaps 
-will stay at the individual developer level. :-)
-
-Thanks,
-
-	Ingo
+Reviewed-by: Jann Horn <jannh@google.com>
