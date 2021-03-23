@@ -2,223 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81508C433E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 00:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 402BAC433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 00:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D3A7619AC
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 00:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDE72619B0
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 00:56:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbhCWAOV (ORCPT
+        id S231351AbhCWAzl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 20:14:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34108 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbhCWAOG (ORCPT
+        Mon, 22 Mar 2021 20:55:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231453AbhCWAzb (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 20:14:06 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D144C061763
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 17:14:06 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id m12so24016628lfq.10
-        for <linux-security-module@vger.kernel.org>; Mon, 22 Mar 2021 17:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TIGZs9jCzlV0x2/zD28u6hnF9ziSX82ipPw1eAlhUAk=;
-        b=NQ71vlDt19b2qIy3K62/rODvW/ipNZXPs54iaqoCcYgvr0ZoSYMPbU3vdVRzRslzc0
-         paD44AWGk2fGxml9DqHSXpWchMulVtSjoazoJQCHqMqDiZQv3PQGaTav7G+EZ+/Yz0Ph
-         +I/b57JKRKullcMz8vVJcYd0UwSmrTSWA4CeJdZBKpdTGzNd97/MAdsFkXxVZPhb3k+4
-         9ZqfVflxIPxDAKr+2r/8JCbzty+q0w/uN+ytri4BJTYKvpQ7fCZjmce6o20eSEVn/bUJ
-         Ik0/GtqeP0J9ZbJyd50mOg9CAXERLBgP8bORDoUzBiazlAWWJUCNW/Nya+XY3VMgqVqW
-         H7xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TIGZs9jCzlV0x2/zD28u6hnF9ziSX82ipPw1eAlhUAk=;
-        b=KvhQ8DPT1sj0wAY2n1/ux+0Fkr44oFTcD+nHk3dRR6jclqlw9O1H4X18IR717ulbMN
-         rjxlz1EXeM5PON7b9RTwLzafNxo5KrrcNZ+CuHh13QpI6gLthhn6xI1+MxkjCABRsPYP
-         BtOvJ4w/Zh57paQJl28c1iE1ZgHEcymSJFY5+MxrPYCBH8oZo6NOnMUAiHwWRj8mzJK7
-         MxzuCRxO1aBJjX/mz2lBfrYxlNUweDw1JQKWN4LdWW39KxU8Jgu0vpCziko1wiKgYWld
-         KNdKPHLv4hdoILf9bR/Xs4UEKwDLe0W7CPscLMCaUfHdNGkSn0jcD1Ut43gWwio0YXNN
-         OquA==
-X-Gm-Message-State: AOAM531OvyIoEYjQd2SFqSDN0D6COBhKB53xwYVAOk64TKGbJKG5bq1j
-        /Sx+2oxdMIDJuuuzE/bmVizyXn9EPJLaf0p2uf9gyw==
-X-Google-Smtp-Source: ABdhPJzjC3gk50Yb4Wr00pH4fD/9xfeZqVtXPShrjfrPIGPPmvrDVMK0gxGlsIriq6MtCniISI8bDCiz3gzLLpYfAU8=
-X-Received: by 2002:a19:946:: with SMTP id 67mr1116146lfj.74.1616458443362;
- Mon, 22 Mar 2021 17:14:03 -0700 (PDT)
+        Mon, 22 Mar 2021 20:55:31 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id EBB68619AD;
+        Tue, 23 Mar 2021 00:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616460931;
+        bh=eL7GjnIfETK0w55hHwx5UGeZDCUlzEv98Et4KDmZU3A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VflmfzXyjLWA9YO8Uh+V1TLVEHavGiiydb8pIWRlVTheDiKZSurbn3/qprgbEigPO
+         qbgMYmUecidjzoK5m9zlh+Xmg4Mj50ESFEZGQ1tfwnwgTyddg5PQ2Xb5lRbpChqDBr
+         Um1znQc2/EIcZNDDLsa2w67M8RPK8aVCZY9GW5+gy2/QLPUOBUbNIVyAWqghNcG1wv
+         qsdCIPSVeWBYxt27By+dx9tLJtu50a5Dx2I82c2mXu5dzerom72pU0e+Ef6dfuB1vA
+         VHI5COlNLSmxiz+yQgqm8KmrFwWWnXfFf/QQ+I0ChpW/p4OufyQu0iob5hCvFxDyJQ
+         UOxxNYbifYzsQ==
+Date:   Mon, 22 Mar 2021 17:55:29 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Andrey Ryabinin <arbn@yandex-team.ru>
+Cc:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: Allow disabling read permissions for key possessor
+Message-ID: <YFk8gb/M4AOGDO7Y@gmail.com>
+References: <20210322095726.14939-1-arbn@yandex-team.ru>
 MIME-Version: 1.0
-References: <20210316204252.427806-1-mic@digikod.net> <20210316204252.427806-8-mic@digikod.net>
-In-Reply-To: <20210316204252.427806-8-mic@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Tue, 23 Mar 2021 01:13:36 +0100
-Message-ID: <CAG48ez1arKO3uYzwng8fst-UHkcH6J7YzyHFN+vfXUT2=1HT+w@mail.gmail.com>
-Subject: Re: [PATCH v30 07/12] landlock: Support filesystem access-control
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322095726.14939-1-arbn@yandex-team.ru>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
- On Tue, Mar 16, 2021 at 9:43 PM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>=
- wrote:
-> Using Landlock objects and ruleset, it is possible to tag inodes
-> according to a process's domain.
-[...]
-> +static void release_inode(struct landlock_object *const object)
-> +       __releases(object->lock)
-> +{
-> +       struct inode *const inode =3D object->underobj;
-> +       struct super_block *sb;
-> +
-> +       if (!inode) {
-> +               spin_unlock(&object->lock);
-> +               return;
-> +       }
-> +
-> +       /*
-> +        * Protects against concurrent use by hook_sb_delete() of the ref=
-erence
-> +        * to the underlying inode.
-> +        */
-> +       object->underobj =3D NULL;
-> +       /*
-> +        * Makes sure that if the filesystem is concurrently unmounted,
-> +        * hook_sb_delete() will wait for us to finish iput().
-> +        */
-> +       sb =3D inode->i_sb;
-> +       atomic_long_inc(&landlock_superblock(sb)->inode_refs);
-> +       spin_unlock(&object->lock);
-> +       /*
-> +        * Because object->underobj was not NULL, hook_sb_delete() and
-> +        * get_inode_object() guarantee that it is safe to reset
-> +        * landlock_inode(inode)->object while it is not NULL.  It is the=
-refore
-> +        * not necessary to lock inode->i_lock.
-> +        */
-> +       rcu_assign_pointer(landlock_inode(inode)->object, NULL);
-> +       /*
-> +        * Now, new rules can safely be tied to @inode with get_inode_obj=
-ect().
-> +        */
-> +
-> +       iput(inode);
-> +       if (atomic_long_dec_and_test(&landlock_superblock(sb)->inode_refs=
-))
-> +               wake_up_var(&landlock_superblock(sb)->inode_refs);
-> +}
-[...]
-> +static struct landlock_object *get_inode_object(struct inode *const inod=
-e)
-> +{
-> +       struct landlock_object *object, *new_object;
-> +       struct landlock_inode_security *inode_sec =3D landlock_inode(inod=
-e);
-> +
-> +       rcu_read_lock();
-> +retry:
-> +       object =3D rcu_dereference(inode_sec->object);
-> +       if (object) {
-> +               if (likely(refcount_inc_not_zero(&object->usage))) {
-> +                       rcu_read_unlock();
-> +                       return object;
-> +               }
-> +               /*
-> +                * We are racing with release_inode(), the object is goin=
-g
-> +                * away.  Wait for release_inode(), then retry.
-> +                */
-> +               spin_lock(&object->lock);
-> +               spin_unlock(&object->lock);
-> +               goto retry;
-> +       }
-> +       rcu_read_unlock();
-> +
-> +       /*
-> +        * If there is no object tied to @inode, then create a new one (w=
-ithout
-> +        * holding any locks).
-> +        */
-> +       new_object =3D landlock_create_object(&landlock_fs_underops, inod=
-e);
-> +       if (IS_ERR(new_object))
-> +               return new_object;
-> +
-> +       /* Protects against concurrent get_inode_object() calls. */
-> +       spin_lock(&inode->i_lock);
-> +       object =3D rcu_dereference_protected(inode_sec->object,
-> +                       lockdep_is_held(&inode->i_lock));
+On Mon, Mar 22, 2021 at 12:57:26PM +0300, Andrey Ryabinin wrote:
+> keyctl_read_key() has a strange code which allows possessor to read
+> key's payload regardless of READ permission status:
+> 
+> $ keyctl add user test test @u
+> 196773443
+> $ keyctl print 196773443
+> test
+> $ keyctl describe 196773443
+> 196773443: alswrv-----v------------  1000  1000 user: test
+> $ keyctl rdescribe 196773443
+> user;1000;1000;3f010000;test
+> $ keyctl setperm 196773443 0x3d010000
+> $ keyctl describe 196773443
+> 196773443: alsw-v-----v------------  1000  1000 user: test
+> $ keyctl  print 196773443
+> test
+> 
+> The last keyctl print should fail with -EACCESS instead of success.
+> Fix this by removing weird possessor checks.
+> 
+> Signed-off-by: Andrey Ryabinin <arbn@yandex-team.ru>
+> ---
+> 
+>  - This was noticed by code review. It seems like a bug to me,
+>  but if I'm wrong and current behavior is correct, I think we need
+>  at least better comment here.
+>    
+> 
+>  security/keys/keyctl.c | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
+> 
+> diff --git a/security/keys/keyctl.c b/security/keys/keyctl.c
+> index 96a92a645216d..2ec021c7adc12 100644
+> --- a/security/keys/keyctl.c
+> +++ b/security/keys/keyctl.c
+> @@ -845,22 +845,9 @@ long keyctl_read_key(key_serial_t keyid, char __user *buffer, size_t buflen)
+>  
+>  	/* see if we can read it directly */
+>  	ret = key_permission(key_ref, KEY_NEED_READ);
+> -	if (ret == 0)
+> -		goto can_read_key;
+> -	if (ret != -EACCES)
+> +	if (ret != 0)
+>  		goto key_put_out;
+>  
+> -	/* we can't; see if it's searchable from this process's keyrings
+> -	 * - we automatically take account of the fact that it may be
+> -	 *   dangling off an instantiation key
+> -	 */
+> -	if (!is_key_possessed(key_ref)) {
+> -		ret = -EACCES;
+> -		goto key_put_out;
+> -	}
+> -
 
-rcu_dereference_protected() requires that inode_sec->object is not
-concurrently changed, but I think another thread could call
-get_inode_object() while we're in landlock_create_object(), and then
-we could race with the NULL write in release_inode() here? (It
-wouldn't actually be a UAF though because we're not actually accessing
-`object` here.) Or am I missing a lock that prevents this?
+This might be intentional, given the comment above the function:
 
-In v28 this wasn't an issue because release_inode() was holding
-inode->i_lock (and object->lock) during the NULL store; but in v29 and
-this version the NULL store in release_inode() moved out of the locked
-region. I think you could just move the NULL store in release_inode()
-back up (and maybe add a comment explaining the locking rules for
-landlock_inode(...)->object)?
+ * The key must either grant the caller Read permission, or it must grant the
+ * caller Search permission when searched for from the process keyrings.
 
-(Or alternatively you could use rcu_dereference_raw() with a comment
-explaining that the read pointer is only used to check for NULL-ness,
-and that it is guaranteed that the pointer can't change if it is NULL
-and we're holding the lock. But that'd be needlessly complicated, I
-think.)
+The 'is_key_possessed()' check is implementing the second part, right?
 
+Maybe check if this shows up in the documentation and tests too.
 
-> +       if (unlikely(object)) {
-> +               /* Someone else just created the object, bail out and ret=
-ry. */
-> +               spin_unlock(&inode->i_lock);
-> +               kfree(new_object);
-> +
-> +               rcu_read_lock();
-> +               goto retry;
-> +       }
-> +
-> +       rcu_assign_pointer(inode_sec->object, new_object);
-> +       /*
-> +        * @inode will be released by hook_sb_delete() on its superblock
-> +        * shutdown.
-> +        */
-> +       ihold(inode);
-> +       spin_unlock(&inode->i_lock);
-> +       return new_object;
-> +}
+- Eric
