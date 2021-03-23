@@ -2,243 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9175AC433C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 19:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DF8C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 22:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63E7B619C8
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 19:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7660619D8
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 22:41:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230361AbhCWTaE (ORCPT
+        id S234141AbhCWWkb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 23 Mar 2021 15:30:04 -0400
-Received: from smtp-42a9.mail.infomaniak.ch ([84.16.66.169]:43785 "EHLO
-        smtp-42a9.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230125AbhCWT3e (ORCPT
+        Tue, 23 Mar 2021 18:40:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42674 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234038AbhCWWkD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 23 Mar 2021 15:29:34 -0400
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F4hJX0tWDzMqFPM;
-        Tue, 23 Mar 2021 20:29:32 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F4hJT4XNSzlh8TL;
-        Tue, 23 Mar 2021 20:29:29 +0100 (CET)
-Subject: Re: [PATCH v30 07/12] landlock: Support filesystem access-control
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210316204252.427806-1-mic@digikod.net>
- <20210316204252.427806-8-mic@digikod.net> <202103191148.6E819426D@keescook>
- <f705f7e8-3ee3-bae9-c283-174fab41629a@digikod.net>
-Message-ID: <79d96c0a-9254-63aa-6f0b-2c0fce370c29@digikod.net>
-Date:   Tue, 23 Mar 2021 20:30:03 +0100
-User-Agent: 
+        Tue, 23 Mar 2021 18:40:03 -0400
+Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAB7AC061763
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Mar 2021 15:40:02 -0700 (PDT)
+Received: by mail-oi1-x233.google.com with SMTP id c16so9908102oib.3
+        for <linux-security-module@vger.kernel.org>; Tue, 23 Mar 2021 15:40:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2K8tLkChb+506zF+z/6B3jJAVVp0oMTr1r3/3aTgbn4=;
+        b=Pe81cQ60l5HI2BEwB08JrmJgjyYI5GsI3IG5+NoNvN7VxFUlwWmEy8vXEIyGwtmzwW
+         PMhpc0Uoys2+0YlJncs+JwzktMZ4f7sMDoja0mnZeF9Av0u9MAKIbVp6r2SqjdHhCwl4
+         91CyfWajYrMgrHW+aut9mDhFzzUElhDwht9/MjUcojOa+L+0nxzHZiE2W5ucqb5Cm/G+
+         0kn9cLuHDDhFx2cfgZs538uCneOninzEY03vpioj/99K2O9tZk5aEH1w8TsBOYitABPk
+         NEKvMo6kq01IAKkKBlZAOaNYMcnXQJyDKKPo5l1L5qhGIO8xwAtsCn3VcYlm69I5+d+w
+         DZaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2K8tLkChb+506zF+z/6B3jJAVVp0oMTr1r3/3aTgbn4=;
+        b=KpO9Iy0smqyHAds9U98zWG7WkXrmq9stf9r88fNgkMtIvGcyuSSjoKvpRAW/0eET2e
+         /aEXk+HxQv940TzOwcrmHY0RZYYM/2drKSLDczwvi9SOWGLHcrTZYKtzMK9+a+4iABOM
+         htuxi0Z8yiMan6fMU3NyHywA1bjCh1/JolVKo0+uF5fnofbgAQAAd9k9QZ569sZq1s9i
+         P3Xvjf4Jd/17xA8fW7WF7e1npfCup3qiXnD6YSeFItX7ov4TmAgkvkb4+El7HcdRaUMS
+         q1gs+4dXHuUDk7KI9aArKj1G1Um1wllD1/8MM0CtiAhceDHRDwT3l5vlHFV9bsoFjaVP
+         Y+EA==
+X-Gm-Message-State: AOAM532MRlzZ1VhZ/p4eJxCqOq+80xQbc7TCQmTsbK7a+MXLskm1nAXM
+        gTaznNEvCmz4cfHn4T7SScn8KnreAAoz6f16a1EBZw==
+X-Google-Smtp-Source: ABdhPJzKT7oZFNSdPkzKR6RwxWfh1Wycs7N3YoemOpk0yIsAn2ibj4rUZ4fk7mjWToK526aRsi+/tUqJdhVxceAbusw=
+X-Received: by 2002:aca:c683:: with SMTP id w125mr263549oif.43.1616539201756;
+ Tue, 23 Mar 2021 15:40:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <f705f7e8-3ee3-bae9-c283-174fab41629a@digikod.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210223023125.2265845-1-jiancai@google.com> <20210223023542.2287529-1-jiancai@google.com>
+ <CACRpkdYC3iDD23SESM0j2=f56kr6ByKeedDQvkGwXbUC0br0fw@mail.gmail.com>
+ <CA+SOCL+M5YfhygG=ogqvqp7y40v+32RiteGr=53THzwvdGugyA@mail.gmail.com>
+ <CACRpkdYrqy78EfB_+UY0QtA0v0tD+_+O09Pod8-1Vd-p-VyMWA@mail.gmail.com>
+ <CA+SOCLLo2MdxCH3gFONHsKdvmGGm2vZuML9QdQfWuX2--qFEOA@mail.gmail.com> <CACRpkdbF43_CjSFNu_4FUCEqOB8CebrpXJpkzeW8TnPpRELBtg@mail.gmail.com>
+In-Reply-To: <CACRpkdbF43_CjSFNu_4FUCEqOB8CebrpXJpkzeW8TnPpRELBtg@mail.gmail.com>
+From:   Jian Cai <jiancai@google.com>
+Date:   Tue, 23 Mar 2021 15:39:50 -0700
+Message-ID: <CA+SOCLJTSHs9CZc+h0bWz=k5UUp5zLSLFwLyVGdr1v7O3VUOew@mail.gmail.com>
+Subject: Re: [PATCH v5] ARM: Implement SLS mitigation
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Luis Lozano <llozano@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Brazdil <dbrazdil@google.com>,
+        James Morse <james.morse@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Thanks for the suggestion. I've sent an inquiry to the author of
+-mharden-sls* in GCC and hopefully that would shed some more light. We
+do get warnings for oraphon sections when using lld. The other linkers
+do not seem to provide such warnings, although the boot failure also
+does not seem to happen with them.
 
-On 19/03/2021 20:19, Mickaël Salaün wrote:
-> 
-> On 19/03/2021 19:57, Kees Cook wrote:
->> On Tue, Mar 16, 2021 at 09:42:47PM +0100, Mickaël Salaün wrote:
->>> From: Mickaël Salaün <mic@linux.microsoft.com>
->>>
->>> Using Landlock objects and ruleset, it is possible to tag inodes
->>> according to a process's domain.  To enable an unprivileged process to
->>> express a file hierarchy, it first needs to open a directory (or a file)
->>> and pass this file descriptor to the kernel through
->>> landlock_add_rule(2).  When checking if a file access request is
->>> allowed, we walk from the requested dentry to the real root, following
->>> the different mount layers.  The access to each "tagged" inodes are
->>> collected according to their rule layer level, and ANDed to create
->>> access to the requested file hierarchy.  This makes possible to identify
->>> a lot of files without tagging every inodes nor modifying the
->>> filesystem, while still following the view and understanding the user
->>> has from the filesystem.
->>>
->>> Add a new ARCH_EPHEMERAL_INODES for UML because it currently does not
->>> keep the same struct inodes for the same inodes whereas these inodes are
->>> in use.
->>>
->>> This commit adds a minimal set of supported filesystem access-control
->>> which doesn't enable to restrict all file-related actions.  This is the
->>> result of multiple discussions to minimize the code of Landlock to ease
->>> review.  Thanks to the Landlock design, extending this access-control
->>> without breaking user space will not be a problem.  Moreover, seccomp
->>> filters can be used to restrict the use of syscall families which may
->>> not be currently handled by Landlock.
->>>
->>> Cc: Al Viro <viro@zeniv.linux.org.uk>
->>> Cc: Anton Ivanov <anton.ivanov@cambridgegreys.com>
->>> Cc: James Morris <jmorris@namei.org>
->>> Cc: Jann Horn <jannh@google.com>
->>> Cc: Jeff Dike <jdike@addtoit.com>
->>> Cc: Kees Cook <keescook@chromium.org>
->>> Cc: Richard Weinberger <richard@nod.at>
->>> Cc: Serge E. Hallyn <serge@hallyn.com>
->>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->>> Link: https://lore.kernel.org/r/20210316204252.427806-8-mic@digikod.net
->>> [...]
->>> +	spin_lock(&sb->s_inode_list_lock);
->>> +	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
->>> +		struct landlock_object *object;
->>> +
->>> +		/* Only handles referenced inodes. */
->>> +		if (!atomic_read(&inode->i_count))
->>> +			continue;
->>> +
->>> +		/*
->>> +		 * Checks I_FREEING and I_WILL_FREE  to protect against a race
->>> +		 * condition when release_inode() just called iput(), which
->>> +		 * could lead to a NULL dereference of inode->security or a
->>> +		 * second call to iput() for the same Landlock object.  Also
->>> +		 * checks I_NEW because such inode cannot be tied to an object.
->>> +		 */
->>> +		spin_lock(&inode->i_lock);
->>> +		if (inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW)) {
->>> +			spin_unlock(&inode->i_lock);
->>> +			continue;
->>> +		}
->>
->> This (and elsewhere here) seems like a lot of inode internals getting
->> exposed. Can any of this be repurposed into helpers? I see this test
->> scattered around the kernel a fair bit:
->>
->> $ git grep I_FREEING | grep I_WILL_FREE | grep I_NEW | wc -l
->> 9
-> 
-> Dealing with the filesystem is complex. Some helpers could probably be
-> added, but with a series dedicated to the filesystem. I can work on that
-> once this series is merged.
-> 
->>
->>> +static inline u32 get_mode_access(const umode_t mode)
->>> +{
->>> +	switch (mode & S_IFMT) {
->>> +	case S_IFLNK:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_SYM;
->>> +	case 0:
->>> +		/* A zero mode translates to S_IFREG. */
->>> +	case S_IFREG:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_REG;
->>> +	case S_IFDIR:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_DIR;
->>> +	case S_IFCHR:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_CHAR;
->>> +	case S_IFBLK:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_BLOCK;
->>> +	case S_IFIFO:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_FIFO;
->>> +	case S_IFSOCK:
->>> +		return LANDLOCK_ACCESS_FS_MAKE_SOCK;
->>> +	default:
->>> +		WARN_ON_ONCE(1);
->>> +		return 0;
->>> +	}
->>
->> I'm assuming this won't be reachable from userspace.
-> 
-> It should not, only a bogus kernel code could.
-> 
->>
->>> [...]
->>> index a5d6ef334991..f8e8e980454c 100644
->>> --- a/security/landlock/setup.c
->>> +++ b/security/landlock/setup.c
->>> @@ -11,17 +11,24 @@
->>>  
->>>  #include "common.h"
->>>  #include "cred.h"
->>> +#include "fs.h"
->>>  #include "ptrace.h"
->>>  #include "setup.h"
->>>  
->>> +bool landlock_initialized __lsm_ro_after_init = false;
->>> +
->>>  struct lsm_blob_sizes landlock_blob_sizes __lsm_ro_after_init = {
->>>  	.lbs_cred = sizeof(struct landlock_cred_security),
->>> +	.lbs_inode = sizeof(struct landlock_inode_security),
->>> +	.lbs_superblock = sizeof(struct landlock_superblock_security),
->>>  };
->>>  
->>>  static int __init landlock_init(void)
->>>  {
->>>  	landlock_add_cred_hooks();
->>>  	landlock_add_ptrace_hooks();
->>> +	landlock_add_fs_hooks();
->>> +	landlock_initialized = true;
->>
->> I think this landlock_initialized is logically separate from the optional
->> DEFINE_LSM "enabled" variable, but I thought I'd double check. :)
-> 
-> An LSM can be marked as enabled (at boot) but not yet initialized.
-> 
->>
->> It seems like it's used here to avoid releasing superblocks before
->> landlock_init() is called? What is the scenario where that happens?
-> 
-> It is a condition for LSM hooks, syscalls and superblock management.
-> 
->>
->>>  	pr_info("Up and running.\n");
->>>  	return 0;
->>>  }
->>> diff --git a/security/landlock/setup.h b/security/landlock/setup.h
->>> index 9fdbf33fcc33..1daffab1ab4b 100644
->>> --- a/security/landlock/setup.h
->>> +++ b/security/landlock/setup.h
->>> @@ -11,6 +11,8 @@
->>>  
->>>  #include <linux/lsm_hooks.h>
->>>  
->>> +extern bool landlock_initialized;
->>> +
->>>  extern struct lsm_blob_sizes landlock_blob_sizes;
->>>  
->>>  #endif /* _SECURITY_LANDLOCK_SETUP_H */
->>> -- 
->>> 2.30.2
->>>
->>
->> The locking and inode semantics are pretty complex, but since, again,
->> it's got significant test and syzkaller coverage, it looks good to me.
->>
->> With the inode helper cleanup:
-
-I think the inode helper would have to be in a separate patch focused on
-fs/ (like all matches of your greps, except Landlock). Are you OK if I
-send a patch for that once Landlock is merged?
-
-
->>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
->>
+On Mon, Mar 22, 2021 at 4:45 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Wed, Mar 10, 2021 at 5:43 AM Jian Cai <jiancai@google.com> wrote:
+> > On Sat, Mar 6, 2021 at 4:25 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > > On Fri, Mar 5, 2021 at 12:23 AM Jian Cai <jiancai@google.com> wrote:
+> > > > On Wed, Mar 3, 2021 at 7:04 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> > > > I think gcc also has these options.
+> > > > https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html
+> > >
+> > > And how does that work with this part of your patch:
+> > >
+> > > +#define SLS_TEXT                                       \
+> > > +       ALIGN_FUNCTION();                              \
+> > > +       *(.text.__llvm_slsblr_thunk_*)
+> > >
+> > > This does not look compiler agnostic?
+> >
+> > You are right, GCC does generate different oraphan section names. I
+> > will address it in the next version of the patch. Also it seems only
+> > arm64 gcc supports -mharden-sls=* at this moment, arm32 gcc does not
+> > support it yet. I don't know if there is any plan to implement it for
+> > 32-bit gcc, but should we patch arm32 linker script preemptively,
+> > assuming the sections will be named with the same pattern like how
+> > clang does so the kernel would not fail to boot when the flag is
+> > implemented?
+>
+> I think the best thing is to have something like this:
+> Implement a macro such as this in
+> include/linux/compiler-clang.h
+>
+> #define SLS_TEXT_SECTION *(.text.__llvm_slsblr_thunk_*)
+>
+> then the corresponding in include/linux/compiler-gcc.h
+> but here also add a
+>
+> #define SLS_TEXT_SECTION #error "no compiler support"
+>
+> if the compiler version does not have this.
+>
+> I don't know the exact best approach sadly, as the patch
+> looks now it seems a bit fragile, I wonder if you get linker
+> warnings when this section is unused?
+>
+> Yours,
+> Linus Walleij
