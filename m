@@ -2,85 +2,97 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B230C433C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 02:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FC9C433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 09:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4CD7619A5
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 02:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 193D7619C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 09:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbhCWCC7 (ORCPT
+        id S230039AbhCWJT3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 22:02:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229590AbhCWCCo (ORCPT
+        Tue, 23 Mar 2021 05:19:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38090 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230006AbhCWJTW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 22:02:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 65CB661923;
-        Tue, 23 Mar 2021 02:02:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616464963;
-        bh=5lknl+7lO43LIBnWuIVTTxHxnStZYFW36kMNB87zaxo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lg/NJae8JYDvPaXUEw0byQ8ayYpvyiBgnL0vDZG3wEgGiDkaY+iwLIG6jsOTIkhvA
-         X1wLCA990qqQDXfKaPmymVZdQw3SB5J0G+yPTBdNVR+CSUURzrd1ZdPqOv1Stbh9Ml
-         5qsxtEKRNS5Nr9PHyEKzrR2/dKtp09ry1rpfCaaIuuJDHL0D1OWpsdtkxcslq3VVoE
-         eaJmsL/rX8BfsZNGn0K0ZVvivkzv7MfIXrcqTUwp5A1aZJ+3gtBJE+eGK/bMfdvw+7
-         LtvcHuRlpwvW+gTDL+duVBkH+GGyzX5OyJcP4gFdupBvU46ymubL4c87Jj2H1VMM0B
-         RLZmsxMWsG8Ow==
-Date:   Tue, 23 Mar 2021 04:02:15 +0200
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Andrey Ryabinin <arbn@yandex-team.ru>,
-        David Howells <dhowells@redhat.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: Allow disabling read permissions for key possessor
-Message-ID: <YFlMJ12+3/MpYixW@kernel.org>
-References: <20210322095726.14939-1-arbn@yandex-team.ru>
+        Tue, 23 Mar 2021 05:19:22 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19F87C061574;
+        Tue, 23 Mar 2021 02:19:22 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id il9-20020a17090b1649b0290114bcb0d6c2so4617998pjb.0;
+        Tue, 23 Mar 2021 02:19:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cjx0WSzuMYREzSGI95Dm8405MXA//Ic3KPFQmalnzDg=;
+        b=h9O2ssAA79VelDOBwCNQ5RVKlhT+lBUASCEP4QkcSPCEL3s6tBsLsHaxSw8R9SBYB5
+         ClEz3ETCCdqmYyinTRc03kyAfy9Vb1nVkFiXw/TuRg4j+2IMw1TZkA5sg2CrzLxgtp+V
+         QE+G1hkngOz7KkAA1nrOFsOgZKPbYFOvsmTIwzWsZ2aBNMsoBHcvcG33qJT/OcZO3tJ2
+         NHSGwCHRJwuuJR0N/yDl344iVvzRHrqP4Gypk3bbXiYMJ9DhehYk48vO4WrjarUhA8ej
+         67oEz84+1KJhBiPHFLbsE4IRUuO8JPoCOuzAqRmcpSpsiRncnDQYB/+P64HcKa/Sv++X
+         McGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cjx0WSzuMYREzSGI95Dm8405MXA//Ic3KPFQmalnzDg=;
+        b=a7aCQQN0BGdqB+fIbUXuSbe7ArZVw2nvG0jGc81ApugWzRXUKESegUkK2z3ywZPzjp
+         AGPQLZJwMv8yq4UD+ID27FDGZrGUCPB6p8VNPpd6ZsWPTP3+wKAzOoDhKfH2CvtpvSrH
+         gpXmt5Jlh9m+Bpk/xvAO1AnZVWjSaK44lca+79e5SB0T9Sf9xjAeBdWKvIt+mMMhn+ul
+         Y2KdbU++IkACZoXBwdInZZd4YQ/TQx3lp1FIwzvQfp1Sw+4t5B42rBHKp10S/U7PsjAE
+         28cUuHvwvGrWICgjrcDW4J8z60Vbv2zb1UXtiU8BkFXkNSQ9VMUlpBHKI6/w+L1mXxab
+         GEgQ==
+X-Gm-Message-State: AOAM53145IoiV6vWnJSdvRpHIwmVs8NHVSUIUXCxXmlrfJcZAsfH6F8v
+        sPW6QOigh5amUEHR2svL9uY=
+X-Google-Smtp-Source: ABdhPJyTcotqOXqx680byQNlECxUvFWgrmiMjtIYHm4IMb6RbYqdpB/RrpU7FmHaU/y+cFndUtgy4g==
+X-Received: by 2002:a17:90a:ec15:: with SMTP id l21mr3535593pjy.164.1616491161661;
+        Tue, 23 Mar 2021 02:19:21 -0700 (PDT)
+Received: from localhost.localdomain ([103.114.158.1])
+        by smtp.gmail.com with ESMTPSA id d20sm1944165pjv.47.2021.03.23.02.19.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Mar 2021 02:19:21 -0700 (PDT)
+From:   Jiele Zhao <unclexiaole@gmail.com>
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jiele Zhao <unclexiaole@gmail.com>
+Subject: [PATCH] ima: Fix function name error in comment.
+Date:   Tue, 23 Mar 2021 09:19:05 +0000
+Message-Id: <20210323091905.317885-1-unclexiaole@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210322095726.14939-1-arbn@yandex-team.ru>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Mar 22, 2021 at 12:57:26PM +0300, Andrey Ryabinin wrote:
-> keyctl_read_key() has a strange code which allows possessor to read
-> key's payload regardless of READ permission status:
-> 
-> $ keyctl add user test test @u
-> 196773443
-> $ keyctl print 196773443
-> test
-> $ keyctl describe 196773443
-> 196773443: alswrv-----v------------  1000  1000 user: test
-> $ keyctl rdescribe 196773443
-> user;1000;1000;3f010000;test
-> $ keyctl setperm 196773443 0x3d010000
-> $ keyctl describe 196773443
-> 196773443: alsw-v-----v------------  1000  1000 user: test
-> $ keyctl  print 196773443
-> test
-> 
-> The last keyctl print should fail with -EACCESS instead of success.
-> Fix this by removing weird possessor checks.
-> 
-> Signed-off-by: Andrey Ryabinin <arbn@yandex-team.ru>
+Function "ima_file_check" is written as "ima_path_check" in
+the comment. Fix this error to prevent misunderstanding.
 
-I wrote a new test. If you include a test into a commit please
-describe it so that it can be easily executed. Otherwise, it is
-somewhat useless.
+Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
+---
+ security/integrity/ima/ima_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9ef748ea829f..03bef720ab44 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -482,7 +482,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ }
+ 
+ /**
+- * ima_path_check - based on policy, collect/store measurement.
++ * ima_file_check - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured
+  * @mask: contains MAY_READ, MAY_WRITE, MAY_EXEC or MAY_APPEND
+  *
+-- 
+2.25.1
 
-https://gist.github.com/jarkk0sakkinen/7b417be20cb52ed971a90561192f0883
-
-David, why all of these end up allowing to still print the payload?
-
-/Jarkko
