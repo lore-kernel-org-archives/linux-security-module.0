@@ -2,83 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C12B0C433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 01:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B230C433C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 02:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C30461992
-	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 01:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4CD7619A5
+	for <linux-security-module@archiver.kernel.org>; Tue, 23 Mar 2021 02:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhCWBrP (ORCPT
+        id S229890AbhCWCC7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 22 Mar 2021 21:47:15 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:54767 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231476AbhCWBrO (ORCPT
+        Mon, 22 Mar 2021 22:02:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229590AbhCWCCo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 22 Mar 2021 21:47:14 -0400
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 12N1kuPx046795;
-        Tue, 23 Mar 2021 10:46:56 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav104.sakura.ne.jp);
- Tue, 23 Mar 2021 10:46:56 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav104.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 12N1kt3L046787
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 23 Mar 2021 10:46:55 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH 2/2] integrity: double check iint_cache was
- initialized
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>
-References: <20210319200358.22816-1-zohar@linux.ibm.com>
- <20210319200358.22816-2-zohar@linux.ibm.com>
- <8450c80a-104a-3f36-0963-0ae8fa69e0f2@i-love.sakura.ne.jp>
- <CACT4Y+bvakfNhVs29QvbY6Z8Pw0zmAUKGWM-DD5DcPZW5ny90A@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <1a2245c6-3cab-7085-83d3-55b083619303@i-love.sakura.ne.jp>
-Date:   Tue, 23 Mar 2021 10:46:52 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Mon, 22 Mar 2021 22:02:44 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 65CB661923;
+        Tue, 23 Mar 2021 02:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1616464963;
+        bh=5lknl+7lO43LIBnWuIVTTxHxnStZYFW36kMNB87zaxo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Lg/NJae8JYDvPaXUEw0byQ8ayYpvyiBgnL0vDZG3wEgGiDkaY+iwLIG6jsOTIkhvA
+         X1wLCA990qqQDXfKaPmymVZdQw3SB5J0G+yPTBdNVR+CSUURzrd1ZdPqOv1Stbh9Ml
+         5qsxtEKRNS5Nr9PHyEKzrR2/dKtp09ry1rpfCaaIuuJDHL0D1OWpsdtkxcslq3VVoE
+         eaJmsL/rX8BfsZNGn0K0ZVvivkzv7MfIXrcqTUwp5A1aZJ+3gtBJE+eGK/bMfdvw+7
+         LtvcHuRlpwvW+gTDL+duVBkH+GGyzX5OyJcP4gFdupBvU46ymubL4c87Jj2H1VMM0B
+         RLZmsxMWsG8Ow==
+Date:   Tue, 23 Mar 2021 04:02:15 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Andrey Ryabinin <arbn@yandex-team.ru>,
+        David Howells <dhowells@redhat.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] keys: Allow disabling read permissions for key possessor
+Message-ID: <YFlMJ12+3/MpYixW@kernel.org>
+References: <20210322095726.14939-1-arbn@yandex-team.ru>
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+bvakfNhVs29QvbY6Z8Pw0zmAUKGWM-DD5DcPZW5ny90A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210322095726.14939-1-arbn@yandex-team.ru>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021/03/20 5:03, Mimi Zohar wrote:
-> The integrity's "iint_cache" is initialized at security_init().  Only
-> after an IMA policy is loaded, which is initialized at late_initcall,
-> is a file's integrity status stored in the "iint_cache".
+On Mon, Mar 22, 2021 at 12:57:26PM +0300, Andrey Ryabinin wrote:
+> keyctl_read_key() has a strange code which allows possessor to read
+> key's payload regardless of READ permission status:
 > 
-> All integrity_inode_get() callers first verify that the IMA policy has
-> been loaded, before calling it.  Yet for some reason, it is still being
-> called, causing a NULL pointer dereference.
+> $ keyctl add user test test @u
+> 196773443
+> $ keyctl print 196773443
+> test
+> $ keyctl describe 196773443
+> 196773443: alswrv-----v------------  1000  1000 user: test
+> $ keyctl rdescribe 196773443
+> user;1000;1000;3f010000;test
+> $ keyctl setperm 196773443 0x3d010000
+> $ keyctl describe 196773443
+> 196773443: alsw-v-----v------------  1000  1000 user: test
+> $ keyctl  print 196773443
+> test
 > 
-> qemu-system-x86_64 (...snipped...) lsm=smack (...snipped...)
+> The last keyctl print should fail with -EACCESS instead of success.
+> Fix this by removing weird possessor checks.
+> 
+> Signed-off-by: Andrey Ryabinin <arbn@yandex-team.ru>
 
-Hmm, why are you using lsm=smack instead of security=smack ?
-Since use of lsm= overrides CONFIG_LSM="lockdown,yama,safesetid,integrity,tomoyo,smack,bpf" settings,
-only smack is activated, which means that integrity_iintcache_init() will not be called by
+I wrote a new test. If you include a test into a commit please
+describe it so that it can be easily executed. Otherwise, it is
+somewhat useless.
 
-  DEFINE_LSM(integrity) = {
-  	.name = "integrity",
-  	.init = integrity_iintcache_init,
-  };
+Anyway,
 
-declaration. That's the reason iint_cache == NULL when integrity_inode_get() is called.
+https://gist.github.com/jarkk0sakkinen/7b417be20cb52ed971a90561192f0883
 
+David, why all of these end up allowing to still print the payload?
+
+/Jarkko
