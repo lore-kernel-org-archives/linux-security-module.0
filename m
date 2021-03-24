@@ -3,37 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABDBC433E5
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 19:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE2DC433C1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 20:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1089561A2B
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 19:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E060B61A1F
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 20:35:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237851AbhCXTeU (ORCPT
+        id S238108AbhCXUfC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 15:34:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59962 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237814AbhCXTdr (ORCPT
+        Wed, 24 Mar 2021 16:35:02 -0400
+Received: from namei.org ([65.99.196.166]:51268 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238128AbhCXUen (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 15:33:47 -0400
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 107ACC0613E1
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 12:33:44 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F5JLt5wb8zMq2dR;
-        Wed, 24 Mar 2021 20:33:42 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F5JLr3wPFzlh8Td;
-        Wed, 24 Mar 2021 20:33:40 +0100 (CET)
-Subject: Re: [PATCH v31 01/12] landlock: Add object management
-To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        Wed, 24 Mar 2021 16:34:43 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 8051F4E1;
+        Wed, 24 Mar 2021 20:31:47 +0000 (UTC)
+Date:   Thu, 25 Mar 2021 07:31:47 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Lutomirski <luto@amacapital.net>,
         Anton Ivanov <anton.ivanov@cambridgegreys.com>,
@@ -51,65 +47,45 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org,
         linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210324191520.125779-1-mic@digikod.net>
- <20210324191520.125779-2-mic@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <3908b240-8a4b-9bd7-bb5f-b59eaed7cb1f@digikod.net>
-Date:   Wed, 24 Mar 2021 20:34:19 +0100
-User-Agent: 
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v30 02/12] landlock: Add ruleset and domain management
+In-Reply-To: <acda4be1-4076-a31d-fcfd-27764dd598c8@digikod.net>
+Message-ID: <c9dc8adb-7fab-14a1-a658-40b288419fdf@namei.org>
+References: <20210316204252.427806-1-mic@digikod.net> <20210316204252.427806-3-mic@digikod.net> <202103191114.C87C5E2B69@keescook> <acda4be1-4076-a31d-fcfd-27764dd598c8@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20210324191520.125779-2-mic@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="1665246916-200031253-1616617907=:3442585"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 24/03/2021 20:15, MickaÃ«l SalaÃ¼n wrote:
-[...]
-> diff --git a/security/landlock/object.h b/security/landlock/object.h
-> new file mode 100644
-> index 000000000000..3e5d5b6941c3
-> --- /dev/null
-> +++ b/security/landlock/object.h
-> @@ -0,0 +1,91 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Landlock LSM - Object management
-> + *
-> + * Copyright Â© 2016-2020 MickaÃ«l SalaÃ¼n <mic@digikod.net>
-> + * Copyright Â© 2018-2020 ANSSI
-> + */
-> +
-> +#ifndef _SECURITY_LANDLOCK_OBJECT_H
-> +#define _SECURITY_LANDLOCK_OBJECT_H
-> +
-> +#include <linux/compiler_types.h>
-> +#include <linux/refcount.h>
-> +#include <linux/spinlock.h>
-> +
-> +struct landlock_object;
-> +
-> +/**
-> + * struct landlock_object_underops - Operations on an underlying object
-> + */
-> +struct landlock_object_underops {
-> +	/**
-> +	 * @release: Releases the underlying object (e.g. iput() for an inode).
-> +	 */
-> +	void (*release)(struct landlock_object *const object)
-> +		__releases(object->lock);
-> +};
-> +
-> +/**
-> + * struct landlock_object - Security blob tied to a kernel object
-> + *
-> + * The goal of this structure is to enable to tie a set of ephemeral access
-> + * rights (pertaining to different domains) to a kernel object (e.g an inode)
-> + * in a safe way.  This implies to handle concurrent use and modification.
-> + *
-> + * The lifetime of a &struct landlock_object depends of the rules referring to
+--1665246916-200031253-1616617907=:3442585
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 8BIT
 
-You should read "depends on"â€¦
+On Fri, 19 Mar 2021, Mickaël Salaün wrote:
+
+> 
+> >> Cc: Kees Cook <keescook@chromium.org>
+> >> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> >> Acked-by: Serge Hallyn <serge@hallyn.com>
+> >> Link: https://lore.kernel.org/r/20210316204252.427806-3-mic@digikod.net
+> > 
+> > (Aside: you appear to be self-adding your Link: tags -- AIUI, this is
+> > normally done by whoever pulls your series. I've only seen Link: tags
+> > added when needing to refer to something else not included in the
+> > series.)
+> 
+> It is an insurance to not lose history. :)
+
+How will history be lost? The code is in the repo and discussions can 
+easily be found by searching for subjects or message IDs.
+
+Is anyone else doing this self linking?
+
+-- 
+James Morris
+<jmorris@namei.org>
+
+--1665246916-200031253-1616617907=:3442585--
