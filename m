@@ -2,125 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5C2C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 15:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F16C433C1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 15:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4E65619F3
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 15:04:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9AAD61992
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 15:31:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236434AbhCXPDe (ORCPT
+        id S236697AbhCXPbA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 11:03:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57262 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236426AbhCXPDF (ORCPT
+        Wed, 24 Mar 2021 11:31:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:1310 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236683AbhCXPaj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 11:03:05 -0400
-Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF497C0613DE
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 08:03:04 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F5BLY1j83zMq3Y5;
-        Wed, 24 Mar 2021 16:03:01 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F5BLT1HXmzlh8TT;
-        Wed, 24 Mar 2021 16:02:57 +0100 (CET)
-Subject: Re: [PATCH v30 08/12] landlock: Add syscall implementations
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210316204252.427806-1-mic@digikod.net>
- <20210316204252.427806-9-mic@digikod.net> <202103191157.CF13C34@keescook>
- <380d65b2-f515-f3f5-5d57-7f99c528e5c7@digikod.net>
-Message-ID: <9062d586-8fa7-a972-9615-ca3a5fe38cef@digikod.net>
-Date:   Wed, 24 Mar 2021 16:03:36 +0100
-User-Agent: 
+        Wed, 24 Mar 2021 11:30:39 -0400
+IronPort-SDR: TDT8xas+TqaIoJVkNiEXLLro6tSxpW0oapG8TPTC6sWKawxhr1Y2bBwLEzL0ayTAGLvsVAhDyD
+ h+K9Yw2upJzQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="190823083"
+X-IronPort-AV: E=Sophos;i="5.81,275,1610438400"; 
+   d="scan'208";a="190823083"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 08:30:38 -0700
+IronPort-SDR: /4dqq/0JWisBWvhTbTEBIBwFyl3ZwxDSlbNQvn9KHdRvSPPQs9Sb14vUi+jgB7se4K1pbShwF/
+ LGKAbJDldGYw==
+X-IronPort-AV: E=Sophos;i="5.81,275,1610438400"; 
+   d="scan'208";a="415534424"
+Received: from hcarliss-mobl1.ger.corp.intel.com (HELO localhost) ([10.252.54.166])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 08:30:27 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+        Ning Sun <ning.sun@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        =?utf-8?Q?Jos=C3=A9?= Roberto de Souza <jose.souza@intel.com>,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
+        Aditya Swarup <aditya.swarup@intel.com>
+Subject: Re: [PATCH 10/11] drm/i915: avoid stringop-overread warning on pri_latency
+In-Reply-To: <20210322160253.4032422-11-arnd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210322160253.4032422-1-arnd@kernel.org> <20210322160253.4032422-11-arnd@kernel.org>
+Date:   Wed, 24 Mar 2021 17:30:24 +0200
+Message-ID: <874kh04lin.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <380d65b2-f515-f3f5-5d57-7f99c528e5c7@digikod.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, 22 Mar 2021, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> gcc-11 warns about what appears to be an out-of-range array access:
+>
+> In function ‘snb_wm_latency_quirk’,
+>     inlined from ‘ilk_setup_wm_latency’ at drivers/gpu/drm/i915/intel_pm.c:3108:3:
+> drivers/gpu/drm/i915/intel_pm.c:3057:9: error: ‘intel_print_wm_latency’ reading 16 bytes from a region of size 10 [-Werror=stringop-overread]
+>  3057 |         intel_print_wm_latency(dev_priv, "Primary", dev_priv->wm.pri_latency);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/i915/intel_pm.c: In function ‘ilk_setup_wm_latency’:
+> drivers/gpu/drm/i915/intel_pm.c:3057:9: note: referencing argument 3 of type ‘const u16 *’ {aka ‘const short unsigned int *’}
+> drivers/gpu/drm/i915/intel_pm.c:2994:13: note: in a call to function ‘intel_print_wm_latency’
+>  2994 | static void intel_print_wm_latency(struct drm_i915_private *dev_priv,
+>       |             ^~~~~~~~~~~~~~~~~~~~~~
+>
+> My guess is that this code is actually safe because the size of the
+> array depends on the hardware generation, and the function checks for
+> that, but at the same time I would not expect the compiler to work it
+> out correctly, and the code seems a little fragile with regards to
+> future changes. Simply increasing the size of the array should help.
 
-On 19/03/2021 22:53, Micka�l Sala�n wrote:
-> 
-> On 19/03/2021 20:06, Kees Cook wrote:
->> On Tue, Mar 16, 2021 at 09:42:48PM +0100, Micka�l Sala�n wrote:
->>> From: Micka�l Sala�n <mic@linux.microsoft.com>
+Agreed, I don't think there's an issue, but the code could use a bunch
+of improvements.
 
-[...]
+Like, we have intel_print_wm_latency() for debug logging and
+wm_latency_show() for debugfs, and there's a bunch of duplication and
+ugh.
 
->>> +/**
->>> + * sys_landlock_create_ruleset - Create a new ruleset
->>> + *
->>> + * @attr: Pointer to a &struct landlock_ruleset_attr identifying the scope of
->>> + *        the new ruleset.
->>> + * @size: Size of the pointed &struct landlock_ruleset_attr (needed for
->>> + *        backward and forward compatibility).
->>> + * @flags: Must be 0.
->>> + *
->>> + * This system call enables to create a new Landlock ruleset, and returns the
->>> + * related file descriptor on success.
->>> + *
->>> + * Possible returned errors are:
->>> + *
->>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
->>> + * - EINVAL: @flags is not 0, or unknown access, or too small @size;
->>> + * - E2BIG or EFAULT: @attr or @size inconsistencies;
->>> + * - ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
->>> + */
->>> +SYSCALL_DEFINE3(landlock_create_ruleset,
->>> +		const struct landlock_ruleset_attr __user *const, attr,
->>> +		const size_t, size, const __u32, flags)
->>> +{
->>> +	struct landlock_ruleset_attr ruleset_attr;
->>> +	struct landlock_ruleset *ruleset;
->>> +	int err, ruleset_fd;
->>> +
->>> +	/* Build-time checks. */
->>> +	build_check_abi();
->>> +
->>> +	if (!landlock_initialized)
->>> +		return -EOPNOTSUPP;
->>> +
->>> +	/* No flag for now. */
->>> +	if (flags)
->>> +		return -EINVAL;
->>> +
->>> +	/* Copies raw user space buffer. */
->>> +	err = copy_min_struct_from_user(&ruleset_attr, sizeof(ruleset_attr),
->>> +			offsetofend(typeof(ruleset_attr), handled_access_fs),
->>
->> The use of offsetofend() here appears to be kind of the "V1", "V2", ...
->> sizes used in other extensible syscall implementations?
-> 
-> ruleset_attr is an extensible argument.
+But this seems like the easiest fix for the warning.
 
-offsetofen() is used to set the minimum size of a valid argument. This
-code will then not change with future extended ruleset_attr.
+Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/i915/i915_drv.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+> index 26d69d06aa6d..3567602e0a35 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.h
+> +++ b/drivers/gpu/drm/i915/i915_drv.h
+> @@ -1095,11 +1095,11 @@ struct drm_i915_private {
+>  		 * in 0.5us units for WM1+.
+>  		 */
+>  		/* primary */
+> -		u16 pri_latency[5];
+> +		u16 pri_latency[8];
+>  		/* sprite */
+> -		u16 spr_latency[5];
+> +		u16 spr_latency[8];
+>  		/* cursor */
+> -		u16 cur_latency[5];
+> +		u16 cur_latency[8];
+>  		/*
+>  		 * Raw watermark memory latency values
+>  		 * for SKL for all 8 levels
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
