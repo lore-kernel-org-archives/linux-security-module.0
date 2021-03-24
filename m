@@ -2,108 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E5AC433C1
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46644C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 754D2619FB
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B76E61A0E
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231530AbhCXJNF (ORCPT
+        id S234709AbhCXJ0b (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 05:13:05 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:27855 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231709AbhCXJNC (ORCPT
+        Wed, 24 Mar 2021 05:26:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40374 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234737AbhCXJ0X (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 05:13:02 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-70-F_iQyAaGNv6_r3BEezM2zQ-1; Wed, 24 Mar 2021 09:11:56 +0000
-X-MC-Unique: F_iQyAaGNv6_r3BEezM2zQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.2; Wed, 24 Mar 2021 09:11:55 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.012; Wed, 24 Mar 2021 09:11:55 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Martin Sebor' <msebor@gmail.com>, Ingo Molnar <mingo@kernel.org>,
-        "Arnd Bergmann" <arnd@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Martin Sebor" <msebor@gcc.gnu.org>, Ning Sun <ning.sun@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Simon Kelley <simon@thekelleys.org.uk>,
-        James Smart <james.smart@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Imre Deak <imre.deak@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "tboot-devel@lists.sourceforge.net" 
-        <tboot-devel@lists.sourceforge.net>,
-        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        Wed, 24 Mar 2021 05:26:23 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5877C061763
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 02:26:23 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1lOzmP-0001bV-VY; Wed, 24 Mar 2021 10:26:22 +0100
+Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Will Deacon <will@kernel.org>
-Subject: RE: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
-Thread-Topic: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
-Thread-Index: AQHXH2fn7jNrPkUb50e9k3rL2a+D9qqS2/oQ
-Date:   Wed, 24 Mar 2021 09:11:55 +0000
-Message-ID: <0aa198a1dd904231bcc29454bf19a812@AcuMS.aculab.com>
-References: <20210322160253.4032422-1-arnd@kernel.org>
- <20210322160253.4032422-3-arnd@kernel.org>
- <20210322202958.GA1955909@gmail.com>
- <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
-In-Reply-To: <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        <linux-security-module@vger.kernel.org>
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+ <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
+ <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com>
+ <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
+ <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de>
+Date:   Wed, 24 Mar 2021 10:26:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.7.0
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
+In-Reply-To: <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-RnJvbTogTWFydGluIFNlYm9yDQo+IFNlbnQ6IDIyIE1hcmNoIDIwMjEgMjI6MDgNCi4uLg0KPiBJ
-biBHQ0MgMTEsIGFsbCBhY2Nlc3Mgd2FybmluZ3MgZXhwZWN0IG9iamVjdHMgdG8gYmUgZWl0aGVy
-IGRlY2xhcmVkDQo+IG9yIGFsbG9jYXRlZC4gIFBvaW50ZXJzIHdpdGggY29uc3RhbnQgdmFsdWVz
-IGFyZSB0YWtlbiB0byBwb2ludCB0bw0KPiBub3RoaW5nIHZhbGlkIChhcyBBcm5kIG1lbnRpb25l
-ZCBhYm92ZSwgdGhpcyBpcyB0byBkZXRlY3QgaW52YWxpZA0KPiBhY2Nlc3NlcyB0byBtZW1iZXJz
-IG9mIHN0cnVjdHMgYXQgYWRkcmVzcyB6ZXJvKS4NCj4gDQo+IE9uZSBwb3NzaWJsZSBzb2x1dGlv
-biB0byB0aGUga25vd24gYWRkcmVzcyBwcm9ibGVtIGlzIHRvIGV4dGVuZCBHQ0MNCj4gYXR0cmli
-dXRlcyBhZGRyZXNzIGFuZCBpbyB0aGF0IHBpbiBhbiBvYmplY3QgdG8gYSBoYXJkd2lyZWQgYWRk
-cmVzcw0KPiB0byBhbGwgdGFyZ2V0cyAoYXQgdGhlIG1vbWVudCB0aGV5J3JlIHN1cHBvcnRlZCBv
-biBqdXN0IG9uZSBvciB0d28NCj4gdGFyZ2V0cykuICBJJ20gbm90IHN1cmUgdGhpcyBjYW4gc3Rp
-bGwgaGFwcGVuIGJlZm9yZSBHQ0MgMTEgcmVsZWFzZXMNCj4gc29tZXRpbWUgaW4gQXByaWwgb3Ig
-TWF5Lg0KDQpBIGRpZmZlcmVudCBzb2x1dGlvbiBpcyB0byBkZWZpbmUgYSBub3JtYWwgQyBleHRl
-cm5hbCBkYXRhIGl0ZW0NCmFuZCB0aGVuIGFzc2lnbiBhIGZpeGVkIGFkZHJlc3Mgd2l0aCBhbiBh
-c20gc3RhdGVtZW50IG9yIGluDQp0aGUgbGlua2VyIHNjcmlwdC4NCg0KCURhdmlkDQoNCi0NClJl
-Z2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0
-b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykN
-Cg==
+Hello Mimi,
 
+On 23.03.21 19:07, Mimi Zohar wrote:
+> On Tue, 2021-03-23 at 17:35 +0100, Ahmad Fatoum wrote:
+>> On 21.03.21 21:48, Horia Geantă wrote:
+>>> caam has random number generation capabilities, so it's worth using that
+>>> by implementing .get_random.
+>>
+>> If the CAAM HWRNG is already seeding the kernel RNG, why not use the kernel's?
+>>
+>> Makes for less code duplication IMO.
+> 
+> Using kernel RNG, in general, for trusted keys has been discussed
+> before.   Please refer to Dave Safford's detailed explanation for not
+> using it [1].
+
+The argument seems to boil down to:
+
+ - TPM RNG are known to be of good quality
+ - Trusted keys always used it so far
+
+Both are fine by me for TPMs, but the CAAM backend is new code and neither point
+really applies.
+
+get_random_bytes_wait is already used for generating key material elsewhere.
+Why shouldn't new trusted key backends be able to do the same thing?
+
+Cheers,
+Ahmad
+
+> 
+> thanks,
+> 
+> Mimi
+> 
+> [1] 
+> https://lore.kernel.org/linux-integrity/BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A38B@ALPMBAPA12.e2k.ad.ge.com/
+>  
+> 
+> 
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
