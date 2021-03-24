@@ -2,161 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F16C433C1
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 14:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5C2C433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 15:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7F23619F8
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 14:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E65619F3
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 15:04:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235970AbhCXOIF (ORCPT
+        id S236434AbhCXPDe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 10:08:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45158 "EHLO
+        Wed, 24 Mar 2021 11:03:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57262 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235922AbhCXOHh (ORCPT
+        with ESMTP id S236426AbhCXPDF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 10:07:37 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A491C061763
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 07:07:37 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1lP4AZ-0001d9-IF; Wed, 24 Mar 2021 15:07:35 +0100
-Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Wed, 24 Mar 2021 11:03:05 -0400
+Received: from smtp-42aa.mail.infomaniak.ch (smtp-42aa.mail.infomaniak.ch [IPv6:2001:1600:4:17::42aa])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF497C0613DE
+        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 08:03:04 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F5BLY1j83zMq3Y5;
+        Wed, 24 Mar 2021 16:03:01 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4F5BLT1HXmzlh8TT;
+        Wed, 24 Mar 2021 16:02:57 +0100 (CET)
+Subject: Re: [PATCH v30 08/12] landlock: Add syscall implementations
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
- <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
- <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com>
- <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
- <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
- <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de>
- <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de>
-Date:   Wed, 24 Mar 2021 15:07:30 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316204252.427806-1-mic@digikod.net>
+ <20210316204252.427806-9-mic@digikod.net> <202103191157.CF13C34@keescook>
+ <380d65b2-f515-f3f5-5d57-7f99c528e5c7@digikod.net>
+Message-ID: <9062d586-8fa7-a972-9615-ca3a5fe38cef@digikod.net>
+Date:   Wed, 24 Mar 2021 16:03:36 +0100
+User-Agent: 
 MIME-Version: 1.0
-In-Reply-To: <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <380d65b2-f515-f3f5-5d57-7f99c528e5c7@digikod.net>
+Content-Type: text/plain; charset=iso-8859-15
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Sumit,
 
-On 24.03.21 11:47, Sumit Garg wrote:
-> On Wed, 24 Mar 2021 at 14:56, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->>
->> Hello Mimi,
->>
->> On 23.03.21 19:07, Mimi Zohar wrote:
->>> On Tue, 2021-03-23 at 17:35 +0100, Ahmad Fatoum wrote:
->>>> On 21.03.21 21:48, Horia GeantÄƒ wrote:
->>>>> caam has random number generation capabilities, so it's worth using that
->>>>> by implementing .get_random.
->>>>
->>>> If the CAAM HWRNG is already seeding the kernel RNG, why not use the kernel's?
->>>>
->>>> Makes for less code duplication IMO.
->>>
->>> Using kernel RNG, in general, for trusted keys has been discussed
->>> before.   Please refer to Dave Safford's detailed explanation for not
->>> using it [1].
->>
->> The argument seems to boil down to:
->>
->>  - TPM RNG are known to be of good quality
->>  - Trusted keys always used it so far
->>
->> Both are fine by me for TPMs, but the CAAM backend is new code and neither point
->> really applies.
->>
->> get_random_bytes_wait is already used for generating key material elsewhere.
->> Why shouldn't new trusted key backends be able to do the same thing?
->>
+On 19/03/2021 22:53, Mickaël Salaün wrote:
 > 
-> Please refer to documented trusted keys behaviour here [1]. New
-> trusted key backends should align to this behaviour and in your case
-> CAAM offers HWRNG so we should be better using that.
+> On 19/03/2021 20:06, Kees Cook wrote:
+>> On Tue, Mar 16, 2021 at 09:42:48PM +0100, Mickaël Salaün wrote:
+>>> From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Why is it better?
+[...]
 
-Can you explain what benefit a CAAM user would have if the trusted key
-randomness comes directly out of the CAAM instead of indirectly from
-the kernel entropy pool that is seeded by it?
-
-> Also, do update documentation corresponding to CAAM as a trusted keys backend.
-
-Yes. The documentation should be updated for CAAM and it should describe
-how the key material is derived. Will do so for v2.
-
-Cheers,
-Ahmad
-
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/tree/Documentation/security/keys/trusted-encrypted.rst#n87
-> 
-> -Sumit
-> 
->> Cheers,
->> Ahmad
+>>> +/**
+>>> + * sys_landlock_create_ruleset - Create a new ruleset
+>>> + *
+>>> + * @attr: Pointer to a &struct landlock_ruleset_attr identifying the scope of
+>>> + *        the new ruleset.
+>>> + * @size: Size of the pointed &struct landlock_ruleset_attr (needed for
+>>> + *        backward and forward compatibility).
+>>> + * @flags: Must be 0.
+>>> + *
+>>> + * This system call enables to create a new Landlock ruleset, and returns the
+>>> + * related file descriptor on success.
+>>> + *
+>>> + * Possible returned errors are:
+>>> + *
+>>> + * - EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+>>> + * - EINVAL: @flags is not 0, or unknown access, or too small @size;
+>>> + * - E2BIG or EFAULT: @attr or @size inconsistencies;
+>>> + * - ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
+>>> + */
+>>> +SYSCALL_DEFINE3(landlock_create_ruleset,
+>>> +		const struct landlock_ruleset_attr __user *const, attr,
+>>> +		const size_t, size, const __u32, flags)
+>>> +{
+>>> +	struct landlock_ruleset_attr ruleset_attr;
+>>> +	struct landlock_ruleset *ruleset;
+>>> +	int err, ruleset_fd;
+>>> +
+>>> +	/* Build-time checks. */
+>>> +	build_check_abi();
+>>> +
+>>> +	if (!landlock_initialized)
+>>> +		return -EOPNOTSUPP;
+>>> +
+>>> +	/* No flag for now. */
+>>> +	if (flags)
+>>> +		return -EINVAL;
+>>> +
+>>> +	/* Copies raw user space buffer. */
+>>> +	err = copy_min_struct_from_user(&ruleset_attr, sizeof(ruleset_attr),
+>>> +			offsetofend(typeof(ruleset_attr), handled_access_fs),
 >>
->>>
->>> thanks,
->>>
->>> Mimi
->>>
->>> [1]
->>> https://lore.kernel.org/linux-integrity/BCA04D5D9A3B764C9B7405BBA4D4A3C035F2A38B@ALPMBAPA12.e2k.ad.ge.com/
->>>
->>>
->>>
->>
->> --
->> Pengutronix e.K.                           |                             |
->> Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
->> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
->> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>> The use of offsetofend() here appears to be kind of the "V1", "V2", ...
+>> sizes used in other extensible syscall implementations?
 > 
+> ruleset_attr is an extensible argument.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+offsetofen() is used to set the minimum size of a valid argument. This
+code will then not change with future extended ruleset_attr.
