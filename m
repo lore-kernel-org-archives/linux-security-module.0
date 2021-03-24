@@ -3,97 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A06C433E2
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 16:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0033C433E0
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 17:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF1CD61A10
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 16:21:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C488661A1A
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 17:23:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234202AbhCXQVG (ORCPT
+        id S237053AbhCXRXK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 12:21:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233894AbhCXQUf (ORCPT
+        Wed, 24 Mar 2021 13:23:10 -0400
+Received: from mga06.intel.com ([134.134.136.31]:16672 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237098AbhCXRW7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 12:20:35 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 770F0C0613DE
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 09:20:34 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F5D401XLQzMq2Qd;
-        Wed, 24 Mar 2021 17:20:32 +0100 (CET)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F5D3w2gZgzlh8TB;
-        Wed, 24 Mar 2021 17:20:28 +0100 (CET)
-Subject: Re: [PATCH v30 12/12] landlock: Add user and kernel documentation
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210316204252.427806-1-mic@digikod.net>
- <20210316204252.427806-13-mic@digikod.net> <202103191056.71AB0515A@keescook>
- <81c76347-9e92-244f-6f32-600984a6c5cb@digikod.net>
-Message-ID: <57a2b232-f5ba-b585-da11-972845ac8067@digikod.net>
-Date:   Wed, 24 Mar 2021 17:21:07 +0100
-User-Agent: 
+        Wed, 24 Mar 2021 13:22:59 -0400
+IronPort-SDR: cQtKDfGSRClLmG3tg20PD7vnKE61zdl5Iy47lu7s8sWzMA5CBf7KgaDKt61tL4HaJj+00Su1S3
+ pZ8MXBc748TA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="252110427"
+X-IronPort-AV: E=Sophos;i="5.81,275,1610438400"; 
+   d="scan'208";a="252110427"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2021 10:22:57 -0700
+IronPort-SDR: q7x5MCG+vkoOU9Zt5AI1qoSHSHC0Zp99QAlPGLHuv2CUXVcGAPnke24VDa6jskQUUfvyu5ceVQ
+ Ar5TomltcFSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,275,1610438400"; 
+   d="scan'208";a="443059639"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.171])
+  by FMSMGA003.fm.intel.com with SMTP; 24 Mar 2021 10:22:49 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Wed, 24 Mar 2021 19:22:48 +0200
+Date:   Wed, 24 Mar 2021 19:22:48 +0200
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Arnd Bergmann <arnd@arndb.de>,
+        x86@kernel.org, Ning Sun <ning.sun@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        =?iso-8859-1?Q?Jos=E9?= Roberto de Souza 
+        <jose.souza@intel.com>, Matt Roper <matthew.d.roper@intel.com>,
+        Aditya Swarup <aditya.swarup@intel.com>
+Subject: Re: [PATCH 10/11] drm/i915: avoid stringop-overread warning on
+ pri_latency
+Message-ID: <YFt1aBFwJI+z97g3@intel.com>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-11-arnd@kernel.org>
+ <874kh04lin.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <81c76347-9e92-244f-6f32-600984a6c5cb@digikod.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <874kh04lin.fsf@intel.com>
+X-Patchwork-Hint: comment
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-On 19/03/2021 19:54, Micka�l Sala�n wrote:
+On Wed, Mar 24, 2021 at 05:30:24PM +0200, Jani Nikula wrote:
+> On Mon, 22 Mar 2021, Arnd Bergmann <arnd@kernel.org> wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > gcc-11 warns about what appears to be an out-of-range array access:
+> >
+> > In function ‘snb_wm_latency_quirk’,
+> >     inlined from ‘ilk_setup_wm_latency’ at drivers/gpu/drm/i915/intel_pm.c:3108:3:
+> > drivers/gpu/drm/i915/intel_pm.c:3057:9: error: ‘intel_print_wm_latency’ reading 16 bytes from a region of size 10 [-Werror=stringop-overread]
+> >  3057 |         intel_print_wm_latency(dev_priv, "Primary", dev_priv->wm.pri_latency);
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/gpu/drm/i915/intel_pm.c: In function ‘ilk_setup_wm_latency’:
+> > drivers/gpu/drm/i915/intel_pm.c:3057:9: note: referencing argument 3 of type ‘const u16 *’ {aka ‘const short unsigned int *’}
+> > drivers/gpu/drm/i915/intel_pm.c:2994:13: note: in a call to function ‘intel_print_wm_latency’
+> >  2994 | static void intel_print_wm_latency(struct drm_i915_private *dev_priv,
+> >       |             ^~~~~~~~~~~~~~~~~~~~~~
+> >
+> > My guess is that this code is actually safe because the size of the
+> > array depends on the hardware generation, and the function checks for
+> > that, but at the same time I would not expect the compiler to work it
+> > out correctly, and the code seems a little fragile with regards to
+> > future changes. Simply increasing the size of the array should help.
 > 
-> On 19/03/2021 19:03, Kees Cook wrote:
->> On Tue, Mar 16, 2021 at 09:42:52PM +0100, Micka�l Sala�n wrote:
->>> From: Micka�l Sala�n <mic@linux.microsoft.com>
-[...]
->>
->>> [...]
->>> +Special filesystems
->>> +-------------------
->>> +
->>> +Access to regular files and directories can be restricted by Landlock,
->>> +according to the handled accesses of a ruleset.  However, files that do not
->>> +come from a user-visible filesystem (e.g. pipe, socket), but can still be
->>> +accessed through /proc/self/fd/, cannot currently be restricted.  Likewise,
->>> +some special kernel filesystems such as nsfs, which can be accessed through
->>> +/proc/self/ns/, cannot currently be restricted.  For now, these kind of special
->>> +paths are then always allowed.  Future Landlock evolutions will enable to
->>> +restrict such paths with dedicated ruleset flags.
->>
->> With this series, can /proc (at the top level) be blocked? (i.e. can a
->> landlock user avoid the weirdness by making /proc/$pid/ unavailable?)
+> Agreed, I don't think there's an issue, but the code could use a bunch
+> of improvements.
 > 
-> /proc can be blocked, but not /proc/*/ns/* because of disconnected
-> roots. I plan to address this.
+> Like, we have intel_print_wm_latency() for debug logging and
+> wm_latency_show() for debugfs, and there's a bunch of duplication and
+> ugh.
 
-It is important to note that access to sensitive /proc files such as
-ns/* and fd/* are automatically restricted according to domain
-hierarchies. I'll add this detail to the documentation. :)
+There is all this ancient stuff in review limbo...
+https://patchwork.freedesktop.org/series/50802/
+
+-- 
+Ville Syrjälä
+Intel
