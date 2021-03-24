@@ -2,98 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE884C433E0
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 10:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA83C433E1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 10:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C652761A07
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 10:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F10E61A06
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 10:40:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229961AbhCXKLB (ORCPT
+        id S233683AbhCXKkE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 06:11:01 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56163 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236326AbhCXKKj (ORCPT
+        Wed, 24 Mar 2021 06:40:04 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:34536 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233870AbhCXKkB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 06:10:39 -0400
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 12OAAJeu030968;
-        Wed, 24 Mar 2021 19:10:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp);
- Wed, 24 Mar 2021 19:10:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav405.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 12OAAJhC030965
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 24 Mar 2021 19:10:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH 2/2] integrity: double check iint_cache was
- initialized
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org, James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <20210319200358.22816-1-zohar@linux.ibm.com>
- <20210319200358.22816-2-zohar@linux.ibm.com>
- <8450c80a-104a-3f36-0963-0ae8fa69e0f2@i-love.sakura.ne.jp>
- <CACT4Y+bvakfNhVs29QvbY6Z8Pw0zmAUKGWM-DD5DcPZW5ny90A@mail.gmail.com>
- <1a2245c6-3cab-7085-83d3-55b083619303@i-love.sakura.ne.jp>
- <8039976be3df9bd07374fe4f1931b8ce28b89dab.camel@linux.ibm.com>
- <cde00350-2a18-1759-d53b-2e7489b6cc0e@i-love.sakura.ne.jp>
- <8a8763a7-eeeb-3578-d50c-c15919fbe1f9@i-love.sakura.ne.jp>
- <3ed2004413e0ac07c7bd6f10294d6b6fac6fdbf3.camel@linux.ibm.com>
- <cc01e7b7-d685-289c-a792-fc76fabba807@i-love.sakura.ne.jp>
- <721b4f8d38b014babb0f4ae829d76014bbf7734e.camel@linux.ibm.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <0a0c5cc5-0e1b-ef01-60c4-5247af2124f4@i-love.sakura.ne.jp>
-Date:   Wed, 24 Mar 2021 19:10:19 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Wed, 24 Mar 2021 06:40:01 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-129-cK_RaveBM8aprN2x6jOm4g-1; Wed, 24 Mar 2021 10:39:58 +0000
+X-MC-Unique: cK_RaveBM8aprN2x6jOm4g-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.2; Wed, 24 Mar 2021 10:39:57 +0000
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.012; Wed, 24 Mar 2021 10:39:57 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Martin Sebor' <msebor@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Martin Sebor" <msebor@gcc.gnu.org>, Ning Sun <ning.sun@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "tboot-devel@lists.sourceforge.net" 
+        <tboot-devel@lists.sourceforge.net>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Will Deacon <will@kernel.org>
+Subject: RE: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
+Thread-Topic: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
+Thread-Index: AQHXH2fn7jNrPkUb50e9k3rL2a+D9qqS2/oQgAAX0+A=
+Date:   Wed, 24 Mar 2021 10:39:57 +0000
+Message-ID: <7e05de6cbb554b09ac532c073fab7386@AcuMS.aculab.com>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-3-arnd@kernel.org>
+ <20210322202958.GA1955909@gmail.com>
+ <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
+ <0aa198a1dd904231bcc29454bf19a812@AcuMS.aculab.com>
+In-Reply-To: <0aa198a1dd904231bcc29454bf19a812@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-In-Reply-To: <721b4f8d38b014babb0f4ae829d76014bbf7734e.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021/03/24 1:13, Mimi Zohar wrote:
-> On Wed, 2021-03-24 at 00:14 +0900, Tetsuo Handa wrote:
->> On 2021/03/23 23:47, Mimi Zohar wrote:
->>> Initially I also questioned making "integrity" an LSM.  Perhaps it's
->>> time to reconsider.   For now, it makes sense to just fix the NULL
->>> pointer dereferencing.
->>
->> Do we think calling panic() as "fix the NULL pointer dereferencing" ?
-> 
-> Not supplying "integrity" as an "lsm=" option is a user error.  There
-> are only two options - allow or deny the caller to proceed.   If the
-> user is expecting the integrity subsystem to be properly working,
-> returning a NULL and allowing the system to boot (RFC patch version)
-> does not make sense.   Better to fail early.
-
-What does the "user" mean? Those who load the vmlinux?
-Only the "root" user (so called administrators)?
-Any users including other than "root" user?
-
-If the user means those who load the vmlinux, that user is explicitly asking
-for disabling "integrity" for some reason. In that case, it is a bug if
-booting with "integrity" disabled is impossible.
-
-If the user means something other than those who load the vmlinux,
-is there a possibility that that user (especially non "root" users) is
-allowed to try to use "integrity" ? If processes other than global init
-process can try to use "integrity", wouldn't it be a DoS attack vector?
-Please explain in the descripotion why calling panic() does not cause
-DoS attack vector.
+RnJvbTogRGF2aWQgTGFpZ2h0DQo+IFNlbnQ6IDI0IE1hcmNoIDIwMjEgMDk6MTINCj4gDQo+IEZy
+b206IE1hcnRpbiBTZWJvcg0KPiA+IFNlbnQ6IDIyIE1hcmNoIDIwMjEgMjI6MDgNCj4gLi4uDQo+
+ID4gSW4gR0NDIDExLCBhbGwgYWNjZXNzIHdhcm5pbmdzIGV4cGVjdCBvYmplY3RzIHRvIGJlIGVp
+dGhlciBkZWNsYXJlZA0KPiA+IG9yIGFsbG9jYXRlZC4gIFBvaW50ZXJzIHdpdGggY29uc3RhbnQg
+dmFsdWVzIGFyZSB0YWtlbiB0byBwb2ludCB0bw0KPiA+IG5vdGhpbmcgdmFsaWQgKGFzIEFybmQg
+bWVudGlvbmVkIGFib3ZlLCB0aGlzIGlzIHRvIGRldGVjdCBpbnZhbGlkDQo+ID4gYWNjZXNzZXMg
+dG8gbWVtYmVycyBvZiBzdHJ1Y3RzIGF0IGFkZHJlc3MgemVybykuDQo+ID4NCj4gPiBPbmUgcG9z
+c2libGUgc29sdXRpb24gdG8gdGhlIGtub3duIGFkZHJlc3MgcHJvYmxlbSBpcyB0byBleHRlbmQg
+R0NDDQo+ID4gYXR0cmlidXRlcyBhZGRyZXNzIGFuZCBpbyB0aGF0IHBpbiBhbiBvYmplY3QgdG8g
+YSBoYXJkd2lyZWQgYWRkcmVzcw0KPiA+IHRvIGFsbCB0YXJnZXRzIChhdCB0aGUgbW9tZW50IHRo
+ZXkncmUgc3VwcG9ydGVkIG9uIGp1c3Qgb25lIG9yIHR3bw0KPiA+IHRhcmdldHMpLiAgSSdtIG5v
+dCBzdXJlIHRoaXMgY2FuIHN0aWxsIGhhcHBlbiBiZWZvcmUgR0NDIDExIHJlbGVhc2VzDQo+ID4g
+c29tZXRpbWUgaW4gQXByaWwgb3IgTWF5Lg0KPiANCj4gQSBkaWZmZXJlbnQgc29sdXRpb24gaXMg
+dG8gZGVmaW5lIGEgbm9ybWFsIEMgZXh0ZXJuYWwgZGF0YSBpdGVtDQo+IGFuZCB0aGVuIGFzc2ln
+biBhIGZpeGVkIGFkZHJlc3Mgd2l0aCBhbiBhc20gc3RhdGVtZW50IG9yIGluDQo+IHRoZSBsaW5r
+ZXIgc2NyaXB0Lg0KDQpPciBzdG9wIGdjYyB0cmFja2luZyB0aGUgdmFsdWUgYnkgdXNpbmc6DQoJ
+c3RydWN0IGZvbyAqZm9vID0gKHZvaWQgKil4eHh4eDsNCglhc20gKCIiLCAiK3IiIChmb28pKTsN
+Cg0KSWYgdGhlIGFkZHJlc3MgaXMgdXNlZCBtb3JlIHRoYW4gb25jZSBmb3JjaW5nIGl0IGludG8N
+CmEgcmVnaXN0ZXIgaXMgYWxzbyBsaWtlbHkgdG8gZ2VuZXJhdGUgYmV0dGVyIGNvZGUuDQoNCglE
+YXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91
+bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5
+NzM4NiAoV2FsZXMpDQo=
 
