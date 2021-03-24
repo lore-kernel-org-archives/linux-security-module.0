@@ -2,97 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241A6C433C1
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E5AC433C1
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7CA4619F9
-	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 754D2619FB
+	for <linux-security-module@archiver.kernel.org>; Wed, 24 Mar 2021 09:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234056AbhCXJBG (ORCPT
+        id S231530AbhCXJNF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 24 Mar 2021 05:01:06 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:3384 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231583AbhCXJAf (ORCPT
+        Wed, 24 Mar 2021 05:13:05 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:27855 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231709AbhCXJNC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 24 Mar 2021 05:00:35 -0400
-Received: from DGGEML402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4F52FK70T5z5g3B;
-        Wed, 24 Mar 2021 16:57:57 +0800 (CST)
-Received: from dggema751-chm.china.huawei.com (10.1.198.193) by
- DGGEML402-HUB.china.huawei.com (10.3.17.38) with Microsoft SMTP Server (TLS)
- id 14.3.498.0; Wed, 24 Mar 2021 17:00:28 +0800
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- dggema751-chm.china.huawei.com (10.1.198.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2106.2; Wed, 24 Mar 2021 17:00:27 +0800
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.013;
- Wed, 24 Mar 2021 10:00:25 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     lihuafei <lihuafei1@huawei.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        Wed, 24 Mar 2021 05:13:02 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-70-F_iQyAaGNv6_r3BEezM2zQ-1; Wed, 24 Mar 2021 09:11:56 +0000
+X-MC-Unique: F_iQyAaGNv6_r3BEezM2zQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.2; Wed, 24 Mar 2021 09:11:55 +0000
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.012; Wed, 24 Mar 2021 09:11:55 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Martin Sebor' <msebor@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        "Arnd Bergmann" <arnd@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Martin Sebor" <msebor@gcc.gnu.org>, Ning Sun <ning.sun@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "tboot-devel@lists.sourceforge.net" 
+        <tboot-devel@lists.sourceforge.net>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "ath11k@lists.infradead.org" <ath11k@lists.infradead.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        yangjihong <yangjihong1@huawei.com>,
-        Zhangjinhao <zhangjinhao2@huawei.com>
-Subject: RE: [PATCH] ima: Fix the error code for restoring the PCR value
-Thread-Topic: [PATCH] ima: Fix the error code for restoring the PCR value
-Thread-Index: AQHXD91Wj9SbBJTtDEeMf5FsP/azT6qRo7OAgAFTVaA=
-Date:   Wed, 24 Mar 2021 09:00:25 +0000
-Message-ID: <0764ed04a7e84546a8b31fc13b264c47@huawei.com>
-References: <20210303032824.124112-1-lihuafei1@huawei.com>
- <9df8d712-0e58-f95d-8f95-5feae2150b42@huawei.com>
-In-Reply-To: <9df8d712-0e58-f95d-8f95-5feae2150b42@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Will Deacon <will@kernel.org>
+Subject: RE: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
+Thread-Topic: [PATCH 02/11] x86: tboot: avoid Wstringop-overread-warning
+Thread-Index: AQHXH2fn7jNrPkUb50e9k3rL2a+D9qqS2/oQ
+Date:   Wed, 24 Mar 2021 09:11:55 +0000
+Message-ID: <0aa198a1dd904231bcc29454bf19a812@AcuMS.aculab.com>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-3-arnd@kernel.org>
+ <20210322202958.GA1955909@gmail.com>
+ <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
+In-Reply-To: <b944a853-0e4b-b767-0175-cc2c1edba759@gmail.com>
+Accept-Language: en-GB, en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.9.172]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBsaWh1YWZlaQ0KPiBTZW50OiBUdWVzZGF5LCBNYXJjaCAyMywgMjAyMSAyOjQxIFBN
-DQo+IHBpbmcuIDotKQ0KPiANCj4gT24gMjAyMS8zLzMgMTE6MjgsIExpIEh1YWZlaSB3cm90ZToN
-Cj4gPiBJbiBpbWFfcmVzdG9yZV9tZWFzdXJlbWVudF9saXN0KCksIGhkcltIRFJfUENSXS5kYXRh
-IGlzIHBvaW50aW5nIHRvIGENCj4gPiBidWZmZXIgb2YgdHlwZSB1OCwgd2hpY2ggY29udGFpbnMg
-dGhlIGR1bXBlZCAzMi1iaXQgcGNyIHZhbHVlLg0KPiA+IEN1cnJlbnRseSwgb25seSB0aGUgbGVh
-c3Qgc2lnbmlmaWNhbnQgYnl0ZSBpcyB1c2VkIHRvIHJlc3RvcmUgdGhlIHBjcg0KPiA+IHZhbHVl
-LiBXZSBzaG91bGQgY29udmVydCBoZHJbSERSX1BDUl0uZGF0YSB0byBhIHBvaW50ZXIgb2YgdHlw
-ZSB1MzINCj4gPiBiZWZvcmUgZmV0Y2hpbmcgdGhlIHZhbHVlIHRvIHJlc3RvcmUgdGhlIGNvcnJl
-Y3QgcGNyIHZhbHVlLg0KPiA+DQo+ID4gRml4ZXM6IDQ3ZmRlZTYwYjQ3ZiAoImltYTogdXNlIGlt
-YV9wYXJzZV9idWYoKSB0byBwYXJzZSBtZWFzdXJlbWVudHMNCj4gaGVhZGVycyIpDQo+ID4gU2ln
-bmVkLW9mZi1ieTogTGkgSHVhZmVpIDxsaWh1YWZlaTFAaHVhd2VpLmNvbT4NCg0KSGkgTGkgSHVh
-ZmVpDQoNCnllcywgY29ycmVjdC4gVGhhbmtzIGZvciB0aGUgcGF0Y2guDQoNClJldmlld2VkLWJ5
-OiBSb2JlcnRvIFNhc3N1IDxyb2JlcnRvLnNhc3N1QGh1YXdlaS5jb20+DQoNClJvYmVydG8NCg0K
-SFVBV0VJIFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5n
-IERpcmVjdG9yOiBMaSBQZW5nLCBMaSBKaWFuLCBTaGkgWWFubGkNCg0KPiA+IC0tLQ0KPiA+ICAg
-c2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGUuYyB8IDQgKystLQ0KPiA+ICAgMSBm
-aWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRp
-ZmYgLS1naXQgYS9zZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV90ZW1wbGF0ZS5jDQo+IGIvc2Vj
-dXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfdGVtcGxhdGUuYw0KPiA+IGluZGV4IGUyMmU1MTBhZTky
-ZC4uNGUwODFlNjUwMDQ3IDEwMDY0NA0KPiA+IC0tLSBhL3NlY3VyaXR5L2ludGVncml0eS9pbWEv
-aW1hX3RlbXBsYXRlLmMNCj4gPiArKysgYi9zZWN1cml0eS9pbnRlZ3JpdHkvaW1hL2ltYV90ZW1w
-bGF0ZS5jDQo+ID4gQEAgLTQ5NCw4ICs0OTQsOCBAQCBpbnQgaW1hX3Jlc3RvcmVfbWVhc3VyZW1l
-bnRfbGlzdChsb2ZmX3Qgc2l6ZSwgdm9pZA0KPiAqYnVmKQ0KPiA+ICAgCQkJfQ0KPiA+ICAgCQl9
-DQo+ID4NCj4gPiAtCQllbnRyeS0+cGNyID0gIWltYV9jYW5vbmljYWxfZm10ID8gKihoZHJbSERS
-X1BDUl0uZGF0YSkgOg0KPiA+IC0JCQkgICAgIGxlMzJfdG9fY3B1KCooaGRyW0hEUl9QQ1JdLmRh
-dGEpKTsNCj4gPiArCQllbnRyeS0+cGNyID0gIWltYV9jYW5vbmljYWxfZm10ID8gKih1MzINCj4g
-KikoaGRyW0hEUl9QQ1JdLmRhdGEpIDoNCj4gPiArCQkJICAgICBsZTMyX3RvX2NwdSgqKHUzMiAq
-KShoZHJbSERSX1BDUl0uZGF0YSkpOw0KPiA+ICAgCQlyZXQgPSBpbWFfcmVzdG9yZV9tZWFzdXJl
-bWVudF9lbnRyeShlbnRyeSk7DQo+ID4gICAJCWlmIChyZXQgPCAwKQ0KPiA+ICAgCQkJYnJlYWs7
-DQo+ID4NCg==
+RnJvbTogTWFydGluIFNlYm9yDQo+IFNlbnQ6IDIyIE1hcmNoIDIwMjEgMjI6MDgNCi4uLg0KPiBJ
+biBHQ0MgMTEsIGFsbCBhY2Nlc3Mgd2FybmluZ3MgZXhwZWN0IG9iamVjdHMgdG8gYmUgZWl0aGVy
+IGRlY2xhcmVkDQo+IG9yIGFsbG9jYXRlZC4gIFBvaW50ZXJzIHdpdGggY29uc3RhbnQgdmFsdWVz
+IGFyZSB0YWtlbiB0byBwb2ludCB0bw0KPiBub3RoaW5nIHZhbGlkIChhcyBBcm5kIG1lbnRpb25l
+ZCBhYm92ZSwgdGhpcyBpcyB0byBkZXRlY3QgaW52YWxpZA0KPiBhY2Nlc3NlcyB0byBtZW1iZXJz
+IG9mIHN0cnVjdHMgYXQgYWRkcmVzcyB6ZXJvKS4NCj4gDQo+IE9uZSBwb3NzaWJsZSBzb2x1dGlv
+biB0byB0aGUga25vd24gYWRkcmVzcyBwcm9ibGVtIGlzIHRvIGV4dGVuZCBHQ0MNCj4gYXR0cmli
+dXRlcyBhZGRyZXNzIGFuZCBpbyB0aGF0IHBpbiBhbiBvYmplY3QgdG8gYSBoYXJkd2lyZWQgYWRk
+cmVzcw0KPiB0byBhbGwgdGFyZ2V0cyAoYXQgdGhlIG1vbWVudCB0aGV5J3JlIHN1cHBvcnRlZCBv
+biBqdXN0IG9uZSBvciB0d28NCj4gdGFyZ2V0cykuICBJJ20gbm90IHN1cmUgdGhpcyBjYW4gc3Rp
+bGwgaGFwcGVuIGJlZm9yZSBHQ0MgMTEgcmVsZWFzZXMNCj4gc29tZXRpbWUgaW4gQXByaWwgb3Ig
+TWF5Lg0KDQpBIGRpZmZlcmVudCBzb2x1dGlvbiBpcyB0byBkZWZpbmUgYSBub3JtYWwgQyBleHRl
+cm5hbCBkYXRhIGl0ZW0NCmFuZCB0aGVuIGFzc2lnbiBhIGZpeGVkIGFkZHJlc3Mgd2l0aCBhbiBh
+c20gc3RhdGVtZW50IG9yIGluDQp0aGUgbGlua2VyIHNjcmlwdC4NCg0KCURhdmlkDQoNCi0NClJl
+Z2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0
+b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykN
+Cg==
+
