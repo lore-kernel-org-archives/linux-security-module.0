@@ -2,174 +2,171 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E37AC433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 12:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5A0C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2FDA61A17
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 12:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3591C61864
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:02:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbhCYMkZ (ORCPT
+        id S230436AbhCYOCD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 08:40:25 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2742 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbhCYMkL (ORCPT
+        Thu, 25 Mar 2021 10:02:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230076AbhCYOBd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 08:40:11 -0400
-Received: from fraeml707-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4F5kzj43rfz6822r;
-        Thu, 25 Mar 2021 20:33:37 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml707-chm.china.huawei.com (10.206.15.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Thu, 25 Mar 2021 13:40:08 +0100
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.013;
- Thu, 25 Mar 2021 13:40:08 +0100
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>,
-        "agruenba@redhat.com" <agruenba@redhat.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
- unmodified metadata
-Thread-Topic: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
- unmodified metadata
-Thread-Index: AQHXEdMs3dcvjnFQvUyUTwTeWmdH4qqTStlAgAFhU4CAAAIZAIAAFakw
-Date:   Thu, 25 Mar 2021 12:40:08 +0000
-Message-ID: <5e724bfe526f4069ba4cb7b99e538856@huawei.com>
-References: <20210305151923.29039-1-roberto.sassu@huawei.com>
- <20210305151923.29039-9-roberto.sassu@huawei.com>
- <ad33c998ee834a588e0ca1a31ee2a530@huawei.com>
- <20210325121341.q2ufjhnqe3osjc7c@wittgenstein>
- <20210325122112.htkwkt3emura5day@wittgenstein>
-In-Reply-To: <20210325122112.htkwkt3emura5day@wittgenstein>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.4.143]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 25 Mar 2021 10:01:33 -0400
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E11C06175F
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 07:01:33 -0700 (PDT)
+Received: by mail-lf1-x136.google.com with SMTP id b83so2652960lfd.11
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 07:01:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MmF8zMMhSJr2UbOoYiZqtv8YBPrRUBEDP7fTi81KAEk=;
+        b=ySCJ54ICDE6200wEeFqVJv/p1kR197zEWndwv2ypByqKlhCXXhWFp8/SLHr5XEWYN8
+         97L3YlomdDH9+yIicnZJt0XCSWZ6LfsEGo/Uc10dXf8YhTttlLJfGwIJqy3mVtxTlp7B
+         1/Ct2gYKCrxR/T7G4+DrDJLfyfIGAgXqUpTEb3DE1U7OdVSRn2JS46gpwUF3/VektYED
+         cviJesFIXSxfUFqjNV5JtVZZGXZPZZpUt4UAND002egeiXa+uOEXrcLommLqWcVX8vxx
+         UzN20W0zHk8DABO2nVpledwJz2npmWit2ZxuobV51siQhqslP3p/LYZae6ZeZx3BUUf8
+         f5ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MmF8zMMhSJr2UbOoYiZqtv8YBPrRUBEDP7fTi81KAEk=;
+        b=t4JMFLGUBCugEbLhbZkU0a3MsOaeLwiEr2F5WrzFT8gaD+LCpn7LcTEGG4nmJ0P3Gx
+         9blXxBoQzlJJLIQwXsUt3QO6880kIVUrq3IUJIjB84GXqr8cwctYwwcwcCfOWNJnhFox
+         /24Ti0XeIPYxw78/i2S4yR7WE6PxjXzXWP6mj+03xgddU0BXKKhk+5mYNgB+JYIh02CP
+         XJuRvFrFNU/7Vi7aUb/QkYtfKO4Hnv2dNNKOW4MQw5eUvjyBH+SOTuEnzejneLtt4nSl
+         cSFmlwwS9agL5SOkhQd4rb+49RkFuRLcmAM48kkfmaj/tGuNg9HMpIrgb3fSEvcl8Ko3
+         NS4w==
+X-Gm-Message-State: AOAM532A0eLYk+I0sv+nqDdzk54u9vgalrsY2Sq6Qw6o7bXS4cIfsSea
+        Vp/qxqI4OiNTUquMTfqGkm6yT3A68ZE1+BIbRKCclg==
+X-Google-Smtp-Source: ABdhPJwN9qo9jK5N4Qbvi4l62f5Ye52sRZLOgrlXWLb5uvDKoV3liGbEnF0y5GhyhtVdQ0++fd/nRNIdObtNPuZNGvU=
+X-Received: by 2002:a19:4c08:: with SMTP id z8mr4917148lfa.157.1616680886895;
+ Thu, 25 Mar 2021 07:01:26 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
+ <20210212195255.1321544-1-jiancai@google.com> <20210217094859.GA3706@willie-the-truck>
+In-Reply-To: <20210217094859.GA3706@willie-the-truck>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 25 Mar 2021 15:01:15 +0100
+Message-ID: <CACRpkdYHXrMPtkG09x9tscBzp2O=Ps-8m_03J6DcBnYcQuvWGg@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: Implement Clang's SLS mitigation
+To:     Will Deacon <will@kernel.org>
+Cc:     Jian Cai <jiancai@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Luis Lozano <llozano@google.com>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        David Laight <David.Laight@aculab.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org,
+        Kristof Beyls <kristof.beyls@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBDaHJpc3RpYW4gQnJhdW5lciBbbWFpbHRvOmNocmlzdGlhbi5icmF1bmVyQHVidW50
-dS5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBNYXJjaCAyNSwgMjAyMSAxOjIxIFBNDQo+IE9uIFRo
-dSwgTWFyIDI1LCAyMDIxIGF0IDAxOjEzOjQxUE0gKzAxMDAsIENocmlzdGlhbiBCcmF1bmVyIHdy
-b3RlOg0KPiA+IE9uIFRodSwgTWFyIDI1LCAyMDIxIGF0IDEwOjUzOjQzQU0gKzAwMDAsIFJvYmVy
-dG8gU2Fzc3Ugd3JvdGU6DQo+ID4gPiA+IEZyb206IFJvYmVydG8gU2Fzc3UNCj4gPiA+ID4gU2Vu
-dDogRnJpZGF5LCBNYXJjaCA1LCAyMDIxIDQ6MTkgUE0NCj4gPiA+ID4gV2l0aCB0aGUgcGF0Y2gg
-dG8gYWxsb3cgeGF0dHIvYXR0ciBvcGVyYXRpb25zIGlmIGEgcG9ydGFibGUgc2lnbmF0dXJlDQo+
-ID4gPiA+IHZlcmlmaWNhdGlvbiBmYWlscywgY3AgYW5kIHRhciBjYW4gY29weSBhbGwgeGF0dHJz
-L2F0dHJzIHNvIHRoYXQgYXQgdGhlDQo+ID4gPiA+IGVuZCBvZiB0aGUgcHJvY2VzcyB2ZXJpZmlj
-YXRpb24gc3VjY2VlZHMuDQo+ID4gPiA+DQo+ID4gPiA+IEhvd2V2ZXIsIGl0IG1pZ2h0IGhhcHBl
-biB0aGF0IHRoZSB4YXR0cnMvYXR0cnMgYXJlIGFscmVhZHkgc2V0IHRvIHRoZQ0KPiA+ID4gPiBj
-b3JyZWN0IHZhbHVlICh0YWtlbiBhdCBzaWduaW5nIHRpbWUpIGFuZCBzaWduYXR1cmUgdmVyaWZp
-Y2F0aW9uDQo+IHN1Y2NlZWRzDQo+ID4gPiA+IGJlZm9yZSB0aGUgY29weSBoYXMgY29tcGxldGVk
-LiBGb3IgZXhhbXBsZSwgYW4gYXJjaGl2ZSBtaWdodA0KPiBjb250YWlucyBmaWxlcw0KPiA+ID4g
-PiBvd25lZCBieSByb290IGFuZCB0aGUgYXJjaGl2ZSBpcyBleHRyYWN0ZWQgYnkgcm9vdC4NCj4g
-PiA+ID4NCj4gPiA+ID4gVGhlbiwgc2luY2UgcG9ydGFibGUgc2lnbmF0dXJlcyBhcmUgaW1tdXRh
-YmxlLCBhbGwgc3Vic2VxdWVudA0KPiBvcGVyYXRpb25zDQo+ID4gPiA+IGZhaWwgKGUuZy4gZmNo
-b3duKCkpLCBldmVuIGlmIHRoZSBvcGVyYXRpb24gaXMgbGVnaXRpbWF0ZSAoZG9lcyBub3QgYWx0
-ZXINCj4gPiA+ID4gdGhlIGN1cnJlbnQgdmFsdWUpLg0KPiA+ID4gPg0KPiA+ID4gPiBUaGlzIHBh
-dGNoIGF2b2lkcyB0aGlzIHByb2JsZW0gYnkgcmVwb3J0aW5nIHN1Y2Nlc3NmdWwgb3BlcmF0aW9u
-IHRvDQo+IHVzZXINCj4gPiA+ID4gc3BhY2Ugd2hlbiB0aGF0IG9wZXJhdGlvbiBkb2VzIG5vdCBh
-bHRlciB0aGUgY3VycmVudCB2YWx1ZSBvZg0KPiB4YXR0cnMvYXR0cnMuDQo+ID4gPiA+DQo+ID4g
-PiA+IFNpZ25lZC1vZmYtYnk6IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNv
-bT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICBzZWN1cml0eS9pbnRlZ3JpdHkvZXZtL2V2bV9tYWlu
-LmMgfCA5Ng0KPiA+ID4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gPiA+
-ICAxIGZpbGUgY2hhbmdlZCwgOTYgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPg0KPiA+ID4gPiBkaWZm
-IC0tZ2l0IGEvc2VjdXJpdHkvaW50ZWdyaXR5L2V2bS9ldm1fbWFpbi5jDQo+ID4gPiA+IGIvc2Vj
-dXJpdHkvaW50ZWdyaXR5L2V2bS9ldm1fbWFpbi5jDQo+ID4gPiA+IGluZGV4IGVhYjUzNmZhMjYw
-Zi4uYTA3NTE2ZGNiOTIwIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9zZWN1cml0eS9pbnRlZ3JpdHkv
-ZXZtL2V2bV9tYWluLmMNCj4gPiA+ID4gKysrIGIvc2VjdXJpdHkvaW50ZWdyaXR5L2V2bS9ldm1f
-bWFpbi5jDQo+ID4gPiA+IEBAIC0xOCw2ICsxOCw3IEBADQo+ID4gPiA+ICAjaW5jbHVkZSA8bGlu
-dXgvaW50ZWdyaXR5Lmg+DQo+ID4gPiA+ICAjaW5jbHVkZSA8bGludXgvZXZtLmg+DQo+ID4gPiA+
-ICAjaW5jbHVkZSA8bGludXgvbWFnaWMuaD4NCj4gPiA+ID4gKyNpbmNsdWRlIDxsaW51eC9wb3Np
-eF9hY2xfeGF0dHIuaD4NCj4gPiA+ID4NCj4gPiA+ID4gICNpbmNsdWRlIDxjcnlwdG8vaGFzaC5o
-Pg0KPiA+ID4gPiAgI2luY2x1ZGUgPGNyeXB0by9oYXNoX2luZm8uaD4NCj4gPiA+ID4gQEAgLTMy
-OCw2ICszMjksNzkgQEAgc3RhdGljIGVudW0gaW50ZWdyaXR5X3N0YXR1cw0KPiA+ID4gPiBldm1f
-dmVyaWZ5X2N1cnJlbnRfaW50ZWdyaXR5KHN0cnVjdCBkZW50cnkgKmRlbnRyeSkNCj4gPiA+ID4g
-IAlyZXR1cm4gZXZtX3ZlcmlmeV9obWFjKGRlbnRyeSwgTlVMTCwgTlVMTCwgMCwgTlVMTCk7DQo+
-ID4gPiA+ICB9DQo+ID4gPiA+DQo+ID4gPiA+ICsvKg0KPiA+ID4gPiArICogZXZtX3hhdHRyX2Fj
-bF9jaGFuZ2UgLSBjaGVjayBpZiBwYXNzZWQgQUNMIGNoYW5nZXMgdGhlIGlub2RlDQo+IG1vZGUN
-Cj4gPiA+ID4gKyAqIEBkZW50cnk6IHBvaW50ZXIgdG8gdGhlIGFmZmVjdGVkIGRlbnRyeQ0KPiA+
-ID4gPiArICogQHhhdHRyX25hbWU6IHJlcXVlc3RlZCB4YXR0cg0KPiA+ID4gPiArICogQHhhdHRy
-X3ZhbHVlOiByZXF1ZXN0ZWQgeGF0dHIgdmFsdWUNCj4gPiA+ID4gKyAqIEB4YXR0cl92YWx1ZV9s
-ZW46IHJlcXVlc3RlZCB4YXR0ciB2YWx1ZSBsZW5ndGgNCj4gPiA+ID4gKyAqDQo+ID4gPiA+ICsg
-KiBDaGVjayBpZiBwYXNzZWQgQUNMIGNoYW5nZXMgdGhlIGlub2RlIG1vZGUsIHdoaWNoIGlzIHBy
-b3RlY3RlZA0KPiBieQ0KPiA+ID4gPiBFVk0uDQo+ID4gPiA+ICsgKg0KPiA+ID4gPiArICogUmV0
-dXJucyAxIGlmIHBhc3NlZCBBQ0wgY2F1c2VzIGlub2RlIG1vZGUgY2hhbmdlLCAwIG90aGVyd2lz
-ZS4NCj4gPiA+ID4gKyAqLw0KPiA+ID4gPiArc3RhdGljIGludCBldm1feGF0dHJfYWNsX2NoYW5n
-ZShzdHJ1Y3QgZGVudHJ5ICpkZW50cnksIGNvbnN0IGNoYXINCj4gPiA+ID4gKnhhdHRyX25hbWUs
-DQo+ID4gPiA+ICsJCQkJY29uc3Qgdm9pZCAqeGF0dHJfdmFsdWUsIHNpemVfdA0KPiA+ID4gPiB4
-YXR0cl92YWx1ZV9sZW4pDQo+ID4gPiA+ICt7DQo+ID4gPiA+ICsJdW1vZGVfdCBtb2RlOw0KPiA+
-ID4gPiArCXN0cnVjdCBwb3NpeF9hY2wgKmFjbCA9IE5VTEwsICphY2xfcmVzOw0KPiA+ID4gPiAr
-CXN0cnVjdCBpbm9kZSAqaW5vZGUgPSBkX2JhY2tpbmdfaW5vZGUoZGVudHJ5KTsNCj4gPiA+ID4g
-KwlpbnQgcmM7DQo+ID4gPiA+ICsNCj4gPiA+ID4gKwkvKiBVSUQvR0lEIGluIEFDTCBoYXZlIGJl
-ZW4gYWxyZWFkeSBjb252ZXJ0ZWQgZnJvbSB1c2VyIHRvIGluaXQgbnMNCj4gPiA+ID4gKi8NCj4g
-PiA+ID4gKwlhY2wgPSBwb3NpeF9hY2xfZnJvbV94YXR0cigmaW5pdF91c2VyX25zLCB4YXR0cl92
-YWx1ZSwNCj4gPiA+ID4geGF0dHJfdmFsdWVfbGVuKTsNCj4gPiA+ID4gKwlpZiAoIWFjbCkNCj4g
-PiA+DQo+ID4gPiBCYXNlZCBvbiBNaW1pJ3MgcmV2aWV3LCBJIHdpbGwgY2hhbmdlIHRoaXMgdG86
-DQo+ID4gPg0KPiA+ID4gaWYgKElTX0VSUl9PUl9OVUxMKGFjbCkpDQo+ID4gPg0KPiA+ID4gPiAr
-CQlyZXR1cm4gMTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArCWFjbF9yZXMgPSBhY2w7DQo+ID4gPiA+
-ICsJcmMgPSBwb3NpeF9hY2xfdXBkYXRlX21vZGUoJmluaXRfdXNlcl9ucywgaW5vZGUsICZtb2Rl
-LA0KPiA+ID4gPiAmYWNsX3Jlcyk7DQo+ID4gPg0KPiA+ID4gQWJvdXQgdGhpcyBwYXJ0LCBwcm9i
-YWJseSBpdCBpcyBub3QgY29ycmVjdC4NCj4gPiA+DQo+ID4gPiBJJ20gd3JpdGluZyBhIHRlc3Qg
-Zm9yIHRoaXMgcGF0Y2ggdGhhdCBjaGVja3MgaWYgb3BlcmF0aW9ucw0KPiA+ID4gdGhhdCBkb24n
-dCBjaGFuZ2UgdGhlIGZpbGUgbW9kZSBzdWNjZWVkIGFuZCB0aG9zZSB0aGF0DQo+ID4gPiBkbyBm
-YWlsLg0KPiA+ID4NCj4gPiA+IG1vdW50LWlkbWFwcGVkIC0tbWFwLW1vdW50IGI6MzAwMTowOjEg
-L21udCAvbW50LWlkbWFwcGVkDQo+ID4gPiBwdXNoZCAvbW50DQo+ID4gPiBlY2hvICJ0ZXN0IiA+
-IHRlc3QtZmlsZQ0KPiA+ID4gY2hvd24gMzAwMSB0ZXN0LWZpbGUNCj4gPiA+IGNoZ3JwIDMwMDEg
-dGVzdC1maWxlDQo+ID4gPiBjaG1vZCAyNjQ0IHRlc3QtZmlsZQ0KPiA+ID4gPGNoZWNrIGVuYWJs
-ZWQ+DQo+ID4gPiBzZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cixtOnIgdGVzdC1maWxlIChl
-eHBlY3RlZCB0byBzdWNjZWVkLCBjYWxsZXIgaGFzDQo+IENBUF9GU0VUSUQsIHNvIFNfSVNHSUQg
-aXMgbm90IGRyb3BwZWQpDQo+ID4gPiBzZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cixtOnJ3
-IHRlc3QtZmlsZSAoZXhwZWN0ZWQgdG8gZmFpbCkNCj4gPiA+IHB1c2hkIC9tbnQtaWRtYXBwZWQN
-Cj4gPiA+IGNhcHNoIC0tZHJvcD1jYXBfZnNldGlkIC0tIC1jIHNldGZhY2wgLS1zZXQgdTo6cncs
-Zzo6cixvOjpyIHRlc3QtZmlsZQ0KPiAoZXhwZWN0ZWQgdG8gc3VjY2VlZCwgY2FsbGVyIGlzIGlu
-IHRoZSBvd25pbmcgZ3JvdXAgb2YgdGVzdC1maWxlLCBzbyBTX0lTR0lEIGlzDQo+IG5vdCBkcm9w
-cGVkKQ0KPiA+ID4NCj4gPiA+IEFmdGVyIGFkZGluZyBhIGRlYnVnIGxpbmUgaW4gcG9zaXhfYWNs
-X3VwZGF0ZV9tb2RlKCk6DQo+ID4gPiBwcmludGsoIiVzOiAlZCglZCkgJWRcbiIsIF9fZnVuY19f
-LA0KPiBpbl9ncm91cF9wKGlfZ2lkX2ludG9fbW50KG1udF91c2VybnMsIGlub2RlKSksDQo+IF9f
-a2dpZF92YWwoaV9naWRfaW50b19tbnQobW50X3VzZXJucywgaW5vZGUpKSwNCj4gY2FwYWJsZV93
-cnRfaW5vZGVfdWlkZ2lkKG1udF91c2VybnMsIGlub2RlLCBDQVBfRlNFVElEKSk7DQo+ID4gPg0K
-PiA+ID4gd2l0aG91dCBwYXNzaW5nIG1udF91c2VybnM6DQo+ID4gPiBbICA3NDguMjYyNTgyXSBz
-ZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cixtOnIgdGVzdC1maWxlDQo+ID4gPiBbICA3NDgu
-MjY4MDIxXSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDAoMzAwMSkgMQ0KPiA+ID4gWyAgNzQ4LjI2
-ODAzNV0gcG9zaXhfYWNsX3VwZGF0ZV9tb2RlOiAwKDMwMDEpIDENCj4gPiA+IFsgIDc0OC4yNjg1
-NzBdIHNldGZhY2wgLS1zZXQgdTo6cncsZzo6cixvOjpyLG06cncgdGVzdC1maWxlDQo+ID4gPiBb
-ICA3NDguMjc0MTkzXSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDAoMzAwMSkgMQ0KPiA+ID4gWyAg
-NzQ4LjI3OTE5OF0gY2Fwc2ggLS1kcm9wPWNhcF9mc2V0aWQgLS0gLWMgc2V0ZmFjbCAtLXNldCB1
-OjpydyxnOjpyLG86OnINCj4gdGVzdC1maWxlDQo+ID4gPiBbICA3NDguMjg3ODk0XSBwb3NpeF9h
-Y2xfdXBkYXRlX21vZGU6IDAoMzAwMSkgMA0KPiA+ID4NCj4gPiA+IHBhc3NpbmcgbW50X3VzZXJu
-czoNCj4gPiA+IFsgICA4MS4xNTk3NjZdIHNldGZhY2wgLS1zZXQgdTo6cncsZzo6cixvOjpyLG06
-ciB0ZXN0LWZpbGUNCj4gPiA+IFsgICA4MS4xNjUyMDddIHBvc2l4X2FjbF91cGRhdGVfbW9kZTog
-MCgzMDAxKSAxDQo+ID4gPiBbICAgODEuMTY1MjI2XSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDAo
-MzAwMSkgMQ0KPiA+ID4gWyAgIDgxLjE2NTczMl0gc2V0ZmFjbCAtLXNldCB1OjpydyxnOjpyLG86
-OnIsbTpydyB0ZXN0LWZpbGUNCj4gPiA+IFsgICA4MS4xNzA5NzhdIHBvc2l4X2FjbF91cGRhdGVf
-bW9kZTogMCgzMDAxKSAxDQo+ID4gPiBbICAgODEuMTc2MDE0XSBjYXBzaCAtLWRyb3A9Y2FwX2Zz
-ZXRpZCAtLSAtYyBzZXRmYWNsIC0tc2V0IHU6OnJ3LGc6OnIsbzo6cg0KPiB0ZXN0LWZpbGUNCj4g
-PiA+IFsgICA4MS4xODQ2NDhdIHBvc2l4X2FjbF91cGRhdGVfbW9kZTogMSgwKSAwDQo+ID4gPiBb
-ICAgODEuMTg0NjYzXSBwb3NpeF9hY2xfdXBkYXRlX21vZGU6IDEoMCkgMA0KPiA+ID4NCj4gPiA+
-IFRoZSBkaWZmZXJlbmNlIGlzIHRoYXQsIGJ5IHBhc3NpbmcgbW50X3VzZXJucywgdGhlIGNhbGxl
-ciAocm9vdCkgaXMNCj4gPiA+IGluIHRoZSBvd25pbmcgZ3JvdXAgb2YgdGhlIGZpbGUgKDMwMDEg
-LT4gMCkuIFdpdGhvdXQgcGFzc2luZyBtbnRfdXNlcm5zLA0KPiA+ID4gaXQgaXMgbm90ICgzMDAx
-IC0+IDMwMDEpLg0KPiA+ID4NCj4gPiA+IENocmlzdGlhbiwgQW5kcmVhcywgY291bGQgeW91IGNv
-bmZpcm0gdGhhdCB0aGlzIGlzIGNvcnJlY3Q/DQo+ID4NCj4gPiBIZXkgUm9iZXJ0LA0KPiANCj4g
-cy9Sb2JlcnQvUm9iZXJ0by8NCj4gDQo+IFNvcnJ5IGZvciB0aGUgdHlwby4NCg0KTm8gd29ycmll
-cyENCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhS
-QiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0K
+Hi Will,
+
+I went back and found this feedback which is kind of the heart of the
+issues regarding SLS.
+
+On Wed, Feb 17, 2021 at 10:51 AM Will Deacon <will@kernel.org> wrote:
+
+> The big problem I have with this is that it's a compile-time decision.
+> For the other spectre crap we have a combination of the "mitigations=off"
+> command-line and CPU detection to avoid the cost of the mitigation where
+> it is not deemed necessary.
+
+For newcomers, the way this works today can be found in e.g.:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/kernel/proton-pack.c
+mitigations=off turns off Spectre v2 and v4 mitigations.
+
+AFAICT this is achived with misc parameterization to firmware
+and hypervisors and no runtime-patching of any code
+at all?
+
+(On ARM32 it has no effect whatsoever, we just turn on all
+spectre v2 mitigations by default. No runtime choice.)
+
+The way I understand it is that for SLS the compiler must at least
+put in some kind of placeholders, but that it *might* be possible to do
+runtime mitigations on top of that.
+
+We need feedback from the compiler people as to what is
+possible here.
+
+If it is *not* possible to mitigate at run-time, then I don't know
+what is the right thing to do. Certainly not to turn it on by default
+as is done today?
+
+> So I think that either we enable this unconditionally, or we don't enable it
+> at all (and people can hack their CFLAGS themselves if they want to). It
+> would be helpful for one of the Arm folks to chime in, as I'm yet to see any
+> evidence that this is actually exploitable.
+(...)
+> Is it any worse that Spectre-v1,
+> where we _don't_ have a compiler mitigation?
+
+There is such a compiler mitigation for Spectre v1, under
+the name "Speculative load hardening" the kernel
+is not (yet) enabling it.
+
+https://llvm.org/docs/SpeculativeLoadHardening.html
+it comes with the intuitive command line switch
+-mspeculative-load-hardening
+
+Certainly a separate patch can add speculative load
+hardening support on top of this, or before this patch,
+if there is desire and/or feels like a more coherent
+approach.
+
+As the article says "The performance overhead of this style of
+comprehensive mitigation is very high (...) most large applications
+seeing a 30% overhead or less."
+
+I suppose it can be enabled while compiling the kernel just
+like this patch enables -mharden-sls=all
+
+I don't know if your comment means that if we enable one
+of them we should just as well enable both or none as
+otherwise there is no real protection, as attackers can
+just use the other similar attack vector?
+
+> Finally, do we have to worry about our assembly code?
+
+AFAICT yes, and you seem to have hardened
+Aarch64's ERET:s which seemed especially vulnerable
+in commit
+679db70801da9fda91d26caf13bf5b5ccc74e8e8
+"arm64: entry: Place an SB sequence following an ERET instruction"
+Link for people without kernel source:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=679db70801da9fda91d26caf13bf5b5ccc74e8e8
+
+So it seems the most vulnerable spot was already
+fixed by you, thanks! But I bet there are some more
+spots.
+
+Yours,
+Linus Walleij
