@@ -2,215 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D21C433C1
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB85AC433E2
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 15:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88C4C619FC
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DDD061A2E
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 15:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbhCYOue (ORCPT
+        id S230416AbhCYPKa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 10:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55344 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbhCYOuC (ORCPT
+        Thu, 25 Mar 2021 11:10:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:63178 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230512AbhCYPKJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:50:02 -0400
-Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28DCAC06174A;
-        Thu, 25 Mar 2021 07:50:02 -0700 (PDT)
-Received: by mail-qk1-x729.google.com with SMTP id z10so1962103qkz.13;
-        Thu, 25 Mar 2021 07:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A01xU9scL5QHqCTcEARA+UZXhX3w6QfTLVjGvG0qhWs=;
-        b=fjIpx38pKKpF7tuHHnx+6bHTa8GIAr+gRLGjKt2x69P7v8gjKVe3W9dYqxgP9vSwI9
-         QihvfqnQepbko6JQmAIRW+EQAppxHtxDBVpKo/ulTx0XeTA+TsLT2XPd5R47EHfs/vL+
-         RcfmGpqKXdbxR340ysSTk2TR5aaFQcoTZCnFjyd/rFWDxI9wey0GlS/SNuFSvLhs+psi
-         0EVXYddJbSDWFSlhrUt5I6M67vOMO/RGQOVQ0jvf2R4mqWnxzVz/163P9EVlylTqlOyg
-         RuvSoLqCSa3d1HolOz0J7uXNfTUCd96jvr8FQ9pq7Hu06fFtmIslpU2LxY/2YEkWewFc
-         MUFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A01xU9scL5QHqCTcEARA+UZXhX3w6QfTLVjGvG0qhWs=;
-        b=EQmldZIvRhPxIqCRsDdjkoQalzl6ePRtPbnagLaXFj9n1qaDLC3YoddTUlK4Dz4d7M
-         umjLrutpZZ4KIr5n9UskLKix4ub7sKQ1rIGV+ePI4LdZ3eK+PV0OKQJJ8BOOz10pXzZG
-         T8+mVmWb3LTBgbJaBApjkwH/Nl4PGoWC+r75qtQFrsY0Ljb4EaDE43zgqjCJO0mjzIoF
-         ypL2uDs5nsEjrEXqRyHCeHdfbl3kcTxm6au7dTHdp9rAS9T832ges3+Nu3HWJX0YmpMe
-         2yOqfhx8o/L27/4/IzotHC88Q5TCLBh7Wkp35V3j0WAhZxlvHu0cX4KqfUYlx1X43h42
-         8DnA==
-X-Gm-Message-State: AOAM532At6N0YPKEkz4ZjxO+iki9p6I2ImF18DH3oviJFRiJ8rR+RwQx
-        VTYLSnxwrQ+Uy7tQxZeBG/A=
-X-Google-Smtp-Source: ABdhPJx2RAnajmw8ltd8BDZCZjs+AmRvn2izOpJq6Wnqeic5eWA8Vk7CLaR0JiE3Cx4o6fmRuVGtdA==
-X-Received: by 2002:a05:620a:1369:: with SMTP id d9mr8566930qkl.378.1616683801356;
-        Thu, 25 Mar 2021 07:50:01 -0700 (PDT)
-Received: from [192.168.0.41] (71-218-23-248.hlrn.qwest.net. [71.218.23.248])
-        by smtp.gmail.com with ESMTPSA id y1sm4324368qki.9.2021.03.25.07.49.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 07:50:00 -0700 (PDT)
-Subject: Re: [PATCH 11/11] [RFC] drm/i915/dp: fix array overflow warning
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Ning Sun <ning.sun@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Simon Kelley <simon@thekelleys.org.uk>,
-        James Smart <james.smart@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        tboot-devel@lists.sourceforge.net,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ath11k@lists.infradead.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-        Animesh Manna <animesh.manna@intel.com>,
-        Sean Paul <seanpaul@chromium.org>
-References: <20210322160253.4032422-1-arnd@kernel.org>
- <20210322160253.4032422-12-arnd@kernel.org> <87wntv3bgt.fsf@intel.com>
- <CAK8P3a0HGiPQ-k6t6roTgeUvVAMMY=fMnGV0+t48yJjz55XFAA@mail.gmail.com>
-From:   Martin Sebor <msebor@gmail.com>
-Message-ID: <44ad545d-cc07-2e5f-9ec8-ad848f39268a@gmail.com>
-Date:   Thu, 25 Mar 2021 08:49:56 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a0HGiPQ-k6t6roTgeUvVAMMY=fMnGV0+t48yJjz55XFAA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 25 Mar 2021 11:10:09 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12PF5NOS076836;
+        Thu, 25 Mar 2021 11:09:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=rravADpvfL0QIpujNbNT4TsZjUwxpTDGUfrXBRxDamg=;
+ b=CqxNirFAAmoKb+ExR3AYjFmjJ1aO9lcbYCUlvTdRD/5Ba2upzBGtIAAFrwvWN7mB9/lh
+ 1yKnhebjCl78NkELKLmRqp8p6xssl3K85c/W/ZevnxtdZ0pmdDhI77bqe0w2LkksnhkZ
+ Ky4TP9on1jSrJECfQpXN14BZR+WlcMOrRiHh1Wvw+hojC65HqDf6sFH858BSdkANaCCi
+ 2YtQBH0umOzTlBeOGfD2onttusZ040LMUuZnNawhEgMpZIvlMK8WUsUezuH6sQ8hF6+7
+ QVCGRH8nDlz5Ks1mtE6AURhWFe8HHznidnU7/DrJki5aGRaa/V/eQeId9zXpkKdjS20o AA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37gvavhb3y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Mar 2021 11:09:41 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12PF5YeG077253;
+        Thu, 25 Mar 2021 11:09:40 -0400
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37gvavhb0h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Mar 2021 11:09:39 -0400
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12PEvhBg027442;
+        Thu, 25 Mar 2021 15:09:34 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03fra.de.ibm.com with ESMTP id 37d9bptvqs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 25 Mar 2021 15:09:34 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12PF9V3N38142278
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Mar 2021 15:09:31 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBA6C52050;
+        Thu, 25 Mar 2021 15:09:31 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.163.11.141])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 44CBD5204F;
+        Thu, 25 Mar 2021 15:09:29 +0000 (GMT)
+Message-ID: <39af167527d6478f86431c2ce29f68177700e82d.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: Fix the error code for restoring the PCR value
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        lihuafei <lihuafei1@huawei.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        yangjihong <yangjihong1@huawei.com>,
+        Zhangjinhao <zhangjinhao2@huawei.com>
+Date:   Thu, 25 Mar 2021 11:09:27 -0400
+In-Reply-To: <0764ed04a7e84546a8b31fc13b264c47@huawei.com>
+References: <20210303032824.124112-1-lihuafei1@huawei.com>
+         <9df8d712-0e58-f95d-8f95-5feae2150b42@huawei.com>
+         <0764ed04a7e84546a8b31fc13b264c47@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-25_04:2021-03-24,2021-03-25 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
+ mlxlogscore=999 adultscore=0 suspectscore=0 clxscore=1011 malwarescore=0
+ phishscore=0 impostorscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2009150000
+ definitions=main-2103250110
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/25/21 3:53 AM, Arnd Bergmann wrote:
-> On Thu, Mar 25, 2021 at 9:05 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
->>> Clearly something is wrong here, but I can't quite figure out what.
->>> Changing the array size to 16 bytes avoids the warning, but is
->>> probably the wrong solution here.
->>
->> Ugh. drm_dp_channel_eq_ok() does not actually require more than
->> DP_LINK_STATUS_SIZE - 2 elements in the link_status. It's some other
->> related functions that do, and in most cases it's convenient to read all
->> those DP_LINK_STATUS_SIZE bytes.
->>
->> However, here the case is slightly different for DP MST, and the change
->> causes reserved DPCD addresses to be read. Not sure it matters, but
->> really I think the problem is what drm_dp_channel_eq_ok() advertizes.
->>
->> I also don't like the array notation with sizes in function parameters
->> in general, because I think it's misleading. Would gcc-11 warn if a
->> function actually accesses the memory out of bounds of the size?
+On Wed, 2021-03-24 at 09:00 +0000, Roberto Sassu wrote:
+> > From: lihuafei
+> > Sent: Tuesday, March 23, 2021 2:41 PM
+> > ping. :-)
+> > 
+> > On 2021/3/3 11:28, Li Huafei wrote:
+> > > In ima_restore_measurement_list(), hdr[HDR_PCR].data is pointing to a
+> > > buffer of type u8, which contains the dumped 32-bit pcr value.
+> > > Currently, only the least significant byte is used to restore the pcr
+> > > value. We should convert hdr[HDR_PCR].data to a pointer of type u32
+> > > before fetching the value to restore the correct pcr value.
+> > >
+> > > Fixes: 47fdee60b47f ("ima: use ima_parse_buf() to parse measurements
+> > headers")
+> > > Signed-off-by: Li Huafei <lihuafei1@huawei.com>
 > 
-> Yes, that is the point of the warning. Using an explicit length in an
-> array argument type tells gcc that the function will never access
-> beyond the end of that bound, and that passing a short array
-> is a bug.
+> Hi Li Huafei
 > 
-> I don't know if this /only/ means triggering a warning, or if gcc
-> is also able to make optimizations after classifying this as undefined
-> behavior that it would not make for an unspecified length.
+> yes, correct. Thanks for the patch.
+> 
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-GCC uses the array parameter notation as a hint for warnings but
-it doesn't optimize on this basis and never will be able to because
-code that accesses more elements from the array isn't invalid.
-Adding static to the bound, as in void f (int[static N]) does
-imply that the function won't access more than N elements and
-C intends for optimizers to rely on it, although GCC doesn't yet.
+The patch set is now queued in next-integrity-testing.
 
-The warning for the array notation is a more portable alternative
-to explicitly annotating functions with attribute access, and to
--Wvla-parameter for VLA parameters.  The latter seem to be used
-relatively rarely, sometimes deliberately because of the bad rap
-of VLA objects, even though VLA parameters don't suffer from
-the same problems.
+thanks,
 
-Martin
-
-> 
->> Anyway. I don't think we're going to get rid of the array notation
->> anytime soon, if ever, no matter how much I dislike it, so I think the
->> right fix would be to at least state the correct required size in
->> drm_dp_channel_eq_ok().
-> 
-> Ok. Just to confirm: Changing the declaration to an unspecified length
-> avoids the warnings, as does the patch below:
-> 
-> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-> index eedbb48815b7..6ebeec3d88a7 100644
-> --- a/drivers/gpu/drm/drm_dp_helper.c
-> +++ b/drivers/gpu/drm/drm_dp_helper.c
-> @@ -46,12 +46,12 @@
->    */
-> 
->   /* Helpers for DP link training */
-> -static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE], int r)
-> +static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE - 2], int r)
->   {
->          return link_status[r - DP_LANE0_1_STATUS];
->   }
-> 
-> -static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE],
-> +static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
->                               int lane)
->   {
->          int i = DP_LANE0_1_STATUS + (lane >> 1);
-> @@ -61,7 +61,7 @@ static u8 dp_get_lane_status(const u8
-> link_status[DP_LINK_STATUS_SIZE],
->          return (l >> s) & 0xf;
->   }
-> 
-> -bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
-> +bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
->                            int lane_count)
->   {
->          u8 lane_align;
-> diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-> index edffd1dcca3e..160f7fd127b1 100644
-> --- a/include/drm/drm_dp_helper.h
-> +++ b/include/drm/drm_dp_helper.h
-> @@ -1456,7 +1456,7 @@ enum drm_dp_phy {
-> 
->   #define DP_LINK_CONSTANT_N_VALUE 0x8000
->   #define DP_LINK_STATUS_SIZE       6
-> -bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
-> +bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
->                            int lane_count);
->   bool drm_dp_clock_recovery_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
->                                int lane_count);
-> 
-> 
-> This obviously needs a good explanation in the code and the changelog text,
-> which I don't have, but if the above is what you had in mind, please take that
-> and add Reported-by/Tested-by: Arnd Bergmann <arnd@arndb.de>.
-> 
->         Arnd
-> 
+Mimi
 
