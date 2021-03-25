@@ -2,208 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35AEDC433E4
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 05:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9A9C433DB
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 08:05:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA7C761A2A
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 05:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39026619DC
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 08:05:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229869AbhCYF0g (ORCPT
+        id S229920AbhCYIF0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 01:26:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46294 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229866AbhCYF0W (ORCPT
+        Thu, 25 Mar 2021 04:05:26 -0400
+Received: from mga09.intel.com ([134.134.136.24]:34351 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229962AbhCYIFW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 01:26:22 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE602C061763
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 22:26:20 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id 15so1634140ljj.0
-        for <linux-security-module@vger.kernel.org>; Wed, 24 Mar 2021 22:26:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gFsXQtNcZc/jzBbc3KmHaNr8LuwlVaIo4tkNpXAhMCs=;
-        b=szUldggyNmVjxsrrTtlWnMRQPOMVT8cZCe5n98DB5e4AYjxCy/yawxRJYDhyjY6/HE
-         1zdQ2jBG3uJUxf4XjRDqgsZIjI/Zywasn9xRPTjryeG8OKkMdPujkQO4GFwQN4oyDFi6
-         o57TGNrEaoTRteOJ6W5ldogRM9nWPaTOxIpCyMiGsYB8nmVZ958quD6y0y3tWN2xtN0c
-         Ge2a1/y1yT3tD/qpV4vaIPTb089AVGdNEmBZ+xYZbA6zlapEXrvicmkhwUq7rM2dV1Vk
-         WnJ0YkTAlZVUzS3v5UkNOVRB6pTUtTAfpkqRIU76j8laN1/2CsRpNb8bW/Wr7tYlHzBj
-         l/xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gFsXQtNcZc/jzBbc3KmHaNr8LuwlVaIo4tkNpXAhMCs=;
-        b=WpRwuf/GlNDHjTNyr9kS2riXtzib58+WjDwevy2hBGmpwYuDomnR7KMma5jHR9wOb+
-         FQ2Wju32BhZ1kPqPC1qDlAA4as4hah7TmdzFvs6pN34B00KKA40xWfx8aJhGoVZ6tCqO
-         iCSsbRN+Mbpsl2koN4iVZVBq8v2mFktClBQ8/K6my9rrCAV6xQ349zTgs63GDM3Xh8eh
-         wwypXhuD8I7gn6ikVltKJthbGflwGBdXs8BekU3GbbEvDhQCjv5uj9kRHxKshgOoblzp
-         R6GRhbqJ0eQSMgHcqXR1tN9KCWs/WUId5QLxueKpaynSmswCw/zSuhBLBZtIGvsPAhLb
-         nLlw==
-X-Gm-Message-State: AOAM5321vtN/DRZrUfB0yZre0H3RebWFZfRNHGJf4juRTSJXYqjMi7io
-        K1oLKcf06MPDAXSHPdUW1jIfaKVyCRpABnO/2T3zzQ==
-X-Google-Smtp-Source: ABdhPJw0lZa1dN3iWsOiL7ok+NZMNVuTQq5qAq6ImnOTO2jdiouw6uWhb1mTAuET6Lx9AmotH317Ob91LGw7g0Kt1wE=
-X-Received: by 2002:a05:651c:481:: with SMTP id s1mr4183162ljc.152.1616649979216;
- Wed, 24 Mar 2021 22:26:19 -0700 (PDT)
+        Thu, 25 Mar 2021 04:05:22 -0400
+IronPort-SDR: fhSYScwTavgQKe1dCnryrywzUrSmsao/0sARx65F6Qc4V+nDgydgykkDivnsdXhbeLeqxMIzyu
+ KiZ9BeCeZE7w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="190971098"
+X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
+   d="scan'208";a="190971098"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 01:05:21 -0700
+IronPort-SDR: YSlh8X6JrYCAgcFAjL5XZMs9hqgR3pcWRIp1+nLDHbTGxn8DfB0UC8NvUc6Fyh2eKqFMEpwwEz
+ JeibtqsaiX5Q==
+X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
+   d="scan'208";a="415886752"
+Received: from jweber-mobl.ger.corp.intel.com (HELO localhost) ([10.252.39.244])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 01:05:09 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+        Ning Sun <ning.sun@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+        Animesh Manna <animesh.manna@intel.com>,
+        Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH 11/11] [RFC] drm/i915/dp: fix array overflow warning
+In-Reply-To: <20210322160253.4032422-12-arnd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20210322160253.4032422-1-arnd@kernel.org> <20210322160253.4032422-12-arnd@kernel.org>
+Date:   Thu, 25 Mar 2021 10:05:06 +0200
+Message-ID: <87wntv3bgt.fsf@intel.com>
 MIME-Version: 1.0
-References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
- <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
- <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com> <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
- <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
- <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de> <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
- <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de>
-In-Reply-To: <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 25 Mar 2021 10:56:07 +0530
-Message-ID: <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 24 Mar 2021 at 19:37, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+On Mon, 22 Mar 2021, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 >
-> Hello Sumit,
+> gcc-11 warns that intel_dp_check_mst_status() has a local array of
+> fourteen bytes and passes the last four bytes into a function that
+> expects a six-byte array:
 >
-> On 24.03.21 11:47, Sumit Garg wrote:
-> > On Wed, 24 Mar 2021 at 14:56, Ahmad Fatoum <a.fatoum@pengutronix.de> wr=
-ote:
-> >>
-> >> Hello Mimi,
-> >>
-> >> On 23.03.21 19:07, Mimi Zohar wrote:
-> >>> On Tue, 2021-03-23 at 17:35 +0100, Ahmad Fatoum wrote:
-> >>>> On 21.03.21 21:48, Horia Geant=C4=83 wrote:
-> >>>>> caam has random number generation capabilities, so it's worth using=
- that
-> >>>>> by implementing .get_random.
-> >>>>
-> >>>> If the CAAM HWRNG is already seeding the kernel RNG, why not use the=
- kernel's?
-> >>>>
-> >>>> Makes for less code duplication IMO.
-> >>>
-> >>> Using kernel RNG, in general, for trusted keys has been discussed
-> >>> before.   Please refer to Dave Safford's detailed explanation for not
-> >>> using it [1].
-> >>
-> >> The argument seems to boil down to:
-> >>
-> >>  - TPM RNG are known to be of good quality
-> >>  - Trusted keys always used it so far
-> >>
-> >> Both are fine by me for TPMs, but the CAAM backend is new code and nei=
-ther point
-> >> really applies.
-> >>
-> >> get_random_bytes_wait is already used for generating key material else=
-where.
-> >> Why shouldn't new trusted key backends be able to do the same thing?
-> >>
-> >
-> > Please refer to documented trusted keys behaviour here [1]. New
-> > trusted key backends should align to this behaviour and in your case
-> > CAAM offers HWRNG so we should be better using that.
+> drivers/gpu/drm/i915/display/intel_dp.c: In function ‘intel_dp_check_mst_status’:
+> drivers/gpu/drm/i915/display/intel_dp.c:4556:22: error: ‘drm_dp_channel_eq_ok’ reading 6 bytes from a region of size 4 [-Werror=stringop-overread]
+>  4556 |                     !drm_dp_channel_eq_ok(&esi[10], intel_dp->lane_count)) {
+>       |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/i915/display/intel_dp.c:4556:22: note: referencing argument 1 of type ‘const u8 *’ {aka ‘const unsigned char *’}
+> In file included from drivers/gpu/drm/i915/display/intel_dp.c:38:
+> include/drm/drm_dp_helper.h:1459:6: note: in a call to function ‘drm_dp_channel_eq_ok’
+>  1459 | bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+>       |      ^~~~~~~~~~~~~~~~~~~~
 >
-> Why is it better?
->
-> Can you explain what benefit a CAAM user would have if the trusted key
-> randomness comes directly out of the CAAM instead of indirectly from
-> the kernel entropy pool that is seeded by it?
+> Clearly something is wrong here, but I can't quite figure out what.
+> Changing the array size to 16 bytes avoids the warning, but is
+> probably the wrong solution here.
 
-IMO, user trust in case of trusted keys comes from trusted keys
-backend which is CAAM here. If a user doesn't trust that CAAM would
-act as a reliable source for RNG then CAAM shouldn't be used as a
-trust source in the first place.
+Ugh. drm_dp_channel_eq_ok() does not actually require more than
+DP_LINK_STATUS_SIZE - 2 elements in the link_status. It's some other
+related functions that do, and in most cases it's convenient to read all
+those DP_LINK_STATUS_SIZE bytes.
 
-And I think building user's trust for kernel RNG implementation with
-multiple entropy contributions is pretty difficult when compared with
-CAAM HWRNG implementation.
+However, here the case is slightly different for DP MST, and the change
+causes reserved DPCD addresses to be read. Not sure it matters, but
+really I think the problem is what drm_dp_channel_eq_ok() advertizes.
 
--Sumit
+I also don't like the array notation with sizes in function parameters
+in general, because I think it's misleading. Would gcc-11 warn if a
+function actually accesses the memory out of bounds of the size?
+
+Anyway. I don't think we're going to get rid of the array notation
+anytime soon, if ever, no matter how much I dislike it, so I think the
+right fix would be to at least state the correct required size in
+drm_dp_channel_eq_ok().
+
+
+BR,
+Jani.
+
 
 >
-> > Also, do update documentation corresponding to CAAM as a trusted keys b=
-ackend.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Yes. The documentation should be updated for CAAM and it should describe
-> how the key material is derived. Will do so for v2.
->
-> Cheers,
-> Ahmad
->
-> >
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.=
-git/tree/Documentation/security/keys/trusted-encrypted.rst#n87
-> >
-> > -Sumit
-> >
-> >> Cheers,
-> >> Ahmad
-> >>
-> >>>
-> >>> thanks,
-> >>>
-> >>> Mimi
-> >>>
-> >>> [1]
-> >>> https://lore.kernel.org/linux-integrity/BCA04D5D9A3B764C9B7405BBA4D4A=
-3C035F2A38B@ALPMBAPA12.e2k.ad.ge.com/
-> >>>
-> >>>
-> >>>
-> >>
-> >> --
-> >> Pengutronix e.K.                           |                          =
-   |
-> >> Steuerwalder Str. 21                       | http://www.pengutronix.de=
-/  |
-> >> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0 =
-   |
-> >> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-55=
-55 |
-> >
->
-> --
-> Pengutronix e.K.                           |                             =
-|
-> Steuerwalder Str. 21                       | http://www.pengutronix.de/  =
-|
-> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
-|
-> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
-|
+> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
+> index 8c12d5375607..830e2515f119 100644
+> --- a/drivers/gpu/drm/i915/display/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
+> @@ -65,7 +65,7 @@
+>  #include "intel_vdsc.h"
+>  #include "intel_vrr.h"
+>  
+> -#define DP_DPRX_ESI_LEN 14
+> +#define DP_DPRX_ESI_LEN 16
+>  
+>  /* DP DSC throughput values used for slice count calculations KPixels/s */
+>  #define DP_DSC_PEAK_PIXEL_RATE			2720000
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
