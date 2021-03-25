@@ -2,171 +2,309 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7C4C433E2
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 09:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0646FC433E0
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 10:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 907DC61A2E
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 09:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC6D561A32
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 10:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229533AbhCYJxv (ORCPT
+        id S230255AbhCYKx4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 05:53:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229576AbhCYJxc (ORCPT
+        Thu, 25 Mar 2021 06:53:56 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2740 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230156AbhCYKxp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 05:53:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 82A4E61A24;
-        Thu, 25 Mar 2021 09:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1616666011;
-        bh=zDIkwCmITSxBLdjnUtP8aWuLpPIn7yP+onOPa2fWtIM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aw+dq7xqFwszvQn+7YjwXW7/fxugShYPXJjaDJagcTuDAOuB8E9nNiKezq66fA/8m
-         hFuPlB/FQy5OaxdMAZxMHga0tzWzb7PQ6p+xNpG4X8bAN7OAf2G+Qkm0llEzqPMeL1
-         Kid4PdS5VCb6nVOuYhBFHH0Yau0kHvVybsDn9ffxag5/mdTWHzlRYsdW/dxayQNar3
-         KY8Ym1MijDJv/mTgzfTa/iwhfzr2YqelyjbMy1v1O0PJUB5A8eiQqK6LL68YF5Ta8p
-         SByPQKDJncOjrUNNBuwi03nuXQ11JZYKUdMwcj0KubiMCvSEyc/5dYjwzZVUc5ZcXd
-         6uORErooXgDMw==
-Received: by mail-oi1-f174.google.com with SMTP id n140so1511569oig.9;
-        Thu, 25 Mar 2021 02:53:31 -0700 (PDT)
-X-Gm-Message-State: AOAM531+Fc0vPk+snEmfO/sX6kulbyC9mLBlEz92JVW/lZGGQK++d02J
-        xEDrMZrr7OU5O4u3f59H+2m+hy9PpwOT9kGs664=
-X-Google-Smtp-Source: ABdhPJyt+33nuIsqD16dqkOAUJq8r6LTgDPW80yQCvhzID/3JW2uxW7CNu42WWpingJPnDTPb6eqRDMwNCcIjLZ5/jc=
-X-Received: by 2002:aca:5945:: with SMTP id n66mr5293345oib.11.1616666010658;
- Thu, 25 Mar 2021 02:53:30 -0700 (PDT)
+        Thu, 25 Mar 2021 06:53:45 -0400
+Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4F5hZF5Ghnz683Jf;
+        Thu, 25 Mar 2021 18:44:53 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Thu, 25 Mar 2021 11:53:43 +0100
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2106.013;
+ Thu, 25 Mar 2021 11:53:43 +0100
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        "agruenba@redhat.com" <agruenba@redhat.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
+ unmodified metadata
+Thread-Topic: [PATCH v4 08/11] evm: Allow setxattr() and setattr() for
+ unmodified metadata
+Thread-Index: AQHXEdMs3dcvjnFQvUyUTwTeWmdH4qqTStlA
+Date:   Thu, 25 Mar 2021 10:53:43 +0000
+Message-ID: <ad33c998ee834a588e0ca1a31ee2a530@huawei.com>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+ <20210305151923.29039-9-roberto.sassu@huawei.com>
+In-Reply-To: <20210305151923.29039-9-roberto.sassu@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.4.143]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20210322160253.4032422-1-arnd@kernel.org> <20210322160253.4032422-12-arnd@kernel.org>
- <87wntv3bgt.fsf@intel.com>
-In-Reply-To: <87wntv3bgt.fsf@intel.com>
-From:   Arnd Bergmann <arnd@kernel.org>
-Date:   Thu, 25 Mar 2021 10:53:14 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a0HGiPQ-k6t6roTgeUvVAMMY=fMnGV0+t48yJjz55XFAA@mail.gmail.com>
-Message-ID: <CAK8P3a0HGiPQ-k6t6roTgeUvVAMMY=fMnGV0+t48yJjz55XFAA@mail.gmail.com>
-Subject: Re: [PATCH 11/11] [RFC] drm/i915/dp: fix array overflow warning
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Ning Sun <ning.sun@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Simon Kelley <simon@thekelleys.org.uk>,
-        James Smart <james.smart@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Imre Deak <imre.deak@intel.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        tboot-devel@lists.sourceforge.net,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        ath11k@lists.infradead.org,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-        Animesh Manna <animesh.manna@intel.com>,
-        Sean Paul <seanpaul@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Mar 25, 2021 at 9:05 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> > Clearly something is wrong here, but I can't quite figure out what.
-> > Changing the array size to 16 bytes avoids the warning, but is
-> > probably the wrong solution here.
->
-> Ugh. drm_dp_channel_eq_ok() does not actually require more than
-> DP_LINK_STATUS_SIZE - 2 elements in the link_status. It's some other
-> related functions that do, and in most cases it's convenient to read all
-> those DP_LINK_STATUS_SIZE bytes.
->
-> However, here the case is slightly different for DP MST, and the change
-> causes reserved DPCD addresses to be read. Not sure it matters, but
-> really I think the problem is what drm_dp_channel_eq_ok() advertizes.
->
-> I also don't like the array notation with sizes in function parameters
-> in general, because I think it's misleading. Would gcc-11 warn if a
-> function actually accesses the memory out of bounds of the size?
+> From: Roberto Sassu
+> Sent: Friday, March 5, 2021 4:19 PM
+> With the patch to allow xattr/attr operations if a portable signature
+> verification fails, cp and tar can copy all xattrs/attrs so that at the
+> end of the process verification succeeds.
+> 
+> However, it might happen that the xattrs/attrs are already set to the
+> correct value (taken at signing time) and signature verification succeeds
+> before the copy has completed. For example, an archive might contains files
+> owned by root and the archive is extracted by root.
+> 
+> Then, since portable signatures are immutable, all subsequent operations
+> fail (e.g. fchown()), even if the operation is legitimate (does not alter
+> the current value).
+> 
+> This patch avoids this problem by reporting successful operation to user
+> space when that operation does not alter the current value of xattrs/attrs.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  security/integrity/evm/evm_main.c | 96
+> +++++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+> 
+> diff --git a/security/integrity/evm/evm_main.c
+> b/security/integrity/evm/evm_main.c
+> index eab536fa260f..a07516dcb920 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/integrity.h>
+>  #include <linux/evm.h>
+>  #include <linux/magic.h>
+> +#include <linux/posix_acl_xattr.h>
+> 
+>  #include <crypto/hash.h>
+>  #include <crypto/hash_info.h>
+> @@ -328,6 +329,79 @@ static enum integrity_status
+> evm_verify_current_integrity(struct dentry *dentry)
+>  	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+>  }
+> 
+> +/*
+> + * evm_xattr_acl_change - check if passed ACL changes the inode mode
+> + * @dentry: pointer to the affected dentry
+> + * @xattr_name: requested xattr
+> + * @xattr_value: requested xattr value
+> + * @xattr_value_len: requested xattr value length
+> + *
+> + * Check if passed ACL changes the inode mode, which is protected by
+> EVM.
+> + *
+> + * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
+> + */
+> +static int evm_xattr_acl_change(struct dentry *dentry, const char
+> *xattr_name,
+> +				const void *xattr_value, size_t
+> xattr_value_len)
+> +{
+> +	umode_t mode;
+> +	struct posix_acl *acl = NULL, *acl_res;
+> +	struct inode *inode = d_backing_inode(dentry);
+> +	int rc;
+> +
+> +	/* UID/GID in ACL have been already converted from user to init ns
+> */
+> +	acl = posix_acl_from_xattr(&init_user_ns, xattr_value,
+> xattr_value_len);
+> +	if (!acl)
 
-Yes, that is the point of the warning. Using an explicit length in an
-array argument type tells gcc that the function will never access
-beyond the end of that bound, and that passing a short array
-is a bug.
+Based on Mimi's review, I will change this to:
 
-I don't know if this /only/ means triggering a warning, or if gcc
-is also able to make optimizations after classifying this as undefined
-behavior that it would not make for an unspecified length.
+if (IS_ERR_OR_NULL(acl))
 
-> Anyway. I don't think we're going to get rid of the array notation
-> anytime soon, if ever, no matter how much I dislike it, so I think the
-> right fix would be to at least state the correct required size in
-> drm_dp_channel_eq_ok().
+> +		return 1;
+> +
+> +	acl_res = acl;
+> +	rc = posix_acl_update_mode(&init_user_ns, inode, &mode,
+> &acl_res);
 
-Ok. Just to confirm: Changing the declaration to an unspecified length
-avoids the warnings, as does the patch below:
+About this part, probably it is not correct.
 
-diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index eedbb48815b7..6ebeec3d88a7 100644
---- a/drivers/gpu/drm/drm_dp_helper.c
-+++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -46,12 +46,12 @@
-  */
+I'm writing a test for this patch that checks if operations
+that don't change the file mode succeed and those that
+do fail.
 
- /* Helpers for DP link training */
--static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE], int r)
-+static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE - 2], int r)
- {
-        return link_status[r - DP_LANE0_1_STATUS];
- }
+mount-idmapped --map-mount b:3001:0:1 /mnt /mnt-idmapped
+pushd /mnt
+echo "test" > test-file
+chown 3001 test-file
+chgrp 3001 test-file
+chmod 2644 test-file
+<check enabled>
+setfacl --set u::rw,g::r,o::r,m:r test-file (expected to succeed, caller has CAP_FSETID, so S_ISGID is not dropped)
+setfacl --set u::rw,g::r,o::r,m:rw test-file (expected to fail)
+pushd /mnt-idmapped
+capsh --drop=cap_fsetid -- -c setfacl --set u::rw,g::r,o::r test-file (expected to succeed, caller is in the owning group of test-file, so S_ISGID is not dropped)
 
--static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE],
-+static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
-                             int lane)
- {
-        int i = DP_LANE0_1_STATUS + (lane >> 1);
-@@ -61,7 +61,7 @@ static u8 dp_get_lane_status(const u8
-link_status[DP_LINK_STATUS_SIZE],
-        return (l >> s) & 0xf;
- }
+After adding a debug line in posix_acl_update_mode():
+printk("%s: %d(%d) %d\n", __func__, in_group_p(i_gid_into_mnt(mnt_userns, inode)), __kgid_val(i_gid_into_mnt(mnt_userns, inode)), capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID));
 
--bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
-+bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
-                          int lane_count)
- {
-        u8 lane_align;
-diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-index edffd1dcca3e..160f7fd127b1 100644
---- a/include/drm/drm_dp_helper.h
-+++ b/include/drm/drm_dp_helper.h
-@@ -1456,7 +1456,7 @@ enum drm_dp_phy {
+without passing mnt_userns:
+[  748.262582] setfacl --set u::rw,g::r,o::r,m:r test-file
+[  748.268021] posix_acl_update_mode: 0(3001) 1
+[  748.268035] posix_acl_update_mode: 0(3001) 1
+[  748.268570] setfacl --set u::rw,g::r,o::r,m:rw test-file
+[  748.274193] posix_acl_update_mode: 0(3001) 1
+[  748.279198] capsh --drop=cap_fsetid -- -c setfacl --set u::rw,g::r,o::r test-file
+[  748.287894] posix_acl_update_mode: 0(3001) 0
 
- #define DP_LINK_CONSTANT_N_VALUE 0x8000
- #define DP_LINK_STATUS_SIZE       6
--bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
-+bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
-                          int lane_count);
- bool drm_dp_clock_recovery_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
-                              int lane_count);
+passing mnt_userns:
+[   81.159766] setfacl --set u::rw,g::r,o::r,m:r test-file
+[   81.165207] posix_acl_update_mode: 0(3001) 1
+[   81.165226] posix_acl_update_mode: 0(3001) 1
+[   81.165732] setfacl --set u::rw,g::r,o::r,m:rw test-file
+[   81.170978] posix_acl_update_mode: 0(3001) 1
+[   81.176014] capsh --drop=cap_fsetid -- -c setfacl --set u::rw,g::r,o::r test-file
+[   81.184648] posix_acl_update_mode: 1(0) 0
+[   81.184663] posix_acl_update_mode: 1(0) 0
 
+The difference is that, by passing mnt_userns, the caller (root) is
+in the owning group of the file (3001 -> 0). Without passing mnt_userns,
+it is not (3001 -> 3001).
 
-This obviously needs a good explanation in the code and the changelog text,
-which I don't have, but if the above is what you had in mind, please take that
-and add Reported-by/Tested-by: Arnd Bergmann <arnd@arndb.de>.
+Christian, Andreas, could you confirm that this is correct?
 
-       Arnd
+If there are no objections, I will send an additional patch to pass
+mnt_userns to EVM.
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> +
+> +	posix_acl_release(acl);
+> +
+> +	if (rc)
+> +		return 1;
+> +
+> +	if (inode->i_mode != mode)
+> +		return 1;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * evm_xattr_change - check if passed xattr value differs from current
+> value
+> + * @dentry: pointer to the affected dentry
+> + * @xattr_name: requested xattr
+> + * @xattr_value: requested xattr value
+> + * @xattr_value_len: requested xattr value length
+> + *
+> + * Check if passed xattr value differs from current value.
+> + *
+> + * Returns 1 if passed xattr value differs from current value, 0 otherwise.
+> + */
+> +static int evm_xattr_change(struct dentry *dentry, const char
+> *xattr_name,
+> +			    const void *xattr_value, size_t xattr_value_len)
+> +{
+> +	char *xattr_data = NULL;
+> +	int rc = 0;
+> +
+> +	if (posix_xattr_acl(xattr_name))
+> +		return evm_xattr_acl_change(dentry, xattr_name,
+> xattr_value,
+> +					    xattr_value_len);
+> +
+> +	rc = vfs_getxattr_alloc(&init_user_ns, dentry, xattr_name,
+> &xattr_data,
+> +				0, GFP_NOFS);
+> +	if (rc < 0)
+> +		return 1;
+> +
+> +	if (rc == xattr_value_len)
+> +		rc = memcmp(xattr_value, xattr_data, rc);
+> +	else
+> +		rc = 1;
+> +
+> +	kfree(xattr_data);
+> +	return rc;
+> +}
+> +
+>  /*
+>   * evm_protect_xattr - protect the EVM extended attribute
+>   *
+> @@ -388,6 +462,10 @@ static int evm_protect_xattr(struct dentry *dentry,
+> const char *xattr_name,
+>  	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
+>  		return 0;
+> 
+> +	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
+> +	    !evm_xattr_change(dentry, xattr_name, xattr_value,
+> xattr_value_len))
+> +		return 0;
+> +
+>  	if (evm_status != INTEGRITY_PASS)
+>  		integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
+> d_backing_inode(dentry),
+>  				    dentry->d_name.name,
+> "appraise_metadata",
+> @@ -527,6 +605,19 @@ void evm_inode_post_removexattr(struct dentry
+> *dentry, const char *xattr_name)
+>  	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+>  }
+> 
+> +static int evm_attr_change(struct dentry *dentry, struct iattr *attr)
+> +{
+> +	struct inode *inode = d_backing_inode(dentry);
+> +	unsigned int ia_valid = attr->ia_valid;
+> +
+> +	if ((!(ia_valid & ATTR_UID) || uid_eq(attr->ia_uid, inode->i_uid))
+> &&
+> +	    (!(ia_valid & ATTR_GID) || gid_eq(attr->ia_gid, inode->i_gid)) &&
+> +	    (!(ia_valid & ATTR_MODE) || attr->ia_mode == inode->i_mode))
+> +		return 0;
+> +
+> +	return 1;
+> +}
+> +
+>  /**
+>   * evm_inode_setattr - prevent updating an invalid EVM extended
+> attribute
+>   * @dentry: pointer to the affected dentry
+> @@ -557,6 +648,11 @@ int evm_inode_setattr(struct dentry *dentry, struct
+> iattr *attr)
+>  	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
+>  	    (evm_ignore_error_safe(evm_status)))
+>  		return 0;
+> +
+> +	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
+> +	    !evm_attr_change(dentry, attr))
+> +		return 0;
+> +
+>  	integrity_audit_msg(AUDIT_INTEGRITY_METADATA,
+> d_backing_inode(dentry),
+>  			    dentry->d_name.name, "appraise_metadata",
+>  			    integrity_status_msg[evm_status], -EPERM, 0);
+> --
+> 2.26.2
+
