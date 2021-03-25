@@ -2,142 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9A9C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 08:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2449C433C1
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 09:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 39026619DC
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 08:05:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E7D619FB
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 09:30:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbhCYIF0 convert rfc822-to-8bit (ORCPT
+        id S230003AbhCYJ3e (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 04:05:26 -0400
-Received: from mga09.intel.com ([134.134.136.24]:34351 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229962AbhCYIFW (ORCPT
+        Thu, 25 Mar 2021 05:29:34 -0400
+Received: from smtp-8fab.mail.infomaniak.ch ([83.166.143.171]:55763 "EHLO
+        smtp-8fab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230062AbhCYJ3J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 04:05:22 -0400
-IronPort-SDR: fhSYScwTavgQKe1dCnryrywzUrSmsao/0sARx65F6Qc4V+nDgydgykkDivnsdXhbeLeqxMIzyu
- KiZ9BeCeZE7w==
-X-IronPort-AV: E=McAfee;i="6000,8403,9933"; a="190971098"
-X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
-   d="scan'208";a="190971098"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 01:05:21 -0700
-IronPort-SDR: YSlh8X6JrYCAgcFAjL5XZMs9hqgR3pcWRIp1+nLDHbTGxn8DfB0UC8NvUc6Fyh2eKqFMEpwwEz
- JeibtqsaiX5Q==
-X-IronPort-AV: E=Sophos;i="5.81,277,1610438400"; 
-   d="scan'208";a="415886752"
-Received: from jweber-mobl.ger.corp.intel.com (HELO localhost) ([10.252.39.244])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2021 01:05:09 -0700
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
-        Ning Sun <ning.sun@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Simon Kelley <simon@thekelleys.org.uk>,
-        James Smart <james.smart@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Imre Deak <imre.deak@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-        Animesh Manna <animesh.manna@intel.com>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 11/11] [RFC] drm/i915/dp: fix array overflow warning
-In-Reply-To: <20210322160253.4032422-12-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20210322160253.4032422-1-arnd@kernel.org> <20210322160253.4032422-12-arnd@kernel.org>
-Date:   Thu, 25 Mar 2021 10:05:06 +0200
-Message-ID: <87wntv3bgt.fsf@intel.com>
+        Thu, 25 Mar 2021 05:29:09 -0400
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F5ftj1bChzMqSFq;
+        Thu, 25 Mar 2021 10:29:01 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F5ftZ3sl9zlh8TD;
+        Thu, 25 Mar 2021 10:28:54 +0100 (CET)
+Subject: Re: [PATCH v30 02/12] landlock: Add ruleset and domain management
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316204252.427806-1-mic@digikod.net>
+ <20210316204252.427806-3-mic@digikod.net> <202103191114.C87C5E2B69@keescook>
+ <acda4be1-4076-a31d-fcfd-27764dd598c8@digikod.net>
+ <c9dc8adb-7fab-14a1-a658-40b288419fdf@namei.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <25f701bf-fddf-8e9c-1ac1-c50a38579096@digikod.net>
+Date:   Thu, 25 Mar 2021 10:29:35 +0100
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <c9dc8adb-7fab-14a1-a658-40b288419fdf@namei.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 22 Mar 2021, Arnd Bergmann <arnd@kernel.org> wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> gcc-11 warns that intel_dp_check_mst_status() has a local array of
-> fourteen bytes and passes the last four bytes into a function that
-> expects a six-byte array:
->
-> drivers/gpu/drm/i915/display/intel_dp.c: In function ‘intel_dp_check_mst_status’:
-> drivers/gpu/drm/i915/display/intel_dp.c:4556:22: error: ‘drm_dp_channel_eq_ok’ reading 6 bytes from a region of size 4 [-Werror=stringop-overread]
->  4556 |                     !drm_dp_channel_eq_ok(&esi[10], intel_dp->lane_count)) {
->       |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/i915/display/intel_dp.c:4556:22: note: referencing argument 1 of type ‘const u8 *’ {aka ‘const unsigned char *’}
-> In file included from drivers/gpu/drm/i915/display/intel_dp.c:38:
-> include/drm/drm_dp_helper.h:1459:6: note: in a call to function ‘drm_dp_channel_eq_ok’
->  1459 | bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
->       |      ^~~~~~~~~~~~~~~~~~~~
->
-> Clearly something is wrong here, but I can't quite figure out what.
-> Changing the array size to 16 bytes avoids the warning, but is
-> probably the wrong solution here.
 
-Ugh. drm_dp_channel_eq_ok() does not actually require more than
-DP_LINK_STATUS_SIZE - 2 elements in the link_status. It's some other
-related functions that do, and in most cases it's convenient to read all
-those DP_LINK_STATUS_SIZE bytes.
+On 24/03/2021 21:31, James Morris wrote:
+> On Fri, 19 Mar 2021, Micka�l Sala�n wrote:
+> 
+>>
+>>>> Cc: Kees Cook <keescook@chromium.org>
+>>>> Signed-off-by: Micka�l Sala�n <mic@linux.microsoft.com>
+>>>> Acked-by: Serge Hallyn <serge@hallyn.com>
+>>>> Link: https://lore.kernel.org/r/20210316204252.427806-3-mic@digikod.net
+>>>
+>>> (Aside: you appear to be self-adding your Link: tags -- AIUI, this is
+>>> normally done by whoever pulls your series. I've only seen Link: tags
+>>> added when needing to refer to something else not included in the
+>>> series.)
+>>
+>> It is an insurance to not lose history. :)
+> 
+> How will history be lost? The code is in the repo and discussions can 
+> easily be found by searching for subjects or message IDs.
 
-However, here the case is slightly different for DP MST, and the change
-causes reserved DPCD addresses to be read. Not sure it matters, but
-really I think the problem is what drm_dp_channel_eq_ok() advertizes.
+The (full and ordered) history may be hard to find without any
+Message-ID in commit messages. The Lore links keep that information (in
+the commit message) and redirect to the related archived email thread,
+which is very handy. For instance, Linus can rely on those links to
+judge the quality of a patch:
+https://lore.kernel.org/lkml/CAHk-=wh7xY3UF7zEc0BNVNjOox59jYBW-Gfi7=emm+BXPWc6nQ@mail.gmail.com/
 
-I also don't like the array notation with sizes in function parameters
-in general, because I think it's misleading. Would gcc-11 warn if a
-function actually accesses the memory out of bounds of the size?
+> 
+> Is anyone else doing this self linking?
+> 
 
-Anyway. I don't think we're going to get rid of the array notation
-anytime soon, if ever, no matter how much I dislike it, so I think the
-right fix would be to at least state the correct required size in
-drm_dp_channel_eq_ok().
-
-
-BR,
-Jani.
-
-
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> index 8c12d5375607..830e2515f119 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> @@ -65,7 +65,7 @@
->  #include "intel_vdsc.h"
->  #include "intel_vrr.h"
->  
-> -#define DP_DPRX_ESI_LEN 14
-> +#define DP_DPRX_ESI_LEN 16
->  
->  /* DP DSC throughput values used for slice count calculations KPixels/s */
->  #define DP_DSC_PEAK_PIXEL_RATE			2720000
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+I don't know, but it doesn't hurt. This way, if you're using git am
+without b4 am -l (or forgot to add links manually), the history is still
+pointed out by these self-reference links. I find it convenient and it
+is a safeguard to not forget them, no matter who takes the patches.
