@@ -2,171 +2,215 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5A0C433DB
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D21C433C1
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3591C61864
-	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88C4C619FC
+	for <linux-security-module@archiver.kernel.org>; Thu, 25 Mar 2021 14:51:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbhCYOCD (ORCPT
+        id S230436AbhCYOue (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 10:02:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44764 "EHLO
+        Thu, 25 Mar 2021 10:50:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230076AbhCYOBd (ORCPT
+        with ESMTP id S229547AbhCYOuC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 10:01:33 -0400
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17E11C06175F
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 07:01:33 -0700 (PDT)
-Received: by mail-lf1-x136.google.com with SMTP id b83so2652960lfd.11
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 07:01:32 -0700 (PDT)
+        Thu, 25 Mar 2021 10:50:02 -0400
+Received: from mail-qk1-x729.google.com (mail-qk1-x729.google.com [IPv6:2607:f8b0:4864:20::729])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28DCAC06174A;
+        Thu, 25 Mar 2021 07:50:02 -0700 (PDT)
+Received: by mail-qk1-x729.google.com with SMTP id z10so1962103qkz.13;
+        Thu, 25 Mar 2021 07:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MmF8zMMhSJr2UbOoYiZqtv8YBPrRUBEDP7fTi81KAEk=;
-        b=ySCJ54ICDE6200wEeFqVJv/p1kR197zEWndwv2ypByqKlhCXXhWFp8/SLHr5XEWYN8
-         97L3YlomdDH9+yIicnZJt0XCSWZ6LfsEGo/Uc10dXf8YhTttlLJfGwIJqy3mVtxTlp7B
-         1/Ct2gYKCrxR/T7G4+DrDJLfyfIGAgXqUpTEb3DE1U7OdVSRn2JS46gpwUF3/VektYED
-         cviJesFIXSxfUFqjNV5JtVZZGXZPZZpUt4UAND002egeiXa+uOEXrcLommLqWcVX8vxx
-         UzN20W0zHk8DABO2nVpledwJz2npmWit2ZxuobV51siQhqslP3p/LYZae6ZeZx3BUUf8
-         f5ug==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=A01xU9scL5QHqCTcEARA+UZXhX3w6QfTLVjGvG0qhWs=;
+        b=fjIpx38pKKpF7tuHHnx+6bHTa8GIAr+gRLGjKt2x69P7v8gjKVe3W9dYqxgP9vSwI9
+         QihvfqnQepbko6JQmAIRW+EQAppxHtxDBVpKo/ulTx0XeTA+TsLT2XPd5R47EHfs/vL+
+         RcfmGpqKXdbxR340ysSTk2TR5aaFQcoTZCnFjyd/rFWDxI9wey0GlS/SNuFSvLhs+psi
+         0EVXYddJbSDWFSlhrUt5I6M67vOMO/RGQOVQ0jvf2R4mqWnxzVz/163P9EVlylTqlOyg
+         RuvSoLqCSa3d1HolOz0J7uXNfTUCd96jvr8FQ9pq7Hu06fFtmIslpU2LxY/2YEkWewFc
+         MUFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MmF8zMMhSJr2UbOoYiZqtv8YBPrRUBEDP7fTi81KAEk=;
-        b=t4JMFLGUBCugEbLhbZkU0a3MsOaeLwiEr2F5WrzFT8gaD+LCpn7LcTEGG4nmJ0P3Gx
-         9blXxBoQzlJJLIQwXsUt3QO6880kIVUrq3IUJIjB84GXqr8cwctYwwcwcCfOWNJnhFox
-         /24Ti0XeIPYxw78/i2S4yR7WE6PxjXzXWP6mj+03xgddU0BXKKhk+5mYNgB+JYIh02CP
-         XJuRvFrFNU/7Vi7aUb/QkYtfKO4Hnv2dNNKOW4MQw5eUvjyBH+SOTuEnzejneLtt4nSl
-         cSFmlwwS9agL5SOkhQd4rb+49RkFuRLcmAM48kkfmaj/tGuNg9HMpIrgb3fSEvcl8Ko3
-         NS4w==
-X-Gm-Message-State: AOAM532A0eLYk+I0sv+nqDdzk54u9vgalrsY2Sq6Qw6o7bXS4cIfsSea
-        Vp/qxqI4OiNTUquMTfqGkm6yT3A68ZE1+BIbRKCclg==
-X-Google-Smtp-Source: ABdhPJwN9qo9jK5N4Qbvi4l62f5Ye52sRZLOgrlXWLb5uvDKoV3liGbEnF0y5GhyhtVdQ0++fd/nRNIdObtNPuZNGvU=
-X-Received: by 2002:a19:4c08:: with SMTP id z8mr4917148lfa.157.1616680886895;
- Thu, 25 Mar 2021 07:01:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <3f61af0eee9b495e8e8c032902d033c5@AcuMS.aculab.com>
- <20210212195255.1321544-1-jiancai@google.com> <20210217094859.GA3706@willie-the-truck>
-In-Reply-To: <20210217094859.GA3706@willie-the-truck>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 25 Mar 2021 15:01:15 +0100
-Message-ID: <CACRpkdYHXrMPtkG09x9tscBzp2O=Ps-8m_03J6DcBnYcQuvWGg@mail.gmail.com>
-Subject: Re: [PATCH v2] ARM: Implement Clang's SLS mitigation
-To:     Will Deacon <will@kernel.org>
-Cc:     Jian Cai <jiancai@google.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Luis Lozano <llozano@google.com>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        David Laight <David.Laight@aculab.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A01xU9scL5QHqCTcEARA+UZXhX3w6QfTLVjGvG0qhWs=;
+        b=EQmldZIvRhPxIqCRsDdjkoQalzl6ePRtPbnagLaXFj9n1qaDLC3YoddTUlK4Dz4d7M
+         umjLrutpZZ4KIr5n9UskLKix4ub7sKQ1rIGV+ePI4LdZ3eK+PV0OKQJJ8BOOz10pXzZG
+         T8+mVmWb3LTBgbJaBApjkwH/Nl4PGoWC+r75qtQFrsY0Ljb4EaDE43zgqjCJO0mjzIoF
+         ypL2uDs5nsEjrEXqRyHCeHdfbl3kcTxm6au7dTHdp9rAS9T832ges3+Nu3HWJX0YmpMe
+         2yOqfhx8o/L27/4/IzotHC88Q5TCLBh7Wkp35V3j0WAhZxlvHu0cX4KqfUYlx1X43h42
+         8DnA==
+X-Gm-Message-State: AOAM532At6N0YPKEkz4ZjxO+iki9p6I2ImF18DH3oviJFRiJ8rR+RwQx
+        VTYLSnxwrQ+Uy7tQxZeBG/A=
+X-Google-Smtp-Source: ABdhPJx2RAnajmw8ltd8BDZCZjs+AmRvn2izOpJq6Wnqeic5eWA8Vk7CLaR0JiE3Cx4o6fmRuVGtdA==
+X-Received: by 2002:a05:620a:1369:: with SMTP id d9mr8566930qkl.378.1616683801356;
+        Thu, 25 Mar 2021 07:50:01 -0700 (PDT)
+Received: from [192.168.0.41] (71-218-23-248.hlrn.qwest.net. [71.218.23.248])
+        by smtp.gmail.com with ESMTPSA id y1sm4324368qki.9.2021.03.25.07.49.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 25 Mar 2021 07:50:00 -0700 (PDT)
+Subject: Re: [PATCH 11/11] [RFC] drm/i915/dp: fix array overflow warning
+To:     Arnd Bergmann <arnd@kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ning Sun <ning.sun@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Kristof Beyls <kristof.beyls@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        tboot-devel@lists.sourceforge.net,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ath11k@lists.infradead.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
+        Uma Shankar <uma.shankar@intel.com>,
+        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
+        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
+        Animesh Manna <animesh.manna@intel.com>,
+        Sean Paul <seanpaul@chromium.org>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-12-arnd@kernel.org> <87wntv3bgt.fsf@intel.com>
+ <CAK8P3a0HGiPQ-k6t6roTgeUvVAMMY=fMnGV0+t48yJjz55XFAA@mail.gmail.com>
+From:   Martin Sebor <msebor@gmail.com>
+Message-ID: <44ad545d-cc07-2e5f-9ec8-ad848f39268a@gmail.com>
+Date:   Thu, 25 Mar 2021 08:49:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <CAK8P3a0HGiPQ-k6t6roTgeUvVAMMY=fMnGV0+t48yJjz55XFAA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Will,
+On 3/25/21 3:53 AM, Arnd Bergmann wrote:
+> On Thu, Mar 25, 2021 at 9:05 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>>> Clearly something is wrong here, but I can't quite figure out what.
+>>> Changing the array size to 16 bytes avoids the warning, but is
+>>> probably the wrong solution here.
+>>
+>> Ugh. drm_dp_channel_eq_ok() does not actually require more than
+>> DP_LINK_STATUS_SIZE - 2 elements in the link_status. It's some other
+>> related functions that do, and in most cases it's convenient to read all
+>> those DP_LINK_STATUS_SIZE bytes.
+>>
+>> However, here the case is slightly different for DP MST, and the change
+>> causes reserved DPCD addresses to be read. Not sure it matters, but
+>> really I think the problem is what drm_dp_channel_eq_ok() advertizes.
+>>
+>> I also don't like the array notation with sizes in function parameters
+>> in general, because I think it's misleading. Would gcc-11 warn if a
+>> function actually accesses the memory out of bounds of the size?
+> 
+> Yes, that is the point of the warning. Using an explicit length in an
+> array argument type tells gcc that the function will never access
+> beyond the end of that bound, and that passing a short array
+> is a bug.
+> 
+> I don't know if this /only/ means triggering a warning, or if gcc
+> is also able to make optimizations after classifying this as undefined
+> behavior that it would not make for an unspecified length.
 
-I went back and found this feedback which is kind of the heart of the
-issues regarding SLS.
+GCC uses the array parameter notation as a hint for warnings but
+it doesn't optimize on this basis and never will be able to because
+code that accesses more elements from the array isn't invalid.
+Adding static to the bound, as in void f (int[static N]) does
+imply that the function won't access more than N elements and
+C intends for optimizers to rely on it, although GCC doesn't yet.
 
-On Wed, Feb 17, 2021 at 10:51 AM Will Deacon <will@kernel.org> wrote:
+The warning for the array notation is a more portable alternative
+to explicitly annotating functions with attribute access, and to
+-Wvla-parameter for VLA parameters.  The latter seem to be used
+relatively rarely, sometimes deliberately because of the bad rap
+of VLA objects, even though VLA parameters don't suffer from
+the same problems.
 
-> The big problem I have with this is that it's a compile-time decision.
-> For the other spectre crap we have a combination of the "mitigations=off"
-> command-line and CPU detection to avoid the cost of the mitigation where
-> it is not deemed necessary.
+Martin
 
-For newcomers, the way this works today can be found in e.g.:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/kernel/proton-pack.c
-mitigations=off turns off Spectre v2 and v4 mitigations.
+> 
+>> Anyway. I don't think we're going to get rid of the array notation
+>> anytime soon, if ever, no matter how much I dislike it, so I think the
+>> right fix would be to at least state the correct required size in
+>> drm_dp_channel_eq_ok().
+> 
+> Ok. Just to confirm: Changing the declaration to an unspecified length
+> avoids the warnings, as does the patch below:
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+> index eedbb48815b7..6ebeec3d88a7 100644
+> --- a/drivers/gpu/drm/drm_dp_helper.c
+> +++ b/drivers/gpu/drm/drm_dp_helper.c
+> @@ -46,12 +46,12 @@
+>    */
+> 
+>   /* Helpers for DP link training */
+> -static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE], int r)
+> +static u8 dp_link_status(const u8 link_status[DP_LINK_STATUS_SIZE - 2], int r)
+>   {
+>          return link_status[r - DP_LANE0_1_STATUS];
+>   }
+> 
+> -static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE],
+> +static u8 dp_get_lane_status(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
+>                               int lane)
+>   {
+>          int i = DP_LANE0_1_STATUS + (lane >> 1);
+> @@ -61,7 +61,7 @@ static u8 dp_get_lane_status(const u8
+> link_status[DP_LINK_STATUS_SIZE],
+>          return (l >> s) & 0xf;
+>   }
+> 
+> -bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+> +bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
+>                            int lane_count)
+>   {
+>          u8 lane_align;
+> diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
+> index edffd1dcca3e..160f7fd127b1 100644
+> --- a/include/drm/drm_dp_helper.h
+> +++ b/include/drm/drm_dp_helper.h
+> @@ -1456,7 +1456,7 @@ enum drm_dp_phy {
+> 
+>   #define DP_LINK_CONSTANT_N_VALUE 0x8000
+>   #define DP_LINK_STATUS_SIZE       6
+> -bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+> +bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE - 2],
+>                            int lane_count);
+>   bool drm_dp_clock_recovery_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
+>                                int lane_count);
+> 
+> 
+> This obviously needs a good explanation in the code and the changelog text,
+> which I don't have, but if the above is what you had in mind, please take that
+> and add Reported-by/Tested-by: Arnd Bergmann <arnd@arndb.de>.
+> 
+>         Arnd
+> 
 
-AFAICT this is achived with misc parameterization to firmware
-and hypervisors and no runtime-patching of any code
-at all?
-
-(On ARM32 it has no effect whatsoever, we just turn on all
-spectre v2 mitigations by default. No runtime choice.)
-
-The way I understand it is that for SLS the compiler must at least
-put in some kind of placeholders, but that it *might* be possible to do
-runtime mitigations on top of that.
-
-We need feedback from the compiler people as to what is
-possible here.
-
-If it is *not* possible to mitigate at run-time, then I don't know
-what is the right thing to do. Certainly not to turn it on by default
-as is done today?
-
-> So I think that either we enable this unconditionally, or we don't enable it
-> at all (and people can hack their CFLAGS themselves if they want to). It
-> would be helpful for one of the Arm folks to chime in, as I'm yet to see any
-> evidence that this is actually exploitable.
-(...)
-> Is it any worse that Spectre-v1,
-> where we _don't_ have a compiler mitigation?
-
-There is such a compiler mitigation for Spectre v1, under
-the name "Speculative load hardening" the kernel
-is not (yet) enabling it.
-
-https://llvm.org/docs/SpeculativeLoadHardening.html
-it comes with the intuitive command line switch
--mspeculative-load-hardening
-
-Certainly a separate patch can add speculative load
-hardening support on top of this, or before this patch,
-if there is desire and/or feels like a more coherent
-approach.
-
-As the article says "The performance overhead of this style of
-comprehensive mitigation is very high (...) most large applications
-seeing a 30% overhead or less."
-
-I suppose it can be enabled while compiling the kernel just
-like this patch enables -mharden-sls=all
-
-I don't know if your comment means that if we enable one
-of them we should just as well enable both or none as
-otherwise there is no real protection, as attackers can
-just use the other similar attack vector?
-
-> Finally, do we have to worry about our assembly code?
-
-AFAICT yes, and you seem to have hardened
-Aarch64's ERET:s which seemed especially vulnerable
-in commit
-679db70801da9fda91d26caf13bf5b5ccc74e8e8
-"arm64: entry: Place an SB sequence following an ERET instruction"
-Link for people without kernel source:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=679db70801da9fda91d26caf13bf5b5ccc74e8e8
-
-So it seems the most vulnerable spot was already
-fixed by you, thanks! But I bet there are some more
-spots.
-
-Yours,
-Linus Walleij
