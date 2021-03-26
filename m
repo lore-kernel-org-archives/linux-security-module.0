@@ -2,102 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_05,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFC2C433C1
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 16:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F03C433DB
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 23:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8E761A33
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 16:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0E6161A2A
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 23:37:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230221AbhCZQFf (ORCPT
+        id S230138AbhCZXg3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Mar 2021 12:05:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44286 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230046AbhCZQFE (ORCPT
+        Fri, 26 Mar 2021 19:36:29 -0400
+Received: from fallback23.m.smailru.net ([94.100.187.222]:37338 "EHLO
+        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S229986AbhCZXgL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Mar 2021 12:05:04 -0400
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 814FFC0613AA
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Mar 2021 09:05:04 -0700 (PDT)
-Received: by mail-io1-xd36.google.com with SMTP id x16so5907931iob.1
-        for <linux-security-module@vger.kernel.org>; Fri, 26 Mar 2021 09:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DyM8mR09HOKJ3duG1Hs3IbvhPdT50cHIKRPlpFE7bRk=;
-        b=PlYA5g107/q0IhxLnIi5RbaM5Djf85Bg+Sl4JiXyxHE92v43t11ahb3/98iuIBP/Pe
-         J+T+6d0wSQwjUk5Du4ku4tnj21VWQSKwhnELjtJctOIpf8wm9gUtADd2+n2HDdn2H5RG
-         WAaI4xn21XSeBXagAd3GynDsUumcrpZnScuZvhXQP6NsLVhtaAw3zhTeorqdBhGnADB7
-         r/SMSIas60osEg+jBaKeTCTOaYJr5ZshsqrI9wwFE93aYXUch5H6XfzMrN02wjE7X7Xh
-         xdCpPpXOHmq/HWqvebigcLMzXmyakgMj+33wUVVTFQA9K9tdWGGv04SLKfvktzvWlik6
-         /r0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=DyM8mR09HOKJ3duG1Hs3IbvhPdT50cHIKRPlpFE7bRk=;
-        b=guNW/AcOAoT/K0bITMd5cwPE+n6KRmr85fuNuqFa9X6ZJnxGPJ53XmgFBq4Gb7d+aV
-         4i0fvnjK53otjoUC3s7OCun9HNBpA++C5D8AuBbiVThGrUXXDCnANWPjjbJWdCVW9wf4
-         M10U2Oir5wrJk8h4DBsMWbBdmc+MxC7UhxdMrBLf+H3NIfSHnWYeuXfn6n86czl4K3cT
-         kXsk2k/2RMse/q8vy/fVhAMekGYtkOit0ueUjsroXU+mfj3fVf4RHMvlmvLJPUHpaZpA
-         X5WcKx01tusYPxeNFKgL+Pq6HMXlK1ypUXPSD53mVaCUzvFmPxcXi649UYyaV2Tx40gG
-         62Gg==
-X-Gm-Message-State: AOAM530/FgfEUDKmecyu9dnDt+br6DinAckj8sgG0LHRqXP2lDE/cA8/
-        c6tLAa7y4M8SKt020deBddzBNQ==
-X-Google-Smtp-Source: ABdhPJy2jPnhi1lfH0pmOKxay7TKLFnWV6o+2WfCCLe+1B/ouV+0+Y1D3D1dB2TalTDDXpzTrJ5N0g==
-X-Received: by 2002:a05:6602:3314:: with SMTP id b20mr11000794ioz.78.1616774704004;
-        Fri, 26 Mar 2021 09:05:04 -0700 (PDT)
-Received: from [192.168.1.30] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id s3sm2897293ilj.77.2021.03.26.09.05.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Mar 2021 09:05:03 -0700 (PDT)
-Subject: Re: [PATCH] Revert "Smack: Handle io_uring kernel thread privileges"
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <04c7c410-08e8-626a-795e-b77db6666804@kernel.dk>
- <cc7dc28e-f812-a719-ce0c-a288d8facf72@schaufler-ca.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <33fc367c-ec00-eba5-71a9-59e47eb76163@kernel.dk>
-Date:   Fri, 26 Mar 2021 10:05:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Fri, 26 Mar 2021 19:36:11 -0400
+X-Greylist: delayed 1393 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Mar 2021 19:36:11 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
+        b=dI0bqD4nkxCQ+1/xvs4a7AnXSHFMzncnpaLYq46eSvS+Pd3HvSx2SktQAJXsonFolAYdJqA1h+9IwDfJn03wYZG5Yqg4rsu8DzKdyFNhMz0PPKIQVq18Jd5UkL3FkcGAAvd7nFOh5/RxT3MbAA4nG0gAQdLXM49AaLVoyDz2xxw=;
+Received: from [10.161.124.209] (port=54226 helo=f737.i.mail.ru)
+        by fallback23.m.smailru.net with esmtp (envelope-from <safinaskar@mail.ru>)
+        id 1lPvdP-0000fg-Ph; Sat, 27 Mar 2021 02:12:56 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
+        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
+        b=WzB97DjzJA6KD0rKtEvuFRcUXaH4NOyHg7rw5Ubpm+lhWb9s7s7AlhcXS333BC2lOLbl+Ixk6A/NWpQguI7Ob6kzw79FgLMA9zV4raNKs/yZJmB002IP637r/iGZJp/lNcpSPHtVpmtZcr+tn51fQ4ZS0ZuCtF+yTNpdpQYQGq4=;
+Received: by f737.i.mail.ru with local (envelope-from <safinaskar@mail.ru>)
+        id 1lPvdC-0000t8-LI; Sat, 27 Mar 2021 02:12:43 +0300
+Received: by light.mail.ru with HTTP;
+        Sat, 27 Mar 2021 02:12:42 +0300
+From:   =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2NSAxLzFdIGZzOiBBbGxvdyBub19uZXdfcHJpdnMgdGFz?=
+ =?UTF-8?B?a3MgdG8gY2FsbCBjaHJvb3QoMik=?=
 MIME-Version: 1.0
-In-Reply-To: <cc7dc28e-f812-a719-ce0c-a288d8facf72@schaufler-ca.com>
+X-Mailer: Mail.Ru Mailer 1.0
+Date:   Sat, 27 Mar 2021 02:12:42 +0300
+Reply-To: =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
+X-Priority: 3 (Normal)
+Message-ID: <1616800362.522029786@f737.i.mail.ru>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: base64
+X-7564579A: EEAE043A70213CC8
+X-77F55803: 119C1F4DF6A9251C54E3E0C6C5F9D941601365FF1EFA00A57B72CABF76C0DD1EABF6EAE57C0FACE9D8A01C7BE6A5AE8F10256108459FC4386EF9DF32E4A6FB8805836D1F9953231F
+X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE75C5A0068DDB44521D82A6BABE6F325AC08BE7437D75B48FABCF491FFA38154B613377AFFFEAFD269176DF2183F8FC7C05C0AD7D016C066E3C2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE74E9055D3307A84CAEA1F7E6F0F101C67CDEEF6D7F21E0D1D174C73DBBBFC7664C364260FAD8F937CCA2C1D19EE196DDBF4001F4B0FE1189D389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C04CF195F1528592878941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B64AAE2D1698E8717BCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB86D1867E19FE14079C09775C1D3CA48CFC5EA940A35A165FF2DBA43225CD8A89FD63380FFBEB38773156CCFE7AF13BCA4B5C8C57E37DE458BEDA766A37F9254B7
+X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2368A440D3B0F6089093C9A16E5BC824AC8B6CDF511875BC4E8F7B195E1C97831F7A2AF59AE45E8C5AB73A7D1547457A7
+X-C1DE0DAB: 0D63561A33F958A5A6AFBEC59E2B787535FC3150985A3DCC196730366FEFC50BBDC6A1CF3F042BAD6DF99611D93F60EF4280523C145DA091699F904B3F4130E343918A1A30D5E7FCCB5012B2E24CD356
+X-C8649E89: 4E36BF7865823D7055A7F0CF078B5EC49A30900B95165D34C786159FDC4342B0C9E4B168990CD8780BCEBC64311BE505E8F3D0AD8841ECE51ADEA222FBDD9F961D7E09C32AA3244C0B0CF7C92C78415DA03BED48498C790D81560E2432555DBB83B48618A63566E0
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRYind6cQHiLPg==
+X-Mailru-Sender: 583F1D7ACE8F49BD48DC4DEF5972559E2B2CCB5D3FBD3778DD0ECC4DFEACCE8F1C238ED0579F4A1304DCC68E0365DB113919A3F0584408A7E277D648EEF17123F32B7A1AD1AAC36A3BEC1D9798BA4B85D186BC2F9B8D6AD3EAB4BC95F72C04283CDA0F3B3F5B9367
+X-Mras: Ok
+X-Spam: undefined
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B4DF7173A40FF1347DA6106AACE9855D49AC59F2BC240176BE049FFFDB7839CE9EFBD1590308EC2BB2A3CE3E131277FC6ECD89962890259BEBE5C51A0269817717
+X-7FA49CB5: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE8AFE25585DE82FD248941B15DA834481FA18204E546F3947C724336BCC0EE1BA8F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006370B730A9793D99025389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C355B626DF3F312CC635872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2AD77751E876CB595E8F7B195E1C97831F7A2AF59AE45E8C57D884B766E578A04
+X-C1DE0DAB: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE808A87E9E263F8CBA8E8E86DC7131B365E7726E8460B7C23C
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRbJZryNFArqbw==
+X-Mailru-MI: 1000000000800
+X-Mras: Ok
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/26/21 10:00 AM, Casey Schaufler wrote:
-> On 3/25/2021 5:42 PM, Jens Axboe wrote:
->> This reverts commit 942cb357ae7d9249088e3687ee6a00ed2745a0c7.
->>
->> The io_uring PF_IO_WORKER threads no longer have PF_KTHREAD set, so no
->> need to special case them for credential checks.
-> 
-> Could you cite the commit making that change?
-> I wouldn't want to see this change back-ported to a kernel
-> that doesn't have that change as well.
-
-This is strictly 5.12+. The change came about from:
-
-commit 3bfe6106693b6b4ba175ad1f929c4660b8f59ca8
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Tue Feb 16 14:15:30 2021 -0700
-
-    io-wq: fork worker threads from original task
-
-So don't backport it.
-
--- 
-Jens Axboe
-
+SGkuIFVucHJpdmlsZWdlZCB1c2VycyBhbHJlYWR5IGNhbiBkbyBjaHJvb3QuIEhlIHNob3VsZCBz
+aW1wbHkgY3JlYXRlIHVzZXJucyBhbmQgdGhlbiBjYWxsICJjaHJvb3QiIGluc2lkZS4gQXMgYW4g
+TFdOIGNvbW1lbnRlciBub3RlZCwgeW91IGNhbiBzaW1wbHkgcnVuIAoidW5zaGFyZSAtciAvdXNy
+L3NiaW4vY2hyb290IHNvbWUtZGlyIi4gKEkgcmVjb21tZW5kIHJlYWRpbmcgYWxsIGNvbW1lbnRz
+OiBodHRwczovL2x3bi5uZXQvQXJ0aWNsZXMvODQ5MTI1LyAuKQoKQWxzbzogaWYgeW91IG5lZWQg
+Y2hyb290IGZvciBwYXRoIHJlc29sdmluZyBvbmx5LCBjb25zaWRlciBvcGVuYXQyIHdpdGggUkVT
+T0xWRV9JTl9ST09UICggaHR0cHM6Ly9sd24ubmV0L0FydGljbGVzLzc5Njg2OC8gKS4KCgo9PQpB
+c2thciBTYWZpbgpodHRwczovL2dpdGh1Yi5jb20vc2FmaW5hc2thcgo=
