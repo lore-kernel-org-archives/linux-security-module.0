@@ -2,103 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF5AC433C1
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 00:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 959C2C433C1
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 04:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73CD961A06
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 00:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72D1461A10
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 04:31:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229934AbhCZAo2 (ORCPT
+        id S230327AbhCZEax (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 25 Mar 2021 20:44:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42930 "EHLO
+        Fri, 26 Mar 2021 00:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbhCZAoS (ORCPT
+        with ESMTP id S230317AbhCZEa3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 25 Mar 2021 20:44:18 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B85F4C06174A
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 17:44:17 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id v186so3468228pgv.7
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 17:44:17 -0700 (PDT)
+        Fri, 26 Mar 2021 00:30:29 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A77C0613E0
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 21:30:28 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id a22-20020a17090aa516b02900c1215e9b33so3636415pjq.5
+        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 21:30:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=kQfJe3SM3uKBO4y80++UrhVTvqfOoULiPheOgQ6rl2A=;
-        b=xUMWuzOHV/hpq2Qlwq23GvUh51ikLyBfqnYYKJ3Mwxr5uOc2lQOhS9I/DDUci0VUEg
-         QHiYcO72fadNjDnruS9Lk3RnqkW7VBqeMY9lNa05yu0uxwVpJVkc8U0vxbRXfZnOmJam
-         Xd4HzrnO7xEgph1p+ljyVPdiqIYR2SCYkI0RpP4qCi+qvEfMoVJjO7I22tyaAITUW5ZV
-         YekTvsXxwECnat/wKVc2eQrEiLVNKrcd0AZ1gyw5zLUjeIYBTtsW8FzGcH1GgwNZA5T4
-         DriLYMj/u0262xaw8pVi1MS1shiZEpFLmi1qRIRLZ0nfKIh4PlTwRqat3dUQonJJ7cBI
-         swIg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=BOYVi/+atNY4w5a1Eu4AFIfXG1/kriVH66pesNImX2Q=;
+        b=Gt0kpo1iHDKszZFpT+Ko0aQvJV+MsUOHDLUaIYJ1Q9zDa/TrEbIi78eqXX6WSu6GX7
+         pfRyJz2XC0x5LcOpkmHrIji2a8gZ0UyaNJuQmQkFZtr1MsmTrWXI9hJ4wj7KlwhwdP8r
+         3TujOSNdRk4l0XyOTFl+8w69IEFt6kj94zI3g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=kQfJe3SM3uKBO4y80++UrhVTvqfOoULiPheOgQ6rl2A=;
-        b=tldQOg507ja2dCVlEgOwJaHODfxT1QGO6dxGM5wFqlOMTvSclNntYxUgvGYJq0IAov
-         NBof3EdRaT+45khUP7ferS9WfRIcn2kCfmNFFLp8sjW4aUMWfaeZX/w4FM//9pet8Ygq
-         JebyGh/+f7MDcYjPIo+5CqP6bDMpaA/jdBv/oPliaoq6n/3cFSCrsvpukKEribt4bD0K
-         3d+1scPap6uQCvimVNAQoKOiBdV+Yt+Ov4oRfpMiiu6eeG5wAYsqYWu1ogY7t0bGIq3P
-         dkVicttujxgQo++x+ed+GH7HlofJ6Pd4LjYwnXi5JhDF0x5mmfWbCQ95SJlyGj1R2J+x
-         Otog==
-X-Gm-Message-State: AOAM532h8cEfw18RYkf3PpnfEPSgfN5lMA6TDDR9kXB57qoSU2LAbXI0
-        7tAoQ081apmO5AuL0mjuvjVshw==
-X-Google-Smtp-Source: ABdhPJwRGCNtpyjZeBVrH8RV0bCyTDTG5DkJDgD8GvOoPZBsBtaU5or6a3QoNLb6Ijr4dfwipLpckQ==
-X-Received: by 2002:aa7:940a:0:b029:1f1:5b58:24e5 with SMTP id x10-20020aa7940a0000b02901f15b5824e5mr10431788pfo.54.1616719455378;
-        Thu, 25 Mar 2021 17:44:15 -0700 (PDT)
-Received: from [192.168.1.134] ([66.219.217.173])
-        by smtp.gmail.com with ESMTPSA id js16sm6636137pjb.21.2021.03.25.17.44.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Mar 2021 17:44:14 -0700 (PDT)
-To:     Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] tomoyo: don't special case PF_IO_WORKER for PF_KTHREAD
-Message-ID: <46f6e3cb-cc96-d214-e183-71dd238da075@kernel.dk>
-Date:   Thu, 25 Mar 2021 18:44:13 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=BOYVi/+atNY4w5a1Eu4AFIfXG1/kriVH66pesNImX2Q=;
+        b=PpH2qtw1ldRAwLAhKsCNw/eYNHRgrpQIllL1El7Z+yrlzHaLXZvgZvXMs/fqLUWLNR
+         hRq3JMms7I1osPRstmSmdCq/Ud4K31q65sqccy36I3hWvYorRoSiNFl1NKxG2cR68q7T
+         OQpANNh2/zBV+WRGVnwHn6/WJmoQAtW0IsXo4dSTLZAqoHq2ru0bhYXPKXpUvKMZGwt5
+         y/gXnbarMxaDG2Jh5dAj/Ng3iJ7D5lCcuUZHoe6PfQqTFvpu/a2FxrT3A20TsiROlq6U
+         RMRkQtPG0z001qq7CCVSQm5FVn75TsXUjqNVhtSAejgiuzCH9H1XpwmmeSGXBTWXmrCm
+         WT/w==
+X-Gm-Message-State: AOAM532Gh2FmLcfUW4juEOra6o2uUlEYfEKPGV3LauxnAxYbmw8nCmjv
+        9ZFisxBERP9+qkLvXHplW66ZZQ==
+X-Google-Smtp-Source: ABdhPJxORFz8+uxcEeMqmif00hsBXABZprC7wNExOBK8tI1Vw3fwRZI2qlUPU6jEh98HY5uxsdvogA==
+X-Received: by 2002:a17:90a:cc0b:: with SMTP id b11mr12101951pju.216.1616733027910;
+        Thu, 25 Mar 2021 21:30:27 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q14sm7482326pff.94.2021.03.25.21.30.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 25 Mar 2021 21:30:27 -0700 (PDT)
+Date:   Thu, 25 Mar 2021 21:30:25 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v31 12/12] landlock: Add user and kernel documentation
+Message-ID: <202103252130.C629319B86@keescook>
+References: <20210324191520.125779-1-mic@digikod.net>
+ <20210324191520.125779-13-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210324191520.125779-13-mic@digikod.net>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The io_uring PF_IO_WORKER threads no longer have PF_KTHREAD set, so no
-need to special case them for credential checks.
+On Wed, Mar 24, 2021 at 08:15:20PM +0100, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
+> 
+> Add a first document describing userspace API: how to define and enforce
+> a Landlock security policy.  This is explained with a simple example.
+> The Landlock system calls are described with their expected behavior and
+> current limitations.
+> 
+> Another document is dedicated to kernel developers, describing guiding
+> principles and some important kernel structures.
+> 
+> This documentation can be built with the Sphinx framework.
+> 
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
 
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- security/tomoyo/network.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the changes!
 
-diff --git a/security/tomoyo/network.c b/security/tomoyo/network.c
-index 478f757ff843..8dc61335f65e 100644
---- a/security/tomoyo/network.c
-+++ b/security/tomoyo/network.c
-@@ -613,7 +613,7 @@ static int tomoyo_check_unix_address(struct sockaddr *addr,
- static bool tomoyo_kernel_service(void)
- {
- 	/* Nothing to do if I am a kernel service. */
--	return (current->flags & (PF_KTHREAD | PF_IO_WORKER)) == PF_KTHREAD;
-+	return current->flags & PF_KTHREAD;
- }
- 
- /**
--- 
-2.31.0
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
 -- 
-Jens Axboe
-
+Kees Cook
