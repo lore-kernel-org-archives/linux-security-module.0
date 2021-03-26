@@ -2,113 +2,192 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46783C433E5
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 04:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D353C433E0
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 09:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3313F61A42
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 04:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE5F061A48
+	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 09:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231146AbhCZEb0 (ORCPT
+        id S229812AbhCZJbT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Mar 2021 00:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35276 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230432AbhCZEa5 (ORCPT
+        Fri, 26 Mar 2021 05:31:19 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:35362 "EHLO fornost.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229832AbhCZJbF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Mar 2021 00:30:57 -0400
-Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2D9CC06174A
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 21:30:55 -0700 (PDT)
-Received: by mail-pf1-x432.google.com with SMTP id l3so4038210pfc.7
-        for <linux-security-module@vger.kernel.org>; Thu, 25 Mar 2021 21:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=35XopTC+7WOzIQnHzWXImRYQHw0CHWkdoXHcf/+9Onk=;
-        b=FuXqSLOY5UJibY4x5cy44xNCqVYXhs/QB8SAK6Ph5plXJluUdlmzkl2vYUhpV/m3iz
-         fBwsgAxyhUwk4l2OzfotcXS7ilTz5vz/4D0pRkceuJfu6MDHX6kEBtNhBX+0z1Q+x9Rq
-         gJAq/6u1b6zvaFaFWLn9VBJN47ayz/H6CG+SQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=35XopTC+7WOzIQnHzWXImRYQHw0CHWkdoXHcf/+9Onk=;
-        b=BZUS8IcYEmWaOSe++zoG1tuIVRWF4UWwuhNDG0h28QjiOAMRE7Db0nEptTSfRnwY8o
-         FQ3s1u9FDyyHjw1KIWxW8Vr2GcwHHSNd1YmBq48saEwcrm/eNgr70yBLULczGsYcTNKZ
-         PbcwW2Y4Zc+I2CsGFUzO9EBVlI43C0s3PLaioUqwqoGxgoVU7ZVPWS7pImDy87Suqgyj
-         BZcZZs+FD2sIjev4gnBKWH3xZhwdcjtoS0OJ6wtTQJ0hHF+F+PmMIi2Tp0za0v6ihuy9
-         sV3ZnuVXcY1Tp0SdWGyRGX307nmkQRHnLu2sivo36fp1JKmP7AKJ6XtOMfRm0NUYve3b
-         +jvQ==
-X-Gm-Message-State: AOAM531H1EsGxn76KXFlOqPTGt81l7ETKn1qwWDih47UAnkFwWXipJL5
-        NREIRsYe7NWUi7+ddXWOPkpWig==
-X-Google-Smtp-Source: ABdhPJxJ4Uh8qq7VGivmsaxoe1yrWQkMSLzdjT7KyXHUDkthLjeUOIqUGrr9oa/zfMmenb3JnsesWA==
-X-Received: by 2002:a62:7f86:0:b029:20a:a195:bb36 with SMTP id a128-20020a627f860000b029020aa195bb36mr11204021pfd.4.1616733055463;
-        Thu, 25 Mar 2021 21:30:55 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d1sm7098940pjc.24.2021.03.25.21.30.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Mar 2021 21:30:54 -0700 (PDT)
-Date:   Thu, 25 Mar 2021 21:30:53 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v31 10/12] selftests/landlock: Add user space tests
-Message-ID: <202103252130.54C78E4@keescook>
-References: <20210324191520.125779-1-mic@digikod.net>
- <20210324191520.125779-11-mic@digikod.net>
+        Fri, 26 Mar 2021 05:31:05 -0400
+Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
+        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
+        id 1lPinv-0003Uk-Sm; Fri, 26 Mar 2021 20:30:57 +1100
+Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Fri, 26 Mar 2021 20:30:55 +1100
+Date:   Fri, 26 Mar 2021 20:30:55 +1100
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        davem@davemloft.net, dhowells@redhat.com, zohar@linux.ibm.com,
+        jarkko@kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patrick@puiterwijk.org
+Subject: Re: [PATCH v12 00/10] Add support for x509 certs with NIST
+ P384/256/192 keys
+Message-ID: <20210326093054.GE12658@gondor.apana.org.au>
+References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210324191520.125779-11-mic@digikod.net>
+In-Reply-To: <20210316210740.1592994-1-stefanb@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 24, 2021 at 08:15:18PM +0100, Mickaël Salaün wrote:
-> From: Mickaël Salaün <mic@linux.microsoft.com>
+On Tue, Mar 16, 2021 at 05:07:30PM -0400, Stefan Berger wrote:
+> This series of patches adds support for x509 certificates signed by a CA
+> that uses NIST P384, P256 or P192 keys for signing. It also adds support for
+> certificates where the public key is one of this type of a key. The math
+> for ECDSA signature verification is also added as well as the math for fast
+> mmod operation for NIST P384.
 > 
-> Test all Landlock system calls, ptrace hooks semantic and filesystem
-> access-control with multiple layouts.
+> Since self-signed certificates are verified upon loading, the following
+> script can be used for testing of NIST P256 keys:
 > 
-> Test coverage for security/landlock/ is 93.6% of lines.  The code not
-> covered only deals with internal kernel errors (e.g. memory allocation)
-> and race conditions.
+> k=$(keyctl newring test @u)
 > 
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> while :; do
+> 	for hash in sha1 sha224 sha256 sha384 sha512; do
+> 		openssl req \
+> 			-x509 \
+> 			-${hash} \
+> 			-newkey ec \
+> 			-pkeyopt ec_paramgen_curve:prime256v1 \
+> 			-keyout key.pem \
+> 			-days 365 \
+> 			-subj '/CN=test' \
+> 			-nodes \
+> 			-outform der \
+> 			-out cert.der
+> 		keyctl padd asymmetric testkey $k < cert.der
+> 		if [ $? -ne 0 ]; then
+> 			echo "ERROR"
+> 			exit 1
+> 		fi
+> 	done
+> done
+> 
+> Ecdsa support also works with restricted keyrings where an RSA key is used
+> to sign a NIST P384/256/192 key. Scripts for testing are here:
+> 
+> https://github.com/stefanberger/eckey-testing
+> 
+> The ECDSA signature verification will be used by IMA Appraisal where ECDSA
+> file signatures stored in RPM packages will use substantially less space
+> than if RSA signatures were to be used.
+> 
+> Further, a patch is added that allows kernel modules to be signed with a NIST
+> P384 key.
+> 
+> Testing was also done with a Pkcs11 device using an ECC key for module
+> signing:
+>   https://github.com/stefanberger/eckey-testing/wiki/Using-Pkcs11-Device-(SoftHSM)-for-Signing-Linux-Kernel-Modules
+> 
+>    Stefan and Saulo
+> 
+> v11->v12:
+>   - Added Jarkko's Acked-by's
+> 
+> v10->v11:
+>   - Addressed Jarkko's comments
+>   - Split off OID definitions from first patch into own patch
+>   - Renamed OID_id_secp384r1 to OID_id_ansip384r1 (spec name) in 09/10
+> 
+> v9->v10:
+>   - rearranged order of patches to have crypto patches first
+>   - moved hunk from patch 3 to patch 2 to avoid compilation warning due to
+>     unused symbol
+> 
+> v8->v9:
+>   - Appended Saulo's patches
+>   - Appended patch to support kernel modules signed with NIST p384 key. This
+>     patch requires Nayna's series here: https://lkml.org/lkml/2021/2/18/856
+> 
+> v7->v8:
+>   - patch 3/4: Do not determine key algo using parse_OID in public_key.c
+>     but do this when parsing the certificate. This addresses an issue
+>     with certain build configurations where OID_REGISTRY is not available
+>     as 'Reported-by: kernel test robot <lkp@intel.com>'.
+> 
+> v6->v7:
+>   - Moved some OID defintions to patch 1 for bisectability
+>   - Applied R-b's
+>   
+> v5->v6:
+>   - moved ecdsa code into its own module ecdsa_generic built from ecdsa.c
+>   - added script-generated test vectors for NIST P256 & P192 and all hashes
+>   - parsing of OID that contain header with new parse_oid()
+> 
+> v4->v5:
+>   - registering crypto support under names ecdsa-nist-p256/p192 following
+>     Hubert Xu's suggestion in other thread
+>   - appended IMA ECDSA support patch
+> 
+> v3->v4:
+>   - split off of ecdsa crypto part; registering akcipher as "ecdsa" and
+>     deriving used curve from digits in parsed key
+> 
+> v2->v3:
+>   - patch 2 now includes linux/scatterlist.h
+> 
+> v1->v2:
+>   - using faster vli_sub rather than newly added vli_mod_fast to 'reduce'
+>     result
+>   - rearranged switch statements to follow after RSA
+>   - 3rd patch from 1st posting is now 1st patch
+> 
+> 
+> Saulo Alessandre (4):
+>   crypto: Add NIST P384 curve parameters
+>   crypto: Add math to support fast NIST P384
+>   ecdsa: Register NIST P384 and extend test suite
+>   x509: Add OID for NIST P384 and extend parser for it
+> 
+> Stefan Berger (6):
+>   oid_registry: Add OIDs for ECDSA with SHA224/256/384/512
+>   crypto: Add support for ECDSA signature verification
+>   x509: Detect sm2 keys by their parameters OID
+>   x509: Add support for parsing x509 certs with ECDSA keys
+>   ima: Support EC keys for signature verification
+>   certs: Add support for using elliptic curve keys for signing modules
+> 
+>  certs/Kconfig                             |  22 ++
+>  certs/Makefile                            |  14 +
+>  crypto/Kconfig                            |  10 +
+>  crypto/Makefile                           |   6 +
+>  crypto/asymmetric_keys/pkcs7_parser.c     |   4 +
+>  crypto/asymmetric_keys/public_key.c       |   4 +-
+>  crypto/asymmetric_keys/x509_cert_parser.c |  49 ++-
+>  crypto/asymmetric_keys/x509_public_key.c  |   4 +-
+>  crypto/ecc.c                              | 281 +++++++++-----
+>  crypto/ecc.h                              |  28 +-
+>  crypto/ecc_curve_defs.h                   |  32 ++
+>  crypto/ecdsa.c                            | 376 +++++++++++++++++++
+>  crypto/ecdsasignature.asn1                |   4 +
+>  crypto/testmgr.c                          |  18 +
+>  crypto/testmgr.h                          | 424 ++++++++++++++++++++++
+>  include/crypto/ecdh.h                     |   1 +
+>  include/keys/asymmetric-type.h            |   6 +
+>  include/linux/oid_registry.h              |  10 +-
+>  lib/oid_registry.c                        |  24 ++
+>  security/integrity/digsig_asymmetric.c    |  30 +-
+>  20 files changed, 1240 insertions(+), 107 deletions(-)
+>  create mode 100644 crypto/ecdsa.c
+>  create mode 100644 crypto/ecdsasignature.asn1
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
+Patches 1-9 applied to branch ecc.  Thanks.
 -- 
-Kees Cook
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
