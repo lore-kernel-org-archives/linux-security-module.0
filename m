@@ -2,80 +2,147 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_05,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F03C433DB
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 23:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33438C433E1
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Mar 2021 12:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0E6161A2A
-	for <linux-security-module@archiver.kernel.org>; Fri, 26 Mar 2021 23:37:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1412D619F7
+	for <linux-security-module@archiver.kernel.org>; Sat, 27 Mar 2021 12:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230138AbhCZXg3 (ORCPT
+        id S230323AbhC0MrP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 26 Mar 2021 19:36:29 -0400
-Received: from fallback23.m.smailru.net ([94.100.187.222]:37338 "EHLO
-        fallback23.mail.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229986AbhCZXgL (ORCPT
+        Sat, 27 Mar 2021 08:47:15 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:59536 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230296AbhC0MrO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 26 Mar 2021 19:36:11 -0400
-X-Greylist: delayed 1393 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Mar 2021 19:36:11 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
-        b=dI0bqD4nkxCQ+1/xvs4a7AnXSHFMzncnpaLYq46eSvS+Pd3HvSx2SktQAJXsonFolAYdJqA1h+9IwDfJn03wYZG5Yqg4rsu8DzKdyFNhMz0PPKIQVq18Jd5UkL3FkcGAAvd7nFOh5/RxT3MbAA4nG0gAQdLXM49AaLVoyDz2xxw=;
-Received: from [10.161.124.209] (port=54226 helo=f737.i.mail.ru)
-        by fallback23.m.smailru.net with esmtp (envelope-from <safinaskar@mail.ru>)
-        id 1lPvdP-0000fg-Ph; Sat, 27 Mar 2021 02:12:56 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail3;
-        h=Content-Transfer-Encoding:Content-Type:Message-ID:Reply-To:Date:MIME-Version:Subject:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=TCgmuDJAYTsjobPwpCKnWi9eh9wfEhXbvIg+omz35DM=;
-        b=WzB97DjzJA6KD0rKtEvuFRcUXaH4NOyHg7rw5Ubpm+lhWb9s7s7AlhcXS333BC2lOLbl+Ixk6A/NWpQguI7Ob6kzw79FgLMA9zV4raNKs/yZJmB002IP637r/iGZJp/lNcpSPHtVpmtZcr+tn51fQ4ZS0ZuCtF+yTNpdpQYQGq4=;
-Received: by f737.i.mail.ru with local (envelope-from <safinaskar@mail.ru>)
-        id 1lPvdC-0000t8-LI; Sat, 27 Mar 2021 02:12:43 +0300
-Received: by light.mail.ru with HTTP;
-        Sat, 27 Mar 2021 02:12:42 +0300
-From:   =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2NSAxLzFdIGZzOiBBbGxvdyBub19uZXdfcHJpdnMgdGFz?=
- =?UTF-8?B?a3MgdG8gY2FsbCBjaHJvb3QoMik=?=
-MIME-Version: 1.0
-X-Mailer: Mail.Ru Mailer 1.0
-Date:   Sat, 27 Mar 2021 02:12:42 +0300
-Reply-To: =?UTF-8?B?QXNrYXIgU2FmaW4=?= <safinaskar@mail.ru>
-X-Priority: 3 (Normal)
-Message-ID: <1616800362.522029786@f737.i.mail.ru>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-X-7564579A: EEAE043A70213CC8
-X-77F55803: 119C1F4DF6A9251C54E3E0C6C5F9D941601365FF1EFA00A57B72CABF76C0DD1EABF6EAE57C0FACE9D8A01C7BE6A5AE8F10256108459FC4386EF9DF32E4A6FB8805836D1F9953231F
-X-7FA49CB5: 70AAF3C13DB7016878DA827A17800CE75C5A0068DDB44521D82A6BABE6F325AC08BE7437D75B48FABCF491FFA38154B613377AFFFEAFD269176DF2183F8FC7C05C0AD7D016C066E3C2099A533E45F2D0395957E7521B51C2CFCAF695D4D8E9FCEA1F7E6F0F101C6778DA827A17800CE74E9055D3307A84CAEA1F7E6F0F101C67CDEEF6D7F21E0D1D174C73DBBBFC7664C364260FAD8F937CCA2C1D19EE196DDBF4001F4B0FE1189D389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C04CF195F1528592878941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B64AAE2D1698E8717BCC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB86D1867E19FE14079C09775C1D3CA48CFC5EA940A35A165FF2DBA43225CD8A89FD63380FFBEB38773156CCFE7AF13BCA4B5C8C57E37DE458BEDA766A37F9254B7
-X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2368A440D3B0F6089093C9A16E5BC824AC8B6CDF511875BC4E8F7B195E1C97831F7A2AF59AE45E8C5AB73A7D1547457A7
-X-C1DE0DAB: 0D63561A33F958A5A6AFBEC59E2B787535FC3150985A3DCC196730366FEFC50BBDC6A1CF3F042BAD6DF99611D93F60EF4280523C145DA091699F904B3F4130E343918A1A30D5E7FCCB5012B2E24CD356
-X-C8649E89: 4E36BF7865823D7055A7F0CF078B5EC49A30900B95165D34C786159FDC4342B0C9E4B168990CD8780BCEBC64311BE505E8F3D0AD8841ECE51ADEA222FBDD9F961D7E09C32AA3244C0B0CF7C92C78415DA03BED48498C790D81560E2432555DBB83B48618A63566E0
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRYind6cQHiLPg==
-X-Mailru-Sender: 583F1D7ACE8F49BD48DC4DEF5972559E2B2CCB5D3FBD3778DD0ECC4DFEACCE8F1C238ED0579F4A1304DCC68E0365DB113919A3F0584408A7E277D648EEF17123F32B7A1AD1AAC36A3BEC1D9798BA4B85D186BC2F9B8D6AD3EAB4BC95F72C04283CDA0F3B3F5B9367
-X-Mras: Ok
-X-Spam: undefined
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4DF7173A40FF1347DA6106AACE9855D49AC59F2BC240176BE049FFFDB7839CE9EFBD1590308EC2BB2A3CE3E131277FC6ECD89962890259BEBE5C51A0269817717
-X-7FA49CB5: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE8AFE25585DE82FD248941B15DA834481FA18204E546F3947C724336BCC0EE1BA8F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F79006370B730A9793D99025389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C355B626DF3F312CC635872C767BF85DA2F004C90652538430E4A6367B16DE6309
-X-B7AD71C0: AC4F5C86D027EB782CDD5689AFBDA7A2AD77751E876CB595E8F7B195E1C97831F7A2AF59AE45E8C57D884B766E578A04
-X-C1DE0DAB: 0D63561A33F958A5FD61E137DE0202F7B6B12DFC72310FE808A87E9E263F8CBA8E8E86DC7131B365E7726E8460B7C23C
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5+wYjsrrSY/u8Y3PrTqANeitKFiSd6Yd7yPpbiiZ/d5BsxIjK0jGQgCHUM3Ry2Lt2G3MDkMauH3h0dBdQGj+BB/iPzQYh7XS329fgu+/vnDhQDnxeTQymRbJZryNFArqbw==
-X-Mailru-MI: 1000000000800
-X-Mras: Ok
+        Sat, 27 Mar 2021 08:47:14 -0400
+X-Greylist: delayed 345 seconds by postgrey-1.27 at vger.kernel.org; Sat, 27 Mar 2021 08:47:12 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by lilium.sigma-star.at (Postfix) with ESMTP id B1F871817F76C;
+        Sat, 27 Mar 2021 13:41:26 +0100 (CET)
+Received: from lilium.sigma-star.at ([127.0.0.1])
+        by localhost (lilium.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 2m3PmdzHQlsy; Sat, 27 Mar 2021 13:41:26 +0100 (CET)
+Received: from lilium.sigma-star.at ([127.0.0.1])
+        by localhost (lilium.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ZIqBOEDGmD9E; Sat, 27 Mar 2021 13:41:25 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 14.0 \(3654.60.0.2.21\))
+Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+From:   David Gstir <david@sigma-star.at>
+In-Reply-To: <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
+Date:   Sat, 27 Mar 2021 13:41:24 +0100
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?utf-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <6F812C20-7585-4718-997E-0306C4118468@sigma-star.at>
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+ <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
+ <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com>
+ <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
+ <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
+ <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de>
+ <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
+ <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de>
+ <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+X-Mailer: Apple Mail (2.3654.60.0.2.21)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SGkuIFVucHJpdmlsZWdlZCB1c2VycyBhbHJlYWR5IGNhbiBkbyBjaHJvb3QuIEhlIHNob3VsZCBz
-aW1wbHkgY3JlYXRlIHVzZXJucyBhbmQgdGhlbiBjYWxsICJjaHJvb3QiIGluc2lkZS4gQXMgYW4g
-TFdOIGNvbW1lbnRlciBub3RlZCwgeW91IGNhbiBzaW1wbHkgcnVuIAoidW5zaGFyZSAtciAvdXNy
-L3NiaW4vY2hyb290IHNvbWUtZGlyIi4gKEkgcmVjb21tZW5kIHJlYWRpbmcgYWxsIGNvbW1lbnRz
-OiBodHRwczovL2x3bi5uZXQvQXJ0aWNsZXMvODQ5MTI1LyAuKQoKQWxzbzogaWYgeW91IG5lZWQg
-Y2hyb290IGZvciBwYXRoIHJlc29sdmluZyBvbmx5LCBjb25zaWRlciBvcGVuYXQyIHdpdGggUkVT
-T0xWRV9JTl9ST09UICggaHR0cHM6Ly9sd24ubmV0L0FydGljbGVzLzc5Njg2OC8gKS4KCgo9PQpB
-c2thciBTYWZpbgpodHRwczovL2dpdGh1Yi5jb20vc2FmaW5hc2thcgo=
+Hi!
+
+> On 25.03.2021, at 06:26, Sumit Garg <sumit.garg@linaro.org> wrote:
+> 
+> On Wed, 24 Mar 2021 at 19:37, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>> 
+>> Hello Sumit,
+>> 
+>> On 24.03.21 11:47, Sumit Garg wrote:
+>>> On Wed, 24 Mar 2021 at 14:56, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>>>> 
+>>>> Hello Mimi,
+>>>> 
+>>>> On 23.03.21 19:07, Mimi Zohar wrote:
+>>>>> On Tue, 2021-03-23 at 17:35 +0100, Ahmad Fatoum wrote:
+>>>>>> On 21.03.21 21:48, Horia Geantă wrote:
+>>>>>>> caam has random number generation capabilities, so it's worth using that
+>>>>>>> by implementing .get_random.
+>>>>>> 
+>>>>>> If the CAAM HWRNG is already seeding the kernel RNG, why not use the kernel's?
+>>>>>> 
+>>>>>> Makes for less code duplication IMO.
+>>>>> 
+>>>>> Using kernel RNG, in general, for trusted keys has been discussed
+>>>>> before.   Please refer to Dave Safford's detailed explanation for not
+>>>>> using it [1].
+>>>> 
+>>>> The argument seems to boil down to:
+>>>> 
+>>>> - TPM RNG are known to be of good quality
+>>>> - Trusted keys always used it so far
+>>>> 
+>>>> Both are fine by me for TPMs, but the CAAM backend is new code and neither point
+>>>> really applies.
+>>>> 
+>>>> get_random_bytes_wait is already used for generating key material elsewhere.
+>>>> Why shouldn't new trusted key backends be able to do the same thing?
+>>>> 
+>>> 
+>>> Please refer to documented trusted keys behaviour here [1]. New
+>>> trusted key backends should align to this behaviour and in your case
+>>> CAAM offers HWRNG so we should be better using that.
+>> 
+>> Why is it better?
+>> 
+>> Can you explain what benefit a CAAM user would have if the trusted key
+>> randomness comes directly out of the CAAM instead of indirectly from
+>> the kernel entropy pool that is seeded by it?
+> 
+> IMO, user trust in case of trusted keys comes from trusted keys
+> backend which is CAAM here. If a user doesn't trust that CAAM would
+> act as a reliable source for RNG then CAAM shouldn't be used as a
+> trust source in the first place.
+> 
+> And I think building user's trust for kernel RNG implementation with
+> multiple entropy contributions is pretty difficult when compared with
+> CAAM HWRNG implementation.
+
+Generally speaking, I’d say trusting the CAAM RNG and trusting in it’s
+other features are two separate things. However, reading through the CAAM
+key blob spec I’ve got here, CAAM key blob keys (the keys that secure a blob’s
+content) are generated using its internal RNG. So I’d save if the CAAM RNG
+is insecure, so are generated key blobs. Maybe somebody with more insight
+into the CAAM internals can verify that, but I don’t see any point in using
+the kernel’s RNG as long as we let CAAM generate the key blob keys for us.
+
+Cheers,
+dave
+
