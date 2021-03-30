@@ -2,148 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17CFC433DB
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 13:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE942C433E5
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 14:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3CB60240
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 13:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 834CD619CF
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 14:45:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232240AbhC3NSg (ORCPT
+        id S232141AbhC3OpN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 09:18:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55310 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232053AbhC3NSF (ORCPT
+        Tue, 30 Mar 2021 10:45:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36728 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231803AbhC3Oo5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 09:18:05 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12UD4TDD014690;
-        Tue, 30 Mar 2021 09:16:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=AILIEiIY4WodSOw/hWAlTDcRZuWl/prYle+ozI4+n88=;
- b=NsJwNENV2eFOdKfww8PX5VeEj6BFm+Sac8zGCCkUwpRKTO1ekQbgRyYcKjM4FvDLjhXu
- y1pHBpenp9jo0Zb+nyLenlegVBsFZE4yG7wyhoO206mFMBFLl5INDK3cwJpmFvfhaG1G
- lprA6+X1uSWjGBfnLV1BKq5FJdF4r+Ij8LHOcZXgYo6F6QEaMbBbmbn2FwjdE+DaqgyM
- Xj7vxGvUzhg4h48rvprC86UcHG4GuyqfHQ4l9+XR+ZS6BCXWFX6Lj7ecdnh5WoZnCzmT
- vOFfr+Wv7fL0LALZ3X12uwHEMgdIK6FadzzsgXULg5Zl11qK1JdaYyjwLsRYHZPoRMB0 LA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37jpmfbx5d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 Mar 2021 09:16:55 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12UD4eTL015827;
-        Tue, 30 Mar 2021 09:16:55 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37jpmfbx4e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 Mar 2021 09:16:55 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12UDCkV3030171;
-        Tue, 30 Mar 2021 13:16:53 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03fra.de.ibm.com with ESMTP id 37hvb81eq8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 30 Mar 2021 13:16:53 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12UDGoqN34865432
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Mar 2021 13:16:50 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 514884C052;
-        Tue, 30 Mar 2021 13:16:50 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2C2D4C040;
-        Tue, 30 Mar 2021 13:16:47 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.103.158])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 30 Mar 2021 13:16:47 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v3 0/3] ima: kernel build support for loading the kernel module signing key
-Date:   Tue, 30 Mar 2021 09:16:33 -0400
-Message-Id: <20210330131636.21711-1-nayna@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
+        Tue, 30 Mar 2021 10:44:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1617115495; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=llTp9KMmNhLgpFrt/A/4gk0SgpNaUf1ZpYpNvho6oEk=;
+        b=iKbol1UC2cYC03I2rvUtoSu92j1pz2tv1L6/9iiw7cxLhRzh90EQvV5vkd5t59I4w79b5z
+        //6Ea77uYBp+fXZGWtXmCr26hrFxJVsTlICwAL4byi52zB9FKuPbHVzN1zqRgW2z3Slp3o
+        4tg7hayC693qItZd+Jni902Xu3F2GZQ=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id EC1C6B315;
+        Tue, 30 Mar 2021 14:44:54 +0000 (UTC)
+Date:   Tue, 30 Mar 2021 16:44:52 +0200
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Sebor <msebor@gcc.gnu.org>, Tejun Heo <tj@kernel.org>,
+        Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ning Sun <ning.sun@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        tboot-devel@lists.sourceforge.net,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ath11k@lists.infradead.org,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Roman Gushchin <guro@fb.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andriin@fb.com>, Odin Ugedal <odin@uged.al>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: Re: [PATCH 06/11] cgroup: fix -Wzero-length-bounds warnings
+Message-ID: <YGM5ZJlK1V7ex9xR@blackbook>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-7-arnd@kernel.org>
+ <YGLkPjSBdgpriC0E@blackbook>
+ <CAK8P3a3nUCGwPpE+E820DniY8Haz1Xx72pA38P6s5MWsbi0iAQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: U9UpW_m77sQPNhMv4vi7oXi1iYqgZq7O
-X-Proofpoint-ORIG-GUID: yuRN93kD96vRjM_KjjcEEAuNcK3EkjrY
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-03-30_04:2021-03-30,2021-03-30 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- impostorscore=0 adultscore=0 clxscore=1011 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103250000
- definitions=main-2103300094
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9pRQkLwCQMovNrXD"
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a3nUCGwPpE+E820DniY8Haz1Xx72pA38P6s5MWsbi0iAQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Kernel modules are currently only signed when CONFIG_MODULE_SIG is enabled.
-The kernel module signing key is a self-signed CA only loaded onto the
-.builtin_trusted_key keyring.  On secure boot enabled systems with an arch
-specific IMA policy enabled, but without MODULE_SIG enabled, kernel modules
-are not signed, nor is the kernel module signing public key loaded onto the
-IMA keyring.
 
-In order to load the the kernel module signing key onto the IMA trusted
-keyring ('.ima'), the certificate needs to be signed by a CA key either on
-the builtin or secondary keyrings. The original version of this patch set
-created and loaded a kernel-CA key onto the builtin keyring. The kernel-CA
-key signed the kernel module signing key, allowing it to be loaded onto the
-IMA trusted keyring.
+--9pRQkLwCQMovNrXD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-However, missing from this version was support for the kernel-CA to sign the
-hardware token certificate. Adding that support would add additional
-complexity.
+On Tue, Mar 30, 2021 at 11:00:36AM +0200, Arnd Bergmann <arnd@kernel.org> wrote:
+> Would it be possible to enclose most or all of kernel/cgroup/cgroup.c
+> in an #ifdef CGROUP_SUBSYS_COUNT block?
+Even without any controllers, there can still be named hierarchies (v1)
+or the default hierarchy (v2) (for instance) for process tracking
+purposes. So only parts of kernel/cgroup/cgroup.c could be ifdef'd.
 
-Since the kernel module signing key is embedded into the Linux kernel at
-build time, instead of creating and loading a kernel-CA onto the builtin
-trusted keyring, this version makes an exception and allows the 
-self-signed kernel module signing key to be loaded directly onto the 
-trusted IMA keyring
+Beware that CGROUP_SUBSYS_COUNT is not known at preprocessing stage (you
+could have a macro alternative though).
 
-v3:
+> I didn't try that myself, but this might be a way to guarantee that
+> there cannot be any callers (it would cause a link error).
+Such a guarantee would be nicer, I agree. I tried a bit but anandoned it
+when I saw macros proliferate (which I found less readable than your
+current variant). But YMMV.
 
-* Fix the "Fixes" tag as suggested by Stefan for Patch 1/3.
-* Revert back the CA signed module signing key to only self-signed.
-* Allow self signed key as exception only for build time generated
-module signing key onto .ima keyring.
+Michal
 
-v2:
+--9pRQkLwCQMovNrXD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-* Include feedback from Stefan - corrected the Fixes commit id in Patch 1
-and cleaned Patch 5/5.
-* Fix the issue reported by kernel test bot.
-* Include Jarkko's feedback on patch description.
+-----BEGIN PGP SIGNATURE-----
 
-Nayna Jain (3):
-  keys: cleanup build time module signing keys
-  ima: enable signing of modules with build time generated key
-  ima: enable loading of build time generated key on .ima keyring
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAmBjOV4ACgkQia1+riC5
+qSgZNQ/9FFBZs5QQqEUHmbWyF9O2R2bGF8WCBz56zh+F2OZf+/GK7z4OGhkKUlEa
+1lPOUoibt4aZZhWD30RcfB3i3qJ8VqY3wqwnS6W9uN9+sU22sgsx/elCqiua3EnM
+4tGDRcLBfSuktgPo1T0oNvGGbFnFJ0kUenLZ6mVkWlSTzx8kp/B8h4S5LkYmRIov
+fVmHURht22FPiA8wwlUb9LAp8ONF+68t6BtMWNmZbqmJ17qHSnLyQQUiHIHytASt
+xgaQCJU8/nrtv2xPfp66aCQLO12b6OxpjPoRxo1hj9IP5HZPukzNDat/VaWyh0iE
+t9GO85K0PVqcuvJpymes0yRT6RvEwlqEna0T+qbh+qih4S3+xRm/Js5IV5m8KfIc
+wWUve4llNT1jq6zzgn28FkXe9coH7ybpwBaWeAdwEM3Wl9GvXimKwIQqg+3ZDnm4
+CbDVh6scYVu3kFYHVy6ld5+fG2GWEKvNL+9AVH+wsXUb6OXtyOtxD3FWyiVVYBkl
+Q4N0KWETd67BNb2NklxTkeC4hYusuHeFvxa9Ki6K6zbdxDxVwdcTWpWFVkTDs45S
+sEVkmsPU9pLu5vm5o9kBCmr6q1lW6yzudcxBvcvcHXGQnkfcmDCo+C3OEwKzKUeh
+8+BhDV9zMpKBpJfuPiI8UNIt8sI7YeTpjdk14YjWYQTgZCHc7WU=
+=iFNx
+-----END PGP SIGNATURE-----
 
- Makefile                      |  6 ++---
- certs/Kconfig                 |  2 +-
- certs/Makefile                |  8 ++++++
- certs/system_certificates.S   | 13 +++++++++-
- certs/system_keyring.c        | 47 +++++++++++++++++++++++++++--------
- include/keys/system_keyring.h |  7 ++++++
- init/Kconfig                  |  6 ++---
- security/integrity/digsig.c   |  2 ++
- 8 files changed, 73 insertions(+), 18 deletions(-)
-
--- 
-2.29.2
+--9pRQkLwCQMovNrXD--
