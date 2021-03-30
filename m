@@ -2,267 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BF8C433E4
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 07:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2BEC433E0
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 08:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85F1C619A6
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 07:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88E9261994
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 08:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229633AbhC3H1G (ORCPT
+        id S231628AbhC3Ils (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 03:27:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38396 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230223AbhC3H0y (ORCPT
+        Tue, 30 Mar 2021 04:41:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55554 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230224AbhC3Ilj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 03:26:54 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60766C0613D8
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 00:26:54 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id d12so1202340lfv.11
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 00:26:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=af4hT6RKaQH4UftQDbKN5QPOjXiK86/wlCCe+4hZGdc=;
-        b=NUla3ScpKv1xeAWa3oYor1HqrS/QBdHFVbD97Gy2NLtpj6f7l2kc1YuVycA+6xgDsi
-         9l7wkk1VeogBBuKyQgr52c9E9XztS56+62DQeXZEzEP9oeFxv1R4pBjtUE5YXoqeUmDR
-         ygTmKi3BM6um384QWqUj1HKRFKr64dVReOWoSQ/bOlimMNzeyk8RRDcabaNIj7rZs7CH
-         04Rj9WUsZ3jLmC/of9MwmcFN+nNvknx0r5TBXUfW+EsQ459b+GxjLJbw48HFQLRgf2nR
-         0j/rJpyVkw6WltmcEO5Sa5tf3UaXGLTHPOoHlWyOe9aVBQi78oClX+hFcLSfXjnPyKj2
-         d5HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=af4hT6RKaQH4UftQDbKN5QPOjXiK86/wlCCe+4hZGdc=;
-        b=E/SQQNthXz0S2al9fMXi4CX82mnwhzJ7WNBAtDaZzYxZ9OCNuaPBhzqaGuN2KtpOk+
-         2o+LyumzoK84wjRryY8qiM1CrqWSJef4cfzulIoEhVuZoLuQddN9pJRDbldweybDbSvT
-         KPTUGb3KsDAn92VbEt/xLcHQUcs8q56NFZGgJYCmLOKIfNRJR8l87JLybn3Hw2N3qa8u
-         rMfxAGMuP/138BVRSBHAMuNF58L7/Ppt+bGf241FSXjGoWFoLfou74IR5DtbXm1gVGJl
-         EIFYhgF0125PjUq5/bkjFjMAaUn0Oo/QEfVuZwRO3cIsDQApGSpvSosjnxHnlGd7hy1K
-         kQww==
-X-Gm-Message-State: AOAM531j9J91dbnf4C44BKHXnELTcE6VuvNvMvexhZioAid+ZnZIndWi
-        hY718O07CcWV4JIfETt7xH99Xzmxt/1AI1i52yVXIg==
-X-Google-Smtp-Source: ABdhPJyXpKWyx5s4QOhIBteYopgz9DFHpopC0zHy2O9Ezg9gQDp3fJSR7hC5ck8fwafksnrhlZdfctLsahIPzGz4fGU=
-X-Received: by 2002:ac2:5970:: with SMTP id h16mr18009743lfp.108.1617089212472;
- Tue, 30 Mar 2021 00:26:52 -0700 (PDT)
+        Tue, 30 Mar 2021 04:41:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1617093697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=jiLzz+FDg8IDgOr7Ru1IW7IRXYaqlH8yrJkDxBSOd+M=;
+        b=SwyQOSqvaO5avOz2XsxkAeyYpWcAxuEpeTup5y2W/3hjoJIa9VL+ySLWFEDXOGMXYYzaNj
+        yfuPCkvCrHUDqDn4OiHjX+VW5qEwgFf/bjJtmVzQs0eem+tKxgSvbAVrRlz0EIt6ankmR8
+        9g4gU0a0vUOWreF+dSJDr1Ih1BW0A9I=
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id F0DDEB1C1;
+        Tue, 30 Mar 2021 08:41:36 +0000 (UTC)
+Date:   Tue, 30 Mar 2021 10:41:34 +0200
+From:   Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+To:     Arnd Bergmann <arnd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Martin Sebor <msebor@gcc.gnu.org>,
+        Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+        Ning Sun <ning.sun@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Simon Kelley <simon@thekelleys.org.uk>,
+        James Smart <james.smart@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Anders Larsen <al@alarsen.net>,
+        Serge Hallyn <serge@hallyn.com>,
+        Imre Deak <imre.deak@intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andriin@fb.com>, Odin Ugedal <odin@uged.al>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Bhaskar Chowdhury <unixbhaskar@gmail.com>
+Subject: Re: [PATCH 06/11] cgroup: fix -Wzero-length-bounds warnings
+Message-ID: <YGLkPjSBdgpriC0E@blackbook>
+References: <20210322160253.4032422-1-arnd@kernel.org>
+ <20210322160253.4032422-7-arnd@kernel.org>
 MIME-Version: 1.0
-References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
- <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
- <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com> <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
- <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
- <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de> <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
- <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de> <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
- <6F812C20-7585-4718-997E-0306C4118468@sigma-star.at> <YGDpA4yPWmTWEyx+@kernel.org>
-In-Reply-To: <YGDpA4yPWmTWEyx+@kernel.org>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 30 Mar 2021 12:56:41 +0530
-Message-ID: <CAFA6WYPGuyg+OEYU2+FS-uom29yj4AyN5VLwm6MYpX97D0Uy0w@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     David Gstir <david@sigma-star.at>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Gbn4BprmVLVWv2rO"
+Content-Disposition: inline
+In-Reply-To: <20210322160253.4032422-7-arnd@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 29 Mar 2021 at 01:07, Jarkko Sakkinen <jarkko@kernel.org> wrote:
->
-> On Sat, Mar 27, 2021 at 01:41:24PM +0100, David Gstir wrote:
-> > Hi!
-> >
-> > > On 25.03.2021, at 06:26, Sumit Garg <sumit.garg@linaro.org> wrote:
-> > >
-> > > On Wed, 24 Mar 2021 at 19:37, Ahmad Fatoum <a.fatoum@pengutronix.de> =
-wrote:
-> > >>
-> > >> Hello Sumit,
-> > >>
-> > >> On 24.03.21 11:47, Sumit Garg wrote:
-> > >>> On Wed, 24 Mar 2021 at 14:56, Ahmad Fatoum <a.fatoum@pengutronix.de=
-> wrote:
-> > >>>>
-> > >>>> Hello Mimi,
-> > >>>>
-> > >>>> On 23.03.21 19:07, Mimi Zohar wrote:
-> > >>>>> On Tue, 2021-03-23 at 17:35 +0100, Ahmad Fatoum wrote:
-> > >>>>>> On 21.03.21 21:48, Horia Geant=C4=83 wrote:
-> > >>>>>>> caam has random number generation capabilities, so it's worth u=
-sing that
-> > >>>>>>> by implementing .get_random.
-> > >>>>>>
-> > >>>>>> If the CAAM HWRNG is already seeding the kernel RNG, why not use=
- the kernel's?
-> > >>>>>>
-> > >>>>>> Makes for less code duplication IMO.
-> > >>>>>
-> > >>>>> Using kernel RNG, in general, for trusted keys has been discussed
-> > >>>>> before.   Please refer to Dave Safford's detailed explanation for=
- not
-> > >>>>> using it [1].
-> > >>>>
-> > >>>> The argument seems to boil down to:
-> > >>>>
-> > >>>> - TPM RNG are known to be of good quality
-> > >>>> - Trusted keys always used it so far
-> > >>>>
-> > >>>> Both are fine by me for TPMs, but the CAAM backend is new code and=
- neither point
-> > >>>> really applies.
-> > >>>>
-> > >>>> get_random_bytes_wait is already used for generating key material =
-elsewhere.
-> > >>>> Why shouldn't new trusted key backends be able to do the same thin=
-g?
-> > >>>>
-> > >>>
-> > >>> Please refer to documented trusted keys behaviour here [1]. New
-> > >>> trusted key backends should align to this behaviour and in your cas=
-e
-> > >>> CAAM offers HWRNG so we should be better using that.
-> > >>
-> > >> Why is it better?
-> > >>
-> > >> Can you explain what benefit a CAAM user would have if the trusted k=
-ey
-> > >> randomness comes directly out of the CAAM instead of indirectly from
-> > >> the kernel entropy pool that is seeded by it?
-> > >
-> > > IMO, user trust in case of trusted keys comes from trusted keys
-> > > backend which is CAAM here. If a user doesn't trust that CAAM would
-> > > act as a reliable source for RNG then CAAM shouldn't be used as a
-> > > trust source in the first place.
-> > >
-> > > And I think building user's trust for kernel RNG implementation with
-> > > multiple entropy contributions is pretty difficult when compared with
-> > > CAAM HWRNG implementation.
-> >
-> > Generally speaking, I=E2=80=99d say trusting the CAAM RNG and trusting =
-in it=E2=80=99s
-> > other features are two separate things. However, reading through the CA=
-AM
-> > key blob spec I=E2=80=99ve got here, CAAM key blob keys (the keys that =
-secure a blob=E2=80=99s
-> > content) are generated using its internal RNG. So I=E2=80=99d save if t=
-he CAAM RNG
-> > is insecure, so are generated key blobs. Maybe somebody with more insig=
-ht
-> > into the CAAM internals can verify that, but I don=E2=80=99t see any po=
-int in using
-> > the kernel=E2=80=99s RNG as long as we let CAAM generate the key blob k=
-eys for us.
->
-> Here's my long'ish analysis. Please read it to the end if by ever means
-> possible, and apologies, I usually try to keep usually my comms short, bu=
-t
-> this requires some more meat than the usual.
->
-> The Bad News
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Now that we add multiple hardware trust sources for trusted keys, will
-> there ever be a scenario where a trusted key is originally sealed with a
-> backing hardware A, unsealed, and resealed with hardware B?
->
-> The hardware and vendor neutral way to generate the key material would be
-> unconditionally always just the kernel RNG.
->
-> CAAM is actually worse than TCG because it's not even a standards body, i=
-f
-> I got it right. Not a lot but at least a tiny fraction.
->
-> This brings an open item in TEE patches: trusted_tee_get_random() is an
-> issue in generating kernel material. I would rather replace that with
-> kernel RNG *for now*, because the same open question applies also to ARM
-> TEE. It's also a single company controlled backing technology.
->
-> By all practical means, I do trust ARM TEE in my personal life but this i=
-s
-> not important.
->
-> CAAM *and* TEE backends break the golden rule of putting as little trust =
-as
-> possible to anything, even not anything weird is clear at sight, as
-> security is essentially a game of known unknowns and unknown unknowns.
->
-> Unfortunately, TPM trusted keys started this bad security practice, and
-> obviously it cannot be fixed without breaking uapi backwards compatibilit=
-y.
->
-> This leaves me exactly two rational options:
->
-> A. Add a patch to remove trusted_tee_get_random() and use kernel RNG
->    instead.
-> B. Drop the whole TEE patch set up until I have good reasons to believe
->    that it's the best possible idea ever to use TEE RNG.
->
-> Doing does (A) does not disclude of doing (B) later on, if someone some
-> day sends a patch with sound reasoning.
->
-> It's also good to understand that when some day a vendor D, other than TC=
-G,
-> CAAM or ARM, comes up, we need to go again this lenghty and messy
-> discussion. Now this already puts an already accepted patch set into a
-> risk, because by being a responsible maintainer I would have legit reason=
-s
-> just simply to drop it.
->
-> OK, but....
->
-> The GOOD News
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> So there's actually option (C) that also fixes the TPM trustd keys issue:
->
-> Add a new kernel patch, which:
->
-> 1. Adds the use of kernel RNG as a boot option.
-> 2. If this boot option is not active, the subsystem will print a warning
->    to klog denoting this.
-> 3. Default is of course vendor RNG given the bad design issue in the TPM
->    trusted keys, but the warning in klog will help to address it at least
->    a bit.
-> 4. Document all this to Documentation/security/keys/trusted-encrypted.rst=
-.
->
-> I'd prefer the choice between A, B and C be concluded rather sooner than
-> later.
 
-Option (C) sounds reasonable to me but I would rather prefer an info
-message rather than warning as otherwise it would reflect that we are
-enforcing kernel RNG choice for a user to trust upon.
+--Gbn4BprmVLVWv2rO
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--Sumit
+On Mon, Mar 22, 2021 at 05:02:44PM +0100, Arnd Bergmann <arnd@kernel.org> w=
+rote:
+> I'm not sure what is expected to happen for such a configuration,
+> presumably these functions are never calls in that case.
+Yes, the functions you patched would only be called from subsystems or
+there should be no way to obtain a struct cgroup_subsys reference
+anyway (hence it's ok to always branch as if ss=3D=3DNULL).
 
->
-> /Jarkko
+I'd prefer a variant that wouldn't compile the affected codepaths when
+there are no subsystems registered, however, I couldn't come up with a
+way how to do it without some preprocessor ugliness.
+
+Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+
+--Gbn4BprmVLVWv2rO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEEoQaUCWq8F2Id1tNia1+riC5qSgFAmBi5DcACgkQia1+riC5
+qSjuqxAAkm/zoS+xvdcQUERzkcuVxIruGtTqOse/NCPQQR9aGuJl6iybyjQw7D+r
+63+BYz7+BdP8zDg+NSTO354Yt0vsWFtCvuZBBabO91wCheLRPaZhHnGByJa0fXyM
+SKC2VSvFHKKiFuCG7mG7/WfDQxTGSaUL2jiFXlA5HAV5dKfkia/Jpuf+KtIy5nBR
+g8g4f44M2wW/TCoBzd5Elt5Cpx6fU2aKuJRCRCE04ts4CQy06/lLcc9H0N7bvgHj
+0oxkHbAjXeEnylnni4pfpmJpInUT2kOZuCjSF/WPw2XeLs00AnBnNB3lDP9Pe2qo
+ippcDc3AFqYMqewKnnxDWoTI3lyMTm8r0yzrDdwpb9Zv28bOCAYiwyoIsFV7+kdN
+C7DnhiL6d+UgKIzCqRuTPXnluthvSmHGzeblqF1vOAaWOFif4CcRmUtsR7v3EyZN
+5aiUTGqVtoKr/pcBNnRU1e2w7ulYpq5sbL/8f9HtnKsZ8MZlLdhdcDoSLjOkuohK
+OlQgS6p+2otxwk3xft0CdFPPHAFb5/WM6IyKdewFGuY0fohxczWJCRI92x94cfe9
+p0JSNLl19JjdM8loYpmBRcmlkoBH+MtkdZiR68b5yX5wcXypubmZPZ9o8ZzQqx1j
+ZX1/nhuyDl6KHuGW7gJXx8FhCLd6nPyKYVu4wbay23oLzdL/1sk=
+=nVTO
+-----END PGP SIGNATURE-----
+
+--Gbn4BprmVLVWv2rO--
