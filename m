@@ -2,315 +2,206 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 316FAC433C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 19:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D72EC433DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 20:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA2136198A
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 19:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F389061985
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 20:36:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233149AbhC3T16 (ORCPT
+        id S230151AbhC3UgS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 15:27:58 -0400
-Received: from smtp-42ab.mail.infomaniak.ch ([84.16.66.171]:33511 "EHLO
-        smtp-42ab.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233143AbhC3T1a (ORCPT
+        Tue, 30 Mar 2021 16:36:18 -0400
+Received: from de-smtp-delivery-102.mimecast.com ([62.140.7.102]:23684 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232388AbhC3UgE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 15:27:30 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F8zwx1YgtzMppPr;
-        Tue, 30 Mar 2021 21:27:29 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F8zwq3148zlppyj;
-        Tue, 30 Mar 2021 21:27:23 +0200 (CEST)
-Subject: Re: [PATCH v5 1/1] fs: Allow no_new_privs tasks to call chroot(2)
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Christoph Hellwig <hch@lst.de>,
+        Tue, 30 Mar 2021 16:36:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1617136563;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9zKKEj6MKz/JIXNozOfbnLGlLfXIRj4Xfb3E1WrMoKc=;
+        b=QoIRLP+Gz1Z/XJj0zaesd070/ZI+VjhJBkN6VLPoy7oqrrcj/6bLIF3a7uokpD8JhRDwyt
+        LpWhd+7+/MUpxutVXeZnIf7FrQQeQu46OY+NDKz3y13ThOBx0qDrIM8F8lN0a/3dFjGhb1
+        HRmBIN7IdvcTIpZWmO0gegx7SDtflTQ=
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com
+ (mail-he1eur04lp2059.outbound.protection.outlook.com [104.47.13.59]) (Using
+ TLS) by relay.mimecast.com with ESMTP id de-mta-2-1T9VMgkXOxK41rOU3XVbkQ-5;
+ Tue, 30 Mar 2021 22:29:52 +0200
+X-MC-Unique: 1T9VMgkXOxK41rOU3XVbkQ-5
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=M9RUYUPo9OYm9Oyn1GvKp2/kmgv+ixw27L5yvljB4YwVZWF9T7K3W3UqQXga5EVnIBumqbsOg9gnKca4u9/4OgneGB+18n+rqMk8AwJx+RTGoLCcevqp6maFl3DbCBzDpH+h3P6C7Hn4Db3l1NW081A4ff++yurx0c3TkOPmkdFna0IVEk5EPc1DUjUDbyqC1vdzh3E+7i+qbsUq14Kg/RAu6RlZX+XCEmAUpJKzfUmRSSnur0RvuVOj2iWGSHVsvz7sZ6G3CLzuM+X3e+wTPv0IG9PL6iwVjeBeDvSIXlbNdsuOEU+IM2+a46ArO4/NsoP5QzZpmvFHobR0R077WQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0PGs18I+TKe1h2xOALY1QG3g4J+7kNSWv6sCbnQ4WQ4=;
+ b=A7TrO2Eut/GSeDfgTdDda2tw3c9WJL5OPxwBgklTpp83RsJcQV96y/ozrJWvad3aOq8v83vOhwI4wcWq8tjCecj8CWlAUzH3s0g012TestlCMKTzGokkD8ZOQ1aArqtxDbc7THIe0dzC/NtlY1vMdRPp20H0XKVNbexVziedjRVjQQ63QxsfY57TbgRKl7qEVTjOkD2NjY7spvyv+ebLbbi5qyHima6LS4l4zI6dUUO+X8pmP2yL2Cu8uS5osjx5/BA598hQItyVWmc59vE8IhjSpGqKrmFi1au2pLgyRhol9JS6Of9R67L+qkp+6O1PQPk/wIe9G4csaymJ6H4hlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=suse.com;
+Received: from AM0PR04MB5650.eurprd04.prod.outlook.com (2603:10a6:208:128::18)
+ by AM4PR0401MB2321.eurprd04.prod.outlook.com (2603:10a6:200:4e::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.29; Tue, 30 Mar
+ 2021 20:29:50 +0000
+Received: from AM0PR04MB5650.eurprd04.prod.outlook.com
+ ([fe80::40bd:b7d7:74a7:5679]) by AM0PR04MB5650.eurprd04.prod.outlook.com
+ ([fe80::40bd:b7d7:74a7:5679%3]) with mapi id 15.20.3977.033; Tue, 30 Mar 2021
+ 20:29:50 +0000
+From:   Varad Gautam <varad.gautam@suse.com>
+To:     linux-crypto@vger.kernel.org
+CC:     Varad Gautam <varad.gautam@suse.com>,
         David Howells <dhowells@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
-References: <20210316203633.424794-1-mic@digikod.net>
- <20210316203633.424794-2-mic@digikod.net>
- <fef10d28-df59-640e-ecf7-576f8348324e@digikod.net>
- <85ebb3a1-bd5e-9f12-6d02-c08d2c0acff5@schaufler-ca.com>
- <b47f73fe-1e79-ff52-b93e-d86b2927bbdc@digikod.net>
- <77ec5d18-f88e-5c7c-7450-744f69654f69@schaufler-ca.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <a8b2545f-51c7-01dc-1a14-e87beefc5419@digikod.net>
-Date:   Tue, 30 Mar 2021 21:28:25 +0200
-User-Agent: 
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        keyrings@vger.kernel.org (open list:ASYMMETRIC KEYS),
+        linux-kernel@vger.kernel.org (open list),
+        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH 18/18] keyctl_pkey: Add pkey parameter slen to pass in PSS salt length
+Date:   Tue, 30 Mar 2021 22:28:29 +0200
+Message-ID: <20210330202829.4825-19-varad.gautam@suse.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210330202829.4825-1-varad.gautam@suse.com>
+References: <20210330202829.4825-1-varad.gautam@suse.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [95.90.93.216]
+X-ClientProxiedBy: AM3PR03CA0066.eurprd03.prod.outlook.com
+ (2603:10a6:207:5::24) To AM0PR04MB5650.eurprd04.prod.outlook.com
+ (2603:10a6:208:128::18)
 MIME-Version: 1.0
-In-Reply-To: <77ec5d18-f88e-5c7c-7450-744f69654f69@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from xps13.suse.de (95.90.93.216) by AM3PR03CA0066.eurprd03.prod.outlook.com (2603:10a6:207:5::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3977.25 via Frontend Transport; Tue, 30 Mar 2021 20:29:49 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 15ccd719-31f2-4bed-73b9-08d8f3ba91a2
+X-MS-TrafficTypeDiagnostic: AM4PR0401MB2321:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM4PR0401MB23210F24916B0CC9D262E867E07D9@AM4PR0401MB2321.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:366;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: CnLOumaz7PKgFVT5rwTmttS6CsR/9KTjcBVagzaidQr2+Lr478SDYx5/drqm9gTkef3dQTfCVLU5dZ2dKstUhp5i5OjY+WKrNRU6syyEojSv88WP0gBfQf3fSOs48cCalyq3Ou++xKAArLjMGTjDriW/xR3GTyL3G4+eq9iVQeQ5wU2BEfFBw5yqmCF/aT24xlJN58tTDxBOOG8k0tUFAEkn5EJfdX0BXoRyXUwIiyTD/Kg8+ie2cvfOVukU+rDdEejC2tjXN9pR4EvVRZe3r2jXQzJu6Y0c0qSS80wLOMtoW/WwqFmQOmh+lkAGt9m/hPXRhQWJWwFDpchQ6nsXQ/psolaQ2J9G6FaWxNcmUfK08M6PLimNOus1JlRVFU4b6sVzUpjzqm9sNh9JPR7OeE2910tpHsJES613msjvJIzBvSp2VKMMx3Hs4d4WzOIbKz3MKPKunppFzkfuVMlt2su13wUP3wQLAbTLW+KruSiCa7u/ZfFJ/KijP09EoJBZLd2Ij8jj622W/8T1RxuM0BRVDC1PPpVE8N5LVWmJ0P4JySVBALncf1XOOTCiFVSx/CXiyY2axKQuqXt5li76dH3bJ+NF2+RONocQwF98RcXwN4ch5fNIWm0rTIhv4os0K4Lq8sQHefFbpp9uYlUV0Q==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5650.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(346002)(136003)(376002)(366004)(39850400004)(478600001)(4326008)(8676002)(36756003)(186003)(6916009)(7416002)(38100700001)(66476007)(26005)(66556008)(8936002)(6666004)(66946007)(5660300002)(86362001)(54906003)(316002)(6512007)(1076003)(16526019)(52116002)(83380400001)(44832011)(2906002)(956004)(6486002)(2616005)(6506007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?IgddJZYhEEWDrsRka/46BTacDL53UkVauxk67rtWsZEO1uyoN3vP735hhIpl?=
+ =?us-ascii?Q?Cq2c18whlE6CUUm9185CyKDpii8gICdpeUyDxJSof8EQlSMngirHaSJC30Bz?=
+ =?us-ascii?Q?BTfEws9KHGVvK9cBusxIgdLT35EmV9V/gFGQAKU9D6ceNAF8V8nYcqvBcuKN?=
+ =?us-ascii?Q?baInfH7ipoB8kamlO2boR81H5stfNe0I1RhT3y3GMPpTZxbc9BvG7g+qUrQt?=
+ =?us-ascii?Q?SmmYqUU0WXpFcEARUPYV29JjdjnnkuEAPB0OCVmhS9p0zR6EEfqN1u+sn7WE?=
+ =?us-ascii?Q?k3Z0M7DAJ14LxZBIL1XMmvWHs5SMTfGCG8BP0wFh4j6LaDLMLPq2EdH+7DtV?=
+ =?us-ascii?Q?sXPhA5MLAtsCMseMVoKjcRxNsPqT718mhtdKWrR+vXM2ccH16PHI8QuM9lR/?=
+ =?us-ascii?Q?rvCx/RDRNAr13O+Bdo4Jc66MuJiAOnU+S9gBctExcnrh3CDimlFQc+x45BKH?=
+ =?us-ascii?Q?ss7DJKIKpn1N2Ro24/jyFA3zSRVnDRaewJpiQsQV6YCd3qE12BUSDED+9nYY?=
+ =?us-ascii?Q?Ap3mtwC8rrBLCM2rMSyJs5+MiYwqLi2V2/ZC22cla8jpS1sD/V9OvOQSKZM6?=
+ =?us-ascii?Q?yoBZulTbXfu1I0qT3sJaF5Af6BxG9TVdafmoSotBcvul1FnE9Bs5ySlLEdx4?=
+ =?us-ascii?Q?aMIFGaxaJ4rgOxAAW8/jrrdpoz9qu+/uhTQhTDi3t5Wwk254y+H/0SkuDKFE?=
+ =?us-ascii?Q?Tdy+3UBGG9Zi3nMkC6VbWSmiwVc4fF1wyrxoo97JoW4R8+wYLEfwhxNNvx2W?=
+ =?us-ascii?Q?w+xVLSj/CTol3iRUyMGR0xX4zkjiJ23e2LfvZM0pFvRVe0seh+6+kOqV+KDL?=
+ =?us-ascii?Q?ShwXEFv4D3umxmBpxlXpdPqGIUj0jIZlW1VfQgdR733AnxyV0RE32XSwp68Z?=
+ =?us-ascii?Q?mkXOAgRsUVfCQn/111PRLN3GJ8CuPcthWc9LynqkA/fT+ctm5KbwEdKv/WAR?=
+ =?us-ascii?Q?lvfJLU9V/oqHaTezZosxYFSYGK6lcoW3Al3yK8uJl+2lQRPf6L49t4Af3AW4?=
+ =?us-ascii?Q?z++68y7y6kes9SjDbPvLgiTSwxCmbzhhJUIvxlmmjw9MZZP6Qm3YpFnQCy/E?=
+ =?us-ascii?Q?5XmVHfTqOvyxZjgPlgjN/XmgPFtJZHAeLZifWYe0QPYNVNd9XpwhFIuc/Tpg?=
+ =?us-ascii?Q?BkCAZWFUWpFYfVfPfp/ZEqHZCg38KsysYejR3Y30KUp3jMwlMUu59des4XZc?=
+ =?us-ascii?Q?wgHchAAKTw95khXZ+dciOiAWrJ7wZdZGR2/xqVkJM+96ZneeoZe8/9ee5/Ph?=
+ =?us-ascii?Q?CQdK4enEZmB0Xl1jwmx3sc7E45yRnMKbyOxwXEiaWresYqXbgm/hqfTgqbFj?=
+ =?us-ascii?Q?Rrcv0A7CMvH/sprxcdYTWAuG?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15ccd719-31f2-4bed-73b9-08d8f3ba91a2
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5650.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Mar 2021 20:29:50.7613
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: STsh3HwcwDOQGFS8jMo1y5V4njnoPk7L7djVQks0ZqXw97i+4UsB1GwDH0r7cO+9k+J+pFsPbRv/PtxaT7Tw0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0401MB2321
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+keyctl pkey_* operations accept enc and hash parameters at present.
+RSASSA-PSS signatures also require passing in the signature salt
+length.
 
-On 30/03/2021 20:40, Casey Schaufler wrote:
-> On 3/30/2021 11:11 AM, Mickaël Salaün wrote:
->> On 30/03/2021 19:19, Casey Schaufler wrote:
->>> On 3/30/2021 10:01 AM, Mickaël Salaün wrote:
->>>> Hi,
->>>>
->>>> Is there new comments on this patch? Could we move forward?
->>> I don't see that new comments are necessary when I don't see
->>> that you've provided compelling counters to some of the old ones.
->> Which ones? I don't buy your argument about the beauty of CAP_SYS_CHROOT.
-> 
-> CAP_SYS_CHROOT, namespaces. Bind mounts. The restrictions on
-> "unprivileged" chroot being sufficiently onerous to make it
-> unlikely to be usable.
+Add another parameter 'slen' to feed in salt length of a PSS
+signature.
 
-There is multiple use cases for these features.
+Signed-off-by: Varad Gautam <varad.gautam@suse.com>
+---
+ crypto/asymmetric_keys/asymmetric_type.c | 1 +
+ include/linux/keyctl.h                   | 1 +
+ security/keys/keyctl_pkey.c              | 6 ++++++
+ 3 files changed, 8 insertions(+)
 
-> 
->>> It's possible to use minimal privilege with CAP_SYS_CHROOT.
->> CAP_SYS_CHROOT can lead to privilege escalation.
-> 
-> Not when used in conjunction with the same set of
-> restrictions you're requiring for "unprivileged" chroot. 
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_k=
+eys/asymmetric_type.c
+index ad8af3d70ac0..eb2ef4a07f8e 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -571,6 +571,7 @@ static int asymmetric_key_verify_signature(struct kerne=
+l_pkey_params *params,
+ 		.hash_algo	=3D params->hash_algo,
+ 		.digest		=3D (void *)in,
+ 		.s		=3D (void *)in2,
++		.salt_length	=3D params->slen,
+ 	};
+=20
+ 	return verify_signature(params->key, &sig);
+diff --git a/include/linux/keyctl.h b/include/linux/keyctl.h
+index 5b79847207ef..970c7bed3082 100644
+--- a/include/linux/keyctl.h
++++ b/include/linux/keyctl.h
+@@ -37,6 +37,7 @@ struct kernel_pkey_params {
+ 		__u32	in2_len;	/* 2nd input data size (verify) */
+ 	};
+ 	enum kernel_pkey_operation op : 8;
++	__u32		slen;
+ };
+=20
+ #endif /* __LINUX_KEYCTL_H */
+diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
+index 5de0d599a274..b54a021e16b1 100644
+--- a/security/keys/keyctl_pkey.c
++++ b/security/keys/keyctl_pkey.c
+@@ -24,11 +24,13 @@ enum {
+ 	Opt_err,
+ 	Opt_enc,		/* "enc=3D<encoding>" eg. "enc=3Doaep" */
+ 	Opt_hash,		/* "hash=3D<digest-name>" eg. "hash=3Dsha1" */
++	Opt_slen,		/* "slen=3D<salt-length>" eg. "slen=3D32" */
+ };
+=20
+ static const match_table_t param_keys =3D {
+ 	{ Opt_enc,	"enc=3D%s" },
+ 	{ Opt_hash,	"hash=3D%s" },
++	{ Opt_slen,	"slen=3D%u" },
+ 	{ Opt_err,	NULL }
+ };
+=20
+@@ -63,6 +65,10 @@ static int keyctl_pkey_params_parse(struct kernel_pkey_p=
+arams *params)
+ 			params->hash_algo =3D q;
+ 			break;
+=20
++		case Opt_slen:
++			if (kstrtouint(q, 0, &params->slen))
++				return -EINVAL;
++			break;
+ 		default:
+ 			return -EINVAL;
+ 		}
+--=20
+2.30.2
 
-I'm talking about security with the principle of least privilege: when
-we consider that a process may be(come) malicious but should still be
-able to drop (more) accesses, e.g. with prctl(set_no_new_privs) *then*
-chroot()
-
-> 
->>> It looks like namespaces provide alternatives for all your
->>> use cases.
->> I explained in the commit message why it is not the case. In a nutshell,
->> namespaces bring complexity which may not be required.
-> 
-> So? I can use a Swiss Army Knife to cut a string even though it
-> has a corkscrew.
-
-Complexity leads to (security) issues. In secure systems, we want to
-reduce the attack surfaces. There is some pointers here:
-https://lwn.net/Articles/673597/
-
-> 
->>  When designing a
->> secure system, we want to avoid giving access to such complexity to
->> untrusted processes (i.e. more complexity leads to more bugs).
-> 
-> If you're *really* designing a secure system you can design it to
-> use existing mechanisms, like CAP_SYS_CHROOT!
-
-Not always. For instance, in the case of a web browser, we don't want to
-give CAP_SYS_CHROOT to every users just because their browser could
-(legitimately) use it as a security sandbox mechanism. The same
-principle can be applied to a lot of use cases, e.g. network services,
-file parsers, etc.
-
-> 
->>  An
->> unprivileged chroot would enable to give just the minimum feature to
->> drop some accesses. Of course it is not enough on its own, but it can be
->> combined with existing (and future) security features.
-> 
-> Like NO_NEW_PRIVS, namespaces and capabilities!
-> You don't need anything new!
-
-If a process is compromised before chrooting itself and dropping
-CAP_SYS_CHROOT, then there is a bigger security issue than without
-CAP_SYS_CHROOT.
-
-> 
->>> The constraints required to make this work are quite
->>> limiting. Where is the real value add?
->> As explain in the commit message, it is useful when hardening
->> applications (e.g. network services, browsers, parsers, etc.). We don't
->> want an untrusted (or compromised) application to have CAP_SYS_CHROOT
->> nor (complex) namespace access.
-> 
-> If you can ensure that an unprivileged application is
-> always run with NO_NEW_PRIVS you could also ensure that
-> it runs with only CAP_SYS_CHROOT or in an appropriate
-> namespace. I believe that it would be easier for your
-> particular use case. I don't believe that is sufficient.
-
-You can't always have this assertion, e.g. because a user may require to
-run (legitimate) SETUID binaries…
-
-For everyone following a defense in depth approach (i.e. multiple layers
-of security), an unprivileged chroot is valuable.
-
-> 
->>>> Regards,
->>>>  Mickaël
->>>>
->>>>
->>>> On 16/03/2021 21:36, Mickaël Salaün wrote:
->>>>> From: Mickaël Salaün <mic@linux.microsoft.com>
->>>>>
->>>>> Being able to easily change root directories enables to ease some
->>>>> development workflow and can be used as a tool to strengthen
->>>>> unprivileged security sandboxes.  chroot(2) is not an access-control
->>>>> mechanism per se, but it can be used to limit the absolute view of the
->>>>> filesystem, and then limit ways to access data and kernel interfaces
->>>>> (e.g. /proc, /sys, /dev, etc.).
->>>>>
->>>>> Users may not wish to expose namespace complexity to potentially
->>>>> malicious processes, or limit their use because of limited resources.
->>>>> The chroot feature is much more simple (and limited) than the mount
->>>>> namespace, but can still be useful.  As for containers, users of
->>>>> chroot(2) should take care of file descriptors or data accessible by
->>>>> other means (e.g. current working directory, leaked FDs, passed FDs,
->>>>> devices, mount points, etc.).  There is a lot of literature that discuss
->>>>> the limitations of chroot, and users of this feature should be aware 
-> of
->>>>> the multiple ways to bypass it.  Using chroot(2) for security purposes
->>>>> can make sense if it is combined with other features (e.g. dedicated
->>>>> user, seccomp, LSM access-controls, etc.).
->>>>>
->>>>> One could argue that chroot(2) is useless without a properly populated
->>>>> root hierarchy (i.e. without /dev and /proc).  However, there are
->>>>> multiple use cases that don't require the chrooting process to create
->>>>> file hierarchies with special files nor mount points, e.g.:
->>>>> * A process sandboxing itself, once all its libraries are loaded, may
->>>>>   not need files other than regular files, or even no file at all.
->>>>> * Some pre-populated root hierarchies could be used to chroot into,
->>>>>   provided for instance by development environments or tailored
->>>>>   distributions.
->>>>> * Processes executed in a chroot may not require access to these special
->>>>>   files (e.g. with minimal runtimes, or by emulating some special files
->>>>>   with a LD_PRELOADed library or seccomp).
->>>>>
->>>>> Allowing a task to change its own root directory is not a threat to the
->>>>> system if we can prevent confused deputy attacks, which could be
->>>>> performed through execution of SUID-like binaries.  This can be
->>>>> prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
->>>>> prctl(2).  To only affect this task, its filesystem information must 
-> not
->>>>> be shared with other tasks, which can be achieved by not passing
->>>>> CLONE_FS to clone(2).  A similar no_new_privs check is already used by
->>>>> seccomp to avoid the same kind of security issues.  Furthermore, because
->>>>> of its security use and to avoid giving a new way for attackers to get
->>>>> out of a chroot (e.g. using /proc/<pid>/root, or chroot/chdir), an
->>>>> unprivileged chroot is only allowed if the calling process is not
->>>>> already chrooted.  This limitation is the same as for creating user
->>>>> namespaces.
->>>>>
->>>>> This change may not impact systems relying on other permission models
->>>>> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
->>>>> such systems may require to update their security policies.
->>>>>
->>>>> Only the chroot system call is relaxed with this no_new_privs check; 
-> the
->>>>> init_chroot() helper doesn't require such change.
->>>>>
->>>>> Allowing unprivileged users to use chroot(2) is one of the initial
->>>>> objectives of no_new_privs:
->>>>> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
->>>>> This patch is a follow-up of a previous one sent by Andy Lutomirski:
->>>>> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
->>>>>
->>>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
->>>>> Cc: Andy Lutomirski <luto@amacapital.net>
->>>>> Cc: Christian Brauner <christian.brauner@ubuntu.com>
->>>>> Cc: Christoph Hellwig <hch@lst.de>
->>>>> Cc: David Howells <dhowells@redhat.com>
->>>>> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
->>>>> Cc: Eric W. Biederman <ebiederm@xmission.com>
->>>>> Cc: James Morris <jmorris@namei.org>
->>>>> Cc: Jann Horn <jannh@google.com>
->>>>> Cc: John Johansen <john.johansen@canonical.com>
->>>>> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->>>>> Cc: Serge Hallyn <serge@hallyn.com>
->>>>> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
->>>>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
->>>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>>> Link: https://lore.kernel.org/r/20210316203633.424794-2-mic@digikod.net
->>>>> ---
->>>>>
->>>>> Changes since v4:
->>>>> * Use READ_ONCE(current->fs->users) (found by Jann Horn).
->>>>> * Remove ambiguous example in commit description.
->>>>> * Add Reviewed-by Kees Cook.
->>>>>
->>>>> Changes since v3:
->>>>> * Move the new permission checks to a dedicated helper
->>>>>   current_chroot_allowed() to make the code easier to read and align
->>>>>   with user_path_at(), path_permission() and security_path_chroot()
->>>>>   calls (suggested by Kees Cook).
->>>>> * Remove now useless included file.
->>>>> * Extend commit description.
->>>>> * Rebase on v5.12-rc3 .
->>>>>
->>>>> Changes since v2:
->>>>> * Replace path_is_under() check with current_chrooted() to gain the same
->>>>>   protection as create_user_ns() (suggested by Jann Horn). See commit
->>>>>   3151527ee007 ("userns:  Don't allow creation if the user is chrooted")
->>>>>
->>>>> Changes since v1:
->>>>> * Replace custom is_path_beneath() with existing path_is_under().
->>>>> ---
->>>>>  fs/open.c | 23 +++++++++++++++++++++--
->>>>>  1 file changed, 21 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/fs/open.c b/fs/open.c
->>>>> index e53af13b5835..480010a551b2 100644
->>>>> --- a/fs/open.c
->>>>> +++ b/fs/open.c
->>>>> @@ -532,6 +532,24 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
->>>>>  	return error;
->>>>>  }
->>>>>  
->>>>> +static inline int current_chroot_allowed(void)
->>>>> +{
->>>>> +	/*
->>>>> +	 * Changing the root directory for the calling task (and its future
->>>>> +	 * children) requires that this task has CAP_SYS_CHROOT in its
->>>>> +	 * namespace, or be running with no_new_privs and not sharing its
->>>>> +	 * fs_struct and not escaping its current root (cf. create_user_ns()).
->>>>> +	 * As for seccomp, checking no_new_privs avoids scenarios where
->>>>> +	 * unprivileged tasks can affect the behavior of privileged children.
->>>>> +	 */
->>>>> +	if (task_no_new_privs(current) && READ_ONCE(current->fs->users) == 
->>> 1 &&
->>>>> +			!current_chrooted())
->>>>> +		return 0;
->>>>> +	if (ns_capable(current_user_ns(), CAP_SYS_CHROOT))
->>>>> +		return 0;
->>>>> +	return -EPERM;
->>>>> +}
->>>>> +
->>>>>  SYSCALL_DEFINE1(chroot, const char __user *, filename)
->>>>>  {
->>>>>  	struct path path;
->>>>> @@ -546,9 +564,10 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
->>>>>  	if (error)
->>>>>  		goto dput_and_out;
->>>>>  
->>>>> -	error = -EPERM;
->>>>> -	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT))
->>>>> +	error = current_chroot_allowed();
->>>>> +	if (error)
->>>>>  		goto dput_and_out;
->>>>> +
->>>>>  	error = security_path_chroot(&path);
->>>>>  	if (error)
->>>>>  		goto dput_and_out;
->>>>>
-> 
