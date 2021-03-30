@@ -2,101 +2,267 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3664C433C1
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Mar 2021 10:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BF8C433E4
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 07:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB5961584
-	for <linux-security-module@archiver.kernel.org>; Mon, 29 Mar 2021 10:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F1C619A6
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 07:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231673AbhC2KUN (ORCPT
+        id S229633AbhC3H1G (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 29 Mar 2021 06:20:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46758 "EHLO
+        Tue, 30 Mar 2021 03:27:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232213AbhC2KTo (ORCPT
+        with ESMTP id S230223AbhC3H0y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 29 Mar 2021 06:19:44 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45791C061756;
-        Mon, 29 Mar 2021 03:19:44 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id v23so4168448ple.9;
-        Mon, 29 Mar 2021 03:19:44 -0700 (PDT)
+        Tue, 30 Mar 2021 03:26:54 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60766C0613D8
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 00:26:54 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id d12so1202340lfv.11
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 00:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=3TmfUi913hGSu3ZvDqEVjODmv0swjr1+6VGvT6E5bKM=;
-        b=blBg1faRPY6sCJR6ifGvqEhMWndnvwGjRSGVSpn60NS7iymSH1GfJL/UFbZZUOn8+2
-         UtU0mjfO3+KeBxgy28/OYPPduknbnXxt3Mxo9wM2GiZC3Mi6pr+TiEQSXcM8TmZT4BtT
-         8LHAFcAQ/HQ9W5AnecPEvcBPiK4bFtDabwSAXd8QJG6QPQnYQ6AdNyggWYjbGGxGsLjs
-         eDumJoKX78/0fL32UbSuxIU/XxLwBJIKIUtZDv1B8SHx3xFFzjFkQc/I8fmC/Oij63c8
-         s0fnMdSdPEjpaFWcV2S7tYC9PWTEgoEYcJ+4IttMgMthTNtaftiwHE7iKZNsHk25s7xH
-         GHsA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=af4hT6RKaQH4UftQDbKN5QPOjXiK86/wlCCe+4hZGdc=;
+        b=NUla3ScpKv1xeAWa3oYor1HqrS/QBdHFVbD97Gy2NLtpj6f7l2kc1YuVycA+6xgDsi
+         9l7wkk1VeogBBuKyQgr52c9E9XztS56+62DQeXZEzEP9oeFxv1R4pBjtUE5YXoqeUmDR
+         ygTmKi3BM6um384QWqUj1HKRFKr64dVReOWoSQ/bOlimMNzeyk8RRDcabaNIj7rZs7CH
+         04Rj9WUsZ3jLmC/of9MwmcFN+nNvknx0r5TBXUfW+EsQ459b+GxjLJbw48HFQLRgf2nR
+         0j/rJpyVkw6WltmcEO5Sa5tf3UaXGLTHPOoHlWyOe9aVBQi78oClX+hFcLSfXjnPyKj2
+         d5HQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=3TmfUi913hGSu3ZvDqEVjODmv0swjr1+6VGvT6E5bKM=;
-        b=olgs3J6PuKZOQgU+ewcq7HyaN/OtRjoWk78oKQ4dxZ/MLaY2P7qdWyLmsvP89M9JWg
-         n1AIFXRN+xjI6Q6ELA1T4pkqoDUtuFYAvd/IxPLp8mVqX+72dFfojLcV9XjiGP26O36C
-         oc1NaumzDv9XrTxTKZlM8UsJa4WaslaLeyVoX7hM9HAfVA/LPVfpKr3pvnd0lDa8G3GN
-         VJ8T54Gqk2FayAQi/96qLntvRVGoU98tQ8By8HSirmAF8PE2kexGdti/LnU+S9OSGWX9
-         LTGimXlbikXsvPDP8kJp6WSBhssT8LSy8pEVUwDD2oIgQM8isSBuTEZqtco+N4hEfdtJ
-         UC/Q==
-X-Gm-Message-State: AOAM5328135gO5qc9Dc6TwwhxcT6GE1prB/HaB27Btd6Ywu3gnYcKsPb
-        oA2dnODq4hOmjc4ohCz5rVDl9wphKopqGg==
-X-Google-Smtp-Source: ABdhPJzlXACmwDqcN0NdMFWh8QPZ9ik9FcNe9QNS5Yz+NT/akmWqOh45PT55X6N44HADqijYhEQpuQ==
-X-Received: by 2002:a17:902:e884:b029:e5:fece:3bb0 with SMTP id w4-20020a170902e884b02900e5fece3bb0mr28620569plg.61.1617013183614;
-        Mon, 29 Mar 2021 03:19:43 -0700 (PDT)
-Received: from [10.43.90.134] ([103.114.158.1])
-        by smtp.gmail.com with ESMTPSA id x186sm16480450pfc.65.2021.03.29.03.19.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Mar 2021 03:19:43 -0700 (PDT)
-Subject: Re: [PATCH] integrity/ima: Add declarations to init_once void
- arguments.
-To:     serge@hallyn.com, jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210323013318.296993-1-unclexiaole@gmail.com>
-From:   Jiele Zhao <unclexiaole@gmail.com>
-Message-ID: <62b05182-e46e-4ef8-e9af-6d2bd00784b9@gmail.com>
-Date:   Mon, 29 Mar 2021 18:18:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=af4hT6RKaQH4UftQDbKN5QPOjXiK86/wlCCe+4hZGdc=;
+        b=E/SQQNthXz0S2al9fMXi4CX82mnwhzJ7WNBAtDaZzYxZ9OCNuaPBhzqaGuN2KtpOk+
+         2o+LyumzoK84wjRryY8qiM1CrqWSJef4cfzulIoEhVuZoLuQddN9pJRDbldweybDbSvT
+         KPTUGb3KsDAn92VbEt/xLcHQUcs8q56NFZGgJYCmLOKIfNRJR8l87JLybn3Hw2N3qa8u
+         rMfxAGMuP/138BVRSBHAMuNF58L7/Ppt+bGf241FSXjGoWFoLfou74IR5DtbXm1gVGJl
+         EIFYhgF0125PjUq5/bkjFjMAaUn0Oo/QEfVuZwRO3cIsDQApGSpvSosjnxHnlGd7hy1K
+         kQww==
+X-Gm-Message-State: AOAM531j9J91dbnf4C44BKHXnELTcE6VuvNvMvexhZioAid+ZnZIndWi
+        hY718O07CcWV4JIfETt7xH99Xzmxt/1AI1i52yVXIg==
+X-Google-Smtp-Source: ABdhPJyXpKWyx5s4QOhIBteYopgz9DFHpopC0zHy2O9Ezg9gQDp3fJSR7hC5ck8fwafksnrhlZdfctLsahIPzGz4fGU=
+X-Received: by 2002:ac2:5970:: with SMTP id h16mr18009743lfp.108.1617089212472;
+ Tue, 30 Mar 2021 00:26:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210323013318.296993-1-unclexiaole@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+ <319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de>
+ <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com> <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
+ <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
+ <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de> <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
+ <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de> <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
+ <6F812C20-7585-4718-997E-0306C4118468@sigma-star.at> <YGDpA4yPWmTWEyx+@kernel.org>
+In-Reply-To: <YGDpA4yPWmTWEyx+@kernel.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Tue, 30 Mar 2021 12:56:41 +0530
+Message-ID: <CAFA6WYPGuyg+OEYU2+FS-uom29yj4AyN5VLwm6MYpX97D0Uy0w@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     David Gstir <david@sigma-star.at>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Ping.
+On Mon, 29 Mar 2021 at 01:07, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+>
+> On Sat, Mar 27, 2021 at 01:41:24PM +0100, David Gstir wrote:
+> > Hi!
+> >
+> > > On 25.03.2021, at 06:26, Sumit Garg <sumit.garg@linaro.org> wrote:
+> > >
+> > > On Wed, 24 Mar 2021 at 19:37, Ahmad Fatoum <a.fatoum@pengutronix.de> =
+wrote:
+> > >>
+> > >> Hello Sumit,
+> > >>
+> > >> On 24.03.21 11:47, Sumit Garg wrote:
+> > >>> On Wed, 24 Mar 2021 at 14:56, Ahmad Fatoum <a.fatoum@pengutronix.de=
+> wrote:
+> > >>>>
+> > >>>> Hello Mimi,
+> > >>>>
+> > >>>> On 23.03.21 19:07, Mimi Zohar wrote:
+> > >>>>> On Tue, 2021-03-23 at 17:35 +0100, Ahmad Fatoum wrote:
+> > >>>>>> On 21.03.21 21:48, Horia Geant=C4=83 wrote:
+> > >>>>>>> caam has random number generation capabilities, so it's worth u=
+sing that
+> > >>>>>>> by implementing .get_random.
+> > >>>>>>
+> > >>>>>> If the CAAM HWRNG is already seeding the kernel RNG, why not use=
+ the kernel's?
+> > >>>>>>
+> > >>>>>> Makes for less code duplication IMO.
+> > >>>>>
+> > >>>>> Using kernel RNG, in general, for trusted keys has been discussed
+> > >>>>> before.   Please refer to Dave Safford's detailed explanation for=
+ not
+> > >>>>> using it [1].
+> > >>>>
+> > >>>> The argument seems to boil down to:
+> > >>>>
+> > >>>> - TPM RNG are known to be of good quality
+> > >>>> - Trusted keys always used it so far
+> > >>>>
+> > >>>> Both are fine by me for TPMs, but the CAAM backend is new code and=
+ neither point
+> > >>>> really applies.
+> > >>>>
+> > >>>> get_random_bytes_wait is already used for generating key material =
+elsewhere.
+> > >>>> Why shouldn't new trusted key backends be able to do the same thin=
+g?
+> > >>>>
+> > >>>
+> > >>> Please refer to documented trusted keys behaviour here [1]. New
+> > >>> trusted key backends should align to this behaviour and in your cas=
+e
+> > >>> CAAM offers HWRNG so we should be better using that.
+> > >>
+> > >> Why is it better?
+> > >>
+> > >> Can you explain what benefit a CAAM user would have if the trusted k=
+ey
+> > >> randomness comes directly out of the CAAM instead of indirectly from
+> > >> the kernel entropy pool that is seeded by it?
+> > >
+> > > IMO, user trust in case of trusted keys comes from trusted keys
+> > > backend which is CAAM here. If a user doesn't trust that CAAM would
+> > > act as a reliable source for RNG then CAAM shouldn't be used as a
+> > > trust source in the first place.
+> > >
+> > > And I think building user's trust for kernel RNG implementation with
+> > > multiple entropy contributions is pretty difficult when compared with
+> > > CAAM HWRNG implementation.
+> >
+> > Generally speaking, I=E2=80=99d say trusting the CAAM RNG and trusting =
+in it=E2=80=99s
+> > other features are two separate things. However, reading through the CA=
+AM
+> > key blob spec I=E2=80=99ve got here, CAAM key blob keys (the keys that =
+secure a blob=E2=80=99s
+> > content) are generated using its internal RNG. So I=E2=80=99d save if t=
+he CAAM RNG
+> > is insecure, so are generated key blobs. Maybe somebody with more insig=
+ht
+> > into the CAAM internals can verify that, but I don=E2=80=99t see any po=
+int in using
+> > the kernel=E2=80=99s RNG as long as we let CAAM generate the key blob k=
+eys for us.
+>
+> Here's my long'ish analysis. Please read it to the end if by ever means
+> possible, and apologies, I usually try to keep usually my comms short, bu=
+t
+> this requires some more meat than the usual.
+>
+> The Bad News
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Now that we add multiple hardware trust sources for trusted keys, will
+> there ever be a scenario where a trusted key is originally sealed with a
+> backing hardware A, unsealed, and resealed with hardware B?
+>
+> The hardware and vendor neutral way to generate the key material would be
+> unconditionally always just the kernel RNG.
+>
+> CAAM is actually worse than TCG because it's not even a standards body, i=
+f
+> I got it right. Not a lot but at least a tiny fraction.
+>
+> This brings an open item in TEE patches: trusted_tee_get_random() is an
+> issue in generating kernel material. I would rather replace that with
+> kernel RNG *for now*, because the same open question applies also to ARM
+> TEE. It's also a single company controlled backing technology.
+>
+> By all practical means, I do trust ARM TEE in my personal life but this i=
+s
+> not important.
+>
+> CAAM *and* TEE backends break the golden rule of putting as little trust =
+as
+> possible to anything, even not anything weird is clear at sight, as
+> security is essentially a game of known unknowns and unknown unknowns.
+>
+> Unfortunately, TPM trusted keys started this bad security practice, and
+> obviously it cannot be fixed without breaking uapi backwards compatibilit=
+y.
+>
+> This leaves me exactly two rational options:
+>
+> A. Add a patch to remove trusted_tee_get_random() and use kernel RNG
+>    instead.
+> B. Drop the whole TEE patch set up until I have good reasons to believe
+>    that it's the best possible idea ever to use TEE RNG.
+>
+> Doing does (A) does not disclude of doing (B) later on, if someone some
+> day sends a patch with sound reasoning.
+>
+> It's also good to understand that when some day a vendor D, other than TC=
+G,
+> CAAM or ARM, comes up, we need to go again this lenghty and messy
+> discussion. Now this already puts an already accepted patch set into a
+> risk, because by being a responsible maintainer I would have legit reason=
+s
+> just simply to drop it.
+>
+> OK, but....
+>
+> The GOOD News
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> So there's actually option (C) that also fixes the TPM trustd keys issue:
+>
+> Add a new kernel patch, which:
+>
+> 1. Adds the use of kernel RNG as a boot option.
+> 2. If this boot option is not active, the subsystem will print a warning
+>    to klog denoting this.
+> 3. Default is of course vendor RNG given the bad design issue in the TPM
+>    trusted keys, but the warning in klog will help to address it at least
+>    a bit.
+> 4. Document all this to Documentation/security/keys/trusted-encrypted.rst=
+.
+>
+> I'd prefer the choice between A, B and C be concluded rather sooner than
+> later.
 
-On 2021/3/23 9:33, Jiele Zhao wrote:
-> init_once is a callback to kmem_cache_create. The parameter
-> type of this function is void *, so it's better to give a
-> explicit cast here.
+Option (C) sounds reasonable to me but I would rather prefer an info
+message rather than warning as otherwise it would reflect that we are
+enforcing kernel RNG choice for a user to trust upon.
+
+-Sumit
+
 >
-> Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
-> ---
->   security/integrity/iint.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 1d20003243c3..5f3f2de997e1 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -152,7 +152,7 @@ void integrity_inode_free(struct inode *inode)
->   
->   static void init_once(void *foo)
->   {
-> -	struct integrity_iint_cache *iint = foo;
-> +	struct integrity_iint_cache *iint = (struct integrity_iint_cache *)foo;
->   
->   	memset(iint, 0, sizeof(*iint));
->   	iint->ima_file_status = INTEGRITY_UNKNOWN;
+> /Jarkko
