@@ -2,187 +2,309 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF41CC433C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 17:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E27AC433C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 17:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0F9E619CB
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 17:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E447619D6
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 17:20:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232416AbhC3RFb (ORCPT
+        id S231952AbhC3RTm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 13:05:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:25574 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232101AbhC3REq (ORCPT
+        Tue, 30 Mar 2021 13:19:42 -0400
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com ([66.163.187.38]:46183
+        "EHLO sonic308-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232221AbhC3RTP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 13:04:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617123885;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=w2lAv6Y8ocPT8PnVS3wa7b+VzR9sgZuZpuwMMYuUfRA=;
-        b=Wlsme69DIYH6oDlehK4Cr0CRlBwkUydU4egbVJC/6BVqNlt+ndTUj57LXsKmVXS0Lv5Sbx
-        LjkQxMrbpiZblqG2lTtncOTQV2lMNpXt7zdibWckL8fyT3T0kBBuhMmtn6qYxUvcodv5+W
-        W+MLxcEDucY3dd1ZupLY9+EoZvJrWD8=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-335-DzaFG-lYP4ibqFUJpkgn4g-1; Tue, 30 Mar 2021 13:04:44 -0400
-X-MC-Unique: DzaFG-lYP4ibqFUJpkgn4g-1
-Received: by mail-wr1-f69.google.com with SMTP id y5so10645952wrp.2
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 10:04:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w2lAv6Y8ocPT8PnVS3wa7b+VzR9sgZuZpuwMMYuUfRA=;
-        b=PCwdym3sKFyJW/yRHJIsDSkR7KwI3gGrzKqLJM50YVAEOIOGSiMdHF1YohIKBVX9RP
-         Bm55bxrhIMbPuIlbRIGubmXQx26S/O7IdV4ubndji8jTJ3hUIHd/j0YV7INJirXreVLB
-         niGV/RaiRGX9leau2MormA9FFrOnPinY20OBB8Ib9wC8fHkuQUpC/EJ1l7seDR76dYnJ
-         kGLoOk6xi+1q7DkSoP4mo1anmC/tB+lDQKs2MZ+dHcZeRhTBXFoyhzUK+SWNsSqJ6tKQ
-         ayW4UFFOxsPUp6eEvPpNt5a/ooK44gJDT/+qGLXiRjTGsbcKglHmrPiRFaMIPirWmx02
-         2ZfA==
-X-Gm-Message-State: AOAM5313aZ18stWifATIXcyefmH+LcMw2Vx8j77RO4UzH8DLCpjtIjDE
-        nq2NRVY7dpj7fdW5gPR+yA93ElRr2okmpNBA76Yemz9DWo4mUjmvl2/XWuxi6yrNKBKnz/ACGgI
-        mjl1kacqevU9CUbcIszoKisx47Df7DRbbcMTJ
-X-Received: by 2002:a1c:94:: with SMTP id 142mr5215304wma.0.1617123880237;
-        Tue, 30 Mar 2021 10:04:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwugJHlzSS2mn8UQWmSis1ODZnV8Ol3jz22ZDpQ2ZeAwkBOxRJlOkJMe6AE9fWnLS9GnIN4Dw==
-X-Received: by 2002:a1c:94:: with SMTP id 142mr5215293wma.0.1617123880037;
-        Tue, 30 Mar 2021 10:04:40 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
-        by smtp.gmail.com with ESMTPSA id c9sm33421003wrr.78.2021.03.30.10.04.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Mar 2021 10:04:34 -0700 (PDT)
-Subject: Re: [syzbot] WARNING in unsafe_follow_pfn
-To:     syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, bp@alien8.de, daniel.vetter@ffwll.ch,
-        daniel.vetter@intel.com, hpa@zytor.com, jmattson@google.com,
-        jmorris@namei.org, joro@8bytes.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        m.szyprowski@samsung.com, mchehab@kernel.org, mingo@redhat.com,
-        seanjc@google.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tfiga@chromium.org,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-References: <000000000000ca9a6005bec29ebe@google.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
-Date:   Tue, 30 Mar 2021 19:04:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Tue, 30 Mar 2021 13:19:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617124754; bh=ruyO0cQ+SgSQWudmya9nza7wW/yADfiYRBpz8TMh36s=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=HplM0UKnpq/9DdV6lsRY/M1isjl2YLLsbqw3DcrX+nOgFdK4krDUpQxiTbYI/WlqakD7cQPmJ90P16vq2GG9KKHb9X0INa1EuhTNNZQLSyIBsr8UfCLa8RD0SrJqCtbjIrMEANYev6eHHOxR2BOc21DvxCxpkWz22diRqlDT8zWmb34DiTEBuxZ7B/eusI6lsb8pluymDmVM11ljvdAXpFtd0EJgdYCKIZGnQmg+MDMh3RRN9EWRIEOAjqMMKatEehEkUsQcerpoS8v9Vshi0KmaibvPoZKvN/PQ+DDeoao5i8anCF8b+obsn0rMdZtl/6st+Y+JWoRIdsci+rsG8Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617124754; bh=pVpUf8xS6K4cmM3oPBMPienrreZdKdvyFyvJwE+6XoG=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=VEhsrdgZ5Q32/XMNunZjeXt1aSGtqT0QLZEqd2MImKCorTsbfvjQfuThelGjaR1CyWmqjF3JJThx3WIKahTYHNnB3XAP8V0N9Lep+RydqezA7+xKlkiwDZzE1+jlOmShhvHuFa4JQvYT5KUxrw9EvCQFM11ciPTkEFrYNPvuVKCUCoZtmYQuiG0eTeiiVNuEOcxNEpJT6m158vsW85B+9PNyoyjLurUMzZsupBY9zPRgcp6BErvmKFU6BwH9DSTF8vUGW5oFbJ+taHUnSAWpgILkvd6vZfPXbfFUhMTiS6wugtgvSQ2yr78XMCXF6y3mXzlwXbJMHLLm6TMagjT8xQ==
+X-YMail-OSG: fImJ3scVM1kPoQOwuUA7zhBZfaHcfqM4Zi.uBqG3qrP08og_H9G31t8lL6CrdmJ
+ SYsSBZQhKeKQWk9InqI_5fEon2BVR_SnMFkOt8fEF8zhvXysgIAMJpIhJALr3lDWIAcZVBU8y1XG
+ rKnRhgWdNAQy7UT7KVVh0fx7ZmrYQXir5e57SCi92cgddnq.RuXVRRHp4xV0Ip4Nk34SUbqGluZh
+ WBT9Yz.2RWeviFBRkNl3707vMUMMEYuSFxc6qvroKTTov0oZEVjYBEM0HmKMtnV8.ZifNcTb7OG5
+ sXvSb6iYo8CSm031EFXCAhb5AiUvaTxcy3_sRTuHUqWHqy5rDsr0q1r2jn.SKP8ZdeD_0b_pbK56
+ Li0C26TvF6jkA61OSGFq0GXVVnqv1J8xqOzbDrnO73nmr4TDgsKRhg3sXmpcUKV1T1clljor6_oo
+ xjLZ9rg4w4xkJoi8Dcg9eLHO6SSW__VCoXY8PrBzSUA54DLE9BB54_aCYiuhdxvlL3SBusiA_enU
+ gRRd35F8.N6P067qANabRBBp4Kh9P30msGLDzezk.PH5ka2Czjv6tOj_.OHa7S42Q5r2oL8tR3A1
+ Qs41_uDLksSt_s3K.Bvcs.P0ndoXECzJcwsuo5xdKgq6sGLFHxZ5fulYo1Q3XNSBTtkmI3WNVz8j
+ Z5w9VNSCXjN8GCA9MiZDVcA6gGEVBieBjei1ObRKMB7Ipp2f0LNCbJt4Lo65cbPFhKdsspODnAZV
+ WlWIiFmFhMvHyLYWwUlJUNw._HfoHT2IQJC36IXk8zFVLp.g5Ae8jx5bDZb1IDGfiC10jVMNY_1F
+ urMKiWw0HdlVnwnGy8MvEDU4NoSj.a8YqjhKKPXxkWatkxh44Qqx35hBbsKOp7CDTOKYHPUFiza_
+ YPmo6btThj0WiaPfkvD8h8PgjablQdDKHHah13z297balD7_XZNa.riB3mg.1Ee6j50LhTCeADvN
+ .33i93mWLrq9AhImZ.CsqTV.9CUTaTcG3KIbz0m.IUf6y.7LaT_iFXiXX3T1T8LbTLFFyet5rhgv
+ c2ZExhCvZSV_qAxzQOOpoYaWfZg55Db3pnvl_5hq34cHCc3WcKVeDjnPInwP1S.qA_Ck5KXLqF_7
+ kFqetRLrL3pfy955EPCTP1yXjfzItC_jBqlfVKQpS165aVtfyETxYpxfSX9gZ5LPnFXuocV_Q_P6
+ 1_B744VigVUMJV0nmyE_UNQ2E_awfZhD.gIm0rXnwshigYzUH6M3rY0mHawxqIOl7Plirul4BzPx
+ 0y885j9aRNnghVhjo9BNwv4ZA0PpS5ClN3qUCUYBE4seYTP8C31G39uZn_BVAa28pSgVPWkBssvj
+ GvCjhpLqsf480L9uuQoUkDyyhE1SR8Tz5a86xIyaBN4mKcqB6c7ofDkYwP.iohuTV5yQMVK0und5
+ lVRrTHmuGJ97Pk68Jgni.Nr5Y9KYry6LJUZGG5HUkh8LVbBcllOeJ0_.auV4Nh6yX_tvq0QaBy1o
+ S.ONX_0bSvmZB.gIqYSxE5YYFm4u0g_fjssqhjeeFoKgSj5SvBciiBqFOmkQDgnFBhuy8WJjotC1
+ FgmsrGszlAJVr_OXxC8fU4yWcxqd1RzlJ2KvMn.s4yEE6Jjvr5IIv4U2TQQrgEWMI7pd_TFmnGXY
+ U7ZKsQnv3FKlLCt3kM4MwNvReLD24dkGto.7ynkQgG.xPh7BD1r6vxdq0GsTh0.sfTFnlP8jUWcg
+ 9Pv5dQFjMP227B_GUfpTIZQfKDV2UUjsX2Tn0qZduyPsTG7DbJh3MqPyVQ4xbI_ReDnexuP7rkrs
+ X2fMUKU1XkIx5PVYByP2t7oeAn.5kTCW9tZHwtH23pD1izDwHRwWMjzigY_ELaJqWBLcTmganQFu
+ fwUwgEyrKzDRsldZvizj0NmiIyT1VwTZo9pxskSkxmZbqww.noQTAQ6QyT7z9_w4uolV8EVVwGb3
+ QYlaMj__YlsESMmly4R.5hRsAPTkYZdcXI7qLc4h.eapO7wtBD4s9xTMg1GDR8eU0msTj0ypJLGZ
+ UP4dbjaZ2e5RnDClHESp6LKwVNSJCdsChoXDJHW3Obm.t6ZAHD0famCuFXlpiRCvUIFwsOF9tSE3
+ rr3egZPpTg_ZhzuJ5LmKeDj1n3VijumQsyjCmco17c8gKj3bkauBjmPIaEgPPwi.5xob8sAfnIOI
+ vwFlK8Cg2tIRZuyd3EPaNej7G.aPZv8t1qSW2ROi.e47ObN0wSXc9o48fQM7iIYAAO.MwaBoPHKV
+ vG_vwOW7G7WO2rAWoVdC0YtLahjZlRG1rE.PKiqZrgTmM0Wgll8hHcCEUkEq_5KXDNibbL5jd_MX
+ 9W3apjfS9_4W7sYh8YhAOESkR0vQmIOx2vA1wa5pxFblUAYOLWofwwxyc0jXzcA0EFxHwWlT7Y_U
+ ymSMi.jQ2xjQIS6ishciTQujUcYHiL8l1lXzgdpakHUnfft7l7brII3_jyL5sFBNX1kM0l1f6DER
+ Qr49Nu5pWTRseySGJ1_DOhNolzNaLzySX8.vw0vctb6gErloMLmczRbGDqwOdODpYgB4kv34XQz6
+ hxyeSbetoJsZYExsiElEmpXzfdLUo9cLonmpbb4W6tRY_k91KK172Iwxhmssc.pGtN5orM7o97yt
+ Pna_lDftkWC3ZJNJxSF9jbKvZApovbobHOMQm.byw2EEZB4fKFSjtZ20PqCjoktM42H3aK274vKe
+ I.KibKbpMKZgNUyAQiKXOo4Su3LY8fBSjmNY1bcJU2MFmJ3lYMPeDYZuPdmmoxq2Lmg25Z6F_Hnj
+ SqTyjhgU0eewYMRMV3f9629JueG_6tEMgLRm7mhlp5gd.UDKB.R4DbPUcOWi7qeDIn2AmG4t12Ux
+ 7mYF0DvSwEpd437TI1_Gez3abTnVYwlCt8Og5eRRKZQUUjyRpd7QJew1o_jNsg3G8KCh4sm7jqoK
+ Cs3bDKxE6rtEk1.SADmDPy1nbMsUJAP6zC3A0klN_mR03NBuKFiYc1my5ydsuh3Os3i1MtkyKn.j
+ wpIezwoCikU1lGFOrrGOy90_cifVnde5eJlM_59AtoeU.WuEYRvWkeyQo5XSpQESj1S_DuZkeBby
+ Gxw1D8BhSoTm0kJzo5kow.i_VosG9QlZy70TmM51eYCIGFC_c_YrgsBi0LDME68zWzaichL8b8IU
+ 5V.dhUDp.MCKTZwvmg0xlV0vSCdlzUPJVm8_jODTbvQFAQarYCXG1YKezmvmIMv28R34_1QAl0LE
+ r4YBrpQjMQ0iyk19kjK6U52t2aASosLQcHPuPrii7rRTr4vHzdUzzpTd4vAf2hivM4k_naLgRqxa
+ E20OzTlxtJSjXjqFZazGNAl8PCVIwxeO2JiaPYO2LiIG.mGv8AI1R3zkQTc1qzcyRY0_E.hmM2Uz
+ lSWp0PQhnGCSXqMzROu6xJwRXp__HGRA6PVmsIRFZ9LFExeZKxDTjT9_0rVFmxv2jPSzO5jKhvsW
+ gNjWyeTObmg7xaheSCOQUAhwU3BZ36QNfVE8PzC2WIey5rGSvYPbBSbxVc9u9hapLG5Hrjz3i.P6
+ XbJaAy.GXjgmrE3v4bdkcVHBZSQteUdHXvrHHcWlh_e4JYufLx2oItjAZcrAkm_.eeV362OB1YkR
+ PARYg4hCBgKz5tYL5HXRXbMH1G1rvBRRJX8hGZ0DcWXYy8zvA6Z4.XKKadUdQBBWcOPGuKqwzT3F
+ YQoLnu6bpHBSSDxepTDVqBarfxhNO0XYK7G.NbuQMBtSgJY2pQ8femaLurvDGSe3rw9lS0VjYxs2
+ MAVPvVdLO_wx7_Y_4i01N9bYzQb.r4cZD76bMmXqoeskBp835dpxPdMxIAMe_Bl7IgjiM1lFH0dz
+ IFa5FBWFz5vI_tpiL.t6HVASQc38GAGSDM12gz75D2UwJ7NhVGiD3sr9VobCtjN4xWjoYVSiBI82
+ UTNLy9iYJvcfh1ZfU7brPwpLPQZ4_kIQwY1cQpOtbAvL.MstC34CwJ4zhmx3YPWA1KzCqe6wRKlz
+ xo6ZOGHHu0x7gTpU-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Mar 2021 17:19:14 +0000
+Received: by kubenode501.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID c7906aa3130534e56463b91725399b85;
+          Tue, 30 Mar 2021 17:19:13 +0000 (UTC)
+Subject: Re: [PATCH v5 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316203633.424794-1-mic@digikod.net>
+ <20210316203633.424794-2-mic@digikod.net>
+ <fef10d28-df59-640e-ecf7-576f8348324e@digikod.net>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <85ebb3a1-bd5e-9f12-6d02-c08d2c0acff5@schaufler-ca.com>
+Date:   Tue, 30 Mar 2021 10:19:12 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-In-Reply-To: <000000000000ca9a6005bec29ebe@google.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pbonzini@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <fef10d28-df59-640e-ecf7-576f8348324e@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.17936 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 30/03/21 17:26, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    93129492 Add linux-next specific files for 20210326
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=169ab21ad00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6f2f73285ea94c45
-> dashboard link: https://syzkaller.appspot.com/bug?extid=015dd7cdbbbc2c180c65
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119b8d06d00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112e978ad00000
-> 
-> The issue was bisected to:
-> 
-> commit d40b9fdee6dc819d8fc35f70c345cbe0394cde4c
-> Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Date:   Tue Mar 16 15:33:01 2021 +0000
-> 
->      mm: Add unsafe_follow_pfn
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122d2016d00000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=112d2016d00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=162d2016d00000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com
-> Fixes: d40b9fdee6dc ("mm: Add unsafe_follow_pfn")
+On 3/30/2021 10:01 AM, Micka=C3=ABl Sala=C3=BCn wrote:
+> Hi,
+>
+> Is there new comments on this patch? Could we move forward?
 
-This is basically intentional because get_vaddr_frames is broken, isn't 
-it?  I think it needs to be ignored in syzkaller.
+I don't see that new comments are necessary when I don't see
+that you've provided compelling counters to some of the old ones.
+It's possible to use minimal privilege with CAP_SYS_CHROOT.
+It looks like namespaces provide alternatives for all your
+use cases. The constraints required to make this work are quite
+limiting. Where is the real value add?
 
-Paolo
+>
+> Regards,
+>  Micka=C3=ABl
+>
+>
+> On 16/03/2021 21:36, Micka=C3=ABl Sala=C3=BCn wrote:
+>> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+>>
+>> Being able to easily change root directories enables to ease some
+>> development workflow and can be used as a tool to strengthen
+>> unprivileged security sandboxes.  chroot(2) is not an access-control
+>> mechanism per se, but it can be used to limit the absolute view of the=
 
-> ------------[ cut here ]------------
-> unsafe follow_pfn usage
-> WARNING: CPU: 1 PID: 8426 at mm/memory.c:4807 unsafe_follow_pfn+0x20f/0x260 mm/memory.c:4807
-> Modules linked in:
-> CPU: 0 PID: 8426 Comm: syz-executor677 Not tainted 5.12.0-rc4-next-20210326-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:unsafe_follow_pfn+0x20f/0x260 mm/memory.c:4807
-> Code: 8b 7c 24 20 49 89 6d 00 e8 6e 84 64 07 e9 30 ff ff ff e8 f4 19 cb ff 48 c7 c7 40 1f 76 89 c6 05 56 eb 09 0c 01 e8 34 1a 21 07 <0f> 0b e9 71 fe ff ff 41 bc ea ff ff ff e9 06 ff ff ff e8 1a 65 0f
-> RSP: 0018:ffffc9000161f660 EFLAGS: 00010282
-> RAX: 0000000000000000 RBX: 1ffff920002c3ecc RCX: 0000000000000000
-> RDX: ffff88801954d580 RSI: ffffffff815c3fd5 RDI: fffff520002c3ebe
-> RBP: ffff888023d56948 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffffff815bd77e R11: 0000000000000000 R12: 0000000021000000
-> R13: ffff8880143a4010 R14: 0000000000000000 R15: 0000000000000110
-> FS:  00000000005d1300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f172c4cd6c0 CR3: 0000000011f70000 CR4: 00000000001506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   get_vaddr_frames+0x337/0x600 drivers/media/common/videobuf2/frame_vector.c:72
->   vb2_create_framevec+0x55/0xc0 drivers/media/common/videobuf2/videobuf2-memops.c:50
->   vb2_vmalloc_get_userptr+0xce/0x4c0 drivers/media/common/videobuf2/videobuf2-vmalloc.c:90
->   __prepare_userptr+0x342/0x15f0 drivers/media/common/videobuf2/videobuf2-core.c:1128
->   __buf_prepare+0x635/0x7d0 drivers/media/common/videobuf2/videobuf2-core.c:1367
->   vb2_core_qbuf+0xa9d/0x11c0 drivers/media/common/videobuf2/videobuf2-core.c:1658
->   vb2_qbuf+0x135/0x1a0 drivers/media/common/videobuf2/videobuf2-v4l2.c:820
->   vb2_ioctl_qbuf+0xfb/0x140 drivers/media/common/videobuf2/videobuf2-v4l2.c:1050
->   v4l_qbuf drivers/media/v4l2-core/v4l2-ioctl.c:2027 [inline]
->   v4l_qbuf+0x92/0xc0 drivers/media/v4l2-core/v4l2-ioctl.c:2021
->   __video_do_ioctl+0xb94/0xe20 drivers/media/v4l2-core/v4l2-ioctl.c:2951
->   video_usercopy+0x253/0x1300 drivers/media/v4l2-core/v4l2-ioctl.c:3297
->   v4l2_ioctl+0x1b3/0x250 drivers/media/v4l2-core/v4l2-dev.c:366
->   vfs_ioctl fs/ioctl.c:48 [inline]
->   __do_sys_ioctl fs/ioctl.c:753 [inline]
->   __se_sys_ioctl fs/ioctl.c:739 [inline]
->   __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:739
->   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
->   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x443639
-> Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffee3065668 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000443639
-> RDX: 0000000020000140 RSI: 00000000c058560f RDI: 0000000000000004
-> RBP: 00000000004031e0 R08: 00000000004004a0 R09: 00000000004004a0
-> R10: 00236962762f7665 R11: 0000000000000246 R12: 0000000000403270
-> R13: 0000000000000000 R14: 00000000004b1018 R15: 00000000004004a0
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> syzbot can test patches for this issue, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> 
+>> filesystem, and then limit ways to access data and kernel interfaces
+>> (e.g. /proc, /sys, /dev, etc.).
+>>
+>> Users may not wish to expose namespace complexity to potentially
+>> malicious processes, or limit their use because of limited resources.
+>> The chroot feature is much more simple (and limited) than the mount
+>> namespace, but can still be useful.  As for containers, users of
+>> chroot(2) should take care of file descriptors or data accessible by
+>> other means (e.g. current working directory, leaked FDs, passed FDs,
+>> devices, mount points, etc.).  There is a lot of literature that discu=
+ss
+>> the limitations of chroot, and users of this feature should be aware o=
+f
+>> the multiple ways to bypass it.  Using chroot(2) for security purposes=
+
+>> can make sense if it is combined with other features (e.g. dedicated
+>> user, seccomp, LSM access-controls, etc.).
+>>
+>> One could argue that chroot(2) is useless without a properly populated=
+
+>> root hierarchy (i.e. without /dev and /proc).  However, there are
+>> multiple use cases that don't require the chrooting process to create
+>> file hierarchies with special files nor mount points, e.g.:
+>> * A process sandboxing itself, once all its libraries are loaded, may
+>>   not need files other than regular files, or even no file at all.
+>> * Some pre-populated root hierarchies could be used to chroot into,
+>>   provided for instance by development environments or tailored
+>>   distributions.
+>> * Processes executed in a chroot may not require access to these speci=
+al
+>>   files (e.g. with minimal runtimes, or by emulating some special file=
+s
+>>   with a LD_PRELOADed library or seccomp).
+>>
+>> Allowing a task to change its own root directory is not a threat to th=
+e
+>> system if we can prevent confused deputy attacks, which could be
+>> performed through execution of SUID-like binaries.  This can be
+>> prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
+>> prctl(2).  To only affect this task, its filesystem information must n=
+ot
+>> be shared with other tasks, which can be achieved by not passing
+>> CLONE_FS to clone(2).  A similar no_new_privs check is already used by=
+
+>> seccomp to avoid the same kind of security issues.  Furthermore, becau=
+se
+>> of its security use and to avoid giving a new way for attackers to get=
+
+>> out of a chroot (e.g. using /proc/<pid>/root, or chroot/chdir), an
+>> unprivileged chroot is only allowed if the calling process is not
+>> already chrooted.  This limitation is the same as for creating user
+>> namespaces.
+>>
+>> This change may not impact systems relying on other permission models
+>> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on=
+
+>> such systems may require to update their security policies.
+>>
+>> Only the chroot system call is relaxed with this no_new_privs check; t=
+he
+>> init_chroot() helper doesn't require such change.
+>>
+>> Allowing unprivileged users to use chroot(2) is one of the initial
+>> objectives of no_new_privs:
+>> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html=
+
+>> This patch is a follow-up of a previous one sent by Andy Lutomirski:
+>> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.=
+1327858005.git.luto@amacapital.net/
+>>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Cc: Andy Lutomirski <luto@amacapital.net>
+>> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+>> Cc: Christoph Hellwig <hch@lst.de>
+>> Cc: David Howells <dhowells@redhat.com>
+>> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+>> Cc: Eric W. Biederman <ebiederm@xmission.com>
+>> Cc: James Morris <jmorris@namei.org>
+>> Cc: Jann Horn <jannh@google.com>
+>> Cc: John Johansen <john.johansen@canonical.com>
+>> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+>> Cc: Serge Hallyn <serge@hallyn.com>
+>> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> Link: https://lore.kernel.org/r/20210316203633.424794-2-mic@digikod.ne=
+t
+>> ---
+>>
+>> Changes since v4:
+>> * Use READ_ONCE(current->fs->users) (found by Jann Horn).
+>> * Remove ambiguous example in commit description.
+>> * Add Reviewed-by Kees Cook.
+>>
+>> Changes since v3:
+>> * Move the new permission checks to a dedicated helper
+>>   current_chroot_allowed() to make the code easier to read and align
+>>   with user_path_at(), path_permission() and security_path_chroot()
+>>   calls (suggested by Kees Cook).
+>> * Remove now useless included file.
+>> * Extend commit description.
+>> * Rebase on v5.12-rc3 .
+>>
+>> Changes since v2:
+>> * Replace path_is_under() check with current_chrooted() to gain the sa=
+me
+>>   protection as create_user_ns() (suggested by Jann Horn). See commit
+>>   3151527ee007 ("userns:  Don't allow creation if the user is chrooted=
+")
+>>
+>> Changes since v1:
+>> * Replace custom is_path_beneath() with existing path_is_under().
+>> ---
+>>  fs/open.c | 23 +++++++++++++++++++++--
+>>  1 file changed, 21 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/open.c b/fs/open.c
+>> index e53af13b5835..480010a551b2 100644
+>> --- a/fs/open.c
+>> +++ b/fs/open.c
+>> @@ -532,6 +532,24 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+>>  	return error;
+>>  }
+>> =20
+>> +static inline int current_chroot_allowed(void)
+>> +{
+>> +	/*
+>> +	 * Changing the root directory for the calling task (and its future
+>> +	 * children) requires that this task has CAP_SYS_CHROOT in its
+>> +	 * namespace, or be running with no_new_privs and not sharing its
+>> +	 * fs_struct and not escaping its current root (cf. create_user_ns()=
+).
+>> +	 * As for seccomp, checking no_new_privs avoids scenarios where
+>> +	 * unprivileged tasks can affect the behavior of privileged children=
+=2E
+>> +	 */
+>> +	if (task_no_new_privs(current) && READ_ONCE(current->fs->users) =3D=3D=20
+1 &&
+>> +			!current_chrooted())
+>> +		return 0;
+>> +	if (ns_capable(current_user_ns(), CAP_SYS_CHROOT))
+>> +		return 0;
+>> +	return -EPERM;
+>> +}
+>> +
+>>  SYSCALL_DEFINE1(chroot, const char __user *, filename)
+>>  {
+>>  	struct path path;
+>> @@ -546,9 +564,10 @@ SYSCALL_DEFINE1(chroot, const char __user *, file=
+name)
+>>  	if (error)
+>>  		goto dput_and_out;
+>> =20
+>> -	error =3D -EPERM;
+>> -	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT))
+>> +	error =3D current_chroot_allowed();
+>> +	if (error)
+>>  		goto dput_and_out;
+>> +
+>>  	error =3D security_path_chroot(&path);
+>>  	if (error)
+>>  		goto dput_and_out;
+>>
 
