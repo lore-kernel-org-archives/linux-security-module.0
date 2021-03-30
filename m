@@ -2,146 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED7E4C433C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4684C433C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 15:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A523C6196A
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 15:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78035619CE
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 15:43:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231812AbhC3P0w (ORCPT
+        id S232348AbhC3Pma (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:26:52 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:51061 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232343AbhC3P0V (ORCPT
+        Tue, 30 Mar 2021 11:42:30 -0400
+Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:44456
+        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232421AbhC3PmR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:26:21 -0400
-Received: by mail-io1-f69.google.com with SMTP id a1so13648549iow.17
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 08:26:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fCp4KYxji0+0j8ZYy/0qgF4qCzIC1ZnpH0/jKqXPGjI=;
-        b=GHs3c3s8mEDXRZ0Mue1Y3xyOpWF3iw9Es6cVKfe5GioYk9txk6wE3FFRBobA5KIniv
-         OH46dXPeRf1+O4CzrZk1oZQjN0oD+wKT9973OIOhKr5/1Df9jdXANjz7JeywHJSvgvHW
-         Sgem3sz3OcsrOyauzVjUVSVslMq7yDj22alAqUAM6MYx918Yaz1PCA6LsYjY8lTUC7v/
-         CqpFHx9Fb77kgU/YimqyqkYZ/8q8IGG7eZQqAzSBOyY1u15Az+RrbLNPi3b2gEN3HVBC
-         0PmHzh7RABvmsCOsPFOqPMOcJViMmsRkoKxXn4NDz/zNxXdyVFJQq2WAVuxTiVYG9p5P
-         P+Qg==
-X-Gm-Message-State: AOAM533t4OGiQPeFljU2n3iLO1LJvzCv+ww5b11hpNobpK7PyxvJ1Hwp
-        HXgllf66s8mQ62Wp7PreSf4KDnPHxn4wKW3oFVjAqpjaGORY
-X-Google-Smtp-Source: ABdhPJxHPgNEMqG7IieXHkAl/dlSLEJglxbo9HdtGSF31T5HbiUR0Dk82x2nwF5ECa0/SYnQvRxn4+eW3DppeXYAq5K63Yubx1yK
+        Tue, 30 Mar 2021 11:42:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617118930; bh=oSDHq47SAtgk1fwx35vh2D9jNNKisET2ZpTrWW0uy4w=; h=To:Cc:From:Subject:Date:References:From:Subject:Reply-To; b=fnI92niXg+vVdkyFwlGFtHVkf3Db6xGEzFUMIMEB9aPkpRpZcATz8vesR60S9FBmNbYzHF/fPnD0kQ3o1uSR9ZE/IbNugF2XZ1Fj+E75mDSweAisFAPR/1grVk6MGWUFeRS5TSVhHn+qho7oHskQ6aYbixO3sFjpgF6uMJUS+H/VIxlK+xkjnisf0tE7ehsVP4xKa2LdrpcQ5geoOf4fBCCAL124hMPSywKX0HGzHSdNPOaiONaAJxmqQAuIOMSkqDEj+z8MRRlMlzBhyfdXQoxg3zLSBSXY6xGcMNZg2YrTZTrXWghkDtDIRrYI7/KO1B4cKcuNT8mM1OWIMhOAEg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617118930; bh=8/m0t9nR7MSNk5J8vhPb/aqBkdD6PNxZxIsiXz2jehf=; h=X-Sonic-MF:To:From:Subject:Date:From:Subject; b=md05Uo5pffu2EviRdYoX+aloow/5qupDv9lqJhToSzF33taVn+t/Nf0+YPTtMNFZyLgFrb1Z1kumM2A46odqo9aK2NTIxoWOcMfdYzzs13NT0jwRyofZr8C3h1tMRLSR3IIwLbGqjEtWH7bPAR+G6zJF1Neiknx28pt1e94gJUrxEDRbrhe5BETXVk7qG44v/u+6j5B8JSO0IowfKYfyY0Tra2aRTMuhVR8lQQfv3iW/N8Ooih1pu7T+60O6JmzkkCG6kfOudFM6DAJU7pZtZ7449pv2nJJreOaY8dhfxmU+chq9Y47OIXwrole/Umq/fCMak+6+oA8veSwHfh1dKw==
+X-YMail-OSG: Xdp_AEgVM1mM7orcWB9azAahpKg9kpGitLOIdmhUzB4pyK8wPjYniIXaISQ7Prl
+ 9CdD8ETyhiB8BjRqcRAYuP_5hocUvuSFEk.NbOqAtymEkMWR3eISgtJCbxLoVkAoEn5YcvPucnXS
+ lSvtq2mU5hhJigReTaazifVHmOHBCsa5aM.SjV1ho.ZMZkHt3ahCJ3JWMCV3otXEo5PzJDsQClov
+ uFqXhHvhkgIBW09k0rL5myciIffKBbZVZzBhlnnLpbdbztGi8CWNb6Pl1GIZvGoazMxrJaIEUoe_
+ 0hA.t0GV6Lm2PyEktdgsSV1.YnWaA11djnwJJwNmbgv.zNraqsN7_785umdOg9sTbkKgT2226m6j
+ bxH124tS0cImpv9QDSb_IfPkbONlU0slyLdGUTVmOFsgNGbGVhKWvTDuGkTBC4tm1J9wysJfqM1I
+ Dbf7PXlbBmaTUovBeq3HUQ9VII3uAUPWnE8hqRmYvRJR0fwcuFJhyg5_peAXWPEk48_iGNNMf0Iw
+ fPOFRD4VvvEzAI7b8OAhKiGrs6pBxKwhf6.B5.XSJDOt3Dm1gSQD.N6FAnCuyPjf92NVkBvsxfIG
+ KWA1WnxoG_wmKbKE6uSOAtDQVnQjFUuizc_7XQVMURCaQCJ_g.4LzytqMauYQQkc77R.2NkHp.eb
+ EvxSV0xLyAqAZmf0hP0a1nG5p5bosXKTLJC0RfibISyimDfKJv3AaKVlhokmWll1GbtLFrjszDUe
+ AbDo9ZbUfS7JY6ARlqskJw1vos8JSysvyLnCZhWfKx9aX8K1Igwuc64RBLK0BHdMNgoBtaSJjryx
+ ge4.eOJDe_x6BuLM5gcPbjQzzp8r3hbvFZVUmAJi00kIg1MENQ0gjdVdz6VZHc41k_Hdzy9xhdRT
+ MTy6VNqrlzrkHOnSruiT93ViP6_gEjYp.WZFwcQa9uN0GUTYIZaR8I1zEerqom5KlbuYb_BCOZfR
+ zWz8Kc8_L0s2ZEKeRpLSrxzItnmK53TJ547FNw6Vd6s9FM9FkyP1e3NP5FGiq_HRKnq9oy7X3bp6
+ OZ39_bdTS0wD9VNkr3FCTbV..Lnyoy1dMTT4_4E4e2V8t9Qf2GQtqnr.I5i5YanmFFOjpfBGd8bu
+ iKqwI4nj_mJTrOa9.Qlekqb04jLaHWNdXb_c1GMC0h9f1PHnGU5mwjUl41rHRxUUhlWxUbChy3ak
+ hjMu2g728jvQmLuMVdGuB3RL3qRb.Sxss6u6u_ZN5QgQGctY8fa7w6Cr1ylZAheXHytMZw5jK.PU
+ 0kzJikTqMkE16Y352mM2OA7AWhxOTzCXNYYsTJmxGxWkOrLpXMr0xUfxf15kGomj5j6ZMOHbGsNk
+ 7cYvN1hWaGXsijJu.Gk9gkp9BMqvd_b5BCYjlBsoBCd_bFavuwsZSjgY1a5xfy9LlG6EQsMDXBq8
+ p5ivUFQOu6E8Fa1kR3IRN7ehhMptCsrODbisvxOnSrtUP1vxgt6wiw4I7l.CkbL_CtKsXT3QnZgr
+ 74Cqx5YzvwSkjDhsWgOo91ZSKfeGPfkRN.EWoSTgwdnAlgHqJt1AJpYbqgI.9NqYjHHPjQpWMUxl
+ PTm3pbK1Zi4BemH5iwwRgUepNJs6M12UcIjn1Zee1mL9wjoNrJh3fF1ROAibkM5GDTu4YATMXj.G
+ sf3O5nU3H2d94XJefxXVY4XcmU_7_J87a69JqhFYLDwz_xKFylxEEBASvbAUupCfuDVCf8nkigTZ
+ ukHJLyg_9PBP2SDZRYD8IQP0UCbAIwyDlChECZxxCcY29juc1BNMB9x0uu3h1VpvdYI83GP0BQ0o
+ .8LyW7kttBghJ0qV8JJjpohI36HydmrQsGs79HGykW2Pwht7qlpZnxtV0hOajqJXdpAnao7Fuw0i
+ SMeZQrG.n6Uh7ssQPBFkz4UHgMCqD_fSIODR3v7Ydzh7LWpnblnB7dY._IJOuQprucPxDnPMYHKZ
+ PqOZbtpybKWHkfakRNi8wkkyne4rMNYmJ_cvAlZOmynyGIR3CuNAV2B1QrDVbBQoCWub7W9udjeF
+ enYjgDcC0.95ud6KzSaIRtGC_n5G6jNSqqY9Kw0dQSb_Z9_SLRVI0Et2rb2JG2lDgY_9qbSalzRm
+ OSiKBiLys1nf_a59SzEc9zBDEOFOA9Foi1pbp8QQX9Czn54M3Duf_FNDJ4M4vB0xDVPQTre732dy
+ mT5zeyhGSLd1NI_Tap6SW5o5IZ2HZcxWoEwhKceA9xhmDuXVVnXcDLA7Ek0kzF.mxIPVib27JIqg
+ TZQ5fJFl0mZCaAzPKjosvNCFADTl5P6KECSyhZg0P7BQPNNLvyRABb3G26N3H4HRI33XWzIgUGg7
+ IqsXDYXjsqy.QxB3VCo3vaLuLsHGUsfYQrhx42WZYEsDnbPQ0rvhz9JgLVgnXxlYVdAwxplDnEES
+ oQO01Yqr2SCTs7H5cc9aECVqkKqe_RqehQEMLXXiahoHwPwJFDnjNUiVXxzN.hHaNoOB4Vl_tUgZ
+ UlkP6sjBiFA9pI6He9FBH8hv7YTuZaTWrT0KCFchaRhB6ulNfTCSXu6kBi3qRA1Jd1qDtVbGa3y3
+ R4.YnlsP0M0f.xnamhBcnc5Fhu2W4qLwCBtFDrI7PCGmDVmGE2SeQx3J94y4dLxigUvnVm8NKgfv
+ moqUs3hpAlbUEiihKSFcFMC4PzK.pPqgfH9deBYxu8G67DWiG1kBUZgofZMf0bKNbJk4G8spVU91
+ J7rw_kCvxaWTt6lepJlYNHNzJwPDNBNlHbBqPfMUPIGXTSfqKKWF8KbZIsyapBzjKPKDs_QiAW6P
+ oz31g94pV7wCQ
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Mar 2021 15:42:10 +0000
+Received: by kubenode528.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 49bec641fca7f66cff32208d4e1c0a3b;
+          Tue, 30 Mar 2021 15:42:05 +0000 (UTC)
+To:     liuyacan <yacanliu@163.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        smack-announce@lists.01.org
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Subject: Commit f211ac154577ec9ccf07c15f18a6abf0d9bdb4ab breaks Smack TCP
+ connections
+Message-ID: <3f8328fe-e648-9d0e-729d-eb6787f11bf9@schaufler-ca.com>
+Date:   Tue, 30 Mar 2021 08:42:04 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:b05:: with SMTP id b5mr26351098ilf.240.1617117980562;
- Tue, 30 Mar 2021 08:26:20 -0700 (PDT)
-Date:   Tue, 30 Mar 2021 08:26:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca9a6005bec29ebe@google.com>
-Subject: [syzbot] WARNING in unsafe_follow_pfn
-From:   syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, bp@alien8.de, daniel.vetter@ffwll.ch,
-        daniel.vetter@intel.com, hpa@zytor.com, jmattson@google.com,
-        jmorris@namei.org, joro@8bytes.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        m.szyprowski@samsung.com, mchehab@kernel.org, mingo@redhat.com,
-        pbonzini@redhat.com, seanjc@google.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tfiga@chromium.org,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+References: <3f8328fe-e648-9d0e-729d-eb6787f11bf9.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.17936 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Commit f211ac154577ec9ccf07c15f18a6abf0d9bdb4ab 'net: correct
+sk_acceptq_is_full()' breaks a system with the Smack LSM.
+Reverting this change results in a return to correct behavior.
 
-syzbot found the following issue on:
+The Smack testsuite can be found at:
+	https://github.com/smack-team/smack-testsuite.git
 
-HEAD commit:    93129492 Add linux-next specific files for 20210326
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=169ab21ad00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6f2f73285ea94c45
-dashboard link: https://syzkaller.appspot.com/bug?extid=015dd7cdbbbc2c180c65
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119b8d06d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112e978ad00000
-
-The issue was bisected to:
-
-commit d40b9fdee6dc819d8fc35f70c345cbe0394cde4c
-Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Tue Mar 16 15:33:01 2021 +0000
-
-    mm: Add unsafe_follow_pfn
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122d2016d00000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=112d2016d00000
-console output: https://syzkaller.appspot.com/x/log.txt?x=162d2016d00000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com
-Fixes: d40b9fdee6dc ("mm: Add unsafe_follow_pfn")
-
-------------[ cut here ]------------
-unsafe follow_pfn usage
-WARNING: CPU: 1 PID: 8426 at mm/memory.c:4807 unsafe_follow_pfn+0x20f/0x260 mm/memory.c:4807
-Modules linked in:
-CPU: 0 PID: 8426 Comm: syz-executor677 Not tainted 5.12.0-rc4-next-20210326-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:unsafe_follow_pfn+0x20f/0x260 mm/memory.c:4807
-Code: 8b 7c 24 20 49 89 6d 00 e8 6e 84 64 07 e9 30 ff ff ff e8 f4 19 cb ff 48 c7 c7 40 1f 76 89 c6 05 56 eb 09 0c 01 e8 34 1a 21 07 <0f> 0b e9 71 fe ff ff 41 bc ea ff ff ff e9 06 ff ff ff e8 1a 65 0f
-RSP: 0018:ffffc9000161f660 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 1ffff920002c3ecc RCX: 0000000000000000
-RDX: ffff88801954d580 RSI: ffffffff815c3fd5 RDI: fffff520002c3ebe
-RBP: ffff888023d56948 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffff815bd77e R11: 0000000000000000 R12: 0000000021000000
-R13: ffff8880143a4010 R14: 0000000000000000 R15: 0000000000000110
-FS:  00000000005d1300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f172c4cd6c0 CR3: 0000000011f70000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- get_vaddr_frames+0x337/0x600 drivers/media/common/videobuf2/frame_vector.c:72
- vb2_create_framevec+0x55/0xc0 drivers/media/common/videobuf2/videobuf2-memops.c:50
- vb2_vmalloc_get_userptr+0xce/0x4c0 drivers/media/common/videobuf2/videobuf2-vmalloc.c:90
- __prepare_userptr+0x342/0x15f0 drivers/media/common/videobuf2/videobuf2-core.c:1128
- __buf_prepare+0x635/0x7d0 drivers/media/common/videobuf2/videobuf2-core.c:1367
- vb2_core_qbuf+0xa9d/0x11c0 drivers/media/common/videobuf2/videobuf2-core.c:1658
- vb2_qbuf+0x135/0x1a0 drivers/media/common/videobuf2/videobuf2-v4l2.c:820
- vb2_ioctl_qbuf+0xfb/0x140 drivers/media/common/videobuf2/videobuf2-v4l2.c:1050
- v4l_qbuf drivers/media/v4l2-core/v4l2-ioctl.c:2027 [inline]
- v4l_qbuf+0x92/0xc0 drivers/media/v4l2-core/v4l2-ioctl.c:2021
- __video_do_ioctl+0xb94/0xe20 drivers/media/v4l2-core/v4l2-ioctl.c:2951
- video_usercopy+0x253/0x1300 drivers/media/v4l2-core/v4l2-ioctl.c:3297
- v4l2_ioctl+0x1b3/0x250 drivers/media/v4l2-core/v4l2-dev.c:366
- vfs_ioctl fs/ioctl.c:48 [inline]
- __do_sys_ioctl fs/ioctl.c:753 [inline]
- __se_sys_ioctl fs/ioctl.c:739 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:739
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x443639
-Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffee3065668 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000443639
-RDX: 0000000020000140 RSI: 00000000c058560f RDI: 0000000000000004
-RBP: 00000000004031e0 R08: 00000000004004a0 R09: 00000000004004a0
-R10: 00236962762f7665 R11: 0000000000000246 R12: 0000000000403270
-R13: 0000000000000000 R14: 00000000004b1018 R15: 00000000004004a0
+The failing test is ipv4-tcp-local-peersec.sh, but it seems
+that most TCP connections hang with SYN_SENT. Oddly, ssh
+to 127.0.0.1 works, but other TCP connections timeout.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+
+
