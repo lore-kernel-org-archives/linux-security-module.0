@@ -2,104 +2,222 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4684C433C1
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 15:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530C6C433C1
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 17:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78035619CE
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 15:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A38A61990
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 17:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232348AbhC3Pma (ORCPT
+        id S232529AbhC3RB7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 11:42:30 -0400
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:44456
-        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232421AbhC3PmR (ORCPT
+        Tue, 30 Mar 2021 13:01:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50514 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232718AbhC3RBI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 11:42:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617118930; bh=oSDHq47SAtgk1fwx35vh2D9jNNKisET2ZpTrWW0uy4w=; h=To:Cc:From:Subject:Date:References:From:Subject:Reply-To; b=fnI92niXg+vVdkyFwlGFtHVkf3Db6xGEzFUMIMEB9aPkpRpZcATz8vesR60S9FBmNbYzHF/fPnD0kQ3o1uSR9ZE/IbNugF2XZ1Fj+E75mDSweAisFAPR/1grVk6MGWUFeRS5TSVhHn+qho7oHskQ6aYbixO3sFjpgF6uMJUS+H/VIxlK+xkjnisf0tE7ehsVP4xKa2LdrpcQ5geoOf4fBCCAL124hMPSywKX0HGzHSdNPOaiONaAJxmqQAuIOMSkqDEj+z8MRRlMlzBhyfdXQoxg3zLSBSXY6xGcMNZg2YrTZTrXWghkDtDIRrYI7/KO1B4cKcuNT8mM1OWIMhOAEg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617118930; bh=8/m0t9nR7MSNk5J8vhPb/aqBkdD6PNxZxIsiXz2jehf=; h=X-Sonic-MF:To:From:Subject:Date:From:Subject; b=md05Uo5pffu2EviRdYoX+aloow/5qupDv9lqJhToSzF33taVn+t/Nf0+YPTtMNFZyLgFrb1Z1kumM2A46odqo9aK2NTIxoWOcMfdYzzs13NT0jwRyofZr8C3h1tMRLSR3IIwLbGqjEtWH7bPAR+G6zJF1Neiknx28pt1e94gJUrxEDRbrhe5BETXVk7qG44v/u+6j5B8JSO0IowfKYfyY0Tra2aRTMuhVR8lQQfv3iW/N8Ooih1pu7T+60O6JmzkkCG6kfOudFM6DAJU7pZtZ7449pv2nJJreOaY8dhfxmU+chq9Y47OIXwrole/Umq/fCMak+6+oA8veSwHfh1dKw==
-X-YMail-OSG: Xdp_AEgVM1mM7orcWB9azAahpKg9kpGitLOIdmhUzB4pyK8wPjYniIXaISQ7Prl
- 9CdD8ETyhiB8BjRqcRAYuP_5hocUvuSFEk.NbOqAtymEkMWR3eISgtJCbxLoVkAoEn5YcvPucnXS
- lSvtq2mU5hhJigReTaazifVHmOHBCsa5aM.SjV1ho.ZMZkHt3ahCJ3JWMCV3otXEo5PzJDsQClov
- uFqXhHvhkgIBW09k0rL5myciIffKBbZVZzBhlnnLpbdbztGi8CWNb6Pl1GIZvGoazMxrJaIEUoe_
- 0hA.t0GV6Lm2PyEktdgsSV1.YnWaA11djnwJJwNmbgv.zNraqsN7_785umdOg9sTbkKgT2226m6j
- bxH124tS0cImpv9QDSb_IfPkbONlU0slyLdGUTVmOFsgNGbGVhKWvTDuGkTBC4tm1J9wysJfqM1I
- Dbf7PXlbBmaTUovBeq3HUQ9VII3uAUPWnE8hqRmYvRJR0fwcuFJhyg5_peAXWPEk48_iGNNMf0Iw
- fPOFRD4VvvEzAI7b8OAhKiGrs6pBxKwhf6.B5.XSJDOt3Dm1gSQD.N6FAnCuyPjf92NVkBvsxfIG
- KWA1WnxoG_wmKbKE6uSOAtDQVnQjFUuizc_7XQVMURCaQCJ_g.4LzytqMauYQQkc77R.2NkHp.eb
- EvxSV0xLyAqAZmf0hP0a1nG5p5bosXKTLJC0RfibISyimDfKJv3AaKVlhokmWll1GbtLFrjszDUe
- AbDo9ZbUfS7JY6ARlqskJw1vos8JSysvyLnCZhWfKx9aX8K1Igwuc64RBLK0BHdMNgoBtaSJjryx
- ge4.eOJDe_x6BuLM5gcPbjQzzp8r3hbvFZVUmAJi00kIg1MENQ0gjdVdz6VZHc41k_Hdzy9xhdRT
- MTy6VNqrlzrkHOnSruiT93ViP6_gEjYp.WZFwcQa9uN0GUTYIZaR8I1zEerqom5KlbuYb_BCOZfR
- zWz8Kc8_L0s2ZEKeRpLSrxzItnmK53TJ547FNw6Vd6s9FM9FkyP1e3NP5FGiq_HRKnq9oy7X3bp6
- OZ39_bdTS0wD9VNkr3FCTbV..Lnyoy1dMTT4_4E4e2V8t9Qf2GQtqnr.I5i5YanmFFOjpfBGd8bu
- iKqwI4nj_mJTrOa9.Qlekqb04jLaHWNdXb_c1GMC0h9f1PHnGU5mwjUl41rHRxUUhlWxUbChy3ak
- hjMu2g728jvQmLuMVdGuB3RL3qRb.Sxss6u6u_ZN5QgQGctY8fa7w6Cr1ylZAheXHytMZw5jK.PU
- 0kzJikTqMkE16Y352mM2OA7AWhxOTzCXNYYsTJmxGxWkOrLpXMr0xUfxf15kGomj5j6ZMOHbGsNk
- 7cYvN1hWaGXsijJu.Gk9gkp9BMqvd_b5BCYjlBsoBCd_bFavuwsZSjgY1a5xfy9LlG6EQsMDXBq8
- p5ivUFQOu6E8Fa1kR3IRN7ehhMptCsrODbisvxOnSrtUP1vxgt6wiw4I7l.CkbL_CtKsXT3QnZgr
- 74Cqx5YzvwSkjDhsWgOo91ZSKfeGPfkRN.EWoSTgwdnAlgHqJt1AJpYbqgI.9NqYjHHPjQpWMUxl
- PTm3pbK1Zi4BemH5iwwRgUepNJs6M12UcIjn1Zee1mL9wjoNrJh3fF1ROAibkM5GDTu4YATMXj.G
- sf3O5nU3H2d94XJefxXVY4XcmU_7_J87a69JqhFYLDwz_xKFylxEEBASvbAUupCfuDVCf8nkigTZ
- ukHJLyg_9PBP2SDZRYD8IQP0UCbAIwyDlChECZxxCcY29juc1BNMB9x0uu3h1VpvdYI83GP0BQ0o
- .8LyW7kttBghJ0qV8JJjpohI36HydmrQsGs79HGykW2Pwht7qlpZnxtV0hOajqJXdpAnao7Fuw0i
- SMeZQrG.n6Uh7ssQPBFkz4UHgMCqD_fSIODR3v7Ydzh7LWpnblnB7dY._IJOuQprucPxDnPMYHKZ
- PqOZbtpybKWHkfakRNi8wkkyne4rMNYmJ_cvAlZOmynyGIR3CuNAV2B1QrDVbBQoCWub7W9udjeF
- enYjgDcC0.95ud6KzSaIRtGC_n5G6jNSqqY9Kw0dQSb_Z9_SLRVI0Et2rb2JG2lDgY_9qbSalzRm
- OSiKBiLys1nf_a59SzEc9zBDEOFOA9Foi1pbp8QQX9Czn54M3Duf_FNDJ4M4vB0xDVPQTre732dy
- mT5zeyhGSLd1NI_Tap6SW5o5IZ2HZcxWoEwhKceA9xhmDuXVVnXcDLA7Ek0kzF.mxIPVib27JIqg
- TZQ5fJFl0mZCaAzPKjosvNCFADTl5P6KECSyhZg0P7BQPNNLvyRABb3G26N3H4HRI33XWzIgUGg7
- IqsXDYXjsqy.QxB3VCo3vaLuLsHGUsfYQrhx42WZYEsDnbPQ0rvhz9JgLVgnXxlYVdAwxplDnEES
- oQO01Yqr2SCTs7H5cc9aECVqkKqe_RqehQEMLXXiahoHwPwJFDnjNUiVXxzN.hHaNoOB4Vl_tUgZ
- UlkP6sjBiFA9pI6He9FBH8hv7YTuZaTWrT0KCFchaRhB6ulNfTCSXu6kBi3qRA1Jd1qDtVbGa3y3
- R4.YnlsP0M0f.xnamhBcnc5Fhu2W4qLwCBtFDrI7PCGmDVmGE2SeQx3J94y4dLxigUvnVm8NKgfv
- moqUs3hpAlbUEiihKSFcFMC4PzK.pPqgfH9deBYxu8G67DWiG1kBUZgofZMf0bKNbJk4G8spVU91
- J7rw_kCvxaWTt6lepJlYNHNzJwPDNBNlHbBqPfMUPIGXTSfqKKWF8KbZIsyapBzjKPKDs_QiAW6P
- oz31g94pV7wCQ
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 30 Mar 2021 15:42:10 +0000
-Received: by kubenode528.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 49bec641fca7f66cff32208d4e1c0a3b;
-          Tue, 30 Mar 2021 15:42:05 +0000 (UTC)
-To:     liuyacan <yacanliu@163.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        smack-announce@lists.01.org
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: Commit f211ac154577ec9ccf07c15f18a6abf0d9bdb4ab breaks Smack TCP
- connections
-Message-ID: <3f8328fe-e648-9d0e-729d-eb6787f11bf9@schaufler-ca.com>
-Date:   Tue, 30 Mar 2021 08:42:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Tue, 30 Mar 2021 13:01:08 -0400
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [IPv6:2001:1600:3:17::190b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C973C0613B5;
+        Tue, 30 Mar 2021 10:01:06 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4F8wgw5K3RzMqBHq;
+        Tue, 30 Mar 2021 19:01:00 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4F8wgq1N2Czlh8TB;
+        Tue, 30 Mar 2021 19:00:55 +0200 (CEST)
+Subject: Re: [PATCH v5 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20210316203633.424794-1-mic@digikod.net>
+ <20210316203633.424794-2-mic@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <fef10d28-df59-640e-ecf7-576f8348324e@digikod.net>
+Date:   Tue, 30 Mar 2021 19:01:57 +0200
+User-Agent: 
 MIME-Version: 1.0
+In-Reply-To: <20210316203633.424794-2-mic@digikod.net>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-References: <3f8328fe-e648-9d0e-729d-eb6787f11bf9.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.17936 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/11.0.9.1)
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit f211ac154577ec9ccf07c15f18a6abf0d9bdb4ab 'net: correct
-sk_acceptq_is_full()' breaks a system with the Smack LSM.
-Reverting this change results in a return to correct behavior.
+Hi,
 
-The Smack testsuite can be found at:
-	https://github.com/smack-team/smack-testsuite.git
+Is there new comments on this patch? Could we move forward?
 
-The failing test is ipv4-tcp-local-peersec.sh, but it seems
-that most TCP connections hang with SYN_SENT. Oddly, ssh
-to 127.0.0.1 works, but other TCP connections timeout.
+Regards,
+ Mickaël
 
 
-
-
-
+On 16/03/2021 21:36, Mickaël Salaün wrote:
+> From: Mickaël Salaün <mic@linux.microsoft.com>
+> 
+> Being able to easily change root directories enables to ease some
+> development workflow and can be used as a tool to strengthen
+> unprivileged security sandboxes.  chroot(2) is not an access-control
+> mechanism per se, but it can be used to limit the absolute view of the
+> filesystem, and then limit ways to access data and kernel interfaces
+> (e.g. /proc, /sys, /dev, etc.).
+> 
+> Users may not wish to expose namespace complexity to potentially
+> malicious processes, or limit their use because of limited resources.
+> The chroot feature is much more simple (and limited) than the mount
+> namespace, but can still be useful.  As for containers, users of
+> chroot(2) should take care of file descriptors or data accessible by
+> other means (e.g. current working directory, leaked FDs, passed FDs,
+> devices, mount points, etc.).  There is a lot of literature that discuss
+> the limitations of chroot, and users of this feature should be aware of
+> the multiple ways to bypass it.  Using chroot(2) for security purposes
+> can make sense if it is combined with other features (e.g. dedicated
+> user, seccomp, LSM access-controls, etc.).
+> 
+> One could argue that chroot(2) is useless without a properly populated
+> root hierarchy (i.e. without /dev and /proc).  However, there are
+> multiple use cases that don't require the chrooting process to create
+> file hierarchies with special files nor mount points, e.g.:
+> * A process sandboxing itself, once all its libraries are loaded, may
+>   not need files other than regular files, or even no file at all.
+> * Some pre-populated root hierarchies could be used to chroot into,
+>   provided for instance by development environments or tailored
+>   distributions.
+> * Processes executed in a chroot may not require access to these special
+>   files (e.g. with minimal runtimes, or by emulating some special files
+>   with a LD_PRELOADed library or seccomp).
+> 
+> Allowing a task to change its own root directory is not a threat to the
+> system if we can prevent confused deputy attacks, which could be
+> performed through execution of SUID-like binaries.  This can be
+> prevented if the calling task sets PR_SET_NO_NEW_PRIVS on itself with
+> prctl(2).  To only affect this task, its filesystem information must not
+> be shared with other tasks, which can be achieved by not passing
+> CLONE_FS to clone(2).  A similar no_new_privs check is already used by
+> seccomp to avoid the same kind of security issues.  Furthermore, because
+> of its security use and to avoid giving a new way for attackers to get
+> out of a chroot (e.g. using /proc/<pid>/root, or chroot/chdir), an
+> unprivileged chroot is only allowed if the calling process is not
+> already chrooted.  This limitation is the same as for creating user
+> namespaces.
+> 
+> This change may not impact systems relying on other permission models
+> than POSIX capabilities (e.g. Tomoyo).  Being able to use chroot(2) on
+> such systems may require to update their security policies.
+> 
+> Only the chroot system call is relaxed with this no_new_privs check; the
+> init_chroot() helper doesn't require such change.
+> 
+> Allowing unprivileged users to use chroot(2) is one of the initial
+> objectives of no_new_privs:
+> https://www.kernel.org/doc/html/latest/userspace-api/no_new_privs.html
+> This patch is a follow-up of a previous one sent by Andy Lutomirski:
+> https://lore.kernel.org/lkml/0e2f0f54e19bff53a3739ecfddb4ffa9a6dbde4d.1327858005.git.luto@amacapital.net/
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Link: https://lore.kernel.org/r/20210316203633.424794-2-mic@digikod.net
+> ---
+> 
+> Changes since v4:
+> * Use READ_ONCE(current->fs->users) (found by Jann Horn).
+> * Remove ambiguous example in commit description.
+> * Add Reviewed-by Kees Cook.
+> 
+> Changes since v3:
+> * Move the new permission checks to a dedicated helper
+>   current_chroot_allowed() to make the code easier to read and align
+>   with user_path_at(), path_permission() and security_path_chroot()
+>   calls (suggested by Kees Cook).
+> * Remove now useless included file.
+> * Extend commit description.
+> * Rebase on v5.12-rc3 .
+> 
+> Changes since v2:
+> * Replace path_is_under() check with current_chrooted() to gain the same
+>   protection as create_user_ns() (suggested by Jann Horn). See commit
+>   3151527ee007 ("userns:  Don't allow creation if the user is chrooted")
+> 
+> Changes since v1:
+> * Replace custom is_path_beneath() with existing path_is_under().
+> ---
+>  fs/open.c | 23 +++++++++++++++++++++--
+>  1 file changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index e53af13b5835..480010a551b2 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -532,6 +532,24 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
+>  	return error;
+>  }
+>  
+> +static inline int current_chroot_allowed(void)
+> +{
+> +	/*
+> +	 * Changing the root directory for the calling task (and its future
+> +	 * children) requires that this task has CAP_SYS_CHROOT in its
+> +	 * namespace, or be running with no_new_privs and not sharing its
+> +	 * fs_struct and not escaping its current root (cf. create_user_ns()).
+> +	 * As for seccomp, checking no_new_privs avoids scenarios where
+> +	 * unprivileged tasks can affect the behavior of privileged children.
+> +	 */
+> +	if (task_no_new_privs(current) && READ_ONCE(current->fs->users) == 1 &&
+> +			!current_chrooted())
+> +		return 0;
+> +	if (ns_capable(current_user_ns(), CAP_SYS_CHROOT))
+> +		return 0;
+> +	return -EPERM;
+> +}
+> +
+>  SYSCALL_DEFINE1(chroot, const char __user *, filename)
+>  {
+>  	struct path path;
+> @@ -546,9 +564,10 @@ SYSCALL_DEFINE1(chroot, const char __user *, filename)
+>  	if (error)
+>  		goto dput_and_out;
+>  
+> -	error = -EPERM;
+> -	if (!ns_capable(current_user_ns(), CAP_SYS_CHROOT))
+> +	error = current_chroot_allowed();
+> +	if (error)
+>  		goto dput_and_out;
+> +
+>  	error = security_path_chroot(&path);
+>  	if (error)
+>  		goto dput_and_out;
+> 
