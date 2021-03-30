@@ -2,194 +2,173 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BABC433E0
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 10:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6991FC433E4
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 13:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3680561985
-	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 10:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AEA1619CD
+	for <linux-security-module@archiver.kernel.org>; Tue, 30 Mar 2021 13:18:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231770AbhC3K5D (ORCPT
+        id S232143AbhC3NRe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 06:57:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37462 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231831AbhC3K44 (ORCPT
+        Tue, 30 Mar 2021 09:17:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232166AbhC3NRF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 06:56:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617101815;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rYqzNHiuAl/aoLjb89NUxhkCMXfILPBrl172tqHnnHE=;
-        b=CNfyjNv8F23LnMAJNDnUNFKhwn/+7qb3AMe4+LBSVke3MjdtxoflURxkmkRK1pxz29h/wa
-        vnfIkHKNay0CZroZ6iXTvyo6Xn63R2rHoOCxuLAkmRYilhPRBTOBrNjn4OI/wGtZljeK1R
-        LcBsMTqOVdAh6cAaCzlQRs3q0Qh8TMU=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-410-aTNIxPUmNAGsg0hNqnvueQ-1; Tue, 30 Mar 2021 06:56:53 -0400
-X-MC-Unique: aTNIxPUmNAGsg0hNqnvueQ-1
-Received: by mail-ej1-f69.google.com with SMTP id fy8so6986571ejb.19
-        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 03:56:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rYqzNHiuAl/aoLjb89NUxhkCMXfILPBrl172tqHnnHE=;
-        b=IA9kC53PR7T2rQqPk2RTnAllXtjHr7rFjuoqEPvfZuMdB5Y1xR9XsZmw8gucw/DVzA
-         Ic5R2RnSWgiKQrylNWNIpGINUKmCjK955XmQbv900p9qPk9dqgUZcE/6knEaiuPZ5aAQ
-         GCmUVMlbWH3l+Yquzf0UAQ1lWxYSm7PuVlsoO3JzyZoXwVjqc2RsB8CWDZyP5//xPldq
-         Gxr+6GdD73XSRnZLKXwC6fXO9uTbS7qXWXl9q8xEvKT2jLa6DFZgY/uAhLEUcDE6z5vN
-         ftUiskq6qgXKiYVgNyZvLm3tpYm58IDepULeNnd+SJ65ImfMRVCoqkwaK9YKCqY4rZ1k
-         LQiA==
-X-Gm-Message-State: AOAM530r22qr20ja8x0kbgBPUpcyxuI/xmuVAGKxYmc5aj93uzfetTT2
-        4WXu0ueqn9zpKAsqxPiV/IQ+otDfrkS6MlPKuyidcaOKn022SHu2OP2o/rBV2VkQ/VbUmF6tXgf
-        WKqitlhvzkksYGJ1Lm2v4yVkOv1D1HNqnH6Vo
-X-Received: by 2002:a05:6402:270e:: with SMTP id y14mr32945867edd.283.1617101812707;
-        Tue, 30 Mar 2021 03:56:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxk85EwNcCIjfgTHncBkIRpyvOFJP73cc6LgtyJnG141Ecwyc7yx0+jNJ7jYIvKmaPJ/RYKmg==
-X-Received: by 2002:a05:6402:270e:: with SMTP id y14mr32945855edd.283.1617101812562;
-        Tue, 30 Mar 2021 03:56:52 -0700 (PDT)
-Received: from x1.localdomain (2001-1c00-0c1e-bf00-1054-9d19-e0f0-8214.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1054:9d19:e0f0:8214])
-        by smtp.gmail.com with ESMTPSA id gq9sm5631143ejb.62.2021.03.30.03.56.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Mar 2021 03:56:52 -0700 (PDT)
-Subject: Re: [PATCH 11/11] [RFC] drm/i915/dp: fix array overflow warning
-To:     Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, imre.deak@intel.com
-Cc:     Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
-        Ning Sun <ning.sun@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Simon Kelley <simon@thekelleys.org.uk>,
-        James Smart <james.smart@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Anders Larsen <al@alarsen.net>, Tejun Heo <tj@kernel.org>,
-        Serge Hallyn <serge@hallyn.com>,
-        Imre Deak <imre.deak@intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        tboot-devel@lists.sourceforge.net, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Uma Shankar <uma.shankar@intel.com>,
-        Ankit Nautiyal <ankit.k.nautiyal@intel.com>,
-        Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-        Animesh Manna <animesh.manna@intel.com>,
-        Sean Paul <seanpaul@chromium.org>
-References: <20210322160253.4032422-1-arnd@kernel.org>
- <20210322160253.4032422-12-arnd@kernel.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <949db606-ac48-69ae-b0f7-b1cba6fc2d7f@redhat.com>
-Date:   Tue, 30 Mar 2021 12:56:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.7.0
+        Tue, 30 Mar 2021 09:17:05 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 12UD3uiG053284;
+        Tue, 30 Mar 2021 09:17:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=0FE6QV8fRwrto/suhw4y73defG5u+8c9hKcbJaEbyyM=;
+ b=lhU81LIq8icTk8qyR9137L8l2nuEq1Kpnd5e6b0pACJQg9IHy9C4qjFIPxeccPVGCiJD
+ G1abhSTc3dxj3gdMVFvt8MFEjGoNIJQ7NHsIt0Sh7lgO0YbJ1UJ43ZoLNfND7nBWCsHO
+ R+Xb8vlBhaqrWCs7nSeD/S/Js59lNHiggGIZlge2saVmxr0XudxK6W3/fCuHb8AJpwCz
+ PTFxSA2jrEvk/8T1JNQFXinEEGYcY+yr0hdSBpgC1oDt/odsoXXEGFSzVs/GDg8cvEDO
+ ROe7fwwp1LVpZTldFsD1Fu2V3sO8QJ0M9ZGd5VOodMv2ecM2dHONhOg0vW1E+jH16/wC VA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37juyp12u6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Mar 2021 09:17:02 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 12UD4DaL056983;
+        Tue, 30 Mar 2021 09:17:02 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37juyp12s9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Mar 2021 09:17:02 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 12UDBr50012208;
+        Tue, 30 Mar 2021 13:16:58 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 37hvb8jqqu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 30 Mar 2021 13:16:58 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 12UDGtSo35389714
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Mar 2021 13:16:55 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A72194C05A;
+        Tue, 30 Mar 2021 13:16:55 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B9E04C046;
+        Tue, 30 Mar 2021 13:16:53 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.103.158])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 30 Mar 2021 13:16:53 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH v3 2/3] ima: enable signing of modules with build time generated key
+Date:   Tue, 30 Mar 2021 09:16:35 -0400
+Message-Id: <20210330131636.21711-3-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210330131636.21711-1-nayna@linux.ibm.com>
+References: <20210330131636.21711-1-nayna@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20210322160253.4032422-12-arnd@kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=hdegoede@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nhSccJ3rEukCWVDcnSo8xLhS8QVIo_BL
+X-Proofpoint-GUID: PjWfczEbCaQWISztLEhlnAiokKJw8qXe
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-03-30_03:2021-03-30,2021-03-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ bulkscore=0 mlxlogscore=999 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103250000 definitions=main-2103300094
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+The kernel build process currently only signs kernel modules when
+MODULE_SIG is enabled. Also, sign the kernel modules at build time when
+IMA_APPRAISE_MODSIG is enabled.
 
-On 3/22/21 5:02 PM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> gcc-11 warns that intel_dp_check_mst_status() has a local array of
-> fourteen bytes and passes the last four bytes into a function that
-> expects a six-byte array:
-> 
-> drivers/gpu/drm/i915/display/intel_dp.c: In function ‘intel_dp_check_mst_status’:
-> drivers/gpu/drm/i915/display/intel_dp.c:4556:22: error: ‘drm_dp_channel_eq_ok’ reading 6 bytes from a region of size 4 [-Werror=stringop-overread]
->  4556 |                     !drm_dp_channel_eq_ok(&esi[10], intel_dp->lane_count)) {
->       |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/i915/display/intel_dp.c:4556:22: note: referencing argument 1 of type ‘const u8 *’ {aka ‘const unsigned char *’}
-> In file included from drivers/gpu/drm/i915/display/intel_dp.c:38:
-> include/drm/drm_dp_helper.h:1459:6: note: in a call to function ‘drm_dp_channel_eq_ok’
->  1459 | bool drm_dp_channel_eq_ok(const u8 link_status[DP_LINK_STATUS_SIZE],
->       |      ^~~~~~~~~~~~~~~~~~~~
-> 
-> Clearly something is wrong here, but I can't quite figure out what.
-> Changing the array size to 16 bytes avoids the warning, but is
-> probably the wrong solution here.
+Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+---
+ certs/Kconfig  | 2 +-
+ certs/Makefile | 8 ++++++++
+ init/Kconfig   | 6 +++---
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
-The drm displayport-helpers indeed expect a 6 bytes buffer, but they
-usually only consume 4 bytes.
-
-I don't think that changing the DP_DPRX_ESI_LEN is a good fix here,
-since it is used in multiple places, but the esi array already gets
-zero-ed out by its initializer, so we can just pass 2 extra 0 bytes
-to give drm_dp_channel_eq_ok() call the 6 byte buffer its prototype
-specifies by doing this:
-
-diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-index 897711d9d7d3..147962d4ad06 100644
---- a/drivers/gpu/drm/i915/display/intel_dp.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp.c
-@@ -4538,7 +4538,11 @@ intel_dp_check_mst_status(struct intel_dp *intel_dp)
- 	drm_WARN_ON_ONCE(&i915->drm, intel_dp->active_mst_links < 0);
+diff --git a/certs/Kconfig b/certs/Kconfig
+index c94e93d8bccf..48675ad319db 100644
+--- a/certs/Kconfig
++++ b/certs/Kconfig
+@@ -4,7 +4,7 @@ menu "Certificates for signature checking"
+ config MODULE_SIG_KEY
+ 	string "File name or PKCS#11 URI of module signing key"
+ 	default "certs/signing_key.pem"
+-	depends on MODULE_SIG
++	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+ 	help
+          Provide the file name of a private key/certificate in PEM format,
+          or a PKCS#11 URI according to RFC7512. The file should contain, or
+diff --git a/certs/Makefile b/certs/Makefile
+index f4c25b67aad9..e3185c57fbd8 100644
+--- a/certs/Makefile
++++ b/certs/Makefile
+@@ -32,6 +32,14 @@ endif # CONFIG_SYSTEM_TRUSTED_KEYRING
+ clean-files := x509_certificate_list .x509.list
  
- 	for (;;) {
--		u8 esi[DP_DPRX_ESI_LEN] = {};
-+		/*
-+		 * drm_dp_channel_eq_ok() expects a 6 byte large buffer, but
-+		 * the ESI info only contains 4 bytes, pass 2 extra 0 bytes.
-+		 */
-+		u8 esi[DP_DPRX_ESI_LEN + 2] = {};
- 		bool handled;
- 		int retry;
+ ifeq ($(CONFIG_MODULE_SIG),y)
++	SIGN_KEY = y
++endif
++
++ifeq ($(CONFIG_IMA_APPRAISE_MODSIG),y)
++	SIGN_KEY = y
++endif
++
++ifdef SIGN_KEY
+ ###############################################################################
+ #
+ # If module signing is requested, say by allyesconfig, but a key has not been
+diff --git a/init/Kconfig b/init/Kconfig
+index 5f5c776ef192..85e48a578f90 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -2164,7 +2164,7 @@ config MODULE_SIG_FORCE
+ config MODULE_SIG_ALL
+ 	bool "Automatically sign all modules"
+ 	default y
+-	depends on MODULE_SIG
++	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+ 	help
+ 	  Sign all modules during make modules_install. Without this option,
+ 	  modules must be signed manually, using the scripts/sign-file tool.
+@@ -2174,7 +2174,7 @@ comment "Do not forget to sign required modules with scripts/sign-file"
  
-
-So i915 devs, would such a fix be acceptable ?
-
-Regards,
-
-Hans
-
-
-
-
-
-
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-> index 8c12d5375607..830e2515f119 100644
-> --- a/drivers/gpu/drm/i915/display/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/display/intel_dp.c
-> @@ -65,7 +65,7 @@
->  #include "intel_vdsc.h"
->  #include "intel_vrr.h"
->  
-> -#define DP_DPRX_ESI_LEN 14
-> +#define DP_DPRX_ESI_LEN 16
->  
->  /* DP DSC throughput values used for slice count calculations KPixels/s */
->  #define DP_DSC_PEAK_PIXEL_RATE			2720000
-> 
+ choice
+ 	prompt "Which hash algorithm should modules be signed with?"
+-	depends on MODULE_SIG
++	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+ 	help
+ 	  This determines which sort of hashing algorithm will be used during
+ 	  signature generation.  This algorithm _must_ be built into the kernel
+@@ -2206,7 +2206,7 @@ endchoice
+ 
+ config MODULE_SIG_HASH
+ 	string
+-	depends on MODULE_SIG
++	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+ 	default "sha1" if MODULE_SIG_SHA1
+ 	default "sha224" if MODULE_SIG_SHA224
+ 	default "sha256" if MODULE_SIG_SHA256
+-- 
+2.29.2
 
