@@ -2,207 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AD4C433DB
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 04:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68CE7C433C1
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 06:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C64A619CD
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 04:32:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FF7C6192E
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 06:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230291AbhCaEcP (ORCPT
+        id S233686AbhCaGDi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Mar 2021 00:32:15 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:56584 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229852AbhCaEbm (ORCPT
+        Wed, 31 Mar 2021 02:03:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49004 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233653AbhCaGDM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Mar 2021 00:31:42 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12V4OtYL012344;
-        Wed, 31 Mar 2021 04:29:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=jZzMIjY2XlBA9lqomrEcWjkgBg3vzw6cwVEXQsnkoy8=;
- b=HIgSM5dzg5vy/U6oQ0ue+ji7TjDVaifkmt2TC+GdOHEEc4400+BPiepwlqmXkp3ZdYv6
- dODu4xpneir8dpWeW+eVBSuGwz2uqLDliBNsOFfXtASDOuQHhPkc/QTsC2wvJ+LZCq9z
- LGO29RHrQcSWJiSstaaUQLZs1c2wtZ+URrIs0NevkdKMBha44tXt5at0UNqsiUJAaPPl
- Vhj4g6cn2rTRd419OI40Y1wQbltzWyes0rfsjUK49kTL7/rMCXZBL68rhoMhpUbAfXjQ
- YcVY0QpogX8qAFWb+AcwGIT5CRbYqoW4GPo4XjOR1cYsLK4L4GHvPKyOHmzLC6qmFO5l xw== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2130.oracle.com with ESMTP id 37mafv0tpc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Mar 2021 04:29:56 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 12V4PZtY012978;
-        Wed, 31 Mar 2021 04:29:54 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 37mabknwvp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 31 Mar 2021 04:29:53 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 12V4Tarv012513;
-        Wed, 31 Mar 2021 04:29:40 GMT
-Received: from kadam (/102.36.221.92)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Mar 2021 21:29:36 -0700
-Date:   Wed, 31 Mar 2021 07:29:22 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, bp@alien8.de, daniel.vetter@ffwll.ch,
-        daniel.vetter@intel.com, hpa@zytor.com, jmattson@google.com,
-        jmorris@namei.org, joro@8bytes.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        m.szyprowski@samsung.com, mchehab@kernel.org, mingo@redhat.com,
-        seanjc@google.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tfiga@chromium.org,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-Subject: Re: [syzbot] WARNING in unsafe_follow_pfn
-Message-ID: <20210331042922.GE2065@kadam>
-References: <000000000000ca9a6005bec29ebe@google.com>
- <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
+        Wed, 31 Mar 2021 02:03:12 -0400
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72EBBC06175F
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 23:03:12 -0700 (PDT)
+Received: by mail-pf1-x42c.google.com with SMTP id x126so13740708pfc.13
+        for <linux-security-module@vger.kernel.org>; Tue, 30 Mar 2021 23:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=GmdAprXBSLF+KiQkRQ1q6vYXVXHwCxP7HlnSoKUve+E=;
+        b=a72k4tykYSfcww6NBUiHL0zy6aIlNDSB4CejRuiPqncwpwT/iOS2lob/SKlfYsiX8m
+         +R6f4d4BT27SSqjP1AKEG+4/D6fahhWMM9Fz8Q+EvonjBqKyTPx8CJQuhUtZ/XUMRAHs
+         K1lqi4wk7ikNlzv/JVBK0PZTK2/WB92FEOAUc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=GmdAprXBSLF+KiQkRQ1q6vYXVXHwCxP7HlnSoKUve+E=;
+        b=MX1nnQO9gyPh17XExS0QtJ3K/2OSrcfO0SLuED/4s4GWp+z9O7tW89dnykoXXM0pYx
+         BSV6bWxAyIZutHg33ac0Onf33Eu0HSQKCn7N9Stv/8jTJO+LGl36C3wcQprAjshkExZC
+         qGltcAhP/ANRuTSa8Jfq5msY41Vbhdm5HZVY+Mtg8FNBbu8JNoKlf85MWYQH0CZzC82n
+         ejD7+P2t455kYxUWZw04Dohvrvo9RxBqGpuKYWQcwG//CYKaSuUPPvY/rCmWThT6YUNZ
+         lMj2FLUuDSX3vk4fIrP9zal2TswF6lSJrpXiZS3OA/sgPNK8gI2kobDqIq9ctWMHYEdJ
+         bi3Q==
+X-Gm-Message-State: AOAM533KK92iNAkzKKDCR/YDCbFAP7tdUzfXT8EKsOVV7xx1C029ZyJ7
+        PajfIbUayas2fpqcBxQ2YuI6sg==
+X-Google-Smtp-Source: ABdhPJxmNy7PylTCLuqIaivE7U+e509y9y5sjk/y3ctOSW8bh+OYWli4WsmRUOoAPXMhkYHa18YcNg==
+X-Received: by 2002:a65:6a0e:: with SMTP id m14mr1700967pgu.448.1617170591906;
+        Tue, 30 Mar 2021 23:03:11 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 190sm1107681pgh.61.2021.03.30.23.03.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Mar 2021 23:03:11 -0700 (PDT)
+Date:   Tue, 30 Mar 2021 23:03:10 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Howells <dhowells@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        kernel-hardening@lists.openwall.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v5 1/1] fs: Allow no_new_privs tasks to call chroot(2)
+Message-ID: <202103302249.6FE62C03@keescook>
+References: <20210316203633.424794-1-mic@digikod.net>
+ <20210316203633.424794-2-mic@digikod.net>
+ <fef10d28-df59-640e-ecf7-576f8348324e@digikod.net>
+ <85ebb3a1-bd5e-9f12-6d02-c08d2c0acff5@schaufler-ca.com>
+ <b47f73fe-1e79-ff52-b93e-d86b2927bbdc@digikod.net>
+ <77ec5d18-f88e-5c7c-7450-744f69654f69@schaufler-ca.com>
+ <a8b2545f-51c7-01dc-1a14-e87beefc5419@digikod.net>
+ <2fcff3d7-e7ca-af3b-9306-d8ef2d3fb4fb@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-IMR: 1
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2103300000 definitions=main-2103310032
-X-Proofpoint-ORIG-GUID: 8U9S4YCrdfA3ra6tRyXiCiMZhDB1YF_P
-X-Proofpoint-GUID: 8U9S4YCrdfA3ra6tRyXiCiMZhDB1YF_P
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9939 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 adultscore=0
- impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0 mlxlogscore=999
- priorityscore=1501 phishscore=0 malwarescore=0 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2103300000
- definitions=main-2103310032
+In-Reply-To: <2fcff3d7-e7ca-af3b-9306-d8ef2d3fb4fb@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 30, 2021 at 07:04:30PM +0200, Paolo Bonzini wrote:
-> On 30/03/21 17:26, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    93129492 Add linux-next specific files for 20210326
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=169ab21ad00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=6f2f73285ea94c45
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=015dd7cdbbbc2c180c65
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119b8d06d00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112e978ad00000
-> > 
-> > The issue was bisected to:
-> > 
-> > commit d40b9fdee6dc819d8fc35f70c345cbe0394cde4c
-> > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Date:   Tue Mar 16 15:33:01 2021 +0000
-> > 
-> >      mm: Add unsafe_follow_pfn
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122d2016d00000
-> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=112d2016d00000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=162d2016d00000
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com
-> > Fixes: d40b9fdee6dc ("mm: Add unsafe_follow_pfn")
-> 
-> This is basically intentional because get_vaddr_frames is broken, isn't it?
-> I think it needs to be ignored in syzkaller.
+On Tue, Mar 30, 2021 at 03:53:37PM -0700, Casey Schaufler wrote:
+> If you need to run legitimate SETUID (or file capability enabled) binaries
+> you can't use NO_NEW_PRIVS. You can use CAP_SYS_CHROOT, because capabilities
+> where designed to work with the UID mechanisms.
 
-What?
+All the discussion of "designing a system" around the isolation is
+missing the point here: this is designed so that no system owner
+coordination is needed. An arbitrary process can set no_new_privs and
+then confine itself in a chroot. There is no need for extra privileges,
+etc, etc. There shouldn't be a need for a privileged environment to
+exist just to let a process confine itself. This is why seccomp is
+generally so useful, and why Landlock is important: no coordination with
+the system owner is needed to shed attack surface.
 
-The bisect is wrong (because it's blaming the commit which added the
-warning instead of the commit which added the buggy caller) but the
-warning is correct.
+> In any case, if you can get other people to endorse your change I'm not
+> all that opposed to it. I think it's gratuitous. It irks me that you're
+> unwilling to use the facilities that are available, and instead want to
+> complicate the security mechanisms and policy further. But, that hasn't
+> seemed to stop anyone before.
 
-Plus users are going to be seeing this as well.  According to the commit
-message for 69bacee7f9ad ("mm: Add unsafe_follow_pfn") "Unfortunately
-there's some users where this is not fixable (like v4l userptr of iomem
-mappings)".  It sort of seems crazy to dump this giant splat and then
-tell users to ignore it forever because it can't be fixed...  0_0
+There's a difference between "designing a system" and "designing a
+process". No privileges are needed to use seccomp, for example.
 
-regards,
-dan carpenter
+The only part of this design that worries me is that it seems as though
+it's still possible to escape the chroot if a process didn't set up its fds carefully, as Jann discussed earlier:
+https://lore.kernel.org/lkml/c7fbf088-02c2-6cac-f353-14bff23d6864@digikod.net/
 
-> 
-> Paolo
-> 
-> > ------------[ cut here ]------------
-> > unsafe follow_pfn usage
-> > WARNING: CPU: 1 PID: 8426 at mm/memory.c:4807 unsafe_follow_pfn+0x20f/0x260 mm/memory.c:4807
-> > Modules linked in:
-> > CPU: 0 PID: 8426 Comm: syz-executor677 Not tainted 5.12.0-rc4-next-20210326-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > RIP: 0010:unsafe_follow_pfn+0x20f/0x260 mm/memory.c:4807
-> > Code: 8b 7c 24 20 49 89 6d 00 e8 6e 84 64 07 e9 30 ff ff ff e8 f4 19 cb ff 48 c7 c7 40 1f 76 89 c6 05 56 eb 09 0c 01 e8 34 1a 21 07 <0f> 0b e9 71 fe ff ff 41 bc ea ff ff ff e9 06 ff ff ff e8 1a 65 0f
-> > RSP: 0018:ffffc9000161f660 EFLAGS: 00010282
-> > RAX: 0000000000000000 RBX: 1ffff920002c3ecc RCX: 0000000000000000
-> > RDX: ffff88801954d580 RSI: ffffffff815c3fd5 RDI: fffff520002c3ebe
-> > RBP: ffff888023d56948 R08: 0000000000000000 R09: 0000000000000000
-> > R10: ffffffff815bd77e R11: 0000000000000000 R12: 0000000021000000
-> > R13: ffff8880143a4010 R14: 0000000000000000 R15: 0000000000000110
-> > FS:  00000000005d1300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f172c4cd6c0 CR3: 0000000011f70000 CR4: 00000000001506f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >   get_vaddr_frames+0x337/0x600 drivers/media/common/videobuf2/frame_vector.c:72
-> >   vb2_create_framevec+0x55/0xc0 drivers/media/common/videobuf2/videobuf2-memops.c:50
-> >   vb2_vmalloc_get_userptr+0xce/0x4c0 drivers/media/common/videobuf2/videobuf2-vmalloc.c:90
-> >   __prepare_userptr+0x342/0x15f0 drivers/media/common/videobuf2/videobuf2-core.c:1128
-> >   __buf_prepare+0x635/0x7d0 drivers/media/common/videobuf2/videobuf2-core.c:1367
-> >   vb2_core_qbuf+0xa9d/0x11c0 drivers/media/common/videobuf2/videobuf2-core.c:1658
-> >   vb2_qbuf+0x135/0x1a0 drivers/media/common/videobuf2/videobuf2-v4l2.c:820
-> >   vb2_ioctl_qbuf+0xfb/0x140 drivers/media/common/videobuf2/videobuf2-v4l2.c:1050
-> >   v4l_qbuf drivers/media/v4l2-core/v4l2-ioctl.c:2027 [inline]
-> >   v4l_qbuf+0x92/0xc0 drivers/media/v4l2-core/v4l2-ioctl.c:2021
-> >   __video_do_ioctl+0xb94/0xe20 drivers/media/v4l2-core/v4l2-ioctl.c:2951
-> >   video_usercopy+0x253/0x1300 drivers/media/v4l2-core/v4l2-ioctl.c:3297
-> >   v4l2_ioctl+0x1b3/0x250 drivers/media/v4l2-core/v4l2-dev.c:366
-> >   vfs_ioctl fs/ioctl.c:48 [inline]
-> >   __do_sys_ioctl fs/ioctl.c:753 [inline]
-> >   __se_sys_ioctl fs/ioctl.c:739 [inline]
-> >   __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:739
-> >   do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
-> >   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > RIP: 0033:0x443639
-> > Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffee3065668 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000443639
-> > RDX: 0000000020000140 RSI: 00000000c058560f RDI: 0000000000000004
-> > RBP: 00000000004031e0 R08: 00000000004004a0 R09: 00000000004004a0
-> > R10: 00236962762f7665 R11: 0000000000000246 R12: 0000000000403270
-> > R13: 0000000000000000 R14: 00000000004b1018 R15: 00000000004004a0
-> > 
-> > 
-> > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > 
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> > syzbot can test patches for this issue, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
-> > 
-> 
-> -- 
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/2db3c803-6a94-9345-261a-a2bb74370c02%40redhat.com.
+Regardless, I still endorse this change because it doesn't make things
+_worse_, since without this, a compromised process wouldn't need ANY
+tricks to escape a chroot because it wouldn't be in one. :) It'd be nice
+if there were some way to make future openat() calls be unable to
+resolve outside the chroot, but I view that as an enhancement.
+
+But, as it stands, I think this makes sense and I stand by my
+Reviewed-by tag. If Al is too busy to take it, and James would rather
+not take VFS, perhaps akpm would carry it? That's where other similar
+VFS security work has landed.
+
+-- 
+Kees Cook
