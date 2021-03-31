@@ -2,136 +2,156 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CC7C433ED
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 23:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B05AC433B4
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 23:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 532D561076
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 23:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C3B461059
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 23:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233002AbhCaXNf (ORCPT
+        id S232356AbhCaX3x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Mar 2021 19:13:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53506 "EHLO mail.kernel.org"
+        Wed, 31 Mar 2021 19:29:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229497AbhCaXNO (ORCPT
+        id S231620AbhCaX3Y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Mar 2021 19:13:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3CE2760FE8;
-        Wed, 31 Mar 2021 23:13:13 +0000 (UTC)
+        Wed, 31 Mar 2021 19:29:24 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B823561057;
+        Wed, 31 Mar 2021 23:29:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1617232393;
-        bh=8tenvRLSfJsN0kvZ2jkfZemaePWY+JI0zsmmOYXQJ0I=;
+        s=k20201202; t=1617233364;
+        bh=JebS+wdY/3yB7SUptLSmC/sUwEFAeCuSulf8NIrcDyQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ooZGAaYjlPs4i61oFkp5lRQ7p2EcWL9MuI6+fbS3mdCSn91aYN9TYxlnLhKgFRONw
-         gXlbZdvE9p2vslGAV6LPXYtLcPJ8/Eyj//w5x1Lxa40EsAEenMdOibravm+RYN6dBU
-         766vdHhCPQBfz8sJcofKwA6HyrjRmmQ0buM2w98ndh4xFxp/mxsnS3B7v4W8UBSJEw
-         uec7ILJ/Qxp+V5/RUhA0LJWknZoMbhEN8cjq2AeqHWi2P77UBTjy0sQWeyzWQUA/en
-         Q4KlUk0cOmboOxEeRbc4cdTgRq6jWwPGtBXdxu9JyBnH/rE+C0DQWPk/21q+Ig7+vr
-         3aWAbkKYBE/Hw==
-Date:   Thu, 1 Apr 2021 02:13:11 +0300
+        b=SqAPqz6e3245+08kGeFKcOh4uuGzFMATtNMfF4K+fHHKK7c7Kr+hRXR7G5pE/6bur
+         2AAhu97AchtYopAQpd7v7t2dSKJTgqspLKJRtje04wwY93yNMFxsjnLLuH5Xcqpsgt
+         nyRnchFKt0uVCzAAvKVXFwXjrBOpmBf/FDijVMKj9WrZ/0YQN9ZCkdgdJWHYQrVK4H
+         MOASZSPhGjhT7gUrSqEj93YYqJfnZyk7dLb96c51Z0+LSQEdo+Z0tKmT1sgeUNuwQS
+         wJz/irzAboWWXhLW4rxkSOn3T6RvUYPi5Ube+yGfNcneWYDq80ONpPMu8sds8946YL
+         5ceiA4W9mVfcQ==
+Date:   Thu, 1 Apr 2021 02:29:22 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Varad Gautam <varad.gautam@suse.com>
-Cc:     linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     David Gstir <david@sigma-star.at>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        David Howells <dhowells@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
         <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH 18/18] keyctl_pkey: Add pkey parameter slen to pass in
- PSS salt length
-Message-ID: <YGUCB1jKCPvn60n2@kernel.org>
-References: <20210330202829.4825-1-varad.gautam@suse.com>
- <20210330202829.4825-19-varad.gautam@suse.com>
+Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+Message-ID: <YGUF0sArOSy2gdpS@kernel.org>
+References: <01e6e13d-2968-0aa5-c4c8-7458b7bde462@nxp.com>
+ <45a9e159-2dcb-85bf-02bd-2993d50b5748@pengutronix.de>
+ <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
+ <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de>
+ <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
+ <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de>
+ <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
+ <6F812C20-7585-4718-997E-0306C4118468@sigma-star.at>
+ <YGDpA4yPWmTWEyx+@kernel.org>
+ <1171de9c-97b9-3936-707b-16ec34cf94d5@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210330202829.4825-19-varad.gautam@suse.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1171de9c-97b9-3936-707b-16ec34cf94d5@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Mar 30, 2021 at 10:28:29PM +0200, Varad Gautam wrote:
-> keyctl pkey_* operations accept enc and hash parameters at present.
-> RSASSA-PSS signatures also require passing in the signature salt
-> length.
+On Mon, Mar 29, 2021 at 12:11:24PM +0200, Ahmad Fatoum wrote:
+> Hello Jarkko,
 > 
-> Add another parameter 'slen' to feed in salt length of a PSS
-> signature.
+> On 28.03.21 22:37, Jarkko Sakkinen wrote:
+> > On Sat, Mar 27, 2021 at 01:41:24PM +0100, David Gstir wrote:
+> >> Generally speaking, I’d say trusting the CAAM RNG and trusting in it’s
+> >> other features are two separate things. However, reading through the CAAM
+> >> key blob spec I’ve got here, CAAM key blob keys (the keys that secure a blob’s
+> >> content) are generated using its internal RNG. So I’d save if the CAAM RNG
+> >> is insecure, so are generated key blobs. Maybe somebody with more insight
+> >> into the CAAM internals can verify that, but I don’t see any point in using
+> >> the kernel’s RNG as long as we let CAAM generate the key blob keys for us.
+> > 
+> > Here's my long'ish analysis. Please read it to the end if by ever means
+> > possible, and apologies, I usually try to keep usually my comms short, but
+> > this requires some more meat than the usual.
 > 
-> Signed-off-by: Varad Gautam <varad.gautam@suse.com>
-> ---
+> Thanks for the write-up!
+> 
+> > The Bad News
+> > ============
+> > 
+> > Now that we add multiple hardware trust sources for trusted keys, will
+> > there ever be a scenario where a trusted key is originally sealed with a
+> > backing hardware A, unsealed, and resealed with hardware B?
+> > 
+> > The hardware and vendor neutral way to generate the key material would be
+> > unconditionally always just the kernel RNG.
+> > 
+> > CAAM is actually worse than TCG because it's not even a standards body, if
+> > I got it right. Not a lot but at least a tiny fraction.
+> 
+> CAAM is how NXP calls the crypto accelerator built into some of its SoCs.
+> 
+> > This brings an open item in TEE patches: trusted_tee_get_random() is an
+> > issue in generating kernel material. I would rather replace that with
+> > kernel RNG *for now*, because the same open question applies also to ARM
+> > TEE. It's also a single company controlled backing technology.
+> > 
+> > By all practical means, I do trust ARM TEE in my personal life but this is
+> > not important.
+> > 
+> > CAAM *and* TEE backends break the golden rule of putting as little trust as
+> > possible to anything, even not anything weird is clear at sight, as
+> > security is essentially a game of known unknowns and unknown unknowns.
+> 
+> Agreed.
+> 
+> > The GOOD News
+> > =============
+> > 
+> > So there's actually option (C) that also fixes the TPM trustd keys issue:
+> > 
+> > Add a new kernel patch, which:
+> > 
+> > 1. Adds the use of kernel RNG as a boot option.
+> > 2. If this boot option is not active, the subsystem will print a warning
+> >    to klog denoting this.
+> > 3. Default is of course vendor RNG given the bad design issue in the TPM
+> >    trusted keys, but the warning in klog will help to address it at least
+> >    a bit.
+> 
+> Why should the TPM backend's choice influence later backends? We could add
+> a new option for key creation time, e.g.:
+> 
+>    keyctl add trusted kmk "new keylen rng=kernel" @s
+> 
+> The default would be rng=vendor if available with a fallback to rng=kernel,
+> which should always be available.
 
+It matters a lot because it is existing ABI - for better or worse.
 
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+I think a new option is a bad idea, because it cannot easily enforced.
+Kernel command-line on the other hand can be even signed.
 
 /Jarkko
-
->  crypto/asymmetric_keys/asymmetric_type.c | 1 +
->  include/linux/keyctl.h                   | 1 +
->  security/keys/keyctl_pkey.c              | 6 ++++++
->  3 files changed, 8 insertions(+)
-> 
-> diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_keys/asymmetric_type.c
-> index ad8af3d70ac0..eb2ef4a07f8e 100644
-> --- a/crypto/asymmetric_keys/asymmetric_type.c
-> +++ b/crypto/asymmetric_keys/asymmetric_type.c
-> @@ -571,6 +571,7 @@ static int asymmetric_key_verify_signature(struct kernel_pkey_params *params,
->  		.hash_algo	= params->hash_algo,
->  		.digest		= (void *)in,
->  		.s		= (void *)in2,
-> +		.salt_length	= params->slen,
->  	};
->  
->  	return verify_signature(params->key, &sig);
-> diff --git a/include/linux/keyctl.h b/include/linux/keyctl.h
-> index 5b79847207ef..970c7bed3082 100644
-> --- a/include/linux/keyctl.h
-> +++ b/include/linux/keyctl.h
-> @@ -37,6 +37,7 @@ struct kernel_pkey_params {
->  		__u32	in2_len;	/* 2nd input data size (verify) */
->  	};
->  	enum kernel_pkey_operation op : 8;
-> +	__u32		slen;
->  };
->  
->  #endif /* __LINUX_KEYCTL_H */
-> diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
-> index 5de0d599a274..b54a021e16b1 100644
-> --- a/security/keys/keyctl_pkey.c
-> +++ b/security/keys/keyctl_pkey.c
-> @@ -24,11 +24,13 @@ enum {
->  	Opt_err,
->  	Opt_enc,		/* "enc=<encoding>" eg. "enc=oaep" */
->  	Opt_hash,		/* "hash=<digest-name>" eg. "hash=sha1" */
-> +	Opt_slen,		/* "slen=<salt-length>" eg. "slen=32" */
->  };
->  
->  static const match_table_t param_keys = {
->  	{ Opt_enc,	"enc=%s" },
->  	{ Opt_hash,	"hash=%s" },
-> +	{ Opt_slen,	"slen=%u" },
->  	{ Opt_err,	NULL }
->  };
->  
-> @@ -63,6 +65,10 @@ static int keyctl_pkey_params_parse(struct kernel_pkey_params *params)
->  			params->hash_algo = q;
->  			break;
->  
-> +		case Opt_slen:
-> +			if (kstrtouint(q, 0, &params->slen))
-> +				return -EINVAL;
-> +			break;
->  		default:
->  			return -EINVAL;
->  		}
-> -- 
-> 2.30.2
-> 
-> 
