@@ -2,76 +2,96 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F17DC433C1
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 02:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5B0C433DB
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 02:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0763E619CD
-	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 02:45:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD00C619D6
+	for <linux-security-module@archiver.kernel.org>; Wed, 31 Mar 2021 02:56:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233067AbhCaCok (ORCPT
+        id S233305AbhCaCzx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 30 Mar 2021 22:44:40 -0400
-Received: from m13115.mail.163.com ([220.181.13.115]:39595 "EHLO
-        m13115.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233293AbhCaCoR (ORCPT
+        Tue, 30 Mar 2021 22:55:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34354 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233291AbhCaCz3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 30 Mar 2021 22:44:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=4q21p
-        Y4sfrLC2Lw/NNcHPh31O6eTbSW9Hf/qFvGG9nE=; b=gftGz8arij1EamDNUskqv
-        L7l1OGIbBBD7RdFq5YvleoyiIYOgLTj2n9Cc32Q6EDNL42ydmZZc7nnyD+aHow2H
-        3hiNg2pTnUDuhVMIRuHNrytK2FVHknQuYEssrQ5VeZqJo3ivZYubfes/ywlFX2dv
-        Kf21TDxcLfQdLmAxY/UiOU=
-Received: from yacanliu$163.com ( [183.136.182.140] ) by
- ajax-webmail-wmsvr115 (Coremail) ; Wed, 31 Mar 2021 10:44:05 +0800 (CST)
-X-Originating-IP: [183.136.182.140]
-Date:   Wed, 31 Mar 2021 10:44:05 +0800 (CST)
-From:   =?UTF-8?B?5YiY5Lqa54G/?= <yacanliu@163.com>
-To:     "Casey Schaufler" <casey@schaufler-ca.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Linux Security Module list" <linux-security-module@vger.kernel.org>
-Subject: Re:Commit f211ac154577ec9ccf07c15f18a6abf0d9bdb4ab breaks Smack TCP
- connections
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.13 build 20210104(ab8c30b6)
- Copyright (c) 2002-2021 www.mailtech.cn 163com
-In-Reply-To: <3f8328fe-e648-9d0e-729d-eb6787f11bf9@schaufler-ca.com>
-References: <3f8328fe-e648-9d0e-729d-eb6787f11bf9.ref@schaufler-ca.com>
- <3f8328fe-e648-9d0e-729d-eb6787f11bf9@schaufler-ca.com>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+        Tue, 30 Mar 2021 22:55:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id CE9B5619D6;
+        Wed, 31 Mar 2021 02:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1617159329;
+        bh=CeP0VvhfD5jRKipKfgRTMCR59h0WViNfjZ1mQ5IK8w4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eimKdz3PK1hkrIri4gAiAtvqV18EMoJlPdlWloYhc/TPui6tJsTK3PpTBm+CiJry6
+         Ie3hOqTCVMFGOm/pl/KvSY1XY9wC0y/pbzkLpG2iirfLiZ4b56S/kVEJdhIqcIUEU1
+         20Bnnf/9HC+R/vlSW6wiFYBRFsb0JTdHZ4bS9SJO2zh/Wb6Yi1G50Z/bJmRmGAp5Z4
+         Y8q9+rlzGBZaco2L0dl3HnyFV8oC0JUvYSLad8PMfpk95iwNjNV7Tcv7MJTwkFX9DQ
+         PJ2GVjlpdWESIyqW7XTUo/W2UacgfQzbp/C7ODNIESwp2kpvy9X89eYVnhr5fq5ODi
+         v3Nh341f7o3pA==
+Date:   Wed, 31 Mar 2021 05:55:26 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [PATCH v3 1/3] keys: cleanup build time module signing keys
+Message-ID: <YGPkngIlvLxz4xYA@kernel.org>
+References: <20210330131636.21711-1-nayna@linux.ibm.com>
+ <20210330131636.21711-2-nayna@linux.ibm.com>
 MIME-Version: 1.0
-Message-ID: <9b85945.3cfb.178862aa787.Coremail.yacanliu@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: c8GowADX7e314WNgDqyxAQ--.64061W
-X-CM-SenderInfo: p1dft0xolxqiywtou0bp/xtbBdR5mS1aD+qYbBAABsR
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210330131636.21711-2-nayna@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-SGkgQ2FzZXY6CgpBIHF1b3RlIGZyb20gdGhlIGxpc3RlbigyKSBtYW4gcGFnZSBvbiBteSBVYnVu
-dHUgc3lzdGVtOgpUaGUgYmFja2xvZyBhcmd1bWVudCBkZWZpbmVzIHRoZSBtYXhpbXVtIGxlbmd0
-aCB0byB3aGljaMKgCnRoZSBxdWV1ZSBvZiBwZW5kaW5nIGNvbm5lY3Rpb25zIGZvciBzb2NrZmQg
-bWF5IGdyb3cuCkkgdGhpbmsgdGhpcyBpbXBsaWVzIHRoYXQgdGhlICdiYWNrbG9nJyBtdXN0IGJl
-IGdyZWF0ZXIgdGhhbiB6ZXJvLgpJbiB0aGUgdGVzdCBzb3VyY2UgZmlsZSAodG9vbHMvc21hY2st
-aXB2NC10Y3AtcGVlcnNlYy5jKSBMaW5lIDYwCkkgZm91bmQgdGhlIGZvbGxvd2luZyBjb2RlOgpp
-ZiAobGlzdGVuKGZpcnN0c29jaywgMCkgPCAwKSB7CgnCoCDCoCBwcmludGYoIiVzLWxpc3Rlblxu
-IiwgYXJndlswXSk7CgnCoCDCoCBleGl0KDEpOwp9ClRoYXQgbWVhbnMgdGhhdCBzb2NrIHdpbGwg
-bm90IGFjY2VwdCBhbnkgcmVxdWVzdHMswqAKc28gY2xpZW50wqBUQ1AgY29ubmVjdGlvbnMgaGFu
-ZyB3aXRoIFNZTl9TRU5ULgpJbiBvcGVuc3NoIGNhc2UswqBpdCB1c2UgU1NIX0xJU1RFTl9CQUNL
-TE9HIGFzIDEyOC4KCkF0IDIwMjEtMDMtMzAgMjM6NDI6MDQsICJDYXNleSBTY2hhdWZsZXIiIDxj
-YXNleUBzY2hhdWZsZXItY2EuY29tPiB3cm90ZToKPkNvbW1pdCBmMjExYWMxNTQ1NzdlYzljY2Yw
-N2MxNWYxOGE2YWJmMGQ5YmRiNGFiICduZXQ6IGNvcnJlY3QKPnNrX2FjY2VwdHFfaXNfZnVsbCgp
-JyBicmVha3MgYSBzeXN0ZW0gd2l0aCB0aGUgU21hY2sgTFNNLgo+UmV2ZXJ0aW5nIHRoaXMgY2hh
-bmdlIHJlc3VsdHMgaW4gYSByZXR1cm4gdG8gY29ycmVjdCBiZWhhdmlvci4KPgo+VGhlIFNtYWNr
-IHRlc3RzdWl0ZSBjYW4gYmUgZm91bmQgYXQ6Cj4JaHR0cHM6Ly9naXRodWIuY29tL3NtYWNrLXRl
-YW0vc21hY2stdGVzdHN1aXRlLmdpdAo+Cj5UaGUgZmFpbGluZyB0ZXN0IGlzIGlwdjQtdGNwLWxv
-Y2FsLXBlZXJzZWMuc2gsIGJ1dCBpdCBzZWVtcwo+dGhhdCBtb3N0IFRDUCBjb25uZWN0aW9ucyBo
-YW5nIHdpdGggU1lOX1NFTlQuIE9kZGx5LCBzc2gKPnRvIDEyNy4wLjAuMSB3b3JrcywgYnV0IG90
-aGVyIFRDUCBjb25uZWN0aW9ucyB0aW1lb3V0Lgo+Cj4KPgo+CgoKCsKgCgoKwqA=
+On Tue, Mar 30, 2021 at 09:16:34AM -0400, Nayna Jain wrote:
+> The "mrproper" target is still looking for build time generated keys in
+> the kernel root directory instead of certs directory. Fix the path and
+> remove the names of the files which are no longer generated.
+> 
+> Fixes: cfc411e7fff3 ("Move certificate handling to its own directory")
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+>  Makefile | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Makefile b/Makefile
+> index d4784d181123..b7c2ed2a8684 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1523,9 +1523,9 @@ MRPROPER_FILES += include/config include/generated          \
+>  		  debian snap tar-install \
+>  		  .config .config.old .version \
+>  		  Module.symvers \
+> -		  signing_key.pem signing_key.priv signing_key.x509	\
+> -		  x509.genkey extra_certificates signing_key.x509.keyid	\
+> -		  signing_key.x509.signer vmlinux-gdb.py \
+> +		  certs/signing_key.pem certs/signing_key.x509 \
+> +		  certs/x509.genkey \
+> +		  vmlinux-gdb.py \
+>  		  *.spec
+>  
+>  # Directories & files removed with 'make distclean'
+> -- 
+> 2.29.2
+> 
+> 
+
+
+
+Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
+
+/Jarkko
