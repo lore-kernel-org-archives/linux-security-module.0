@@ -2,89 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF93DC43462
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 01:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BA8C433ED
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 02:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 665436108B
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 01:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A3EA6100A
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 02:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233174AbhDABMp (ORCPT
+        id S233076AbhDACP3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 31 Mar 2021 21:12:45 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:37150 "EHLO fornost.hmeau.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230284AbhDABMM (ORCPT
+        Wed, 31 Mar 2021 22:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232994AbhDACPV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 31 Mar 2021 21:12:12 -0400
-Received: from gwarestrin.arnor.me.apana.org.au ([192.168.103.7])
-        by fornost.hmeau.com with smtp (Exim 4.92 #5 (Debian))
-        id 1lRlrx-0007Nz-AT; Thu, 01 Apr 2021 12:11:34 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Thu, 01 Apr 2021 12:11:32 +1100
-Date:   Thu, 1 Apr 2021 12:11:32 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        David Gstir <david@sigma-star.at>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        Wed, 31 Mar 2021 22:15:21 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AD14C061574;
+        Wed, 31 Mar 2021 19:15:19 -0700 (PDT)
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
+        id 1lRmr7-001X2U-Bm; Thu, 01 Apr 2021 02:14:45 +0000
+Date:   Thu, 1 Apr 2021 02:14:45 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
         David Howells <dhowells@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-Message-ID: <20210401011132.GB4349@gondor.apana.org.au>
-References: <f9c0087d299be1b9b91b242f41ac6ef7b9ee3ef7.camel@linux.ibm.com>
- <63dd7d4b-4729-9e03-cd8f-956b94eab0d9@pengutronix.de>
- <CAFA6WYOw_mQwOUN=onhzb7zCTyYDBrcx0E7C3LRk6nPLAVCWEQ@mail.gmail.com>
- <557b92d2-f3b8-d136-7431-419429f0e059@pengutronix.de>
- <CAFA6WYNE44=Y7Erfc-xNtOrf7TkJjh+odmYH5vzhEHR6KqBfeQ@mail.gmail.com>
- <6F812C20-7585-4718-997E-0306C4118468@sigma-star.at>
- <YGDpA4yPWmTWEyx+@kernel.org>
- <YGOcZtkw3ZM5kvl6@gmail.com>
- <YGUGYi4Q3Uxyol6r@kernel.org>
- <YGUHBelwhvJDhKoo@gmail.com>
+        "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v31 07/12] landlock: Support filesystem access-control
+Message-ID: <YGUslUPwp85Zrp4t@zeniv-ca.linux.org.uk>
+References: <20210324191520.125779-1-mic@digikod.net>
+ <20210324191520.125779-8-mic@digikod.net>
+ <d2764451-8970-6cbd-e2bf-254a42244ffc@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YGUHBelwhvJDhKoo@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d2764451-8970-6cbd-e2bf-254a42244ffc@digikod.net>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 31, 2021 at 04:34:29PM -0700, Eric Biggers wrote:
-> On Thu, Apr 01, 2021 at 02:31:46AM +0300, Jarkko Sakkinen wrote:
-> > 
-> > It's a bummer but uapi is the god in the end. Since TPM does not do it
-> > today, that behaviour must be supported forever. That's why a boot option
-> > AND a warning would be the best compromise.
-> 
-> It's not UAPI if there is no way for userspace to tell if it changed.
+On Wed, Mar 31, 2021 at 07:33:50PM +0200, Mickaël Salaün wrote:
 
-Exactly.  UAPI is only an issue if something *breaks*.
+> > +static inline u64 unmask_layers(
+> > +		const struct landlock_ruleset *const domain,
+> > +		const struct path *const path, const u32 access_request,
+> > +		u64 layer_mask)
+> > +{
+> > +	const struct landlock_rule *rule;
+> > +	const struct inode *inode;
+> > +	size_t i;
+> > +
+> > +	if (d_is_negative(path->dentry))
+> > +		/* Continues to walk while there is no mapped inode. */
+				     ^^^^^
+Odd comment, that...
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> > +static int check_access_path(const struct landlock_ruleset *const domain,
+> > +		const struct path *const path, u32 access_request)
+> > +{
+
+> > +	walker_path = *path;
+> > +	path_get(&walker_path);
+
+> > +	while (true) {
+> > +		struct dentry *parent_dentry;
+> > +
+> > +		layer_mask = unmask_layers(domain, &walker_path,
+> > +				access_request, layer_mask);
+> > +		if (layer_mask == 0) {
+> > +			/* Stops when a rule from each layer grants access. */
+> > +			allowed = true;
+> > +			break;
+> > +		}
+> > +
+> > +jump_up:
+> > +		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+> > +			if (follow_up(&walker_path)) {
+> > +				/* Ignores hidden mount points. */
+> > +				goto jump_up;
+> > +			} else {
+> > +				/*
+> > +				 * Stops at the real root.  Denies access
+> > +				 * because not all layers have granted access.
+> > +				 */
+> > +				allowed = false;
+> > +				break;
+> > +			}
+> > +		}
+> > +		if (unlikely(IS_ROOT(walker_path.dentry))) {
+> > +			/*
+> > +			 * Stops at disconnected root directories.  Only allows
+> > +			 * access to internal filesystems (e.g. nsfs, which is
+> > +			 * reachable through /proc/<pid>/ns/<namespace>).
+> > +			 */
+> > +			allowed = !!(walker_path.mnt->mnt_flags & MNT_INTERNAL);
+> > +			break;
+> > +		}
+> > +		parent_dentry = dget_parent(walker_path.dentry);
+> > +		dput(walker_path.dentry);
+> > +		walker_path.dentry = parent_dentry;
+> > +	}
+> > +	path_put(&walker_path);
+> > +	return allowed ? 0 : -EACCES;
+
+That's a whole lot of grabbing/dropping references...  I realize that it's
+an utterly tactless question, but... how costly it is?  IOW, do you have
+profiling data?
+
+> > +/*
+> > + * pivot_root(2), like mount(2), changes the current mount namespace.  It must
+> > + * then be forbidden for a landlocked process.
+
+... and cross-directory rename(2) can change the tree topology.  Do you ban that
+as well?
+
+[snip]
+
+> > +static int hook_path_rename(const struct path *const old_dir,
+> > +		struct dentry *const old_dentry,
+> > +		const struct path *const new_dir,
+> > +		struct dentry *const new_dentry)
+> > +{
+> > +	const struct landlock_ruleset *const dom =
+> > +		landlock_get_current_domain();
+> > +
+> > +	if (!dom)
+> > +		return 0;
+> > +	/* The mount points are the same for old and new paths, cf. EXDEV. */
+> > +	if (old_dir->dentry != new_dir->dentry)
+> > +		/* For now, forbids reparenting. */
+> > +		return -EACCES;
+
+You do, apparently, and not in a way that would have the userland fall
+back to copy+unlink.  Lovely...  Does e.g. git survive such restriction?
+Same question for your average package build...
