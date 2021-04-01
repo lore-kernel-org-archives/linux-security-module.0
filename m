@@ -2,140 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC87FC001BA
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8008C43460
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 17:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAEB1611ED
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 17:42:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F79C61284
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Apr 2021 17:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235075AbhDARmL (ORCPT
+        id S234236AbhDARmO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Apr 2021 13:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57162 "EHLO
+        Thu, 1 Apr 2021 13:42:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234547AbhDARh6 (ORCPT
+        with ESMTP id S234869AbhDARk6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:37:58 -0400
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CFCAC0613BC
-        for <linux-security-module@vger.kernel.org>; Thu,  1 Apr 2021 05:19:35 -0700 (PDT)
-Received: by mail-qt1-x82c.google.com with SMTP id h7so1286415qtx.3
-        for <linux-security-module@vger.kernel.org>; Thu, 01 Apr 2021 05:19:35 -0700 (PDT)
+        Thu, 1 Apr 2021 13:40:58 -0400
+Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AA56C05BD19
+        for <linux-security-module@vger.kernel.org>; Thu,  1 Apr 2021 05:55:16 -0700 (PDT)
+Received: by mail-lj1-x231.google.com with SMTP id y1so2112517ljm.10
+        for <linux-security-module@vger.kernel.org>; Thu, 01 Apr 2021 05:55:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Vgr/Zl3BDXRnrq2J6EE+e/3R7mQgt/D2Dsj5nuE2w0M=;
-        b=JpAs1vzPTjz4W8rdx9Lqz6nBqd13qCgN3+erq91mh4WGoo/LZS5fEquo+DACiJnKkX
-         QrRXi051hfgjTbJbWkb4DYzvsW7dd5nBrV1B7iZhANXyvf9JPdE2B/K8FL9e62txVK7G
-         0X/gpOxbofNzmLf0GAqzpX8sBfJtZmAM5AgY6NsA+fMjUnX+sBbt/uAKoHA8hXKR3thw
-         I4MqU09EK54ap9j94WYb6DERRr6dM1RBsJqJQLblOPlbmso1274vL9Xp0KegLKnMSTTI
-         OwoDTz18mnTz8i5OKZzE0CwVDjue/qX8moZSc4OPC55MzH1GtPpdWvMfTcPBykbbhtQ4
-         E5jg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VIk1VyBFqF5fVZFBu0yexXHYaS9Jn30Rld7o2bVbBwk=;
+        b=Apd+UzHEAEi98S6OdfucHkNROZU7jCgX5/KNygYU3cVOLmi2PHXIN8LRL/INjJMZT2
+         +T7sbpkA1dHoI5hc7fww5ba5aE2TjM8dwGwwufSllGQiwylrGI0cS488JL/xNibDw5Cu
+         2+eknYxHVIfteXbHDfVGnwtETKC61+6Ys9Q59Y5+NreZIXf3O8ek1f6nwiPeAZ31FLYx
+         JP07cdx8Lht2U45g70INCV2MprWQgxaOUq4Y3uGF3LwH7J/nRfQOjuLD03XeTBhbnZ3w
+         3kGM/AEkbnuu9X/oEc2B9w4enaBqVfgrhZYb3ySlCRAGSvA6qD8rW+w9ga1FZsJLnIXC
+         z8Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Vgr/Zl3BDXRnrq2J6EE+e/3R7mQgt/D2Dsj5nuE2w0M=;
-        b=OlpHISt45ZsQ7/3tBrAABA1IcitlZdZUj8oXNkh6v9FWsOhjYUuUYl70c1dxO5xu+b
-         EuZJRF8upp0uVsubZRAi5y9k4EIVRDgig57+hRNk9CtgHrnVY/nuj45DLtF0/OuSNtqK
-         o4kArLyvszS3xVE1WRpmjWcL0glwMFnZm72OGVSoF2aOxTqVT83Ov1joD/clXjYfo3W+
-         s5zfi2YOZY0yNZKH84510NnShoB9YnrPdMzG/3QZaYtdq/tN+4Qbl4caUaGKMeNb4k29
-         uf0ZZ277jRMgcJNT8WEaZGUoyQC9M8cqDMW5R0fyHEDKHdKrjqJQGzHvVdfbXOdFCll/
-         Y95w==
-X-Gm-Message-State: AOAM53033/0IJO5XFW6qVRLNZtBoNM/uYoKll4lPfPp29QLNTzThv2nF
-        20bGQn+ExiZxedjklaaAX4//SQ==
-X-Google-Smtp-Source: ABdhPJz6ns0s4EMUeoQopcXj71hOMnL0XWBbKVYAuaGM2OabeF39OGOUzeq0Rc+BHh/xNK4055cz0A==
-X-Received: by 2002:ac8:7f52:: with SMTP id g18mr6906607qtk.250.1617279574765;
-        Thu, 01 Apr 2021 05:19:34 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-162-115-133.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.162.115.133])
-        by smtp.gmail.com with ESMTPSA id s28sm3807098qkj.73.2021.04.01.05.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Apr 2021 05:19:34 -0700 (PDT)
-Received: from jgg by mlx with local (Exim 4.94)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1lRwIP-006jdH-LT; Thu, 01 Apr 2021 09:19:33 -0300
-Date:   Thu, 1 Apr 2021 09:19:33 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, bp@alien8.de, daniel.vetter@ffwll.ch,
-        daniel.vetter@intel.com, hpa@zytor.com, jmattson@google.com,
-        jmorris@namei.org, joro@8bytes.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-security-module@vger.kernel.org,
-        m.szyprowski@samsung.com, mchehab@kernel.org, mingo@redhat.com,
-        seanjc@google.com, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, tfiga@chromium.org,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-Subject: Re: [syzbot] WARNING in unsafe_follow_pfn
-Message-ID: <20210401121933.GA2710221@ziepe.ca>
-References: <000000000000ca9a6005bec29ebe@google.com>
- <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
- <20210331042922.GE2065@kadam>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VIk1VyBFqF5fVZFBu0yexXHYaS9Jn30Rld7o2bVbBwk=;
+        b=t5mueok87JciROdLVCKgjtQG0jMe4RXQPoik4MU6S8NtqfNfaGME7uxXPybxxH4Or/
+         iqqreMiqdEx1CBz1NwZo3PimS6tlOeyJpUtneq79Qwl5IP9HejMwXt1xpYsi0jMICF/d
+         s6K9TcQsOd0o0drp7BCQnkKPK9xpcQCT2qxc4irmse5fNpzwcLpMr0GHxucTTipoZAFN
+         pmJqeRfSeogpcFlzW+1kn7GXEFyCDZZHGPwlyuJ3wt0rpavAXHEEaFCDf6SWTXBg8Dhv
+         sn6A5gHDdlnB5QeuR/9sjcu40FH+KvbViMRbVzuc0WeIgGIioMJnLtk8lUCvufR/5i23
+         JZqw==
+X-Gm-Message-State: AOAM530jDntrmQNlM+/fQO706CiIzHPthwkneYxKXzuksqCufC/r2byd
+        Z1CARAls01FgYKMNIh6Jv9go7aC14AohcC4zK1yVZw==
+X-Google-Smtp-Source: ABdhPJzxwz2LDe0yIeonE1iDSI5e5lDG4mIYMjWxL+WfT+GgrPcNFOKL6OGonaimUeBpqxqGZ9SE9Ng/p3VJVcrOnEs=
+X-Received: by 2002:a2e:8e33:: with SMTP id r19mr5136316ljk.40.1617281715310;
+ Thu, 01 Apr 2021 05:55:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210331042922.GE2065@kadam>
+References: <cover.56fff82362af6228372ea82e6bd7e586e23f0966.1615914058.git-series.a.fatoum@pengutronix.de>
+ <CAFLxGvzWLje+_HFeb+hKNch4U1f5uypVUOuP=QrEPn_JNM+scg@mail.gmail.com>
+ <ca2a7c17-3ed0-e52f-2e2f-c0f8bbe10323@pengutronix.de> <CAFLxGvwNomKOo3mQLMxYGDA8T8zN=Szpo2q5jrp4D1CaMHydWA@mail.gmail.com>
+In-Reply-To: <CAFLxGvwNomKOo3mQLMxYGDA8T8zN=Szpo2q5jrp4D1CaMHydWA@mail.gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Thu, 1 Apr 2021 18:25:03 +0530
+Message-ID: <CAFA6WYO29o73nSg4ikU9cyaOr0kpaXFJpcGLGmFLgjKQWchcEg@mail.gmail.com>
+Subject: Re: [PATCH v1 0/3] KEYS: trusted: Introduce support for NXP
+ CAAM-based trusted keys
+To:     Richard Weinberger <richard.weinberger@gmail.com>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Bottomley <jejb@linux.ibm.com>, kernel@pengutronix.de,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        linux-integrity@vger.kernel.org,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Mar 31, 2021 at 07:29:22AM +0300, Dan Carpenter wrote:
-> On Tue, Mar 30, 2021 at 07:04:30PM +0200, Paolo Bonzini wrote:
-> > On 30/03/21 17:26, syzbot wrote:
-> > > Hello,
-> > > 
-> > > syzbot found the following issue on:
-> > > 
-> > > HEAD commit:    93129492 Add linux-next specific files for 20210326
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=169ab21ad00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6f2f73285ea94c45
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=015dd7cdbbbc2c180c65
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119b8d06d00000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112e978ad00000
-> > > 
-> > > The issue was bisected to:
-> > > 
-> > > commit d40b9fdee6dc819d8fc35f70c345cbe0394cde4c
-> > > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > Date:   Tue Mar 16 15:33:01 2021 +0000
-> > > 
-> > >      mm: Add unsafe_follow_pfn
-> > > 
-> > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122d2016d00000
-> > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=112d2016d00000
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=162d2016d00000
-> > > 
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com
-> > > Fixes: d40b9fdee6dc ("mm: Add unsafe_follow_pfn")
-> > 
-> > This is basically intentional because get_vaddr_frames is broken, isn't it?
-> > I think it needs to be ignored in syzkaller.
-> 
-> What?
-> 
-> The bisect is wrong (because it's blaming the commit which added the
-> warning instead of the commit which added the buggy caller) but the
-> warning is correct.
-> 
-> Plus users are going to be seeing this as well.  According to the commit
-> message for 69bacee7f9ad ("mm: Add unsafe_follow_pfn") "Unfortunately
-> there's some users where this is not fixable (like v4l userptr of iomem
-> mappings)".  It sort of seems crazy to dump this giant splat and then
-> tell users to ignore it forever because it can't be fixed...  0_0
+Hi Richard,
 
-I think the discussion conclusion was that this interface should not
-be used by userspace anymore, it is obsolete by some new interface?
+On Wed, 31 Mar 2021 at 03:34, Richard Weinberger
+<richard.weinberger@gmail.com> wrote:
+>
+> Ahmad,
+>
+> On Wed, Mar 17, 2021 at 3:08 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+> >     keyctl add trusted $KEYNAME "load $(cat ~/kmk.blob)" @s
+>
+> Is there a reason why we can't pass the desired backend name in the
+> trusted key parameters?
+> e.g.
+> keyctl add trusted $KEYNAME "backendtype caam load $(cat ~/kmk.blob)" @s
+>
 
-It should be protected by some kconfig and the kconfig should be
-turned off for syzkaller runs.
+IIUC, this would require support for multiple trusted keys backends at
+runtime but currently the trusted keys subsystem only supports a
+single backend which is selected via kernel module parameter during
+boot.
 
-Jason
+So the trusted keys framework needs to evolve to support multiple
+trust sources at runtime but I would like to understand the use-cases
+first. IMO, selecting the best trust source available on a platform
+for trusted keys should be a one time operation, so why do we need to
+have other backends available at runtime as well?
+
+-Sumit
+
+> --
+> Thanks,
+> //richard
