@@ -2,73 +2,177 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4566C4360C
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Apr 2021 09:20:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB09AC433B4
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Apr 2021 11:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D65C610FC
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Apr 2021 09:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E2D3610CF
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Apr 2021 11:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbhDBJUp (ORCPT
+        id S235172AbhDBL1i (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Apr 2021 05:20:45 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:15903 "EHLO
-        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbhDBJUo (ORCPT
+        Fri, 2 Apr 2021 07:27:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:17352 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S235170AbhDBL1h (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Apr 2021 05:20:44 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4FBZHQ1bqLzkgpp;
-        Fri,  2 Apr 2021 17:18:58 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.498.0; Fri, 2 Apr 2021
- 17:20:37 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>
-CC:     <jejb@linux.ibm.com>, <jarkko@kernel.org>
-Subject: [PATCH -next] KEYS: trusted: Switch to kmemdup_nul()
-Date:   Fri, 2 Apr 2021 17:23:46 +0800
-Message-ID: <20210402092346.2444932-1-yangyingliang@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 2 Apr 2021 07:27:37 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 132B4K7S176199;
+        Fri, 2 Apr 2021 07:27:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=GXI532RUtUF0I/TkqNc22FCXRKltQLqudGyKbkMAYuI=;
+ b=iYAOLNbz8MADkV7F0/6GAMDhzuNki/WllObrXA6OJhiGDG9y84oAxIlpN/1q2V6AQtB1
+ O7lAMrwI9lTWL6kJBDTvSgSWRv33lK1U614TolSUSAAY+8/pe+RRdnTGTrObDxI7cOZd
+ NcSjoIWn+dRhJBE+N8UGn8LsBxVZ2gSbsoCexOy2bQYMsKPrTLzY7ks1R0BebpA/DAro
+ 4wR8qGszobtNVt8ZJ0L/mp30+x/KDhV7hF4G9Dq/Ut5KeCr5K0zrjQZpyWbNEdCSkgwS
+ oBSUq5jCH32YbBlfjU/zIEK/qEIsaT+XLQHjfxELLAN72XElCrRUP5OJZ8XIvM0a/7tC hw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37nbtcj459-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Apr 2021 07:27:27 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 132B4mvu177316;
+        Fri, 2 Apr 2021 07:27:27 -0400
+Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37nbtcj43y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Apr 2021 07:27:27 -0400
+Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
+        by ppma02wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 132BLpFJ030833;
+        Fri, 2 Apr 2021 11:27:21 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma02wdc.us.ibm.com with ESMTP id 37n2942qt5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 02 Apr 2021 11:27:21 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 132BRKxk10093148
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 2 Apr 2021 11:27:20 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EB4AFC6059;
+        Fri,  2 Apr 2021 11:27:19 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 326BBC6055;
+        Fri,  2 Apr 2021 11:27:19 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri,  2 Apr 2021 11:27:18 +0000 (GMT)
+Subject: Re: [PATCH v3 2/3] ima: enable signing of modules with build time
+ generated key
+To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20210330131636.21711-1-nayna@linux.ibm.com>
+ <20210330131636.21711-3-nayna@linux.ibm.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <c0df8b07-79de-80cb-9eaa-ed70fbf8414b@linux.ibm.com>
+Date:   Fri, 2 Apr 2021 07:27:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.103.91]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210330131636.21711-3-nayna@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: bB_Cg1RSifXY98ku04wXcNMmgrKSnXr7
+X-Proofpoint-GUID: NGAkoLW4r8Gt0EZTS08vedNqU9BIE09U
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
+ definitions=2021-04-02_07:2021-04-01,2021-04-02 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 adultscore=0 priorityscore=1501 impostorscore=0
+ suspectscore=0 spamscore=0 phishscore=0 mlxlogscore=999 malwarescore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2103310000 definitions=main-2104020080
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Use kmemdup_nul() helper instead of open-coding to
-simplify the code.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- security/keys/trusted-keys/trusted_tpm1.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-index 493eb91ed017..90ded4757e79 100644
---- a/security/keys/trusted-keys/trusted_tpm1.c
-+++ b/security/keys/trusted-keys/trusted_tpm1.c
-@@ -978,11 +978,9 @@ static int trusted_instantiate(struct key *key,
- 	if (datalen <= 0 || datalen > 32767 || !prep->data)
- 		return -EINVAL;
- 
--	datablob = kmalloc(datalen + 1, GFP_KERNEL);
-+	datablob = kmemdup_nul(prep->data, datalen, GFP_KERNEL);
- 	if (!datablob)
- 		return -ENOMEM;
--	memcpy(datablob, prep->data, datalen);
--	datablob[datalen] = '\0';
- 
- 	options = trusted_options_alloc();
- 	if (!options) {
--- 
-2.25.1
-
+On 3/30/21 9:16 AM, Nayna Jain wrote:
+> The kernel build process currently only signs kernel modules when
+> MODULE_SIG is enabled. Also, sign the kernel modules at build time when
+> IMA_APPRAISE_MODSIG is enabled.
+>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+Acked-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>   certs/Kconfig  | 2 +-
+>   certs/Makefile | 8 ++++++++
+>   init/Kconfig   | 6 +++---
+>   3 files changed, 12 insertions(+), 4 deletions(-)
+>
+> diff --git a/certs/Kconfig b/certs/Kconfig
+> index c94e93d8bccf..48675ad319db 100644
+> --- a/certs/Kconfig
+> +++ b/certs/Kconfig
+> @@ -4,7 +4,7 @@ menu "Certificates for signature checking"
+>   config MODULE_SIG_KEY
+>   	string "File name or PKCS#11 URI of module signing key"
+>   	default "certs/signing_key.pem"
+> -	depends on MODULE_SIG
+> +	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+>   	help
+>            Provide the file name of a private key/certificate in PEM format,
+>            or a PKCS#11 URI according to RFC7512. The file should contain, or
+> diff --git a/certs/Makefile b/certs/Makefile
+> index f4c25b67aad9..e3185c57fbd8 100644
+> --- a/certs/Makefile
+> +++ b/certs/Makefile
+> @@ -32,6 +32,14 @@ endif # CONFIG_SYSTEM_TRUSTED_KEYRING
+>   clean-files := x509_certificate_list .x509.list
+>   
+>   ifeq ($(CONFIG_MODULE_SIG),y)
+> +	SIGN_KEY = y
+> +endif
+> +
+> +ifeq ($(CONFIG_IMA_APPRAISE_MODSIG),y)
+> +	SIGN_KEY = y
+> +endif
+> +
+> +ifdef SIGN_KEY
+>   ###############################################################################
+>   #
+>   # If module signing is requested, say by allyesconfig, but a key has not been
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 5f5c776ef192..85e48a578f90 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -2164,7 +2164,7 @@ config MODULE_SIG_FORCE
+>   config MODULE_SIG_ALL
+>   	bool "Automatically sign all modules"
+>   	default y
+> -	depends on MODULE_SIG
+> +	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+>   	help
+>   	  Sign all modules during make modules_install. Without this option,
+>   	  modules must be signed manually, using the scripts/sign-file tool.
+> @@ -2174,7 +2174,7 @@ comment "Do not forget to sign required modules with scripts/sign-file"
+>   
+>   choice
+>   	prompt "Which hash algorithm should modules be signed with?"
+> -	depends on MODULE_SIG
+> +	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+>   	help
+>   	  This determines which sort of hashing algorithm will be used during
+>   	  signature generation.  This algorithm _must_ be built into the kernel
+> @@ -2206,7 +2206,7 @@ endchoice
+>   
+>   config MODULE_SIG_HASH
+>   	string
+> -	depends on MODULE_SIG
+> +	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
+>   	default "sha1" if MODULE_SIG_SHA1
+>   	default "sha224" if MODULE_SIG_SHA224
+>   	default "sha256" if MODULE_SIG_SHA256
