@@ -2,126 +2,212 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	TRACKER_ID autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7825C433B4
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Apr 2021 12:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C56C433B4
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Apr 2021 15:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 896EF613C6
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Apr 2021 12:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33F86613A7
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Apr 2021 15:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243170AbhDFMqw (ORCPT
+        id S234732AbhDFPnl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Apr 2021 08:46:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57600 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238988AbhDFMqu (ORCPT
+        Tue, 6 Apr 2021 11:43:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59840 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239586AbhDFPnl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Apr 2021 08:46:50 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 136CYekB067856;
-        Tue, 6 Apr 2021 08:46:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=N2HYbq+DP5GjAQFh4BQgOct+20zb8QIEIVdBX6wIHCY=;
- b=FWu6/BnJann6sR1t8VTlBoFQUcNJSf/wNUrmffH5SGZQgXiR5MxEtno2uO34gsiEZXt5
- Fdzs4PES+wwVK70HxJZuB/uQ0ZScQtJSAiq/jihM057APQ/Kye759T0VP91jxMF7a9CD
- IxUAGaayqQnGc4MYaR3pweQgCSMXv4iWFLqMijS8d0U3mTbTRjkcBwqbgVk9A4l0OQ8b
- 2newToYYyYwemp8d9xJXUOMTIJHYJfEw3SmZnoIj+WHlcbc3e5Fpsx8lRgv90Qhrm8j2
- tY3zUgOoHjdubPzoSJ+9ql/uP8X1g/9qbkYHEY38DVj9qNUxf6l2PJ5dpudGm1a9WPyx Rg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37q5dv9hfh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Apr 2021 08:46:39 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 136CYdOc067743;
-        Tue, 6 Apr 2021 08:46:39 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37q5dv9heb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Apr 2021 08:46:38 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 136CTBOL018010;
-        Tue, 6 Apr 2021 12:46:36 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 37q2q5j5dg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Apr 2021 12:46:36 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 136CkDf730343546
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 6 Apr 2021 12:46:13 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 11E645204F;
-        Tue,  6 Apr 2021 12:46:34 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.36.140])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id A27105204E;
-        Tue,  6 Apr 2021 12:46:32 +0000 (GMT)
-Message-ID: <02aea740eadccd6512a3781632284113127a5494.camel@linux.ibm.com>
-Subject: Re: [PATCH] integrity/ima: Add declarations to init_once void
- arguments.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jiele Zhao <unclexiaole@gmail.com>, serge@hallyn.com,
-        jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 06 Apr 2021 08:46:31 -0400
-In-Reply-To: <20210323013318.296993-1-unclexiaole@gmail.com>
-References: <20210323013318.296993-1-unclexiaole@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vSu16LnikMXMNY2tQ4AgHnB8qowSsU32
-X-Proofpoint-ORIG-GUID: HzlMjAEURFFEjxDo8NOrTyeS1hbHVGBH
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-04-06_03:2021-04-01,2021-04-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- impostorscore=0 suspectscore=0 clxscore=1015 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104030000
- definitions=main-2104060086
+        Tue, 6 Apr 2021 11:43:41 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41AA2C06174A;
+        Tue,  6 Apr 2021 08:43:31 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id x17so16057656iog.2;
+        Tue, 06 Apr 2021 08:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ECh+8tYfn4hKWUWBsHXDMBiOe0Fu2PWbeWU09osjJks=;
+        b=Nq/TEtJIC/JX2DqB60AXoQRpLHJZ5TJ0FfrsqhryoHcBPpG7f1CK0b1Lr7/D6VohpW
+         mMLxKWnKhbLnKiWP9tl0/nObKBqLPBVnozObUUZ5RtyE9iMhWL/2eBWX9GHU837AsfPP
+         yBkyoOQV4iKmN9mvTZyQmazsnbxSlY07Aq6yVHbXWwE6lTWG7wFD/CX9X11r2FAyaosi
+         q/v17+epNWF4OVB9KUWCfrMF4O8i1PflUajcb2JuTpo1cfnHk9iNBhTeytdqvbyTMtMZ
+         lWEo4nUARTwGfK8by6X0SqCzDXYQMSYmsZisOMyo6y29hTcquFEePkGVWA+2ESfOYBfU
+         hoWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ECh+8tYfn4hKWUWBsHXDMBiOe0Fu2PWbeWU09osjJks=;
+        b=OnUnmDf9psP+BCcktVCdovsWNH9yhaUWMQahwbimaVFqaEARS+E+btJFDTRjkq78dF
+         mzTcLuZhZflK6bedue1ulNBMPkrGvxyI1yr7W13F3lDs9kB7luoEhuP4GECpcjUZ25wr
+         1GGeR8Udv9mPy7eAk7BzC4UFIfcJYJDWK0x3jBQ/p4zyeIKO47vs5svnPCh+9NqnIkS2
+         ptZ7Quy2d991qp0jfo1boNauIsszdIJ8uUzX5qRF1LDXnqBMr/5262KygDx5M4S8YaxN
+         eZ1TBVvafhReyB6612GLmwM++v+Rdln5L7zk00wnialjLZ10+PCZ7phJ6crWJ19OuHpn
+         zVMw==
+X-Gm-Message-State: AOAM5303DWcQzpdY7V8Sf3XsD6G3x+rQOpqnraTmz4syT2/ROUf7wiaa
+        /BUDB/7Tx1/G+/uETjYVda9cADTH7Fq07wjcK0li3upKmAw=
+X-Google-Smtp-Source: ABdhPJwNIwsxvh3VNKKkgWpXUrGLYsCdIIPl/c2eSeZd4AwxfIzAQuoNLLX9rdpI6IFnRVOAzE6+myMv5YPwo3QLxF0=
+X-Received: by 2002:a05:6602:2596:: with SMTP id p22mr24038732ioo.186.1617723810686;
+ Tue, 06 Apr 2021 08:43:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAOQ4uxjVdjLPbkkZd+_1csecDFuHxms3CcSLuAtRbKuozHUqWA@mail.gmail.com>
+ <20210330125336.vj2hkgwhyrh5okee@wittgenstein> <CAOQ4uxjPhrY55kJLUr-=2+S4HOqF0qKAAX27h2T1H1uOnxM9pQ@mail.gmail.com>
+ <20210330141703.lkttbuflr5z5ia7f@wittgenstein> <CAOQ4uxirMBzcaLeLoBWCMPPr7367qeKjnW3f88bh1VMr_3jv_A@mail.gmail.com>
+ <20210331094604.xxbjl3krhqtwcaup@wittgenstein> <CAOQ4uxirud-+ot0kZ=8qaicvjEM5w1scAeoLP_-HzQx+LwihHw@mail.gmail.com>
+ <20210331125412.GI30749@quack2.suse.cz> <CAOQ4uxjOyuvpJ7Tv3cGmv+ek7+z9BJBF4sK_-OLxwePUrHERUg@mail.gmail.com>
+ <CAOQ4uxhWE9JGOZ_jN9_RT5EkACdNWXOryRsm6Wg_zkaDNDSjsA@mail.gmail.com>
+ <20210401102947.GA29690@quack2.suse.cz> <CAOQ4uxjHFkRVTY5iyTSpb0R5R6j-j=8+Htpu2hgMAz9MTci-HQ@mail.gmail.com>
+ <CAOQ4uxgE_bCK_URCe=_4mBq4_72bazM86D859Kzs_ZoWyKJRhw@mail.gmail.com>
+ <CAOQ4uxg+82RLt+KZXVLYhuDvrPLE0zaLf3Nw=oCJ=wBY6j6hTw@mail.gmail.com> <4224a40756ca036756493782ece9885967fd5892.camel@linux.ibm.com>
+In-Reply-To: <4224a40756ca036756493782ece9885967fd5892.camel@linux.ibm.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 6 Apr 2021 18:43:19 +0300
+Message-ID: <CAOQ4uxgj0DhzZxpD_YQzJPDE+HWN70xDVyf5=_21_2rp6-ObKQ@mail.gmail.com>
+Subject: Re: LSM and setxattr helpers
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>, Jan Kara <jack@suse.cz>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Tyler Hicks <code@tyhicks.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        LSM List <linux-security-module@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Jiele,
+security_inode_post_setxattr
 
-On Tue, 2021-03-23 at 01:33 +0000, Jiele Zhao wrote:
-> init_once is a callback to kmem_cache_create. The parameter
-> type of this function is void *, so it's better to give a
-> explicit cast here.
-> 
-> Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
+On Mon, Apr 5, 2021 at 5:47 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>
+> Hi Amir,
+>
+> On Sun, 2021-04-04 at 13:27 +0300, Amir Goldstein wrote:
+> > [forking question about security modules]
+> >
+> > >
+> > > Nice thing about vfs_{set,remove}xattr() is that they already have
+> > > several levels of __vfs_ helpers and nfsd already calls those, so
+> > > we can hoist fsnotify_xattr() hooks hooks up from the __vfs_xxx
+> > > helpers to the common vfs_xxx helpers and add fsnotify hooks to
+> > > the very few callers of __vfs_ helpers.
+> > >
+> > > nfsd is consistently calling __vfs_{set,remove}xattr_locked() which
+> > > do generate events, but ecryptfs mixes __vfs_setxattr_locked() with
+> > > __vfs_removexattr(), which does not generate event and does not
+> > > check permissions - it looks like an oversight.
+> > >
+> > > The thing is, right now __vfs_setxattr_noperm() generates events,
+> > > but looking at all the security/* callers, it feels to me like those are
+> > > very internal operations and that "noperm" should also imply "nonotify".
+> > >
+> > > To prove my point, all those callers call __vfs_removexattr() which
+> > > does NOT generate an event.
+> > >
+> > > Also, I *think* the EVM setxattr is something that usually follows
+> > > another file data/metadata change, so some event would have been
+> > > generated by the original change anyway.
+> > >
+> > > Mimi,
+> > >
+> > > Do you have an opinion on that?
+>
+> Right, EVM is re-calculating the EVM HMAC, which is based on other LSM
+> xattrs and includes some misc file metadata (e.g. ino, generation, uid,
+> gid, mode).
+>
 
-Please remove the "ima" in the Subject line and re-post Cc'ing the
-linux-integrity mailing list.
+That explains why EVM registers to security_inode_post_setxattr() hook in
+__vfs_setxattr_noperm() and which is the helper that selinux and smack call.
 
-> ---
->  security/integrity/iint.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-> index 1d20003243c3..5f3f2de997e1 100644
-> --- a/security/integrity/iint.c
-> +++ b/security/integrity/iint.c
-> @@ -152,7 +152,7 @@ void integrity_inode_free(struct inode *inode)
-> 
->  static void init_once(void *foo)
->  {
-> -	struct integrity_iint_cache *iint = foo;
-> +	struct integrity_iint_cache *iint = (struct integrity_iint_cache *)foo;
+> > >
+> > > The question is if you think it is important for an inotify/fanotify watcher
+> > > that subscribed to IN_ATTRIB/FAN_ATTRIB events on a file to get an
+> > > event when the IMA security blob changes.
+>
+> Probably not.  Programs could open files R/W, but never modify the
+> file.  Perhaps to detect mutable file changes, but I'm not aware of
+> anyone doing so.
+>
+> >
+> > Guys,
+> >
+> > I was doing some re-factoring of the __vfs_setxattr helpers
+> > and noticed some strange things.
+> >
+> > The wider context is fsnotify_xattr() hooks inside internal
+> > setxattr,removexattr calls. I would like to move those hooks
+> > to the common vfs_{set,remove}xattr() helpers.
+> >
+> > SMACK & SELINUX:
+> > For the callers of __vfs_setxattr_noperm(),
+> > smack_inode_setsecctx() and selinux_inode_setsecctx()
+> > It seems that the only user is nfsd4_set_nfs4_label(), so it
+> > makes sense for me to add the fsnotify_xattr() in nfsd context,
+> > same as I did with other fsnotify_ hooks.
+> >
+> > Are there any other expected callers of security_inode_setsecctx()
+> > except nfsd in the future? If so they would need to also add the
+> > fsnotify_xattr() hook, if at all the user visible FS_ATTRIB event is
+> > considered desirable.
+> >
+> > SMACK:
+> > Just to be sure, is the call to __vfs_setxattr() from smack_d_instantiate()
+> > guaranteed to be called for an inode whose S_NOSEC flag is already
+> > cleared? Because the flag is being cleared by __vfs_setxattr_noperm().
+> >
+> > EVM:
+> > I couldn't find what's stopping this recursion:
+> > evm_update_evmxattr() => __vfs_setxattr_noperm() =>
+> > security_inode_post_setxattr() => evm_inode_post_removexattr() =>
+> > evm_update_evmxattr()
+>
+> EVM is triggered when file metadata changes, causing the EVM HMAC to be
+> re-calculated. Before updating security.evm, EVM first verifies, on the
+> evm_inode_setattr/setxattr/removexattr() hooks, that the existing
+> security.evm value is correct.
+>
+> On the _post hooks, security.evm is updated or removed, if no LSM xattr
+> exists.
+>
 
-Like the other init_once() examples, please add a blank before foo.
+I'm not sure I understand why evm_update_evmxattr() calls
+__vfs_setxattr_noperm() and not __vfs_setxattr(), but it's not really important
+for my needs to understand this. Neither helper will generate an fsnotify event.
 
-thanks,
+> > It looks like the S_NOSEC should already be clear when
+> > evm_update_evmxattr() is called(?), so it seems more logical to me to
+> > call __vfs_setxattr() as there is no ->inode_setsecurity() hook for EVM.
+> > Am I missing something?
+>
+> EVM is triggered when an LSM updates/removes its xattr.   The LSM is
+> responsible for taking the inode lock.   Thus it is calling
+> __vfs_setxattr_noperm.
+>
 
-Mimi
-> 
->  	memset(iint, 0, sizeof(*iint));
->  	iint->ima_file_status = INTEGRITY_UNKNOWN;
+Surely you need to call a variant that is __vfs_setxattr_locked() or
+below it. I just did not understand why that variant is not  __vfs_setxattr().
+
+> >
+> > It seems to me that updating the EVM hmac should not generate
+> > a visible FS_ATTRIB event to listeners, because it is an internal
+> > implementation detail and because update EVM hmac happens
+> > following another change to the inode which anyway reports a
+> > visible event to listeners.
+>
+> Ok
+>
 
 
+OK. It looks like there is a consensus about losing those events.
+That's what I thought, but wanted to check with you security guys.
+
+Thanks,
+Amir.
