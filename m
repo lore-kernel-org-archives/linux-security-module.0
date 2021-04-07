@@ -2,116 +2,229 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5837C43460
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 18:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E35EC433ED
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 19:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD3FC611C1
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 18:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2601C6124B
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 19:28:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355153AbhDGSQF (ORCPT
+        id S236486AbhDGT2r (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Apr 2021 14:16:05 -0400
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:52518 "EHLO
-        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355150AbhDGSQC (ORCPT
+        Wed, 7 Apr 2021 15:28:47 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2804 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229512AbhDGT2r (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Apr 2021 14:16:02 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Wed, 07 Apr 2021 14:15:59 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1733; q=dns/txt; s=iport;
-  t=1617819353; x=1619028953;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=I2B/l0BZ2IBFeo5zroet5ZcFM1Gn2lU1WCWA/j5KrhY=;
-  b=L7lDePtrCbrc55qKP48XShSLI718ubRQryHhsPe89QIJ35/2dHNTkYIN
-   34bCel9YaJwYlZAOfSMlK6UWAen5nB/S8T3uGtoZmJQLUarkEWXTQimz/
-   15O4VNvvuNB2/HCo0Vs2+NSYWF0sPQbPczkunBzk+jeXYFDSdOJx+F/K+
-   I=;
-X-IPAS-Result: =?us-ascii?q?A0AHAABF9G1gmIgNJK1aGQEBAQEBAQEBAQEBAQEBAQEBA?=
- =?us-ascii?q?RIBAQEBAQEBAQEBAQFAgUEBAQEBAQELAYMhVgE5MQIBkzmCWgOQDYxYCwEBA?=
- =?us-ascii?q?Q0BASwIBAEBhFACgXcCJTcGDgIDAQEBAwIDAQEBAQEFAQEBAgEGBBQBAQEBA?=
- =?us-ascii?q?QEBAWiFUA2GRQECAzo/EAsSBi48DQ4GE4JxAYMHD6w4dYE0gQGDPwGEZoE+B?=
- =?us-ascii?q?iKBFwGNSgInHIFJQoQ1PoF9ghyDdYIrBIJABQGBDwshBUp7OyEFlBCKW5sVg?=
- =?us-ascii?q?RSDFYEmiD2TCjIQgz2hJJcliVqSUTWEOQIEBgUCFoFqIoFbMxoIGxWCcAEBM?=
- =?us-ascii?q?xI9GQ6OOIhrhWUhAzEBAQEIKwIGCgEBAwmKTIJFAQE?=
-IronPort-HdrOrdr: A9a23:qnFkZKhYGydZwDdpyOQwM/DDCnBQXmcji2hD6mlwRA09T+Wzna
- mV88gz/xnylToXRTUMmcqYPrOBXHPb8vdOkOwsFJ2lWxTrv3btEZF64eLZsl/dMgD36+I178
- 1dWodkDtmYNzVHpOb8pDK1CtMxhOSAmZrY4dv261dIYUVUZ7p77wF/YzzrcXFeYAVdH5I2GN
- 69y6N8xgaIQngcYsSlCnRtZYGqzOHjr57obQULABQq8mC17Q+A0qLwEBSTw34lPQ9n/LFKyw
- T4uj28wLm/uPemzRKZ8Gnf4/1t6b3c4+oGItCQgc4ILTipsCKUXcBKXr2Puy1dmpDJ1GoX
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="5.82,203,1613433600"; 
-   d="scan'208";a="666219298"
-Received: from alln-core-3.cisco.com ([173.36.13.136])
-  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 07 Apr 2021 18:08:41 +0000
-Received: from zorba ([10.24.2.1])
-        by alln-core-3.cisco.com (8.15.2/8.15.2) with ESMTPS id 137I8dI2017172
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 7 Apr 2021 18:08:40 GMT
-Date:   Wed, 7 Apr 2021 11:08:39 -0700
-From:   Daniel Walker <danielwa@cisco.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@us.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: cert update procedure with insert-sys-cert
-Message-ID: <20210407180839.GB3981976@zorba>
-References: <20210407162534.GA3981976@zorba>
- <ef2f5a5ac6396a0c29a5680cff0388b0c42a0400.camel@linux.ibm.com>
+        Wed, 7 Apr 2021 15:28:47 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FFvQP56Zsz67nFq;
+        Thu,  8 Apr 2021 03:21:33 +0800 (CST)
+Received: from fraphisprd00473.huawei.com (7.182.8.141) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Wed, 7 Apr 2021 21:28:33 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [RESEND][PATCH v5 09/12] evm: Allow setxattr() and setattr() for unmodified metadata
+Date:   Wed, 7 Apr 2021 21:28:18 +0200
+Message-ID: <20210407192818.9387-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <202104080245.Cn25aFdH-lkp@intel.com>
+References: <202104080245.Cn25aFdH-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ef2f5a5ac6396a0c29a5680cff0388b0c42a0400.camel@linux.ibm.com>
-X-Outbound-SMTP-Client: 10.24.2.1, [10.24.2.1]
-X-Outbound-Node: alln-core-3.cisco.com
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [7.182.8.141]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 07, 2021 at 12:51:13PM -0400, Mimi Zohar wrote:
-> [Cc'ing Nayna Jain, George Wilson]
-> 
-> Hi Daniel,
-> 
-> On Wed, 2021-04-07 at 09:32 -0700, Daniel Walker wrote:
-> > Hi,
-> > 
-> > I was wondering about the practical use of this insert-sys-cert. How is the compressed
-> > kernel re-made ? You submitted this change,
-> > 
-> > https://patchwork.kernel.org/project/linux-security-module/patch/20180502230811.2751-4-mkayaalp@linux.vnet.ibm.com/
-> > 
-> > for re-assemble a bzImage for x86. Is it the case that the bzImage can not be
-> > re-assembled by using the make system ?
-> > 
-> > Cisco is similar to IBM in that we internally distribute a binary SDK with a
-> > kernel. The actual build tree is only saved in a partial form.
-> > 
-> > We currently use the above commit to insert a certificate for x86, however, I've
-> > found that other architecture are more complex than x86. For example , powerpc
-> > images maybe not have ELF headers.
-> > 
-> > I'm wondering what values does the insert-sys-cert have without the bzImage
-> > commit ? Am I using it wrong, and there's a way to use the make system to
-> > reassemble ?
-> 
-> On powerpc, the kernel image is signed with an appended signature,
-> using the same format as kernel modules.  scripts/sign-file.c can be
-> used to append the kernel image signature.  Verifying the kernel image
-> is limited on powerpc to kexec_file_load syscall.
-> 
-> The CONFIG_IMA_ARCH_POLICY loads architecture specific rules.  With
-> secure boot enabled on powerpc, it loads a policy requiring the kernel
-> image to be signed.
+With the patch to allow xattr/attr operations if a portable signature
+verification fails, cp and tar can copy all xattrs/attrs so that at the
+end of the process verification succeeds.
 
-There is no way to insert new certificates with the insert-sys-cert tool ? Or
-maybe I'm not understanding your comments.
+However, it might happen that the xattrs/attrs are already set to the
+correct value (taken at signing time) and signature verification succeeds
+before the copy has completed. For example, an archive might contains files
+owned by root and the archive is extracted by root.
 
-Daniel
+Then, since portable signatures are immutable, all subsequent operations
+fail (e.g. fchown()), even if the operation is legitimate (does not alter
+the current value).
+
+This patch avoids this problem by reporting successful operation to user
+space when that operation does not alter the current value of xattrs/attrs.
+
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
+---
+ security/integrity/evm/evm_main.c | 108 ++++++++++++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 74f9f3a2ae53..8e80af97021e 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -18,6 +18,7 @@
+ #include <linux/integrity.h>
+ #include <linux/evm.h>
+ #include <linux/magic.h>
++#include <linux/posix_acl_xattr.h>
+ 
+ #include <crypto/hash.h>
+ #include <crypto/hash_info.h>
+@@ -328,6 +329,90 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+ 	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+ }
+ 
++/*
++ * evm_xattr_acl_change - check if passed ACL changes the inode mode
++ * @mnt_userns: user namespace of the idmapped mount
++ * @dentry: pointer to the affected dentry
++ * @xattr_name: requested xattr
++ * @xattr_value: requested xattr value
++ * @xattr_value_len: requested xattr value length
++ *
++ * Check if passed ACL changes the inode mode, which is protected by EVM.
++ *
++ * Returns 1 if passed ACL causes inode mode change, 0 otherwise.
++ */
++static int evm_xattr_acl_change(struct user_namespace *mnt_userns,
++				struct dentry *dentry, const char *xattr_name,
++				const void *xattr_value, size_t xattr_value_len)
++{
++#ifdef CONFIG_FS_POSIX_ACL
++	umode_t mode;
++	struct posix_acl *acl = NULL, *acl_res;
++	struct inode *inode = d_backing_inode(dentry);
++	int rc;
++
++	/* user_ns is not relevant here, ACL_USER/ACL_GROUP don't have impact
++	 * on the inode mode (see posix_acl_equiv_mode()).
++	 */
++	acl = posix_acl_from_xattr(&init_user_ns, xattr_value, xattr_value_len);
++	if (IS_ERR_OR_NULL(acl))
++		return 1;
++
++	acl_res = acl;
++	/* Passing mnt_userns is necessary to correctly determine the GID in
++	 * an idmapped mount, as the GID is used to clear the setgid bit in
++	 * the inode mode.
++	 */
++	rc = posix_acl_update_mode(mnt_userns, inode, &mode, &acl_res);
++
++	posix_acl_release(acl);
++
++	if (rc)
++		return 1;
++
++	if (inode->i_mode != mode)
++		return 1;
++#endif
++	return 0;
++}
++
++/*
++ * evm_xattr_change - check if passed xattr value differs from current value
++ * @mnt_userns: user namespace of the idmapped mount
++ * @dentry: pointer to the affected dentry
++ * @xattr_name: requested xattr
++ * @xattr_value: requested xattr value
++ * @xattr_value_len: requested xattr value length
++ *
++ * Check if passed xattr value differs from current value.
++ *
++ * Returns 1 if passed xattr value differs from current value, 0 otherwise.
++ */
++static int evm_xattr_change(struct user_namespace *mnt_userns,
++			    struct dentry *dentry, const char *xattr_name,
++			    const void *xattr_value, size_t xattr_value_len)
++{
++	char *xattr_data = NULL;
++	int rc = 0;
++
++	if (posix_xattr_acl(xattr_name))
++		return evm_xattr_acl_change(mnt_userns, dentry, xattr_name,
++					    xattr_value, xattr_value_len);
++
++	rc = vfs_getxattr_alloc(&init_user_ns, dentry, xattr_name, &xattr_data,
++				0, GFP_NOFS);
++	if (rc < 0)
++		return 1;
++
++	if (rc == xattr_value_len)
++		rc = !!memcmp(xattr_value, xattr_data, rc);
++	else
++		rc = 1;
++
++	kfree(xattr_data);
++	return rc;
++}
++
+ /*
+  * evm_protect_xattr - protect the EVM extended attribute
+  *
+@@ -389,6 +474,11 @@ static int evm_protect_xattr(struct user_namespace *mnt_userns,
+ 	if (evm_status == INTEGRITY_FAIL_IMMUTABLE)
+ 		return 0;
+ 
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_xattr_change(mnt_userns, dentry, xattr_name, xattr_value,
++			      xattr_value_len))
++		return 0;
++
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -532,6 +622,19 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+ }
+ 
++static int evm_attr_change(struct dentry *dentry, struct iattr *attr)
++{
++	struct inode *inode = d_backing_inode(dentry);
++	unsigned int ia_valid = attr->ia_valid;
++
++	if ((!(ia_valid & ATTR_UID) || uid_eq(attr->ia_uid, inode->i_uid)) &&
++	    (!(ia_valid & ATTR_GID) || gid_eq(attr->ia_gid, inode->i_gid)) &&
++	    (!(ia_valid & ATTR_MODE) || attr->ia_mode == inode->i_mode))
++		return 0;
++
++	return 1;
++}
++
+ /**
+  * evm_inode_setattr - prevent updating an invalid EVM extended attribute
+  * @dentry: pointer to the affected dentry
+@@ -562,6 +665,11 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 	    (evm_status == INTEGRITY_FAIL_IMMUTABLE) ||
+ 	    (evm_ignore_error_safe(evm_status)))
+ 		return 0;
++
++	if (evm_status == INTEGRITY_PASS_IMMUTABLE &&
++	    !evm_attr_change(dentry, attr))
++		return 0;
++
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+ 			    integrity_status_msg[evm_status], -EPERM, 0);
+-- 
+2.26.2
+
