@@ -2,126 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07ED1C43611
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Apr 2021 18:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE4C433ED
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 01:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C88E7613B3
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Apr 2021 18:54:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 574E2613B7
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 01:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237335AbhDFSyw (ORCPT
+        id S242044AbhDGBpb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Apr 2021 14:54:52 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3918 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240728AbhDFSx6 (ORCPT
+        Tue, 6 Apr 2021 21:45:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235801AbhDGBpa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Apr 2021 14:53:58 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 136IYixS189899;
-        Tue, 6 Apr 2021 14:53:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=W0JexB3pGbSVM6Gi/s0lWDphouOz+hg8nBrceVRz5NA=;
- b=S33qW43fvNljiKw3SmiaqMnoqyZXqH2kJy9US0QGfPm1Ji0MImIN31/OfgMj9B+wgEUZ
- Usmbt/ZwCZWZ7/qN6pTHjDxQTXlMQe4vLmIzRQlxHUYK+ty38wP4IKMl+VUN6Edp/KGY
- +E+zNl6w/iySxEAJ1oA6LjS6P+JRLGFcOqy2VkyB6eb3iRS0eahuqyrtlMivbUiytaqi
- 22IZSTzzdAdryH4pj/gOJNtQX5oUSXreVslI1D7NSg0fTnWm0ho3v963PhPvmRkjerI3
- SXxcyI06GeP2l/TPVQxBAzN4TDfEkrKUzw3Q0pQPqvgDEwLYJSDEErkRrSkUZRNP4dp5 eA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37rvmesgfk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Apr 2021 14:53:48 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 136IZoZn000764;
-        Tue, 6 Apr 2021 14:53:47 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37rvmesgfb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Apr 2021 14:53:47 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 136IbCCn009177;
-        Tue, 6 Apr 2021 18:53:47 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma01dal.us.ibm.com with ESMTP id 37rvs1085f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 06 Apr 2021 18:53:47 +0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 136IrjWd23134614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 6 Apr 2021 18:53:45 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 510BA6A051;
-        Tue,  6 Apr 2021 18:53:45 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C135B6A057;
-        Tue,  6 Apr 2021 18:53:44 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.47.158.152])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  6 Apr 2021 18:53:44 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     keyrings@vger.kernel.org, dhowells@redhat.com, zohar@linux.ibm.com,
-        jarkko@kernel.org
-Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH 1/2] certs: Trigger recreation of module signing key if it's not an RSA key
-Date:   Tue,  6 Apr 2021 14:53:39 -0400
-Message-Id: <20210406185340.1079403-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210406185340.1079403-1-stefanb@linux.ibm.com>
-References: <20210406185340.1079403-1-stefanb@linux.ibm.com>
+        Tue, 6 Apr 2021 21:45:30 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38F07C06174A;
+        Tue,  6 Apr 2021 18:45:22 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id c17so11757042pfn.6;
+        Tue, 06 Apr 2021 18:45:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CKBesTcPJy3Nw7YSl4x2NMzjY0EW4bPgGn6LOTRbyPk=;
+        b=HYJEIaHAiegMN+TIpdTxePgMwrqnwQHP8kpKS+i5jXK80fhXQjgS3RvHMJZEbnJbH4
+         ECU+kec1GaCnvfWAX4t0DpxfFaPD3IZXcCSNYPf2hcq473Ihq0fs2WdThHRQ17A6xo38
+         dU4L7fhAupQvAp+LiZC9wlsUmaxzs5HJ0yJxavg4RDtT/22UaYyRQ4nSMzp45Zf7NtJ4
+         sqU1vuQTDHDUUNj5kvK6vwRu/27xwIF4w+DNHAQtKTKWVEhvXJNCBL19T4LAormzb59S
+         VlzgoXdtj3DMg7ZUY6g7ZovpqJ9P0abU4f5kUrUOs97ORVEYKOXR1IjsNqPBFGivv9QG
+         swFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=CKBesTcPJy3Nw7YSl4x2NMzjY0EW4bPgGn6LOTRbyPk=;
+        b=SzcD/w4z16tkBDgfajg7OxQHj87EARJo/O1bOWq8h4qv9FZpn6O63PlwtlfV1I1ZXO
+         fMp/qeuqPHDRhcrMLSOnDEBDISoOyXkbdwgSS3x1L7lA21S8ZfFE5PtjmuFCeO1NbgEK
+         Ox1OjvKrsOseFF1AqGjIP67a2bflhl1L6NuARGPCKMKcQe67cmi6skJ4vm9fYDGi41Or
+         7tyQ00n5PCjyGXW+S/irKcJnCdaaDCQGWyfYfnNuZVJuqFe1R1uBgvwEfNG0bm9E2jp/
+         XAgEsCkMiwfMzqJtZa90u8te1bXgAiN2SYXhs9ZaV9Q4A9bbRU+t+FsP5UvQKPTXjzps
+         6N6g==
+X-Gm-Message-State: AOAM5307bBu0aDYSeUG5l/fmiqoQsjfAY9nuaaFXIIu5YgvKJB9pUSf7
+        tJ2HsMBdjJ1huDA+zF6pMlI=
+X-Google-Smtp-Source: ABdhPJyrKngUjFqVVmGTbyoTS+gNL4pRLPk2KHS7900U5GDnupo5TgUowSauLbtdx9H3pOyTojXe3g==
+X-Received: by 2002:a63:e242:: with SMTP id y2mr1013789pgj.298.1617759921737;
+        Tue, 06 Apr 2021 18:45:21 -0700 (PDT)
+Received: from localhost.localdomain ([103.114.158.1])
+        by smtp.gmail.com with ESMTPSA id y8sm19821701pfp.140.2021.04.06.18.45.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Apr 2021 18:45:21 -0700 (PDT)
+From:   Jiele Zhao <unclexiaole@gmail.com>
+To:     zohar@linux.ibm.com
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Jiele Zhao <unclexiaole@gmail.com>
+Subject: [PATCH v2] integrity: Add declarations to init_once void arguments.
+Date:   Wed,  7 Apr 2021 01:44:38 +0000
+Message-Id: <20210407014438.39516-1-unclexiaole@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: pGnen7d5n5YNdc3RHnezdeAmKb6PHfvx
-X-Proofpoint-ORIG-GUID: t_y6zRtVxIKoTvYf5CJOfPR3MOMnHgSY
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.369,18.0.761
- definitions=2021-04-06_06:2021-04-06,2021-04-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 impostorscore=0 mlxscore=0 adultscore=0
- phishscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- mlxlogscore=999 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104060000 definitions=main-2104060127
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Make sure that the kernel module signing key is an RSA key and
-remove it otherwise so that it gets recreated.
+init_once is a callback to kmem_cache_create. The parameter
+type of this function is void *, so it's better to give a
+explicit cast here.
 
-Prevent module loading failures if a developer chose an ECDSA key for
-module signing with a 5.12 kernel and then falls back to compiling an
-older kernel. However, this will also only work if falling back to
-kernels that have actually been patched with this kernel, such as the
-stable trees.
-
-Fixes: cfc411e7fff3 ("Move certificate handling to its own directory")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
 ---
- certs/Makefile | 5 +++++
- 1 file changed, 5 insertions(+)
+ security/integrity/iint.c         | 2 +-
+ security/integrity/ima/ima_main.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/certs/Makefile b/certs/Makefile
-index e3185c57fbd8..f64bc89ccbf1 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -59,6 +59,11 @@ silent_redirect_openssl = 2>/dev/null
- # external private key, because 'make randconfig' might enable such a
- # boolean option and we unfortunately can't make it depend on !RANDCONFIG.
- ifeq ($(CONFIG_MODULE_SIG_KEY),"certs/signing_key.pem")
-+
-+X509TEXT=$(shell openssl x509 -in $(CONFIG_MODULE_SIG_KEY) -text)
-+
-+$(if $(findstring rsaEncryption,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+
- $(obj)/signing_key.pem: $(obj)/x509.genkey
- 	@$(kecho) "###"
- 	@$(kecho) "### Now generating an X.509 key pair to be used for signing modules."
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index 0ba01847e836..fca8a9409e4a 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -160,7 +160,7 @@ void integrity_inode_free(struct inode *inode)
+ 
+ static void init_once(void *foo)
+ {
+-	struct integrity_iint_cache *iint = foo;
++	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
+ 
+ 	memset(iint, 0, sizeof(*iint));
+ 	iint->ima_file_status = INTEGRITY_UNKNOWN;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9ef748ea829f..03bef720ab44 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -482,7 +482,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
+ }
+ 
+ /**
+- * ima_path_check - based on policy, collect/store measurement.
++ * ima_file_check - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured
+  * @mask: contains MAY_READ, MAY_WRITE, MAY_EXEC or MAY_APPEND
+  *
 -- 
-2.29.2
+2.25.1
 
