@@ -2,112 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE4C433ED
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 01:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0258C43460
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 10:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 574E2613B7
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 01:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1E326139C
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Apr 2021 10:53:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242044AbhDGBpb (ORCPT
+        id S234000AbhDGKxS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Apr 2021 21:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235801AbhDGBpa (ORCPT
+        Wed, 7 Apr 2021 06:53:18 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2784 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1351592AbhDGKxP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Apr 2021 21:45:30 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38F07C06174A;
-        Tue,  6 Apr 2021 18:45:22 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id c17so11757042pfn.6;
-        Tue, 06 Apr 2021 18:45:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CKBesTcPJy3Nw7YSl4x2NMzjY0EW4bPgGn6LOTRbyPk=;
-        b=HYJEIaHAiegMN+TIpdTxePgMwrqnwQHP8kpKS+i5jXK80fhXQjgS3RvHMJZEbnJbH4
-         ECU+kec1GaCnvfWAX4t0DpxfFaPD3IZXcCSNYPf2hcq473Ihq0fs2WdThHRQ17A6xo38
-         dU4L7fhAupQvAp+LiZC9wlsUmaxzs5HJ0yJxavg4RDtT/22UaYyRQ4nSMzp45Zf7NtJ4
-         sqU1vuQTDHDUUNj5kvK6vwRu/27xwIF4w+DNHAQtKTKWVEhvXJNCBL19T4LAormzb59S
-         VlzgoXdtj3DMg7ZUY6g7ZovpqJ9P0abU4f5kUrUOs97ORVEYKOXR1IjsNqPBFGivv9QG
-         swFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=CKBesTcPJy3Nw7YSl4x2NMzjY0EW4bPgGn6LOTRbyPk=;
-        b=SzcD/w4z16tkBDgfajg7OxQHj87EARJo/O1bOWq8h4qv9FZpn6O63PlwtlfV1I1ZXO
-         fMp/qeuqPHDRhcrMLSOnDEBDISoOyXkbdwgSS3x1L7lA21S8ZfFE5PtjmuFCeO1NbgEK
-         Ox1OjvKrsOseFF1AqGjIP67a2bflhl1L6NuARGPCKMKcQe67cmi6skJ4vm9fYDGi41Or
-         7tyQ00n5PCjyGXW+S/irKcJnCdaaDCQGWyfYfnNuZVJuqFe1R1uBgvwEfNG0bm9E2jp/
-         XAgEsCkMiwfMzqJtZa90u8te1bXgAiN2SYXhs9ZaV9Q4A9bbRU+t+FsP5UvQKPTXjzps
-         6N6g==
-X-Gm-Message-State: AOAM5307bBu0aDYSeUG5l/fmiqoQsjfAY9nuaaFXIIu5YgvKJB9pUSf7
-        tJ2HsMBdjJ1huDA+zF6pMlI=
-X-Google-Smtp-Source: ABdhPJyrKngUjFqVVmGTbyoTS+gNL4pRLPk2KHS7900U5GDnupo5TgUowSauLbtdx9H3pOyTojXe3g==
-X-Received: by 2002:a63:e242:: with SMTP id y2mr1013789pgj.298.1617759921737;
-        Tue, 06 Apr 2021 18:45:21 -0700 (PDT)
-Received: from localhost.localdomain ([103.114.158.1])
-        by smtp.gmail.com with ESMTPSA id y8sm19821701pfp.140.2021.04.06.18.45.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 18:45:21 -0700 (PDT)
-From:   Jiele Zhao <unclexiaole@gmail.com>
-To:     zohar@linux.ibm.com
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        Jiele Zhao <unclexiaole@gmail.com>
-Subject: [PATCH v2] integrity: Add declarations to init_once void arguments.
-Date:   Wed,  7 Apr 2021 01:44:38 +0000
-Message-Id: <20210407014438.39516-1-unclexiaole@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 7 Apr 2021 06:53:15 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FFh1p1dL2z686qw;
+        Wed,  7 Apr 2021 18:47:58 +0800 (CST)
+Received: from fraphisprd00473.huawei.com (7.182.8.141) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2106.2; Wed, 7 Apr 2021 12:53:03 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v5 00/12] evm: Improve usability of portable signatures
+Date:   Wed, 7 Apr 2021 12:52:40 +0200
+Message-ID: <20210407105252.30721-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [7.182.8.141]
+X-ClientProxiedBy: lhreml753-chm.china.huawei.com (10.201.108.203) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-init_once is a callback to kmem_cache_create. The parameter
-type of this function is void *, so it's better to give a
-explicit cast here.
+EVM portable signatures are particularly suitable for the protection of
+metadata of immutable files where metadata is signed by a software vendor.
+They can be used for example in conjunction with an IMA policy that
+appraises only executed and memory mapped files.
 
-Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
----
- security/integrity/iint.c         | 2 +-
- security/integrity/ima/ima_main.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+However, some usability issues are still unsolved, especially when EVM is
+used without loading an HMAC key. This patch set attempts to fix the open
+issues.
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 0ba01847e836..fca8a9409e4a 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -160,7 +160,7 @@ void integrity_inode_free(struct inode *inode)
- 
- static void init_once(void *foo)
- {
--	struct integrity_iint_cache *iint = foo;
-+	struct integrity_iint_cache *iint = (struct integrity_iint_cache *) foo;
- 
- 	memset(iint, 0, sizeof(*iint));
- 	iint->ima_file_status = INTEGRITY_UNKNOWN;
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 9ef748ea829f..03bef720ab44 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -482,7 +482,7 @@ int ima_bprm_check(struct linux_binprm *bprm)
- }
- 
- /**
-- * ima_path_check - based on policy, collect/store measurement.
-+ * ima_file_check - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured
-  * @mask: contains MAY_READ, MAY_WRITE, MAY_EXEC or MAY_APPEND
-  *
+Patch 1 allows EVM to be used without loading an HMAC key. Patch 2 avoids
+appraisal verification of public keys (they are already verified by the key
+subsystem).
+
+Patches 3-5 allow metadata verification to be turned off when no HMAC key
+is loaded and to use this mode in a safe way (by ensuring that IMA
+revalidates metadata when there is a change).
+
+Patches 6-9 make portable signatures more usable if metadata verification
+is not turned off, by ignoring the INTEGRITY_NOLABEL and INTEGRITY_NOXATTS
+errors when possible, by accepting any metadata modification until
+signature verification succeeds (useful when xattrs/attrs are copied
+sequentially from a source) and by allowing operations that don't change
+metadata.
+
+Patch 10 makes it possible to use portable signatures when the IMA policy
+requires file signatures and patch 11 shows portable signatures in the
+measurement list when the ima-sig template is selected.
+
+Lastly, patch 12 avoids undesired removal of security.ima when a file is
+not selected by the IMA policy.
+
+Changelog
+
+v4:
+- add patch to pass mnt_userns to EVM inode set/remove xattr hooks
+  (suggested by Christian Brauner)
+- pass mnt_userns to posix_acl_update_mode()
+- use IS_ERR_OR_NULL() in evm_xattr_acl_change() (suggested by Mimi)
+
+v3:
+- introduce evm_ignore_error_safe() to correctly ignore INTEGRITY_NOLABEL
+  and INTEGRITY_NOXATTRS errors
+- fix an error in evm_xattr_acl_change()
+- replace #ifndef with !IS_ENABLED() in integrity_load_keys()
+- reintroduce ima_inode_removexattr()
+- adapt patches to apply on top of the idmapped mounts patch set
+
+v2:
+- replace EVM_RESET_STATUS flag with evm_status_revalidate()
+- introduce IMA post hooks ima_inode_post_setxattr() and
+  ima_inode_post_removexattr()
+- remove ima_inode_removexattr()
+- ignore INTEGRITY_NOLABEL error if the HMAC key is not loaded
+
+v1:
+- introduce EVM_RESET_STATUS integrity flag instead of clearing IMA flag
+- introduce new template field evmsig
+- add description of evm_xattr_acl_change() and evm_xattr_change()
+
+Roberto Sassu (12):
+  evm: Execute evm_inode_init_security() only when an HMAC key is loaded
+  evm: Load EVM key in ima_load_x509() to avoid appraisal
+  evm: Refuse EVM_ALLOW_METADATA_WRITES only if an HMAC key is loaded
+  ima: Move ima_reset_appraise_flags() call to post hooks
+  evm: Introduce evm_status_revalidate()
+  evm: Ignore INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if conditions are
+    safe
+  evm: Allow xattr/attr operations for portable signatures
+  evm: Pass user namespace to set/remove xattr hooks
+  evm: Allow setxattr() and setattr() for unmodified metadata
+  ima: Allow imasig requirement to be satisfied by EVM portable
+    signatures
+  ima: Introduce template field evmsig and write to field sig as
+    fallback
+  ima: Don't remove security.ima if file must not be appraised
+
+ Documentation/ABI/testing/evm             |   5 +-
+ Documentation/security/IMA-templates.rst  |   4 +-
+ fs/xattr.c                                |   2 +
+ include/linux/evm.h                       |  18 +-
+ include/linux/ima.h                       |  18 ++
+ include/linux/integrity.h                 |   1 +
+ security/integrity/evm/evm_main.c         | 216 ++++++++++++++++++++--
+ security/integrity/evm/evm_secfs.c        |   4 +-
+ security/integrity/iint.c                 |   4 +-
+ security/integrity/ima/ima_appraise.c     |  55 ++++--
+ security/integrity/ima/ima_init.c         |   4 +
+ security/integrity/ima/ima_template.c     |   2 +
+ security/integrity/ima/ima_template_lib.c |  33 +++-
+ security/integrity/ima/ima_template_lib.h |   2 +
+ security/security.c                       |   5 +-
+ 15 files changed, 329 insertions(+), 44 deletions(-)
+
 -- 
-2.25.1
+2.26.2
 
