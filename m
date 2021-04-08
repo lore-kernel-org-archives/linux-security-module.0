@@ -2,87 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A069C43462
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 20:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3FBC43461
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 21:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71AD161175
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 20:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28AA9610D1
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 21:35:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232341AbhDHUcZ (ORCPT
+        id S232605AbhDHVfW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Apr 2021 16:32:25 -0400
-Received: from namei.org ([65.99.196.166]:37518 "EHLO mail.namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232091AbhDHUcY (ORCPT
+        Thu, 8 Apr 2021 17:35:22 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40432 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232158AbhDHVfW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Apr 2021 16:32:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 0EC185A6;
-        Thu,  8 Apr 2021 20:28:45 +0000 (UTC)
-Date:   Fri, 9 Apr 2021 06:28:44 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-cc:     Jann Horn <jannh@google.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
-Subject: Re: [PATCH v33 07/12] landlock: Support filesystem access-control
-In-Reply-To: <20210407160726.542794-8-mic@digikod.net>
-Message-ID: <5f4dfa1-f9ac-f31f-3237-dcf976cabbfc@namei.org>
-References: <20210407160726.542794-1-mic@digikod.net> <20210407160726.542794-8-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="1665246916-304441139-1617913725=:4030621"
+        Thu, 8 Apr 2021 17:35:22 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 138LWk2v127518;
+        Thu, 8 Apr 2021 17:35:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=NlTWlP7JzJrLFbMqZA78IcCmymtDtKnIvdZilXk8Ryc=;
+ b=XnqvZB35vbJ6qe2sJEpPmBKs+1vmRy43bphUFWgbsFo1gXfu1DSCPlMZat4/1PU9IIlz
+ YDSYI2oJvnf22ywilcWK4rplP1NGwy09yTKXWBsjamjEr8ZHZ/j2JVYHQ8CEFQ2Gfizw
+ PM5P5362bWB4MmHkRvPw9+l5RwRx7RCvu+SQIYYKSWvJFYugAHWHdCigEWK1p7H3t4WL
+ HBSuBA6EP68hxAducyyrzbY6PtJ4pEUlBbHIYIFyQ5u2e8FtW+8mAhW9WBjEka5Hr8ku
+ +n4lCTlZRdY/fIXmI16imXlV+0j7jMnYuBZlyY9Q4wI8TUEeev/Qq1rHBvcBboBnam42 Hg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37rvy8jawm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Apr 2021 17:35:04 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 138LWpEP128048;
+        Thu, 8 Apr 2021 17:35:03 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 37rvy8jav5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Apr 2021 17:35:03 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 138LXUus001983;
+        Thu, 8 Apr 2021 21:34:59 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06ams.nl.ibm.com with ESMTP id 37rvbw9wu6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 08 Apr 2021 21:34:59 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 138LYunM43319658
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 8 Apr 2021 21:34:56 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AED2352050;
+        Thu,  8 Apr 2021 21:34:56 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.65.12])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 7F10D52052;
+        Thu,  8 Apr 2021 21:34:54 +0000 (GMT)
+Message-ID: <ff1e9e427e1011976fcf122fa93c2b35d314f89b.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 1/2] certs: Trigger creation of RSA module signing
+ key if it's not an RSA key
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>, keyrings@vger.kernel.org,
+        dhowells@redhat.com, jarkko@kernel.org,
+        Herbert Xu <herbert@gondor.hengli.com.au>
+Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 08 Apr 2021 17:34:53 -0400
+In-Reply-To: <b04939a3-c9e5-faf2-ec7b-27127b2ab41d@linux.ibm.com>
+References: <20210408152403.1189121-1-stefanb@linux.ibm.com>
+         <20210408152403.1189121-2-stefanb@linux.ibm.com>
+         <a5f7f2b44e7d4de94b761324139024a31a1cf209.camel@linux.ibm.com>
+         <b04939a3-c9e5-faf2-ec7b-27127b2ab41d@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tKkizb_yLtcjx-4zjhtc7aA3znySB9i7
+X-Proofpoint-ORIG-GUID: s9QxXQQjKkxuJJdVB2nsSqIQsbBgVqJd
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-08_07:2021-04-08,2021-04-08 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ lowpriorityscore=0 clxscore=1011 adultscore=0 phishscore=0 spamscore=0
+ priorityscore=1501 mlxscore=0 impostorscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104080143
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Thu, 2021-04-08 at 15:19 -0400, Stefan Berger wrote:
+> On 4/8/21 1:15 PM, Mimi Zohar wrote:
+> > On Thu, 2021-04-08 at 11:24 -0400, Stefan Berger wrote:
+> >> Address a kbuild issue where a developer created an ECDSA key for signing
+> >> kernel modules and then builds an older version of the kernel, when bi-
+> >> secting the kernel for example, that does not support ECDSA keys.
+> >>
+> >> Trigger the creation of an RSA module signing key if it is not an RSA key.
+> >>
+> >> Fixes: cfc411e7fff3 ("Move certificate handling to its own directory")
+> >> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Thanks, Stefan.
+> >
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> >
+> 
+> Via which tree will this go upstream? keyrings?
 
---1665246916-304441139-1617913725=:4030621
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+This patch set originally had a dependency on Nayna's v1 & v2 "ima:
+kernel build support for loading the kernel module signing key" patch
+set and on Herbert's "ecc" branch.  With v3, the dependency on Nayna's
+patch set is gone.
 
-On Wed, 7 Apr 2021, Mickaël Salaün wrote:
+Jarkko, David, Herbert did you want to pick up this patch set or would
+you prefer that I did?  Either way is fine.
 
-> Changes since v31:
-> * Gracefully forbid reparenting by returning EXDEV in hook_path_link()
->   and hook_path_rename() (hinted by Al Viro).
-> * Replace excessive WARN_ON_ONCE() with unlikely() in
->   hook_path_rename() and use ENOENT instead of EACCES.
-> * Improve comment in unmask_layers() (pointed out by Al Viro).  Also use
->   filesystem "topology" instead of "layout", which seems more
->   appropriate.
-> * Add access(2) to the documented list of unsupported syscall families.
-> * Replace "option" with "flag" in hook_sb_mount() comment.
+thanks,
 
-Good to see these changes.
+Mimi
 
-Al: any further comments now on this patch?
-
--- 
-James Morris
-<jmorris@namei.org>
-
---1665246916-304441139-1617913725=:4030621--
