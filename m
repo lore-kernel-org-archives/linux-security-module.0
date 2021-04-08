@@ -2,123 +2,224 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF47C43611
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 15:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F50C433B4
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 16:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C641361151
-	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 15:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B52D1610CF
+	for <linux-security-module@archiver.kernel.org>; Thu,  8 Apr 2021 16:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232192AbhDHPYW (ORCPT
+        id S232236AbhDHQSW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 8 Apr 2021 11:24:22 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11128 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231955AbhDHPYV (ORCPT
+        Thu, 8 Apr 2021 12:18:22 -0400
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com ([66.163.186.211]:44089
+        "EHLO sonic310-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232210AbhDHQSV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 8 Apr 2021 11:24:21 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 138FALZI160012;
-        Thu, 8 Apr 2021 11:24:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=13VxI2u/uzl1rsCou/jlybKaB3Fcj4Hk8iNuw0hp8ss=;
- b=OkbCeoVcTJ1F9yIY5WpqQowQcgWj4HvfA+B/HdA0ED0VFCk9AB/biKkQyxpQQk0OME2Q
- n3c2EUoyauIgFhszq1mY7OxtOxS31lNf6b9BaUHEjkkTyiyFQifcHavkU3IFVKmE/qIr
- 6l6uU7zBp1836XuXbLUHGMwz5fvShYW9mPNs6f8DBVQgBUSQetQbT2487pxVdqIiMBB2
- PCOVxf62KaFRroyMX78QmiRHMQkZHzTVGiKF2+pBcJ+NHMWkTknt0f9yVA3rFVWqvqI7
- d+ygYk2pPEHF/3/7UeW55vc2mOYf14Dl2TtTCvvLawgPxrT82kHTvUnkjBq6J84afvR+ BA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37rwf1krhj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Apr 2021 11:24:08 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 138FAPx2160433;
-        Thu, 8 Apr 2021 11:24:07 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 37rwf1krh4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Apr 2021 11:24:07 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 138FMdOO026221;
-        Thu, 8 Apr 2021 15:24:07 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma03dal.us.ibm.com with ESMTP id 37rvc2sd11-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 08 Apr 2021 15:24:07 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 138FO6eO24707440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 8 Apr 2021 15:24:06 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5C7F5112067;
-        Thu,  8 Apr 2021 15:24:06 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 44DD6112065;
-        Thu,  8 Apr 2021 15:24:06 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.47.158.152])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu,  8 Apr 2021 15:24:06 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     keyrings@vger.kernel.org, dhowells@redhat.com, zohar@linux.ibm.com,
-        jarkko@kernel.org
-Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v2 1/2] certs: Trigger creation of RSA module signing key if it's not an RSA key
-Date:   Thu,  8 Apr 2021 11:24:02 -0400
-Message-Id: <20210408152403.1189121-2-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210408152403.1189121-1-stefanb@linux.ibm.com>
-References: <20210408152403.1189121-1-stefanb@linux.ibm.com>
+        Thu, 8 Apr 2021 12:18:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617898690; bh=enZo/Yda2EywT1nykAt0YKvcJZOkW+jSi0wjxRqh7jU=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=KIF9S5sIDj70Ygz5d0hfL+Ex4/Syb5WrH2WmiU5RXv7NadiOdsx4nlNkmD1hL8rdr3SYy7gaY7whdTouX6o9O1rIHVqrVxSBOrzUXWSUBSpLtFfiERJSfvruR2OfxKjxUWwfeB9NftHSGr+Nsuj5XXS3EDCPWzRmfs33kMbeSYa3zdmy132ETZd5kS3OBrc6okS2czx4c5KKT7Zxi+Um7q2PrKvlF9YA9Oa4kUYkToCE/LR1uQks9IOOBLNxBFkokePppckZmdbyZlWfTyuqkDHi7E7ipTxlSq30FbucNAiTMnyDF3FKZ7v0upowsm2BpTJHzQX+F0Sn3CMVWjgkMw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617898690; bh=dORPfVfj3AyLqwbE4g200G2f6uLhT+gIDwy4A00IUik=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=O/tTaUTnlD2ldEybgMPa0+OSUuKzsFfevyXhvcHq6q+EhDn5V27nOZxlDjSw4N5vvKzeUdWLO6SIWDhWYk0zI830TvvxOdNwPdFToAxK3LMwoXTLpXJxRHUSy2BvqJPlBFqyzbMqZ1nYwbH9D5X992OWb+1zWIq0CWfm9YL92oMkACXounYtWh6HfSuPyeCb0vqyz1zxpueyBZlw98KrlrUaYp0SiFeqWEDTqonh7MXsHbyIunZ14J6WFxMuHDgVzcT64/VgXbYAjOBtd9+XF62U25J0jWfcQitd+///Mc5wP1+IG6znUsaGLuJhDJCU5GUyrYVIe9/+ClMfl+2AkQ==
+X-YMail-OSG: I7wgwgEVM1kpdLSfejOArdcyK5CKCPF0eyIbxwYcP7umQvEB4uuFzFMh0VBDYSm
+ 8hVy2hTLn0qb5_GQFd.lfRyVAN2vMs4uXhOJ7wJZSjmESMywwtxye.PHmLMGp982ab_F5I6tQAM7
+ kNiiBMhVzFCr3N1sY7EUw8XB2RB_CF.4bq01.mInlPzUslIhTmQJqfbZU8u.nFvXk6jX8OoYIIPO
+ NBARAqC.Rv1KUfmU9KgmmkExgXX8Mh1PJOTU8AlTt.RsgluRhAtcb2xKVsdIFbeo.2Yq14wIMvRc
+ WfIf12azjTEr3ykaYqifmrZplg5Ch5nYG0nFvNA_OiLrEMCJ.ZQRslBkpmodcHHyuWykLrxWKq24
+ aogPYfhdm.vEjKe.YX371AKNbFV5bIbQF1mGPX0iaJv7fMmOaCwKF3BBMB1BIOh9gSzM9StOnZAL
+ 11HIDVcnVPR4NkSQRCX8kGL8sa649YEqo3CF..PlPFiCkd6gg38RNj6v1R4U_jJlj1r_4DW.t7bQ
+ YMZL80rpF5zG4hMRoJNLwQCipStHPo_EcYCI_0dI5CsQa4zUMiBWOgreq6dSIUwYbXrOIaGQ.Ntx
+ S_F26wEB7l6PXzuIz7pSWnvmTMAR9FU5fioRrAA46OBPJ3E6no4lQH8uK6Ppb1Il_6iW6FYLSY.E
+ M3qxcvv9nh8ZnHg84IjNGqHQbF3VykLLNwfS6YaeI4idOPziFvkXcrs9jQxOKC16Zj7rk7H9E1eg
+ ImkeR56UeTbd.ZXw3bzP0QJlpE6mtQytC3vhzUFAXEnYev9Ep6L8rT8W1lzydZvGQHbkjlTk8uXp
+ FyxvAzRdsPf.h1fdQbHZ7Q3HFzeBjdy4JIldHKOL6wBqr81HJ9kYiUxBat.HdGFNQzS0nG5qoAZ9
+ 2TdECjgHLgjLYguwYXnS8_t8LctXqnltFGcXw33gBOhkerRQ9Xy.GWo3St74ayqIAA1z0_R8dky_
+ sDrtrRCvcUzf0W2hf7AFCrCXsRDhWiz9NWEQ6rEoO4bvK0JeDaUUmsLBgiXkCO7UZn_oEodpuEl5
+ 8IG4fLJUbvEYVHDnicHbqUjR3oa5B.hG6bntUif0PVLhiWAxmrfCnZHoX4bG.LQTemZuObvofMl_
+ ZkSm9o7ozThzy7J_cUN9CWNaOeqdm0W2s8D_Axw25elR90iVil4VYOW.XX.127cd2XEsRW2C2dK8
+ to5D_ezlJ9dzdANH8.khIU8nuckL70llfjwtL0JqlpYZJ9oS3Ft_5ffd0rX_LvytnoQ_u4MaCmWr
+ _Io0_69K25rzM.h64sSJxuIDjGOVxXsSYESenwjNWqYEsCfT5DMbJkek0c7zaXBuSOi1RqLxJEKT
+ PUKxxE1InpPYaEK.0zVBs_4aP.lq.UpsMcmndL839wRSeNDlSTRA.jUo7vG1BtgKhCcWi_70p7nC
+ 4ZyGPmKEkUSUoyUdG6ImBVYxZdQ57Xq0UFJVeb4TBuhiM33q9iVmek0npRRhq5u_waucaANAzF6_
+ 67b8pGRJHuB1SoevgPCDef8ZVO.TkW4RVUHyC5wY2yFgAOcrp3lBhP0pI_6rKJaUoOBkf6vqCGWu
+ puP9HQRiA_tKof0uWmKfM0x5P0U0FReZjtR30vZfiOnEgKoANMH3KtgGQJGKIPb_C3jXbmnTQHgE
+ AlcAa7PVfVeEMIWowIarvZUPPcCrBvfXq6juuWizXRwxFYMt7q59coKWmK2aOmvXtDKdj6Bafcz7
+ jj7K_vQvxboT6.7KwtsgF5qPX9sVimmsWckbUMNTX5GOuoQj_kKcywUbm6T.vpkJMhskW0qCA3Gq
+ Cc8ha8BqdQB9oXq0MNcGaKBM5q4eT7oEGZfvipYVdW7M1soTgE_RvRRA.pLB7zXwR_sExZtgZZlv
+ zV9kC...or3ZUJqEh8MuhjzzBrqUFUWADJWEq6801IzuBb1pb5WuDuhQ_sxOrNZ1zzJcjZL6uP5T
+ yib2ck2fDodvOKFG36q5bjgBmgfbivaJoHbM40meAHWK5lk7D3IpEyLqk7EmWb9eyGSc2zt51xGd
+ PYgh15n9h7qUB5RTQTSCmH1pQgQH24snygYt42jqEfVRLwfc6vhITR9YVa7qTZ6ogpopfLy63Npf
+ gC9dTlDtrgfL3caAQGJYtUksk939sE2QOLM8HV0uYVxOKRVtbir4cz9jSr.eNwz5Z0YlqmGuQWtH
+ mHCIg4NpnviYf7vLbvyrI8iZRlDdSjecmvzgrJaJUudwRHdlEOTG.kYWYarJ07qw0h0yMoq7IK4Z
+ dJ1KMiIdoXXQqBQgQ8g._nHyo.F4mJEACKGN6PmATQzu24AyO7kPsCrkgKV7vLZ8H3CFKQwWCwPZ
+ SWZDFQCNzbHANXITKQf9Hv2Rtt5NRoNiUtJKqg8hS6hEnqgZJXKBfOOz9kIs8nBNnLckStqmyIKO
+ JlwCNGylRHDzY.SrnESHfChTZZ5f4FnkXi3XQVPjwPnqMtVOV6vAFAK.Xswa0xEs0inhQBAuIyQW
+ otk6bWZA8rrZrue_POr2jHD0JsVbCKfROMiIK8ZYAyaifa0CfwbBhKy9UlthG9hdJzXBnSNClzE5
+ .7aN23YaeXPq0.FzjviO7Rh9GzEYufLSvOKY9vKtoD_T2qMZt0amdJqnXN8XT1m1NrrYoabL4OAc
+ Lh03di3uSMJ4CoBDS7_E1pv1yQ74XkA19b9r6oeQ9aYRInxkFwbHrlOweDeW1hshfHtBW_AZ9Vp.
+ 32tzSIrfLBOBI4ztUrbsc5sOz6EU5kgmm3gN.YX0cUuuSLAT1m0XkjdEybehzfJXTon3m1g0tHcK
+ 2JbJ.yDvvCwhEVbMbYY_BA08DWDF_lZWmsSW6sjDEzFbSriLOzDvCTjx8_9ct4npWLUznFhL3789
+ jHfImeMlj556iZjgFPnLTKeesz8WbAta1O9Spgqm3o_CrQdI.lu_u9gQAq0xO8ywf6ImE.mmsQO_
+ X9QzIwa8aJUcJX_HRyYZzA6aurn0eXrmsUO3eWiUJdK3u0Tw3f.V299b9NfUJ91q_YAvAs_zUV1L
+ ZETX.aUHNuq2q9fGysIq6nlsVnTjnJ5NIM83FOBMT.UNjDfLh3LIYBE1nuNg_.fFjL4kuA0byCgh
+ oUpuIeit2zHh0eLEYRTLoQ8aRGcJo5wTDOKnNy3tGmRLsGtTyQsl6ETHdpLs4cSadjncoI9R2LPo
+ 7Ok3.qAo5S10u50zdb2B05LNqqL.VOl936vdyX4xqub7OtJV_aTUClo.3KuDdZhYRSlpHyfd1gwx
+ oraekI6p.lBihNwLHuudYQ2Y3Y6xs9kz9xLP18vcBT.bbV7sh_jOWNffVRISkJiDsOsg3lr0qPtG
+ ifhbecajtBTrqmRabxmXgBeaYV7q_h4I3QikVpbRYXnUW5b1f0HoQ.wGE5XlhnSCT1RdME2QHu3a
+ Hm4duivIJtYoE1rkQHMiA66Ei3Fn57658UTmv6caDYAEmuBtKtF8J96X5jEki0cj_t.g6oJUWgw9
+ qIaBxfrYtrw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 8 Apr 2021 16:18:10 +0000
+Received: by kubenode518.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 63e14078f60baa386ac5fb2941f90919;
+          Thu, 08 Apr 2021 16:18:08 +0000 (UTC)
+Subject: Re: [PATCH] selinux:Delete selinux_xfrm_policy_lookup() useless
+ argument
+To:     Zhongjun Tan <hbut_tan@163.com>, steffen.klassert@secunet.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org,
+        jmorris@namei.org, serge@hallyn.com, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, ebiederm@xmission.com,
+        gregkh@linuxfoundation.org, dhowells@redhat.com,
+        kpsingh@google.com, christian.brauner@ubuntu.com,
+        zohar@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        Zhongjun Tan <tanzhongjun@yulong.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20210408084907.841-1-hbut_tan@163.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <2304b75f-a3d0-3cb3-183c-0a7f62de9895@schaufler-ca.com>
+Date:   Thu, 8 Apr 2021 09:18:07 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 3QNguRayzkW5kw3IyuqH-1Ge7cc3uRr7
-X-Proofpoint-ORIG-GUID: QeIhrBMURocd0-TB0Dyj0CFIXzoVzQWh
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-08_03:2021-04-08,2021-04-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- malwarescore=0 impostorscore=0 phishscore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0
- spamscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104080104
+In-Reply-To: <20210408084907.841-1-hbut_tan@163.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.18033 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Address a kbuild issue where a developer created an ECDSA key for signing
-kernel modules and then builds an older version of the kernel, when bi-
-secting the kernel for example, that does not support ECDSA keys.
+On 4/8/2021 1:49 AM, Zhongjun Tan wrote:
+> From: Zhongjun Tan <tanzhongjun@yulong.com>
+>
+> Delete selinux selinux_xfrm_policy_lookup() useless argument.
+>
+> Signed-off-by: Zhongjun Tan <tanzhongjun@yulong.com>
+> ---
+>  include/linux/lsm_hook_defs.h   | 3 +--
+>  include/linux/security.h        | 4 ++--
+>  net/xfrm/xfrm_policy.c          | 6 ++----
+>  security/security.c             | 4 ++--
+>  security/selinux/include/xfrm.h | 2 +-
+>  security/selinux/xfrm.c         | 2 +-
+>  6 files changed, 9 insertions(+), 12 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 04c0179..2adeea4 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -358,8 +358,7 @@
+>  	 struct xfrm_sec_ctx *polsec, u32 secid)
+>  LSM_HOOK(void, LSM_RET_VOID, xfrm_state_free_security, struct xfrm_state *x)
+>  LSM_HOOK(int, 0, xfrm_state_delete_security, struct xfrm_state *x)
+> -LSM_HOOK(int, 0, xfrm_policy_lookup, struct xfrm_sec_ctx *ctx, u32 fl_secid,
+> -	 u8 dir)
+> +LSM_HOOK(int, 0, xfrm_policy_lookup, struct xfrm_sec_ctx *ctx, u32 fl_secid)
+>  LSM_HOOK(int, 1, xfrm_state_pol_flow_match, struct xfrm_state *x,
+>  	 struct xfrm_policy *xp, const struct flowi_common *flic)
+>  LSM_HOOK(int, 0, xfrm_decode_session, struct sk_buff *skb, u32 *secid,
 
-Trigger the creation of an RSA module signing key if it is not an RSA key.
+Please update the descriptive comment at the top of the file.
 
-Fixes: cfc411e7fff3 ("Move certificate handling to its own directory")
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- certs/Makefile | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/certs/Makefile b/certs/Makefile
-index e3185c57fbd8..f64bc89ccbf1 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -59,6 +59,11 @@ silent_redirect_openssl = 2>/dev/null
- # external private key, because 'make randconfig' might enable such a
- # boolean option and we unfortunately can't make it depend on !RANDCONFIG.
- ifeq ($(CONFIG_MODULE_SIG_KEY),"certs/signing_key.pem")
-+
-+X509TEXT=$(shell openssl x509 -in $(CONFIG_MODULE_SIG_KEY) -text)
-+
-+$(if $(findstring rsaEncryption,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+
- $(obj)/signing_key.pem: $(obj)/x509.genkey
- 	@$(kecho) "###"
- 	@$(kecho) "### Now generating an X.509 key pair to be used for signing modules."
--- 
-2.29.2
-
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 06f7c50..24eda04 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -1681,7 +1681,7 @@ int security_xfrm_state_alloc_acquire(struct xfrm_state *x,
+>  				      struct xfrm_sec_ctx *polsec, u32 secid);
+>  int security_xfrm_state_delete(struct xfrm_state *x);
+>  void security_xfrm_state_free(struct xfrm_state *x);
+> -int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir);
+> +int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid);
+>  int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+>  				       struct xfrm_policy *xp,
+>  				       const struct flowi_common *flic);
+> @@ -1732,7 +1732,7 @@ static inline int security_xfrm_state_delete(struct xfrm_state *x)
+>  	return 0;
+>  }
+>  
+> -static inline int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
+> +static inline int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
+>  {
+>  	return 0;
+>  }
+> diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+> index 156347f..d5d934e 100644
+> --- a/net/xfrm/xfrm_policy.c
+> +++ b/net/xfrm/xfrm_policy.c
+> @@ -1902,8 +1902,7 @@ static int xfrm_policy_match(const struct xfrm_policy *pol,
+>  
+>  	match = xfrm_selector_match(sel, fl, family);
+>  	if (match)
+> -		ret = security_xfrm_policy_lookup(pol->security, fl->flowi_secid,
+> -						  dir);
+> +		ret = security_xfrm_policy_lookup(pol->security, fl->flowi_secid);
+>  	return ret;
+>  }
+>  
+> @@ -2181,8 +2180,7 @@ static struct xfrm_policy *xfrm_sk_policy_lookup(const struct sock *sk, int dir,
+>  				goto out;
+>  			}
+>  			err = security_xfrm_policy_lookup(pol->security,
+> -						      fl->flowi_secid,
+> -						      dir);
+> +						      fl->flowi_secid);
+>  			if (!err) {
+>  				if (!xfrm_pol_hold_rcu(pol))
+>  					goto again;
+> diff --git a/security/security.c b/security/security.c
+> index b38155b..0c1c979 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2466,9 +2466,9 @@ void security_xfrm_state_free(struct xfrm_state *x)
+>  	call_void_hook(xfrm_state_free_security, x);
+>  }
+>  
+> -int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
+> +int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
+>  {
+> -	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid, dir);
+> +	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid);
+>  }
+>  
+>  int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
+> diff --git a/security/selinux/include/xfrm.h b/security/selinux/include/xfrm.h
+> index 0a6f34a..7415940 100644
+> --- a/security/selinux/include/xfrm.h
+> +++ b/security/selinux/include/xfrm.h
+> @@ -23,7 +23,7 @@ int selinux_xfrm_state_alloc_acquire(struct xfrm_state *x,
+>  				     struct xfrm_sec_ctx *polsec, u32 secid);
+>  void selinux_xfrm_state_free(struct xfrm_state *x);
+>  int selinux_xfrm_state_delete(struct xfrm_state *x);
+> -int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir);
+> +int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid);
+>  int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x,
+>  				      struct xfrm_policy *xp,
+>  				      const struct flowi_common *flic);
+> diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
+> index 634f3db..be83e5c 100644
+> --- a/security/selinux/xfrm.c
+> +++ b/security/selinux/xfrm.c
+> @@ -150,7 +150,7 @@ static int selinux_xfrm_delete(struct xfrm_sec_ctx *ctx)
+>   * LSM hook implementation that authorizes that a flow can use a xfrm policy
+>   * rule.
+>   */
+> -int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
+> +int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
+>  {
+>  	int rc;
+>  
