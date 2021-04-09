@@ -2,262 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73971C43600
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 14:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8497FC43460
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 16:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3ABFC611C1
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 14:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56DD461001
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 16:04:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233950AbhDIOfr (ORCPT
+        id S232796AbhDIQFG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Apr 2021 10:35:47 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40688 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233915AbhDIOfo (ORCPT
+        Fri, 9 Apr 2021 12:05:06 -0400
+Received: from sonic310-30.consmr.mail.ne1.yahoo.com ([66.163.186.211]:35408
+        "EHLO sonic310-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232642AbhDIQFF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Apr 2021 10:35:44 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 139EXdQL122253;
-        Fri, 9 Apr 2021 10:35:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=ZR3AnmvHvVrLQTtNhkZBfTTjyjO+odybSOncG5g3+9M=;
- b=WweNq6+n8zufsNH2KSHgl4c898wKCQT80MjUnGCtPGj1u7HU1v77nRpWavgiushfaMeS
- kXgqeb0cTcgvmTgOp2OXQRvVcKHlW502EX+EMy0xx7Pzu2f4gAF0VsmtSxWvHKd9cW5N
- aMqyfpFO8V4sf7Fc36hZ5jN4/gBKUIfN7w15WcQr7KLpBGjX4khxCRnxxs8x33tIxoHL
- DnAzCExDXfhveWCn7XzdIlXRtof/t0+3CIsgbH8W7UpZhXb6TAkZZHaPUU+JDti4TEMH
- f6HwQsrCKbeaPJli4xLocJRas/EsD1Y4rKH8jlxy/s4PfKU/5AK/Jn9pH8FN5WucN+rb tw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37rw7mg34s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 10:35:28 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 139EXnqO122793;
-        Fri, 9 Apr 2021 10:35:28 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37rw7mg33x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 10:35:28 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 139EXT8A020560;
-        Fri, 9 Apr 2021 14:35:25 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04ams.nl.ibm.com with ESMTP id 37rvbuahfb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 14:35:25 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 139EZMMA63242508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Apr 2021 14:35:22 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D1554C04A;
-        Fri,  9 Apr 2021 14:35:22 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 32E3A4C046;
-        Fri,  9 Apr 2021 14:35:20 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.63.3])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  9 Apr 2021 14:35:19 +0000 (GMT)
-From:   Nayna Jain <nayna@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
+        Fri, 9 Apr 2021 12:05:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617984290; bh=hx2AE2I6w9Qq9AGRy34zDwr9Uc4ea9n2GR6ByjcrG9s=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=B+QJZ07h2oNd52a1X5XcKgjVNBUkXJElSH7AUPTlJvC6WXDMLVBKGyN5viXJ1BP3XM7tWK3M+QGRdPxbmmJbn4R6oo48+8od68lMjbhXOiAyEGR2q7n9e2MUOZ07EkdqzMjvlLlSACQ286nRxTI++8P1ttGZADn7pY8ly9xxRoHna/zxv9AVHlEwLwjtpL+DnhAP2CC6nLc5DfhSF1QSkIlSlyvTUhNH7zHyRsSVqd1LYdWD3dbT68ysscnn2ERnApUr8wzshLaoUN/1XTGd/yTCZEnScu2jyCb4HzNHHnHg3zO1ypVVzKrcz5b692+MuIZXE8QOwxN2yDyUPa3MYQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1617984290; bh=Lcd3vERvJtsGZPqBzW+44fNU/kSVsstAYRF57V0GSZk=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=r5gfO0QwIux+UfoKei00oBCP4hBXjZ0FSLv3xJW/rv00R5m2MH3bCtqh1PwFbQAGIsfpawSmAGlJGtBeqJ58/UaeoV3AVbei4nqoqPQ7/YoHyA63PseFNcA349sE43X2NdHLcL1tK5hcqDmtKyouW8biVv5NMfQyUqVgJBnDbdLt3hzw9XttC8JMbXi2oyvIsH7ta8yYTD09c5wTK9IPj6TcnAJrzQ8lKKcPo2mkZVKLeeo8TKm9T+ya2HMBT+sQ3VxceONGtnZtJ4UZlNN+HKHEdYuiIsOoH8OTmiGJbKn8oC+aTqvHCpEFvZmePkB+vnn2VuDLPFBXbdNsXQFMOw==
+X-YMail-OSG: m9Hr8bwVM1l2uVBPYry5Cr3m7UXU5F1xrdNlNk3Xzu_MRCV1GKlNKyDAlKx6vjc
+ 2tLuvOXfEDsv9lq8rCYKWqDbicn.iby98MEWriNsAoOsEcSQ6ztf5aQim_3o4xAB9KL0zZllAoGv
+ HnFfOg7jLhnmF0wsLg3JELyxskmU6fBkxQGio1NZIRy.kBtDN3lyxWuJzeALGoDTdTxszfvH7mDD
+ 1tBGc3h3S1HdvARMqanihmUx_qJaVEVdno6581AO.UrcTo4Uu1KmJbThMIN38ZU7vLLRtHTN2gxC
+ aYsvU.UWFnotv66qLTH8Vlc2zXXJzG.PuPtyH2OwtLaMlxWdP60VP1Ux7FDov7p4eZqEog3xtqBY
+ 2Nfr5vHJu5vb_NRwOpDHCVZBPO.1B3PDMiM0WDTCR7aGIC5h6QBVjSSjn8h2bKbmRWxmx1PkPA22
+ G.oXq4nyEo9KGSCFBE_7UAH2eY8_qz0s0v9xJt50SnUwVeEuwqz0K2y._kM8ljhLe_QnszLlhj_4
+ XchHKBRV8ZK54JpOvWzTC4TVc5b6t8s0FqfKG4PhdUAl9KdHOeznuQrerXsIB1A6AfuZEv_B_vwn
+ nUD7JUGqujefLNSYIRR3CHzDQ4NAB7oPtc7_u3OdGbl5vKLH9KOxwP92Ra55BtyeheR.D5hPYvOr
+ unbB8hAhc.7xigk4dphOMUwwMfEzMT9X7aw1VJtoWENVixigLA1hCCLvUUxBhkuEICst.sYeQjkf
+ vMSqFG.A8HZ6pGsaE7fpQmZFpXyHGPK.pnbKkysVAqhn.JzlG2u2SXSE7i6DGwC9GLDuDtU11mhf
+ bGdIGeoHR8x14tyvV3WWpGTwzMmI4JMw9axszFQuZ_hQnyeYg4BImSIPvEfyZqxZznL6KNQ8_GVI
+ LXXgk2ZdjPG.vX4t62AurrHuzCvg6mq83fzFgrTFiK1Z64D2fTNAO5VCjqCzwMiHEa7MT8MACjX6
+ qP1wlIwH3q2wanEJdAJT9cSgqTSqwrRxpN49JqFCHMKYxPc3RopKzFdAFCGlFl0M3d5fP0RjqOKB
+ lyl.6QCkDir2mm_fVnjgwsEgm1GAS5sXaeyaT4lOuT641dtbTMOi5PhOf84FtY6MGsFwvvLBEX9Z
+ fmmbLEt4fpxb_7LOQga2K7N6iFnP9s0Cm3CzAAY41.ppeoffr2syWeVaFX4hYyELKhjo_02sNqsV
+ HkuiQ5Dh6zFU61UurgLmXMKC9olqi7eVc8HNIUybkonFCBo167dLtIUXmwQ5KTbYeHC3IHhdT5Tq
+ yNErWuIHTozX.1iksdPnS6B7rJ5aKm_3PMU8Of1YqOl0oN6q5Ok48f4cMYiGJ2Pjma7QTEMLQzwE
+ yPwh.KgbvvGfno_.wkFVpKS31gL8hK_LaMFJnvPyuVL8BFEvuv9kRNYS2jddLgem9lBx9aJ1.RZR
+ YmZ8NcgnXg3H0FTxY1n7QMg8o9Xy0x4wzddFjSPLXCXV0ppNGITjKE25POWe3c3W.4CjIMcnoKdH
+ DniuXlOmfJgxmAbK3US7R44yaNuX822wRPFbQh3JT4E1WLU11Wfo6mv_TSh_wjMvjYV6moBWWPkd
+ zDYt.1Z7O8XssTRFjhfJy6irI2U4.d8p6mhw1xRKIAD5RQbwSgvmmVoV_5Gl3FniTRjAjUA8O1MZ
+ L_..js.W_7v3BPJBhF9mUDUe7hNHWxiXQ2NH.kWlcxl8HY7LHyLG6Hf_MHFKhp8lw2vh_EkiR217
+ JPLGI56CqEILkWdv5EL2a3fD4c3L6i5h2D95Hw8XlA3byle3DjWVJfiZ0efFOfOafeBKcDlZV8ps
+ kzU7ygyKoKkLZy1o_lXzVtgnkebl23mfbPT3AcVaXgFnXL2jf74qlcH.DIEkdGn2CBvcjW62L4Kc
+ 78l9FuB7Y_XYlU.K9mn7dmLqPsdxpQo_gwjYtxUIBUxP_dC8qk4I95POHt.vifsJUcA50gX8kf9d
+ n.kWoeMJqwA5tAzYx6Lv.kp7N0Bop7EgnwkFLNDbg8hCOrPcUylrupYUUuFb8ELEyqicE.Gn6bfu
+ S4Fo0b0plKOg3daZS43hEjyVhfeZ9HARdGetqUVe90AzZVWpNh3lCi5G6syamKGDoDnN92a_b5km
+ P32R8T0Uc3BmEvuCc2aaE6GQ32XiGpdKX0Nd7ryxmS8OfiLC2e3t8LEtGIOa4ZFo0vc6o_bdMcZE
+ Gaw6asjk3j7bc.5.owOvoIGn2b0LNE9w6mF8ESG5vSgMvJaDHZdazf_jJW6c6exhUoo6Gio3d..d
+ 7Sm94CZ2S24AhOlQOOncuUtRESZD.GYBSRvNKBtqYUuilxC71Ffk0UU4sTvD5tdGt7y7jdkEVRhs
+ vxq1R7cOG44dEya59lvowXptw37ZqH0F4XJTRW5gxo6MA7jY7KN4v8eWZ.QiHJ5n6PpIkRM.PVpX
+ rbtZUgCbOMpFRbidIYjaH0ZaK791mENRJs5k0_J7eEVFSsIClQePQynvkJgV7AT5CkwAdfYrtdTf
+ OTospNChy.FVFg3tgxZmmB9G91qiIBsV.pFeqR1WuAClAhbEVAMACIsz_ZN1KSd1BwISWlI78rvu
+ vZiecj_3BolxUlaW5Ym5Xxxe1S3VO0Q_7VJTIapvJtQdt.uilhaEKpCQWEBdqRM8EziapzHxtfsP
+ s8IXEZyOuHeU8e5NrZ0x_wzZ1W7TltPN3IlNcWBMT7_eHvCa5daDUl41DR0uuogiMTYfGrxDmUpY
+ _PJMu95XuSzvA05l4rY2ZT6eYIg4C8vbH8DmrfDe0fPkaWhco4mXZAu60qZUKc70Wrk_fEJtFy3Z
+ p6i6.96pNtaEiYwL4Ns_5IRhjgrkmLWUjHZDsXoSrk5gAxpQK4Akk23YP9XGuhjDOnPqQDbRSz3N
+ 4aHut4Q5LZwdKCzgu2s4kG9SfSy5tAxVSpw6gtCXo43V46zZNXD2_EHLSgKididIAddhS8jX_4TW
+ TySDmWEZnm3nq9ERhSslVnE66r1QQrs.EpisiZYeT6VRy4c6QwfN46rhy0.VTPlut5rqt7LLyKkm
+ HjeIsuL31DvJQkXuFCxINP5gR5s8545d6IfsRatKVXo6WNt.hwQO39xEHiOzGdRB6NKPEXO7SNxk
+ yFDBBIHVvtK7VluyBhn5nRyn4t4BdK3FpILSbdH3gEvAc7vnxOxy3QRwxsllYTSuG9KPl4g314b7
+ Ae0caUN2nfM3Zp1kvhXdx3qYzCS_ioLeOSTp5dLI32FUuKou_07Qohie2ikgOqjmIBamGoMMcR7L
+ Ikr2yuH7cB4NOJKqsytmww_mpt.N6YHEcbCA9bMcalPtrQfX8g0CThOf3K_2GpJF4HKnTyj.Jpxc
+ L1IxhQPhkbxIS3p2AzzeUVyEyh7XzIcnumKCy0XDyLfFrw1gxecT.OSYYnO_PEHc052ArjgUl8oy
+ P6IaucIknckoy90hKF5b_1E.L6LS_O04_KgoO9YueWpDaozd5fnYxdyuKo2Nsskcqq5G9wPiEndr
+ kWFRiND.CJuIRXxkOSI32VtU7fTrFEn.jSh18GP1svvGQEHMH1dSWj7nTEWcWUUR0M4TXF03QcrZ
+ fLie5JhOlDCO7UZsRNrS9Yur2e46BtwN1zXVKJau.gP.6kDq5ZgqiVJTkjyYfTiZmkR2wq2UNpMB
+ luPCc469qvRTVlwedwthx9dm28Xxvupss2jG8aaykurWYYwI2CU88Dv8QFrvvIXMc.HQHyyDuKg1
+ 0CqWQ3oVdbf6m_uMUYx3v0bhc4fkCY5TJSC5ib2RPV54ppAX_6ZAbr5ZS6DU75sUKKP8P0xB_Yoi
+ HJSN24naPsejZhosPkjqqDZMEQ5WzKOe6guQwlgPr0VJWnKzEBeRt8KX6cLgETX6h5GVazu1wa2b
+ VhYOAccwo0zLJ6Vu2Y5eARB8vq1QtCzX5bt9VQC81oJQTsVoNBabL44.E2d6wagI8mwpQpjjyzOp
+ NgEDW3N4TiQyHa4R5KxH1FdLacqYydN4qeVsn6MH_7mf7oRL0PO.UhXo2QYg58E11LZvHtmdrwxa
+ .BuYfYzBlIDPQ8tV_QjvU5KE4rJY3Gz4qrsvDxKyGsT.N727r1Soi4oHHu4KUPlxzT8zVJE6o1.H
+ 9VhknZnN1UheYE9kwgiID120URjvsxKMPWIDF0mmvswejKej3Wsr.6aSJPyNCkzEF3UptWGgI99y
+ 495tEdPVz5rsaMaVpBo9MvLMPCPIPpPtxl.H5Q_t7_PACsUnXqVLv8JezwNHqTnnGr1nYaBYS53Q
+ VJ39_brtxVWjrzXYbdUczrJq7smS_L3QvU8UMOlj6JRy7IQHfhXz7oPAKBTWMTpr2Ka3z.jME_g.
+ Z.wlAkyi.qUrCn5Byug3OmYt8.QL9F9nVibmiJDhr2UQvlNKvU.vyMm5XLPZ4pF_QEoQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Fri, 9 Apr 2021 16:04:50 +0000
+Received: by kubenode563.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID a2480e1f2493dc0ec318d730caad4606;
+          Fri, 09 Apr 2021 16:04:45 +0000 (UTC)
+Subject: Re: [PATCH v33 00/12] Landlock LSM
+To:     James Morris <jmorris@namei.org>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Cc:     Jann Horn <jannh@google.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
         David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH v4 3/3] ima: enable loading of build time generated key on .ima keyring
-Date:   Fri,  9 Apr 2021 10:35:07 -0400
-Message-Id: <20210409143507.191443-4-nayna@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20210409143507.191443-1-nayna@linux.ibm.com>
-References: <20210409143507.191443-1-nayna@linux.ibm.com>
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org
+References: <20210407160726.542794-1-mic@digikod.net>
+ <d7f25c43-8bea-2640-292b-df2fcceae428@namei.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <9e4e42a3-937e-710d-8ccb-9bcb0969c5cb@schaufler-ca.com>
+Date:   Fri, 9 Apr 2021 09:04:41 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7T2_09vbtw2fGNoyY09CBi_uaWrPN3oG
-X-Proofpoint-ORIG-GUID: Exp0e4j45OrJ46B645Qnuo4s9WmRfBxS
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-09_06:2021-04-09,2021-04-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
- mlxlogscore=999 malwarescore=0 lowpriorityscore=0 suspectscore=0
- phishscore=0 adultscore=0 priorityscore=1501 spamscore=0 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104090110
+In-Reply-To: <d7f25c43-8bea-2640-292b-df2fcceae428@namei.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.18121 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The kernel currently only loads the kernel module signing key onto the
-builtin trusted keyring. Load the module signing key onto the IMA keyring
-as well.
+On 4/8/2021 6:48 PM, James Morris wrote:
+> I've added this to my tree at:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git landlock_lsm_v33
+>
+> and merged that into the next-testing branch which is pulled into Linux 
+> next.
 
-Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
-Acked-by: Stefan Berger <stefanb@linux.ibm.com>
----
- certs/system_certificates.S   | 13 ++++++++-
- certs/system_keyring.c        | 50 ++++++++++++++++++++++++++++-------
- include/keys/system_keyring.h |  7 +++++
- security/integrity/digsig.c   |  2 ++
- 4 files changed, 61 insertions(+), 11 deletions(-)
-
-diff --git a/certs/system_certificates.S b/certs/system_certificates.S
-index 8f29058adf93..dcad27ea8527 100644
---- a/certs/system_certificates.S
-+++ b/certs/system_certificates.S
-@@ -8,9 +8,11 @@
- 	.globl system_certificate_list
- system_certificate_list:
- __cert_list_start:
--#ifdef CONFIG_MODULE_SIG
-+__module_cert_start:
-+#if defined(CONFIG_MODULE_SIG) || defined(CONFIG_IMA_APPRAISE_MODSIG)
- 	.incbin "certs/signing_key.x509"
- #endif
-+__module_cert_end:
- 	.incbin "certs/x509_certificate_list"
- __cert_list_end:
- 
-@@ -35,3 +37,12 @@ system_certificate_list_size:
- #else
- 	.long __cert_list_end - __cert_list_start
- #endif
-+
-+	.align 8
-+	.globl module_cert_size
-+module_cert_size:
-+#ifdef CONFIG_64BIT
-+	.quad __module_cert_end - __module_cert_start
-+#else
-+	.long __module_cert_end - __module_cert_start
-+#endif
-diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-index 4b693da488f1..2b3ad375ecc1 100644
---- a/certs/system_keyring.c
-+++ b/certs/system_keyring.c
-@@ -27,6 +27,7 @@ static struct key *platform_trusted_keys;
- 
- extern __initconst const u8 system_certificate_list[];
- extern __initconst const unsigned long system_certificate_list_size;
-+extern __initconst const unsigned long module_cert_size;
- 
- /**
-  * restrict_link_to_builtin_trusted - Restrict keyring addition by built in CA
-@@ -132,19 +133,11 @@ static __init int system_trusted_keyring_init(void)
-  */
- device_initcall(system_trusted_keyring_init);
- 
--/*
-- * Load the compiled-in list of X.509 certificates.
-- */
--static __init int load_system_certificate_list(void)
-+static __init int load_cert(const u8 *p, const u8 *end, struct key *keyring)
- {
- 	key_ref_t key;
--	const u8 *p, *end;
- 	size_t plen;
- 
--	pr_notice("Loading compiled-in X.509 certificates\n");
--
--	p = system_certificate_list;
--	end = p + system_certificate_list_size;
- 	while (p < end) {
- 		/* Each cert begins with an ASN.1 SEQUENCE tag and must be more
- 		 * than 256 bytes in size.
-@@ -159,7 +152,7 @@ static __init int load_system_certificate_list(void)
- 		if (plen > end - p)
- 			goto dodgy_cert;
- 
--		key = key_create_or_update(make_key_ref(builtin_trusted_keys, 1),
-+		key = key_create_or_update(make_key_ref(keyring, 1),
- 					   "asymmetric",
- 					   NULL,
- 					   p,
-@@ -186,6 +179,43 @@ static __init int load_system_certificate_list(void)
- 	pr_err("Problem parsing in-kernel X.509 certificate list\n");
- 	return 0;
- }
-+
-+__init int load_module_cert(struct key *keyring)
-+{
-+	const u8 *p, *end;
-+
-+	if (!IS_ENABLED(CONFIG_IMA_APPRAISE_MODSIG))
-+		return 0;
-+
-+	pr_notice("Loading compiled-in module X.509 certificates\n");
-+
-+	p = system_certificate_list;
-+	end = p + module_cert_size;
-+
-+	return load_cert(p, end, keyring);
-+}
-+
-+/*
-+ * Load the compiled-in list of X.509 certificates.
-+ */
-+static __init int load_system_certificate_list(void)
-+{
-+	const u8 *p, *end;
-+	unsigned long size;
-+
-+	pr_notice("Loading compiled-in X.509 certificates\n");
-+
-+#ifdef CONFIG_MODULE_SIG
-+	p = system_certificate_list;
-+	size = system_certificate_list_size;
-+#else
-+	p = system_certificate_list + module_cert_size;
-+	size = system_certificate_list_size - module_cert_size;
-+#endif
-+
-+	end = p + size;
-+	return load_cert(p, end, builtin_trusted_keys);
-+}
- late_initcall(load_system_certificate_list);
- 
- #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
-diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-index fb8b07daa9d1..f954276c616a 100644
---- a/include/keys/system_keyring.h
-+++ b/include/keys/system_keyring.h
-@@ -16,9 +16,16 @@ extern int restrict_link_by_builtin_trusted(struct key *keyring,
- 					    const struct key_type *type,
- 					    const union key_payload *payload,
- 					    struct key *restriction_key);
-+extern __init int load_module_cert(struct key *keyring);
- 
- #else
- #define restrict_link_by_builtin_trusted restrict_link_reject
-+
-+static inline __init int load_module_cert(struct key *keyring)
-+{
-+	return 0;
-+}
-+
- #endif
- 
- #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 250fb0836156..3b06a01bd0fd 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -111,6 +111,8 @@ static int __init __integrity_init_keyring(const unsigned int id,
- 	} else {
- 		if (id == INTEGRITY_KEYRING_PLATFORM)
- 			set_platform_trusted_keys(keyring[id]);
-+		if (id == INTEGRITY_KEYRING_IMA)
-+			load_module_cert(keyring[id]);
- 	}
- 
- 	return err;
--- 
-2.29.2
+Thank you.
 
