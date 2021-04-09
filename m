@@ -5,38 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 173EAC43611
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F40C433B4
 	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5D2C611C0
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:43:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59FFF61177
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:43:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233288AbhDILn7 (ORCPT
+        id S233367AbhDILoA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:43:59 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2820 "EHLO
+        Fri, 9 Apr 2021 07:44:00 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2822 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231611AbhDILn6 (ORCPT
+        with ESMTP id S232815AbhDILn7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:43:58 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FGwy76S3wz685bH;
-        Fri,  9 Apr 2021 19:34:07 +0800 (CST)
+        Fri, 9 Apr 2021 07:43:59 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FGx14533Hz67yjc;
+        Fri,  9 Apr 2021 19:36:40 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Fri, 9 Apr 2021 13:43:43 +0200
+ 15.1.2106.2; Fri, 9 Apr 2021 13:43:44 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 2/7] ima: Add meta_immutable appraisal type
-Date:   Fri, 9 Apr 2021 13:43:08 +0200
-Message-ID: <20210409114313.4073-3-roberto.sassu@huawei.com>
+Subject: [PATCH 4/7] ima: Introduce appraise_exec_tcb and appraise_tmpfs policies
+Date:   Fri, 9 Apr 2021 13:43:10 +0200
+Message-ID: <20210409114313.4073-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210409114313.4073-1-roberto.sassu@huawei.com>
 References: <20210409114313.4073-1-roberto.sassu@huawei.com>
@@ -50,123 +50,124 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Currently, IMA supports the appraise_type=imasig option in the policy to
-require signed file content or metadata. This patch introduces the new
-option appraise_type=meta_immutable to require that file metadata is also
-immutable, i.e. it cannot have been produced by the system itself but only
-from a vendor whose signing key is trusted by the kernel. Currently, this
-requirement can be satisfied only by portable signatures.
+This patch introduces two new hard-coded policies, named appraise_exec_tcb
+and appraise_tmpfs. The first appraises files executed or mmapped, as
+opposed to files owned by root, requiring in addition a digital signature.
+The second appraises files in the tmpfs and ramfs filesystems, to avoid
+that an attacker copies files there to avoid appraisal. The new policies
+can be selected by specifying them as a value of ima_policy= in the kernel
+command line.
 
-The main purpose of this option is to ensure a proper label transition
-during binary execution, when the target label depends on the label of the
-binary being executed. Without it, an administrator might obtain a
-different target label by changing the label of the executable.
+Similarly to the exec_tcb policy, the appraise_exec_tcb policy can be used
+to appraise only immutable files and avoid appraisal of mutable files which
+might not have an HMAC or digital signature.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/ABI/testing/ima_policy  |  2 +-
- security/integrity/ima/ima_appraise.c |  9 +++++++++
- security/integrity/ima/ima_policy.c   | 13 ++++++++++---
- security/integrity/integrity.h        |  1 +
- 4 files changed, 21 insertions(+), 4 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  9 +++++
+ security/integrity/ima/ima_policy.c           | 33 +++++++++++++++----
+ 2 files changed, 35 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
-index 070779e8d836..bc6597db7c78 100644
---- a/Documentation/ABI/testing/ima_policy
-+++ b/Documentation/ABI/testing/ima_policy
-@@ -42,7 +42,7 @@ Description:
- 			fowner:= decimal value
- 		  lsm:  are LSM specific
- 		  option:
--			appraise_type:= [imasig] [imasig|modsig]
-+			appraise_type:= [imasig] [imasig|modsig] [meta_immutable]
- 			appraise_flag:= [check_blacklist]
- 			Currently, blacklist check is only for files signed with appended
- 			signature.
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 45e244fc2ef2..5814b8cbe86c 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -430,6 +430,15 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
- 	}
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 88c2ba679c92..93c5f78905e2 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1775,6 +1775,15 @@
+ 			The "appraise_tcb" policy appraises the integrity of
+ 			all files owned by root.
  
-+	if ((iint->flags & IMA_META_IMMUTABLE_REQUIRED) &&
-+	    status != INTEGRITY_PASS_IMMUTABLE) {
-+		status = INTEGRITY_FAIL;
-+		cause = "metadata-modifiable";
-+		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
-+				    filename, op, cause, rc, 0);
-+		goto out;
-+	}
++			The "appraise_exec_tcb" is similar to the "appraise_tcb"
++			policy except for files executed or mmapped, which are
++			appraised (with imasig requirement) instead of files
++			owned by root.
 +
- 	if (xattr_value)
- 		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
- 				  &cause);
++			The "appraise_tmpfs" policy excludes the dont_appraise
++			rule for the tmpfs and ramfs filesystems for the
++			"appraise_tcb" and "appraise_exec_tcb" policies.
++
+ 			The "secure_boot" policy appraises the integrity
+ 			of files (eg. kexec kernel image, kernel modules,
+ 			firmware, policy, etc) based on file signatures.
 diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 4f8cb155e4fd..33b5133645b3 100644
+index fff178abb004..a45e494e06e8 100644
 --- a/security/integrity/ima/ima_policy.c
 +++ b/security/integrity/ima/ima_policy.c
-@@ -1079,7 +1079,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		return false;
+@@ -154,8 +154,8 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ 	{.action = DONT_APPRAISE, .fsmagic = PROC_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = SYSFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = DEBUGFS_MAGIC, .flags = IMA_FSMAGIC},
+-	{.action = DONT_APPRAISE, .fsmagic = TMPFS_MAGIC, .flags = IMA_FSMAGIC},
+-	{.action = DONT_APPRAISE, .fsmagic = RAMFS_MAGIC, .flags = IMA_FSMAGIC},
++	{.action = DONT_APPRAISE, .fsmagic = TMPFS_MAGIC, .flags = IMA_FSMAGIC | IMA_SKIP_TMPFS},
++	{.action = DONT_APPRAISE, .fsmagic = RAMFS_MAGIC, .flags = IMA_FSMAGIC | IMA_SKIP_TMPFS},
+ 	{.action = DONT_APPRAISE, .fsmagic = DEVPTS_SUPER_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = BINFMTFS_MAGIC, .flags = IMA_FSMAGIC},
+ 	{.action = DONT_APPRAISE, .fsmagic = SECURITYFS_MAGIC, .flags = IMA_FSMAGIC},
+@@ -171,14 +171,21 @@ static struct ima_rule_entry default_appraise_rules[] __ro_after_init = {
+ #endif
+ #ifndef CONFIG_IMA_APPRAISE_SIGNED_INIT
+ 	{.action = APPRAISE, .fowner = GLOBAL_ROOT_UID, .fowner_op = &uid_eq,
+-	 .flags = IMA_FOWNER},
++	 .flags = IMA_FOWNER | IMA_SKIP_OPEN},
+ #else
+ 	/* force signature */
+ 	{.action = APPRAISE, .fowner = GLOBAL_ROOT_UID, .fowner_op = &uid_eq,
+-	 .flags = IMA_FOWNER | IMA_DIGSIG_REQUIRED},
++	 .flags = IMA_FOWNER | IMA_DIGSIG_REQUIRED | IMA_SKIP_OPEN},
+ #endif
+ };
  
- 	if (entry->action != APPRAISE &&
--	    entry->flags & (IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED | IMA_CHECK_BLACKLIST))
-+	    entry->flags & (IMA_DIGSIG_REQUIRED | IMA_MODSIG_ALLOWED |
-+			    IMA_CHECK_BLACKLIST | IMA_META_IMMUTABLE_REQUIRED))
- 		return false;
++static struct ima_rule_entry appraise_exec_rules[] __ro_after_init = {
++	{.action = APPRAISE, .func = BPRM_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++	{.action = APPRAISE, .func = MMAP_CHECK,
++	 .flags = IMA_FUNC | IMA_DIGSIG_REQUIRED},
++};
++
+ static struct ima_rule_entry build_appraise_rules[] __ro_after_init = {
+ #ifdef CONFIG_IMA_APPRAISE_REQUIRE_MODULE_SIGS
+ 	{.action = APPRAISE, .func = MODULE_CHECK,
+@@ -234,6 +241,7 @@ static int __init default_measure_policy_setup(char *str)
+ __setup("ima_tcb", default_measure_policy_setup);
  
- 	/*
-@@ -1109,7 +1110,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 				     IMA_UID | IMA_FOWNER | IMA_FSUUID |
- 				     IMA_INMASK | IMA_EUID | IMA_PCR |
- 				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
--				     IMA_PERMIT_DIRECTIO))
-+				     IMA_PERMIT_DIRECTIO |
-+				     IMA_META_IMMUTABLE_REQUIRED))
- 			return false;
- 
- 		break;
-@@ -1121,7 +1123,8 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 				     IMA_INMASK | IMA_EUID | IMA_PCR |
- 				     IMA_FSNAME | IMA_DIGSIG_REQUIRED |
- 				     IMA_PERMIT_DIRECTIO | IMA_MODSIG_ALLOWED |
--				     IMA_CHECK_BLACKLIST))
-+				     IMA_CHECK_BLACKLIST |
-+				     IMA_META_IMMUTABLE_REQUIRED))
- 			return false;
- 
- 		break;
-@@ -1495,6 +1498,8 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 				 strcmp(args[0].from, "imasig|modsig") == 0)
- 				entry->flags |= IMA_DIGSIG_REQUIRED |
- 						IMA_MODSIG_ALLOWED;
-+			else if (strcmp(args[0].from, "meta_immutable") == 0)
-+				entry->flags |= IMA_META_IMMUTABLE_REQUIRED;
- 			else
- 				result = -EINVAL;
- 			break;
-@@ -1850,6 +1855,8 @@ int ima_policy_show(struct seq_file *m, void *v)
+ static unsigned int ima_measure_skip_flags __initdata;
++static unsigned int ima_appraise_skip_flags __initdata;
+ static bool ima_use_appraise_tcb __initdata;
+ static bool ima_use_secure_boot __initdata;
+ static bool ima_use_critical_data __initdata;
+@@ -254,7 +262,12 @@ static int __init policy_setup(char *str)
+ 			ima_measure_skip_flags |= IMA_SKIP_OPEN;
+ 		} else if (strcmp(p, "appraise_tcb") == 0)
+ 			ima_use_appraise_tcb = true;
+-		else if (strcmp(p, "secure_boot") == 0)
++		else if ((strcmp(p, "appraise_tmpfs") == 0))
++			ima_appraise_skip_flags |= IMA_SKIP_TMPFS;
++		else if (strcmp(p, "appraise_exec_tcb") == 0) {
++			ima_use_appraise_tcb = true;
++			ima_appraise_skip_flags |= IMA_SKIP_OPEN;
++		} else if (strcmp(p, "secure_boot") == 0)
+ 			ima_use_secure_boot = true;
+ 		else if (strcmp(p, "critical_data") == 0)
+ 			ima_use_critical_data = true;
+@@ -889,10 +902,16 @@ void __init ima_init_policy(void)
+ 				  IMA_DEFAULT_POLICY | IMA_CUSTOM_POLICY, 0);
  	}
- 	if (entry->flags & IMA_CHECK_BLACKLIST)
- 		seq_puts(m, "appraise_flag=check_blacklist ");
-+	if (entry->flags & IMA_META_IMMUTABLE_REQUIRED)
-+		seq_puts(m, "appraise_type=meta_immutable ");
- 	if (entry->flags & IMA_PERMIT_DIRECTIO)
- 		seq_puts(m, "permit_directio ");
- 	rcu_read_unlock();
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 547425c20e11..be501a63ae30 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -39,6 +39,7 @@
- #define IMA_FAIL_UNVERIFIABLE_SIGS	0x10000000
- #define IMA_MODSIG_ALLOWED	0x20000000
- #define IMA_CHECK_BLACKLIST	0x40000000
-+#define IMA_META_IMMUTABLE_REQUIRED	0x80000000
  
- #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
- 				 IMA_HASH | IMA_APPRAISE_SUBMASK)
+-	if (ima_use_appraise_tcb)
++	if (ima_use_appraise_tcb) {
+ 		add_rules(default_appraise_rules,
+ 			  ARRAY_SIZE(default_appraise_rules),
+-			  IMA_DEFAULT_POLICY, 0);
++			  IMA_DEFAULT_POLICY, ima_appraise_skip_flags);
++
++		if (ima_appraise_skip_flags & IMA_SKIP_OPEN)
++			add_rules(appraise_exec_rules,
++				  ARRAY_SIZE(appraise_exec_rules),
++				  IMA_DEFAULT_POLICY, 0);
++	}
+ 
+ 	if (ima_use_critical_data)
+ 		add_rules(critical_data_rules,
 -- 
 2.26.2
 
