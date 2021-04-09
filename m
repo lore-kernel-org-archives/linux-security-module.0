@@ -2,182 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0695C433B4
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 05:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C3BC43461
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A69F461179
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 05:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F395610E7
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:12:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229613AbhDIFwh (ORCPT
+        id S232042AbhDILM5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Apr 2021 01:52:37 -0400
-Received: from m12-16.163.com ([220.181.12.16]:49472 "EHLO m12-16.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229498AbhDIFwh (ORCPT
+        Fri, 9 Apr 2021 07:12:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39931 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233619AbhDILM5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Apr 2021 01:52:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=O0Fw6
-        C8nkVcsEdj5tqNF1VdUgPPuLHJN/DPaM3S9r6A=; b=C5rCZ+exjQYqIMxJXI9KL
-        MMEvRNe3NdGIFMN8nu0Pq/y4kOzd6nfqEjyaCmCFXPKm/1CBKePvvmt4c/ljzXA2
-        pyo6exW/U0hB9/dN3zbC4a3BeQo8zXmYDAeBxXWitS07Xdy/3EyrW0AsllYsiCAK
-        ry5p2h8x6xlXsbirYYbNIo=
-Received: from localhost.localdomain (unknown [183.9.194.37])
-        by smtp12 (Coremail) with SMTP id EMCowABnYDjF6m9grpXkkg--.11493S2;
-        Fri, 09 Apr 2021 13:48:56 +0800 (CST)
-From:   =?UTF-8?q?=C2=A0Zhongjun=20Tan?= <hbut_tan@163.com>
-To:     steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, kuba@kernel.org, jmorris@namei.org,
-        serge@hallyn.com, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        keescook@chromium.org, gregkh@linuxfoundation.org,
-        ebiederm@xmission.com, kpsingh@google.com, dhowells@redhat.com,
-        christian.brauner@ubuntu.com, zohar@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Zhongjun Tan <tanzhongjun@yulong.com>
-Subject: [PATCH 2/2] selinux:Delete selinux_xfrm_policy_lookup() useless argument
-Date:   Fri,  9 Apr 2021 13:48:41 +0800
-Message-Id: <20210409054841.320-1-hbut_tan@163.com>
-X-Mailer: git-send-email 2.30.0.windows.2
+        Fri, 9 Apr 2021 07:12:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1617966763;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Bic823Qpg0UIbdBp1AlM1MQR7teEWxxmvsucAoEoioY=;
+        b=bEqccTXJty36hU0KT0Mr1jjk2mi1eFE663GuxiCHNM1qgPWA1tEiSSraFI1SwSZSztHDF8
+        QsqXsdF9TY1HWwEZfPZm4IvDq1KJCDkweEem/5MzHgEdNvYu/I4tst5IzOv+dJQVEVHL6R
+        49ZVXcK0UR1o72HN8Rf278aXeIiX6Yc=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-143-RrMUV4yaMQer4ufZOSMqGg-1; Fri, 09 Apr 2021 07:12:39 -0400
+X-MC-Unique: RrMUV4yaMQer4ufZOSMqGg-1
+Received: by mail-ed1-f70.google.com with SMTP id h9so2480117edb.10
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Apr 2021 04:12:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bic823Qpg0UIbdBp1AlM1MQR7teEWxxmvsucAoEoioY=;
+        b=oDJS0H0+2LGES6Cg387EJpUytkPMF2G70BbG/Uu9cbYJOZOnKttbkCi8tHQxx9tAkp
+         vZeW6qubJ4WeL/8ifoAn+2GN+1Kl5YvXFKdb0aed6sLdL9zGa+kIGXyq97iuXijkS+Kx
+         M/uGiqj2IF3hxYCEaL9l+t6NNleMG7LIR5YLNeWH/n1Cy1ZKQhAaQhXJ7+TOQ+iyxf3B
+         J93fLI4HC/MsZUjecMuTB03CTTQjejPAUT5rXlPQZOWaTbVmZZvSxLxgtEhcV6TLoKg0
+         31kXZHU74c0xAMmBEyQ/A1IOBcBO/YXmKGRv4lkN3OCcTn5HlUJ1qzPBdrzjDNwSHCH5
+         7Oyg==
+X-Gm-Message-State: AOAM531054yr3z5ZyksnsZ+GG9p4nAzYwlJHZ8PGxd900rzWgr1IzwiR
+        rbTCwTnSOGR2kiXCvYl/R/RvH82LGsx9Y+v1n5e2me7S8GZwSFbrO1DQTmQDyovGyrzhEAKXAyJ
+        yY0i0W1uiWMSLM2xCtD3gvZP9O+TeRtAo0C1T
+X-Received: by 2002:a17:907:c16:: with SMTP id ga22mr15467252ejc.120.1617966758229;
+        Fri, 09 Apr 2021 04:12:38 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzKmCtyYxCgoItu1rjqaew5l87gB4XKn8woRZ6AuvVgLaR11fjN9WbNEEdf+WGTbltsU3xEWA==
+X-Received: by 2002:a17:907:c16:: with SMTP id ga22mr15467237ejc.120.1617966757927;
+        Fri, 09 Apr 2021 04:12:37 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8308:b105:dd00:277b:6436:24db:9466])
+        by smtp.gmail.com with ESMTPSA id t15sm1304810edw.84.2021.04.09.04.12.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Apr 2021 04:12:37 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: [PATCH] fs_context: drop the unused lsm_flags member
+Date:   Fri,  9 Apr 2021 13:12:34 +0200
+Message-Id: <20210409111234.271707-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: EMCowABnYDjF6m9grpXkkg--.11493S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtFWrWr43GrW7CrWkCrW5trb_yoW7Wr15pF
-        4DKFyUKr4UXa4UuFn7JFnruFnIg3yYka9rJrWkCw1YyasrJr1rWws5JryakryFyrWUJFyI
-        9w13CrZ5Gw45trDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jTFALUUUUU=
-X-Originating-IP: [183.9.194.37]
-X-CM-SenderInfo: xkex3sxwdqqiywtou0bp/xtbBqAhvxl75bagm0wAAse
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Zhongjun Tan <tanzhongjun@yulong.com>
+This isn't ever used by VFS now, and it couldn't even work. Any FS that
+uses the SECURITY_LSM_NATIVE_LABELS flag needs to also process the
+value returned back from the LSM, so it needs to do its
+security_sb_set_mnt_opts() call on its own anyway.
 
-seliunx_xfrm_policy_lookup() is hooks of security_xfrm_policy_lookup().
-The dir argument is uselss in security_xfrm_policy_lookup(). So
-remove the dir argument from selinux_xfrm_policy_lookup() and
-security_xfrm_policy_lookup().
-
-Signed-off-by: Zhongjun Tan <tanzhongjun@yulong.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- include/linux/lsm_hook_defs.h   | 3 +--
- include/linux/security.h        | 4 ++--
- net/xfrm/xfrm_policy.c          | 6 ++----
- security/security.c             | 4 ++--
- security/selinux/include/xfrm.h | 2 +-
- security/selinux/xfrm.c         | 2 +-
- 6 files changed, 9 insertions(+), 12 deletions(-)
+ Documentation/filesystems/mount_api.rst | 1 -
+ fs/nfs/super.c                          | 3 ---
+ include/linux/fs_context.h              | 1 -
+ include/linux/security.h                | 2 +-
+ 4 files changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 04c0179..2adeea4 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -358,8 +358,7 @@
- 	 struct xfrm_sec_ctx *polsec, u32 secid)
- LSM_HOOK(void, LSM_RET_VOID, xfrm_state_free_security, struct xfrm_state *x)
- LSM_HOOK(int, 0, xfrm_state_delete_security, struct xfrm_state *x)
--LSM_HOOK(int, 0, xfrm_policy_lookup, struct xfrm_sec_ctx *ctx, u32 fl_secid,
--	 u8 dir)
-+LSM_HOOK(int, 0, xfrm_policy_lookup, struct xfrm_sec_ctx *ctx, u32 fl_secid)
- LSM_HOOK(int, 1, xfrm_state_pol_flow_match, struct xfrm_state *x,
- 	 struct xfrm_policy *xp, const struct flowi_common *flic)
- LSM_HOOK(int, 0, xfrm_decode_session, struct sk_buff *skb, u32 *secid,
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index eb358a00be27..6fb8e22afe36 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -79,7 +79,6 @@ context.  This is represented by the fs_context structure::
+ 		unsigned int		sb_flags;
+ 		unsigned int		sb_flags_mask;
+ 		unsigned int		s_iflags;
+-		unsigned int		lsm_flags;
+ 		enum fs_context_purpose	purpose:8;
+ 		...
+ 	};
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 4aaa1f5dd381..a64c85234b59 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -1263,9 +1263,6 @@ int nfs_get_tree_common(struct fs_context *fc)
+ 		if (ctx->clone_data.sb->s_flags & SB_SYNCHRONOUS)
+ 			fc->sb_flags |= SB_SYNCHRONOUS;
+ 
+-	if (server->caps & NFS_CAP_SECURITY_LABEL)
+-		fc->lsm_flags |= SECURITY_LSM_NATIVE_LABELS;
+-
+ 	/* Get a superblock - note that we may end up sharing one that already exists */
+ 	fc->s_fs_info = server;
+ 	s = sget_fc(fc, compare_super, nfs_set_super);
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index 37e1e8f7f08d..7ca88c7e108f 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -104,7 +104,6 @@ struct fs_context {
+ 	unsigned int		sb_flags;	/* Proposed superblock flags (SB_*) */
+ 	unsigned int		sb_flags_mask;	/* Superblock flags that were changed */
+ 	unsigned int		s_iflags;	/* OR'd with sb->s_iflags */
+-	unsigned int		lsm_flags;	/* Information flags from the fs to the LSM */
+ 	enum fs_context_purpose	purpose:8;
+ 	enum fs_context_phase	phase:8;	/* The phase the context is in */
+ 	bool			need_free:1;	/* Need to call ops->free() */
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 06f7c50..24eda04 100644
+index 9aeda3f9e838..cda04d052b9c 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -1681,7 +1681,7 @@ int security_xfrm_state_alloc_acquire(struct xfrm_state *x,
- 				      struct xfrm_sec_ctx *polsec, u32 secid);
- int security_xfrm_state_delete(struct xfrm_state *x);
- void security_xfrm_state_free(struct xfrm_state *x);
--int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir);
-+int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid);
- int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 				       struct xfrm_policy *xp,
- 				       const struct flowi_common *flic);
-@@ -1732,7 +1732,7 @@ static inline int security_xfrm_state_delete(struct xfrm_state *x)
- 	return 0;
- }
+@@ -67,7 +67,7 @@ struct watch_notification;
+ /* If capable is being called by a setid function */
+ #define CAP_OPT_INSETID BIT(2)
  
--static inline int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
-+static inline int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
- {
- 	return 0;
- }
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index 156347f..d5d934e 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1902,8 +1902,7 @@ static int xfrm_policy_match(const struct xfrm_policy *pol,
+-/* LSM Agnostic defines for fs_context::lsm_flags */
++/* LSM Agnostic defines for security_sb_set_mnt_opts() flags */
+ #define SECURITY_LSM_NATIVE_LABELS	1
  
- 	match = xfrm_selector_match(sel, fl, family);
- 	if (match)
--		ret = security_xfrm_policy_lookup(pol->security, fl->flowi_secid,
--						  dir);
-+		ret = security_xfrm_policy_lookup(pol->security, fl->flowi_secid);
- 	return ret;
- }
- 
-@@ -2181,8 +2180,7 @@ static struct xfrm_policy *xfrm_sk_policy_lookup(const struct sock *sk, int dir,
- 				goto out;
- 			}
- 			err = security_xfrm_policy_lookup(pol->security,
--						      fl->flowi_secid,
--						      dir);
-+						      fl->flowi_secid);
- 			if (!err) {
- 				if (!xfrm_pol_hold_rcu(pol))
- 					goto again;
-diff --git a/security/security.c b/security/security.c
-index b38155b..0c1c979 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2466,9 +2466,9 @@ void security_xfrm_state_free(struct xfrm_state *x)
- 	call_void_hook(xfrm_state_free_security, x);
- }
- 
--int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
-+int security_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
- {
--	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid, dir);
-+	return call_int_hook(xfrm_policy_lookup, 0, ctx, fl_secid);
- }
- 
- int security_xfrm_state_pol_flow_match(struct xfrm_state *x,
-diff --git a/security/selinux/include/xfrm.h b/security/selinux/include/xfrm.h
-index 0a6f34a..7415940 100644
---- a/security/selinux/include/xfrm.h
-+++ b/security/selinux/include/xfrm.h
-@@ -23,7 +23,7 @@ int selinux_xfrm_state_alloc_acquire(struct xfrm_state *x,
- 				     struct xfrm_sec_ctx *polsec, u32 secid);
- void selinux_xfrm_state_free(struct xfrm_state *x);
- int selinux_xfrm_state_delete(struct xfrm_state *x);
--int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir);
-+int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid);
- int selinux_xfrm_state_pol_flow_match(struct xfrm_state *x,
- 				      struct xfrm_policy *xp,
- 				      const struct flowi_common *flic);
-diff --git a/security/selinux/xfrm.c b/security/selinux/xfrm.c
-index 634f3db..be83e5c 100644
---- a/security/selinux/xfrm.c
-+++ b/security/selinux/xfrm.c
-@@ -150,7 +150,7 @@ static int selinux_xfrm_delete(struct xfrm_sec_ctx *ctx)
-  * LSM hook implementation that authorizes that a flow can use a xfrm policy
-  * rule.
-  */
--int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid, u8 dir)
-+int selinux_xfrm_policy_lookup(struct xfrm_sec_ctx *ctx, u32 fl_secid)
- {
- 	int rc;
- 
+ struct ctl_table;
 -- 
-1.9.1
-
+2.30.2
 
