@@ -2,127 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B61AC43460
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 18:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4AF4C433B4
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 18:50:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 021D76115B
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 18:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6427D6115B
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 18:50:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234464AbhDIStR (ORCPT
+        id S234628AbhDISu3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Apr 2021 14:49:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51448 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233332AbhDIStQ (ORCPT
+        Fri, 9 Apr 2021 14:50:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19712 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234313AbhDISu1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Apr 2021 14:49:16 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 139IYFNs007375;
-        Fri, 9 Apr 2021 14:48:54 -0400
+        Fri, 9 Apr 2021 14:50:27 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 139IXaWs080310;
+        Fri, 9 Apr 2021 14:50:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  content-transfer-encoding : mime-version; s=pp1;
- bh=LVzrLC3YzT681sAknI1GQ3Z35WioB0LcG1pPl1zQXw4=;
- b=a7m8n//I20hjSiC+dD1CwBG3TZ8YJ2th0D90oANyxCa0GYQPUfvca/bNATCRq2n2dI0G
- DzC/cL3Q0lWo3HfjXN7fPTndDaG7pwdjRK6lVIlSRnITazp1CfchEoZjOZRp1IbxDB5j
- 4DGt6EPinwtNk4GwTVvdo1qqiUpUCFdqK4w79uLEy7zcGqdlBpiyoxhKXqdG9n076iq2
- 5SDU26t+ecyEh1HgIQ0kMoIRFGI53srV63PHnz0+X49HSrd8sMReJseOivuv/yxbnPhA
- KDYdY4d3/y/iRP7pgR0BHif3dMMErhP0e8m2Etr/YnmL4ocybwVO8iRYMZF5xgLyKy9F jQ== 
+ bh=bXvWzn00WBimAoSqYZ8BuvquyHQosk2Hc5yyYjVSe7s=;
+ b=BlIn2jwwTeFtOJekXGVP9/L07qYZHBdujPLf2R7wBXT14HFd/pk05WpcPo1RK5yeP3bq
+ BVHCt4SLZi+WIfEwC14sYnwAxQPa8ZUaGggF9HQDzUNv6cEJJMzkSR+rgtklmdOFgxt3
+ k94DXHmIQnUf9LOp+BlGj+D1Hczjr07OS+DnIYBZFWuGqSlPqnsY4v3cDH94455g34vj
+ KzQWWbOPHeE5LDHblb6/QFvleJV0R9fO91udFQlcKqJH9URKN5Yq0IUdf7QxBzar8DgA
+ UNaJjRT1DGV9S3XcAQJz9NJXRLLw224cvifAbvGZfqJjV460p9M971v7g0SiGQrdgLgh Aw== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37t8fn24bs-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37tunh1bjj-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 14:48:53 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 139IZ9lh011994;
-        Fri, 9 Apr 2021 14:48:53 -0400
+        Fri, 09 Apr 2021 14:50:12 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 139IXbHE080392;
+        Fri, 9 Apr 2021 14:50:11 -0400
 Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 37t8fn24b6-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 37tunh1bhe-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 14:48:53 -0400
+        Fri, 09 Apr 2021 14:50:11 -0400
 Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 139Ilsau016000;
-        Fri, 9 Apr 2021 18:48:52 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 37rvbwap4k-1
+        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 139ImutW017941;
+        Fri, 9 Apr 2021 18:50:09 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06ams.nl.ibm.com with ESMTP id 37rvbwap53-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Apr 2021 18:48:51 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 139Imm5b63570412
+        Fri, 09 Apr 2021 18:50:09 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 139Inj6433751368
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Apr 2021 18:48:49 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA6F6AE04D;
-        Fri,  9 Apr 2021 18:48:48 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3675BAE056;
-        Fri,  9 Apr 2021 18:48:46 +0000 (GMT)
+        Fri, 9 Apr 2021 18:49:45 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D51934204B;
+        Fri,  9 Apr 2021 18:50:06 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 910C04204F;
+        Fri,  9 Apr 2021 18:50:05 +0000 (GMT)
 Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.54.65])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  9 Apr 2021 18:48:45 +0000 (GMT)
-Message-ID: <b631513d0b5200577bb613ee23e2cdf7ad4bd175.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 0/3] ima: kernel build support for loading the kernel
- module signing key
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  9 Apr 2021 18:50:05 +0000 (GMT)
+Message-ID: <e5255a234d022726d892766969d37cd894ea8e03.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] ima: Fix function name error in comment.
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna Jain <nayna@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Date:   Fri, 09 Apr 2021 14:48:45 -0400
-In-Reply-To: <20210409143507.191443-1-nayna@linux.ibm.com>
-References: <20210409143507.191443-1-nayna@linux.ibm.com>
+To:     Jiele Zhao <unclexiaole@gmail.com>, jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 09 Apr 2021 14:50:04 -0400
+In-Reply-To: <20210406021210.2843-1-unclexiaole@gmail.com>
+References: <20210406021210.2843-1-unclexiaole@gmail.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: B9lq_fuyFgfJO-nl6YsqnUnoHecksFB6
-X-Proofpoint-ORIG-GUID: vHFzPe2KQAFXU1iElsm5sT_rJZmtQZ_-
+X-Proofpoint-ORIG-GUID: COzyK8LmymYZU4ryIN8fw9WCpgu5Pjmj
+X-Proofpoint-GUID: Ryspu2l-7B2iyc7wEFOwWTma3nx-8IJU
 Content-Transfer-Encoding: 7bit
 X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-04-09_07:2021-04-09,2021-04-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- mlxlogscore=999 impostorscore=0 mlxscore=0 phishscore=0 bulkscore=0
- clxscore=1011 suspectscore=0 malwarescore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 mlxlogscore=999
+ adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2104060000 definitions=main-2104090133
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2021-04-09 at 10:35 -0400, Nayna Jain wrote:
-> Kernel modules are currently only signed when CONFIG_MODULE_SIG is enabled.
-> The kernel module signing key is a self-signed CA only loaded onto the
-> .builtin_trusted_key keyring.  On secure boot enabled systems with an arch
-> specific IMA policy enabled, but without MODULE_SIG enabled, kernel modules
-> are not signed, nor is the kernel module signing public key loaded onto the
-> IMA keyring.
+On Tue, 2021-04-06 at 02:12 +0000, Jiele Zhao wrote:
+> The original function name was ima_path_check().  The policy parsing
+> still supports PATH_CHECK.   Commit 9bbb6cad0173 ("ima: rename
+> ima_path_check to ima_file_check") renamed the function to
+> ima_file_check(), but missed modifying the function name in the
+> comment.
 > 
-> In order to load the the kernel module signing key onto the IMA trusted
-> keyring ('.ima'), the certificate needs to be signed by a CA key either on
-> the builtin or secondary keyrings. The original version of this patch set
-> created and loaded a kernel-CA key onto the builtin keyring. The kernel-CA
-> key signed the kernel module signing key, allowing it to be loaded onto the
-> IMA trusted keyring.
+> Fixes: 9bbb6cad0173 ("ima: rename ima_path_check to ima_file_check").
 > 
-> However, missing from this version was support for the kernel-CA to sign the
-> hardware token certificate. Adding that support would add additional
-> complexity.
-> 
-> Since the kernel module signing key is embedded into the Linux kernel at
-> build time, instead of creating and loading a kernel-CA onto the builtin
-> trusted keyring, this version makes an exception and allows the 
-> self-signed kernel module signing key to be loaded directly onto the 
-> trusted IMA keyring.
+> Signed-off-by: Jiele Zhao <unclexiaole@gmail.com>
 
-Thanks,  Nayna.
+Thanks, Jiele.
 
 Applied to
 git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git 
