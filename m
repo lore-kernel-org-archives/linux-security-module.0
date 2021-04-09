@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E03C433B4
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A936C43461
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC8961182
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F21B461184
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 11:45:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233005AbhDILpK (ORCPT
+        id S233534AbhDILpL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Apr 2021 07:45:10 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2823 "EHLO
+        Fri, 9 Apr 2021 07:45:11 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2825 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232295AbhDILpJ (ORCPT
+        with ESMTP id S231611AbhDILpK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Apr 2021 07:45:09 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FGwzW2VhVz67w98;
-        Fri,  9 Apr 2021 19:35:19 +0800 (CST)
+        Fri, 9 Apr 2021 07:45:10 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FGwzX2wvKz682sM;
+        Fri,  9 Apr 2021 19:35:20 +0800 (CST)
 Received: from fraphisprd00473.huawei.com (7.182.8.141) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2106.2; Fri, 9 Apr 2021 13:44:55 +0200
+ 15.1.2106.2; Fri, 9 Apr 2021 13:44:56 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 5/7] ima: Introduce appraise_exec_immutable policy
-Date:   Fri, 9 Apr 2021 13:43:11 +0200
-Message-ID: <20210409114313.4073-6-roberto.sassu@huawei.com>
+Subject: [PATCH 7/7] evm: Extend evm= with allow_metadata_writes and complete values
+Date:   Fri, 9 Apr 2021 13:43:13 +0200
+Message-ID: <20210409114313.4073-8-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20210409114313.4073-1-roberto.sassu@huawei.com>
 References: <20210409114313.4073-1-roberto.sassu@huawei.com>
@@ -50,66 +50,91 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch modifies the existing "appraise_exec_tcb" policy, by adding the
-appraise_type=meta_immutable requirement for executed files. This policy
-can be selected by specifying
-ima_policy="appraise_exec_tcb|appraise_exec_immutable" in the kernel
-command line.
+With the patch 'evm: Ignore INTEGRITY_NOLABEL/INTEGRITY_NOXATTRS if
+conditions are safe', the INTEGRITY_NOLABEL and INTEGRITY_NOXATTRS errors
+can be ignored by setting the EVM_SETUP_COMPLETE flag. Also, the same
+errors can be avoided by disabling EVM verification completely with the
+EVM_ALLOW_METADATA_WRITES flag.
+
+This patch makes it possible to set these initialization flags directly in
+the kernel command line, so that no additional setup is required from the
+initial ram disk. The new allowed values for evm= are:
+
+allow_metadata_writes: permit metadata modificatons;
+complete: don't allow further changes of the EVM mode.
+
+While EVM_ALLOW_METADATA_WRITES will be applied directly by the kernel at
+setup time, EVM_SETUP_COMPLETE will be applied only if a public key is
+loaded by evm_load_x509().
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 4 ++++
- security/integrity/ima/ima_policy.c             | 8 +++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
+ Documentation/admin-guide/kernel-parameters.txt |  8 +++++---
+ security/integrity/evm/evm_main.c               | 16 ++++++++++++----
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 93c5f78905e2..265f7657f59d 100644
+index f61ce44c5d8e..eaf08095df43 100644
 --- a/Documentation/admin-guide/kernel-parameters.txt
 +++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1780,6 +1780,10 @@
- 			appraised (with imasig requirement) instead of files
- 			owned by root.
+@@ -1339,9 +1339,11 @@
+ 			has equivalent usage. See its documentation for details.
  
-+			The "appraise_exec_immutable" policy requires immutable
-+			metadata for executed files, if the "appraise_exec_tcb"
-+			policy is selected.
-+
- 			The "appraise_tmpfs" policy excludes the dont_appraise
- 			rule for the tmpfs and ramfs filesystems for the
- 			"appraise_tcb" and "appraise_exec_tcb" policies.
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index a45e494e06e8..6249817ebd04 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -243,6 +243,7 @@ __setup("ima_tcb", default_measure_policy_setup);
- static unsigned int ima_measure_skip_flags __initdata;
- static unsigned int ima_appraise_skip_flags __initdata;
- static bool ima_use_appraise_tcb __initdata;
-+static bool ima_use_appraise_exec_immutable __initdata;
- static bool ima_use_secure_boot __initdata;
- static bool ima_use_critical_data __initdata;
- static bool ima_fail_unverifiable_sigs __ro_after_init;
-@@ -267,7 +268,9 @@ static int __init policy_setup(char *str)
- 		else if (strcmp(p, "appraise_exec_tcb") == 0) {
- 			ima_use_appraise_tcb = true;
- 			ima_appraise_skip_flags |= IMA_SKIP_OPEN;
--		} else if (strcmp(p, "secure_boot") == 0)
-+		} else if (strcmp(p, "appraise_exec_immutable") == 0)
-+			ima_use_appraise_exec_immutable = true;
-+		else if (strcmp(p, "secure_boot") == 0)
- 			ima_use_secure_boot = true;
- 		else if (strcmp(p, "critical_data") == 0)
- 			ima_use_critical_data = true;
-@@ -913,6 +916,9 @@ void __init ima_init_policy(void)
- 				  IMA_DEFAULT_POLICY, 0);
- 	}
+ 	evm=		[EVM]
+-			Format: { "fix" }
+-			Permit 'security.evm' to be updated regardless of
+-			current integrity status.
++			Format: { "fix" | "allow_metadata_writes" | "complete" }
++			fix: permit 'security.evm' to be updated regardless of
++			current integrity status;
++			allow_metadata_writes: permit metadata modificatons;
++			complete: don't allow further changes of the EVM mode.
  
-+	if (ima_use_appraise_exec_immutable)
-+		appraise_exec_rules[0].flags |= IMA_META_IMMUTABLE_REQUIRED;
-+
- 	if (ima_use_critical_data)
- 		add_rules(critical_data_rules,
- 			  ARRAY_SIZE(critical_data_rules),
+ 	evm_hash=	[EVM] Hash algorithm used to calculate the HMAC.
+ 			Format: { md5 | sha1 | rmd160 | sha256 | sha384
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index cb3754e0cc60..84a9b7a69b1f 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -56,17 +56,22 @@ static struct xattr_list evm_config_default_xattrnames[] = {
+ 
+ LIST_HEAD(evm_config_xattrnames);
+ 
+-static int evm_fixmode;
+-static int __init evm_set_fixmode(char *str)
++static int evm_fixmode __ro_after_init;
++static int evm_complete __ro_after_init;
++static int __init evm_set_param(char *str)
+ {
+ 	if (strncmp(str, "fix", 3) == 0)
+ 		evm_fixmode = 1;
++	else if (strncmp(str, "allow_metadata_writes", 21) == 0)
++		evm_initialized |= EVM_ALLOW_METADATA_WRITES;
++	else if (strncmp(str, "complete", 8) == 0)
++		evm_complete = 1;
+ 	else
+ 		pr_err("invalid \"%s\" mode", str);
+ 
+ 	return 0;
+ }
+-__setup("evm=", evm_set_fixmode);
++__setup("evm=", evm_set_param);
+ 
+ static void __init evm_init_config(void)
+ {
+@@ -737,8 +742,11 @@ void __init evm_load_x509(void)
+ 	int rc;
+ 
+ 	rc = integrity_load_x509(INTEGRITY_KEYRING_EVM, CONFIG_EVM_X509_PATH);
+-	if (!rc)
++	if (!rc) {
+ 		evm_initialized |= EVM_INIT_X509;
++		if (evm_complete)
++			evm_initialized |= EVM_SETUP_COMPLETE;
++	}
+ }
+ #endif
+ 
 -- 
 2.26.2
 
