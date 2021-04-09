@@ -2,67 +2,67 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF46C43460
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 17:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DCCC43462
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 17:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D6EB601FD
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 17:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DD3D6113A
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Apr 2021 17:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234273AbhDIRjc (ORCPT
+        id S234316AbhDIRoE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Apr 2021 13:39:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30147 "EHLO
+        Fri, 9 Apr 2021 13:44:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:42109 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234133AbhDIRjb (ORCPT
+        by vger.kernel.org with ESMTP id S233896AbhDIRoE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Apr 2021 13:39:31 -0400
+        Fri, 9 Apr 2021 13:44:04 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1617989958;
+        s=mimecast20190719; t=1617990230;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ctSABw2kjoLnR/9CPsehS2T91aGqZMmVOGM3FfnHLik=;
-        b=BH7vAMMCRfOinjpFyXteIZ6epWmq8hl4d8tF38XkXET5lZX8hk5O7L0YmNsGvnqsdmsCGZ
-        VtvnrtzZjYt+u0p9d40gEpB7jeyHSW6COIZVlA3zHXrMBwkJgC0V9N4qhvZ6HiStGXqZ5R
-        pb7EjJqAw30COglbGc08UtzbdzN5HV8=
+        bh=qMoHusWRU3EEFKJLrdPdn6fw7g5fEbxgGHTh4Vd8ET0=;
+        b=I6kxOgE8Ko+rYXsYf5aOZ7yh2T5kfKHh+IXlNkAZyPIKYwTjG9yquk3uGTUdfsXzGGpp2X
+        gTyaw/WmfmFGgyyT77p3hrz0lagpAeikNJohCRgFV1hx6t2pJ/FU/8gp5mi0BDdxJs6x9n
+        T10oX9flDjYP9xwCNbrt3P3Dcky/fS0=
 Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
  [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-193-rEAHMiOVOSCDkVP7QVyvJg-1; Fri, 09 Apr 2021 13:39:16 -0400
-X-MC-Unique: rEAHMiOVOSCDkVP7QVyvJg-1
-Received: by mail-yb1-f199.google.com with SMTP id v6so6029107ybk.9
-        for <linux-security-module@vger.kernel.org>; Fri, 09 Apr 2021 10:39:16 -0700 (PDT)
+ us-mta-361-nbd-XsP5O8mIqv-8tT1JWQ-1; Fri, 09 Apr 2021 13:43:46 -0400
+X-MC-Unique: nbd-XsP5O8mIqv-8tT1JWQ-1
+Received: by mail-yb1-f199.google.com with SMTP id w7so6093379ybq.4
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Apr 2021 10:43:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ctSABw2kjoLnR/9CPsehS2T91aGqZMmVOGM3FfnHLik=;
-        b=YkZcx4m0w4vFGMQPq1YRsvWHZZ/LxNmCxc9ob35540Il7D3wW9aCRRkmCS+Ir2R/Ou
-         oNjUYkL0vibRQidODQD2iQVKMxjI7c0S6kcGj6Nxg1NaSqBzT2G3qy2BZ8FMArtE+pfj
-         6x1Hj3Lb/ZqlYe5MMwqzrD0g6dMACvsfVt6krtDpYKOdt5/KDa7NGma6zu9Qg6GFTqVo
-         EkHV5X8yIaGRnAYqf23jVHnGdXQUDoUE0VygtmuGD3wNF1zqVHPgo3/OhGwDXhFmCIMs
-         FvUmgGYT7B6rWlRwI6g++mfXYUsjRBDzWIynoHcQYnI7pfxt/UUYrHdM8mY0rOw79NT9
-         +lwQ==
-X-Gm-Message-State: AOAM533lA1Og6t9LALMVMv2FbskLKi/9pxcUgNuJSq3WQGXo7xodsLYC
-        fMjehHTBvgOwPkGsHNqdDGMZOkNBsq8UkN0iE7CdCYMWviVveC2BKmPqG9btBU3qderErzZPeM/
-        h8ky7UaL3nBP04BiPzgi1NUuZ1EQxaoG251IICyzNKlRnVHDXmudL
-X-Received: by 2002:a25:c607:: with SMTP id k7mr6756014ybf.227.1617989955814;
-        Fri, 09 Apr 2021 10:39:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz+mTXRAzv4p+pKtFBXvvYgqFhiLeH+4Jst89hdPmwIQxdwoJP7Ld4xy5sP/8Zg8hbTmY6FfD9wYvwlUd9JMdk=
-X-Received: by 2002:a25:c607:: with SMTP id k7mr6755995ybf.227.1617989955622;
- Fri, 09 Apr 2021 10:39:15 -0700 (PDT)
+        bh=qMoHusWRU3EEFKJLrdPdn6fw7g5fEbxgGHTh4Vd8ET0=;
+        b=tbeAWJjyecyN3KAqgjRq6XlRTElyY8kcTmz56I76V0TuWe1jRwQp6DP3P1b4fSpjI/
+         3nuahZ0TfaxnPkMMnMHj247eaBlTaGatI6vBWPjP834fd4ebkPxNxClvxy3V+U6wG72m
+         iNgZMsmPmPvKru+NcUf9e1VoQHFM0hc7XUKT/FgbT/ZRWHmntzOyvtEfrg3OrZPdOmiz
+         3AnGrpAMFAJA2aO+SoopbClJsAveE4YlRUZ2kkhOEms7NlCVTQ2A8VkWEwtul5EEwMGD
+         vYoJPWxD6c6sAucQcbPSb97wL9qU8uRX80Bi93tKyAqc1LLiV8KjuiV1k/vFK+gzoCFD
+         HoxA==
+X-Gm-Message-State: AOAM533sMTN/6VoESLxHPmUOjedgVfzXBmmV6Usm4ASH4B3PJMfnOF3V
+        Re7sK5QWilnmG297W1qnROq2kr7fXd1q/4p1J1Alwmimk1OQDo9qy6xCpdvUGJno8X+mY5TtTuL
+        KC758WAUgton+2aE5fzoPMfNRsoKOxNCh1MVWCZkOTsnUdH41dyf5
+X-Received: by 2002:a25:c750:: with SMTP id w77mr18988184ybe.340.1617990226072;
+        Fri, 09 Apr 2021 10:43:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyePgBUXoxlCId5qbcbVtMHPFy79XeNQKfpB+vnhzetF47rq1MWoBwqoXUkxzWZFDH1Z8C7fd36q8TbvUNnQx4=
+X-Received: by 2002:a25:c750:: with SMTP id w77mr18988165ybe.340.1617990225907;
+ Fri, 09 Apr 2021 10:43:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210409111254.271800-1-omosnace@redhat.com> <YHBITqlAfOk8IV5w@zeniv-ca.linux.org.uk>
-In-Reply-To: <YHBITqlAfOk8IV5w@zeniv-ca.linux.org.uk>
+References: <20210409111254.271800-1-omosnace@redhat.com> <53c532c8-fecf-ff13-ac82-7755f11a087d@schaufler-ca.com>
+In-Reply-To: <53c532c8-fecf-ff13-ac82-7755f11a087d@schaufler-ca.com>
 From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 9 Apr 2021 19:39:02 +0200
-Message-ID: <CAFqZXNuhog5YfaG9CBVmZ+C3mSzAEgZkSC-mrQGOD4vyLEz4Xw@mail.gmail.com>
+Date:   Fri, 9 Apr 2021 19:43:33 +0200
+Message-ID: <CAFqZXNtcMsTMDtT3pvRNp31UPGUgDzz6DPSC+uw=1LRvLrVspw@mail.gmail.com>
 Subject: Re: [PATCH 0/2] vfs/security/NFS/btrfs: clean up and fix LSM option handling
-To:     Al Viro <viro@zeniv.linux.org.uk>
+To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
         SElinux list <selinux@vger.kernel.org>,
@@ -70,6 +70,7 @@ Cc:     Linux Security Module list
         linux-nfs <linux-nfs@vger.kernel.org>,
         linux-btrfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
         Olga Kornievskaia <aglo@umich.edu>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         David Howells <dhowells@redhat.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>
 Authentication-Results: relay.mimecast.com;
@@ -80,42 +81,56 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 9, 2021 at 2:28 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Fri, Apr 09, 2021 at 01:12:52PM +0200, Ondrej Mosnacek wrote:
+On Fri, Apr 9, 2021 at 7:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 4/9/2021 4:12 AM, Ondrej Mosnacek wrote:
 > > This series attempts to clean up part of the mess that has grown around
 > > the LSM mount option handling across different subsystems.
+> >
+> > The original motivation was to fix a NFS+SELinux bug that I found while
+> > trying to get the NFS part of the selinux-testsuite [1] to work, which
+> > is fixed by patch 2.
+> >
+> > The first patch paves the way for the second one by eliminating the
+> > special case workaround in selinux_set_mnt_opts(), while also
+> > simplifying BTRFS's LSM mount option handling.
+> >
+> > I tested the patches by running the NFS part of the SELinux testsuite
+> > (which is now fully passing). I also added the pending patch for
+> > broken BTRFS LSM options support with fsconfig(2) [2] and ran the
+> > proposed BTRFS SELinux tests for selinux-testsuite [3] (still passing
+> > with all patches).
 >
-> I would not describe growing another FS_... flag
+> The Smack testsuite can be found at:
+>         https://github.com/smack-team/smack-testsuite.git
+>
+> It might provide another layer of confidence.
 
-Why is that necessarily a bad thing?
+Thanks, but that doesn't seem to exercise mounting/remounting btrfs
+nor nfs with security options. Anything else should be unaffected.
 
-> *AND* spreading the
-> FS_BINARY_MOUNTDATA further, with rather weird semantics at that,
-> as a cleanup of any sort.
+>
+> >
+> > [1] https://github.com/SELinuxProject/selinux-testsuite/
+> > [2] https://lore.kernel.org/selinux/20210401065403.GA1363493@infradead.org/T/
+> > [3] https://lore.kernel.org/selinux/20201103110121.53919-2-richard_c_haines@btinternet.com/
+> >     ^^ the original patch no longer applies - a rebased version is here:
+> >     https://github.com/WOnder93/selinux-testsuite/commit/212e76b5bd0775c7507c1996bd172de3bcbff139.patch
+> >
+> > Ondrej Mosnacek (2):
+> >   vfs,LSM: introduce the FS_HANDLES_LSM_OPTS flag
+> >   selinux: fix SECURITY_LSM_NATIVE_LABELS flag handling on double mount
+> >
+> >  fs/btrfs/super.c         | 35 ++++++-----------------------------
+> >  fs/nfs/fs_context.c      |  6 ++++--
+> >  fs/super.c               | 10 ++++++----
+> >  include/linux/fs.h       |  3 ++-
+> >  security/selinux/hooks.c | 32 +++++++++++++++++---------------
+> >  5 files changed, 35 insertions(+), 51 deletions(-)
+> >
+>
 
-How is this spreading it further? The patches remove one (rather bad)
-use of it in SELinux and somewhat reduce its use in btrfs.
 
-Hold on... actually I just realized that with FS_HANDLES_LSM_OPTS it
-is possible to do btrfs without FS_BINARY_MOUNTDATA and also eliminate
-the need for the workaround in vfs_parse_fs_param() (i.e. [2]).
-
-Basically instead of setting FS_BINARY_MOUNTDATA | FS_HANDLES_LSM_OPTS
-in btrfs_fs_type and neither in btrfs_root_fs_type, it is enough to
-set neither in btrfs_fs_type and only FS_HANDLES_LSM_OPTS in
-btrfs_root_fs_type. The security opts are then applied in the outer
-vfs_get_tree() call instead of the inner one, but the net effect is
-the same.
-
-That should pretty much do away with both the non-legit users of
-FS_BINARY_MOUNTDATA (selinux_set_mnt_opts() and btrfs). All the rest
-seem to be in line with the semantic.
-
-Would [something like] the above stand any chance of getting your approval?
-
-[2] https://lore.kernel.org/selinux/20210401065403.GA1363493@infradead.org/T/
-
---
+-- 
 Ondrej Mosnacek
 Software Engineer, Linux Security - SELinux kernel
 Red Hat, Inc.
