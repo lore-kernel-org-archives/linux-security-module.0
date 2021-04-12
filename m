@@ -2,82 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F54CC433ED
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 13:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C428C43461
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD5186128C
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 13:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3296C61355
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 15:50:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239428AbhDLN3G (ORCPT
+        id S243101AbhDLPux (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Apr 2021 09:29:06 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:49404 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238431AbhDLN3G (ORCPT
+        Mon, 12 Apr 2021 11:50:53 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15668 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240878AbhDLPuw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Apr 2021 09:29:06 -0400
-Received: from fsav101.sakura.ne.jp (fsav101.sakura.ne.jp [27.133.134.228])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 13CDSMkM016243;
-        Mon, 12 Apr 2021 22:28:22 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav101.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp);
- Mon, 12 Apr 2021 22:28:22 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav101.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 13CDSKDH016227
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 12 Apr 2021 22:28:22 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [syzbot] WARNING in smk_set_cipso (2)
-To:     casey@schaufler-ca.com
-References: <000000000000d06f2605bfc110e4@google.com>
-Cc:     jmorris@namei.org, linux-kernel@vger.kernel.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        syzbot <syzbot+77c53db50c9fff774e8e@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <d1d73239-c549-c6c0-5b24-5d701b69e3f1@i-love.sakura.ne.jp>
-Date:   Mon, 12 Apr 2021 22:28:15 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+        Mon, 12 Apr 2021 11:50:52 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FJtRJ1G7HzpXgv;
+        Mon, 12 Apr 2021 23:47:40 +0800 (CST)
+Received: from localhost.localdomain (10.175.102.38) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.498.0; Mon, 12 Apr 2021 23:50:22 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     <weiyongjun1@huawei.com>, James Bottomley <jejb@linux.ibm.com>,
+        "Jarkko Sakkinen" <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sumit Garg <sumit.garg@linaro.org>
+CC:     <linux-integrity@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] KEYS: trusted: Switch to kmemdup_nul()
+Date:   Mon, 12 Apr 2021 16:00:22 +0000
+Message-ID: <20210412160022.193460-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <000000000000d06f2605bfc110e4@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Commit 7ef4c19d245f3dc2 ("smackfs: restrict bytes count in smackfs write
-functions") missed that count > SMK_CIPSOMAX check applies to only
-format == SMK_FIXED24_FMT case.
+Use kmemdup_nul() helper instead of open-coding to
+simplify the code.
 
-Reported-by: syzbot <syzbot+77c53db50c9fff774e8e@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- security/smack/smackfs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ security/keys/trusted-keys/trusted_core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 22ded2c26089..1ad7d0d1ea62 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -855,6 +855,8 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 	if (format == SMK_FIXED24_FMT &&
- 	    (count < SMK_CIPSOMIN || count > SMK_CIPSOMAX))
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index ec3a066a4b42..9430cba1f084 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -146,11 +146,9 @@ static int trusted_instantiate(struct key *key,
+ 	if (datalen <= 0 || datalen > 32767 || !prep->data)
  		return -EINVAL;
-+	if (count > PAGE_SIZE)
-+		return -EINVAL;
  
- 	data = memdup_user_nul(buf, count);
- 	if (IS_ERR(data))
--- 
-2.18.4
+-	datablob = kmalloc(datalen + 1, GFP_KERNEL);
++	datablob = kmemdup_nul(prep->data, datalen, GFP_KERNEL);
+ 	if (!datablob)
+ 		return -ENOMEM;
+-	memcpy(datablob, prep->data, datalen);
+-	datablob[datalen] = '\0';
+ 
+ 	payload = trusted_payload_alloc(key);
+ 	if (!payload) {
 
