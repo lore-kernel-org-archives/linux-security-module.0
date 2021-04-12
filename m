@@ -2,118 +2,156 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B3DFC433ED
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 07:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1DAC433B4
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 12:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 646196121F
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 07:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 718106128E
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Apr 2021 12:16:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236705AbhDLHAd (ORCPT
+        id S239439AbhDLMQT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Apr 2021 03:00:33 -0400
-Received: from mail-il1-f199.google.com ([209.85.166.199]:47845 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236658AbhDLHAc (ORCPT
+        Mon, 12 Apr 2021 08:16:19 -0400
+Received: from mgw-02.mpynet.fi ([82.197.21.91]:59198 "EHLO mgw-02.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S237283AbhDLMQS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Apr 2021 03:00:32 -0400
-Received: by mail-il1-f199.google.com with SMTP id e15so2255534ilr.14
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Apr 2021 00:00:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=a8MjXdSruPWsNT6YKlOq40bkg1Bt0LxN86WBiQWj0DY=;
-        b=JPerJA6uxlYVDNqvKruWg2ljjkoRCFWyJIGTJmyrBLiM4+kysrwKMf8KZGNDaEcRso
-         m4HOeWksC3vRzZ8vIK+27kdX5LPRssEft9sB8GgCjGKO5p7qFhIUl7pD6z+QtV9jjyDt
-         KkezPtzbflDS/uBfK/+Ed4HU85qbH6xTv6yAjtiDy/+jdgfmcS1ykRqv9oQOBfXc+Vh2
-         VflJQC6bOOxfmKQjUPs0yFkQgxMz1ZmHXjE4wp30QhW+PfNRe2Q3wOI3R9EOqQkiFzPr
-         5jKlsj6EjXO4ISrZYy/7wh2gOFdW5MI9Mkud683xkLuVHtYnv6WV28apR1Kovd4SqFEf
-         S3lA==
-X-Gm-Message-State: AOAM530Wmpv+6MfZlMsXqWV/d3C4axwhx+6uYqLvh5ooUaFBr0QtSIoa
-        xJdXAzrb5QZFmPUwzE+OYHR+a6znXU9AcWDZWzizwV3BPdEo
-X-Google-Smtp-Source: ABdhPJyYX7RRly5jRUCsB2jM4ji+pnoUuRRRuQXwlLySlY5Ug0xTtFw36aUjVAVKNxphyrVzmWPvkAoAlrCvbIl9aKgF0DHkB4iu
+        Mon, 12 Apr 2021 08:16:18 -0400
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Mon, 12 Apr 2021 08:16:16 EDT
+Received: from pps.filterd (mgw-02.mpynet.fi [127.0.0.1])
+        by mgw-02.mpynet.fi (8.16.0.43/8.16.0.43) with SMTP id 13CBuj4R036297;
+        Mon, 12 Apr 2021 15:05:00 +0300
+Received: from ex13.tuxera.com (ex13.tuxera.com [178.16.184.72])
+        by mgw-02.mpynet.fi with ESMTP id 37vmqsr2ph-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 12 Apr 2021 15:05:00 +0300
+Received: from tuxera-exch.ad.tuxera.com (10.20.48.11) by
+ tuxera-exch.ad.tuxera.com (10.20.48.11) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 12 Apr 2021 15:04:59 +0300
+Received: from tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789]) by
+ tuxera-exch.ad.tuxera.com ([fe80::552a:f9f0:68c3:d789%12]) with mapi id
+ 15.00.1497.012; Mon, 12 Apr 2021 15:04:59 +0300
+From:   Anton Altaparmakov <anton@tuxera.com>
+To:     "christian.brauner@ubuntu.com" <christian.brauner@ubuntu.com>
+CC:     "James.Bottomley@hansenpartnership.com" 
+        <James.Bottomley@hansenpartnership.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "alban@kinvolk.io" <alban@kinvolk.io>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        "containers@lists.linux-foundation.org" 
+        <containers@lists.linux-foundation.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "cyphar@cyphar.com" <cyphar@cyphar.com>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "geofft@ldpreload.com" <geofft@ldpreload.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "hirofumi@mail.parknet.co.jp" <hirofumi@mail.parknet.co.jp>,
+        "john.johansen@canonical.com" <john.johansen@canonical.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "lennart@poettering.net" <lennart@poettering.net>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "mpatel@redhat.com" <mpatel@redhat.com>,
+        "paul@paul-moore.com" <paul@paul-moore.com>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "seth.forshee@canonical.com" <seth.forshee@canonical.com>,
+        "smbarber@chromium.org" <smbarber@chromium.org>,
+        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
+        "tkjos@google.com" <tkjos@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "tycho@tycho.ws" <tycho@tycho.ws>, "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
+Subject: Re: [PATCH v6 24/40] fs: make helpers idmap mount aware
+Thread-Topic: [PATCH v6 24/40] fs: make helpers idmap mount aware
+Thread-Index: AQHXL5QPJZ+OaKJz8USD3Dodtq0P1w==
+Date:   Mon, 12 Apr 2021 12:04:59 +0000
+Message-ID: <E901E25F-41FA-444D-B3C7-A7A786DDD5D5@tuxera.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [109.145.212.130]
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BA514E4FAABFD8498C8B1419EB26396B@ex13.tuxera.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-Received: by 2002:a5e:cb4c:: with SMTP id h12mr20880277iok.183.1618210815240;
- Mon, 12 Apr 2021 00:00:15 -0700 (PDT)
-Date:   Mon, 12 Apr 2021 00:00:15 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d06f2605bfc110e4@google.com>
-Subject: [syzbot] WARNING in smk_set_cipso (2)
-From:   syzbot <syzbot+77c53db50c9fff774e8e@syzkaller.appspotmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-GUID: Vd5127wVnEcv9vrUnKYvowNFSa7J_xlE
+X-Proofpoint-ORIG-GUID: Vd5127wVnEcv9vrUnKYvowNFSa7J_xlE
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-12_09:2021-04-12,2021-04-12 signatures=0
+X-Proofpoint-Spam-Details: rule=mpy_notspam policy=mpy score=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 mlxscore=0 malwarescore=0 spamscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104120082
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Hi,
 
-syzbot found the following issue on:
+I noticed this patch got merged into mainline and looking through the HFS+ changes, I noticed something that struck me as odd.  I am not familiar with this patch set so perhaps it is the intention but I wanted to ask you because it just seems strange thing to do.
 
-HEAD commit:    7d900724 Merge tag 'for-5.12-rc6-tag' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1462c619d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f91155ccddaf919c
-dashboard link: https://syzkaller.appspot.com/bug?extid=77c53db50c9fff774e8e
-compiler:       Debian clang version 11.0.1-2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132c59a1d00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13acf5e9d00000
+So you are adding a new argument of "struct user_namespace *mnt_userns" to lots of functions but then inside the functions when they call another function you often make that use "&init_user_ns" instead of the passed in "mnt_userns" which kind of defeats the point of having the new "mnt_userns" argument altogether, doesn't it?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+77c53db50c9fff774e8e@syzkaller.appspotmail.com
+Example after this chunk:
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 8372 at mm/page_alloc.c:4985 __alloc_pages_nodemask+0x44e/0x500 mm/page_alloc.c:5029
-Modules linked in:
-CPU: 1 PID: 8372 Comm: syz-executor118 Not tainted 5.12.0-rc6-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:__alloc_pages_nodemask+0x44e/0x500 mm/page_alloc.c:5029
-Code: 00 48 ba 00 00 00 00 00 fc ff df e9 fb fd ff ff 89 f9 80 e1 07 80 c1 03 38 c1 0f 8c 06 fe ff ff e8 97 67 09 00 e9 fc fd ff ff <0f> 0b e9 15 fe ff ff 44 89 ed a9 00 00 08 00 75 11 81 e5 7f ff ff
-RSP: 0018:ffffc90001e2fba0 EFLAGS: 00010246
-RAX: ffffc90001e2fba8 RBX: ffffc90001e2fbd4 RCX: 0000000000000000
-RDX: 0000000000000028 RSI: 0000000000000000 RDI: ffffc90001e2fbd0
-RBP: 0000000000000000 R08: dffffc0000000000 R09: ffffc90001e2fba8
-R10: fffff520003c5f7a R11: 0000000000000000 R12: 0000000000f0ff80
-R13: 0000000000040cc0 R14: 1ffff920003c5f7a R15: 000000000000000c
-FS:  0000000001eb9300(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020003314 CR3: 0000000012ba3000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- alloc_pages include/linux/gfp.h:561 [inline]
- kmalloc_order+0x41/0x170 mm/slab_common.c:902
- kmalloc_order_trace+0x15/0x70 mm/slab_common.c:918
- kmalloc_large include/linux/slab.h:483 [inline]
- __kmalloc_track_caller+0x26d/0x390 mm/slub.c:4554
- memdup_user_nul+0x26/0xf0 mm/util.c:260
- smk_set_cipso+0xff/0x6f0 security/smack/smackfs.c:859
- vfs_write+0x220/0xab0 fs/read_write.c:603
- ksys_write+0x11b/0x220 fs/read_write.c:658
- do_syscall_64+0x2d/0x70 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x43ee59
-Code: 28 c3 e8 2a 14 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffddac6bda8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000400488 RCX: 000000000043ee59
-RDX: 0000000000f0ff7f RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000402e40 R08: 0000000000000000 R09: 0000000000400488
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402ed0
-R13: 0000000000000000 R14: 00000000004ac018 R15: 0000000000400488
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 642e067d8fe8..7a937de9b2ad 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -241,7 +241,8 @@ static int hfsplus_file_release(struct inode *inode, struct file *file)
+        return 0;
+ }
 
+-static int hfsplus_setattr(struct dentry *dentry, struct iattr *attr)
++static int hfsplus_setattr(struct user_namespace *mnt_userns,
++                    struct dentry *dentry, struct iattr *attr)
+ {
+        struct inode *inode = d_inode(dentry);
+        int error;
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+The code now looks like this:
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+static int hfsplus_setattr(struct user_namespace *mnt_userns,
+                           struct dentry *dentry, struct iattr *attr)
+{
+        struct inode *inode = d_inode(dentry);
+        int error;
+
+        error = setattr_prepare(&init_user_ns, dentry, attr);
+        if (error)
+                return error;
+[...]
+        setattr_copy(&init_user_ns, inode, attr);
+        mark_inode_dirty(inode);
+
+        return 0;
+}
+
+Shouldn't that be using mnt_userns instead of &init_user_ns both for the setattr_prepare() and setattr_copy() calls?
+
+Please note this is just one example - it seems the kernel is now littered with such examples in current mainline and I don't mean just HFS+ - this is now all over the place...
+
+Best regards,
+
+	Anton
+-- 
+Anton Altaparmakov <anton at tuxera.com> (replace at with @)
+Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
+Linux NTFS maintainer
+
