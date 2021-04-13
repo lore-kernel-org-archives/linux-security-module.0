@@ -2,189 +2,184 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19757C43460
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 05:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1077EC433ED
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 08:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9CD0613AF
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 05:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D534B61278
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 08:13:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244341AbhDMFmh (ORCPT
+        id S239527AbhDMINn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Apr 2021 01:42:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56208 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244605AbhDMFmg (ORCPT
+        Tue, 13 Apr 2021 04:13:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:58434 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241607AbhDMINl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Apr 2021 01:42:36 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49A0FC06175F
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Apr 2021 22:42:17 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id n138so25389844lfa.3
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Apr 2021 22:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MITjT2ay51KOcdM71HVFO+ySm3JooSqiJI3Cb7Ri/aQ=;
-        b=on4KYu7s8YlB0xwBDXTiFFbdyzkvcU7IAPfyGWXq5powKidROTOJGmYgHpqcw41WBk
-         LKpnOH6b+gid2kUOFlDS9dLSbLUnXOhlFRgMmQBNx+hlvAIRZtZ07ga9CeO/UbifKU1F
-         k7bY/jo0BhF5LCfDddP8BLCX368gJlErfsjpgCrp3qE9NdnNmtf2G+6Eg2SdPpJoGmtF
-         IIkg9jc4Me4BMMIgM5CJEzPfYIECwFOi2unjFtYwX2tBiRT7FxVTQv2i2lnTZqAD00ZB
-         plosOla9KJY3ZZTEUXfgwMTXbWAQ2jUh9L3av/iP1JtGxs75TTJ+qEV2j1rvPxBSr0vi
-         ytpA==
+        Tue, 13 Apr 2021 04:13:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1618301601;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KLyUzT5M5en0X4VIingKMBNaeYaSW+6rovobSSA9k74=;
+        b=Lja0P/0VQwFxjnsvoftM9cJvFqY9nFVQIv/6FyumD5ebWzqKQPGya9s+t9Gdt3eMKTpscE
+        GoArjcNQvho9CeeaEwZAcDJWf8MwRFr/cedN83zYCXICLoCOVZjMHupiA76vGiI3WZQzLX
+        s9ZAEv7ctmgyjiVcT2z81P4Jc01wYUQ=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-519-b8GQxmAyOBa3ciJRJ4fK7Q-1; Tue, 13 Apr 2021 04:13:18 -0400
+X-MC-Unique: b8GQxmAyOBa3ciJRJ4fK7Q-1
+Received: by mail-yb1-f200.google.com with SMTP id u128so15362718ybf.12
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Apr 2021 01:13:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MITjT2ay51KOcdM71HVFO+ySm3JooSqiJI3Cb7Ri/aQ=;
-        b=mpxU6Z9gsFVpCpNKz/BkMGlEdswDkYHlkSejHDBdmIRa7rPtyOLEynAElbrSFyN1C4
-         mdu4X0DoiXfCvARMtL5rT3Vyk5LcbRFU6maGYXMde+rThjAtrbhw7028/2L9uuh+XWum
-         sCRvEbADUHx+bjblC6oTkdg5i+aUdJE+RZRkPtoRv3jtkbQ7+G4UvwRZ462yZERX5QAq
-         UPF6528FRQCbS61Q5QOVBGfaZL7cmW+ZmyCIE6KYMZC2jvH9IyrnknCbiOm8VI6kV+Sk
-         dyFCD7oQ5aSqjIj0aa8asvhaTOiqn8+Oy848vQEnWpteDzZtcIWl7ypPkawLU5TatuA3
-         81Ug==
-X-Gm-Message-State: AOAM531NhGyfejHRIEKrAqLzbaPlBikyhd3fuJHPfdAXZ8ECBplqP/73
-        hDCDJ3YFWnZaz4JSGfqTdtNgjWDKxgAdgSi96T5pSw==
-X-Google-Smtp-Source: ABdhPJyMKOQIyeojpXPuo0SSdzWliMMkGmlkNBcznqsQM2TOrLpFA1+nvOPmwAotZazrF73OIccOTqzdFp3YLO7vuwY=
-X-Received: by 2002:a05:6512:3c8e:: with SMTP id h14mr3031818lfv.113.1618292535723;
- Mon, 12 Apr 2021 22:42:15 -0700 (PDT)
+        bh=KLyUzT5M5en0X4VIingKMBNaeYaSW+6rovobSSA9k74=;
+        b=I1/kdaLXhwohVj7/4lkIJYHGThvSdORQdHP35KNtneFYla/gukr3gr3zrpulORkbu6
+         zU4cmVx9+1XCrgRo1pZVXjk7O5Gcushp0IKMd+zL1jeCDhfRZu/4BgbmTSVKHfQC5Z90
+         OeEHmqNX53tvKUl1/trdl7Xm0AWvX9FP2UPCQRZMvn8cC0Jnk9nlhtKWEfdVlRP7hl3X
+         pf2rt1qwgWaNedQhmvkuzpnf+2trxFkbuw/8Yc+Fy0TpxiBrojFIHuZrUL1CsP2AADnJ
+         RkTJGxpiVF67EdNakcT+Gvadt+yv8AH/15vkUTHZalK1sFywD3NRpRg5GDSEbAdq3j1C
+         ZblA==
+X-Gm-Message-State: AOAM531KI3GQPqg/jqw3NAnPEZOK3vgmDXGF3bIh1PyWBTLKlsT8JPQ4
+        6gIMd8oV9hef3LqOVr1dhKHu8KxZdxyRkXUfnDCkyu1/8yzH6eIdq7gqnFCdqxybCvi6YBhXh0Q
+        fbVzxAlGT3nQjEXp+H64R3VGu/IEd3RDnErNozAizmazP6bgK8O/f
+X-Received: by 2002:a25:ce09:: with SMTP id x9mr7099184ybe.81.1618301597499;
+        Tue, 13 Apr 2021 01:13:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyZMvsTkqUxAY9JNxCpjjk3fc9GGC9EFicegDOlF/Jpnn3EnjqB4N6bPUo4PnYHL4tsk1GsNBMxRJOZZ531USk=
+X-Received: by 2002:a25:ce09:: with SMTP id x9mr7099155ybe.81.1618301597217;
+ Tue, 13 Apr 2021 01:13:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210412160101.1627882-1-colin.king@canonical.com>
- <adeb7c73d0bb354f04f8117c5ccf6b006dfc15de.camel@linux.ibm.com> <53fef8cf-0dd4-e4fe-260b-0f5ad25d9014@canonical.com>
-In-Reply-To: <53fef8cf-0dd4-e4fe-260b-0f5ad25d9014@canonical.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Tue, 13 Apr 2021 11:12:04 +0530
-Message-ID: <CAFA6WYPt97daNPQ+tWpFunTK77Q-vP=sdya7k+bUEJ9YHDq-Jg@mail.gmail.com>
-Subject: Re: [PATCH][next] KEYS: trusted: Fix missing null return from kzalloc call
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191012005747.210722465@goodmis.org> <20191012005921.580293464@goodmis.org>
+In-Reply-To: <20191012005921.580293464@goodmis.org>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 13 Apr 2021 10:13:04 +0200
+Message-ID: <CAFqZXNs4eRC6kjFRe6CdwA-sng-w6bcJZf5io+hoLKwM98TVSA@mail.gmail.com>
+Subject: Re: [PATCH 7/7 v2] tracing: Do not create tracefs files if tracefs
+ lockdown is in effect
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Herton Krzesinski <hkrzesin@redhat.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 12 Apr 2021 at 22:34, Colin Ian King <colin.king@canonical.com> wrote:
+On Sat, Oct 12, 2019 at 2:59 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 >
-> On 12/04/2021 17:48, James Bottomley wrote:
-> > On Mon, 2021-04-12 at 17:01 +0100, Colin King wrote:
-> >> From: Colin Ian King <colin.king@canonical.com>
-> >>
-> >> The kzalloc call can return null with the GFP_KERNEL flag so
-> >> add a null check and exit via a new error exit label. Use the
-> >> same exit error label for another error path too.
-> >>
-> >> Addresses-Coverity: ("Dereference null return value")
-> >> Fixes: 830027e2cb55 ("KEYS: trusted: Add generic trusted keys
-> >> framework")
-> >> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> >> ---
-> >>  security/keys/trusted-keys/trusted_core.c | 6 ++++--
-> >>  1 file changed, 4 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/security/keys/trusted-keys/trusted_core.c
-> >> b/security/keys/trusted-keys/trusted_core.c
-> >> index ec3a066a4b42..90774793f0b1 100644
-> >> --- a/security/keys/trusted-keys/trusted_core.c
-> >> +++ b/security/keys/trusted-keys/trusted_core.c
-> >> @@ -116,11 +116,13 @@ static struct trusted_key_payload
-> >> *trusted_payload_alloc(struct key *key)
-> >>
-> >>      ret = key_payload_reserve(key, sizeof(*p));
-> >>      if (ret < 0)
-> >> -            return p;
-> >> +            goto err;
-> >>      p = kzalloc(sizeof(*p), GFP_KERNEL);
-> >> +    if (!p)
-> >> +            goto err;
-> >>
-> >>      p->migratable = migratable;
-> >> -
-> >> +err:
-> >>      return p;
-> >
-> > This is clearly a code migration bug in
-> >
-> > commit 251c85bd106099e6f388a89e88e12d14de2c9cda
-> > Author: Sumit Garg <sumit.garg@linaro.org>
-> > Date:   Mon Mar 1 18:41:24 2021 +0530
-> >
-> >     KEYS: trusted: Add generic trusted keys framework
-> >
-> > Which has for addition to trusted_core.c:
-> >
-> > +static struct trusted_key_payload *trusted_payload_alloc(struct key
-> > *key)
-> > +{
-> > +       struct trusted_key_payload *p = NULL;
-> > +       int ret;
-> > +
-> > +       ret = key_payload_reserve(key, sizeof(*p));
-> > +       if (ret < 0)
-> > +               return p;
-> > +       p = kzalloc(sizeof(*p), GFP_KERNEL);
-> > +
-> > +       p->migratable = migratable;
-> > +
-> > +       return p;
-> > +}
-> >
-> > And for trusted_tpm1.c:
-> >
-> > -static struct trusted_key_payload *trusted_payload_alloc(struct key
-> > *key)
-> > -{
-> > -       struct trusted_key_payload *p = NULL;
-> > -       int ret;
-> > -
-> > -       ret = key_payload_reserve(key, sizeof *p);
-> > -       if (ret < 0)
-> > -               return p;
-> > -       p = kzalloc(sizeof *p, GFP_KERNEL);
-> > -       if (p)
-> > -               p->migratable = 1; /* migratable by default */
-> > -       return p;
-> > -}
-> >
-> > The trusted_tpm1.c code was correct and we got this bug introduced by
-> > what should have been a simple cut and paste ... how did that happen?
-
-It was a little more than just cut and paste where I did generalized
-"migratable" flag to be provided by the corresponding trust source's
-ops struct.
-
-> > And therefore, how safe is the rest of the extraction into
-> > trusted_core.c?
-> >
+> If on boot up, lockdown is activated for tracefs, don't even bother creating
+> the files. This can also prevent instances from being created if lockdown is
+> in effect.
 >
-> fortunately it gets caught by static analysis, but it does make me also
-> concerned about what else has changed and how this gets through review.
+> Link: http://lkml.kernel.org/r/CAHk-=whC6Ji=fWnjh2+eS4b15TnbsS4VPVtvBOwCy1jjEG_JHQ@mail.gmail.com
 >
-
-I agree that extraction into trusted_core.c was a complex change but
-this patch has been up for review for almost 2 years [1]. And
-extensive testing can't catch this sort of bug as allocation wouldn't
-normally fail.
-
-[1] https://lwn.net/Articles/795416/
-
--Sumit
-
-> > James
-> >
-> >
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  fs/tracefs/inode.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 >
+> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> index eeeae0475da9..0caa151cae4e 100644
+> --- a/fs/tracefs/inode.c
+> +++ b/fs/tracefs/inode.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/tracefs.h>
+>  #include <linux/fsnotify.h>
+> +#include <linux/security.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/parser.h>
+>  #include <linux/magic.h>
+> @@ -390,6 +391,9 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
+>         struct dentry *dentry;
+>         struct inode *inode;
+>
+> +       if (security_locked_down(LOCKDOWN_TRACEFS))
+> +               return NULL;
+> +
+>         if (!(mode & S_IFMT))
+>                 mode |= S_IFREG;
+>         BUG_ON(!S_ISREG(mode));
+> --
+> 2.23.0
+
+Hi all,
+
+sorry for coming back to an old thread, but it turns out that this
+patch doesn't play well with SELinux's implementation of the
+security_locked_down() hook, which was added a few months later (so
+not your fault :) in commit 59438b46471a ("security,lockdown,selinux:
+implement SELinux lockdown").
+
+What SELinux does is it checks if the current task's creds are allowed
+the lockdown::integrity or lockdown::confidentiality permission in the
+policy whenever security_locked_down() is called. The idea is to be
+able to control at SELinux domain level which tasks can do these
+sensitive operations (when the kernel is not actually locked down by
+the Lockdown LSM).
+
+With this patch + the SELinux lockdown mechanism in use, when a
+userspace task loads a module that creates some tracefs nodes in its
+initcall SELinux will check if the task has the
+lockdown::confidentiality permission and if not, will report denials
+in audit log and prevent the tracefs entries from being created. But
+that is not a very logical behavior, since the task loading the module
+is itself not (explicitly) doing anything that would breach
+confidentiality. It just indirectly causes some tracefs nodes to be
+created, but doesn't actually use them at that point.
+
+Since it seems the other patches also added security_locked_down()
+calls to the tracefs nodes' open functions, I guess reverting this
+patch could be an acceptable way to fix this problem (please correct
+me if there is something that this call catches, which the other ones
+don't). However, even then I can understand that you (or someone else)
+might want to keep this as an optimization, in which case we could
+instead do this:
+1. Add a new hook security_locked_down_permanently() (the name is open
+for discussion), which would be intended for situations when we want
+to avoid doing some pointless work when the kernel is in a "hard"
+lockdown that can't be taken back (except perhaps in some rescue
+scenario...).
+2. This hook would be backed by the same implementation as
+security_locked_down() in the Lockdown LSM and left unimplemented by
+SELinux.
+3. tracefs_create_file() would call this hook instead of security_locked_down().
+
+This way it would work as before relative to the standard lockdown via
+the Lockdown LSM and would be simply ignored by SELinux. I went over
+all the security_locked_down() call in the kernel and I think this
+alternative hook could also fit better in arch/powerpc/xmon/xmon.c,
+where it seems to be called from interrupt context (so task creds are
+irrelevant, anyway...) and mainly causes some values to be redacted.
+(I also found a couple minor issues with how the hook is used in other
+places, for which I plan to send patches later.)
+
+Thoughts?
+
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
