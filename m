@@ -2,183 +2,183 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F943C433B4
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 08:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A90A8C43460
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 17:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E6AE613AE
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 08:26:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78F7B611AD
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 17:21:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242933AbhDMI1M (ORCPT
+        id S1347119AbhDMRVu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Apr 2021 04:27:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50806 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229794AbhDMI1L (ORCPT
+        Tue, 13 Apr 2021 13:21:50 -0400
+Received: from mail-qk1-f169.google.com ([209.85.222.169]:35347 "EHLO
+        mail-qk1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231661AbhDMRVo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Apr 2021 04:27:11 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7981161242;
-        Tue, 13 Apr 2021 08:26:43 +0000 (UTC)
-Date:   Tue, 13 Apr 2021 10:26:40 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Anton Altaparmakov <anton@tuxera.com>,
-        "James.Bottomley@hansenpartnership.com" 
-        <James.Bottomley@hansenpartnership.com>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "alban@kinvolk.io" <alban@kinvolk.io>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "cyphar@cyphar.com" <cyphar@cyphar.com>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "geofft@ldpreload.com" <geofft@ldpreload.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "hirofumi@mail.parknet.co.jp" <hirofumi@mail.parknet.co.jp>,
-        "john.johansen@canonical.com" <john.johansen@canonical.com>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "lennart@poettering.net" <lennart@poettering.net>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "mpatel@redhat.com" <mpatel@redhat.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "seth.forshee@canonical.com" <seth.forshee@canonical.com>,
-        "smbarber@chromium.org" <smbarber@chromium.org>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "tkjos@google.com" <tkjos@google.com>,
-        "tycho@tycho.ws" <tycho@tycho.ws>, "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-Subject: Re: [PATCH v6 24/40] fs: make helpers idmap mount aware
-Message-ID: <20210413082640.krcmqac6y2esuz24@wittgenstein>
-References: <E901E25F-41FA-444D-B3C7-A7A786DDD5D5@tuxera.com>
- <CAHk-=wiXqbSgqzv53C98sbaHVqpc+c8NZTpXC7bBMQT3OznE4g@mail.gmail.com>
+        Tue, 13 Apr 2021 13:21:44 -0400
+Received: by mail-qk1-f169.google.com with SMTP id i9so18628813qka.2
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Apr 2021 10:21:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OxU0Eujrm9GQyvXdIjhuiVVTC0s99PIjeEwmRYVaK0M=;
+        b=TvQ0AiMsfQyBkVrkMDo18tZSvp8ItDKLX9tIp24gJJi9NrydOSekkMLSPHzrYhWjkV
+         kXfwlD8SA8kKV/fBmZHnkDl7WgoA2uz4kz0fJ7rWdXXQ69IkfLAnlDT/vm7Ptw/lexEa
+         iDybKWcdRXGnOCWSfkGPqZ4dkCHaoRuNzrxQ3wkNmL7avVA1jv66QGIuJhTalp9yccWi
+         NABnGz+dNplEJ3EybgzfEkASRU8pZxjuDuM6zwCBX4Yf/H0dXOQrFGg1UjfcT/g2x+fp
+         Gr8+YicXBTWxLVD1DR4OjHi8EUuWZpJeAkBPbQKhcUAPTTHmILuIgSiCpcB9SfHGysPL
+         ZPAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OxU0Eujrm9GQyvXdIjhuiVVTC0s99PIjeEwmRYVaK0M=;
+        b=S3CXTcKy31wCdbU3Bbbv0QkahCcRZkdmYQQ4wNoKX4iJ7TrVOcOAW/TQj+lolQAbho
+         KJaWg284pwXlprNN3nIEwNnYzhj/Rwa1RkCYOhTBZQKAJ0SmrSOWHzpvQeXjByr7vVzL
+         TKyYy5Q65XKmt0mXZ0pz2BJrYJ14hQyc0f+MHO15AFUfARZtV051bysevihuGQMVKQG0
+         kV8GCYNfVwcEIz6PWmFTadauB5eMYdP5Y2LIv71gRAauLaGqWv9X2uTBk83KzxitIIgB
+         ybYGJW8UT0zFKn1H/E0Pkg8wXpWMqvxEPe8/bLR5mdlR3PGDm9RGZLo4aZZHrdM2x5Vi
+         wkww==
+X-Gm-Message-State: AOAM530eB5O5y/AfydWvtpZ9wU89wHznQuNgt5nGsz+YBImjmmnxUNPP
+        KQX7NQERbhbmtUBXUDxcIaNU+TE8xgZlg/Sony/KRQ==
+X-Google-Smtp-Source: ABdhPJzZbF9SOsSr1JV8btp47Zzg36R3JvHSGAwCv47evxt2VeGK3yqlQo147eL5mHjg5iEX+jdnHlDqSzZOV8YjVsc=
+X-Received: by 2002:a05:620a:243:: with SMTP id q3mr14170127qkn.501.1618334423663;
+ Tue, 13 Apr 2021 10:20:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiXqbSgqzv53C98sbaHVqpc+c8NZTpXC7bBMQT3OznE4g@mail.gmail.com>
+References: <000000000000ca9a6005bec29ebe@google.com> <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
+ <20210331042922.GE2065@kadam> <20210401121933.GA2710221@ziepe.ca>
+In-Reply-To: <20210401121933.GA2710221@ziepe.ca>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 13 Apr 2021 19:20:12 +0200
+Message-ID: <CACT4Y+ZG9Dhv1UTvotsTimVrzaojPN91Lu1CsPqm4kd1j5yNkQ@mail.gmail.com>
+Subject: Re: [syzbot] WARNING in unsafe_follow_pfn
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        daniel.vetter@intel.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Jim Mattson <jmattson@google.com>,
+        James Morris <jmorris@namei.org>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        m.szyprowski@samsung.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Apr 12, 2021 at 09:23:38AM -0700, Linus Torvalds wrote:
-> On Mon, Apr 12, 2021 at 5:05 AM Anton Altaparmakov <anton@tuxera.com> wrote:
+On Thu, Apr 1, 2021 at 2:19 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Wed, Mar 31, 2021 at 07:29:22AM +0300, Dan Carpenter wrote:
+> > On Tue, Mar 30, 2021 at 07:04:30PM +0200, Paolo Bonzini wrote:
+> > > On 30/03/21 17:26, syzbot wrote:
+> > > > Hello,
+> > > >
+> > > > syzbot found the following issue on:
+> > > >
+> > > > HEAD commit:    93129492 Add linux-next specific files for 20210326
+> > > > git tree:       linux-next
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=169ab21ad00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=6f2f73285ea94c45
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=015dd7cdbbbc2c180c65
+> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119b8d06d00000
+> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112e978ad00000
+> > > >
+> > > > The issue was bisected to:
+> > > >
+> > > > commit d40b9fdee6dc819d8fc35f70c345cbe0394cde4c
+> > > > Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+> > > > Date:   Tue Mar 16 15:33:01 2021 +0000
+> > > >
+> > > >      mm: Add unsafe_follow_pfn
+> > > >
+> > > > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122d2016d00000
+> > > > final oops:     https://syzkaller.appspot.com/x/report.txt?x=112d2016d00000
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=162d2016d00000
+> > > >
+> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > Reported-by: syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com
+> > > > Fixes: d40b9fdee6dc ("mm: Add unsafe_follow_pfn")
+> > >
+> > > This is basically intentional because get_vaddr_frames is broken, isn't it?
+> > > I think it needs to be ignored in syzkaller.
 > >
-> > Shouldn't that be using mnt_userns instead of &init_user_ns both for the setattr_prepare() and setattr_copy() calls?
-> 
-> It doesn't matter for a filesystem that hasn't marked itself as
-> supporting idmaps.
-> 
-> If the filesystem doesn't set FS_ALLOW_IDMAP, then mnt_userns is
-> always going to be &init_user_ns.
-> 
-> That said, I don't think you are wrong - it would probably be a good
-> idea to pass down the 'mnt_userns' argument just to avoid confusion.
-> But if you look at the history, you'll see that adding the mount
-> namespace argument to the helper functions (like setattr_copy())
-> happened before the actual "switch the filesystem setattr() function
-> over to get the namespace argument".
-> 
-> So the current situation is partly an artifact of how the incremental
-> filesystem changes were done.
+> > What?
+> >
+> > The bisect is wrong (because it's blaming the commit which added the
+> > warning instead of the commit which added the buggy caller) but the
+> > warning is correct.
+> >
+> > Plus users are going to be seeing this as well.  According to the commit
+> > message for 69bacee7f9ad ("mm: Add unsafe_follow_pfn") "Unfortunately
+> > there's some users where this is not fixable (like v4l userptr of iomem
+> > mappings)".  It sort of seems crazy to dump this giant splat and then
+> > tell users to ignore it forever because it can't be fixed...  0_0
+>
+> I think the discussion conclusion was that this interface should not
+> be used by userspace anymore, it is obsolete by some new interface?
+>
+> It should be protected by some kconfig and the kconfig should be
+> turned off for syzkaller runs.
 
-I'm not so sure the complaint in the original mail is obviously valid.
-Passing down mnt_userns through all filesystem codepaths at once
-would've caused way more churn. There are filesystems that e.g. do stuff
-like this:
+If this is not a kernel bug, then it must not use WARN_ON[_ONCE]. It
+makes the kernel untestable for both automated systems and humans:
 
-<fstype>_create()
--> __<fstype>_internal_create()
-<fstype>_mknod()
--> __<fstype>_internal_create()
-<fstype>_rmdir()
--> __<fstype>_internal_create()
+https://lwn.net/Articles/769365/
 
-where __<fstype>_internal_create() was additionally called in a few
-other places.
-So instead of only changing <fstype>_<i_op> we would've now also have to
-change __<fstype>_internal_create() which would've caused the fs
-specific change to be more invasive than it needed to be. The way we
-did it allowed us to keep the change legible.
+<quote>
+Greg Kroah-Hartman raised the problem of core kernel API code that
+will use WARN_ON_ONCE() to complain about bad usage; that will not
+generate the desired result if WARN_ON_ONCE() is configured to crash
+the machine. He was told that the code should just call pr_warn()
+instead, and that the called function should return an error in such
+situations. It was generally agreed that any WARN_ON() or
+WARN_ON_ONCE() calls that can be triggered from user space need to be
+fixed.
+</quote>
 
-And that's just a simple example.
-There are fses that have more convoluted callpaths:
-- an internal helper used additionally as a callback in a custom ops
-  struct
-- or most i_ops boiling down to a single internal function
-So the choice was also deliberate.
 
-We've also tried to be consistent when we actually pass down mnt_userns
-further within the filesystem and when we simply use init_user_ns in
-general. Just looking at setattr_copy() which was in the example:
+https://lore.kernel.org/netdev/20210413085522.2caee809@gandalf.local.home/
+From: Steven Rostedt
+<quote>
 
-                   attr.c:void setattr_copy(struct user_namespace *mnt_userns, struct inode *inode,
-                   attr.c:EXPORT_SYMBOL(setattr_copy);
-                   btrfs/inode.c:          setattr_copy(&init_user_ns, inode, attr);
-                   cifs/inode.c:   setattr_copy(&init_user_ns, inode, attrs);
-                   cifs/inode.c:   setattr_copy(&init_user_ns, inode, attrs);
-                   exfat/file.c:   setattr_copy(&init_user_ns, inode, attr);
-                   ext2/inode.c:   setattr_copy(&init_user_ns, inode, iattr);
-**FS_ALLOW_IDMAP** ext4/inode.c:           setattr_copy(mnt_userns, inode, attr);
-                   f2fs/file.c:static void __setattr_copy(struct user_namespace *mnt_userns,
-                   f2fs/file.c:#define __setattr_copy setattr_copy
-                   f2fs/file.c:    __setattr_copy(&init_user_ns, inode, attr);
-                   fat/file.c:      * setattr_copy can't truncate these appropriately, so we'll
-**FS_ALLOW_IDMAP** fat/file.c:     setattr_copy(mnt_userns, inode, attr);
-                   gfs2/inode.c:   setattr_copy(&init_user_ns, inode, attr);
-                   hfs/inode.c:    setattr_copy(&init_user_ns, inode, attr);
-                   hfsplus/inode.c:        setattr_copy(&init_user_ns, inode, attr);
-                   hostfs/hostfs_kern.c:   setattr_copy(&init_user_ns, inode, attr);
-                   hpfs/inode.c:   setattr_copy(&init_user_ns, inode, attr);
-                   hugetlbfs/inode.c:      setattr_copy(&init_user_ns, inode, attr);
-                   jfs/file.c:     setattr_copy(&init_user_ns, inode, iattr);
-                   kernfs/inode.c: setattr_copy(&init_user_ns, inode, iattr);
-**helper library** libfs.c:        setattr_copy(mnt_userns, inode, iattr);
-                   minix/file.c:   setattr_copy(&init_user_ns, inode, attr);
-                   nilfs2/inode.c: setattr_copy(&init_user_ns, inode, iattr);
-                   ocfs2/dlmfs/dlmfs.c:    setattr_copy(&init_user_ns, inode, attr);
-                   ocfs2/file.c:   setattr_copy(&init_user_ns, inode, attr);
-                   omfs/file.c:    setattr_copy(&init_user_ns, inode, attr);
-                   orangefs/inode.c:       setattr_copy(&init_user_ns, inode, iattr);
-                   proc/base.c:    setattr_copy(&init_user_ns, inode, attr);
-                   proc/generic.c: setattr_copy(&init_user_ns, inode, iattr);
-                   proc/proc_sysctl.c:     setattr_copy(&init_user_ns, inode, attr);
-                   ramfs/file-nommu.c:     setattr_copy(&init_user_ns, inode, ia);
-                   reiserfs/inode.c:               setattr_copy(&init_user_ns, inode, attr);
-                   sysv/file.c:    setattr_copy(&init_user_ns, inode, attr);
-                   udf/file.c:     setattr_copy(&init_user_ns, inode, attr);
-                   ufs/inode.c:    setattr_copy(&init_user_ns, inode, attr);
-                   zonefs/super.c: setattr_copy(&init_user_ns, inode, iattr);
+I agree. WARN_ON(_ONCE) should be reserved for anomalies that should not
+happen ever. Anything that the user could trigger, should not trigger a
+WARN_ON.
 
-so we pass mnt_userns further down for all fses that have FS_ALLOW_IDMAP
-set or where it's located in a helper library like libfs whose helpers
-might be called by an idmapped mount aware fs.
+A WARN_ON is perfectly fine for detecting an accounting error inside the
+kernel. I have them scattered all over my code, but they should never be
+hit, even if something in user space tries to hit it. (with an exception of
+an interface I want to deprecate, where I want to know if it's still being
+used ;-) Of course, that wouldn't help bots testing the code. And I haven't
+done that in years)
 
-When an fs is made aware of idmapped mounts the mnt_userns will
-naturally be passed down further at which point the relevant fs
-developer can decide how to restructure their own internal helpers
-instead of vfs developers deciding these internals for them.
+Any anomaly that can be triggered by user space doing something it should
+not be doing really needs a pr_warn().
+</quote>
 
-The xfs port is a good example where the xfs developers had - rightly so
-- opinions on how they wanted the calling conventions for their internal
-helpers to look like and how they wanted to pass around mnt_userns. I
-don't feel in a position to mandate this from a vfs developers
-perspective. I will happily provide input and express my opinion but the
-authority of the vfs-calling-convention police mostly ends at the i_op
-level.
-
-Christian
+And if it's a kernel bug reachable from user-space, then I think this
+code should be removed entirely, not just on all testing systems. Or
+otherwise if we are not removing it for some reason, then it needs to
+be fixed.
