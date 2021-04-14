@@ -2,175 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39724C433ED
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 20:13:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A703C433B4
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Apr 2021 04:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19483613D2
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Apr 2021 20:13:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68E8C611F2
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Apr 2021 04:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229903AbhDMUN4 (ORCPT
+        id S230136AbhDNEkn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Apr 2021 16:13:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49674 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229590AbhDMUNz (ORCPT
+        Wed, 14 Apr 2021 00:40:43 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:36764 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229515AbhDNEkm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Apr 2021 16:13:55 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82518C061574;
-        Tue, 13 Apr 2021 13:13:35 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id w4so13919578wrt.5;
-        Tue, 13 Apr 2021 13:13:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=VLF6/P7EZjK4b9JVKvC4s0oerk5rpO6dK9mxoGQATgk=;
-        b=QBMerjyfmkBCZjkkYTsAlMSuXiu3Z0Jzf81vhQdmkJxcRdnOPQdw53ibPDLTQm9beD
-         9crudOocqZowDvYl+ESSSmVQFQ3xNWXlQTWJJKOB2S3ISVv1SyHDSZhc5c6lLTfs3Icj
-         G6A/wmFfv4bdKBHVP8N+ctQoLWa+iArTfjJEqDvabCAH2DHrLspZiy4CbZaoHwqwYbP6
-         Cf3HSrWabCPq9XOE67ePcQmxGuZejRRh08VOdANdzCU4PC2z19O9ESjqdtUK71fTj+Db
-         ZlU0xtlwgrryRWP3Uet6aw6DY19FdSnztVZ+SPmwyHxWR4byHksNnHgaoudGaencyEYs
-         Y0kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=VLF6/P7EZjK4b9JVKvC4s0oerk5rpO6dK9mxoGQATgk=;
-        b=r6zFhe6PC44fdrahOFLNfYhbosy/TK7UiPttp3UGm/22Zd1n+oyZUzLVGM+3c0gddt
-         ezyP8GwHdS6WAhMkuo/YkAJxpuZarEzoMv38p6bpVnWqpKUKI9Yh+Myo6+GU+dU5KAzo
-         Pth4m751EVWmDpo9gORHLSazMpmBNGzktUBJOSkhcIrX3u/i3h/+vOGWvnj/QqUJ92Ak
-         3dy0GsUZCB8usjdhVrJ9OwLwFWb+3GgiwV7ZcZIkjtZgMJ3nNHAzS5/VgEYE/PJW7fsB
-         pIK2U5BKpnm7+4qYaGzTghAsmZjAV9ge1MdUlhXyFEDxs8V45HGmtjr3ciyhthydmL/O
-         qNgw==
-X-Gm-Message-State: AOAM5302k6fCWM638mROFWRVknEaju5lwa+7ussrXeltiJ4YPdo4aXbj
-        2qVapT8SWfupO6y3AhEAPYU=
-X-Google-Smtp-Source: ABdhPJwZCfFj02Edi3FehLcM4AGqWBkDDDDqv5RLROfIpiZbFdprbOFl3OcX7pxq7HPnjvlkfy45GA==
-X-Received: by 2002:a5d:6a90:: with SMTP id s16mr19299060wru.163.1618344814180;
-        Tue, 13 Apr 2021 13:13:34 -0700 (PDT)
-Received: from LEGION ([39.46.65.172])
-        by smtp.gmail.com with ESMTPSA id f6sm9820799wrt.19.2021.04.13.13.13.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Apr 2021 13:13:33 -0700 (PDT)
-Date:   Wed, 14 Apr 2021 01:13:26 +0500
-From:   Muhammad Usama Anjum <musamaanjum@gmail.com>
-To:     James.Bottomley@HansenPartnership.com,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
+        Wed, 14 Apr 2021 00:40:42 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E4U1FE039741;
+        Wed, 14 Apr 2021 04:38:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2020-01-29;
+ bh=Bd4/hg1yN1is4IRJn7hT6CyZTbFjK4SqbaFRqE8RBN8=;
+ b=GDhlovi8GebAxK8lBABqyOkduyXZ8ROVjsZYsvvAarJBH9EElr42BK9NSjnbWDUkue9x
+ ke0VO8SRzVPbjAXmqylIvdhhCAfJQvQXCscPoq9R7P+bSbDThL19ya2fTEWxudgzX5YN
+ 2MpT5FhVoZvxYjhTo2e6X7QDgu4rohNhW5a7IMQiTTCaARtprCiTSno9B1iojLaWN2tB
+ QMt5cMNb8YnLLVanQxMTvu/fmkgR7bEbvZ/LvLqL4qDYlkcZq0OZ0gytoU07NsuWqJvv
+ iJkyhSk34fw9oRHWn6u1FpVhLMI2RLWQk8uzFIrs7UPv12RQWut4ljw91gOFzb1WQhGy AQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2130.oracle.com with ESMTP id 37u1hbh5ep-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Apr 2021 04:38:32 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E4ZVxl007477;
+        Wed, 14 Apr 2021 04:38:31 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 37unstc5ny-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Apr 2021 04:38:30 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13E4cH43023157;
+        Wed, 14 Apr 2021 04:38:21 GMT
+Received: from kadam (/102.36.221.92)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Apr 2021 04:38:17 +0000
+Date:   Wed, 14 Apr 2021 07:37:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        daniel.vetter@intel.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Jim Mattson <jmattson@google.com>,
         James Morris <jmorris@namei.org>,
+        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        m.szyprowski@samsung.com,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Sean Christopherson <seanjc@google.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        "open list:KEYS-TRUSTED" <linux-integrity@vger.kernel.org>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     musamaanjum@gmail.com, kernel-janitors@vger.kernel.org,
-        dan.carpenter@oracle.com, colin.king@canonical.com
-Subject: [PATCH] security: keys: trusted: prevent memory leak in error path
-Message-ID: <20210413201326.GA649679@LEGION>
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [syzbot] WARNING in unsafe_follow_pfn
+Message-ID: <20210414043759.GM6021@kadam>
+References: <000000000000ca9a6005bec29ebe@google.com>
+ <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
+ <20210331042922.GE2065@kadam>
+ <20210401121933.GA2710221@ziepe.ca>
+ <CACT4Y+ZG9Dhv1UTvotsTimVrzaojPN91Lu1CsPqm4kd1j5yNkQ@mail.gmail.com>
+ <20210413181145.GK227011@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20210413181145.GK227011@ziepe.ca>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-IMR: 1
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104140030
+X-Proofpoint-GUID: 5W5g74JUOBhBXqiypFmTmoVnXKL81tdF
+X-Proofpoint-ORIG-GUID: 5W5g74JUOBhBXqiypFmTmoVnXKL81tdF
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
+ clxscore=1015 adultscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
+ definitions=main-2104140029
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-tpm2_key_decode sometimes allocates blob. This blob should be freed if
-some error occurs later in the function. Free the blob before returning
-from this function if it was allocated.
+On Tue, Apr 13, 2021 at 03:11:45PM -0300, Jason Gunthorpe wrote:
+> On Tue, Apr 13, 2021 at 07:20:12PM +0200, Dmitry Vyukov wrote:
+> > > > Plus users are going to be seeing this as well.  According to the commit
+> > > > message for 69bacee7f9ad ("mm: Add unsafe_follow_pfn") "Unfortunately
+> > > > there's some users where this is not fixable (like v4l userptr of iomem
+> > > > mappings)".  It sort of seems crazy to dump this giant splat and then
+> > > > tell users to ignore it forever because it can't be fixed...  0_0
+> > >
+> > > I think the discussion conclusion was that this interface should not
+> > > be used by userspace anymore, it is obsolete by some new interface?
+> > >
+> > > It should be protected by some kconfig and the kconfig should be
+> > > turned off for syzkaller runs.
+> > 
+> > If this is not a kernel bug, then it must not use WARN_ON[_ONCE]. It
+> > makes the kernel untestable for both automated systems and humans:
+> 
+> It is a kernel security bug triggerable by userspace.
+> 
+> > And if it's a kernel bug reachable from user-space, then I think this
+> > code should be removed entirely, not just on all testing systems. Or
+> > otherwise if we are not removing it for some reason, then it needs to
+> > be fixed.
+> 
+> Legacy embedded systems apparently require it.
 
-Addresses-Coverity: ("Prevent memory leak")
-Fixes: 14676f1eb796 ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Signed-off-by: Muhammad Usama Anjum <musamaanjum@gmail.com>
----
-This is only build tested. 
+Are legacy embedded systems ever going to update their kernel?  It might
+be better to just remove it.  (I don't really have any details outside
+of your email so I don't know).
 
- security/keys/trusted-keys/trusted_tpm2.c | 37 +++++++++++++++--------
- 1 file changed, 24 insertions(+), 13 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index d225ad140960..4551384124e0 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	}
- 
- 	/* new format carries keyhandle but old format doesn't */
--	if (!options->keyhandle)
--		return -EINVAL;
-+	if (!options->keyhandle) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
- 
- 	/* must be big enough for at least the two be16 size counts */
--	if (payload->blob_len < 4)
--		return -EINVAL;
-+	if (payload->blob_len < 4) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
- 
- 	private_len = get_unaligned_be16(blob);
- 
- 	/* must be big enough for following public_len */
--	if (private_len + 2 + 2 > (payload->blob_len))
--		return -E2BIG;
-+	if (private_len + 2 + 2 > (payload->blob_len)) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	public_len = get_unaligned_be16(blob + 2 + private_len);
--	if (private_len + 2 + public_len + 2 > payload->blob_len)
--		return -E2BIG;
-+	if (private_len + 2 + public_len + 2 > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	pub = blob + 2 + private_len + 2;
- 	/* key attributes are always at offset 4 */
-@@ -406,12 +414,14 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		payload->migratable = 1;
- 
- 	blob_len = private_len + public_len + 4;
--	if (blob_len > payload->blob_len)
--		return -E2BIG;
-+	if (blob_len > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
- 	if (rc)
--		return rc;
-+		goto err;
- 
- 	tpm_buf_append_u32(&buf, options->keyhandle);
- 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
-@@ -433,12 +443,13 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
- 
- out:
--	if (blob != payload->blob)
--		kfree(blob);
- 	tpm_buf_destroy(&buf);
- 
- 	if (rc > 0)
- 		rc = -EPERM;
-+err:
-+	if (blob != payload->blob)
-+		kfree(blob);
- 
- 	return rc;
- }
--- 
-2.25.1
+regards,
+dan carpenter
 
