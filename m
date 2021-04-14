@@ -2,142 +2,171 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A703C433B4
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Apr 2021 04:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0585C43461
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Apr 2021 06:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68E8C611F2
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Apr 2021 04:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A15E613C7
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Apr 2021 06:09:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230136AbhDNEkn (ORCPT
+        id S233257AbhDNGJu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Apr 2021 00:40:43 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:36764 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229515AbhDNEkm (ORCPT
+        Wed, 14 Apr 2021 02:09:50 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:52368 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229840AbhDNGJt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Apr 2021 00:40:42 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E4U1FE039741;
-        Wed, 14 Apr 2021 04:38:32 GMT
+        Wed, 14 Apr 2021 02:09:49 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E64ZWa128459;
+        Wed, 14 Apr 2021 06:09:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2020-01-29;
- bh=Bd4/hg1yN1is4IRJn7hT6CyZTbFjK4SqbaFRqE8RBN8=;
- b=GDhlovi8GebAxK8lBABqyOkduyXZ8ROVjsZYsvvAarJBH9EElr42BK9NSjnbWDUkue9x
- ke0VO8SRzVPbjAXmqylIvdhhCAfJQvQXCscPoq9R7P+bSbDThL19ya2fTEWxudgzX5YN
- 2MpT5FhVoZvxYjhTo2e6X7QDgu4rohNhW5a7IMQiTTCaARtprCiTSno9B1iojLaWN2tB
- QMt5cMNb8YnLLVanQxMTvu/fmkgR7bEbvZ/LvLqL4qDYlkcZq0OZ0gytoU07NsuWqJvv
- iJkyhSk34fw9oRHWn6u1FpVhLMI2RLWQk8uzFIrs7UPv12RQWut4ljw91gOFzb1WQhGy AQ== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2130.oracle.com with ESMTP id 37u1hbh5ep-1
+ : subject : message-id : mime-version : content-type; s=corp-2020-01-29;
+ bh=QVyht9+yJ8dfT9u8/h2qi0FFBihCppmvtUsB/7xN34o=;
+ b=XD221qAHFQ7YOfWFC+j5D3mO++IQ1s/pBnb6VxCzqPofgai4zSWydUihR44gjLxLaou3
+ B8P4B0w6F4+7n3e3YBz8CPop2eN8/BgHCwlK6j42ps8/p/pyhgfEIFLPTyJWBg5088Qh
+ 9XgHd2tDYcud+fKbyj2i6ORnERurWKyqNKvenDdqyyKAn/3ykoY3mDJULXr7ekPtVx2E
+ 4tMi5XAZRcgPpr1G/2vhTh6Ku0pt66bPLxw9LRAB6UPkYPVcS9w40Grx77WKDQ3OmIxA
+ p+/NccSwwaaBUdMJo970w7tjfxYSdLOpc4Ow1CHlACTbf3ThL9xE3NS7/RLHR50h114d FA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 37u3ymh5sf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Apr 2021 04:38:32 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E4ZVxl007477;
-        Wed, 14 Apr 2021 04:38:31 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 37unstc5ny-1
+        Wed, 14 Apr 2021 06:09:14 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 13E64Vfn112554;
+        Wed, 14 Apr 2021 06:09:12 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 37unkqjppa-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Apr 2021 04:38:30 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13E4cH43023157;
-        Wed, 14 Apr 2021 04:38:21 GMT
-Received: from kadam (/102.36.221.92)
+        Wed, 14 Apr 2021 06:09:12 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id 13E695DF023914;
+        Wed, 14 Apr 2021 06:09:09 GMT
+Received: from mwanda (/10.175.166.128)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Apr 2021 04:38:17 +0000
-Date:   Wed, 14 Apr 2021 07:37:59 +0300
+        with ESMTP ; Wed, 14 Apr 2021 06:09:05 +0000
+Date:   Wed, 14 Apr 2021 09:08:58 +0300
 From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        syzbot <syzbot+015dd7cdbbbc2c180c65@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        daniel.vetter@intel.com, "H. Peter Anvin" <hpa@zytor.com>,
-        Jim Mattson <jmattson@google.com>,
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
-        Joerg Roedel <joro@8bytes.org>, KVM list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        m.szyprowski@samsung.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Sean Christopherson <seanjc@google.com>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: [syzbot] WARNING in unsafe_follow_pfn
-Message-ID: <20210414043759.GM6021@kadam>
-References: <000000000000ca9a6005bec29ebe@google.com>
- <2db3c803-6a94-9345-261a-a2bb74370c02@redhat.com>
- <20210331042922.GE2065@kadam>
- <20210401121933.GA2710221@ziepe.ca>
- <CACT4Y+ZG9Dhv1UTvotsTimVrzaojPN91Lu1CsPqm4kd1j5yNkQ@mail.gmail.com>
- <20210413181145.GK227011@ziepe.ca>
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] KEYS: trusted: fix a couple error pointer dereferences
+Message-ID: <YHaG+p5nlOXQFp1n@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210413181145.GK227011@ziepe.ca>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Mailer: git-send-email haha only kidding
 X-Proofpoint-IMR: 1
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 mlxscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104140030
-X-Proofpoint-GUID: 5W5g74JUOBhBXqiypFmTmoVnXKL81tdF
-X-Proofpoint-ORIG-GUID: 5W5g74JUOBhBXqiypFmTmoVnXKL81tdF
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
+ adultscore=0 phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104140043
+X-Proofpoint-GUID: RJNP3oqmP6_MQGiSmuiOdzohr_7cx_9X
+X-Proofpoint-ORIG-GUID: RJNP3oqmP6_MQGiSmuiOdzohr_7cx_9X
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9953 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 priorityscore=1501
- clxscore=1015 adultscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 suspectscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 clxscore=1011
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104140029
+ definitions=main-2104140043
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Apr 13, 2021 at 03:11:45PM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 13, 2021 at 07:20:12PM +0200, Dmitry Vyukov wrote:
-> > > > Plus users are going to be seeing this as well.  According to the commit
-> > > > message for 69bacee7f9ad ("mm: Add unsafe_follow_pfn") "Unfortunately
-> > > > there's some users where this is not fixable (like v4l userptr of iomem
-> > > > mappings)".  It sort of seems crazy to dump this giant splat and then
-> > > > tell users to ignore it forever because it can't be fixed...  0_0
-> > >
-> > > I think the discussion conclusion was that this interface should not
-> > > be used by userspace anymore, it is obsolete by some new interface?
-> > >
-> > > It should be protected by some kconfig and the kconfig should be
-> > > turned off for syzkaller runs.
-> > 
-> > If this is not a kernel bug, then it must not use WARN_ON[_ONCE]. It
-> > makes the kernel untestable for both automated systems and humans:
-> 
-> It is a kernel security bug triggerable by userspace.
-> 
-> > And if it's a kernel bug reachable from user-space, then I think this
-> > code should be removed entirely, not just on all testing systems. Or
-> > otherwise if we are not removing it for some reason, then it needs to
-> > be fixed.
-> 
-> Legacy embedded systems apparently require it.
+If registering "reg_shm_out" fails, then it is an error pointer and the
+error handling will call tee_shm_free(reg_shm_out) which leads to an
+error pointer dereference and an Oops.
 
-Are legacy embedded systems ever going to update their kernel?  It might
-be better to just remove it.  (I don't really have any details outside
-of your email so I don't know).
+I've re-arranged it so we only free things that have been allocated
+successfully.
 
-regards,
-dan carpenter
+Fixes: 6dd95e650c8a ("KEYS: trusted: Introduce TEE based Trusted Keys")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ security/keys/trusted-keys/trusted_tee.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+index 2ce66c199e1d..45f96f6ed673 100644
+--- a/security/keys/trusted-keys/trusted_tee.c
++++ b/security/keys/trusted-keys/trusted_tee.c
+@@ -65,7 +65,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+ 	int ret;
+ 	struct tee_ioctl_invoke_arg inv_arg;
+ 	struct tee_param param[4];
+-	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
++	struct tee_shm *reg_shm_in, *reg_shm_out;
+ 
+ 	memset(&inv_arg, 0, sizeof(inv_arg));
+ 	memset(&param, 0, sizeof(param));
+@@ -84,7 +84,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+ 	if (IS_ERR(reg_shm_out)) {
+ 		dev_err(pvt_data.dev, "blob shm register failed\n");
+ 		ret = PTR_ERR(reg_shm_out);
+-		goto out;
++		goto free_shm_in;
+ 	}
+ 
+ 	inv_arg.func = TA_CMD_SEAL;
+@@ -109,11 +109,9 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+ 		p->blob_len = param[1].u.memref.size;
+ 	}
+ 
+-out:
+-	if (reg_shm_out)
+-		tee_shm_free(reg_shm_out);
+-	if (reg_shm_in)
+-		tee_shm_free(reg_shm_in);
++	tee_shm_free(reg_shm_out);
++free_shm_in:
++	tee_shm_free(reg_shm_in);
+ 
+ 	return ret;
+ }
+@@ -126,7 +124,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+ 	int ret;
+ 	struct tee_ioctl_invoke_arg inv_arg;
+ 	struct tee_param param[4];
+-	struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
++	struct tee_shm *reg_shm_in, *reg_shm_out;
+ 
+ 	memset(&inv_arg, 0, sizeof(inv_arg));
+ 	memset(&param, 0, sizeof(param));
+@@ -145,7 +143,7 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+ 	if (IS_ERR(reg_shm_out)) {
+ 		dev_err(pvt_data.dev, "key shm register failed\n");
+ 		ret = PTR_ERR(reg_shm_out);
+-		goto out;
++		goto free_shm_in;
+ 	}
+ 
+ 	inv_arg.func = TA_CMD_UNSEAL;
+@@ -170,11 +168,9 @@ static int trusted_tee_unseal(struct trusted_key_payload *p, char *datablob)
+ 		p->key_len = param[1].u.memref.size;
+ 	}
+ 
+-out:
+-	if (reg_shm_out)
+-		tee_shm_free(reg_shm_out);
+-	if (reg_shm_in)
+-		tee_shm_free(reg_shm_in);
++	tee_shm_free(reg_shm_out);
++free_shm_in:
++	tee_shm_free(reg_shm_in);
+ 
+ 	return ret;
+ }
+-- 
+2.30.2
 
