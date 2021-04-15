@@ -2,130 +2,81 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A22C433B4
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 13:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70680C43461
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 14:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE689611AD
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 13:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FA4361153
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 14:00:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233216AbhDOOAI (ORCPT
+        id S233286AbhDOOA3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Apr 2021 10:00:08 -0400
-Received: from mailomta25-re.btinternet.com ([213.120.69.118]:28118 "EHLO
-        re-prd-fep-045.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232976AbhDOOAI (ORCPT
+        Thu, 15 Apr 2021 10:00:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60380 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233282AbhDOOA2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Apr 2021 10:00:08 -0400
-X-Greylist: delayed 336 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Apr 2021 10:00:07 EDT
-Received: from re-prd-rgout-005.btmx-prd.synchronoss.net ([10.2.54.8])
-          by re-prd-fep-049.btinternet.com with ESMTP
-          id <20210415135406.ZZU30724.re-prd-fep-049.btinternet.com@re-prd-rgout-005.btmx-prd.synchronoss.net>;
-          Thu, 15 Apr 2021 14:54:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1618494846; 
-        bh=PEIQZRl02qSK0bAUVPnjtZ16+29ZysaK0ipawB7wr84=;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:MIME-Version;
-        b=AeBSrgVCS7THI3BAL/PtU67KRtpLdnurmt8BTKmBso0vB129SrJ6KPiqq1yEOa+v9dp9BwR/1kRDDNQfpVDdxq1wMdFnQvty2/Z98+zV6pHBSTXfOPgtG8ZoIRfz5O4p3lzYGCBOPmEyTlbCsvToALa2WdOXG1vrWpB9xuxHwwYcVtC4FHRa6uZDQ/c1iaIIPGREaHaeI1tjrTe8xkP4UN1YWnqT8cnkw/OnAhY8wtogE9Wb3VykGBEyuzw2KNaZ60vnhcTexzXQwimcP70Kr2/osmAFotI1jmOE2J8ESVEWSwfkFxyoWofdNlO7ZwCC5J6rgGofXc3S5rMwYiSFFA==
-Authentication-Results: btinternet.com;
-    auth=pass (LOGIN) smtp.auth=richard_c_haines@btinternet.com
-X-SNCR-Rigid: 5ED9C74D2F0690E7
-X-Originating-IP: [109.158.127.17]
-X-OWM-Source-IP: 109.158.127.17 (GB)
-X-OWM-Env-Sender: richard_c_haines@btinternet.com
-X-VadeSecure-score: verdict=clean score=0/300, class=clean
-X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeduledrudelfedgjeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuueftkffvkffujffvgffngfevqffopdfqfgfvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkuffhvfffjghftggfggfgsehtkeertddtreejnecuhfhrohhmpeftihgthhgrrhguucfjrghinhgvshcuoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucggtffrrghtthgvrhhnpefhkeegheduudeggfffkeehheettefgjedugefhhfevuedvveduhedtleejkeduveenucfkphepuddtledrudehkedruddvjedrudejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplgduledvrdduieekrddurdduleekngdpihhnvghtpedutdelrdduheekrdduvdejrddujedpmhgrihhlfhhrohhmpeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomhequceuqfffjgepkeeukffvoffkoffgpdhrtghpthhtohepoegtrghsvgihsehstghhrghufhhlvghrqdgtrgdrtghomheqpdhrtghpthhtohepoegtohhrsggvtheslhifnhdrnhgvtheqpdhrtghpthhtohepoehjmhhorhhrihhssehnrghmvghirdhorhhgqedprhgtphhtthhopeeolhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehl
-        ihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgqedprhgtphhtthhopeeophgruhhlsehprghulhdqmhhoohhrvgdrtghomheqpdhrtghpthhtohepoehsvghrghgvsehhrghllhihnhdrtghomheq
-X-RazorGate-Vade-Verdict: clean 0
-X-RazorGate-Vade-Classification: clean
-X-SNCR-hdrdom: btinternet.com
-Received: from [192.168.1.198] (109.158.127.17) by re-prd-rgout-005.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
-        id 5ED9C74D2F0690E7; Thu, 15 Apr 2021 14:54:06 +0100
-Message-ID: <96941e4977f38dea58a56fe19cfeb84179f0e3ef.camel@btinternet.com>
-Subject: Re: [RFC PATCH 0/3] LSM Documentation - Render lsm_hooks.h for
- kernel_docs
-From:   Richard Haines <richard_c_haines@btinternet.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        Thu, 15 Apr 2021 10:00:28 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29638C061756
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Apr 2021 07:00:05 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id e7so28135147edu.10
+        for <linux-security-module@vger.kernel.org>; Thu, 15 Apr 2021 07:00:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y6SOtxaSvvSrMRGWadRLTdN5j/Ia40PgWlLDe/mfqno=;
+        b=MtB3uFfgeAtlB7+OskzJhQgeqwn0OUXUhk2ByLLtZl2bG065DMtx6WtfeFL27cIv20
+         F3h8q+RDHP8unvp7PjqcwcC3Qie+7t/E+fduqwCNU9i8Cw64UNxPyTbi93n/PELs8ZPM
+         kTvAujHl7X11hfvBCj7U1z/Oqk0eqF5I9nbCDEq9pMmz2J4+tUxm7Xmiv9x4w7pQ2dlT
+         HlfDfCHkqpVQBN/d2eu3lXVdPrqQ/2fVu769Th8o99VPtiH3lfZFtIkCF5mQKT56sYcT
+         /S5PLABL7KFsWZKOgq2t2bKts+N2GCteAAqmzCYLrsdyXH/FqvTWgld1bk781P0leb9l
+         qbpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y6SOtxaSvvSrMRGWadRLTdN5j/Ia40PgWlLDe/mfqno=;
+        b=IY5SNZOdZ1EBURj37ADVMOgfvwCj7V1UYF81t1vGCsXeDhPJmj3S+5hUNukoP/bVSo
+         rvY5lk9vsRNPFufCzAjyIlkxaCQXhjefvq5DWVXwLfp1ajKQWH0TlGRsLrqSGaunVG38
+         EbB9yjL7TsG507iBqqn9dknz1lQ9lgsCQM/3TjvA2wTjLbujDerRnVJbraOCC2q5MrLz
+         7boajfPeX/HL5gkXh7DTk2TkhZSKvB48Kmk3bL1ieSEX1xtVrzGNBs1iE1TXvSUchU8X
+         wzr5wrNbz4SLP+Brff+ZOFmYcymeUMrXO0c6J5IOqbt5UWohC9FSbzRT46vr1YTY0KTn
+         Scyw==
+X-Gm-Message-State: AOAM530Ewb3SUe1dK3ilRgNfd3xmILlRJesya/PXZJdj7tDfE57U8DnU
+        5JaDo8InlC1GyEjitjPF7sp2NwJSZ7ENYZVxdrEj
+X-Google-Smtp-Source: ABdhPJxZmXYSXlByiPXfvpOnk1xaJfWfuy87POt7oGwxO8XTzXAp9SNEduKcz1rwITJhH+c/jpKTsNSWGMSeUJRaCTQ=
+X-Received: by 2002:a05:6402:1cc1:: with SMTP id ds1mr4251308edb.135.1618495203692;
+ Thu, 15 Apr 2021 07:00:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210309143953.142341-1-richard_c_haines@btinternet.com>
+ <CAHC9VhSHm-GrmjdZKPFf8Rr5JNzo7ieR+mSy7F3n-KjfD1OEaA@mail.gmail.com>
+ <20210413190150.GB26626@mail.hallyn.com> <96941e4977f38dea58a56fe19cfeb84179f0e3ef.camel@btinternet.com>
+In-Reply-To: <96941e4977f38dea58a56fe19cfeb84179f0e3ef.camel@btinternet.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 15 Apr 2021 09:59:52 -0400
+Message-ID: <CAHC9VhTcEx07YZ=F5M3kft+YL1aYBi-cN6PvuGr+cZ2HWMD3pA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/3] LSM Documentation - Render lsm_hooks.h for kernel_docs
+To:     Richard Haines <richard_c_haines@btinternet.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
         corbet@lwn.net, James Morris <jmorris@namei.org>,
         casey@schaufler-ca.com
-Date:   Thu, 15 Apr 2021 14:53:55 +0100
-In-Reply-To: <20210413190150.GB26626@mail.hallyn.com>
-References: <20210309143953.142341-1-richard_c_haines@btinternet.com>
-         <CAHC9VhSHm-GrmjdZKPFf8Rr5JNzo7ieR+mSy7F3n-KjfD1OEaA@mail.gmail.com>
-         <20210413190150.GB26626@mail.hallyn.com>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.38.4 (3.38.4-1.fc33) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2021-04-13 at 14:01 -0500, Serge E. Hallyn wrote:
-> On Wed, Apr 07, 2021 at 09:42:01PM -0400, Paul Moore wrote:
-> > On Tue, Mar 9, 2021 at 9:40 AM Richard Haines
-> > <richard_c_haines@btinternet.com> wrote:
-> > > 
-> > > This patch series updates the LSM hook text defined in the
-> > > comments
-> > > section of inlcude/linux/lsm_hooks.h. This enables the hook
-> > > functions to
-> > > be rendered in kernel_docs html or pdf format.
-> > > 
-> > > Note that no text has been changed in lsm_hooks.h, only
-> > > formatting
-> > > to render the text.
-> > > 
-> > > To get the correct rendering some lines have exceeded checkpatch
-> > > limits and
-> > > therefore has a moan. The function statements seem to need being
-> > > a
-> > > continuous line. The others can be split, but decided not to.
-> > > Any better ideas ??
-> > > 
-> > > The hook functions render in HTML ok, however in PDF format the
-> > > only issue
-> > > is that the long function definitions do not wrap and therefore
-> > > truncated.
-> > > Check the 'int sb_mount(const char *dev_name' entry in:
-> > > Documentation/output/pdf/security.pdf
-> > > 
-> > > For reference two hooks have been marked as deprecated:
-> > > sb_copy_data() and
-> > > sb_parse_opts_str()
-> > > 
-> > > Tested using 'make pdfdocs' and 'make htmldocs'
-> > > 
-> > > Richard Haines (3):
-> > >   Documentation/security: Update LSM security hook text
-> > >   include/linux: Update LSM hook text part1
-> > >   include/linux: Update LSM hook text part2
-> > > 
-> > >  Documentation/security/lsm-development.rst |    5 +-
-> > >  include/linux/lsm_hooks.h                  | 2365 +++++++++++---
-> > > ------
-> > >  2 files changed, 1364 insertions(+), 1006 deletions(-)
-> > 
-> > I haven't yet pulled this patchset to generate the HTML/PDF docs,
-> > but
-> > just looking at the comments themselves it looks reasonable to me
-> > ...
-> > and I say this as being perhaps one of the stricter folks under
-> > security/ when it comes to 80 character line lengths :)  In my
-> > opinion, the benefit of being able to render the docs nicely
-> > outweigh
-> > the pain of scrolling horizontally in my editor.  Thanks for doing
-> > this Richard.
-> > 
-> > Does anyone else have any thoughts on these changes?
-> 
-> No objection from me.
+On Thu, Apr 15, 2021 at 9:54 AM Richard Haines
+<richard_c_haines@btinternet.com> wrote:
+> Thanks for the comments, I'll rebuild on 5.12-rc7 and resubmit as a
+> patch.
 
-Thanks for the comments, I'll rebuild on 5.12-rc7 and resubmit as a
-patch.
+Thanks Richard.
 
-
+-- 
+paul moore
+www.paul-moore.com
