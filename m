@@ -2,81 +2,64 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70680C43461
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 14:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8B4C433ED
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 16:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA4361153
-	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 14:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB7916115B
+	for <linux-security-module@archiver.kernel.org>; Thu, 15 Apr 2021 16:23:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233286AbhDOOA3 (ORCPT
+        id S231137AbhDOQXi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 15 Apr 2021 10:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233282AbhDOOA2 (ORCPT
+        Thu, 15 Apr 2021 12:23:38 -0400
+Received: from namei.org ([65.99.196.166]:43726 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230056AbhDOQXi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 15 Apr 2021 10:00:28 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29638C061756
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Apr 2021 07:00:05 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id e7so28135147edu.10
-        for <linux-security-module@vger.kernel.org>; Thu, 15 Apr 2021 07:00:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y6SOtxaSvvSrMRGWadRLTdN5j/Ia40PgWlLDe/mfqno=;
-        b=MtB3uFfgeAtlB7+OskzJhQgeqwn0OUXUhk2ByLLtZl2bG065DMtx6WtfeFL27cIv20
-         F3h8q+RDHP8unvp7PjqcwcC3Qie+7t/E+fduqwCNU9i8Cw64UNxPyTbi93n/PELs8ZPM
-         kTvAujHl7X11hfvBCj7U1z/Oqk0eqF5I9nbCDEq9pMmz2J4+tUxm7Xmiv9x4w7pQ2dlT
-         HlfDfCHkqpVQBN/d2eu3lXVdPrqQ/2fVu769Th8o99VPtiH3lfZFtIkCF5mQKT56sYcT
-         /S5PLABL7KFsWZKOgq2t2bKts+N2GCteAAqmzCYLrsdyXH/FqvTWgld1bk781P0leb9l
-         qbpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y6SOtxaSvvSrMRGWadRLTdN5j/Ia40PgWlLDe/mfqno=;
-        b=IY5SNZOdZ1EBURj37ADVMOgfvwCj7V1UYF81t1vGCsXeDhPJmj3S+5hUNukoP/bVSo
-         rvY5lk9vsRNPFufCzAjyIlkxaCQXhjefvq5DWVXwLfp1ajKQWH0TlGRsLrqSGaunVG38
-         EbB9yjL7TsG507iBqqn9dknz1lQ9lgsCQM/3TjvA2wTjLbujDerRnVJbraOCC2q5MrLz
-         7boajfPeX/HL5gkXh7DTk2TkhZSKvB48Kmk3bL1ieSEX1xtVrzGNBs1iE1TXvSUchU8X
-         wzr5wrNbz4SLP+Brff+ZOFmYcymeUMrXO0c6J5IOqbt5UWohC9FSbzRT46vr1YTY0KTn
-         Scyw==
-X-Gm-Message-State: AOAM530Ewb3SUe1dK3ilRgNfd3xmILlRJesya/PXZJdj7tDfE57U8DnU
-        5JaDo8InlC1GyEjitjPF7sp2NwJSZ7ENYZVxdrEj
-X-Google-Smtp-Source: ABdhPJxZmXYSXlByiPXfvpOnk1xaJfWfuy87POt7oGwxO8XTzXAp9SNEduKcz1rwITJhH+c/jpKTsNSWGMSeUJRaCTQ=
-X-Received: by 2002:a05:6402:1cc1:: with SMTP id ds1mr4251308edb.135.1618495203692;
- Thu, 15 Apr 2021 07:00:03 -0700 (PDT)
+        Thu, 15 Apr 2021 12:23:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id BC10C4E1;
+        Thu, 15 Apr 2021 16:19:35 +0000 (UTC)
+Date:   Fri, 16 Apr 2021 02:19:35 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+cc:     linux-kernel@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] security: commoncap: clean up kernel-doc comments
+In-Reply-To: <20210412005528.3326-1-rdunlap@infradead.org>
+Message-ID: <f1b7edf3-2df-64c-91a5-f9989b745136@namei.org>
+References: <20210412005528.3326-1-rdunlap@infradead.org>
 MIME-Version: 1.0
-References: <20210309143953.142341-1-richard_c_haines@btinternet.com>
- <CAHC9VhSHm-GrmjdZKPFf8Rr5JNzo7ieR+mSy7F3n-KjfD1OEaA@mail.gmail.com>
- <20210413190150.GB26626@mail.hallyn.com> <96941e4977f38dea58a56fe19cfeb84179f0e3ef.camel@btinternet.com>
-In-Reply-To: <96941e4977f38dea58a56fe19cfeb84179f0e3ef.camel@btinternet.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 15 Apr 2021 09:59:52 -0400
-Message-ID: <CAHC9VhTcEx07YZ=F5M3kft+YL1aYBi-cN6PvuGr+cZ2HWMD3pA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/3] LSM Documentation - Render lsm_hooks.h for kernel_docs
-To:     Richard Haines <richard_c_haines@btinternet.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        corbet@lwn.net, James Morris <jmorris@namei.org>,
-        casey@schaufler-ca.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Apr 15, 2021 at 9:54 AM Richard Haines
-<richard_c_haines@btinternet.com> wrote:
-> Thanks for the comments, I'll rebuild on 5.12-rc7 and resubmit as a
-> patch.
+On Sun, 11 Apr 2021, Randy Dunlap wrote:
 
-Thanks Richard.
+> Fix kernel-doc notation in commoncap.c.
+> 
+> Use correct (matching) function name in comments as in code.
+> Use correct function argument names in kernel-doc comments.
+> Use kernel-doc's "Return:" format for function return values.
+> 
+> Fixes these kernel-doc warnings:
+> 
+> ../security/commoncap.c:1206: warning: expecting prototype for cap_task_ioprio(). Prototype was for cap_task_setioprio() instead
+> ../security/commoncap.c:1219: warning: expecting prototype for cap_task_ioprio(). Prototype was for cap_task_setnice() instead
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: linux-security-module@vger.kernel.org
+
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git fixes-v5.12
 
 -- 
-paul moore
-www.paul-moore.com
+James Morris
+<jmorris@namei.org>
+
