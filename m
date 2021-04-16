@@ -2,118 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07192C433ED
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 10:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 815F1C433ED
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 12:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEA2361107
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 10:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 585AB611AF
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 12:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240068AbhDPKNO (ORCPT
+        id S243530AbhDPM3U (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Apr 2021 06:13:14 -0400
-Received: from m12-14.163.com ([220.181.12.14]:57070 "EHLO m12-14.163.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239216AbhDPKNN (ORCPT
+        Fri, 16 Apr 2021 08:29:20 -0400
+Received: from mailomta23-re.btinternet.com ([213.120.69.116]:38907 "EHLO
+        re-prd-fep-047.btinternet.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S243485AbhDPM3R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Apr 2021 06:13:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=DBxpB
-        nFi6nwZpjt7AR3toFc2XaJmljNpCiXZBY+5bG0=; b=mMWVVG6STYatFqvjcdvPM
-        NMD/z2k8MHlMoPtAMBIxuNGfh8gyR6LACkDrxFZcHlGKcYNhgdspCe1IAVeVVPLL
-        d5BbsOq0NIVV0GnB3vYwWjC/ZwdthxGNAN2Rbql0/JuN8yZoY+1DHLUBV86Pj1if
-        /HBOYNbprjtdyfilSMUyq4=
-Received: from localhost.localdomain (unknown [183.46.98.96])
-        by smtp10 (Coremail) with SMTP id DsCowADnkjAGY3lgfNzBDg--.11814S2;
-        Fri, 16 Apr 2021 18:12:24 +0800 (CST)
-From:   =?UTF-8?q?=C2=A0Zhongjun=20Tan?= <hbut_tan@163.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhongjun Tan <tanzhongjun@yulong.com>
-Subject: [PATCH v2] lsm:fix a missing-check bug in smack_sb_eat_lsm_opts()
-Date:   Fri, 16 Apr 2021 18:12:10 +0800
-Message-Id: <20210416101210.1175-1-hbut_tan@163.com>
-X-Mailer: git-send-email 2.30.0.windows.2
+        Fri, 16 Apr 2021 08:29:17 -0400
+Received: from re-prd-rgout-002.btmx-prd.synchronoss.net ([10.2.54.5])
+          by re-prd-fep-047.btinternet.com with ESMTP
+          id <20210416122851.PEFJ28099.re-prd-fep-047.btinternet.com@re-prd-rgout-002.btmx-prd.synchronoss.net>;
+          Fri, 16 Apr 2021 13:28:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=btinternet.com; s=btmx201904; t=1618576131; 
+        bh=UKwPGuS6hHKi/vOoUL4sIZTkf0ALcnjL8Vg71k+LWYA=;
+        h=From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version;
+        b=QR4c9TjvjzuRDSE/qTwvtZ7Ss9Xdo70TFGZgj0Ru5M+79hQAm3OqRyRUHUPG6/iF+ou2R2MwVLnnLFBM4+Cwp5ByELKRCYi2lCqk3/VqtIFr8AfjKfgO+SHB5ZXGFgGeVeIfj7xm8QEK743ikyFxKVLOMG1oyM5lPt6EVkiiFg8mi4IvY9SsgzT3c/IQKRaLE0T7ptd+NbQpOdo5nMZv40PzdxeYRasG/eHOlK5se/rwZSlougw37SXSIYuwhPh/Prbr2H4iKr3FvriyYIqi8VsLFyr+j6NzrL2EgCtqFEOqa/eQOlGkBufDTrKw8fFMgHDPB4n0D2l5egsBh2FFHA==
+Authentication-Results: btinternet.com;
+    auth=pass (PLAIN) smtp.auth=richard_c_haines@btinternet.com
+X-SNCR-Rigid: 5ED9C0CC2F248680
+X-Originating-IP: [86.184.99.58]
+X-OWM-Source-IP: 86.184.99.58 (GB)
+X-OWM-Env-Sender: richard_c_haines@btinternet.com
+X-VadeSecure-score: verdict=clean score=0/300, class=clean
+X-RazorGate-Vade: gggruggvucftvghtrhhoucdtuddrgeduledrudelhedgheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuueftkffvkffujffvgffngfevqffopdfqfgfvnecuuegrihhlohhuthemuceftddunecunecujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeftihgthhgrrhguucfjrghinhgvshcuoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqeenucggtffrrghtthgvrhhnpeelteffgeevveejheevhfetgfeuveduteetuddtffdvjeekieetgeehveefjedtfeenucfkphepkeeirddukeegrdelledrheeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehhvghloheplhhotggrlhhhohhsthdrlhhotggrlhguohhmrghinhdpihhnvghtpeekiedrudekgedrleelrdehkedpmhgrihhlfhhrohhmpeeorhhitghhrghruggptggphhgrihhnvghssegsthhinhhtvghrnhgvthdrtghomheqpdhrtghpthhtohepoegtrghsvgihsehstghhrghufhhlvghrqdgtrgdrtghomheqpdhrtghpthhtohepoegtohhrsggvtheslhifnhdrnhgvtheqpdhrtghpthhtohepoehjmhhorhhrihhssehnrghmvghirdhorhhgqedprhgtphhtthhopeeolhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdrohhrgheqpdhrtghpthhtohepoehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdho
+        rhhgqedprhgtphhtthhopeeophgruhhlsehprghulhdqmhhoohhrvgdrtghomheqpdhrtghpthhtohepoehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmqecuqfftvefrvfeprhhftgekvddvnehrihgthhgrrhgupggtpghhrghinhgvshessghtihhnthgvrhhnvghtrdgtohhmpdhrtghpthhtohepoehsvghrghgvsehhrghllhihnhdrtghomheq
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+X-SNCR-hdrdom: btinternet.com
+Received: from localhost.localdomain (86.184.99.58) by re-prd-rgout-002.btmx-prd.synchronoss.net (5.8.340) (authenticated as richard_c_haines@btinternet.com)
+        id 5ED9C0CC2F248680; Fri, 16 Apr 2021 13:28:51 +0100
+From:   Richard Haines <richard_c_haines@btinternet.com>
+To:     linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org
+Cc:     corbet@lwn.net, paul@paul-moore.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [PATCH 0/3] LSM Documentation - Render lsm_hooks.h for kernel_docs
+Date:   Fri, 16 Apr 2021 13:28:40 +0100
+Message-Id: <20210416122843.4752-1-richard_c_haines@btinternet.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: DsCowADnkjAGY3lgfNzBDg--.11814S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Kr1DKF1xGry3tF47Xr4UCFg_yoW8Wrykpr
-        sakFnxGrnYqFs2qa93WF1vqF4rGa1kKr1UWrZF9w13J3WYq34kKrWqqFy3tF1xGFWrtr4a
-        9rs0vr45WF1UAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jPKsbUUUUU=
-X-Originating-IP: [183.46.98.96]
-X-CM-SenderInfo: xkex3sxwdqqiywtou0bp/xtbBXgh2xlaD6oCNkAAAsE
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Zhongjun Tan <tanzhongjun@yulong.com>
+This patch series updates the LSM hook text defined in the comments
+section of inlcude/linux/lsm_hooks.h. This enables the hook functions to
+be rendered in kernel_docs html or pdf format.
 
-In smack_sb_eat_lsm_opts(), 'arg' is allocated by kmemdup_nul().
-It returns NULL when fails. So 'arg' should be checked. And 'mnt_opts'
-should be freed when error.
+Note that no text has been changed in lsm_hooks.h, only formatting
+to render the text.
 
-Signed-off-by: Zhongjun Tan <tanzhongjun@yulong.com>
----
-v2:fix brace error 
+For reference two hooks have been marked as deprecated: sb_copy_data() and
+sb_parse_opts_str()
 
- security/smack/smack_lsm.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+Tested using 'make pdfdocs' and 'make htmldocs'
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 223a6da..1e4c66f 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -696,10 +696,11 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
- {
- 	char *from = options, *to = options;
- 	bool first = true;
-+	int rc;
- 
- 	while (1) {
- 		char *next = strchr(from, ',');
--		int token, len, rc;
-+		int token, len;
- 		char *arg = NULL;
- 
- 		if (next)
-@@ -710,13 +711,14 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
- 		token = match_opt_prefix(from, len, &arg);
- 		if (token != Opt_error) {
- 			arg = kmemdup_nul(arg, from + len - arg, GFP_KERNEL);
-+			if (!arg) {
-+				rc = -ENOMEM;
-+				goto free_mnt_opts;
-+			}
- 			rc = smack_add_opt(token, arg, mnt_opts);
- 			if (unlikely(rc)) {
- 				kfree(arg);
--				if (*mnt_opts)
--					smack_free_mnt_opts(*mnt_opts);
--				*mnt_opts = NULL;
--				return rc;
-+				goto free_mnt_opts;
- 			}
- 		} else {
- 			if (!first) {	// copy with preceding comma
-@@ -734,6 +736,13 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
- 	}
- 	*to = '\0';
- 	return 0;
-+
-+free_mnt_opts:
-+	if (*mnt_opts) {
-+		smack_free_mnt_opts(*mnt_opts);
-+		*mnt_opts = NULL;
-+	}
-+	return rc;
- }
- 
- /**
+Change from RFC patch: Rebased on 5.12-rc7
+
+Richard Haines (3):
+  Documentation/security: Update LSM security hook text
+  include/linux: Update LSM hook text part1
+  include/linux: Update LSM hook text part2
+
+ Documentation/security/lsm-development.rst |    5 +-
+ include/linux/lsm_hooks.h                  | 2365 +++++++++++---------
+ 2 files changed, 1364 insertions(+), 1006 deletions(-)
+
 -- 
-1.9.1
+2.30.2
 
