@@ -2,61 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D445BC433B4
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 13:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7287C43600
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 14:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA7DD61107
-	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 13:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9D086103D
+	for <linux-security-module@archiver.kernel.org>; Fri, 16 Apr 2021 14:09:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242700AbhDPNgo (ORCPT
+        id S242385AbhDPOJn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 16 Apr 2021 09:36:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59692 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240255AbhDPNgn (ORCPT
+        Fri, 16 Apr 2021 10:09:43 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:39982 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244335AbhDPOI7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 16 Apr 2021 09:36:43 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93293C061574;
-        Fri, 16 Apr 2021 06:36:18 -0700 (PDT)
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94 #2 (Red Hat Linux))
-        id 1lXOdd-005laJ-Hu; Fri, 16 Apr 2021 13:36:01 +0000
-Date:   Fri, 16 Apr 2021 13:36:01 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     =?iso-8859-1?Q?=A0Zhongjun?= Tan <hbut_tan@163.com>
-Cc:     casey@schaufler-ca.com, jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Zhongjun Tan <tanzhongjun@yulong.com>
-Subject: Re: [PATCH] lsm:fix a missing-check bug in smack_sb_eat_lsm_opts()
-Message-ID: <YHmSwVpR2oq2yqUG@zeniv-ca.linux.org.uk>
-References: <20210416095303.530-1-hbut_tan@163.com>
+        Fri, 16 Apr 2021 10:08:59 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 302AA64A; Fri, 16 Apr 2021 09:08:26 -0500 (CDT)
+Date:   Fri, 16 Apr 2021 09:08:26 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] KEYS: trusted: fix a couple error pointer dereferences
+Message-ID: <20210416140826.GA21299@mail.hallyn.com>
+References: <YHaG+p5nlOXQFp1n@mwanda>
+ <20210414140734.GB11180@mail.hallyn.com>
+ <CAFA6WYOfy0mtM071GoSjeARRNWJ7ozJdZNsNa4v0ba=TxFnE8g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210416095303.530-1-hbut_tan@163.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <CAFA6WYOfy0mtM071GoSjeARRNWJ7ozJdZNsNa4v0ba=TxFnE8g@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 16, 2021 at 05:53:03PM +0800,  Zhongjun Tan wrote:
+On Fri, Apr 16, 2021 at 06:15:58PM +0530, Sumit Garg wrote:
+> Hi Serge,
+> 
+> On Wed, 14 Apr 2021 at 19:37, Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Wed, Apr 14, 2021 at 09:08:58AM +0300, Dan Carpenter wrote:
+> > > If registering "reg_shm_out" fails, then it is an error pointer and the
+> > > error handling will call tee_shm_free(reg_shm_out) which leads to an
+> > > error pointer dereference and an Oops.
+> > >
+> > > I've re-arranged it so we only free things that have been allocated
+> > > successfully.
+> > >
+> > > Fixes: 6dd95e650c8a ("KEYS: trusted: Introduce TEE based Trusted Keys")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > >  security/keys/trusted-keys/trusted_tee.c | 24 ++++++++++--------------
+> > >  1 file changed, 10 insertions(+), 14 deletions(-)
+> > >
+> > > diff --git a/security/keys/trusted-keys/trusted_tee.c b/security/keys/trusted-keys/trusted_tee.c
+> > > index 2ce66c199e1d..45f96f6ed673 100644
+> > > --- a/security/keys/trusted-keys/trusted_tee.c
+> > > +++ b/security/keys/trusted-keys/trusted_tee.c
+> > > @@ -65,7 +65,7 @@ static int trusted_tee_seal(struct trusted_key_payload *p, char *datablob)
+> > >       int ret;
+> > >       struct tee_ioctl_invoke_arg inv_arg;
+> > >       struct tee_param param[4];
+> > > -     struct tee_shm *reg_shm_in = NULL, *reg_shm_out = NULL;
+> > > +     struct tee_shm *reg_shm_in, *reg_shm_out;
+> >
+> > I don't have this file (trusted_tee.c) in my tree and there's no lore
+> > link here to previous what threads this depends on.  Based on the
+> > context I can't verify that reg_shm_in will always be initialized
+> > before you get to the free_shm_in label.
+> >
+> 
+> You can find trusted_tee.c here [1].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/tree/security/keys/trusted-keys/trusted_tee.c
 
-> @@ -710,13 +711,14 @@ static int smack_sb_eat_lsm_opts(char *options, void **mnt_opts)
->  		token = match_opt_prefix(from, len, &arg);
->  		if (token != Opt_error) {
->  			arg = kmemdup_nul(arg, from + len - arg, GFP_KERNEL);
-> +			if (!arg) {
-> +				rc = -ENOMEM;
-> +				goto free_mnt_opts;
->  			rc = smack_add_opt(token, arg, mnt_opts);
-
-			if (arg)
-	  			rc = smack_add_opt(token, arg, mnt_opts);
-			else
-				rc = -ENOMEM;
-
-and no other changes are needed anywhere...
+Thanks.  Looks good then :)
