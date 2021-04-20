@@ -2,163 +2,269 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5350CC43461
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Apr 2021 18:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E66B8C433ED
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Apr 2021 11:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10399611EE
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Apr 2021 18:19:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B04CC613DB
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Apr 2021 11:47:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240843AbhDSSTj (ORCPT
+        id S232274AbhDTLr5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Apr 2021 14:19:39 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31252 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240833AbhDSSTh (ORCPT
+        Tue, 20 Apr 2021 07:47:57 -0400
+Received: from de-smtp-delivery-102.mimecast.com ([194.104.109.102]:20584 "EHLO
+        de-smtp-delivery-102.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232297AbhDTLrV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Apr 2021 14:19:37 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13JI389x035353;
-        Mon, 19 Apr 2021 14:19:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=WOCU0v2Lu57O0GygzD6lMGDf/Be48O4MFk0JkmNA+yE=;
- b=doTVfzWrPi/CtJdv8IYZRu0iS51onFTWUMgKSCv+mDmDIuxkhrzdd5m2XJxSBQPVaZIc
- RWpKnWmy15beFyhtUyAzKQCyjfZyXGdaPlk2d55BuDudfBcnQfYLpd4vrUq87Nc0mdai
- Q0T3dZYmJS2kjk76OdE3R2rgUMNEhYsja8qGQeIzib9fRoSIBT1Dv8BbNOSqR4U3bjns
- 4FEX5UAWJ5qQK3/2DGvAgfDW+JtyacYxXMeSr7WyY0UYEUwEUCzQTkJggrC1HnEqWsgL
- 5kSIhQa/wjd/x7DX1VVVg2ikdtW6Ic4AsJlFBkYfJckJRkFiXdgzqp2WZFoOzfCbIZCd Lg== 
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 380d7dsuub-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Apr 2021 14:19:05 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13JI7fH5026138;
-        Mon, 19 Apr 2021 18:19:03 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma05fra.de.ibm.com with ESMTP id 37yqa88p4j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Apr 2021 18:19:03 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13JIJ0Tu58065302
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Apr 2021 18:19:01 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C24E242054;
-        Mon, 19 Apr 2021 18:19:00 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34AA742042;
-        Mon, 19 Apr 2021 18:18:59 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com.ibmuc.com (unknown [9.211.122.203])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Apr 2021 18:18:59 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>
-Subject: [RFC PATCH] integrity: fix null ptr dereference in integrity_inode_free()
-Date:   Mon, 19 Apr 2021 14:18:50 -0400
-Message-Id: <20210419181850.885349-1-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Imfql3XVQtZw4maZDDPUQhG93XocMYDK
-X-Proofpoint-GUID: Imfql3XVQtZw4maZDDPUQhG93XocMYDK
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 20 Apr 2021 07:47:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=mimecast20200619;
+        t=1618919209;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Dtx1HpslgLwDNo+cZrr6/lfosvuJM0KIomZbB5ORQA8=;
+        b=HkhJYVjC5qKjtK3f1fOySWwq0XVV5Mv+BFcsoXnkftbxI9BUqcLllXXwJ4Z4n11d/3PQgD
+        baBDLB6wGna8pPgIuEA+8qCDDPIVaQfz3784UN+oLQ8dNkylxRaDUAajauOha8bt1bjf1W
+        hwifVM8vCIM1C4cGxvZZKC6oLU6Iiww=
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com
+ (mail-db8eur05lp2110.outbound.protection.outlook.com [104.47.17.110])
+ (Using TLS) by relay.mimecast.com with ESMTP id
+ de-mta-35-JZg3QnJTPEubXxg26mwsqg-5; Tue, 20 Apr 2021 13:46:47 +0200
+X-MC-Unique: JZg3QnJTPEubXxg26mwsqg-5
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DPOUozchl8cljvcVEVsRyOicRIKrJg+T24zDf5di82fqCedrSb2pOAejtcNXiMsFpUlh1MXeY/sGtpyzrzGNUqq7pJ+sPMkEECGvIxzRRtyOBvIFCi3s+cojVsqJN1CYUnWLTIHdkI2TckiDrGG25B3nNA02/AEuQbbyHZannJ0cp9aXZziteXD34JBdUMI57mk3luWU+W60CMtfcfBv9HVxGbh66U7AWHfgtTbM5pACW5zCrAjAUytVmd7SIrilGe7tr71nUahUL7ZgsGUdvJEsb7p41D89kLmO5nsvPQ0gZiQpTBwt0z7aq/HNvrYilk7il0UZDvsFiVAlt/djmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZXBTMCgIrSY1cHuJ/Qcn642Fg/21QQ2PFDUiHYMpMbc=;
+ b=LkvrPewPDA6nlYK8IYhwR3PIOy07Y32udbZsINT4oVG9P3IqS9kNDizWE+sc/GHQJV2owwU7RhMKODOGFhNqabg3vMESN6oAcGRzzxC7Ll20bQfCuarQJCQi5kn6JceDAJDSe+wShDsLtIlNCETwQUSDCJdaT55kHpFDC6H0CL5akXodHthHXAUMZ3xo8jfxy+5kBi82NYt7o0Efvz5bBD21E8rGHFh9loJNwV3V2b8nDDGriGlbct202SXi8DWvecs/itgVEtwPIjQzKEiSTwDTjaJyg8slcvHgOL4MH1Tgm1WAUhjs3EXrhY/dREs3YsUqNz3Xtvt8f5buHY8GIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=suse.com;
+Received: from AM0PR04MB5650.eurprd04.prod.outlook.com (2603:10a6:208:128::18)
+ by AM0PR04MB4995.eurprd04.prod.outlook.com (2603:10a6:208:c4::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.19; Tue, 20 Apr
+ 2021 11:46:45 +0000
+Received: from AM0PR04MB5650.eurprd04.prod.outlook.com
+ ([fe80::756a:86b8:8283:733d]) by AM0PR04MB5650.eurprd04.prod.outlook.com
+ ([fe80::756a:86b8:8283:733d%6]) with mapi id 15.20.4042.024; Tue, 20 Apr 2021
+ 11:46:45 +0000
+From:   Varad Gautam <varad.gautam@suse.com>
+To:     linux-crypto@vger.kernel.org
+CC:     varad.gautam@suse.com, dhowells@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, vt@altlinux.org,
+        tianjia.zhang@linux.alibaba.com, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jarkko@kernel.org,
+        Ben Boeckel <me@benboeckel.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+        linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v3 18/18] keyctl_pkey: Add pkey parameters saltlen and mgfhash for PSS
+Date:   Tue, 20 Apr 2021 13:41:23 +0200
+Message-ID: <20210420114124.9684-19-varad.gautam@suse.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210420114124.9684-1-varad.gautam@suse.com>
+References: <20210420114124.9684-1-varad.gautam@suse.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [95.90.93.216]
+X-ClientProxiedBy: PR3P189CA0083.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:102:b4::28) To AM0PR04MB5650.eurprd04.prod.outlook.com
+ (2603:10a6:208:128::18)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-19_11:2021-04-19,2021-04-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 suspectscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 clxscore=1015 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104190124
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from xps13.suse.de (95.90.93.216) by PR3P189CA0083.EURP189.PROD.OUTLOOK.COM (2603:10a6:102:b4::28) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4042.16 via Frontend Transport; Tue, 20 Apr 2021 11:46:44 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8162cf49-5add-4cd2-0022-08d903f1f968
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4995:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4995CFAFB7ABC6311669343AE0489@AM0PR04MB4995.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:765;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fuNmE30MKCe5WhlZc2k90IeNafgIFeNIRqFA88btmyhfpKhaOBfEUIHKH4BSyFo2HqLN/wrK005gwGqye8lVtaaDC387QH5/JP2Z5X/Pp2k6PG9nH+dO7xlBYqKNfTkynl7lQIZTUT2y7cmNjU/VfwqC/S5DMLWLDmezBuxPprEdi752PV4OzlREAjJ/jiSTnrfdO6d0Q2YMy3sEmAV7ixXvWd15ndQ1vnJpUilIfmeQaLiSBqh875XHrzToI4s/kZ6kfYN70w0VwGixboGhknSlVoKRU9xQtUQ3zAqktGdziFSFOeekO6ShjpYqZswZvA2ARQGdHvjgcfym8PfIJfCN1QeEKgzje2ymVHgZJSD69cCe+TWCd9h9B/BCewPcogvodKueg/7gfgtKeuSqCCqDFm8Y7ShvzR+L1RFATFzrAXoCfBHJDh8j3uYF6ucsfLAflfkOuE7Xs5o4WzF1+hZX01fnGYQChyDBGX7zgOYJzNKK8V1By6ZRBTz1AvgXUW0c1UeLHlHNDu4kk+Yj2r25imZLKQkHXOXb8qBAxL5GyjaxlG0zoWZUC1bGIcAnzQ/89zzwAA20vTaMz5razyMW6BukrUpikegrl7h6yUuljDd1Vh4J6lqItJJ9EIpItcUZGfiKWdvhsqKunPrA1g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5650.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(346002)(376002)(39850400004)(366004)(136003)(316002)(8936002)(83380400001)(6512007)(6486002)(52116002)(26005)(956004)(6506007)(54906003)(8676002)(16526019)(2616005)(7416002)(6916009)(478600001)(44832011)(4326008)(38100700002)(186003)(2906002)(66556008)(86362001)(66476007)(38350700002)(5660300002)(66946007)(1076003)(6666004)(36756003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?us-ascii?Q?8D/zJbXtArmduRmpk9vkopRxsDcPL4JuRvXKvLjEgA18ukf6rOMd7OsZoIWj?=
+ =?us-ascii?Q?iWkrshckotpuzxhXh1qLeTeR37iVo+EN1twxtBOxBzy/+PzJgHHdOVQV8u63?=
+ =?us-ascii?Q?V6mNNtbsb7SsIz8ryeCwMFFqoRNOEGyNVnIdhSGlkfFNSEka/r30EZPC8jRB?=
+ =?us-ascii?Q?Sb6GyEIOgS2COy4Wg980YrjIQJIiRcivG9GEUYWQAdgp0VHDE8inA8+49QAP?=
+ =?us-ascii?Q?m+SzcejBWL+ZlrdXc3xKgSynl9XTfewQeAl9zbZryifB8mx+AZE+Mv/xa3kq?=
+ =?us-ascii?Q?Cz37LeWt5IRa+tzWNN/dSUZtwQ2FQlP6aS+8aE0rw3TqpP8u+rwauO9Lkb+h?=
+ =?us-ascii?Q?wRvZNqalsJPqa180yDOs5C6pbMgNaq/KcdPVEStXosOnZOrq6jiXREQsd96Q?=
+ =?us-ascii?Q?qk0zHqijosny1BBA62NzgzSRpiSc/iSF9SniPZZ0vrAU2twIoe+Miskn2D1z?=
+ =?us-ascii?Q?meby1otJaUvow6J5dzVGMLWhGu//xB+bCJySQh+alrY+JBnhix4qnxs1r9um?=
+ =?us-ascii?Q?OQvmOR5oDxU8ELHYg2Ct/FPhim6dzNapTu6JpOEodKfzsYXLvazOfYv6F+xq?=
+ =?us-ascii?Q?QeINwxZQeqQ0G8ccYbxeTK/DJsBtUM0tjjJGvGACx5iA7DMWxupOaXlFTUYV?=
+ =?us-ascii?Q?TjKU6rbww/NE8wqkjkjTax5iO0Rpy6QrGx1GH4jKxOMI4UNpIactor/sZZkz?=
+ =?us-ascii?Q?eiKlQzRj5kK5upL83p9QRXtnn16EPTU4vY8WsDj9PXumsmtrlMaIY94EpPS6?=
+ =?us-ascii?Q?GaEQ0LR0nMoMc0oOCc/848QM7SDEBd4zMGDviQR6zdADTBd3r5j0TTuE4VsJ?=
+ =?us-ascii?Q?Xe6OIxJrldBWRgl4I3oFvllXxGp9yEWcgEoKcx9VTgl9Iz1yl8CTiNcKw/IX?=
+ =?us-ascii?Q?/3JeoquhD3/6PHAIQupxI9rIx5wjLa5P+uRaydMRSiNGXBBGBJZc+gj5XVIu?=
+ =?us-ascii?Q?oSQJ16U116CnHB2TDXqrkrPj8H0KSsON7qVMkqy6LNBTSUWrDwvsIwOtNLHq?=
+ =?us-ascii?Q?YLY3UNlMbmcmBu2YRelHUT3pUfGZho3KT2pWQUS/sp5HHMUTuVbHsXQtwfsW?=
+ =?us-ascii?Q?PzqXunIcFBupozmHOtR8TMMJPcVsJMa4NwzPgisshqqi+vAszXPwohFpS/YL?=
+ =?us-ascii?Q?k1KITDxzYd5KcJsb9Z80RBh0hpBHm4trIs/5Q8LdoziqrlQfLeRjN6I2cUjN?=
+ =?us-ascii?Q?dj/hdf6LHCDNZF3SwHiyuQGktNDR2jiB+0F/6sYwGW2kCwGmupqB1c0TRnQL?=
+ =?us-ascii?Q?B+ARgTfQPJQM+7OhX4BOp6Bt0FO9ABcVDQH/1hEW4T62f8HLUAsEB0Hgw3dL?=
+ =?us-ascii?Q?abh63+OEtffHKGW9g89g0IXI?=
+X-OriginatorOrg: suse.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8162cf49-5add-4cd2-0022-08d903f1f968
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5650.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Apr 2021 11:46:45.7009
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: f7a17af6-1c5c-4a36-aa8b-f5be247aa4ba
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k31+wdv5d1mVNKQu2RNfaiKKgJnwDuHMRlNFXzI/XhugZZl2maVW92YAa7lSXgFey7ctSXBykdgOz+hhga48OQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4995
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-__destroy_inode() -> security_inode_free() should only be called once to
-free an inode.  With the provided ecryptfs test.sh script the same inode
-is freed twice.
+keyctl pkey_* operations accept enc and hash parameters at present.
+RSASSA-PSS signatures also require passing in the signature salt
+length and the mgf hash function.
 
-With some debugging info and dump_stack():
-[  417.586522][T13423] integrity_inode_get: pid=13423 ppid=13404 ino:7221545
-	count: 1 write:0 read:1
-[  417.724446][T13428] integrity_inode_get: pid=13428 ppid=13404 ino:7221545
-	count: 2 write:0 read:1
-[  417.796269][T13430] integrity_inode_free: pid=13430 ppid=13404 ino:7221545
-	count: 0 write:0 read:0
-[  417.799101][T13430] integrity_inode_free: pid=13430 ppid=13404 ino:7221545
-	count: 0 write:0 read:0
+Add parameters:
+- 'saltlen' to feed in salt length of a PSS signature.
+- 'mgfhash' to feed in the hash function used for MGF.
 
-But only when executing both the provided ecryptfs test.sh and test2.sh
-scripts, causes the null pointer dereferencing.
-
-[  420.896059][T13532] integrity_inode_get: pid=13532 ppid=13514 ino:7604534
-	count: 1 write:0 read:1
-[  421.020910][T13541] integrity_inode_get: pid=13541 ppid=13514 ino:7604534
-	count: 2 write:0 read:1
-[  421.055163][T13543] integrity_inode_free: pid=13543 ppid=13514 ino:7604534
-	count: 0 write:0 read:0
-[  421.056274][T13543] integrity_inode_free null: pid=13543 ppid=13514 ino:7604534
-	count: 0 write:0 read:0
-[  421.058096][T13543] CPU: 3 PID: 13543 Comm: rm Not tainted 5.12.0-rc6+ #47
-[  421.059039][T13543] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-48-gd9c812dda519-prebuilt.qemu.org 04/01/2014
-[  421.060277][T13543] Call Trace:
-[  421.060645][T13543]  dump_stack+0x141/0x1d7
-[  421.061156][T13543]  integrity_inode_free+0x3e7/0xa70
-[  421.061726][T13543]  security_inode_free+0x1e/0xc0
-[  421.062245][T13543]  __destroy_inode+0x22f/0x700
-[  421.062807][T13543]  destroy_inode+0x91/0x1b0
-[  421.063301][T13543]  iput.part.0+0x57e/0x810
-[  421.063749][T13543]  iput+0x58/0x70
-[  421.064123][T13543]  do_unlinkat+0x431/0x690
-[  421.064553][T13543]  ? __ia32_sys_rmdir+0x100/0x100
-[  421.065066][T13543]  ? getname_flags.part.0+0x1dd/0x4f0
-[  421.065765][T13543]  __x64_sys_unlinkat+0xbd/0x130
-[  421.066412][T13543]  do_syscall_64+0x2d/0x70
-[  421.067082][T13543]  entry_SYSCALL_64_after_hwframe+0x44/0xae
-[  421.068065][T13543] RIP: 0033:0x7fdaaaa0d17b
-[  421.068590][T13543] Code: 73 01 c3 48 8b 0d fd fc 0c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 07 01 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d cd fc 0c 00 f7 d8 64 89 01 48
-[  421.071401][T13543] RSP: 002b:00007ffdc00e5948 EFLAGS: 00000246 ORIG_RAX: 0000000000000107
-[  421.072321][T13543] RAX: ffffffffffffffda RBX: 0000562e27c0e820 RCX: 00007fdaaaa0d17b
-[  421.073211][T13543] RDX: 0000000000000000 RSI: 0000562e27c0e920 RDI: 0000000000000004
-[  421.074083][T13543] RBP: 0000562e27c0d440 R08: 0000000000000000 R09: 0000000000000000
-[  421.074973][T13543] R10: 0000000000000231 R11: 0000000000000246 R12: 0000000000000000
-[  421.075854][T13543] R13: 00007ffdc00e5a60 R14: 0000562e25ddca80 R15: 0000000000000002
-
-Before accessing the "iint", make sure it hasn't already been freed.
-
-Link: https://lore.kernel.org/linux-integrity/630cc0a27a0db8fd790a767300ae0a7f2540bdc2.camel@linux.ibm.com/
-Reported-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Signed-off-by: Varad Gautam <varad.gautam@suse.com>
+CC: Jarkko Sakkinen <jarkko@kernel.org>
+CC: Ben Boeckel <me@benboeckel.net>
 ---
- security/integrity/iint.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+v3: Rename slen to saltlen, update Documentation/security/keys/core.rst.
 
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index fca8a9409e4a..f2af4afbd94b 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -152,9 +152,13 @@ void integrity_inode_free(struct inode *inode)
- 
- 	write_lock(&integrity_iint_lock);
- 	iint = __integrity_iint_find(inode);
--	rb_erase(&iint->rb_node, &integrity_iint_tree);
-+	if (iint)
-+		rb_erase(&iint->rb_node, &integrity_iint_tree);
- 	write_unlock(&integrity_iint_lock);
- 
-+	if (!iint)
-+		return;
+ Documentation/security/keys/core.rst     | 14 +++++++++++++-
+ crypto/asymmetric_keys/asymmetric_type.c |  2 ++
+ include/linux/keyctl.h                   |  2 ++
+ security/keys/keyctl_pkey.c              | 13 +++++++++++++
+ 4 files changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/security/keys/core.rst b/Documentation/security/=
+keys/core.rst
+index b3ed5c581034c..4bd774c56899e 100644
+--- a/Documentation/security/keys/core.rst
++++ b/Documentation/security/keys/core.rst
+@@ -1022,6 +1022,15 @@ The keyctl syscall functions are:
+ 			which hash function was used, the hash function can be
+ 			specified with this, eg. "hash=3Dsha256".
+=20
++	``mgfhash=3D<algo>`` In case of "RSASSA-PSS" ("enc=3Dpss"), this specifie=
+s
++			the hash function used with the Mask Generation Function
++			to generate a signature, eg. "mgfhash=3Dsha256". Supported
++			hashes are: sha1, sha224, sha256, sha384, and sha512.
 +
- 	iint_free(iint);
- }
- 
--- 
-2.27.0
++	``saltlen=3D<salt_length>`` In case of "RSASSA-PSS" ("enc=3Dpss"), this
++			specifies the salt length as a u16, used to generate a
++			signature. Eg. "saltlen=3D32".
++
+      The ``__spare[]`` space in the parameter block must be set to 0.  Thi=
+s is
+      intended, amongst other things, to allow the passing of passphrases
+      required to unlock a key.
+@@ -1700,6 +1709,8 @@ The structure has a number of fields, some of which a=
+re mandatory:
+ 			__u32	in2_len;
+ 		};
+ 		enum kernel_pkey_operation op : 8;
++		__u16		salt_len;
++		const char	*mgf_hash_algo;
+ 	};
+=20
+      This includes the key to be used; a string indicating the encoding to=
+ use
+@@ -1707,7 +1718,8 @@ The structure has a number of fields, some of which a=
+re mandatory:
+      RSASSA-PKCS1-v1.5 or RSAES-PKCS1-v1.5 encoding or "raw" if no encodin=
+g);
+      the name of the hash algorithm used to generate the data for a signat=
+ure
+      (if appropriate); the sizes of the input and output (or second input)
+-     buffers; and the ID of the operation to be performed.
++     buffers; the ID of the operation to be performed; salt length to be u=
+sed
++     in case of RSASSA-PSS; and hash algorithm used with MGF for RSASSA-PS=
+S.
+=20
+      For a given operation ID, the input and output buffers are used as
+      follows::
+diff --git a/crypto/asymmetric_keys/asymmetric_type.c b/crypto/asymmetric_k=
+eys/asymmetric_type.c
+index ad8af3d70ac04..2d3419509ec35 100644
+--- a/crypto/asymmetric_keys/asymmetric_type.c
++++ b/crypto/asymmetric_keys/asymmetric_type.c
+@@ -571,6 +571,8 @@ static int asymmetric_key_verify_signature(struct kerne=
+l_pkey_params *params,
+ 		.hash_algo	=3D params->hash_algo,
+ 		.digest		=3D (void *)in,
+ 		.s		=3D (void *)in2,
++		.salt_length	=3D params->salt_len,
++		.mgf_hash_algo	=3D params->mgf_hash_algo,
+ 	};
+=20
+ 	return verify_signature(params->key, &sig);
+diff --git a/include/linux/keyctl.h b/include/linux/keyctl.h
+index 5b79847207ef2..b0122ac6e11c9 100644
+--- a/include/linux/keyctl.h
++++ b/include/linux/keyctl.h
+@@ -37,6 +37,8 @@ struct kernel_pkey_params {
+ 		__u32	in2_len;	/* 2nd input data size (verify) */
+ 	};
+ 	enum kernel_pkey_operation op : 8;
++	__u16		salt_len;
++	const char	*mgf_hash_algo;
+ };
+=20
+ #endif /* __LINUX_KEYCTL_H */
+diff --git a/security/keys/keyctl_pkey.c b/security/keys/keyctl_pkey.c
+index 5de0d599a2748..019f112474dcd 100644
+--- a/security/keys/keyctl_pkey.c
++++ b/security/keys/keyctl_pkey.c
+@@ -24,11 +24,15 @@ enum {
+ 	Opt_err,
+ 	Opt_enc,		/* "enc=3D<encoding>" eg. "enc=3Doaep" */
+ 	Opt_hash,		/* "hash=3D<digest-name>" eg. "hash=3Dsha1" */
++	Opt_saltlen,		/* "saltlen=3D<salt-length>" eg. "saltlen=3D32" */
++	Opt_mgfhash,		/* "mgfhash=3D<digest-name>" eg. "mgfhash=3Dsha1" */
+ };
+=20
+ static const match_table_t param_keys =3D {
+ 	{ Opt_enc,	"enc=3D%s" },
+ 	{ Opt_hash,	"hash=3D%s" },
++	{ Opt_saltlen,	"saltlen=3D%u" },
++	{ Opt_mgfhash,	"mgfhash=3D%s" },
+ 	{ Opt_err,	NULL }
+ };
+=20
+@@ -63,6 +67,15 @@ static int keyctl_pkey_params_parse(struct kernel_pkey_p=
+arams *params)
+ 			params->hash_algo =3D q;
+ 			break;
+=20
++		case Opt_saltlen:
++			if (kstrtou16(q, 0, &params->salt_len))
++				return -EINVAL;
++			break;
++
++		case Opt_mgfhash:
++			params->mgf_hash_algo =3D q;
++			break;
++
+ 		default:
+ 			return -EINVAL;
+ 		}
+--=20
+2.30.2
 
