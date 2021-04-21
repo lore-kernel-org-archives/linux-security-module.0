@@ -2,205 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72043C43462
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Apr 2021 19:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9183C433B4
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Apr 2021 20:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EF9561453
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Apr 2021 19:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9092861424
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Apr 2021 20:38:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245518AbhDUToI (ORCPT
+        id S245606AbhDUUjH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Apr 2021 15:44:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38696 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S245496AbhDUToC (ORCPT
+        Wed, 21 Apr 2021 16:39:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55236 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240068AbhDUUjG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Apr 2021 15:44:02 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13LJYH4F088501;
-        Wed, 21 Apr 2021 15:43:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=4OumTIa+6p1ka93GHomN7b6NR3Ghe9gvkQLBB6dvFEs=;
- b=rbGz/pzykMQeN+bE6ID5uoGRdxDDBIsdC2jNghjzXLKSMCpR8UHk9FuhbCQUA5ww+o5/
- jRCZCEddaoefSU/KJuFPCAL9R9m7/cOvmkaVg9lepdxU1vc2/bEQMD9pqggV47GTWY6I
- OsKrZ+uXP3Xv/1XKupNGfe5Dpl67MKmfycVY0Sx4JHInyekJnbelXWVq2wquNJeBOeeu
- Vj2D4RJh2cGxBNc8fqGllwjedABzuVfypcSYWa7naPfYuf8xJOjQ7jwHd7b/Lv/yunJq
- ZIIeLeI46eY2MF6A4tBk8aOca7mvays2fyOAWeaucXcE1i66P/ufn01JVG1CWEyQzGMH BQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 382sbr9td2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Apr 2021 15:43:27 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13LJaAkD097703;
-        Wed, 21 Apr 2021 15:43:27 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 382sbr9tcq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Apr 2021 15:43:27 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13LJgYAD021907;
-        Wed, 21 Apr 2021 19:43:26 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma03wdc.us.ibm.com with ESMTP id 37yqa9cg4x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 21 Apr 2021 19:43:26 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13LJhODe32178508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Apr 2021 19:43:24 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A4FE678060;
-        Wed, 21 Apr 2021 19:43:24 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDFD87805E;
-        Wed, 21 Apr 2021 19:43:23 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.47.158.152])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 21 Apr 2021 19:43:23 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.ibm.com>
-To:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        zohar@linux.ibm.com, jarkko@kernel.org
-Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 2/2] certs: Add support for using elliptic curve keys for signing modules
-Date:   Wed, 21 Apr 2021 15:43:19 -0400
-Message-Id: <20210421194319.1489291-3-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210421194319.1489291-1-stefanb@linux.ibm.com>
-References: <20210421194319.1489291-1-stefanb@linux.ibm.com>
+        Wed, 21 Apr 2021 16:39:06 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F131BC06138A
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Apr 2021 13:38:32 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id u21so65448029ejo.13
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Apr 2021 13:38:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=md3o4p7n3hM5uE+5WCGNtClm3RdZoyFagq0E7NLsAic=;
+        b=jluoif0LUeWyHw6yXRzDm293OaeL1Gvzfs7lwWkF0kZ9iIB1xqqXcZBZzzI/nHk04R
+         RJ5g0rXOaZVzvBmrxkjLX1UL2uAcE44TgBlZMGHdPQ6nibpmb/ZZgNzdIwqQWeaE4jwe
+         X7GwFGRmJn4teKMZEas+gWWYQ6GPcmOqBAE1TKE0ELsYa+UL1L3STWfI7955RsmXxtZX
+         iN3VPpRYPPbQVHaaquw/NaB2MZk+e1rO98iDD8P0RBMTASUUMSwY0li2YrNwYWvfizuR
+         kW4otWYEy08FXf46qc1KQr9JcddGNgHgqd88tjlw3lYZDryYu2WR5b576MwjjpTbBKrI
+         +Arw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=md3o4p7n3hM5uE+5WCGNtClm3RdZoyFagq0E7NLsAic=;
+        b=Of2QPQDT2AUugQOsDOduzVVwPmlBKa6KMxKpKLv6LEfbohlQLAQzOECE0qOeicpHBb
+         owArIw2BPDlVPQl7dI4TwE8bOTqc8SVk0udoVudVzvOvv2SHrNdJYUcQ/VML63tBPce/
+         ucWOLvpX/A8yL+g9VPG8nrZXAhBLIbbZj8Kggta28iw/rKLzskct3caAyonhpXFGi9av
+         UoWn50ISwI6Sm/cc/J/JGjxJ5Ta84gqu7tf5FAOF+uWjS2PXNRWafaKai6d6JvilGTv7
+         Ijfmmk4mic1Z9MHZoIPgFWj6Lf0FeJ0gfoZWr1Y3q2tv4V/hj7ky+OLRAheDIPiQzDSS
+         Xu+g==
+X-Gm-Message-State: AOAM531EyBKGMG3oFftu09gmNFrMriBnXXS3l+8usi1Zl9WZ0jjCrhR4
+        U8xfrh69J3/SaQPLM23zymw+t2zrOUogCSC7p3oQ
+X-Google-Smtp-Source: ABdhPJyFe9bNzV6/bc99zAfaqrVO1DebH0rgqEH8+mOVAiJ8K6bc6MFkmZrpd827WzqVo1ofdZuRb3cNGC3u1dwSFpY=
+X-Received: by 2002:a17:906:f1cb:: with SMTP id gx11mr35468706ejb.106.1619037511266;
+ Wed, 21 Apr 2021 13:38:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RZqX34gZpmpTwsXMgx2-u_MIVJc9ikub
-X-Proofpoint-GUID: E6BucHQ_nDFy5dpOVlW0s3UZ41Syh29g
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-21_05:2021-04-21,2021-04-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0 impostorscore=0
- priorityscore=1501 clxscore=1015 spamscore=0 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104060000
- definitions=main-2104210134
+References: <20210421171446.785507-1-omosnace@redhat.com>
+In-Reply-To: <20210421171446.785507-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 21 Apr 2021 16:38:20 -0400
+Message-ID: <CAHC9VhTFPHO7YtTxSZNcEZwoy4R3RXVu-4RrAHRtv8BVEw-zGA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] selinux,anon_inodes: Use a separate SELinux class
+ for each type of anon inode
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Add support for using elliptic curve keys for signing modules. It uses
-a NIST P384 (secp384r1) key if the user chooses an elliptic curve key
-and will have ECDSA support built into the kernel.
+On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> This series aims to correct a design flaw in the original anon_inode
+> SELinux support that would make it hard to write policies for anonymous
+> inodes once more types of them are supported (currently only userfaultfd
+> inodes are). A more detailed rationale is provided in the second patch.
+>
+> The first patch extends the anon_inode_getfd_secure() function to accept
+> an additional numeric identifier that represents the type of the
+> anonymous inode being created, which is passed to the LSMs via
+> security_inode_init_security_anon().
+>
+> The second patch then introduces a new SELinux policy capability that
+> allow policies to opt-in to have a separate class used for each type of
+> anon inode. That means that the "old way" will still
 
-Note: A developer choosing an ECDSA key for signing modules should still
-delete the signing key (rm certs/signing_key.*) when building an older
-version of a kernel that only supports RSA keys. Unless kbuild automati-
-cally detects and generates a new kernel module key, ECDSA-signed kernel
-modules will fail signature verification.
+... will what? :)
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+I think it would be a very good idea if you could provide some
+concrete examples of actual policy problems encountered using the
+current approach.  I haven't looked at these patches very seriously
+yet, but my initial reaction is not "oh yes, we definitely need this".
 
----
-v3:
-  - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
-  - added recommendation to use string hash to Kconfig help text
+> I wish I had realized the practical consequences earlier, while the
+> patches were still under review, but it only started to sink in after
+> the authors themselves later raised the issue in an off-list
+> conversation. Even then, I still hoped it wouldn't be that bad, but the
+> more I thought about how to apply this in an actual policy, the more I
+> realized how much pain it would be to work with the current design, so
+> I decided to propose these changes.
+>
+> I hope this will be an acceptable solution.
+>
+> A selinux-testsuite patch that adapts the userfaultfd test to work also
+> with the new policy capability enabled will follow.
+>
+> Ondrej Mosnacek (2):
+>   LSM,anon_inodes: explicitly distinguish anon inode types
+>   selinux: add capability to map anon inode types to separate classes
+>
+>  fs/anon_inodes.c                           | 42 +++++++++++++---------
+>  fs/userfaultfd.c                           |  6 ++--
+>  include/linux/anon_inodes.h                |  4 ++-
+>  include/linux/lsm_hook_defs.h              |  3 +-
+>  include/linux/security.h                   | 19 ++++++++++
+>  security/security.c                        |  3 +-
+>  security/selinux/hooks.c                   | 28 ++++++++++++++-
+>  security/selinux/include/classmap.h        |  2 ++
+>  security/selinux/include/policycap.h       |  1 +
+>  security/selinux/include/policycap_names.h |  3 +-
+>  security/selinux/include/security.h        |  7 ++++
+>  11 files changed, 95 insertions(+), 23 deletions(-)
+>
+> --
+> 2.30.2
 
-v2:
-  - check for ECDSA key by id-ecPublicKey from output line
-    'Public Key Algorithm: id-ecPublicKey'.
----
- certs/Kconfig                         | 26 ++++++++++++++++++++++++++
- certs/Makefile                        |  9 +++++++++
- crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
- 3 files changed, 43 insertions(+)
-
-diff --git a/certs/Kconfig b/certs/Kconfig
-index 48675ad319db..d58f16c9f2d9 100644
---- a/certs/Kconfig
-+++ b/certs/Kconfig
-@@ -15,6 +15,32 @@ config MODULE_SIG_KEY
-          then the kernel will automatically generate the private key and
-          certificate as described in Documentation/admin-guide/module-signing.rst
- 
-+choice
-+	prompt "Type of module signing key to be generated"
-+	default MODULE_SIG_KEY_TYPE_RSA
-+	help
-+	 The type of module signing key type to generate. This option
-+	 does not apply if a #PKCS11 URI is used.
-+
-+config MODULE_SIG_KEY_TYPE_RSA
-+	bool "RSA"
-+	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
-+	help
-+	 Use an RSA key for module signing.
-+
-+config MODULE_SIG_KEY_TYPE_ECDSA
-+	bool "ECDSA"
-+	select CRYPTO_ECDSA
-+	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
-+	help
-+	 Use an elliptic curve key (NIST P384) for module signing. Consider
-+	 using a strong hash like sha256 or sha384 for hashing modules.
-+
-+	 Note: Remove all ECDSA signing keys, e.g. certs/signing_key.pem,
-+	 when falling back to building Linux 5.11 and older kernels.
-+
-+endchoice
-+
- config SYSTEM_TRUSTED_KEYRING
- 	bool "Provide system-wide ring of trusted keys"
- 	depends on KEYS
-diff --git a/certs/Makefile b/certs/Makefile
-index f64bc89ccbf1..c2fabc288550 100644
---- a/certs/Makefile
-+++ b/certs/Makefile
-@@ -62,7 +62,15 @@ ifeq ($(CONFIG_MODULE_SIG_KEY),"certs/signing_key.pem")
- 
- X509TEXT=$(shell openssl x509 -in $(CONFIG_MODULE_SIG_KEY) -text)
- 
-+# Support user changing key type
-+ifdef CONFIG_MODULE_SIG_KEY_TYPE_ECDSA
-+keytype_openssl = -newkey ec -pkeyopt ec_paramgen_curve:secp384r1
-+$(if $(findstring id-ecPublicKey,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+endif
-+
-+ifdef CONFIG_MODULE_SIG_KEY_TYPE_RSA
- $(if $(findstring rsaEncryption,$(X509TEXT)),,$(shell rm -f $(CONFIG_MODULE_SIG_KEY)))
-+endif
- 
- $(obj)/signing_key.pem: $(obj)/x509.genkey
- 	@$(kecho) "###"
-@@ -77,6 +85,7 @@ $(obj)/signing_key.pem: $(obj)/x509.genkey
- 		-batch -x509 -config $(obj)/x509.genkey \
- 		-outform PEM -out $(obj)/signing_key.pem \
- 		-keyout $(obj)/signing_key.pem \
-+		$(keytype_openssl) \
- 		$($(quiet)redirect_openssl)
- 	@$(kecho) "###"
- 	@$(kecho) "### Key pair generated."
-diff --git a/crypto/asymmetric_keys/pkcs7_parser.c b/crypto/asymmetric_keys/pkcs7_parser.c
-index 967329e0a07b..6592279d839a 100644
---- a/crypto/asymmetric_keys/pkcs7_parser.c
-+++ b/crypto/asymmetric_keys/pkcs7_parser.c
-@@ -269,6 +269,14 @@ int pkcs7_sig_note_pkey_algo(void *context, size_t hdrlen,
- 		ctx->sinfo->sig->pkey_algo = "rsa";
- 		ctx->sinfo->sig->encoding = "pkcs1";
- 		break;
-+	case OID_id_ecdsa_with_sha1:
-+	case OID_id_ecdsa_with_sha224:
-+	case OID_id_ecdsa_with_sha256:
-+	case OID_id_ecdsa_with_sha384:
-+	case OID_id_ecdsa_with_sha512:
-+		ctx->sinfo->sig->pkey_algo = "ecdsa";
-+		ctx->sinfo->sig->encoding = "x962";
-+		break;
- 	default:
- 		printk("Unsupported pkey algo: %u\n", ctx->last_oid);
- 		return -ENOPKG;
 -- 
-2.29.2
-
+paul moore
+www.paul-moore.com
