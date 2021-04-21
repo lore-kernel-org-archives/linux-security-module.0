@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 706D4C43600
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3A9C4360C
 	for <linux-security-module@archiver.kernel.org>; Wed, 21 Apr 2021 17:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2781161456
+	by mail.kernel.org (Postfix) with ESMTP id 81FDF6145E
 	for <linux-security-module@archiver.kernel.org>; Wed, 21 Apr 2021 17:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244497AbhDURPc (ORCPT
+        id S244517AbhDURPc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
         Wed, 21 Apr 2021 13:15:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39879 "EHLO
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29875 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S242773AbhDURP2 (ORCPT
+        by vger.kernel.org with ESMTP id S242198AbhDURP1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Apr 2021 13:15:28 -0400
+        Wed, 21 Apr 2021 13:15:27 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1619025295;
+        s=mimecast20190719; t=1619025294;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=G0dqxk6aCIJwYIeIK7RlZfnhxumuA+fnJWxdgE7A8fI=;
-        b=T5uaXwUnxOF7Vb73rMfgE5OjfgLR14scQZtUREoJ7x2F5Y0Wn93UV8HpqWG+lIWwyaITSv
-        Vs8MaWrwqW8woNUKcjv9+GsVeTXpHWS/PpI9jk1VzAhrXSPzwIbkEvzUAFMhrvCBpdWCk1
-        10UKa1/6ib7LrmF9UB0V5dVppihkyrI=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-143-QQWA2RO2MquzZdhpc3lw-w-1; Wed, 21 Apr 2021 13:14:53 -0400
-X-MC-Unique: QQWA2RO2MquzZdhpc3lw-w-1
-Received: by mail-ed1-f69.google.com with SMTP id r14-20020a50d68e0000b0290385504d6e4eso5467254edi.7
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Apr 2021 10:14:52 -0700 (PDT)
+        bh=CH/H9EMCPzTVO17F0AhVsjZvQyeIY3RFQ1xi2LaIF3U=;
+        b=aZy8qFaKzkQHve4Ktao5pr4hlwEn2xi0iJiRTuVaoCmTyCEBEKquyyNzT5kJWSb+dAwwNl
+        vBKHG2Tz6NNDVUzhCVsQsrxXvYGi5lg7uTy3UZYQKubhtm/E3XvffPJ6qIHD0pa+mN/PM1
+        Ge5kvDQ4wWHUdJh9vVkACRADotbi01w=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-45-Yl11WY8XP3COS-MZ1jCWrw-1; Wed, 21 Apr 2021 13:14:52 -0400
+X-MC-Unique: Yl11WY8XP3COS-MZ1jCWrw-1
+Received: by mail-ed1-f70.google.com with SMTP id c15-20020a056402100fb029038518e5afc5so7863478edu.18
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Apr 2021 10:14:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=G0dqxk6aCIJwYIeIK7RlZfnhxumuA+fnJWxdgE7A8fI=;
-        b=MoPkKanmLzDcYguzv1XTIbz7jUEHRIt9wdHBi4ZZRM2w660q62PxhCzcfIB4FVvj+G
-         liHFX7ysorhaMgNf5Gv1DKuh2b/3Grxr1Co2Iv/0Wb7MjmOoJro2gY0IXYLxFXt7GZTF
-         fSvhJ1DIY1WCiziZoAo5jFAs5P6CrOih4aSlXpF2bTjqF5tShieFAfG8FQ+WvfapeGew
-         DRzG0rVHcKhomF97quaMCvwxlNuoBD87moNHVvmHEnrgHVOdlx57Yh9klCfBbBynEkz/
-         dWADvVgy6+3NcEKE//CyTRorB1EgjKPlp6ywWD94riD5+Ot2p2Mp9Rz/kwQKaR2e40rg
-         wrxQ==
-X-Gm-Message-State: AOAM531j5QMlzMf0Ui8W11wY8E3qCrSv3tbs6YMdMQP7ONjg6jmBb7vL
-        E6k1RcnRi1nVhB9ifYkdcgw5GcNZPLrmvFuCg3+T2hGy1Gai9a9hiclaM+tCb1L3Iaaj8A42qcT
-        eY2IMBz5Y8FclgYphlOhPSY9oS58UQXKd+/LW
-X-Received: by 2002:aa7:c893:: with SMTP id p19mr32667741eds.256.1619025291742;
-        Wed, 21 Apr 2021 10:14:51 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyN2tOLiqStlOemoPihxz37Wt/OP+d1rIvEkhFqaa2GTQP9HkpW/vJH8NQfFid5RullHfwiDQ==
-X-Received: by 2002:aa7:c893:: with SMTP id p19mr32667724eds.256.1619025291553;
-        Wed, 21 Apr 2021 10:14:51 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8308:b105:dd00:277b:6436:24db:9466])
-        by smtp.gmail.com with ESMTPSA id i1sm22905edt.33.2021.04.21.10.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        bh=CH/H9EMCPzTVO17F0AhVsjZvQyeIY3RFQ1xi2LaIF3U=;
+        b=oa6ueDyq2i6ALxEPVY2IUxey+lFNmeca+b+0M18qMAQ1nWkktBki3QNwi/Xmkh06BG
+         8AHlHY5YE+3qAkErf7ehlUiwpAc3qVizOqs7pfRJU+UMA8nwBJlZKr/SPMXU7fbbIamS
+         kocCUQ/VNEhSTM7EKGTI6WgyfU+/PG5VQlF/Q2lpVyi0YdTBR2wEGUq9p39BRb2UIisR
+         x7pFBrUz61eoIb5CSPDedDHF7aQVkeDM2QLYGgyledR8A9WOqeu9PzErZZGfHSp04Dx5
+         s6aMQ2wRQWizztxLEqk4OkmelL/8n0YlkXXGkVQZP6Mv5CyOcyzY9+g9eNiCbYX7uBr7
+         tu0Q==
+X-Gm-Message-State: AOAM531f7Ecp5muNq/dJ91hpOSBhTtoxX7w8iHyUeA+/VcSMX6f4gau1
+        ezWWnt3ZfGSF0CD3EwtF2bnp8PHBf6/tGru+c0MxstdGpOG4LGzQ3KSDm7uPpVrI6RdXwF+XzRb
+        eAudUqBC1Mo+iDFP3/zgvk5cBvwQrNcdvYPfg
+X-Received: by 2002:a17:906:cc48:: with SMTP id mm8mr35075125ejb.58.1619025290663;
         Wed, 21 Apr 2021 10:14:50 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzfY4E6B1rqiCEVZTtJIhVGRKBMsxhaixFISYRx97QdosCAdLI1H8CPlvqMBiK9Dx8yD8FXlw==
+X-Received: by 2002:a17:906:cc48:: with SMTP id mm8mr35075104ejb.58.1619025290485;
+        Wed, 21 Apr 2021 10:14:50 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8308:b105:dd00:277b:6436:24db:9466])
+        by smtp.gmail.com with ESMTPSA id i1sm22905edt.33.2021.04.21.10.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Apr 2021 10:14:49 -0700 (PDT)
 From:   Ondrej Mosnacek <omosnace@redhat.com>
 To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
 Cc:     linux-security-module@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lokesh Gidra <lokeshgidra@google.com>,
         Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: [RFC PATCH 2/2] selinux: add capability to map anon inode types to separate classes
-Date:   Wed, 21 Apr 2021 19:14:46 +0200
-Message-Id: <20210421171446.785507-3-omosnace@redhat.com>
+Subject: [RFC PATCH 1/2] LSM,anon_inodes: explicitly distinguish anon inode types
+Date:   Wed, 21 Apr 2021 19:14:45 +0200
+Message-Id: <20210421171446.785507-2-omosnace@redhat.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210421171446.785507-1-omosnace@redhat.com>
 References: <20210421171446.785507-1-omosnace@redhat.com>
@@ -82,153 +82,282 @@ Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Unfortunately, the approach chosen in commit 29cd6591ab6f ("selinux:
-teach SELinux about anonymous inodes") to use a single class for all
-anon inodes and let the policy distinguish between them using named
-transitions turned out to have a rather unfortunate drawback.
+Add an enum to <linux/security.h> that allows LSMs to reliably
+distinguish types of anon inodes created via anon_inode_getfd_secure()
+and require callers of this function to pass the type as an argument.
+For the single current user of this function (userfaultfd), add the
+corresponding type and pass it in its anon_inode_getfd_secure() call.
 
-For example, suppose we have two types of anon inodes, "A" and "B", and
-we want to allow a set of domains (represented by an attribute "attr_x")
-certain set of permissions on anon inodes of type "A" that were created
-by the same domain, but at the same time disallow this set to access
-anon inodes of type "B" entirely. Since all inodes share the same class
-and we want to distinguish both the inode types and the domains that
-created them, we have no choice than to create separate types for the
-cartesian product of (domains that belong to attr_x) x ("A", "B") and
-add all the necessary allow and transition rules for each domain
-individually.
+While the "name" argument can be used to distinguish different types as
+well, some users of anon_inode_getfd() put some additional information
+here (e.g. KVM anon inodes), so using an explicit numeric identifier is
+preferred to parsing this information from strings.
 
-This makes it very impractical to write sane policies for anon inodes in
-the future, as more anon inode types are added. Therefore, this patch
-implements an alternative approach that assigns a separate class to each
-type of anon inode. This allows the example above to be implemented
-without any transition rules and with just a single allow rule:
-
-allow attr_x self:A { ... };
-
-In order to not break possible existing users of the already merged
-original approach, this patch also adds a new policy capability
-"extended_anon_inode_class" that needs to be set by the policy to enable
-the new behavior.
-
-I decided to keep the named transition mechanism in the new variant,
-since there might eventually be some extra information in the anon inode
-name that could be used in transitions.
-
-One minor annoyance is that the kernel still expects the policy to
-provide both classes (anon_inode and userfaultfd) regardless of the
-capability setting and if one of them is not defined in the policy, the
-kernel will print a warning when loading the policy. However, it doesn't
-seem worth to work around that in the kernel, as the policy can provide
-just the definition of the unused class(es) (and permissions) to avoid
-this warning. Keeping the legacy anon_inode class with some fallback
-rules may also be desirable to keep the policy compatible with kernels
-that only support anon_inode.
+The new type information will be used by SELinux in a subsequent patch.
 
 Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- security/selinux/hooks.c                   | 27 +++++++++++++++++++++-
- security/selinux/include/classmap.h        |  2 ++
- security/selinux/include/policycap.h       |  1 +
- security/selinux/include/policycap_names.h |  3 ++-
- security/selinux/include/security.h        |  7 ++++++
- 5 files changed, 38 insertions(+), 2 deletions(-)
+ fs/anon_inodes.c              | 42 ++++++++++++++++++++++-------------
+ fs/userfaultfd.c              |  6 +++--
+ include/linux/anon_inodes.h   |  4 +++-
+ include/linux/lsm_hook_defs.h |  3 ++-
+ include/linux/security.h      | 19 ++++++++++++++++
+ security/security.c           |  3 ++-
+ security/selinux/hooks.c      |  1 +
+ 7 files changed, 57 insertions(+), 21 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index dc57ba21d8ff..20a8d7d17936 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -3079,7 +3079,32 @@ static int selinux_inode_init_security_anon(struct inode *inode,
- 		isec->sclass = context_isec->sclass;
- 		isec->sid = context_isec->sid;
- 	} else {
--		isec->sclass = SECCLASS_ANON_INODE;
-+		/*
-+		 * If the check below fails:
-+		 *  1. Add the corresponding security class to
-+		 *     security/selinux/include/classmap.h
-+		 *  2. Map the new LSM_ANON_INODE_* value to the class in
-+		 *     the switch statement below.
-+		 *  3. Update the RHS of the comparison in the BUILD_BUG_ON().
-+		 *  4. CC selinux@vger.kernel.org and
-+		 *     linux-security-module@vger.kernel.org when submitting
-+		 *     the patch or in case of any questions.
-+		 */
-+		BUILD_BUG_ON(LSM_ANON_INODE_MAX > LSM_ANON_INODE_USERFAULTFD);
-+
-+		if (selinux_policycap_extended_anon_inode()) {
-+			switch (type) {
-+			case LSM_ANON_INODE_USERFAULTFD:
-+				isec->sclass = SECCLASS_USERFAULTFD;
-+				break;
-+			default:
-+				pr_err("SELinux:  got invalid anon inode type: %d",
-+				       (int)type);
-+				return -EINVAL;
-+			}
-+		} else {
-+			isec->sclass = SECCLASS_ANON_INODE;
-+		}
- 		rc = security_transition_sid(
- 			&selinux_state, tsec->sid, tsec->sid,
- 			isec->sclass, name, &isec->sid);
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index ba2e01a6955c..e4308cad6407 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -251,6 +251,8 @@ struct security_class_mapping secclass_map[] = {
- 	  { "integrity", "confidentiality", NULL } },
- 	{ "anon_inode",
- 	  { COMMON_FILE_PERMS, NULL } },
-+	{ "userfaultfd",
-+	  { COMMON_FILE_PERMS, NULL } },
- 	{ NULL }
-   };
- 
-diff --git a/security/selinux/include/policycap.h b/security/selinux/include/policycap.h
-index 2ec038efbb03..969804bd6dab 100644
---- a/security/selinux/include/policycap.h
-+++ b/security/selinux/include/policycap.h
-@@ -11,6 +11,7 @@ enum {
- 	POLICYDB_CAPABILITY_CGROUPSECLABEL,
- 	POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION,
- 	POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS,
-+	POLICYDB_CAPABILITY_EXTENDED_ANON_INODE_CLASS,
- 	__POLICYDB_CAPABILITY_MAX
- };
- #define POLICYDB_CAPABILITY_MAX (__POLICYDB_CAPABILITY_MAX - 1)
-diff --git a/security/selinux/include/policycap_names.h b/security/selinux/include/policycap_names.h
-index b89289f092c9..78651990425e 100644
---- a/security/selinux/include/policycap_names.h
-+++ b/security/selinux/include/policycap_names.h
-@@ -12,7 +12,8 @@ const char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
- 	"always_check_network",
- 	"cgroup_seclabel",
- 	"nnp_nosuid_transition",
--	"genfs_seclabel_symlinks"
-+	"genfs_seclabel_symlinks",
-+	"extended_anon_inode_class",
+diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
+index a280156138ed..0c8e77b69893 100644
+--- a/fs/anon_inodes.c
++++ b/fs/anon_inodes.c
+@@ -56,6 +56,7 @@ static struct file_system_type anon_inode_fs_type = {
  };
  
- #endif /* _SELINUX_POLICYCAP_NAMES_H_ */
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index 7130c9648ad1..4fb75101aca4 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -219,6 +219,13 @@ static inline bool selinux_policycap_genfs_seclabel_symlinks(void)
- 	return READ_ONCE(state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS]);
+ static struct inode *anon_inode_make_secure_inode(
++	enum lsm_anon_inode_type type,
+ 	const char *name,
+ 	const struct inode *context_inode)
+ {
+@@ -67,7 +68,8 @@ static struct inode *anon_inode_make_secure_inode(
+ 	if (IS_ERR(inode))
+ 		return inode;
+ 	inode->i_flags &= ~S_PRIVATE;
+-	error =	security_inode_init_security_anon(inode, &qname, context_inode);
++	error =	security_inode_init_security_anon(inode, type, &qname,
++						  context_inode);
+ 	if (error) {
+ 		iput(inode);
+ 		return ERR_PTR(error);
+@@ -75,11 +77,11 @@ static struct inode *anon_inode_make_secure_inode(
+ 	return inode;
  }
  
-+static inline bool selinux_policycap_extended_anon_inode(void)
-+{
-+	struct selinux_state *state = &selinux_state;
+-static struct file *__anon_inode_getfile(const char *name,
++static struct file *__anon_inode_getfile(enum lsm_anon_inode_type type,
++					 const char *name,
+ 					 const struct file_operations *fops,
+ 					 void *priv, int flags,
+-					 const struct inode *context_inode,
+-					 bool secure)
++					 const struct inode *context_inode)
+ {
+ 	struct inode *inode;
+ 	struct file *file;
+@@ -87,8 +89,8 @@ static struct file *__anon_inode_getfile(const char *name,
+ 	if (fops->owner && !try_module_get(fops->owner))
+ 		return ERR_PTR(-ENOENT);
+ 
+-	if (secure) {
+-		inode =	anon_inode_make_secure_inode(name, context_inode);
++	if (type != LSM_ANON_INODE_NONE) {
++		inode =	anon_inode_make_secure_inode(type, name, context_inode);
+ 		if (IS_ERR(inode)) {
+ 			file = ERR_CAST(inode);
+ 			goto err;
+@@ -144,15 +146,16 @@ struct file *anon_inode_getfile(const char *name,
+ 				const struct file_operations *fops,
+ 				void *priv, int flags)
+ {
+-	return __anon_inode_getfile(name, fops, priv, flags, NULL, false);
++	return __anon_inode_getfile(LSM_ANON_INODE_NONE, name, fops, priv,
++				    flags, NULL);
+ }
+ EXPORT_SYMBOL_GPL(anon_inode_getfile);
+ 
+-static int __anon_inode_getfd(const char *name,
++static int __anon_inode_getfd(enum lsm_anon_inode_type type,
++			      const char *name,
+ 			      const struct file_operations *fops,
+ 			      void *priv, int flags,
+-			      const struct inode *context_inode,
+-			      bool secure)
++			      const struct inode *context_inode)
+ {
+ 	int error, fd;
+ 	struct file *file;
+@@ -162,8 +165,8 @@ static int __anon_inode_getfd(const char *name,
+ 		return error;
+ 	fd = error;
+ 
+-	file = __anon_inode_getfile(name, fops, priv, flags, context_inode,
+-				    secure);
++	file = __anon_inode_getfile(type, name, fops, priv, flags,
++				    context_inode);
+ 	if (IS_ERR(file)) {
+ 		error = PTR_ERR(file);
+ 		goto err_put_unused_fd;
+@@ -197,7 +200,8 @@ err_put_unused_fd:
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags)
+ {
+-	return __anon_inode_getfd(name, fops, priv, flags, NULL, false);
++	return __anon_inode_getfd(LSM_ANON_INODE_NONE, name, fops, priv,
++				  flags, NULL);
+ }
+ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+ 
+@@ -207,7 +211,9 @@ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+  * the inode_init_security_anon() LSM hook. This allows the inode to have its
+  * own security context and for a LSM to reject creation of the inode.
+  *
+- * @name:    [in]    name of the "class" of the new file
++ * @type:    [in]    type of the file recognizable by LSMs
++ * @name:    [in]    name of the "class" of the new file (may be more specific
++ *                   than @type)
+  * @fops:    [in]    file operations for the new file
+  * @priv:    [in]    private data for the new file (will be file's private_data)
+  * @flags:   [in]    flags
+@@ -217,11 +223,15 @@ EXPORT_SYMBOL_GPL(anon_inode_getfd);
+  * The LSM may use @context_inode in inode_init_security_anon(), but a
+  * reference to it is not held.
+  */
+-int anon_inode_getfd_secure(const char *name, const struct file_operations *fops,
++int anon_inode_getfd_secure(enum lsm_anon_inode_type type, const char *name,
++			    const struct file_operations *fops,
+ 			    void *priv, int flags,
+ 			    const struct inode *context_inode)
+ {
+-	return __anon_inode_getfd(name, fops, priv, flags, context_inode, true);
++	/* The caller must pass a valid type! */
++	if (WARN_ON(type <= LSM_ANON_INODE_NONE || type > LSM_ANON_INODE_MAX))
++		return -EINVAL;
++	return __anon_inode_getfd(type, name, fops, priv, flags, context_inode);
+ }
+ EXPORT_SYMBOL_GPL(anon_inode_getfd_secure);
+ 
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 0be8cdd4425a..003f65d752c4 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -985,7 +985,8 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
+ {
+ 	int fd;
+ 
+-	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
++	fd = anon_inode_getfd_secure(LSM_ANON_INODE_USERFAULTFD,
++			"[userfaultfd]", &userfaultfd_fops, new,
+ 			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+ 	if (fd < 0)
+ 		return fd;
+@@ -2000,7 +2001,8 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+ 	/* prevent the mm struct to be freed */
+ 	mmgrab(ctx->mm);
+ 
+-	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
++	fd = anon_inode_getfd_secure(LSM_ANON_INODE_USERFAULTFD,
++			"[userfaultfd]", &userfaultfd_fops, ctx,
+ 			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+ 	if (fd < 0) {
+ 		mmdrop(ctx->mm);
+diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
+index 71881a2b6f78..37137e994ceb 100644
+--- a/include/linux/anon_inodes.h
++++ b/include/linux/anon_inodes.h
+@@ -9,6 +9,8 @@
+ #ifndef _LINUX_ANON_INODES_H
+ #define _LINUX_ANON_INODES_H
+ 
++#include <linux/security.h>
 +
-+	return READ_ONCE(state->policycap[POLICYDB_CAPABILITY_EXTENDED_ANON_INODE_CLASS]);
-+}
+ struct file_operations;
+ struct inode;
+ 
+@@ -17,7 +19,7 @@ struct file *anon_inode_getfile(const char *name,
+ 				void *priv, int flags);
+ int anon_inode_getfd(const char *name, const struct file_operations *fops,
+ 		     void *priv, int flags);
+-int anon_inode_getfd_secure(const char *name,
++int anon_inode_getfd_secure(enum lsm_anon_inode_type type, const char *name,
+ 			    const struct file_operations *fops,
+ 			    void *priv, int flags,
+ 			    const struct inode *context_inode);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 61f04f7dc1a4..ba03a7d0bf1a 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -115,7 +115,8 @@ LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+ 	 struct inode *dir, const struct qstr *qstr, const char **name,
+ 	 void **value, size_t *len)
+ LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+-	 const struct qstr *name, const struct inode *context_inode)
++	 enum lsm_anon_inode_type type, const struct qstr *name,
++	 const struct inode *context_inode)
+ LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *dentry,
+ 	 umode_t mode)
+ LSM_HOOK(int, 0, inode_link, struct dentry *old_dentry, struct inode *dir,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 9aeda3f9e838..7c5117676f29 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -79,6 +79,23 @@ enum lsm_event {
+ 	LSM_POLICY_CHANGE,
+ };
+ 
++/*
++ * Types of anonymous inodes that may be interesting to LSMs.
++ * Passed to anon_inode_getfd_secure() and
++ * security_inode_init_security_anon().
++ */
++enum lsm_anon_inode_type {
++	/* anon inodes invisible to the LSMs */
++	LSM_ANON_INODE_NONE = 0,
++	/* userfaultfd anon inodes */
++	LSM_ANON_INODE_USERFAULTFD,
++	/* (add new types above this line) */
 +
- int security_mls_enabled(struct selinux_state *state);
- int security_load_policy(struct selinux_state *state,
- 			void *data, size_t len,
++	__LSM_ANON_INODE_MAX,
++	/* max value used for asserts */
++	LSM_ANON_INODE_MAX = __LSM_ANON_INODE_MAX - 1,
++};
++
+ /*
+  * These are reasons that can be passed to the security_locked_down()
+  * LSM hook. Lockdown reasons that protect kernel integrity (ie, the
+@@ -329,6 +346,7 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
+ int security_inode_init_security_anon(struct inode *inode,
++				      enum lsm_anon_inode_type type,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode);
+ int security_old_inode_init_security(struct inode *inode, struct inode *dir,
+@@ -759,6 +777,7 @@ static inline int security_inode_init_security(struct inode *inode,
+ }
+ 
+ static inline int security_inode_init_security_anon(struct inode *inode,
++						    enum lsm_anon_inode_type type,
+ 						    const struct qstr *name,
+ 						    const struct inode *context_inode)
+ {
+diff --git a/security/security.c b/security/security.c
+index 94383f83ba42..3786932c576c 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1067,10 +1067,11 @@ out:
+ EXPORT_SYMBOL(security_inode_init_security);
+ 
+ int security_inode_init_security_anon(struct inode *inode,
++				      enum lsm_anon_inode_type type,
+ 				      const struct qstr *name,
+ 				      const struct inode *context_inode)
+ {
+-	return call_int_hook(inode_init_security_anon, 0, inode, name,
++	return call_int_hook(inode_init_security_anon, 0, inode, type, name,
+ 			     context_inode);
+ }
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 92f909a2e8f7..dc57ba21d8ff 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3048,6 +3048,7 @@ static int selinux_inode_init_security(struct inode *inode, struct inode *dir,
+ }
+ 
+ static int selinux_inode_init_security_anon(struct inode *inode,
++					    enum lsm_anon_inode_type type,
+ 					    const struct qstr *name,
+ 					    const struct inode *context_inode)
+ {
 -- 
 2.30.2
 
