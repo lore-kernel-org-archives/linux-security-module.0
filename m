@@ -2,234 +2,89 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D250C433ED
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 13:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3582C433B4
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 13:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2132611CD
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 13:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ABD3613DE
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 13:30:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236310AbhDVNVz (ORCPT
+        id S232844AbhDVNay (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Apr 2021 09:21:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49812 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235830AbhDVNVz (ORCPT
+        Thu, 22 Apr 2021 09:30:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57104 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230005AbhDVNau (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Apr 2021 09:21:55 -0400
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE55C06174A;
-        Thu, 22 Apr 2021 06:21:20 -0700 (PDT)
-Received: by mail-lf1-x12d.google.com with SMTP id y4so31924184lfl.10;
-        Thu, 22 Apr 2021 06:21:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PHTEUlxqgA8l0F2eLJhm0lUslDtS68hTg+QYS24mt1A=;
-        b=W7OhzBe3tGUvNLBkODmWurcIqydRnEopd0uCZ7QbiU0h8VJODUAOgr/3XEF92VflWL
-         TXceQfgaNdpDg1UZRmbzPTG/0L4PlAQgTVuPAwopTgPlwj5U+BeXZQoSRaUL5ma+2bCC
-         vsH3TBHRwlPoNzyhQfT99Nn97tBv4CiuPKbmQNBy03lBXBKQm8jTqQmuGDxl9wzOuHOu
-         CHODrbcVzlu+LM35gAf1pN09cFuWMk9cdrJwBiAi/STbb+w6F2eLveY8XqqJLod9m8QX
-         LhegfL4CHs7Cqsan2vBBPlw32MMwx6zv5p5LSqjAhg3Ni6jqTuu1XKMo0Mw/2vgyoUtF
-         q6AQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PHTEUlxqgA8l0F2eLJhm0lUslDtS68hTg+QYS24mt1A=;
-        b=b5D21r/VO6XvpFHwVDDGnwP++n2sr6T8y4GVR57JINanzuQlTwM3mLW6s9Y/935ePK
-         bhVKgvNMwEbPUkHzMrG45DJSqEd4VU02kDkWB829SWsFzSsJs2afzTffp+8/XPB9Xvv1
-         KSruMrAfk13Rz/XWcheZDgA7rNjOTgwj63LQmlZFnuFfm4yEWVpeDO66Lw6A+JzJpCWb
-         LrF8YZa+cR/vsyFpIMrH+qYBbZFtIP3OQsdkSTrVU16x18QCcPJHCXHkJhfLdYERx5Ma
-         pam1YN5bg3eMRqTGE2blo6EUeZpm0zSlYLIzou78khtQtkzJMHhR03nQKT1HtgmcJSsX
-         T+yA==
-X-Gm-Message-State: AOAM532KFlXa64Trvt/Rz/vzImEFax8NFOsJ3jyVbpsh7TuTrb2k0qX5
-        /1kP6j8G1LxIEE4X3azrACop1AsccWQ2lxBHSRz54KAaOBY=
-X-Google-Smtp-Source: ABdhPJzchxlr8SAqDCJEYfgZJ8QXE6CDSC4eSAy8LD85f/vmqWZ1RAbHO7YYaqobzfkUvRLmAMfCh19ckF2iWAe3l5w=
-X-Received: by 2002:ac2:43c5:: with SMTP id u5mr2441430lfl.40.1619097678746;
- Thu, 22 Apr 2021 06:21:18 -0700 (PDT)
+        Thu, 22 Apr 2021 09:30:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 440136143B;
+        Thu, 22 Apr 2021 13:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619098215;
+        bh=C/N43WVFiAate8dTxtGVLCNXK5ejQ6QClZ0OGp0igFg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QpYHQy8SOy0EUYU1mSRuGwKtDDDNtQf01s4lNuwJt/PqFZFodPERnsq6qp3RHqy4p
+         gc8fShSOZEtlpcKGmuFkET8LIvqmlgWf4ijvUPKoLTtiNfo4UCszQciSMc2orwKcOF
+         D6EbaHlCn97Tah2INl5MzNA70i/UBCPdWzCngKJPF6Zr/Uki97uwyjr7/IiUC4zhh6
+         jRzkGkdVKRLMktkXPrRjBtf5/PwKm8I7Aqy9NmiIy6ko7dxAAdSY0aVjNEkXa2X/z3
+         eWMngcN7ZLzuHwc6bzAovzC03bAWCPElKD5m4CJFe4Cy6voUPYICnr+kG7p2aHz2b6
+         SMSEqAqvwaa/g==
+From:   Arnd Bergmann <arnd@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        John Johansen <john.johansen@canonical.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        Bruno Meneguele <bmeneg@redhat.com>,
+        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ima: require CONFIG_MODULES for IMA_APPRAISE_MODSIG
+Date:   Thu, 22 Apr 2021 15:29:48 +0200
+Message-Id: <20210422132956.1628059-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <20210421171446.785507-1-omosnace@redhat.com> <20210421171446.785507-3-omosnace@redhat.com>
-In-Reply-To: <20210421171446.785507-3-omosnace@redhat.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Thu, 22 Apr 2021 09:21:07 -0400
-Message-ID: <CAEjxPJ5ksqrafO8uaf3jR=cjU5JnyQYmn_57skp=WXz7-RcbVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] selinux: add capability to map anon inode types
- to separate classes
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Lokesh Gidra <lokeshgidra@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> Unfortunately, the approach chosen in commit 29cd6591ab6f ("selinux:
-> teach SELinux about anonymous inodes") to use a single class for all
-> anon inodes and let the policy distinguish between them using named
-> transitions turned out to have a rather unfortunate drawback.
->
-> For example, suppose we have two types of anon inodes, "A" and "B", and
-> we want to allow a set of domains (represented by an attribute "attr_x")
-> certain set of permissions on anon inodes of type "A" that were created
-> by the same domain, but at the same time disallow this set to access
-> anon inodes of type "B" entirely. Since all inodes share the same class
-> and we want to distinguish both the inode types and the domains that
-> created them, we have no choice than to create separate types for the
-> cartesian product of (domains that belong to attr_x) x ("A", "B") and
-> add all the necessary allow and transition rules for each domain
-> individually.
->
-> This makes it very impractical to write sane policies for anon inodes in
-> the future, as more anon inode types are added. Therefore, this patch
-> implements an alternative approach that assigns a separate class to each
-> type of anon inode. This allows the example above to be implemented
-> without any transition rules and with just a single allow rule:
->
-> allow attr_x self:A { ... };
->
-> In order to not break possible existing users of the already merged
-> original approach, this patch also adds a new policy capability
-> "extended_anon_inode_class" that needs to be set by the policy to enable
-> the new behavior.
->
-> I decided to keep the named transition mechanism in the new variant,
-> since there might eventually be some extra information in the anon inode
-> name that could be used in transitions.
->
-> One minor annoyance is that the kernel still expects the policy to
-> provide both classes (anon_inode and userfaultfd) regardless of the
-> capability setting and if one of them is not defined in the policy, the
-> kernel will print a warning when loading the policy. However, it doesn't
-> seem worth to work around that in the kernel, as the policy can provide
-> just the definition of the unused class(es) (and permissions) to avoid
-> this warning. Keeping the legacy anon_inode class with some fallback
-> rules may also be desirable to keep the policy compatible with kernels
-> that only support anon_inode.
->
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-NAK.  We do not want to introduce a new security class for every user
-of anon inodes - that isn't what security classes are for.
-For things like kvm device inodes, those should ultimately use the
-inherited context from the related inode (the /dev/kvm inode itself).
-That was the original intent of supporting the related inode.
+When module support is disabled, CONFIG_MODULE_SIG_HASH cannot
+be set either, so the build process fails with an error
 
-> ---
->  security/selinux/hooks.c                   | 27 +++++++++++++++++++++-
->  security/selinux/include/classmap.h        |  2 ++
->  security/selinux/include/policycap.h       |  1 +
->  security/selinux/include/policycap_names.h |  3 ++-
->  security/selinux/include/security.h        |  7 ++++++
->  5 files changed, 38 insertions(+), 2 deletions(-)
->
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index dc57ba21d8ff..20a8d7d17936 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3079,7 +3079,32 @@ static int selinux_inode_init_security_anon(struct inode *inode,
->                 isec->sclass = context_isec->sclass;
->                 isec->sid = context_isec->sid;
->         } else {
-> -               isec->sclass = SECCLASS_ANON_INODE;
-> +               /*
-> +                * If the check below fails:
-> +                *  1. Add the corresponding security class to
-> +                *     security/selinux/include/classmap.h
-> +                *  2. Map the new LSM_ANON_INODE_* value to the class in
-> +                *     the switch statement below.
-> +                *  3. Update the RHS of the comparison in the BUILD_BUG_ON().
-> +                *  4. CC selinux@vger.kernel.org and
-> +                *     linux-security-module@vger.kernel.org when submitting
-> +                *     the patch or in case of any questions.
-> +                */
-> +               BUILD_BUG_ON(LSM_ANON_INODE_MAX > LSM_ANON_INODE_USERFAULTFD);
-> +
-> +               if (selinux_policycap_extended_anon_inode()) {
-> +                       switch (type) {
-> +                       case LSM_ANON_INODE_USERFAULTFD:
-> +                               isec->sclass = SECCLASS_USERFAULTFD;
-> +                               break;
-> +                       default:
-> +                               pr_err("SELinux:  got invalid anon inode type: %d",
-> +                                      (int)type);
-> +                               return -EINVAL;
-> +                       }
-> +               } else {
-> +                       isec->sclass = SECCLASS_ANON_INODE;
-> +               }
->                 rc = security_transition_sid(
->                         &selinux_state, tsec->sid, tsec->sid,
->                         isec->sclass, name, &isec->sid);
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-> index ba2e01a6955c..e4308cad6407 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -251,6 +251,8 @@ struct security_class_mapping secclass_map[] = {
->           { "integrity", "confidentiality", NULL } },
->         { "anon_inode",
->           { COMMON_FILE_PERMS, NULL } },
-> +       { "userfaultfd",
-> +         { COMMON_FILE_PERMS, NULL } },
->         { NULL }
->    };
->
-> diff --git a/security/selinux/include/policycap.h b/security/selinux/include/policycap.h
-> index 2ec038efbb03..969804bd6dab 100644
-> --- a/security/selinux/include/policycap.h
-> +++ b/security/selinux/include/policycap.h
-> @@ -11,6 +11,7 @@ enum {
->         POLICYDB_CAPABILITY_CGROUPSECLABEL,
->         POLICYDB_CAPABILITY_NNP_NOSUID_TRANSITION,
->         POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS,
-> +       POLICYDB_CAPABILITY_EXTENDED_ANON_INODE_CLASS,
->         __POLICYDB_CAPABILITY_MAX
->  };
->  #define POLICYDB_CAPABILITY_MAX (__POLICYDB_CAPABILITY_MAX - 1)
-> diff --git a/security/selinux/include/policycap_names.h b/security/selinux/include/policycap_names.h
-> index b89289f092c9..78651990425e 100644
-> --- a/security/selinux/include/policycap_names.h
-> +++ b/security/selinux/include/policycap_names.h
-> @@ -12,7 +12,8 @@ const char *selinux_policycap_names[__POLICYDB_CAPABILITY_MAX] = {
->         "always_check_network",
->         "cgroup_seclabel",
->         "nnp_nosuid_transition",
-> -       "genfs_seclabel_symlinks"
-> +       "genfs_seclabel_symlinks",
-> +       "extended_anon_inode_class",
->  };
->
->  #endif /* _SELINUX_POLICYCAP_NAMES_H_ */
-> diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-> index 7130c9648ad1..4fb75101aca4 100644
-> --- a/security/selinux/include/security.h
-> +++ b/security/selinux/include/security.h
-> @@ -219,6 +219,13 @@ static inline bool selinux_policycap_genfs_seclabel_symlinks(void)
->         return READ_ONCE(state->policycap[POLICYDB_CAPABILITY_GENFS_SECLABEL_SYMLINKS]);
->  }
->
-> +static inline bool selinux_policycap_extended_anon_inode(void)
-> +{
-> +       struct selinux_state *state = &selinux_state;
-> +
-> +       return READ_ONCE(state->policycap[POLICYDB_CAPABILITY_EXTENDED_ANON_INODE_CLASS]);
-> +}
-> +
->  int security_mls_enabled(struct selinux_state *state);
->  int security_load_policy(struct selinux_state *state,
->                         void *data, size_t len,
-> --
-> 2.30.2
->
+certs/Makefile:52: *** Could not determine digest type to use from kernel config.  Stop.
+
+when IMA_APPRAISE_MODSIG is set but modules are not.
+
+Add a Kconfig dependency to prevent this configuration.
+
+Fixes: 0165f4ca223b ("ima: enable signing of modules with build time generated key")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ security/integrity/ima/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 12e9250c1bec..2c36144cdd24 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -242,6 +242,7 @@ config IMA_APPRAISE_MODSIG
+ 	bool "Support module-style signatures for appraisal"
+ 	depends on IMA_APPRAISE
+ 	depends on INTEGRITY_ASYMMETRIC_KEYS
++	depends on MODULES
+ 	select PKCS7_MESSAGE_PARSER
+ 	select MODULE_SIG_FORMAT
+ 	default n
+-- 
+2.29.2
+
