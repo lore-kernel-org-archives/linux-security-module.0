@@ -2,147 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D6DC43462
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 04:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C66C43460
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 11:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0AC2611C9
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 04:47:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C292361437
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 11:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230509AbhDVErw (ORCPT
+        id S230510AbhDVLkl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Apr 2021 00:47:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48904 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbhDVEru (ORCPT
+        Thu, 22 Apr 2021 07:40:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:31652 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235955AbhDVLkj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Apr 2021 00:47:50 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 959A3C06138D
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Apr 2021 21:47:16 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id o16so50302295ljp.3
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Apr 2021 21:47:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e8xSVHnbnPreLCUm7lSlAXXP6DIoYnAcQ4G8DoJd4po=;
-        b=VtdCM6R6wqO20+uZ6bRWiuSnZJL/C81YI/D91nz6KU/GcxI5P46Udak7Pod8u/G0AN
-         rUBQ4rOUoCb3bJZXZTNX72aSGAOqChTfNh+ZMKNNafbKqCyceaw6hKzX3IcLVZoT7+eH
-         pR4/WGEI26z6Y6amHnm0LqCBn4vHu9UjAkGuw+dEImVUgoFM1EDhscrpFf1I/z+8DYgn
-         ku2DgFfh/G82U3PruwU3KeNRw1egaE1iERchBMBjFKN18fKF21aYBCkhqmAbv/g4SmUY
-         L649YW352pvHgX2DwiDn8mDPPtCoQtujbiTyifvWVWSuFxZVNhRv4ael8Ddzcidzm1Hu
-         SdqA==
+        Thu, 22 Apr 2021 07:40:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619091604;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=uMXkQKD92XEqLOdKkZ9LkipLsjeMEu880iIF7KLHuos=;
+        b=KF5+guVGfnM0osOYVhLzTNyYYrUV3BOKta0NTgERdGxe52FI7+4hSfcM7AXDQcvYlU/BsI
+        HvkFZ8u+2fFQ3yzghyGlHbYgG2VQiikGDQ3Jm736EjAIMc8/C4RUh0iQT1Zz73LEFbWXao
+        lmuYO6aWXbsrLO6ztMbCsloW9sJ5qaM=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-203-Tx3WoxcZP8iXz590xVhojQ-1; Thu, 22 Apr 2021 07:39:52 -0400
+X-MC-Unique: Tx3WoxcZP8iXz590xVhojQ-1
+Received: by mail-yb1-f200.google.com with SMTP id p9-20020a2574090000b02904e2cb6a90e7so19725398ybc.17
+        for <linux-security-module@vger.kernel.org>; Thu, 22 Apr 2021 04:39:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=e8xSVHnbnPreLCUm7lSlAXXP6DIoYnAcQ4G8DoJd4po=;
-        b=SctQcrMggkU2VY+LHO6kCpVI8+WKix0eZsvb97YcqZyLa0NmqPh/wdbvWrbYYlTW4B
-         dP05EztJ66Yz4p9xhQABQgUES4CEk4NR9SPwCpKYJQhFiJ4UN4JWJ6DbGm+rwHIHcbiR
-         fI+rKaIDtOnZE1de0QXS3jdkVdXMyTLOLPF0tOpCeoe23pcZfQ8H77zDJHa6tpWLgMTC
-         I4TvM8BBFEBxxf4WacHC5pxoZ8bqLRBhhTBegWBsX2WZ/9DCz6ZHPwIoLQuFRRlmp+nf
-         BK2F5NuzAktYL6xHIKIFqDc3rNyAOkm/SUIALXr31kqiw3+4LcWGLCWftfc7vegQfeKH
-         AYAg==
-X-Gm-Message-State: AOAM531Wk+/2Dt9x/b2mmeQ2g5rVFkjLzjiwr93qJ7rC53reMqf7KrU1
-        tmG6u37xgaP/Ao8M0xae5WNB8X6WRfc35mKtGmLC9A==
-X-Google-Smtp-Source: ABdhPJyZHxpDwI0EgkJCh5/0J5fqW292ra6TnpMN3+D+M/7dCIKQxqZY4Yov2+SeYHml0Acg2lTS/DUjtX+ig/efka8=
-X-Received: by 2002:a2e:9e98:: with SMTP id f24mr1134602ljk.442.1619066834900;
- Wed, 21 Apr 2021 21:47:14 -0700 (PDT)
+        bh=uMXkQKD92XEqLOdKkZ9LkipLsjeMEu880iIF7KLHuos=;
+        b=gCFCMT0CCVKDoogyUuMSJTni++DhiWAvNI+o+8q1Gpa0rj0vXFzWoWy4gHIrvqJqy8
+         hhOjSIZlxf7TG2j5xtPBW9ykII0Hng4ja0VlW/xaxwmKHBsI4gGGDmEFo9Wh2pRZlAYO
+         QUBw8331Q7XQr/oWv3KCBuXZURfQbqtXB/BbnceW1cP5q8SjwSX8rbPsQC9cAvYlJPIc
+         mbvEx/YmjbM2BXWTR7YmymzqaSrHdoyYdlSDuttl8ncX8oN1H35noZDi7dbO7OMpAcVS
+         bKOtft2+gavyWqxhUTxoB8D57lTwN47NVmJSNHSN4vqCyXsrDymXcKP2paLzReqmIeUw
+         PXQg==
+X-Gm-Message-State: AOAM531im56nw2APDqV7LXIboMSEwFZ4DjbSwW0aCGk5rTz7HsXBthhm
+        NcNA2XoR0Blyi/5BsZUW0I3c5heuVD++LpGXx8/RwFkHXMxqjHNQNoADoJAlzCmMQvLMnVfCKuW
+        YiTiW51CiNKUE4DLDMN7lmq62wOW/7sK0yFeLvEJ0HplFlvh8h7wF
+X-Received: by 2002:a25:7085:: with SMTP id l127mr4068965ybc.293.1619091591518;
+        Thu, 22 Apr 2021 04:39:51 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyyhE6DS/eW1dR9xemDwBcQEmjxrQY+fv1G9l6m2UGwYtINpsqaUV9AJsTDjlsF+gV/DTMftEHXE3GlbORd3Hk=
+X-Received: by 2002:a25:7085:: with SMTP id l127mr4068951ybc.293.1619091591336;
+ Thu, 22 Apr 2021 04:39:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210301131127.793707-1-sumit.garg@linaro.org>
- <20210301131127.793707-2-sumit.garg@linaro.org> <65dcc9fa28833e6beb1eadf98b0ed3402404d693.camel@linux.ibm.com>
- <CAFA6WYOzD-qhHrcnzvd9P7iFvEqWwf0NCKXrgrEgvnB5i_-SxQ@mail.gmail.com> <e7a91c8c09722afe1fb1ec3aa7b6544e713183af.camel@linux.ibm.com>
-In-Reply-To: <e7a91c8c09722afe1fb1ec3aa7b6544e713183af.camel@linux.ibm.com>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Thu, 22 Apr 2021 10:17:02 +0530
-Message-ID: <CAFA6WYOSVVhk91XxwbmqGkvpcUF5pkro4M7fay480Enocoj+=g@mail.gmail.com>
-Subject: Re: [PATCH v9 1/4] KEYS: trusted: Add generic trusted keys framework
-To:     James Bottomley <jejb@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Janne Karhunen <janne.karhunen@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Markus Wamser <Markus.Wamser@mixed-mode.de>,
-        Luke Hinds <lhinds@redhat.com>,
-        Elaine Palmer <erpalmer@us.ibm.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        op-tee@lists.trustedfirmware.org
+References: <20210421171446.785507-1-omosnace@redhat.com> <CAHC9VhTFPHO7YtTxSZNcEZwoy4R3RXVu-4RrAHRtv8BVEw-zGA@mail.gmail.com>
+In-Reply-To: <CAHC9VhTFPHO7YtTxSZNcEZwoy4R3RXVu-4RrAHRtv8BVEw-zGA@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Thu, 22 Apr 2021 13:39:39 +0200
+Message-ID: <CAFqZXNts94w-hMhzCjKW5sHrVw2pw2w7cMQ3+Q2suJ_XUUpUwg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] selinux,anon_inodes: Use a separate SELinux class
+ for each type of anon inode
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     SElinux list <selinux@vger.kernel.org>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 21 Apr 2021 at 22:51, James Bottomley <jejb@linux.ibm.com> wrote:
->
-> On Wed, 2021-04-21 at 16:38 +0530, Sumit Garg wrote:
-> > Hi James,
+On Wed, Apr 21, 2021 at 10:38 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
 > >
-> > On Wed, 21 Apr 2021 at 04:47, James Bottomley <jejb@linux.ibm.com>
-> > wrote:
-> > > On Mon, 2021-03-01 at 18:41 +0530, Sumit Garg wrote:
-> > > > Current trusted keys framework is tightly coupled to use TPM
-> > > > device as an underlying implementation which makes it difficult
-> > > > for implementations like Trusted Execution Environment (TEE) etc.
-> > > > to provide trusted keys support in case platform doesn't posses a
-> > > > TPM device.
-> > > >
-> > > > Add a generic trusted keys framework where underlying
-> > > > implementations can be easily plugged in. Create struct
-> > > > trusted_key_ops to achieve this, which contains necessary
-> > > > functions of a backend.
-> > > >
-> > > > Also, define a module parameter in order to select a particular
-> > > > trust source in case a platform support multiple trust sources.
-> > > > In case its not specified then implementation itetrates through
-> > > > trust sources list starting with TPM and assign the first trust
-> > > > source as a backend which has initiazed successfully during
-> > > > iteration.
-> > > >
-> > > > Note that current implementation only supports a single trust
-> > > > source at runtime which is either selectable at compile time or
-> > > > during boot via aforementioned module parameter.
-> > >
-> > > You never actually tested this, did you?  I'm now getting EINVAL
-> > > from all the trusted TPM key operations because of this patch.
-> > >
+> > This series aims to correct a design flaw in the original anon_inode
+> > SELinux support that would make it hard to write policies for anonymous
+> > inodes once more types of them are supported (currently only userfaultfd
+> > inodes are). A more detailed rationale is provided in the second patch.
 > >
-> > Unfortunately, I don't possess a development machine with a TPM
-> > device. So mine testing was entirely based on TEE as a backend which
-> > doesn't support any optional parameters. And that being the reason I
-> > didn't catch this issue at first instance.
+> > The first patch extends the anon_inode_getfd_secure() function to accept
+> > an additional numeric identifier that represents the type of the
+> > anonymous inode being created, which is passed to the LSMs via
+> > security_inode_init_security_anon().
 > >
-> > Is there any TPM emulation environment available that I can use for
-> > testing?
+> > The second patch then introduces a new SELinux policy capability that
+> > allow policies to opt-in to have a separate class used for each type of
+> > anon inode. That means that the "old way" will still
 >
-> Well use the same as we all use: A software TPM running in the host
-> coupled with a virtual machine guest for the kernel:
->
-> https://en.opensuse.org/Software_TPM_Emulator_For_QEMU
->
-> It doesn't catch interface issues (like TIS timeouts) but it does catch
-> TPM operations problems like this patch had.
->
+> ... will what? :)
 
-Thanks for the pointer. I will use it for future testing.
+Whoops, I thought I had gone over all the text enough times, but
+apparently not :) It should have said something along the lines of:
 
--Sumit
+...will still work and will be used by default.
 
-> James
 >
->
+> I think it would be a very good idea if you could provide some
+> concrete examples of actual policy problems encountered using the
+> current approach.  I haven't looked at these patches very seriously
+> yet, but my initial reaction is not "oh yes, we definitely need this".
+
+An example is provided in patch 2. It is a generalized problem that we
+would eventually run into in Fedora policy (at least) with the
+unconfined_domain_type attribute and so far only hypothetical future
+types of anon inodes.
+
+-- 
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
