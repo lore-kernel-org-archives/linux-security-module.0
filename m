@@ -2,134 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 189B6C433ED
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 17:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55785C43462
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 19:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF73261431
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 17:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2173B61435
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 19:12:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236681AbhDVRYx (ORCPT
+        id S236952AbhDVTNS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Apr 2021 13:24:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33152 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236287AbhDVRYx (ORCPT
+        Thu, 22 Apr 2021 15:13:18 -0400
+Received: from namei.org ([65.99.196.166]:49432 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236058AbhDVTNQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Apr 2021 13:24:53 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13MH3774152386;
-        Thu, 22 Apr 2021 13:23:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=ny6eUa2pWJaAztEFaaCjx4Af+2Iip1DFJY/+o/Lyygs=;
- b=cE5pVCiI9SYqc9Wc5Llw0OuuvHycQBGUGl6vOn2HGAkivg2ctlfQtgQJsnCJOAsmCRgr
- B8lPmA+DsMO4ZLgqetPyVmQMAwQT+k+ZxMlQLhFOInbmMJyoQq8eynV6327gmFhhQ4lc
- P8YZrru1m2eHgz+pjVzYy/hGVteiYM+k78q7c5UbpVEvH0N1Z0aR3cYd/RcNzbrMqnwA
- h+KhFUaR/gD8K8DykG0YHpm5LXXji77n1iX3XA2XPqVBo2c7ml7tP9X31e8wLEV9vbS0
- Z/91XvjHT9Wg/WOHfhKnftluTkb43EuyQef71aC71KsUmChb/Yoht7VvWQYXrsGMOewm 7w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3838n6tcjn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Apr 2021 13:23:39 -0400
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13MH45Ou156570;
-        Thu, 22 Apr 2021 13:23:39 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3838n6tcj3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Apr 2021 13:23:39 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13MHGt2Q003591;
-        Thu, 22 Apr 2021 17:23:38 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma05wdc.us.ibm.com with ESMTP id 37yqa9kd7p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Apr 2021 17:23:38 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13MHNbbc17301872
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Apr 2021 17:23:37 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5562112405B;
-        Thu, 22 Apr 2021 17:23:37 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42CAF124052;
-        Thu, 22 Apr 2021 17:23:33 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.211.42.66])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Apr 2021 17:23:32 +0000 (GMT)
-Subject: Re: [PATCH] ima: require CONFIG_MODULES for IMA_APPRAISE_MODSIG
-To:     Arnd Bergmann <arnd@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        John Johansen <john.johansen@canonical.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        Bruno Meneguele <bmeneg@redhat.com>,
-        "Alexander A. Klimov" <grandmaster@al2klimov.de>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210422132956.1628059-1-arnd@kernel.org>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <2fd688d8-9f39-5839-2262-fb703d19d4c3@linux.vnet.ibm.com>
-Date:   Thu, 22 Apr 2021 13:23:31 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+        Thu, 22 Apr 2021 15:13:16 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id 15803508;
+        Thu, 22 Apr 2021 19:08:47 +0000 (UTC)
+Date:   Fri, 23 Apr 2021 05:08:46 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+cc:     Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        David Howells <dhowells@redhat.com>,
+        Jeff Dike <jdike@addtoit.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        linux-security-module@vger.kernel.org, x86@kernel.org,
+        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>
+Subject: Re: [PATCH v34 08/13] landlock: Add syscall implementations
+In-Reply-To: <20210422154123.13086-9-mic@digikod.net>
+Message-ID: <d4684742-452b-6e88-dd51-f1e9c29cb34d@namei.org>
+References: <20210422154123.13086-1-mic@digikod.net> <20210422154123.13086-9-mic@digikod.net>
 MIME-Version: 1.0
-In-Reply-To: <20210422132956.1628059-1-arnd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 86X-afWF5ijgDGXQ3Si7BegMd0btkpNR
-X-Proofpoint-ORIG-GUID: gYy4mficW60_jMLR9n-_9DqqdirzbrSf
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-22_12:2021-04-22,2021-04-22 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 clxscore=1011
- malwarescore=0 spamscore=0 priorityscore=1501 phishscore=0 mlxscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104060000 definitions=main-2104220128
+Content-Type: multipart/mixed; boundary="1665246916-299225943-1619118527=:394812"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 4/22/21 9:29 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> When module support is disabled, CONFIG_MODULE_SIG_HASH cannot
-> be set either, so the build process fails with an error
->
-> certs/Makefile:52: *** Could not determine digest type to use from kernel config.  Stop.
->
-> when IMA_APPRAISE_MODSIG is set but modules are not.
->
-> Add a Kconfig dependency to prevent this configuration.
->
-> Fixes: 0165f4ca223b ("ima: enable signing of modules with build time generated key")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+--1665246916-299225943-1619118527=:394812
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-Thanks Arnd !!
+On Thu, 22 Apr 2021, Mickaël Salaün wrote:
 
-This fix solves the config issue, but adds an unnecessary MODULES 
-dependency on APPRAISE_MODSIG. APPRAISE_MODSIG can be used for kernel 
-image(appended signature) as well as for kernel modules.
+> +
+> +	/* No flag for now. */
+> +	if (flags)
+> +		return -EINVAL;
 
-I am working on the fix. I am sorry for the delay, I got stuck with some 
-urgent issues early this week.
+Good, returning an error here instead of ignoring it is the right 
+approach, so apps don't start using this and then break later.
 
-Thanks & Regards,
 
-       - Nayna
+-- 
+James Morris
+<jmorris@namei.org>
 
+--1665246916-299225943-1619118527=:394812--
