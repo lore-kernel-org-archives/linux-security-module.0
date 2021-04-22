@@ -2,621 +2,389 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC8FC433B4
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 15:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0211C43470
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 15:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ACB561407
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 15:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4D561407
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Apr 2021 15:46:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238586AbhDVPok (ORCPT
+        id S236603AbhDVPq6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 22 Apr 2021 11:44:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238701AbhDVPn1 (ORCPT
+        Thu, 22 Apr 2021 11:46:58 -0400
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com ([66.163.188.211]:40289
+        "EHLO sonic311-30.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236780AbhDVPq5 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 22 Apr 2021 11:43:27 -0400
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [IPv6:2001:1600:3:17::42ab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92161C061369
-        for <linux-security-module@vger.kernel.org>; Thu, 22 Apr 2021 08:41:49 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4FR1qw0rQnzMqsb7;
-        Thu, 22 Apr 2021 17:41:48 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4FR1qv502wzlh8Td;
-        Thu, 22 Apr 2021 17:41:47 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        David Howells <dhowells@redhat.com>,
-        Jeff Dike <jdike@addtoit.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        linux-security-module@vger.kernel.org, x86@kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v34 12/13] landlock: Add user and kernel documentation
-Date:   Thu, 22 Apr 2021 17:41:22 +0200
-Message-Id: <20210422154123.13086-13-mic@digikod.net>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210422154123.13086-1-mic@digikod.net>
-References: <20210422154123.13086-1-mic@digikod.net>
+        Thu, 22 Apr 2021 11:46:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1619106382; bh=UkCXK1QR81Y+wUBBsIECzyf3fHkMEHIz6oyKrszYCLw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=XdIWTjdLinm7tygufPd9U9D47z15qW0CYsGuOkY+EIFUYNUgwoO3/ifdyZV4J0Iux/6TmV1ishJSdPOLf65ZjtPSFM0H1L5eEKCB8W5lumwfdf2pJqohaab5Yn2hPw+08+hDDdUq+dnLuD5WQEGDkC7r20jsYKvU0MY3HtuZcEZ6Lj6dpyj7PMpJ2VTfwu9DXq3tlzhP4TY92qtrhx7F3q/xmeX5euIWgUSdU2g0358byHwCV2vQBl/8dLEIgl3/s9SNzSkPAwTskRd1qTvMbapE4WwPBQYra3K7fUfX9h7uFa5/MI1YG0QSUKgM5nh6nic28gVni22IkXWhvnxomQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1619106382; bh=DxGkQOBmA5ReLu8Ucogr5a2dHtQiPc2hDsinlPW+9E9=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=fjMYpURNFyT4RIM4YUTO0NV+fpgjERjrbmdvMp23FW0puP8row5PHgVx6+CoHpRUs8TiymBfeoGEk7mhzbOjSYVYchi3FnBV4cLHXj8yUO9VJuVgwB8GUojeAWdWdYJ4yVgTYOdBeFTY3tQS3BbgTtPS+JCACHp0h0fzhxHQujBPfWRUtVv/669NJVob30MhS/essxjiQGdSd16yz1FJNT3i7bXf3ZTM4GjlHRSJopQpEW9Uvu8gdco8O/S2SYUGOuuHnDNfaSZ4nwSvzeosDu+/K/TelS3AMZ2sRoZmn2nLzcekCf6hMraa3+J/W9ktXL//NnR6LB2L+/07ejHwnQ==
+X-YMail-OSG: ajU57xwVM1l_NVOkNrGKOtYd1U316VNSTctfTvTzv1.ulh7gx64_ftjslXVsmyL
+ hgoRGzm2oH09hN.ITqHIHJETuejnrs1zVYkCRnrLqocceB1nMbBCDdx7dvhmwHzcyCGXOjGRdLpV
+ ZBjPz6X994IfOMEeprW2iHFNI2122YJufLyW0BHAgpzcCs8rj_yCTGuAktaO0VRxC7wdMxBH6vb_
+ HX9VBQzzGrRDVV4nbwzx5Y7dc3TE8doJzet6rIlBPCjexF1z.xXyY37YZGHwhsIpNefUfzxb2arZ
+ fVeXpg_DJmgxw9gIkN1pat0Mv_CwpvgFpD4qgzDsZmSV_C7MbGKK3dLVC6A85j9u0r3xs8YOqFvg
+ v3bwpxNeiA9ob106mIYXjWT6ueUyg9P4rrEKS77dnYA6VWKCzWftQQ8RoWfw3iFX2aGye3Ln50LJ
+ R6NxpZVKk4qB.n_moABYaVBeUdiROK0Hq6b7WMkf4NNAxqs_x128HREw0FhHpxtvBTHPXaA.9fNx
+ eAPfqSwL5GFGQi5zU8yUmVlEGXqBFEKymgWZWiISyudeVlnD2MYbUkafq4Xf9gtQezDkYJOKf_mz
+ G_jMEpCROEbYyt28kimXZNk38leRGwgoAwPLE8NsZ48axib7tlcp8cWQSc0IPrvnQ8Ivi4TBwCQ.
+ mUOlj0xg8HadqoWHlRpJ8GYz8Me_I4mka3OJgScJUQb95TpLELEv9KzhWQodZyn_xIuPHdibNcvw
+ sgiG.SmfpqK2sFN.ajno.PuceS3zg10YFBwsetBjeiX6v3XkgQPF1hkq.fOoTh0tE5dUOqFlaROn
+ 6H3HbShOT1NDbqso5QoN4SiP9j1KphHTsmI7NTL5zuzTx_ERM68PNLby9KCtBSmaE0HnzXaLUbF0
+ sWgoEpupwNa6axuJ7e25xjT28ACI34lKgfOe.GGIYbSeleIxM5hKHDprZ5mvbt1STdavgb2xkzwP
+ lwGv1uB7PKTYTxzxEWtoWdlJUnBEhdW2BZivtaMYQ9PRq_C_ji_SO.1N8_sn_vImYzgk9q_TZsIK
+ ugLAUOqIj_43E2d4_Qlpr3i3fiFoRY1MPkM6LpGP6hlY33XMXM1.ag.0XOc.gTk4xFdQ_v90zrnT
+ 8GpO1ZoE7mw71hbbuyM5fX1PCUkDWKNDMmkBN1J0B5LhbAPUcQq8zYRSO2hSd4ZBNrs.nft0utyL
+ CydlAERqe.iZXZ8BFm.YiuCgz6qiopM4hVU1WQJXZ6Zc0lCg_TU0MqJbkh7UUfe3n6iYwrhf7kpj
+ yAawpNVFBfkZIJXo9bmCAE_jssrE05sUYhI9dgB0eglVDkRZiWHmQrv_wvcXqMLFyiTdr4XZg5xc
+ jX3y52fuG0noEuegGTvJ5a5oSNQo47Yz677O3_3tfjMvm7inswUOR359I19_dnbWG_mJD5rgwW6U
+ _l4YgCkW3AmEQnnVwfM7sdByyYptRF6.IUlChpAkLMUvOko1czrnTSJlYM8xC47pJj1BcbDsIklW
+ k1mEShN6MddeMRq_gZUmEjK8oZAxEW09Fw_O88gV5a3Oqy_1x9BEtSlVWbm3.enedUVFpGtrlvoP
+ PcVqS5DGCp9oW3Pa8Q8G7cM5Y_fowkf8nlR2Xc5FbXNoyggv7aNQfQjSFqbKl1fL31YCy3wEtjCc
+ _IAFaX3eOJL.vpodFJ98gEyrQSwV4huuFTs949G7dJsQSx.tJ66VpUiUYDTEFBDjCvI4u6oTezJL
+ qMTgT_gwyA2R2H.U6GrwjIjy0gDp5QSlB0D5NtMo.gUZhpWTSlGP5y8O_ptoiCCQGJY0ZcBtadJY
+ bjdlSwGTR9PVLk8Duvrd_L93e5Cl8c.dY4OzOILh72hZhqFA3uAO4Y3WLnt8GhD7KeysJ35tTX.N
+ v9bSXEFZsU1vTHDO._UziRc7F3d2qLKlCEXbaDNjvZFem0j9nr1aF6pips.Tjc.07VxgpNU_HMhX
+ w69vx5uSGgSG5YYBRlxA1GRero6WYtmHdaaktgf.kLVD1YK1zsP.5cgqZwC9r2HIt6G7retBhJ6J
+ tWINbAvtX777bISTXvy2eqdYcKBbI1tPC7tI2hryHVUKmo.Wt9D6S8.NDooD7.KlvJkXHdY3v41A
+ OLbLhE_kC5ezWPrbvt3ej5YIF.SURGoaYw1yPGsy2un_0qKSzfIGi.XLWqS2i3BwErEYdtwVr22.
+ o8deWymFaH57rWVEGNqsypN.08GR5grgc_mQ.uMz_6E4zARA9WsXINIRHnyLWqXkkv2E_3HMHy97
+ UbhFplqe_Tkjt76bPYKti0d5LqFWqRiqBepZCOL._4FCKUzieR16LZo.coOyVXRKZfbqGyhVYUli
+ uESAFvs1OX4Tjhg1vQfMZG0fWqxevne_c86PYL_2Cwj5GTgdLovkuEW2xSEJFOUa4RV4D6YDWy_e
+ CVjNFWWL0YqkBVw1osFVHxdWF9B8yZAF1tgubS971Rz301AAHwGED24GdNdn4ULezN.dcPlibczW
+ fMAsOJaPrI8OcgOg0..bWEN8QUbEWCkgNFkawfHTLDObnQtufJqgjvC72uQ_xeLbnwivO1AEj0Es
+ udSYiUw0wOHywDpkCv2ysz2OVi6LnHZm7enUrs.WEhYbImZIHHLr8Lya7xAtcnD4UIDGhqeFlCxI
+ dk8d.7HZVIHBVe0DxNmugM7i9RKW9ucnGIBhs5vVslyEZW2defU.ZMTCrQGd0TdqebPReVkaZQEZ
+ Wpmt72NOmungsxSqEx0ph_XbiQAk3o2LNSaB4VQErNlhKoPOK9wrXAir3uKQdPrL8kgB_HY56MR.
+ xi8ffAK4xSm0lPOb4UejAHqeK3tgA14wDpuwh16peyDOVIv2QOQoqQhkQTjASl2p1YulPCJkIChi
+ vngWO2onFYP.YXxFfwpUDIp0wohnPG7vFOWWPe7QhOH94JjgXvWFUzA7kR6CQOOHzqUY8jtZgSYp
+ crQPjNPP59kqfQ809M37MU3quBJHRnyDzTj8EMK7zYL6pdqNHr.loiulrgYk.cndTUV13c8HUoS3
+ EmsbpRhjwsm80C_V1voaYR2aiVhaVoV4UCTqnVdV5MPR48GVQzq24U7fdCYLJhH3pbC8FIKWxjZn
+ Mh2P4dRjH2WhtboPpB.InawRTTd8I.5tmJcvWOyWc4VVhm.XgyjWf0FOpyvJZQ3.UDH3kiMvFfUR
+ sxjv0Ae8Y8G55XKJQBF6EU10YLqT0UUPU71bgzAoDQJxruMC1m3yZd0cCF39dJinZZQcOYTOGMa5
+ enL5skDA3WAIQgMWweTZvKTSeo1Fs7dO50gwqsd9dTj3aRn8p55p8fd11Gvv1y9ax.lBFzks6UUb
+ HRtPtO0Yx
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 22 Apr 2021 15:46:22 +0000
+Received: by kubenode533.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 8c99ac3b8b3ac92e5023df89796bef93;
+          Thu, 22 Apr 2021 15:46:21 +0000 (UTC)
+Subject: Re: [PATCH v2 3/6] security: Pass xattrs allocated by LSMs to the
+ inode_init_security hook
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "paul@paul-moore.com" <paul@paul-moore.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "reiserfs-devel@vger.kernel.org" <reiserfs-devel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20210421161925.968825-1-roberto.sassu@huawei.com>
+ <20210421161925.968825-4-roberto.sassu@huawei.com>
+ <0caf1e58-1e2d-c781-3f71-18aaf55cada2@schaufler-ca.com>
+ <406d450699034f54b6c184f286acccfe@huawei.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <37460a6a-da6c-3fdc-7460-0cec024e49db@schaufler-ca.com>
+Date:   Thu, 22 Apr 2021 08:46:20 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <406d450699034f54b6c184f286acccfe@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.18121 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On 4/22/2021 6:46 AM, Roberto Sassu wrote:
+>> From: Casey Schaufler [mailto:casey@schaufler-ca.com]
+>> Sent: Thursday, April 22, 2021 12:44 AM
+>> On 4/21/2021 9:19 AM, Roberto Sassu wrote:
+>>> In preparation for moving EVM to the LSM infrastructure, this patch
+>>> replaces the name, value, len triple with the xattr array pointer pro=
+vided
+>>> by security_inode_init_security(). LSMs are expected to call the new
+>>> function lsm_find_xattr_slot() to find the first unused slot of the a=
+rray
+>>> where the xattr should be written.
+>>>
+>>> This patch modifies also SELinux and Smack to search for an unused sl=
+ot, to
+>>> have a consistent behavior across LSMs (the unmodified version would
+>>> overwrite the xattr set by the first LSM in the chain). It is also
+>>> desirable to have the modification in those LSMs, as they are likely =
+used
+>>> as a reference for the development of new LSMs.
+>> This looks better than V1. One safety comment below.
+>>
+>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>>> ---
+>>>  include/linux/lsm_hook_defs.h |  4 ++--
+>>>  include/linux/lsm_hooks.h     | 18 +++++++++++++++---
+>>>  security/security.c           | 13 +++++++------
+>>>  security/selinux/hooks.c      | 13 ++++++-------
+>>>  security/smack/smack_lsm.c    | 20 +++++++++-----------
+>>>  5 files changed, 39 insertions(+), 29 deletions(-)
+>>>
+>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_d=
+efs.h
+>>> index 477a597db013..afb9dd122f60 100644
+>>> --- a/include/linux/lsm_hook_defs.h
+>>> +++ b/include/linux/lsm_hook_defs.h
+>>> @@ -111,8 +111,8 @@ LSM_HOOK(int, 0, path_notify, const struct path
+>> *path, u64 mask,
+>>>  LSM_HOOK(int, 0, inode_alloc_security, struct inode *inode)
+>>>  LSM_HOOK(void, LSM_RET_VOID, inode_free_security, struct inode *inod=
+e)
+>>>  LSM_HOOK(int, 0, inode_init_security, struct inode *inode,
+>>> -	 struct inode *dir, const struct qstr *qstr, const char **name,
+>>> -	 void **value, size_t *len)
+>>> +	 struct inode *dir, const struct qstr *qstr, struct xattr *xattrs,
+>>> +	 void *fs_data)
+>>>  LSM_HOOK(int, 0, inode_init_security_anon, struct inode *inode,
+>>>  	 const struct qstr *name, const struct inode *context_inode)
+>>>  LSM_HOOK(int, 0, inode_create, struct inode *dir, struct dentry *den=
+try,
+>>> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+>>> index c5498f5174ce..e8c9bac29b9d 100644
+>>> --- a/include/linux/lsm_hooks.h
+>>> +++ b/include/linux/lsm_hooks.h
+>>> @@ -27,6 +27,7 @@
+>>>
+>>>  #include <linux/security.h>
+>>>  #include <linux/init.h>
+>>> +#include <linux/xattr.h>
+>>>  #include <linux/rculist.h>
+>>>
+>>>  /**
+>>> @@ -227,9 +228,11 @@
+>>>   *	@inode contains the inode structure of the newly created inode.
+>>>   *	@dir contains the inode structure of the parent directory.
+>>>   *	@qstr contains the last path component of the new object
+>>> - *	@name will be set to the allocated name suffix (e.g. selinux).
+>>> - *	@value will be set to the allocated attribute value.
+>>> - *	@len will be set to the length of the value.
+>>> + *	@xattrs contains the full array of xattrs allocated by LSMs where=
 
-Add a first document describing userspace API: how to define and enforce
-a Landlock security policy.  This is explained with a simple example.
-The Landlock system calls are described with their expected behavior and
-current limitations.
+>>> + *	->name will be set to the allocated name suffix (e.g. selinux).
+>>> + *	->value will be set to the allocated attribute value.
+>>> + *	->len will be set to the length of the value.
+>>> + *	@fs_data contains filesystem-specific data.
+>>>   *	Returns 0 if @name and @value have been successfully set,
+>>>   *	-EOPNOTSUPP if no security attribute is needed, or
+>>>   *	-ENOMEM on memory allocation failure.
+>>> @@ -1661,4 +1664,13 @@ static inline void security_delete_hooks(struc=
+t
+>> security_hook_list *hooks,
+>>>  extern int lsm_inode_alloc(struct inode *inode);
+>>>
+>> Some "security researcher" with a fuzz tester is going to manage to du=
+mp junk
+>> into the slots and ruin your week. I suggest a simple change to make b=
+ounds
+>> checking
+>> possible. It should never happen, but if that was sufficient people wo=
+uld
+>> love C
+>> string processing better.
+>>
+>>> +static inline struct xattr *lsm_find_xattr_slot(struct xattr *xattrs=
+)
+>> +static inline struct xattr *lsm_find_xattr_slot(struct xattr *xattrs,=20
+int available)
+> Ok. I looked at how I should do that. Initially, I thought that I could=
 
-Another document is dedicated to kernel developers, describing guiding
-principles and some important kernel structures.
+> use a global variable storing the number of inode_init_security
+> implementations, determined at LSM registration time. Then,
+> I realized that this would not work, as the number of array elements
+> when security_old_inode_init_security() is called is 1.
 
-This documentation can be built with the Sphinx framework.
+You can address that by expanding the call_int_hook MACRO in
+security_old_inode_init_security() in place and change it to stop
+after the first call. The two callers of security_old_inode_init_security=
+()
+are going to need to be converted to security_inode_init_security()
+when the "complete" stacking (i.e. SELinux + Smack) anyway, so I don't
+see that as an issue.
 
-Cc: James Morris <jmorris@namei.org>
-Cc: Jann Horn <jannh@google.com>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Reviewed-by: Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20210422154123.13086-13-mic@digikod.net
----
+Is anyone concerned that ocfs2 and reiserfs aren't EVM capable?
 
-Changes since v31:
-* Use "filesystem topology".
-* Add Reviewed-by Kees Cook.
+>
+> I modified the patch set to pass also the number of array elements.
+>
+> Roberto
+>
+> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+> Managing Director: Li Peng, Li Jian, Shi Yanli
+>
+>>> +{
+>>> +	struct xattr *slot;
+>>> +
+>>> +	for (slot =3D xattrs; slot && slot->name !=3D NULL; slot++)
+>> +	for (slot =3D xattrs; slot && slot->name !=3D NULL; slot++)
+>>  		if (WARN_ON(slot > xattrs[available]))
+>> 			return NULL;
+>>
+>>> +		;
+>>> +
+>>> +	return slot;
+>>> +}
+>>>  #endif /* ! __LINUX_LSM_HOOKS_H */
+>>> diff --git a/security/security.c b/security/security.c
+>>> index 7f14e59c4f8e..2c1fe1496069 100644
+>>> --- a/security/security.c
+>>> +++ b/security/security.c
+>>> @@ -1037,18 +1037,16 @@ int security_inode_init_security(struct inode=
 
-Changes since v30:
-* Fix typo (spotted by Kees Cook).
-* Extend commit description (suggested by Kees Cook).
-* Add note about what a Landlock user should do about OverlayFS
-  (requested by Kees Cook).
-* Include inode and superblock documentation.
-* Improve explanations about special filesystem limitations, and
-  highlight automatic /proc restrictions.
-* Bump the last modification date.
+>> *inode, struct inode *dir,
+>>>  	if (!initxattrs)
+>>>  		return call_int_hook(inode_init_security, -EOPNOTSUPP,
+>> inode,
+>>> -				     dir, qstr, NULL, NULL, NULL);
+>>> +				     dir, qstr, NULL, fs_data);
+>>>  	memset(new_xattrs, 0, sizeof(new_xattrs));
+>>>  	lsm_xattr =3D new_xattrs;
+>>>  	ret =3D call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,=20
+qstr,
+>>> -						&lsm_xattr->name,
+>>> -						&lsm_xattr->value,
+>>> -						&lsm_xattr->value_len);
+>>> +			    lsm_xattr, fs_data);
+>>>  	if (ret)
+>>>  		goto out;
+>>>
+>>>  	evm_xattr =3D lsm_xattr + 1;
+>>> -	ret =3D evm_inode_init_security(inode, lsm_xattr, evm_xattr);
+>>> +	ret =3D evm_inode_init_security(inode, new_xattrs, evm_xattr);
+>>>  	if (ret)
+>>>  		goto out;
+>>>  	ret =3D initxattrs(inode, new_xattrs, fs_data);
+>>> @@ -1071,10 +1069,13 @@ int security_old_inode_init_security(struct i=
+node
+>> *inode, struct inode *dir,
+>>>  				     const struct qstr *qstr, const char **name,
+>>>  				     void **value, size_t *len)
+>>>  {
+>>> +	struct xattr xattr =3D { .name =3D NULL, .value =3D NULL, .value_le=
+n =3D 0 };
+>>> +	struct xattr *lsm_xattr =3D (name && value && len) ? &xattr : NULL;=
 
-Changes since v28:
-* Reorder subsections by importance in the "Current limitations"
-  section.
+>>> +
+>>>  	if (unlikely(IS_PRIVATE(inode)))
+>>>  		return -EOPNOTSUPP;
+>>>  	return call_int_hook(inode_init_security, -EOPNOTSUPP, inode, dir,
+>>> -			     qstr, name, value, len);
+>>> +			     qstr, lsm_xattr, NULL);
+>>>  }
+>>>  EXPORT_SYMBOL(security_old_inode_init_security);
+>>>
+>>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>>> index ddd097790d47..806827eb132a 100644
+>>> --- a/security/selinux/hooks.c
+>>> +++ b/security/selinux/hooks.c
+>>> @@ -2916,11 +2916,11 @@ static int selinux_dentry_create_files_as(str=
+uct
+>> dentry *dentry, int mode,
+>>>  static int selinux_inode_init_security(struct inode *inode, struct i=
+node *dir,
+>>>  				       const struct qstr *qstr,
+>>> -				       const char **name,
+>>> -				       void **value, size_t *len)
+>>> +				       struct xattr *xattrs, void *fs_data)
+>>>  {
+>>>  	const struct task_security_struct *tsec =3D selinux_cred(current_cr=
+ed());
+>>>  	struct superblock_security_struct *sbsec;
+>>> +	struct xattr *xattr =3D lsm_find_xattr_slot(xattrs);
+>>>  	u32 newsid, clen;
+>>>  	int rc;
+>>>  	char *context;
+>>> @@ -2947,16 +2947,15 @@ static int selinux_inode_init_security(struct=
 
-Changes since v27:
-* Update landlock_restrict_self(2).
-* Update date and copyright.
-
-Changes since v25:
-* Explain the behavior of layered access rights.
-* Explain how bind mounts and overayfs mounts are handled by Landlock:
-  merged overlayfs mount points have their own inodes, which makes these
-  hierarchies independent from its upper and lower layers, unlike bind
-  mounts which share the same inodes between the source hierarchy and
-  the mount point hierarchy.
-  New overlayfs mount and bind mount tests check these behaviors.
-* Synchronize with the new syscalls.c file and update syscall names.
-* Fix spelling.
-* Remove Reviewed-by Jann Horn because of the above changes.
-
-Changes since v24:
-* Add Reviewed-by Jann Horn.
-* Add a paragraph to explain how the ruleset layers work.
-* Bump date.
-
-Changes since v23:
-* Explain limitations for the maximum number of stacked ruleset, and the
-  memory usage restrictions.
-
-Changes since v22:
-* Fix spelling and remove obsolete sentence (spotted by Jann Horn).
-* Bump date.
-
-Changes since v21:
-* Move the user space documentation to userspace-api/landlock.rst and
-  the kernel documentation to security/landlock.rst .
-* Add license headers.
-* Add last update dates.
-* Update MAINTAINERS file.
-* Add (back) links to git.kernel.org .
-* Fix spelling.
-
-Changes since v20:
-* Update examples and documentation with the new syscalls.
-
-Changes since v19:
-* Update examples and documentation with the new syscalls.
-
-Changes since v15:
-* Add current limitations.
-
-Changes since v14:
-* Fix spelling (contributed by Randy Dunlap).
-* Extend documentation about inheritance and explain layer levels.
-* Remove the use of now-removed access rights.
-* Use GitHub links.
-* Improve kernel documentation.
-* Add section for tests.
-* Update example.
-
-Changes since v13:
-* Rewrote the documentation according to the major revamp.
-
-Previous changes:
-https://lore.kernel.org/lkml/20191104172146.30797-8-mic@digikod.net/
----
- Documentation/security/index.rst         |   1 +
- Documentation/security/landlock.rst      |  85 +++++++
- Documentation/userspace-api/index.rst    |   1 +
- Documentation/userspace-api/landlock.rst | 311 +++++++++++++++++++++++
- MAINTAINERS                              |   2 +
- 5 files changed, 400 insertions(+)
- create mode 100644 Documentation/security/landlock.rst
- create mode 100644 Documentation/userspace-api/landlock.rst
-
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index 8129405eb2cc..16335de04e8c 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -16,3 +16,4 @@ Security Documentation
-    siphash
-    tpm/index
-    digsig
-+   landlock
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-new file mode 100644
-index 000000000000..2e84925ae971
---- /dev/null
-+++ b/Documentation/security/landlock.rst
-@@ -0,0 +1,85 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.. Copyright © 2019-2020 ANSSI
-+
-+==================================
-+Landlock LSM: kernel documentation
-+==================================
-+
-+:Author: Mickaël Salaün
-+:Date: March 2021
-+
-+Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
-+harden a whole system, this feature should be available to any process,
-+including unprivileged ones.  Because such process may be compromised or
-+backdoored (i.e. untrusted), Landlock's features must be safe to use from the
-+kernel and other processes point of view.  Landlock's interface must therefore
-+expose a minimal attack surface.
-+
-+Landlock is designed to be usable by unprivileged processes while following the
-+system security policy enforced by other access control mechanisms (e.g. DAC,
-+LSM).  Indeed, a Landlock rule shall not interfere with other access-controls
-+enforced on the system, only add more restrictions.
-+
-+Any user can enforce Landlock rulesets on their processes.  They are merged and
-+evaluated according to the inherited ones in a way that ensures that only more
-+constraints can be added.
-+
-+User space documentation can be found here: :doc:`/userspace-api/landlock`.
-+
-+Guiding principles for safe access controls
-+===========================================
-+
-+* A Landlock rule shall be focused on access control on kernel objects instead
-+  of syscall filtering (i.e. syscall arguments), which is the purpose of
-+  seccomp-bpf.
-+* To avoid multiple kinds of side-channel attacks (e.g. leak of security
-+  policies, CPU-based attacks), Landlock rules shall not be able to
-+  programmatically communicate with user space.
-+* Kernel access check shall not slow down access request from unsandboxed
-+  processes.
-+* Computation related to Landlock operations (e.g. enforcing a ruleset) shall
-+  only impact the processes requesting them.
-+
-+Tests
-+=====
-+
-+Userspace tests for backward compatibility, ptrace restrictions and filesystem
-+support can be found here: `tools/testing/selftests/landlock/`_.
-+
-+Kernel structures
-+=================
-+
-+Object
-+------
-+
-+.. kernel-doc:: security/landlock/object.h
-+    :identifiers:
-+
-+Filesystem
-+----------
-+
-+.. kernel-doc:: security/landlock/fs.h
-+    :identifiers:
-+
-+Ruleset and domain
-+------------------
-+
-+A domain is a read-only ruleset tied to a set of subjects (i.e. tasks'
-+credentials).  Each time a ruleset is enforced on a task, the current domain is
-+duplicated and the ruleset is imported as a new layer of rules in the new
-+domain.  Indeed, once in a domain, each rule is tied to a layer level.  To
-+grant access to an object, at least one rule of each layer must allow the
-+requested action on the object.  A task can then only transit to a new domain
-+that is the intersection of the constraints from the current domain and those
-+of a ruleset provided by the task.
-+
-+The definition of a subject is implicit for a task sandboxing itself, which
-+makes the reasoning much easier and helps avoid pitfalls.
-+
-+.. kernel-doc:: security/landlock/ruleset.h
-+    :identifiers:
-+
-+.. Links
-+.. _tools/testing/selftests/landlock/:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/tools/testing/selftests/landlock/
-diff --git a/Documentation/userspace-api/index.rst b/Documentation/userspace-api/index.rst
-index d29b020e5622..744c6491610c 100644
---- a/Documentation/userspace-api/index.rst
-+++ b/Documentation/userspace-api/index.rst
-@@ -18,6 +18,7 @@ place where this information is gathered.
- 
-    no_new_privs
-    seccomp_filter
-+   landlock
-    unshare
-    spec_ctrl
-    accelerators/ocxl
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-new file mode 100644
-index 000000000000..62c9361a3c7f
---- /dev/null
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -0,0 +1,311 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+.. Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.. Copyright © 2019-2020 ANSSI
-+.. Copyright © 2021 Microsoft Corporation
-+
-+=====================================
-+Landlock: unprivileged access control
-+=====================================
-+
-+:Author: Mickaël Salaün
-+:Date: March 2021
-+
-+The goal of Landlock is to enable to restrict ambient rights (e.g. global
-+filesystem access) for a set of processes.  Because Landlock is a stackable
-+LSM, it makes possible to create safe security sandboxes as new security layers
-+in addition to the existing system-wide access-controls. This kind of sandbox
-+is expected to help mitigate the security impact of bugs or
-+unexpected/malicious behaviors in user space applications.  Landlock empowers
-+any process, including unprivileged ones, to securely restrict themselves.
-+
-+Landlock rules
-+==============
-+
-+A Landlock rule describes an action on an object.  An object is currently a
-+file hierarchy, and the related filesystem actions are defined with `access
-+rights`_.  A set of rules is aggregated in a ruleset, which can then restrict
-+the thread enforcing it, and its future children.
-+
-+Defining and enforcing a security policy
-+----------------------------------------
-+
-+We first need to create the ruleset that will contain our rules.  For this
-+example, the ruleset will contain rules that only allow read actions, but write
-+actions will be denied.  The ruleset then needs to handle both of these kind of
-+actions.
-+
-+.. code-block:: c
-+
-+    int ruleset_fd;
-+    struct landlock_ruleset_attr ruleset_attr = {
-+        .handled_access_fs =
-+            LANDLOCK_ACCESS_FS_EXECUTE |
-+            LANDLOCK_ACCESS_FS_WRITE_FILE |
-+            LANDLOCK_ACCESS_FS_READ_FILE |
-+            LANDLOCK_ACCESS_FS_READ_DIR |
-+            LANDLOCK_ACCESS_FS_REMOVE_DIR |
-+            LANDLOCK_ACCESS_FS_REMOVE_FILE |
-+            LANDLOCK_ACCESS_FS_MAKE_CHAR |
-+            LANDLOCK_ACCESS_FS_MAKE_DIR |
-+            LANDLOCK_ACCESS_FS_MAKE_REG |
-+            LANDLOCK_ACCESS_FS_MAKE_SOCK |
-+            LANDLOCK_ACCESS_FS_MAKE_FIFO |
-+            LANDLOCK_ACCESS_FS_MAKE_BLOCK |
-+            LANDLOCK_ACCESS_FS_MAKE_SYM,
-+    };
-+
-+    ruleset_fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-+    if (ruleset_fd < 0) {
-+        perror("Failed to create a ruleset");
-+        return 1;
-+    }
-+
-+We can now add a new rule to this ruleset thanks to the returned file
-+descriptor referring to this ruleset.  The rule will only allow reading the
-+file hierarchy ``/usr``.  Without another rule, write actions would then be
-+denied by the ruleset.  To add ``/usr`` to the ruleset, we open it with the
-+``O_PATH`` flag and fill the &struct landlock_path_beneath_attr with this file
-+descriptor.
-+
-+.. code-block:: c
-+
-+    int err;
-+    struct landlock_path_beneath_attr path_beneath = {
-+        .allowed_access =
-+            LANDLOCK_ACCESS_FS_EXECUTE |
-+            LANDLOCK_ACCESS_FS_READ_FILE |
-+            LANDLOCK_ACCESS_FS_READ_DIR,
-+    };
-+
-+    path_beneath.parent_fd = open("/usr", O_PATH | O_CLOEXEC);
-+    if (path_beneath.parent_fd < 0) {
-+        perror("Failed to open file");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+    err = landlock_add_rule(ruleset_fd, LANDLOCK_RULE_PATH_BENEATH,
-+                            &path_beneath, 0);
-+    close(path_beneath.parent_fd);
-+    if (err) {
-+        perror("Failed to update ruleset");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+
-+We now have a ruleset with one rule allowing read access to ``/usr`` while
-+denying all other handled accesses for the filesystem.  The next step is to
-+restrict the current thread from gaining more privileges (e.g. thanks to a SUID
-+binary).
-+
-+.. code-block:: c
-+
-+    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+        perror("Failed to restrict privileges");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+
-+The current thread is now ready to sandbox itself with the ruleset.
-+
-+.. code-block:: c
-+
-+    if (landlock_restrict_self(ruleset_fd, 0)) {
-+        perror("Failed to enforce ruleset");
-+        close(ruleset_fd);
-+        return 1;
-+    }
-+    close(ruleset_fd);
-+
-+If the `landlock_restrict_self` system call succeeds, the current thread is now
-+restricted and this policy will be enforced on all its subsequently created
-+children as well.  Once a thread is landlocked, there is no way to remove its
-+security policy; only adding more restrictions is allowed.  These threads are
-+now in a new Landlock domain, merge of their parent one (if any) with the new
-+ruleset.
-+
-+Full working code can be found in `samples/landlock/sandboxer.c`_.
-+
-+Layers of file path access rights
-+---------------------------------
-+
-+Each time a thread enforces a ruleset on itself, it updates its Landlock domain
-+with a new layer of policy.  Indeed, this complementary policy is stacked with
-+the potentially other rulesets already restricting this thread.  A sandboxed
-+thread can then safely add more constraints to itself with a new enforced
-+ruleset.
-+
-+One policy layer grants access to a file path if at least one of its rules
-+encountered on the path grants the access.  A sandboxed thread can only access
-+a file path if all its enforced policy layers grant the access as well as all
-+the other system access controls (e.g. filesystem DAC, other LSM policies,
-+etc.).
-+
-+Bind mounts and OverlayFS
-+-------------------------
-+
-+Landlock enables to restrict access to file hierarchies, which means that these
-+access rights can be propagated with bind mounts (cf.
-+:doc:`/filesystems/sharedsubtree`) but not with :doc:`/filesystems/overlayfs`.
-+
-+A bind mount mirrors a source file hierarchy to a destination.  The destination
-+hierarchy is then composed of the exact same files, on which Landlock rules can
-+be tied, either via the source or the destination path.  These rules restrict
-+access when they are encountered on a path, which means that they can restrict
-+access to multiple file hierarchies at the same time, whether these hierarchies
-+are the result of bind mounts or not.
-+
-+An OverlayFS mount point consists of upper and lower layers.  These layers are
-+combined in a merge directory, result of the mount point.  This merge hierarchy
-+may include files from the upper and lower layers, but modifications performed
-+on the merge hierarchy only reflects on the upper layer.  From a Landlock
-+policy point of view, each OverlayFS layers and merge hierarchies are
-+standalone and contains their own set of files and directories, which is
-+different from bind mounts.  A policy restricting an OverlayFS layer will not
-+restrict the resulted merged hierarchy, and vice versa.  Landlock users should
-+then only think about file hierarchies they want to allow access to, regardless
-+of the underlying filesystem.
-+
-+Inheritance
-+-----------
-+
-+Every new thread resulting from a :manpage:`clone(2)` inherits Landlock domain
-+restrictions from its parent.  This is similar to the seccomp inheritance (cf.
-+:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
-+:manpage:`credentials(7)`.  For instance, one process's thread may apply
-+Landlock rules to itself, but they will not be automatically applied to other
-+sibling threads (unlike POSIX thread credential changes, cf.
-+:manpage:`nptl(7)`).
-+
-+When a thread sandboxes itself, we have the guarantee that the related security
-+policy will stay enforced on all this thread's descendants.  This allows
-+creating standalone and modular security policies per application, which will
-+automatically be composed between themselves according to their runtime parent
-+policies.
-+
-+Ptrace restrictions
-+-------------------
-+
-+A sandboxed process has less privileges than a non-sandboxed process and must
-+then be subject to additional restrictions when manipulating another process.
-+To be allowed to use :manpage:`ptrace(2)` and related syscalls on a target
-+process, a sandboxed process should have a subset of the target process rules,
-+which means the tracee must be in a sub-domain of the tracer.
-+
-+Kernel interface
-+================
-+
-+Access rights
-+-------------
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: fs_access
-+
-+Creating a new ruleset
-+----------------------
-+
-+.. kernel-doc:: security/landlock/syscalls.c
-+    :identifiers: sys_landlock_create_ruleset
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: landlock_ruleset_attr
-+
-+Extending a ruleset
-+-------------------
-+
-+.. kernel-doc:: security/landlock/syscalls.c
-+    :identifiers: sys_landlock_add_rule
-+
-+.. kernel-doc:: include/uapi/linux/landlock.h
-+    :identifiers: landlock_rule_type landlock_path_beneath_attr
-+
-+Enforcing a ruleset
-+-------------------
-+
-+.. kernel-doc:: security/landlock/syscalls.c
-+    :identifiers: sys_landlock_restrict_self
-+
-+Current limitations
-+===================
-+
-+File renaming and linking
-+-------------------------
-+
-+Because Landlock targets unprivileged access controls, it is needed to properly
-+handle composition of rules.  Such property also implies rules nesting.
-+Properly handling multiple layers of ruleset, each one of them able to restrict
-+access to files, also implies to inherit the ruleset restrictions from a parent
-+to its hierarchy.  Because files are identified and restricted by their
-+hierarchy, moving or linking a file from one directory to another implies to
-+propagate the hierarchy constraints.  To protect against privilege escalations
-+through renaming or linking, and for the sake of simplicity, Landlock currently
-+limits linking and renaming to the same directory.  Future Landlock evolutions
-+will enable more flexibility for renaming and linking, with dedicated ruleset
-+flags.
-+
-+Filesystem topology modification
-+--------------------------------
-+
-+As for file renaming and linking, a sandboxed thread cannot modify its
-+filesystem topology, whether via :manpage:`mount(2)` or
-+:manpage:`pivot_root(2)`.  However, :manpage:`chroot(2)` calls are not denied.
-+
-+Special filesystems
-+-------------------
-+
-+Access to regular files and directories can be restricted by Landlock,
-+according to the handled accesses of a ruleset.  However, files that do not
-+come from a user-visible filesystem (e.g. pipe, socket), but can still be
-+accessed through ``/proc/<pid>/fd/*``, cannot currently be explicitly
-+restricted.  Likewise, some special kernel filesystems such as nsfs, which can
-+be accessed through ``/proc/<pid>/ns/*``, cannot currently be explicitly
-+restricted.  However, thanks to the `ptrace restrictions`_, access to such
-+sensitive ``/proc`` files are automatically restricted according to domain
-+hierarchies.  Future Landlock evolutions could still enable to explicitly
-+restrict such paths with dedicated ruleset flags.
-+
-+Ruleset layers
-+--------------
-+
-+There is a limit of 64 layers of stacked rulesets.  This can be an issue for a
-+task willing to enforce a new ruleset in complement to its 64 inherited
-+rulesets.  Once this limit is reached, sys_landlock_restrict_self() returns
-+E2BIG.  It is then strongly suggested to carefully build rulesets once in the
-+life of a thread, especially for applications able to launch other applications
-+that may also want to sandbox themselves (e.g. shells, container managers,
-+etc.).
-+
-+Memory usage
-+------------
-+
-+Kernel memory allocated to create rulesets is accounted and can be restricted
-+by the :doc:`/admin-guide/cgroup-v1/memory`.
-+
-+Questions and answers
-+=====================
-+
-+What about user space sandbox managers?
-+---------------------------------------
-+
-+Using user space process to enforce restrictions on kernel resources can lead
-+to race conditions or inconsistent evaluations (i.e. `Incorrect mirroring of
-+the OS code and state
-+<https://www.ndss-symposium.org/ndss2003/traps-and-pitfalls-practical-problems-system-call-interposition-based-security-tools/>`_).
-+
-+What about namespaces and containers?
-+-------------------------------------
-+
-+Namespaces can help create sandboxes but they are not designed for
-+access-control and then miss useful features for such use case (e.g. no
-+fine-grained restrictions).  Moreover, their complexity can lead to security
-+issues, especially when untrusted processes can manipulate them (cf.
-+`Controlling access to user namespaces <https://lwn.net/Articles/673597/>`_).
-+
-+Additional documentation
-+========================
-+
-+* :doc:`/security/landlock`
-+* https://landlock.io
-+
-+.. Links
-+.. _samples/landlock/sandboxer.c:
-+   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/samples/landlock/sandboxer.c
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 88175ed1f315..7b0c6de5946a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10003,6 +10003,8 @@ L:	linux-security-module@vger.kernel.org
- S:	Supported
- W:	https://landlock.io
- T:	git https://github.com/landlock-lsm/linux.git
-+F:	Documentation/security/landlock.rst
-+F:	Documentation/userspace-api/landlock.rst
- F:	include/uapi/linux/landlock.h
- F:	samples/landlock/
- F:	security/landlock/
--- 
-2.31.1
+>> inode *inode, struct inode *dir,
+>>>  	    !(sbsec->flags & SBLABEL_MNT))
+>>>  		return -EOPNOTSUPP;
+>>>
+>>> -	if (name)
+>>> -		*name =3D XATTR_SELINUX_SUFFIX;
+>>> +	if (xattr) {
+>>> +		xattr->name =3D XATTR_SELINUX_SUFFIX;
+>>>
+>>> -	if (value && len) {
+>>>  		rc =3D security_sid_to_context_force(&selinux_state, newsid,
+>>>  						   &context, &clen);
+>>>  		if (rc)
+>>>  			return rc;
+>>> -		*value =3D context;
+>>> -		*len =3D clen;
+>>> +		xattr->value =3D context;
+>>> +		xattr->value_len =3D clen;
+>>>  	}
+>>>
+>>>  	return 0;
+>>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>>> index 12a45e61c1a5..af7eee0fee52 100644
+>>> --- a/security/smack/smack_lsm.c
+>>> +++ b/security/smack/smack_lsm.c
+>>> @@ -962,26 +962,24 @@ static int smack_inode_alloc_security(struct in=
+ode
+>> *inode)
+>>>   * @inode: the newly created inode
+>>>   * @dir: containing directory object
+>>>   * @qstr: unused
+>>> - * @name: where to put the attribute name
+>>> - * @value: where to put the attribute value
+>>> - * @len: where to put the length of the attribute
+>>> + * @xattrs: where to put the attribute
+>>>   *
+>>>   * Returns 0 if it all works out, -ENOMEM if there's no memory
+>>>   */
+>>>  static int smack_inode_init_security(struct inode *inode, struct ino=
+de
+>> *dir,
+>>> -				     const struct qstr *qstr, const char **name,
+>>> -				     void **value, size_t *len)
+>>> +				     const struct qstr *qstr,
+>>> +				     struct xattr *xattrs, void *fs_data)
+>>>  {
+>>>  	struct inode_smack *issp =3D smack_inode(inode);
+>>>  	struct smack_known *skp =3D smk_of_current();
+>>>  	struct smack_known *isp =3D smk_of_inode(inode);
+>>>  	struct smack_known *dsp =3D smk_of_inode(dir);
+>>> +	struct xattr *xattr =3D lsm_find_xattr_slot(xattrs);
+>>>  	int may;
+>>>
+>>> -	if (name)
+>>> -		*name =3D XATTR_SMACK_SUFFIX;
+>>> +	if (xattr) {
+>>> +		xattr->name =3D XATTR_SMACK_SUFFIX;
+>>>
+>>> -	if (value && len) {
+>>>  		rcu_read_lock();
+>>>  		may =3D smk_access_entry(skp->smk_known, dsp->smk_known,
+>>>  				       &skp->smk_rules);
+>>> @@ -999,11 +997,11 @@ static int smack_inode_init_security(struct ino=
+de
+>> *inode, struct inode *dir,
+>>>  			issp->smk_flags |=3D SMK_INODE_CHANGED;
+>>>  		}
+>>>
+>>> -		*value =3D kstrdup(isp->smk_known, GFP_NOFS);
+>>> -		if (*value =3D=3D NULL)
+>>> +		xattr->value =3D kstrdup(isp->smk_known, GFP_NOFS);
+>>> +		if (xattr->value =3D=3D NULL)
+>>>  			return -ENOMEM;
+>>>
+>>> -		*len =3D strlen(isp->smk_known);
+>>> +		xattr->value_len =3D strlen(isp->smk_known);
+>>>  	}
+>>>
+>>>  	return 0;
 
