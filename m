@@ -2,163 +2,136 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED719C43460
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Apr 2021 14:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C97F4C43460
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Apr 2021 15:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB2706128D
-	for <linux-security-module@archiver.kernel.org>; Fri, 23 Apr 2021 14:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FA38611C2
+	for <linux-security-module@archiver.kernel.org>; Fri, 23 Apr 2021 15:12:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbhDWOXc (ORCPT
+        id S242984AbhDWPNe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 23 Apr 2021 10:23:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbhDWOXc (ORCPT
+        Fri, 23 Apr 2021 11:13:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1548 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S242829AbhDWPNd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 23 Apr 2021 10:23:32 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21C1C061574;
-        Fri, 23 Apr 2021 07:22:55 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id r128so50814669lff.4;
-        Fri, 23 Apr 2021 07:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Qa960KFNtDJWzfAsJHjaJz591q3u8hYXWUc5bQSIFZQ=;
-        b=E5Q5fzOYxKb7vTg6Z0Fd03DNJhEsqQliuJ/wNn88ZidkxiT97Ho9ZcT9r1RVj71++b
-         6ansjU/yJFnR0kwb3WMrDSktUkw/1NyeuVHaf6VRurcOEDJ62JUrBWAb0bTs9kfud8t4
-         29Owr5AcXlebNyD6nw5BfKpAMgHYFU/naT1nBnm8wdRoWzdwPDBbu8WzJiWRxhkxzgjY
-         vap+1+a7HjNwjerEchtfNfmAuCBSiR1H42fr41xQCTUG3z4VgTrtZMa/uXStHpWuG5cd
-         3XnnJxMbvwAriHG64TXI9828OSMcvrpaA4iTlRFImuhq1dogayUYOlsZBci4xlpYi7Ad
-         aeOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qa960KFNtDJWzfAsJHjaJz591q3u8hYXWUc5bQSIFZQ=;
-        b=o7hvgFw/s8YcVUFP82l1Y2CozIrJWZGifqn3UQ5cBB7Ee4GUeXop7sjd9Jjm5bwLJE
-         v/k+HeUvKLij0dW9CWrMPFRu07snl0e5A1HlYBAMOjesiqs8NAfey/IOEIRmxQq0BM+2
-         bxD3ge2HkzRtCUjX1hNiWXQVSjO6UQsFEeQDB0wGLpjiqw+f3X+y4OMC5PFo1FvqsdBF
-         0meJyV76lOR94l1s84msR11G1pff8KUj9s6IUPjN8rTh8ai6ji95KtfTr0Co+McjNPvP
-         iDakxdhx+KoOM4GfWFdeOOzMfjXiaV5w3D26wePMHXQ6ORz1Odpur+QzmxjPQCTOSlt/
-         nLNA==
-X-Gm-Message-State: AOAM5320JpGcPYh9kEbWcgM3GrMTXZ1fPt7zO3VPryf+FbwMabQg3/9Z
-        Zyic9lZtVNRVt4o3tezLWbQ9Gp/6vna7Tz8BO2AuZFEX
-X-Google-Smtp-Source: ABdhPJw3QpXCLbuutv29r/KI5zf4kroTRX9E1xa5uWDI96RtTPOqa8A16tvHlawGP3l1hrHeyhipL8Br05agVBFZiGY=
-X-Received: by 2002:a05:6512:4ca:: with SMTP id w10mr2923982lfq.322.1619187774064;
- Fri, 23 Apr 2021 07:22:54 -0700 (PDT)
+        Fri, 23 Apr 2021 11:13:33 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13NF3nNB176430;
+        Fri, 23 Apr 2021 11:12:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=LG6EJsspN0xFsaGsQWZaOBJblkgxt0683z6zahBn1As=;
+ b=Vg3wdxbZPJATu36lQ+rc8Dfn9SRTRaNw+BiRCbOpKS//406+oNsUIwO+OcLGWiagrtHD
+ z/OVBqVY7YGGW4pyjoQsio1NzbZ9/Kszkp4YMUjNZjmkRuRjvCZMX6NjJGs0IC4V3cc/
+ TMGsvxDTNVT29IVvwSuKbKIKdwC+YoFU/Zz1tzy4ABZtQmfsvJNp0nxfzmhXbIYH1Tz2
+ 0j/bUwEsVViIKGeQI0lWev7S81yj5ZspeBFYRvE4om/2DTpRQkoJUk64RJRUyb806snJ
+ KfXmiJE6QlIJPKMgiUlE1lqoLfTXoNuPmug9aD94iUY8VPi3H0U5i4fxpiVwQMfNfDfw nQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3838hmdfxr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Apr 2021 11:12:55 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13NF4BJ0177686;
+        Fri, 23 Apr 2021 11:12:55 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3838hmdfx1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Apr 2021 11:12:55 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13NF8vf9022737;
+        Fri, 23 Apr 2021 15:12:53 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma02dal.us.ibm.com with ESMTP id 37yqab608a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 23 Apr 2021 15:12:53 +0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13NFCqQ149742162
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 23 Apr 2021 15:12:52 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 02ACA6A047;
+        Fri, 23 Apr 2021 15:12:52 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FE3E6A054;
+        Fri, 23 Apr 2021 15:12:51 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.47.158.152])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 23 Apr 2021 15:12:51 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.ibm.com>
+To:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
+        zohar@linux.ibm.com, jarkko@kernel.org
+Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v4 0/2] Add support for ECDSA-signed kernel modules
+Date:   Fri, 23 Apr 2021 11:12:45 -0400
+Message-Id: <20210423151247.1517808-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.30.2
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 7G0SZ7zPPPMVkRFCz80gYPxP2DwOK-1v
+X-Proofpoint-GUID: GoWDdKadZhkikM8HM_GKK1gFsB5YXfB4
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <20210421171446.785507-1-omosnace@redhat.com> <20210421171446.785507-3-omosnace@redhat.com>
- <CAEjxPJ5ksqrafO8uaf3jR=cjU5JnyQYmn_57skp=WXz7-RcbVQ@mail.gmail.com> <CAFqZXNv4gKFN5FV_Z8U82cOzauBggaqPE0WZZUdnNRxCQ3PVPw@mail.gmail.com>
-In-Reply-To: <CAFqZXNv4gKFN5FV_Z8U82cOzauBggaqPE0WZZUdnNRxCQ3PVPw@mail.gmail.com>
-From:   Stephen Smalley <stephen.smalley.work@gmail.com>
-Date:   Fri, 23 Apr 2021 10:22:42 -0400
-Message-ID: <CAEjxPJ5iWjcQGzfJy-5CLa+e95C+OmeQ_GAU44s+8ripuMJg9g@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] selinux: add capability to map anon inode types
- to separate classes
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     SElinux list <selinux@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Lokesh Gidra <lokeshgidra@google.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-23_07:2021-04-23,2021-04-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104230098
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 23, 2021 at 9:41 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> On Thu, Apr 22, 2021 at 3:21 PM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> > On Wed, Apr 21, 2021 at 1:14 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > Unfortunately, the approach chosen in commit 29cd6591ab6f ("selinux:
-> > > teach SELinux about anonymous inodes") to use a single class for all
-> > > anon inodes and let the policy distinguish between them using named
-> > > transitions turned out to have a rather unfortunate drawback.
-> > >
-> > > For example, suppose we have two types of anon inodes, "A" and "B", and
-> > > we want to allow a set of domains (represented by an attribute "attr_x")
-> > > certain set of permissions on anon inodes of type "A" that were created
-> > > by the same domain, but at the same time disallow this set to access
-> > > anon inodes of type "B" entirely. Since all inodes share the same class
-> > > and we want to distinguish both the inode types and the domains that
-> > > created them, we have no choice than to create separate types for the
-> > > cartesian product of (domains that belong to attr_x) x ("A", "B") and
-> > > add all the necessary allow and transition rules for each domain
-> > > individually.
-> > >
-> > > This makes it very impractical to write sane policies for anon inodes in
-> > > the future, as more anon inode types are added. Therefore, this patch
-> > > implements an alternative approach that assigns a separate class to each
-> > > type of anon inode. This allows the example above to be implemented
-> > > without any transition rules and with just a single allow rule:
-> > >
-> > > allow attr_x self:A { ... };
-> > >
-> > > In order to not break possible existing users of the already merged
-> > > original approach, this patch also adds a new policy capability
-> > > "extended_anon_inode_class" that needs to be set by the policy to enable
-> > > the new behavior.
-> > >
-> > > I decided to keep the named transition mechanism in the new variant,
-> > > since there might eventually be some extra information in the anon inode
-> > > name that could be used in transitions.
-> > >
-> > > One minor annoyance is that the kernel still expects the policy to
-> > > provide both classes (anon_inode and userfaultfd) regardless of the
-> > > capability setting and if one of them is not defined in the policy, the
-> > > kernel will print a warning when loading the policy. However, it doesn't
-> > > seem worth to work around that in the kernel, as the policy can provide
-> > > just the definition of the unused class(es) (and permissions) to avoid
-> > > this warning. Keeping the legacy anon_inode class with some fallback
-> > > rules may also be desirable to keep the policy compatible with kernels
-> > > that only support anon_inode.
-> > >
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> >
-> > NAK.  We do not want to introduce a new security class for every user
-> > of anon inodes - that isn't what security classes are for.
-> > For things like kvm device inodes, those should ultimately use the
-> > inherited context from the related inode (the /dev/kvm inode itself).
-> > That was the original intent of supporting the related inode.
->
-> Hmm, so are you implying that anon inodes should be thought of the
-> same as control /dev nodes? I.e. that even though there may be many
-> one-time actual inodes created by different processes, they should be
-> thought of as a single "static interface" to the respective kernel
-> functionality? That would justify having a common type/label for all
-> of them, but I'm not sure if it doesn't open some gap due to the
-> possibility to pass the associated file descriptors between processes
-> (as AFAIK, these can hold some context)...
+This series adds support for ECDSA-signed kernel modules. It also
+attempts to address a kbuild issue where a developer created an ECDSA
+key for signing kernel modules and then builds an older version of the
+kernel, when bisecting the kernel for example, that does not support
+ECDSA keys.
 
-That was the original design (and the original patchset that we posted
-in parallel with Google's independently developed one). We even had
-example policy/controls for /dev/kvm ioctls.
-Imagine trying to write policy over /dev/kvm ioctls where you have to
-deal with N different classes and/or types and remember which ioctl
-commands are exercised on which class or type even though from the
-users' perspective they all occurred through the /dev/kvm interface.
-It seemed super fragile and difficult to maintain/analyze that way.
-Versus writing a single allow rule for all /dev/kvm ioctls.
+The first patch addresses the kbuild issue of needing to delete that
+ECDSA key if it is in certs/signing_key.pem and trigger the creation
+of an RSA key. However, for this to work this patch would have to be
+backported to previous versions of the kernel but would also only work
+for the developer if he/she used a stable version of the kernel to which
+this patch was applied. So whether this patch actually achieves the
+wanted effect is not always guaranteed.
 
-I guess we could discuss the alternatives but please have a look at
-those original patches and examples.  If we go down this road, we need
-some way to deal with scaling because we only have a limited number of
-discrete classes available to us and potentially unbounded set of
-distinct anon inode users (although hopefully in practice only a few
-that we care about distinguishing).
+The 2nd patch adds the support for the ECSDA-signed kernel modules.
 
-> I thought this was supposed to resemble more the way BPF, perf_event,
-> etc. support was implemented - the BPF and perf_event fds are also
-> anon inodes under the hood, BTW - where each file descriptor is
-> considered a separate object that inherits the label of its creator
-> and there is some class separation (e.g. bpf vs. perf_event).
+This patch depends on the ECDSA support series currently queued here:
+https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/log/?h=ecc
+
+  Stefan
+
+v4:
+  - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
+  
+v3:
+  - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
+  - added recommendation to use string hash to Kconfig help text
+
+v2:
+  - Adjustment to ECDSA key detector string in 2/2
+  - Rephrased cover letter and patch descriptions with Mimi
+
+
+Stefan Berger (2):
+  certs: Trigger creation of RSA module signing key if it's not an RSA
+    key
+  certs: Add support for using elliptic curve keys for signing modules
+
+ certs/Kconfig                         | 26 ++++++++++++++++++++++++++
+ certs/Makefile                        | 14 ++++++++++++++
+ crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
+ 3 files changed, 48 insertions(+)
+
+-- 
+2.29.2
+
