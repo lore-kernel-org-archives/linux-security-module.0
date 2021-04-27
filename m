@@ -2,65 +2,66 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFD0C433ED
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 20:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA41C433ED
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 23:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F98461400
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 20:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 037516101E
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 23:20:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237055AbhD0UzW (ORCPT
+        id S235423AbhD0XV0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Apr 2021 16:55:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36252 "EHLO mail.kernel.org"
+        Tue, 27 Apr 2021 19:21:26 -0400
+Received: from namei.org ([65.99.196.166]:53970 "EHLO mail.namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235416AbhD0UzW (ORCPT
+        id S239429AbhD0XVZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Apr 2021 16:55:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 2FA3961040;
-        Tue, 27 Apr 2021 20:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619556878;
-        bh=AwiTtd5vkDQuzzMVTo3n+DBNy3GA69ZpFqG3PG00hsA=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=tiI7wTmai6M1TopjYCoe0yHNIc/DM3Q90yP2HwXV7ejTJEi3aaMrrS6RdG/Q+zC9m
-         Y7zVgJB2GzbPECVW9jhEdMOUHeaTPLTFyYf0j9to+UpxVXSYu+tvjlS/XZEUtVIXQR
-         Zz13QUQBPYqvaQ4Ft0I8IFO60xHiviec6SoBrvcDevFNXltgTRVbXWqylZe7LwbPnb
-         +hbRDpimVK7drGqzlNrY550Hgf7jG8QXh9BFBZwHrRtezWS+y0bniDW3uiaw7uPejC
-         bv4daLatvic3v1pLY5OXlDfmGht+6vX7J6+ZHq38QiPPNSdQiGtXWdgMyn5YlWhT0L
-         9Sc7rAv4u0H/A==
-Subject: Re: [GIT PULL] SELinux patches for v5.13
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAHC9VhQc7GguPxuN0cU2D0960LBcDK6fW1fHWyMkQCyxNZ_9FA@mail.gmail.com>
-References: <CAHC9VhQc7GguPxuN0cU2D0960LBcDK6fW1fHWyMkQCyxNZ_9FA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAHC9VhQc7GguPxuN0cU2D0960LBcDK6fW1fHWyMkQCyxNZ_9FA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20210426
-X-PR-Tracked-Commit-Id: e4c82eafb609c2badc56f4e11bc50fcf44b8e9eb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f1c921fb70de06c7eda59104470134aecc7a07c4
-Message-Id: <161955687808.8723.17319027358639885057.pr-tracker-bot@kernel.org>
-Date:   Tue, 27 Apr 2021 20:54:38 +0000
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org
+        Tue, 27 Apr 2021 19:21:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id E58508B0;
+        Tue, 27 Apr 2021 23:16:37 +0000 (UTC)
+Date:   Wed, 28 Apr 2021 09:16:37 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL][Security Subsystem] Fixes for v5.13
+Message-ID: <bed5f880-9651-5ee1-c3c2-713c1ac194f0@namei.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 26 Apr 2021 19:27:42 -0400:
+Hi Linus,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20210426
+Please pull these minor fixes for the security subsystem for v5.13.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f1c921fb70de06c7eda59104470134aecc7a07c4
+---
 
-Thank you!
+The following changes since commit f40ddce88593482919761f74910f42f4b84c004b:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+  Linux 5.11 (2021-02-14 14:32:24 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.13
+
+for you to fetch changes up to 049ae601f3fb3d5b1c1efdb434499770c96237f6:
+
+  security: commoncap: clean up kernel-doc comments (2021-04-15 09:21:58 -0700)
+
+----------------------------------------------------------------
+Miscellaneous minor fixes for v5.13.
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      security: commoncap: fix -Wstringop-overread warning
+
+Randy Dunlap (1):
+      security: commoncap: clean up kernel-doc comments
+
+ security/commoncap.c | 52 ++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 34 insertions(+), 18 deletions(-)
