@@ -2,122 +2,110 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49A6C43460
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 16:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0DEFC433B4
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 18:38:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7025760FF1
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 16:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5493613F8
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 18:38:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237537AbhD0Qtc (ORCPT
+        id S238963AbhD0Sis (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Apr 2021 12:49:32 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47454 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237539AbhD0QtF (ORCPT
+        Tue, 27 Apr 2021 14:38:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53625 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238822AbhD0Siq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Apr 2021 12:49:05 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13RGXXVQ072052;
-        Tue, 27 Apr 2021 12:48:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=sK/kfEPDNAy/W73TYtW08cQTH0f6vXPcMHahw7XFPGQ=;
- b=q9hf4jtJPWAD4PwYjyX+inldY407WIvN5ME0pnurEhWmSwcj+ytMEF7yXyBr2w6lvSOt
- ep+Owe6YYqXXYOeNbYQ+c/Hb+RLWFUi41JcvEivBwAwHM4JyD+6FBikcIFQBqaZfFCDJ
- TgSmF+zEejm8QRTTs1cekLzdxo1Bj1ZH9H5jSvXlwgtcPMHq7bldgmt0vMVAnzz1/Sjx
- NL6syw7nG4p7SFrZyOtBr9SIm1nENh40sGwGS259Xi2vCMaH4qDpO3wjQbLfoh2z6V7b
- /tBYLIGUK5aOn3Sjfh5AsJZiDzDz3U4LMd/v67E67gFTLzl/e9KORD6IhQtiLTsQp5b9 NA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 386muqubkg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Apr 2021 12:48:09 -0400
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13RGXe8k072967;
-        Tue, 27 Apr 2021 12:48:09 -0400
-Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 386muqubk1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Apr 2021 12:48:08 -0400
-Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
-        by ppma03fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13RGidOK023537;
-        Tue, 27 Apr 2021 16:48:07 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma03fra.de.ibm.com with ESMTP id 384ay8rtjc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 27 Apr 2021 16:48:06 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13RGm3Ec30933496
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 27 Apr 2021 16:48:03 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C29EC42045;
-        Tue, 27 Apr 2021 16:48:03 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E86414203F;
-        Tue, 27 Apr 2021 16:48:01 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.36.231])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 27 Apr 2021 16:48:01 +0000 (GMT)
-Message-ID: <2c4baf092a11eadfc589ca2a314bcbf689284b0a.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "mjg59@google.com" <mjg59@google.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 27 Apr 2021 12:48:00 -0400
-In-Reply-To: <3354e1a0-bca2-2cb9-6e82-7209b9106008@schaufler-ca.com>
-References: <20210305151923.29039-1-roberto.sassu@huawei.com>
-         <20210305151923.29039-5-roberto.sassu@huawei.com>
-         <c3bb1069-c732-d3cf-0dde-7a83b3f31871@schaufler-ca.com>
-         <93858a47a29831ca782c8388faaa43c8ffc3f5cd.camel@linux.ibm.com>
-         <7a39600c24a740838dca24c20af92c1a@huawei.com>
-         <d047d1347e7104162e0e36eb57ade6bba914ea2d.camel@linux.ibm.com>
-         <d783e2703248463f9af68e155ee65c38@huawei.com>
-         <3354e1a0-bca2-2cb9-6e82-7209b9106008@schaufler-ca.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: UQxgqS5tfaz7u6xEhw6-mov5dXxGuI3Q
-X-Proofpoint-ORIG-GUID: BhALz2mzO1A0UFYjsNFOhf10bxTXbPKE
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-04-27_10:2021-04-27,2021-04-27 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 bulkscore=0 phishscore=0
- impostorscore=0 mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104060000 definitions=main-2104270112
+        Tue, 27 Apr 2021 14:38:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619548683;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=4VuZQSuryR31hzWJ615ODRd3rogZxavth8Va+pMZREE=;
+        b=VcOyhZGQvu+ratEKdNSHTyFiUg1P46s/1Y/21b24oz+oNjz6/Etw55pyGRkBV5aw7ogYWx
+        8pv/ZKGEv+710RxMiqKdA96NrQtKIUMfT/SNS4qKNF0Da8L/1OfirnCyNgjqiGuEPueU9M
+        oiuYEVpQIdfNNchepfEzj1SxqyqCstc=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-23-9gGAZwiiNnWShNlwPNnSHQ-1; Tue, 27 Apr 2021 14:38:00 -0400
+X-MC-Unique: 9gGAZwiiNnWShNlwPNnSHQ-1
+Received: by mail-qt1-f197.google.com with SMTP id i7-20020ac84f470000b02901b944d49e13so16064302qtw.7
+        for <linux-security-module@vger.kernel.org>; Tue, 27 Apr 2021 11:38:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4VuZQSuryR31hzWJ615ODRd3rogZxavth8Va+pMZREE=;
+        b=VLYrEF45zmV1j89eXvsDZWLhJxDAb2e6/2y5fUzkRoW6GmoMAMXw7K5iZ3Otf6dkXh
+         FhqEg0WycZeiQziWWlUV+wuU0TrVUNQfVLYQnJNX6kuzIkeaiPsiuH7OCULENuquOBjp
+         600sTifNNTU1Fsr0it91YY+vPA+eljyR2UJMYFgFw9HQWNs7wZGMXGnoDrz2Mct2UrKg
+         fggU+c7yZEDfPVRSdQinOmZ9Kz3gQBxcoxrqMRad3+FS9R2dvyb2lZpMFBUjElmHMpfG
+         lHYK7jawfJD7gGjKnVqKhtayoW7qxIJz9Kd/obDUZ89lsUL6TC+Bzfeg/nEKbqLROtc+
+         BscA==
+X-Gm-Message-State: AOAM531DfLb86H201CRfosXXxFbtJj9a/pW1GFdf4gpGFEMjcFnZVxnV
+        EU646x4XdfrL9VzWsXUh70H1C+X0C7YbVFJdGQUzdwT8kbP0CVMT3BaeXH/t2k90uLYiVNukkbJ
+        cZvK/UlJiwyzdQL7e8lIRuzIJWJr/YjRghk7c
+X-Received: by 2002:a05:620a:14ba:: with SMTP id x26mr23398298qkj.457.1619548679881;
+        Tue, 27 Apr 2021 11:37:59 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwHmo+tFoQV0mUdGbTaCoTFEnkBuus13gSDjgfQyCZ3EXJ0VwKiP/wenE08m3y4BKI265nlZA==
+X-Received: by 2002:a05:620a:14ba:: with SMTP id x26mr23398278qkj.457.1619548679727;
+        Tue, 27 Apr 2021 11:37:59 -0700 (PDT)
+Received: from localhost.localdomain.com (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id o25sm478118qtl.37.2021.04.27.11.37.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Apr 2021 11:37:59 -0700 (PDT)
+From:   trix@redhat.com
+To:     mic@digikod.net, nathan@kernel.org, ndesaulniers@google.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Tom Rix <trix@redhat.com>
+Subject: [PATCH] samples/landlock: fix path_list memory leak
+Date:   Tue, 27 Apr 2021 11:37:55 -0700
+Message-Id: <20210427183755.2790654-1-trix@redhat.com>
+X-Mailer: git-send-email 2.26.3
+MIME-Version: 1.0
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Casey,
+From: Tom Rix <trix@redhat.com>
 
-On Tue, 2021-04-27 at 09:39 -0700, Casey Schaufler wrote:
-> >> That ship sailed when "security=" was deprecated in favor of "lsm="
-> >> support, which dynamically enables/disables LSMs at runtime.
-> 
-> security= is still supported and works the same as ever. lsm= is
-> more powerful than security= but also harder to use.
+Clang static analysis reports this error
 
-I understand that it still exists, but the documentation says it's been
-deprecated.
-From Documentation/admin-guide/kernel-parameters.txt:
+sandboxer.c:134:8: warning: Potential leak of memory
+  pointed to by 'path_list'
+        ret = 0;
+              ^
+path_list is allocated in parse_path() but never freed.
 
-        security=  [SECURITY] Choose a legacy "major" security module to
-                        enable at boot. This has been deprecated by the
-                        "lsm=" parameter.
+Signed-off-by: Tom Rix <trix@redhat.com>
+---
+ samples/landlock/sandboxer.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Mimi
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 7a15910d2171..4629d011ed61 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -134,6 +134,8 @@ static int populate_ruleset(
+ 	ret = 0;
+ 
+ out_free_name:
++	if (path_list)
++		free(path_list);
+ 	free(env_path_name);
+ 	return ret;
+ }
+-- 
+2.26.3
 
