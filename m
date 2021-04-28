@@ -2,244 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE1EC433B4
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 02:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFCC1C433B4
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 07:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 308F4613D8
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 02:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA076606A5
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 07:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237124AbhD1C7L (ORCPT
+        id S236816AbhD1Htg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Apr 2021 22:59:11 -0400
-Received: from namei.org ([65.99.196.166]:54052 "EHLO mail.namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235839AbhD1C7L (ORCPT
+        Wed, 28 Apr 2021 03:49:36 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2933 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230145AbhD1Htd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Apr 2021 22:59:11 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.namei.org (Postfix) with ESMTPS id 94D85A1D;
-        Wed, 28 Apr 2021 02:54:22 +0000 (UTC)
-Date:   Wed, 28 Apr 2021 12:54:22 +1000 (AEST)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?ISO-8859-15?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
-        Al Viro <viro@ftp.linux.org.uk>
-Subject: [GIT PULL][Security] Add new Landlock LSM
-Message-ID: <11a1adfd-d2e8-2181-81a-529792e4b6e5@namei.org>
+        Wed, 28 Apr 2021 03:49:33 -0400
+Received: from fraeml708-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FVVws4j2qz685Yc;
+        Wed, 28 Apr 2021 15:43:09 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 28 Apr 2021 09:48:47 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Wed, 28 Apr 2021 09:48:47 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Topic: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Index: AQHXEdMA2oN9D131skWV9JJ8Z5VEUap1limAgFHPEQCAAOj3gIAAYluAgAAixgD//+9mgIABHETQ
+Date:   Wed, 28 Apr 2021 07:48:46 +0000
+Message-ID: <24cd7c6a3e36451691f70ed153ab3e75@huawei.com>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+ <20210305151923.29039-5-roberto.sassu@huawei.com>
+ <c3bb1069-c732-d3cf-0dde-7a83b3f31871@schaufler-ca.com>
+ <93858a47a29831ca782c8388faaa43c8ffc3f5cd.camel@linux.ibm.com>
+ <7a39600c24a740838dca24c20af92c1a@huawei.com>
+ <d047d1347e7104162e0e36eb57ade6bba914ea2d.camel@linux.ibm.com>
+ <d783e2703248463f9af68e155ee65c38@huawei.com>
+ <3354e1a0-bca2-2cb9-6e82-7209b9106008@schaufler-ca.com>
+In-Reply-To: <3354e1a0-bca2-2cb9-6e82-7209b9106008@schaufler-ca.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="1665246916-1848305378-1619577521=:601019"
-Content-ID: <fe93242b-25d9-40d7-f5e-a49713347e@namei.org>
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---1665246916-1848305378-1619577521=:601019
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: 8BIT
-Content-ID: <48825c2c-fe1c-8b9f-c86e-1cc7ed1c8ec@namei.org>
-
-Hi Linus,
-
-This patchset adds a new LSM called Landlock, from Mickaël Salaün.
-
-Briefly, Landlock provides for unprivileged application sandboxing.
-
-From Mickaël's cover letter:
-
-  The goal of Landlock is to enable to restrict ambient rights (e.g.
-  global filesystem access) for a set of processes.  Because Landlock is a
-  stackable LSM [1], it makes possible to create safe security sandboxes
-  as new security layers in addition to the existing system-wide
-  access-controls.  This kind of sandbox is expected to help mitigate the
-  security impact of bugs or unexpected/malicious behaviors in user-space
-  applications.  Landlock empowers any process, including unprivileged
-  ones, to securely restrict themselves.
-
-  Landlock is inspired by seccomp-bpf but instead of filtering syscalls
-  and their raw arguments, a Landlock rule can restrict the use of kernel
-  objects like file hierarchies, according to the kernel semantic.
-  Landlock also takes inspiration from other OS sandbox mechanisms: XNU
-  Sandbox, FreeBSD Capsicum or OpenBSD Pledge/Unveil.
-
-  In this current form, Landlock misses some access-control features.
-  This enables to minimize this patch series and ease review.  This series
-  still addresses multiple use cases, especially with the combined use of
-  seccomp-bpf: applications with built-in sandboxing, init systems,
-  security sandbox tools and security-oriented APIs [2].
-
-  [1] https://lore.kernel.org/lkml/50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com/
-  [2] https://lore.kernel.org/lkml/f646e1c7-33cf-333f-070c-0a40ad0468cd@digikod.net/
-
-The cover letter and v34 posting is here:
-https://lore.kernel.org/linux-security-module/20210422154123.13086-1-mic@digikod.net/
-
-See also: https://landlock.io/
-
-This code has had extensive design discussion and review over several 
-years. The v33 code has been in next since April 9, and was updated last 
-week to v34 with a relatively simple change. If you prefer to pull v33 
-instead, please pull "tags/landlock_v33" instead, and we'll push the 
-change through after merging.
-
-There's a merge conflict in the syscall tables, with resolution by 
-Stephen Rothwell:
-https://lore.kernel.org/linux-next/20210409143954.22329cfa@canb.auug.org.au/
-
-Al Viro raised some issues re. the VFS in v31:
-https://lore.kernel.org/linux-security-module/YGUslUPwp85Zrp4t@zeniv-ca.linux.org.uk/
-
-which were addressed in comments and in v33:
-https://lore.kernel.org/linux-security-module/5f4dfa1-f9ac-f31f-3237-dcf976cabbfc@namei.org/
-
-
-Please pull.
-
----
-
-The following changes since commit 1e28eed17697bcf343c6743f0028cc3b5dd88bf0:
-
-  Linux 5.12-rc3 (2021-03-14 14:41:02 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/landlock_v34
-
-for you to fetch changes up to 3532b0b4352ce79400b0aa68414f1a0fc422b920:
-
-  landlock: Enable user space to infer supported features (2021-04-22 12:22:11 -0700)
-
-----------------------------------------------------------------
-Add Landlock, a new LSM from Mickaël Salaün <mic@linux.microsoft.com>
-
-----------------------------------------------------------------
-Casey Schaufler (1):
-      LSM: Infrastructure management of the superblock
-
-Mickaël Salaün (12):
-      landlock: Add object management
-      landlock: Add ruleset and domain management
-      landlock: Set up the security framework and manage credentials
-      landlock: Add ptrace restrictions
-      landlock: Support filesystem access-control
-      fs,security: Add sb_delete hook
-      arch: Wire up Landlock syscalls
-      landlock: Add syscall implementations
-      selftests/landlock: Add user space tests
-      samples/landlock: Add a sandbox manager example
-      landlock: Add user and kernel documentation
-      landlock: Enable user space to infer supported features
-
- Documentation/security/index.rst               |    1 +
- Documentation/security/landlock.rst            |   85 +
- Documentation/userspace-api/index.rst          |    1 +
- Documentation/userspace-api/landlock.rst       |  311 +++
- MAINTAINERS                                    |   15 +
- arch/Kconfig                                   |    7 +
- arch/alpha/kernel/syscalls/syscall.tbl         |    3 +
- arch/arm/tools/syscall.tbl                     |    3 +
- arch/arm64/include/asm/unistd.h                |    2 +-
- arch/arm64/include/asm/unistd32.h              |    6 +
- arch/ia64/kernel/syscalls/syscall.tbl          |    3 +
- arch/m68k/kernel/syscalls/syscall.tbl          |    3 +
- arch/microblaze/kernel/syscalls/syscall.tbl    |    3 +
- arch/mips/kernel/syscalls/syscall_n32.tbl      |    3 +
- arch/mips/kernel/syscalls/syscall_n64.tbl      |    3 +
- arch/mips/kernel/syscalls/syscall_o32.tbl      |    3 +
- arch/parisc/kernel/syscalls/syscall.tbl        |    3 +
- arch/powerpc/kernel/syscalls/syscall.tbl       |    3 +
- arch/s390/kernel/syscalls/syscall.tbl          |    3 +
- arch/sh/kernel/syscalls/syscall.tbl            |    3 +
- arch/sparc/kernel/syscalls/syscall.tbl         |    3 +
- arch/um/Kconfig                                |    1 +
- arch/x86/entry/syscalls/syscall_32.tbl         |    3 +
- arch/x86/entry/syscalls/syscall_64.tbl         |    3 +
- arch/xtensa/kernel/syscalls/syscall.tbl        |    3 +
- fs/super.c                                     |    1 +
- include/linux/lsm_hook_defs.h                  |    1 +
- include/linux/lsm_hooks.h                      |    4 +
- include/linux/security.h                       |    4 +
- include/linux/syscalls.h                       |    7 +
- include/uapi/asm-generic/unistd.h              |    8 +-
- include/uapi/linux/landlock.h                  |  137 ++
- kernel/sys_ni.c                                |    5 +
- samples/Kconfig                                |    7 +
- samples/Makefile                               |    1 +
- samples/landlock/.gitignore                    |    1 +
- samples/landlock/Makefile                      |   13 +
- samples/landlock/sandboxer.c                   |  238 ++
- security/Kconfig                               |   11 +-
- security/Makefile                              |    2 +
- security/landlock/Kconfig                      |   21 +
- security/landlock/Makefile                     |    4 +
- security/landlock/common.h                     |   20 +
- security/landlock/cred.c                       |   46 +
- security/landlock/cred.h                       |   58 +
- security/landlock/fs.c                         |  692 ++++++
- security/landlock/fs.h                         |   70 +
- security/landlock/limits.h                     |   21 +
- security/landlock/object.c                     |   67 +
- security/landlock/object.h                     |   91 +
- security/landlock/ptrace.c                     |  120 +
- security/landlock/ptrace.h                     |   14 +
- security/landlock/ruleset.c                    |  473 ++++
- security/landlock/ruleset.h                    |  165 ++
- security/landlock/setup.c                      |   40 +
- security/landlock/setup.h                      |   18 +
- security/landlock/syscalls.c                   |  451 ++++
- security/security.c                            |   51 +-
- security/selinux/hooks.c                       |   58 +-
- security/selinux/include/objsec.h              |    6 +
- security/selinux/ss/services.c                 |    3 +-
- security/smack/smack.h                         |    6 +
- security/smack/smack_lsm.c                     |   35 +-
- tools/testing/selftests/Makefile               |    1 +
- tools/testing/selftests/landlock/.gitignore    |    2 +
- tools/testing/selftests/landlock/Makefile      |   24 +
- tools/testing/selftests/landlock/base_test.c   |  266 +++
- tools/testing/selftests/landlock/common.h      |  183 ++
- tools/testing/selftests/landlock/config        |    7 +
- tools/testing/selftests/landlock/fs_test.c     | 2791 ++++++++++++++++++++++++
- tools/testing/selftests/landlock/ptrace_test.c |  337 +++
- tools/testing/selftests/landlock/true.c        |    5 +
- 72 files changed, 6986 insertions(+), 77 deletions(-)
- create mode 100644 Documentation/security/landlock.rst
- create mode 100644 Documentation/userspace-api/landlock.rst
- create mode 100644 include/uapi/linux/landlock.h
- create mode 100644 samples/landlock/.gitignore
- create mode 100644 samples/landlock/Makefile
- create mode 100644 samples/landlock/sandboxer.c
- create mode 100644 security/landlock/Kconfig
- create mode 100644 security/landlock/Makefile
- create mode 100644 security/landlock/common.h
- create mode 100644 security/landlock/cred.c
- create mode 100644 security/landlock/cred.h
- create mode 100644 security/landlock/fs.c
- create mode 100644 security/landlock/fs.h
- create mode 100644 security/landlock/limits.h
- create mode 100644 security/landlock/object.c
- create mode 100644 security/landlock/object.h
- create mode 100644 security/landlock/ptrace.c
- create mode 100644 security/landlock/ptrace.h
- create mode 100644 security/landlock/ruleset.c
- create mode 100644 security/landlock/ruleset.h
- create mode 100644 security/landlock/setup.c
- create mode 100644 security/landlock/setup.h
- create mode 100644 security/landlock/syscalls.c
- create mode 100644 tools/testing/selftests/landlock/.gitignore
- create mode 100644 tools/testing/selftests/landlock/Makefile
- create mode 100644 tools/testing/selftests/landlock/base_test.c
- create mode 100644 tools/testing/selftests/landlock/common.h
- create mode 100644 tools/testing/selftests/landlock/config
- create mode 100644 tools/testing/selftests/landlock/fs_test.c
- create mode 100644 tools/testing/selftests/landlock/ptrace_test.c
- create mode 100644 tools/testing/selftests/landlock/true.c
---1665246916-1848305378-1619577521=:601019--
+PiBGcm9tOiBDYXNleSBTY2hhdWZsZXIgW21haWx0bzpjYXNleUBzY2hhdWZsZXItY2EuY29tXQ0K
+PiBTZW50OiBUdWVzZGF5LCBBcHJpbCAyNywgMjAyMSA2OjQwIFBNDQo+IE9uIDQvMjcvMjAyMSA4
+OjU3IEFNLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiA+PiBGcm9tOiBNaW1pIFpvaGFyIFttYWls
+dG86em9oYXJAbGludXguaWJtLmNvbV0NCj4gPj4gU2VudDogVHVlc2RheSwgQXByaWwgMjcsIDIw
+MjEgNTozNSBQTQ0KPiA+PiBPbiBUdWUsIDIwMjEtMDQtMjcgYXQgMDk6MjUgKzAwMDAsIFJvYmVy
+dG8gU2Fzc3Ugd3JvdGU6DQo+ID4+Pj4gRnJvbTogTWltaSBab2hhciBbbWFpbHRvOnpvaGFyQGxp
+bnV4LmlibS5jb21dDQo+ID4+Pj4gU2VudDogTW9uZGF5LCBBcHJpbCAyNiwgMjAyMSA5OjQ5IFBN
+DQo+ID4+Pj4gT24gRnJpLCAyMDIxLTAzLTA1IGF0IDA5OjMwIC0wODAwLCBDYXNleSBTY2hhdWZs
+ZXIgd3JvdGU6DQo+ID4+Pj4+IEhvd2V2ZXIgLi4uDQo+ID4+Pj4+DQo+ID4+Pj4+IFRoZSBzcGVj
+aWFsIGNhc2luZyBvZiBJTUEgYW5kIEVWTSBpbiBzZWN1cml0eS5jIGlzIGdldHRpbmcgb3V0IG9m
+DQo+ID4+Pj4+IGhhbmQsIGFuZCBhcHBlYXJzIHRvIGJlIHVubmVjZXNzYXJ5LiBCeSBteSBjb3Vu
+dCB0aGVyZSBhcmUgOSBJTUENCj4gPj4+Pj4gaG9va3MgYW5kIDUgRVZNIGhvb2tzIHRoYXQgaGF2
+ZSBiZWVuIGhhcmQgY29kZWQuIEFkZGluZyB0aGlzIElNQQ0KPiA+Pj4+PiBob29rIG1ha2VzIDEw
+LiBJdCB3b3VsZCBiZSByZWFsbHkgZWFzeSB0byByZWdpc3RlciBJTUEgYW5kIEVWTSBhcw0KPiA+
+Pj4+PiBzZWN1cml0eSBtb2R1bGVzLiBUaGF0IHdvdWxkIHJlbW92ZSB0aGUgZGVwZW5kZW5jeSB0
+aGV5IGN1cnJlbnRseQ0KPiA+Pj4+PiBoYXZlIG9uIHNlY3VyaXR5IHN1Yi1zeXN0ZW0gYXBwcm92
+YWwgZm9yIGNoYW5nZXMgbGlrZSB0aGlzIG9uZS4NCj4gPj4+Pj4gSSBrbm93IHRoZXJlIGhhcyBi
+ZWVuIHJlc2lzdGFuY2UgdG8gIklNQSBhcyBhbiBMU00iIGluIHRoZSBwYXN0LA0KPiA+Pj4+PiBi
+dXQgaXQncyBwcmV0dHkgaGFyZCB0byBzZWUgaG93IGl0IHdvdWxkbid0IGJlIGEgd2luLg0KPiA+
+PiBJdCBzaG9sZG4ndCBiZSBvbmUgd2F5LiAgQXJlIHlvdSB3aWxsaW5nIHRvIGFsc28gbWFrZSB0
+aGUgZXhpc3RpbmcNCj4gPj4gSU1BL0VWTSBob29rcyB0aGF0IGFyZSBub3QgY3VycmVudGx5IHNl
+Y3VyaXR5IGhvb2tzLCBzZWN1cml0eSBob29rcw0KPiA+PiB0b28/ICAgQW5kIGFjY2VwdCBhbnkg
+bmV3IElNQS9FVk0gaG9va3Mgd291bGQgcmVzdWx0IGluIG5ldyBzZWN1cml0eQ0KPiA+PiBob29r
+cz8gIEFyZSB5b3UgYWxzbyB3aWxsaW5nIHRvIGFkZCBkZXBlbmRlbmN5IHRyYWNraW5nIGJldHdl
+ZW4gTFNNcz8NCj4gPiBJIGFscmVhZHkgaGF2ZSBhIHByZWxpbWluYXJ5IGJyYW5jaCB3aGVyZSBJ
+TUEvRVZNIGFyZSBmdWxsIExTTXMuDQo+IA0KPiBJIGRvbid0IHRoaW5rIHRoYXQgSU1BL0VWTSBu
+ZWVkIHRvIGJlIGZ1bGwgTFNNcyB0byBhZGRyZXNzIG15IHdoaW5naW5nLg0KPiBJIGRvbid0IHRo
+aW5rIHRoYXQgY2hhbmdpbmcgdGhlIGV4aXN0aW5nIGludGVncml0eV93aGF0ZXZlcigpIHRvDQo+
+IHNlY3VyaXR5X3doYXRldmVyKCkgaXMgbmVjZXNzYXJ5LiBBbGwgdGhhdCBJJ20gcmVhbGx5IG9i
+amVjdGluZyB0byBpcw0KPiBzcGVjaWFsIGNhc2VzIGluIHNlY3VyaXR5LmM6DQo+IA0KPiB7DQo+
+IAlpbnQgcmV0Ow0KPiANCj4gCWlmICh1bmxpa2VseShJU19QUklWQVRFKGRfYmFja2luZ19pbm9k
+ZShkZW50cnkpKSkpDQo+IAkJcmV0dXJuIDA7DQo+IAkvKg0KPiAJICogU0VMaW51eCBhbmQgU21h
+Y2sgaW50ZWdyYXRlIHRoZSBjYXAgY2FsbCwNCj4gCSAqIHNvIGFzc3VtZSB0aGF0IGFsbCBMU01z
+IHN1cHBseWluZyB0aGlzIGNhbGwgZG8gc28uDQo+IAkgKi8NCj4gCXJldCA9IGNhbGxfaW50X2hv
+b2soaW5vZGVfcmVtb3ZleGF0dHIsIDEsIG1udF91c2VybnMsIGRlbnRyeSwNCj4gbmFtZSk7DQo+
+IAlpZiAocmV0ID09IDEpDQo+IAkJcmV0ID0gY2FwX2lub2RlX3JlbW92ZXhhdHRyKG1udF91c2Vy
+bnMsIGRlbnRyeSwgbmFtZSk7DQo+IAlpZiAocmV0KQ0KPiAJCXJldHVybiByZXQ7DQo+IAlyZXQg
+PSBpbWFfaW5vZGVfcmVtb3ZleGF0dHIoZGVudHJ5LCBuYW1lKTsNCj4gCWlmIChyZXQpDQo+IAkJ
+cmV0dXJuIHJldDsNCj4gCXJldHVybiBldm1faW5vZGVfcmVtb3ZleGF0dHIoZGVudHJ5LCBuYW1l
+KTsNCj4gfQ0KPiANCj4gTm90IGFsbCB1c2VzIG9mIGltYS9ldm0gZnVuY3Rpb25zIGluIHNlY3Vy
+aXR5LmMgbWFrZSBzZW5zZSB0byBjb252ZXJ0DQo+IHRvIExTTSBob29rcy4gSW4gZmFjdCwgSSBj
+b3VsZCBiZSBjb21wbGV0ZWx5IHdyb25nIHRoYXQgaXQgbWFrZXMgc2Vuc2UNCj4gdG8gY2hhbmdl
+IGFueXRoaW5nLiBXaGF0IEkgc2VlIGlzIHNvbWV0aGluZyB0aGF0IGxvb2tzIGxpa2UgaXQgb3Vn
+aHQgdG8NCj4gYmUgbm9ybWFsaXplZC4gSWYgdGhlcmUncyBnb29kIHJlYXNvbiAoYW5kIGl0IGxv
+b2tzIGxpa2UgdGhlcmUgbWF5IGJlKQ0KPiBmb3IgaXQgdG8gYmUgZGlmZmVyZW50IHRoZXJlJ3Mg
+bm8gcmVhc29uIHRvIHBheSBhdHRlbnRpb24gdG8gbWUuDQoNCllvdSBhcmUgcmlnaHQuIFdoZW4g
+SSBzYWlkIHRoYXQgSSBkb24ndCBzZWUgYW55IHZhbGlkIHJlYXNvbiBmb3INCm5vdCBtb3Zpbmcg
+SU1BL0VWTSB0byB0aGUgTFNNIGluZnJhc3RydWN0dXJlLCBJIHByb2JhYmx5IHNob3VsZA0KaGF2
+ZSBzYWlkIGp1c3QgdGhhdCBpdCBpcyB0ZWNobmljYWxseSBmZWFzaWJsZS4gQXBvbG9naWVzIGZv
+ciBiZWluZw0KdG9vIHJlc29sdXRlIGluIG15IHN0YXRlbWVudC4NCg0KUm9iZXJ0bw0KDQpIVUFX
+RUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGly
+ZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5saQ0KDQo+ID4gSW5kZWVkLCB0aGUgYmln
+Z2VzdCBwcm9ibGVtIHdvdWxkIGJlIHRvIGhhdmUgdGhlIG5ldyBob29rcw0KPiA+IGFjY2VwdGVk
+LiBJIGNhbiBzZW5kIHRoZSBwYXRjaCBzZXQgZm9yIGV2YWx1YXRpb24gdG8gc2VlIHdoYXQNCj4g
+PiBwZW9wbGUgdGhpbmsuDQo+ID4NCj4gPj4+PiBTb21laG93IEkgbWlzc2VkIHRoZSBuZXcgImxz
+bT0iIGJvb3QgY29tbWFuZCBsaW5lIG9wdGlvbiwgd2hpY2gNCj4gPj4+PiBkeW5hbWljYWxseSBh
+bGxvd3MgZW5hYmxpbmcvZGlzYWJsaW5nIExTTXMsIGJlaW5nIHVwc3RyZWFtZWQuICBUaGlzDQo+
+ID4+Pj4gd291bGQgYmUgb25lIG9mIHRoZSByZWFzb25zIGZvciBub3QgbWFraW5nIElNQS9FVk0g
+ZnVsbCBMU01zLg0KPiA+Pj4gSGkgTWltaQ0KPiA+Pj4NCj4gPj4+IG9uZSBjb3VsZCBhcmd1ZSB3
+aHkgSU1BL0VWTSBzaG91bGQgcmVjZWl2ZSBhIHNwZWNpYWwNCj4gPj4+IHRyZWF0bWVudC4gSSB1
+bmRlcnN0YW5kIHRoYXQgdGhpcyB3YXMgYSBuZWNlc3NpdHkgd2l0aG91dA0KPiA+Pj4gTFNNIHN0
+YWNraW5nLiBOb3cgdGhhdCBMU00gc3RhY2tpbmcgaXMgYXZhaWxhYmxlLCBJIGRvbid0DQo+ID4+
+PiBzZWUgYW55IHZhbGlkIHJlYXNvbiB3aHkgSU1BL0VWTSBzaG91bGQgbm90IGJlIG1hbmFnZWQN
+Cj4gPj4+IGJ5IHRoZSBMU00gaW5mcmFzdHJ1Y3R1cmUuDQo+ID4+Pg0KPiA+Pj4+IEJvdGggSU1B
+IGFuZCBFVk0gZmlsZSBkYXRhL21ldGFkYXRhIGlzIHBlcnNpc3RlbnQgYWNyb3NzIGJvb3RzLiAg
+SWYNCj4gPj4+PiBlaXRoZXIgb25lIG9yIHRoZSBvdGhlciBpcyBub3QgZW5hYmxlZCB0aGUgZmls
+ZSBkYXRhIGhhc2ggb3IgZmlsZQ0KPiA+Pj4+IG1ldGFkYXRhIEhNQUMgd2lsbCBub3QgcHJvcGVy
+bHkgYmUgdXBkYXRlZCwgcG90ZW50aWFsbHkgcHJldmVudGluZyB0aGUNCj4gPj4+PiBzeXN0ZW0g
+ZnJvbSBib290aW5nIHdoZW4gcmUtZW5hYmxlZC4gIFJlLWVuYWJsaW5nIElNQSBhbmQgRVZNDQo+
+IHdvdWxkDQo+ID4+Pj4gcmVxdWlyZSAiZml4aW5nIiB0aGUgbXV0YWJsZSBmaWxlIGRhdGEgaGFz
+aCBhbmQgSE1BQywgd2l0aG91dCBhbnkNCj4gPj4+PiBrbm93bGVkZ2Ugb2Ygd2hhdCB0aGUgImZp
+eGVkIiB2YWx1ZXMgc2hvdWxkIGJlLiAgRGF2ZSBTYWZmb3JkIHJlZmVycmVkDQo+ID4+Pj4gdG8g
+dGhpcyBhcyAiYmxlc3NpbmciIHRoZSBuZXdseSBjYWxjdWxhdGVkIHZhbHVlcy4NCj4gPj4+IElN
+QS9FVk0gY2FuIGJlIGVhc2lseSBkaXNhYmxlZCBpbiBvdGhlciB3YXlzLCBmb3IgZXhhbXBsZQ0K
+PiA+Pj4gYnkgbW92aW5nIHRoZSBJTUEgcG9saWN5IG9yIHRoZSBFVk0ga2V5cyBlbHNld2hlcmUu
+DQo+ID4+IER5bmFtaWNhbGx5IGRpc2FibGluZyBJTUEvRVZNIGlzIHZlcnkgZGlmZmVyZW50IHRo
+YW4gcmVtb3Zpbmcga2V5cyBhbmQNCj4gPj4gcHJldmVudGluZyB0aGUgc3lzdGVtIGZyb20gYm9v
+dGluZy4gIFJlc3RvcmluZyB0aGUga2V5cyBzaG91bGQgcmVzdWx0DQo+ID4+IGluIGJlaW5nIGFi
+bGUgdG8gcmUtYm9vdCB0aGUgc3lzdGVtLiAgUmUtZW5hYmxpbmcgSU1BL0VWTSwgcmVxdWlyZXMg
+cmUtDQo+ID4+IGxhYmVsaW5nIHRoZSBmaWxlc3lzdGVtIGluICJmaXgiIG1vZGUsIHdoaWNoICJi
+bGVzc2VzIiBhbnkgY2hhbmdlcyBtYWRlDQo+ID4+IHdoZW4gSU1BL0VWTSB3ZXJlIG5vdCBlbmFi
+bGVkLg0KPiA+IFVobSwgSSB0aG91Z2h0IHRoYXQgaWYgeW91IG1vdmUgdGhlIEhNQUMga2V5IGZv
+ciBleGFtcGxlDQo+ID4gYW5kIHlvdSBib290IHRoZSBzeXN0ZW0sIHlvdSBpbnZhbGlkYXRlIGFs
+bCBmaWxlcyB0aGF0IGNoYW5nZSwNCj4gPiBiZWNhdXNlIHRoZSBITUFDIGlzIG5vdCB1cGRhdGVk
+Lg0KPiA+DQo+ID4+PiBBbHNvIG90aGVyIExTTXMgcmVseSBvbiBhIGR5bmFtaWMgYW5kIHBlcnNp
+c3RlbnQgc3RhdGUNCj4gPj4+IChmb3IgZXhhbXBsZSBmb3IgZmlsZSB0cmFuc2l0aW9ucyBpbiBT
+RUxpbnV4KSwgd2hpY2ggY2Fubm90IGJlDQo+ID4+PiB0cnVzdGVkIGFueW1vcmUgaWYgTFNNcyBh
+cmUgZXZlbiB0ZW1wb3JhcmlseSBkaXNhYmxlZC4NCj4gPj4gWW91ciBhcmd1bWVudCBpcyBiZWNh
+dXNlIHRoaXMgaXMgYSBwcm9ibGVtIGZvciBTRUxpbnV4LCBtYWtlIGl0IGFsc28gYQ0KPiA+PiBw
+cm9ibGVtIGZvciBJTUEvRVZNIHRvbz8hICAgKCJUd28gd3JvbmdzIG1ha2UgYSByaWdodCIpDQo+
+ID4gVG8gbWUgaXQgc2VlbXMgcmVhc29uYWJsZSB0byBnaXZlIHRoZSBhYmlsaXR5IHRvIHBlb3Bs
+ZSB0bw0KPiA+IGRpc2FibGUgdGhlIExTTXMgaWYgdGhleSB3YW50IHRvIGRvIHNvLCBhbmQgYXQg
+dGhlIHNhbWUgdGltZQ0KPiA+IHRvIHRyeSB0byBwcmV2ZW50IGFjY2lkZW50YWwgZGlzYWJsZSB3
+aGVuIHRoZSBMU01zIHNob3VsZCBiZQ0KPiA+IGVuYWJsZWQuDQo+ID4NCj4gPj4+IElmIElNQS9F
+Vk0gaGF2ZSB0byBiZSBlbmFibGVkIHRvIHByZXZlbnQgbWlzY29uZmlndXJhdGlvbiwNCj4gPj4+
+IEkgdGhpbmsgdGhlIHNhbWUgY2FuIGJlIGFjaGlldmVkIGlmIHRoZXkgYXJlIGZ1bGwgTFNNcywg
+Zm9yDQo+ID4+PiBleGFtcGxlIGJ5IHByZXZlbnRpbmcgdGhhdCB0aGUgbGlzdCBvZiBlbmFibGVk
+IExTTXMgY2hhbmdlcw0KPiA+Pj4gYXQgcnVuLXRpbWUuDQo+ID4+IFRoYXQgc2hpcCBzYWlsZWQg
+d2hlbiAic2VjdXJpdHk9IiB3YXMgZGVwcmVjYXRlZCBpbiBmYXZvciBvZiAibHNtPSINCj4gPj4g
+c3VwcG9ydCwgd2hpY2ggZHluYW1pY2FsbHkgZW5hYmxlcy9kaXNhYmxlcyBMU01zIGF0IHJ1bnRp
+bWUuDQo+IA0KPiBzZWN1cml0eT0gaXMgc3RpbGwgc3VwcG9ydGVkIGFuZCB3b3JrcyB0aGUgc2Ft
+ZSBhcyBldmVyLiBsc209IGlzDQo+IG1vcmUgcG93ZXJmdWwgdGhhbiBzZWN1cml0eT0gYnV0IGFs
+c28gaGFyZGVyIHRvIHVzZS4NCj4gDQo+ID4gTWF5YmUgdGhpcyBwb3NzaWJpbGl0eSBjYW4gYmUg
+ZGlzYWJsZWQgd2l0aCBhIG5ldyBrZXJuZWwgb3B0aW9uLg0KPiA+IEkgd2lsbCB0aGluayBhIG1v
+cmUgY29uY3JldGUgc29sdXRpb24uDQo+ID4NCj4gPiBSb2JlcnRvDQo+ID4NCj4gPiBIVUFXRUkg
+VEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgsIEhSQiA1NjA2Mw0KPiA+IE1hbmFnaW5nIERp
+cmVjdG9yOiBMaSBQZW5nLCBMaSBKaWFuLCBTaGkgWWFubGkNCg0K
