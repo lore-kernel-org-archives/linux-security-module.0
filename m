@@ -2,103 +2,64 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC43DC43462
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 23:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 058ABC433ED
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 02:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2AA861076
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Apr 2021 23:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9F9B60FF1
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 02:43:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239519AbhD0Xsf (ORCPT
+        id S235839AbhD1Co2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Apr 2021 19:48:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59906 "EHLO mail.kernel.org"
+        Tue, 27 Apr 2021 22:44:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236015AbhD0Xsf (ORCPT
+        id S235422AbhD1Co1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Apr 2021 19:48:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3E28061076;
-        Tue, 27 Apr 2021 23:47:51 +0000 (UTC)
+        Tue, 27 Apr 2021 22:44:27 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 94EF2613BF;
+        Wed, 28 Apr 2021 02:43:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619567271;
-        bh=TFwGmF0S+aDOzPhe7rg8N7GWEOOJzXVXXwUBK1ZpOOE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VGeLEos/LYRcIBjuqKtAGyIam3joh+EZmmQcM3sGI4fAyKvqLz/JWmgKsgfFq9f1l
-         r6T1j0+u6Zduo3SQqzKbmiw0QXxRJoAvl+qYq73J88OP9KF1FdxXPwCVnhVQ2OhAAM
-         0WtO4VBbIaxWG8csflefoovclu1FZHgcmI12WBEAkYxK0AUeWEOusclhEw8z6cTA2X
-         A6YvItjkUTDysbqAPP7EGla3lQVc4LcIRfU57YnWcKVMvgiogD+nkx0MpMlSHptU1W
-         AiYHDDGvttdlGeOCe02+Dr64Pqcg7YrgMMtVffrVFef1EwzlwCCG67WRgkMXTR1wEY
-         S/TU7qIf1XJDw==
-Date:   Wed, 28 Apr 2021 02:47:49 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        zohar@linux.ibm.com, nayna@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
+        s=k20201202; t=1619577823;
+        bh=sHYjtFfEQNiXpCeTMcprDBstLSJOrWLBqhGEntxJohw=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=XnwOiJxnNMZgYF789KQ8ngoNCJuuhcDrZ1MPOQ6vjMB5mlHjMZc1RKA/m6pw29+P+
+         nwK/V07VFUh+Oh1M53SYsnjw14Xht1OjURGfdSPV+j/VjypfxpsEsi7UOaOkod8X4i
+         1E7OnomCRIF61+bro6iDW4S9FvPgHDF9sBHV7UOIsraZ+cNpdVD5xyGStb/Y5Sk0KW
+         voq2zexyx7F3PvNbRIYddTTPIOJIwK5sNuuRPQ9ZQBPVARUjKXIDyTVFgm6W6XJtty
+         VQgrup2jeLKpTtwHBdYgLzp2uR3zVA+radnoH+y3cjXDVPaxPHha31/JqGrOLBIJRX
+         djK5lL8jZigSQ==
+Subject: Re: [GIT PULL][Security Subsystem] Fixes for v5.13
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <bed5f880-9651-5ee1-c3c2-713c1ac194f0@namei.org>
+References: <bed5f880-9651-5ee1-c3c2-713c1ac194f0@namei.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <bed5f880-9651-5ee1-c3c2-713c1ac194f0@namei.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.13
+X-PR-Tracked-Commit-Id: 049ae601f3fb3d5b1c1efdb434499770c96237f6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: acd3d28594536e9096c1ea76c5867d8a68babef6
+Message-Id: <161957782350.6484.6716461834501073563.pr-tracker-bot@kernel.org>
+Date:   Wed, 28 Apr 2021 02:43:43 +0000
+To:     James Morris <jmorris@namei.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] Add support for ECDSA-signed kernel modules
-Message-ID: <YIiipT1nDSfzX3P6@kernel.org>
-References: <20210423151247.1517808-1-stefanb@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210423151247.1517808-1-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 23, 2021 at 11:12:45AM -0400, Stefan Berger wrote:
-> This series adds support for ECDSA-signed kernel modules. It also
-> attempts to address a kbuild issue where a developer created an ECDSA
-> key for signing kernel modules and then builds an older version of the
-> kernel, when bisecting the kernel for example, that does not support
-> ECDSA keys.
-> 
-> The first patch addresses the kbuild issue of needing to delete that
-> ECDSA key if it is in certs/signing_key.pem and trigger the creation
-> of an RSA key. However, for this to work this patch would have to be
-> backported to previous versions of the kernel but would also only work
-> for the developer if he/she used a stable version of the kernel to which
-> this patch was applied. So whether this patch actually achieves the
-> wanted effect is not always guaranteed.
-> 
-> The 2nd patch adds the support for the ECSDA-signed kernel modules.
-> 
-> This patch depends on the ECDSA support series currently queued here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/log/?h=ecc
-> 
->   Stefan
-> 
-> v4:
->   - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
->   
-> v3:
->   - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
->   - added recommendation to use string hash to Kconfig help text
-> 
-> v2:
->   - Adjustment to ECDSA key detector string in 2/2
->   - Rephrased cover letter and patch descriptions with Mimi
-> 
-> 
-> Stefan Berger (2):
->   certs: Trigger creation of RSA module signing key if it's not an RSA
->     key
->   certs: Add support for using elliptic curve keys for signing modules
-> 
->  certs/Kconfig                         | 26 ++++++++++++++++++++++++++
->  certs/Makefile                        | 14 ++++++++++++++
->  crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
->  3 files changed, 48 insertions(+)
-> 
-> -- 
-> 2.29.2
-> 
-> 
+The pull request you sent on Wed, 28 Apr 2021 09:16:37 +1000 (AEST):
 
-I just went through v3. My tags apply also to this version.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git tags/fixes-v5.13
 
-/Jarkko
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/acd3d28594536e9096c1ea76c5867d8a68babef6
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
