@@ -2,254 +2,146 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 835B1C43462
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 15:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C416FC433ED
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 15:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4482961407
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 15:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86F9361006
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 15:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231347AbhD1PgT convert rfc822-to-8bit (ORCPT
+        id S240400AbhD1Phk (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Apr 2021 11:36:19 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:2944 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231169AbhD1PgQ (ORCPT
+        Wed, 28 Apr 2021 11:37:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:30531 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S240344AbhD1PhX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Apr 2021 11:36:16 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FVjHL5d7mz6wkLW;
-        Wed, 28 Apr 2021 23:29:50 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 28 Apr 2021 17:35:28 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Wed, 28 Apr 2021 17:35:28 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "mjg59@google.com" <mjg59@google.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: RE: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-Thread-Topic: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
- post hooks
-Thread-Index: AQHXEdMA2oN9D131skWV9JJ8Z5VEUarKXeAg
-Date:   Wed, 28 Apr 2021 15:35:28 +0000
-Message-ID: <8e62ae3f8cf94c798fc1b7ffd69cbdc4@huawei.com>
-References: <20210305151923.29039-1-roberto.sassu@huawei.com>
- <20210305151923.29039-5-roberto.sassu@huawei.com>
-In-Reply-To: <20210305151923.29039-5-roberto.sassu@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 28 Apr 2021 11:37:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1619624197;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=pG5pwOUgg892glFsUccSS4Ot1zsI7mcT+KpkcWM44lQ=;
+        b=SohgRZU0rNTanpN9U2JOiSPyASSpl4F/ov9BWdYpNMuVAlNq4WTCXC4y6FggjNeJuo+jfE
+        gmr5YgnqgH4cBAbCdrwh/kOzygcWsf6pfqWhntVnMe1xvP8i5PXoHqGXwlmFt1u73L7SCl
+        97NqXwG2mQ3x43NuoN2WCUS09BXTDT4=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-190-Uc7eCMBVPqW4Ubtg2MxzbQ-1; Wed, 28 Apr 2021 11:36:31 -0400
+X-MC-Unique: Uc7eCMBVPqW4Ubtg2MxzbQ-1
+Received: by mail-qk1-f199.google.com with SMTP id y9-20020ae9f4090000b02902e4caf24229so5149389qkl.4
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Apr 2021 08:36:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pG5pwOUgg892glFsUccSS4Ot1zsI7mcT+KpkcWM44lQ=;
+        b=HXKKl2GZ+4cPxZ7uIRHFZIBsYjQSIaXXLiJIjeJtndqp8bp/nma7bsL3hl73MYSUWw
+         fwKAC8+F7a//5NsmNV7ybHAfA1gyHB5yiA6mhoqRarwVBSbGw1dEPf/H6H0gwu+qGiuS
+         0DTkIGXlMlnbRIvwbs39PYqyAY75Jns60iYrVymAcvLTLGRTNtNvmflHiq9NDAzPUas0
+         fSNnJHLcI9uX6YHQCLG+EL9kn+BADs9C4chxh0woy3eMsgolzH94C/qqrMajaB3vhUJH
+         9UKuTMQIvwqv0ZWDoJ21xnUnaFGjwf7BPdU8fRPLqnwSu88gDGSC/wnXW4AcIcRuf0OD
+         oZ6A==
+X-Gm-Message-State: AOAM532AzV5d9tPaQVQPkaDjf3AfyK4JdW6k1f8xLCel1MAJdwcwbiGn
+        OjFcXAMYtcGmrexrj+dUq7yL+XPs7b36IKRytnM3CHmiVeEgFKPifNlGpQT12uxkv+QgEt38tnr
+        A0L8styKJeipJvARprxylPcpzz9TOgVMB/C46
+X-Received: by 2002:a37:5f41:: with SMTP id t62mr29451306qkb.458.1619624190593;
+        Wed, 28 Apr 2021 08:36:30 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz+naGLpqAAopTlTZbQTPCAVHulsI7tDqz+zkw7UWnc7YVzu6jS0fCGmeR9jCcwK9+IV75HsA==
+X-Received: by 2002:a37:5f41:: with SMTP id t62mr29451285qkb.458.1619624190406;
+        Wed, 28 Apr 2021 08:36:30 -0700 (PDT)
+Received: from localhost.localdomain (075-142-250-213.res.spectrum.com. [75.142.250.213])
+        by smtp.gmail.com with ESMTPSA id e15sm21640qkm.129.2021.04.28.08.36.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Apr 2021 08:36:29 -0700 (PDT)
+Subject: Re: [PATCH] samples/landlock: fix path_list memory leak
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Nathan Chancellor <nathan@kernel.org>,
+        linux-security-module@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        James Morris <jmorris@namei.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <20210427183755.2790654-1-trix@redhat.com>
+ <CAKwvOdmj5YvWZZWwcq1G7JgRALwPbqwiROiedMeEbBst2sGeiQ@mail.gmail.com>
+ <6108e69b-0470-cd71-e477-ba64641cbf58@digikod.net>
+From:   Tom Rix <trix@redhat.com>
+Message-ID: <4ece80d4-16fe-1938-7eba-2046840881f6@redhat.com>
+Date:   Wed, 28 Apr 2021 08:36:27 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <6108e69b-0470-cd71-e477-ba64641cbf58@digikod.net>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=trix@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Roberto Sassu
-> Sent: Friday, March 5, 2021 4:19 PM
-> ima_inode_setxattr() and ima_inode_removexattr() hooks are called before
-> an
-> operation is performed. Thus, ima_reset_appraise_flags() should not be
-> called there, as flags might be unnecessarily reset if the operation is
-> denied.
-> 
-> This patch introduces the post hooks ima_inode_post_setxattr() and
-> ima_inode_post_removexattr(), and adds the call to
-> ima_reset_appraise_flags() in the new functions.
-> 
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  fs/xattr.c                            |  2 ++
->  include/linux/ima.h                   | 18 ++++++++++++++++++
->  security/integrity/ima/ima_appraise.c | 25 ++++++++++++++++++++++---
->  security/security.c                   |  1 +
->  4 files changed, 43 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index b3444e06cded..81847f132d26 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -16,6 +16,7 @@
->  #include <linux/namei.h>
->  #include <linux/security.h>
->  #include <linux/evm.h>
-> +#include <linux/ima.h>
->  #include <linux/syscalls.h>
->  #include <linux/export.h>
->  #include <linux/fsnotify.h>
-> @@ -502,6 +503,7 @@ __vfs_removexattr_locked(struct user_namespace
-> *mnt_userns,
-> 
->  	if (!error) {
->  		fsnotify_xattr(dentry);
-> +		ima_inode_post_removexattr(dentry, name);
->  		evm_inode_post_removexattr(dentry, name);
->  	}
-> 
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 61d5723ec303..5e059da43857 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -171,7 +171,13 @@ extern void ima_inode_post_setattr(struct
-> user_namespace *mnt_userns,
->  				   struct dentry *dentry);
->  extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
->  		       const void *xattr_value, size_t xattr_value_len);
-> +extern void ima_inode_post_setxattr(struct dentry *dentry,
-> +				    const char *xattr_name,
-> +				    const void *xattr_value,
-> +				    size_t xattr_value_len);
->  extern int ima_inode_removexattr(struct dentry *dentry, const char
-> *xattr_name);
-> +extern void ima_inode_post_removexattr(struct dentry *dentry,
-> +				       const char *xattr_name);
->  #else
->  static inline bool is_ima_appraise_enabled(void)
->  {
-> @@ -192,11 +198,23 @@ static inline int ima_inode_setxattr(struct dentry
-> *dentry,
->  	return 0;
->  }
-> 
-> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
-> +					   const char *xattr_name,
-> +					   const void *xattr_value,
-> +					   size_t xattr_value_len)
-> +{
-> +}
-> +
->  static inline int ima_inode_removexattr(struct dentry *dentry,
->  					const char *xattr_name)
->  {
->  	return 0;
->  }
-> +
-> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
-> +					      const char *xattr_name)
-> +{
-> +}
->  #endif /* CONFIG_IMA_APPRAISE */
-> 
->  #if defined(CONFIG_IMA_APPRAISE) &&
-> defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-> diff --git a/security/integrity/ima/ima_appraise.c
-> b/security/integrity/ima/ima_appraise.c
-> index 565e33ff19d0..1f029e4c8d7f 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -577,21 +577,40 @@ int ima_inode_setxattr(struct dentry *dentry, const
-> char *xattr_name,
->  	if (result == 1) {
->  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
->  			return -EINVAL;
-> -		ima_reset_appraise_flags(d_backing_inode(dentry),
-> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
->  		result = 0;
->  	}
->  	return result;
->  }
-> 
-> +void ima_inode_post_setxattr(struct dentry *dentry, const char
-> *xattr_name,
-> +			     const void *xattr_value, size_t xattr_value_len)
-> +{
-> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
-> +	int result;
-> +
-> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
-> +				   xattr_value_len);
-> +	if (result == 1)
-> +		ima_reset_appraise_flags(d_backing_inode(dentry),
 
-I found an issue in this patch.
+On 4/28/21 2:58 AM, Mickaël Salaün wrote:
+> On 27/04/2021 21:13, Nick Desaulniers wrote:
+>> On Tue, Apr 27, 2021 at 11:38 AM <trix@redhat.com> wrote:
+>>> From: Tom Rix <trix@redhat.com>
+>>>
+>>> Clang static analysis reports this error
+>>>
+>>> sandboxer.c:134:8: warning: Potential leak of memory
+>>>    pointed to by 'path_list'
+>>>          ret = 0;
+>>>                ^
+>>> path_list is allocated in parse_path() but never freed.
+>>>
+>>> Signed-off-by: Tom Rix <trix@redhat.com>
+>>> ---
+>>>   samples/landlock/sandboxer.c | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+>>> index 7a15910d2171..4629d011ed61 100644
+>>> --- a/samples/landlock/sandboxer.c
+>>> +++ b/samples/landlock/sandboxer.c
+>>> @@ -134,6 +134,8 @@ static int populate_ruleset(
+>>>          ret = 0;
+>>>
+>>>   out_free_name:
+>>> +       if (path_list)
+>>> +               free(path_list);
+>> I don't think the conditional is even necessary? By our first `goto
+>> out_free_name;`, `parse_path` has already been called/memory for
+>> `path_list` has already been allocated. `parse_path` doesn't check
+>> whether `malloc` has failed.
+> Indeed, no need for the path_list check. In practice, this memory leak
+> doesn't stay long because of the execve, but I missed this free anyway.
+> Thanks!
 
-Moving ima_reset_appraise_flags() to the post hook causes this
-function to be executed also when __vfs_setxattr_noperm() is
-called.
+Ok, the general problem of not checking if malloc and friends succeeds 
+is a different problem.
 
-The problem is that at the end of a write IMA calls
-ima_collect_measurement() to recalculate the file digest and
-update security.ima. ima_collect_measurement() sets
-IMA_COLLECTED.
+So remove the check and keep the free ?
 
-However, after that __vfs_setxattr_noperm() causes
-IMA_COLLECTED to be reset, and to unnecessarily recalculate
-the file digest. This wouldn't happen if ima_reset_appraise_flags()
-is in the pre hook.
+Tom
 
-I solved by replacing:
-	iint->flags &= ~IMA_DONE_MASK;
-with:
-	iint->flags &= ~(IMA_DONE_MASK & ~IMA_COLLECTED);
-
-just when the IMA_CHANGE_XATTR bit is set. It should
-not be a problem since setting an xattr does not influence
-the file content.
-
-Mimi, what do you think?
-
-Thanks
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
-> +}
-> +
->  int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
->  {
->  	int result;
-> 
->  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
->  	if (result == 1) {
-> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
->  		result = 0;
->  	}
->  	return result;
->  }
-> +
-> +void ima_inode_post_removexattr(struct dentry *dentry, const char
-> *xattr_name)
-> +{
-> +	int result;
-> +
-> +	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
-> +	if (result == 1)
-> +		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> +}
-> diff --git a/security/security.c b/security/security.c
-> index 5ac96b16f8fa..efb1f874dc41 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1319,6 +1319,7 @@ void security_inode_post_setxattr(struct dentry
-> *dentry, const char *name,
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return;
->  	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
-> +	ima_inode_post_setxattr(dentry, name, value, size);
->  	evm_inode_post_setxattr(dentry, name, value, size);
->  }
-> 
-> --
-> 2.26.2
+> Reviewed-by: Mickaël Salaün <mic@linux.microsoft.com>
+>
+>>>          free(env_path_name);
+>>>          return ret;
+>>>   }
+>>> --
+>>> 2.26.3
+>>>
+>>
 
