@@ -2,279 +2,254 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CFCC43460
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 11:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 835B1C43462
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 15:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA42D61438
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 11:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4482961407
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Apr 2021 15:35:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239684AbhD1LMk (ORCPT
+        id S231347AbhD1PgT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Apr 2021 07:12:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239656AbhD1LMb (ORCPT
+        Wed, 28 Apr 2021 11:36:19 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2944 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231169AbhD1PgQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Apr 2021 07:12:31 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4A5716142F;
-        Wed, 28 Apr 2021 11:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1619608306;
-        bh=HvDLgNabGCOs+S5SagXeZ4aMTi+wJrhEtYPRjaSVkDU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o6wSB3EuE82HhSGkx4KVpcYVG0Ov42M9Lspez3WGXR90twVeL5rtTUH9W1qiPaxAM
-         h9ZgAYuR7Ctf1BPdAcj9HItjLQNQj11AaAJb1D2PLcq20aHGK+rIQnKgLR+HiSUH4s
-         qh2GLHpndmiAS30OHW0G+oQzol8pbgfyP4ucWWHeUmh8wZnNMyeTvCD+HAL1UgLY1r
-         eDOMfxfQBGlOxkd5eBf2fjOHkwHz2Vji8Ntcw9tvb7RSQSpLTl4wearu8/csI7SsU+
-         nzlS7nzLXgHJ0PmO4qG4tBRi1xW84BIYJ9ZWzkDaGzDCfhEBN10V43js9kKgXzc+eY
-         Gk9GNwlOuQcKw==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        "Andrew G . Morgan" <morgan@kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 2/4] capabilities: require CAP_SETFCAP to map uid 0
-Date:   Wed, 28 Apr 2021 07:11:39 -0400
-Message-Id: <20210428111141.1343299-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210428111141.1343299-1-sashal@kernel.org>
-References: <20210428111141.1343299-1-sashal@kernel.org>
+        Wed, 28 Apr 2021 11:36:16 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FVjHL5d7mz6wkLW;
+        Wed, 28 Apr 2021 23:29:50 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 28 Apr 2021 17:35:28 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Wed, 28 Apr 2021 17:35:28 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: RE: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Topic: [PATCH v4 04/11] ima: Move ima_reset_appraise_flags() call to
+ post hooks
+Thread-Index: AQHXEdMA2oN9D131skWV9JJ8Z5VEUarKXeAg
+Date:   Wed, 28 Apr 2021 15:35:28 +0000
+Message-ID: <8e62ae3f8cf94c798fc1b7ffd69cbdc4@huawei.com>
+References: <20210305151923.29039-1-roberto.sassu@huawei.com>
+ <20210305151923.29039-5-roberto.sassu@huawei.com>
+In-Reply-To: <20210305151923.29039-5-roberto.sassu@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: "Serge E. Hallyn" <serge@hallyn.com>
+> From: Roberto Sassu
+> Sent: Friday, March 5, 2021 4:19 PM
+> ima_inode_setxattr() and ima_inode_removexattr() hooks are called before
+> an
+> operation is performed. Thus, ima_reset_appraise_flags() should not be
+> called there, as flags might be unnecessarily reset if the operation is
+> denied.
+> 
+> This patch introduces the post hooks ima_inode_post_setxattr() and
+> ima_inode_post_removexattr(), and adds the call to
+> ima_reset_appraise_flags() in the new functions.
+> 
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  fs/xattr.c                            |  2 ++
+>  include/linux/ima.h                   | 18 ++++++++++++++++++
+>  security/integrity/ima/ima_appraise.c | 25 ++++++++++++++++++++++---
+>  security/security.c                   |  1 +
+>  4 files changed, 43 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index b3444e06cded..81847f132d26 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/security.h>
+>  #include <linux/evm.h>
+> +#include <linux/ima.h>
+>  #include <linux/syscalls.h>
+>  #include <linux/export.h>
+>  #include <linux/fsnotify.h>
+> @@ -502,6 +503,7 @@ __vfs_removexattr_locked(struct user_namespace
+> *mnt_userns,
+> 
+>  	if (!error) {
+>  		fsnotify_xattr(dentry);
+> +		ima_inode_post_removexattr(dentry, name);
+>  		evm_inode_post_removexattr(dentry, name);
+>  	}
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 61d5723ec303..5e059da43857 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -171,7 +171,13 @@ extern void ima_inode_post_setattr(struct
+> user_namespace *mnt_userns,
+>  				   struct dentry *dentry);
+>  extern int ima_inode_setxattr(struct dentry *dentry, const char *xattr_name,
+>  		       const void *xattr_value, size_t xattr_value_len);
+> +extern void ima_inode_post_setxattr(struct dentry *dentry,
+> +				    const char *xattr_name,
+> +				    const void *xattr_value,
+> +				    size_t xattr_value_len);
+>  extern int ima_inode_removexattr(struct dentry *dentry, const char
+> *xattr_name);
+> +extern void ima_inode_post_removexattr(struct dentry *dentry,
+> +				       const char *xattr_name);
+>  #else
+>  static inline bool is_ima_appraise_enabled(void)
+>  {
+> @@ -192,11 +198,23 @@ static inline int ima_inode_setxattr(struct dentry
+> *dentry,
+>  	return 0;
+>  }
+> 
+> +static inline void ima_inode_post_setxattr(struct dentry *dentry,
+> +					   const char *xattr_name,
+> +					   const void *xattr_value,
+> +					   size_t xattr_value_len)
+> +{
+> +}
+> +
+>  static inline int ima_inode_removexattr(struct dentry *dentry,
+>  					const char *xattr_name)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline void ima_inode_post_removexattr(struct dentry *dentry,
+> +					      const char *xattr_name)
+> +{
+> +}
+>  #endif /* CONFIG_IMA_APPRAISE */
+> 
+>  #if defined(CONFIG_IMA_APPRAISE) &&
+> defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
+> diff --git a/security/integrity/ima/ima_appraise.c
+> b/security/integrity/ima/ima_appraise.c
+> index 565e33ff19d0..1f029e4c8d7f 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -577,21 +577,40 @@ int ima_inode_setxattr(struct dentry *dentry, const
+> char *xattr_name,
+>  	if (result == 1) {
+>  		if (!xattr_value_len || (xvalue->type >= IMA_XATTR_LAST))
+>  			return -EINVAL;
+> -		ima_reset_appraise_flags(d_backing_inode(dentry),
+> -			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+>  		result = 0;
+>  	}
+>  	return result;
+>  }
+> 
+> +void ima_inode_post_setxattr(struct dentry *dentry, const char
+> *xattr_name,
+> +			     const void *xattr_value, size_t xattr_value_len)
+> +{
+> +	const struct evm_ima_xattr_data *xvalue = xattr_value;
+> +	int result;
+> +
+> +	result = ima_protect_xattr(dentry, xattr_name, xattr_value,
+> +				   xattr_value_len);
+> +	if (result == 1)
+> +		ima_reset_appraise_flags(d_backing_inode(dentry),
 
-[ Upstream commit db2e718a47984b9d71ed890eb2ea36ecf150de18 ]
+I found an issue in this patch.
 
-cap_setfcap is required to create file capabilities.
+Moving ima_reset_appraise_flags() to the post hook causes this
+function to be executed also when __vfs_setxattr_noperm() is
+called.
 
-Since commit 8db6c34f1dbc ("Introduce v3 namespaced file capabilities"),
-a process running as uid 0 but without cap_setfcap is able to work
-around this as follows: unshare a new user namespace which maps parent
-uid 0 into the child namespace.
+The problem is that at the end of a write IMA calls
+ima_collect_measurement() to recalculate the file digest and
+update security.ima. ima_collect_measurement() sets
+IMA_COLLECTED.
 
-While this task will not have new capabilities against the parent
-namespace, there is a loophole due to the way namespaced file
-capabilities are represented as xattrs.  File capabilities valid in
-userns 1 are distinguished from file capabilities valid in userns 2 by
-the kuid which underlies uid 0.  Therefore the restricted root process
-can unshare a new self-mapping namespace, add a namespaced file
-capability onto a file, then use that file capability in the parent
-namespace.
+However, after that __vfs_setxattr_noperm() causes
+IMA_COLLECTED to be reset, and to unnecessarily recalculate
+the file digest. This wouldn't happen if ima_reset_appraise_flags()
+is in the pre hook.
 
-To prevent that, do not allow mapping parent uid 0 if the process which
-opened the uid_map file does not have CAP_SETFCAP, which is the
-capability for setting file capabilities.
+I solved by replacing:
+	iint->flags &= ~IMA_DONE_MASK;
+with:
+	iint->flags &= ~(IMA_DONE_MASK & ~IMA_COLLECTED);
 
-As a further wrinkle: a task can unshare its user namespace, then open
-its uid_map file itself, and map (only) its own uid.  In this case we do
-not have the credential from before unshare, which was potentially more
-restricted.  So, when creating a user namespace, we record whether the
-creator had CAP_SETFCAP.  Then we can use that during map_write().
+just when the IMA_CHANGE_XATTR bit is set. It should
+not be a problem since setting an xattr does not influence
+the file content.
 
-With this patch:
+Mimi, what do you think?
 
-1. Unprivileged user can still unshare -Ur
+Thanks
 
-   ubuntu@caps:~$ unshare -Ur
-   root@caps:~# logout
+Roberto
 
-2. Root user can still unshare -Ur
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
 
-   ubuntu@caps:~$ sudo bash
-   root@caps:/home/ubuntu# unshare -Ur
-   root@caps:/home/ubuntu# logout
-
-3. Root user without CAP_SETFCAP cannot unshare -Ur:
-
-   root@caps:/home/ubuntu# /sbin/capsh --drop=cap_setfcap --
-   root@caps:/home/ubuntu# /sbin/setcap cap_setfcap=p /sbin/setcap
-   unable to set CAP_SETFCAP effective capability: Operation not permitted
-   root@caps:/home/ubuntu# unshare -Ur
-   unshare: write failed /proc/self/uid_map: Operation not permitted
-
-Note: an alternative solution would be to allow uid 0 mappings by
-processes without CAP_SETFCAP, but to prevent such a namespace from
-writing any file capabilities.  This approach can be seen at [1].
-
-Background history: commit 95ebabde382 ("capabilities: Don't allow
-writing ambiguous v3 file capabilities") tried to fix the issue by
-preventing v3 fscaps to be written to disk when the root uid would map
-to the same uid in nested user namespaces.  This led to regressions for
-various workloads.  For example, see [2].  Ultimately this is a valid
-use-case we have to support meaning we had to revert this change in
-3b0c2d3eaa83 ("Revert 95ebabde382c ("capabilities: Don't allow writing
-ambiguous v3 file capabilities")").
-
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git/log/?h=2021-04-15/setfcap-nsfscaps-v4 [1]
-Link: https://github.com/containers/buildah/issues/3071 [2]
-Signed-off-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Andrew G. Morgan <morgan@kernel.org>
-Tested-by: Christian Brauner <christian.brauner@ubuntu.com>
-Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
-Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/linux/user_namespace.h  |  3 ++
- include/uapi/linux/capability.h |  3 +-
- kernel/user_namespace.c         | 65 +++++++++++++++++++++++++++++++--
- 3 files changed, 67 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index 6ef1c7109fc4..7616c7bf4b24 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -64,6 +64,9 @@ struct user_namespace {
- 	kgid_t			group;
- 	struct ns_common	ns;
- 	unsigned long		flags;
-+	/* parent_could_setfcap: true if the creator if this ns had CAP_SETFCAP
-+	 * in its effective capability set at the child ns creation time. */
-+	bool			parent_could_setfcap;
- 
- #ifdef CONFIG_KEYS
- 	/* List of joinable keyrings in this namespace.  Modification access of
-diff --git a/include/uapi/linux/capability.h b/include/uapi/linux/capability.h
-index c6ca33034147..2ddb4226cd23 100644
---- a/include/uapi/linux/capability.h
-+++ b/include/uapi/linux/capability.h
-@@ -335,7 +335,8 @@ struct vfs_ns_cap_data {
- 
- #define CAP_AUDIT_CONTROL    30
- 
--/* Set or remove capabilities on files */
-+/* Set or remove capabilities on files.
-+   Map uid=0 into a child user namespace. */
- 
- #define CAP_SETFCAP	     31
- 
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index e703d5d9cbe8..ce396ea4de60 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -106,6 +106,7 @@ int create_user_ns(struct cred *new)
- 	if (!ns)
- 		goto fail_dec;
- 
-+	ns->parent_could_setfcap = cap_raised(new->cap_effective, CAP_SETFCAP);
- 	ret = ns_alloc_inum(&ns->ns);
- 	if (ret)
- 		goto fail_free;
-@@ -841,6 +842,60 @@ static int sort_idmaps(struct uid_gid_map *map)
- 	return 0;
- }
- 
-+/**
-+ * verify_root_map() - check the uid 0 mapping
-+ * @file: idmapping file
-+ * @map_ns: user namespace of the target process
-+ * @new_map: requested idmap
-+ *
-+ * If a process requests mapping parent uid 0 into the new ns, verify that the
-+ * process writing the map had the CAP_SETFCAP capability as the target process
-+ * will be able to write fscaps that are valid in ancestor user namespaces.
-+ *
-+ * Return: true if the mapping is allowed, false if not.
-+ */
-+static bool verify_root_map(const struct file *file,
-+			    struct user_namespace *map_ns,
-+			    struct uid_gid_map *new_map)
-+{
-+	int idx;
-+	const struct user_namespace *file_ns = file->f_cred->user_ns;
-+	struct uid_gid_extent *extent0 = NULL;
-+
-+	for (idx = 0; idx < new_map->nr_extents; idx++) {
-+		if (new_map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
-+			extent0 = &new_map->extent[idx];
-+		else
-+			extent0 = &new_map->forward[idx];
-+		if (extent0->lower_first == 0)
-+			break;
-+
-+		extent0 = NULL;
-+	}
-+
-+	if (!extent0)
-+		return true;
-+
-+	if (map_ns == file_ns) {
-+		/* The process unshared its ns and is writing to its own
-+		 * /proc/self/uid_map.  User already has full capabilites in
-+		 * the new namespace.  Verify that the parent had CAP_SETFCAP
-+		 * when it unshared.
-+		 * */
-+		if (!file_ns->parent_could_setfcap)
-+			return false;
-+	} else {
-+		/* Process p1 is writing to uid_map of p2, who is in a child
-+		 * user namespace to p1's.  Verify that the opener of the map
-+		 * file has CAP_SETFCAP against the parent of the new map
-+		 * namespace */
-+		if (!file_ns_capable(file, map_ns->parent, CAP_SETFCAP))
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
- static ssize_t map_write(struct file *file, const char __user *buf,
- 			 size_t count, loff_t *ppos,
- 			 int cap_setid,
-@@ -848,7 +903,7 @@ static ssize_t map_write(struct file *file, const char __user *buf,
- 			 struct uid_gid_map *parent_map)
- {
- 	struct seq_file *seq = file->private_data;
--	struct user_namespace *ns = seq->private;
-+	struct user_namespace *map_ns = seq->private;
- 	struct uid_gid_map new_map;
- 	unsigned idx;
- 	struct uid_gid_extent extent;
-@@ -895,7 +950,7 @@ static ssize_t map_write(struct file *file, const char __user *buf,
- 	/*
- 	 * Adjusting namespace settings requires capabilities on the target.
- 	 */
--	if (cap_valid(cap_setid) && !file_ns_capable(file, ns, CAP_SYS_ADMIN))
-+	if (cap_valid(cap_setid) && !file_ns_capable(file, map_ns, CAP_SYS_ADMIN))
- 		goto out;
- 
- 	/* Parse the user data */
-@@ -965,7 +1020,7 @@ static ssize_t map_write(struct file *file, const char __user *buf,
- 
- 	ret = -EPERM;
- 	/* Validate the user is allowed to use user id's mapped to. */
--	if (!new_idmap_permitted(file, ns, cap_setid, &new_map))
-+	if (!new_idmap_permitted(file, map_ns, cap_setid, &new_map))
- 		goto out;
- 
- 	ret = -EPERM;
-@@ -1086,6 +1141,10 @@ static bool new_idmap_permitted(const struct file *file,
- 				struct uid_gid_map *new_map)
- {
- 	const struct cred *cred = file->f_cred;
-+
-+	if (cap_setid == CAP_SETUID && !verify_root_map(file, ns, new_map))
-+		return false;
-+
- 	/* Don't allow mappings that would allow anything that wouldn't
- 	 * be allowed without the establishment of unprivileged mappings.
- 	 */
--- 
-2.30.2
+> +			xvalue->type == EVM_IMA_XATTR_DIGSIG);
+> +}
+> +
+>  int ima_inode_removexattr(struct dentry *dentry, const char *xattr_name)
+>  {
+>  	int result;
+> 
+>  	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+>  	if (result == 1) {
+> -		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+>  		result = 0;
+>  	}
+>  	return result;
+>  }
+> +
+> +void ima_inode_post_removexattr(struct dentry *dentry, const char
+> *xattr_name)
+> +{
+> +	int result;
+> +
+> +	result = ima_protect_xattr(dentry, xattr_name, NULL, 0);
+> +	if (result == 1)
+> +		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
+> +}
+> diff --git a/security/security.c b/security/security.c
+> index 5ac96b16f8fa..efb1f874dc41 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1319,6 +1319,7 @@ void security_inode_post_setxattr(struct dentry
+> *dentry, const char *name,
+>  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
+>  		return;
+>  	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
+> +	ima_inode_post_setxattr(dentry, name, value, size);
+>  	evm_inode_post_setxattr(dentry, name, value, size);
+>  }
+> 
+> --
+> 2.26.2
 
