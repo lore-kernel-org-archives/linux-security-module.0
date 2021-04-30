@@ -2,130 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C1D4C43461
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Apr 2021 19:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A2DC433B4
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Apr 2021 20:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1839A613F8
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Apr 2021 19:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 665DE6145D
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Apr 2021 20:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233756AbhD3T5O (ORCPT
+        id S235341AbhD3U3G (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Apr 2021 15:57:14 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:45389 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233671AbhD3T5L (ORCPT
+        Fri, 30 Apr 2021 16:29:06 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5986 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231325AbhD3U3F (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Apr 2021 15:57:11 -0400
-X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Fri, 30 Apr 2021 15:57:11 EDT
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id 139241EAC;
-        Fri, 30 Apr 2021 15:50:22 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Fri, 30 Apr 2021 15:50:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-         h=date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=PtajBDBgytedXM7xt9/aNsUr4Q+
-        i946QjqQp1VhqJa0=; b=mJJOo7rS8hXM00Wzh05jeER5Vf3Ld3NnGG9ASX9Do7n
-        MTQnxS+peMdL2PAAmeXBAnOliWXZLjWbVORnHc2tZ+zdVAq+FrrjQrRghZYGMNsu
-        C5jiv/W4NiHy73v+9zORRbE5bfhqAdk5uMGH7iHztDco185BwAgjLaJJCbwi4b/U
-        +DRbmVu/soNpkYIzA8wVINuZJKBdidbNeTXZP9HYSSqPTSM4v7SgmCy3MMqW1r6K
-        zBNCCqC0o+QorvcPBEjr4IsTgkh3AQxYBi/khA8kYojegwY2uDp47E9ITbTJAS7w
-        0Af8o5u0sHR27UR4Y5ePJFGpY3WQmaLs0QrzcYlYjSQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=PtajBD
-        BgytedXM7xt9/aNsUr4Q+i946QjqQp1VhqJa0=; b=CQw2WcmK0fpUBvOrNdkrDt
-        AAWM/QVfy+qlNpPT+VPwx9PNzbCCq6ePBp+b4Q6Wl4hI/bAsqgRjZ8DFUSC9fizQ
-        vhVXOsCZzuvOq9dpF0s9UpB6oo4tuMcm1jvtFdkegkhtFMwLRKeyjLkQlVsuk7Tf
-        113wZGyzLKai5j5g8jRONyowqb0RWqak+oaGvlNW4fpWE42y8S3ikxlUp/cVgSi4
-        DlGTd/JD3/4/Ogcf4sFEGhFVlH9jlAziHaYdXSg3v5cJhEn4s27xBB52ZCuAqtgq
-        nYhZGf5ybpWEpS3ddGuvLxz4raHynVZmOj+jy7n6qQ2cndY0uVaABLoQj7PUzbmA
-        ==
-X-ME-Sender: <xms:fV-MYGCuNY33RtIZbJ2dAPFK-P6e3VGSCt-Qz7WlOG0ov0WXdKygwQ>
-    <xme:fV-MYAib-6LePyxvkfHUzCAv0PJnkZ9MgCo72TC797hKCm5nhhNnE9_dhkA_80FKW
-    cQclyz51QwWwlVkpZ0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvddviedgudegfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
-    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
-    htvghrnhepvefftdettefgtddtkeeufeegtddttdeuueegkeegteffueetffejudeihefh
-    kedtnecukfhppedvgedrudeiledrvddtrddvheehnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepmhgvsegsvghnsghovggtkhgvlhdrnhgvth
-X-ME-Proxy: <xmx:fV-MYJmKKkUaZ3Vg6hQeQFv6z0sonlUX9aZ6s_HkpIQ4Iqvw1acM_A>
-    <xmx:fV-MYEzlkWO2rbOYKSWEGCIc0TwEtVU7W6_Fz3V-YsQKTFki7ArI7g>
-    <xmx:fV-MYLStdP-ko4iAxttjv0Qh8tF8vO1MUVQH82APFsVxUDNIfv4oGw>
-    <xmx:fV-MYA_xWu_ni5RFR_Vbc-9xPIpzruTB8Xs3eqDeuNBkSKU6b0r3VDOOCBo>
-Received: from localhost (unknown [24.169.20.255])
-        by mail.messagingengine.com (Postfix) with ESMTPA;
-        Fri, 30 Apr 2021 15:50:20 -0400 (EDT)
-Date:   Fri, 30 Apr 2021 15:50:18 -0400
-From:   Ben Boeckel <me@benboeckel.net>
-To:     trix@redhat.com
-Cc:     jejb@linux.ibm.com, jarkko@kernel.org, zohar@linux.ibm.com,
-        dhowells@redhat.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Fri, 30 Apr 2021 16:29:05 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 13UKF2OB109712;
+        Fri, 30 Apr 2021 16:28:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=pxiRmky6ur7sUT82EcQQsIfV75IKw/jYxavOQF/kgck=;
+ b=khzwySDheuFHlkaKsRyq2era6MP8PJe0978H0RFvdeclCNL2oI9wPZ3qxKu0Vs1ZT8x9
+ cr44Bq7HxeiJwx+2dhgyPCdsPJPi+DwSod4yKo7nUtrT80+hyFJeSTqyzgOvbd9pdoEr
+ 7ZY62dBVWzWxd7c8jeOizFY6PXxMca0zrliI7lgefqesgXjjlH4568G09k8DVUYEPwx2
+ XUWiKrcvz1WOJsHJl6an2o9U5E1qLwqMNjwNv+ByNWrBlTXnF2X+IcAqflR2YwUN/Rda
+ AAaYBCTH20tBK5ODSmZtKaM1a7zofukk2GaanD6KadQP3+MNoRubOxsOvoTfTT7sM3un 9g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 388rrsg832-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Apr 2021 16:28:12 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 13UKGXCm117187;
+        Fri, 30 Apr 2021 16:28:12 -0400
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 388rrsg82k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Apr 2021 16:28:12 -0400
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 13UKSAwL009267;
+        Fri, 30 Apr 2021 20:28:10 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma05fra.de.ibm.com with ESMTP id 384gjxsurv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 30 Apr 2021 20:28:10 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 13UKS7S431785316
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 30 Apr 2021 20:28:07 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C89B3AE04D;
+        Fri, 30 Apr 2021 20:28:07 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7285DAE053;
+        Fri, 30 Apr 2021 20:28:05 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.211.32.5])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 30 Apr 2021 20:28:05 +0000 (GMT)
+Message-ID: <48beadc5561f1c0d697be322bc347ebeea37503d.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 03/12] evm: Refuse EVM_ALLOW_METADATA_WRITES only if
+ an HMAC key is loaded
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com,
+        ericchiang@google.com, bweeks@google.com
+Cc:     linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Colin King <colin.king@canonical.com>
-Subject: Re: [PATCH] KEYS: trusted: fix memory leak
-Message-ID: <YIxfehTLhWe58sNE@erythro>
-References: <20210430185810.3331311-1-trix@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210430185810.3331311-1-trix@redhat.com>
-User-Agent: Mutt/2.0.5 (2021-01-21)
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Date:   Fri, 30 Apr 2021 16:28:04 -0400
+In-Reply-To: <20210407105252.30721-4-roberto.sassu@huawei.com>
+References: <20210407105252.30721-1-roberto.sassu@huawei.com>
+         <20210407105252.30721-4-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ScSj7frOsZQorSSHi6ZIesLfcqL4iOkE
+X-Proofpoint-ORIG-GUID: gdK7viZ1-c1EWg6UkRcCYx-FYB4eKrPG
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-04-30_12:2021-04-30,2021-04-30 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 clxscore=1011 mlxscore=0 suspectscore=0 mlxlogscore=999
+ phishscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104060000 definitions=main-2104300139
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 30, 2021 at 11:58:10 -0700, trix@redhat.com wrote:
-> From: Tom Rix <trix@redhat.com>
+Hi Roberto,
+
+On Wed, 2021-04-07 at 12:52 +0200, Roberto Sassu wrote:
+> EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be set to
+> temporarily disable metadata verification until all xattrs/attrs necessary
+> to verify an EVM portable signature are copied to the file. This flag is
+> cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
+> calculated on unverified xattrs/attrs.
 > 
-> Static analysis reports this problem
-> trusted-keys/trusted_tpm1.c:496:10: warning: Potential memory leak
->   return ret;
->          ^~~
+> Currently EVM unnecessarily denies setting this flag if EVM is initialized
+> with a public key, which is not a concern as it cannot be used to trust
+> xattrs/attrs updates. This patch removes this limitation.
 > 
-> In tpm_seal() some failure handling returns directly, without
-> freeing memory.
-> 
-> Fixes: 5df16caada3f ("KEYS: trusted: Fix incorrect handling of tpm_get_random()")
-> Signed-off-by: Tom Rix <trix@redhat.com>
+> Cc: stable@vger.kernel.org # 4.16.x
+> Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  security/keys/trusted-keys/trusted_tpm1.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  Documentation/ABI/testing/evm      | 5 +++--
+>  security/integrity/evm/evm_secfs.c | 4 ++--
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> index 469394550801..aa108bea6739 100644
-> --- a/security/keys/trusted-keys/trusted_tpm1.c
-> +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> @@ -493,10 +493,12 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
+> diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+> index 3c477ba48a31..eb6d70fd6fa2 100644
+> --- a/Documentation/ABI/testing/evm
+> +++ b/Documentation/ABI/testing/evm
+> @@ -49,8 +49,9 @@ Description:
+>  		modification of EVM-protected metadata and
+>  		disable all further modification of policy
 >  
->  	ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
->  	if (ret < 0)
-> -		return ret;
-> +		goto out;
+> -		Note that once a key has been loaded, it will no longer be
+> -		possible to enable metadata modification.
+> +		Note that once an HMAC key has been loaded, it will no longer
+> +		be possible to enable metadata modification and, if it is
+> +		already enabled, it will be disabled.
 >  
-> -	if (ret != TPM_NONCE_SIZE)
-> -		return -EIO;
-> +	if (ret != TPM_NONCE_SIZE) {
-> +		ret = -EIO;
-> +		goto out;
-> +	}
+>  		Until key loading has been signaled EVM can not create
+>  		or validate the 'security.evm' xattr, but returns
+> diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+> index bbc85637e18b..197a4b83e534 100644
+> --- a/security/integrity/evm/evm_secfs.c
+> +++ b/security/integrity/evm/evm_secfs.c
+> @@ -81,10 +81,10 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
+>  		return -EINVAL;
 >  
->  	ordinal = htonl(TPM_ORD_SEAL);
->  	datsize = htonl(datalen);
+>  	/* Don't allow a request to freshly enable metadata writes if
+> -	 * keys are loaded.
+> +	 * an HMAC key is loaded.
+>  	 */
+>  	if ((i & EVM_ALLOW_METADATA_WRITES) &&
+> -	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
+> +	    ((evm_initialized & EVM_INIT_HMAC) != 0) &&
+>  	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
+>  		return -EPERM;
+>  
 
-I see this patch also submitted by Colin (Cc'd) in Message-Id:
+The comment "freshly enable" is confusing.  Perhaps the original intent
+was to enable flags before loading any keys.  So the comment and code
+were kind of in sync.  With this change, enabling metadata writes may
+be triggered after loading an x509 certificate.  Unless someone
+comments, I don't have problems with this change.
 
-    <20210430113724.110746-1-colin.king@canonical.com>
+Once metadata writes are enabled, the only way of disabling them is by
+loading and enabling an HMAC key.  With this change "freshly enable"
+only refers to after an HMAC key is loaded, when the setup completion
+flag is not set.  The code can be simplified by just checking if an
+HMAC key is loaded.
 
-To my eyes, the commit message seems a bit better over there.
+thanks,
 
---Ben
+Mimi
+
