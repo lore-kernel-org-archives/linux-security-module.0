@@ -2,115 +2,88 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6621EC43460
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Apr 2021 19:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413E8C43461
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Apr 2021 11:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36B0661456
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Apr 2021 19:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1103A613FA
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Apr 2021 11:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbhD2TXr (ORCPT
+        id S229958AbhD3LiU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Apr 2021 15:23:47 -0400
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:45433 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235623AbhD2TWv (ORCPT
+        Fri, 30 Apr 2021 07:38:20 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:56602 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229911AbhD3LiT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Apr 2021 15:22:51 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id A6E895C0093;
-        Thu, 29 Apr 2021 15:22:04 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Thu, 29 Apr 2021 15:22:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
-         h=from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=h3cv4urXYSFk9
-        7s6YrYJHSj6MAiYXM35h2NCOKlwrv0=; b=eohsoYKvQzbbeIhDknuuEXX9VOE0e
-        QJDIfvp6FoW9zqwDpPOt8lR8wSgvHdzjDpktew7bAtxULwJDmXrLXSAkxY6pwBf6
-        7iI/chHjVwx9ncWh4s/4Se3iuGzs5G+4gkS8QbRWryLL1hOq+5SdxnQrqXWbLiwt
-        gxDMOhpslwiqubw7Zgp+s3MWbIU0fXG/dF61dO2cI7B2o32suwp0rEvTqYOWl+P7
-        iur0m5LdGItMhQ838AcZZ+AT3UVTAQGVcFgGmjmi2xAyErkSVzi/GD0MkUXVCWgK
-        JMRNr9Ns94qB1NiZHim347BlqZHoFXv3mX+FJi3/miiK6K17II9NZHiUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=h3cv4urXYSFk97s6YrYJHSj6MAiYXM35h2NCOKlwrv0=; b=ucs1s/hh
-        UnHw7OVRYnt2bTrUBB3DDQ4iigIgItLyxaqc+otV2imIRzfFWNB+b70BOteCAQzb
-        9Ekp6SQNw4xC7k8XpbBcj7g0qQNcbGyh7/5lAPgH//ZDSS9eJLqgso5KcgJgQnXX
-        1c1zaDpid6+0eOqWbzomg6zMh5mKsrTu1G9BrVQ85A6nvWi3jzVw5FDIKWUumbk4
-        9eM3giPxPbJb2avX9DdTgNjPzSJNDJhFyMPF1HS4gJVqWbBoijbEemh9nGg/d4kn
-        mJ514qM4lZTEAM94F7O7/JDXTeg+8bRgw2JujL1aQG3iZyrooU7gNajZmWcNObKr
-        aJTVeUSPUey2dw==
-X-ME-Sender: <xms:XAeLYCvFOsRsjqZkcsGigE5tzg_HAPJtZBebdQyo-S_MO6y4HKruuQ>
-    <xme:XAeLYHexxK8JlaRf92tij3QwUtKAXMQ0eQMQBCkF6YVqQE4Uc9Ez-EzTdZxD3cseZ
-    5VKUZmGCw78doXdEFo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvddvgedgudefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepuegvnhcu
-    uehovggtkhgvlhcuoehmvgessggvnhgsohgvtghkvghlrdhnvghtqeenucggtffrrghtth
-    gvrhhnpeffkeehlefgteelgefhheekfeeigeffledtkefhveeifeehledtffehkeeuheek
-    heenucfkphepvdegrdduieelrddvtddrvdehheenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehmvgessggvnhgsohgvtghkvghlrdhnvght
-X-ME-Proxy: <xmx:XAeLYNzRRFEmxdmcJiwKMuL33R1YdclCOZTNdvTDbCyCmK00Qgaz7Q>
-    <xmx:XAeLYNNujPLmOWpirYpAIftwNjJHeqBm5wExQK13oPNaLiPV_CCdGg>
-    <xmx:XAeLYC-GJNIdZ4ELwXwdhz9K9L8dvwKzjwLJ87qDoEoq3i-UfXk15w>
-    <xmx:XAeLYGZa0Vg8tHXIaaoLxK-6xo5cGZsLyObhD5HjflbKcHqmQvYDpg>
-Received: from localhost (unknown [24.169.20.255])
-        by mail.messagingengine.com (Postfix) with ESMTPA;
-        Thu, 29 Apr 2021 15:22:04 -0400 (EDT)
-From:   Ben Boeckel <me@benboeckel.net>
-To:     keyrings@vger.kernel.org
-Cc:     Ben Boeckel <mathstuf@gmail.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [PATCH v2 1/1] trusted-keys: match tpm_get_ops on all return paths
-Date:   Thu, 29 Apr 2021 15:21:56 -0400
-Message-Id: <20210429192156.770145-2-list.lkml.keyrings@me.benboeckel.net>
+        Fri, 30 Apr 2021 07:38:19 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1lcRSW-0004rU-TC; Fri, 30 Apr 2021 11:37:24 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH] KEYS: trusted: Fix memory leak on object td
+Date:   Fri, 30 Apr 2021 12:37:24 +0100
+Message-Id: <20210430113724.110746-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210429192156.770145-1-list.lkml.keyrings@me.benboeckel.net>
-References: <20210429192156.770145-1-list.lkml.keyrings@me.benboeckel.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Ben Boeckel <mathstuf@gmail.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-The `tpm_get_ops` call at the beginning of the function is not paired
-with a `tpm_put_ops` on this return path.
+Two error return paths are neglecting to free allocated object td,
+causing a memory leak. Fix this by returning via the error return
+path that securely kfree's td.
 
-Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Ben Boeckel <mathstuf@gmail.com>
+Fixes clang scan-build warning:
+security/keys/trusted-keys/trusted_tpm1.c:496:10: warning: Potential
+memory leak [unix.Malloc]
+
+Fixes: 5df16caada3f ("KEYS: trusted: Fix incorrect handling of tpm_get_random()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ security/keys/trusted-keys/trusted_tpm1.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 617fabd4d913..0165da386289 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -336,9 +336,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
- 			rc = -EPERM;
- 	}
- 	if (blob_len < 0)
--		return blob_len;
--
--	payload->blob_len = blob_len;
-+		rc = blob_len;
-+	else
-+		payload->blob_len = blob_len;
+diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
+index 469394550801..aa108bea6739 100644
+--- a/security/keys/trusted-keys/trusted_tpm1.c
++++ b/security/keys/trusted-keys/trusted_tpm1.c
+@@ -493,10 +493,12 @@ static int tpm_seal(struct tpm_buf *tb, uint16_t keytype,
  
- 	tpm_put_ops(chip);
- 	return rc;
+ 	ret = tpm_get_random(chip, td->nonceodd, TPM_NONCE_SIZE);
+ 	if (ret < 0)
+-		return ret;
++		goto out;
+ 
+-	if (ret != TPM_NONCE_SIZE)
+-		return -EIO;
++	if (ret != TPM_NONCE_SIZE) {
++		ret = -EIO;
++		goto out;
++	}
+ 
+ 	ordinal = htonl(TPM_ORD_SEAL);
+ 	datsize = htonl(datalen);
 -- 
 2.30.2
 
