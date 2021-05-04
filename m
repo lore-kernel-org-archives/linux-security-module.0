@@ -2,116 +2,108 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D42C43460
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 May 2021 10:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6ED1C433B4
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 May 2021 11:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C0E461182
-	for <linux-security-module@archiver.kernel.org>; Tue,  4 May 2021 10:31:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C52461185
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 May 2021 11:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230284AbhEDKb7 (ORCPT
+        id S230151AbhEDLeN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 4 May 2021 06:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbhEDKb7 (ORCPT
+        Tue, 4 May 2021 07:34:13 -0400
+Received: from mail-il1-f200.google.com ([209.85.166.200]:50708 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230166AbhEDLeM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 4 May 2021 06:31:59 -0400
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A209BC061574;
-        Tue,  4 May 2021 03:31:03 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4FZGMn6ZThzMqPTp;
-        Tue,  4 May 2021 12:31:01 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4FZGMl3dv5zlh8TS;
-        Tue,  4 May 2021 12:30:59 +0200 (CEST)
-Subject: Re: [PATCH v7 0/5] Enable root to update the blacklist keyring
-To:     David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        James Morris <jmorris@namei.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Tyler Hicks <tyhicks@linux.microsoft.com>,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20210312171232.2681989-1-mic@digikod.net>
- <52f54ebb-6ac7-4d68-f97a-74219ed88d0b@digikod.net>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <ef2f9a31-e01f-2443-08a0-c78dd3750cbb@digikod.net>
-Date:   Tue, 4 May 2021 12:31:43 +0200
-User-Agent: 
+        Tue, 4 May 2021 07:34:12 -0400
+Received: by mail-il1-f200.google.com with SMTP id t4-20020a92c0c40000b02901990d153bb9so6743782ilf.17
+        for <linux-security-module@vger.kernel.org>; Tue, 04 May 2021 04:33:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=KkldCC8vnwDUsxXBBKnjsIMoaTF/A86bqTEGiJBZfMQ=;
+        b=QjoeI38SZO6x+7DOllPHPlDBabDC2x7wn6j/xftEvcAiCEE1TQ6xg+tWMYf2G87VDv
+         tRnscz4/6TQzlOHfV3dM5V8dMGWRVEUKpVRJrGPteOVLHvSNAUiR4sxMos46yfNoElwv
+         +aoNBKwnHwsek93OeJ1CLto6wN6h3KI7oFpUWOcBZ5sJRg1/Ooc5viRu+R9S8OynBqbd
+         jy+a4GTmwht+DPKOjlY0CoMirQk6Y/CCB0URuheIKDcRGq/7m30Bgvq4Q7mTLx6e0U3t
+         IfLcdofC7FfTHIv0arl6zrEzfSvcb3IadOOTCUW13ccNi3dVKRV7gRnx/v7YM6yiKyDP
+         O4iA==
+X-Gm-Message-State: AOAM530zfhub1+GU0H677lfhiVkvWd5lieLxVnuajUgarzS7iMRrCSZk
+        iKlAaZWnAYCOGx2X9pGVgJorIGhuCaKVjZ+K1udy772qmz+m
+X-Google-Smtp-Source: ABdhPJx7mNrSDGEeKSQGY+okCJevU/2/0ktjrtdQ5tKKPW1LHT6TscRZcasLF83f+P8Cw1heSbvy+kRH1foI/yIjj3VOvxzTM2bD
 MIME-Version: 1.0
-In-Reply-To: <52f54ebb-6ac7-4d68-f97a-74219ed88d0b@digikod.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:ce4e:: with SMTP id a14mr20104182ilr.211.1620127997107;
+ Tue, 04 May 2021 04:33:17 -0700 (PDT)
+Date:   Tue, 04 May 2021 04:33:17 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c224d005c17f7142@google.com>
+Subject: [syzbot] KCSAN: data-race in assoc_array_apply_edit / search_nested_keyrings
+From:   syzbot <syzbot+e4eb6db47eb0f80308c6@syzkaller.appspotmail.com>
+To:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Are you waiting for the end of the merge window to push to linux-next?
+Hello,
 
-On 07/04/2021 19:21, Mickaël Salaün wrote:
-> Hi David and Jarkko,
-> 
-> What is the status of this patchset? Could someone take it to -next?
-> 
-> Regards,
->  Mickaël
-> 
-> 
-> On 12/03/2021 18:12, Mickaël Salaün wrote:
->> This new patch series is a rebase on David Howells's and Eric Snowberg's
->> keys-cve-2020-26541-v3.
->>
->> I successfully tested this patch series with the 186 entries from
->> https://uefi.org/sites/default/files/resources/dbxupdate_x64.bin (184
->> binary hashes and 2 certificates).
->>
->> The goal of these patches is to add a new configuration option to enable the
->> root user to load signed keys in the blacklist keyring.  This keyring is useful
->> to "untrust" certificates or files.  Enabling to safely update this keyring
->> without recompiling the kernel makes it more usable.
->>
->> This can be applied on top of David Howells's keys-cve-2020-26541-branch:
->> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-cve-2020-26541-branch
->>
->> Previous patch series:
->> https://lore.kernel.org/lkml/20210210120410.471693-1-mic@digikod.net/
->>
->> Regards,
->>
->> Mickaël Salaün (5):
->>   tools/certs: Add print-cert-tbs-hash.sh
->>   certs: Check that builtin blacklist hashes are valid
->>   certs: Make blacklist_vet_description() more strict
->>   certs: Factor out the blacklist hash creation
->>   certs: Allow root user to append signed hashes to the blacklist
->>     keyring
->>
->>  MAINTAINERS                                   |   2 +
->>  certs/.gitignore                              |   1 +
->>  certs/Kconfig                                 |  17 +-
->>  certs/Makefile                                |  17 +-
->>  certs/blacklist.c                             | 218 ++++++++++++++----
->>  crypto/asymmetric_keys/x509_public_key.c      |   3 +-
->>  include/keys/system_keyring.h                 |  14 +-
->>  scripts/check-blacklist-hashes.awk            |  37 +++
->>  .../platform_certs/keyring_handler.c          |  26 +--
->>  tools/certs/print-cert-tbs-hash.sh            |  91 ++++++++
->>  10 files changed, 346 insertions(+), 80 deletions(-)
->>  create mode 100755 scripts/check-blacklist-hashes.awk
->>  create mode 100755 tools/certs/print-cert-tbs-hash.sh
->>
->>
->> base-commit: ebd9c2ae369a45bdd9f8615484db09be58fc242b
->>
+syzbot found the following issue on:
+
+HEAD commit:    5e321ded Merge tag 'for-5.13/parisc' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=111cafb9d00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a4da2ebcb6e8f526
+dashboard link: https://syzkaller.appspot.com/bug?extid=e4eb6db47eb0f80308c6
+compiler:       Debian clang version 11.0.1-2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e4eb6db47eb0f80308c6@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in assoc_array_apply_edit / search_nested_keyrings
+
+write to 0xffff8881065ffc10 of 8 bytes by task 30966 on cpu 1:
+ assoc_array_apply_edit+0x3e/0x660 lib/assoc_array.c:1357
+ __key_link+0x8a/0xc0 security/keys/keyring.c:1372
+ __key_instantiate_and_link+0x15b/0x290 security/keys/key.c:459
+ key_create_or_update+0x750/0x990 security/keys/key.c:941
+ __do_sys_add_key security/keys/keyctl.c:134 [inline]
+ __se_sys_add_key+0x26f/0x300 security/keys/keyctl.c:74
+ __x64_sys_add_key+0x63/0x70 security/keys/keyctl.c:74
+ do_syscall_64+0x4a/0x90 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+read to 0xffff8881065ffc10 of 8 bytes by task 30971 on cpu 0:
+ search_nested_keyrings+0x34f/0x920 security/keys/keyring.c:751
+ keyring_search_rcu+0xf4/0x180 security/keys/keyring.c:922
+ search_cred_keyrings_rcu+0x135/0x240 security/keys/process_keys.c:480
+ search_process_keyrings_rcu security/keys/process_keys.c:544 [inline]
+ lookup_user_key+0xab6/0xd40 security/keys/process_keys.c:762
+ __do_sys_add_key security/keys/keyctl.c:126 [inline]
+ __se_sys_add_key+0x23a/0x300 security/keys/keyctl.c:74
+ __x64_sys_add_key+0x63/0x70 security/keys/keyctl.c:74
+ do_syscall_64+0x4a/0x90 arch/x86/entry/common.c:47
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 PID: 30971 Comm: syz-executor.1 Not tainted 5.12.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
