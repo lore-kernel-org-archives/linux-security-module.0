@@ -2,97 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5491C433ED
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 May 2021 21:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D42C43460
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 May 2021 10:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8B557611AD
-	for <linux-security-module@archiver.kernel.org>; Mon,  3 May 2021 21:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C0E461182
+	for <linux-security-module@archiver.kernel.org>; Tue,  4 May 2021 10:31:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229570AbhECVnU (ORCPT
+        id S230284AbhEDKb7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 3 May 2021 17:43:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34424 "EHLO
+        Tue, 4 May 2021 06:31:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbhECVnU (ORCPT
+        with ESMTP id S230253AbhEDKb7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 3 May 2021 17:43:20 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3027AC061573
-        for <linux-security-module@vger.kernel.org>; Mon,  3 May 2021 14:42:26 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id u13so5398495edd.3
-        for <linux-security-module@vger.kernel.org>; Mon, 03 May 2021 14:42:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=T+XjJ3dALnd0wG0aJMGSCh1rng0ubFs/IjGWlTrspJM=;
-        b=Ybd9vvSWTOAC080D7jgCAv7+YqxcwtOyKIBQn8P36iYgh5OsJbjamKtIFBMxKP6A0n
-         E+JYycOY4SIFpNC1Uq2HVYATPhDy8mEk9QD9cCTRyWnJIqzj8yJLsJqHKv96rz3Hrp1H
-         JYlnFcu3VGzWBqNAN7T+Ban4hA1BFWlkGncr8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=T+XjJ3dALnd0wG0aJMGSCh1rng0ubFs/IjGWlTrspJM=;
-        b=B6KyV+2J97dUxftg5EaEPanmhQLWKKKx+aOcXsNa49mKm90QZVu8fHJGIONn+aH8t8
-         frcN9bY1DR7a1J8hafx9TvQND/NQBfpb9o0ZnQ1G2/Juk5Pb7Cu42hweGjNP4lJMBAq+
-         pMvVmbotuIPoHkEmbP4coySA7IB65UI+W6qy4+zCX8wWIxqskWSXkEIiNYcXbEJ+L1eC
-         vawvbeR+FbdEUDr9RQM8sTcw2lgbnLy08OW//kUYWmNjkwEeY9zpejYjY7+tA5TFNRoO
-         /K8s1ZcUn9mYjOdq6iKtmpyqwIwrNI7Yn6uP0eI5FCsWEBOrCTb0kBgUZ6eRzd1YpSBP
-         wGQg==
-X-Gm-Message-State: AOAM532qIOzwJgof3WwaZI26lgXaIeklDK11tqeBnybe5Yz1EumLurJ/
-        fFIgae846+nhw8llVRbDKPsmlWKrd/xiBf8sEkXhNie/6mzcTw==
-X-Google-Smtp-Source: ABdhPJyveRS3brIE3ehtHcriSX7MMFHgnM2+onNaMlB5JadrRCdNkKRzvACmNxg2rvC7wz9F4XEGv3gRsAYEnvlZq3s=
-X-Received: by 2002:aa7:c150:: with SMTP id r16mr22009605edp.82.1620078144962;
- Mon, 03 May 2021 14:42:24 -0700 (PDT)
+        Tue, 4 May 2021 06:31:59 -0400
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [IPv6:2001:1600:3:17::8fab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A209BC061574;
+        Tue,  4 May 2021 03:31:03 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4FZGMn6ZThzMqPTp;
+        Tue,  4 May 2021 12:31:01 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4FZGMl3dv5zlh8TS;
+        Tue,  4 May 2021 12:30:59 +0200 (CEST)
+Subject: Re: [PATCH v7 0/5] Enable root to update the blacklist keyring
+To:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        James Morris <jmorris@namei.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Tyler Hicks <tyhicks@linux.microsoft.com>,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20210312171232.2681989-1-mic@digikod.net>
+ <52f54ebb-6ac7-4d68-f97a-74219ed88d0b@digikod.net>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <ef2f9a31-e01f-2443-08a0-c78dd3750cbb@digikod.net>
+Date:   Tue, 4 May 2021 12:31:43 +0200
+User-Agent: 
 MIME-Version: 1.0
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Mon, 3 May 2021 11:42:13 -1000
-Message-ID: <CAJ-EccOdLW1+8xx8=PRHzSjy4kVaVOUave0pAXF5b=cD4w3=pg@mail.gmail.com>
-Subject: [GIT PULL] SafeSetID changes for v5.13
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <52f54ebb-6ac7-4d68-f97a-74219ed88d0b@digikod.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The following changes since commit 9f4ad9e425a1d3b6a34617b8ea226d56a119a717:
+Are you waiting for the end of the merge window to push to linux-next?
 
-  Linux 5.12 (2021-04-25 13:49:08 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/micah-morton/linux.git tags/safesetid-5.13
-
-for you to fetch changes up to 1ca86ac1ec8d201478e9616565d4df5d51595cfc:
-
-  LSM: SafeSetID: Fix code specification by scripts/checkpatch.pl
-(2021-04-26 16:36:50 -0700)
-
-----------------------------------------------------------------
-Simple code cleanup
-
-This pull request just has a single 3-line code cleanup commit to eliminate
-some unreachable 'break' statements that come after 'return's. No
-other work was done on SafeSetID for the 5.13 merge window.
-
-The commit has been in linux-next since 4-26-2021. I forgot to add the commit
-to linux-next until after the 5.13 merge window started, which is why the commit
-is on top of the 5.12 release. I'm not really sure which
-release/commit the patch author based the commit on, but doesn't seem
-to matter in this case since the commit is obviously correct from
-looking at the code and the commit applied cleanly on top of 5.12 --
-so I don't see applying this on top of 5.12 as a case of losing any of
-the testing/development history of the commit.
-
-----------------------------------------------------------------
-Yanwei Gao (1):
-      LSM: SafeSetID: Fix code specification by scripts/checkpatch.pl
-
- security/safesetid/lsm.c | 3 ---
- 1 file changed, 3 deletions(-)
+On 07/04/2021 19:21, Mickaël Salaün wrote:
+> Hi David and Jarkko,
+> 
+> What is the status of this patchset? Could someone take it to -next?
+> 
+> Regards,
+>  Mickaël
+> 
+> 
+> On 12/03/2021 18:12, Mickaël Salaün wrote:
+>> This new patch series is a rebase on David Howells's and Eric Snowberg's
+>> keys-cve-2020-26541-v3.
+>>
+>> I successfully tested this patch series with the 186 entries from
+>> https://uefi.org/sites/default/files/resources/dbxupdate_x64.bin (184
+>> binary hashes and 2 certificates).
+>>
+>> The goal of these patches is to add a new configuration option to enable the
+>> root user to load signed keys in the blacklist keyring.  This keyring is useful
+>> to "untrust" certificates or files.  Enabling to safely update this keyring
+>> without recompiling the kernel makes it more usable.
+>>
+>> This can be applied on top of David Howells's keys-cve-2020-26541-branch:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-cve-2020-26541-branch
+>>
+>> Previous patch series:
+>> https://lore.kernel.org/lkml/20210210120410.471693-1-mic@digikod.net/
+>>
+>> Regards,
+>>
+>> Mickaël Salaün (5):
+>>   tools/certs: Add print-cert-tbs-hash.sh
+>>   certs: Check that builtin blacklist hashes are valid
+>>   certs: Make blacklist_vet_description() more strict
+>>   certs: Factor out the blacklist hash creation
+>>   certs: Allow root user to append signed hashes to the blacklist
+>>     keyring
+>>
+>>  MAINTAINERS                                   |   2 +
+>>  certs/.gitignore                              |   1 +
+>>  certs/Kconfig                                 |  17 +-
+>>  certs/Makefile                                |  17 +-
+>>  certs/blacklist.c                             | 218 ++++++++++++++----
+>>  crypto/asymmetric_keys/x509_public_key.c      |   3 +-
+>>  include/keys/system_keyring.h                 |  14 +-
+>>  scripts/check-blacklist-hashes.awk            |  37 +++
+>>  .../platform_certs/keyring_handler.c          |  26 +--
+>>  tools/certs/print-cert-tbs-hash.sh            |  91 ++++++++
+>>  10 files changed, 346 insertions(+), 80 deletions(-)
+>>  create mode 100755 scripts/check-blacklist-hashes.awk
+>>  create mode 100755 tools/certs/print-cert-tbs-hash.sh
+>>
+>>
+>> base-commit: ebd9c2ae369a45bdd9f8615484db09be58fc242b
+>>
