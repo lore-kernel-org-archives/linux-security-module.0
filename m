@@ -7,37 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FADC43617
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D61F9C433B4
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85EF061176
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC93561176
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:33:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233064AbhEELbD (ORCPT
+        id S232934AbhEELev (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 May 2021 07:31:03 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3006 "EHLO
+        Wed, 5 May 2021 07:34:51 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3008 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232967AbhEELbB (ORCPT
+        with ESMTP id S232854AbhEELeu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 May 2021 07:31:01 -0400
+        Wed, 5 May 2021 07:34:50 -0400
 Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZvVl3R3hz6yjBC;
-        Wed,  5 May 2021 19:24:15 +0800 (CST)
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZvb82bDYz6yhrR;
+        Wed,  5 May 2021 19:28:04 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 5 May 2021 13:30:03 +0200
+ 15.1.2176.2; Wed, 5 May 2021 13:33:52 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@google.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH v6 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if an HMAC key is loaded
-Date:   Wed, 5 May 2021 13:29:27 +0200
-Message-ID: <20210505112935.1410679-4-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v6 05/11] evm: Introduce evm_hmac_disabled() to safely ignore verification errors
+Date:   Wed, 5 May 2021 13:33:23 +0200
+Message-ID: <20210505113329.1410943-1-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210505112935.1410679-1-roberto.sassu@huawei.com>
 References: <20210505112935.1410679-1-roberto.sassu@huawei.com>
@@ -51,58 +50,90 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be set to
-temporarily disable metadata verification until all xattrs/attrs necessary
-to verify an EVM portable signature are copied to the file. This flag is
-cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
-calculated on unverified xattrs/attrs.
+When a file is being created, LSMs can set the initial label with the
+inode_init_security hook. If no HMAC key is loaded, the new file will have
+LSM xattrs but not the HMAC. It is also possible that the file remains
+without protected xattrs after creation if no active LSM provided it.
 
-Currently EVM unnecessarily denies setting this flag if EVM is initialized
-with a public key, which is not a concern as it cannot be used to trust
-xattrs/attrs updates. This patch removes this limitation.
+Unfortunately, EVM will deny any further metadata operation on new files,
+as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error, or
+INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
+usability of EVM when only a public key is loaded, as commands such as cp
+or tar with the option to preserve xattrs won't work.
 
-Cc: stable@vger.kernel.org # 4.16.x
-Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-protected metadata")
+This patch introduces the evm_hmac_disabled() function to determine whether
+or not it is safe to ignore verification errors, based on the ability of
+EVM to calculate HMACs. If the HMAC key is not loaded, and it cannot be
+loaded in the future due to the EVM_SETUP_COMPLETE initialization flag,
+allowing an operation despite the attrs/xattrs being found invalid will not
+make them valid.
+
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- Documentation/ABI/testing/evm      | 5 +++--
- security/integrity/evm/evm_secfs.c | 5 ++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ security/integrity/evm/evm_main.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
-index 3c477ba48a31..eb6d70fd6fa2 100644
---- a/Documentation/ABI/testing/evm
-+++ b/Documentation/ABI/testing/evm
-@@ -49,8 +49,9 @@ Description:
- 		modification of EVM-protected metadata and
- 		disable all further modification of policy
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 998818283fda..f625196eee8e 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -90,6 +90,24 @@ static bool evm_key_loaded(void)
+ 	return (bool)(evm_initialized & EVM_KEY_MASK);
+ }
  
--		Note that once a key has been loaded, it will no longer be
--		possible to enable metadata modification.
-+		Note that once an HMAC key has been loaded, it will no longer
-+		be possible to enable metadata modification and, if it is
-+		already enabled, it will be disabled.
++/*
++ * This function determines whether or not it is safe to ignore verification
++ * errors, based on the ability of EVM to calculate HMACs. If the HMAC key
++ * is not loaded, and it cannot be loaded in the future due to the
++ * EVM_SETUP_COMPLETE initialization flag, allowing an operation despite the
++ * attrs/xattrs being found invalid will not make them valid.
++ */
++static bool evm_hmac_disabled(void)
++{
++	if (evm_initialized & EVM_INIT_HMAC)
++		return false;
++
++	if (!(evm_initialized & EVM_SETUP_COMPLETE))
++		return false;
++
++	return true;
++}
++
+ static int evm_find_protected_xattrs(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -338,6 +356,10 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 	if (evm_status == INTEGRITY_NOXATTRS) {
+ 		struct integrity_iint_cache *iint;
  
- 		Until key loading has been signaled EVM can not create
- 		or validate the 'security.evm' xattr, but returns
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index bbc85637e18b..860c48b9a0c3 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -81,11 +81,10 @@ static ssize_t evm_write_key(struct file *file, const char __user *buf,
- 		return -EINVAL;
- 
- 	/* Don't allow a request to freshly enable metadata writes if
--	 * keys are loaded.
-+	 * an HMAC key is loaded.
- 	 */
- 	if ((i & EVM_ALLOW_METADATA_WRITES) &&
--	    ((evm_initialized & EVM_KEY_MASK) != 0) &&
--	    !(evm_initialized & EVM_ALLOW_METADATA_WRITES))
-+	    (evm_initialized & EVM_INIT_HMAC) != 0)
- 		return -EPERM;
- 
- 	if (i & EVM_INIT_HMAC) {
++		/* Exception if the HMAC is not going to be calculated. */
++		if (evm_hmac_disabled())
++			return 0;
++
+ 		iint = integrity_iint_find(d_backing_inode(dentry));
+ 		if (iint && (iint->flags & IMA_NEW_FILE))
+ 			return 0;
+@@ -354,6 +376,9 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 				    -EPERM, 0);
+ 	}
+ out:
++	/* Exception if the HMAC is not going to be calculated. */
++	if (evm_hmac_disabled() && evm_status == INTEGRITY_NOLABEL)
++		return 0;
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -515,7 +540,8 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 		return 0;
+ 	evm_status = evm_verify_current_integrity(dentry);
+ 	if ((evm_status == INTEGRITY_PASS) ||
+-	    (evm_status == INTEGRITY_NOXATTRS))
++	    (evm_status == INTEGRITY_NOXATTRS) ||
++	    (evm_hmac_disabled() && evm_status == INTEGRITY_NOLABEL))
+ 		return 0;
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
 -- 
 2.25.1
 
