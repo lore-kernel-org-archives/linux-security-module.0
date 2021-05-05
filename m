@@ -2,107 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81086C433ED
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 10:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40478C433B4
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52503613E6
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 10:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BAB5610A7
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:30:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232331AbhEEKCE (ORCPT
+        id S233019AbhEELbB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 May 2021 06:02:04 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47725 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232262AbhEEKB6 (ORCPT
+        Wed, 5 May 2021 07:31:01 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3005 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232907AbhEELbB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 May 2021 06:01:58 -0400
-Received: from mail-ot1-f72.google.com ([209.85.210.72])
-        by youngberry.canonical.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <dimitri.ledkov@canonical.com>)
-        id 1leEKx-0000tw-DI
-        for linux-security-module@vger.kernel.org; Wed, 05 May 2021 10:00:59 +0000
-Received: by mail-ot1-f72.google.com with SMTP id l10-20020a056830054ab0290241bf5f8c25so890127otb.11
-        for <linux-security-module@vger.kernel.org>; Wed, 05 May 2021 03:00:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hmv8ovZ+lzfrtpGUv4rzbEFq7f24tUyHf3OpammTdVs=;
-        b=OdaaORfBtFeWb26slhw4yZ1vUji4dHTnCkstDjcyZKZVKp+3p7JHyt4i2vcB4fLb8S
-         8ojGHJ5jUXpweCrD+sNyBpoCESgWwcGHyfjBW7V21rLobfGRN0EYebHF4afKC4lW6tZO
-         jERi8k9qejI/1M14VXCQSnNNaf6iap+2X4Mid4+ZDiamPJfGCfY2lL+fgHEWB56iNf7V
-         3QUGjtleyjyARsSKsJlfoSSo/oFQRB7jUINFOnWpsefkUp0ALD5W/Hq/xKSuqdFVfqKt
-         L5eL8wWh5ivfCiVhCle+DkFN45JF0dWXNoyujbPd1ITBE2YcuGN+3ErnSuwWoptOBhRS
-         MtyQ==
-X-Gm-Message-State: AOAM532Isn6+2dihVJrilmLb/FM0skZ9I+WYtUfvR3sKDO/+wGfqq2e4
-        9IfSgu+ILSw1Qp69yQcjX0K9pBpPOXzS/fFiXj/LiGdj7gq0DbgroiPiESSmWQL3xLOgRu8glaj
-        oQcEo6sC5t5UoQfB4qcPTCH7cQCJ686Gifl1qGinaGVQ2F/OcguPy1a0Pro5xts9WVi91HQ==
-X-Received: by 2002:aca:f008:: with SMTP id o8mr21310002oih.106.1620208858222;
-        Wed, 05 May 2021 03:00:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxpRAMGh4AS9JFPRCCBNyvlCeqrX9tgmlXqMVO13lCuk0UmTaaGw2kTzBqWRUd/WpjRXslgaBkTm9Kbc76fMKA=
-X-Received: by 2002:aca:f008:: with SMTP id o8mr21309979oih.106.1620208857795;
- Wed, 05 May 2021 03:00:57 -0700 (PDT)
+        Wed, 5 May 2021 07:31:01 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZvNp1QPYz6wkRM;
+        Wed,  5 May 2021 19:19:06 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 5 May 2021 13:30:02 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v6 02/11] evm: Load EVM key in ima_load_x509() to avoid appraisal
+Date:   Wed, 5 May 2021 13:29:26 +0200
+Message-ID: <20210505112935.1410679-3-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210505112935.1410679-1-roberto.sassu@huawei.com>
+References: <20210505112935.1410679-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-References: <337B72A8-C81A-4C53-A4D6-FFFD7FA66CEC@oracle.com>
- <161428671215.677100.6372209948022011988.stgit@warthog.procyon.org.uk>
- <161428674320.677100.12637282414018170743.stgit@warthog.procyon.org.uk>
- <4b275a33-28ac-78c2-e075-ea2eda4f13a8@canonical.com> <92182F5F-327E-4F1D-A7D9-42355625C84C@oracle.com>
- <b10f51dc-b9d7-e84d-3a52-438ebd358a7d@canonical.com> <2579343.1615623232@warthog.procyon.org.uk>
- <12AAB359-A315-490E-8B94-FF947997B30E@oracle.com>
-In-Reply-To: <12AAB359-A315-490E-8B94-FF947997B30E@oracle.com>
-From:   Dimitri John Ledkov <dimitri.ledkov@canonical.com>
-Date:   Wed, 5 May 2021 11:00:21 +0100
-Message-ID: <CADWks+Z0xqDcJG_+VKKJYw2m1aG9DZ3pD9yoLCSSA5CUjJgsSA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] integrity: Load mokx variables into the blacklist keyring
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.62.217]
+X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Mar 13, 2021 at 2:40 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
->
->
-> > On Mar 13, 2021, at 1:13 AM, David Howells <dhowells@redhat.com> wrote:
-> >
-> > Eric Snowberg <eric.snowberg@oracle.com> wrote:
-> >
-> >> If MOKx will be available thru a config table in the next shim,
-> >> I'll prepare a follow on patch to add this support.
-> >
-> > Can this go separately, or would it be better rolled into the existing
-> > patchset?
->
-> IMHO, since you have already sent a pull request and this is not available
-> yet in shim, it seems save to have it go separately.  I should have time
-> to send something out next week to address this change.
->
+The public builtin keys do not need to be appraised by IMA as the
+restriction on the IMA/EVM trusted keyrings ensures that a key can be
+loaded only if it is signed with a key on the builtin or secondary
+keyrings.
 
-I don't think that was correct to call it "not available yet in shim".
-Shim has always exported all the variables, it's just at the time most
-shims from most distros did not have any contents in MokX. And as
-usual with all EFI variables, empty ones do not exist.
+However, when evm_load_x509() is called, appraisal is already enabled and
+a valid IMA signature must be added to the EVM key to pass verification.
 
-The shim from Ubuntu which is now public contains 1 cert & 378 on
-x86_64 and 1 cert & 170 hashes. Thus it is likely to fail to be read
-by kernel correctly unless it uses efi_mokvar_entry_find(). These
-patches are tagged with CVE number which it does not address
-completely in some configurations. Are you working on a patch to add
-efi_mokvar_entry_find() or do you want me to write it / test it /
-submit it for review?
+Since the restriction is applied on both IMA and EVM trusted keyrings, it
+is safe to disable appraisal also when the EVM key is loaded. This patch
+calls evm_load_x509() inside ima_load_x509() if CONFIG_IMA_LOAD_X509 is
+enabled, which crosses the normal IMA and EVM boundary.
 
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ security/integrity/iint.c         | 4 +++-
+ security/integrity/ima/ima_init.c | 4 ++++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
+diff --git a/security/integrity/iint.c b/security/integrity/iint.c
+index fca8a9409e4a..8638976f7990 100644
+--- a/security/integrity/iint.c
++++ b/security/integrity/iint.c
+@@ -208,7 +208,9 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+ void __init integrity_load_keys(void)
+ {
+ 	ima_load_x509();
+-	evm_load_x509();
++
++	if (!IS_ENABLED(CONFIG_IMA_LOAD_X509))
++		evm_load_x509();
+ }
+ 
+ static int __init integrity_fs_init(void)
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 6e8742916d1d..5076a7d9d23e 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -108,6 +108,10 @@ void __init ima_load_x509(void)
+ 
+ 	ima_policy_flag &= ~unset_flags;
+ 	integrity_load_x509(INTEGRITY_KEYRING_IMA, CONFIG_IMA_X509_PATH);
++
++	/* load also EVM key to avoid appraisal */
++	evm_load_x509();
++
+ 	ima_policy_flag |= unset_flags;
+ }
+ #endif
 -- 
-Regards,
+2.25.1
 
-Dimitri.
