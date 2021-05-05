@@ -2,78 +2,184 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4A1C43461
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1B2C43461
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 19:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA78C6109E
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 11:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93C89613C4
+	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 19:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233118AbhEELgJ (ORCPT
+        id S235439AbhEETTK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 May 2021 07:36:09 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3014 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232976AbhEELgI (ORCPT
+        Wed, 5 May 2021 15:19:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46606 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234973AbhEETTF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 May 2021 07:36:08 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZvVj2cMhz6wkRK;
-        Wed,  5 May 2021 19:24:13 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 5 May 2021 13:35:10 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <mjg59@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v6 11/11] ima: Don't remove security.ima if file must not be appraised
-Date:   Wed, 5 May 2021 13:33:29 +0200
-Message-ID: <20210505113329.1410943-7-roberto.sassu@huawei.com>
+        Wed, 5 May 2021 15:19:05 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E04ACC061763
+        for <linux-security-module@vger.kernel.org>; Wed,  5 May 2021 12:18:07 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id z16so2519561pga.1
+        for <linux-security-module@vger.kernel.org>; Wed, 05 May 2021 12:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4WYSC4vZQjtev2oFzlx0FGKTMmYzxEnnQo/e/yAZ4w8=;
+        b=kPvQemPtSPOW/yzBzeEYb+M1Ag2ysITcVCD+EG4obVHyhN8ONYEUXUYUBJXh7XznIt
+         Zvxxx93f26qcHTzi1BL9KKkw5rMICh0K5dySFfjUYcgol62ZlD3TOLX4E6JapDAaKFFV
+         D3z7bkHVbiJZOxV5aY+rcYfJMQwjTEcwXnxOg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4WYSC4vZQjtev2oFzlx0FGKTMmYzxEnnQo/e/yAZ4w8=;
+        b=XAQPIip4KEf/fds1aYmUoMXeP7hz+Vk1SvJ2bKgiMXSa7EK19Tv4rAWhPQlWk7MucR
+         /RMvqB8yBGDNfozopiwIC5qvpNnnCnWyd2WJTgIh4CR9vLsXz3FTBn55JZFmxAARaePX
+         ZVPKWbGXnir6c5Ib5dGD8tbT3nU5DRUD8+NlHRBpjHv3wfcN47aYHxB11qP8uDHWkAAf
+         lAiDvlzgcyVwSHD441cHkPUmR0MJC4nc4lxw1DTjUZ9atpIArztrN8gm6GqXrvI6XDUW
+         xQrQ+BhWA2IxXXirQ2NDh5EDhLy0+OS20XcfVr5XE1tckPh5NNKl2zhR1974aC2j7fat
+         Bu1Q==
+X-Gm-Message-State: AOAM533cytvVi+qRI34RWXRTSJLz4ZRN3Cf1EMfaNcE031sGnRLKn3+R
+        1oxx/lFe6m9dhd53koX2ZsNQPA==
+X-Google-Smtp-Source: ABdhPJysdlxx7Lr0SIayibsfBEnnNF5N67lBnTfNjc9vFhiqdhpxd/izyt4dW9Lm8k/+21BMTSrUeQ==
+X-Received: by 2002:a63:465b:: with SMTP id v27mr414257pgk.445.1620242287430;
+        Wed, 05 May 2021 12:18:07 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b21sm26163pfl.82.2021.05.05.12.18.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 May 2021 12:18:06 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-hardening@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Qing Zhao <qing.zhao@oracle.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH] Makefile: Introduce CONFIG_ZERO_CALL_USED_REGS
+Date:   Wed,  5 May 2021 12:18:04 -0700
+Message-Id: <20210505191804.4015873-1-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210505112935.1410679-1-roberto.sassu@huawei.com>
-References: <20210505112935.1410679-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.62.217]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+X-Patch-Hashes: v=1; h=sha256; g=486ae8ef11ec6ce07be8f36f937bc84f12b212d7; i=INxa/4VCLBovtkxgk4v6PayUOJQvpGeFUZovolpEDWo=; m=6hofzkFzCVIzIaBPLx/ZSwUq1VzuU3BvCXxnAGa5Moo=; p=yiFCvg8shZIMIJrM4uWz6P8G93GPjOZ7K1K592eVyGA=
+X-Patch-Sig: m=pgp; i=keescook@chromium.org; s=0x0x8972F4DFDC6DC026; b=iQIzBAABCgAdFiEEpcP2jyKd1g9yPm4TiXL039xtwCYFAmCS72sACgkQiXL039xtwCZG5g/+J1o l9p/R17NzyztXLl2VsbdCf3h4tXYkMbK+K6TpUi19k92VY2sbrGJN1i5uXLSAXyVaQIvyChiqoCCM gWv+amkmus6B4aCuie6xRnnqqYfxUGICtTys9T60XMCuqbMawGDuXd/5r0kIwYN4JitjJv9WR1kTt z4mdwwlb3bp6vKn1YxcvVgE45rGJNN8tgth0B7gqy4llri/agllSLgkRvU9PUu0x7dBwYWIdiz2/V yfbBRBhn1Wthc+Quz372wiYylx1O3/QfggDxabhE8j+gYlCi7NtgWpkkL4OpAn8+3kOGng+VVK1/K Ht10W/Ikjcwx99XlgyTMmj28FK4FDec838v125bjsnV/aRhiNOffmYTIFfR2xV+xY6ddkG66xMAAG cP5ng83+VpYV+vEcZ4zkIKv4KbYs4siOmi0YlqpcTwp0QhWbhEWQ34YCe/1PCgyvkiYTJ1NpMnPIP PNNCNJjBO95lr3lIVu4+XrTTrG3zoirjq5SO1u1gyS+6Z3lHeAHAAp7k0JtKoZ8a0GaFFj5r2mh6l VihdtWY3ysqlHCVPqlTcTbrCxxHv5fdJnPjUOdEaPPx3gvBsbW8T1yyYn67/4DCTSoPRguS1j5bGT uaui+WGG8Xbe42gGc3dJrAjPcxzXML6vVGa0e6kswXg4VuCiHHXCHNrhS2aI6JoA=
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Files might come from a remote source and might have xattrs, including
-security.ima. It should not be IMA task to decide whether security.ima
-should be kept or not. This patch removes the removexattr() system
-call in ima_inode_post_setattr().
+When CONFIG_ZERO_CALL_USED_REGS is enabled, build the kernel with
+"-fzero-call-used-regs=used-gpr" (in GCC 11). This option will zero any
+caller-used register contents just before returning from a function,
+ensuring that temporary values are not leaked beyond the function
+boundary. This means that register contents are less likely to be
+available for side channel attacks and information exposures.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Additionally this helps reduce the number of useful ROP gadgets in the
+kernel image by about 20%:
+
+$ ROPgadget.py --nosys --nojop --binary vmlinux.stock | tail -n1
+Unique gadgets found: 337245
+
+$ ROPgadget.py --nosys --nojop --binary vmlinux.zero-call-regs | tail -n1
+Unique gadgets found: 267175
+
+and more notably removes simple "write-what-where" gadgets:
+
+$ ROPgadget.py --ropchain --binary vmlinux.stock | sed -n '/Step 1/,/Step 2/p'
+- Step 1 -- Write-what-where gadgets
+
+        [+] Gadget found: 0xffffffff8102d76c mov qword ptr [rsi], rdx ; ret
+        [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+        [+] Gadget found: 0xffffffff8104d7c8 pop rdx ; ret
+        [-] Can't find the 'xor rdx, rdx' gadget. Try with another 'mov [reg], reg'
+
+        [+] Gadget found: 0xffffffff814c2b4c mov qword ptr [rsi], rdi ; ret
+        [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+        [+] Gadget found: 0xffffffff81001e51 pop rdi ; ret
+        [-] Can't find the 'xor rdi, rdi' gadget. Try with another 'mov [reg], reg'
+
+        [+] Gadget found: 0xffffffff81540d61 mov qword ptr [rsi], rdi ; pop rbx ; pop rbp ; ret
+        [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+        [+] Gadget found: 0xffffffff81001e51 pop rdi ; ret
+        [-] Can't find the 'xor rdi, rdi' gadget. Try with another 'mov [reg], reg'
+
+        [+] Gadget found: 0xffffffff8105341e mov qword ptr [rsi], rax ; ret
+        [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+        [+] Gadget found: 0xffffffff81029a11 pop rax ; ret
+        [+] Gadget found: 0xffffffff811f1c3b xor rax, rax ; ret
+
+- Step 2 -- Init syscall number gadgets
+
+$ ROPgadget.py --ropchain --binary vmlinux.zero* | sed -n '/Step 1/,/Step 2/p'
+- Step 1 -- Write-what-where gadgets
+
+        [-] Can't find the 'mov qword ptr [r64], r64' gadget
+
+In parallel build tests, this has a less than 1% performance impact,
+and grows the image size less than 1%:
+
+$ size vmlinux.stock vmlinux.zero-call-regs
+   text    data     bss     dec     hex filename
+22437676   8559152 14127340 45124168 2b08a48 vmlinux.stock
+22453184   8563248 14110956 45127388 2b096dc vmlinux.zero-call-regs
+
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- security/integrity/ima/ima_appraise.c | 2 --
- 1 file changed, 2 deletions(-)
+ Makefile                   |  5 +++++
+ security/Kconfig.hardening | 17 +++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 23af45d8ac58..e1bd61f76f9e 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -532,8 +532,6 @@ void ima_inode_post_setattr(struct user_namespace *mnt_userns,
- 		return;
+diff --git a/Makefile b/Makefile
+index 31dcdb3d61fa..810600618490 100644
+--- a/Makefile
++++ b/Makefile
+@@ -811,6 +811,11 @@ KBUILD_CFLAGS	+= -ftrivial-auto-var-init=zero
+ KBUILD_CFLAGS	+= -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
+ endif
  
- 	action = ima_must_appraise(mnt_userns, inode, MAY_ACCESS, POST_SETATTR);
--	if (!action)
--		__vfs_removexattr(&init_user_ns, dentry, XATTR_NAME_IMA);
- 	iint = integrity_iint_find(inode);
- 	if (iint) {
- 		set_bit(IMA_CHANGE_ATTR, &iint->atomic_flags);
++# Clear used registers at func exit (to reduce data lifetime and ROP gadgets).
++ifdef CONFIG_ZERO_CALL_USED_REGS
++KBUILD_CFLAGS	+= -fzero-call-used-regs=used-gpr
++endif
++
+ DEBUG_CFLAGS	:=
+ 
+ # Workaround for GCC versions < 5.0
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 269967c4fc1b..85f7f2036725 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -217,6 +217,23 @@ config INIT_ON_FREE_DEFAULT_ON
+ 	  touching "cold" memory areas. Most cases see 3-5% impact. Some
+ 	  synthetic workloads have measured as high as 8%.
+ 
++config CC_HAS_ZERO_CALL_USED_REGS
++	def_bool $(cc-option,-fzero-call-used-regs=used-gpr)
++
++config ZERO_CALL_USED_REGS
++	bool "Enable register zeroing on function exit"
++	depends on CC_HAS_ZERO_CALL_USED_REGS
++	help
++	  At the end of functions, always zero any caller-used register
++	  contents. This helps ensure that temporary values are not
++	  leaked beyond the function boundary. This means that register
++	  contents are less likely to be available for side channels
++	  and information exposures. Additionally, this helps reduce the
++	  number of useful ROP gadgets by about 20% (and removes compiler
++	  generated "write-what-where" gadgets) in the resulting kernel
++	  image. This has a less than 1% performance impact on most
++	  workloads, and grows the image size less than 1%.
++
+ endmenu
+ 
+ endmenu
 -- 
 2.25.1
 
