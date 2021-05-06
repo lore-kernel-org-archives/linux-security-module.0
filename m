@@ -2,155 +2,189 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FC3C433B4
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 May 2021 09:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C189EC433ED
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 May 2021 12:55:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 140F6610A2
-	for <linux-security-module@archiver.kernel.org>; Thu,  6 May 2021 09:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A28610E9
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 May 2021 12:55:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232097AbhEFJUW (ORCPT
+        id S233046AbhEFM4L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 6 May 2021 05:20:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36054 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231206AbhEFJUU (ORCPT
+        Thu, 6 May 2021 08:56:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:34196 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229946AbhEFM4J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 6 May 2021 05:20:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620292762;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=9T3+gtqvRPWaN1kbhzEfYcsn4RQucKuVfAaPYhpIxaE=;
-        b=Fjwmldr/72S+KsVx93qDzIkMR3AOaa4D8HSHjc65gugegi+Yf257IT0hVdwiLmiEN7e7vB
-        6lx/bbKosoVyPXtcqS1JRtHZe2HJfOxE6ts1CI1hwsNkSPl1uFWZJ5Oxq1eaorENr/ZU45
-        bPS75q8iwv1qvK3zfURab9fyiskelW4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-225-YvqA8d_6MjelWBozQMda6Q-1; Thu, 06 May 2021 05:19:17 -0400
-X-MC-Unique: YvqA8d_6MjelWBozQMda6Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69970802B78;
-        Thu,  6 May 2021 09:19:16 +0000 (UTC)
-Received: from max-t490s.redhat.com (unknown [10.36.110.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ABA2419D7C;
-        Thu,  6 May 2021 09:19:07 +0000 (UTC)
-From:   Maxime Coquelin <maxime.coquelin@redhat.com>
-To:     alex.williamson@redhat.com, jmorris@namei.org, dhowells@redhat.com,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, kvm@vger.kernel.org
-Cc:     mjg59@srcf.ucam.org, keescook@chromium.org, cohuck@redhat.com,
-        Maxime Coquelin <maxime.coquelin@redhat.com>
-Subject: [PATCH] vfio: Lock down no-IOMMU mode when kernel is locked down
-Date:   Thu,  6 May 2021 11:18:59 +0200
-Message-Id: <20210506091859.6961-1-maxime.coquelin@redhat.com>
+        Thu, 6 May 2021 08:56:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CFFD6106F;
+        Thu,  6 May 2021 05:55:10 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [10.57.31.158])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C5893F73B;
+        Thu,  6 May 2021 05:55:09 -0700 (PDT)
+Date:   Thu, 6 May 2021 13:54:57 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-hardening@vger.kernel.org, Qing Zhao <qing.zhao@oracle.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] Makefile: Introduce CONFIG_ZERO_CALL_USED_REGS
+Message-ID: <20210506125457.GA34956@C02TD0UTHF1T.local>
+References: <20210505191804.4015873-1-keescook@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210505191804.4015873-1-keescook@chromium.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-When no-IOMMU mode is enabled, VFIO is as unsafe as accessing
-the PCI BARs via the device's sysfs, which is locked down when
-the kernel is locked down.
+Hi Kees,
 
-Indeed, it is possible for an attacker to craft DMA requests
-to modify kernel's code or leak secrets stored in the kernel,
-since the device is not isolated by an IOMMU.
+On Wed, May 05, 2021 at 12:18:04PM -0700, Kees Cook wrote:
+> When CONFIG_ZERO_CALL_USED_REGS is enabled, build the kernel with
+> "-fzero-call-used-regs=used-gpr" (in GCC 11). This option will zero any
+> caller-used register contents just before returning from a function,
+> ensuring that temporary values are not leaked beyond the function
+> boundary. This means that register contents are less likely to be
+> available for side channel attacks and information exposures.
+> 
+> Additionally this helps reduce the number of useful ROP gadgets in the
+> kernel image by about 20%:
+> 
+> $ ROPgadget.py --nosys --nojop --binary vmlinux.stock | tail -n1
+> Unique gadgets found: 337245
+> 
+> $ ROPgadget.py --nosys --nojop --binary vmlinux.zero-call-regs | tail -n1
+> Unique gadgets found: 267175
+> 
+> and more notably removes simple "write-what-where" gadgets:
+> 
+> $ ROPgadget.py --ropchain --binary vmlinux.stock | sed -n '/Step 1/,/Step 2/p'
+> - Step 1 -- Write-what-where gadgets
+> 
+>         [+] Gadget found: 0xffffffff8102d76c mov qword ptr [rsi], rdx ; ret
+>         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+>         [+] Gadget found: 0xffffffff8104d7c8 pop rdx ; ret
+>         [-] Can't find the 'xor rdx, rdx' gadget. Try with another 'mov [reg], reg'
+> 
+>         [+] Gadget found: 0xffffffff814c2b4c mov qword ptr [rsi], rdi ; ret
+>         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+>         [+] Gadget found: 0xffffffff81001e51 pop rdi ; ret
+>         [-] Can't find the 'xor rdi, rdi' gadget. Try with another 'mov [reg], reg'
+> 
+>         [+] Gadget found: 0xffffffff81540d61 mov qword ptr [rsi], rdi ; pop rbx ; pop rbp ; ret
+>         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+>         [+] Gadget found: 0xffffffff81001e51 pop rdi ; ret
+>         [-] Can't find the 'xor rdi, rdi' gadget. Try with another 'mov [reg], reg'
+> 
+>         [+] Gadget found: 0xffffffff8105341e mov qword ptr [rsi], rax ; ret
+>         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+>         [+] Gadget found: 0xffffffff81029a11 pop rax ; ret
+>         [+] Gadget found: 0xffffffff811f1c3b xor rax, rax ; ret
+> 
+> - Step 2 -- Init syscall number gadgets
+> 
+> $ ROPgadget.py --ropchain --binary vmlinux.zero* | sed -n '/Step 1/,/Step 2/p'
+> - Step 1 -- Write-what-where gadgets
+> 
+>         [-] Can't find the 'mov qword ptr [r64], r64' gadget
+> 
+> In parallel build tests, this has a less than 1% performance impact,
+> and grows the image size less than 1%:
+> 
+> $ size vmlinux.stock vmlinux.zero-call-regs
+>    text    data     bss     dec     hex filename
+> 22437676   8559152 14127340 45124168 2b08a48 vmlinux.stock
+> 22453184   8563248 14110956 45127388 2b096dc vmlinux.zero-call-regs
 
-This patch introduces a new integrity lockdown reason for the
-unsafe VFIO no-iommu mode.
+FWIW, I gave this a go on arm64, and the size increase is a fair bit
+larger:
 
-Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
----
- drivers/vfio/vfio.c      | 13 +++++++++----
- include/linux/security.h |  1 +
- security/security.c      |  1 +
- 3 files changed, 11 insertions(+), 4 deletions(-)
+| [mark@lakrids:~/src/linux]% ls -l Image* 
+| -rw-r--r-- 1 mark mark 31955456 May  6 13:36 Image.stock
+| -rw-r--r-- 1 mark mark 33724928 May  6 13:23 Image.zero-call-regs
 
-diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
-index 5e631c359ef2..fe466d6ea5d8 100644
---- a/drivers/vfio/vfio.c
-+++ b/drivers/vfio/vfio.c
-@@ -25,6 +25,7 @@
- #include <linux/pci.h>
- #include <linux/rwsem.h>
- #include <linux/sched.h>
-+#include <linux/security.h>
- #include <linux/slab.h>
- #include <linux/stat.h>
- #include <linux/string.h>
-@@ -165,7 +166,8 @@ static void *vfio_noiommu_open(unsigned long arg)
- {
- 	if (arg != VFIO_NOIOMMU_IOMMU)
- 		return ERR_PTR(-EINVAL);
--	if (!capable(CAP_SYS_RAWIO))
-+	if (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_VFIO_NOIOMMU))
- 		return ERR_PTR(-EPERM);
- 
- 	return NULL;
-@@ -1280,7 +1282,8 @@ static int vfio_group_set_container(struct vfio_group *group, int container_fd)
- 	if (atomic_read(&group->container_users))
- 		return -EINVAL;
- 
--	if (group->noiommu && !capable(CAP_SYS_RAWIO))
-+	if (group->noiommu && (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_VFIO_NOIOMMU)))
- 		return -EPERM;
- 
- 	f = fdget(container_fd);
-@@ -1362,7 +1365,8 @@ static int vfio_group_get_device_fd(struct vfio_group *group, char *buf)
- 	    !group->container->iommu_driver || !vfio_group_viable(group))
- 		return -EINVAL;
- 
--	if (group->noiommu && !capable(CAP_SYS_RAWIO))
-+	if (group->noiommu && (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_VFIO_NOIOMMU)))
- 		return -EPERM;
- 
- 	device = vfio_device_get_from_name(group, buf);
-@@ -1490,7 +1494,8 @@ static int vfio_group_fops_open(struct inode *inode, struct file *filep)
- 	if (!group)
- 		return -ENODEV;
- 
--	if (group->noiommu && !capable(CAP_SYS_RAWIO)) {
-+	if (group->noiommu && (!capable(CAP_SYS_RAWIO) ||
-+			security_locked_down(LOCKDOWN_VFIO_NOIOMMU))) {
- 		vfio_group_put(group);
- 		return -EPERM;
- 	}
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 06f7c50ce77f..f29388180fab 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -120,6 +120,7 @@ enum lockdown_reason {
- 	LOCKDOWN_MMIOTRACE,
- 	LOCKDOWN_DEBUGFS,
- 	LOCKDOWN_XMON_WR,
-+	LOCKDOWN_VFIO_NOIOMMU,
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_KCORE,
- 	LOCKDOWN_KPROBES,
-diff --git a/security/security.c b/security/security.c
-index b38155b2de83..33c3ddb6dcab 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -58,6 +58,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
- 	[LOCKDOWN_DEBUGFS] = "debugfs access",
- 	[LOCKDOWN_XMON_WR] = "xmon write access",
-+	[LOCKDOWN_VFIO_NOIOMMU] = "VFIO unsafe no-iommu mode",
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_KCORE] = "/proc/kcore access",
- 	[LOCKDOWN_KPROBES] = "use of kprobes",
--- 
-2.31.1
+| [mark@lakrids:~/src/linux]% size vmlinux.stock vmlinux.zero-call-regs 
+|    text    data     bss     dec     hex filename
+| 20728552        11086474         505540 32320566        1ed2c36 vmlinux.stock
+| 22500688        11084298         505540 34090526        2082e1e vmlinux.zero-call-regs
 
+The Image is ~5.5% bigger, and the .text in the vmlinux is ~8.5% bigger
+
+The resulting Image appears to work, but I haven't done anything beyond
+booting, and I wasn't able to get ROPgadget.py going to quantify the
+number of gadgets.
+
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  Makefile                   |  5 +++++
+>  security/Kconfig.hardening | 17 +++++++++++++++++
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/Makefile b/Makefile
+> index 31dcdb3d61fa..810600618490 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -811,6 +811,11 @@ KBUILD_CFLAGS	+= -ftrivial-auto-var-init=zero
+>  KBUILD_CFLAGS	+= -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang
+>  endif
+>  
+> +# Clear used registers at func exit (to reduce data lifetime and ROP gadgets).
+> +ifdef CONFIG_ZERO_CALL_USED_REGS
+> +KBUILD_CFLAGS	+= -fzero-call-used-regs=used-gpr
+> +endif
+> +
+>  DEBUG_CFLAGS	:=
+>  
+>  # Workaround for GCC versions < 5.0
+> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+> index 269967c4fc1b..85f7f2036725 100644
+> --- a/security/Kconfig.hardening
+> +++ b/security/Kconfig.hardening
+> @@ -217,6 +217,23 @@ config INIT_ON_FREE_DEFAULT_ON
+>  	  touching "cold" memory areas. Most cases see 3-5% impact. Some
+>  	  synthetic workloads have measured as high as 8%.
+>  
+> +config CC_HAS_ZERO_CALL_USED_REGS
+> +	def_bool $(cc-option,-fzero-call-used-regs=used-gpr)
+> +
+> +config ZERO_CALL_USED_REGS
+> +	bool "Enable register zeroing on function exit"
+> +	depends on CC_HAS_ZERO_CALL_USED_REGS
+> +	help
+> +	  At the end of functions, always zero any caller-used register
+> +	  contents. This helps ensure that temporary values are not
+> +	  leaked beyond the function boundary. This means that register
+> +	  contents are less likely to be available for side channels
+> +	  and information exposures. Additionally, this helps reduce the
+> +	  number of useful ROP gadgets by about 20% (and removes compiler
+> +	  generated "write-what-where" gadgets) in the resulting kernel
+> +	  image. This has a less than 1% performance impact on most
+> +	  workloads, and grows the image size less than 1%.
+
+I think the numbers need an "on x86" caveat, since they're not
+necessarily representative of other architectures.
+
+This shows up under the "Memory initialization" sub-menu, but I assume
+it was meant to be directly under the "Kernel hardening options" menu...
+
+> +
+>  endmenu
+
+... and should presumably be here?
+
+Thanks,
+Mark.
+
+>  
+>  endmenu
+> -- 
+> 2.25.1
+> 
