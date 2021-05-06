@@ -2,65 +2,155 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A04C43460
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 20:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FC3C433B4
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 May 2021 09:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2FF9613E3
-	for <linux-security-module@archiver.kernel.org>; Wed,  5 May 2021 20:49:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 140F6610A2
+	for <linux-security-module@archiver.kernel.org>; Thu,  6 May 2021 09:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbhEEUuT (ORCPT
+        id S232097AbhEFJUW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 5 May 2021 16:50:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230009AbhEEUuQ (ORCPT
+        Thu, 6 May 2021 05:20:22 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:36054 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231206AbhEFJUU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 5 May 2021 16:50:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id BCACD613ED;
-        Wed,  5 May 2021 20:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620247759;
-        bh=aRGoPiNdZDbJUjhYfqJ0RTBYlAMNcp+GVNgQfxE2Sbc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=IkjNDHHOpXmFqpGbTXyZ1USYd0Cu3fbRjXD12p3rsIu2cvrvc+K6BikE4tNfVgeTU
-         m2bBNTh8LkTPaaKqRW+kK0XeJBgudPEeuvdk/L2zmQtBzwNUc3D2XTZGUfFzpqBJWC
-         RIIW+62pu0sZbcWvUH9lfwnF+ts4SQXAE/Oparc4+nZKQeiGV5jjBkXdLBdB24RogG
-         wJaYFSGa/PPBsunWEz6+Rz6kSCg8EmbLCI3F7yXzuHPvp1f/IAWWvyNBLaUIEQ/oDv
-         VVFhy58GAOOG2cyUL6K916Jv03jWiYcPMPiJHrV31p0sygColP2C6SacmXKiDe2OjE
-         TTncGdjQAp0jg==
-Subject: Re: [GIT PULL] SafeSetID changes for v5.13
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJ-EccOdLW1+8xx8=PRHzSjy4kVaVOUave0pAXF5b=cD4w3=pg@mail.gmail.com>
-References: <CAJ-EccOdLW1+8xx8=PRHzSjy4kVaVOUave0pAXF5b=cD4w3=pg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJ-EccOdLW1+8xx8=PRHzSjy4kVaVOUave0pAXF5b=cD4w3=pg@mail.gmail.com>
-X-PR-Tracked-Remote: https://github.com/micah-morton/linux.git tags/safesetid-5.13
-X-PR-Tracked-Commit-Id: 1ca86ac1ec8d201478e9616565d4df5d51595cfc
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d29c9bb0108eedfc8f8b46f225f9539190c50d45
-Message-Id: <162024775974.12235.11953358196306474920.pr-tracker-bot@kernel.org>
-Date:   Wed, 05 May 2021 20:49:19 +0000
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
+        Thu, 6 May 2021 05:20:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620292762;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=9T3+gtqvRPWaN1kbhzEfYcsn4RQucKuVfAaPYhpIxaE=;
+        b=Fjwmldr/72S+KsVx93qDzIkMR3AOaa4D8HSHjc65gugegi+Yf257IT0hVdwiLmiEN7e7vB
+        6lx/bbKosoVyPXtcqS1JRtHZe2HJfOxE6ts1CI1hwsNkSPl1uFWZJ5Oxq1eaorENr/ZU45
+        bPS75q8iwv1qvK3zfURab9fyiskelW4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-225-YvqA8d_6MjelWBozQMda6Q-1; Thu, 06 May 2021 05:19:17 -0400
+X-MC-Unique: YvqA8d_6MjelWBozQMda6Q-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69970802B78;
+        Thu,  6 May 2021 09:19:16 +0000 (UTC)
+Received: from max-t490s.redhat.com (unknown [10.36.110.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ABA2419D7C;
+        Thu,  6 May 2021 09:19:07 +0000 (UTC)
+From:   Maxime Coquelin <maxime.coquelin@redhat.com>
+To:     alex.williamson@redhat.com, jmorris@namei.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, kvm@vger.kernel.org
+Cc:     mjg59@srcf.ucam.org, keescook@chromium.org, cohuck@redhat.com,
+        Maxime Coquelin <maxime.coquelin@redhat.com>
+Subject: [PATCH] vfio: Lock down no-IOMMU mode when kernel is locked down
+Date:   Thu,  6 May 2021 11:18:59 +0200
+Message-Id: <20210506091859.6961-1-maxime.coquelin@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The pull request you sent on Mon, 3 May 2021 11:42:13 -1000:
+When no-IOMMU mode is enabled, VFIO is as unsafe as accessing
+the PCI BARs via the device's sysfs, which is locked down when
+the kernel is locked down.
 
-> https://github.com/micah-morton/linux.git tags/safesetid-5.13
+Indeed, it is possible for an attacker to craft DMA requests
+to modify kernel's code or leak secrets stored in the kernel,
+since the device is not isolated by an IOMMU.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d29c9bb0108eedfc8f8b46f225f9539190c50d45
+This patch introduces a new integrity lockdown reason for the
+unsafe VFIO no-iommu mode.
 
-Thank you!
+Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+---
+ drivers/vfio/vfio.c      | 13 +++++++++----
+ include/linux/security.h |  1 +
+ security/security.c      |  1 +
+ 3 files changed, 11 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/vfio/vfio.c b/drivers/vfio/vfio.c
+index 5e631c359ef2..fe466d6ea5d8 100644
+--- a/drivers/vfio/vfio.c
++++ b/drivers/vfio/vfio.c
+@@ -25,6 +25,7 @@
+ #include <linux/pci.h>
+ #include <linux/rwsem.h>
+ #include <linux/sched.h>
++#include <linux/security.h>
+ #include <linux/slab.h>
+ #include <linux/stat.h>
+ #include <linux/string.h>
+@@ -165,7 +166,8 @@ static void *vfio_noiommu_open(unsigned long arg)
+ {
+ 	if (arg != VFIO_NOIOMMU_IOMMU)
+ 		return ERR_PTR(-EINVAL);
+-	if (!capable(CAP_SYS_RAWIO))
++	if (!capable(CAP_SYS_RAWIO) ||
++			security_locked_down(LOCKDOWN_VFIO_NOIOMMU))
+ 		return ERR_PTR(-EPERM);
+ 
+ 	return NULL;
+@@ -1280,7 +1282,8 @@ static int vfio_group_set_container(struct vfio_group *group, int container_fd)
+ 	if (atomic_read(&group->container_users))
+ 		return -EINVAL;
+ 
+-	if (group->noiommu && !capable(CAP_SYS_RAWIO))
++	if (group->noiommu && (!capable(CAP_SYS_RAWIO) ||
++			security_locked_down(LOCKDOWN_VFIO_NOIOMMU)))
+ 		return -EPERM;
+ 
+ 	f = fdget(container_fd);
+@@ -1362,7 +1365,8 @@ static int vfio_group_get_device_fd(struct vfio_group *group, char *buf)
+ 	    !group->container->iommu_driver || !vfio_group_viable(group))
+ 		return -EINVAL;
+ 
+-	if (group->noiommu && !capable(CAP_SYS_RAWIO))
++	if (group->noiommu && (!capable(CAP_SYS_RAWIO) ||
++			security_locked_down(LOCKDOWN_VFIO_NOIOMMU)))
+ 		return -EPERM;
+ 
+ 	device = vfio_device_get_from_name(group, buf);
+@@ -1490,7 +1494,8 @@ static int vfio_group_fops_open(struct inode *inode, struct file *filep)
+ 	if (!group)
+ 		return -ENODEV;
+ 
+-	if (group->noiommu && !capable(CAP_SYS_RAWIO)) {
++	if (group->noiommu && (!capable(CAP_SYS_RAWIO) ||
++			security_locked_down(LOCKDOWN_VFIO_NOIOMMU))) {
+ 		vfio_group_put(group);
+ 		return -EPERM;
+ 	}
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 06f7c50ce77f..f29388180fab 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -120,6 +120,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_MMIOTRACE,
+ 	LOCKDOWN_DEBUGFS,
+ 	LOCKDOWN_XMON_WR,
++	LOCKDOWN_VFIO_NOIOMMU,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_KCORE,
+ 	LOCKDOWN_KPROBES,
+diff --git a/security/security.c b/security/security.c
+index b38155b2de83..33c3ddb6dcab 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -58,6 +58,7 @@ const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_MMIOTRACE] = "unsafe mmio",
+ 	[LOCKDOWN_DEBUGFS] = "debugfs access",
+ 	[LOCKDOWN_XMON_WR] = "xmon write access",
++	[LOCKDOWN_VFIO_NOIOMMU] = "VFIO unsafe no-iommu mode",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_KCORE] = "/proc/kcore access",
+ 	[LOCKDOWN_KPROBES] = "use of kprobes",
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.31.1
+
