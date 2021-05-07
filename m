@@ -2,65 +2,172 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE99C43461
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 13:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C02C433B4
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 13:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2B761443
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 13:26:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2FC060249
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 13:31:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237248AbhEGN1I (ORCPT
+        id S235937AbhEGNcb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 May 2021 09:27:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50090 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230499AbhEGN1I (ORCPT
+        Fri, 7 May 2021 09:32:31 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3041 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234545AbhEGNca (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 May 2021 09:27:08 -0400
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6A9D61042;
-        Fri,  7 May 2021 13:26:06 +0000 (UTC)
-Date:   Fri, 7 May 2021 09:26:04 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Garrett <matthewgarrett@google.com>,
-        James Morris James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        Herton Krzesinski <hkrzesin@redhat.com>
-Subject: Re: [PATCH 7/7 v2] tracing: Do not create tracefs files if tracefs
- lockdown is in effect
-Message-ID: <20210507092604.31d2491d@gandalf.local.home>
-In-Reply-To: <CAFqZXNs4eRC6kjFRe6CdwA-sng-w6bcJZf5io+hoLKwM98TVSA@mail.gmail.com>
-References: <20191012005747.210722465@goodmis.org>
-        <20191012005921.580293464@goodmis.org>
-        <CAFqZXNs4eRC6kjFRe6CdwA-sng-w6bcJZf5io+hoLKwM98TVSA@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Fri, 7 May 2021 09:32:30 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fc9zr6sxGz6wkgY;
+        Fri,  7 May 2021 21:20:24 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 7 May 2021 15:31:28 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RESEND][PATCH v6 05/11] evm: Introduce evm_hmac_disabled() to safely ignore verification errors
+Date:   Fri, 7 May 2021 15:31:14 +0200
+Message-ID: <20210507133114.2138653-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210505113329.1410943-1-roberto.sassu@huawei.com>
+References: <20210505113329.1410943-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.62.217]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 13 Apr 2021 10:13:04 +0200
-Ondrej Mosnacek <omosnace@redhat.com> wrote:
+When a file is being created, LSMs can set the initial label with the
+inode_init_security hook. If no HMAC key is loaded, the new file will have
+LSM xattrs but not the HMAC. It is also possible that the file remains
+without protected xattrs after creation if no active LSM provided it.
 
-> Thoughts?
+Unfortunately, EVM will deny any further metadata operation on new files,
+as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error, or
+INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
+usability of EVM when only a public key is loaded, as commands such as cp
+or tar with the option to preserve xattrs won't work.
 
-I never enable the lockdown feature for tracefs, so I'll leave it up to the
-other people that do (and that care about this code) to answer.
+This patch introduces the evm_hmac_disabled() function to determine whether
+or not it is safe to ignore verification errors, based on the ability of
+EVM to calculate HMACs. If the HMAC key is not loaded, and it cannot be
+loaded in the future due to the EVM_SETUP_COMPLETE initialization flag,
+allowing an operation despite the attrs/xattrs being found invalid will not
+make them valid.
 
--- Steve
+Since the post hooks can be executed even when the HMAC key is not loaded,
+this patch also ensures that the EVM_INIT_HMAC initialization flag is set
+before the post hooks call evm_update_evmxattr().
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ security/integrity/evm/evm_main.c | 37 ++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
+
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 998818283fda..940e5f0a5f93 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -90,6 +90,24 @@ static bool evm_key_loaded(void)
+ 	return (bool)(evm_initialized & EVM_KEY_MASK);
+ }
+ 
++/*
++ * This function determines whether or not it is safe to ignore verification
++ * errors, based on the ability of EVM to calculate HMACs. If the HMAC key
++ * is not loaded, and it cannot be loaded in the future due to the
++ * EVM_SETUP_COMPLETE initialization flag, allowing an operation despite the
++ * attrs/xattrs being found invalid will not make them valid.
++ */
++static bool evm_hmac_disabled(void)
++{
++	if (evm_initialized & EVM_INIT_HMAC)
++		return false;
++
++	if (!(evm_initialized & EVM_SETUP_COMPLETE))
++		return false;
++
++	return true;
++}
++
+ static int evm_find_protected_xattrs(struct dentry *dentry)
+ {
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -338,6 +356,10 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 	if (evm_status == INTEGRITY_NOXATTRS) {
+ 		struct integrity_iint_cache *iint;
+ 
++		/* Exception if the HMAC is not going to be calculated. */
++		if (evm_hmac_disabled())
++			return 0;
++
+ 		iint = integrity_iint_find(d_backing_inode(dentry));
+ 		if (iint && (iint->flags & IMA_NEW_FILE))
+ 			return 0;
+@@ -354,6 +376,9 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 				    -EPERM, 0);
+ 	}
+ out:
++	/* Exception if the HMAC is not going to be calculated. */
++	if (evm_hmac_disabled() && evm_status == INTEGRITY_NOLABEL)
++		return 0;
+ 	if (evm_status != INTEGRITY_PASS)
+ 		integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 				    dentry->d_name.name, "appraise_metadata",
+@@ -470,6 +495,9 @@ void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
+ 
+ 	evm_reset_status(dentry->d_inode);
+ 
++	if (!(evm_initialized & EVM_INIT_HMAC))
++		return;
++
+ 	evm_update_evmxattr(dentry, xattr_name, xattr_value, xattr_value_len);
+ }
+ 
+@@ -490,6 +518,9 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ 
+ 	evm_reset_status(dentry->d_inode);
+ 
++	if (!(evm_initialized & EVM_INIT_HMAC))
++		return;
++
+ 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+ }
+ 
+@@ -515,7 +546,8 @@ int evm_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ 		return 0;
+ 	evm_status = evm_verify_current_integrity(dentry);
+ 	if ((evm_status == INTEGRITY_PASS) ||
+-	    (evm_status == INTEGRITY_NOXATTRS))
++	    (evm_status == INTEGRITY_NOXATTRS) ||
++	    (evm_hmac_disabled() && evm_status == INTEGRITY_NOLABEL))
+ 		return 0;
+ 	integrity_audit_msg(AUDIT_INTEGRITY_METADATA, d_backing_inode(dentry),
+ 			    dentry->d_name.name, "appraise_metadata",
+@@ -541,6 +573,9 @@ void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
+ 
+ 	evm_reset_status(dentry->d_inode);
+ 
++	if (!(evm_initialized & EVM_INIT_HMAC))
++		return;
++
+ 	if (ia_valid & (ATTR_MODE | ATTR_UID | ATTR_GID))
+ 		evm_update_evmxattr(dentry, NULL, NULL, 0);
+ }
+-- 
+2.25.1
+
