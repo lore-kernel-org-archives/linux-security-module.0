@@ -2,135 +2,190 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA98C43462
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 11:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2947EC433ED
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 12:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2DA460FD8
-	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 11:57:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E85C76144F
+	for <linux-security-module@archiver.kernel.org>; Fri,  7 May 2021 12:00:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235656AbhEGL62 (ORCPT
+        id S235689AbhEGMBZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 7 May 2021 07:58:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:49070 "EHLO
+        Fri, 7 May 2021 08:01:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:34021 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235609AbhEGL62 (ORCPT
+        by vger.kernel.org with ESMTP id S230302AbhEGMBY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 7 May 2021 07:58:28 -0400
+        Fri, 7 May 2021 08:01:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620388648;
+        s=mimecast20190719; t=1620388824;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=YXvAn6PhmCpGYLW0QYPpJQEW72/FRvqimCSflbY0beM=;
-        b=dxM5WMG6lgVecKhYkQjJEEys13lSjv4Lh43MGbq+1cRTU/b5Jybi1CWIlrMdzva/sOHf+b
-        dlCCmWFTHaB6R9ataUU23HaHEzU1MqRjrGJJKbJZfm7vU3ZSGkgam4PkOIb9GB+PpZe+4j
-        kBWqFBeLHokjsXjN6azE3ScN4bPeq2Q=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-567-rMnaUg_nPuG1OqsNeEjfTg-1; Fri, 07 May 2021 07:57:25 -0400
-X-MC-Unique: rMnaUg_nPuG1OqsNeEjfTg-1
-Received: by mail-ej1-f69.google.com with SMTP id zo1-20020a170906ff41b02903973107d7b5so2885922ejb.21
-        for <linux-security-module@vger.kernel.org>; Fri, 07 May 2021 04:57:25 -0700 (PDT)
+         in-reply-to:in-reply-to:references:references;
+        bh=xE5gyBAP7XXvwmcVdD/ZatFOGgEM/dN4lyKwStNP9II=;
+        b=WVEN0uVxnj9MbZbnDbvoyL1QwfJ9e8FT2yAsSTlCoCAGcgI+3rZOpT5jX9t9TKI31ZkEER
+        ujUCy+awiBZMZUnfEgaRDJ8/4KtS9W0I4UMb7+QRKLEH/2dNuBKdceimXeb/lW1XHO8HXE
+        FGSaIRKAkz369ptPfPSiWp46dh627y4=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-59-zABuumRpMoqkvm9DX0ABhg-1; Fri, 07 May 2021 08:00:23 -0400
+X-MC-Unique: zABuumRpMoqkvm9DX0ABhg-1
+Received: by mail-yb1-f200.google.com with SMTP id v184-20020a257ac10000b02904f84a5c5297so8708350ybc.16
+        for <linux-security-module@vger.kernel.org>; Fri, 07 May 2021 05:00:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=YXvAn6PhmCpGYLW0QYPpJQEW72/FRvqimCSflbY0beM=;
-        b=EH/87a6sJng9tMgYFXjVtSWfrj+jWWlKkj35aEE7K416ZeRyvOJPlzDzutDMAeWqDi
-         JajuYAyGb/C3Ux6P9l8Ob6mJ30jcfWCbwoTuzzV46xgcmUFC9oPzFoPhqsaGN00Hu0Nw
-         akTiJIT9YdTvgKtORhaMGy7gZXNC5qeEqTFTfgScS6B1oDUXETC8QwNu/5Ut6wv40Eh6
-         dkKmuKzw6s3mC2FfO13bkK8C4U758fuQCWMn2/2RlqtOJRknwScLho5aU7k94q04/tLJ
-         CyTjKW8RM6aabRIl9xb60Nvx3ELt2hAl5LsGRzbT6B2S8TQE6NpwVCrPjEvx81A7/WeZ
-         fhxw==
-X-Gm-Message-State: AOAM530oDxqXjR2M48ihOcj/Ajkn54EM+kAHEdE1KrX31TjaE0Xn+RF7
-        I0GKB/ADwgnu9Vd3O7hESsgsWGs+QwfXah6itFnnO6qQxldSrz4MMuJi8AqMwTf1lI3iTdnay91
-        kLbq1zLDsu5jhGOIc5rAtAogw+nsF5e++jYN0
-X-Received: by 2002:a05:6402:518f:: with SMTP id q15mr10961512edd.345.1620388644407;
-        Fri, 07 May 2021 04:57:24 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJx0mUjelRd+5LBa+/SoDUEq7Qu7Gn0SmyPwD91nNDesN5xWttmUuZOfJ500zMk6FJ/yUea2gQ==
-X-Received: by 2002:a05:6402:518f:: with SMTP id q15mr10961502edd.345.1620388644218;
-        Fri, 07 May 2021 04:57:24 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:8308:b105:dd00:277b:6436:24db:9466])
-        by smtp.gmail.com with ESMTPSA id l7sm3657324ejk.115.2021.05.07.04.57.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 May 2021 04:57:23 -0700 (PDT)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jiri Slaby <jirislaby@kernel.org>, selinux@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] serial: core: fix suspicious security_locked_down() call
-Date:   Fri,  7 May 2021 13:57:19 +0200
-Message-Id: <20210507115719.140799-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.31.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xE5gyBAP7XXvwmcVdD/ZatFOGgEM/dN4lyKwStNP9II=;
+        b=Wt1C2McsvR224zPRp/zscv7U/8JdSUECqXpQdIJGI63P1D6k/yqgS3qWEBthEK8uyX
+         tZgzAqi1SNh/EKpL7oAuTD0irrqVhRpS5pvrSqgxZ4LBauHUaDCui+xbjYD41W07e95S
+         aaz6K0aOpZbvkmPqskXhj3lq+48tqSIlTtFE+HgOIJhfAKiSGwlcetashuEvijrEuQx2
+         bbEPSK8r1VS6Ua+8jvxnTqAxyPfQRq4MkjCkmLS+4ZjHurdm2gLWLQwj9/PaEwuYu/OW
+         +bpLjRhK7pVnVSuGl6XKhJQZo9wy396Ff3YVLf8r5Bgeprs7gKOm1mcFqJ9o3CyqBwBe
+         JCxA==
+X-Gm-Message-State: AOAM531zIwaybbgHC0kHJ2OZvqGyA1kjSGdI4PQ2qEpmVjoQmvf9PZPG
+        s4dPq2xM4LQJqKwQv1IDQ9pKUV2G9z4guRbzCgLIyISD6DOlFihW3fZKYKXmJfQRnQkx2PeFwv5
+        JHWS53NAJUOUarXz3t3pRAh10Fja6MmtIBRpUyShvFvbLCqWq+F3Y
+X-Received: by 2002:a25:6886:: with SMTP id d128mr12852967ybc.227.1620388822836;
+        Fri, 07 May 2021 05:00:22 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzJzFoLmM53HRRPTS8+L1NFo6C4N4lbmA/5cKumgX6lQWkw3hZSH5NVRI0R1lv1CH4GMXBTdIxM8bWjoat1/WU=
+X-Received: by 2002:a25:6886:: with SMTP id d128mr12852927ybc.227.1620388822601;
+ Fri, 07 May 2021 05:00:22 -0700 (PDT)
 MIME-Version: 1.0
+References: <20191012005747.210722465@goodmis.org> <20191012005921.580293464@goodmis.org>
+ <CAFqZXNs4eRC6kjFRe6CdwA-sng-w6bcJZf5io+hoLKwM98TVSA@mail.gmail.com>
+In-Reply-To: <CAFqZXNs4eRC6kjFRe6CdwA-sng-w6bcJZf5io+hoLKwM98TVSA@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Fri, 7 May 2021 14:00:09 +0200
+Message-ID: <CAFqZXNuxs-h1KKjNfGuZVP4s5MiwRVCWj2E+pDA4PoqxuTrndQ@mail.gmail.com>
+Subject: Re: [PATCH 7/7 v2] tracing: Do not create tracefs files if tracefs
+ lockdown is in effect
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Garrett <matthewgarrett@google.com>,
+        James Morris James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Ben Hutchings <ben@decadent.org.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        Herton Krzesinski <hkrzesin@redhat.com>
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
 X-Mimecast-Spam-Score: 0
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The commit that added this check did so in a very strange way - first
-security_locked_down() is called, its value stored into retval, and if
-it's nonzero, then an additional check is made for (change_irq ||
-change_port), and if this is true, the function returns. However, if
-the goto exit branch is not taken, the code keeps the retval value and
-continues executing the function. Then, depending on whether
-uport->ops->verify_port is set, the retval value may or may not be reset
-to zero and eventually the error value from security_locked_down() may
-abort the function a few lines below.
+On Tue, Apr 13, 2021 at 10:13 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> On Sat, Oct 12, 2019 at 2:59 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> >
+> > If on boot up, lockdown is activated for tracefs, don't even bother creating
+> > the files. This can also prevent instances from being created if lockdown is
+> > in effect.
+> >
+> > Link: http://lkml.kernel.org/r/CAHk-=whC6Ji=fWnjh2+eS4b15TnbsS4VPVtvBOwCy1jjEG_JHQ@mail.gmail.com
+> >
+> > Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > ---
+> >  fs/tracefs/inode.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> > index eeeae0475da9..0caa151cae4e 100644
+> > --- a/fs/tracefs/inode.c
+> > +++ b/fs/tracefs/inode.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/namei.h>
+> >  #include <linux/tracefs.h>
+> >  #include <linux/fsnotify.h>
+> > +#include <linux/security.h>
+> >  #include <linux/seq_file.h>
+> >  #include <linux/parser.h>
+> >  #include <linux/magic.h>
+> > @@ -390,6 +391,9 @@ struct dentry *tracefs_create_file(const char *name, umode_t mode,
+> >         struct dentry *dentry;
+> >         struct inode *inode;
+> >
+> > +       if (security_locked_down(LOCKDOWN_TRACEFS))
+> > +               return NULL;
+> > +
+> >         if (!(mode & S_IFMT))
+> >                 mode |= S_IFREG;
+> >         BUG_ON(!S_ISREG(mode));
+> > --
+> > 2.23.0
+>
+> Hi all,
+>
+> sorry for coming back to an old thread, but it turns out that this
+> patch doesn't play well with SELinux's implementation of the
+> security_locked_down() hook, which was added a few months later (so
+> not your fault :) in commit 59438b46471a ("security,lockdown,selinux:
+> implement SELinux lockdown").
+>
+> What SELinux does is it checks if the current task's creds are allowed
+> the lockdown::integrity or lockdown::confidentiality permission in the
+> policy whenever security_locked_down() is called. The idea is to be
+> able to control at SELinux domain level which tasks can do these
+> sensitive operations (when the kernel is not actually locked down by
+> the Lockdown LSM).
+>
+> With this patch + the SELinux lockdown mechanism in use, when a
+> userspace task loads a module that creates some tracefs nodes in its
+> initcall SELinux will check if the task has the
+> lockdown::confidentiality permission and if not, will report denials
+> in audit log and prevent the tracefs entries from being created. But
+> that is not a very logical behavior, since the task loading the module
+> is itself not (explicitly) doing anything that would breach
+> confidentiality. It just indirectly causes some tracefs nodes to be
+> created, but doesn't actually use them at that point.
+>
+> Since it seems the other patches also added security_locked_down()
+> calls to the tracefs nodes' open functions, I guess reverting this
+> patch could be an acceptable way to fix this problem (please correct
+> me if there is something that this call catches, which the other ones
+> don't). However, even then I can understand that you (or someone else)
+> might want to keep this as an optimization, in which case we could
+> instead do this:
+> 1. Add a new hook security_locked_down_permanently() (the name is open
+> for discussion), which would be intended for situations when we want
+> to avoid doing some pointless work when the kernel is in a "hard"
+> lockdown that can't be taken back (except perhaps in some rescue
+> scenario...).
+> 2. This hook would be backed by the same implementation as
+> security_locked_down() in the Lockdown LSM and left unimplemented by
+> SELinux.
+> 3. tracefs_create_file() would call this hook instead of security_locked_down().
+>
+> This way it would work as before relative to the standard lockdown via
+> the Lockdown LSM and would be simply ignored by SELinux. I went over
+> all the security_locked_down() call in the kernel and I think this
+> alternative hook could also fit better in arch/powerpc/xmon/xmon.c,
+> where it seems to be called from interrupt context (so task creds are
+> irrelevant, anyway...) and mainly causes some values to be redacted.
+> (I also found a couple minor issues with how the hook is used in other
+> places, for which I plan to send patches later.)
+>
+> Thoughts?
 
-I will go out on a limb and assume that this isn't the intended behavior
-and that an error value from security_locked_down() was supposed to
-abort the function only in case (change_irq || change_port) is true.
+In the meantime I found some other places where the SELinux check
+should be skipped, so I went ahead and sent this patch:
+https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/T/
 
-Note that security_locked_down() should be called last in any series of
-checks, since the SELinux implementation of this hook will do a check
-against the policy and generate an audit record in case of denial. If
-the operation was to carry on after calling security_locked_down(), then
-the SELinux denial record would be bogus.
-
-See commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-lockdown") for how SELinux implements this hook.
-
-Fixes: 794edf30ee6c ("lockdown: Lock down TIOCSSERIAL")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- drivers/tty/serial/serial_core.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index ba31e97d3d96..d7d8e7dbda60 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -865,9 +865,11 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
- 		goto check_and_exit;
- 	}
- 
--	retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
--	if (retval && (change_irq || change_port))
--		goto exit;
-+	if (change_irq || change_port) {
-+		retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
-+		if (retval)
-+			goto exit;
-+	}
- 
- 	/*
- 	 * Ask the low level driver to verify the settings.
 -- 
-2.31.1
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
