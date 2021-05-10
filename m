@@ -2,140 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5667C43462
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 19:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B69C43461
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 21:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9868E613C5
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 19:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB7861581
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 21:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231411AbhEJTiF (ORCPT
+        id S230449AbhEJVFq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 May 2021 15:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231546AbhEJTiF (ORCPT
+        Mon, 10 May 2021 17:05:46 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:44985 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230165AbhEJVFq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 May 2021 15:38:05 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376EAC0613ED
-        for <linux-security-module@vger.kernel.org>; Mon, 10 May 2021 12:37:00 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id m190so14108001pga.2
-        for <linux-security-module@vger.kernel.org>; Mon, 10 May 2021 12:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=w733lNx5OPvObGbQFjQ0hyLyLp32Sr7cenOR1wA1DIY=;
-        b=lVGfbvll40bgW3gA0fIk8JnjEglkVV5jCVUhsmj7ENwfKb7AnT261Kn/TUZHgnA8iQ
-         vFA72QWJlBYZTSrbMdmrm1kqYiHWzkPRKp2KbV392cJ+EqzkEt8SkIGerLo/bRjyzH+2
-         UrG5K2+KQ2ObPy4UieTwNbPSU/s9lxlr/kz7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=w733lNx5OPvObGbQFjQ0hyLyLp32Sr7cenOR1wA1DIY=;
-        b=FIB+gjJMQZH9m9L+tfG6G4yXMacidcMq6ZicMhV3b+EsG6HeoINVbHZpTBE1g4qe32
-         Qd05FZsGerHo4JUVIPhjbP1B3T3V2i59ELAgFlDEQQtqP1TzPIr1BX0w0tmvGpTVXsh0
-         Nt8UBXlp6AgxlfRfUdd9O/OR4FpU61E0vswnFbGro0NFbIH3vKcWZE6evUDoCk/7zdkN
-         MT25FMV2cWSJ43aOzNQsTtgvU/m/WEhoRnx3iskrhE17h/e3Ftdn5zBjUEN609WqQdn+
-         xFp6KgIngnBseH08ombuEzvC9sO94mF+kPvOT2GcifrunMfh7g6bvIsaXzRL66VnlMQE
-         YTPw==
-X-Gm-Message-State: AOAM531tDaUVW8bCmk7ibjC5+qhU4ScT6WyAJCsg/FVZxa07pLCPr2uW
-        irPQJDJvbNVsxwfTc+w2NZkULw==
-X-Google-Smtp-Source: ABdhPJx+twpgUp3Tckqv3jXwuEJgx8N1FiNKbDh2d4JwFvvNONDhOoxUrO4PG1e2unCsVRONdCucWg==
-X-Received: by 2002:a63:1064:: with SMTP id 36mr27146092pgq.164.1620675419601;
-        Mon, 10 May 2021 12:36:59 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id g18sm11938600pfb.178.2021.05.10.12.36.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 12:36:58 -0700 (PDT)
-Date:   Mon, 10 May 2021 12:36:56 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-serial@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Jiri Slaby <jirislaby@kernel.org>, selinux@vger.kernel.org,
+        Mon, 10 May 2021 17:05:46 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 463445C004F;
+        Mon, 10 May 2021 17:04:36 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 10 May 2021 17:04:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=benboeckel.net;
+         h=date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=b+B/Ao5TBLbn8YtT21sbRFDG8ts
+        Ssyhgsy6rowzSCO8=; b=iFZ2Hrvxjx+zZkLTKCjSMtsUAvMgvSOiqGpIyAMCdCn
+        7//m6GaTjkoIdvzqZDdIpAVkcQMlvCIAzK3yu/Dk2FMasgkr8BCV+edU6hkjXtsY
+        aTf7Dw7PV3epQNz9PES8WumbNqFIVxtmvc9Q02ZbiNPTPZd19BtAKK7kGRP2PPsU
+        F4r2svNX59SQu2Iz/pMrbYfjMK9yZPNcPq274JbGkjxI3bHqjigbDvO6/yIIf52v
+        /HhCIMuJVBPhI3i9lgHIsLvjEeQq/GmY/MwWuRgR5PGgBt0mQ4Kt1b5ogsdPVZQZ
+        s549O5y35DEHrPbz7PF92M5kxBrJMmVdkwAr9TqmiSg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=b+B/Ao
+        5TBLbn8YtT21sbRFDG8tsSsyhgsy6rowzSCO8=; b=Uci6YFmok17WNk7jqxrnKX
+        KXS9dQeGedD0sYZJazlhh3LbN3dvi/j5QecsUh7Y+OBjHI9WmK4tjgN52D+0hWY+
+        AgYvISA7Rhpq4evPc831YZz9xEUGnDt+jBPmullaHqgSZCTMA/VG9TkCgTsCKZvI
+        VqvG9L4fJB2yT9+WxNib7wM2VUZ/asDy20PU5h+q60oInIk3A0CMU+U29mtEgr5O
+        yWmjjPDu3i3BXHMY34lM2HPB5PS8JsCP540SnGD8RCUwZ6bKNZ0wkuQ1WOVHLQjF
+        e09AH4UJW7ypLFz06pyyxl8IDj/7s10Ln7bFw/0mz3BsPHCru0caaOGiDmQJm93g
+        ==
+X-ME-Sender: <xms:45-ZYE1KqrRSWHuBSacsn2R2KmU8jnwNQWXkldS22XwxqRl0OKY68A>
+    <xme:45-ZYPHsNHh7J5waVoc9wpH9Twbv3BYPHQsEQsnPwmUJG3Id-j_XJz9XU8VIHA9oh
+    AgSOXwl2o5yPQL8oOk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdegkedgudehkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujggfsehttdertddtreejnecuhfhrohhmpeeuvghn
+    uceuohgvtghkvghluceomhgvsegsvghnsghovggtkhgvlhdrnhgvtheqnecuggftrfgrth
+    htvghrnhepvefftdettefgtddtkeeufeegtddttdeuueegkeegteffueetffejudeihefh
+    kedtnecukfhppedvgedrudeiledrvddtrddvheehnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepmhgvsegsvghnsghovggtkhgvlhdrnhgvth
+X-ME-Proxy: <xmx:45-ZYM7A9R5Jt2884Wp-wnpKOdJ7Twu5t9g8IG7DuYKUg3n8lu3uHA>
+    <xmx:45-ZYN2Xp6CeEy5PSwod02rub18zFMmwz7RbKIuvGS54fey7QdUvGA>
+    <xmx:45-ZYHH7y9uu0mR82EeCRA906xVt8_91KEgHNO1kcJaBJmKodtrzgw>
+    <xmx:5J-ZYLi2w64bLuN-O1vT7gak7sK-d9Kfpx36F0KpvufnaZo_O4-JmA>
+Received: from localhost (unknown [24.169.20.255])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Mon, 10 May 2021 17:04:35 -0400 (EDT)
+Date:   Mon, 10 May 2021 17:04:33 -0400
+From:   Ben Boeckel <me@benboeckel.net>
+To:     keyrings@vger.kernel.org
+Cc:     Ben Boeckel <mathstuf@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] serial: core: fix suspicious security_locked_down() call
-Message-ID: <202105101226.E2AD9AEC@keescook>
-References: <20210507115719.140799-1-omosnace@redhat.com>
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v2 1/1] trusted-keys: match tpm_get_ops on all return
+ paths
+Message-ID: <YJmf4Q0l+MTFEaEo@erythro.dev.benboeckel.internal>
+References: <20210429192156.770145-1-list.lkml.keyrings@me.benboeckel.net>
+ <20210429192156.770145-2-list.lkml.keyrings@me.benboeckel.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210507115719.140799-1-omosnace@redhat.com>
+In-Reply-To: <20210429192156.770145-2-list.lkml.keyrings@me.benboeckel.net>
+User-Agent: Mutt/2.0.5 (2021-01-21)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 07, 2021 at 01:57:19PM +0200, Ondrej Mosnacek wrote:
-> The commit that added this check did so in a very strange way - first
-> security_locked_down() is called, its value stored into retval, and if
-> it's nonzero, then an additional check is made for (change_irq ||
-> change_port), and if this is true, the function returns. However, if
-> the goto exit branch is not taken, the code keeps the retval value and
-> continues executing the function. Then, depending on whether
-> uport->ops->verify_port is set, the retval value may or may not be reset
-> to zero and eventually the error value from security_locked_down() may
-> abort the function a few lines below.
+On Thu, Apr 29, 2021 at 15:21:56 -0400, Ben Boeckel wrote:
+> From: Ben Boeckel <mathstuf@gmail.com>
 > 
-> I will go out on a limb and assume that this isn't the intended behavior
-> and that an error value from security_locked_down() was supposed to
-> abort the function only in case (change_irq || change_port) is true.
+> The `tpm_get_ops` call at the beginning of the function is not paired
+> with a `tpm_put_ops` on this return path.
 > 
-> Note that security_locked_down() should be called last in any series of
-> checks, since the SELinux implementation of this hook will do a check
-> against the policy and generate an audit record in case of denial. If
-> the operation was to carry on after calling security_locked_down(), then
-> the SELinux denial record would be bogus.
-> 
-> See commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> lockdown") for how SELinux implements this hook.
-> 
-> Fixes: 794edf30ee6c ("lockdown: Lock down TIOCSSERIAL")
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Ben Boeckel <mathstuf@gmail.com>
 > ---
->  drivers/tty/serial/serial_core.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+>  security/keys/trusted-keys/trusted_tpm2.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-> index ba31e97d3d96..d7d8e7dbda60 100644
-> --- a/drivers/tty/serial/serial_core.c
-> +++ b/drivers/tty/serial/serial_core.c
-> @@ -865,9 +865,11 @@ static int uart_set_info(struct tty_struct *tty, struct tty_port *port,
->  		goto check_and_exit;
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 617fabd4d913..0165da386289 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -336,9 +336,9 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+>  			rc = -EPERM;
 >  	}
+>  	if (blob_len < 0)
+> -		return blob_len;
+> -
+> -	payload->blob_len = blob_len;
+> +		rc = blob_len;
+> +	else
+> +		payload->blob_len = blob_len;
 >  
-> -	retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
-> -	if (retval && (change_irq || change_port))
-> -		goto exit;
-> +	if (change_irq || change_port) {
-> +		retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
-> +		if (retval)
-> +			goto exit;
-> +	}
->  
->  	/*
->  	 * Ask the low level driver to verify the settings.
+>  	tpm_put_ops(chip);
+>  	return rc;
 
-Oops. Yeah, good catch -- I missed the kind of weird handling of retval
-in this function when I originally reviewed it.
+Ping? Is this going to make 5.13? This fixes an issue that is in
+5.13-rc1.
 
-I think the goals of just covering IRQ/IO port changes originate from here:
-https://lore.kernel.org/lkml/26173.1479769852@warthog.procyon.org.uk/
-
-And I think the "Reported-by: Greg KH" originates from here:
-https://lore.kernel.org/lkml/20161206071104.GA10292@kroah.com/
-
-So, yes, I think your fix is correct.
-
-Acked-by: Kees Cook <keescook@chromium.org>
-
--- 
-Kees Cook
+--Ben
