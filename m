@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_RED,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD92C43460
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 17:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0192FC43462
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 17:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 70F0761494
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 17:23:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1CEF61480
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 17:23:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232733AbhEJRYS (ORCPT
+        id S232784AbhEJRYT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 May 2021 13:24:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46544 "EHLO
+        Mon, 10 May 2021 13:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232786AbhEJRYG (ORCPT
+        with ESMTP id S232770AbhEJRYI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 May 2021 13:24:06 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C52C061574;
-        Mon, 10 May 2021 10:23:00 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id 1so12529782qtb.0;
-        Mon, 10 May 2021 10:23:00 -0700 (PDT)
+        Mon, 10 May 2021 13:24:08 -0400
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB443C061760;
+        Mon, 10 May 2021 10:23:02 -0700 (PDT)
+Received: by mail-qt1-x82e.google.com with SMTP id n22so12481762qtk.9;
+        Mon, 10 May 2021 10:23:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=YZ7jgh8n9Ewl7aTtjcfWvHPosfSycLeUWDUFaOitHlw=;
-        b=gW8vw40vlqTZ2jCM73vqolZZWkLgjI6c84c2tdzyF63+bw928QLCYtR1cCbArh3pRd
-         7ovyWIfbukHuJpC8I7uocQczXzzhiM37478tup8wGcHa9YA6ProL07kpILxau+hPNc2Z
-         XDp/teyLZrcVl4lsg+9NSwJqpwBAUX0gLRB6kbiNAO863Ay4jolZ1LpvwD876Jp4HEOD
-         31q0MFGgavZgCRlU9YO2QgQTRKL6A0uRlzJ5H/pklh1oGZrW6huBhC5bux0ofYfwvL30
-         Bgw/sm8wtwEFGGwfu06ZqEyz5XOu4GOGvDUi5Tt/UKSV84Ip3fEBKpELlDAhLuiORzgr
-         3A7w==
+        bh=os+aNkIj11roEHDUU05sC6TNDVf0op+4DKUiI/YhlCI=;
+        b=M5fRVYqrGRIo+zDt0ww9BZnPnThLcGUFnq1uBtyv9zZCFzq7kYM+ebANCjyQPR7JyW
+         mojidBSveomAk3SZkuZyQQbm33GnzbuwSmiT7pRt5dreyQRnAiAGSLLIjdAkL3bXtXJW
+         Kt/uQ0ZGpjx10L02Nyw2XJqcP6SjauIIlC6rOnlauWf0OQXsXChwyC2s3wUuAHjR+OBl
+         449/wDIHI8AY8vsyKGmxD4MQMG/lfaEFI0m2zRzxEkducKu0VsktQiFeN03xmZIiqgWq
+         lzx6AAApP7SWNBNaW8VN5W5QrdTaJQYfZzWHM1ZZ8LY0g4pEyrOREnKw6c7bk3FvV3y6
+         4acQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=YZ7jgh8n9Ewl7aTtjcfWvHPosfSycLeUWDUFaOitHlw=;
-        b=XhQzDKk8726Nh2RgoQPfLwPKxl4SPlO1Hil7wABIDy2Rq634bGXBDVe77bi7Cda6Ge
-         ZU8ywIWn2rmUNPghSwBuD+zycf0h6rJbszoJeod8U/vbGJ8CEIqhXwkFa4uLFmuOWTZP
-         koI9AMbo6tetqG97ev/M7C8VY84z3/Mx+2CGdE7VkUUb3uHoKBu1qxy+r2NNRJ/zu1by
-         IjhAWQJamDkE6LIMl25z/PGLsy+2AdxOKLylPTmRoe1i2QEq2g7G/TBF+9WTfaWFEeQX
-         WxdJtB/TK5Pp27k4XFwHKsuZbDLVAuzphDYrxMsU2ZCvltXU7U4YmXvS8fNfZD3ln4rs
-         EOjw==
-X-Gm-Message-State: AOAM530WRflZvQ/vBtY5a+1+2CrpHeUv4IXwmOXwiIoMlt2WmolIA2ig
-        Y2IL+eraMNkoukv9oDGMzCLA63NK8QjOwfxh
-X-Google-Smtp-Source: ABdhPJym19kE/RMpadgsTPFOwNJudsn2Uv/1tnLrQ9Li4RWoca5YsWzywFdeZDE6mOLLRD3fnk6emA==
-X-Received: by 2002:a05:622a:10e:: with SMTP id u14mr23252254qtw.229.1620667379628;
-        Mon, 10 May 2021 10:22:59 -0700 (PDT)
+        bh=os+aNkIj11roEHDUU05sC6TNDVf0op+4DKUiI/YhlCI=;
+        b=JPsUvG9zmpXYkpPF5pcSRPOAtJb15d4OAJZeF8RwmafOjcpqolSQXMCh6Ek/Pa7pe9
+         ZvlRJTYVMbPBv5jqagBiJVvc0DrB3GU00gZKH8EG/4vMBfICZwltfa8/vHqN5euGOrNI
+         Wt0snOyRxZS7wYBn7SZhUZZilH/RoWUK88S6eQrsP13R/9U9XeLcDVnw/vMxoDceK/43
+         0i0EGPPzCz6JyCJCvU5NtospH+XuQqKC8liohpLuqoWn/BJEwU7DkPeGrqy08OewZtQg
+         8M0wcKCj5nbHoaG/1a91Y8Nli47/d4bdYYbswPoMFNNthty7P9iNtpqkgzBurwwg5OPh
+         tKZw==
+X-Gm-Message-State: AOAM532fdVZfOL0ehB3GVCd+d0VNnw+wYUTa5wymccTcnxCekB9OnalG
+        uSeC11XEv0pOOLNqjD1aplCFuYVmdDk2IeZ8
+X-Google-Smtp-Source: ABdhPJzGzOZt96I0Zs7TdCghlnOJueKKaLB7JVqgkm1SC2dIxERLF1FLObKXXk8uUTGdiuh0MqkEEw==
+X-Received: by 2002:ac8:646:: with SMTP id e6mr22635080qth.285.1620667382103;
+        Mon, 10 May 2021 10:23:02 -0700 (PDT)
 Received: from localhost.localdomain (host-173-230-99-154.tnkngak.clients.pavlovmedia.com. [173.230.99.154])
-        by smtp.gmail.com with ESMTPSA id q7sm11924367qki.17.2021.05.10.10.22.58
+        by smtp.gmail.com with ESMTPSA id q7sm11924367qki.17.2021.05.10.10.23.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 May 2021 10:22:59 -0700 (PDT)
+        Mon, 10 May 2021 10:23:01 -0700 (PDT)
 From:   YiFei Zhu <zhuyifei1999@gmail.com>
 To:     containers@lists.linux.dev, bpf@vger.kernel.org
 Cc:     YiFei Zhu <yifeifz2@illinois.edu>,
@@ -81,9 +81,9 @@ Cc:     YiFei Zhu <yifeifz2@illinois.edu>,
         Tobin Feldman-Fitzthum <tobin@ibm.com>,
         Tom Hromatka <tom.hromatka@oracle.com>,
         Will Drewry <wad@chromium.org>
-Subject: [RFC PATCH bpf-next seccomp 05/12] samples/bpf: Add eBPF seccomp sample programs
-Date:   Mon, 10 May 2021 12:22:42 -0500
-Message-Id: <5f7c10074e10f994f3984a564531d5d9285d53eb.1620499942.git.yifeifz2@illinois.edu>
+Subject: [RFC PATCH bpf-next seccomp 07/12] bpf/verifier: allow restricting direct map access
+Date:   Mon, 10 May 2021 12:22:44 -0500
+Message-Id: <08b306f207cc6c516500a58ee0bc506f09859d26.1620499942.git.yifeifz2@illinois.edu>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <cover.1620499942.git.yifeifz2@illinois.edu>
 References: <cover.1620499942.git.yifeifz2@illinois.edu>
@@ -92,157 +92,46 @@ Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Sargun Dhillon <sargun@sargun.me>
+From: YiFei Zhu <yifeifz2@illinois.edu>
 
-This adds a sample program that uses seccomp-eBPF, called
-test_seccomp. It shows the simple ability to code seccomp filters
-in C.
+Add a verifier hook that is able to reject direct map access that
+does not make use of eBPF helpers. These accesses mostly correspond
+to eBPF data section accesses. This allows a program type to disable
+maps altogether by resturing direct map accesses and not whitelisting
+helpers that perform map accesses.
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-Link: https://lists.linux-foundation.org/pipermail/containers/2018-February/038573.html
-Co-developed-by: Jinghao Jia <jinghao7@illinois.edu>
-Signed-off-by: Jinghao Jia <jinghao7@illinois.edu>
-[YiFei: change from bpf_load to libbpf]
-Co-developed-by: YiFei Zhu <yifeifz2@illinois.edu>
 Signed-off-by: YiFei Zhu <yifeifz2@illinois.edu>
 ---
- samples/bpf/Makefile            |  3 ++
- samples/bpf/test_seccomp_kern.c | 41 +++++++++++++++++++++++++++
- samples/bpf/test_seccomp_user.c | 49 +++++++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+)
- create mode 100644 samples/bpf/test_seccomp_kern.c
- create mode 100644 samples/bpf/test_seccomp_user.c
+ include/linux/bpf.h   | 1 +
+ kernel/bpf/verifier.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index 45ceca4e2c70..d49e7f91eba6 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -55,6 +55,7 @@ tprogs-y += task_fd_query
- tprogs-y += xdp_sample_pkts
- tprogs-y += ibumad
- tprogs-y += hbm
-+tprogs-y += test_seccomp
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index 02b02cb29ce2..86f3e8784e43 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -484,6 +484,7 @@ struct bpf_verifier_ops {
+ 				 enum bpf_access_type atype,
+ 				 u32 *next_btf_id);
+ 	bool (*check_kfunc_call)(u32 kfunc_btf_id);
++	bool (*map_access)(enum bpf_access_type type);
+ };
  
- # Libbpf dependencies
- LIBBPF = $(TOOLS_PATH)/lib/bpf/libbpf.a
-@@ -113,6 +114,7 @@ task_fd_query-objs := task_fd_query_user.o $(TRACE_HELPERS)
- xdp_sample_pkts-objs := xdp_sample_pkts_user.o
- ibumad-objs := ibumad_user.o
- hbm-objs := hbm.o $(CGROUP_HELPERS)
-+test_seccomp-objs := test_seccomp_user.o
+ struct bpf_prog_offload_ops {
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 8fd552c16763..8eec1796caaa 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3100,6 +3100,9 @@ static int check_map_access_type(struct bpf_verifier_env *env, u32 regno,
+ 	struct bpf_map *map = regs[regno].map_ptr;
+ 	u32 cap = bpf_map_flags_to_cap(map);
  
- # Tell kbuild to always build the programs
- always-y := $(tprogs-y)
-@@ -174,6 +176,7 @@ always-y += ibumad_kern.o
- always-y += hbm_out_kern.o
- always-y += hbm_edt_kern.o
- always-y += xdpsock_kern.o
-+always-y += test_seccomp_kern.o
- 
- ifeq ($(ARCH), arm)
- # Strip all except -D__LINUX_ARM_ARCH__ option needed to handle linux
-diff --git a/samples/bpf/test_seccomp_kern.c b/samples/bpf/test_seccomp_kern.c
-new file mode 100644
-index 000000000000..efd42f47d9c4
---- /dev/null
-+++ b/samples/bpf/test_seccomp_kern.c
-@@ -0,0 +1,41 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <uapi/linux/seccomp.h>
-+#include <uapi/linux/bpf.h>
-+#include <uapi/linux/unistd.h>
-+#include <uapi/linux/errno.h>
-+#include <bpf/bpf_helpers.h>
-+#include <uapi/linux/audit.h>
++	if (env->ops->map_access && !env->ops->map_access(type))
++		cap = 0;
 +
-+#if defined(__x86_64__)
-+#define ARCH	AUDIT_ARCH_X86_64
-+#elif defined(__i386__)
-+#define ARCH	AUDIT_ARCH_I386
-+#else
-+#endif
-+
-+#ifdef ARCH
-+/* Returns EPERM when trying to close fd 999 */
-+SEC("seccomp")
-+int bpf_prog1(struct seccomp_data *ctx)
-+{
-+	/*
-+	 * Make sure this BPF program is being run on the same architecture it
-+	 * was compiled on.
-+	 */
-+	if (ctx->arch != ARCH)
-+		return SECCOMP_RET_ERRNO | EPERM;
-+	if (ctx->nr == __NR_close && ctx->args[0] == 999)
-+		return SECCOMP_RET_ERRNO | EPERM;
-+
-+	return SECCOMP_RET_ALLOW;
-+}
-+#else
-+#warning Architecture not supported -- Blocking all syscalls
-+SEC("seccomp")
-+int bpf_prog1(struct seccomp_data *ctx)
-+{
-+	return SECCOMP_RET_ERRNO | EPERM;
-+}
-+#endif
-+
-+char _license[] SEC("license") = "GPL";
-diff --git a/samples/bpf/test_seccomp_user.c b/samples/bpf/test_seccomp_user.c
-new file mode 100644
-index 000000000000..ba17e18666b9
---- /dev/null
-+++ b/samples/bpf/test_seccomp_user.c
-@@ -0,0 +1,49 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <assert.h>
-+#include <bpf/libbpf.h>
-+#include <errno.h>
-+#include <linux/bpf.h>
-+#include <linux/seccomp.h>
-+#include <linux/unistd.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <strings.h>
-+#include <sys/prctl.h>
-+#include <unistd.h>
-+
-+int main(int argc, char **argv)
-+{
-+	struct bpf_object *obj;
-+	char filename[256];
-+	int prog_fd;
-+
-+	snprintf(filename, sizeof(filename), "%s_kern.o", argv[0]);
-+
-+	if (bpf_prog_load(filename, BPF_PROG_TYPE_SECCOMP, &obj, &prog_fd))
-+		exit(EXIT_FAILURE);
-+	if (prog_fd < 0) {
-+		fprintf(stderr, "ERROR: no program found: %s\n",
-+			strerror(prog_fd));
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	/* set new_new_privs so non-privileged users can attach filters */
-+	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-+		perror("prctl(NO_NEW_PRIVS)");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	if (syscall(__NR_seccomp, SECCOMP_SET_MODE_FILTER,
-+		    SECCOMP_FILTER_FLAG_EXTENDED, &prog_fd)) {
-+		perror("seccomp");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	close(111);
-+	assert(errno == EBADF);
-+	close(999);
-+	assert(errno == EPERM);
-+
-+	printf("close syscall successfully filtered\n");
-+	return 0;
-+}
+ 	if (type == BPF_WRITE && !(cap & BPF_MAP_CAN_WRITE)) {
+ 		verbose(env, "write into map forbidden, value_size=%d off=%d size=%d\n",
+ 			map->value_size, off, size);
 -- 
 2.31.1
 
