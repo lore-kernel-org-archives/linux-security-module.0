@@ -2,194 +2,221 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F0FC43460
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 13:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B039C43461
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 13:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 258EE61288
-	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 13:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DE9E61106
+	for <linux-security-module@archiver.kernel.org>; Mon, 10 May 2021 13:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235560AbhEJNdj (ORCPT
+        id S241121AbhEJNwz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 10 May 2021 09:33:39 -0400
-Received: from mail-il1-f198.google.com ([209.85.166.198]:48831 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344802AbhEJMUX (ORCPT
+        Mon, 10 May 2021 09:52:55 -0400
+Received: from foss.arm.com ([217.140.110.172]:58754 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S242460AbhEJNqk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 10 May 2021 08:20:23 -0400
-Received: by mail-il1-f198.google.com with SMTP id h4-20020a926c040000b0290192f4fa4c3bso13569707ilc.15
-        for <linux-security-module@vger.kernel.org>; Mon, 10 May 2021 05:19:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=LIsysw+22kJoVtdEn0ARG+JVEdMdBtBx51RjL3I2/Tk=;
-        b=NJtw/kdRjIjIbo5OGK5Df6pkIMRhVIZD8q9St8uHoxDFT2+7OrP4Ydk80OKN2HguEm
-         lqvN9XdmSt44s6EAJ+i7uoGhoaGYkfEifdjRQxqn99zzggkaTGzi5mq+0GqmCxnpWaIm
-         bBzq0J0xVLvZuW5FhpTxEr3NX8Z6p9AOlJjnsGzP2tUPZhKgt8jK4x2Ly95cLD1jaY6T
-         8n+86gYj1LX/e/c/+YKiSL1a3PlXqXP5gSdsDmoOcfnmLrTM80353Kt2G/7XaWQQgPSk
-         ddmsLEo7DMdhWjgRXfVnMTSruf73iJNZh5y27OuyGxeSRaVASjiUJrv+eED/LNYWkvmy
-         j2MA==
-X-Gm-Message-State: AOAM530PYY+DmMUaYGI4p8izWOPJM0/iDroqa0ib9AozRLROjd2Bucdy
-        ECZTR/kJxoQHAo1zX7teFRl2527pOquJez6TnCi1AeWhsqZ9
-X-Google-Smtp-Source: ABdhPJwiqnW7Qb1We7cNl8N28tyshNYYabZIjlibGO6iNBPyJmQU/lUn76wY7epMNeYvZ48V9/OSJgb7NToOHS37ma24vqhZuAHn
+        Mon, 10 May 2021 09:46:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A49B71688;
+        Mon, 10 May 2021 06:45:34 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [10.57.4.9])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1548E3F73B;
+        Mon, 10 May 2021 06:45:29 -0700 (PDT)
+Date:   Mon, 10 May 2021 14:45:03 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-hardening@vger.kernel.org, Qing Zhao <qing.zhao@oracle.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] Makefile: Introduce CONFIG_ZERO_CALL_USED_REGS
+Message-ID: <20210510134503.GA88495@C02TD0UTHF1T.local>
+References: <20210505191804.4015873-1-keescook@chromium.org>
+ <20210506125457.GA34956@C02TD0UTHF1T.local>
+ <202105061416.3CB40BE5@keescook>
 MIME-Version: 1.0
-X-Received: by 2002:a92:2a0a:: with SMTP id r10mr21447954ile.274.1620649158133;
- Mon, 10 May 2021 05:19:18 -0700 (PDT)
-Date:   Mon, 10 May 2021 05:19:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000604ea605c1f8c9af@google.com>
-Subject: [syzbot] possible deadlock in process_measurement (3)
-From:   syzbot <syzbot+ccfcdc8958f74084f16d@syzkaller.appspotmail.com>
-To:     dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202105061416.3CB40BE5@keescook>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Thu, May 06, 2021 at 02:24:18PM -0700, Kees Cook wrote:
+> On Thu, May 06, 2021 at 01:54:57PM +0100, Mark Rutland wrote:
+> > Hi Kees,
+> > 
+> > On Wed, May 05, 2021 at 12:18:04PM -0700, Kees Cook wrote:
+> > > When CONFIG_ZERO_CALL_USED_REGS is enabled, build the kernel with
+> > > "-fzero-call-used-regs=used-gpr" (in GCC 11). This option will zero any
+> > > caller-used register contents just before returning from a function,
+> > > ensuring that temporary values are not leaked beyond the function
+> > > boundary. This means that register contents are less likely to be
+> > > available for side channel attacks and information exposures.
+> > > 
+> > > Additionally this helps reduce the number of useful ROP gadgets in the
+> > > kernel image by about 20%:
+> > > 
+> > > $ ROPgadget.py --nosys --nojop --binary vmlinux.stock | tail -n1
+> > > Unique gadgets found: 337245
+> > > 
+> > > $ ROPgadget.py --nosys --nojop --binary vmlinux.zero-call-regs | tail -n1
+> > > Unique gadgets found: 267175
+> > > 
+> > > and more notably removes simple "write-what-where" gadgets:
+> > > 
+> > > $ ROPgadget.py --ropchain --binary vmlinux.stock | sed -n '/Step 1/,/Step 2/p'
+> > > - Step 1 -- Write-what-where gadgets
+> > > 
+> > >         [+] Gadget found: 0xffffffff8102d76c mov qword ptr [rsi], rdx ; ret
+> > >         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+> > >         [+] Gadget found: 0xffffffff8104d7c8 pop rdx ; ret
+> > >         [-] Can't find the 'xor rdx, rdx' gadget. Try with another 'mov [reg], reg'
+> > > 
+> > >         [+] Gadget found: 0xffffffff814c2b4c mov qword ptr [rsi], rdi ; ret
+> > >         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+> > >         [+] Gadget found: 0xffffffff81001e51 pop rdi ; ret
+> > >         [-] Can't find the 'xor rdi, rdi' gadget. Try with another 'mov [reg], reg'
+> > > 
+> > >         [+] Gadget found: 0xffffffff81540d61 mov qword ptr [rsi], rdi ; pop rbx ; pop rbp ; ret
+> > >         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+> > >         [+] Gadget found: 0xffffffff81001e51 pop rdi ; ret
+> > >         [-] Can't find the 'xor rdi, rdi' gadget. Try with another 'mov [reg], reg'
+> > > 
+> > >         [+] Gadget found: 0xffffffff8105341e mov qword ptr [rsi], rax ; ret
+> > >         [+] Gadget found: 0xffffffff81000cf5 pop rsi ; ret
+> > >         [+] Gadget found: 0xffffffff81029a11 pop rax ; ret
+> > >         [+] Gadget found: 0xffffffff811f1c3b xor rax, rax ; ret
+> > > 
+> > > - Step 2 -- Init syscall number gadgets
+> > > 
+> > > $ ROPgadget.py --ropchain --binary vmlinux.zero* | sed -n '/Step 1/,/Step 2/p'
+> > > - Step 1 -- Write-what-where gadgets
+> > > 
+> > >         [-] Can't find the 'mov qword ptr [r64], r64' gadget
+> > > 
+> > > In parallel build tests, this has a less than 1% performance impact,
+> > > and grows the image size less than 1%:
+> > > 
+> > > $ size vmlinux.stock vmlinux.zero-call-regs
+> > >    text    data     bss     dec     hex filename
+> > > 22437676   8559152 14127340 45124168 2b08a48 vmlinux.stock
+> > > 22453184   8563248 14110956 45127388 2b096dc vmlinux.zero-call-regs
+> > 
+> > FWIW, I gave this a go on arm64, and the size increase is a fair bit
+> > larger:
+> > 
+> > | [mark@lakrids:~/src/linux]% ls -l Image* 
+> > | -rw-r--r-- 1 mark mark 31955456 May  6 13:36 Image.stock
+> > | -rw-r--r-- 1 mark mark 33724928 May  6 13:23 Image.zero-call-regs
+> > 
+> > | [mark@lakrids:~/src/linux]% size vmlinux.stock vmlinux.zero-call-regs 
+> > |    text    data     bss     dec     hex filename
+> > | 20728552        11086474         505540 32320566        1ed2c36 vmlinux.stock
+> > | 22500688        11084298         505540 34090526        2082e1e vmlinux.zero-call-regs
+> > 
+> > The Image is ~5.5% bigger, and the .text in the vmlinux is ~8.5% bigger
+> 
+> Woo, that's quite a bit larger! So much so that I struggle to imagine
+> the delta. That's almost 1 extra instruction for every 10. 
 
-syzbot found the following issue on:
+About 31% of this seems to be due to GCC (almost) always clearing x16
+and x17 (see further down for numbers). I suspect that's because GCC has
+to assume that any (non-static) functions might be reached via a PLT
+which would clobber x16 and x17 with specific values.
 
-HEAD commit:    d2b6f8a1 Merge tag 'xfs-5.13-merge-3' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f425b3d00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=65c207250bba4efe
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccfcdc8958f74084f16d
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16079d1ed00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12280d95d00000
+We also have a bunch of small functions with multiple returns, where
+each return path gets the full complement of zeroing instructions, e.g.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ccfcdc8958f74084f16d@syzkaller.appspotmail.com
+Stock:
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.12.0-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor167/10873 is trying to acquire lock:
-ffff8880162d0bc0 (&iint->mutex){+.+.}-{3:3}, at: process_measurement+0x3a8/0x17e0 security/integrity/ima/ima_main.c:253
+| <fpsimd_sync_to_sve>:
+|        d503245f        bti     c
+|        f9400001        ldr     x1, [x0]
+|        7209003f        tst     w1, #0x800000
+|        54000040        b.eq    ffff800010014cc4 <fpsimd_sync_to_sve+0x14>  // b.none
+|        d65f03c0        ret
+|        d503233f        paciasp
+|        a9bf7bfd        stp     x29, x30, [sp, #-16]!
+|        910003fd        mov     x29, sp
+|        97fffdac        bl      ffff800010014380 <fpsimd_to_sve>
+|        a8c17bfd        ldp     x29, x30, [sp], #16
+|        d50323bf        autiasp
+|        d65f03c0        ret
 
-but task is already holding lock:
-ffff888147e2e460 (sb_writers#5){.+.+}-{0:0}, at: do_open fs/namei.c:3354 [inline]
-ffff888147e2e460 (sb_writers#5){.+.+}-{0:0}, at: path_openat+0x1ad9/0x27e0 fs/namei.c:3494
+With zero-call-regs:
 
-which lock already depends on the new lock.
+| <fpsimd_sync_to_sve>:
+|        d503245f        bti     c
+|        f9400001        ldr     x1, [x0]
+|        7209003f        tst     w1, #0x800000
+|        540000c0        b.eq    ffff8000100152a8 <fpsimd_sync_to_sve+0x24>  // b.none
+|        d2800000        mov     x0, #0x0                        // #0
+|        d2800001        mov     x1, #0x0                        // #0
+|        d2800010        mov     x16, #0x0                       // #0
+|        d2800011        mov     x17, #0x0                       // #0
+|        d65f03c0        ret
+|        d503233f        paciasp
+|        a9bf7bfd        stp     x29, x30, [sp, #-16]!
+|        910003fd        mov     x29, sp
+|        97fffd17        bl      ffff800010014710 <fpsimd_to_sve>
+|        a8c17bfd        ldp     x29, x30, [sp], #16
+|        d50323bf        autiasp
+|        d2800000        mov     x0, #0x0                        // #0
+|        d2800001        mov     x1, #0x0                        // #0
+|        d2800010        mov     x16, #0x0                       // #0
+|        d2800011        mov     x17, #0x0                       // #0
+|        d65f03c0        ret
 
+... where we go from 12 instructions to 20, which is a ~67% bloat.
 
-the existing dependency chain (in reverse order) is:
+> I don't imagine functions are that short. There seem to be only r9..r15 as
+> call-used.
 
--> #1 (sb_writers#5){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1765 [inline]
-       sb_start_write include/linux/fs.h:1835 [inline]
-       mnt_want_write+0x6e/0x3e0 fs/namespace.c:375
-       ovl_maybe_copy_up+0x11f/0x190 fs/overlayfs/copy_up.c:995
-       ovl_open+0xba/0x270 fs/overlayfs/file.c:149
-       do_dentry_open+0x4b9/0x11b0 fs/open.c:826
-       vfs_open fs/open.c:940 [inline]
-       dentry_open+0x132/0x1d0 fs/open.c:956
-       ima_calc_file_hash+0x2d2/0x4b0 security/integrity/ima/ima_crypto.c:557
-       ima_collect_measurement+0x4ca/0x570 security/integrity/ima/ima_api.c:252
-       process_measurement+0xd1c/0x17e0 security/integrity/ima/ima_main.c:330
-       ima_file_check+0xb9/0x100 security/integrity/ima/ima_main.c:499
-       do_open fs/namei.c:3363 [inline]
-       path_openat+0x15b5/0x27e0 fs/namei.c:3494
-       do_filp_open+0x190/0x3d0 fs/namei.c:3521
-       do_sys_openat2+0x16d/0x420 fs/open.c:1187
-       do_sys_open fs/open.c:1203 [inline]
-       __do_sys_open fs/open.c:1211 [inline]
-       __se_sys_open fs/open.c:1207 [inline]
-       __x64_sys_open+0x119/0x1c0 fs/open.c:1207
-       do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
+We have a bunch of cases like the above. Also note that per the AAPCS a
+function can clobber x0-17 (and x18 if it's not reserved for something
+like SCS), and I see a few places that clobber x1-x17.
 
--> #0 (&iint->mutex){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:2938 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3061 [inline]
-       validate_chain kernel/locking/lockdep.c:3676 [inline]
-       __lock_acquire+0x2a17/0x5230 kernel/locking/lockdep.c:4902
-       lock_acquire kernel/locking/lockdep.c:5512 [inline]
-       lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5477
-       __mutex_lock_common kernel/locking/mutex.c:949 [inline]
-       __mutex_lock+0x139/0x1120 kernel/locking/mutex.c:1096
-       process_measurement+0x3a8/0x17e0 security/integrity/ima/ima_main.c:253
-       ima_file_check+0xb9/0x100 security/integrity/ima/ima_main.c:499
-       do_open fs/namei.c:3363 [inline]
-       path_openat+0x15b5/0x27e0 fs/namei.c:3494
-       do_filp_open+0x190/0x3d0 fs/namei.c:3521
-       do_sys_openat2+0x16d/0x420 fs/open.c:1187
-       do_sys_open fs/open.c:1203 [inline]
-       __do_sys_open fs/open.c:1211 [inline]
-       __se_sys_open fs/open.c:1207 [inline]
-       __x64_sys_open+0x119/0x1c0 fs/open.c:1207
-       do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
+> Even if every one was cleared at every function exit (28
+> bytes), that implies 63,290 functions, with an average function size of
+> 40 instructions?
 
-other info that might help us debug this:
+I generated some (slightly dodgy) numbers by grepping the output of
+objdump:
 
- Possible unsafe locking scenario:
+[mark@lakrids:~/src/linux]% usekorg 10.1.0 aarch64-linux-objdump -d vmlinux.stock | wc -l                                
+3979677
+[mark@lakrids:~/src/linux]% usekorg 10.1.0 aarch64-linux-objdump -d vmlinux.stock | grep 'mov\sx[0-9]\+, #0x0' | wc -l 
+50070
+[mark@lakrids:~/src/linux]% usekorg 10.1.0 aarch64-linux-objdump -d vmlinux.stock | grep 'mov\sx1[67], #0x0' | wc -l
+1
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(sb_writers#5);
-                               lock(&iint->mutex);
-                               lock(sb_writers#5);
-  lock(&iint->mutex);
+[mark@lakrids:~/src/linux]% usekorg 10.1.0 aarch64-linux-objdump -d vmlinux.zero-call-regs | wc -l                                
+4422188
+[mark@lakrids:~/src/linux]% usekorg 10.1.0 aarch64-linux-objdump -d vmlinux.zero-call-regs | grep 'mov\sx[0-9]\+, #0x0' | wc -l
+491371
+[mark@lakrids:~/src/linux]% usekorg 10.1.0 aarch64-linux-objdump -d vmlinux.zero-call-regs | grep 'mov\sx1[67], #0x0' | wc -l 
+135729
 
- *** DEADLOCK ***
+That's 441301 new MOVs, and the equivalent of 442511 new instructions
+overall. There are 135728 new MOVs to x16 and x17 specifically, which
+account for ~31% of that.
 
-1 lock held by syz-executor167/10873:
- #0: ffff888147e2e460 (sb_writers#5){.+.+}-{0:0}, at: do_open fs/namei.c:3354 [inline]
- #0: ffff888147e2e460 (sb_writers#5){.+.+}-{0:0}, at: path_openat+0x1ad9/0x27e0 fs/namei.c:3494
+Overall we go from MOVs being ~1.3% of all instructions to 11%.
 
-stack backtrace:
-CPU: 1 PID: 10873 Comm: syz-executor167 Not tainted 5.12.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:79 [inline]
- dump_stack+0x141/0x1d7 lib/dump_stack.c:120
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2129
- check_prev_add kernel/locking/lockdep.c:2938 [inline]
- check_prevs_add kernel/locking/lockdep.c:3061 [inline]
- validate_chain kernel/locking/lockdep.c:3676 [inline]
- __lock_acquire+0x2a17/0x5230 kernel/locking/lockdep.c:4902
- lock_acquire kernel/locking/lockdep.c:5512 [inline]
- lock_acquire+0x1ab/0x740 kernel/locking/lockdep.c:5477
- __mutex_lock_common kernel/locking/mutex.c:949 [inline]
- __mutex_lock+0x139/0x1120 kernel/locking/mutex.c:1096
- process_measurement+0x3a8/0x17e0 security/integrity/ima/ima_main.c:253
- ima_file_check+0xb9/0x100 security/integrity/ima/ima_main.c:499
- do_open fs/namei.c:3363 [inline]
- path_openat+0x15b5/0x27e0 fs/namei.c:3494
- do_filp_open+0x190/0x3d0 fs/namei.c:3521
- do_sys_openat2+0x16d/0x420 fs/open.c:1187
- do_sys_open fs/open.c:1203 [inline]
- __do_sys_open fs/open.c:1211 [inline]
- __se_sys_open fs/open.c:1207 [inline]
- __x64_sys_open+0x119/0x1c0 fs/open.c:1207
- do_syscall_64+0x3a/0xb0 arch/x86/entry/common.c:47
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x446119
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff688b472f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00000000004cb4c0 RCX: 0000000000446119
-RDX: 0000000000000000 RSI: 0000000000000300 RDI: 0000000020000040
-RBP: 000000000049b06c R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-R13: 3d72696472657070 R14: 0079616c7265766f R15: 00000000004cb4c8
+> > The resulting Image appears to work, but I haven't done anything beyond
+> > booting, and I wasn't able to get ROPgadget.py going to quantify the
+> > number of gadgets.
+> 
+> Does it not like arm64 machine code? I can go check and see if I can get
+> numbers...
 
+It's supposed to, and I suspect it works fine, but I wasn't able to get
+the tool running at all due to environment problems on my machine.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks,
+Mark.
