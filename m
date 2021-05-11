@@ -2,123 +2,76 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8E9C43460
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 13:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D36F9C43460
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 13:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0926101A
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 13:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F646613F7
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 13:59:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231634AbhEKNnf (ORCPT
+        id S231508AbhEKOAc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 May 2021 09:43:35 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33772 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231623AbhEKNne (ORCPT
+        Tue, 11 May 2021 10:00:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:48358 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231461AbhEKOAc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 May 2021 09:43:34 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14BDYP3X009593;
-        Tue, 11 May 2021 09:42:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=f9vO9RefB+oUE3iXwZ90+gEsfMSU8YiKItNlbfwzQus=;
- b=a7S3v/ZkYvVr7PIvaZMea7V0MB5uhuZC28n31LfFwLL4CiEBbnNn570YG8wT7TgkYUsZ
- 34jhs5U3I+vrk/4Etla71ylsYs5uQAGp2fHIoBp/KLegDSZyWiNLv0ERO8AmcJsyyE/K
- 7KdgU3Z7D6fueKe6AsY8PVkSs8LdZb+LdPQ+2e087gv22jrmByg53uuYqxHidCj5GKZw
- TVyi5P9Ege/1VJ6U+FIPNpLnNiXLiiXUDG5tvJie8za0X/aSwmrK0ufj26Ff5DQbRxyd
- dQm1skG8rQmvlH8WkHaDh+FwhqmA1MCZ1hn6AzQd189zphUy6uJg0pbagIcoqwCN8FdS pQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38fsrvttc2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 May 2021 09:42:22 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14BDb0pn020296;
-        Tue, 11 May 2021 09:42:21 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38fsrvttbe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 May 2021 09:42:21 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14BDfve1023047;
-        Tue, 11 May 2021 13:42:20 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma04ams.nl.ibm.com with ESMTP id 38dj989pxx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 11 May 2021 13:42:19 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14BDgH1D63570222
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 11 May 2021 13:42:17 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AA9A611C052;
-        Tue, 11 May 2021 13:42:17 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7241711C04C;
-        Tue, 11 May 2021 13:42:16 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.116.76])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 11 May 2021 13:42:16 +0000 (GMT)
-Message-ID: <956020eb1babea38fa904aadfdbc4c81b9fb7baa.camel@linux.ibm.com>
-Subject: Re: [RESEND][PATCH v6 05/11] evm: Introduce evm_hmac_disabled() to
- safely ignore verification errors
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@google.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 11 May 2021 09:42:15 -0400
-In-Reply-To: <20210507133114.2138653-1-roberto.sassu@huawei.com>
-References: <20210505113329.1410943-1-roberto.sassu@huawei.com>
-         <20210507133114.2138653-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qDkpqTL3z5NsS3aQuUgasGcRbsgbs9kP
-X-Proofpoint-GUID: t1GGushV9RgWfXjWKUFDQ8VKgfhyIstr
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-11_02:2021-05-11,2021-05-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- clxscore=1015 malwarescore=0 lowpriorityscore=0 phishscore=0 spamscore=0
- mlxscore=0 adultscore=0 impostorscore=0 suspectscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105110104
+        Tue, 11 May 2021 10:00:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC836101E;
+        Tue, 11 May 2021 06:59:25 -0700 (PDT)
+Received: from C02TD0UTHF1T.local (unknown [10.57.29.91])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10C733F718;
+        Tue, 11 May 2021 06:59:23 -0700 (PDT)
+Date:   Tue, 11 May 2021 14:59:20 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-hardening@vger.kernel.org, Qing Zhao <qing.zhao@oracle.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] Makefile: Introduce CONFIG_ZERO_CALL_USED_REGS
+Message-ID: <20210511135920.GB8933@C02TD0UTHF1T.local>
+References: <20210505191804.4015873-1-keescook@chromium.org>
+ <20210506125457.GA34956@C02TD0UTHF1T.local>
+ <202105061416.3CB40BE5@keescook>
+ <20210510134503.GA88495@C02TD0UTHF1T.local>
+ <202105101458.EC466299@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202105101458.EC466299@keescook>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2021-05-07 at 15:31 +0200, Roberto Sassu wrote:
-> When a file is being created, LSMs can set the initial label with the
-> inode_init_security hook. If no HMAC key is loaded, the new file will have
-> LSM xattrs but not the HMAC. It is also possible that the file remains
-> without protected xattrs after creation if no active LSM provided it.
-> 
-> Unfortunately, EVM will deny any further metadata operation on new files,
-> as evm_protect_xattr() will always return the INTEGRITY_NOLABEL error, or
-> INTEGRITY_NOXATTRS if no protected xattrs exist. This would limit the
-> usability of EVM when only a public key is loaded, as commands such as cp
-> or tar with the option to preserve xattrs won't work.
-> 
-> This patch introduces the evm_hmac_disabled() function to determine whether
-> or not it is safe to ignore verification errors, based on the ability of
-> EVM to calculate HMACs. If the HMAC key is not loaded, and it cannot be
-> loaded in the future due to the EVM_SETUP_COMPLETE initialization flag,
-> allowing an operation despite the attrs/xattrs being found invalid will not
-> make them valid.
-> 
-> Since the post hooks can be executed even when the HMAC key is not loaded,
-> this patch also ensures that the EVM_INIT_HMAC initialization flag is set
-> before the post hooks call evm_update_evmxattr().
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+On Mon, May 10, 2021 at 03:01:48PM -0700, Kees Cook wrote:
+> On Mon, May 10, 2021 at 02:45:03PM +0100, Mark Rutland wrote:
 
-Thanks, Robert!
+[...]
 
-Reviewed-by:  Mimi Zohar <zohar@linux.ibm.com>
+> > That's 441301 new MOVs, and the equivalent of 442511 new instructions
+> > overall. There are 135728 new MOVs to x16 and x17 specifically, which
+> > account for ~31% of that.
+> 
+> I assume the x16/x17 case could be addressed by the compiler if it
+> examined the need for PLTs, or is that too late (in the sense that the
+> linker is doing that phase)?
 
+Most (all?) PLTs will be created at link time, and IIUC the compiler
+simply has to assume any non-static function might have a PLT, since the
+AAPCS permits that. Maybe some of the smaller memory size models don't
+permit PLTs, but I have no real knowledge of that area and I'm already
+out on a limb.
+
+LTO could probably help with visiblity, but otherwise I don't see a way
+the compiler could be sure a PLT won't exist.
+
+> Regardless, I will update the documentation on this feature. :)
+
+Great; thanks!
+
+Mark.
