@@ -4,119 +4,170 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A184FC433B4
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 16:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEA1C433ED
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 19:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 659936190A
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 16:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A2146121E
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 19:53:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbhEKQK7 (ORCPT
+        id S229948AbhEKTys (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 May 2021 12:10:59 -0400
-Received: from sonic317-38.consmr.mail.ne1.yahoo.com ([66.163.184.49]:43004
-        "EHLO sonic317-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230435AbhEKQK6 (ORCPT
+        Tue, 11 May 2021 15:54:48 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:2172 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229920AbhEKTyr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 May 2021 12:10:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1620749391; bh=pe6Q1aF/N1DY6RK/gXq9v35gxNan0VBcPGFDU/pIcog=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=kMu8KWXaloIQaxkW7hlR7MZkvqRH0nFUCPnK+J6txF0tYaL/ew71FO48SMzJbim3cqoYKqU1QvgCLE9Kf/KbO5yrqmEsKJhm5epk/uewXsOUQKJezf3hZqAuxzKeLPs8c0HnVE5Cbe/YSUpTNbT52LUVdLLJGC/iyQJiKKHe/I4aLlNWAMTdkcLVioRdgca/LtEaAtnb+MRv9jwSCdl0XPAX3QAlC90s4+qTilJO2XAdHKPiDxTTqBZqPPa/qkkc1Li8L1FG0R7ni1aFks1eao413DumKoHoRYyY6iUeoMxuT+2BS/oDueLlb2EvrCGH/s596mmuPmYpvypCAlmh1A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1620749391; bh=dKT/ewubhLMdKhR7Kvwy/qzEO4HLONazgM76QQLt7vq=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=NSQ8wPjeilKshkXGpjwBiTS4oJkhsY660rUYFVrLcCOcISfM+7ZHoSE+tAskwFd9d0zeNEilLBwm8ww/VOYfqkFD/ImrbwhY+Mmxb03aZKK4Gu80rOPg7JdoxH6sKvz6ya/DpW9o/StReTXT0ejSzJuWtGUODjQszU24QijrnuvaXGUjS98+nHi9+XEW5Bu5Mh2LLVx9C8or+8zszDLOds9rsVRtza5paVDxbaCHJvAYzs+74gAKGtGV/wL1vgjy2FkCL2z1BGNsrvftVRl+uIChGF8J202YwErt47Ptz3AP2Jd0nru73jIao7/JYUJn76PfZSFiZu5Euu3y1GP4Wg==
-X-YMail-OSG: LA_dw14VM1kuVffsX3K2J_DYbVL6XDIcyv0mQIlDLc6W8cTf.ql0Y38_hbqeXRU
- Lca5IdVK5dylyBQtSUC8TrbGxf2WDXz2YKUgqMxsdih4knt9k.kQKravt1GQBCGIS2_JbmGLEnuS
- uFiogLjjS_NAXfIWJx90r4hazr3s6KxJoPaGPEFS24AdfOA3MNIhC63W5UqaXPKK_drt2ETiEIEB
- RFz3QKLh10yKQSL7vq3nO_7oQiBkJfpwsnlbgO5cr2_p0t4154emtS9ZNKetjhlb45J14IouL72N
- WK0jiXmy.KzCYJrItamxKqXKNFrNsbcBsldKvzHgpEmwTtvhSl5HkxcKhjL_7Ny__crH4.Po7WXL
- fh_mUMDeYBzKXAyUYuAf49BaDK4F6VaGLWLCuf3lS7THp4sZSNMK8Besqoiw5mN09iOHI8qp.wTA
- vFTgqGBEo7qAOr3GBd06EuS1QB7p5UtbQVg7GgX8UUst5AZ1xfS.YlR1Yf6LvOpbUvZ.kr8zOT1Y
- z2E5NyMWsMTnQrRkCTkqJOxLmhCcHKk5nopBOlvwPiu3CHrP7draYIfo00TSIPrp3GJ17RfPPRNT
- 1RMVwCVRkAl90IHMMOTWZTvQ0NlPmhiLdx.X4xs3fxcnkHWWgiGZsnMuF44V.c15xdHiXVp44aJU
- xSYFokUpD2cLt0NsZFTN0UVYTfS6ljqy.YPWizEZ_GIwjoJZTrWPRz_fppH8WQXfyml_UzO0OAVX
- v3BTvnlrLy_iH7SAWQhrrOGyTjgS.ft1cQfACjKOUdnX2sX2CNHQYW.90KxRujnUF3FO.OeSAOO3
- tyPRMiZmjNSCtrNPdkYyvPGzhflsr.alzazYyoiP19uWsnV.dpYMHt5cyKYr0eyq_jsp.zPNC.NV
- T.pU0nQ9HRsN2qYuBrFW_4A2gzXTBbRcY7om10FbCgV_rZeF9FHXwI2Scu5zh4ejuGaW0TeGMF6x
- BnY_cJtQO.3Dh1Y_4Wym93dl3osux1Z0wP.TkKHf9RfVQ059QFBnh.C0qi_rLIko564rhkkkiNEw
- cdF7n2cc7ONEPwJwufiadFjOYfWDqaq08VyOmzM_RLlJ.Q1Ip68h1sWFOX3msOAXJQLvbsWU5pla
- 3GCheb8XNF4bJf58_36gaC55vzXPrWK1QwI3ySxey_EY_L3qs8HyLGcXffzqaEYgDUyRimuoY6Ol
- l23EZMnyhCuwfI7m0AMm.3iDCSLz1gHoCm0v9Te93G.j4wPiYJgb1m3pJPuJ97KjfIHGxQQh_hOy
- WofZ0MrdCPkKywe9jWl3i1e4qFbxG9q7VuFDMbF.BvqDPtG4pGvNen1q6M9huusstV.Y7Cjhx8_e
- K.tUknPzuaRZlrN4g40cZLxUkevW7VS6kiK2Hbv0PFjc2C46tph.cAD9yose_yacZhukTbDjpWM0
- 1YDR7gSO_kZKnduz0HzXb7yllqTD4U6TwpL1ZcWGx3CaARfR6mppVuWx7jrRlREuGEzEyQ4lpoYt
- mDPki9r11OzKlzNRvOGgl4RHTsv.NR7a69FvXMLLjNO9h4w19Msyl4ZUwQ.jpA3iKz0Kf2n8ouVD
- ryF4II61tusGCQRvgdrkqYNpe1P4q8Y2po6gLLnSfNqLsSsGqzrt3fVlFocNyPqZT9nSK_O9P_SV
- 1Uz0PK5OnPKtgwxxebDj3zFOrVp1.07mF_rL2hNBMEqGQzis8M.TJ3G3wxNc2oRtNBErCB2.yjd7
- KMu48GSLfiasvuZ8rkYBNshylL2a.GmGU97D1BCQE_hDtEXUTpHOEZKFdsGLf.pQKbIgcIrGOv41
- Chx5DvtNJhXWW35DfEt_hU.S9J5z6JfoIVMDGUPoNjFoPb6cX40xv8S_iOdYfEk1etdm6Tjoiku3
- mIBXhyQ8oZUkpB79Zj1XIJS.VzCuLjtU8vyAXEpNLFrRdnCsdIxZTkwusFb1dAuZWY51b8ZkN95A
- pL6Jx1Who_XR8UPGLcmqBpGdBCHzyMHpHvyJ2RqhRhu3ZQQL6vb_yft2Zvqy4y_Qr1MX_ZPhZXjx
- 1QXZW8PvZ0LYP4xeTIEhKm5kK5Br8LTlv.s.iMlOiEU7oFj4BNXO3MhMaDdHMxvm8KJ8OY._zdMM
- TclY9Zt.L_Rhw9jwN3huEGM1ZnPpe9QeSLKq8j_fO3cUjtg.w4D7ULA86OmyKIrL9kiISfTcQajm
- yR2.Ijaa833sk7du21a8340bu9loI3hHT7GkApt2Jb.ZA57RVnKqdkEe85FUPo9owJMDy_6l6BEl
- 1cBHmB7sl8awVnA29HGSFK4BZCnWpUjc_W.6Kp_27lv5.RaeOxMHKZn6tKyyZvZVkZvZXg3dcebL
- 1F6nnVbtb76UTZIzk76qolJvy1ShRxLvGLLysmYp4qbUV5Eca6CTla_QwDAB9FEDLAFDWN9L.0lx
- pSaNwL5zu6Nni1WdOhTNLHcViBBevh6jx73SRx4cT1b3z9S0Y81w5UCdYaq65sjn1dBERXZT7y2x
- 0ia4yVfj.DB_DAwJkO8HY_2URsV0IZkHKZpL0y_VXX7xO_cCAXLmfjKheJMvEpQ1Qy.2GBKKjFqL
- zb.43mA3n4_tXVEn7lpjKEKRf8hIoHlorTmi_W3AvOuBr9Sv8X6lzYE6En4fVc_zJ2My9pj4UNH5
- tJYEB2TpCAQhcllxy7DjB1XQMQO0OxmVTpSBEv52K3mw4_Wdvu5GdTV41SJ8QyRTxBXFlTk6xdMi
- 6AJIFB6.7LmHgQrQjJf.Qk8pLYU5xZrELwu9aYicK_AZVcgCRkIfSFXxrJCosTRr3U8awMltijaQ
- ZSxPLk1tqdaFjz_RSxpzZK2X_eMif_ov8VOvb.1HpYwnogJo4JOejhkqWE0txEH.j7jEHwn3VX.b
- 2KiPpF7ohW3Z6p8PmyjoktBn_sQQsLmqJXDpb4wDSHVLi61oZa1GxMykJ6pYzQ86Khr6JYgUU1.T
- zo2sMGyqAIC6nM9uTo6OomgGaWf1Nnlms2gnsyO2V5LfNZ76bHQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Tue, 11 May 2021 16:09:51 +0000
-Received: by kubenode562.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 2211720ec52ce342b9b5052105b4ac20;
-          Tue, 11 May 2021 16:09:46 +0000 (UTC)
-Subject: Re: [PATCH] security/smack: fix misspellings using codespell tool
-To:     menglong8.dong@gmail.com
-Cc:     jmorris@namei.org, serge@hallyn.com,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Xiong Zhenwu <xiong.zhenwu@zte.com.cn>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210318111024.472126-1-xiong.zhenwu@zte.com.cn>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <aeff2e07-4780-8d4c-581a-fdd1756eb64a@schaufler-ca.com>
-Date:   Tue, 11 May 2021 09:09:46 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <20210318111024.472126-1-xiong.zhenwu@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
+        Tue, 11 May 2021 15:54:47 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14BJYnAc044402;
+        Tue, 11 May 2021 15:53:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=uwIX+a9AmDwK0Whw4IZJuRNHjaUD+3bsa0lcZexzn4Q=;
+ b=rruHaDCRRf3HsPdbX76G8oJr++qlISVDIEuLgBFWPs0sxXVsh78ZRp7t0w8zXavK6+1H
+ YfFfj5VoEpymbd4CC6AxB9M2GtaBrBLH2B71TSeB/WyryEOVdOZEvSLwHV2EAC44ej0d
+ Kc3W7Pnj+JI6Zshv/1g8jURWl2tEADt8V/MVnpzoMXBRXK/BlkGp1iNW11DmhdSwO7fj
+ vKY9ektWG/liyu1E+klKuhTUU66+IPtRkaZ0ULYwThWKpwlD+g9xiYxcoyltl0S8EmzR
+ WrZ5z3DzyAOJroWRvUwQRJ77gmy18r9f1MjiX/spS8RX2geuTKtoWbwaBdM/h2AQ68fL BQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38fyng9b26-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 May 2021 15:53:35 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14BJYqG8044680;
+        Tue, 11 May 2021 15:53:35 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38fyng9b1x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 May 2021 15:53:34 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14BJkqRx026071;
+        Tue, 11 May 2021 19:53:33 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06fra.de.ibm.com with ESMTP id 38dhwh10gx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 May 2021 19:53:33 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14BJr4gZ31981934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 May 2021 19:53:04 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A8CE15204E;
+        Tue, 11 May 2021 19:53:30 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.116.76])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 4B05852050;
+        Tue, 11 May 2021 19:53:29 +0000 (GMT)
+Message-ID: <c0d393c4c8e676ea1423b6abfbaa6418a12f10f0.camel@linux.ibm.com>
+Subject: Re: [PATCH v6 03/11] evm: Refuse EVM_ALLOW_METADATA_WRITES only if
+ an HMAC key is loaded
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "mjg59@google.com" <mjg59@google.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Date:   Tue, 11 May 2021 15:53:28 -0400
+In-Reply-To: <1f0530bc9b974951ae0bb1e2beb02422@huawei.com>
+References: <20210505112935.1410679-1-roberto.sassu@huawei.com>
+         <20210505112935.1410679-4-roberto.sassu@huawei.com>
+         <6f5603489b16918de5d3cbb73c1a7c0e835f0671.camel@linux.ibm.com>
+         <1f0530bc9b974951ae0bb1e2beb02422@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OiEadkjEZY-psod8V59iJYsAziHwSPp6
+X-Proofpoint-ORIG-GUID: klQcZJ7zyaf0V3HOJQdanH3yRk1fem3p
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.18295 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-11_04:2021-05-11,2021-05-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ impostorscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105110130
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/18/2021 4:10 AM, menglong8.dong@gmail.com wrote:
-> From: Xiong Zhenwu <xiong.zhenwu@zte.com.cn>
->
-> A typo is found out by codespell tool in 116th line of smackfs.c:
->
-> $ codespell ./security/smack
-> ./smackfs.c:116: lables  ==> labels
->
-> Fix a typo found by codespell.
->
-> Signed-off-by: Xiong Zhenwu <xiong.zhenwu@zte.com.cn>
+On Tue, 2021-05-11 at 14:12 +0000, Roberto Sassu wrote:
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Tuesday, May 11, 2021 3:42 PM
+> > On Wed, 2021-05-05 at 13:29 +0200, Roberto Sassu wrote:
+> > > EVM_ALLOW_METADATA_WRITES is an EVM initialization flag that can be
+> > set to
+> > > temporarily disable metadata verification until all xattrs/attrs necessary
+> > > to verify an EVM portable signature are copied to the file. This flag is
+> > > cleared when EVM is initialized with an HMAC key, to avoid that the HMAC is
+> > > calculated on unverified xattrs/attrs.
+> > >
+> > > Currently EVM unnecessarily denies setting this flag if EVM is initialized
+> > > with a public key, which is not a concern as it cannot be used to trust
+> > > xattrs/attrs updates. This patch removes this limitation.
+> > >
+> > > Cc: stable@vger.kernel.org # 4.16.x
+> > > Fixes: ae1ba1676b88e ("EVM: Allow userland to permit modification of EVM-
+> > protected metadata")
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > Once the comments below are addressed,
+> > 
+> > Reviewed-by:  Mimi Zohar <zohar@linux.ibm.com>
+> > 
+> > > ---
+> > >  Documentation/ABI/testing/evm      | 5 +++--
+> > >  security/integrity/evm/evm_secfs.c | 5 ++---
+> > >  2 files changed, 5 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/Documentation/ABI/testing/evm
+> > b/Documentation/ABI/testing/evm
+> > > index 3c477ba48a31..eb6d70fd6fa2 100644
+> > > --- a/Documentation/ABI/testing/evm
+> > > +++ b/Documentation/ABI/testing/evm
+> > > @@ -49,8 +49,9 @@ Description:
+> > >  		modification of EVM-protected metadata and
+> > >  		disable all further modification of policy
+> > >
+> > > -		Note that once a key has been loaded, it will no longer be
+> > > -		possible to enable metadata modification.
+> > > +		Note that once an HMAC key has been loaded, it will no longer
+> > > +		be possible to enable metadata modification and, if it is
+> > > +		already enabled, it will be disabled.
+> > 
+> > It's worth mentioning that echo'ing a new value is additive.  Once EVM
+> > metadata modification is enabled, the only way of disabling it is by
+> > enabling an HMAC key.  It's also worth mentioning that metadata writes
+> > are only permitted once further changes to the EVM policy are disabled.
+> 
+> If I'm not wrong, it is not required to set EVM_SETUP_COMPLETE to allow
+> metadata writes.
 
-Added to smack-next. Thank you.
+Agreed, EVM_SETUP_COMPLETE is not needed to allow metadata writes. 
+Once EVM_ALLOW_METADATA_WRITES is enabled, however, there is no way of
+unsetting it without loading the HMAC key.
 
-> ---
->  security/smack/smackfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 22ded2c26089..ef8625cb3f2a 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -113,7 +113,7 @@ struct smack_known *smack_syslog_label;
->   * SMACK_PTRACE_DEFAULT    regular smack ptrace rules (/proc based)
->   * SMACK_PTRACE_EXACT      labels must match, but can be overriden with
->   *			   CAP_SYS_PTRACE
-> - * SMACK_PTRACE_DRACONIAN  lables must match, CAP_SYS_PTRACE has no effect
-> + * SMACK_PTRACE_DRACONIAN  labels must match, CAP_SYS_PTRACE has no effect
->   */
->  int smack_ptrace_rule = SMACK_PTRACE_DEFAULT;
->  
+> I think the original idea was to boot a system in a way
+> that portable signatures can be written, and then to enable enforcement.
+
+Nothing special is needed to write portable signatures.  Based on the
+documentation, I think the original intention supports three modes:
+- only enable HMAC validation  (1)
+- enable both HMAC and digital signature validation (3)
+- only enable digital signature validation and allow modification of
+EVM-protected metadata (6)
+
+The third example is enabled using "0x80000006", which also prevents
+enabling HMAC verification.  Leaving out the example of enabling just
+digital signature validation without modification of EVM protected
+metadata seems to have been intentional.
+
+thanks,
+
+Mimi
+
