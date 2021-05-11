@@ -2,179 +2,94 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4442DC433B4
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 07:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88128C43460
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 10:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 184576192B
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 07:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 552A861932
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 10:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229984AbhEKHPU (ORCPT
+        id S230393AbhEKKv2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 May 2021 03:15:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229945AbhEKHPT (ORCPT
+        Tue, 11 May 2021 06:51:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:59425 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229892AbhEKKv2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 May 2021 03:15:19 -0400
-Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA40C061574;
-        Tue, 11 May 2021 00:14:13 -0700 (PDT)
-Received: by mail-pg1-x534.google.com with SMTP id q15so10873159pgg.12;
-        Tue, 11 May 2021 00:14:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OCE0VDemWP3Un3BUBubMOTJqKvhb1dlengItxJN9kCg=;
-        b=dvWBVFkDpMFMjORmV6mBzC0CLWkszPaXOBWqcbLFzQzTFGR8V382LPXY3RSt47PSwJ
-         PriWUdBlYzxBgzlQNm5VRwrDBalYJyi4uPr4uNiM03Hhrk0iVoYWwKNMrXEF3QPf4kZn
-         8mYO91HE02cfwkoVfsLEemXRhNo12BIrGCV1CBSxLmQzPP/OPv/cCQbJE999w5QZlFVP
-         MgNjN52ICxRoOyOdkf4lNyAbxXiGrRk5UJKx0PXf3/2shlFSiB1fC/qgalaGcR4ze6SW
-         drEy294gra5n6N4J3H0s4FAXsbsORpig3yHGOau0FvDpSHnDDbNCwvpGF3DpsAxtIaGv
-         +KoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OCE0VDemWP3Un3BUBubMOTJqKvhb1dlengItxJN9kCg=;
-        b=UQMTrBcBvMzJhXbXeJokqGtvicvRdYJZu5pYatms8MUzK1XRkVnYbTGqvbMiTnT4sv
-         zRJ4ehqtE+K7TNvVpa9BOWIvFWjYuWj7MNmcdem9nK/vDjP6aXEhbu6rYZPrBAtBa+4y
-         YJGUPfpOw1zw5R8EuI8wt27aUrGxc7bYQW0TXVBHI5tjjmPMkIkm5Ry0g85aKaMcnKqS
-         YuG1eAbAkoA5BON0JCtXhq2KSnD3J0A+BgN9a2Ymhi0CsIVK0NtVWpKnOlkhW6C3Lppa
-         k7018rrU2qKP4Mxrswm0kGBXjcGknvbMXMCggaghqG1d48dlFUDPWa8+0eQOdnGA0vHj
-         h5fA==
-X-Gm-Message-State: AOAM532qpWn6fL8LdNJvVs1EAvULlUoTiOBNuQeXalE1bMsBbVTBgRol
-        AtYgCb1iyag5OvuIyT+D5VMWpu6D5/eVoyM20i8=
-X-Google-Smtp-Source: ABdhPJzB5dBcRqYw4ILOKKlWtRmv2VdjzfR/h5MVREf5B3Yicsh7OXee7jd9MFZwwpcPeUm13xty8co8o8PTnZYrbzw=
-X-Received: by 2002:a05:6a00:139a:b029:2a1:2e2d:5924 with SMTP id
- t26-20020a056a00139ab02902a12e2d5924mr25069886pfg.15.1620717252935; Tue, 11
- May 2021 00:14:12 -0700 (PDT)
+        Tue, 11 May 2021 06:51:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1620730221;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=pDKfMCSmDrYbYLb3RYYkSWVBebsV7OFYV2lkS/seTjY=;
+        b=X9q1DzlmW/HnYe7Icm34QGpe5i7YvcCha+iuozrJVUwNKwFBmX2DD8aSbOIoPrXhhGebQj
+        dYosQe6Mw1DLGMbvYxLvOjZJEf6c0fqS0HBoGMz11xZcjCZW2WEhdgCpX2GSFlY/dH2WQ0
+        PklDF8B72XIEpw/8oFp6HQKRlUtIXFQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-235-k5-U_UGNPKSvNGkjgNC1IQ-1; Tue, 11 May 2021 06:50:19 -0400
+X-MC-Unique: k5-U_UGNPKSvNGkjgNC1IQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 765F6107ACCA;
+        Tue, 11 May 2021 10:50:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E850189A5;
+        Tue, 11 May 2021 10:50:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1620467481-110575-1-git-send-email-yang.lee@linux.alibaba.com>
+References: <1620467481-110575-1-git-send-email-yang.lee@linux.alibaba.com>
+To:     Yang Li <yang.lee@linux.alibaba.com>
+Cc:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
+        serge@hallyn.com, nathan@kernel.org, ndesaulniers@google.com,
+        keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] Keys: Remove redundant initialization of cred
 MIME-Version: 1.0
-References: <cover.1620499942.git.yifeifz2@illinois.edu> <53db70ed544928d227df7e3f3a1f8c53e3665c65.1620499942.git.yifeifz2@illinois.edu>
- <20210511020425.54nygajvrpxqnfsh@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20210511020425.54nygajvrpxqnfsh@ast-mbp.dhcp.thefacebook.com>
-From:   YiFei Zhu <zhuyifei1999@gmail.com>
-Date:   Tue, 11 May 2021 02:14:01 -0500
-Message-ID: <CABqSeAT8iz-VhWjWqABqGbF7ydkoT7LmzJ5Do8K1ANQvQK=FJQ@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next seccomp 10/12] seccomp-ebpf: Add ability to
- read user memory
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     containers@lists.linux.dev, bpf <bpf@vger.kernel.org>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Austin Kuo <hckuo2@illinois.edu>,
-        Claudio Canella <claudio.canella@iaik.tugraz.at>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Hubertus Franke <frankeh@us.ibm.com>,
-        Jann Horn <jannh@google.com>,
-        Jinghao Jia <jinghao7@illinois.edu>,
-        Josep Torrellas <torrella@illinois.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tianyin Xu <tyxu@illinois.edu>,
-        Tobin Feldman-Fitzthum <tobin@ibm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Will Drewry <wad@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2499882.1620730214.1@warthog.procyon.org.uk>
+Date:   Tue, 11 May 2021 11:50:14 +0100
+Message-ID: <2499883.1620730214@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 10, 2021 at 9:04 PM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Mon, May 10, 2021 at 12:22:47PM -0500, YiFei Zhu wrote:
-> >
-> > +BPF_CALL_3(bpf_probe_read_user_dumpable, void *, dst, u32, size,
-> > +        const void __user *, unsafe_ptr)
-> > +{
-> > +     int ret = -EPERM;
-> > +
-> > +     if (get_dumpable(current->mm))
-> > +             ret = copy_from_user_nofault(dst, unsafe_ptr, size);
->
-> Could you explain a bit more how dumpable flag makes it safe for unpriv?
-> The unpriv prog is attached to the children tasks only, right?
-> and dumpable gets cleared if euid changes?
+Yang Li <yang.lee@linux.alibaba.com> wrote:
 
-This is the "reduction to ptrace". The model here is that the eBPF
-seccomp filter is doing the equivalent of ptracing the user process
-using the privileges of the task at the time of loading the seccomp
-filter.
+> -	const struct cred *cred = current_cred();
+> +	const struct cred *cred;
 
-ptrace access control is governed by ptrace.c:__ptrace_may_access. The
-requirements are:
-* always allow thread group introspection -- assume false so we are
-more restrictive than ptrace.
-* tracer has CAP_PTRACE in the target user namespace or tracer
-r/fsu/gidid equal target resu/gid -- discuss below
-* tracer has CAP_PTRACE in the target user namespace or target is
-SUID_DUMP_USER (I realized I should probably change the condition to
-== SUID_DUMP_USER).
-* passes LSM checks (eg yama ptrace_scope) -- we expose a hook to LSM
-but it's more of a "disable all advanced seccomp-eBPF features". How
-would a better interface to LSM look like?
+Good catch, but it's probably the wrong fix.
 
-The dumpable check handles the "target is SUID_DUMP_USER" condition,
-in the circumstance that the loader does not have CAP_PTRACE in its
-namespace at the time of load. Why would this imply its CAP_PTRACE
-capability in target namespace? This is based on my understanding on
-how capabilities and user namespaces interact:
-For the sake of simplicity, let's first assume that loader is the same
-task as the task that attaches the filter (via prctl or seccomp
-syscall).
-* Case 1: target and loader are the same user namespace. Trivial case,
-the two operations are the same.
-* Case 2: target is loader's parent namespace. Can't happen under
-assumption. Seccomp affects itself and children only, and it is only
-possible to join a descendant user ns.
-* Case 3: target is loader's descendant namespace. Loader would have
-full CAP_PTRACE on target. We are more restrictive than ptrace.
-* Case 4: target and loader are on unrelated namespace branches. Can't
-happen under assumption. Same as case 2.
+In that function, there is:
 
-Let's break this assumption and see what happens if the loader and
-attacher are in different contexts:
-* Case 1: attacher is less capable (as a general term of "what it can
-do") than loader then all of the above applies, since the model
-concerns and checks the capabilities of the loader.
-* Case 2: attacher is more capable than loader. The attacher would
-need an fd to the prog to attach it:
-  * subcase 1: attacher inherited the fd after an exec and became more
-capable. uh... why is it trusting fds from a less capable context?
-  * subcase 2: attacher has CAP_SYS_ADMIN and gets the fd via
-BPF_PROG_GET_FD_BY_ID. uh... why is it trusting random fds and
-attaching it?
-  * subcase 3: attacher received the fd via a domain socket from a
-process which may be in a different user namespace. On my first
-thought, I thought, why is it trusting random fds from a less capable
-context? Except I just thought of an adversary could:
-    * Clone into new userns,
-    * Load filter in child, which has CAP_PTRACE in new userns
-    * Send filter to the parent which doesn't have CAP_PTRACE in its userns
-    * It's broken :(
-We'll think more about this case. One way is to check against init
-namespace, which means unpriv container runtimes won't have the
-non-dumpable override. Though, it shouldn't be affecting most of the
-use cases. Alternatively we can store which userns it was loaded from
-and reject attaching from a different userns.
+	const struct cred *cred = current_cred();
+	...
+	cred = get_current_cred();
+	keyring = keyring_alloc(desc, cred->fsuid, cred->fsgid, cred, ...);
+	put_cred(cred);
+	...
+	sprintf(uid_str, "%d", from_kuid(&init_user_ns, cred->fsuid));
+	...
 
-Regarding u/gids, for an attacher to attach a seccomp filter, whether
-cBPF or eBPF, if it doesn't have CAP_SYS_ADMIN in its current ns, it
-will have to set no_new_privs on itself before it can attach. (Unlike
-the previous discussion, this check is done at attach time rather than
-load.) With no_new_privs the target's privs is a subset of the
-attacher's, so the attacher should have a way to match the target's
-resuid, so this condition is not a concern.
+So we get the creds again, but with a ref, and then drop after calling
+keyring_alloc()... and then access cred again, which is dodgy - but we get
+away with it because cred is still pinned by our task_struct.
 
-YiFei Zhu
+I think what is actually needed is to remove the get_current_cred() and the
+put_cred() calls, in which case, you want this:
+
+	Fixes: d84f4f992cbd ("CRED: Inaugurate COW credentials")
+
+David
+
