@@ -7,61 +7,62 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20361C433ED
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 05:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4442DC433B4
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 07:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E799461924
-	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 05:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 184576192B
+	for <linux-security-module@archiver.kernel.org>; Tue, 11 May 2021 07:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230109AbhEKFqF (ORCPT
+        id S229984AbhEKHPU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 11 May 2021 01:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43186 "EHLO
+        Tue, 11 May 2021 03:15:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbhEKFqF (ORCPT
+        with ESMTP id S229945AbhEKHPT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 11 May 2021 01:46:05 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F290C061574;
-        Mon, 10 May 2021 22:44:58 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id z6-20020a17090a1706b0290155e8a752d8so661896pjd.4;
-        Mon, 10 May 2021 22:44:58 -0700 (PDT)
+        Tue, 11 May 2021 03:15:19 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DA40C061574;
+        Tue, 11 May 2021 00:14:13 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id q15so10873159pgg.12;
+        Tue, 11 May 2021 00:14:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7XVavgeSmV2+7ZuA8AScQGjekCrXRJjlh8qmTF2ezzQ=;
-        b=cYGXc/2ggSmY5+d1AujXwZwOLXQBpQggw62i01cWJViiFl+r+5/T4guXJ1GW1okCq5
-         TF/Gzr8G6u70GyyQsx0BBDw5UxaRb0BwcWdu4hs/sYNK5IPUpr6bESivGYJGst4nYn0o
-         vlYdjkNYrYVfVJZFAo6IHbDQX1b5kxz1s6qx8HXvd2tsZvzKXgQZVGMRT2FHj0b5z7Sh
-         PxSAgkrObVGb0svSop5w4ZF0OgnaFSci/tzJqH/s1Ce2dZ1skQoh9dgFZbGHvHQwXTOL
-         rJGiBtNeM5s7hspIyi0z5eAyjjg4L+L8hvc8fdYKoUCsVnLKLCH1i7Duu8xHL5F4+Tdf
-         nTKg==
+        bh=OCE0VDemWP3Un3BUBubMOTJqKvhb1dlengItxJN9kCg=;
+        b=dvWBVFkDpMFMjORmV6mBzC0CLWkszPaXOBWqcbLFzQzTFGR8V382LPXY3RSt47PSwJ
+         PriWUdBlYzxBgzlQNm5VRwrDBalYJyi4uPr4uNiM03Hhrk0iVoYWwKNMrXEF3QPf4kZn
+         8mYO91HE02cfwkoVfsLEemXRhNo12BIrGCV1CBSxLmQzPP/OPv/cCQbJE999w5QZlFVP
+         MgNjN52ICxRoOyOdkf4lNyAbxXiGrRk5UJKx0PXf3/2shlFSiB1fC/qgalaGcR4ze6SW
+         drEy294gra5n6N4J3H0s4FAXsbsORpig3yHGOau0FvDpSHnDDbNCwvpGF3DpsAxtIaGv
+         +KoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7XVavgeSmV2+7ZuA8AScQGjekCrXRJjlh8qmTF2ezzQ=;
-        b=G2gEULoSahTDF6kQozsLO4cFuEoWRAuIobncBAb4fJB6uhmJ8NvqhiduBOas3ohYQO
-         0l9bgzygGmLETeXh0KmmsxIIAxb4Ka4H6mLU0KnuwuwTYpCbwUV8AoUa24ZK0+DrKtR9
-         s2oqOWVNXXBppbSP5DSvTH6jaFwNNY58oM0HGPadfpWW6QhygYhXkaiBt0pAeNjOPIyq
-         CNCv3xh4U3N5Ikv1hzgYQ3sQGnhBbpzleN0PdBS81C1LGG/arX8pQL55e36vQfXR7zzo
-         gxAzzuhWWn4EiCG8dNDlREwhDzGfL0O744AoMRF5kJQ2KJsvlUthrUq88qOHoM7+7Dwx
-         4VVQ==
-X-Gm-Message-State: AOAM530vTUaoJ7s2rl9CwmiwOkF3wAvHlIE/wIIDS/XriipY+nMRzQQ6
-        O0DYMuWykX1+Ku+5Dqu/9kjuhlFuf1zFqINAvRo=
-X-Google-Smtp-Source: ABdhPJzScQ+ejW/lypbqMNzTBKNKVnN/6N4w1C3tVb4NxjroBcA9XNlX51+Z0Z3wuTOCRQmS6BrJeedWL165YjdWZr8=
-X-Received: by 2002:a17:90a:d512:: with SMTP id t18mr3194031pju.108.1620711897656;
- Mon, 10 May 2021 22:44:57 -0700 (PDT)
+        bh=OCE0VDemWP3Un3BUBubMOTJqKvhb1dlengItxJN9kCg=;
+        b=UQMTrBcBvMzJhXbXeJokqGtvicvRdYJZu5pYatms8MUzK1XRkVnYbTGqvbMiTnT4sv
+         zRJ4ehqtE+K7TNvVpa9BOWIvFWjYuWj7MNmcdem9nK/vDjP6aXEhbu6rYZPrBAtBa+4y
+         YJGUPfpOw1zw5R8EuI8wt27aUrGxc7bYQW0TXVBHI5tjjmPMkIkm5Ry0g85aKaMcnKqS
+         YuG1eAbAkoA5BON0JCtXhq2KSnD3J0A+BgN9a2Ymhi0CsIVK0NtVWpKnOlkhW6C3Lppa
+         k7018rrU2qKP4Mxrswm0kGBXjcGknvbMXMCggaghqG1d48dlFUDPWa8+0eQOdnGA0vHj
+         h5fA==
+X-Gm-Message-State: AOAM532qpWn6fL8LdNJvVs1EAvULlUoTiOBNuQeXalE1bMsBbVTBgRol
+        AtYgCb1iyag5OvuIyT+D5VMWpu6D5/eVoyM20i8=
+X-Google-Smtp-Source: ABdhPJzB5dBcRqYw4ILOKKlWtRmv2VdjzfR/h5MVREf5B3Yicsh7OXee7jd9MFZwwpcPeUm13xty8co8o8PTnZYrbzw=
+X-Received: by 2002:a05:6a00:139a:b029:2a1:2e2d:5924 with SMTP id
+ t26-20020a056a00139ab02902a12e2d5924mr25069886pfg.15.1620717252935; Tue, 11
+ May 2021 00:14:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1620499942.git.yifeifz2@illinois.edu> <db41ad3924d01374d08984d20ad6678f91b82cde.1620499942.git.yifeifz2@illinois.edu>
- <20210511015814.5sr37y4ogf5cr7c5@ast-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20210511015814.5sr37y4ogf5cr7c5@ast-mbp.dhcp.thefacebook.com>
+References: <cover.1620499942.git.yifeifz2@illinois.edu> <53db70ed544928d227df7e3f3a1f8c53e3665c65.1620499942.git.yifeifz2@illinois.edu>
+ <20210511020425.54nygajvrpxqnfsh@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20210511020425.54nygajvrpxqnfsh@ast-mbp.dhcp.thefacebook.com>
 From:   YiFei Zhu <zhuyifei1999@gmail.com>
-Date:   Tue, 11 May 2021 00:44:46 -0500
-Message-ID: <CABqSeARf03BsdWJJO-w=Bb+goHB6nmBaErz8Qmpgden_Q4Txeg@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next seccomp 12/12] seccomp-ebpf: support task
- storage from BPF-LSM, defaulting to group leader
+Date:   Tue, 11 May 2021 02:14:01 -0500
+Message-ID: <CABqSeAT8iz-VhWjWqABqGbF7ydkoT7LmzJ5Do8K1ANQvQK=FJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next seccomp 10/12] seccomp-ebpf: Add ability to
+ read user memory
 To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Cc:     containers@lists.linux.dev, bpf <bpf@vger.kernel.org>,
         YiFei Zhu <yifeifz2@illinois.edu>,
@@ -89,42 +90,91 @@ Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, May 10, 2021 at 8:58 PM Alexei Starovoitov
+On Mon, May 10, 2021 at 9:04 PM Alexei Starovoitov
 <alexei.starovoitov@gmail.com> wrote:
 >
-> On Mon, May 10, 2021 at 12:22:49PM -0500, YiFei Zhu wrote:
-> > +
-> > +BPF_CALL_4(bpf_task_storage_get_default_leader, struct bpf_map *, map,
-> > +        struct task_struct *, task, void *, value, u64, flags)
+> On Mon, May 10, 2021 at 12:22:47PM -0500, YiFei Zhu wrote:
+> >
+> > +BPF_CALL_3(bpf_probe_read_user_dumpable, void *, dst, u32, size,
+> > +        const void __user *, unsafe_ptr)
 > > +{
-> > +     if (!task)
-> > +             task = current->group_leader;
+> > +     int ret = -EPERM;
+> > +
+> > +     if (get_dumpable(current->mm))
+> > +             ret = copy_from_user_nofault(dst, unsafe_ptr, size);
 >
-> Did you actually need it to be group_leader or current is enough?
-> If so loading BTF is not necessary.
+> Could you explain a bit more how dumpable flag makes it safe for unpriv?
+> The unpriv prog is attached to the children tasks only, right?
+> and dumpable gets cleared if euid changes?
 
-I think if task_storage were to be used to apply a policy onto a set
-of tasks, there are probably more use cases to perform the state
-transitions across an entire process than state transitions across a
-single thread. Though, since seccomp only applies to the process tree
-a lot of use cases of a per-process storage would be covered by a
-global datasec too.
+This is the "reduction to ptrace". The model here is that the eBPF
+seccomp filter is doing the equivalent of ptracing the user process
+using the privileges of the task at the time of loading the seccomp
+filter.
 
-> You could have exposed it bpf_get_current_task_btf() and passed its
-> return value into bpf_task_storage_get.
->
-> On the other side loading BTF can be relaxed to unpriv,
-> but doing current->group_leader deref will make it priv only anyway.
+ptrace access control is governed by ptrace.c:__ptrace_may_access. The
+requirements are:
+* always allow thread group introspection -- assume false so we are
+more restrictive than ptrace.
+* tracer has CAP_PTRACE in the target user namespace or tracer
+r/fsu/gidid equal target resu/gid -- discuss below
+* tracer has CAP_PTRACE in the target user namespace or target is
+SUID_DUMP_USER (I realized I should probably change the condition to
+== SUID_DUMP_USER).
+* passes LSM checks (eg yama ptrace_scope) -- we expose a hook to LSM
+but it's more of a "disable all advanced seccomp-eBPF features". How
+would a better interface to LSM look like?
 
-Yeah, that deref is what I was concerned about. It seems that if I
-expose BTF structs to a prog type it gains the ability to deref it,
-and I definitely don't want unpriv reading task_structs. Though yeah
-we could potentially change the verifier to prohibit PTR_TO_BTF_ID
-deref and any pointer arithmetic on it...
+The dumpable check handles the "target is SUID_DUMP_USER" condition,
+in the circumstance that the loader does not have CAP_PTRACE in its
+namespace at the time of load. Why would this imply its CAP_PTRACE
+capability in target namespace? This is based on my understanding on
+how capabilities and user namespaces interact:
+For the sake of simplicity, let's first assume that loader is the same
+task as the task that attaches the filter (via prctl or seccomp
+syscall).
+* Case 1: target and loader are the same user namespace. Trivial case,
+the two operations are the same.
+* Case 2: target is loader's parent namespace. Can't happen under
+assumption. Seccomp affects itself and children only, and it is only
+possible to join a descendant user ns.
+* Case 3: target is loader's descendant namespace. Loader would have
+full CAP_PTRACE on target. We are more restrictive than ptrace.
+* Case 4: target and loader are on unrelated namespace branches. Can't
+happen under assumption. Same as case 2.
 
-How about, we expose bpf_get_current_task_btf to unpriv, prohibit
-unpriv deref and pointer arithmetic, and have NULL be
-current->group_leader? This way, unpriv has access to both per-thread
-and per-process.
+Let's break this assumption and see what happens if the loader and
+attacher are in different contexts:
+* Case 1: attacher is less capable (as a general term of "what it can
+do") than loader then all of the above applies, since the model
+concerns and checks the capabilities of the loader.
+* Case 2: attacher is more capable than loader. The attacher would
+need an fd to the prog to attach it:
+  * subcase 1: attacher inherited the fd after an exec and became more
+capable. uh... why is it trusting fds from a less capable context?
+  * subcase 2: attacher has CAP_SYS_ADMIN and gets the fd via
+BPF_PROG_GET_FD_BY_ID. uh... why is it trusting random fds and
+attaching it?
+  * subcase 3: attacher received the fd via a domain socket from a
+process which may be in a different user namespace. On my first
+thought, I thought, why is it trusting random fds from a less capable
+context? Except I just thought of an adversary could:
+    * Clone into new userns,
+    * Load filter in child, which has CAP_PTRACE in new userns
+    * Send filter to the parent which doesn't have CAP_PTRACE in its userns
+    * It's broken :(
+We'll think more about this case. One way is to check against init
+namespace, which means unpriv container runtimes won't have the
+non-dumpable override. Though, it shouldn't be affecting most of the
+use cases. Alternatively we can store which userns it was loaded from
+and reject attaching from a different userns.
+
+Regarding u/gids, for an attacher to attach a seccomp filter, whether
+cBPF or eBPF, if it doesn't have CAP_SYS_ADMIN in its current ns, it
+will have to set no_new_privs on itself before it can attach. (Unlike
+the previous discussion, this check is done at attach time rather than
+load.) With no_new_privs the target's privs is a subset of the
+attacher's, so the attacher should have a way to match the target's
+resuid, so this condition is not a concern.
 
 YiFei Zhu
