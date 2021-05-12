@@ -2,182 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D43C433ED
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 09:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A86C43460
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 10:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA31F613C3
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 09:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAF2D613EE
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 10:55:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbhELKAV (ORCPT
+        id S230213AbhELK4m convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 May 2021 06:00:21 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:56631 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230126AbhELKAU (ORCPT
+        Wed, 12 May 2021 06:56:42 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3065 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230096AbhELK4l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 May 2021 06:00:20 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R481e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yunbo.xufeng@linux.alibaba.com;NM=1;PH=DS;RN=15;SR=0;TI=SMTPD_---0UYdyiiS_1620813539;
-Received: from localhost.localdomain(mailfrom:yunbo.xufeng@linux.alibaba.com fp:SMTPD_---0UYdyiiS_1620813539)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 12 May 2021 17:59:06 +0800
-From:   Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
-To:     kpsingh@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     revest@chromium.org, jackmanb@chromium.org, yhs@fb.com,
-        songliubraving@fb.com, kafai@fb.com, john.fastabend@gmail.com,
-        joe@cilium.io, quentin@isovalent.com,
-        Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
-Subject: [RFC] [PATCH bpf-next 1/1] bpf: Add a BPF helper for getting the cgroup path of current task
-Date:   Wed, 12 May 2021 17:58:23 +0800
-Message-Id: <20210512095823.99162-2-yunbo.xufeng@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1 (Apple Git-117)
-In-Reply-To: <20210512095823.99162-1-yunbo.xufeng@linux.alibaba.com>
-References: <20210512095823.99162-1-yunbo.xufeng@linux.alibaba.com>
+        Wed, 12 May 2021 06:56:41 -0400
+Received: from fraeml707-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FgBLl6p5Tz6ppQ3;
+        Wed, 12 May 2021 18:47:11 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml707-chm.china.huawei.com (10.206.15.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 12 May 2021 12:55:29 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Wed, 12 May 2021 12:55:29 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        "mjg59@google.com" <mjg59@google.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 10/11] ima: Introduce template field evmsig and write
+ to field sig as fallback
+Thread-Topic: [PATCH v6 10/11] ima: Introduce template field evmsig and write
+ to field sig as fallback
+Thread-Index: AQHXQaK0P4hV9Rbe4USY0rnHgJAPHarewKKAgAD2aHA=
+Date:   Wed, 12 May 2021 10:55:29 +0000
+Message-ID: <cca5e15939cc46b39d436cb7578c26e3@huawei.com>
+References: <20210505112935.1410679-1-roberto.sassu@huawei.com>
+         <20210505113329.1410943-6-roberto.sassu@huawei.com>
+ <f1e16fe91bd80437ea2cf9ed60c40a3687fa0e40.camel@linux.ibm.com>
+In-Reply-To: <f1e16fe91bd80437ea2cf9ed60c40a3687fa0e40.camel@linux.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-To implement security rules for application containers by utilizing
-bpf LSM, the container to which the current running task belongs need
-to be known in bpf context. Think about this scenario: kubernetes
-schedules a pod into one host, before the application container can run,
-the security rules for this application need to be loaded into bpf
-maps firstly, so that LSM bpf programs can make decisions based on
-this rule maps.
+> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> Sent: Wednesday, May 12, 2021 12:12 AM
+> Hi Roberto,
+> 
+> On Wed, 2021-05-05 at 13:33 +0200, Roberto Sassu wrote:
+> > With the patch to accept EVM portable signatures when the
+> > appraise_type=imasig requirement is specified in the policy, appraisal can
+> > be successfully done even if the file does not have an IMA signature.
+> >
+> > However, remote attestation would not see that a different signature type
+> > was used, as only IMA signatures can be included in the measurement list.
+> > This patch solves the issue by introducing the new template field 'evmsig'
+> > to show EVM portable signatures and by including its value in the existing
+> > field 'sig' if the IMA signature is not found.
+> 
+> With this patch, instead of storing the file data signature, the file
+> metadata signature is stored in the IMA measurement list, as designed.
+> There's a minor problem.  Unlike the file data signature, the
+> measurement list record does not contain all the information needed to
+> verify the file metadata signature.
 
-However, there is no effective bpf helper to achieve this goal,
-especially for cgroup v1. In the above case, the only available information
-from user side is container-id, and the cgroup path for this container
-is certain based on container-id, so in order to make a bridge between
-user side and bpf programs, bpf programs also need to know the current
-cgroup path of running task.
+Ok, we could add new template fields later.
 
-This change add a new bpf helper: bpf_get_current_cpuset_cgroup_path(),
-since cgroup_path_ns() can sleep, this helper is only allowed for
-sleepable LSM hooks.
+Roberto
 
-Signed-off-by: Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
----
- include/uapi/linux/bpf.h       | 13 +++++++++++++
- kernel/bpf/bpf_lsm.c           | 28 ++++++++++++++++++++++++++++
- tools/include/uapi/linux/bpf.h | 13 +++++++++++++
- 3 files changed, 54 insertions(+)
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index ec6d85a81744..e8295101b865 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -4735,6 +4735,18 @@ union bpf_attr {
-  *		be zero-terminated except when **str_size** is 0.
-  *
-  *		Or **-EBUSY** if the per-CPU memory copy buffer is busy.
-+ *
-+ * int bpf_get_current_cpuset_cgroup_path(char *buf, u32 buf_len)
-+ *	Description
-+ *		Get the cpuset cgroup path of current task from kernel memory,
-+ *		this path can be used to identify in which container is the
-+ *		current task running.
-+ *		*buf* memory is pre-allocated, and *buf_len* indicates the size
-+ *		of this memory.
-+ *
-+ *	Return
-+ *		The cpuset cgroup path is copied into *buf* on success,
-+ *		or a negative integer error in case of failure.
-  */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -4903,6 +4915,7 @@ union bpf_attr {
- 	FN(check_mtu),			\
- 	FN(for_each_map_elem),		\
- 	FN(snprintf),			\
-+	FN(get_current_cpuset_cgroup_path),     \
- 	/* */
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 5efb2b24012c..5e62e3875df1 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -99,6 +99,30 @@ static const struct bpf_func_proto bpf_ima_inode_hash_proto = {
- 	.allowed	= bpf_ima_inode_hash_allowed,
- };
- 
-+#ifdef CONFIG_CGROUPS
-+BPF_CALL_2(bpf_get_current_cpuset_cgroup_path, char *, buf, u32, buf_len)
-+{
-+	struct cgroup_subsys_state *css;
-+	int retval;
-+
-+	css = task_get_css(current, cpuset_cgrp_id);
-+	retval = cgroup_path_ns(css->cgroup, buf, buf_len, &init_cgroup_ns);
-+	css_put(css);
-+	if (retval >= buf_len)
-+		retval = -ENAMETOOLONG;
-+	return retval;
-+}
-+
-+static const struct bpf_func_proto bpf_get_current_cpuset_cgroup_path_proto = {
-+	.func           = bpf_get_current_cpuset_cgroup_path,
-+	.gpl_only       = false,
-+	.ret_type       = RET_INTEGER,
-+	.arg1_type      = ARG_PTR_TO_UNINIT_MEM,
-+	.arg2_type      = ARG_CONST_SIZE,
-+	.allowed        = bpf_ima_inode_hash_allowed,
-+};
-+#endif
-+
- static const struct bpf_func_proto *
- bpf_lsm_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- {
-@@ -119,6 +143,10 @@ bpf_lsm_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_bprm_opts_set_proto;
- 	case BPF_FUNC_ima_inode_hash:
- 		return prog->aux->sleepable ? &bpf_ima_inode_hash_proto : NULL;
-+#ifdef CONFIG_CGROUPS
-+	case BPF_FUNC_get_current_cpuset_cgroup_path:
-+		return prog->aux->sleepable ? &bpf_get_current_cpuset_cgroup_path_proto : NULL;
-+#endif
- 	default:
- 		return tracing_prog_func_proto(func_id, prog);
- 	}
-diff --git a/tools/include/uapi/linux/bpf.h b/tools/include/uapi/linux/bpf.h
-index ec6d85a81744..fe31252d92e3 100644
---- a/tools/include/uapi/linux/bpf.h
-+++ b/tools/include/uapi/linux/bpf.h
-@@ -4735,6 +4735,18 @@ union bpf_attr {
-  *		be zero-terminated except when **str_size** is 0.
-  *
-  *		Or **-EBUSY** if the per-CPU memory copy buffer is busy.
-+ *
-+ * int bpf_get_current_cpuset_cgroup_path(char *buf, u32 buf_len)
-+ *	Description
-+ *		Get the cpuset cgroup path of current task from kernel memory,
-+ *		this path can be used to identify in which container is the
-+ *		current task running.
-+ *		*buf* memory is pre-allocated, and *buf_len* indicates the size
-+ *		of this memory.
-+ *
-+ *	Return
-+ *		The cpuset cgroup path is copied into *buf* on success,
-+ *		or a negative integer error in case of failure.
-  */
- #define __BPF_FUNC_MAPPER(FN)		\
- 	FN(unspec),			\
-@@ -4903,6 +4915,7 @@ union bpf_attr {
- 	FN(check_mtu),			\
- 	FN(for_each_map_elem),		\
- 	FN(snprintf),			\
-+	FN(get_current_cpuset_cgroup_path),	\
- 	/* */
- 
- /* integer value in 'imm' field of BPF_CALL instruction selects which helper
--- 
-2.20.1 (Apple Git-117)
+> thanks,
+> 
+> Mimi
 
