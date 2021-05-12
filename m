@@ -2,131 +2,141 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28752C43600
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BB8C433ED
 	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 17:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC702613BC
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 17:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10E02613E9
+	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 17:07:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235808AbhELRIE (ORCPT
+        id S237823AbhELRIG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 May 2021 13:08:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40163 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244348AbhELQpp (ORCPT
+        Wed, 12 May 2021 13:08:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244517AbhELQuk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 May 2021 12:45:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1620837874;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1wT9y/+CUxpw2t+GrCY0Qp+nfyUTGHKVjJx14ixlaYw=;
-        b=Ef0LUMNJ+2iDUklUtfj2fdV2HB1I/+d678yNRRsNH0CmZj2p6+sv+xWuwkLgMvaclkBbe9
-        baMOvRkm/NTiCSawZeWMKdHs7NMcV0vHrjipIl5adLaZjYulxItr4wnA8KimvrvJHa7rfU
-        iGSsuBwZJhcEV4PMOmsBy7npFV2cWyA=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-302-7yKNwMCZMICZqMi8Mrl8HA-1; Wed, 12 May 2021 12:44:33 -0400
-X-MC-Unique: 7yKNwMCZMICZqMi8Mrl8HA-1
-Received: by mail-yb1-f199.google.com with SMTP id u7-20020a259b470000b02904dca50820c2so28675829ybo.11
-        for <linux-security-module@vger.kernel.org>; Wed, 12 May 2021 09:44:33 -0700 (PDT)
+        Wed, 12 May 2021 12:50:40 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A965FC022A8E
+        for <linux-security-module@vger.kernel.org>; Wed, 12 May 2021 09:23:48 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id n2so35862128ejy.7
+        for <linux-security-module@vger.kernel.org>; Wed, 12 May 2021 09:23:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sPhA/5oxp7tvZCmXw/waTJLyyY6raAYfgYxrBgAmwyM=;
+        b=SYoFDx/Zzixg1Z4D0jeH1vTMiEe+P69opHbSwG8ECggk/vHidyrKZ9K2E4m0b+i3i1
+         K83HryhQJQQwyKJD2wDav1FQRNkauXOu/e2wPsrp8hps5qNCRyxUi+JtvCuo1w5DpHM5
+         3B6+LRj1a92CVU1h2YidjPJ2DJSGjKhcn7UqFRPOLTObGYJ/WxCUgH72f6Yvw0uiGs5n
+         Txd5KN2fMIdiYQNP7BEVnNiFOOWqyodtFLagVJKZ6T7jIYstslYAvw3ualmCWqdYKfCt
+         RL+Xw+9+hqfnmQMJJNjbVGfkmYMyoJyIkDMJLexvX85Mkohyu/NVfsV5hc+WjMwpeN5n
+         anjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=1wT9y/+CUxpw2t+GrCY0Qp+nfyUTGHKVjJx14ixlaYw=;
-        b=Tba/GX376ZziqeLy+AGvevO/nz6NGdfHB+orIrXFQ1+fE41MppTpItTy9A50xX9bIc
-         2EpFDZQtN1DwiBXcd9cN2GAJw2QLE9PKUp3aFH7beN6nW2y0fGlir8OBN4yXQNE4SQwq
-         2PCv7s/s7CsvMVm6KQWZHpXSS3S9+B9hwlxaiIHf0XUgBhymAwsl0Hi4u1y/FWf/L9d8
-         mCB8aPMS3rfr+z5HnePO5UrbyUI0nSxIJJg/cKgmQhB54YpMX8EJCLF+l24GitqKvUhM
-         baZB9rGyXUwAqc+aqlO7P7agrGbXgUwtbfxj9cCNZBz4x1QuJezZOYr1Ta6Tncz8zQmu
-         VC4Q==
-X-Gm-Message-State: AOAM5338Hx25xeD8jNkL12CzJok1/rc9PKlcdbRVsnNSfIE2bFq5khM0
-        ZAijLMxfgBLHbGsfvZg//oPNVNs48ooEvDELTb9dcweyk90jqk94nV9B+aproG2bJw759sTHmQv
-        KinfJX/7ru/B8F1DpoiItrrENWUUd4UgEhrAAPafxr4uGISON23dA
-X-Received: by 2002:a25:6886:: with SMTP id d128mr49884189ybc.227.1620837872715;
-        Wed, 12 May 2021 09:44:32 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJziai7GI5a1DWeJt0YlXK6570k2N9+Sy1G9tLOxLGUvPGU+rPfrJ8aFA1k+I7x/KZgli19pSgP+PzUsymRQT9M=
-X-Received: by 2002:a25:6886:: with SMTP id d128mr49884143ybc.227.1620837872433;
- Wed, 12 May 2021 09:44:32 -0700 (PDT)
+        bh=sPhA/5oxp7tvZCmXw/waTJLyyY6raAYfgYxrBgAmwyM=;
+        b=YJ7+KnFUK8HRZ8vjk0//wbyB7gS8BLSVR2yRS3N7bfMtQ88T6phHInHV1gffMAxMJw
+         c8VIc9OIFdC0PajynRYnMsNt/HkrVmMr9UgI17PYsVf122U3TqnJArv4fIIcwJlTZJ/q
+         XglFkJ4RNnX/DV7gh6CrOTBjiwRl5I7+t/ek+XAOixGkF1LdT16/G24VZf9XEs433cQA
+         fLHup1gYN69iJ7BOVmMLAvL6n7WGt5I6RlYvung18K+3DZ8FUU/NpVtuyZokhefcsXDs
+         E0WrfkIBHjdtWhZ7P3Qqvgnvqk4ViNSMhbChsKmQlZk6umy0dZ7qxU6KtFh2IF5fba2r
+         rqsA==
+X-Gm-Message-State: AOAM533zG/cUeljANhw0UlXW+IDHjeA5nYo2/AeTWbZRc7HQ8N9ftVSL
+        xzeQKsmDbOSdhF+0Ps6y1qkUUj9GxnA7qlxDbA4r
+X-Google-Smtp-Source: ABdhPJxzTvz4e3IxBmnaK3WmYXJZbzN5Zq06UuaBzHtcPCb3mZVtS8qUf8gHkah92LuUo/6uuvWFQnDEFJKIFg48vRY=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr38393600ejb.542.1620836627295;
+ Wed, 12 May 2021 09:23:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210507114048.138933-1-omosnace@redhat.com> <a8d138a6-1d34-1457-9266-4abeddb6fdba@schaufler-ca.com>
- <CAFqZXNtr1YjzRg7fTm+j=0oZF+7C5xEu5J0mCZynP-dgEzvyUg@mail.gmail.com> <24a61ff1-e415-adf8-17e8-d212364d4b97@schaufler-ca.com>
-In-Reply-To: <24a61ff1-e415-adf8-17e8-d212364d4b97@schaufler-ca.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Wed, 12 May 2021 18:44:21 +0200
-Message-ID: <CAFqZXNvB-EyPz1Qz3cCRTr1u1+D+xT-dp7cUxFocYM1AOYSuxw@mail.gmail.com>
-Subject: Re: [PATCH] lockdown,selinux: fix bogus SELinux lockdown permission checks
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <CAA-qYXi-znXVt_8KuMwEpbqmeWVQJZX9ixnOLs22fPM7HKmmtA@mail.gmail.com>
+In-Reply-To: <CAA-qYXi-znXVt_8KuMwEpbqmeWVQJZX9ixnOLs22fPM7HKmmtA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 12 May 2021 12:23:36 -0400
+Message-ID: <CAHC9VhRo0y+3_VmWKpiw9h-p4ci6JVNJ9ZzQ2yXTOXtUf-XEyA@mail.gmail.com>
+Subject: Re: A missing check bug in __sys_accept4_file()
+To:     Jinmeng Zhou <jjjinmeng.zhou@gmail.com>
+Cc:     axboe@kernel.dk, Jakub Kicinski <kuba@kernel.org>,
+        davem@davemloft.net, James Morris <jmorris@namei.org>,
+        Serge Hallyn <serge@hallyn.com>, shenwenbosmile@gmail.com,
+        netdev@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 12, 2021 at 6:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 5/12/2021 6:21 AM, Ondrej Mosnacek wrote:
-> > On Sat, May 8, 2021 at 12:17 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> On 5/7/2021 4:40 AM, Ondrej Mosnacek wrote:
-> >>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> >>> lockdown") added an implementation of the locked_down LSM hook to
-> >>> SELinux, with the aim to restrict which domains are allowed to perform
-> >>> operations that would breach lockdown.
-> >>>
-> >>> However, in several places the security_locked_down() hook is called in
-> >>> situations where the current task isn't doing any action that would
-> >>> directly breach lockdown, leading to SELinux checks that are basically
-> >>> bogus.
-> >>>
-> >>> Since in most of these situations converting the callers such that
-> >>> security_locked_down() is called in a context where the current task
-> >>> would be meaningful for SELinux is impossible or very non-trivial (and
-> >>> could lead to TOCTOU issues for the classic Lockdown LSM
-> >>> implementation), fix this by adding a separate hook
-> >>> security_locked_down_globally()
-> >> This is a poor solution to the stated problem. Rather than adding
-> >> a new hook you should add the task as a parameter to the existing hook
-> >> and let the security modules do as they will based on its value.
-> >> If the caller does not have an appropriate task it should pass NULL.
-> >> The lockdown LSM can ignore the task value and SELinux can make its
-> >> own decision based on the task value passed.
-> > The problem with that approach is that all callers would then need to
-> > be updated and I intended to keep the patch small as I'd like it to go
-> > to stable kernels as well.
-> >
-> > But it does seem to be a better long-term solution - would it work for
-> > you (and whichever maintainer would be taking the patch(es)) if I just
-> > added another patch that refactors it to use the task parameter?
+On Wed, May 12, 2021 at 3:43 AM Jinmeng Zhou <jjjinmeng.zhou@gmail.com> wrote:
+> Dear maintainers,
 >
-> I can't figure out what you're suggesting. Are you saying that you
-> want to add a new hook *and* add the task parameter?
+> hi, our team has found and reported a missing check bug on Linux
+> kernel v5.10.7 using static analysis.
+> We are looking forward to having more experts' eyes on this. Thank you!
 
-No, just to keep this patch as-is (and let it go to stable in this
-form) and post another (non-stable) patch on top of it that undoes the
-new hook and re-implements the fix using your suggestion. (Yeah, it'll
-look weird, but I'm not sure how better to handle such situation - I'm
-open to doing it whatever different way the maintainers prefer.)
+Creating a new socket, not associated with a connection (e.g. via
+sock_create_lite()), is a different operation than creating a new
+socket in response to an incoming connection as is done in
+__sys_accept4_file().  This is why the sock_create_lite() uses the
+security_socket_create() LSM hook and __sys_accept4_file() uses the
+security_socket_accept() LSM hook.
+
+> > On Fri, May 7, 2021 at 1:59 AM Jakub Kicinski <kuba@kernel.org> wrote:
+> > > On Thu, 6 May 2021 15:44:36 +0800 Jinmeng Zhou wrote:
+> > > hi, our team has found a missing check bug on Linux kernel v5.10.7 using static analysis. There is a path calls sock_alloc() after checking LSM function security_socket_create(), while another path calls it without checking.
+> > > We think there is a missing check bug in __sys_accept4_file() before calling sock_alloc().
+> >
+> > Perhaps the semantics for listening sockets is that only the parent
+> > sockets get the LSM check. Could you please circulate the report more
+> > widely? I'd be good to have LSM experts' eyes on this at least.
+> > CCing the mailing list should help get more opinions. Thank you!
+> >
+> > > Function sock_create_lite() uses security_socket_create() to check.
+> > > 1.    // check security_socket_create() ///////////////////////
+> > > 2.    int sock_create_lite(int family, int type, int protocol, struct socket **res)
+> > > 3.    {
+> > > 4.      int err;
+> > > 5.      struct socket *sock = NULL;
+> > > 6.      err = security_socket_create(family, type, protocol, 1);
+> > > 7.      if (err)
+> > > 8.        goto out;
+> > > 9.      sock = sock_alloc();
+> > > 10.   ...
+> > > 11.   }
+> > >
+> > > However, __sys_accept4_file() directly calls sock_alloc() without the security check.
+> > > 1.    // no check ////////////////////////////////////
+> > > 2.    int __sys_accept4_file(struct file *file, unsigned file_flags,
+> > > 3.          struct sockaddr __user *upeer_sockaddr,
+> > > 4.          int __user *upeer_addrlen, int flags,
+> > > 5.          unsigned long nofile)
+> > > 6.    {
+> > > 7.      struct socket *sock, *newsock;
+> > > 8.      struct file *newfile;
+> > > 9.      int err, len, newfd;
+> > > 10.     struct sockaddr_storage address;
+> > > 11.     if (flags & ~(SOCK_CLOEXEC | SOCK_NONBLOCK))
+> > > 12.       return -EINVAL;
+> > > 13.     if (SOCK_NONBLOCK != O_NONBLOCK && (flags & SOCK_NONBLOCK))
+> > > 14.       flags = (flags & ~SOCK_NONBLOCK) | O_NONBLOCK;
+> > > 15.     sock = sock_from_file(file, &err);
+> > > 16.     if (!sock)
+> > > 17.       goto out;
+> > > 18.     err = -ENFILE;
+> > > 19.     newsock = sock_alloc();
+> > > 20.   ...
+> > > 21.   }
+> > >
+> > > This no-check function can be reached through syscall.
+> > > syscall => __sys_accept4 => __sys_accept4_file
+> > >
+> > > SYSCALL_DEFINE4(accept4, int, fd, struct sockaddr __user *, upeer_sockaddr,
+> > > int __user *, upeer_addrlen, int, flags)
+> > > {
+> > > return __sys_accept4(fd, upeer_sockaddr, upeer_addrlen, flags);
+> > > }
 
 -- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+paul moore
+www.paul-moore.com
