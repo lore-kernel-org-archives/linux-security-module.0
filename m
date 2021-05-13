@@ -2,142 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-26.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B94CC433B4
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 May 2021 17:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC984C43603
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 May 2021 19:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ABF76143C
-	for <linux-security-module@archiver.kernel.org>; Thu, 13 May 2021 17:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 855BF61433
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 May 2021 19:36:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230367AbhEMRRR (ORCPT
+        id S231130AbhEMThe (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 13 May 2021 13:17:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230349AbhEMRRQ (ORCPT
+        Thu, 13 May 2021 15:37:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231185AbhEMTh3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 13 May 2021 13:17:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 083756143C
-        for <linux-security-module@vger.kernel.org>; Thu, 13 May 2021 17:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1620926167;
-        bh=Ry2wjIVSYj1t6KKG93LfA7nqkdFhgjKLx802ZbZeA0A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mEkE7LLBXRwRAGqz9BaFjjMCPBb9Eq4M/yjSpJDZJX30xdkOJKuw4d7dcrfA40tmh
-         Wpt0YLo+ULypdIyBtvkKq3gSNhR7zjv3/1qlImNgpQs3geDVtNAqfye/vAaqhEHa76
-         UO6Q8bfZaZin+mfljCfQwBiQ2Tk/NahMUgS+2a0XV9jEh9+tusx6TAxnNY3nb/mIhx
-         z8sAbcgyCwUaly5pYkX7CXvi7LaTz+s82Dg17iaTdj09kVBsI22ydnVEZa9HIANf8c
-         QInpIhNp2cj8MJZXhFQJW8kunB4hRDgggudLvfFGMZyv45tywHvDz8zd16IXfoflFG
-         lQIhE3ZS/90mQ==
-Received: by mail-ed1-f43.google.com with SMTP id r11so7763305edt.13
-        for <linux-security-module@vger.kernel.org>; Thu, 13 May 2021 10:16:06 -0700 (PDT)
-X-Gm-Message-State: AOAM532eibuwnQARAbifCiCy7bZRAFhTcCwiOl37qpN9o2VywMQFzYLZ
-        Ir+dSgE6sxNTd0yTbKvMP1Ho61Rzw+9BxNCUpMTb9w==
-X-Google-Smtp-Source: ABdhPJzXLGCnTkj2E/00lNqydWmiYxjCYe6O+PIcMnjIWu8EnTQzfh9BwwyDPhJVG7WJp8KKqPul2wugt7zsXVQjzI4=
-X-Received: by 2002:a05:6402:cac:: with SMTP id cn12mr53201537edb.238.1620926165459;
- Thu, 13 May 2021 10:16:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <CABqSeAR9rgARxYGYUVZQgZ0a-wqZxy-qeoVpu495XHxpj0Ku=A@mail.gmail.com>
- <B541CF0E-3410-4CA3-93E4-670052C5FC11@amacapital.net> <CABqSeAT1OeiW69RipcY6U4drPtJ+GaygZqXfd8aL8uX4d4Wp=A@mail.gmail.com>
-In-Reply-To: <CABqSeAT1OeiW69RipcY6U4drPtJ+GaygZqXfd8aL8uX4d4Wp=A@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 13 May 2021 10:15:54 -0700
-X-Gmail-Original-Message-ID: <CALCETrWfV0C8c9erk-imRrndsY8dEffT=W4mJZnoKYP8-Dxojg@mail.gmail.com>
-Message-ID: <CALCETrWfV0C8c9erk-imRrndsY8dEffT=W4mJZnoKYP8-Dxojg@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next seccomp 10/12] seccomp-ebpf: Add ability to
- read user memory
-To:     YiFei Zhu <zhuyifei1999@gmail.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        containers@lists.linux.dev, bpf <bpf@vger.kernel.org>,
-        YiFei Zhu <yifeifz2@illinois.edu>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Austin Kuo <hckuo2@illinois.edu>,
-        Claudio Canella <claudio.canella@iaik.tugraz.at>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Hubertus Franke <frankeh@us.ibm.com>,
-        Jann Horn <jannh@google.com>,
-        Jinghao Jia <jinghao7@illinois.edu>,
-        Josep Torrellas <torrella@illinois.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tianyin Xu <tyxu@illinois.edu>,
-        Tobin Feldman-Fitzthum <tobin@ibm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Will Drewry <wad@chromium.org>
+        Thu, 13 May 2021 15:37:29 -0400
+Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F13C06138E
+        for <linux-security-module@vger.kernel.org>; Thu, 13 May 2021 12:36:19 -0700 (PDT)
+Received: by mail-yb1-xb4a.google.com with SMTP id d20-20020a25add40000b02904f8960b23e8so23333388ybe.6
+        for <linux-security-module@vger.kernel.org>; Thu, 13 May 2021 12:36:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=Pnc5KHobM9DAhbBV5Sa6uLIgYm7GRUmsgARd8oXUtk4=;
+        b=qdj8z0tyEapRCEHGj+KqH2QK8fxUKn095Z0UBOLAKAgycVvBiBNVt2kKMcJWcvk/cQ
+         wK0mHvVQb2X6oSreOivh0vEomGETKVOHSufNjH7VGxNjQdSWPGwavzmcmPsIksEN0G0W
+         hP/6gu0onwU9JCa10hobeWljzWfrZUk8EdxSo560sTdlefkm2oJ5/nPOVC6onKi2Hzdt
+         jpZUNhLDPHsyKKodSZ0kveeWiwUU50nyttaA5W1WxoehIkq8rBockN2XRP23bmfpK/iK
+         J0DGje01/GBKdppsjXnrDivp5UePhi2kdqiqxy7alTou8wAldXYekxZSjAB7EocsJ6m1
+         XYJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=Pnc5KHobM9DAhbBV5Sa6uLIgYm7GRUmsgARd8oXUtk4=;
+        b=jNceXkNYVP6IQo1+Bs4/hWpAUOga32vcQmu6vOuYw76gvqnNUHF49PvxOI6uJAISp4
+         auqgvzIyvBuqf5xVeETDzh4Q1rDKOPb2K5mWfMA7XgnGKc7FIRWmeA/eGM1HdNEfJl/Y
+         dTLraa8/mmv1AqDqTX3D9EBYDnKfHp+WKul2gyVyYyr4X56tSBQv+VQSkL359SvrJprb
+         XtQB0kLE7LSpcA8sWz9NhEPboRSh77cduXU3IojX6AaJvS0NFNBfEiObAamyrLYCLcim
+         isGhaosAM+06HyuRV9+SBceEWTrkhPZzMInvSMk+eixEZjHNQZyc/twJzVswun7wGwdR
+         w0VQ==
+X-Gm-Message-State: AOAM531nc+0vpKs5442Pma/5tYyZLC+/356Ti7HMj7Sqgv8Igg/KrmUp
+        tpzAupf58/N2hkytGRSvBBe42M4INfv5wA==
+X-Google-Smtp-Source: ABdhPJx51srw5OAx9CYuU/ovSs3B51DS0yWNunkqHF3XEGT1k2yqzFkADqVwrM7QxX7nv8tG8T89tJDKhPATYA==
+X-Received: from spirogrip.svl.corp.google.com ([2620:15c:2cb:201:5f61:8ca4:879b:809e])
+ (user=davidgow job=sendgmr) by 2002:a25:4fc4:: with SMTP id
+ d187mr58699374ybb.245.1620934578714; Thu, 13 May 2021 12:36:18 -0700 (PDT)
+Date:   Thu, 13 May 2021 12:32:03 -0700
+In-Reply-To: <20210513193204.816681-1-davidgow@google.com>
+Message-Id: <20210513193204.816681-9-davidgow@google.com>
+Mime-Version: 1.0
+References: <20210513193204.816681-1-davidgow@google.com>
+X-Mailer: git-send-email 2.31.1.751.gd2f1c929bd-goog
+Subject: [PATCH v2 09/10] apparmor: test: Remove some casts which are
+ no-longer required
+From:   David Gow <davidgow@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     David Gow <davidgow@google.com>, kunit-dev@googlegroups.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 13, 2021 at 10:13 AM YiFei Zhu <zhuyifei1999@gmail.com> wrote:
->
-> On Thu, May 13, 2021 at 9:53 AM Andy Lutomirski <luto@amacapital.net> wro=
-te:
-> > > On May 12, 2021, at 10:26 PM, YiFei Zhu <zhuyifei1999@gmail.com> wrot=
-e:
-> > >
-> > > =EF=BB=BFOn Wed, May 12, 2021 at 5:36 PM Alexei Starovoitov
-> > > <alexei.starovoitov@gmail.com> wrote:
-> > >> Typically the verifier does all the checks at load time to avoid
-> > >> run-time overhead during program execution. Then at attach time we
-> > >> check that attach parameters provided at load time match exactly
-> > >> to those at attach time. ifindex, attach_btf_id, etc fall into this =
-category.
-> > >> Doing something similar it should be possible to avoid
-> > >> doing get_dumpable() at run-time.
-> > >
-> > > Do you mean to move the check of dumpable to load time instead of
-> > > runtime? I do not think that makes sense. A process may arbitrarily
-> > > set its dumpable attribute during execution via prctl. A process coul=
-d
-> > > do set itself to non-dumpable, before interacting with sensitive
-> > > information that would better not be possible to be dumped (eg.
-> > > ssh-agent does this [1]). Therefore, being dumpable at one point in
-> > > time does not indicate anything about whether it stays dumpable at a
-> > > later point in time. Besides, seccomp filters are inherited across
-> > > clone and exec, attaching to many tasks with no option to detach. Wha=
-t
-> > > should the load-time check of task dump-ability be against? The
-> > > current task may only be the tip of an iceburg.
-> > >
-> > > [1] https://github.com/openssh/openssh-portable/blob/2dc328023f60212c=
-d29504fc05d849133ae47355/ssh-agent.c#L1398
-> > >
-> > >
-> >
-> > First things first: why are you checking dumpable at all?  Once you fig=
-ure out why and whether it=E2=80=99s needed, you may learn something about =
-what task to check.
-> >
-> > I don=E2=80=99t think checking dumpable makes any sense.
->
-> ptrace. We don't want to extend one's ability to read another
-> process's memory if they could not read it via ptrace
-> (process_vm_readv or ptrace(PTRACE_PEEK{TEXT,DATA})). The constraints
-> for ptrace to access a target's memory I've written down earlier [1],
-> but tl;dr: to be at least as restrictive as ptrace, a tracer without
-> CAP_PTRACE cannot trace a non-dumpable process. What's the target
-> process (i.e. the process whose memory is being read) in the context
-> of a seccomp filter? The current task. Does that answer your
-> questions?
->
-> [1] https://lore.kernel.org/bpf/CABqSeAT8iz-VhWjWqABqGbF7ydkoT7LmzJ5Do8K1=
-ANQvQK=3DFJQ@mail.gmail.com/
+With some of the stricter type checking in KUnit's EXPECT macros
+removed, several casts in policy_unpack_test are no longer required.
 
-The whole seccomp model is based on the assumption that the filter
-installer completely controls the filtered task.  Reading memory is
-not qualitatively different.
+Remove the unnecessary casts, making the conditions clearer.
 
-To be clear, this is not to be interpreted as an ack to allowing
-seccomp to read process memory.  I'm saying that, if seccomp gains the
-ability to read process memory, I don't think a dumpable or ptrace
-check is needed.
+Signed-off-by: David Gow <davidgow@google.com>
+---
+This should be a no-op functionality wise, and while it depends on the
+first couple of patches in this series, it's otherwise independent from
+the others. I think this makes the test more readable, but if you
+particularly dislike it, I'm happy to drop it.
+
+ security/apparmor/policy_unpack_test.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
+index 533137f45361..03f78a41ef79 100644
+--- a/security/apparmor/policy_unpack_test.c
++++ b/security/apparmor/policy_unpack_test.c
+@@ -177,7 +177,7 @@ static void policy_unpack_test_unpack_array_out_of_bounds(struct kunit *test)
+ 
+ 	array_size = unpack_array(puf->e, name);
+ 
+-	KUNIT_EXPECT_EQ(test, array_size, (u16)0);
++	KUNIT_EXPECT_EQ(test, array_size, 0);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos,
+ 		puf->e->start + TEST_NAMED_ARRAY_BUF_OFFSET);
+ }
+@@ -313,7 +313,7 @@ static void policy_unpack_test_unpack_strdup_out_of_bounds(struct kunit *test)
+ 	size = unpack_strdup(puf->e, &string, TEST_STRING_NAME);
+ 
+ 	KUNIT_EXPECT_EQ(test, size, 0);
+-	KUNIT_EXPECT_PTR_EQ(test, string, (char *)NULL);
++	KUNIT_EXPECT_PTR_EQ(test, string, NULL);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, start);
+ }
+ 
+@@ -391,10 +391,10 @@ static void policy_unpack_test_unpack_u16_chunk_basic(struct kunit *test)
+ 
+ 	size = unpack_u16_chunk(puf->e, &chunk);
+ 
+-	KUNIT_EXPECT_PTR_EQ(test, (void *)chunk,
++	KUNIT_EXPECT_PTR_EQ(test, chunk,
+ 			    puf->e->start + TEST_U16_OFFSET + 2);
+-	KUNIT_EXPECT_EQ(test, size, (size_t)TEST_U16_DATA);
+-	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (void *)(chunk + TEST_U16_DATA));
++	KUNIT_EXPECT_EQ(test, size, TEST_U16_DATA);
++	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, (chunk + TEST_U16_DATA));
+ }
+ 
+ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
+@@ -408,8 +408,8 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_1(
+ 
+ 	size = unpack_u16_chunk(puf->e, &chunk);
+ 
+-	KUNIT_EXPECT_EQ(test, size, (size_t)0);
+-	KUNIT_EXPECT_PTR_EQ(test, chunk, (char *)NULL);
++	KUNIT_EXPECT_EQ(test, size, 0);
++	KUNIT_EXPECT_PTR_EQ(test, chunk, NULL);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->end - 1);
+ }
+ 
+@@ -430,8 +430,8 @@ static void policy_unpack_test_unpack_u16_chunk_out_of_bounds_2(
+ 
+ 	size = unpack_u16_chunk(puf->e, &chunk);
+ 
+-	KUNIT_EXPECT_EQ(test, size, (size_t)0);
+-	KUNIT_EXPECT_PTR_EQ(test, chunk, (char *)NULL);
++	KUNIT_EXPECT_EQ(test, size, 0);
++	KUNIT_EXPECT_PTR_EQ(test, chunk, NULL);
+ 	KUNIT_EXPECT_PTR_EQ(test, puf->e->pos, puf->e->start + TEST_U16_OFFSET);
+ }
+ 
+-- 
+2.31.1.751.gd2f1c929bd-goog
+
