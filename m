@@ -2,114 +2,115 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50843C433B4
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 23:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A70C433ED
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 May 2021 05:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26DCC61376
-	for <linux-security-module@archiver.kernel.org>; Wed, 12 May 2021 23:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14C6B61432
+	for <linux-security-module@archiver.kernel.org>; Thu, 13 May 2021 05:26:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233851AbhELXNB (ORCPT
+        id S230024AbhEMF1l (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 12 May 2021 19:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33898 "EHLO
+        Thu, 13 May 2021 01:27:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239747AbhELW51 (ORCPT
+        with ESMTP id S229880AbhEMF1l (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 12 May 2021 18:57:27 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFD9BC06135A;
-        Wed, 12 May 2021 15:55:09 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id m190so19500718pga.2;
-        Wed, 12 May 2021 15:55:09 -0700 (PDT)
+        Thu, 13 May 2021 01:27:41 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C812EC061574;
+        Wed, 12 May 2021 22:26:31 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id e19so2425910pfv.3;
+        Wed, 12 May 2021 22:26:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=U6Yw/aST6fr+ZgDp8ejO8NenUGdJg/UmhmI/pM7yQvE=;
-        b=OBMINBawBSAXl5ymaYMRHcQ7jBGlJX8tbkO+VDxVWQFkkMqUmGwpUW/EI8uwfC35Af
-         7jrxzoUCEKD+RVwXcId53ScX0ROrj4stQcBLQdt7DOeIcGksJ4RewjD/XsYkc1CxeW9C
-         YMAmVQJC9F67Fm7IUt8bDpgAnKweWXaUCWpDPjG4pGmvYCdOnMQXUSsP7X11psFmjjZ6
-         7iZJgFV8qKb8kXGB6vAqaJP1xwP9ExtIwn5BhDax1NFeDSSVjZXyriZnadAjUDlX8uPN
-         9lsw0ve/FlR/wmzqIPINV1FURx/IR613DoOLN063LoDxA6cJtf0LBLy4TfORhgsqjkty
-         sFhQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=y4PJcU19svcp9/MR6WVhgslZEMX/TOTb95M1ykjqumY=;
+        b=kvNPjIHIodRIOmqPVUCvw2VJr1sLnyZ2/BwJCCIPSSU9PlFvNkNEQ4vDjHQxm986Pp
+         KMWl74WGcaCD7dkmdzDG8PsGr4LFXz7m8icZEzE38r8H0RZDWjuBAQuJI9/zCXzoGWHR
+         V2W5GIWIgfxhlU1no0qKTpg1FqmGVEZ63OyIIg1nNE77QXsJuJgecZrWn6UiKrA6mleF
+         3npXu5/vTLuSnsUF9spv49LSizs79uWTAliScTjTZJRnpF7xIHTym4ruLlZM7kubo86B
+         HtbEjHUcf7gNJrRYjTwp1cO2Jjmc8En4wUhWcAl47wallR/2OjWpBDMFxIfOQb1TIRIn
+         RHhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=U6Yw/aST6fr+ZgDp8ejO8NenUGdJg/UmhmI/pM7yQvE=;
-        b=IuoNWs0RlR9EKYhhjVB/RJ6EHXMCh4EftKzHRQyaXb2D7HBL4USwBemZJ+SMHKppbS
-         nEmAkIEx/xBHxGZrfi+bDQdWj9kZl8N6mPK7GJ6/MmOVD81VaY9FC3MUkpMQ9ln+4hd6
-         5MZgBv8pOUNtlcvucEKbFKwHWLfsCLi9G15pk/v02oWsTYTcnqr/1iu7clVahkp8GaMo
-         0h3Uf0AL7vsBvnmBaBt7AD+/XOtazafoW3FV2iMxGZakum2cEb4NMAEUW9GS4ob52D2j
-         7NTcY6Ae+SMyAEt4yYXikyKthT8ScOLdpyMM5kQIwfTKBQo7kPlKnTBBqELxLWH7qq/l
-         KPug==
-X-Gm-Message-State: AOAM531Vu/Xv0EydsZsCiL8pv8cWQIVbMJihKSZX1R5LCcOgV+Pbm4z6
-        AQytvUmWMgNRG0ITBY0ZZx8=
-X-Google-Smtp-Source: ABdhPJx7mjAd5lZDATnx+mICrKQl/DuyOhr4TIbBH8Fq3HOgYrji+F7V3/xAsrmyf0Nhzbl9imJ1bw==
-X-Received: by 2002:a63:4f4a:: with SMTP id p10mr886589pgl.384.1620860109475;
-        Wed, 12 May 2021 15:55:09 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:400::5:c6f4])
-        by smtp.gmail.com with ESMTPSA id p11sm642052pjo.19.2021.05.12.15.55.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 May 2021 15:55:08 -0700 (PDT)
-Date:   Wed, 12 May 2021 15:55:04 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Xufeng Zhang <yunbo.xufeng@linux.alibaba.com>
-Cc:     kpsingh@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, revest@chromium.org,
-        jackmanb@chromium.org, yhs@fb.com, songliubraving@fb.com,
-        kafai@fb.com, john.fastabend@gmail.com, joe@cilium.io,
-        quentin@isovalent.com
-Subject: Re: [RFC] [PATCH bpf-next 1/1] bpf: Add a BPF helper for getting the
- cgroup path of current task
-Message-ID: <20210512225504.3kt6ij4xqzbtyej5@ast-mbp.dhcp.thefacebook.com>
-References: <20210512095823.99162-1-yunbo.xufeng@linux.alibaba.com>
- <20210512095823.99162-2-yunbo.xufeng@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=y4PJcU19svcp9/MR6WVhgslZEMX/TOTb95M1ykjqumY=;
+        b=JAZKd+G53rEclZFYtoX2/FWj3dXqAt5owV3pIUCJr/6/bo9T6L7M0xHrJNH8/Tsqz4
+         aF4bCBLauxgBIklDepuJXb7T2FID7WjecqozgJdAZy2GPNAk8cjsRsxPpkngPLizFh6p
+         /5tgF6r/9CJSIEfRqUxY33R3H2zP1x931H6CiVi0omARLWguTB1VirBDjdn5e2SwFh/Y
+         zOxq/bdimy0TELlVVWvsLQ9E8XFHD+m9E0DqQoro9bpng5TUgpK/FuK3I5LZdtfpftXB
+         /jBdgRSuw0rm2uL9YNniw+zmdxIjwKPhs+O5Q6y5K131Q+g2JFDaGgSQtgimogTOKrEV
+         gVkQ==
+X-Gm-Message-State: AOAM530zW2oUtW5MGmaWGc8WRkhHBgMD9VumQDhN9GxfV+u13sju9+EP
+        d8lM7zUnUUgHM2N26ry/WPHoupTlSqj2DjAdZtk=
+X-Google-Smtp-Source: ABdhPJwetf7ucCBgJMHapemhtdShZFEnneY9R/qxzx30AscHdVmsjKVKW/KoTs94eio7G5hx0yg6oHunkDwxUsq3Qq4=
+X-Received: by 2002:a63:465b:: with SMTP id v27mr39714727pgk.445.1620883591109;
+ Wed, 12 May 2021 22:26:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210512095823.99162-2-yunbo.xufeng@linux.alibaba.com>
+References: <cover.1620499942.git.yifeifz2@illinois.edu> <53db70ed544928d227df7e3f3a1f8c53e3665c65.1620499942.git.yifeifz2@illinois.edu>
+ <20210511020425.54nygajvrpxqnfsh@ast-mbp.dhcp.thefacebook.com>
+ <CABqSeAT8iz-VhWjWqABqGbF7ydkoT7LmzJ5Do8K1ANQvQK=FJQ@mail.gmail.com> <20210512223626.olex7ewf6xd6m2c4@ast-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20210512223626.olex7ewf6xd6m2c4@ast-mbp.dhcp.thefacebook.com>
+From:   YiFei Zhu <zhuyifei1999@gmail.com>
+Date:   Thu, 13 May 2021 00:26:19 -0500
+Message-ID: <CABqSeAR9rgARxYGYUVZQgZ0a-wqZxy-qeoVpu495XHxpj0Ku=A@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next seccomp 10/12] seccomp-ebpf: Add ability to
+ read user memory
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     containers@lists.linux.dev, bpf <bpf@vger.kernel.org>,
+        YiFei Zhu <yifeifz2@illinois.edu>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Austin Kuo <hckuo2@illinois.edu>,
+        Claudio Canella <claudio.canella@iaik.tugraz.at>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Hubertus Franke <frankeh@us.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        Jinghao Jia <jinghao7@illinois.edu>,
+        Josep Torrellas <torrella@illinois.edu>,
+        Kees Cook <keescook@chromium.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tianyin Xu <tyxu@illinois.edu>,
+        Tobin Feldman-Fitzthum <tobin@ibm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Will Drewry <wad@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 12, 2021 at 05:58:23PM +0800, Xufeng Zhang wrote:
-> To implement security rules for application containers by utilizing
-> bpf LSM, the container to which the current running task belongs need
-> to be known in bpf context. Think about this scenario: kubernetes
-> schedules a pod into one host, before the application container can run,
-> the security rules for this application need to be loaded into bpf
-> maps firstly, so that LSM bpf programs can make decisions based on
-> this rule maps.
-> 
-> However, there is no effective bpf helper to achieve this goal,
-> especially for cgroup v1. In the above case, the only available information
-> from user side is container-id, and the cgroup path for this container
-> is certain based on container-id, so in order to make a bridge between
-> user side and bpf programs, bpf programs also need to know the current
-> cgroup path of running task.
-...
-> +#ifdef CONFIG_CGROUPS
-> +BPF_CALL_2(bpf_get_current_cpuset_cgroup_path, char *, buf, u32, buf_len)
-> +{
-> +	struct cgroup_subsys_state *css;
-> +	int retval;
-> +
-> +	css = task_get_css(current, cpuset_cgrp_id);
-> +	retval = cgroup_path_ns(css->cgroup, buf, buf_len, &init_cgroup_ns);
-> +	css_put(css);
-> +	if (retval >= buf_len)
-> +		retval = -ENAMETOOLONG;
+On Wed, May 12, 2021 at 5:36 PM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> Typically the verifier does all the checks at load time to avoid
+> run-time overhead during program execution. Then at attach time we
+> check that attach parameters provided at load time match exactly
+> to those at attach time. ifindex, attach_btf_id, etc fall into this category.
+> Doing something similar it should be possible to avoid
+> doing get_dumpable() at run-time.
 
-Manipulating string path to check the hierarchy will be difficult to do
-inside bpf prog. It seems to me this helper will be useful only for
-simplest cgroup setups where there is no additional cgroup nesting
-within containers.
-Have you looked at *ancestor_cgroup_id and *cgroup_id helpers?
-They're a bit more flexible when dealing with hierarchy and
-can be used to achieve the same correlation between kernel and user cgroup ids.
+Do you mean to move the check of dumpable to load time instead of
+runtime? I do not think that makes sense. A process may arbitrarily
+set its dumpable attribute during execution via prctl. A process could
+do set itself to non-dumpable, before interacting with sensitive
+information that would better not be possible to be dumped (eg.
+ssh-agent does this [1]). Therefore, being dumpable at one point in
+time does not indicate anything about whether it stays dumpable at a
+later point in time. Besides, seccomp filters are inherited across
+clone and exec, attaching to many tasks with no option to detach. What
+should the load-time check of task dump-ability be against? The
+current task may only be the tip of an iceburg.
+
+[1] https://github.com/openssh/openssh-portable/blob/2dc328023f60212cd29504fc05d849133ae47355/ssh-agent.c#L1398
+
+YiFei Zhu
