@@ -2,217 +2,336 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB65DC43462
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 18:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1913BC433ED
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 19:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 998CF6143F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 18:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8449613E9
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 19:00:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231465AbhENSxp (ORCPT
+        id S232326AbhENTBd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 May 2021 14:53:45 -0400
-Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:54806 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231166AbhENSxo (ORCPT
+        Fri, 14 May 2021 15:01:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232265AbhENTBd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 May 2021 14:53:44 -0400
-Received: from mailhost.synopsys.com (badc-mailhost4.synopsys.com [10.192.0.82])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mailhost.synopsys.com", Issuer "SNPSica2" (verified OK))
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 8998840228;
-        Fri, 14 May 2021 18:52:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1621018352; bh=hlhT9LqnygK41oShNkAbfp12nOBteIrA228h8aIkrQA=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=NEjSRw9KUR8Kn8qDa7FLEaMSerIOho1TfKgXqP64e4ozQDUy8fAMb8ihl4IUs0P2W
-         YiHIvACN9Mp3CcSzg1JA0ET5YIxbQE4Wvsbcn+mm4lwRq1vvBriUm7lvklWMC+12YN
-         4TiedOuC42tHKsukOQmsNyzcfUs8nbAvoAwJCqJYwHIpsl/xY+ssAHOBF783bCZlQ+
-         Jpxu3hDkZGp8VtuHIkXJ+7rBf5A/ipvZLmmCixr29Un8lUKp9ZtFMJYaPTR+xvS6Z/
-         fHGUZVaf+AP7lt8pAhN7hPUrP2cLtw3Bluf8Pf1RRZx1wJg0snLAnJmsJgH9BGbSKj
-         Mi5EeCjqTh2Xw==
-Received: from o365relay-in.synopsys.com (sv2-o365relay3.synopsys.com [10.202.1.139])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id F2ADFA0060;
-        Fri, 14 May 2021 18:52:11 +0000 (UTC)
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2103.outbound.protection.outlook.com [104.47.58.103])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "mail.protection.outlook.com", Issuer "DigiCert Cloud Services CA-1" (verified OK))
-        by o365relay-in.synopsys.com (Postfix) with ESMTPS id D293640139;
-        Fri, 14 May 2021 18:52:01 +0000 (UTC)
-Authentication-Results: o365relay-in.synopsys.com; dmarc=pass (p=reject dis=none) header.from=synopsys.com
-Authentication-Results: o365relay-in.synopsys.com; spf=pass smtp.mailfrom=vgupta@synopsys.com
-Authentication-Results: o365relay-in.synopsys.com;
-        dkim=pass (1024-bit key; unprotected) header.d=synopsys.com header.i=@synopsys.com header.b="KOBhVvri";
-        dkim-atps=neutral
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wij2GSqqBaiWQIOnJgX1byIdGb9tFRktvjOj4CbTj1ePyK97Y/hGH5fTd7UqW3g1nsDhYgYJm623hhN5WeS7CssiQGYi4rVgvZiLFF2y2vs7QhEUZ24sDuAzjcBHwMMsYCiPHmOM5KeYkfYRXh0bF7312KyZ8xvpwOWvn1kXxljkYCQd+CD2mhGM4iECfayLfi2wlavCDedEhLS2W+GiAI/8Pbz8QmyCHoW5RFyYmozOgcyPzt59T/j2eD95/pi3EeMVHVyw8PsXFeg1TUUMWhCgdGJmCG9BxKVv49Y0Cbd1zU4NPtpxUwKxxvIFfJjSg050UPXoJ/et1KmpRz+STA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hlhT9LqnygK41oShNkAbfp12nOBteIrA228h8aIkrQA=;
- b=iG5Wn1gIElYQdsBSb6ryuPK9gvp4VwVKj4lpmI6j5ieCBSnyDdHutyV32aMkU/MUYlGMZZuB8VynF/RjTQUN9Whs6Wk+/62RqUZpdJh3rWnLY7eq8KYZdHt/ZMk1LkIHfHhml7xVBDzTBurPX/EuKUjViSHE84D+PNB/qxZCcCSHaHy+vk+vriC2EGOU5Eqk7vE8uhfMmgb1jfD7WkL0KM3Lad8obCYnayFRHVsW3XRP/Q+o+zUsl8yNukbN7We0uQfxNrfCBFtLB0Byimvv5FnFrm3eMRtRkO3URko636+yycZo55pv9oXPGfdBrIJF3F3vrtCjPR1y3Gpg64Pg0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synopsys.com; dmarc=pass action=none header.from=synopsys.com;
- dkim=pass header.d=synopsys.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=synopsys.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hlhT9LqnygK41oShNkAbfp12nOBteIrA228h8aIkrQA=;
- b=KOBhVvrihDHooW3XKKKpBWhcuGlulxUppCWglgUrRUHFkJkpNAmUJFn/BZY3xnb3O9cd9n7V2O9rxi8jJR9RapcnA2XPfavAYs+sAn0HFwT62qVBk96nWuFz9CElVVsiwqONJ0twPTxlDByE26xISXOtcAN9Fs8h4WsP7+/pgms=
-Received: from BYAPR12MB3479.namprd12.prod.outlook.com (2603:10b6:a03:dc::26)
- by BYAPR12MB3016.namprd12.prod.outlook.com (2603:10b6:a03:dc::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4129.28; Fri, 14 May
- 2021 18:51:59 +0000
-Received: from BYAPR12MB3479.namprd12.prod.outlook.com
- ([fe80::d1a0:ed05:b9cc:e94d]) by BYAPR12MB3479.namprd12.prod.outlook.com
- ([fe80::d1a0:ed05:b9cc:e94d%7]) with mapi id 15.20.4108.036; Fri, 14 May 2021
- 18:51:59 +0000
-X-SNPS-Relay: synopsys.com
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Arnd Bergmann <arnd@kernel.org>
-CC:     linux-arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ganapathi Bhat <ganapathi017@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        James Morris <jmorris@namei.org>, Jens Axboe <axboe@kernel.dk>,
-        John Johansen <john.johansen@canonical.com>,
-        Jonas Bonn <jonas@southpole.se>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Rich Felker <dalias@libc.org>,
-        "Richard Russon (FlatCap)" <ldm@flatcap.org>,
-        Russell King <linux@armlinux.org.uk>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sharvari Harisangam <sharvari.harisangam@nxp.com>,
-        Stafford Horne <shorne@gmail.com>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        linux-sparc <sparclinux@vger.kernel.org>,
-        "linux-ntfs-dev@lists.sourceforge.net" 
-        <linux-ntfs-dev@lists.sourceforge.net>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v2 00/13] Unify asm/unaligned.h around struct helper
-Thread-Topic: [PATCH v2 00/13] Unify asm/unaligned.h around struct helper
-Thread-Index: AQHXSKg19FKoFxcBX0+yXT8p8kMtfqrjPPKAgAAWKgA=
-Date:   Fri, 14 May 2021 18:51:59 +0000
-Message-ID: <2408c893-4ae7-4f53-f58c-497c91f5b034@synopsys.com>
-References: <20210514100106.3404011-1-arnd@kernel.org>
- <CAHk-=whGObOKruA_bU3aPGZfoDqZM1_9wBkwREp0H0FgR-90uQ@mail.gmail.com>
-In-Reply-To: <CAHk-=whGObOKruA_bU3aPGZfoDqZM1_9wBkwREp0H0FgR-90uQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
-authentication-results: linux-foundation.org; dkim=none (message not signed)
- header.d=none;linux-foundation.org; dmarc=none action=none
- header.from=synopsys.com;
-x-originating-ip: [149.117.75.11]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 687cc2a5-d804-4fb1-684b-08d917095ae4
-x-ms-traffictypediagnostic: BYAPR12MB3016:
-x-microsoft-antispam-prvs: <BYAPR12MB3016131C9A9D0112DE57094BB6509@BYAPR12MB3016.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8XTc0fd9c2qK5R9/x2oghiB3tZ/3cjoD3/oLzvBXiOko2msHr5UjgEHaf+II4FYEo0+BWMGanxhrtD+9xxFlgDUjYw409QhW4gHHcNff9TIszBZROPOPCJUaPP62mqy9QTb4KH5y0z3joi1GeJLFTB+zAFxfFu5FuG/NBguxv/78X+giEIhtkvLVLoola+BjeGyXlwSBo7cj5nTH5cAeM6Hmfb5eWsqloXSl62CaUBHQevzQtdhO6cULbEYFzCXKa4m4rnaOZMi+OEeH8OYgtB2yvRDoAhZAd1VuNvLwXfMHKRB2SVh+0+xXT4g4Ur/FHtyBIIVMenEwAt7Hdtvrhz24a1yTAK3tjY0hJfo3JxrpuZERH1fvOdf1UOcp4g9q1JtgWjCMz+fwnRMD/SquPRPojvfx1PiYrlXaptx8V7moesYBNoIEFAMvG9FfLtpbUB2LO6JjKqqTbzQ+DAPgxSh+BSsmPeXfSGSlVCnScSzQ2BLQyz2wwkz7j25INWGmLaNovVf3cmpzRVf/L+ad5Cr4HjErKqayKOAx5qjrnAvz9PZQwywg2IkuTM00GqWq6q/pw2QQNe83B+UXOJ8I+HLPQ1E9XQqTFkXVLqHA9BLgMtzow6WJdrBIhc6LfjTeDoC9y/pqDs949UQAXFk3S1TYo6yMYIxWxAf9eoUqHeU+xbGms2eNp7V5rQ952GgB
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR12MB3479.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(396003)(346002)(136003)(39860400002)(366004)(186003)(38100700002)(6486002)(66446008)(76116006)(66946007)(64756008)(66556008)(122000001)(7416002)(6512007)(36756003)(71200400001)(478600001)(66476007)(2906002)(8676002)(31696002)(8936002)(26005)(6506007)(316002)(53546011)(2616005)(4744005)(54906003)(110136005)(5660300002)(31686004)(7406005)(4326008)(86362001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?UmlpeERtclhWK3Y0blYzNmFPWlFxK2YzWlZNK0xvOUdhNWtJbVNUWFJZSTVH?=
- =?utf-8?B?WE5aMUFRTFV6Q3FHZ05RYU4wMk1aYzJLVXZBVnJCNitIT0FYWTZXanl5VEJr?=
- =?utf-8?B?RVFQb0VqaWNmZmNzdEhVdGhFK2I5N21mRWJxYmxYR0RSbE1KRk9VOXZDS25w?=
- =?utf-8?B?Wjd0RzZhVUZxYy9mVUpRbFdXOXhEL0hrRDdQL2V0ZnhpUFdQUlpTSXcxRjZu?=
- =?utf-8?B?QTN1TlJsNGtiUU5XODFNcXZod211NUtvb2hMZ2lvQ0J4ZFRtamVMZVRWK2FY?=
- =?utf-8?B?ajc1WVJuQWNKMWQvRXJ1dnpab0tuZWVBTU9mQjZRbHlLMldGRzIzUytZSjdI?=
- =?utf-8?B?SHU1VWhZVVdwd1lpemJON0FFNitWTW0xWFJZVmFuVkgxY2xZMUk5c0IvWGFJ?=
- =?utf-8?B?SE9uZ1lZOUhDSTZnbFdnaDQxU1ZKV3VOdjlCam9OblZXaTA5NzNvZ1VTK1lZ?=
- =?utf-8?B?UXBiNWZhZ3IvNXkvd3h2aWwzbm1tR0NPSlU1b0QwSmlXdHpvUXlrcWtGenV0?=
- =?utf-8?B?REc1VUdWQTRPdHJaWEpMMXdXQU5adGJBVlQ1NXpYUW84V2dCUERjZzVSTXUv?=
- =?utf-8?B?MnprUDdQaDFiL0owSUcrL0d5K2UxS1FWZGFoL0laeDNFWVNOWFcvZ1VqUWNx?=
- =?utf-8?B?OXR4T2kySEVmWnZkazBESGZoUmZ4bC9IblprMUtLbUY3UWFtalY3SjdqYjFm?=
- =?utf-8?B?YzA3RGF5ZGRoc0VCY2dLNkpKM1poVktxU1lWUVIrTG1mOXEyK1FPcTYxd0NT?=
- =?utf-8?B?UzdoTEJxOGhadzU3dGYveGpPaUFpUGgxam5MRVk4NG1CZmQ2QmlDQUFCOVVQ?=
- =?utf-8?B?QnUyVUpyUkxmKzE5cFhpajlVRnllSHJPMHllNUd5QjhQQUFCMHZ5WFRsNmZP?=
- =?utf-8?B?cUVNejd5UjA1b054aWczbzgwSFkvSVlVVEZvdGc5bE9EZlpzWmdUdG1FVktw?=
- =?utf-8?B?aEtvclUrY2ZQS1pYWWV1dXdhLzhSM1VsWTNHQzRlMG1vbTRVOWYwaWhOWThC?=
- =?utf-8?B?WFZGbGdEZXFBWnJFeVVlYjl6a3lHWmxIVmdpVS90MEU0ODh3NnlRK3M4NVg1?=
- =?utf-8?B?eUsvaitoUFRRWHVqa1FqWXlscTNndHFER1Z6KysxYXBTK2poa0lzSG5EZU93?=
- =?utf-8?B?SmVjRHdNNUxrY3NlbDhrWGxONGtOaEo2WENlUXBJQUNCM2N1VmdoeTlhR2dl?=
- =?utf-8?B?a1lTb0VhTzIzOHo0OHdlR3ZtWFpDQ2NFOTJrMG02MTNvVWhUMlpkR0JGYzdI?=
- =?utf-8?B?V1lITy90OEhzZlZlV2dYM1E3THNmL21HMzFpU2lkRE9rdlp3S2xOd3JhYjI4?=
- =?utf-8?B?ZE14V1VTQ3dwS2dZcFdpWU5OTEVZRmNQSlRsbzBkRGRuZzA3Yzk2RjNoNUdL?=
- =?utf-8?B?TWFhTXpOSllFejJXYVh0THFtY0l6M0Fka3JVNFFSSHlrZlYvdlNKLytmb3U1?=
- =?utf-8?B?MlZHUFloa1d6aHQrb1B1TVM3SW5xcDFjMHhpR1YzRU90MWF2Nk1xQ3ptVm13?=
- =?utf-8?B?MFJmMlpCd2pxSW9MbGtiT1lYMEtiNkxOU3FJdHFlTk91UTdrcVE4RHhwdzFG?=
- =?utf-8?B?VnRTYVRVc1FiNUpPUXRPNytGdCtJbkpFVnRBMTUrY1pQK1ErZ05kY1Z0MjJ2?=
- =?utf-8?B?Qjkrc0drcGU4dnhXb1l3emE3WFZNUnBuRGViRVlvYTBlWmdTUnlkb1BCK0xH?=
- =?utf-8?B?Ukg1TERhMEo5M1dSSWlwSlZwR01Zelhodm1WcGRLVmYyUVZJWjVmZE5CaHA1?=
- =?utf-8?Q?HelmnC35e2YsiNjtaU=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DB23825F53490341B1251C0CE0EEE735@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 14 May 2021 15:01:33 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69531C061756
+        for <linux-security-module@vger.kernel.org>; Fri, 14 May 2021 12:00:21 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id d16so378875pfn.12
+        for <linux-security-module@vger.kernel.org>; Fri, 14 May 2021 12:00:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Mf7rkQg4v10s4Zo1+kidnAGMG8KrQBs6mbDlxs4XCDE=;
+        b=iFQbPjFOutm2MBufL9DX44RvxPq26rbHzg/YKQrfl92GR2nw3W9BLsQAiY7l9RyEYl
+         aP3S87bixsdzNN22R+KohMw6Yg756BC/7GNWW73Wg0xenL5aVlvAhFHFt3/haulV8vJP
+         Xlt+sQCCS/Ykc6aZ+BxA4jtAjKkY9O644yNoE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Mf7rkQg4v10s4Zo1+kidnAGMG8KrQBs6mbDlxs4XCDE=;
+        b=hbhRTB27aQkRgmpEtodBcMSWxErZI6IQmp0egxyRfknO/I6JHoSIwrVElsaPzt0VwG
+         iunjUeA+07fWM5PpZFTHZZw7Ha0dyoKmS0CtJtqMfHveanZKk6jStJnfeInVf5GW/6zZ
+         6TteGw8B1cr/NXNT8aOaF1aLoY7cnqa6dfkrTznuHH/JgnOmaeUiyNfrdTaVhSDqvQCm
+         i1dODSSkkZuy55okEds4SKKUl8dR4pDr7CwUM8lzQMOrK7pSobZtww0PLBOo51F3a3ki
+         9nyREPQ6Mks+BubwmatxM24bBe3FZ9o+pf1g4kfKtyinKvugpJqJVEMs9wuTEgJOvZol
+         H82Q==
+X-Gm-Message-State: AOAM531HfYw5rhF3UhdF2bvd4/deLW1VuofYQPEmILPqAjlfylTaHe0S
+        WtWC3mxw8owliyD65Ke7v1Wn2iHj3lLI5w==
+X-Google-Smtp-Source: ABdhPJyR/YWWjnzvR0qdPdYqINapCmqW53Fjxx4Amu9VJnIcwKiSw4J3/KrWOzIX4AhUQuNA4Q0Org==
+X-Received: by 2002:a62:60c2:0:b029:2cb:70a7:a8ce with SMTP id u185-20020a6260c20000b02902cb70a7a8cemr18703272pfb.77.1621018820798;
+        Fri, 14 May 2021 12:00:20 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id gm21sm6333686pjb.31.2021.05.14.12.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 May 2021 12:00:20 -0700 (PDT)
+Date:   Fri, 14 May 2021 12:00:19 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, jmorris@namei.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
+        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v26 04/25] IMA: avoid label collisions with stacked LSMs
+Message-ID: <202105141157.DF737E145@keescook>
+References: <20210513200807.15910-1-casey@schaufler-ca.com>
+ <20210513200807.15910-5-casey@schaufler-ca.com>
 MIME-Version: 1.0
-X-OriginatorOrg: synopsys.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR12MB3479.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 687cc2a5-d804-4fb1-684b-08d917095ae4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2021 18:51:59.6079
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c33c9f88-1eb7-4099-9700-16013fd9e8aa
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +ztLBGcXQ2/T2mgWX21qDVqcEJzLhQK2EzE14Ok2mAoW5YjMKli7UONOB6DhBOIzt9/vJ5mqCIvNvP9Ss5zyRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3016
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210513200807.15910-5-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gNS8xNC8yMSAxMDozMiBBTSwgTGludXMgVG9ydmFsZHMgd3JvdGU6DQo+IE9uIEZyaSwgTWF5
-IDE0LCAyMDIxIGF0IDM6MDIgQU0gQXJuZCBCZXJnbWFubiA8YXJuZEBrZXJuZWwub3JnPiB3cm90
-ZToNCj4+IEkndmUgaW5jbHVkZWQgdGhpcyB2ZXJzaW9uIGluIHRoZSBhc20tZ2VuZXJpYyB0cmVl
-IGZvciA1LjE0IGFscmVhZHksDQo+PiBhZGRyZXNzaW5nIHRoZSBmZXcgaXNzdWVzIHRoYXQgd2Vy
-ZSBwb2ludGVkIG91dCBpbiB0aGUgUkZDLiBJZiB0aGVyZQ0KPj4gYXJlIGFueSByZW1haW5pbmcg
-cHJvYmxlbXMsIEkgaG9wZSB0aG9zZSBjYW4gYmUgYWRkcmVzc2VkIGFzIGZvbGxvdy11cA0KPj4g
-cGF0Y2hlcy4NCj4gVGhpcyBjb250aW51ZXMgdG8gbG9vayBncmVhdCB0byBtZSwgYW5kIG5vdyBo
-YXMgdGhlIGV2ZW4gc2ltcGxlcg0KPiByZW1haW5pbmcgaW1wbGVtZW50YXRpb24uDQo+DQo+IEkn
-ZCBiZSB0ZW1wdGVkIHRvIGp1c3QgcHVsbCBpdCBpbiBmb3IgNS4xMywgYnV0IEkgZ3Vlc3Mgd2Ug
-ZG9uJ3QNCj4gYWN0dWFsbHkgaGF2ZSBhbnkgX291dHN0YW5kaW5nXyBidWcgaW4gdGhpcyBhcmVh
-ICh0aGUgYnVnIHdhcyBpbiBvdXINCj4gemxpYiBjb2RlLCByZXF1aXJlZCAtTzMgdG8gdHJpZ2dl
-ciwgaGFzIGJlZW4gZml4ZWQgbm93LA0KDQpXYXNuJ3QgdGhlIG5ldyB6bGliIGNvZGUgc2xhdGVk
-IGZvciA1LjE0LiBJIGRvbid0IHNlZSBpdCBpbiB5b3VyIG1hc3RlciB5ZXQNCg0KPiAgIGFuZCB0
-aGUgYmlnZ3kNCj4gY2FzZSBkaWRuJ3QgZXZlbiB1c2UgImdldF91bmFsaWduZWQoKSIpLg0KDQpJ
-bmRlZWQgdGhpcyBzZXJpZXMgaXMgc29ydCBvZiBvcnRob2dvbmFsIHRvIHRoYXQgYnVnLCBidXQg
-SU1PIHRoYXQgYnVnIA0Kc3RpbGwgZXhpc3RzIGluIDUuMTMgZm9yIC1PMyBidWlsZCwgZ3JhbnRl
-ZCB0aGF0IGlzIG5vdCBlbmFibGVkIGZvciAhQVJDLg0KDQotVmluZWV0DQoNCj4NCj4gU28gSSBn
-dWVzcyB5b3VyIDUuMTQgdGltaW5nIGlzIHRoZSByaWdodCB0aGluZyB0byBkby4NCj4NCj4gICAg
-ICAgICAgTGludXMNCg0K
+On Thu, May 13, 2021 at 01:07:46PM -0700, Casey Schaufler wrote:
+> Integrity measurement may filter on security module information
+> and needs to be clear in the case of multiple active security
+> modules which applies. Provide a boot option ima_rules_lsm= to
+> allow the user to specify an active securty module to apply
+> filters to. If not specified, use the first registered module
+> that supports the audit_rule_match() LSM hook. Allow the user
+> to specify in the IMA policy an lsm= option to specify the
+> security module to use for a particular rule.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> To: Mimi Zohar <zohar@linux.ibm.com>
+> To: linux-integrity@vger.kernel.org
+> ---
+>  Documentation/ABI/testing/ima_policy |  8 ++-
+>  security/integrity/ima/ima_policy.c  | 77 ++++++++++++++++++++--------
+>  2 files changed, 62 insertions(+), 23 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/ima_policy b/Documentation/ABI/testing/ima_policy
+> index 070779e8d836..84dd19bc4344 100644
+> --- a/Documentation/ABI/testing/ima_policy
+> +++ b/Documentation/ABI/testing/ima_policy
+> @@ -25,7 +25,7 @@ Description:
+>  			base:	[[func=] [mask=] [fsmagic=] [fsuuid=] [uid=]
+>  				[euid=] [fowner=] [fsname=]]
+>  			lsm:	[[subj_user=] [subj_role=] [subj_type=]
+> -				 [obj_user=] [obj_role=] [obj_type=]]
+> +				 [obj_user=] [obj_role=] [obj_type=] [lsm=]]
+>  			option:	[[appraise_type=]] [template=] [permit_directio]
+>  				[appraise_flag=] [keyrings=]
+>  		  base:
+> @@ -117,6 +117,12 @@ Description:
+>  
+>  			measure subj_user=_ func=FILE_CHECK mask=MAY_READ
+>  
+> +		It is possible to explicitly specify which security
+> +		module a rule applies to using lsm=.  If the security
+> +		modules specified is not active on the system the rule
+> +		will be rejected.  If lsm= is not specified the first
+> +		security module registered on the system will be assumed.
+> +
+>  		Example of measure rules using alternate PCRs::
+>  
+>  			measure func=KEXEC_KERNEL_CHECK pcr=4
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index 5c40677e881c..d804b9a0dd95 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -79,8 +79,9 @@ struct ima_rule_entry {
+>  	bool (*uid_op)(kuid_t, kuid_t);    /* Handlers for operators       */
+>  	bool (*fowner_op)(kuid_t, kuid_t); /* uid_eq(), uid_gt(), uid_lt() */
+>  	int pcr;
+> +	int which_lsm; /* which of the rules to use */
+>  	struct {
+> -		void *rules[LSMBLOB_ENTRIES]; /* LSM file metadata specific */
+> +		void *rule;	/* LSM file metadata specific */
+>  		char *args_p;	/* audit value */
+>  		int type;	/* audit type */
+>  	} lsm[MAX_LSM_RULES];
+> @@ -92,17 +93,15 @@ struct ima_rule_entry {
+>  
+>  /**
+>   * ima_lsm_isset - Is a rule set for any of the active security modules
+> - * @rules: The set of IMA rules to check
+> + * @entry: the rule entry to examine
+> + * @lsm_rule: the specific rule type in question
+>   *
+> - * If a rule is set for any LSM return true, otherwise return false.
+> + * If a rule is set return true, otherwise return false.
+>   */
+> -static inline bool ima_lsm_isset(void *rules[])
+> +static inline bool ima_lsm_isset(struct ima_rule_entry *entry, int lsm_rule)
+>  {
+> -	int i;
+> -
+> -	for (i = 0; i < LSMBLOB_ENTRIES; i++)
+> -		if (rules[i])
+> -			return true;
+> +	if (entry->lsm[lsm_rule].rule)
+> +		return true;
+
+I'd be happier if this retained the MAX_LSM_RULES bounds-check.
+
+>  	return false;
+>  }
+>  
+> @@ -282,6 +281,20 @@ static int __init default_appraise_policy_setup(char *str)
+>  }
+>  __setup("ima_appraise_tcb", default_appraise_policy_setup);
+>  
+> +static int ima_rules_lsm __ro_after_init;
+> +
+> +static int __init ima_rules_lsm_init(char *str)
+> +{
+> +	ima_rules_lsm = lsm_name_to_slot(str);
+> +	if (ima_rules_lsm < 0) {
+> +		ima_rules_lsm = 0;
+> +		pr_err("rule lsm \"%s\" not registered", str);
+> +	}
+> +
+> +	return 1;
+> +}
+> +__setup("ima_rules_lsm=", ima_rules_lsm_init);
+> +
+>  static struct ima_rule_opt_list *ima_alloc_rule_opt_list(const substring_t *src)
+>  {
+>  	struct ima_rule_opt_list *opt_list;
+> @@ -351,11 +364,10 @@ static void ima_free_rule_opt_list(struct ima_rule_opt_list *opt_list)
+>  static void ima_lsm_free_rule(struct ima_rule_entry *entry)
+>  {
+>  	int i;
+> -	int r;
+>  
+>  	for (i = 0; i < MAX_LSM_RULES; i++) {
+> -		for (r = 0; r < LSMBLOB_ENTRIES; r++)
+> -			ima_filter_rule_free(entry->lsm[i].rules[r]);
+> +		if (entry->lsm[i].rule)
+> +			ima_filter_rule_free(entry->lsm[i].rule);
+>  		kfree(entry->lsm[i].args_p);
+>  	}
+>  }
+> @@ -406,8 +418,8 @@ static struct ima_rule_entry *ima_lsm_copy_rule(struct ima_rule_entry *entry)
+>  
+>  		ima_filter_rule_init(nentry->lsm[i].type, Audit_equal,
+>  				     nentry->lsm[i].args_p,
+> -				     &nentry->lsm[i].rules[0]);
+> -		if (!ima_lsm_isset(nentry->lsm[i].rules))
+> +				     &nentry->lsm[i].rule);
+> +		if (!ima_lsm_isset(nentry, i))
+>  			pr_warn("rule for LSM \'%s\' is undefined\n",
+>  				nentry->lsm[i].args_p);
+>  	}
+> @@ -596,7 +608,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+>  		int rc = 0;
+>  		u32 osid;
+>  
+> -		if (!ima_lsm_isset(rule->lsm[i].rules)) {
+> +		if (!ima_lsm_isset(rule, i)) {
+>  			if (!rule->lsm[i].args_p)
+>  				continue;
+>  			else
+> @@ -609,14 +621,14 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
+>  			security_inode_getsecid(inode, &osid);
+>  			rc = ima_filter_rule_match(osid, rule->lsm[i].type,
+>  						   Audit_equal,
+> -						   rule->lsm[i].rules);
+> +						   rule->lsm[i].rule);
+>  			break;
+>  		case LSM_SUBJ_USER:
+>  		case LSM_SUBJ_ROLE:
+>  		case LSM_SUBJ_TYPE:
+>  			rc = ima_filter_rule_match(secid, rule->lsm[i].type,
+>  						   Audit_equal,
+> -						   rule->lsm[i].rules);
+> +						   rule->lsm[i].rule);
+>  			break;
+>  		default:
+>  			break;
+> @@ -966,7 +978,7 @@ enum {
+>  	Opt_uid_lt, Opt_euid_lt, Opt_fowner_lt,
+>  	Opt_appraise_type, Opt_appraise_flag,
+>  	Opt_permit_directio, Opt_pcr, Opt_template, Opt_keyrings,
+> -	Opt_label, Opt_err
+> +	Opt_lsm, Opt_label, Opt_err
+>  };
+>  
+>  static const match_table_t policy_tokens = {
+> @@ -1004,6 +1016,7 @@ static const match_table_t policy_tokens = {
+>  	{Opt_template, "template=%s"},
+>  	{Opt_keyrings, "keyrings=%s"},
+>  	{Opt_label, "label=%s"},
+> +	{Opt_lsm, "lsm=%s"},
+>  	{Opt_err, NULL}
+>  };
+>  
+> @@ -1012,7 +1025,7 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+>  {
+>  	int result;
+>  
+> -	if (ima_lsm_isset(entry->lsm[lsm_rule].rules))
+> +	if (ima_lsm_isset(entry, lsm_rule))
+>  		return -EINVAL;
+>  
+>  	entry->lsm[lsm_rule].args_p = match_strdup(args);
+> @@ -1022,8 +1035,8 @@ static int ima_lsm_rule_init(struct ima_rule_entry *entry,
+>  	entry->lsm[lsm_rule].type = audit_type;
+>  	result = ima_filter_rule_init(entry->lsm[lsm_rule].type, Audit_equal,
+>  				      entry->lsm[lsm_rule].args_p,
+> -				      &entry->lsm[lsm_rule].rules[0]);
+> -	if (!ima_lsm_isset(entry->lsm[lsm_rule].rules)) {
+> +				      &entry->lsm[lsm_rule].rule);
+> +	if (!ima_lsm_isset(entry, lsm_rule)) {
+>  		pr_warn("rule for LSM \'%s\' is undefined\n",
+>  			entry->lsm[lsm_rule].args_p);
+>  
+> @@ -1561,6 +1574,19 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>  						 &(template_desc->num_fields));
+>  			entry->template = template_desc;
+>  			break;
+> +		case Opt_lsm:
+> +			result = lsm_name_to_slot(args[0].from);
+> +			if (result == LSMBLOB_INVALID) {
+> +				int i;
+> +
+> +				for (i = 0; i < MAX_LSM_RULES; i++)
+> +					entry->lsm[i].args_p = NULL;
+> +				result = -EINVAL;
+> +				break;
+> +			}
+> +			entry->which_lsm = result;
+> +			result = 0;
+> +			break;
+>  		case Opt_err:
+>  			ima_log_string(ab, "UNKNOWN", p);
+>  			result = -EINVAL;
+> @@ -1597,6 +1623,7 @@ ssize_t ima_parse_add_rule(char *rule)
+>  	struct ima_rule_entry *entry;
+>  	ssize_t result, len;
+>  	int audit_info = 0;
+> +	int i;
+>  
+>  	p = strsep(&rule, "\n");
+>  	len = strlen(p) + 1;
+> @@ -1614,6 +1641,9 @@ ssize_t ima_parse_add_rule(char *rule)
+>  
+>  	INIT_LIST_HEAD(&entry->list);
+>  
+> +	for (i = 0; i < MAX_LSM_RULES; i++)
+> +		entry->which_lsm = ima_rules_lsm;
+> +
+>  	result = ima_parse_rule(p, entry);
+>  	if (result) {
+>  		ima_free_rule(entry);
+> @@ -1830,7 +1860,7 @@ int ima_policy_show(struct seq_file *m, void *v)
+>  	}
+>  
+>  	for (i = 0; i < MAX_LSM_RULES; i++) {
+> -		if (ima_lsm_isset(entry->lsm[i].rules)) {
+> +		if (ima_lsm_isset(entry, i)) {
+>  			switch (i) {
+>  			case LSM_OBJ_USER:
+>  				seq_printf(m, pt(Opt_obj_user),
+> @@ -1872,6 +1902,9 @@ int ima_policy_show(struct seq_file *m, void *v)
+>  		seq_puts(m, "appraise_flag=check_blacklist ");
+>  	if (entry->flags & IMA_PERMIT_DIRECTIO)
+>  		seq_puts(m, "permit_directio ");
+> +	if (entry->which_lsm >= 0)
+> +		seq_printf(m, pt(Opt_lsm),
+> +			   lsm_slot_to_name(entry->which_lsm));
+>  	rcu_read_unlock();
+>  	seq_puts(m, "\n");
+>  	return 0;
+> -- 
+> 2.29.2
+> 
+
+Otherwise, this looks correct. With bounds checking:
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-- 
+Kees Cook
