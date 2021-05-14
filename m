@@ -4,41 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD8FC433B4
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 15:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4019DC43470
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 15:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 40F866145A
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 15:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FE1D613DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 15:29:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234717AbhENPaj (ORCPT
+        id S234750AbhENPak (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 May 2021 11:30:39 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3075 "EHLO
+        Fri, 14 May 2021 11:30:40 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3077 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231296AbhENPag (ORCPT
+        with ESMTP id S233842AbhENPah (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 May 2021 11:30:36 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FhXNT2g2Rz6cw7l;
-        Fri, 14 May 2021 23:23:21 +0800 (CST)
+        Fri, 14 May 2021 11:30:37 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FhXKp2mG7z6rmKT;
+        Fri, 14 May 2021 23:21:02 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 14 May 2021 17:29:23 +0200
+ 15.1.2176.2; Fri, 14 May 2021 17:29:24 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@srcf.ucam.org>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v7 07/12] evm: Pass user namespace to set/remove xattr hooks
-Date:   Fri, 14 May 2021 17:27:48 +0200
-Message-ID: <20210514152753.982958-8-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v7 09/12] evm: Deprecate EVM_ALLOW_METADATA_WRITES
+Date:   Fri, 14 May 2021 17:27:50 +0200
+Message-ID: <20210514152753.982958-10-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210514152753.982958-1-roberto.sassu@huawei.com>
 References: <20210514152753.982958-1-roberto.sassu@huawei.com>
@@ -52,152 +50,46 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In preparation for 'evm: Allow setxattr() and setattr() for unmodified
-metadata', this patch passes mnt_userns to the inode set/remove xattr hooks
-so that the GID of the inode on an idmapped mount is correctly determined
-by posix_acl_update_mode().
+This patch deprecates the usage of EVM_ALLOW_METADATA_WRITES, as it is no
+longer necessary. All the issues that prevent the usage of EVM portable
+signatures just with a public key loaded have been solved.
 
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
-Cc: Andreas Gruenbacher <agruenba@redhat.com>
+This flag will remain available for a short time to ensure that users are
+able to use EVM without it.
+
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
 ---
- include/linux/evm.h               | 12 ++++++++----
- security/integrity/evm/evm_main.c | 17 +++++++++++------
- security/security.c               |  4 ++--
- 3 files changed, 21 insertions(+), 12 deletions(-)
+ Documentation/ABI/testing/evm | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 39bb17a8236b..31ef1dbbb3ac 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -23,13 +23,15 @@ extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
- 					     struct integrity_iint_cache *iint);
- extern int evm_inode_setattr(struct dentry *dentry, struct iattr *attr);
- extern void evm_inode_post_setattr(struct dentry *dentry, int ia_valid);
--extern int evm_inode_setxattr(struct dentry *dentry, const char *name,
-+extern int evm_inode_setxattr(struct user_namespace *mnt_userns,
-+			      struct dentry *dentry, const char *name,
- 			      const void *value, size_t size);
- extern void evm_inode_post_setxattr(struct dentry *dentry,
- 				    const char *xattr_name,
- 				    const void *xattr_value,
- 				    size_t xattr_value_len);
--extern int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name);
-+extern int evm_inode_removexattr(struct user_namespace *mnt_userns,
-+				 struct dentry *dentry, const char *xattr_name);
- extern void evm_inode_post_removexattr(struct dentry *dentry,
- 				       const char *xattr_name);
- extern int evm_inode_init_security(struct inode *inode,
-@@ -72,7 +74,8 @@ static inline void evm_inode_post_setattr(struct dentry *dentry, int ia_valid)
- 	return;
- }
+diff --git a/Documentation/ABI/testing/evm b/Documentation/ABI/testing/evm
+index 2243b72e4110..553fd8a33e56 100644
+--- a/Documentation/ABI/testing/evm
++++ b/Documentation/ABI/testing/evm
+@@ -24,7 +24,7 @@ Description:
+ 		1	  Enable digital signature validation
+ 		2	  Permit modification of EVM-protected metadata at
+ 			  runtime. Not supported if HMAC validation and
+-			  creation is enabled.
++			  creation is enabled (deprecated).
+ 		31	  Disable further runtime modification of EVM policy
+ 		===	  ==================================================
  
--static inline int evm_inode_setxattr(struct dentry *dentry, const char *name,
-+static inline int evm_inode_setxattr(struct user_namespace *mnt_userns,
-+				     struct dentry *dentry, const char *name,
- 				     const void *value, size_t size)
- {
- 	return 0;
-@@ -86,7 +89,8 @@ static inline void evm_inode_post_setxattr(struct dentry *dentry,
- 	return;
- }
+@@ -47,7 +47,13 @@ Description:
  
--static inline int evm_inode_removexattr(struct dentry *dentry,
-+static inline int evm_inode_removexattr(struct user_namespace *mnt_userns,
-+					struct dentry *dentry,
- 					const char *xattr_name)
- {
- 	return 0;
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 77259cc901e2..12cb0ff590af 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -342,7 +342,8 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
-  * For posix xattr acls only, permit security.evm, even if it currently
-  * doesn't exist, to be updated unless the EVM signature is immutable.
-  */
--static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
-+static int evm_protect_xattr(struct user_namespace *mnt_userns,
-+			     struct dentry *dentry, const char *xattr_name,
- 			     const void *xattr_value, size_t xattr_value_len)
- {
- 	enum integrity_status evm_status;
-@@ -405,6 +406,7 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
+ 		will enable digital signature validation, permit
+ 		modification of EVM-protected metadata and
+-		disable all further modification of policy
++		disable all further modification of policy. This option is now
++		deprecated in favor of::
++
++		  echo 0x80000002 ><securityfs>/evm
++
++		as the outstanding issues that prevent the usage of EVM portable
++		signatures have been solved.
  
- /**
-  * evm_inode_setxattr - protect the EVM extended attribute
-+ * @mnt_userns: user namespace of the idmapped mount
-  * @dentry: pointer to the affected dentry
-  * @xattr_name: pointer to the affected extended attribute name
-  * @xattr_value: pointer to the new extended attribute value
-@@ -416,8 +418,9 @@ static int evm_protect_xattr(struct dentry *dentry, const char *xattr_name,
-  * userspace from writing HMAC value.  Writing 'security.evm' requires
-  * requires CAP_SYS_ADMIN privileges.
-  */
--int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
--		       const void *xattr_value, size_t xattr_value_len)
-+int evm_inode_setxattr(struct user_namespace *mnt_userns, struct dentry *dentry,
-+		       const char *xattr_name, const void *xattr_value,
-+		       size_t xattr_value_len)
- {
- 	const struct evm_ima_xattr_data *xattr_data = xattr_value;
- 
-@@ -434,19 +437,21 @@ int evm_inode_setxattr(struct dentry *dentry, const char *xattr_name,
- 		    xattr_data->type != EVM_XATTR_PORTABLE_DIGSIG)
- 			return -EPERM;
- 	}
--	return evm_protect_xattr(dentry, xattr_name, xattr_value,
-+	return evm_protect_xattr(mnt_userns, dentry, xattr_name, xattr_value,
- 				 xattr_value_len);
- }
- 
- /**
-  * evm_inode_removexattr - protect the EVM extended attribute
-+ * @mnt_userns: user namespace of the idmapped mount
-  * @dentry: pointer to the affected dentry
-  * @xattr_name: pointer to the affected extended attribute name
-  *
-  * Removing 'security.evm' requires CAP_SYS_ADMIN privileges and that
-  * the current value is valid.
-  */
--int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name)
-+int evm_inode_removexattr(struct user_namespace *mnt_userns,
-+			  struct dentry *dentry, const char *xattr_name)
- {
- 	/* Policy permits modification of the protected xattrs even though
- 	 * there's no HMAC key loaded
-@@ -454,7 +459,7 @@ int evm_inode_removexattr(struct dentry *dentry, const char *xattr_name)
- 	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
- 		return 0;
- 
--	return evm_protect_xattr(dentry, xattr_name, NULL, 0);
-+	return evm_protect_xattr(mnt_userns, dentry, xattr_name, NULL, 0);
- }
- 
- static void evm_reset_status(struct inode *inode)
-diff --git a/security/security.c b/security/security.c
-index b38155b2de83..e9f8010a2341 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1354,7 +1354,7 @@ int security_inode_setxattr(struct user_namespace *mnt_userns,
- 	ret = ima_inode_setxattr(dentry, name, value, size);
- 	if (ret)
- 		return ret;
--	return evm_inode_setxattr(dentry, name, value, size);
-+	return evm_inode_setxattr(mnt_userns, dentry, name, value, size);
- }
- 
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
-@@ -1399,7 +1399,7 @@ int security_inode_removexattr(struct user_namespace *mnt_userns,
- 	ret = ima_inode_removexattr(dentry, name);
- 	if (ret)
- 		return ret;
--	return evm_inode_removexattr(dentry, name);
-+	return evm_inode_removexattr(mnt_userns, dentry, name);
- }
- 
- int security_inode_need_killpriv(struct dentry *dentry)
+ 		Echoing a value is additive, the new value is added to the
+ 		existing initialization flags.
 -- 
 2.25.1
 
