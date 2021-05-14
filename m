@@ -7,79 +7,84 @@ X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F63C433ED
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 19:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82B6CC43460
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 19:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85DC26143F
-	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 19:00:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 615C861457
+	for <linux-security-module@archiver.kernel.org>; Fri, 14 May 2021 19:03:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233722AbhENTBw (ORCPT
+        id S232778AbhENTFH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 14 May 2021 15:01:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
+        Fri, 14 May 2021 15:05:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233735AbhENTBv (ORCPT
+        with ESMTP id S232080AbhENTFG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 14 May 2021 15:01:51 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42911C061574
-        for <linux-security-module@vger.kernel.org>; Fri, 14 May 2021 12:00:39 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id p17so16577046plf.12
-        for <linux-security-module@vger.kernel.org>; Fri, 14 May 2021 12:00:39 -0700 (PDT)
+        Fri, 14 May 2021 15:05:06 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9C1C061574
+        for <linux-security-module@vger.kernel.org>; Fri, 14 May 2021 12:03:52 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id c13so413376pfv.4
+        for <linux-security-module@vger.kernel.org>; Fri, 14 May 2021 12:03:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=UCybwO0TaczTSlpLwTibNxV8SjBVCUt+aJC9ueKaUsc=;
-        b=bhrjbmVoLzZrE0Ye3zSI7lNoZD7nvh/L3Yqq95EI4+CnJ0Syo1J7GFnmqO+AtMBM8/
-         DSAbWGDASNfIDYGnB9BKkvavgGmYfk/6erDQCmQsoQ106PaAkQQ3spPJfedq3hnR/Bzy
-         8f0VEPWrBOduCQjJsJTse8mAMQi2RJssi2Png=
+        bh=VWunAqK+FZyoTV2vjU3HeNB9kZQfJxaL+p7FRXpB3v8=;
+        b=JBsuXKPLey+XhgBL4O0cJdva2yDe7zLMx/jjM8bSnpRVxLrwz2JcMgo+bObx71S2GS
+         cheyla6heHxUN0y0Nfx+LRGrcoXwQ9l5JKZKt37SyBvhyfrW02F62BJPBxUWghGz/REM
+         psf5IE5vtuOIlUlEI6YoCQGUvYecvNq4icPpQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=UCybwO0TaczTSlpLwTibNxV8SjBVCUt+aJC9ueKaUsc=;
-        b=lwJhCg6PbwnTijoa2Wdgaht6CRFqUYG4In0rkq/SVjXph+Zwe6kB4SJMD48VrYiFPj
-         YD96PtAmoqRG+sDpOQPtLtA3FSb6nSSqiO0ICblx90vULTMTejFGXqAJ8hNg8dc4lYKu
-         /eGP5CyqEHVN2dbeInkGEbbCQ/hhBCQ2FTfn5e7kuFy2VlvF02RQCaK47hLxjJIAq8aR
-         scdixpGyQeSLfaj900/XBhv7eiStNjFztmh1GgHofF/uTGuvH2Qs8dVZLbkbEwMUY3+x
-         Esz9AO4PitDZAvTPWWQv84yoWWR6pLmXoQwTz44BOBsvF8HgN8qDt/NNYcT8DBL3Gv+m
-         XN1Q==
-X-Gm-Message-State: AOAM532Kdf+SEV53Q/iMl0gHdzRtpAHpJNrVQ3jLcSsw7VoBZjyQ6R3t
-        F0eVwxgk6yJk3L3LsyMoJlOMqg==
-X-Google-Smtp-Source: ABdhPJzwydOqrNEs8BGiriz1WpXA2XMtZmviya9EPj7XrWMKzuXa+83JaN7GU/Lf5l1HjO2uimqTAA==
-X-Received: by 2002:a17:90a:b38c:: with SMTP id e12mr4308880pjr.134.1621018838886;
-        Fri, 14 May 2021 12:00:38 -0700 (PDT)
+        bh=VWunAqK+FZyoTV2vjU3HeNB9kZQfJxaL+p7FRXpB3v8=;
+        b=DHlPNFvTJNiZZr9WVGOe4L9BuAVZsC9tFRo/iAe+8Ai7ek7pUuzKjmiCTuKxT17jVB
+         igLOenAefLQxZx/ZsvIUx7GQuxhg6JRzugIV4iI7Z8YQZcBlvzp1muKRZ2HyhRLaW7aq
+         iaaikknoQowHRic/DjTB/tiFyFFwK6RivvLG7KyZbKJGXzcLxhGODW9x6Ko8lknzlW7m
+         lDQiGhzhsk9lkYIsO8JmNEW99T+CLL8JWJO/AU8MDG1enr82l1BbnZl/t66k1bJTghxU
+         OmnC2pbt0mmd6UQCS1JCmSE4TtrhTsaZb6mOPtX0My7VMsHg8Dihy5Sa3/l4hOgLhfYs
+         Vreg==
+X-Gm-Message-State: AOAM530fW/r/LTX0w9XedHLuZEs5ZSbZ3chfBTUNaUpa3lTN2pixUBJ3
+        0Z9uVii8KrOgW4mwnykezTtB7A==
+X-Google-Smtp-Source: ABdhPJy/2ssb8xICyRpzUdXDJOa7C5xielVPk0SjlrBIAD2a+w+docVTMCOrVjaCXs6HLij/mumypA==
+X-Received: by 2002:a65:6549:: with SMTP id a9mr24482406pgw.213.1621019032283;
+        Fri, 14 May 2021 12:03:52 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h4sm10577030pjc.12.2021.05.14.12.00.38
+        by smtp.gmail.com with ESMTPSA id c201sm4624403pfc.38.2021.05.14.12.03.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 May 2021 12:00:38 -0700 (PDT)
-Date:   Fri, 14 May 2021 12:00:37 -0700
+        Fri, 14 May 2021 12:03:51 -0700 (PDT)
+Date:   Fri, 14 May 2021 12:03:50 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     Casey Schaufler <casey@schaufler-ca.com>
 Cc:     casey.schaufler@intel.com, jmorris@namei.org,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, john.johansen@canonical.com,
         penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v26 03/25] LSM: provide lsm name and id slot mappings
-Message-ID: <202105141200.F0001143A@keescook>
+        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH v26 07/25] LSM: Use lsmblob in security_secctx_to_secid
+Message-ID: <202105141203.60B0435@keescook>
 References: <20210513200807.15910-1-casey@schaufler-ca.com>
- <20210513200807.15910-4-casey@schaufler-ca.com>
+ <20210513200807.15910-8-casey@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210513200807.15910-4-casey@schaufler-ca.com>
+In-Reply-To: <20210513200807.15910-8-casey@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 13, 2021 at 01:07:45PM -0700, Casey Schaufler wrote:
-> Provide interfaces to map LSM slot numbers and LSM names.
-> Update the LSM registration code to save this information.
+On Thu, May 13, 2021 at 01:07:49PM -0700, Casey Schaufler wrote:
+> Change the security_secctx_to_secid interface to use a lsmblob
+> structure in place of the single u32 secid in support of
+> module stacking. Change its callers to do the same.
+> 
+> The security module hook is unchanged, still passing back a secid.
+> The infrastructure passes the correct entry from the lsmblob.
 > 
 > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Seems a reasonable set of utilities. :)
+This looks like sane refactoring into the new blob type.
 
 Reviewed-by: Kees Cook <keescook@chromium.org>
 
