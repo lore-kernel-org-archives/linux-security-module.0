@@ -2,127 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F55BC433B4
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 May 2021 13:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BABCBC433ED
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 May 2021 15:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E9EC611BD
-	for <linux-security-module@archiver.kernel.org>; Mon, 17 May 2021 13:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6BC61184
+	for <linux-security-module@archiver.kernel.org>; Mon, 17 May 2021 15:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237490AbhEQNrg (ORCPT
+        id S244915AbhEQPrV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 17 May 2021 09:47:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29327 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235466AbhEQNrf (ORCPT
+        Mon, 17 May 2021 11:47:21 -0400
+Received: from wnew1-smtp.messagingengine.com ([64.147.123.26]:35969 "EHLO
+        wnew1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1343758AbhEQPmF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 17 May 2021 09:47:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621259179;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=O6gr94SKde4B9VQO2zKDR9PV8wUiJnB7z5q1aL8r6mE=;
-        b=g6tnM7mXjTreJhnuhfR+kd5FMMVZoBuDUyt0tCcQfrnIL40c8n6YxnYnSHx8JoCkVWnKHP
-        AAIUdkKsZnPyOM00f0bG+boBkRSpDGU4jUaANt43lB5/GUuEQuUHaX5ml7znnEv2jSLrrt
-        0v/tkL8NMmOs6aBD+JNH3EZmC3j0kls=
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
- [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-537-lLc_8cy9MoW9yEv4GAci6Q-1; Mon, 17 May 2021 09:46:17 -0400
-X-MC-Unique: lLc_8cy9MoW9yEv4GAci6Q-1
-Received: by mail-yb1-f198.google.com with SMTP id d63-20020a254f420000b02904f91ef33453so9376890ybb.12
-        for <linux-security-module@vger.kernel.org>; Mon, 17 May 2021 06:46:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O6gr94SKde4B9VQO2zKDR9PV8wUiJnB7z5q1aL8r6mE=;
-        b=uQd3dJPuSfZiplEjdW9y4RUEHq5G1DqcX49QDtRThGJ8xt0p3tS+27M1cXqfnVh8KJ
-         QLhOzT7aIFPqu1CLT5juVYocMc4spgv55x+coLstrS/yw+Jd/BC5GKgbUtG2M22NmA7F
-         cFXHGozfPY0oX7wA3jdKNPxdb0DzPi7miUDgZGMe6zhi4YxmVJtiqhNIIbUAlqtvYLhj
-         Ei42c2Gjgf8Be0klrERFeIndZTVDLE+pkI857tyBmQCgtO1S96b7l2ckgtC4DoP3bFG9
-         sa3LIt9dxhpYqgTHIaJvzVonGEFLoANe7SF/S47hSxf8b+4phsLPsbZZarR3zVra241i
-         ND/A==
-X-Gm-Message-State: AOAM533JaFKK2xl3pyrNfQlSr3WCFO9p/macb8eJyVzuHq4OFhVbFCWM
-        O7/LBqT07zV+flkE7jZw1WYFaBbqK9VIw0vFcJADsc0NbO7Jr1v/4NRC0I2mkRXTZvJn0WJaPay
-        /X5UMFCHEH1BKSg6xmSEeEYjZI5BVbQtNvDQpW/RwGspHRLF7W8fs
-X-Received: by 2002:a25:ed12:: with SMTP id k18mr18195725ybh.340.1621259177100;
-        Mon, 17 May 2021 06:46:17 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzwK+KojIQGBbY/tivk0bWRjrdOpNQ4CP1gdoVKuvMZGWmwJCCUScXooFAbY7pwFCMtgUCp0ALpfKPY3u5ezt4=
-X-Received: by 2002:a25:ed12:: with SMTP id k18mr18195683ybh.340.1621259176769;
- Mon, 17 May 2021 06:46:16 -0700 (PDT)
+        Mon, 17 May 2021 11:42:05 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id 27C19273;
+        Mon, 17 May 2021 11:40:32 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 17 May 2021 11:40:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tycho.pizza; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=wst7L607Txv7R6hkiDuGqcVCA4a
+        4080QIuIbxzlHCcU=; b=vdWhaeQ8Ry88uZH2ZQx7NTjdu982iHmRxpRteix8qpH
+        q8OidQcWzX9HF68eMo5a6DuPvSLtXiz9pe1n+xpUQ/s7KyQZoV+d3JdXLgbeqbZ5
+        km38NOqL2Y0bvgMYBKGIZYS/Mk5M73Np2qewnaeXNMWiL/FTBtxaXN9kCnyZNGHd
+        TBS67A8rMpZZb/gFsmHA5zjeMj4K4EK6N6X5/f2jWTTJBeJFGsgYwTRpMnl1IEjL
+        3Kl73TGQmgKdEhW568XKsrJ3eXd04pCCWsqbpPeIvJmfgBZ9+hS6Os8osWpbDo0y
+        iw9gtqnPKPd4kV2VlO81LBWdEGuChuciXfpZsBvCIeQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=wst7L6
+        07Txv7R6hkiDuGqcVCA4a4080QIuIbxzlHCcU=; b=gsOQPxbTg6IkY5X0kjex4H
+        GYEIJDZrSrb8/WrmXu6/RhfHgoCo1jhYNxNhY5/7wnUi+hyPTf2rkQbEvzpuzlQv
+        /g3yd3hlSKHY+/SDpY/wB+f9hZYZ63j+XGKXzci7jE1tLvEPGMvgAslxzfjI32A3
+        xd2JuZsZXAvZfhFIpt5ZLJYuXSy9U3rCVIJSBcvOe+wZa7qrqzRdQVOO9FksjGVE
+        hwvHU0iSc/eH04VV0f4T3Z0qjq5CUnV09p09hsagRubYNPbjS4TzI8g+PmK1aobH
+        bjUtnDLlb4NqQ9jvjGfR9MFnPS7UzcOKNrb2ZPS2R11gE9h15SX0ESZXnqN337bA
+        ==
+X-ME-Sender: <xms:bo6iYKvN-acJkgM1LrBFpFo8Uvu0L9UYI1QgZEzBoLfjgFm6HDES2w>
+    <xme:bo6iYPdPvh-GHCmDpFdx9-UcUa8A8BMRdt604NE1vRAdgYdTWhxO-0fzJ5XWiNPlv
+    SP38q0KUtMV5WlZMBg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduledrvdeihedgledvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefvhigthhho
+    ucetnhguvghrshgvnhcuoehthigthhhosehthigthhhordhpihiiiigrqeenucggtffrrg
+    htthgvrhhnpedttdeljeetiedthfetueevudegudfgjedvvdeifeehgfeuhfeileeihfej
+    veduveenucffohhmrghinhepuhhrlhguvghfvghnshgvrdgtohhmnecukfhppeduvdekrd
+    dutdejrddvgedurddukedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
+    rghilhhfrhhomhepthihtghhohesthihtghhohdrphhiiiiirg
+X-ME-Proxy: <xmx:bo6iYFxO9GBF_VOTjiIC81q_-53fpwmmv0TirqPNjFSC1Sec9p8rZw>
+    <xmx:bo6iYFNxHxDdGYtBqSGGv4QBkgREYKL5Hxp0rIn26tpOPXWCGoPBrQ>
+    <xmx:bo6iYK-W-8vvBB5e-GzqJzmx-8HiqDH-hmvtV9tcOepHFH4StdaW5A>
+    <xmx:b46iYAndTQNYU9J2HasiQmBT3hX_Q1Fe4y2z3tFw10ie5SViaccYCKVn7ks>
+Received: from cisco (unknown [128.107.241.182])
+        by mail.messagingengine.com (Postfix) with ESMTPA;
+        Mon, 17 May 2021 11:40:25 -0400 (EDT)
+Date:   Mon, 17 May 2021 09:40:24 -0600
+From:   Tycho Andersen <tycho@tycho.pizza>
+To:     Tianyin Xu <tyxu@illinois.edu>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        YiFei Zhu <zhuyifei1999@gmail.com>,
+        "containers@lists.linux.dev" <containers@lists.linux.dev>,
+        bpf <bpf@vger.kernel.org>, "Zhu, YiFei" <yifeifz2@illinois.edu>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
+        Claudio Canella <claudio.canella@iaik.tugraz.at>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Hubertus Franke <frankeh@us.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        "Jia, Jinghao" <jinghao7@illinois.edu>,
+        "Torrellas, Josep" <torrella@illinois.edu>,
+        Kees Cook <keescook@chromium.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tobin Feldman-Fitzthum <tobin@ibm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Will Drewry <wad@chromium.org>
+Subject: Re: [RFC PATCH bpf-next seccomp 00/12] eBPF seccomp filters
+Message-ID: <20210517154024.GE1964106@cisco>
+References: <cover.1620499942.git.yifeifz2@illinois.edu>
+ <CALCETrUQBonh5BC4eomTLpEOFHVcQSz9SPcfOqNFTf2TPht4-Q@mail.gmail.com>
+ <CABqSeASYRXMwTQwLfm_Tapg45VUy9sPfV7BeeV8p7XJrDoLf+Q@mail.gmail.com>
+ <fffbea8189794a8da539f6082af3de8e@DM5PR11MB1692.namprd11.prod.outlook.com>
+ <CAGMVDEGzGB4+6gJPTw6Tdng5ur9Jua+mCbqwPoNZ16EFaDcmjA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20210409111254.271800-1-omosnace@redhat.com> <YHBITqlAfOk8IV5w@zeniv-ca.linux.org.uk>
- <CAFqZXNuhog5YfaG9CBVmZ+C3mSzAEgZkSC-mrQGOD4vyLEz4Xw@mail.gmail.com>
-In-Reply-To: <CAFqZXNuhog5YfaG9CBVmZ+C3mSzAEgZkSC-mrQGOD4vyLEz4Xw@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Mon, 17 May 2021 15:46:04 +0200
-Message-ID: <CAFqZXNs6dVkAj4GYme1-COU-EvmTxRXAgS6oTUQpxxjNiamyzg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] vfs/security/NFS/btrfs: clean up and fix LSM option handling
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        linux-btrfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Olga Kornievskaia <aglo@umich.edu>,
-        David Howells <dhowells@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGMVDEGzGB4+6gJPTw6Tdng5ur9Jua+mCbqwPoNZ16EFaDcmjA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Apr 9, 2021 at 7:39 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> On Fri, Apr 9, 2021 at 2:28 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Fri, Apr 09, 2021 at 01:12:52PM +0200, Ondrej Mosnacek wrote:
-> > > This series attempts to clean up part of the mess that has grown around
-> > > the LSM mount option handling across different subsystems.
+On Sun, May 16, 2021 at 03:38:00AM -0500, Tianyin Xu wrote:
+> On Sat, May 15, 2021 at 10:49 AM Andy Lutomirski <luto@kernel.org> wrote:
 > >
-> > I would not describe growing another FS_... flag
->
-> Why is that necessarily a bad thing?
->
-> > *AND* spreading the
-> > FS_BINARY_MOUNTDATA further, with rather weird semantics at that,
-> > as a cleanup of any sort.
->
-> How is this spreading it further? The patches remove one (rather bad)
-> use of it in SELinux and somewhat reduce its use in btrfs.
->
-> Hold on... actually I just realized that with FS_HANDLES_LSM_OPTS it
-> is possible to do btrfs without FS_BINARY_MOUNTDATA and also eliminate
-> the need for the workaround in vfs_parse_fs_param() (i.e. [2]).
->
-> Basically instead of setting FS_BINARY_MOUNTDATA | FS_HANDLES_LSM_OPTS
-> in btrfs_fs_type and neither in btrfs_root_fs_type, it is enough to
-> set neither in btrfs_fs_type and only FS_HANDLES_LSM_OPTS in
-> btrfs_root_fs_type. The security opts are then applied in the outer
-> vfs_get_tree() call instead of the inner one, but the net effect is
-> the same.
->
-> That should pretty much do away with both the non-legit users of
-> FS_BINARY_MOUNTDATA (selinux_set_mnt_opts() and btrfs). All the rest
-> seem to be in line with the semantic.
->
-> Would [something like] the above stand any chance of getting your approval?
+> > On 5/10/21 10:21 PM, YiFei Zhu wrote:
+> > > On Mon, May 10, 2021 at 12:47 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > >> On Mon, May 10, 2021 at 10:22 AM YiFei Zhu <zhuyifei1999@gmail.com> wrote:
+> > >>>
+> > >>> From: YiFei Zhu <yifeifz2@illinois.edu>
+> > >>>
+> > >>> Based on: https://urldefense.com/v3/__https://lists.linux-foundation.org/pipermail/containers/2018-February/038571.html__;!!DZ3fjg!thbAoRgmCeWjlv0qPDndNZW1j6Y2Kl_huVyUffr4wVbISf-aUiULaWHwkKJrNJyo$
+> > >>>
+> > >>> This patchset enables seccomp filters to be written in eBPF.
+> > >>> Supporting eBPF filters has been proposed a few times in the past.
+> > >>> The main concerns were (1) use cases and (2) security. We have
+> > >>> identified many use cases that can benefit from advanced eBPF
+> > >>> filters, such as:
+> > >>
+> > >> I haven't reviewed this carefully, but I think we need to distinguish
+> > >> a few things:
+> > >>
+> > >> 1. Using the eBPF *language*.
+> > >>
+> > >> 2. Allowing the use of stateful / non-pure eBPF features.
+> > >>
+> > >> 3. Allowing the eBPF programs to read the target process' memory.
+> > >>
+> > >> I'm generally in favor of (1).  I'm not at all sure about (2), and I'm
+> > >> even less convinced by (3).
+> > >>
+> > >>>
+> > >>>   * exec-only-once filter / apply filter after exec
+> > >>
+> > >> This is (2).  I'm not sure it's a good idea.
+> > >
+> > > The basic idea is that for a container runtime it may wait to execute
+> > > a program in a container without that program being able to execve
+> > > another program, stopping any attack that involves loading another
+> > > binary. The container runtime can block any syscall but execve in the
+> > > exec-ed process by using only cBPF.
+> > >
+> > > The use case is suggested by Andrea Arcangeli and Giuseppe Scrivano.
+> > > @Andrea and @Giuseppe, could you clarify more in case I missed
+> > > something?
+> >
+> > We've discussed having a notifier-using filter be able to replace its
+> > filter.  This would allow this and other use cases without any
+> > additional eBPF or cBPF code.
+> >
+> 
+> A notifier is not always a solution (even ignoring its perf overhead).
+> 
+> One problem, pointed out by Andrea Arcangeli, is that notifiers need
+> userspace daemons. So, it can hardly be used by daemonless container
+> engines like Podman.
 
-So I posted this variant as v2 now:
-https://lore.kernel.org/selinux/20210517134201.29271-1-omosnace@redhat.com/T/
+I'm not sure I buy this argument. Podman already has a conmon instance
+for each container, this could be a child of that conmon process, or
+live inside conmon itself.
 
->
-> [2] https://lore.kernel.org/selinux/20210401065403.GA1363493@infradead.org/T/
-
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+Tycho
