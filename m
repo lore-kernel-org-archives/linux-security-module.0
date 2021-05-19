@@ -2,184 +2,315 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA6EBC43460
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 14:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DAEC433ED
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 17:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6EF613B6
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 14:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DE35611AB
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 17:08:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241332AbhESOeT (ORCPT
+        id S241779AbhESRJV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 May 2021 10:34:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34028 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S240748AbhESOeS (ORCPT
+        Wed, 19 May 2021 13:09:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49904 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240245AbhESRJV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 May 2021 10:34:18 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14JEGqUx130080;
-        Wed, 19 May 2021 10:32:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=y/O3yzKmZ5S/nF30qtkhN4pFKCGjmMbwXJWy7EalH7Y=;
- b=dxLkg4t3xTxmgQ0/oc64iowxGb3YTxZjRh94jqw32U5yrHZStR/2kN+uG3ma+lQ6j257
- zUgscK0rcp/Rph72b9OtmpcwJFa/hEdhE6B7+N6SC/QHLr0pwfIFkO8fn3KwAc1jthBl
- emWGdAbvP1g3voCrGxY6v119KtK0ip4GQwzJ4mh7F1QjMF4W0d7BiGZK6/OSIXUUI4OC
- OfrdM2faa7lZ2OhsQO4fXs9FX6TS+QKYRyFhlAoIYlfshsdE8fAADv0SB+Gkvowl5qgq
- qQibZdrXzljPaPLY1ToODx6zuYjLRoXEubIHLtLHFNS1NwEoFQhawTgURGRimH6KlNOw 5A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38n4a48f72-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 May 2021 10:32:34 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14JEHhVr131996;
-        Wed, 19 May 2021 10:32:34 -0400
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 38n4a48f62-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 May 2021 10:32:33 -0400
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14JEWWBw006834;
-        Wed, 19 May 2021 14:32:32 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06ams.nl.ibm.com with ESMTP id 38j5jgt634-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 19 May 2021 14:32:32 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14JEWT5e31850820
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 May 2021 14:32:29 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C38DBA4060;
-        Wed, 19 May 2021 14:32:29 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DDF2DA4064;
-        Wed, 19 May 2021 14:32:26 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.6.141])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 19 May 2021 14:32:26 +0000 (GMT)
-Message-ID: <fdb42621e7145ce81a34840cbcf0914874c78913.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH 0/3] Add additional MOK vars
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, jarkko@kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        torvalds@linux-foundation.org, serge@hallyn.com,
-        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
-        glin@suse.com
-Date:   Wed, 19 May 2021 10:32:26 -0400
-In-Reply-To: <20210517225714.498032-1-eric.snowberg@oracle.com>
-References: <20210517225714.498032-1-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Uz0m6BshD-Whk-r4KS0C61M6yjtaS8ZK
-X-Proofpoint-GUID: Dvfcj28MJQ7usNP2HwRzr5tcZDczTIye
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-19_06:2021-05-19,2021-05-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- lowpriorityscore=0 phishscore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0
- malwarescore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104190000 definitions=main-2105190084
+        Wed, 19 May 2021 13:09:21 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BF5EC06175F;
+        Wed, 19 May 2021 10:08:01 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id i13so16204581edb.9;
+        Wed, 19 May 2021 10:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M9qJt6iZyiH92s7OGLPIf2jRAWEht1wmNiDf+EksrqA=;
+        b=R2XmojNa4+M27qrXuBPFEkj1WPAKYPkGuxnWdHEfBRqLuo6FyAstbTwD+SwYO5FKQ0
+         N92wqdbBWOjgM67x6MQ7iSBKIGctF7Mm8Ew/umd8YFVRrIfXnZoQJyA3z18poa6fQlG3
+         oyEQqBqNHm61dZdDagO2WTQ1oeTcp4ZZjX52dRP5FsBwLlvh01nttidnNvPOJarqDcBH
+         rIYdWdBErg0L1OSv0Ibal0oknQQSiEgzPDI3tot5jm8WsKAyI4Hh0Pjh7bQ1vXtVXhC/
+         DutV8/frCnaE+ckUmRl46tlKqRl1fATDZxz/hHuywejmCjBlf6x8hqFJalFGC+I5qAK8
+         502A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M9qJt6iZyiH92s7OGLPIf2jRAWEht1wmNiDf+EksrqA=;
+        b=r20mq4F1RJntCCb8sraJ9NXrXB1D0lJo8vXdHc8RP91lKEuo5S8qItMhTgheLdj618
+         /MHlTq5yOWXek1anFelRyFWKDJ5nADJR3ikui647H+tjm8KWqUAFPa3I+eRDpdWT4gGR
+         abvcQPLOuoyexU40pIvf7OWWbYp0VS63/IsUbdZYiyE5m9UDF9GIfSUdEvFnT1qL3yft
+         gPytinIwbtUYBhtk+mcJGzovvH4tMZ4Cod7EDoqfZ+dRynkIxJ1GlJMp7JdpgbNagGp5
+         58QQ5BCzh25JDB9gpnp6/Xo2wKx5qiCy+UGv44vuLl4Skquw/K8DfrH3qoTK5YecGaLw
+         BA/w==
+X-Gm-Message-State: AOAM53171mOHKFgJ1qXVRjs6g/zzwt2hKWx5I0X1rVv1VlaqAogZP4BL
+        W75ShuEXHiX5shkMJbRCEDozyxs1QzaANH+cgF4=
+X-Google-Smtp-Source: ABdhPJwKqyEBYYDYjexq5qNHqt8YllLe9ffCC9CJnbUH42riDUrZLu9d5YaM7CCqPiGPU8SS93kLy0lwCv0rcZXUUJA=
+X-Received: by 2002:a05:6402:199:: with SMTP id r25mr92932edv.128.1621444080000;
+ Wed, 19 May 2021 10:08:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210517134201.29271-1-omosnace@redhat.com> <20210517134201.29271-2-omosnace@redhat.com>
+In-Reply-To: <20210517134201.29271-2-omosnace@redhat.com>
+From:   Olga Kornievskaia <aglo@umich.edu>
+Date:   Wed, 19 May 2021 13:07:48 -0400
+Message-ID: <CAN-5tyF8J2+kpVtHHmwc9rASmn=EJmei8RB47cQAgYC6P1=GSw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] vfs,LSM: introduce the FS_HANDLES_LSM_OPTS flag
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        SElinux list <selinux@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        linux-btrfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Richard Haines <richard_c_haines@btinternet.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Eric,
+On Mon, May 17, 2021 at 9:42 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Add a new FS_HANDLES_LSM_OPTS filesystem flag to singal to VFS that the
+> filesystem does LSM option setting for the given mount on its own, so
+> the security_sb_set_mnt_opts() call in vfs_get_tree() can be skipped.
+>
+> This allows the following simplifications:
+> 1. Removal of explicit LSM option handling from BTRFS.
+>
+>    This exists only because of the double-layer mount that BTRFS is
+>    doing for its subvolume support. Setting FS_HANDLES_LSM_OPTS on the
+>    inner layer (btrfs_root_fs_type) and unsetting FS_BINARY_MOUNTDATA
+>    from both layers allows us to leave the LSM option handling entirely
+>    on VFS as part of the outer vfs_get_tree() call.
+>
+> 2. Removal of FS_BINARY_MOUNTDATA flags from BTRFS's fs_types.
+>
+>    After applying (1.), we can let VFS eat away LSM opts at the outer
+>    mount layer and then do selinux_set_mnt_opts() with these opts, so
+>    setting the flag is no longer needed neither for preserving the LSM
+>    opts, nor for the SELinux double-set_mnt_opts exception.
+>
+> 3. Removal of the ugly FS_BINARY_MOUNTDATA special case from
+>    selinux_set_mnt_opts().
+>
+>    Applying (1.) and also setting FS_HANDLES_LSM_OPTS on NFS fs_types
+>    (which needs to unavoidably do the LSM options handling on its own
+>    due to the SECURITY_LSM_NATIVE_LABELS flag usage) gets us to the
+>    state where there is an exactly one security_sb_set_mnt_opts() or
+>    security_sb_clone_mnt_opts() call for each superblock, so the rather
+>    hacky FS_BINARY_MOUNTDATA special case can be finally removed from
+>    security_sb_set_mnt_opts().
+>
+> The only other filesystem that sets FS_BINARY_MOUNTDATA is coda, which
+> is also the only one that has binary mount data && doesn't do its own
+> LSM options handling. So for coda we leave FS_HANDLES_LSM_OPTS unset and
+> the behavior remains unchanged - with fsconfig(2) it (probably) won't
+> even mount and with mount(2) it still won't support LSM options (and the
+> security_sb_set_mnt_opts() will be always performed with empty LSM
+> options as before).
+>
+> AFAICT, this shouldn't negatively affect the other LSMs. In fact, I
+> think AppArmor will now gain the ability to do its DFA matching on BTRFS
+> mount options, which was prevented before due to FS_BINARY_MOUNTDATA
+> being set on both its fs_types.
 
-On Mon, 2021-05-17 at 18:57 -0400, Eric Snowberg wrote:
-> This series is being sent as an RFC. I am looking for feedback; if
-> adding additional MOK variables would be an acceptable solution to help
-> downstream Linux distros solve some of the problems we are facing?
-> 
-> Currently, pre-boot keys are not trusted within the Linux boundary [1].
-> Pre-boot keys include UEFI Secure Boot DB keys and MOKList keys. These
-> keys are loaded into the platform keyring and can only be used for kexec.
-> If an end-user wants to use their own key within the Linux trust
-> boundary, they must either compile it into the kernel themselves or use
-> the insert-sys-cert script. Both options present a problem. Many
-> end-users do not want to compile their own kernels. With the
-> insert-sys-cert option, there are missing upstream changes [2].  Also,
-> with the insert-sys-cert option, the end-user must re-sign their kernel
-> again with their own key, and then insert that key into the MOK db.
-> Another problem with insert-sys-cert is that only a single key can be
-> inserted into a compressed kernel.
-> 
-> Having the ability to insert a key into the Linux trust boundary opens
-> up various possibilities.  The end-user can use a pre-built kernel and
-> sign their own kernel modules.  It also opens up the ability for an
-> end-user to more easily use digital signature based IMA-appraisal.  To
-> get a key into the ima keyring, it must be signed by a key within the
-> Linux trust boundary.
-> 
-> Downstream Linux distros try to have a single signed kernel for each
-> architecture.  Each end-user may use this kernel in entirely different
-> ways.  Some downstream kernels have chosen to always trust platform keys
-> within the Linux trust boundary.  In addition, most downstream kernels
-> do not have an easy way for an end-user to use digital signature based
-> IMA-appraisal.
-> 
-> This series adds two new MOK variables to shim. The first variable
-> allows the end-user to decide if they want to trust keys contained
-> within the platform keyring within the Linux trust boundary. By default,
-> nothing changes; platform keys are not trusted within the Linux kernel.
-> They are only trusted after the end-user makes the decision themself.
-> The end-user would set this through mokutil using a new --trust-platform
-> option [3]. This would work similar to how the kernel uses MOK variables
-> to enable/disable signature validation as well as use/ignore the db.
-> 
-> The second MOK variable allows a downstream Linux distro to make
-> better use of the IMA architecture specific Secure Boot policy.  This
-> IMA policy is enabled whenever Secure Boot is enabled.  By default, this 
-> new MOK variable is not defined.  This causes the IMA architecture 
-> specific Secure Boot policy to be disabled.  Since this changes the 
-> current behavior, it is placed behind a new Kconfig option.  Kernels
-> built with IMA_UEFI_ARCH_POLICY enabled would  allow the end-user
-> to enable this through mokutil using a new --ima-sb-enable option [3].
-> This gives the downstream Linux distro the capability to offer the
-> IMA architecture specific Secure Boot policy option, while giving
-> the end-user the ability to decide if they want to use it.
-> 
-> I have included links to both the mokutil [3] and shim [4] changes I
-> made to support this new functionality.
-> 
-> Thank you and looking forward to hearing your reviews.
+Tested-by: Olga Kornievskaia <kolga@netapp.com> (both patches).
 
-This patch set addresses two very different issues - allowing keys on
-the platform keyring to be trusted for things other than verifying the
-kexec kernel image signature, overwriting the arch specific IMA secure
-boot policy rules.  The only common denominator is basing those
-decisions on UEFI variables, which has been previously suggested and
-rejected.  The threat model hasn't changed.
-
-The desire for allowing a single local CA key to be loaded onto a
-trusted keyring is understandable.  A local CA key can be used to sign
-certificates, allowing them to be loaded onto the IMA keyring.  What is
-the need for multiple keys? 
-
-Making an exception for using a UEFI key for anything other than
-verifying the kexec kernel image, can not be based solely on UEFI
-variables, but should require some form of kernel
-agreement/confirmation.  If/when a safe mechanism for identifying a
-single local CA key is defined, the certificate should be loaded
-directly onto the secondary keyring, not linked to the platform
-keyring.
-
-The system owner can enable/disable secure boot.  Disabling the arch
-secure boot IMA policy rules is not needed.  However, another mechanism
-for enabling them would be acceptable.
-
-thanks,
-
-Mimi
-
+>
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>  fs/btrfs/super.c         | 34 +++++-----------------------------
+>  fs/nfs/fs_context.c      |  6 ++++--
+>  fs/super.c               | 10 ++++++----
+>  include/linux/fs.h       |  3 ++-
+>  security/selinux/hooks.c | 15 ---------------
+>  5 files changed, 17 insertions(+), 51 deletions(-)
+>
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 4a396c1147f1..80716ead1cde 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -1666,19 +1666,12 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+>         struct btrfs_device *device = NULL;
+>         struct btrfs_fs_devices *fs_devices = NULL;
+>         struct btrfs_fs_info *fs_info = NULL;
+> -       void *new_sec_opts = NULL;
+>         fmode_t mode = FMODE_READ;
+>         int error = 0;
+>
+>         if (!(flags & SB_RDONLY))
+>                 mode |= FMODE_WRITE;
+>
+> -       if (data) {
+> -               error = security_sb_eat_lsm_opts(data, &new_sec_opts);
+> -               if (error)
+> -                       return ERR_PTR(error);
+> -       }
+> -
+>         /*
+>          * Setup a dummy root and fs_info for test/set super.  This is because
+>          * we don't actually fill this stuff out until open_ctree, but we need
+> @@ -1688,10 +1681,9 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+>          * superblock with our given fs_devices later on at sget() time.
+>          */
+>         fs_info = kvzalloc(sizeof(struct btrfs_fs_info), GFP_KERNEL);
+> -       if (!fs_info) {
+> -               error = -ENOMEM;
+> -               goto error_sec_opts;
+> -       }
+> +       if (!fs_info)
+> +               return ERR_PTR(-ENOMEM);
+> +
+>         btrfs_init_fs_info(fs_info);
+>
+>         fs_info->super_copy = kzalloc(BTRFS_SUPER_INFO_SIZE, GFP_KERNEL);
+> @@ -1748,9 +1740,6 @@ static struct dentry *btrfs_mount_root(struct file_system_type *fs_type,
+>                         set_bit(BTRFS_FS_CSUM_IMPL_FAST, &fs_info->flags);
+>                 error = btrfs_fill_super(s, fs_devices, data);
+>         }
+> -       if (!error)
+> -               error = security_sb_set_mnt_opts(s, new_sec_opts, 0, NULL);
+> -       security_free_mnt_opts(&new_sec_opts);
+>         if (error) {
+>                 deactivate_locked_super(s);
+>                 return ERR_PTR(error);
+> @@ -1762,8 +1751,6 @@ error_close_devices:
+>         btrfs_close_devices(fs_devices);
+>  error_fs_info:
+>         btrfs_free_fs_info(fs_info);
+> -error_sec_opts:
+> -       security_free_mnt_opts(&new_sec_opts);
+>         return ERR_PTR(error);
+>  }
+>
+> @@ -1925,17 +1912,6 @@ static int btrfs_remount(struct super_block *sb, int *flags, char *data)
+>         sync_filesystem(sb);
+>         set_bit(BTRFS_FS_STATE_REMOUNTING, &fs_info->fs_state);
+>
+> -       if (data) {
+> -               void *new_sec_opts = NULL;
+> -
+> -               ret = security_sb_eat_lsm_opts(data, &new_sec_opts);
+> -               if (!ret)
+> -                       ret = security_sb_remount(sb, new_sec_opts);
+> -               security_free_mnt_opts(&new_sec_opts);
+> -               if (ret)
+> -                       goto restore;
+> -       }
+> -
+>         ret = btrfs_parse_options(fs_info, data, *flags);
+>         if (ret)
+>                 goto restore;
+> @@ -2385,7 +2361,7 @@ static struct file_system_type btrfs_fs_type = {
+>         .name           = "btrfs",
+>         .mount          = btrfs_mount,
+>         .kill_sb        = btrfs_kill_super,
+> -       .fs_flags       = FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA,
+> +       .fs_flags       = FS_REQUIRES_DEV,
+>  };
+>
+>  static struct file_system_type btrfs_root_fs_type = {
+> @@ -2393,7 +2369,7 @@ static struct file_system_type btrfs_root_fs_type = {
+>         .name           = "btrfs",
+>         .mount          = btrfs_mount_root,
+>         .kill_sb        = btrfs_kill_super,
+> -       .fs_flags       = FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA,
+> +       .fs_flags       = FS_REQUIRES_DEV | FS_HANDLES_LSM_OPTS,
+>  };
+>
+>  MODULE_ALIAS_FS("btrfs");
+> diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+> index d95c9a39bc70..b5db4160e89b 100644
+> --- a/fs/nfs/fs_context.c
+> +++ b/fs/nfs/fs_context.c
+> @@ -1557,7 +1557,8 @@ struct file_system_type nfs_fs_type = {
+>         .init_fs_context        = nfs_init_fs_context,
+>         .parameters             = nfs_fs_parameters,
+>         .kill_sb                = nfs_kill_super,
+> -       .fs_flags               = FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
+> +       .fs_flags               = FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA|
+> +                                 FS_HANDLES_LSM_OPTS,
+>  };
+>  MODULE_ALIAS_FS("nfs");
+>  EXPORT_SYMBOL_GPL(nfs_fs_type);
+> @@ -1569,7 +1570,8 @@ struct file_system_type nfs4_fs_type = {
+>         .init_fs_context        = nfs_init_fs_context,
+>         .parameters             = nfs_fs_parameters,
+>         .kill_sb                = nfs_kill_super,
+> -       .fs_flags               = FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
+> +       .fs_flags               = FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA|
+> +                                 FS_HANDLES_LSM_OPTS,
+>  };
+>  MODULE_ALIAS_FS("nfs4");
+>  MODULE_ALIAS("nfs4");
+> diff --git a/fs/super.c b/fs/super.c
+> index 11b7e7213fd1..918c77b8c161 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1520,10 +1520,12 @@ int vfs_get_tree(struct fs_context *fc)
+>         smp_wmb();
+>         sb->s_flags |= SB_BORN;
+>
+> -       error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> -       if (unlikely(error)) {
+> -               fc_drop_locked(fc);
+> -               return error;
+> +       if (!(fc->fs_type->fs_flags & FS_HANDLES_LSM_OPTS)) {
+> +               error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
+> +               if (unlikely(error)) {
+> +                       fc_drop_locked(fc);
+> +                       return error;
+> +               }
+>         }
+>
+>         /*
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c3c88fdb9b2a..36f9cd37bc83 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2469,7 +2469,8 @@ struct file_system_type {
+>  #define FS_HAS_SUBTYPE         4
+>  #define FS_USERNS_MOUNT                8       /* Can be mounted by userns root */
+>  #define FS_DISALLOW_NOTIFY_PERM        16      /* Disable fanotify permission events */
+> -#define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
+> +#define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
+> +#define FS_HANDLES_LSM_OPTS    64      /* FS handles LSM opts on its own - skip it in VFS */
+>  #define FS_THP_SUPPORT         8192    /* Remove once all fs converted */
+>  #define FS_RENAME_DOES_D_MOVE  32768   /* FS will handle d_move() during rename() internally. */
+>         int (*init_fs_context)(struct fs_context *);
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index eaea837d89d1..041529cbf214 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -684,21 +684,6 @@ static int selinux_set_mnt_opts(struct super_block *sb,
+>                 goto out;
+>         }
+>
+> -       /*
+> -        * Binary mount data FS will come through this function twice.  Once
+> -        * from an explicit call and once from the generic calls from the vfs.
+> -        * Since the generic VFS calls will not contain any security mount data
+> -        * we need to skip the double mount verification.
+> -        *
+> -        * This does open a hole in which we will not notice if the first
+> -        * mount using this sb set explict options and a second mount using
+> -        * this sb does not set any security options.  (The first options
+> -        * will be used for both mounts)
+> -        */
+> -       if ((sbsec->flags & SE_SBINITIALIZED) && (sb->s_type->fs_flags & FS_BINARY_MOUNTDATA)
+> -           && !opts)
+> -               goto out;
+> -
+>         root_isec = backing_inode_security_novalidate(root);
+>
+>         /*
+> --
+> 2.31.1
+>
