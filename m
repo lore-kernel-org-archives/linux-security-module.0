@@ -2,117 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B288C433ED
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 May 2021 17:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E87E5C43460
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 07:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F10D260FD9
-	for <linux-security-module@archiver.kernel.org>; Tue, 18 May 2021 17:40:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBE386135C
+	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 07:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243866AbhERRmD (ORCPT
+        id S237741AbhESH4z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 18 May 2021 13:42:03 -0400
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com ([66.163.190.38]:38096
-        "EHLO sonic307-15.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243707AbhERRmC (ORCPT
+        Wed, 19 May 2021 03:56:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44790 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234405AbhESH4z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 18 May 2021 13:42:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1621359644; bh=OaRaXZ/TyLu+rceOhMWTshaqetdfiL84Ys2DWla4GaE=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=cHTfS16ouunxapRJtevME9XWI36OpoDesNx4owqyRVzDr5zO/XV147zh4mM9KUGB+IbiqsPq80svHsKVpnoi4QI+QE5/OIzY1DRzHP1YsIafFvyLawAqqDLiYdHq7H/07bGq8994kteeUd1QNAtxMEV/o9XRME81MpW6543QDfw/gLfr2/3F6HLnEEBUgfD6e6PLyYuZZxJ0InWP3AS0iUBqQf+JWY3wnf4802AGpePoFJ+5yJ71GMUsfh/fQpyiPq/WdUCg8MNzOMj/qo+gDXf2TsGvpi/KbymFnTX5DE5e2UihDZ9vZa5gWuT5mQMXMcDOlst3w+C8GNA+Od3AlA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1621359644; bh=6ETJSKxd/n3W0jylI8cVdKEYJ+mSomcdrAioFk+OZsc=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=KSSt12t9oPlrgbvqP8rtPOhnLVYIOE1s4dYCfzyRp77f/Q31DbNwDNPkGfcR2cE85a2oQVSvU4C2S6gxK7HYVlBJXMvOKOzlGpeeolJPqvvnJDA1X6fod9j5Fh2VcqRrWE5358tg3zBf2+DOsnoeGRLYiCA5SlV5kR9V5yI9XCd/ynrL+i5I4Y9VGkpghVybnnihmcCr7wuTvArEWjhubFe2AR9sEG9Nc6UD788rfs1ZvlhS1JrR/8kvHBPewji83hLyrgW8zRPBXcMBN4rrS+wcbjy0jrq/09PAnDN377KJUCV+G36+C0QaNFmeu4J7w7GBIQR5/uDUsZ/c+TRe/g==
-X-YMail-OSG: aLknHFcVM1kcOHo.Zowg.xsmp0F64c26Q7QDTmFUHtxtedz5WPL_brFC_GTpGBm
- q2imlIui.k_R2.V.15gCJEZ2zrEB_Rm28YmahRkCIOLqxreLsxTW8jnb5Y2bR2GHjsELImC0Wanj
- Oeu4EAo3ewHG2WnfzTkqP9j19L22DZi.VPXiTTzzgY_FnaJn_TmtDNHtZR4s3hNNlkLRDKT2k24S
- z7vqI5KABqr2DKh9I6MuXFzrlEQBIEeZNqWfmE1H9AB7ctQLR3ni1JdfxbncB.wU2ly9J109wSd.
- BzBHGjgK1Ddu2IrewLM1fbky9cJ9ogNb8BnzX1NzEDh7KR.J_pHB.o7uKPcst8imb_Mym779Ljqu
- qHewhUdjU7iKG2pg4zmwnExPSCZZZu45uaqzGwXF_MDLwjrJKudvu0Wb9nQQNyDdziUd7NAe67bA
- 5w2cpV8vwF8uc3hS2hqWx2fCMEfT8Eao9c27BiSGIJ5gnjxvV6cp6FFK6VB1pkln8qa2flAPbYBB
- OQYj4pKaebqLkWgqb37ekyjSYa6VYOIE4w5CiLxNaXFSvgN_d7d79qa7eX9ASIHpGUO_aMJlwVTh
- RuG4ChbfOJC_TYACvXSvrlLy2zuhD.3J44henbJykX9oBT.F9FWr4W5B0BhlSavTffyl1_nyhkJI
- IqaXP9xBNWwu9sVTxUxpzixzAdh6kHEPLugnf.hxCS9WpekgV4qmuK5OjMW1G7LilPyeTVKeh.PB
- ceQiBH3SV7N3JxQ_6klMq46PBhsW1fFBICQa7virIRfRXmiCZ7mEE0uCMBQLxCvG23qT2Vbgbg_t
- nEb6D9pFqW4yafC4z1QeEophQJ4xapC.tgRuAGBlhVuT8rszSobqwUAQCnlUML5pmSRdnXllIV4V
- 59bNirWhZWlSX.yedOZcT7C2aikl6XuJLjZQm93pZ1qH0GJ4cZJ_GnmzVLMH7S1WK0cDZMkj5D22
- bNYx2yQPBbqR3t7tFn.ina8.ufq3Dtpe9FZdgFI1tpIcgvAW37mTgupHp0NrokWxZP17D4o3B9RP
- 3FZBsRq4QMYipxCtIlJ0Q2LMc8Deirr4Yaz_f0els.5gj0Gp7ghANCmXqH4RrlPI38GIm.sbojVb
- EbIveV4hDWI4lDmIhckJ6v3Rjbng8gVUsRmZIWzg9bWjodjXvNagTE5Cv.ORtuF7end6_NdCohPR
- UKKq53kuU3e0jgkQRCwL42.WKHvTw5lMAVIm4aoAJz1SFPau74Zy1qX7ap0wxclcsMOmerZc.KL2
- xn2AyG668s1RZk7CfHvQHTB2dtm3v1OjO_hTtF3wzvAy4iZjjbNt0kqA_Iiw0a5MLClBezzgy5on
- odKpwlvgfj6q5KFVHQA.AosDYnV6MN8XKFfzxwdNd5OxDGOr5I6qIs_HjiOCF_jrSA7IxJJQ_apC
- qPssGg6aLS2iZKzfhO3i7xE8YNNKUYIbfpDKHnXlU3rKoqyC8kLfidPzXTKZm3idF_l2bDqjTc9N
- NZhYg3_zg2CXJBy2vApabji3GiFWiPPd1AYM4dEvBmt61jnGih2RFvo386asrO6X.7pXDBdPOHuv
- TWWYeHByhb0UR9QTbZSmMqbymZAy.mIEbq1bKAD_yN.yqwOf.vPvi9zZ58IqzjjejQGxbQTh.7mv
- ZPxuV8_XoUqyUalme1i4khl.l9P6dR5sx74W6YHWe_IvLCpmRJCsalMzjA76dAGNyt6S6AB.5eEi
- UCnTgbr5aUv42yX0rMX5CBgeJH4BhrhWeii3EI8ypgMZwL2x5.4LIJaIRCYMO9W2Bsu.ydO5ltYY
- b13CS.95VuZx_TX2n3Ea9Qa.zGYSZYZ8MRtM3mUveCcCpPDoqshWQjeFSIPV7Jd7Gb8c2rls3Ukx
- svrTP5z9AU5SYnzj1BwSHnu7G6kFY_O380ovi7Uhq7WyoxRj4x65sYdO1hrNKNWIORscf36cmP_y
- 42weCKNuvGLqZtNsDK57R35hxRpeBnnk65UlyN6_PbowaFLrt3g15WuOE0tGAg1ByILGZxAFJksg
- RVte1TNLdf500nRA67WnZBcNpvIcBH7voyA6agZM3cRxyzxLneGVl2i7hOV5La01fHdouKIs9gl9
- 5IOn81W6b9veAZhImxl99snaZHdT4oqqPR8VoZxRss5Kcj8pgGrRhOxEh0MQVonTZfmoBQ6Y1ePh
- BnjTLUcYpSUN0Ryu57xCX.wj0u7r9NvWHu1pYJMtZFQESpDTgeQBHE6i2RIlnYUPysmEqvvDznmo
- psZAz_W7x6xeUhNnHSEEugxaaTt.BQdZyrSJV5sCQflgLE9YCtVGOwzLckV.byK_W9PQWwGFmbdw
- QGgTQaAh33D_4UalbrGHeqlR0GTh_BvBaWQG2DXNl2PU5vjVE8sJSCmNMbY6R3GSwOGN2m8oPbSl
- vmXzi9RY91QWr_CXw7l4djV9WtGAVKKu8urKTKx9yd3oyQznzq9P2r8tl3LywprQa.2wN3DDKnEU
- VTaNNlP31LIPI9yj4zvmz5L3F8fqqXmQk0x4IpMt9kfO08Y3GFvqd5HIjDL_ayQw5nA4ZH6uQfIE
- dycvTrjj1bvhAyH3MCzUmXAL75j4nDIr0eb5rKZFj_YatwG39D6F_aeBa8.6G0nGvK516.UqiwQk
- 7V_OS._.ieiO8wME.I0pm.nQZN9ak4WBIOgcOs9tQjq2cC9zGHjCb79Ju01sI5yPaNRTyexib_43
- GYR6obqEqO4cWhNahpCjxstDGCG8VkaVioluV.A--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Tue, 18 May 2021 17:40:44 +0000
-Received: by kubenode546.mail-prod1.omega.ne1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 6ed5589bd64c2f62052162e8342531d0;
-          Tue, 18 May 2021 17:40:40 +0000 (UTC)
-Subject: Re: [PATCH] Revert "Smack: Handle io_uring kernel thread privileges"
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-security-module@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <04c7c410-08e8-626a-795e-b77db6666804@kernel.dk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <89593a3e-96dc-f14c-0925-4b62872ca42e@schaufler-ca.com>
-Date:   Tue, 18 May 2021 10:40:40 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Wed, 19 May 2021 03:56:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 79CA060FDC;
+        Wed, 19 May 2021 07:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1621410936;
+        bh=yUbE+px/6gOPTPVPQfpUK35kefreBxxbJ76GQwwDZs0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DjtMlupdr4JiIPMb/7FeiANrvoq4Pyz32YH1n6tRgM6QhtPlS3Ugghe/IdvNwi+9D
+         BaNcpCJDwI1zjqrYW0P5590cSRL/uKSvmHC8VtXV0wZWPgW37GyMMJicrmU5Ig7nYr
+         p07d4y0BZB12bWbYBnBAXYYDQys8xd/nQAcYqHNRB0QG43lSES18xIrghAa9+W5k4U
+         7VhRK/TJCX0VYB0a6RPAmA0TxDvnejiS9RSKyDhOt5ioURQEXEA1S7oGnT2or4SpYA
+         l4yzGgjNgTkzQqlk1/foV1MIrl9Vg1Dr52yEhT/U/T12Iv9E5yHi8WIYx8syR++flH
+         W8sDnAEFa4QJQ==
+Date:   Wed, 19 May 2021 10:55:33 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
+        torvalds@linux-foundation.org, serge@hallyn.com,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        glin@suse.com
+Subject: Re: [RFC PATCH 0/3] Add additional MOK vars
+Message-ID: <YKTEdWgwy0R1qpOE@kernel.org>
+References: <20210517225714.498032-1-eric.snowberg@oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <04c7c410-08e8-626a-795e-b77db6666804@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.18291 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo Apache-HttpAsyncClient/4.1.4 (Java/16)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210517225714.498032-1-eric.snowberg@oracle.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 3/25/2021 5:42 PM, Jens Axboe wrote:
-> This reverts commit 942cb357ae7d9249088e3687ee6a00ed2745a0c7.
->
-> The io_uring PF_IO_WORKER threads no longer have PF_KTHREAD set, so no
-> need to special case them for credential checks.
->
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On Mon, May 17, 2021 at 06:57:11PM -0400, Eric Snowberg wrote:
+> This series is being sent as an RFC. I am looking for feedback; if
+> adding additional MOK variables would be an acceptable solution to help
+> downstream Linux distros solve some of the problems we are facing?
+> 
+> Currently, pre-boot keys are not trusted within the Linux boundary [1].
+> Pre-boot keys include UEFI Secure Boot DB keys and MOKList keys. These
+> keys are loaded into the platform keyring and can only be used for kexec.
+> If an end-user wants to use their own key within the Linux trust
+> boundary, they must either compile it into the kernel themselves or use
+> the insert-sys-cert script. Both options present a problem. Many
+> end-users do not want to compile their own kernels. With the
+> insert-sys-cert option, there are missing upstream changes [2].  Also,
+> with the insert-sys-cert option, the end-user must re-sign their kernel
+> again with their own key, and then insert that key into the MOK db.
+> Another problem with insert-sys-cert is that only a single key can be
+> inserted into a compressed kernel.
+> 
+> Having the ability to insert a key into the Linux trust boundary opens
+> up various possibilities.  The end-user can use a pre-built kernel and
+> sign their own kernel modules.  It also opens up the ability for an
+> end-user to more easily use digital signature based IMA-appraisal.  To
+> get a key into the ima keyring, it must be signed by a key within the
+> Linux trust boundary.
+> 
+> Downstream Linux distros try to have a single signed kernel for each
+> architecture.  Each end-user may use this kernel in entirely different
+> ways.  Some downstream kernels have chosen to always trust platform keys
+> within the Linux trust boundary.  In addition, most downstream kernels
+> do not have an easy way for an end-user to use digital signature based
+> IMA-appraisal.
+> 
+> This series adds two new MOK variables to shim. The first variable
+> allows the end-user to decide if they want to trust keys contained
 
-I have added this to smack-next. Thank you.
+Nit: would be nice to just say "what it is" instead "what it allows".
 
-> ---
->  security/smack/smack_access.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-> index 7eabb448acab..efe2406a3960 100644
-> --- a/security/smack/smack_access.c
-> +++ b/security/smack/smack_access.c
-> @@ -688,10 +688,9 @@ bool smack_privileged_cred(int cap, const struct cred *cred)
->  bool smack_privileged(int cap)
->  {
->  	/*
-> -	 * Kernel threads may not have credentials we can use.
-> -	 * The io_uring kernel threads do have reliable credentials.
-> +	 * All kernel tasks are privileged
->  	 */
-> -	if ((current->flags & (PF_KTHREAD | PF_IO_WORKER)) == PF_KTHREAD)
-> +	if (unlikely(current->flags & PF_KTHREAD))
->  		return true;
->  
->  	return smack_privileged_cred(cap, current_cred());
+> within the platform keyring within the Linux trust boundary. By default,
+> nothing changes; platform keys are not trusted within the Linux kernel.
+> They are only trusted after the end-user makes the decision themself.
+> The end-user would set this through mokutil using a new --trust-platform
+> option [3]. This would work similar to how the kernel uses MOK variables
+> to enable/disable signature validation as well as use/ignore the db.
+> 
+> The second MOK variable allows a downstream Linux distro to make
+
+...
+
+> better use of the IMA architecture specific Secure Boot policy.  This
+> IMA policy is enabled whenever Secure Boot is enabled.  By default, this 
+> new MOK variable is not defined.  This causes the IMA architecture 
+> specific Secure Boot policy to be disabled.  Since this changes the 
+> current behavior, it is placed behind a new Kconfig option.  Kernels
+> built with IMA_UEFI_ARCH_POLICY enabled would  allow the end-user
+> to enable this through mokutil using a new --ima-sb-enable option [3].
+> This gives the downstream Linux distro the capability to offer the
+> IMA architecture specific Secure Boot policy option, while giving
+> the end-user the ability to decide if they want to use it.
+> 
+> I have included links to both the mokutil [3] and shim [4] changes I
+> made to support this new functionality.
+> 
+> Thank you and looking forward to hearing your reviews.
+> 
+> [1] https://lore.kernel.org/lkml/1556221605.24945.3.camel@HansenPartnership.com/
+> [2] https://lore.kernel.org/patchwork/cover/902768/
+> [3] https://github.com/esnowberg/mokutil/tree/0.3.0-mokvars
+> [4] https://github.com/esnowberg/shim/tree/mokvars
+> 
+> Eric Snowberg (3):
+>   keys: Add ability to trust the platform keyring
+>   keys: Trust platform keyring if MokTrustPlatform found
+>   ima: Enable IMA SB Policy if MokIMAPolicy found
+> 
+>  certs/system_keyring.c                        | 19 ++++++++-
+>  include/keys/system_keyring.h                 | 10 +++++
+>  security/integrity/ima/Kconfig                |  8 ++++
+>  security/integrity/ima/ima_efi.c              | 24 ++++++++++++
+>  .../platform_certs/platform_keyring.c         | 39 +++++++++++++++++++
+>  5 files changed, 99 insertions(+), 1 deletion(-)
+> 
+> -- 
+> 2.18.4
+> 
+> 
+
+/Jarkko
