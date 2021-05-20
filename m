@@ -2,199 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_RED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD1CC433ED
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AD8C433B4
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7CF661261
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 946766135A
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230505AbhETI5m (ORCPT
+        id S231246AbhETI6o (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 May 2021 04:57:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45538 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229536AbhETI5m (ORCPT
+        Thu, 20 May 2021 04:58:44 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3083 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229536AbhETI6o (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 May 2021 04:57:42 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 0A1566124C;
-        Thu, 20 May 2021 08:56:15 +0000 (UTC)
-Date:   Thu, 20 May 2021 10:56:13 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Tianyin Xu <tyxu@illinois.edu>
-Cc:     Tycho Andersen <tycho@tycho.pizza>,
-        Andy Lutomirski <luto@kernel.org>,
-        YiFei Zhu <zhuyifei1999@gmail.com>,
-        "containers@lists.linux.dev" <containers@lists.linux.dev>,
-        bpf <bpf@vger.kernel.org>, "Zhu, YiFei" <yifeifz2@illinois.edu>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
-        Claudio Canella <claudio.canella@iaik.tugraz.at>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Hubertus Franke <frankeh@us.ibm.com>,
-        Jann Horn <jannh@google.com>,
-        "Jia, Jinghao" <jinghao7@illinois.edu>,
-        "Torrellas, Josep" <torrella@illinois.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Tobin Feldman-Fitzthum <tobin@ibm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Will Drewry <wad@chromium.org>
-Subject: Re: [RFC PATCH bpf-next seccomp 00/12] eBPF seccomp filters
-Message-ID: <20210520085613.gvshk4jffmzggvsm@wittgenstein>
-References: <cover.1620499942.git.yifeifz2@illinois.edu>
- <CALCETrUQBonh5BC4eomTLpEOFHVcQSz9SPcfOqNFTf2TPht4-Q@mail.gmail.com>
- <CABqSeASYRXMwTQwLfm_Tapg45VUy9sPfV7BeeV8p7XJrDoLf+Q@mail.gmail.com>
- <fffbea8189794a8da539f6082af3de8e@DM5PR11MB1692.namprd11.prod.outlook.com>
- <CAGMVDEGzGB4+6gJPTw6Tdng5ur9Jua+mCbqwPoNZ16EFaDcmjA@mail.gmail.com>
- <108b4b9c2daa4123805d2b92cf51374b@DM5PR11MB1692.namprd11.prod.outlook.com>
- <CAGMVDEEkDeUBcJAswpBjcQNWk7QDcO8BZR=uvVfm-+qe714tYg@mail.gmail.com>
+        Thu, 20 May 2021 04:58:44 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm3Gn5cyRz6Vyjj;
+        Thu, 20 May 2021 16:45:37 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 20 May 2021 10:57:20 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <mjg59@srcf.ucam.org>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 1/7] ima: Add ima_show_template_uint() template library function
+Date:   Thu, 20 May 2021 10:56:55 +0200
+Message-ID: <20210520085701.465369-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210520085701.465369-1-roberto.sassu@huawei.com>
+References: <20210520085701.465369-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGMVDEEkDeUBcJAswpBjcQNWk7QDcO8BZR=uvVfm-+qe714tYg@mail.gmail.com>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.62.217]
+X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 20, 2021 at 03:16:10AM -0500, Tianyin Xu wrote:
-> On Mon, May 17, 2021 at 10:40 AM Tycho Andersen <tycho@tycho.pizza> wrote:
-> >
-> > On Sun, May 16, 2021 at 03:38:00AM -0500, Tianyin Xu wrote:
-> > > On Sat, May 15, 2021 at 10:49 AM Andy Lutomirski <luto@kernel.org> wrote:
-> > > >
-> > > > On 5/10/21 10:21 PM, YiFei Zhu wrote:
-> > > > > On Mon, May 10, 2021 at 12:47 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > > > >> On Mon, May 10, 2021 at 10:22 AM YiFei Zhu <zhuyifei1999@gmail.com> wrote:
-> > > > >>>
-> > > > >>> From: YiFei Zhu <yifeifz2@illinois.edu>
-> > > > >>>
-> > > > >>> Based on: https://urldefense.com/v3/__https://lists.linux-foundation.org/pipermail/containers/2018-February/038571.html__;!!DZ3fjg!thbAoRgmCeWjlv0qPDndNZW1j6Y2Kl_huVyUffr4wVbISf-aUiULaWHwkKJrNJyo$
-> > > > >>>
-> > > > >>> This patchset enables seccomp filters to be written in eBPF.
-> > > > >>> Supporting eBPF filters has been proposed a few times in the past.
-> > > > >>> The main concerns were (1) use cases and (2) security. We have
-> > > > >>> identified many use cases that can benefit from advanced eBPF
-> > > > >>> filters, such as:
-> > > > >>
-> > > > >> I haven't reviewed this carefully, but I think we need to distinguish
-> > > > >> a few things:
-> > > > >>
-> > > > >> 1. Using the eBPF *language*.
-> > > > >>
-> > > > >> 2. Allowing the use of stateful / non-pure eBPF features.
-> > > > >>
-> > > > >> 3. Allowing the eBPF programs to read the target process' memory.
-> > > > >>
-> > > > >> I'm generally in favor of (1).  I'm not at all sure about (2), and I'm
-> > > > >> even less convinced by (3).
-> > > > >>
-> > > > >>>
-> > > > >>>   * exec-only-once filter / apply filter after exec
-> > > > >>
-> > > > >> This is (2).  I'm not sure it's a good idea.
-> > > > >
-> > > > > The basic idea is that for a container runtime it may wait to execute
-> > > > > a program in a container without that program being able to execve
-> > > > > another program, stopping any attack that involves loading another
-> > > > > binary. The container runtime can block any syscall but execve in the
-> > > > > exec-ed process by using only cBPF.
-> > > > >
-> > > > > The use case is suggested by Andrea Arcangeli and Giuseppe Scrivano.
-> > > > > @Andrea and @Giuseppe, could you clarify more in case I missed
-> > > > > something?
-> > > >
-> > > > We've discussed having a notifier-using filter be able to replace its
-> > > > filter.  This would allow this and other use cases without any
-> > > > additional eBPF or cBPF code.
-> > > >
-> > >
-> > > A notifier is not always a solution (even ignoring its perf overhead).
-> > >
-> > > One problem, pointed out by Andrea Arcangeli, is that notifiers need
-> > > userspace daemons. So, it can hardly be used by daemonless container
-> > > engines like Podman.
-> >
-> > I'm not sure I buy this argument. Podman already has a conmon instance
-> > for each container, this could be a child of that conmon process, or
-> > live inside conmon itself.
-> >
-> > Tycho
-> 
-> I checked with Andrea Arcangeli and Giuseppe Scrivano who are working on Podman.
-> 
-> You are right that Podman is not completely daemonless. However, “the
-> fact it's no entirely daemonless doesn't imply it's a good idea to
-> make it worse and to add complexity to the background conmon daemon or
-> to add more daemons.”
-> 
-> TL;DR. User notifiers are surely more flexible, but are also more
-> expensive and complex to implement, compared with ebpf filters. /*
-> I’ll reply to Sargun’s performance argument in a separate email */
-> 
-> I'm sure you know Podman well, but let me still move some jade from
-> Andrea and Giuseppe (all credits on podmon/crun are theirs) to
-> elaborate the point, for folks cced on the list who are not very
-> familiar with Podman.
-> 
-> Basically, the current order goes as follows:
-> 
->          podman -> conmon -> crun -> container_binary
->                                \
->                                 - seccomp done at crun level, not conmon
-> 
-> At runtime, what's left is:
-> 
->          conmon -> container_binary  /* podman disappears; crun disappears */
-> 
-> So, to go through and use seccomp notify to block `exec`, we can
-> either start the container_binary with a seccomp agent wrapper, or
-> bloat the common binary (as pointed out by Tycho).
-> 
-> If we go with the first approach, we will have:
-> 
->          podman -> conmon -> crun -> seccomp_agent -> container_binary
-> 
-> So, at runtime we'd be left with one more daemon:
-> 
->         conmon -> seccomp_agent -> container_binary
+This patch introduces the new function ima_show_template_uint(). This can
+be used for showing integers of different sizes in ASCII format. The
+function ima_show_template_data_ascii() automatically determines how to
+print a stored integer by checking the integer size.
 
-That seems like a strawman. I don't see why this has to be out of
-process or a separate daemon. Conmon uses a regular event loop. Adding
-support for processing notifier syscall notifications is
-straightforward. Moving it to a plugin as you mentioned below is a
-design decision not a necessity.
+If integers have been written in canonical format,
+ima_show_template_data_ascii() calls the appropriate leXX_to_cpu() function
+to correctly display the value.
 
-> 
-> Apparently, nobody likes one more daemon. So, the proposal from
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_template_lib.c | 38 ++++++++++++++++++++++-
+ security/integrity/ima/ima_template_lib.h |  2 ++
+ 2 files changed, 39 insertions(+), 1 deletion(-)
 
-I'm not sure such a blanket statements about an indeterminate group of
-people's alleged preferences constitutes a technical argument wny we
-need ebpf in seccomp.
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 4314d9a3514c..f23296c33da1 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -24,7 +24,8 @@ enum data_formats {
+ 	DATA_FMT_DIGEST = 0,
+ 	DATA_FMT_DIGEST_WITH_ALGO,
+ 	DATA_FMT_STRING,
+-	DATA_FMT_HEX
++	DATA_FMT_HEX,
++	DATA_FMT_UINT
+ };
+ 
+ static int ima_write_template_field_data(const void *data, const u32 datalen,
+@@ -88,6 +89,35 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 	case DATA_FMT_STRING:
+ 		seq_printf(m, "%s", buf_ptr);
+ 		break;
++	case DATA_FMT_UINT:
++		switch (field_data->len) {
++		case sizeof(u8):
++			seq_printf(m, "%u", *(u8 *)buf_ptr);
++			break;
++		case sizeof(u16):
++			if (ima_canonical_fmt)
++				seq_printf(m, "%u",
++					   le16_to_cpu(*(u16 *)buf_ptr));
++			else
++				seq_printf(m, "%u", *(u16 *)buf_ptr);
++			break;
++		case sizeof(u32):
++			if (ima_canonical_fmt)
++				seq_printf(m, "%u",
++					   le32_to_cpu(*(u32 *)buf_ptr));
++			else
++				seq_printf(m, "%u", *(u32 *)buf_ptr);
++			break;
++		case sizeof(u64):
++			if (ima_canonical_fmt)
++				seq_printf(m, "%llu",
++					   le64_to_cpu(*(u64 *)buf_ptr));
++			else
++				seq_printf(m, "%llu", *(u64 *)buf_ptr);
++			break;
++		default:
++			break;
++		}
+ 	default:
+ 		break;
+ 	}
+@@ -163,6 +193,12 @@ void ima_show_template_buf(struct seq_file *m, enum ima_show_type show,
+ 	ima_show_template_field_data(m, show, DATA_FMT_HEX, field_data);
+ }
+ 
++void ima_show_template_uint(struct seq_file *m, enum ima_show_type show,
++			    struct ima_field_data *field_data)
++{
++	ima_show_template_field_data(m, show, DATA_FMT_UINT, field_data);
++}
++
+ /**
+  * ima_parse_buf() - Parses lengths and data from an input buffer
+  * @bufstartp:       Buffer start address.
+diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
+index f4b2a2056d1d..54b67c80b315 100644
+--- a/security/integrity/ima/ima_template_lib.h
++++ b/security/integrity/ima/ima_template_lib.h
+@@ -27,6 +27,8 @@ void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
+ 			   struct ima_field_data *field_data);
+ void ima_show_template_buf(struct seq_file *m, enum ima_show_type show,
+ 			   struct ima_field_data *field_data);
++void ima_show_template_uint(struct seq_file *m, enum ima_show_type show,
++			    struct ima_field_data *field_data);
+ int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
+ 		  int maxfields, struct ima_field_data *fields, int *curfields,
+ 		  unsigned long *len_mask, int enforce_mask, char *bufname);
+-- 
+2.25.1
 
-> Giuseppe was/is to use user notifiers as plugins (.so) loaded by
-> conmon:
-> https://github.com/containers/conmon/pull/190
-> https://github.com/containers/crun/pull/438
-> 
-> Now, with the ebpf filter support, one can implement the same thing
-> using an embarrassingly simple ebpf filter and, thanks to Giuseppe,
-> this is well supported by crun.
-
-So I think this is trying to jump the gun by saying "Look, the result
-might be simpler.". That may even be the case - though I'm not yet
-convinced - but Andy's point stands that this brings a slew of issues on
-the table that need clear answers. Bringing stateful ebpf features into
-seccomp is a pretty big step and especially around the
-privilege/security model it looks pretty handwavy right now.
-
-Christian
