@@ -2,196 +2,91 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A905C433B4
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 10:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDCEC43462
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 11:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9F9F610CB
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 10:59:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B91560FEE
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 11:56:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238196AbhETLAg (ORCPT
+        id S242240AbhETL5g (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 May 2021 07:00:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37789 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S239151AbhETK5w (ORCPT
+        Thu, 20 May 2021 07:57:36 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3091 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236669AbhETLzf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 May 2021 06:57:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621508190;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=LQZCINOYapruthT4D/kwlMlBLQw/cWatEEnCVt5MAZo=;
-        b=B/uncVe8CjzsWE5VRYKRWSXu3aHQfVclycKnQdY9JaHc6EWJLub53MDT4XSWAVeAgGJ0B1
-        tzHaoFriX/dyXLwVbpKqLbUqOya/2Y3OwXgV36b8tHS1xY0UVtSRJC011gxO/3p7Uuf/HI
-        d/Hq68b/vR8RvK28kCgGDjx8D7yyrdA=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-486-zvnL7eXuN1ir7c5k61mAUg-1; Thu, 20 May 2021 06:56:26 -0400
-X-MC-Unique: zvnL7eXuN1ir7c5k61mAUg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BEE00801106;
-        Thu, 20 May 2021 10:56:24 +0000 (UTC)
-Received: from work-vm (ovpn-115-44.ams2.redhat.com [10.36.115.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7F60F5D742;
-        Thu, 20 May 2021 10:56:20 +0000 (UTC)
-Date:   Thu, 20 May 2021 11:56:17 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Brijesh Singh <brijesh.singh@amd.com>
-Cc:     Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@ibm.com>,
-        Jim Cadden <jcadden@ibm.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Hubertus Franke <frankeh@us.ibm.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Laszlo Ersek <lersek@redhat.com>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, ak@linux.intel.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] Allow access to confidential computing secret
- area
-Message-ID: <YKZAUdbikp2Pt0XV@work-vm>
-References: <20210513062634.2481118-1-dovmurik@linux.ibm.com>
- <2c8ae998-6dd0-bcb9-f735-e90da05ab9d9@amd.com>
+        Thu, 20 May 2021 07:55:35 -0400
+Received: from fraeml708-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm7Bn1QpXz6J68Q;
+        Thu, 20 May 2021 19:42:25 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml708-chm.china.huawei.com (10.206.15.36) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 20 May 2021 13:54:09 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Thu, 20 May 2021 13:54:09 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 3/7] ima: Introduce template fields mntuidmap and
+ mntgidmap
+Thread-Topic: [PATCH 3/7] ima: Introduce template fields mntuidmap and
+ mntgidmap
+Thread-Index: AQHXTVYl5/ijYWmHy0e6NDJab3clu6rr+yiAgAABJoCAAEZSAA==
+Date:   Thu, 20 May 2021 11:54:08 +0000
+Message-ID: <f3dfccf2aa5f4c5b96ff6c55a222b7dd@huawei.com>
+References: <20210520085701.465369-1-roberto.sassu@huawei.com>
+ <20210520085701.465369-4-roberto.sassu@huawei.com>
+ <20210520093659.oeeytegx2tvzp33e@wittgenstein>
+ <20210520094105.x2k3bc53xejfl5b2@wittgenstein>
+In-Reply-To: <20210520094105.x2k3bc53xejfl5b2@wittgenstein>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c8ae998-6dd0-bcb9-f735-e90da05ab9d9@amd.com>
-User-Agent: Mutt/2.0.7 (2021-05-04)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Brijesh Singh (brijesh.singh@amd.com) wrote:
-> Hi Dov,
-> 
-> 
-> On 5/13/21 1:26 AM, Dov Murik wrote:
-> > Confidential computing hardware such as AMD SEV (Secure Encrypted
-> > Virtualization) allows guest owners to inject secrets into the VMs
-> > memory without the host/hypervisor being able to read them.  In SEV,
-> > secret injection is performed early in the VM launch process, before the
-> > guest starts running.
-> >
-> > Support for secret injection is already available in OVMF (in its AmdSev
-> > package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the Sev
-> > Secret area using a configuration table" [1]), but the secrets were not
-> > available in the guest kernel.
-> >
-> > The patch series copies the secrets from the EFI-provided memory to
-> > kernel reserved memory, and optionally exposes them to userspace via
-> > securityfs using a new sev_secret kernel module.
-> >
-> > The first patch in efi/libstub copies the secret area from the EFI
-> > memory to specially allocated memory; the second patch reserves that
-> > memory block; and the third patch introduces the new sev_secret module
-> > that exposes the content of the secret entries as securityfs files.
-> >
-> > This has been tested with AMD SEV guests, but the kernel side of
-> > handling the secret area has no SEV-specific dependencies, and therefore
-> > should be usable for any confidential computing hardware that can
-> > publish the secret area via the standard EFI config table entry.
-> >
-> > Here is a simple example for usage of the sev_secret module in a guest to which
-> > secrets were injected during launch:
-> >
-> > # modprobe sev_secret
-> > # ls -la /sys/kernel/security/sev_secret
-> > total 0
-> > drwxr-xr-x 2 root root 0 May 12 18:03 .
-> > drwxr-xr-x 3 root root 0 May 12 18:02 ..
-> > -r--r----- 1 root root 0 May 12 18:03 736870e5-84f0-4973-92ec-06879ce3da0b
-> > -r--r----- 1 root root 0 May 12 18:03 83c83f7f-1356-4975-8b7e-d3a0b54312c6
-> > -r--r----- 1 root root 0 May 12 18:03 9553f55d-3da2-43ee-ab5d-ff17f78864d2
-> > -r--r----- 1 root root 0 May 12 18:03 e6f5a162-d67f-4750-a67c-5d065f2a9910
-> >
-> > # xxd /sys/kernel/security/sev_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
-> > 00000000: 7468 6573 652d 6172 652d 7468 652d 6b61  these-are-the-ka
-> > 00000010: 7461 2d73 6563 7265 7473 0001 0203 0405  ta-secrets......
-> > 00000020: 0607                                     ..
-> 
-> I am adding a new virt driver to help get the attestation report for the
-> SEV-SNP guest. I understand they both are different, in case of the SEV
-> the attestation is already completed and we are simply exposing the
-> secret provided after the attestation to the userspace, whereas in SNP,
-> the userspace is querying the attestation and will probably derive keys
-> etc based on the attestation report. I am wondering if we should merge
-> both the SEV secret and SNP attestation query in a single driver ?
-> Should we cover usecases where SEV guest is not booted under the EFI ?
-> Also, it appears that this driver need to be manually loaded, should we
-> create a platform device so that the driver binds to platform device and
-> use the resource structure to find the location of the secret data?
-
-The nice thing about Dov's device/file is that it's a simple text file
-that userspace can then read the secret out of;  I'm not sure if there's
-anything similar in SNP (or for that matter TDX, cc'ing in Andi)
-
-Dave
-
-> I was trying to answer some of these questions SNP series. See these patches
-> 
-> https://marc.info/?l=kvm&m=161978514019741&w=2
-> 
-> https://marc.info/?l=kvm&m=161978514119744&w=2
-> 
-> https://marc.info/?l=kvm&m=161978514219751&w=2
-> 
-> 
-> >
-> > [1] https://github.com/tianocore/edk2/commit/01726b6d23d4
-> >
-> >
-> > Cc: Laszlo Ersek <lersek@redhat.com>
-> > Cc: Ashish Kalra <ashish.kalra@amd.com>
-> > Cc: Brijesh Singh <brijesh.singh@amd.com>
-> > Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> > Cc: James Bottomley <jejb@linux.ibm.com>
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> > Cc: linux-efi@vger.kernel.org
-> > Cc: linux-security-module@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> >
-> > Dov Murik (3):
-> >   efi/libstub: Copy confidential computing secret area
-> >   efi: Reserve confidential computing secret area
-> >   virt: Add sev_secret module to expose confidential computing secrets
-> >
-> >  drivers/firmware/efi/Makefile                 |   2 +-
-> >  drivers/firmware/efi/confidential-computing.c |  41 +++
-> >  drivers/firmware/efi/efi.c                    |   5 +
-> >  drivers/firmware/efi/libstub/Makefile         |   3 +-
-> >  .../efi/libstub/confidential-computing.c      |  68 +++++
-> >  drivers/firmware/efi/libstub/efi-stub.c       |   2 +
-> >  drivers/firmware/efi/libstub/efistub.h        |   2 +
-> >  drivers/firmware/efi/libstub/x86-stub.c       |   2 +
-> >  drivers/virt/Kconfig                          |   2 +
-> >  drivers/virt/Makefile                         |   1 +
-> >  drivers/virt/sev_secret/Kconfig               |  11 +
-> >  drivers/virt/sev_secret/Makefile              |   2 +
-> >  drivers/virt/sev_secret/sev_secret.c          | 260 ++++++++++++++++++
-> >  include/linux/efi.h                           |  11 +
-> >  14 files changed, 410 insertions(+), 2 deletions(-)
-> >  create mode 100644 drivers/firmware/efi/confidential-computing.c
-> >  create mode 100644 drivers/firmware/efi/libstub/confidential-computing.c
-> >  create mode 100644 drivers/virt/sev_secret/Kconfig
-> >  create mode 100644 drivers/virt/sev_secret/Makefile
-> >  create mode 100644 drivers/virt/sev_secret/sev_secret.c
-> >
-> >
-> > base-commit: c06a2ba62fc401b7aaefd23f5d0bc06d2457ccc1
--- 
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
-
+PiBGcm9tOiBDaHJpc3RpYW4gQnJhdW5lciBbbWFpbHRvOmNocmlzdGlhbi5icmF1bmVyQHVidW50
+dS5jb21dDQo+IFNlbnQ6IFRodXJzZGF5LCBNYXkgMjAsIDIwMjEgMTE6NDEgQU0NCj4gT24gVGh1
+LCBNYXkgMjAsIDIwMjEgYXQgMTE6Mzc6MDdBTSArMDIwMCwgQ2hyaXN0aWFuIEJyYXVuZXIgd3Jv
+dGU6DQo+ID4gT24gVGh1LCBNYXkgMjAsIDIwMjEgYXQgMTA6NTY6NTdBTSArMDIwMCwgUm9iZXJ0
+byBTYXNzdSB3cm90ZToNCj4gPiA+IFRoaXMgcGF0Y2ggaW50cm9kdWNlcyB0aGUgbmV3IHRlbXBs
+YXRlIGZpZWxkcyBtbnR1aWRtYXAgYW5kIG1udGdpZG1hcCwNCj4gPiA+IHdoaWNoIGluY2x1ZGUg
+cmVzcGVjdGl2ZWx5IHRoZSBVSUQgYW5kIEdJRCBtYXBwaW5ncyBvZiB0aGUgaWRtYXBwZWQNCj4g
+bW91bnQsDQo+ID4gPiBpZiB0aGUgdXNlciBuYW1lc3BhY2UgaXMgbm90IHRoZSBpbml0aWFsIG9u
+ZS4NCj4gPiA+DQo+ID4gPiBUaGVzZSB0ZW1wbGF0ZSBmaWVsZHMsIHdoaWNoIHNob3VsZCBiZSBp
+bmNsdWRlZCB3aGVuZXZlciB0aGUgaXVpZCBhbmQgdGhlDQo+ID4gPiBpZ2lkIGZpZWxkcyBhcmUg
+aW5jbHVkZWQsIGFsbG93IHJlbW90ZSB2ZXJpZmllcnMgdG8gZmluZCB0aGUgb3JpZ2luYWwgVUlE
+DQo+ID4gPiBhbmQgR0lEIG9mIHRoZSBpbm9kZSBkdXJpbmcgc2lnbmF0dXJlIHZlcmlmaWNhdGlv
+bi4gVGhlIGl1aWQgYW5kIGlnaWQNCj4gPiA+IGZpZWxkcyBpbmNsdWRlIHRoZSBtYXBwZWQgVUlE
+IGFuZCBHSUQgd2hlbiB0aGUgaW5vZGUgaXMgaW4gYW4gaWRtYXBwZWQNCj4gPiA+IG1vdW50Lg0K
+PiA+ID4NCj4gPiA+IFRoaXMgc29sdXRpb24gaGFzIGJlZW4gcHJlZmVycmVkIHRvIHByb3ZpZGlu
+ZyBhbHdheXMgdGhlIG9yaWdpbmFsIFVJRCBhbmQNCj4gPiA+IEdJRCwgcmVnYXJkbGVzcyBvZiB3
+aGV0aGVyIHRoZSBpbm9kZSBpcyBpbiBhbiBpZG1hcHBlZCBtb3VudCBvciBub3QsIGFzDQo+ID4g
+PiB0aGUgbWFwcGVkIFVJRCBhbmQgR0lEIGFyZSB0aG9zZSBzZWVuIGJ5IHByb2Nlc3NlcyBhbmQg
+bWF0Y2hlZCB3aXRoDQo+IHRoZSBJTUENCj4gPiA+IHBvbGljeS4NCj4gPg0KPiA+IEhtLCBsb29r
+aW5nIGF0IHRoZSBjb2RlIHRoaXMgZG9lc24ndCBzZWVtIGxpa2UgYSBnb29kIGlkZWEgdG8gbWUu
+IEkNCj4gPiB0aGluayB3ZSBzaG91bGQgYXZvaWQgdGhhdCBhbmQganVzdCByZWx5IG9uIHRoZSBv
+cmlnaW5hbCB1aWQgYW5kIGdpZC4NCj4gDQo+IEl0J2QgYmUgb2sgdG8gaW5jbHVkZSB0aGUgbWFw
+cGVkIHVpZC9naWQgYnV0IGRvbid0IGNvcHkgdGhlIG1hcHBpbmcNCj4gaXRzZWxmLg0KDQpVaG0s
+IHdlIHdvdWxkIG5lZWQgYSB3YXkgdG8gb2J0YWluIHRoZSBvcmlnaW5hbCBVSUQgYW5kIEdJRCB0
+bw0KdmVyaWZ5IHRoZSBwb3J0YWJsZSBzaWduYXR1cmUuDQoNClJvYmVydG8NCg0KSFVBV0VJIFRF
+Q0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVjdG9y
+OiBMaSBQZW5nLCBMaSBKaWFuLCBTaGkgWWFubGkNCg==
