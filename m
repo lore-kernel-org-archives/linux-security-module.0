@@ -2,41 +2,42 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AD8C433B4
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD64CC43603
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 946766135A
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA865613AE
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231246AbhETI6o (ORCPT
+        id S231395AbhETI6q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 May 2021 04:58:44 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3083 "EHLO
+        Thu, 20 May 2021 04:58:46 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3085 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229536AbhETI6o (ORCPT
+        with ESMTP id S231193AbhETI6p (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 May 2021 04:58:44 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm3Gn5cyRz6Vyjj;
-        Thu, 20 May 2021 16:45:37 +0800 (CST)
+        Thu, 20 May 2021 04:58:45 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm3Gq13nkz6Vykc;
+        Thu, 20 May 2021 16:45:39 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 20 May 2021 10:57:20 +0200
+ 15.1.2176.2; Thu, 20 May 2021 10:57:22 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@srcf.ucam.org>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 1/7] ima: Add ima_show_template_uint() template library function
-Date:   Thu, 20 May 2021 10:56:55 +0200
-Message-ID: <20210520085701.465369-2-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH 3/7] ima: Introduce template fields mntuidmap and mntgidmap
+Date:   Thu, 20 May 2021 10:56:57 +0200
+Message-ID: <20210520085701.465369-4-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210520085701.465369-1-roberto.sassu@huawei.com>
 References: <20210520085701.465369-1-roberto.sassu@huawei.com>
@@ -50,97 +51,166 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch introduces the new function ima_show_template_uint(). This can
-be used for showing integers of different sizes in ASCII format. The
-function ima_show_template_data_ascii() automatically determines how to
-print a stored integer by checking the integer size.
+This patch introduces the new template fields mntuidmap and mntgidmap,
+which include respectively the UID and GID mappings of the idmapped mount,
+if the user namespace is not the initial one.
 
-If integers have been written in canonical format,
-ima_show_template_data_ascii() calls the appropriate leXX_to_cpu() function
-to correctly display the value.
+These template fields, which should be included whenever the iuid and the
+igid fields are included, allow remote verifiers to find the original UID
+and GID of the inode during signature verification. The iuid and igid
+fields include the mapped UID and GID when the inode is in an idmapped
+mount.
 
+This solution has been preferred to providing always the original UID and
+GID, regardless of whether the inode is in an idmapped mount or not, as
+the mapped UID and GID are those seen by processes and matched with the IMA
+policy.
+
+Cc: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/ima/ima_template_lib.c | 38 ++++++++++++++++++++++-
- security/integrity/ima/ima_template_lib.h |  2 ++
- 2 files changed, 39 insertions(+), 1 deletion(-)
+ Documentation/security/IMA-templates.rst  |  4 ++
+ security/integrity/ima/ima_template.c     |  6 ++
+ security/integrity/ima/ima_template_lib.c | 83 +++++++++++++++++++++++
+ security/integrity/ima/ima_template_lib.h |  4 ++
+ 4 files changed, 97 insertions(+)
 
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 4314d9a3514c..f23296c33da1 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -24,7 +24,8 @@ enum data_formats {
- 	DATA_FMT_DIGEST = 0,
- 	DATA_FMT_DIGEST_WITH_ALGO,
- 	DATA_FMT_STRING,
--	DATA_FMT_HEX
-+	DATA_FMT_HEX,
-+	DATA_FMT_UINT
+diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
+index bf8ce4cf5878..48a2df22a1a1 100644
+--- a/Documentation/security/IMA-templates.rst
++++ b/Documentation/security/IMA-templates.rst
+@@ -77,6 +77,10 @@ descriptors by adding their identifier to the format string
+  - 'evmsig': the EVM portable signature;
+  - 'iuid': the inode UID;
+  - 'igid': the inode GID;
++ - 'mntuidmap': the UID mappings of the idmapped mount (nr extents,
++    [ uid_gid_extent1 ] ... [ uid_gid_extentN ], all u32 in canonical format);
++ - 'mntgidmap': the GID mappings of the idmapped mount (same format as
++   'mntuidmap');
+ 
+ 
+ Below, there is the list of defined template descriptors:
+diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
+index a5ecd9e2581b..19de115b985b 100644
+--- a/security/integrity/ima/ima_template.c
++++ b/security/integrity/ima/ima_template.c
+@@ -51,6 +51,12 @@ static const struct ima_template_field supported_fields[] = {
+ 	 .field_show = ima_show_template_uint},
+ 	{.field_id = "igid", .field_init = ima_eventinodegid_init,
+ 	 .field_show = ima_show_template_uint},
++	{.field_id = "mntuidmap",
++	 .field_init = ima_eventmnt_userns_uid_map_init,
++	 .field_show = ima_show_template_sig},
++	{.field_id = "mntgidmap",
++	 .field_init = ima_eventmnt_userns_gid_map_init,
++	 .field_show = ima_show_template_sig},
  };
  
- static int ima_write_template_field_data(const void *data, const u32 datalen,
-@@ -88,6 +89,35 @@ static void ima_show_template_data_ascii(struct seq_file *m,
- 	case DATA_FMT_STRING:
- 		seq_printf(m, "%s", buf_ptr);
- 		break;
-+	case DATA_FMT_UINT:
-+		switch (field_data->len) {
-+		case sizeof(u8):
-+			seq_printf(m, "%u", *(u8 *)buf_ptr);
-+			break;
-+		case sizeof(u16):
-+			if (ima_canonical_fmt)
-+				seq_printf(m, "%u",
-+					   le16_to_cpu(*(u16 *)buf_ptr));
-+			else
-+				seq_printf(m, "%u", *(u16 *)buf_ptr);
-+			break;
-+		case sizeof(u32):
-+			if (ima_canonical_fmt)
-+				seq_printf(m, "%u",
-+					   le32_to_cpu(*(u32 *)buf_ptr));
-+			else
-+				seq_printf(m, "%u", *(u32 *)buf_ptr);
-+			break;
-+		case sizeof(u64):
-+			if (ima_canonical_fmt)
-+				seq_printf(m, "%llu",
-+					   le64_to_cpu(*(u64 *)buf_ptr));
-+			else
-+				seq_printf(m, "%llu", *(u64 *)buf_ptr);
-+			break;
-+		default:
-+			break;
-+		}
- 	default:
- 		break;
- 	}
-@@ -163,6 +193,12 @@ void ima_show_template_buf(struct seq_file *m, enum ima_show_type show,
- 	ima_show_template_field_data(m, show, DATA_FMT_HEX, field_data);
+ /*
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index a191b861548b..bc4919d90c3a 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -609,3 +609,86 @@ int ima_eventinodegid_init(struct ima_event_data *event_data,
+ {
+ 	return ima_eventinodedac_init_common(event_data, field_data, false);
  }
- 
-+void ima_show_template_uint(struct seq_file *m, enum ima_show_type show,
-+			    struct ima_field_data *field_data)
++
++int ima_eventmnt_userns_common_init(struct ima_event_data *event_data,
++				    struct ima_field_data *field_data,
++				    bool get_uid_map)
 +{
-+	ima_show_template_field_data(m, show, DATA_FMT_UINT, field_data);
++	struct user_namespace *mnt_userns;
++	u8 *buf, *buf_ptr;
++	struct uid_gid_map *map;
++	int rc, i;
++
++	if (!event_data->file)
++		return 0;
++
++	mnt_userns = file_mnt_user_ns(event_data->file);
++	if (mnt_userns == &init_user_ns)
++		return 0;
++
++	map = &mnt_userns->uid_map;
++	if (!get_uid_map)
++		map = &mnt_userns->gid_map;
++
++	buf_ptr = buf = kmalloc(sizeof(map->nr_extents) +
++				map->nr_extents * sizeof(*map->extent),
++				GFP_KERNEL);
++	if (!buf)
++		return 0;
++
++	memcpy(buf_ptr, &map->nr_extents, sizeof(map->nr_extents));
++
++	if (ima_canonical_fmt)
++		*(u32 *)buf_ptr = cpu_to_le32(*(u32 *)buf_ptr);
++
++	buf_ptr += sizeof(u32);
++
++	for (i = 0; i < map->nr_extents; i++) {
++		struct uid_gid_extent *extent;
++
++		/* Taken from m_start() in kernel/user_namespace.c. */
++		if (map->nr_extents <= UID_GID_MAP_MAX_BASE_EXTENTS)
++			extent = &map->extent[i];
++		else
++			extent = &map->forward[i];
++
++		memcpy(buf_ptr, &extent->first, sizeof(extent->first));
++		if (ima_canonical_fmt)
++			*(u32 *)buf_ptr = cpu_to_le32(*(u32 *)buf_ptr);
++		buf_ptr += sizeof(extent->first);
++		memcpy(buf_ptr, &extent->lower_first,
++		       sizeof(extent->lower_first));
++		if (ima_canonical_fmt)
++			*(u32 *)buf_ptr = cpu_to_le32(*(u32 *)buf_ptr);
++		buf_ptr += sizeof(extent->lower_first);
++		memcpy(buf_ptr, &extent->count, sizeof(extent->count));
++		if (ima_canonical_fmt)
++			*(u32 *)buf_ptr = cpu_to_le32(*(u32 *)buf_ptr);
++		buf_ptr += sizeof(extent->count);
++	}
++
++	rc = ima_write_template_field_data((char *)buf, buf_ptr - buf,
++					   DATA_FMT_HEX, field_data);
++	kfree(buf);
++	return rc;
 +}
 +
- /**
-  * ima_parse_buf() - Parses lengths and data from an input buffer
-  * @bufstartp:       Buffer start address.
++/*
++ *  ima_eventmnt_userns_uid_map_init - include the UID mappings of the idmapped
++ *  mount as part of the template data
++ */
++int ima_eventmnt_userns_uid_map_init(struct ima_event_data *event_data,
++				     struct ima_field_data *field_data)
++{
++	return ima_eventmnt_userns_common_init(event_data, field_data, true);
++}
++
++/*
++ *  ima_eventmnt_userns_gid_map_init - include the GID mappings of the idmapped
++ *  mount as part of the template data
++ */
++int ima_eventmnt_userns_gid_map_init(struct ima_event_data *event_data,
++				     struct ima_field_data *field_data)
++{
++	return ima_eventmnt_userns_common_init(event_data, field_data, false);
++}
 diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-index f4b2a2056d1d..54b67c80b315 100644
+index b0aaf109f386..51ee66fc7230 100644
 --- a/security/integrity/ima/ima_template_lib.h
 +++ b/security/integrity/ima/ima_template_lib.h
-@@ -27,6 +27,8 @@ void ima_show_template_sig(struct seq_file *m, enum ima_show_type show,
+@@ -54,4 +54,8 @@ int ima_eventinodeuid_init(struct ima_event_data *event_data,
  			   struct ima_field_data *field_data);
- void ima_show_template_buf(struct seq_file *m, enum ima_show_type show,
+ int ima_eventinodegid_init(struct ima_event_data *event_data,
  			   struct ima_field_data *field_data);
-+void ima_show_template_uint(struct seq_file *m, enum ima_show_type show,
-+			    struct ima_field_data *field_data);
- int ima_parse_buf(void *bufstartp, void *bufendp, void **bufcurp,
- 		  int maxfields, struct ima_field_data *fields, int *curfields,
- 		  unsigned long *len_mask, int enforce_mask, char *bufname);
++int ima_eventmnt_userns_uid_map_init(struct ima_event_data *event_data,
++				     struct ima_field_data *field_data);
++int ima_eventmnt_userns_gid_map_init(struct ima_event_data *event_data,
++				     struct ima_field_data *field_data);
+ #endif /* __LINUX_IMA_TEMPLATE_LIB_H */
 -- 
 2.25.1
 
