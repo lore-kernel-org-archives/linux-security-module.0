@@ -4,284 +4,374 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_RED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AFEC43460
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 22:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4647AC433ED
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB90E6139A
-	for <linux-security-module@archiver.kernel.org>; Wed, 19 May 2021 22:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2798461184
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:28:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229681AbhESWGx (ORCPT
+        id S231160AbhETI3X (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 19 May 2021 18:06:53 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:50338 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229455AbhESWGx (ORCPT
+        Thu, 20 May 2021 04:29:23 -0400
+Received: from mx0b-00007101.pphosted.com ([148.163.139.28]:45316 "EHLO
+        mx0b-00007101.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230102AbhETI3W (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 19 May 2021 18:06:53 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14JM2OrL020340;
-        Wed, 19 May 2021 22:05:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2020-01-29;
- bh=FKHLdLhbWXuFLVxEhHVD15ZDFpb7y5boG65aR0G1UBQ=;
- b=nczvtCNnD49XHPPohNTdzKeONgjAUq/MSFIr7WN2Js2U+3EWmVyl2VtEwNAHMEju4DVT
- 0aUedtIOmBRL9gTfUn34vCRz07gywqcRCuIwX+xONRGtNMRpIuGcNk3u+VXEWOE8F86O
- mGlje8+ymLLCk9r3ba0nkD2DyHbECNEq05aPt1UijcsXDddm21Wp6gDR1jV995XwtMsB
- dH4S8usInfq/SX0ARV6/mKn1vYx/7E7HB5dh28AEyafo/0r6DAE8iO75IL+J3XbUjkTd
- MwB5GqLu5Xu1tAEGYKa2/Mg+GNMGjIF7oB33QEaTqPRZlKXBNBA6uZvpPeZQc5LFwf+k pQ== 
-Received: from oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 38n4ukr608-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 May 2021 22:05:07 +0000
-Received: from userp3020.oracle.com (userp3020.oracle.com [127.0.0.1])
-        by pps.podrdrct (8.16.0.36/8.16.0.36) with SMTP id 14JM56DB037041;
-        Wed, 19 May 2021 22:05:06 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2177.outbound.protection.outlook.com [104.47.59.177])
-        by userp3020.oracle.com with ESMTP id 38n4914mpt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 19 May 2021 22:05:06 +0000
+        Thu, 20 May 2021 04:29:22 -0400
+X-Greylist: delayed 358 seconds by postgrey-1.27 at vger.kernel.org; Thu, 20 May 2021 04:29:22 EDT
+Received: from pps.filterd (m0166259.ppops.net [127.0.0.1])
+        by mx0b-00007101.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14K8Mq69010924;
+        Thu, 20 May 2021 08:28:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=illinois.edu; h=references :
+ in-reply-to : from : date : message-id : subject : to : cc : content-type
+ : content-transfer-encoding : mime-version; s=campusrelays;
+ bh=1vPOD5/SmQsAgA03fHyImG1OAuwriWypWFoAzmvGm6I=;
+ b=sPNwiFe6S8wsmQIxVY4LXrjMwLMd7xOh1Hizn+ZctPDGsa2piZ2uwdpFZwoZWkLxp3c/
+ vOPPbtujJ3MSOjx6Uwr580BNcpUja1wBzDxPW+z/7odxxgesWtek32ZTNQ8czevptCp7
+ nFyoZ1Z6e/kOxk/Pa2BHgCNj667xmJgYIRYi3qgMpBusajhwZ0JdP2oOxYDS7XEX0AvH
+ c2BqeS1bgLiWQ4c+ciHVIH5tXEkz1V2M5pcGu+ryqXReB/mLWXI/0GtWSwtq5WjNKGuK
+ rTPHAJZETNPm97X7iadUJyf2aOl42tir/VmfyHlGlJVypNlR19WVokxtJAhgfoYRUZRz WQ== 
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
+        by mx0b-00007101.pphosted.com with ESMTP id 38n3w781f1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 20 May 2021 08:28:00 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eKmdq8GGkZlm5BBVH3u2dlMhsGOUfG7ZA3rQDwGBhnpK/XrYhy+iZ0b1ojgV/Wn3cCc6dYFQ0lEF6CoY1xI+qxBhsj6XHRNBwzrgzyqJWzCn9ZdSy3Wb5LZYrO2/z0whvvQkw5HCYQcL8u8lDFVoMstrd4eVNBkxCO2x4W3/OOj7dDFyaWqBxKm+a5L9M1tVv41ynfpAdVu0RW5sd5UDSr3Msu2vAQ5iUI7JRfhcj+/GjHeszSVaVhZCD52ubEhxtLZV9iLRUTqJO+A2FnijGKvRLQc0SPtDLITTt5KVC+nCwU9JyeqgojXNIDdCU24/ghyzHJ8S97xO0UrZDrcGaw==
+ b=IQqHeavvrcNIk6ap+EPQumSzUIVt9lspEKAy9xQW7pkny6K+jJW3rvZY3W8Mf0OVg/XYj+jUS4V9Tzfy2ZcS3jveGfEevnCBEI15izJEWsuTV0FqV6cwfh9MmTmejmuGgUQS+wGGY+A5oVs0KCUFji8slyNyk1ZuHCDxp3kjdBG8FLO+XTsLL955gj3WM7W19IfE9M7bTK3fOtPfh0p0tG3Bq4oz5qxvfIackICuA0aVLCyu4kf3mhojNFXyGjbNkVoJldDUdFmFnh4h3x787Mci8YyEBL9TnftNZQFaLQazocyYhWfJRu3oat+CDE05y6qRxJuCmV/jbr4GIuPubA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FKHLdLhbWXuFLVxEhHVD15ZDFpb7y5boG65aR0G1UBQ=;
- b=NeBigvsfogTBTgSiMFAhmPjhQKBlCJSZGxHVBYkDj0OUpdRxIrP1vWu2i2ryipxmM9X/G5RtM5ghRxFbNtQvo0/1y5N4wh0YiLhnZKRmmEbeyYvkHpURbPeAsRilooRBFSRMRmcbMx0cLUlomxDYtO9eYaSr+XPv4JPL9lJSgxFC2o9jVsae/TWB7snUKsQPnPlbLHPW2SbYwYrOGZX4cpmMSh21OSSYR3P8zLzIcnXhdbqtzM1e1aOLuc5KGYaw61nbCjxXaPEKr71SiKJZa+80onN6M+1mR9K39RdbVXd6FWcwzfekZHWf/hkBd+qR7D+5s0SHzoZAYcmuBVnwjg==
+ bh=1vPOD5/SmQsAgA03fHyImG1OAuwriWypWFoAzmvGm6I=;
+ b=HUGB+BA9iPi7hjmZbOeGNIUc4T2o9nuWDQND07o1RQr9l0m9YakTJHDsEkT6aCbMFMMIXjhKC46fJ5xovD9qqFL6aAXK2MUMUr9st0RO6rkISJNGhoMAIeVPJM2/sClAcpE6SCsCSg1eTVDICOIZw2t6GbA+T8jwyvdY6MrbDhQPK/DvSeB9SZY9DJWB3ZHGekjNif7GXIfD4KKDYLgDjnBoxa8Q1U6vI5uYysGsUklKWJWjpVeV/rJ1jUS126WiEwMBWBikWyDbQcJR78p41RID47GWHXdHQAucTfOMCPOLPoEhWAzBt/gHlYI3C18njvlzelomYsqT05UV6IuNmg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FKHLdLhbWXuFLVxEhHVD15ZDFpb7y5boG65aR0G1UBQ=;
- b=duGF7JRysxc0THppjBt/DjcHb1qDUzR7yy04RlGW9SXdYZ4r0hmkaS7dVN8MF6h77XbzXanuKNcIj1isr/Fgboe0PHHbUoDEHickw7ojzGGX3RDwIcfASMKcv1xDeCuaJsPPjXSWx9g9N2qdjwPjTbCX+ZBLWR7veCXJbR1tNSk=
-Authentication-Results: linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=none action=none header.from=oracle.com;
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH0PR10MB5100.namprd10.prod.outlook.com (2603:10b6:610:df::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4129.28; Wed, 19 May
- 2021 22:05:03 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::99fc:aabb:5cff:b177]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::99fc:aabb:5cff:b177%3]) with mapi id 15.20.4129.033; Wed, 19 May 2021
- 22:05:03 +0000
-Content-Type: text/plain; charset=utf-8
-Subject: Re: [RFC PATCH 0/3] Add additional MOK vars
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <fdb42621e7145ce81a34840cbcf0914874c78913.camel@linux.ibm.com>
-Date:   Wed, 19 May 2021 16:04:58 -0600
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        torvalds@linux-foundation.org,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        pjones@redhat.com, glin@suse.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>
+ smtp.mailfrom=illinois.edu; dmarc=pass action=none header.from=illinois.edu;
+ dkim=pass header.d=illinois.edu; arc=none
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=illinois.edu;
+Received: from DM5PR11MB1692.namprd11.prod.outlook.com (2603:10b6:3:d::23) by
+ DM5PR11MB1436.namprd11.prod.outlook.com (2603:10b6:4:8::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4129.26; Thu, 20 May 2021 08:27:59 +0000
+Received: from DM5PR11MB1692.namprd11.prod.outlook.com
+ ([fe80::21bb:c117:6de2:2ac8]) by DM5PR11MB1692.namprd11.prod.outlook.com
+ ([fe80::21bb:c117:6de2:2ac8%8]) with mapi id 15.20.4129.034; Thu, 20 May 2021
+ 08:27:58 +0000
+X-Gm-Message-State: AOAM530+zwn+1QLswY66Pm0E+e7XRoKl7mWrP3QG4eMyM9LaT5yClfF2
+        gX3b1tATDcTJ4SBhdbbvrCHRN/+L2rDeLmgdB60=
+X-Google-Smtp-Source: ABdhPJzYU8PPIuEKhtS+s4rdR95FWltc+cSLP5SJssuxJoJj622hGX0S886hCqXMZOEN4UXHj5aN0EnLbLZISELxyQ8=
+X-Received: by 2002:a25:38ca:: with SMTP id f193mr5520847yba.422.1621498944674;
+ Thu, 20 May 2021 01:22:24 -0700 (PDT)
+References: <cover.1620499942.git.yifeifz2@illinois.edu> <CALCETrUQBonh5BC4eomTLpEOFHVcQSz9SPcfOqNFTf2TPht4-Q@mail.gmail.com>
+ <CABqSeASYRXMwTQwLfm_Tapg45VUy9sPfV7BeeV8p7XJrDoLf+Q@mail.gmail.com>
+ <fffbea8189794a8da539f6082af3de8e@DM5PR11MB1692.namprd11.prod.outlook.com>
+ <CAGMVDEGzGB4+6gJPTw6Tdng5ur9Jua+mCbqwPoNZ16EFaDcmjA@mail.gmail.com> <eae2a0e5038b41c4af87edcb3d4cdc13@DM5PR11MB1692.namprd11.prod.outlook.com>
+In-Reply-To: <eae2a0e5038b41c4af87edcb3d4cdc13@DM5PR11MB1692.namprd11.prod.outlook.com>
+From:   Tianyin Xu <tyxu@illinois.edu>
+Date:   Thu, 20 May 2021 03:22:13 -0500
+X-Gmail-Original-Message-ID: <CAGMVDEFE8g5XKyQbB1xaK3ve58cENN2hZm3u=ktpGFgmBdQkeQ@mail.gmail.com>
+Message-ID: <CAGMVDEFE8g5XKyQbB1xaK3ve58cENN2hZm3u=ktpGFgmBdQkeQ@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next seccomp 00/12] eBPF seccomp filters
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        YiFei Zhu <zhuyifei1999@gmail.com>,
+        "containers@lists.linux.dev" <containers@lists.linux.dev>,
+        bpf <bpf@vger.kernel.org>, "Zhu, YiFei" <yifeifz2@illinois.edu>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
+        Claudio Canella <claudio.canella@iaik.tugraz.at>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Hubertus Franke <frankeh@us.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        "Jia, Jinghao" <jinghao7@illinois.edu>,
+        "Torrellas, Josep" <torrella@illinois.edu>,
+        Kees Cook <keescook@chromium.org>,
+        Tobin Feldman-Fitzthum <tobin@ibm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Will Drewry <wad@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <7F861393-7971-43AB-A741-223B8A50FFA0@oracle.com>
-References: <20210517225714.498032-1-eric.snowberg@oracle.com>
- <fdb42621e7145ce81a34840cbcf0914874c78913.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>
-X-Mailer: Apple Mail (2.3273)
-X-Originating-IP: [24.52.35.144]
-X-ClientProxiedBy: SA0PR11CA0207.namprd11.prod.outlook.com
- (2603:10b6:806:1bc::32) To CH2PR10MB4150.namprd10.prod.outlook.com
- (2603:10b6:610:ac::13)
+X-Originating-IP: [209.85.222.52]
+X-ClientProxiedBy: BN7PR06CA0069.namprd06.prod.outlook.com
+ (2603:10b6:408:34::46) To DM5PR11MB1692.namprd11.prod.outlook.com
+ (2603:10b6:3:d::23)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [172.16.177.128] (24.52.35.144) by SA0PR11CA0207.namprd11.prod.outlook.com (2603:10b6:806:1bc::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4129.33 via Frontend Transport; Wed, 19 May 2021 22:05:02 +0000
+Received: from mail-ua1-f52.google.com (209.85.222.52) by BN7PR06CA0069.namprd06.prod.outlook.com (2603:10b6:408:34::46) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4150.23 via Frontend Transport; Thu, 20 May 2021 08:27:58 +0000
+Received: by mail-ua1-f52.google.com with SMTP id 20so5293281uaf.12;        Thu, 20 May 2021 01:27:58 -0700 (PDT)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 51fafae3-851b-48a5-0be7-08d91b12277d
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5100:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CH0PR10MB5100BA466A8F6D44F56B7D6F872B9@CH0PR10MB5100.namprd10.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: d1b2fcb7-ea24-45a6-3a6a-08d91b692cd8
+X-MS-TrafficTypeDiagnostic: DM5PR11MB1436:
+X-Microsoft-Antispam-PRVS: <DM5PR11MB1436ABC3A3779B97F2D58E80BB2A9@DM5PR11MB1436.namprd11.prod.outlook.com>
 X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: qu9PNniE0HV716F+VKpQFSVG4InhZaufwG+fF5j2SMB/AxuNranQPEL6WAiYlQ5Vvbfk+kgmFhIKIoSei5LlGMUD+m0r8UfKw8HPZ+qD94786P5mAZaHitq0k94guAq2D91zVbEHYrsUC+fG9vW7YUCR1YPBwQJvjUtXpXv4KB4YwAne697eRFSpTSHr/1bV+itJaxxO5WBc2ZMjGR7h4C1XFkEVpthWSGKnwmFGtTRdaOv2zAWADkZFN1FGuEMszV2u6VIIJxN/7Rxn5UUH6k4fmvYh1kPLXkz/0to0mvmdR28IZfVGtvWc7ep54ZcWAdw+9rn4HQUmm2SVwPP0POMfSf7VvAk9exYePoSacFUCzYgrepSjmeStK+g9EkGm3n82U4MO45jwRMMERfAtQS5wYk/SjNdjHmdcJ1XN2t8e5/6FzHHVhq31YfcNzHnct1MAV+PLUlI8P93qq49KWQxIdbtEHByPC+qLajyY7ZaoAvEvTyWLp6uiAwyxSdl2cry+12zszyR2TJ+Pw4Z89aY8ZS4Z+N04qLs7r9k0gEpXdyhf/AiMqLutbKJn8HpKiA0s0pmWMCkz9SF6OTNuZOgEpx4mU4az4AFrphPIdw/RRATd2CajG5JLSqIkbMSKVSbsfs37aoZV1/ANldmfkJf50zkj6N9X86TfUuAR9g1kO+VOQViPZZ8uNMI/BYxdIp52EdM6iGMpzMUzHqs1r8NvL7Y3Kyy9ePBRXQB5bkpCBMY1LE5HbZ7R4mvfvIS9hgEiNFP/Z8zdstBTk6X5ZB4Lm2dBoFP1zzJ8J7XiRUY=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(136003)(396003)(39860400002)(346002)(376002)(8936002)(4326008)(8676002)(316002)(6486002)(83380400001)(52116002)(54906003)(110136005)(16576012)(53546011)(26005)(107886003)(186003)(16526019)(2906002)(66946007)(66476007)(66556008)(6666004)(33656002)(44832011)(86362001)(36756003)(2616005)(966005)(38100700002)(5660300002)(38350700002)(478600001)(956004)(7416002)(45980500001)(6606295002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?YUl2N2tvVGdnQXA5T0thb1J0NmE2TVhVRWNDeVc2cHhKTFh1aStqSjV2eXl1?=
- =?utf-8?B?OC81WG1MMnI5MHVhSWROR1hEeU9oMDRZaHJrZ1VUMHJxVCtHbFpLb3QrMk9S?=
- =?utf-8?B?YlhwSGRaMGg1eUQvcHFNeFZQdjJpS2kvYWlkc3BFcVNMcE1oOWIybGxtcnlq?=
- =?utf-8?B?YVNvdnlmY3pTcURzbXBGemFsYVFWejQ3RVhNRmRTVlJwNkVCNkVRRzMyOFNl?=
- =?utf-8?B?V3h6cEk4RG5sMkpmRHZHMml3eFZab1lqQTF0VTZVYi8wQkNUcjB1UHU1YUt4?=
- =?utf-8?B?T1FrS0dBYVNzYml5S01EL1hTWjVPNHNQKzhYVHpKV21SN0MrZXR3ZmRJRk1q?=
- =?utf-8?B?WjRiQlZRVytBQ0YrY1pubmZjNEZBYlEyV092Z2RZeGxPQTR0a2RLd1F3Z2lR?=
- =?utf-8?B?TXVYK0t0RW5tcGJNR3o3Y29HUGxvQVFUV1dhZUxPUzBza1EzNzlvVUFSekdw?=
- =?utf-8?B?dFFGc050T1BrY0pDRjkwd3VnVkg0VjRvSGhWZEZoelkrb3BBNVFZdlVhK2RU?=
- =?utf-8?B?ZnlCczU4WU42RlQ2WFFuVlZQK2VkcUszYzBrUVVHYzQ4enhQVGFRbUtGanFi?=
- =?utf-8?B?dlBpUjZibmNvZ3RzQm5JUTlQNXFMUHF3clNxWEZscVNVbWVYbUcwRG1SanRp?=
- =?utf-8?B?L095WnE3NnBTNTNLOXFYV2NqTFFFREQ5S05VQzdYSG54OHh0dWNhbXo4VFVo?=
- =?utf-8?B?RlhoU01XWjRvaHZCUVNoV3JVY2hOT1hLVlJrQlkzS0RHNDlaR0JFWGZWam1O?=
- =?utf-8?B?LzhMcEtMR3J4RW5DbUExK3duQzUzcGs4K01kTFpWdGkxOXh0ZjRoWU9MWTlL?=
- =?utf-8?B?TW94am5WdUxFRjJrVVBIZWcxajlJUFBjeHN1YUlSekN6cDJONHJLVXIvNmM1?=
- =?utf-8?B?eW4yZ2ZhZjVKanJ5enQ0YUdNcG51elU1L3J5UTR3aHI5VHU0VDM1YjZWbWhC?=
- =?utf-8?B?TXcxbVR1TFhOMHZTQlRzVzhWekQvajE2K3MwMXY3TkNIdjVNUUVtT3I2Wi9Z?=
- =?utf-8?B?YmZWU0pkMUNkSUtpVXpoUnFCTjVtTjhJWTdtU2tXdlF1c3pSc1E5NDhaNmRv?=
- =?utf-8?B?TUV2bC9HaE54c045YlFHeHYwMGVxV0tnT1V5SXJDN1BxaDR4NTI1M2JHaTlx?=
- =?utf-8?B?VW4vRVhhWHpMOW5IQ2hndFVRendtT1ZRNTlaZUl1bHcwTGl6RXN1MHJUMk5H?=
- =?utf-8?B?SVlhcFllOTAwVUZnTlM1TTVtekZMeGsxTElsT1JSRkh3RDJtMlZNMlRIV2lx?=
- =?utf-8?B?bmZUY0dRdHhpRmt1Z1pZc3F1c0NraEhuc08xcFhseVZJWnk4WlppMnZrOU5Q?=
- =?utf-8?B?TnVGejUwUThEazgzQ3BtTC9PdkNWMktBV0hKSEVZYkdDeFhESGpSbTNqcVpr?=
- =?utf-8?B?bmFhWWEzZXZ4U0JuS3poZ0pKU3VEZHhBazVQbW1lOUhTRi9NdStvVVJOQ0k4?=
- =?utf-8?B?UUpvUDdVNDFkVzJYcEhQUm5ZUDZKM3lUTjBuenFhUFRUaVhsN0pJRTRuUnFU?=
- =?utf-8?B?NlVoTUNiMmtIeERHb204N1BuanpIYUswdVRPNDNQU0dHamxadkk4Q2QzeW5U?=
- =?utf-8?B?VVZVQUdXV0N0aVVxYnlhSFZPM2JMb0J5ZmlBeTRuZmd3RVZ4TUJpWjllMXRw?=
- =?utf-8?B?dlpTK1UzWmM2eUI2MVEwSnlJblNpTzZ6TXFSblZVcy9uVHNNZWVSVzkySG9D?=
- =?utf-8?B?c0EwZUxKQU5VK1ozZUFqWmprY1lXa3dLU08wMnBKS2hzMXZQYkJDSnMwZndj?=
- =?utf-8?Q?q/wUNc6HwOD5MHOXjUDg93Fwx39p3w4yTaDamyH?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51fafae3-851b-48a5-0be7-08d91b12277d
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-Microsoft-Antispam-Message-Info: RL5VlUJW4KvKJgg/HyjCZNWk/77FANmtkHYLgieUzeye1tMZUoHdP1ZoHtqcfQriUBIT6UVGDHwFJB+CafvEuVZGZA5q3AMiui58TEbXYg0Q5lAKJmAGrHroyiS5E6P5YizOmYbSEuqhtuCk6tGEvPgAcUrol2RJ52JhTuTBOc1VoEDKeGy+wK73wKwS2BS4Mu8Ic7xFIPIxTXZu1PSy9+2OZbb9+8/cvuCDYaHL+XaMkRw1KHxVMR6h8EFezFF78talp0wbbeY1g8CzKH42Rac1Y8M8HTsWYAgMRTXTaDNzkDCAgx3H9VBQpXoBhkJ0lN6842K8AYd/750xH0EX3ObY0FgLswvXHtXBXbiEUjKOcn3e9z7jxba9Y3iH+7Pw58yhMJeQEQYvohO0td0iH0wBrNbuIyz5jznqO8rq8FimJY12lz/HGVmX7ybzCkZx/dIjJL5hz0FYdMzVrTCo46BGS300EX2Myx0pOkvD25zORQYV7d5WvfCMVUTYctxgn3zV09XG9e0iNOBFuWErxKYordvHTq0OWW0qdRl8+HRuOE3OqUBnqdcP56AoC2EcJRKDTEjbLnF7WW0DosACpz8XQjoQwoAPgqjDZViidkzjCJqADZcsd0xbhWyXjNtDGL3nAY4KjX+/6QWTbPhoIMbClrTmaOI86zrEnFh60vRu9yyYnwZ4gu2+jUvuo1MnuAh6sdKC/WnMvDwld18dWUXLmm+eLhnIsQN4YQgoa+OC3OzV/CPjAf/s22Ui0X8xOk753cFVwvnn+n8Fw6gneg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR11MB1692.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(346002)(376002)(366004)(136003)(396003)(39850400004)(66556008)(66476007)(26005)(75432002)(107886003)(66946007)(6666004)(52116002)(8676002)(83380400001)(53546011)(8936002)(6862004)(38350700002)(38100700002)(42186006)(966005)(186003)(9686003)(2906002)(786003)(54906003)(316002)(4326008)(86362001)(55446002)(450100002)(478600001)(5660300002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: =?utf-8?B?Z1crMFd0VEt0V3ZDU1lrcmVhZHhQNyt6aldOR21TeUJ2VmZvNW9lUDBTU1lC?=
+ =?utf-8?B?bzNEdU5YUGluQ011Tlcxalkwd0hzZlo5Z203NWNLdDM2dlJqaVRXdFNkRFdm?=
+ =?utf-8?B?cnJGVmJiWkZUZndaRzM1WDRDUWlQelRZOEdoS0dHRDZNdTg0T2NacS92NW12?=
+ =?utf-8?B?OE5MZWxDNGdPSVBWZXIvekJLRFU0Z0FCb3VBWVBUZlpMcVJSRHVDM1FDNVpw?=
+ =?utf-8?B?R1FOcHdDKzloM0dKRTIwMWM1cStEUWluUjBtQ1k0UjBRWmE5MTRJVFY4a3JS?=
+ =?utf-8?B?UCs3cjd4YU9QdExZbDExTjVlOVJVbjVFRmZ5dVZoMWlhUzFJdkpoTExybktu?=
+ =?utf-8?B?ckdySWFtanVRYWMyTGgvVEdUaUMzbnYwVDR1cGE4aXI1SjNFRWhXOUR3K1F4?=
+ =?utf-8?B?K1FGa1A1ZE5TYjFMQUhjNS9TSlRuYm1zdFQ1WHk5M1FKSFU1SCtHb0haVnRp?=
+ =?utf-8?B?dlg3cTRJWk5LYW83UWlLRndCNHhkVEhaNWtPZ3FjZG85Lyt1dWJNa2xSTExZ?=
+ =?utf-8?B?N0N6Snd4RGhlandPR1hHOXM3T0wramtNTkdWRG9DdWFDaUVodTdwTm5Ga0Nr?=
+ =?utf-8?B?MDd5TGFiSXFZazJoVEpEUDJ0QkYxM2x2bnNncjFLbi9sU3VkOHo4TFcyQ1di?=
+ =?utf-8?B?WVFDRWNwS09Pemc3dWM5RnF2SXkxNEIvTUNYMVV1eFdBb2xtek04ekVuZDZ3?=
+ =?utf-8?B?Z2FBWDQyd09MaGN0UC80WWlJMjZ1MkhabCtmSXFLcHEzMTFkamtuQ0pHdk9o?=
+ =?utf-8?B?eU1WSUduckFhaTR0QUNKZDI2Smd0UVFOS2lTY01YbkFaa3N2T3ZFSERBOXVk?=
+ =?utf-8?B?bG9oaUFoenhSU1RqampuS2hIWU54ZUNISG1jRVdzWW1TR1RIN2FoMXpRaVIr?=
+ =?utf-8?B?dUwvOFJNZU90VFZkUkZXeng4UG5vSEVOSG1vYjlTYzBoVnhWaSt2SDZtTGlU?=
+ =?utf-8?B?dFFia2FJWE1rdUYvUUc2c0RTVTcxcnZrMnFxbzR0MVpRQ0pxYThhV3J5OVBO?=
+ =?utf-8?B?aUtza1MycmVVT1NWMDN5djhKejM0djFCeUxETTJ0MWtxU3JHajU0b01udjVa?=
+ =?utf-8?B?cHQxTmwvQnhKMlBEbitvRmlpd1NUU0FMQ2xVQVczcUZVWnVpejAwY3lsWHhH?=
+ =?utf-8?B?SHlibjVDVG9jVFJrNW9hTGNLYXo4blB4NUFrdmx3L1ZFamVRQjdMMnNLWVhh?=
+ =?utf-8?B?Wlp0TW9NR05aa2pRcm1sU1RYVC9vMXBidVBKTFQ5cWo4aG5JVzE0eWhqaVdU?=
+ =?utf-8?B?QUh3ZUNPV1llZWRKd1VoOUFUMDhhR2xkdVluQ3AwbnhRVkdNRTJWVC9GaTZU?=
+ =?utf-8?B?aUNtck1rai91K01sL0RsK3ZxZVY4ZGsrL1BudXZpeVVrelcrcVRITGtxNXVk?=
+ =?utf-8?B?ZzFRQy9Ra00zakVjaDd4alpzOURCWUZ4U2VyNlR4QWJtNk1pUTBGU2I4SG1z?=
+ =?utf-8?B?RXU5RFpSU2RsYUc5dTdxU2FQUEJTZzBhNkxWZVlIQ1JJZ0l4R251THpiVEdS?=
+ =?utf-8?B?U0R6M0FCc1JuMTRkWGNINktMWjF4ck9aNHJyay9QM3JNRWRBTFRLbUY3T1da?=
+ =?utf-8?B?TkxoU1UvRGQ5UmRIeUMveTJuYkhmRkd6aFpJRGRqSmNFVTdpZTNvdnJSY1JQ?=
+ =?utf-8?B?U3ZwYjN1Y2lWeFFsYndMb3VUTHpQMzF2dm01RE40MEx0S01KUlp5UHBpWmFI?=
+ =?utf-8?B?Zlo5SE1aczVxYjdjcWJyN3VDeUJ3TGJPUGdySGlBb0wyQlpHakh0b2tRemM0?=
+ =?utf-8?Q?7mTir3bVYQ3jMLAaIS9ZOj3BtVVEPKII8ZwG3vb?=
+X-OriginatorOrg: illinois.edu
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1b2fcb7-ea24-45a6-3a6a-08d91b692cd8
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR11MB1692.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2021 22:05:03.7325
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2021 08:27:58.9409
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 44467e6f-462c-4ea2-823f-7800de5434e3
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wDtKDDkeHYeSABRqpM4gWU6VIelX+NH7Uyzs4OT2wAfSgghQ/PuqEPs/5k04e/Qwx82MEv1VMBqjQNkSvtIHiNDAFMg/pkNmPMwPd9cmHDQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5100
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=9989 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 bulkscore=0
- suspectscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2105190133
-X-Proofpoint-GUID: Nf55dCkNMYxnzCfS2kC9b8gCC85MIb0l
-X-Proofpoint-ORIG-GUID: Nf55dCkNMYxnzCfS2kC9b8gCC85MIb0l
+X-MS-Exchange-CrossTenant-UserPrincipalName: aPqzbK4+X0cpQ+TjWmtc0OiOTmQKTYmfthaOtk5rsnV6elTokX8bjR1JkHTl8Kz9+UWsAQOIW8/iOdzKZHS/Kw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1436
+X-Proofpoint-GUID: u3Xtcs2Ic5Hb-0BK6TcziMS_zPNfpyzx
+X-Proofpoint-ORIG-GUID: u3Xtcs2Ic5Hb-0BK6TcziMS_zPNfpyzx
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-
-> On May 19, 2021, at 8:32 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> On Mon, 2021-05-17 at 18:57 -0400, Eric Snowberg wrote:
->> This series is being sent as an RFC. I am looking for feedback; if
->> adding additional MOK variables would be an acceptable solution to help
->> downstream Linux distros solve some of the problems we are facing?
->>=20
->> Currently, pre-boot keys are not trusted within the Linux boundary [1].
->> Pre-boot keys include UEFI Secure Boot DB keys and MOKList keys. These
->> keys are loaded into the platform keyring and can only be used for kexec=
+On Mon, May 17, 2021 at 12:08 PM Sargun Dhillon <sargun@sargun.me> wrote:
+>
+> On Sun, May 16, 2021 at 1:39 AM Tianyin Xu <tyxu@illinois.edu> wrote:
+> >
+> > On Sat, May 15, 2021 at 10:49 AM Andy Lutomirski <luto@kernel.org> wrot=
+e:
+> > >
+> > > On 5/10/21 10:21 PM, YiFei Zhu wrote:
+> > > > On Mon, May 10, 2021 at 12:47 PM Andy Lutomirski <luto@kernel.org> =
+wrote:
+> > > >> On Mon, May 10, 2021 at 10:22 AM YiFei Zhu <zhuyifei1999@gmail.com=
+> wrote:
+> > > >>>
+> > > >>> From: YiFei Zhu <yifeifz2@illinois.edu>
+> > > >>>
+> > > >>> Based on: https://urldefense.com/v3/__https://lists.linux-foundat=
+ion.org/pipermail/containers/2018-February/038571.html__;!!DZ3fjg!thbAoRgmC=
+eWjlv0qPDndNZW1j6Y2Kl_huVyUffr4wVbISf-aUiULaWHwkKJrNJyo$
+> > > >>>
+> > > >>> This patchset enables seccomp filters to be written in eBPF.
+> > > >>> Supporting eBPF filters has been proposed a few times in the past=
 .
->> If an end-user wants to use their own key within the Linux trust
->> boundary, they must either compile it into the kernel themselves or use
->> the insert-sys-cert script. Both options present a problem. Many
->> end-users do not want to compile their own kernels. With the
->> insert-sys-cert option, there are missing upstream changes [2].  Also,
->> with the insert-sys-cert option, the end-user must re-sign their kernel
->> again with their own key, and then insert that key into the MOK db.
->> Another problem with insert-sys-cert is that only a single key can be
->> inserted into a compressed kernel.
->>=20
->> Having the ability to insert a key into the Linux trust boundary opens
->> up various possibilities.  The end-user can use a pre-built kernel and
->> sign their own kernel modules.  It also opens up the ability for an
->> end-user to more easily use digital signature based IMA-appraisal.  To
->> get a key into the ima keyring, it must be signed by a key within the
->> Linux trust boundary.
->>=20
->> Downstream Linux distros try to have a single signed kernel for each
->> architecture.  Each end-user may use this kernel in entirely different
->> ways.  Some downstream kernels have chosen to always trust platform keys
->> within the Linux trust boundary.  In addition, most downstream kernels
->> do not have an easy way for an end-user to use digital signature based
->> IMA-appraisal.
->>=20
->> This series adds two new MOK variables to shim. The first variable
->> allows the end-user to decide if they want to trust keys contained
->> within the platform keyring within the Linux trust boundary. By default,
->> nothing changes; platform keys are not trusted within the Linux kernel.
->> They are only trusted after the end-user makes the decision themself.
->> The end-user would set this through mokutil using a new --trust-platform
->> option [3]. This would work similar to how the kernel uses MOK variables
->> to enable/disable signature validation as well as use/ignore the db.
->>=20
->> The second MOK variable allows a downstream Linux distro to make
->> better use of the IMA architecture specific Secure Boot policy.  This
->> IMA policy is enabled whenever Secure Boot is enabled.  By default, this=
-=20
->> new MOK variable is not defined.  This causes the IMA architecture=20
->> specific Secure Boot policy to be disabled.  Since this changes the=20
->> current behavior, it is placed behind a new Kconfig option.  Kernels
->> built with IMA_UEFI_ARCH_POLICY enabled would  allow the end-user
->> to enable this through mokutil using a new --ima-sb-enable option [3].
->> This gives the downstream Linux distro the capability to offer the
->> IMA architecture specific Secure Boot policy option, while giving
->> the end-user the ability to decide if they want to use it.
->>=20
->> I have included links to both the mokutil [3] and shim [4] changes I
->> made to support this new functionality.
->>=20
->> Thank you and looking forward to hearing your reviews.
->=20
-> This patch set addresses two very different issues - allowing keys on
-> the platform keyring to be trusted for things other than verifying the
-> kexec kernel image signature, overwriting the arch specific IMA secure
-> boot policy rules.  The only common denominator is basing those
-> decisions on UEFI variables, which has been previously suggested and
-> rejected.  The threat model hasn't changed.
+> > > >>> The main concerns were (1) use cases and (2) security. We have
+> > > >>> identified many use cases that can benefit from advanced eBPF
+> > > >>> filters, such as:
+> > > >>
+> > > >> I haven't reviewed this carefully, but I think we need to distingu=
+ish
+> > > >> a few things:
+> > > >>
+> > > >> 1. Using the eBPF *language*.
+> > > >>
+> > > >> 2. Allowing the use of stateful / non-pure eBPF features.
+> > > >>
+> > > >> 3. Allowing the eBPF programs to read the target process' memory.
+> > > >>
+> > > >> I'm generally in favor of (1).  I'm not at all sure about (2), and=
+ I'm
+> > > >> even less convinced by (3).
+> > > >>
+> > > >>>
+> > > >>>   * exec-only-once filter / apply filter after exec
+> > > >>
+> > > >> This is (2).  I'm not sure it's a good idea.
+> > > >
+> > > > The basic idea is that for a container runtime it may wait to execu=
+te
+> > > > a program in a container without that program being able to execve
+> > > > another program, stopping any attack that involves loading another
+> > > > binary. The container runtime can block any syscall but execve in t=
+he
+> > > > exec-ed process by using only cBPF.
+> > > >
+> > > > The use case is suggested by Andrea Arcangeli and Giuseppe Scrivano=
+.
+> > > > @Andrea and @Giuseppe, could you clarify more in case I missed
+> > > > something?
+> > >
+> > > We've discussed having a notifier-using filter be able to replace its
+> > > filter.  This would allow this and other use cases without any
+> > > additional eBPF or cBPF code.
+> > >
+> >
+> > A notifier is not always a solution (even ignoring its perf overhead).
+> >
+> > One problem, pointed out by Andrea Arcangeli, is that notifiers need
+> > userspace daemons. So, it can hardly be used by daemonless container
+> > engines like Podman.
+> >
+> > And, /* sorry for repeating.. */ the performance overhead of notifiers
+> > is not close to ebpf, which prevents use cases that require native
+> > performance.
+>
+> While I agree with you that this is the case right now, there's no reason=
+ it
+> has to be the case. There's a variety of mechanisms that can be employed
+> to significantly speed up the performance of the notifier. For example, r=
+ight
+> now the notifier is behind one large per-filter lock. That could be remov=
+ed
+> allowing for better concurrency. There are a large number of mechanisms
+> that scale O(n) with the outstanding notifications -- again, something
+> that could be improved.
 
-Could you point me please to the previous discussion on the threat model
-this change would violate?  What I found was [1], which I have tried to
-solve with this series.  Having the ability to update a MOK variable=20
-indicates the user is not only root, but also the machine owner.  MOK=20
-variable updates require both root access to update and then physical=20
-presence to set via shim after reboot. This patch set tries to address=20
-the "*second* order" Linus requested [2].
+Thanks for the pointer! But, I don=E2=80=99t think this can fundamentally
+eliminate the performance gap between the notifiers and the ebpf
+filters. IMHO, the additional context switches of user notifiers make
+the difference.
 
-> The desire for allowing a single local CA key to be loaded onto a
-> trusted keyring is understandable.  A local CA key can be used to sign
-> certificates, allowing them to be loaded onto the IMA keyring.  What is
-> the need for multiple keys?
+>
+> The other big improvement that could be made is being able to use somethi=
+ng
+> like io_uring with the notifier interface, but it would require a
+> fairly significant
+> user API change -- and a move away from ioctl. I'm not sure if people are
+> excited about that idea at the moment.
+>
 
-We have no control over how many keys an end-user may wish to enroll. =20
-They might want to enroll a CA for IMA and a different key for their=20
-kernel modules. This is a generic kernel that can serve many different=20
-purposes. Think distro kernels - like Fedora, Ubuntu, Oracle Linux, etc.
+Apologize that I don=E2=80=99t fully understand your proposal. My
+understanding about io_uring is that it allows you to amortize the
+cost of context switch but not eliminate it, unless you are willing to
+dedicate a core for it. I still believe that, even with io_uring, user
+notifiers are going to be much slower than eBPF filters.
 
-> Making an exception for using a UEFI key for anything other than
-> verifying the kexec kernel image, can not be based solely on UEFI
-> variables, but should require some form of kernel
-> agreement/confirmation. =20
+Btw, our patches are based on your patch set (thank you!). Are you
+using user notifiers (with your improved version?) these days? It will
+be nice to hear your opinions on ebpf filters.
 
-Isn=E2=80=99t that the case today with how MOK variables get set through
-mokutil and shim?=20
-
-> If/when a safe mechanism for identifying a
-> single local CA key is defined, the certificate should be loaded
-> directly onto the secondary keyring, not linked to the platform
-> keyring.
-> The system owner can enable/disable secure boot.  Disabling the arch
-> secure boot IMA policy rules is not needed.  However, another mechanism
-> for enabling them would be acceptable.
-
-For a distro kernel, disabling the arch secure boot IMA policy rules is=20
-needed.  Distributions build a single kernel that can be used in many=20
-different ways. If we wanted to add a built-in IMA policy for an extra=20
-level of security protection, this allows the end-user to opt-in when=20
-secure boot is enabled. They are then protected before init is called.=20
-Not every user will want this protection; a different user may just want=20
-secure boot enabled without the IMA level protection.
-
-After going through the mailing list history related to IMA appraisal,=20
-is this feature strictly geared towards a custom kernel used for a=20
-specific purpose?  Do you view it as not being a feature suitable for=20
-a generic distribution kernel to offer?=20
-
-
-[1] https://lore.kernel.org/lkml/1556221605.24945.3.camel@HansenPartnership=
-.com/
-[2] https://marc.info/?l=3Dlinux-kernel&m=3D136185386310140&w=3D2
-
-
+> >
+> >
+> > > >> eBPF doesn't really have a privilege model yet.  There was a long =
+and
+> > > >> disappointing thread about this awhile back.
+> > > >
+> > > > The idea is that =E2=80=9Cseccomp-eBPF does not make life easier fo=
+r an
+> > > > adversary=E2=80=9D. Any attack an adversary could potentially utili=
+ze
+> > > > seccomp-eBPF, they can do the same with other eBPF features, i.e. i=
+t
+> > > > would be an issue with eBPF in general rather than specifically
+> > > > seccomp=E2=80=99s use of eBPF.
+> > > >
+> > > > Here it is referring to the helpers goes to the base
+> > > > bpf_base_func_proto if the caller is unprivileged (!bpf_capable ||
+> > > > !perfmon_capable). In this case, if the adversary would utilize eBP=
+F
+> > > > helpers to perform an attack, they could do it via another
+> > > > unprivileged prog type.
+> > > >
+> > > > That said, there are a few additional helpers this patchset is addi=
+ng:
+> > > > * get_current_uid_gid
+> > > > * get_current_pid_tgid
+> > > >   These two provide public information (are namespaces a concern?).=
+ I
+> > > > have no idea what kind of exploit it could add unless the adversary
+> > > > somehow side-channels the task_struct? But in that case, how is the
+> > > > reading of task_struct different from how the rest of the kernel is
+> > > > reading task_struct?
+> > >
+> > > Yes, namespaces are a concern.  This idea got mostly shot down for kd=
+bus
+> > > (what ever happened to that?), and it likely has the same problems fo=
+r
+> > > seccomp.
+> > >
+> > > >>
+> > > >> What is this for?
+> > > >
+> > > > Memory reading opens up lots of use cases. For example, logging wha=
+t
+> > > > files are being opened without imposing too much performance penalt=
+y
+> > > > from strace. Or as an accelerator for user notify emulation, where
+> > > > syscalls can be rejected on a fast path if we know the memory conte=
+nts
+> > > > does not satisfy certain conditions that user notify will check.
+> > > >
+> > >
+> > > This has all kinds of race conditions.
+> > >
+> > >
+> > > I hate to be a party pooper, but this patchset is going to very high =
+bar
+> > > to acceptance.  Right now, seccomp has a couple of excellent properti=
+es:
+> > >
+> > > First, while it has limited expressiveness, it is simple enough that =
+the
+> > > implementation can be easily understood and the scope for
+> > > vulnerabilities that fall through the cracks of the seccomp sandbox
+> > > model is low.  Compare this to Windows' low-integrity/high-integrity
+> > > sandbox system: there is a never ending string of sandbox escapes due=
+ to
+> > > token misuse, unexpected things at various integrity levels, etc.
+> > > Seccomp doesn't have tokens or integrity levels, and these bugs don't
+> > > happen.
+> > >
+> > > Second, seccomp works, almost unchanged, in a completely unprivileged
+> > > context.  The last time making eBPF work sensibly in a less- or
+> > > -unprivileged context, the maintainers mostly rejected the idea of
+> > > developing/debugging a permission model for maps, cleaning up the bpf
+> > > object id system, etc.  You are going to have a very hard time
+> > > convincing the seccomp maintainers to let any of these mechanism
+> > > interact with seccomp until the underlying permission model is in pla=
+ce.
+> > >
+> > > --Andy
+> >
+> > Thanks for pointing out the tradeoff between expressiveness vs. simplic=
+ity.
+> >
+> > Note that we are _not_ proposing to replace cbpf, but propose to also
+> > support ebpf filters. There certainly are use cases where cbpf is
+> > sufficient, but there are also important use cases ebpf could make
+> > life much easier.
+> >
+> > Most importantly, we strongly believe that ebpf filters can be
+> > supported without reducing security.
+> >
+> > No worries about =E2=80=9Cparty pooping=E2=80=9D and we appreciate the =
+feedback. We=E2=80=99d
+> > love to hear concerns and collect feedback so we can address them to
+> > hit that very high bar.
+> >
+> >
+> > ~t
+> >
+> > --
+> > Tianyin Xu
+> > University of Illinois at Urbana-Champaign
+> > https://urldefense.com/v3/__https://tianyin.github.io/__;!!DZ3fjg!o4__O=
+b32oapUDg9_f6hzksoFiX9517CJ5-w8qtG9i-WKFs_xWbGQfUHpLjHjCddw$
