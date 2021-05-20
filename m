@@ -2,76 +2,174 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_RED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19088C4360C
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C526AC433B4
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 09:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFEB761261
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6B06135A
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 09:05:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231476AbhETI77 (ORCPT
+        id S231228AbhETJHO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 May 2021 04:59:59 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3090 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231403AbhETI75 (ORCPT
+        Thu, 20 May 2021 05:07:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230458AbhETJHO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 May 2021 04:59:57 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm3Qc38Hgz6dtFd;
-        Thu, 20 May 2021 16:52:24 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 20 May 2021 10:58:34 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <mjg59@srcf.ucam.org>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 7/7] evm: Don't return an error in evm_write_xattrs() if audit is not enabled
-Date:   Thu, 20 May 2021 10:57:01 +0200
-Message-ID: <20210520085701.465369-8-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210520085701.465369-1-roberto.sassu@huawei.com>
-References: <20210520085701.465369-1-roberto.sassu@huawei.com>
+        Thu, 20 May 2021 05:07:14 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A3C49610CB;
+        Thu, 20 May 2021 09:05:47 +0000 (UTC)
+Date:   Thu, 20 May 2021 11:05:43 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     YiFei Zhu <zhuyifei1999@gmail.com>, containers@lists.linux.dev,
+        bpf <bpf@vger.kernel.org>, YiFei Zhu <yifeifz2@illinois.edu>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Austin Kuo <hckuo2@illinois.edu>,
+        Claudio Canella <claudio.canella@iaik.tugraz.at>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Hubertus Franke <frankeh@us.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        Jinghao Jia <jinghao7@illinois.edu>,
+        Josep Torrellas <torrella@illinois.edu>,
+        Kees Cook <keescook@chromium.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tianyin Xu <tyxu@illinois.edu>,
+        Tobin Feldman-Fitzthum <tobin@ibm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Will Drewry <wad@chromium.org>
+Subject: Re: [RFC PATCH bpf-next seccomp 00/12] eBPF seccomp filters
+Message-ID: <20210520090543.vay4guole7hkeaf3@wittgenstein>
+References: <cover.1620499942.git.yifeifz2@illinois.edu>
+ <CALCETrUQBonh5BC4eomTLpEOFHVcQSz9SPcfOqNFTf2TPht4-Q@mail.gmail.com>
+ <CABqSeASYRXMwTQwLfm_Tapg45VUy9sPfV7BeeV8p7XJrDoLf+Q@mail.gmail.com>
+ <b3a1684b-86e4-74c4-184b-7700613aa838@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.62.217]
-X-ClientProxiedBy: lhreml752-chm.china.huawei.com (10.201.108.202) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b3a1684b-86e4-74c4-184b-7700613aa838@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch avoids that evm_write_xattrs() returns an error when audit is
-not enabled. The ab variable can be NULL and still be passed to the other
-audit_log_() functions, as those functions do not include any instruction.
+On Sat, May 15, 2021 at 08:49:01AM -0700, Andy Lutomirski wrote:
+> On 5/10/21 10:21 PM, YiFei Zhu wrote:
+> > On Mon, May 10, 2021 at 12:47 PM Andy Lutomirski <luto@kernel.org> wrote:
+> >> On Mon, May 10, 2021 at 10:22 AM YiFei Zhu <zhuyifei1999@gmail.com> wrote:
+> >>>
+> >>> From: YiFei Zhu <yifeifz2@illinois.edu>
+> >>>
+> >>> Based on: https://lists.linux-foundation.org/pipermail/containers/2018-February/038571.html
+> >>>
+> >>> This patchset enables seccomp filters to be written in eBPF.
+> >>> Supporting eBPF filters has been proposed a few times in the past.
+> >>> The main concerns were (1) use cases and (2) security. We have
+> >>> identified many use cases that can benefit from advanced eBPF
+> >>> filters, such as:
+> >>
+> >> I haven't reviewed this carefully, but I think we need to distinguish
+> >> a few things:
+> >>
+> >> 1. Using the eBPF *language*.
+> >>
+> >> 2. Allowing the use of stateful / non-pure eBPF features.
+> >>
+> >> 3. Allowing the eBPF programs to read the target process' memory.
+> >>
+> >> I'm generally in favor of (1).  I'm not at all sure about (2), and I'm
+> >> even less convinced by (3).
+> >>
+> >>>
+> >>>   * exec-only-once filter / apply filter after exec
+> >>
+> >> This is (2).  I'm not sure it's a good idea.
+> > 
+> > The basic idea is that for a container runtime it may wait to execute
+> > a program in a container without that program being able to execve
+> > another program, stopping any attack that involves loading another
+> > binary. The container runtime can block any syscall but execve in the
+> > exec-ed process by using only cBPF.
+> > 
+> > The use case is suggested by Andrea Arcangeli and Giuseppe Scrivano.
+> > @Andrea and @Giuseppe, could you clarify more in case I missed
+> > something?
+> 
+> We've discussed having a notifier-using filter be able to replace its
+> filter.  This would allow this and other use cases without any
+> additional eBPF or cBPF code.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/evm/evm_secfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Are you referring to sm like I sketched in
+https://lore.kernel.org/containers/20210301110907.2qoxmiy55gpkgwnq@wittgenstein/
+?
 
-diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
-index ec3ed75a347d..07e263ae13e0 100644
---- a/security/integrity/evm/evm_secfs.c
-+++ b/security/integrity/evm/evm_secfs.c
-@@ -196,7 +196,7 @@ static ssize_t evm_write_xattrs(struct file *file, const char __user *buf,
- 
- 	ab = audit_log_start(audit_context(), GFP_KERNEL,
- 			     AUDIT_INTEGRITY_EVM_XATTR);
--	if (!ab)
-+	if (!ab && IS_ENABLED(CONFIG_AUDIT))
- 		return -ENOMEM;
- 
- 	xattr = kmalloc(sizeof(struct xattr_list), GFP_KERNEL);
--- 
-2.25.1
+> 
+> >> eBPF doesn't really have a privilege model yet.  There was a long and
+> >> disappointing thread about this awhile back.
+> > 
+> > The idea is that “seccomp-eBPF does not make life easier for an
+> > adversary”. Any attack an adversary could potentially utilize
+> > seccomp-eBPF, they can do the same with other eBPF features, i.e. it
+> > would be an issue with eBPF in general rather than specifically
+> > seccomp’s use of eBPF.
+> > 
+> > Here it is referring to the helpers goes to the base
+> > bpf_base_func_proto if the caller is unprivileged (!bpf_capable ||
+> > !perfmon_capable). In this case, if the adversary would utilize eBPF
+> > helpers to perform an attack, they could do it via another
+> > unprivileged prog type.
+> > 
+> > That said, there are a few additional helpers this patchset is adding:
+> > * get_current_uid_gid
+> > * get_current_pid_tgid
+> >   These two provide public information (are namespaces a concern?). I
 
+If they are seen from userspace in any way then these must be resolved
+relative to the caller's userns or caller's pidns. So yes, namespaces
+need to be taken into account.
+
+> > have no idea what kind of exploit it could add unless the adversary
+> > somehow side-channels the task_struct? But in that case, how is the
+> > reading of task_struct different from how the rest of the kernel is
+> > reading task_struct?
+> 
+> Yes, namespaces are a concern.  This idea got mostly shot down for kdbus
+> (what ever happened to that?), and it likely has the same problems for
+> seccomp.
+> 
+> >>
+> >> What is this for?
+> > 
+> > Memory reading opens up lots of use cases. For example, logging what
+> > files are being opened without imposing too much performance penalty
+> > from strace. Or as an accelerator for user notify emulation, where
+> > syscalls can be rejected on a fast path if we know the memory contents
+> > does not satisfy certain conditions that user notify will check.
+> > 
+> 
+> This has all kinds of race conditions.
+> 
+> 
+> I hate to be a party pooper, but this patchset is going to very high bar
+> to acceptance.  Right now, seccomp has a couple of excellent properties:
+> 
+> First, while it has limited expressiveness, it is simple enough that the
+> implementation can be easily understood and the scope for
+> vulnerabilities that fall through the cracks of the seccomp sandbox
+> model is low.  Compare this to Windows' low-integrity/high-integrity
+> sandbox system: there is a never ending string of sandbox escapes due to
+> token misuse, unexpected things at various integrity levels, etc.
+> Seccomp doesn't have tokens or integrity levels, and these bugs don't
+> happen.
+> 
+> Second, seccomp works, almost unchanged, in a completely unprivileged
+> context.  The last time making eBPF work sensibly in a less- or
+
+Yeah, which is pretty important.
