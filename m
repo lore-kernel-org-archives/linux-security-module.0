@@ -5,39 +5,38 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB48C43600
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDF6C43611
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99F9A61358
-	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707FA6135B
+	for <linux-security-module@archiver.kernel.org>; Thu, 20 May 2021 08:57:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231393AbhETI6p (ORCPT
+        id S231397AbhETI6q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 20 May 2021 04:58:45 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3084 "EHLO
+        Thu, 20 May 2021 04:58:46 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3086 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231162AbhETI6p (ORCPT
+        with ESMTP id S231309AbhETI6q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 20 May 2021 04:58:45 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm3LQ6Yq5z6wjYk;
-        Thu, 20 May 2021 16:48:46 +0800 (CST)
+        Thu, 20 May 2021 04:58:46 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Fm3Gq5Z4zz6VylS;
+        Thu, 20 May 2021 16:45:39 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.62.217) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 20 May 2021 10:57:21 +0200
+ 15.1.2176.2; Thu, 20 May 2021 10:57:22 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <mjg59@srcf.ucam.org>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: [PATCH 2/7] ima: Introduce template fields iuid and igid
-Date:   Thu, 20 May 2021 10:56:56 +0200
-Message-ID: <20210520085701.465369-3-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 4/7] ima: Introduce template field imode
+Date:   Thu, 20 May 2021 10:56:58 +0200
+Message-ID: <20210520085701.465369-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210520085701.465369-1-roberto.sassu@huawei.com>
 References: <20210520085701.465369-1-roberto.sassu@huawei.com>
@@ -51,130 +50,83 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch introduces the new template fields iuid and igid, which include
-respectively the inode UID and GID. If the inode is part of an idmapped
-mount, the UID and GID are the mapped ones and need to be translated with
-the new fields mntuidmap and mntgidmap included in a subsequent patch, in
-order to get the original UID and GID.
+This patch introduces the new template field imode, which includes the
+inode mode. It can be used by a remote verifier to verify the EVM portable
+signature, if it was included with the template fields sig or evmsig.
 
-These fields can be used to verify the EVM portable signature, if it was
-included with the template fields sig or evmsig.
-
-Cc: Christian Brauner <christian.brauner@ubuntu.com>
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/security/IMA-templates.rst  |  2 +
- security/integrity/ima/ima_template.c     |  4 ++
- security/integrity/ima/ima_template_lib.c | 58 +++++++++++++++++++++++
- security/integrity/ima/ima_template_lib.h |  4 ++
- 4 files changed, 68 insertions(+)
+ Documentation/security/IMA-templates.rst  |  1 +
+ security/integrity/ima/ima_template.c     |  2 ++
+ security/integrity/ima/ima_template_lib.c | 22 ++++++++++++++++++++++
+ security/integrity/ima/ima_template_lib.h |  2 ++
+ 4 files changed, 27 insertions(+)
 
 diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-index 9f3e86ab028a..bf8ce4cf5878 100644
+index 48a2df22a1a1..6e98bce20029 100644
 --- a/Documentation/security/IMA-templates.rst
 +++ b/Documentation/security/IMA-templates.rst
-@@ -75,6 +75,8 @@ descriptors by adding their identifier to the format string
-  - 'modsig' the appended file signature;
-  - 'buf': the buffer data that was used to generate the hash without size limitations;
-  - 'evmsig': the EVM portable signature;
-+ - 'iuid': the inode UID;
-+ - 'igid': the inode GID;
+@@ -81,6 +81,7 @@ descriptors by adding their identifier to the format string
+     [ uid_gid_extent1 ] ... [ uid_gid_extentN ], all u32 in canonical format);
+  - 'mntgidmap': the GID mappings of the idmapped mount (same format as
+    'mntuidmap');
++ - 'imode': the inode mode;
  
  
  Below, there is the list of defined template descriptors:
 diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-index 7a60848c04a5..a5ecd9e2581b 100644
+index 19de115b985b..34674aef1cc5 100644
 --- a/security/integrity/ima/ima_template.c
 +++ b/security/integrity/ima/ima_template.c
-@@ -47,6 +47,10 @@ static const struct ima_template_field supported_fields[] = {
+@@ -57,6 +57,8 @@ static const struct ima_template_field supported_fields[] = {
+ 	{.field_id = "mntgidmap",
+ 	 .field_init = ima_eventmnt_userns_gid_map_init,
  	 .field_show = ima_show_template_sig},
- 	{.field_id = "evmsig", .field_init = ima_eventevmsig_init,
- 	 .field_show = ima_show_template_sig},
-+	{.field_id = "iuid", .field_init = ima_eventinodeuid_init,
-+	 .field_show = ima_show_template_uint},
-+	{.field_id = "igid", .field_init = ima_eventinodegid_init,
++	{.field_id = "imode", .field_init = ima_eventinodemode_init,
 +	 .field_show = ima_show_template_uint},
  };
  
  /*
 diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index f23296c33da1..a191b861548b 100644
+index bc4919d90c3a..b82fb8f35e5d 100644
 --- a/security/integrity/ima/ima_template_lib.c
 +++ b/security/integrity/ima/ima_template_lib.c
-@@ -551,3 +551,61 @@ int ima_eventevmsig_init(struct ima_event_data *event_data,
- 	kfree(xattr_data);
- 	return rc;
+@@ -692,3 +692,25 @@ int ima_eventmnt_userns_gid_map_init(struct ima_event_data *event_data,
+ {
+ 	return ima_eventmnt_userns_common_init(event_data, field_data, false);
  }
 +
-+static int ima_eventinodedac_init_common(struct ima_event_data *event_data,
-+					 struct ima_field_data *field_data,
-+					 bool get_uid)
++/*
++ *  ima_eventinodemode_init - include the inode mode as part of the template
++ *  data
++ */
++int ima_eventinodemode_init(struct ima_event_data *event_data,
++			    struct ima_field_data *field_data)
 +{
-+	struct user_namespace *mnt_userns;
-+	uid_t uid;
-+	gid_t gid;
-+	char *data_ptr = (char *)&uid;
++	struct inode *inode;
++	umode_t mode;
 +
 +	if (!event_data->file)
 +		return 0;
 +
-+	mnt_userns = file_mnt_user_ns(event_data->file);
-+	if (get_uid) {
-+		uid = from_kuid(&init_user_ns,
-+				i_uid_into_mnt(mnt_userns,
-+					       file_inode(event_data->file)));
-+	} else {
-+		gid = from_kgid(&init_user_ns,
-+				i_gid_into_mnt(mnt_userns,
-+					       file_inode(event_data->file)));
-+		data_ptr = (char *)&gid;
-+	}
++	inode = file_inode(event_data->file);
++	mode = inode->i_mode;
++	if (ima_canonical_fmt)
++		mode = cpu_to_le16(mode);
 +
-+	if (ima_canonical_fmt) {
-+		if (sizeof(uid) == sizeof(u16)) {
-+			uid = cpu_to_le16(uid);
-+			gid = cpu_to_le16(gid);
-+		} else {
-+			uid = cpu_to_le32(uid);
-+			gid = cpu_to_le32(gid);
-+		}
-+	}
-+
-+	return ima_write_template_field_data(data_ptr, sizeof(uid),
++	return ima_write_template_field_data((char *)&mode, sizeof(mode),
 +					     DATA_FMT_UINT, field_data);
 +}
-+
-+/*
-+ *  ima_eventinodeuid_init - include the inode UID as part of the template
-+ *  data
-+ */
-+int ima_eventinodeuid_init(struct ima_event_data *event_data,
-+			   struct ima_field_data *field_data)
-+{
-+	return ima_eventinodedac_init_common(event_data, field_data, true);
-+}
-+
-+/*
-+ *  ima_eventinodegid_init - include the inode GID as part of the template
-+ *  data
-+ */
-+int ima_eventinodegid_init(struct ima_event_data *event_data,
-+			   struct ima_field_data *field_data)
-+{
-+	return ima_eventinodedac_init_common(event_data, field_data, false);
-+}
 diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-index 54b67c80b315..b0aaf109f386 100644
+index 51ee66fc7230..dc3c16912f6d 100644
 --- a/security/integrity/ima/ima_template_lib.h
 +++ b/security/integrity/ima/ima_template_lib.h
-@@ -50,4 +50,8 @@ int ima_eventmodsig_init(struct ima_event_data *event_data,
- 			 struct ima_field_data *field_data);
- int ima_eventevmsig_init(struct ima_event_data *event_data,
- 			 struct ima_field_data *field_data);
-+int ima_eventinodeuid_init(struct ima_event_data *event_data,
-+			   struct ima_field_data *field_data);
-+int ima_eventinodegid_init(struct ima_event_data *event_data,
-+			   struct ima_field_data *field_data);
+@@ -58,4 +58,6 @@ int ima_eventmnt_userns_uid_map_init(struct ima_event_data *event_data,
+ 				     struct ima_field_data *field_data);
+ int ima_eventmnt_userns_gid_map_init(struct ima_event_data *event_data,
+ 				     struct ima_field_data *field_data);
++int ima_eventinodemode_init(struct ima_event_data *event_data,
++			    struct ima_field_data *field_data);
  #endif /* __LINUX_IMA_TEMPLATE_LIB_H */
 -- 
 2.25.1
