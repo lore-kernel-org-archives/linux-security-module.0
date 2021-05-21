@@ -2,110 +2,145 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220CDC43460
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 07:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2BCC43461
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 11:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07FFE613D8
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 07:07:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 951CC613DF
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 11:45:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235342AbhEUHI7 convert rfc822-to-8bit (ORCPT
+        id S232156AbhEULq7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 May 2021 03:08:59 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3092 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235326AbhEUHIv (ORCPT
+        Fri, 21 May 2021 07:46:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:14202 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232499AbhEULq4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 May 2021 03:08:51 -0400
-Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FmcnD1ghMz6842m;
-        Fri, 21 May 2021 14:55:28 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 21 May 2021 09:07:14 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Fri, 21 May 2021 09:07:14 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v7 00/12] evm: Improve usability of portable signatures
-Thread-Topic: [PATCH v7 00/12] evm: Improve usability of portable signatures
-Thread-Index: AQHXSNW+s9pGdic160Kc6WkU36Axf6rsoEOAgADsKvA=
-Date:   Fri, 21 May 2021 07:07:14 +0000
-Message-ID: <a316bc5ec316446c8b07134c33b06d77@huawei.com>
-References: <20210514152753.982958-1-roberto.sassu@huawei.com>
- <2804f10fa77b58b4992f56ea36a36d4f1e3f4b24.camel@linux.ibm.com>
-In-Reply-To: <2804f10fa77b58b4992f56ea36a36d4f1e3f4b24.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 21 May 2021 07:46:56 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14LBYGi7030377;
+        Fri, 21 May 2021 07:45:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=63ZT8sa41e7r+0vT3qTkmsUgDavSFDDoI2d81uQ2iMY=;
+ b=L9hSyLAje48wYxW3XW+8ES3yr7V8wd6tVNIGWlhhBKVSzXWQfWbGOrOqdDQAGPc+xF8B
+ 0TOk2Sj1hFs4U8ngOXS+DBS8VeJXX/KVaT8jESAOqlGnYTb8S191nLdWIry4hA9i+Fcn
+ YYT6hUZI7zgDY8x9CohTVg8kwXNCIdAKBRiACkZOYmqWE+/PjQgvDrDZU9U/G6plMPWW
+ EEhc2TvDAzupZBGaBAzBi8B1yXf9NM349P9W8A2IqneONV5hiJ+eKrqOW1dntt2Zrkl9
+ OACz+sPX1Ka/Yl30N1ohAruJYanL+NDzIiyqpC1sC1wipuif19C0QjQkZLmEkvCZrM1G Yg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38pbek19e8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 May 2021 07:45:02 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14LBYx1u035761;
+        Fri, 21 May 2021 07:45:02 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38pbek19da-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 May 2021 07:45:02 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14LBS1p1016558;
+        Fri, 21 May 2021 11:45:00 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04ams.nl.ibm.com with ESMTP id 38j5x8b48p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 21 May 2021 11:44:59 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14LBiTTG22544752
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 21 May 2021 11:44:29 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 608B952050;
+        Fri, 21 May 2021 11:44:57 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.6.127])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BB0145204F;
+        Fri, 21 May 2021 11:44:53 +0000 (GMT)
+Message-ID: <fd0e91c43cf0dc14aeeda4e7095416c77df0d0cc.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH 0/3] Add additional MOK vars
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        torvalds@linux-foundation.org,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        pjones@redhat.com, glin@suse.com,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Patrick Uiterwijk <patrick@puiterwijk.org>
+Date:   Fri, 21 May 2021 07:44:52 -0400
+In-Reply-To: <4A887886-BDB2-4F88-9D83-73B9BC9E641F@oracle.com>
+References: <20210517225714.498032-1-eric.snowberg@oracle.com>
+         <fdb42621e7145ce81a34840cbcf0914874c78913.camel@linux.ibm.com>
+         <7F861393-7971-43AB-A741-223B8A50FFA0@oracle.com>
+         <c134ad45d924e8b719f8abb6d36b426b889e9394.camel@linux.ibm.com>
+         <4A887886-BDB2-4F88-9D83-73B9BC9E641F@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: MUe8apbdE6APMT7MJ6YxnSMPparGVqMz
+X-Proofpoint-GUID: ZBXZkRp-Z9LqJLD5ntEtu9DO5rW3R11j
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-21_04:2021-05-20,2021-05-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 spamscore=0 priorityscore=1501 phishscore=0 suspectscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2105210071
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Thursday, May 20, 2021 8:56 PM
-> On Fri, 2021-05-14 at 17:27 +0200, Roberto Sassu wrote:
-> > EVM portable signatures are particularly suitable for the protection of
-> > metadata of immutable files where metadata is signed by a software vendor.
-> > They can be used for example in conjunction with an IMA policy that
-> > appraises only executed and memory mapped files.
-> >
-> > However, until now portable signatures can be properly installed only if
-> > the EVM_ALLOW_METADATA_WRITES initialization flag is also set, which
-> > disables metadata verification until an HMAC key is loaded. This will cause
-> > metadata writes to be allowed even in the situations where they shouldn't
-> > (metadata protected by a portable signature is immutable).
-> >
-> > The main reason why setting the flag is necessary is that the operations
-> > necessary to install portable signatures and protected metadata would be
-> > otherwise denied, despite being legitimate, due to the fact that the
-> > decision logic has to avoid an unsafe recalculation of the HMAC that would
-> > make the unsuccessfully verified metadata valid. However, the decision
-> > logic is too coarse, and does not fully take into account all the possible
-> > situations where metadata operations could be allowed.
-> >
-> > For example, if the HMAC key is not loaded and it cannot be loaded in the
-> > future due the EVM_SETUP_COMPLETE flag being set, it wouldn't be a
-> problem
-> > to allow metadata operations, as they wouldn't result in an HMAC being
-> > recalculated.
-> >
-> > This patch set extends the decision logic and adds the necessary exceptions
-> > to use portable signatures without turning off metadata verification and
-> > deprecates the EVM_ALLOW_METADATA_WRITES flag.
+[Cc'ing Patrick Uiterwijk]
+
+On Thu, 2021-05-20 at 14:37 -0600, Eric Snowberg wrote:
+> > On May 20, 2021, at 6:22 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+
+> > I really do understand the need for extending the root of trust beyond
+> > the builtin keys and allowing end user keys to be loaded onto a kernel
+> > keyring, but it needs to be done safely.  The first step might include
+> > locally signing the MOK keys being loaded onto the secondary keyring
+> > and then somehow safely providing the local-CA key id to the kernel.
 > 
-> Thanks, Roberto.
-> 
-> Applied to: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-
-> integrity.git
-> next-integrity-testing
+> If the machine owner and Linux distributor are independent of one another,
+> I don’t see how MOK key signing could work.  There wouldn’t be a way for
+> the kernel to verify the end-user supplied signed MOK key.  An end-user 
+> choosing a Linux distro is trusting the company/organization building the 
+> kernel, but the trust doesn’t go the other way.  Do you have a solution 
+> in mind on how this would be possible? If you do, I’m happy to move in
+> a different direction to solve this problem.
 
-Hi Mimi
+We are working with the distros to address this problem.  The first
+attempt at extending the secondary keyring's root of trust relied on a
+TPM2 NV Index[1].
 
-could you please take the newer version of patch 5/12, which also adds
-an exception for the INTEGRITY_UNKNOWN error (it occurs when xattrs
-are not supported)?
+Using MOK is a possible alternative, if it can be done safely.  For
+example, if the boot command line could be protected from modification,
+the end-user could enroll a key in MOK and identify the specific MOK
+key on the boot command line[2].  The boot command line would then
+become an additional root of trust source.
 
-https://lore.kernel.org/linux-integrity/6d7e059876b64f249b9a01d8b7696e29@huawei.com/T/#m58442ec12e47d9d457bef9b438809a6a132b7512
+The root of trust for loading keys on the different trusted keyrings
+are self documenting -  restrict_link_by_builtin_trusted,
+restrict_link_by_builtin_and_secondary_trusted().  A new function would
+need to be defined to include the boot command line as a new or
+additional root of trust source.
+ 
+thanks,
 
-Thanks
+Mimi
 
-Roberto
+[1] https://lore.kernel.org/linux-integrity/20210225203229.363302-1-patrick@puiterwijk.org/
+[2] Perhaps extend the existing "ca_keys" boot command line option.
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
