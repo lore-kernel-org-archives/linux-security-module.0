@@ -2,142 +2,184 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8185AC4707A
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 17:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E214EC47076
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 17:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52C7461168
-	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 17:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C498F611AB
+	for <linux-security-module@archiver.kernel.org>; Fri, 21 May 2021 17:35:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233438AbhEURd0 (ORCPT
+        id S236425AbhEURg5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 21 May 2021 13:33:26 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58102 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233220AbhEURdZ (ORCPT
+        Fri, 21 May 2021 13:36:57 -0400
+Received: from mout.gmx.net ([212.227.15.15]:48553 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233220AbhEURg4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 21 May 2021 13:33:25 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14LH47Iv033808;
-        Fri, 21 May 2021 13:31:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=L5aXyblV4MweJE7kliRjqe7BHKoS8cOQrVYDSV0UtSs=;
- b=n1/9CKvD0UU+OSGRXsf782Sb1jT//72bWMwiZ12djVIIYNjSu60Gi9qKbDE6HM1MweP6
- 8xwoSyuE9i9lKdK0Qe7hiBk0x+/F6K0OhP0XLBJwcjC1BHhu3uebKhoVESde/3dVtKsD
- fNnJAbV7ZCPERQXNvNWT+a30suHPYL55uLLts0xk13uau7+3GZBD4fZcYQVVT60SNThs
- nGVGXSwOWK/MjnlKuuhiUsi5lhhxFEPK02ls1QYpqW8Vh7qoSGdYjjuJR28/tgjrsiX0
- NwwapRaRM/9+Oq3yzZZlyOMlPzTjI3ZSfjYL5DZHgQfdD5FGgtLJeNbil3dU/B46bNTT Wg== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 38pgwv0p9q-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 May 2021 13:31:52 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14LHSHXa006975;
-        Fri, 21 May 2021 17:31:51 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 38j5x8b96s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 21 May 2021 17:31:50 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14LHVm9933227098
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 21 May 2021 17:31:48 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 65CC811C058;
-        Fri, 21 May 2021 17:31:48 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1319F11C04C;
-        Fri, 21 May 2021 17:31:47 +0000 (GMT)
-Received: from sig-9-65-215-195.ibm.com (unknown [9.65.215.195])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 21 May 2021 17:31:46 +0000 (GMT)
-Message-ID: <7a52753c709499edbdf755abcd55a4ddf98503f1.camel@linux.ibm.com>
-Subject: Re: [PATCH v7 00/12] evm: Improve usability of portable signatures
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Fri, 21 May 2021 13:31:46 -0400
-In-Reply-To: <a316bc5ec316446c8b07134c33b06d77@huawei.com>
-References: <20210514152753.982958-1-roberto.sassu@huawei.com>
-         <2804f10fa77b58b4992f56ea36a36d4f1e3f4b24.camel@linux.ibm.com>
-         <a316bc5ec316446c8b07134c33b06d77@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 59QOAR-obJ1YIk9sNTw3UuSxgGTKQjfG
-X-Proofpoint-GUID: 59QOAR-obJ1YIk9sNTw3UuSxgGTKQjfG
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Fri, 21 May 2021 13:36:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1621618477;
+        bh=jYd+DBUq5/+hoWltaHEIKEySfVzGVUxKtuTlWhtWnNU=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Kx8aLe9AKZkFlHBFzKJQ/0wO5CcwPquXKmR8TTit7BChbVKbSqFooAblS8Rf2ryz/
+         rem1qyVFe5OlpYpwOF7Op7yahmHVvWV0DF4yriyBrQICZBlEvZluGaW1rxMkC4ACeF
+         ZbpwL+OavEkNMn3DVwawfQnaDwrNffx+jtc3qgfg=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([83.52.228.41]) by mail.gmx.net
+ (mrgmx004 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 1MPGW7-1m6u3c2AHd-00PaoO; Fri, 21 May 2021 19:34:37 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     Kees Cook <keescook@chromium.org>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>
+Cc:     John Wood <john.wood@gmx.com>, Andi Kleen <ak@linux.intel.com>,
+        valdis.kletnieks@vt.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: [PATCH v7 1/7] security: Add LSM hook at the point where a task gets a fatal signal
+Date:   Fri, 21 May 2021 19:24:08 +0200
+Message-Id: <20210521172414.69456-2-john.wood@gmx.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210521172414.69456-1-john.wood@gmx.com>
+References: <20210521172414.69456-1-john.wood@gmx.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-21_07:2021-05-20,2021-05-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 spamscore=0 bulkscore=0 impostorscore=0
- malwarescore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105210090
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Bd6lib84LVlkJT8jNqZAPUjNinmei+Xet/u0DD1+cHkiKEm3feF
+ HT9bCqV7iIbCFUzz/JKgZCFWJOJMWDiXaJlKsCIUC2k7end9vd+XP1uID+wLCkVzUwFhr3+
+ y+v3JS+c2GJC76pLYtnMrj7kZuxHwGgbttcFMRFUIpuNjaUpqH29kG7NGc4ZZ7OlrjLEP2R
+ vHsgogfOcVJBKVmcoBkTQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6IzlPLp9f6s=:mRCsH7AFbIQl1g7NxLFy2S
+ RL3o1/lFuK9b4P0IYPqitza5mnxG0OhhsvQaeBsmwlhRDQo8uuYJ9Ag2sTZilVX4aMwiqkZKV
+ 7UMoe4qaCcWKByzEk5LMdt/K2wS1P82N1MEJOKeONkrwQpXX1EUsLASFlmF0D39p9DpidEkna
+ xEKYNdtU8pDVUWfidjveb5cFVlQk4qZq7MjnXfUkSCsNAC570amFjHEn3Nt6OLIUZgu/nOcoN
+ kHcU3m10GpTHZhMz1tV7YVmb+yUS07ItIUJJkb01F+AFI3b+T1+WCbBOsXwklBZ882GuKccCD
+ jOp66XHdJp7r/A3D6eoVqscOtQ3g/3bjtmSFtC4vUwfwtnKSprS7IeJ3kBS+5DrGL8EYRdGPy
+ FMpUNTomkI+frPzJpZGhFzA+EghsWzinnk/7yg8y0O0xRQq7GtRNyeSiSfuchH+2bhl73rW5o
+ ddlbm+jTdO06FpRiz44lOl8AxVI+CzisvNSgP9JSc5bfN4gkldOt3EisIjVElbl2Wg3Emmwiy
+ OH3uqW55FfrIN2xawGSyF8feR/0ZRDG653I3R1+gkgI24NO7imkyMoHX7KUeXzbtzGjGFaSYL
+ T1txig1UyxtAoAA4PZDr02bv+yRMOCWyPU2eGn0o8552XIggIDelLtp3OwWPr9Xdb7XX9Qtd/
+ +59rwgB8cHWLeqiWC1/JjrE8HuLHeroUswRaSgbdA9TN0gMjT28fs2LJyixM/zVjJr3hSD8cA
+ 92MxppbEOkiBA7m9gd1roANZ9z4UU2s4bMFcaUMucc2cSrXgKb9woSGT3PJfMH+VL+1nMHNWw
+ bUbkZB8mNO1y1B5oe4k5X9DT7YB0C/gYeadDtY3kMUKCbfV/JrUbwD6N3pFkapfrxWiGspnWn
+ me+rNqShm2CHXkzEpS+sKguOFLpQ2hZVXMVoMN46zZfZgfABx7E2QCUY1hnjt4MjUsdifT+9y
+ 4HIyw/uyCZLCXun7J6Al3257WGQcMCkXhJg02qkrc1efWfd7SKOYzsZN8tZv8O5QFdxddV/Ag
+ sM/b744VAcGw3oNEsDGLatxlxMfibejfCFQwGmEtA5ivPc3/iUogkT+HKa6l/sXLfDDcPQats
+ zFvgx2bD9eQqxjlz5+xAJ7g1gdauvaF9EECxUmckN5umXE5j+Q+G03dIBswKFxR9EiS5mOYdN
+ iGJW7jRzXHgB+wjp0BT89AxY6aDhp+eLQWsGteid+QEzBgLFF6aWsvY06kSq879vhyY/w=
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2021-05-21 at 07:07 +0000, Roberto Sassu wrote:
-> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> > Sent: Thursday, May 20, 2021 8:56 PM
-> > On Fri, 2021-05-14 at 17:27 +0200, Roberto Sassu wrote:
-> > > EVM portable signatures are particularly suitable for the protection of
-> > > metadata of immutable files where metadata is signed by a software vendor.
-> > > They can be used for example in conjunction with an IMA policy that
-> > > appraises only executed and memory mapped files.
-> > >
-> > > However, until now portable signatures can be properly installed only if
-> > > the EVM_ALLOW_METADATA_WRITES initialization flag is also set, which
-> > > disables metadata verification until an HMAC key is loaded. This will cause
-> > > metadata writes to be allowed even in the situations where they shouldn't
-> > > (metadata protected by a portable signature is immutable).
-> > >
-> > > The main reason why setting the flag is necessary is that the operations
-> > > necessary to install portable signatures and protected metadata would be
-> > > otherwise denied, despite being legitimate, due to the fact that the
-> > > decision logic has to avoid an unsafe recalculation of the HMAC that would
-> > > make the unsuccessfully verified metadata valid. However, the decision
-> > > logic is too coarse, and does not fully take into account all the possible
-> > > situations where metadata operations could be allowed.
-> > >
-> > > For example, if the HMAC key is not loaded and it cannot be loaded in the
-> > > future due the EVM_SETUP_COMPLETE flag being set, it wouldn't be a
-> > problem
-> > > to allow metadata operations, as they wouldn't result in an HMAC being
-> > > recalculated.
-> > >
-> > > This patch set extends the decision logic and adds the necessary exceptions
-> > > to use portable signatures without turning off metadata verification and
-> > > deprecates the EVM_ALLOW_METADATA_WRITES flag.
-> > 
-> > Thanks, Roberto.
-> > 
-> > Applied to: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-
-> > integrity.git
-> > next-integrity-testing
-> 
-> Hi Mimi
-> 
-> could you please take the newer version of patch 5/12, which also adds
-> an exception for the INTEGRITY_UNKNOWN error (it occurs when xattrs
-> are not supported)?
+Add a security hook that allows a LSM to be notified when a task gets a
+fatal signal. This patch is a previous step on the way to compute the
+task crash period by the "brute" LSM (linux security module to detect
+and mitigate fork brute force attack against vulnerable userspace
+processes).
 
-Thank you for catching it.  I'd appreciate your checking once more. 
-FYI, get-lore-mbox.py moved "Cc: stable" to the end.
+Signed-off-by: John Wood <john.wood@gmx.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+=2D--
+ include/linux/lsm_hook_defs.h | 1 +
+ include/linux/lsm_hooks.h     | 4 ++++
+ include/linux/security.h      | 4 ++++
+ kernel/signal.c               | 1 +
+ security/security.c           | 5 +++++
+ 5 files changed, 15 insertions(+)
 
-thanks,
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 04c01794de83..e28468e84300 100644
+=2D-- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -225,6 +225,7 @@ LSM_HOOK(int, -ENOSYS, task_prctl, int option, unsigne=
+d long arg2,
+ 	 unsigned long arg3, unsigned long arg4, unsigned long arg5)
+ LSM_HOOK(void, LSM_RET_VOID, task_to_inode, struct task_struct *p,
+ 	 struct inode *inode)
++LSM_HOOK(void, LSM_RET_VOID, task_fatal_signal, const kernel_siginfo_t *s=
+iginfo)
+ LSM_HOOK(int, 0, ipc_permission, struct kern_ipc_perm *ipcp, short flag)
+ LSM_HOOK(void, LSM_RET_VOID, ipc_getsecid, struct kern_ipc_perm *ipcp,
+ 	 u32 *secid)
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 5c4c5c0602cb..fc8bef0f15d9 100644
+=2D-- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -799,6 +799,10 @@
+  *	security attributes, e.g. for /proc/pid inodes.
+  *	@p contains the task_struct for the task.
+  *	@inode contains the inode structure for the inode.
++ * @task_fatal_signal:
++ *	This hook allows security modules to be notified when a task gets a
++ *	fatal signal.
++ *	@siginfo contains the signal information.
+  *
+  * Security hooks for Netlink messaging.
+  *
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 06f7c50ce77f..609c76c6c764 100644
+=2D-- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -433,6 +433,7 @@ int security_task_kill(struct task_struct *p, struct k=
+ernel_siginfo *info,
+ int security_task_prctl(int option, unsigned long arg2, unsigned long arg=
+3,
+ 			unsigned long arg4, unsigned long arg5);
+ void security_task_to_inode(struct task_struct *p, struct inode *inode);
++void security_task_fatal_signal(const kernel_siginfo_t *siginfo);
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag);
+ void security_ipc_getsecid(struct kern_ipc_perm *ipcp, u32 *secid);
+ int security_msg_msg_alloc(struct msg_msg *msg);
+@@ -1183,6 +1184,9 @@ static inline int security_task_prctl(int option, un=
+signed long arg2,
+ static inline void security_task_to_inode(struct task_struct *p, struct i=
+node *inode)
+ { }
 
-Mimi
++static inline void security_task_fatal_signal(const kernel_siginfo_t *sig=
+info)
++{ }
++
+ static inline int security_ipc_permission(struct kern_ipc_perm *ipcp,
+ 					  short flag)
+ {
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 66e88649cf74..62625ad98b14 100644
+=2D-- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2787,6 +2787,7 @@ bool get_signal(struct ksignal *ksig)
+ 		/*
+ 		 * Anything else is fatal, maybe with a core dump.
+ 		 */
++		security_task_fatal_signal(&ksig->info);
+ 		current->flags |=3D PF_SIGNALED;
+
+ 		if (sig_kernel_coredump(signr)) {
+diff --git a/security/security.c b/security/security.c
+index b38155b2de83..208e3e7d4284 100644
+=2D-- a/security/security.c
++++ b/security/security.c
+@@ -1891,6 +1891,11 @@ void security_task_to_inode(struct task_struct *p, =
+struct inode *inode)
+ 	call_void_hook(task_to_inode, p, inode);
+ }
+
++void security_task_fatal_signal(const kernel_siginfo_t *siginfo)
++{
++	call_void_hook(task_fatal_signal, siginfo);
++}
++
+ int security_ipc_permission(struct kern_ipc_perm *ipcp, short flag)
+ {
+ 	return call_int_hook(ipc_permission, 0, ipcp, flag);
+=2D-
+2.25.1
 
