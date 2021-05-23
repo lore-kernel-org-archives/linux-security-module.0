@@ -2,218 +2,219 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-22.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C97C2B9F2
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 May 2021 12:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DC8C47080
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 May 2021 07:39:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EBC76135A
-	for <linux-security-module@archiver.kernel.org>; Sat, 22 May 2021 12:59:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF056115C
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 May 2021 07:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230431AbhEVNAm (ORCPT
+        id S231620AbhEWHdu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 22 May 2021 09:00:42 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:29327 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230244AbhEVNAl (ORCPT
+        Sun, 23 May 2021 03:33:50 -0400
+Received: from mout.gmx.net ([212.227.17.22]:38567 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231561AbhEWHdt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 22 May 2021 09:00:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1621688356;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0jihgK6nUGSssaLZQS5Ili6PzS5KwAtgGpBMxwFQ9h0=;
-        b=Wj9FbKEvQY4LejuGsPXXNjhRvZsA0s2m83nHyl3GEnJPQSCmcPLJhcLkopp7R1He+nFPQi
-        5PMBkbWe0PCZVZGU3lPHEvpGy2M5te/7ns2U853ixrvwMwk8OLk9UozwDkABg1ABpb9aqg
-        lU2A3p17/PxLxhjfQvo2jnGPYrMsI+I=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-215-zvytTB6vPqu5PNUiXhMBTg-1; Sat, 22 May 2021 08:59:13 -0400
-X-MC-Unique: zvytTB6vPqu5PNUiXhMBTg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0882C107ACC7;
-        Sat, 22 May 2021 12:59:11 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.57])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A66A719D9D;
-        Sat, 22 May 2021 12:59:02 +0000 (UTC)
-Date:   Sat, 22 May 2021 08:58:59 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        john.johansen@canonical.com, selinux@vger.kernel.org,
-        netdev@vger.kernel.org, James Morris <jmorris@namei.org>,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-audit@redhat.com,
-        casey.schaufler@intel.com, Stephen Smalley <sds@tycho.nsa.gov>
-Subject: Re: [PATCH v26 22/25] Audit: Add new record for multiple process LSM
- attributes
-Message-ID: <20210522125859.GF447005@madcap2.tricolour.ca>
-References: <20210513200807.15910-1-casey@schaufler-ca.com>
- <20210513200807.15910-23-casey@schaufler-ca.com>
- <CAHC9VhSdFVuZvThMsqWT-L9wcHevA-0yAX+kxqXN0iMmqRc10g@mail.gmail.com>
- <d753115f-6cbd-0886-473c-b10485cb7c52@schaufler-ca.com>
- <CAHC9VhR9OPbNCLaKpCEt9mES8yWXpNoTBrgnKW2ER+vEkuNQwQ@mail.gmail.com>
+        Sun, 23 May 2021 03:33:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1621755103;
+        bh=eEvoPzUKKDAusOW/Ow5cN9nihfVkpEkN3+SSzfVyau8=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=fr0kMU3bS6ef5nnDzpiT0rstMl+QpTk2+TtBd6y88VSE5l9W3HsMT3U6GAfWjffqt
+         csFav+a61W7cwHnlFPsoZhGb3jm2EoziowalkrMPJWtLU7xfE9+X1j/6NzV6c+BDTs
+         r+woH8jhH76x5WffFCv7rGxN1htplw31oOoc0N/8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([83.52.228.41]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1N17UQ-1lHowO2j5G-012U34; Sun, 23
+ May 2021 09:31:42 +0200
+Date:   Sun, 23 May 2021 09:31:24 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>, valdis.kletnieks@vt.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v7 0/7] Fork brute force attack mitigation
+Message-ID: <20210523073124.GA3762@ubuntu>
+References: <20210521172414.69456-1-john.wood@gmx.com>
+ <19903478-52e0-3829-0515-3e17669108f7@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhR9OPbNCLaKpCEt9mES8yWXpNoTBrgnKW2ER+vEkuNQwQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+In-Reply-To: <19903478-52e0-3829-0515-3e17669108f7@linux.intel.com>
+X-Provags-ID: V03:K1:xGdrTJqW5jUbvCt0cYnj0WGdWQuK8aFsEq+/1qXjQEjk7ZcUNh8
+ TbuhgQTiujT/xJvMJxMz3yYR2sLH9oGSRba9o+xI8QCMQKvuJAHYL9yTETwmZgWXH/JkTNG
+ hEIudoiLn0Lt3KbW5k5uK5AzLmA+iWqsXTL7OOSAXSDFdwSsqMoY8j+AZobhiV+PbJzDesq
+ GxpEOICGeaE/vptwz4WTQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:kN+bt8ib7gc=:kYckXckHhMmCyO9KUeoHdW
+ BoAuQhF52m+KarZtNWH9fHRyuCGiXqzThx928TdrIReC2EGJj2kPxk97ZIIA2lTLHCVfKD8zO
+ dKiU5bR6hFRveU1DS6VZXcR+nd/lZNNLNs/kbF8Qr2VfWzHPY6dU7upzSA7O5AJHj4fCmE9Of
+ vUBDzOX/aA0sNtSnpHoAm30fM3OwXkHDIys50t6whkhVFIQBPm28yRky2rx2uswocQGlHVk26
+ wadk50rgGwsSTBkAITdEC2Azr+Md+PQ8zAElqhgYgpHWVhSp1bjjWrGz2ofHEu4VBrfsWpwiu
+ wnwGSZN/4pi1PHVa9B/0A8vAEHbqWJ5u0yE6wiHnPbB6Q/6TYTwx44esHiXmqKpw7o+u0KCQd
+ /JZblqD503AkdBd6oAvEVr6Acpl1G8X0gn3cSOAkTvllNmSC44j1BRGJiQrroPVs4LHdP3BUS
+ fJ57fN7UMMif2SK+gUvLwsvrVzXeZf2loEr1TQLTbPqjrVo1jMdJ6STK6yz7I05YWkBc/+rq1
+ 0TmXNkScd63fyDIqFR3L69vfHNWWtM/5MhELHeYtTQ7h1bz8wu+c+CtTLuuCgw8zyuF5LXm/O
+ otC8YH2RhWkcuj4KGm6mPDK6Iwk+ehPLQUcpU+/Gwdj2C71OTt3TGAHdqborFEef9zWzDpoJn
+ 8l4edbpC1YQHnDxHdUdsdMkgjj3xqOjY/DAa/HO2k33IlYhIHewX5LFP9ELRvPKIghDA7TMJD
+ MRDAbgiToviG1fDHfiYOr8haCPybGDoBIv6JNL+mrOHwzX4NddruvRZL/HsTsRhR5eySg/BFb
+ BUrGXoYkCuy2S7YypaZCoZWgt2xtkLXXYqxxgBO3Xow8fvi2MnBrV24wTO2NB2ijR9eZ8ROzk
+ joqx/yr6mYL8gSFnbrFUJsyU91XtM/Ozjg9/QGP8Gl2+VxpcpOM7Z/pjmj63alq6BxxGM3OUA
+ tSXsc1HEYM4/fnNMS1qBmsiYFWuxDiaMKa9zOtUoF6CROA+uJp4IKnOUvrQJkT8bgG7HGHKG8
+ ScjFy9pXNlGr7W1jk9C+G6icYpjLONlWOrn4BxDFYbwSbq+vR73ihJGvC3y8/UTpLrBm9K/+s
+ 7tWS0rJbZjenCgdxQ5yE6jkGMKgaV1xe9uEtCVa0WH7qeFWianANWX1O3u+9es7m5xB6zTdmw
+ xeIiZLa1hz9E6kQAkLXxbhkALy1yAdgH5/irv0kKNqWDVhtcbpLji/0beSHHgZpcje/AQ=
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021-05-21 22:20, Paul Moore wrote:
-> On Fri, May 21, 2021 at 6:05 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > On 5/21/2021 1:19 PM, Paul Moore wrote:
-> > > On Thu, May 13, 2021 at 4:32 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> > >> Create a new audit record type to contain the subject information
-> > >> when there are multiple security modules that require such data.
-> > >> This record is linked with the same timestamp and serial number
-> > >> using the audit_alloc_local() mechanism.
-> > > The record is linked with the other associated records into a single
-> > > event, it doesn't matter if it gets the timestamp/serial from
-> > > audit_alloc_local() or an existing audit event, e.g. ongoing syscall.
-> > >
-> > >> The record is produced only in cases where there is more than one
-> > >> security module with a process "context".
-> > >> In cases where this record is produced the subj= fields of
-> > >> other records in the audit event will be set to "subj=?".
-> > >>
-> > >> An example of the MAC_TASK_CONTEXTS (1420) record is:
-> > >>
-> > >>         type=UNKNOWN[1420]
-> > >>         msg=audit(1600880931.832:113)
-> > >>         subj_apparmor==unconfined
-> > > It should be just a single "=" in the line above.
-> >
-> > AppArmor provides the 2nd "=" as part of the subject context.
-> > What's here is correct. I won't argue that it won't case confusion
-> > or worse.
-> 
-> Oh, wow, okay.  That needs to change at some point but I agree it's
-> out of scope for this patchset.  In the meantime I might suggest using
-> something other than AppArmor as an example here.
+Hi,
 
-Similar but not identical situation to:
-	BUG: INTEGRITY_POLICY_RULE violates audit message format · Issue #113 · linux-audit/audit-kernel
-	https://github.com/linux-audit/audit-kernel/issues/113
+On Fri, May 21, 2021 at 11:02:14AM -0700, Andi Kleen wrote:
+>
+> > Moreover, I think this solves another problem pointed out by Andi Klee=
+n
+> > during the v5 review [2] related to the possibility that a supervisor
+> > respawns processes killed by the Brute LSM. He suggested adding some w=
+ay so
+> > a supervisor can know that a process has been killed by Brute and then
+> > decide to respawn or not. So, now, the supervisor can read the brute x=
+attr
+> > of one executable and know if it is blocked by Brute and why (using th=
+e
+> > statistical data).
+>
+> It looks better now, Thank.
+>
+> One potential problem is that the supervisor might see the executable
+> directly, but run it through some wrapper. In fact I suspect that will b=
+e
+> fairly common with complex daemons. So it couldn't directly look at the
+> xattr. Might be useful to also pass this information through the wait*
+> chain, so that the supervisor can directly collect it. That would need s=
+ome
+> extension to these system calls.
+>
+Could something like this help? (not tested)
 
-> > >>         subj_smack=_
-> > >>
-> > >> There will be a subj_$LSM= entry for each security module
-> > >> LSM that supports the secid_to_secctx and secctx_to_secid
-> > >> hooks. The BPF security module implements secid/secctx
-> > >> translation hooks, so it has to be considered to provide a
-> > >> secctx even though it may not actually do so.
-> > >>
-> > >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > >> To: paul@paul-moore.com
-> > >> To: linux-audit@redhat.com
-> > >> To: rgb@redhat.com
-> > >> Cc: netdev@vger.kernel.org
-> > >> ---
-> > >>  drivers/android/binder.c                |  2 +-
-> > >>  include/linux/audit.h                   | 24 ++++++++
-> > >>  include/linux/security.h                | 16 ++++-
-> > >>  include/net/netlabel.h                  |  3 +-
-> > >>  include/net/scm.h                       |  2 +-
-> > >>  include/net/xfrm.h                      | 13 +++-
-> > >>  include/uapi/linux/audit.h              |  1 +
-> > >>  kernel/audit.c                          | 80 ++++++++++++++++++-------
-> > >>  kernel/audit.h                          |  3 +
-> > >>  kernel/auditfilter.c                    |  6 +-
-> > >>  kernel/auditsc.c                        | 75 ++++++++++++++++++++---
-> > >>  net/ipv4/ip_sockglue.c                  |  2 +-
-> > >>  net/netfilter/nf_conntrack_netlink.c    |  4 +-
-> > >>  net/netfilter/nf_conntrack_standalone.c |  2 +-
-> > >>  net/netfilter/nfnetlink_queue.c         |  2 +-
-> > >>  net/netlabel/netlabel_domainhash.c      |  4 +-
-> > >>  net/netlabel/netlabel_unlabeled.c       | 24 ++++----
-> > >>  net/netlabel/netlabel_user.c            | 20 ++++---
-> > >>  net/netlabel/netlabel_user.h            |  6 +-
-> > >>  net/xfrm/xfrm_policy.c                  | 10 ++--
-> > >>  net/xfrm/xfrm_state.c                   | 20 ++++---
-> > >>  security/integrity/ima/ima_api.c        |  7 ++-
-> > >>  security/integrity/integrity_audit.c    |  6 +-
-> > >>  security/security.c                     | 46 +++++++++-----
-> > >>  security/smack/smackfs.c                |  3 +-
-> > >>  25 files changed, 274 insertions(+), 107 deletions(-)
-> > > ...
-> > >
-> > >> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > >> index 97cd7471e572..229cd71fbf09 100644
-> > >> --- a/include/linux/audit.h
-> > >> +++ b/include/linux/audit.h
-> > >> @@ -386,6 +395,19 @@ static inline void audit_ptrace(struct task_struct *t)
-> > >>                 __audit_ptrace(t);
-> > >>  }
-> > >>
-> > >> +static inline struct audit_context *audit_alloc_for_lsm(gfp_t gfp)
-> > >> +{
-> > >> +       struct audit_context *context = audit_context();
-> > >> +
-> > >> +       if (context)
-> > >> +               return context;
-> > >> +
-> > >> +       if (lsm_multiple_contexts())
-> > >> +               return audit_alloc_local(gfp);
-> > >> +
-> > >> +       return NULL;
-> > >> +}
-> > > See my other comments, but this seems wrong at face value.  The
-> > > additional LSM record should happen as part of the existing audit log
-> > > functions.
-> >
-> > I'm good with that. But if you defer calling audit_alloc_local()
-> > until you know you need it you may be in a place where you can't
-> > associate the new context with the event. I think. I will have
-> > another go at it.
-> 
-> I can't think of a case where you would ever not know if you need to
-> allocate a local context at the start.  If you are unsure, get in
-> touch and we can work it out.
-> 
-> > > I think I was distracted with the local context issue and I've lost
-> > > track of the details here, perhaps it's best to fix the local context
-> > > issue first (that should be a big change to this patch) and then we
-> > > can take another look.
-> >
-> > I really need to move forward. I'll give allocation of local contexts
-> > as necessary in audit_log_task_context() another shot.
-> 
-> I appreciate the desire to move forward, and while I can't speak for
-> everyone, I'll do my best to work with you to find a good solution.
-> If you get stuck or aren't sure you know how to reach me :)
-> 
-> As a start, I might suggest looking at some of the recent audit
-> container ID patchsets from Richard; while they have had some issues,
-> they should serve as a basic example of what we mean when we talk
-> about "local contexts" and how they should be used.
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://listman.redhat.com/mailman/listinfo/linux-audit
+diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_comp=
+at.c
+index 0e5d0a7e203b..409c9c4c40c0 100644
+=2D-- a/arch/x86/kernel/signal_compat.c
++++ b/arch/x86/kernel/signal_compat.c
+@@ -30,7 +30,7 @@ static inline void signal_compat_build_tests(void)
+ 	BUILD_BUG_ON(NSIGSEGV !=3D 9);
+ 	BUILD_BUG_ON(NSIGBUS  !=3D 5);
+ 	BUILD_BUG_ON(NSIGTRAP !=3D 6);
+-	BUILD_BUG_ON(NSIGCHLD !=3D 6);
++	BUILD_BUG_ON(NSIGCHLD !=3D 7);
+ 	BUILD_BUG_ON(NSIGSYS  !=3D 2);
 
-- RGB
+ 	/* This is part of the ABI and can never change in size: */
+diff --git a/include/brute/brute.h b/include/brute/brute.h
+new file mode 100644
+index 000000000000..1569bd495f94
+=2D-- /dev/null
++++ b/include/brute/brute.h
+@@ -0,0 +1,13 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _BRUTE_H_
++#define _BRUTE_H_
++
++#include <linux/sched.h>
++
++#ifdef CONFIG_SECURITY_FORK_BRUTE
++bool brute_task_killed(struct task_struct *task);
++#else
++static inline bool brute_task_killed(struct task_struct *task) { return f=
+alse; }
++#endif
++
++#endif /* _BRUTE_H_ */
+diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic=
+/siginfo.h
+index 03d6f6d2c1fe..488abfdc7b0d 100644
+=2D-- a/include/uapi/asm-generic/siginfo.h
++++ b/include/uapi/asm-generic/siginfo.h
+@@ -273,7 +273,8 @@ typedef struct siginfo {
+ #define CLD_TRAPPED	4	/* traced child has trapped */
+ #define CLD_STOPPED	5	/* child has stopped */
+ #define CLD_CONTINUED	6	/* stopped child has continued */
+-#define NSIGCHLD	6
++#define CLD_BRUTE	7	/* child was killed by brute LSM */
++#define NSIGCHLD	7
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+ /*
+  * SIGPOLL (or any other signal without signal specific si_codes) si_code=
+s
+diff --git a/kernel/exit.c b/kernel/exit.c
+index fd1c04193e18..69bcbd00d277 100644
+=2D-- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -69,6 +69,8 @@
+ #include <asm/unistd.h>
+ #include <asm/mmu_context.h>
 
++#include <brute/brute.h>
++
+ static void __unhash_process(struct task_struct *p, bool group_dead)
+ {
+ 	nr_threads--;
+@@ -1001,6 +1003,7 @@ static int wait_task_zombie(struct wait_opts *wo, st=
+ruct task_struct *p)
+ 	pid_t pid =3D task_pid_vnr(p);
+ 	uid_t uid =3D from_kuid_munged(current_user_ns(), task_uid(p));
+ 	struct waitid_info *infop;
++	bool killed_by_brute =3D brute_task_killed(p);
+
+ 	if (!likely(wo->wo_flags & WEXITED))
+ 		return 0;
+@@ -1114,7 +1117,8 @@ static int wait_task_zombie(struct wait_opts *wo, st=
+ruct task_struct *p)
+ 			infop->cause =3D CLD_EXITED;
+ 			infop->status =3D status >> 8;
+ 		} else {
+-			infop->cause =3D (status & 0x80) ? CLD_DUMPED : CLD_KILLED;
++			infop->cause =3D (status & 0x80) ? CLD_DUMPED :
++				killed_by_brute ? CLD_BRUTE : CLD_KILLED;
+ 			infop->status =3D status & 0x7f;
+ 		}
+ 		infop->pid =3D pid;
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 62625ad98b14..f6c062b19563 100644
+=2D-- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -55,6 +55,8 @@
+ #include <asm/siginfo.h>
+ #include <asm/cacheflush.h>
+
++#include <brute/brute.h>
++
+ /*
+  * SLAB caches for signal bits.
+  */
+@@ -1996,7 +1998,7 @@ bool do_notify_parent(struct task_struct *tsk, int s=
+ig)
+ 	if (tsk->exit_code & 0x80)
+ 		info.si_code =3D CLD_DUMPED;
+ 	else if (tsk->exit_code & 0x7f)
+-		info.si_code =3D CLD_KILLED;
++		info.si_code =3D brute_task_killed(tsk) ? CLD_BRUTE : CLD_KILLED;
+ 	else {
+ 		info.si_code =3D CLD_EXITED;
+ 		info.si_status =3D tsk->exit_code >> 8;
+
+Thanks,
+John Wood
