@@ -2,138 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B21AC47083
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 May 2021 15:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7C4C47083
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 May 2021 20:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20CCF61028
-	for <linux-security-module@archiver.kernel.org>; Sun, 23 May 2021 15:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9BF9610A5
+	for <linux-security-module@archiver.kernel.org>; Sun, 23 May 2021 20:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231831AbhEWPu3 (ORCPT
+        id S231945AbhEWU17 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 23 May 2021 11:50:29 -0400
-Received: from mout.gmx.net ([212.227.15.18]:49693 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231789AbhEWPu3 (ORCPT
+        Sun, 23 May 2021 16:27:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45702 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231933AbhEWU16 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 23 May 2021 11:50:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1621784884;
-        bh=FrWraqxqE5YYa+m3D7qRmF+oGA519cjiJkwpYd5Z2+4=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=MlAGITup6S74CPUyUk7DrKXMFyKxhwmYjNVvZxacdvzyJnqweDEjwR10Uehfrq14V
-         qNrqXwa0NC8gwyd1h6akEGEOFnys6LzF/WWLOknzdPYudg4UI6DkYARAGJVvIdCxVH
-         KQ3ZVbulhSh7knPpHzoewt1P59a1mdE2NFpgSgWo=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from ubuntu ([83.52.228.41]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MAfUo-1lZnhs0rQ8-00B7XB; Sun, 23
- May 2021 17:48:04 +0200
-Date:   Sun, 23 May 2021 17:47:49 +0200
-From:   John Wood <john.wood@gmx.com>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>, valdis.kletnieks@vt.edu,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-hardening@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v7 0/7] Fork brute force attack mitigation
-Message-ID: <20210523154749.GA3762@ubuntu>
-References: <20210521172414.69456-1-john.wood@gmx.com>
- <19903478-52e0-3829-0515-3e17669108f7@linux.intel.com>
- <20210523073124.GA3762@ubuntu>
- <3d4ddd55-4f42-3ef7-dd68-a9f2bc33ba4b@linux.intel.com>
+        Sun, 23 May 2021 16:27:58 -0400
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9558CC061574;
+        Sun, 23 May 2021 13:26:31 -0700 (PDT)
+Received: by mail-wm1-x32c.google.com with SMTP id n17-20020a7bc5d10000b0290169edfadac9so430293wmk.1;
+        Sun, 23 May 2021 13:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:references:from:subject:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
+        b=esrTniYlKVIz1qwncB0fA1f6EoaGdXdv9Byf2wrzoXpJoI8ojdqkT7UMYtQ9tQdySr
+         dSSenwaL0uFN0kSScz4CSe6aF58av5EQOYX0crNgBe7TucIZqRPeRPClZzCZd7yi8vWW
+         O8nk+31pXBR9ihIKwxvRsCSxf62JDvRBeSK/GiTZ2dw/RpQpabwMEsy6xgjhQ8CbfoP5
+         QLmJcJBTT4BYTPrUanoQCVObQvlzPbKoVnKLRz+H90+AnrvDsodYtO/tWjJExz5Adju5
+         /lQx48WoVzuaUsfWYwEcjGsVXZwjY1oR64OEuEmYacUMdOdrwAbXifj7z1hl61xv6RDW
+         +kLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PygufLx+GftT6TS2etBhgc6+uuLN9BWMi/zqgHpQvsY=;
+        b=gLXj6Ac2l8Z0G8Ix7wJnc9AgD1h16l/ooQAG8LPDBLhJRKDmTde+2jT9rWquNdmVn3
+         Md7APd2kH4SdX6St8WqxD7yMXx9Iten6ufr0VHC0WGQkIyW5Ak8f8C/uoMhZzmaR2tiB
+         6JItb7srFisF6oH6TE6C7ItzXHlE/OdaVqhaw3IEYSOHnGDQu757ijliAYkJ2JSsU2xn
+         uzHPjXOKYNo0Ze9KarabMK5jOFoIqx0ksVb8ZB3eby68thNsFxg8Ca0W+8cEWMduPzWi
+         /4EBFZBbJnzbXuwgOftwH1hB7GwDjzgecb4o8aXEi+yc+eu1LziUfp1TvNfE/Dpeviem
+         txuA==
+X-Gm-Message-State: AOAM530hZhyBzj4zpbyxDDarbQ2COhHDISIQ/FtVtmVQ8RfG+EpucDLj
+        GXs5F+cF11eqJSCVw6prF00F51Z0/rE0jefX
+X-Google-Smtp-Source: ABdhPJwHSQNM+a1cD2dybYGpeqrMJbBTrEBwBzdhWHyWUNWiVsmNBtsEauiH5obSA1GKRpi7NeXYOw==
+X-Received: by 2002:a1c:4b13:: with SMTP id y19mr17332089wma.102.1621801590115;
+        Sun, 23 May 2021 13:26:30 -0700 (PDT)
+Received: from [192.168.8.197] ([185.69.145.65])
+        by smtp.gmail.com with ESMTPSA id 11sm5855772wmo.24.2021.05.23.13.26.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 May 2021 13:26:29 -0700 (PDT)
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+Date:   Sun, 23 May 2021 21:26:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d4ddd55-4f42-3ef7-dd68-a9f2bc33ba4b@linux.intel.com>
-X-Provags-ID: V03:K1:YICGuZJa+XoC4UrRWY3G49f7Hh4z2qD02D0EnqYde0YwRyk9D5j
- Wi36QkvxyTc6zY4wywHFAUwaQ1T3kaxiU1axjO/iEG64lDNTsijLIp3jAAXP3TdsrJjI1JO
- DCtClcBdN6YqFvOlSJKBPLCjYzqW9K9ZYe4fB6b3v2dCemUVnRAXQGi2k3CWene6CaCzesp
- TKgy3Qcj7xt+rcaEUIorA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:uq0tE3o5F/Y=:1AswCfz2hpV+ocgmC9DNmk
- /kz64yOiY4gO1DnokRMAGVeJRQS/yTyKZy/NE472elXysojfgXyWIOlY4L0UY5S5IcDu6x/HX
- CRt09XC3r/Fm2nWKYJOjKLSohgd7xbjtd7C7R5f8MZWA971cLJ6vASeWBjnIWjwTThvZhzXIs
- taCDiwYzm5tClKLMvV4Xvi/QPOsErKYD1emaEo0yfK8UdtRofpl77Jo3NXJbGvJaKUW+9dZFQ
- 3cFCplMX5ObbZRjk5w1tV6MwsA6IfEgfXln16uzePSMME7mZ4y1aIsAiZDb7sP6joSS5j4IUF
- WhOuRhLcFjXOUA/L1JT5rCznwrZZHbOcvhj9bYZQIDKSNA+fUhMZF+nW7z0djPQB/TKe646nO
- 3y+CBp9DpND9EMK4xoe73jH1+mRmrFqjnaLFqu3tsRFx35QIQxo/9DX4MuxdEKhh6M4Fj6Vkc
- h2/J2b2ZA6erVioFDegM+i7AMyN7aA+7CL510SwijdrMCCuBp74pdz85pzU3lL1qt86aNRGMw
- W6B1STzAvoUfw//O+KT+jbmmbE3GE4F9pBFCH4gmxIgbREIeOrRG3JlR1Df6h2raiP8ngxGnm
- o4ps/wXTboUNZjIJfQs/sA0dYCNSTlNz5U4c3eQRXCPpb1xBeVsnAtfuXXt7LZhpb6fkuwMLN
- NzqUy0rHbaQzO7JKVhPRE/txaH8rtR894k/yE1u5J4n2dGdSTO2f6IXScTUa/sYBNiSkwbtdB
- tKTw4lBIc1Vvr288fFESsrjWvo1/hbN5YRPE4Va5tYJ5Mq5oUd+SsdTKPnVbH+kGtlBQsLVXB
- 7vOEAPXDgkTjo8K7GMMVpHewriuji3cAGh/+pqIqekH1jRSd6o9D1WyQJGaUEBGxJ+wCeI338
- VkYlj7coGmjjn1yI+5rABltlGVtdr+XqodNbK7rDCJfKVX36txXOpNH9rJ5O8hgVaGH6c1P2n
- 6MqnZ4n1z/9N/YdkMXFxAtnOlx4mbMWcK6iibM9erFrw1kqQJL/oogW4tez+1dNej096IbvI4
- ShmJS801cDSZVHM19J3BCKUEUvUk4vkGMh5xZAfHcPK38VnJcBcSYreHe/9oMFZGRCMk+IDPx
- QItNaiPbOVAxKGckD0t4sdEbuuRQl+9NAyQ
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, May 23, 2021 at 07:43:16AM -0700, Andi Kleen wrote:
->
-> On 5/23/2021 12:31 AM, John Wood wrote:
-> > Hi,
-> >
-> > On Fri, May 21, 2021 at 11:02:14AM -0700, Andi Kleen wrote:
-> > > > Moreover, I think this solves another problem pointed out by Andi =
-Kleen
-> > > > during the v5 review [2] related to the possibility that a supervi=
-sor
-> > > > respawns processes killed by the Brute LSM. He suggested adding so=
-me way so
-> > > > a supervisor can know that a process has been killed by Brute and =
-then
-> > > > decide to respawn or not. So, now, the supervisor can read the bru=
-te xattr
-> > > > of one executable and know if it is blocked by Brute and why (usin=
-g the
-> > > > statistical data).
-> > > It looks better now, Thank.
-> > >
-> > > One potential problem is that the supervisor might see the executabl=
-e
-> > > directly, but run it through some wrapper. In fact I suspect that wi=
-ll be
-> > > fairly common with complex daemons. So it couldn't directly look at =
-the
-> > > xattr. Might be useful to also pass this information through the wai=
-t*
-> > > chain, so that the supervisor can directly collect it. That would ne=
-ed some
-> > > extension to these system calls.
-> > >
-> > Could something like this help? (not tested)
->
-> This works even when someone further down the chain died?
+On 5/22/21 3:36 AM, Paul Moore wrote:
+> On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+>> On 5/21/21 10:49 PM, Paul Moore wrote:
+[...]
+>>>
+>>> +     if (req->opcode < IORING_OP_LAST)
+>>
+>> always true at this point
+> 
+> I placed the opcode check before the audit call because the switch
+> statement below which handles the operation dispatching has a 'ret =
+> -EINVAL' for the default case, implying that there are some paths
+> where an invalid opcode could be passed into the function.  Obviously
+> if that is not the case and you can guarantee that req->opcode will
+> always be valid we can easily drop the check prior to the audit call.
 
-Yes, this is the idea. (but now is a work in progress :) )
+It is always true at this point, would be completely broken
+otherwise
 
-> Assuming it does, for SIGCHLD it seems reasonable.
+>>> +             audit_uring_entry(req->opcode);
+>>
+>> So, it adds two if's with memory loads (i.e. current->audit_context)
+>> per request in one of the hottest functions here... No way, nack
+>>
+>> Maybe, if it's dynamically compiled into like kprobes if it's
+>> _really_ used.
+> 
+> I'm open to suggestions on how to tweak the io_uring/audit
+> integration, if you don't like what I've proposed in this patchset,
+> lets try to come up with a solution that is more palatable.  If you
+> were going to add audit support for these io_uring operations, how
+> would you propose we do it?  Not being able to properly audit io_uring
+> operations is going to be a significant issue for a chunk of users, if
+> it isn't already, we need to work to find a solution to this problem.
 
-So, if there are no objections I will work on it for the next version.
+Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+for many popular distributions, so I assume that is not compiled out.
 
->
-> I'm not fully sure how it will interact with cgroup release tracking tho=
-ugh,
-> that might need more research (my understanding is that modern superviso=
-rs
-> often use cgroups)
+What are use cases for audit? Always running I guess? Putting aside
+compatibility problems, it sounds that with the amount of overhead
+it adds there is no much profit in using io_uring in the first place.
+Is that so?
 
-Yeah, a new topic to learn: cgroups. I will try to work on this too if the=
-re are
-no objections.
+__audit_uring_exit()
+-> audit_filter_syscall()
+  -> for (audit_list) if (...) audit_filter_rules()
+    -> ...
+-> audit_filter_inodes()
+  -> ...
 
-Thanks for the feedback.
-John Wood
+> Unfortunately I don't think dynamically inserting audit calls is
+> something that would meet the needs of the audit community (I fear it
+> would run afoul of the various security certifications), and it
+> definitely isn't something that we support at present.
+
+I see
+
+-- 
+Pavel Begunkov
