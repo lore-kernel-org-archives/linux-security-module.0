@@ -2,275 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701A1C04FF3
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 18:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A4FC2B9F8
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 19:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F15761360
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 18:56:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC27E61400
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 19:59:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233209AbhEXS5h (ORCPT
+        id S233122AbhEXUA4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 May 2021 14:57:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36760 "EHLO
+        Mon, 24 May 2021 16:00:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232709AbhEXS5g (ORCPT
+        with ESMTP id S233070AbhEXUAv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 May 2021 14:57:36 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1F20C061574
-        for <linux-security-module@vger.kernel.org>; Mon, 24 May 2021 11:56:06 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id e17so16359133iol.7
-        for <linux-security-module@vger.kernel.org>; Mon, 24 May 2021 11:56:06 -0700 (PDT)
+        Mon, 24 May 2021 16:00:51 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3994AC06138B
+        for <linux-security-module@vger.kernel.org>; Mon, 24 May 2021 12:59:23 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id l1so43617519ejb.6
+        for <linux-security-module@vger.kernel.org>; Mon, 24 May 2021 12:59:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kY5ODL09+MFOG0z0UW2n/UhvHutj9fmmLO3qpZTedGA=;
-        b=DU9Nb3d0eumYE6yPGePAk/liCz7kzb4TdqRZU3Q9TXKx1N0JT/l2RW1mQ5dVtqN8WV
-         RfLtOktNcAG2XTXy0wmJy59K9Kj9T2JgvzslsaBWDS8Dug081GxE3ql9gr8eG0H8i/8W
-         phWc3AWv+VY0QMEc1d8eIrsiprPFZogFOsvco=
+         :cc;
+        bh=09wkFCImo62hLXHkPnzCDHAYLxWzFwtrCMOPgJlSi80=;
+        b=YPDA+Xc5XRpHuRWNw83rgJb7PAeoUrr32wd0YoytgmXhNe7upISv9x7+VbYgvBRRRZ
+         b1/35UAnT2GeCOcUlkm8zabNyAF+k8Cn+e5O0hJ1x2gxBn3cdJTTvuVHYhCehubyE1rf
+         7LkrfO5dlawwPih4pzrlgP54+8tXpJIwTAqYJ9AYeKWy9J78rgvQjAbFvg0SbnFTQyGO
+         UfL80Or+LC+uiw/fI8E7yVHljeCMy/Ee9NriTZfdTBWr3mnMMB96bBZxa1ESHq439TEO
+         lI31NQJyIX76xNxgH/iQJLXmJEUWuRh5GidWMSCPd8K2FtLgR6A19p/trTaYQBXDfyvd
+         XKGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kY5ODL09+MFOG0z0UW2n/UhvHutj9fmmLO3qpZTedGA=;
-        b=gog3I2LIvfb72Sq+mBnKbCoAczViWH23DpwzzdloqZNic4BxjZrYUenNWK54OCnMJk
-         d4hGCscs7AzLzd66hNBCjBIWyClvUOsjZK5RjL4oDIcPlAPM1rPW/NavHKemlEGIANir
-         OPWhc+3gXAiDtwRpqMJL103tMApdlCW9dhU0Xff6Pyx6r519TlM4kCoBg5jjao5VZi3G
-         E5PlximdIm3V2lHjaGz9En1qVPT8TKfZbStf6VWQXxGM/wvyfx+6IFJMXCMCN950EIKz
-         b5SP6WTJOpBWEywbQDqJTlrxXh2Xq8fsldhTz5SyCicNvGEJlUrb3s4IieqdEIzbdz32
-         YqZg==
-X-Gm-Message-State: AOAM532pEp9I+Rx4Wa+KDV/tQGGhsrXEtUIYKrq1HwE8w+wKz2vtPaQf
-        MjmoLj+2yNbKGFEuFzlA+HOzkMJpIok377NzH9EDiA==
-X-Google-Smtp-Source: ABdhPJyU5QTyR2R5Ov3SlHc+M44rspLop3d/kpVd20Xusxd9ECjmltvb99VG+PRGEuN4LJN9mjVBUZxMjMroEa/D55c=
-X-Received: by 2002:a05:6602:2d8f:: with SMTP id k15mr16960080iow.114.1621882565864;
- Mon, 24 May 2021 11:56:05 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=09wkFCImo62hLXHkPnzCDHAYLxWzFwtrCMOPgJlSi80=;
+        b=CKgiUKERLtkyNNBpuvrd/lqQBeTypsPe24cX2ND5t1JxGtn/XQm6J/1ImKmejet4+X
+         DfcOJyJiFlkpFAElqXkQJimyt9FxaaFT21ARHK7Jl9dm0dD5IG1TRWP5F1a6herEooyy
+         h6kFBUJQ5F/caPiVXRVKw3v44sd//Yg43kqj5pnDJoOi01WZu5CY8HUXy9PMAib/k4vw
+         fWCgZbxofwEhNGXzJC9Zl1fqF90WhPdY/exdRyOTdP33StgzQy4d+U+5A6cUa6hpaDV8
+         Tr2xXRnGCDFvnKLnMsBZWFCWJRJZe4ZlKpQC1QMvpVAmuKu4CKbHRBSDKPP+wOAC/Ei1
+         ZeSg==
+X-Gm-Message-State: AOAM531QjH9+x/bXUoj81/8rOLF9Hnqt5FlsPiumRXUQBhjKgn34X19G
+        fjeljRtwiy+rTsIu2aOSHx8kycsaDEbN0UPmoFBb
+X-Google-Smtp-Source: ABdhPJyJnn8cTuWE0D6WCTdnxc3zkrXdZltcoobyaH7I8DthDbUf1aZItUpXKY/gO3bnHsam4ng+oV2h/jNU1sQt9pA=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr24731654ejb.542.1621886361736;
+ Mon, 24 May 2021 12:59:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1620499942.git.yifeifz2@illinois.edu> <CALCETrUQBonh5BC4eomTLpEOFHVcQSz9SPcfOqNFTf2TPht4-Q@mail.gmail.com>
- <CABqSeASYRXMwTQwLfm_Tapg45VUy9sPfV7BeeV8p7XJrDoLf+Q@mail.gmail.com>
- <fffbea8189794a8da539f6082af3de8e@DM5PR11MB1692.namprd11.prod.outlook.com>
- <CAGMVDEGzGB4+6gJPTw6Tdng5ur9Jua+mCbqwPoNZ16EFaDcmjA@mail.gmail.com>
- <eae2a0e5038b41c4af87edcb3d4cdc13@DM5PR11MB1692.namprd11.prod.outlook.com> <CAGMVDEFE8g5XKyQbB1xaK3ve58cENN2hZm3u=ktpGFgmBdQkeQ@mail.gmail.com>
-In-Reply-To: <CAGMVDEFE8g5XKyQbB1xaK3ve58cENN2hZm3u=ktpGFgmBdQkeQ@mail.gmail.com>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Mon, 24 May 2021 11:55:29 -0700
-Message-ID: <CAMp4zn9gAA4csoM=p75_hU_EfxMaw25yrjy0bFnn3gGhrksFhg@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next seccomp 00/12] eBPF seccomp filters
-To:     Tianyin Xu <tyxu@illinois.edu>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        YiFei Zhu <zhuyifei1999@gmail.com>,
-        "containers@lists.linux.dev" <containers@lists.linux.dev>,
-        bpf <bpf@vger.kernel.org>, "Zhu, YiFei" <yifeifz2@illinois.edu>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
-        Claudio Canella <claudio.canella@iaik.tugraz.at>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Hubertus Franke <frankeh@us.ibm.com>,
-        Jann Horn <jannh@google.com>,
-        "Jia, Jinghao" <jinghao7@illinois.edu>,
-        "Torrellas, Josep" <torrella@illinois.edu>,
-        Kees Cook <keescook@chromium.org>,
-        Tobin Feldman-Fitzthum <tobin@ibm.com>,
-        Tom Hromatka <tom.hromatka@oracle.com>,
-        Will Drewry <wad@chromium.org>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com> <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+In-Reply-To: <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 24 May 2021 15:59:10 -0400
+Message-ID: <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 20, 2021 at 1:22 AM Tianyin Xu <tyxu@illinois.edu> wrote:
->
-> On Mon, May 17, 2021 at 12:08 PM Sargun Dhillon <sargun@sargun.me> wrote:
+On Sun, May 23, 2021 at 4:26 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> On 5/22/21 3:36 AM, Paul Moore wrote:
+> > On Fri, May 21, 2021 at 8:22 PM Pavel Begunkov <asml.silence@gmail.com> wrote:
+> >> On 5/21/21 10:49 PM, Paul Moore wrote:
+> [...]
+> >>>
+> >>> +     if (req->opcode < IORING_OP_LAST)
+> >>
+> >> always true at this point
 > >
-> > While I agree with you that this is the case right now, there's no reas=
-on it
-> > has to be the case. There's a variety of mechanisms that can be employe=
-d
-> > to significantly speed up the performance of the notifier. For example,=
- right
-> > now the notifier is behind one large per-filter lock. That could be rem=
-oved
-> > allowing for better concurrency. There are a large number of mechanisms
-> > that scale O(n) with the outstanding notifications -- again, something
-> > that could be improved.
+> > I placed the opcode check before the audit call because the switch
+> > statement below which handles the operation dispatching has a 'ret =
+> > -EINVAL' for the default case, implying that there are some paths
+> > where an invalid opcode could be passed into the function.  Obviously
+> > if that is not the case and you can guarantee that req->opcode will
+> > always be valid we can easily drop the check prior to the audit call.
 >
-> Thanks for the pointer! But, I don=E2=80=99t think this can fundamentally
-> eliminate the performance gap between the notifiers and the ebpf
-> filters. IMHO, the additional context switches of user notifiers make
-> the difference.
->
-I mean, I still think it can be closed. Or at least get better. I've
-thought about
-working on performance improvements, but they're lower on the list
-than functionality changes.
+> It is always true at this point, would be completely broken
+> otherwise
 
+Understood, I was just pointing out an oddity in the code.  I just
+dropped the checks from my local tree, you'll see it in the next draft
+of the patchset.
+
+> >> So, it adds two if's with memory loads (i.e. current->audit_context)
+> >> per request in one of the hottest functions here... No way, nack
+> >>
+> >> Maybe, if it's dynamically compiled into like kprobes if it's
+> >> _really_ used.
 > >
-> > The other big improvement that could be made is being able to use somet=
-hing
-> > like io_uring with the notifier interface, but it would require a
-> > fairly significant
-> > user API change -- and a move away from ioctl. I'm not sure if people a=
-re
-> > excited about that idea at the moment.
-> >
+> > I'm open to suggestions on how to tweak the io_uring/audit
+> > integration, if you don't like what I've proposed in this patchset,
+> > lets try to come up with a solution that is more palatable.  If you
+> > were going to add audit support for these io_uring operations, how
+> > would you propose we do it?  Not being able to properly audit io_uring
+> > operations is going to be a significant issue for a chunk of users, if
+> > it isn't already, we need to work to find a solution to this problem.
 >
-> Apologize that I don=E2=80=99t fully understand your proposal. My
-> understanding about io_uring is that it allows you to amortize the
-> cost of context switch but not eliminate it, unless you are willing to
-> dedicate a core for it. I still believe that, even with io_uring, user
-> notifiers are going to be much slower than eBPF filters.
-The notifier gets significantly slower as a function of the notifications. =
-If
-you have a large number of notifications in flight, or if you're trying to
-concurrently handle a large number of notifications, it gets slower. This
-is where something like io_uring is super useful in terms of reducing
-wakeups.
-
-Also, in the original futex2 patches, it had a mechanism to better handle
-(scheduling) of notifier like cases[1]. If the seccomp notifier did a simil=
-ar
-thing, we could see better performance.
-
+> Who knows. First of all, seems CONFIG_AUDIT is enabled by default
+> for many popular distributions, so I assume that is not compiled out.
 >
-> Btw, our patches are based on your patch set (thank you!). Are you
-> using user notifiers (with your improved version?) these days? It will
-> be nice to hear your opinions on ebpf filters.
->
-I'm so glad that someone is picking up the work on this.
+> What are use cases for audit? Always running I guess?
 
-> > >
-> > >
-> > > > >> eBPF doesn't really have a privilege model yet.  There was a lon=
-g and
-> > > > >> disappointing thread about this awhile back.
-> > > > >
-> > > > > The idea is that =E2=80=9Cseccomp-eBPF does not make life easier =
-for an
-> > > > > adversary=E2=80=9D. Any attack an adversary could potentially uti=
-lize
-> > > > > seccomp-eBPF, they can do the same with other eBPF features, i.e.=
- it
-> > > > > would be an issue with eBPF in general rather than specifically
-> > > > > seccomp=E2=80=99s use of eBPF.
-> > > > >
-> > > > > Here it is referring to the helpers goes to the base
-> > > > > bpf_base_func_proto if the caller is unprivileged (!bpf_capable |=
-|
-> > > > > !perfmon_capable). In this case, if the adversary would utilize e=
-BPF
-> > > > > helpers to perform an attack, they could do it via another
-> > > > > unprivileged prog type.
-> > > > >
-> > > > > That said, there are a few additional helpers this patchset is ad=
-ding:
-> > > > > * get_current_uid_gid
-> > > > > * get_current_pid_tgid
-> > > > >   These two provide public information (are namespaces a concern?=
-). I
-> > > > > have no idea what kind of exploit it could add unless the adversa=
-ry
-> > > > > somehow side-channels the task_struct? But in that case, how is t=
-he
-> > > > > reading of task_struct different from how the rest of the kernel =
-is
-> > > > > reading task_struct?
-> > > >
-> > > > Yes, namespaces are a concern.  This idea got mostly shot down for =
-kdbus
-> > > > (what ever happened to that?), and it likely has the same problems =
-for
-> > > > seccomp.
-> > > >
-So, we actually have a case where we want to inspect an argument --
-We want to look at the FD number that's passed to the sendmsg syscall, and =
-then
-see if that's an AF_INET socket, and if it is, then pass back to
-notifier, otherwise
-allow it to continue through. This is an area where I can see eBPF being
-very useful.
+Audit has been around for quite some time now, and it's goal is to
+provide a mechanism for logging "security relevant" information in
+such a way that it meets the needs of various security certification
+efforts.  Traditional Linux event logging, e.g. syslog and the like,
+does not meet these requirements and changing them would likely affect
+the usability for those who are not required to be compliant with
+these security certifications.  The Linux audit subsystem allows Linux
+to be used in places it couldn't be used otherwise (or rather makes it
+a *lot* easier).
 
-> > > > >>
-> > > > >> What is this for?
-> > > > >
-> > > > > Memory reading opens up lots of use cases. For example, logging w=
-hat
-> > > > > files are being opened without imposing too much performance pena=
-lty
-> > > > > from strace. Or as an accelerator for user notify emulation, wher=
-e
-> > > > > syscalls can be rejected on a fast path if we know the memory con=
-tents
-> > > > > does not satisfy certain conditions that user notify will check.
-> > > > >
-> > > >
-> > > > This has all kinds of race conditions.
-> > > >
-> > > >
-> > > > I hate to be a party pooper, but this patchset is going to very hig=
-h bar
-> > > > to acceptance.  Right now, seccomp has a couple of excellent proper=
-ties:
-> > > >
-> > > > First, while it has limited expressiveness, it is simple enough tha=
-t the
-> > > > implementation can be easily understood and the scope for
-> > > > vulnerabilities that fall through the cracks of the seccomp sandbox
-> > > > model is low.  Compare this to Windows' low-integrity/high-integrit=
-y
-> > > > sandbox system: there is a never ending string of sandbox escapes d=
-ue to
-> > > > token misuse, unexpected things at various integrity levels, etc.
-> > > > Seccomp doesn't have tokens or integrity levels, and these bugs don=
-'t
-> > > > happen.
-> > > >
-> > > > Second, seccomp works, almost unchanged, in a completely unprivileg=
-ed
-> > > > context.  The last time making eBPF work sensibly in a less- or
-> > > > -unprivileged context, the maintainers mostly rejected the idea of
-> > > > developing/debugging a permission model for maps, cleaning up the b=
-pf
-> > > > object id system, etc.  You are going to have a very hard time
-> > > > convincing the seccomp maintainers to let any of these mechanism
-> > > > interact with seccomp until the underlying permission model is in p=
-lace.
-> > > >
-> > > > --Andy
-> > >
-> > > Thanks for pointing out the tradeoff between expressiveness vs. simpl=
-icity.
-> > >
-> > > Note that we are _not_ proposing to replace cbpf, but propose to also
-> > > support ebpf filters. There certainly are use cases where cbpf is
-> > > sufficient, but there are also important use cases ebpf could make
-> > > life much easier.
-> > >
-> > > Most importantly, we strongly believe that ebpf filters can be
-> > > supported without reducing security.
-> > >
-> > > No worries about =E2=80=9Cparty pooping=E2=80=9D and we appreciate th=
-e feedback. We=E2=80=99d
-> > > love to hear concerns and collect feedback so we can address them to
-> > > hit that very high bar.
-> > >
-> > >
-> > > ~t
-> > >
-> > > --
-> > > Tianyin Xu
-> > > University of Illinois at Urbana-Champaign
-> > > https://urldefense.com/v3/__https://tianyin.github.io/__;!!DZ3fjg!o4_=
-_Ob32oapUDg9_f6hzksoFiX9517CJ5-w8qtG9i-WKFs_xWbGQfUHpLjHjCddw$
->
+That said, audit is not for everyone, and we have build time and
+runtime options to help make life easier.  Beyond simply disabling
+audit at compile time a number of Linux distributions effectively
+shortcut audit at runtime by adding a "never" rule to the audit
+filter, for example:
 
-[1]: https://lore.kernel.org/lkml/20210215152404.250281-1-andrealmeid@colla=
-bora.com/T/
+ % auditctl -a task,never
+
+> Putting aside compatibility problems, it sounds that with the amount of overhead
+> it adds there is no much profit in using io_uring in the first place.
+> Is that so?
+
+Well, if audit alone erased all of the io_uring advantages we should
+just rip io_uring out of the kernel and people can just disable audit
+instead ;)
+
+I believe there are people who would like to use io_uring and are also
+required to use a kernel with audit, either due to the need to run a
+distribution kernel or the need to capture security information in the
+audit stream.  I'm hoping that we can find a solution for these users;
+if we don't we are asking this group to choose either io_uring or
+audit, and that is something I would like to avoid.
+
+-- 
+paul moore
+www.paul-moore.com
