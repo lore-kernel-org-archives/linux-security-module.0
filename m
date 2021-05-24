@@ -2,181 +2,122 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84003C2B9F7
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 11:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A1DC2B9F8
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 12:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 645AC611CE
-	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 11:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 048C3610A6
+	for <linux-security-module@archiver.kernel.org>; Mon, 24 May 2021 12:08:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232603AbhEXLOI (ORCPT
+        id S232731AbhEXMJt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 24 May 2021 07:14:08 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:18784 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232476AbhEXLOH (ORCPT
+        Mon, 24 May 2021 08:09:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37995 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232110AbhEXMJs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 24 May 2021 07:14:07 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14OB5eD4069183;
-        Mon, 24 May 2021 07:12:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=dxxCUw9AUksxkk1OUxPET1kAJioUlIefAqJ+aPFv2zE=;
- b=Y3rhb2H7qxl7t+aJWPbNDsd1duq2Dr8WOZkMWXrfrCupPFSoskM2khHhKVQfn4tujCOg
- Fosd6oHPNMLFS0FW1tDRTRx8uiRZm8m+6JjmZPhMYNvT/KeAaKs7ceO7ST7qPhPWD8Z0
- Vm79xmzozUQ4ZPAntWpKLDyFYKiOhK3s0YekmuLScpOq6vgdgCNgRMDB+WTlKOxbhWIZ
- 80+RYriT3pujuProjU+yvaPie7KppcPKwdu4ZX1LOXnFYibHGp2SyxJCriRmjRUhXmis
- CmYTE/YQx7LQ1G1Zp/5Txn3vTctDioG5bJAOzF7L+C110EWkHk3o+4LvrVyOrZSl8by/ Xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 38rarr8fm6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 May 2021 07:12:12 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 14OB5uRo071689;
-        Mon, 24 May 2021 07:12:12 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 38rarr8fka-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 May 2021 07:12:12 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.0.43/8.16.0.43) with SMTP id 14OB2sjL000786;
-        Mon, 24 May 2021 11:12:09 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma03ams.nl.ibm.com with ESMTP id 38psk88r2j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 May 2021 11:12:09 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14OBBcZ823855370
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 24 May 2021 11:11:38 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E5CC5204F;
-        Mon, 24 May 2021 11:12:07 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.80.46])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id D21705204E;
-        Mon, 24 May 2021 11:12:03 +0000 (GMT)
-Message-ID: <7a51691adae4099c9d0e1b23e8edf5ce5535eb44.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH 0/3] Add additional MOK vars
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-kernel@vger.kernel.org,
+        Mon, 24 May 2021 08:09:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1621858100;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=SG5PHcm3N2r6OH4+o6Ayr7esIOujvwtFU8EaysbDMm0=;
+        b=R93jfKsmfLVXzUzS1rEMg4fsyypk/ULsFtZKs8f59KMB2kqssjDgnVRiHTgGJ/dPVmLkhF
+        kip0NiXzudT4fzAV8gLMfQYE0akIYhgCq0wDGHfByaBZ1Jl9q2p7rHDB5roDuLI8c6rVDv
+        3jEWi/xbyPJvK9xJm5ZHenlrNGGWAlA=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-60-Tb0XBAKPO4O5YKt-JoO5Gg-1; Mon, 24 May 2021 08:08:16 -0400
+X-MC-Unique: Tb0XBAKPO4O5YKt-JoO5Gg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BC473107ACF8;
+        Mon, 24 May 2021 12:08:09 +0000 (UTC)
+Received: from work-vm (ovpn-112-207.ams2.redhat.com [10.36.112.207])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 42607100EBAF;
+        Mon, 24 May 2021 12:08:06 +0000 (UTC)
+Date:   Mon, 24 May 2021 13:08:03 +0100
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     Andi Kleen <ak@linux.intel.com>, Dov Murik <dovmurik@linux.ibm.com>
+Cc:     Brijesh Singh <brijesh.singh@amd.com>, linux-efi@vger.kernel.org,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@ibm.com>,
+        Jim Cadden <jcadden@ibm.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Hubertus Franke <frankeh@us.ibm.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Laszlo Ersek <lersek@redhat.com>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         linux-security-module@vger.kernel.org,
-        torvalds@linux-foundation.org,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        pjones@redhat.com, glin@suse.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        Patrick Uiterwijk <patrick@puiterwijk.org>
-Date:   Mon, 24 May 2021 07:12:02 -0400
-In-Reply-To: <7440CE7D-9630-44DB-8916-792523AC86E7@oracle.com>
-References: <20210517225714.498032-1-eric.snowberg@oracle.com>
-         <fdb42621e7145ce81a34840cbcf0914874c78913.camel@linux.ibm.com>
-         <7F861393-7971-43AB-A741-223B8A50FFA0@oracle.com>
-         <c134ad45d924e8b719f8abb6d36b426b889e9394.camel@linux.ibm.com>
-         <4A887886-BDB2-4F88-9D83-73B9BC9E641F@oracle.com>
-         <fd0e91c43cf0dc14aeeda4e7095416c77df0d0cc.camel@linux.ibm.com>
-         <7440CE7D-9630-44DB-8916-792523AC86E7@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jJJ4zRQ0UF8b88QIeNQkRd_Dofs6idGR
-X-Proofpoint-GUID: uhT95_T61E6kbowOTWesQr_2_eSE1rta
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        linux-kernel@vger.kernel.org,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Subject: Re: [RFC PATCH 0/3] Allow access to confidential computing secret
+ area
+Message-ID: <YKuXI9TUBa3sjY3e@work-vm>
+References: <20210513062634.2481118-1-dovmurik@linux.ibm.com>
+ <2c8ae998-6dd0-bcb9-f735-e90da05ab9d9@amd.com>
+ <YKZAUdbikp2Pt0XV@work-vm>
+ <ccdf0059-7e39-7895-2733-412dbe4b13f1@linux.intel.com>
+ <c316c49c-03db-22e3-0072-ebaf3c7f2ca2@amd.com>
+ <45842efd-7b6b-496f-d161-e5786760078d@linux.intel.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-05-24_06:2021-05-24,2021-05-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- bulkscore=0 impostorscore=0 phishscore=0 adultscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2105240077
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <45842efd-7b6b-496f-d161-e5786760078d@linux.intel.com>
+User-Agent: Mutt/2.0.7 (2021-05-04)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sun, 2021-05-23 at 18:57 -0600, Eric Snowberg wrote:
-> > On May 21, 2021, at 5:44 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > On Thu, 2021-05-20 at 14:37 -0600, Eric Snowberg wrote:
-> >>> On May 20, 2021, at 6:22 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> >>> I really do understand the need for extending the root of trust beyond
-> >>> the builtin keys and allowing end user keys to be loaded onto a kernel
-> >>> keyring, but it needs to be done safely.  The first step might include
-> >>> locally signing the MOK keys being loaded onto the secondary keyring
-> >>> and then somehow safely providing the local-CA key id to the kernel.
-> >> 
-> >> If the machine owner and Linux distributor are independent of one another,
-> >> I don’t see how MOK key signing could work.  There wouldn’t be a way for
-> >> the kernel to verify the end-user supplied signed MOK key.  An end-user 
-> >> choosing a Linux distro is trusting the company/organization building the 
-> >> kernel, but the trust doesn’t go the other way.  Do you have a solution 
-> >> in mind on how this would be possible? If you do, I’m happy to move in
-> >> a different direction to solve this problem.
-> > 
-> > We are working with the distros to address this problem.  The first
-> > attempt at extending the secondary keyring's root of trust relied on a
-> > TPM2 NV Index[1].
+* Andi Kleen (ak@linux.intel.com) wrote:
 > 
-> Yes, I saw that patch.  I view (which could be a mistake on my part) 
-> digital signature based IMA appraisal as an extension of a verified boot. 
-> Once a TPM is introduced, it is an extension of a measured boot. It seems 
-> like this patch is using measured boot to solve a problem that exists on 
-> the verified boot side. While it may be a good solution for someone using 
-> both measured boot and verified boot at the same time, not all machines or 
-> VMs contain a TPM. 
+> > The SEV-SNP attestation approach is very similar to what Andi described
+> > for the TDX. However, in the case of legacy SEV and ES, the attestation
+> > verification is performed before the guest is booted. In this case, the
+> > hyervisor puts the secret provided by the guest owner (after the
+> > attestation) at a fixed location. Dov's driver is simply reading that
+> > fixed location and making it available through the simple text file.
+> 
+> That's the same as our SVKL model.
+> 
+> The (not yet posted) driver is here:
+> 
+> https://github.com/intel/tdx/commit/62c2d9fae275d5bf50f869e8cfb71d2ca1f71363
+> 
 
-True, the TPM is used as part of measured boot, but that doesn't
-prevent it from being used in other capacities.  In this case the TPM2
-NV Index was used just to store a public key and safely used based on
-TPM 2.0 rules.
+Is there any way we could merge these two so that the TDX/SVKL would
+look similar to SEV/ES to userspace?  If we needed some initrd glue here
+for luks it would be great if we could have one piece of glue.
+[I'm not sure if the numbering/naming of the secrets, and their format
+are defined in the same way]
 
-> 
-> > Using MOK is a possible alternative, if it can be done safely.
-> 
-> I do want to point out, in case this was missed, when the new MOK variable 
-> is set to trust the platform keyring, PCR14 gets extended [1]. The UEFI BS 
-> var MokTPKState is mirrored to a freshly created UEFI RT var called 
-> MokTrustPlatform.   The contents are extended into PCR14. This happens every 
-> time the system boots. The UEFI RT var does not persist across reboots, it 
-> is alway recreated by shim.  The same thing happens with keys in the MOKList.
-> Since the contents are mirrored, a key change can be detected on each boot. 
-> This makes it possible to use attestation to see if the system was booted 
-> with the proper variables set. For someone using measured boot, would this 
-> satisfy the requirement of safely protecting the system from a MOK update?
+> We opted to use ioctls, with the idea that it should be just read and
+> cleared once to not let the secret lying around. Typically you would just
+> use it to set up dmcrypt or similar once. I think read-and-clear with
+> explicit operations is a better model than some virtual file because of the
+> security properties.
 
-TPM based trusted keys can be sealed to a TPM PCR.  Only if the PCRs
-matched, is the private key unsealed.   In that case, measuring
-provides the trust for releasing the private key.  In this case, just
-measuring the UEFI MOK variable and key does not prevent an unknown
-public key from being loaded onto a keyring.   Once loaded it could be
-used to verify any signed code's signature.
+Do you think the ioctl is preferable to read+ftruncate/unlink ?
+And if it was an ioctl, again could we get some standardisation here -
+i.e.
+maybe a /dev/confguest with a CONF_COMP_GET_KEY etc ?
 
-Mimi
+Dave
 
-> > For example, if the boot command line could be protected from modification,
-> > the end-user could enroll a key in MOK and identify the specific MOK
-> > key on the boot command line[2].  The boot command line would then
-> > become an additional root of trust source.
-> > 
-> > The root of trust for loading keys on the different trusted keyrings
-> > are self documenting -  restrict_link_by_builtin_trusted,
-> > restrict_link_by_builtin_and_secondary_trusted().  A new function would
-> > need to be defined to include the boot command line as a new or
-> > additional root of trust source.
+> -Andi
 > 
 > 
-> [1] https://github.com/esnowberg/shim/commit/ee3961b503e7d39cae7412ddf4e8d6709d998e87#diff-b1dd148baf92edaddd15cc8cd768201114ed86d991502bc492a827c66bbffb69R259
-> 
+-- 
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
 
