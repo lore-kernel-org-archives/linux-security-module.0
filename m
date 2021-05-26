@@ -2,165 +2,138 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7894CC47089
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 May 2021 10:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2BE2C47088
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 May 2021 11:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57E1861442
-	for <linux-security-module@archiver.kernel.org>; Wed, 26 May 2021 10:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE6C661248
+	for <linux-security-module@archiver.kernel.org>; Wed, 26 May 2021 11:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233875AbhEZKUv (ORCPT
+        id S232948AbhEZLqt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 26 May 2021 06:20:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60794 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233793AbhEZKUv (ORCPT
+        Wed, 26 May 2021 07:46:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:33082 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232088AbhEZLqs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 26 May 2021 06:20:51 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97863C061574;
-        Wed, 26 May 2021 03:19:18 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id p7so491115wru.10;
-        Wed, 26 May 2021 03:19:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:references:from:subject:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z+Ri2n3Ocsu19UbwoKK73grQnRbFQovYzLp7sCDG7XU=;
-        b=HT2qdFrJEOcbSqmn0mj2PZXPRGJPTyWLMUq4Sz5FBCUsKzvBMnojJApDwbnIG2Jcwq
-         CObn/SIeDSWdNbEm2Q0vOyG7B/T/jQtWsobjvyGytUJ0a0GFSOZ8HZPhqXl+MyOhqDn+
-         21oHC+3cyl/2rSO3q9WeQ9HVIEUNzSNHhIRrxXmRtcuOY4FA/Po5GYpgu9lpJRSy8MoO
-         PXnRAHw2NlZ5naEUFKX7UhGXyCYpOyi4L1DwxatAMiOg+CYwRHPBVvFmFnq77FOhhPvC
-         /QhsjLiZMF9jgrleP2f/GTD3oELCq0SihHcojHWjksoRBHvqS8WiSHuyvtr5HyizyoUX
-         mi5w==
+        Wed, 26 May 2021 07:46:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622029516;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5Uw+/IY4PFLhc9QD0XQTD8Vq22Bv9V1A42B8cw/tcfQ=;
+        b=KZW7SBXegZu/wpZtz8zD3v+c+Tfn24w8Eh3QahoBAYv0mpHdy6NN90Pi9eTOR4ih+SkyEC
+        Jf0bJbiqlXJ21kPasLIbijiQ9LPvSbiQI8LWQ2eukOZjfTtYzxlONsPX/yCSUf1N4nyABf
+        PSighAa3eR5ZZsVoX0qyYHzpK1vuiOQ=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-36-2oHCrqq_OSWl0FdUL-7llg-1; Wed, 26 May 2021 07:45:15 -0400
+X-MC-Unique: 2oHCrqq_OSWl0FdUL-7llg-1
+Received: by mail-yb1-f197.google.com with SMTP id x187-20020a25e0c40000b029052a5f0bf9acso1396995ybg.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 May 2021 04:45:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:references:from:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z+Ri2n3Ocsu19UbwoKK73grQnRbFQovYzLp7sCDG7XU=;
-        b=qItsuLbon3SrGakcsPpHIDITwz2D6Vf9P79gd19mr5aADFURjUz5rgaP1I3z372j9i
-         x6G/xiZ0sW6wk8lt1lyD3Egr9+EdOWlh9ZCWGJMOANZHhxMpjwuSuTHeDgzejVZcTVRX
-         jTLJoPO+lIjRMQdmgZ/uP2JdOT1b6C5LZdy3SMatEIGpEgyZNxd5Qzwg/9V+Qw4HVXYk
-         t7+g32mG45PBKshyXzzSu6uQ9Z/2o80hCIsVkrMBMVOiSuAylqYcGTb7knNeBUCGhcQc
-         uieNebLlHZSFFZhmngkFdObb/G2D1E2Pf/cBX/2y99WR2vy1EkWj5sM255zF1JSJOk99
-         6SMg==
-X-Gm-Message-State: AOAM530d/rwpWD8SFOiJTu1i/1JjJn0fEGNuxpgjFIm4Y9XL7UCXDrKN
-        T0e/swJHCyokd6C/19bBR30=
-X-Google-Smtp-Source: ABdhPJywganIcqZjZaYvnZH3uWCkDwi9O5Ktdyk9fsy+ejFwjvibA7TSYKN66vm6LiQxTCnmYRzmCQ==
-X-Received: by 2002:a5d:5407:: with SMTP id g7mr32338951wrv.207.1622024357214;
-        Wed, 26 May 2021 03:19:17 -0700 (PDT)
-Received: from [192.168.8.197] ([85.255.235.102])
-        by smtp.gmail.com with ESMTPSA id u8sm5538665wmq.29.2021.05.26.03.19.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 May 2021 03:19:16 -0700 (PDT)
-To:     Paul Moore <paul@paul-moore.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl>
- <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
- <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
- <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
- <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
- <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
- <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
-From:   Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-Message-ID: <0a668302-b170-31ce-1651-ddf45f63d02a@gmail.com>
-Date:   Wed, 26 May 2021 11:19:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5Uw+/IY4PFLhc9QD0XQTD8Vq22Bv9V1A42B8cw/tcfQ=;
+        b=IMeK6HGibnqPV/AxX82CsXWemTDXnc1qXFwBe5n8VzwoTPQMeDb8x7DHOXg+4IOdsJ
+         aLVcTQfB2jxszIoDHmLZF2bCQdYGucPo2QQFEJTT0xOOJ/ynNRpaYGlQom7WHqJg9F8Z
+         nflA0XTgeYaE4MnexWhdcHukOi3R6u7AAW4OMH2cjuZJ6eqhnoB+nqtfRpSCXvbIWwfL
+         +0y60eBVoFlQhnEFW54JpuZ82TU0t6Dj5Z4zHl1NOc1kKyLuCqmSFlNWezVDfWGxiMG6
+         5EU4DNw5NGREcex89dycJtuW/2zmBtZZT0eccRAXaBTPU2rLZEjEMOiJfjXgH57ih5+S
+         FO2g==
+X-Gm-Message-State: AOAM530Va2LFSa2xe+4p4q2SFOAzVIoTkQr8GztK842RaaomOvayPxgZ
+        GuQa3VnwIdN4sztQfSWuHsy2HS7035pOfFYvG/sdvFB0k03sj69QtdJBbsrklIuY1xfuTfjrZuf
+        mJ+2vOiZNiZJOSV5ahyJkGgQszGdMpTprQCkopofmEFUjcsvmINSv
+X-Received: by 2002:a25:f50e:: with SMTP id a14mr48352359ybe.172.1622029514559;
+        Wed, 26 May 2021 04:45:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7JX0t9Q+MjZUdNuGYqNNwFWjv7mwlUzB5zjT5J9a7c3DzGoUhB3CdgL/OZI5wwTVrJZE9FoOnkmowu6kRXnk=
+X-Received: by 2002:a25:f50e:: with SMTP id a14mr48352333ybe.172.1622029514339;
+ Wed, 26 May 2021 04:45:14 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210517092006.803332-1-omosnace@redhat.com> <87o8d9k4ln.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87o8d9k4ln.fsf@mpe.ellerman.id.au>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Wed, 26 May 2021 13:44:59 +0200
+Message-ID: <CAFqZXNtUvrGxT6UMy81WfMsfZsydGN5k-VGFBq8yjDWN5ARAWw@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Paul Moore <paul@paul-moore.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 5/26/21 3:04 AM, Paul Moore wrote:
-> On Tue, May 25, 2021 at 9:11 PM Jens Axboe <axboe@kernel.dk> wrote:
->> On 5/24/21 1:59 PM, Paul Moore wrote:
->>> That said, audit is not for everyone, and we have build time and
->>> runtime options to help make life easier.  Beyond simply disabling
->>> audit at compile time a number of Linux distributions effectively
->>> shortcut audit at runtime by adding a "never" rule to the audit
->>> filter, for example:
->>>
->>>  % auditctl -a task,never
->>
->> As has been brought up, the issue we're facing is that distros have
->> CONFIG_AUDIT=y and hence the above is the best real world case outside
->> of people doing custom kernels. My question would then be how much
->> overhead the above will add, considering it's an entry/exit call per op.
->> If auditctl is turned off, what is the expectation in turns of overhead?
-> 
-> I commented on that case in my last email to Pavel, but I'll try to go
-> over it again in a little more detail.
-> 
-> As we discussed earlier in this thread, we can skip the req->opcode
-> check before both the _entry and _exit calls, so we are left with just
-> the bare audit calls in the io_uring code.  As the _entry and _exit
-> functions are small, I've copied them and their supporting functions
-> below and I'll try to explain what would happen in CONFIG_AUDIT=y,
-> "task,never" case.
-> 
-> +  static inline struct audit_context *audit_context(void)
-> +  {
-> +    return current->audit_context;
-> +  }
-> 
-> +  static inline bool audit_dummy_context(void)
-> +  {
-> +    void *p = audit_context();
-> +    return !p || *(int *)p;
-> +  }
-> 
-> +  static inline void audit_uring_entry(u8 op)
-> +  {
-> +    if (unlikely(audit_enabled && audit_context()))
-> +      __audit_uring_entry(op);
-> +  }
+On Mon, May 17, 2021 at 1:00 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Ondrej Mosnacek <omosnace@redhat.com> writes:
+> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > lockdown") added an implementation of the locked_down LSM hook to
+> > SELinux, with the aim to restrict which domains are allowed to perform
+> > operations that would breach lockdown.
+> >
+> > However, in several places the security_locked_down() hook is called in
+> > situations where the current task isn't doing any action that would
+> > directly breach lockdown, leading to SELinux checks that are basically
+> > bogus.
+> >
+> > Since in most of these situations converting the callers such that
+> > security_locked_down() is called in a context where the current task
+> > would be meaningful for SELinux is impossible or very non-trivial (and
+> > could lead to TOCTOU issues for the classic Lockdown LSM
+> > implementation), fix this by modifying the hook to accept a struct cred
+> > pointer as argument, where NULL will be interpreted as a request for a
+> > "global", task-independent lockdown decision only. Then modify SELinux
+> > to ignore calls with cred == NULL.
+> >
+> > Since most callers will just want to pass current_cred() as the cred
+> > parameter, rename the hook to security_cred_locked_down() and provide
+> > the original security_locked_down() function as a simple wrapper around
+> > the new hook.
+> >
+> > The callers migrated to the new hook, passing NULL as cred:
+> > 1. arch/powerpc/xmon/xmon.c
+> >      Here the hook seems to be called from non-task context and is only
+> >      used for redacting some sensitive values from output sent to
+> >      userspace.
+>
+> It's hard to follow but it actually disables interactive use of xmon
+> entirely if lockdown is in confidentiality mode, and disables
+> modifications of the kernel in integrity mode.
+>
+> But that's not really that important, the patch looks fine.
+>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-I'd rather agree that it's my cycle-picking. The case I care about
-is CONFIG_AUDIT=y (because everybody enable it), and io_uring
-tracing _not_ enabled at runtime. If enabled let them suffer
-the overhead, it will probably dip down the performance
+Thanks, Michael!
 
-So, for the case I care about it's two of
+James/Paul, is there anything blocking this patch from being merged?
+Especially the BPF case is causing real trouble for people and the
+only workaround is to broadly allow lockdown::confidentiality in the
+policy.
 
-if (unlikely(audit_enabled && current->audit_context))
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-in the hot path. load-test-jump + current, so it will
-be around 7x2 instructions. We can throw away audit_enabled
-as you say systemd already enables it, that will give
-4x2 instructions including 2 conditional jumps.
-
-That's not great at all. And that's why I brought up
-the question about need of pre and post hooks and whether
-can be combined. Would be just 4 instructions and that is
-ok (ish).
-
-> We would need to check with the current security requirements (there
-> are distro people on the linux-audit list that keep track of that
-> stuff), but looking at the opcodes right now my gut feeling is that
-> most of the opcodes would be considered "security relevant" so
-> selective auditing might not be that useful in practice.  It would
-> definitely clutter the code and increase the chances that new opcodes
-> would not be properly audited when they are merged.
-
-I'm curious, why it's enabled by many distros by default? Are there
-use cases they use? Tempting to add AUDIT_IOURING=default N, but
-won't work I guess
-
--- 
-Pavel Begunkov
