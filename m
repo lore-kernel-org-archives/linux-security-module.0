@@ -2,103 +2,171 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0A1C47089
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 May 2021 14:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D79C4707F
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 May 2021 17:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 222FA613D1
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 May 2021 14:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8DF36128B
+	for <linux-security-module@archiver.kernel.org>; Thu, 27 May 2021 17:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236361AbhE0OUj (ORCPT
+        id S236981AbhE0R3B (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 May 2021 10:20:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46482 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235342AbhE0OUi (ORCPT
+        Thu, 27 May 2021 13:29:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:46961 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236974AbhE0R3A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 May 2021 10:20:38 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0802AC061760
-        for <linux-security-module@vger.kernel.org>; Thu, 27 May 2021 07:19:05 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id jt22so340000ejb.7
-        for <linux-security-module@vger.kernel.org>; Thu, 27 May 2021 07:19:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0KMicP7dPruhWbetN8SS8Qn8WRBhDpCdjlUFYTYIPQY=;
-        b=oL8+TZNnSedYZxnjK4DI9LSvARM8ndmpxlxh6MbE8xc+bzPwC15R8Oe7BjBHBNDZJU
-         TNJP8Tt8TyG1DmWC33rk+d5R2TN/mvP/gK0UeOcVkgdELmghktfHLYP8jQjpCHsvmX2b
-         DhFL94mzDwpgYjyGSpg4J/rAkkNxNjR97srQQgHxVbtNcfz5kQ/cblTw8NQzxSMLaOrY
-         G1r+90PQY64rR4qLSENwuRJU1aPtfVkjFCNY2D6JqIUDBKPVcJCgfP8G2hKezSwWEDi4
-         apxq9vHVNpXDgfq28VM6AgmXZQSXQY5PyR5QvKTo1urmbFatACON7BQ19GUEX0119z5i
-         Scww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0KMicP7dPruhWbetN8SS8Qn8WRBhDpCdjlUFYTYIPQY=;
-        b=uR4RSlAwsXZ93T+X9d4XP/jRHsp6ssY01AjHo3Iq8Q3j40IJR6ct30kOcqlv3/wG6G
-         Bpdr1Zi1sSB3qnHznBAoacRtx8LUmiaOE/rUsO0afxZHeUYZnF6dDoT6sSirEkg738ND
-         RBb5QYk0L92FiC1cK+i/ry5MTJpvpbrhEQsR2vCnVfBdI52IiwBWMaKxn2KfUI0lz4en
-         iTvE9tB3slhgyJPa07QPgHaJFlu46E1WWWJl9tEcuZRZNXuAPPc50kItwjD0nmtTiPOk
-         /rYPeki9ry6keAENk7BEBHDb0oz94AFH0nBeRmSrXpjuv0vaCWtU1SOg0BWtUiDyeOWC
-         Xs2g==
-X-Gm-Message-State: AOAM530+eqqJT1jnjfABM/uovASm65UJOwvablOSk4+eND6Vm89T/IYG
-        7aVCktUEQhOKLi/oEP+fkUUYqfiT5Zo9S0vNzAdY
-X-Google-Smtp-Source: ABdhPJxNY45Rvc2vrfaQ2IL4Eku6yyHzxMbb+NaSgzTa9DTK2YgRMf8cywVg6CWuAUNioudc7Sfjin2qWfEjUKkshxk=
-X-Received: by 2002:a17:906:f283:: with SMTP id gu3mr4078724ejb.91.1622125143443;
- Thu, 27 May 2021 07:19:03 -0700 (PDT)
+        Thu, 27 May 2021 13:29:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622136447;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=GzMol78bVGcIW11Te4X3+WhXNCOWxLfeqzpVW8dA0z8=;
+        b=DsY4GkVzRmRfzNv9AzCqy8d0hdxDst+FnhMLM1Ta9UXvKkFgRESytN0YpM5hMGXOC0XmMA
+        XbL++7Y3Lbo93E6JU6q4axEUZyLI6i8PwBIG7qye1tks1ajlpXvjoLdFKbL/4Wy0kowAsX
+        aM688UDiQF5+kYWeW5MhA/yk+03RzNc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-43-ViXTwQLXOR-Ms0fFwaEzDw-1; Thu, 27 May 2021 13:27:23 -0400
+X-MC-Unique: ViXTwQLXOR-Ms0fFwaEzDw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 3D547801B1E;
+        Thu, 27 May 2021 17:27:21 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43DE75D9DC;
+        Thu, 27 May 2021 17:27:10 +0000 (UTC)
+Date:   Thu, 27 May 2021 13:27:07 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Stefan Metzmacher <metze@samba.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-audit@redhat.com, Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+Message-ID: <20210527172707.GI2268484@madcap2.tricolour.ca>
+References: <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <0a668302-b170-31ce-1651-ddf45f63d02a@gmail.com>
+ <CAHC9VhTAvcB0A2dpv1Xn7sa+Kh1n+e-dJr_8wSSRaxS4D0f9Sw@mail.gmail.com>
+ <18823c99-7d65-0e6f-d508-a487f1b4b9e7@samba.org>
+ <20210526154905.GJ447005@madcap2.tricolour.ca>
+ <aaa98bcc-0515-f0e4-f15f-058ef0eb61e7@kernel.dk>
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <87o8d9k4ln.fsf@mpe.ellerman.id.au>
- <CAFqZXNtUvrGxT6UMy81WfMsfZsydGN5k-VGFBq8yjDWN5ARAWw@mail.gmail.com> <3ad4fb7f-99f3-fa71-fdb2-59db751c7e2b@namei.org>
-In-Reply-To: <3ad4fb7f-99f3-fa71-fdb2-59db751c7e2b@namei.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 27 May 2021 10:18:52 -0400
-Message-ID: <CAHC9VhSSZzDeM1bcOjVBN6u5KPAvMysg3sLcSniq+cLr65WFqg@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     James Morris <jmorris@namei.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aaa98bcc-0515-f0e4-f15f-058ef0eb61e7@kernel.dk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 27, 2021 at 12:33 AM James Morris <jmorris@namei.org> wrote:
-> On Wed, 26 May 2021, Ondrej Mosnacek wrote:
->
-> > Thanks, Michael!
-> >
-> > James/Paul, is there anything blocking this patch from being merged?
-> > Especially the BPF case is causing real trouble for people and the
-> > only workaround is to broadly allow lockdown::confidentiality in the
-> > policy.
->
-> It would be good to see more signoffs/reviews, especially from Paul, but
-> he is busy with the io_uring stuff.
+On 2021-05-26 11:22, Jens Axboe wrote:
+> On 5/26/21 9:49 AM, Richard Guy Briggs wrote:
+> >> So why is there anything special needed for io_uring (now that the
+> >> native worker threads are used)?
+> > 
+> > Because syscall has been bypassed by a memory-mapped work queue.
+> 
+> I don't follow this one at all, that's just the delivery mechanism if
+> you choose to use SQPOLL. If you do, then a thread sibling of the
+> original task does the actual system call. There's no magic involved
+> there, and the tasks are related.
+> 
+> So care to expand on that?
 
-Yes, it's been a busy week with various things going on around here.
-I looked at the v1 posting but haven't had a chance yet to look at v2;
-I promise to get to it today, but it might not happen until later
-tonight.
+These may be poor examples, but hear me out...
 
-> Let's see if anyone else can look at this in the next couple of days.
+In the case of an open call, I'm guessing that they are mapped 1:1
+syscall to io_uring action so that the action can be asynchronous.  So
+in this case, there is a record of the action, but we don't see the
+result success/failure.  I assume that file paths can only be specified
+in the original syscall and not in an SQPOLL action?
 
--- 
-paul moore
-www.paul-moore.com
+In the case of a syscall read/write (which aren't as interesting
+generally to audit, but I'm concerned there are other similar situations
+that are), the syscall would be called for every buffer that is passed
+back and forth user/kernel and vice versa, providing a way to log all
+that activity.  In the case of SQPOLL, I understand that a syscall sets
+up the action and then io_uring takes over and does the bulk transfer
+and we'd not have the visibility of how many times that action was
+repeated nor that the result success/failure was due to its asynchrony.
+
+Perhaps I am showing my ignorance, so please correct me if I have it
+wrong.
+
+> >> Is there really any io_uring opcode that bypasses the security checks the corresponding native syscall
+> >> would do? If so, I think that should just be fixed...
+> > 
+> > This is by design to speed it up.  This is what Paul's iouring entry and
+> > exit hooks do.
+> 
+> As far as I can tell, we're doing double logging at that point, if the
+> syscall helper does the audit as well. We'll get something logging the
+> io_uring opcode (eg IORING_OP_OPENAT2), then log again when we call the
+> fs helper. That's _assuming_ that we always hit the logging part when we
+> call into the vfs, but that's something that can be updated to be true
+> and kept an eye on for future additions.
+> 
+> Why is the double logging useful? It only tells you that the invocation
+> was via io_uring as the delivery mechanism rather than the usual system
+> call, but the effect is the same - the file is opened, for example.
+> 
+> I feel like I'm missing something here, or the other side is. Or both!
+
+Paul addressed this in his reply, but let me add a more concrete
+example...  There was one corner case I was looking at that showed up
+this issue.  Please indicate if I have mischaracterized or
+misunderstood.
+
+A syscall would generate records something like this:
+
+	AUDIT_SYSCALL
+	AUDIT_...
+	AUDIT_EOE
+
+A io_uring SQPOLL event would generate something like this:
+
+	AUDIT_URINGOP
+	AUDIT_...
+	AUDIT_EOE
+
+The "hybrid" event that is a syscall that starts an io_uring action
+would generate something like this:
+
+	AUDIT_URINGOP
+	[possible AUDIT_CONFIG_CHANGE (from killed_trees)]
+	AUDIT_SYSCALL
+	AUDIT_...
+	AUDIT_EOE
+
+The AUDIT_... is all the operation-specific records that log parameters
+that aren't able to be expressed in the SYSLOG or URINGOP records such
+as pathnames, other arguments, and context (pwd, etc...).  So this isn't
+"double logging".  It is either introducing an io_uring event, or it is
+providing more detail about the io_uring arguments to a syscall event.
+
+> Jens Axboe
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
