@@ -2,86 +2,214 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF643C4707F
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 May 2021 17:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6C2FC4708B
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 01:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A3F14613BE
-	for <linux-security-module@archiver.kernel.org>; Thu, 27 May 2021 17:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9F10613B4
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 01:37:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbhE0RsB (ORCPT
+        id S235341AbhE1BjV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 27 May 2021 13:48:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229791AbhE0RsA (ORCPT
+        Thu, 27 May 2021 21:39:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58536 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234770AbhE1BjU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 27 May 2021 13:48:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 296B6610A0;
-        Thu, 27 May 2021 17:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622137587;
-        bh=5ZRnfqRtr/J0QJfUg5D/PQYEwhdZT/hAb/+xrZGlOHU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sfxmwW3029z6rLKsitywLDXKyPX2OAKi30JDxN16STWTO7Fxr26PZB76nT//N540K
-         pRypVB7E/b6rGdqtZClQjJc8LMRnIC5xOSC0ADPOa9ShWoBd1L53v9UPYZfOaQGizi
-         JCJFp0jsRUvikoaoRoM/v4tIfoJphf/G/PE/22KFIDahZV/uVG4vfYkYbYHCrp4VXw
-         gj3NDBIrliYRl/rkDUKMsF55itmp2+QosiiK2VFN7RP/bPwxP3W0Ydcui6imex8A5B
-         Rzi9DYUBlZ+yusdeVDv99S++VjNIi8Fl+mwOyxIbsU/oyzgzZdb2Hqo5tZhTzPLwD7
-         69u+6T9vDNbtA==
-Date:   Thu, 27 May 2021 10:46:25 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Austin Kim <austindh.kim@gmail.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        catalin.marinas@arm.com, will@kernel.org,
-        john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-security-module@vger.kernel.org,
-        linux-crypto@vger.kernel.org, austin.kim@lge.com
-Subject: Re: [PATCH] crypto: arm64/gcm - remove Wunused-const-variable
- ghash_cpu_feature
-Message-ID: <YK/a8f7MhO2SlrMS@gmail.com>
-References: <20210527062809.GA1251@raspberrypi>
+        Thu, 27 May 2021 21:39:20 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A428C061760
+        for <linux-security-module@vger.kernel.org>; Thu, 27 May 2021 18:37:45 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id e12so2989521ejt.3
+        for <linux-security-module@vger.kernel.org>; Thu, 27 May 2021 18:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OCl/OoNf08gbSAkv21GdMjWI/U5EK/VtpzFkOjaRXDc=;
+        b=POerS0Ux4ct2bWMhkrOhHCReDGmKwGq49OtylDhjF9lBGQePK0TFjOCijyW8C1Kp/o
+         Xh/madiE0TnJlXbz8A9quFOg+/RI5jAUOif+6JsRURl3t/ze4YQnI44921ViT1tdrrM4
+         HjuPpQdlOCOYZPPbHCLCzTx/HQU+AEBcGTknBjcNeZrWDZ8YoRD7/wVOL3h3fMalQU3w
+         RHKDeBAQIYl6E/bgA3OnVAijXoVpCgmqz+qBj1zfhN7HjvWBWklw9U4UDflAOFogdwNn
+         LQdislTgKFgkdjsNn26pf+B5s1Ifqow6EwLkeFnrksRVYEWkqLWG9JczSwAXar565r2c
+         BXqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OCl/OoNf08gbSAkv21GdMjWI/U5EK/VtpzFkOjaRXDc=;
+        b=E1aHUqK0D6bukj3K9AaSmEDlHfz/H2R0R2NC8m1qqLwN/ItNlMbkgtMLT5j4a2qppa
+         cy/TyQsbh2272Zu006Y/iPW3KuJGEjIDCtP3P8TWFXlrtbkrecEM+1UnLERoTEg+Leq8
+         pJTSS9d5Wus/snGfMtwIY3BlIJoifMcFgjOywigYb1ekjm+9ZwxMzj6m/8hutS7x6caq
+         XsX4dbrKv3Jz23+jgwuOV00+nSPz33KAXEzZSSchR8SCTk91+ed+SY5xwoWGUSTDOQZL
+         7Nd6+/uXLXQlDGarNnfd+/5pvMnDksAsVp2cMulXoKJ5JA7v7ilAMy61aca3/ca7QyRy
+         V36w==
+X-Gm-Message-State: AOAM531VAuUkC6zzVQAYVma1BEcW1+yOam5aQu2aAo4vQik0ZADL+Yis
+        +s9/c5C5yHFN2068Q6pgcDlQzhpCqNNMKPCJmRLa
+X-Google-Smtp-Source: ABdhPJxLOItL9vdGc/YxGb4zM3gCgphGyyxSx8AHRjJ/9K0sjs3QF6XIJzfJvXSrGS6ej4rkXclv/bfnao0YEc+kFow=
+X-Received: by 2002:a17:906:b2ce:: with SMTP id cf14mr6910759ejb.178.1622165863989;
+ Thu, 27 May 2021 18:37:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210527062809.GA1251@raspberrypi>
+References: <20210517092006.803332-1-omosnace@redhat.com>
+In-Reply-To: <20210517092006.803332-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 27 May 2021 21:37:33 -0400
+Message-ID: <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, May 27, 2021 at 07:28:09AM +0100, Austin Kim wrote:
-> 
-> The variable with MODULE_DEVICE_TABLE() is registered as platform_driver.
+On Mon, May 17, 2021 at 5:22 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> lockdown") added an implementation of the locked_down LSM hook to
+> SELinux, with the aim to restrict which domains are allowed to perform
+> operations that would breach lockdown.
+>
+> However, in several places the security_locked_down() hook is called in
+> situations where the current task isn't doing any action that would
+> directly breach lockdown, leading to SELinux checks that are basically
+> bogus.
+>
+> Since in most of these situations converting the callers such that
+> security_locked_down() is called in a context where the current task
+> would be meaningful for SELinux is impossible or very non-trivial (and
+> could lead to TOCTOU issues for the classic Lockdown LSM
+> implementation), fix this by modifying the hook to accept a struct cred
+> pointer as argument, where NULL will be interpreted as a request for a
+> "global", task-independent lockdown decision only. Then modify SELinux
+> to ignore calls with cred == NULL.
 
-What does this mean?  There is no platform_driver involved here at all.
+I'm not overly excited about skipping the access check when cred is
+NULL.  Based on the description and the little bit that I've dug into
+thus far it looks like using SECINITSID_KERNEL as the subject would be
+much more appropriate.  *Something* (the kernel in most of the
+relevant cases it looks like) is requesting that a potentially
+sensitive disclosure be made, and ignoring it seems like the wrong
+thing to do.  Leaving the access control intact also provides a nice
+avenue to audit these requests should users want to do that.
 
-> But ghash_cpu_feature is not used, so remove ghash_cpu_feature.
+Those users that generally don't care can grant kernel_t all the
+necessary permissions without much policy.
 
-It is used when the file is built as a module.
+> Since most callers will just want to pass current_cred() as the cred
+> parameter, rename the hook to security_cred_locked_down() and provide
+> the original security_locked_down() function as a simple wrapper around
+> the new hook.
 
-> diff --git a/arch/arm64/crypto/ghash-ce-glue.c b/arch/arm64/crypto/ghash-ce-glue.c
-> index 720cd3a58da3..c3f27d0d5329 100644
-> --- a/arch/arm64/crypto/ghash-ce-glue.c
-> +++ b/arch/arm64/crypto/ghash-ce-glue.c
-> @@ -615,10 +615,5 @@ static void __exit ghash_ce_mod_exit(void)
->  		crypto_unregister_shash(&ghash_alg);
->  }
->  
-> -static const struct cpu_feature ghash_cpu_feature[] = {
-> -	{ cpu_feature(PMULL) }, { }
-> -};
-> -MODULE_DEVICE_TABLE(cpu, ghash_cpu_feature);
-> -
+I know you and Casey went back and forth on this in v1, but I agree
+with Casey that having two LSM hooks here is a mistake.  I know it
+makes backports hard, but spoiler alert: maintaining complex software
+over any non-trivial period of time is hard, reeeeally hard sometimes
+;)
 
-Probably adding __maybe_unused to ghash_cpu_feature[] is the right thing to do.
-That's what module_cpu_feature_match() does.
+> The callers migrated to the new hook, passing NULL as cred:
+> 1. arch/powerpc/xmon/xmon.c
+>      Here the hook seems to be called from non-task context and is only
+>      used for redacting some sensitive values from output sent to
+>      userspace.
 
-(Note that module_cpu_feature_match() can't be used here, as it seems the intent
-is for this module to be autoloaded when PMULL is detected, but still be
-loadable without it.  So, that's apparently the reason for using
-MODULE_DEVICE_TABLE() directly.)
+This definitely sounds like kernel_t based on the description above.
 
-- Eric
+> 2. fs/tracefs/inode.c:tracefs_create_file()
+>      Here the call is used to prevent creating new tracefs entries when
+>      the kernel is locked down. Assumes that locking down is one-way -
+>      i.e. if the hook returns non-zero once, it will never return zero
+>      again, thus no point in creating these files.
+
+More kernel_t.
+
+> 3. kernel/trace/bpf_trace.c:bpf_probe_read_kernel{,_str}_common()
+>      Called when a BPF program calls a helper that could leak kernel
+>      memory. The task context is not relevant here, since the program
+>      may very well be run in the context of a different task than the
+>      consumer of the data.
+>      See: https://bugzilla.redhat.com/show_bug.cgi?id=1955585
+
+The access control check isn't so much who is consuming the data, but
+who is requesting a potential violation of a "lockdown", yes?  For
+example, the SELinux policy rule for the current lockdown check looks
+something like this:
+
+  allow <who> <who> : lockdown { <reason> };
+
+It seems to me that the task context is relevant here and performing
+the access control check based on the task's domain is correct.  If we
+are also concerned about who has access to this sensitive information
+once it has been determined that the task can cause it to be sent, we
+should have another check point for that, assuming the access isn't
+already covered by another check/hook.
+
+> 4. net/xfrm/xfrm_user.c:copy_to_user_*()
+>      Here a cryptographic secret is redacted based on the value returned
+>      from the hook. There are two possible actions that may lead here:
+>      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+>         task context is relevant, since the dumped data is sent back to
+>         the current task.
+
+If the task context is relevant we should use it.
+
+>      b) When deleting an SA via XFRM_MSG_DELSA, the dumped SAs are
+>         broadcasted to tasks subscribed to XFRM events - here the
+>         SELinux check is not meningful as the current task's creds do
+>         not represent the tasks that could potentially see the secret.
+
+This looks very similar to the BPF hook discussed above, I believe my
+comments above apply here as well.
+
+>      It really doesn't seem worth it to try to preserve the check in the
+>      a) case ...
+
+After you've read all of the above I hope you can understand why I
+disagree with this.
+
+>      ... since the eventual leak can be circumvented anyway via b)
+
+I don't follow the statement above ... ?  However I'm not sure it
+matters much considering my other concerns.
+
+>      plus there is no way for the task to indicate that it doesn't care
+>      about the actual key value, so the check could generate a lot of
+>      noise.
+>
+> Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+>
+> v2:
+> - change to a single hook based on suggestions by Casey Schaufler
+>
+> v1: https://lore.kernel.org/lkml/20210507114048.138933-1-omosnace@redhat.com/
+>
+>  arch/powerpc/xmon/xmon.c      |  4 ++--
+>  fs/tracefs/inode.c            |  2 +-
+>  include/linux/lsm_hook_defs.h |  3 ++-
+>  include/linux/lsm_hooks.h     |  3 ++-
+>  include/linux/security.h      | 11 ++++++++---
+>  kernel/trace/bpf_trace.c      |  4 ++--
+>  net/xfrm/xfrm_user.c          |  2 +-
+>  security/lockdown/lockdown.c  |  5 +++--
+>  security/security.c           |  6 +++---
+>  security/selinux/hooks.c      | 12 +++++++++---
+>  10 files changed, 33 insertions(+), 19 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
