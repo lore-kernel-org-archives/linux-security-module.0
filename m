@@ -2,186 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C51C4708F
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 13:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B4FC47087
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 13:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAD7611AB
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 13:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622FD613B6
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 13:51:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234677AbhE1NoC (ORCPT
+        id S235956AbhE1NxR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 May 2021 09:44:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:39973 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233841AbhE1Nn6 (ORCPT
+        Fri, 28 May 2021 09:53:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235676AbhE1NxQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 May 2021 09:43:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622209343;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=U2IqSZIHmJs1U626ov1801TPHqiAMQZgW3aXqcOf9ok=;
-        b=aZjWNNFpyQHmN4fJRFe2e1L+qm+2GVOLTllFx5KP0SBVVo9oBsx5uX+ndH5Q9Svr313pvP
-        Gsm9NeqK5jvoDMhBiHJePpVoXMV+mN/NpApf1f9trz6pzFYzh437ZPufESchFrRSSL+65c
-        aFaDfcLOQKs2XWnSzXhtjyfpH8JLdbE=
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
- [209.85.219.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-93-DcHF0v3zMiaX1506-XEAoA-1; Fri, 28 May 2021 09:42:22 -0400
-X-MC-Unique: DcHF0v3zMiaX1506-XEAoA-1
-Received: by mail-yb1-f197.google.com with SMTP id e203-20020a2569d40000b029052f27a0b9b3so4405214ybc.13
-        for <linux-security-module@vger.kernel.org>; Fri, 28 May 2021 06:42:22 -0700 (PDT)
+        Fri, 28 May 2021 09:53:16 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AD72C061574;
+        Fri, 28 May 2021 06:51:42 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id r1so2573913pgk.8;
+        Fri, 28 May 2021 06:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=St+typHKzUUHCLcGqwo1YuMiqNw+EQW0Fgi4q8xjUjg=;
+        b=bucn/0pTL5a01KenTEgCyU+fttb45un1+4uHVJyaTTP3mYo/+uYeKIcn3oQBwdx7aC
+         Xaamf8AIFpFWEoZPbNS7cM+9pOPZmgiqOTeX7hfUGX2PdJRDqi8bvHE8eE5/u+x/OaW+
+         /6/C1Q8wyDHvf8SccQQCDdm2gNpJlcJ2MC/DyPd336MuH1X3SlLZElATZwdrlsbf11ve
+         rwSfO16yl5mMuruIni31qqS7Qxdvpv4Sm+lP93MOxNuCA/i5xMJHGo2fZmpguHHbo6yV
+         vyNCQkVBfqMsKCOSGMmDS9re2lTgktZ3xfOikMsm0d7GUsG6yJEHHLtPH3AiYjNiFfze
+         vPPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U2IqSZIHmJs1U626ov1801TPHqiAMQZgW3aXqcOf9ok=;
-        b=MCDuE3+6Ke93yCuwn8kl4XH+47xID/FXIVyaEG3f+1YtS8/ZfhDEn8sbSEDkikVlVs
-         DJ6bOKmpwkcuUOEoiy5hEx5dF5D+qiNvCnQyZVHpYTr1Vxp/K/FAioMAVqNZ34Vgwp3N
-         uk6aiiUQ0hnZfLZ4FzjxyfLe+IUS9M1LlXbUOg2qF+aKq3vToqKVN8FEcJ/e0x0RA//s
-         XaudVa63hyUkHJk2ARpZhHbYWgcbvP+WJSyEaJFcXuYhZQI22DzYjj9o2iiEfa/rfWof
-         qM0vyk7VetyCEuxpf303smt5AE0NUrb9PGrlVOZ0l/a4wGZd+p01I3W4a/yWIDfAwUiL
-         fuHQ==
-X-Gm-Message-State: AOAM531Dse77sFsWp5+MLduGcgRfnD2fdh2plqUYpn/8s7Qth1Ysh9ZD
-        /Rhi1OtjiABwYTsCcit3Cky8wRAYRyrsjr2R7YmfHi9aPzO5ktqSUMGocLCa4Fbd+XtnbgqjvXB
-        rhwuimQ7mlCjEdxjZp0wV/WSnpGFRRlwj9za5TJryN8HLAmDK3tse
-X-Received: by 2002:a25:f208:: with SMTP id i8mr12505993ybe.340.1622209341656;
-        Fri, 28 May 2021 06:42:21 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzY+Q3lAZD5z2I0qCaLzE8vPZbw30C0qe9jw96SwP96ICqH8giHKwWORUSXlm+cwx1tCc/b+Qf60iJexuKP47M=
-X-Received: by 2002:a25:f208:: with SMTP id i8mr12505951ybe.340.1622209341353;
- Fri, 28 May 2021 06:42:21 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=St+typHKzUUHCLcGqwo1YuMiqNw+EQW0Fgi4q8xjUjg=;
+        b=dl8+rJy4frJAMlAF4F3ef6Ro92rM9/c1w5KtSw9Uy+mJCBNAFn9TzimEZ1zD/Bjywk
+         qSdHmK5B7tAY/Jm1DvA+YFzO4g1L2PbcTfe9DxDvuHpcLM0Ah7qskTCCh99r6NMfV1ju
+         bv925ahU5N8U+RK9KXIZflcXHT7yS5eoBfXS6qD3PZy1kzI5dXY3L0VcIjEkJrigtGxN
+         jABMotqqAs9BPFCZP1gLEMXw85SMg2xkQQPOE3OSDQFL5bFojnILem32AUlyVZ/OGjtF
+         DMx1V+zlA4F4xUwlKJ+AXFkz2UEXk98coOTLr/uubCupoy+2/UlP5R7NAZUQqMu3Bor8
+         nS4Q==
+X-Gm-Message-State: AOAM533h0OwWOrpJRFCdQkGMOSAcJZ+QFUONWNOLtTSnCeEAIgoPVkb+
+        M+l3grIt0OolYiUkH2zCFt6Z+23w8dKcWMk+I0M=
+X-Google-Smtp-Source: ABdhPJx6QLP1NcHNcae4Goasd3V+OI6/Cno3PYqY4cqFiiiwH722T6CrZ1asHkIJeD6N7M4X+1KIUE3+QLJfDbSt85Y=
+X-Received: by 2002:a63:b211:: with SMTP id x17mr9001925pge.106.1622209901916;
+ Fri, 28 May 2021 06:51:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <4fee8c12-194f-3f85-e28b-f7f24ab03c91@iogearbox.net>
-In-Reply-To: <4fee8c12-194f-3f85-e28b-f7f24ab03c91@iogearbox.net>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Fri, 28 May 2021 15:42:06 +0200
-Message-ID: <CAFqZXNsKf5wSGmspEVEDrm4Ywar-F4kJWbBPBE+_hd1CGQ3jhg@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
-        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Jiri Olsa <jolsa@redhat.com>, andrii.nakryiko@gmail.com
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+References: <20210527062809.GA1251@raspberrypi> <YK/a8f7MhO2SlrMS@gmail.com>
+In-Reply-To: <YK/a8f7MhO2SlrMS@gmail.com>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Fri, 28 May 2021 22:51:33 +0900
+Message-ID: <CADLLry6AfRT6mGXnd66OV57YP4=m2PpOT5tom4QxVrOqGchw4w@mail.gmail.com>
+Subject: Re: [PATCH] crypto: arm64/gcm - remove Wunused-const-variable ghash_cpu_feature
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
+        catalin.marinas@arm.com, will@kernel.org,
+        John Johansen <john.johansen@canonical.com>, jmorris@namei.org,
+        serge@hallyn.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-security-module@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        =?UTF-8?B?6rmA64+Z7ZiE?= <austin.kim@lge.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-(I'm off work today and plan to reply also to Paul's comments next
-week, but for now let me at least share a couple quick thoughts on
-Daniel's patch.)
-
-On Fri, May 28, 2021 at 11:56 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+2021=EB=85=84 5=EC=9B=94 28=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 2:46, E=
+ric Biggers <ebiggers@kernel.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> On 5/28/21 9:09 AM, Daniel Borkmann wrote:
-> > On 5/28/21 3:37 AM, Paul Moore wrote:
-> >> On Mon, May 17, 2021 at 5:22 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >>>
-> >>> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> >>> lockdown") added an implementation of the locked_down LSM hook to
-> >>> SELinux, with the aim to restrict which domains are allowed to perform
-> >>> operations that would breach lockdown.
-> >>>
-> >>> However, in several places the security_locked_down() hook is called in
-> >>> situations where the current task isn't doing any action that would
-> >>> directly breach lockdown, leading to SELinux checks that are basically
-> >>> bogus.
-> >>>
-> >>> Since in most of these situations converting the callers such that
-> >>> security_locked_down() is called in a context where the current task
-> >>> would be meaningful for SELinux is impossible or very non-trivial (and
-> >>> could lead to TOCTOU issues for the classic Lockdown LSM
-> >>> implementation), fix this by modifying the hook to accept a struct cred
-> >>> pointer as argument, where NULL will be interpreted as a request for a
-> >>> "global", task-independent lockdown decision only. Then modify SELinux
-> >>> to ignore calls with cred == NULL.
-> >>
-> >> I'm not overly excited about skipping the access check when cred is
-> >> NULL.  Based on the description and the little bit that I've dug into
-> >> thus far it looks like using SECINITSID_KERNEL as the subject would be
-> >> much more appropriate.  *Something* (the kernel in most of the
-> >> relevant cases it looks like) is requesting that a potentially
-> >> sensitive disclosure be made, and ignoring it seems like the wrong
-> >> thing to do.  Leaving the access control intact also provides a nice
-> >> avenue to audit these requests should users want to do that.
+> On Thu, May 27, 2021 at 07:28:09AM +0100, Austin Kim wrote:
 > >
-> > I think the rationale/workaround for ignoring calls with cred == NULL (or the previous
-> > patch with the unimplemented hook) from Ondrej was two-fold, at least speaking for his
-> > seen tracing cases:
-> >
-> >    i) The audit events that are triggered due to calls to security_locked_down()
-> >       can OOM kill a machine, see below details [0].
-> >
-> >   ii) It seems to be causing a deadlock via slow_avc_audit() -> audit_log_end()
-> >       when presumingly trying to wake up kauditd [1].
+> > The variable with MODULE_DEVICE_TABLE() is registered as platform_drive=
+r.
+>
+> What does this mean?  There is no platform_driver involved here at all.
+>
 
-Actually, I wasn't aware of the deadlock... But calling an LSM hook
-[that is backed by a SELinux access check] from within a BPF helper is
-calling for all kinds of trouble, so I'm not surprised :)
+What I would like to say is "in many cases, MODULE_DEVICE_TABLE is
+registered as struct of platform_driver"
+ex) [drivers/char/hw_random/meson-rng.c]
+MODULE_DEVICE_TABLE(of, meson_rng_of_match);
 
-> Ondrej / Paul / Jiri: at least for the BPF tracing case specifically (I haven't looked
-> at the rest but it's also kind of independent), the attached fix should address both
-> reported issues, please take a look & test.
+static struct platform_driver meson_rng_driver =3D {
+.probe =3D meson_rng_probe,
+.driver =3D {
+.name =3D "meson-rng",
+.of_match_table =3D meson_rng_of_match,
+},
+};
 
-Thanks, I like this solution, although there are a few gotchas:
+> > But ghash_cpu_feature is not used, so remove ghash_cpu_feature.
+>
+> It is used when the file is built as a module.
+>
 
-1. This patch creates a slight "regression" in that if someone flips
-the Lockdown LSM into lockdown mode on runtime, existing (already
-loaded) BPF programs will still be able to call the
-confidentiality-breaching helpers, while before the lockdown would
-apply also to them. Personally, I don't think it's a big deal (and I
-bet there are other existing cases where some handle kept from before
-lockdown could leak data), but I wanted to mention it in case someone
-thinks the opposite.
+Thanks for the information. But it looks like this file is compiled
+as built-in with 'CONFIG_CRYPTO_GHASH_ARM64_CE=3Dy' by default.
 
-2. IIUC. when a BPF program is rejected due to lockdown/SELinux, the
-kernel will return -EINVAL to userspace (looking at
-check_helper_call() in kernel/bpf/verifier.c; didn't have time to look
-at other callers...). It would be nicer if the error code from the
-security_locked_down() call would be passed through the call chain and
-eventually returned to the caller. It should be relatively
-straightforward to convert bpf_base_func_proto() to return a PTR_ERR()
-instead of NULL on error, but it looks like this would result in quite
-a big patch updating all the callers (and callers of callers, etc.)
-with a not-so-small chance of missing some NULL check and introducing
-a bug... I guess we could live with EINVAL-on-denied in stable kernels
-and only have the error path refactoring in -next; I'm not sure...
+> > diff --git a/arch/arm64/crypto/ghash-ce-glue.c b/arch/arm64/crypto/ghas=
+h-ce-glue.c
+> > index 720cd3a58da3..c3f27d0d5329 100644
+>>[...]
+>
+> Probably adding __maybe_unused to ghash_cpu_feature[] is the right thing =
+to do.
+> That's what module_cpu_feature_match() does.
+>
+> (Note that module_cpu_feature_match() can't be used here, as it seems the=
+ intent
+> is for this module to be autoloaded when PMULL is detected, but still be
+> loadable without it.  So, that's apparently the reason for using
+> MODULE_DEVICE_TABLE() directly.)
 
-3. This is a bit of a shot-in-the-dark, but I suppose there might be
-some BPF programs that would be able to do something useful also when
-the read_kernel helpers return an error, yet the kernel will now
-outright refuse to load them (when the lockdown hook returns nonzero).
-I have no idea if such BPF programs realistically exist in practice,
-but perhaps it would be worth returning some dummy
-always-error-returning helper function instead of NULL from
-bpf_base_func_proto() when security_locked_down() returns an error.
-That would also resolve (2.), basically. (Then there is the question
-of what error code to use (because Lockdown LSM uses -EPERM, while
-SELinux -EACCESS), but I think always returning -EPERM from such stub
-helpers would be a viable choice.)
+Thanks for the valuable idea and feedback.
 
--- 
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+>
+> - Eric
