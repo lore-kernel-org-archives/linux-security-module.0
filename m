@@ -2,159 +2,227 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC1FBC47087
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 08:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64CFEC4708D
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 09:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8D2C613E5
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 08:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D3AF613E5
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 09:53:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236352AbhE1I0u (ORCPT
+        id S235889AbhE1Jy5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 May 2021 04:26:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236190AbhE1I0r (ORCPT
+        Fri, 28 May 2021 05:54:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:27587 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235493AbhE1Jyw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 May 2021 04:26:47 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9955F613E3;
-        Fri, 28 May 2021 08:25:11 +0000 (UTC)
-Date:   Fri, 28 May 2021 10:25:08 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, mjg59@srcf.ucam.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] ima: Define new template fields iuid and igid
-Message-ID: <20210528082508.lqolb3r2oepf3god@wittgenstein>
-References: <20210528073812.407936-1-roberto.sassu@huawei.com>
- <20210528073812.407936-3-roberto.sassu@huawei.com>
+        Fri, 28 May 2021 05:54:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1622195597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0JEyT4Qen3ccTPRK6zwJJW/dqDZ8R3N8AbSzkF9MSlk=;
+        b=Q3YQTbNTKQAun1v+fw0v5yN2eOnKPybIc6Yrp9EKVhxqsEJHfeC4B6rzP3kH6MLNEjIZ/c
+        2rqQJsd5P+SpsTXQB21ssf/y1ctx8qDT67Al61AVkIddudHQ2Q8KWv65cE6sW4BbfTcmej
+        k3DBwMbBzdIeyeFgabuXLhgG9PK93Ps=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-341-ptzWPf6ROl-wSzCnc4zXfQ-1; Fri, 28 May 2021 05:53:16 -0400
+X-MC-Unique: ptzWPf6ROl-wSzCnc4zXfQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E0F85107ACC7;
+        Fri, 28 May 2021 09:53:13 +0000 (UTC)
+Received: from krava (unknown [10.40.192.177])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6F14B50450;
+        Fri, 28 May 2021 09:53:09 +0000 (UTC)
+Date:   Fri, 28 May 2021 11:53:08 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+Message-ID: <YLC9hIou6f7U7JLe@krava>
+References: <20210517092006.803332-1-omosnace@redhat.com>
+ <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+ <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210528073812.407936-3-roberto.sassu@huawei.com>
+In-Reply-To: <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 28, 2021 at 09:38:07AM +0200, Roberto Sassu wrote:
-> This patch defines the new template fields iuid and igid, which include
-> respectively the inode UID and GID. For idmapped mounts, still the original
-> UID and GID are provided.
+On Fri, May 28, 2021 at 09:09:57AM +0200, Daniel Borkmann wrote:
+> On 5/28/21 3:37 AM, Paul Moore wrote:
+> > On Mon, May 17, 2021 at 5:22 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > > 
+> > > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> > > lockdown") added an implementation of the locked_down LSM hook to
+> > > SELinux, with the aim to restrict which domains are allowed to perform
+> > > operations that would breach lockdown.
+> > > 
+> > > However, in several places the security_locked_down() hook is called in
+> > > situations where the current task isn't doing any action that would
+> > > directly breach lockdown, leading to SELinux checks that are basically
+> > > bogus.
+> > > 
+> > > Since in most of these situations converting the callers such that
+> > > security_locked_down() is called in a context where the current task
+> > > would be meaningful for SELinux is impossible or very non-trivial (and
+> > > could lead to TOCTOU issues for the classic Lockdown LSM
+> > > implementation), fix this by modifying the hook to accept a struct cred
+> > > pointer as argument, where NULL will be interpreted as a request for a
+> > > "global", task-independent lockdown decision only. Then modify SELinux
+> > > to ignore calls with cred == NULL.
+> > 
+> > I'm not overly excited about skipping the access check when cred is
+> > NULL.  Based on the description and the little bit that I've dug into
+> > thus far it looks like using SECINITSID_KERNEL as the subject would be
+> > much more appropriate.  *Something* (the kernel in most of the
+> > relevant cases it looks like) is requesting that a potentially
+> > sensitive disclosure be made, and ignoring it seems like the wrong
+> > thing to do.  Leaving the access control intact also provides a nice
+> > avenue to audit these requests should users want to do that.
 > 
-> These fields can be used to verify the EVM portable signature, if it was
-> included with the template fields sig or evmsig.
+> I think the rationale/workaround for ignoring calls with cred == NULL (or the previous
+> patch with the unimplemented hook) from Ondrej was two-fold, at least speaking for his
+> seen tracing cases:
 > 
-> Cc: Christian Brauner <christian.brauner@ubuntu.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
+>   i) The audit events that are triggered due to calls to security_locked_down()
+>      can OOM kill a machine, see below details [0].
+> 
+>  ii) It seems to be causing a deadlock via slow_avc_audit() -> audit_log_end()
+>      when presumingly trying to wake up kauditd [1].
 
-That's fine with me. Thanks, Robert!
-Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+hi,
+I saw the same deadlock, ended up with this sequence:
 
->  Documentation/security/IMA-templates.rst  |  2 +
->  security/integrity/ima/ima_template.c     |  4 ++
->  security/integrity/ima/ima_template_lib.c | 45 +++++++++++++++++++++++
->  security/integrity/ima/ima_template_lib.h |  4 ++
->  4 files changed, 55 insertions(+)
+  rq_lock(rq) -> trace_sched_switch -> bpf_prog -> selinux_lockdown -> audit_log_end -> wake_up_interruptible -> try_to_wake_up -> rq_lock(rq)
+
+problem is that trace_sched_switch already holds rq_lock
+
+I had powerpc server where I could reproduce this easily,
+but now for some reason I can't hit the issue anymore
+
+jirka
+
 > 
-> diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-> index 9f3e86ab028a..bf8ce4cf5878 100644
-> --- a/Documentation/security/IMA-templates.rst
-> +++ b/Documentation/security/IMA-templates.rst
-> @@ -75,6 +75,8 @@ descriptors by adding their identifier to the format string
->   - 'modsig' the appended file signature;
->   - 'buf': the buffer data that was used to generate the hash without size limitations;
->   - 'evmsig': the EVM portable signature;
-> + - 'iuid': the inode UID;
-> + - 'igid': the inode GID;
->  
->  
->  Below, there is the list of defined template descriptors:
-> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-> index 7a60848c04a5..a5ecd9e2581b 100644
-> --- a/security/integrity/ima/ima_template.c
-> +++ b/security/integrity/ima/ima_template.c
-> @@ -47,6 +47,10 @@ static const struct ima_template_field supported_fields[] = {
->  	 .field_show = ima_show_template_sig},
->  	{.field_id = "evmsig", .field_init = ima_eventevmsig_init,
->  	 .field_show = ima_show_template_sig},
-> +	{.field_id = "iuid", .field_init = ima_eventinodeuid_init,
-> +	 .field_show = ima_show_template_uint},
-> +	{.field_id = "igid", .field_init = ima_eventinodegid_init,
-> +	 .field_show = ima_show_template_uint},
->  };
->  
->  /*
-> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> index f23296c33da1..87b40f391739 100644
-> --- a/security/integrity/ima/ima_template_lib.c
-> +++ b/security/integrity/ima/ima_template_lib.c
-> @@ -551,3 +551,48 @@ int ima_eventevmsig_init(struct ima_event_data *event_data,
->  	kfree(xattr_data);
->  	return rc;
->  }
-> +
-> +static int ima_eventinodedac_init_common(struct ima_event_data *event_data,
-> +					 struct ima_field_data *field_data,
-> +					 bool get_uid)
-> +{
-> +	unsigned int id;
-> +
-> +	if (!event_data->file)
-> +		return 0;
-> +
-> +	if (get_uid)
-> +		id = i_uid_read(file_inode(event_data->file));
-> +	else
-> +		id = i_gid_read(file_inode(event_data->file));
-> +
-> +	if (ima_canonical_fmt) {
-> +		if (sizeof(id) == sizeof(u16))
-> +			id = cpu_to_le16(id);
-> +		else
-> +			id = cpu_to_le32(id);
-> +	}
-> +
-> +	return ima_write_template_field_data((void *)&id, sizeof(id),
-> +					     DATA_FMT_UINT, field_data);
-> +}
-> +
-> +/*
-> + *  ima_eventinodeuid_init - include the inode UID as part of the template
-> + *  data
-> + */
-> +int ima_eventinodeuid_init(struct ima_event_data *event_data,
-> +			   struct ima_field_data *field_data)
-> +{
-> +	return ima_eventinodedac_init_common(event_data, field_data, true);
-> +}
-> +
-> +/*
-> + *  ima_eventinodegid_init - include the inode GID as part of the template
-> + *  data
-> + */
-> +int ima_eventinodegid_init(struct ima_event_data *event_data,
-> +			   struct ima_field_data *field_data)
-> +{
-> +	return ima_eventinodedac_init_common(event_data, field_data, false);
-> +}
-> diff --git a/security/integrity/ima/ima_template_lib.h b/security/integrity/ima/ima_template_lib.h
-> index 54b67c80b315..b0aaf109f386 100644
-> --- a/security/integrity/ima/ima_template_lib.h
-> +++ b/security/integrity/ima/ima_template_lib.h
-> @@ -50,4 +50,8 @@ int ima_eventmodsig_init(struct ima_event_data *event_data,
->  			 struct ima_field_data *field_data);
->  int ima_eventevmsig_init(struct ima_event_data *event_data,
->  			 struct ima_field_data *field_data);
-> +int ima_eventinodeuid_init(struct ima_event_data *event_data,
-> +			   struct ima_field_data *field_data);
-> +int ima_eventinodegid_init(struct ima_event_data *event_data,
-> +			   struct ima_field_data *field_data);
->  #endif /* __LINUX_IMA_TEMPLATE_LIB_H */
-> -- 
-> 2.25.1
+> How would your suggestion above solve both i) and ii)?
 > 
+> [0] https://bugzilla.redhat.com/show_bug.cgi?id=1955585 :
+> 
+>   I starting seeing this with F-34. When I run a container that is traced with eBPF
+>   to record the syscalls it is doing, auditd is flooded with messages like:
+> 
+>   type=AVC msg=audit(1619784520.593:282387): avc:  denied  { confidentiality } for
+>    pid=476 comm="auditd" lockdown_reason="use of bpf to read kernel RAM"
+>     scontext=system_u:system_r:auditd_t:s0 tcontext=system_u:system_r:auditd_t:s0 tclass=lockdown permissive=0
+> 
+>   This seems to be leading to auditd running out of space in the backlog buffer and
+>   eventually OOMs the machine.
+> 
+>   auditd running at 99% CPU presumably processing all the messages, eventually I get:
+>   Apr 30 12:20:42 fedora kernel: audit: backlog limit exceeded
+>   Apr 30 12:20:42 fedora kernel: audit: backlog limit exceeded
+>   Apr 30 12:20:42 fedora kernel: audit: audit_backlog=2152579 > audit_backlog_limit=64
+>   Apr 30 12:20:42 fedora kernel: audit: audit_backlog=2152626 > audit_backlog_limit=64
+>   Apr 30 12:20:42 fedora kernel: audit: audit_backlog=2152694 > audit_backlog_limit=64
+>   Apr 30 12:20:42 fedora kernel: audit: audit_lost=6878426 audit_rate_limit=0 audit_backlog_limit=64
+>   Apr 30 12:20:45 fedora kernel: oci-seccomp-bpf invoked oom-killer: gfp_mask=0x100cca(GFP_HIGHUSER_MOVABLE), order=0, oom_score_adj=-1000
+>   Apr 30 12:20:45 fedora kernel: CPU: 0 PID: 13284 Comm: oci-seccomp-bpf Not tainted 5.11.12-300.fc34.x86_64 #1
+>   Apr 30 12:20:45 fedora kernel: Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-2.fc32 04/01/2014
+> 
+> [1] https://lore.kernel.org/linux-audit/CANYvDQN7H5tVp47fbYcRasv4XF07eUbsDwT_eDCHXJUj43J7jQ@mail.gmail.com/ :
+> 
+>   Upstream kernel 5.11.0-rc7 and later was found to deadlock during a bpf_probe_read_compat()
+>   call within a sched_switch tracepoint. The problem is reproducible with the reg_alloc3
+>   testcase from SystemTap's BPF backend testsuite on x86_64 as well as the runqlat,runqslower
+>   tools from bcc on ppc64le. Example stack trace from [1]:
+> 
+>   [  730.868702] stack backtrace:
+>   [  730.869590] CPU: 1 PID: 701 Comm: in:imjournal Not tainted, 5.12.0-0.rc2.20210309git144c79ef3353.166.fc35.x86_64 #1
+>   [  730.871605] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.13.0-2.fc32 04/01/2014
+>   [  730.873278] Call Trace:
+>   [  730.873770]  dump_stack+0x7f/0xa1
+>   [  730.874433]  check_noncircular+0xdf/0x100
+>   [  730.875232]  __lock_acquire+0x1202/0x1e10
+>   [  730.876031]  ? __lock_acquire+0xfc0/0x1e10
+>   [  730.876844]  lock_acquire+0xc2/0x3a0
+>   [  730.877551]  ? __wake_up_common_lock+0x52/0x90
+>   [  730.878434]  ? lock_acquire+0xc2/0x3a0
+>   [  730.879186]  ? lock_is_held_type+0xa7/0x120
+>   [  730.880044]  ? skb_queue_tail+0x1b/0x50
+>   [  730.880800]  _raw_spin_lock_irqsave+0x4d/0x90
+>   [  730.881656]  ? __wake_up_common_lock+0x52/0x90
+>   [  730.882532]  __wake_up_common_lock+0x52/0x90
+>   [  730.883375]  audit_log_end+0x5b/0x100
+>   [  730.884104]  slow_avc_audit+0x69/0x90
+>   [  730.884836]  avc_has_perm+0x8b/0xb0
+>   [  730.885532]  selinux_lockdown+0xa5/0xd0
+>   [  730.886297]  security_locked_down+0x20/0x40
+>   [  730.887133]  bpf_probe_read_compat+0x66/0xd0
+>   [  730.887983]  bpf_prog_250599c5469ac7b5+0x10f/0x820
+>   [  730.888917]  trace_call_bpf+0xe9/0x240
+>   [  730.889672]  perf_trace_run_bpf_submit+0x4d/0xc0
+>   [  730.890579]  perf_trace_sched_switch+0x142/0x180
+>   [  730.891485]  ? __schedule+0x6d8/0xb20
+>   [  730.892209]  __schedule+0x6d8/0xb20
+>   [  730.892899]  schedule+0x5b/0xc0
+>   [  730.893522]  exit_to_user_mode_prepare+0x11d/0x240
+>   [  730.894457]  syscall_exit_to_user_mode+0x27/0x70
+>   [  730.895361]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> 
+> > > Since most callers will just want to pass current_cred() as the cred
+> > > parameter, rename the hook to security_cred_locked_down() and provide
+> > > the original security_locked_down() function as a simple wrapper around
+> > > the new hook.
+> [...]
+> > 
+> > > 3. kernel/trace/bpf_trace.c:bpf_probe_read_kernel{,_str}_common()
+> > >       Called when a BPF program calls a helper that could leak kernel
+> > >       memory. The task context is not relevant here, since the program
+> > >       may very well be run in the context of a different task than the
+> > >       consumer of the data.
+> > >       See: https://bugzilla.redhat.com/show_bug.cgi?id=1955585
+> > 
+> > The access control check isn't so much who is consuming the data, but
+> > who is requesting a potential violation of a "lockdown", yes?  For
+> > example, the SELinux policy rule for the current lockdown check looks
+> > something like this:
+> > 
+> >    allow <who> <who> : lockdown { <reason> };
+> > 
+> > It seems to me that the task context is relevant here and performing
+> > the access control check based on the task's domain is correct.
+> This doesn't make much sense to me, it's /not/ the task 'requesting a potential
+> violation of a "lockdown"', but rather the running tracing program which is e.g.
+> inspecting kernel data structures around the triggered event. If I understood
+> you correctly, having an 'allow' check on, say, httpd would be rather odd since
+> things like perf/bcc/bpftrace/systemtap/etc is installing the tracing probe instead.
+> 
+> Meaning, if we would /not/ trace such events (like in the prior mentioned syscall
+> example), then there is also no call to the security_locked_down() from that same/
+> unmodified application.
+> 
+> Thanks,
+> Daniel
+> 
+
