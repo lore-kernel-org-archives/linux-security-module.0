@@ -2,106 +2,101 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D62C47087
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 16:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A07C2B9F7
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 18:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13B3D611AB
-	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 16:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA524613D1
+	for <linux-security-module@archiver.kernel.org>; Fri, 28 May 2021 18:11:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235484AbhE1QEt (ORCPT
+        id S229500AbhE1SMp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 28 May 2021 12:04:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54252 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234665AbhE1QEr (ORCPT
+        Fri, 28 May 2021 14:12:45 -0400
+Received: from condef-03.nifty.com ([202.248.20.68]:63019 "EHLO
+        condef-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229453AbhE1SMo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 28 May 2021 12:04:47 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB30FC061760
-        for <linux-security-module@vger.kernel.org>; Fri, 28 May 2021 09:03:10 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id jt22so6125469ejb.7
-        for <linux-security-module@vger.kernel.org>; Fri, 28 May 2021 09:03:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n2mkp1VfbRLXyX9BQ4/sufzNob6zQwJ5kWZnckwzjKg=;
-        b=XN2MWTRNcK+CU7plcx6VTpATsrmsKATolYVbfOniDSO21Y5pEf6h2GpH8bMm+fAQho
-         QkHK8FyZQLQNtBE7JZYv/2AnbIH+DDVekQS3/V/7JGJXqrvtdcZ/O8kYGScYEv9Z4bvm
-         mdJga8p/z8HPfzRFgQd00MyNZTUULOc2FUKYxpVnBTLbNs5wuq9ktq8W1/70TYiNFkVk
-         Ev6r8oW4NAs4E+07r1ee8XbEzaXNon4sr681aBZAPumTSWH3ZQkf0lAdxkmo08ApAqhs
-         +UyR+OvZme+Ckor57XsUteckvvq93NYjoNNkVka6PbHUHdjO+PIkjvAcitoS4O5QKSkb
-         T3tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n2mkp1VfbRLXyX9BQ4/sufzNob6zQwJ5kWZnckwzjKg=;
-        b=NMLm40839HS5DaqpPGCwLeSqtfZBUdt7ld7IIaFhfSky0dQCUVbvr93b8B7aJwa1zA
-         yLjTsFjyBkXN2Ozwn5ftCbg5gQtg3BILDHE0ke/IhZlZvoWuifULkNriv0qHbGbQ+zXw
-         /c22WgTp+r/7bOdXpRsCesRQQ7jaXXKJI4gMD7Qww11IqrSSndLGnCS0JcTEUiRE9R26
-         Rj3wVuWod1g1vS1w4/Vmz/ljY7Um/Cm2lJkO7GaKTcgDBNccIw20QtBwEDQCC8a3Va3i
-         0wqxchjznyfnN47mhBkBKMFzFwAiIAcCG6t3NwTrkfpOUaVw84nvlTaAHC1pqYaVmFuc
-         I8jA==
-X-Gm-Message-State: AOAM532ZtIk/xHmEEWbDDUeS/bieQ/gG8t54fmzX1+Xe8GLLh/hSZhQA
-        wq7wTAeVESFV7d5dOwrl7LwCVQyT1b8WXXgGhgWo
-X-Google-Smtp-Source: ABdhPJxRjX3Ws7VBEcmMgQB006OahZcwDvgkWQ9e4I1WzulhYU5E4GfGyPMI6cxRYYL7k/JKuuFBrGiK18GyCTgkyuA=
-X-Received: by 2002:a17:906:4111:: with SMTP id j17mr150091ejk.488.1622217789328;
- Fri, 28 May 2021 09:03:09 -0700 (PDT)
+        Fri, 28 May 2021 14:12:44 -0400
+X-Greylist: delayed 301 seconds by postgrey-1.27 at vger.kernel.org; Fri, 28 May 2021 14:12:44 EDT
+Received: from conuserg-12.nifty.com ([10.126.8.75])by condef-03.nifty.com with ESMTP id 14SI37Pl007109
+        for <linux-security-module@vger.kernel.org>; Sat, 29 May 2021 03:03:26 +0900
+Received: from localhost.localdomain (133-32-232-101.west.xps.vectant.ne.jp [133.32.232.101]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id 14SI1haG022124;
+        Sat, 29 May 2021 03:01:43 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com 14SI1haG022124
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1622224904;
+        bh=2kZqwL1JQt5glLFuW6WR3qf32xQUK04xmZfKd8g1NcY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=E3oPsiWNYKDJybUlRh+1jWhmLju0XfZ5nsPJwOGTL9eH70T8taHVoQQgeD+BVpLd+
+         gqFe9fFuxRPp7siI4jst5EV2+xLfiLOpxUZWJ+pHP1aNpYwJ8xgxMjPkFh0JCJ1GMt
+         a96oQCP1k1zimzGrNl7ChC2NsldurW1xrJj9dUXkcJH+5XHb0q65oClMGVrtCqZIDJ
+         8li640STUWao1UI1Kyvmz7zkAQBaN67jIEpiUKMNicAyfdeZFFoY5fbtLOgne3H5P1
+         Hzgkt4HYDNBu7/KRdsCLAXmtyDXEc68hblH5uWhvDqSByexmw15DsHbBAM9mT5nvWV
+         ooHYctkP6MC9g==
+X-Nifty-SrcIP: [133.32.232.101]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Masahiro Yamada <masahiroy@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH] security: remove unneeded subdir-$(CONFIG_...)
+Date:   Sat, 29 May 2021 03:01:40 +0900
+Message-Id: <20210528180140.176257-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl> <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
- <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
- <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com> <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
- <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk> <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
- <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk> <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
- <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk> <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
- <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
- <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk> <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
-In-Reply-To: <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 28 May 2021 12:02:58 -0400
-Message-ID: <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
- support to io_uring
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
-> ... If we moved the _entry
-> and _exit calls into the individual operation case blocks (quick
-> openat example below) so that only certain operations were able to be
-> audited would that be acceptable assuming the high frequency ops were
-> untouched?  My initial gut feeling was that this would involve >50% of
-> the ops, but Steve Grubb seems to think it would be less; it may be
-> time to look at that a bit more seriously, but if it gets a NACK
-> regardless it isn't worth the time - thoughts?
->
->   case IORING_OP_OPENAT:
->     audit_uring_entry(req->opcode);
->     ret = io_openat(req, issue_flags);
->     audit_uring_exit(!ret, ret);
->     break;
+All of these are unneeded. The directories to descend are specified
+by obj-$(CONFIG_...).
 
-I wanted to pose this question again in case it was lost in the
-thread, I suspect this may be the last option before we have to "fix"
-things at the Kconfig level.  I definitely don't want to have to go
-that route, and I suspect most everyone on this thread feels the same,
-so I'm hopeful we can find a solution that is begrudgingly acceptable
-to both groups.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
+ security/Makefile | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/security/Makefile b/security/Makefile
+index 47e432900e24..18121f8f85cd 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -4,16 +4,6 @@
+ #
+ 
+ obj-$(CONFIG_KEYS)			+= keys/
+-subdir-$(CONFIG_SECURITY_SELINUX)	+= selinux
+-subdir-$(CONFIG_SECURITY_SMACK)		+= smack
+-subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
+-subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
+-subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+-subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+-subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+-subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
+-subdir-$(CONFIG_BPF_LSM)		+= bpf
+-subdir-$(CONFIG_SECURITY_LANDLOCK)	+= landlock
+ 
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -36,5 +26,4 @@ obj-$(CONFIG_BPF_LSM)			+= bpf/
+ obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
+ 
+ # Object integrity file lists
+-subdir-$(CONFIG_INTEGRITY)		+= integrity
+ obj-$(CONFIG_INTEGRITY)			+= integrity/
 -- 
-paul moore
-www.paul-moore.com
+2.27.0
+
