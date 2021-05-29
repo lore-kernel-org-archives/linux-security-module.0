@@ -2,81 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A483C47082
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 May 2021 08:41:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D630C47082
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 May 2021 18:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46AA46128D
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 May 2021 08:41:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45B9C601FC
+	for <linux-security-module@archiver.kernel.org>; Sat, 29 May 2021 18:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbhE2Imh (ORCPT
+        id S229852AbhE2SuX (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 29 May 2021 04:42:37 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2529 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbhE2Imf (ORCPT
+        Sat, 29 May 2021 14:50:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229746AbhE2SuW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 29 May 2021 04:42:35 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FsZh86Vl5zYr3L;
-        Sat, 29 May 2021 16:38:16 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (7.185.36.114) by
- dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Sat, 29 May 2021 16:40:58 +0800
-Received: from localhost.localdomain (10.69.192.56) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Sat, 29 May 2021 16:40:58 +0800
-From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
-To:     <linux-security-module@vger.kernel.org>
-CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH] apparmor: Remove the repeated declaration
-Date:   Sat, 29 May 2021 16:40:48 +0800
-Message-ID: <1622277648-27803-1-git-send-email-zhangshaokun@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        Sat, 29 May 2021 14:50:22 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F12C061574
+        for <linux-security-module@vger.kernel.org>; Sat, 29 May 2021 11:48:45 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id b11so1821561edy.4
+        for <linux-security-module@vger.kernel.org>; Sat, 29 May 2021 11:48:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PxkN5674Gdo7C/DvFwdmRlPrHnz0qD2VW7zEeao9HA0=;
+        b=egZtDVPv+pEmzpQcYmGqbrNNZyRf7Aqgebz64H8qjXLqaTKcUwlR3bcfeOXQVoQ0/I
+         7zwI+0FvRjoKaxZUkV7/qMK527UOii8JwIHXsmWt3289bVTzi9jLS7DrylJywuRK85RH
+         XBY1R3AHPL69XeC7SFpUqb6jYFOv1/r8nNtp8fKORkkIuxQaK7l7pwk6KrKXFhlZQCGE
+         EcOZJePRxsnnGa9NxCm+Hg9bBxdVgKUxA06srzViIJ8xJs6i38G7NVkfnqvzrPg5uWam
+         tPUgQZGd1V/osaT50MNDtOL3E3SbY3nnfIen9INxBSbFY2ZNJ5UWnlfEyLDqOf4fSzeX
+         BIxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PxkN5674Gdo7C/DvFwdmRlPrHnz0qD2VW7zEeao9HA0=;
+        b=QD2/n2bE+ZukpIJOtf1thcGSY1WWT1rmd1eEoFySbNQoDGYwq0hzYpTftriPU3jfZl
+         ll4B2qYzies5Z70Q625Z8QeD1L7PXtmdzsy5PYKJQhEStVkIjhCQO/En2FNJY4V8OUH5
+         WaYX/PBO/w/DMSkxfYUpzjmcF5tY1wjW8XCl8QHIUKLrt0GmndUlW+FIyvbl4FodswWO
+         0mPONNhCsJl6qVAUC1yI29MjhfndLVe/1cMFs94eUA9+Veg8cJqvExqVHq/0Jxy7IXBi
+         aPmwQfgF1sLgjk4bHap98bLlgauWTL5WdwxQyZtOfL39FDXnBZtYwRnXz3jqpvRRDk4y
+         ylEw==
+X-Gm-Message-State: AOAM532Il4XqKpCikDs9q9ZL2P10Ma28dcMkSZmqz74o51A7xImVXAlz
+        zpkgEoqGHGjgeJCm47X2dMPKQMLcP23xm0EIAVvd
+X-Google-Smtp-Source: ABdhPJyUKpixSoshzQJyPJqEx0bgxxFA8s58ydUH/2LXx1S03FTwjdX+rXFI9WK5gl/+d4oHpjX3EfrlNm+PVmnhJgQ=
+X-Received: by 2002:a05:6402:430b:: with SMTP id m11mr16690557edc.31.1622314124071;
+ Sat, 29 May 2021 11:48:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+ <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
+ <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
+In-Reply-To: <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 29 May 2021 14:48:33 -0400
+Message-ID: <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Function 'aa_labelset_destroy' and 'aa_labelset_init' are declared
-twice, so remove the repeated declaration and unnecessary blank line.
+On Fri, May 28, 2021 at 2:28 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
+> In the case of tracing, it's different. You install small programs that are
+> triggered when certain events fire. Random example from bpftrace's README [0],
+> you want to generate a histogram of syscall counts by program. One-liner is:
+>
+>    bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }'
+>
+> bpftrace then goes and generates a BPF prog from this internally. One way of
+> doing it could be to call bpf_get_current_task() helper and then access
+> current->comm via one of bpf_probe_read_kernel{,_str}() helpers ...
 
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
----
- security/apparmor/include/label.h | 4 ----
- 1 file changed, 4 deletions(-)
+I think we can all agree that the BPF tracing is a bit chaotic in the
+sense that the tracing programs can be executed in various
+places/contexts and that presents some challenges with respect to
+access control and auditing.  If you are following the io_uring stuff
+that is going on now you can see a little of what is required to make
+audit work properly in the various io_uring contexts and that is
+relatively small compared to what is possible with BPF tracing.  Of
+course this assumes I've managed to understand bpf tracing properly
+this morning, and I very well may still be missing points and/or
+confused about some of the important details.  Corrections are
+welcome.
 
-diff --git a/security/apparmor/include/label.h b/security/apparmor/include/label.h
-index 1e90384b1523..18b290f73b8b 100644
---- a/security/apparmor/include/label.h
-+++ b/security/apparmor/include/label.h
-@@ -77,10 +77,6 @@ struct aa_labelset {
- #define __labelset_for_each(LS, N) \
- 	for ((N) = rb_first(&(LS)->root); (N); (N) = rb_next(N))
- 
--void aa_labelset_destroy(struct aa_labelset *ls);
--void aa_labelset_init(struct aa_labelset *ls);
--
--
- enum label_flags {
- 	FLAG_HAT = 1,			/* profile is a hat */
- 	FLAG_UNCONFINED = 2,		/* label unconfined only if all */
+Daniel's patch side steps that worry by just doing the lockdown
+permission check when the BPF program is loaded, but that isn't a
+great solution if the policy changes afterward.  I was hoping there
+might be some way to perform the permission check as needed, but the
+more I look the more that appears to be difficult, if not impossible
+(once again, corrections are welcome).
+
+I'm now wondering if the right solution here is to make use of the LSM
+notifier mechanism.  I'm not yet entirely sure if this would work from
+a BPF perspective, but I could envision the BPF subsystem registering
+a LSM notification callback via register_blocking_lsm_notifier(), see
+if Infiniband code as an example, and then when the LSM(s) policy
+changes the BPF subsystem would get a notification and it could
+revalidate the existing BPF programs and take block/remove/whatever
+the offending BPF programs.  This obviously requires a few things
+which I'm not sure are easily done, or even possible:
+
+1. Somehow the BPF programs would need to be "marked" at
+load/verification time with respect to their lockdown requirements so
+that decisions can be made later.  Perhaps a flag in bpf_prog_aux?
+
+2. While it looks like it should be possible to iterate over all of
+the loaded BPF programs in the LSM notifier callback via
+idr_for_each(prog_idr, ...), it is not clear to me if it is possible
+to safely remove, or somehow disable, BPF programs once they have been
+loaded.  Hopefully the BPF folks can help answer that question.
+
+3. Disabling of BPF programs might be preferable to removing them
+entirely on LSM policy changes as it would be possible to make the
+lockdown state less restrictive at a future point in time, allowing
+for the BPF program to be executed again.  Once again, not sure if
+this is even possible.
+
+Related, the lockdown LSM should probably also grow LSM notifier
+support similar to selinux_lsm_notifier_avc_callback(), for example
+either lock_kernel_down() or lockdown_write() might want to do a
+call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL) call.
+
 -- 
-2.7.4
-
+paul moore
+www.paul-moore.com
