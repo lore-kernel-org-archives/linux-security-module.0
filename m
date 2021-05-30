@@ -2,142 +2,215 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D630C47082
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 May 2021 18:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4543EC47094
+	for <linux-security-module@archiver.kernel.org>; Sun, 30 May 2021 15:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45B9C601FC
-	for <linux-security-module@archiver.kernel.org>; Sat, 29 May 2021 18:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D736611AC
+	for <linux-security-module@archiver.kernel.org>; Sun, 30 May 2021 15:26:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229852AbhE2SuX (ORCPT
+        id S229783AbhE3P2Q (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 29 May 2021 14:50:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35886 "EHLO
+        Sun, 30 May 2021 11:28:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbhE2SuW (ORCPT
+        with ESMTP id S229739AbhE3P2Q (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 29 May 2021 14:50:22 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96F12C061574
-        for <linux-security-module@vger.kernel.org>; Sat, 29 May 2021 11:48:45 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id b11so1821561edy.4
-        for <linux-security-module@vger.kernel.org>; Sat, 29 May 2021 11:48:45 -0700 (PDT)
+        Sun, 30 May 2021 11:28:16 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE220C061761
+        for <linux-security-module@vger.kernel.org>; Sun, 30 May 2021 08:26:37 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id g8so4302262ejx.1
+        for <linux-security-module@vger.kernel.org>; Sun, 30 May 2021 08:26:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PxkN5674Gdo7C/DvFwdmRlPrHnz0qD2VW7zEeao9HA0=;
-        b=egZtDVPv+pEmzpQcYmGqbrNNZyRf7Aqgebz64H8qjXLqaTKcUwlR3bcfeOXQVoQ0/I
-         7zwI+0FvRjoKaxZUkV7/qMK527UOii8JwIHXsmWt3289bVTzi9jLS7DrylJywuRK85RH
-         XBY1R3AHPL69XeC7SFpUqb6jYFOv1/r8nNtp8fKORkkIuxQaK7l7pwk6KrKXFhlZQCGE
-         EcOZJePRxsnnGa9NxCm+Hg9bBxdVgKUxA06srzViIJ8xJs6i38G7NVkfnqvzrPg5uWam
-         tPUgQZGd1V/osaT50MNDtOL3E3SbY3nnfIen9INxBSbFY2ZNJ5UWnlfEyLDqOf4fSzeX
-         BIxQ==
+        bh=e83Xdcrb8ArQTK3BfJ+SKjS0Z61QsbiftdtWKkLx9t0=;
+        b=xxmRfSdqR7k/5JUg2bVa/HZl4RASa24Zfj1QgGechwXgZHEtHOd0ktJScwP5bQimAm
+         XUYqJtP0hDxk+ZXVnZR4aY1OyjeHBf+veNfgXsQ3vgLWtPekUJL/BZGg3oI1MAThdQTI
+         VDjF7lyY0rwv9afdqBsYU7gAlRJxy5AFHgVvegxl82XdF/HwAEB3uDOjThe/mpZ0IHtx
+         gvJWtS2SmUqSAW4v401VZRgrbfAl79crzB3oMHe0uRFOXkOawtpQXplEsxlMa4gTfuN9
+         zX3d54/1D/AucoBl0RsmoItn6LRW7Syu3nCvuZzyeFkQTxMQH7XvVVLZiF6lCoDV8xyt
+         7KBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PxkN5674Gdo7C/DvFwdmRlPrHnz0qD2VW7zEeao9HA0=;
-        b=QD2/n2bE+ZukpIJOtf1thcGSY1WWT1rmd1eEoFySbNQoDGYwq0hzYpTftriPU3jfZl
-         ll4B2qYzies5Z70Q625Z8QeD1L7PXtmdzsy5PYKJQhEStVkIjhCQO/En2FNJY4V8OUH5
-         WaYX/PBO/w/DMSkxfYUpzjmcF5tY1wjW8XCl8QHIUKLrt0GmndUlW+FIyvbl4FodswWO
-         0mPONNhCsJl6qVAUC1yI29MjhfndLVe/1cMFs94eUA9+Veg8cJqvExqVHq/0Jxy7IXBi
-         aPmwQfgF1sLgjk4bHap98bLlgauWTL5WdwxQyZtOfL39FDXnBZtYwRnXz3jqpvRRDk4y
-         ylEw==
-X-Gm-Message-State: AOAM532Il4XqKpCikDs9q9ZL2P10Ma28dcMkSZmqz74o51A7xImVXAlz
-        zpkgEoqGHGjgeJCm47X2dMPKQMLcP23xm0EIAVvd
-X-Google-Smtp-Source: ABdhPJyUKpixSoshzQJyPJqEx0bgxxFA8s58ydUH/2LXx1S03FTwjdX+rXFI9WK5gl/+d4oHpjX3EfrlNm+PVmnhJgQ=
-X-Received: by 2002:a05:6402:430b:: with SMTP id m11mr16690557edc.31.1622314124071;
- Sat, 29 May 2021 11:48:44 -0700 (PDT)
+        bh=e83Xdcrb8ArQTK3BfJ+SKjS0Z61QsbiftdtWKkLx9t0=;
+        b=VzNUjLLkEhT7T0LyV9KTYDuCXUZdd8XyYQVyxubcN5y7g7Zn/RMRQrGyAVDyzebCvB
+         Tc5+8WdYKK/b9xTbaPKiz8XCmHB9fCAYb7jgp7PYYhC3YpSKTgbxFehkAlzK249EbdJ+
+         bkrplYAaGVX5yAHEAzznuHbeA8Pac9zVND59WDHXIrKB4UnkP3PP3fLHNXwtT7ILRVLE
+         XVr8ieNUzXXoAD+olCRVkgdmNw+2oka1AEiE29/Yt19XmQ1TWmII9X0EKaICYsALNlHU
+         6R+aOe5eavLT+Up6RMjwVKqvqL/oNFC6Rrxi60G/OVGsCOxc+z10pP9S3QAobocwDXRJ
+         OKJw==
+X-Gm-Message-State: AOAM533w8eF6u7J8q+0lbxKfzyI1NH/pmvUhTwVpQKBwEkTqyHULwW62
+        43NAqx36GTEXyVYtuthpQKkVYOXDwxF8aAE6pBOF
+X-Google-Smtp-Source: ABdhPJwPsCNauSlDJZZCjOpy5U50sK0NxibF5HbYEJWlsb/BX8Aa7YBzBA+a2fJHbO4WCKa8o/7Q2nAhnogkBmdUNtg=
+X-Received: by 2002:a17:906:4111:: with SMTP id j17mr9037573ejk.488.1622388396174;
+ Sun, 30 May 2021 08:26:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
-In-Reply-To: <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163380685.8379.17381053199011043757.stgit@sifl> <20210528223544.GL447005@madcap2.tricolour.ca>
+In-Reply-To: <20210528223544.GL447005@madcap2.tricolour.ca>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 29 May 2021 14:48:33 -0400
-Message-ID: <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>, jolsa@redhat.com
+Date:   Sun, 30 May 2021 11:26:25 -0400
+Message-ID: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/9] audit: add filtering for io_uring records
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, May 28, 2021 at 2:28 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> In the case of tracing, it's different. You install small programs that are
-> triggered when certain events fire. Random example from bpftrace's README [0],
-> you want to generate a histogram of syscall counts by program. One-liner is:
+On Fri, May 28, 2021 at 6:36 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2021-05-21 17:50, Paul Moore wrote:
+> > WARNING - This is a work in progress and should not be merged
+> > anywhere important.  It is almost surely not complete, and while it
+> > probably compiles it likely hasn't been booted and will do terrible
+> > things.  You have been warned.
+> >
+> > This patch adds basic audit io_uring filtering, using as much of the
+> > existing audit filtering infrastructure as possible.  In order to do
+> > this we reuse the audit filter rule's syscall mask for the io_uring
+> > operation and we create a new filter for io_uring operations as
+> > AUDIT_FILTER_URING_EXIT/audit_filter_list[7].
+> >
+> > <TODO - provide some additional guidance for the userspace tools>
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  include/uapi/linux/audit.h |    3 +-
+> >  kernel/auditfilter.c       |    4 ++-
+> >  kernel/auditsc.c           |   65 ++++++++++++++++++++++++++++++++++----------
+> >  3 files changed, 55 insertions(+), 17 deletions(-)
+
+...
+
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index d8aa2c690bf9..4f6ab34020fb 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -799,6 +799,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
+> >       return rule->mask[word] & bit;
+> >  }
+> >
+> > +/**
+> > + * audit_filter_uring - apply filters to an io_uring operation
+> > + * @tsk: associated task
+> > + * @ctx: audit context
+> > + */
+> > +static void audit_filter_uring(struct task_struct *tsk,
+> > +                            struct audit_context *ctx)
+> > +{
+> > +     struct audit_entry *e;
+> > +     enum audit_state state;
+> > +
+> > +     if (auditd_test_task(tsk))
+> > +             return;
 >
->    bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count(); }'
+> Is this necessary?  auditd and auditctl don't (intentionally) use any
+> io_uring functionality.  Is it possible it might inadvertantly use some
+> by virtue of libc or other library calls now or in the future?
+
+I think the better question is what harm does it do?  Yes, I'm not
+aware of an auditd implementation that currently makes use of
+io_uring, but it is also not inconceivable some future implementation
+might want to make use of it and given the disjoint nature of kernel
+and userspace development I don't want the kernel to block such
+developments.  However, if you can think of a reason why having this
+check here is bad I'm listening (note: we are already in the slow path
+here so having the additional check isn't an issue as far as I'm
+concerned).
+
+As a reminder, auditd_test_task() only returns true/1 if the task is
+registered with the audit subsystem as an auditd connection, an
+auditctl process should not cause this function to return true.
+
+> > +     rcu_read_lock();
+> > +     list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
+> > +                             list) {
+> > +             if (audit_in_mask(&e->rule, ctx->uring_op) &&
 >
-> bpftrace then goes and generates a BPF prog from this internally. One way of
-> doing it could be to call bpf_get_current_task() helper and then access
-> current->comm via one of bpf_probe_read_kernel{,_str}() helpers ...
+> While this seems like the most obvious approach given the parallels
+> between syscalls and io_uring operations, as coded here it won't work
+> due to the different mappings of syscall numbers and io_uring
+> operations unless we re-use the auditctl -S field with raw io_uring
+> operation numbers in the place of syscall numbers.  This should have
+> been obvious to me when I first looked at this patch.  It became obvious
+> when I started looking at the userspace auditctl.c.
 
-I think we can all agree that the BPF tracing is a bit chaotic in the
-sense that the tracing programs can be executed in various
-places/contexts and that presents some challenges with respect to
-access control and auditing.  If you are following the io_uring stuff
-that is going on now you can see a little of what is required to make
-audit work properly in the various io_uring contexts and that is
-relatively small compared to what is possible with BPF tracing.  Of
-course this assumes I've managed to understand bpf tracing properly
-this morning, and I very well may still be missing points and/or
-confused about some of the important details.  Corrections are
-welcome.
+FWIW, my intention was to treat io_uring opcodes exactly like we treat
+syscall numbers.  Yes, this would potentially be an issue if we wanted
+to combine syscalls and io_uring opcodes into one filter, but why
+would we ever want to do that?  Combining the two into one filter not
+only makes the filter lists longer than needed (we will always know if
+we are filtering on a syscall or io_uring op) and complicates the
+filter rule processing.
 
-Daniel's patch side steps that worry by just doing the lockdown
-permission check when the BPF program is loaded, but that isn't a
-great solution if the policy changes afterward.  I was hoping there
-might be some way to perform the permission check as needed, but the
-more I look the more that appears to be difficult, if not impossible
-(once again, corrections are welcome).
+Or is there a problem with this that I'm missing?
 
-I'm now wondering if the right solution here is to make use of the LSM
-notifier mechanism.  I'm not yet entirely sure if this would work from
-a BPF perspective, but I could envision the BPF subsystem registering
-a LSM notification callback via register_blocking_lsm_notifier(), see
-if Infiniband code as an example, and then when the LSM(s) policy
-changes the BPF subsystem would get a notification and it could
-revalidate the existing BPF programs and take block/remove/whatever
-the offending BPF programs.  This obviously requires a few things
-which I'm not sure are easily done, or even possible:
+> The easy first step would be to use something like this:
+>         auditctl -a uring,always -S 18,28 -F key=uring_open
+> to monitor file open commands only.  The same is not yet possible for
+> the perm field, but there are so few io_uring ops at this point compared
+> with syscalls that it might be manageable.  The arch is irrelevant since
+> io_uring operation numbers are identical across all hardware as far as I
+> can tell.  Most of the rest of the fields should make sense if they do
+> for a syscall rule.
 
-1. Somehow the BPF programs would need to be "marked" at
-load/verification time with respect to their lockdown requirements so
-that decisions can be made later.  Perhaps a flag in bpf_prog_aux?
+I've never been a fan of audit's "perm" filtering; I've always felt
+there were better ways to handle that so I'm not overly upset that we
+are skipping that functionality with this initial support.  If it
+becomes a problem in the future we can always add that support at a
+later date.
 
-2. While it looks like it should be possible to iterate over all of
-the loaded BPF programs in the LSM notifier callback via
-idr_for_each(prog_idr, ...), it is not clear to me if it is possible
-to safely remove, or somehow disable, BPF programs once they have been
-loaded.  Hopefully the BPF folks can help answer that question.
+I currently fear that just getting io_uring and audit to coexist is
+going to be a large enough problem in the immediate future.
 
-3. Disabling of BPF programs might be preferable to removing them
-entirely on LSM policy changes as it would be possible to make the
-lockdown state less restrictive at a future point in time, allowing
-for the BPF program to be executed again.  Once again, not sure if
-this is even possible.
+> Here's a sample of userspace code to support this
+> patch:
+>         https://github.com/rgbriggs/audit-userspace/commit/a77baa1651b7ad841a220eb962d4cc92bc07dc96
+>         https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghau-iouring-filtering.v1.0
 
-Related, the lockdown LSM should probably also grow LSM notifier
-support similar to selinux_lsm_notifier_avc_callback(), for example
-either lock_kernel_down() or lockdown_write() might want to do a
-call_blocking_lsm_notifier(LSM_POLICY_CHANGE, NULL) call.
+Great, thank you.  I haven't grabbed a copy yet for testing, but I will.
 
--- 
+> If we abuse the syscall infrastructure at first, we'd need a transition
+> plan to coordinate user and kernel switchover to seperate mechanisms for
+> the two to work together if the need should arise to have both syscall
+> and uring filters in the same rule.
+
+See my comments above, I don't currently see why we would ever want
+syscall and io_uring filtering to happen in the same rule.  Please
+speak up if you can think of a reason why this would either be needed,
+or desirable for some reason.
+
+> It might be wise to deliberately not support auditctl "-w" (and the
+> exported audit_add_watch() function) since that is currently hardcoded
+> to the AUDIT_FILTER_EXIT list and is the old watch form [replaced by
+> audit_rule_fieldpair_data()] anyways that is more likely to be
+> deprecated.  It also appears to make sense not to support autrace (at
+> least initially).
+
+I'm going to be honest with you and simply say that I've run out of my
+email/review time in front of the computer on this holiday weekend
+(blame the lockdown/bpf/lsm discussion <g>) and I need to go for
+today, but this is something I'll take a look it this coming week.
+Hopefully the comments above give us something to think/talk about in
+the meantime.
+
+Regardless, thanks for your help on the userspace side of the
+filtering, that should make testing a lot easier moving forward.
+
+--
 paul moore
 www.paul-moore.com
