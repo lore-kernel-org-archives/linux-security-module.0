@@ -2,91 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5324C47096
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 May 2021 13:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977A5C47080
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 May 2021 16:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACC886162A
-	for <linux-security-module@archiver.kernel.org>; Mon, 31 May 2021 13:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B43D6128A
+	for <linux-security-module@archiver.kernel.org>; Mon, 31 May 2021 16:01:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232248AbhEaNvE (ORCPT
+        id S233524AbhEaQDD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 31 May 2021 09:51:04 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:35980 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232975AbhEaNrj (ORCPT
+        Mon, 31 May 2021 12:03:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54104 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230308AbhEaQAw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 31 May 2021 09:47:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1622468759;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y54MkJ1DkDPUmNpg6ptgLnrQ5/7BnVMsItBiTZSYR8Q=;
-        b=U/ffQNWsGWzo+UviRzP3xE4wjTrZ8lThoMyWmEk2Hx2OnHYnexzApeMsvMWkS0MTMYPUh/
-        z5vK9mYNBH/ODqPopWq3Iy6xuw4x+9s7DRYa8dWT6V0bcIXSBqbT8/rt0rluPKXZfUnY1I
-        jnE4BDkdrSBSKj99SFDM/fZcP2enL4A=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-593-AjF5-yO5PKy1ZPlxqlSV7A-1; Mon, 31 May 2021 09:45:57 -0400
-X-MC-Unique: AjF5-yO5PKy1ZPlxqlSV7A-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E7774189C44F;
-        Mon, 31 May 2021 13:45:54 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B3B5B5C1B4;
-        Mon, 31 May 2021 13:45:52 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>, linux-audit@redhat.com,
-        io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH 2/2] audit: block PERM fields being used with io_uring filtering
-Date:   Mon, 31 May 2021 09:44:55 -0400
-Message-Id: <8d1435a4b5db9139cc8eebce633f14872dd3a007.1622467740.git.rgb@redhat.com>
-In-Reply-To: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
-References: <CAHC9VhTr_hw_RBPf5yGD16j-qV2tbjjPJkimMNNQZBHtrJDbuQ@mail.gmail.com>
+        Mon, 31 May 2021 12:00:52 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 14VFcFIL088905;
+        Mon, 31 May 2021 11:58:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=MbQJoW+uSYC3MhQzAUeotJa8WDXDGWMqBHniGRV0EI4=;
+ b=Pefz5wmSHm7OQ3z76C2DQTjK8HN1ppm/pfk+cm/WG3fDD2mXcJm9ZEEEgWcGYYgI47tD
+ /ECWtfXZhaH5vfES2foyby84ZPLQvcsCRpQiTGrmvH4UfN+DBRnaTJqcg70Gmx59Magb
+ t38qrICJgsADOUYqMaTrlsn+YfPPWNxIf51qGzSaSoUlmtMDk4gnR4rAY+aLA5yCfuow
+ 2wiHfTgnaetzjELFfvV1VRWKf3oR5UgjupQ9I8p9HDoBm1OKYFHvvndpkUDTYWgaK1ob
+ FDiSjIaGlARRxkPtsXgR3IuKu3Jo7QV5hKsYAolV3zrvYoH9NOqynHFnPmibaDLGgRX3 Tw== 
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 38w11uk0sp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 May 2021 11:58:28 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 14VFwNUn002969;
+        Mon, 31 May 2021 15:58:27 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma06fra.de.ibm.com with ESMTP id 38ucvh8me8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 31 May 2021 15:58:26 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 14VFvrOX35979670
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 31 May 2021 15:57:53 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 652A542042;
+        Mon, 31 May 2021 15:58:24 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 310424203F;
+        Mon, 31 May 2021 15:58:23 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.84.117])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 31 May 2021 15:58:23 +0000 (GMT)
+Message-ID: <73739875882e9f7416f0958f8589a09089e53d9e.camel@linux.ibm.com>
+Subject: Re: [PATCH v2 0/7] ima: Add template fields to verify EVM portable
+ signatures
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@srcf.ucam.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 31 May 2021 11:58:20 -0400
+In-Reply-To: <20210528073812.407936-1-roberto.sassu@huawei.com>
+References: <20210528073812.407936-1-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lRxu8V3qGNS4nn_Tn_5W4pqZHjQYYytD
+X-Proofpoint-ORIG-GUID: lRxu8V3qGNS4nn_Tn_5W4pqZHjQYYytD
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-05-31_08:2021-05-31,2021-05-31 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 mlxscore=0
+ adultscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2105310114
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The commit ("audit: add filtering for io_uring records") added support for
-filtering io_uring operations.  The PERM field is invalid for io_uring
-filtering, so block it.
+On Fri, 2021-05-28 at 09:38 +0200, Roberto Sassu wrote:
+> The recent patch set 'evm: Improve usability of portable signatures' added
+> the possibility to include EVM portable signatures in the IMA measurement
+> list.
+> 
+> However, the information necessary to verify the signature were not
+> included in the IMA measurement list. This patch set introduces new
+> template fields to accomplish this goal:
+> 
+> - 'iuid': the inode UID;
+> - 'igid': the inode GID;
+> - 'imode': the inode mode;
+> - 'xattrnames': a list of xattr names (separated by |), only if the xattr is
+>   present;
+> - 'xattrlengths': a list of xattr lengths (u32), only if the xattr is present;
+> - 'xattrvalues': a list of xattr values;
+> 
+> Patch 1 adds an helper function to show integers in the measurement list.
+> Patches 2, 3 and 5 introduce new template fields. Patch 4 make it possible
+> to verify EVM portable signatures which protect xattrs belonging to LSMs
+> not enabled in the target platform. Patch 6 introduces the new IMA template
+> evm-sig. Patch 7 fixes a small issue in evm_write_xattrs() when audit is
+> not enabled.
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/auditfilter.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks, Roberto. 
 
-diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
-index bcdedfd1088c..d75acb014ccd 100644
---- a/kernel/auditfilter.c
-+++ b/kernel/auditfilter.c
-@@ -336,6 +336,10 @@ static int audit_field_valid(struct audit_entry *entry, struct audit_field *f)
- 		if (entry->rule.listnr != AUDIT_FILTER_FS)
- 			return -EINVAL;
- 		break;
-+	case AUDIT_PERM:
-+		if (entry->rule.listnr == AUDIT_FILTER_URING_EXIT)
-+			return -EINVAL;
-+		break;
- 	}
- 
- 	switch (entry->rule.listnr) {
--- 
-2.27.0
+Applied to: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+next-integrity-testing branch.
+
+Mimi
 
