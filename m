@@ -2,73 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2285CC47093
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Jun 2021 17:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6F1C47092
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Jun 2021 19:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA45613BD
-	for <linux-security-module@archiver.kernel.org>; Tue,  1 Jun 2021 17:58:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 455AC613BC
+	for <linux-security-module@archiver.kernel.org>; Tue,  1 Jun 2021 19:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234654AbhFASAY (ORCPT
+        id S234656AbhFAT45 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 1 Jun 2021 14:00:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36280 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231331AbhFASAY (ORCPT
+        Tue, 1 Jun 2021 15:56:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43922 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233853AbhFAT4z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 1 Jun 2021 14:00:24 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1EBFB61375;
-        Tue,  1 Jun 2021 17:58:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1622570322;
-        bh=m6UKi9NkcvUQfNe74vrYXbvMtDoD1pgdMVNQhtu02sc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rddcm3FO/E+i6q6srd+/vTeN5/b7srk8oLfkEEDmOSvE2ST8kvk2LG5J24tO3G2cC
-         PByMTKWSzyHRG+W6Y79ORIvC8Vee3s9v5nezs6nlygPOhqqsdolXemTjRKhUz/TTkx
-         eqOT3FDtVRaze/pBdOQWOYxtQMlcK3Rpp0umNg4W1qOEvA5JT3ymGCl3Y83mCRi1Uz
-         IbTbSxixx7GgGI+eVFY8AjCOv0hz/KgL9XM4zWxQ/rWKPWtD9a6Tc+UXpqolTqbBZP
-         SV/Oi6MZuz2FWZP8MkJcmCnn+/F6rNC2F4ebvPTlgkloCYlf8ePvf9nhIjcAS8hxDU
-         5wdL7tl33nIJw==
-Date:   Tue, 1 Jun 2021 20:58:40 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] certs: Trigger creation of RSA module signing key
- if it's not an RSA key
-Message-ID: <20210601175840.nzgkon3ocdifntav@kernel.org>
-References: <20210601105245.213767-1-stefanb@linux.ibm.com>
- <20210601105245.213767-2-stefanb@linux.ibm.com>
+        Tue, 1 Jun 2021 15:56:55 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B803AC061574
+        for <linux-security-module@vger.kernel.org>; Tue,  1 Jun 2021 12:55:12 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id e22so225832pgv.10
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Jun 2021 12:55:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ApMBV5fRu56qu4SK6yHlizJ6W1eRv0wSD3z+NP9p+0U=;
+        b=N5hDZSfq/UlXfJ8hJLChOlY7XWu+QxfPXzk5Md44NJjRpsBwF8bGJFVpPeig2SNQcV
+         QPaQUIQ5glLKlIY7qr2qPfE2TxakmhIXNEsbID6ecUP4bMFzZIZWgPBOvCaCJ+/oSUGn
+         lNPLusLe+lAlv+nEN9XaEwzAbSutg+ee8Igc8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ApMBV5fRu56qu4SK6yHlizJ6W1eRv0wSD3z+NP9p+0U=;
+        b=D2puDYy56LteOdRJQWjOQ9E+QWb278DuXcMdo6z+SF7cuQs6ctjuLxMMInnDl39iHW
+         AESn96e9S+V4egxewvT1SVARY7dFzRb4bW+fg38FY1ApgrTQecjQC2Rl29ii1+2FCErM
+         cdSgwzSpUS7W64hqR0nhgBQg2njVfyxWe1Aer38KpZA0i0nbsICPvT2WYVSBZ99rDClN
+         gG4sE3FYx5VsLBaJ30tKpFslyNYLJNdLaeFYOUw2jNZfZYDdaxhjZkwgfjHAPL8Ttrj6
+         wtOxEKCgx8noAPjyMe/A3evY/bx6KeE93fFoF5Q/t8L6CMgpOTmEKANEHI/tvuotcQ8Q
+         /toQ==
+X-Gm-Message-State: AOAM532h30+S6wLZnajrbgiE7gBBXnlUFAc2e/S9GBF+f6fwYmT0FITF
+        ejylRRtcRGv9ClTVSXsFA9kSGg==
+X-Google-Smtp-Source: ABdhPJy80Hs3KzZN3hBYzAEXNt+CQstTWbNv7MoTTvMu1cm6s5ZsF1KQjsVPyifZ3wlORwX61iM4Kw==
+X-Received: by 2002:aa7:8551:0:b029:2e9:f46e:c560 with SMTP id y17-20020aa785510000b02902e9f46ec560mr5993875pfn.14.1622577311708;
+        Tue, 01 Jun 2021 12:55:11 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id a129sm9613791pfa.118.2021.06.01.12.55.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Jun 2021 12:55:11 -0700 (PDT)
+Date:   Tue, 1 Jun 2021 12:55:10 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christian Brauner <christian.brauner@ubuntu.com>
+Cc:     Tianyin Xu <tyxu@illinois.edu>, Tycho Andersen <tycho@tycho.pizza>,
+        Andy Lutomirski <luto@kernel.org>,
+        YiFei Zhu <zhuyifei1999@gmail.com>,
+        "containers@lists.linux.dev" <containers@lists.linux.dev>,
+        bpf <bpf@vger.kernel.org>, "Zhu, YiFei" <yifeifz2@illinois.edu>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kuo, Hsuan-Chi" <hckuo2@illinois.edu>,
+        Claudio Canella <claudio.canella@iaik.tugraz.at>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Dimitrios Skarlatos <dskarlat@cs.cmu.edu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Hubertus Franke <frankeh@us.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        "Jia, Jinghao" <jinghao7@illinois.edu>,
+        "Torrellas, Josep" <torrella@illinois.edu>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tobin Feldman-Fitzthum <tobin@ibm.com>,
+        Tom Hromatka <tom.hromatka@oracle.com>,
+        Will Drewry <wad@chromium.org>
+Subject: Re: [RFC PATCH bpf-next seccomp 00/12] eBPF seccomp filters
+Message-ID: <202106011244.76762C210@keescook>
+References: <cover.1620499942.git.yifeifz2@illinois.edu>
+ <CALCETrUQBonh5BC4eomTLpEOFHVcQSz9SPcfOqNFTf2TPht4-Q@mail.gmail.com>
+ <CABqSeASYRXMwTQwLfm_Tapg45VUy9sPfV7BeeV8p7XJrDoLf+Q@mail.gmail.com>
+ <fffbea8189794a8da539f6082af3de8e@DM5PR11MB1692.namprd11.prod.outlook.com>
+ <CAGMVDEGzGB4+6gJPTw6Tdng5ur9Jua+mCbqwPoNZ16EFaDcmjA@mail.gmail.com>
+ <108b4b9c2daa4123805d2b92cf51374b@DM5PR11MB1692.namprd11.prod.outlook.com>
+ <CAGMVDEEkDeUBcJAswpBjcQNWk7QDcO8BZR=uvVfm-+qe714tYg@mail.gmail.com>
+ <20210520085613.gvshk4jffmzggvsm@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210601105245.213767-2-stefanb@linux.ibm.com>
+In-Reply-To: <20210520085613.gvshk4jffmzggvsm@wittgenstein>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 01, 2021 at 06:52:44AM -0400, Stefan Berger wrote:
-> Address a kbuild issue where a developer created an ECDSA key for signing
-> kernel modules and then builds an older version of the kernel, when bi-
-> secting the kernel for example, that does not support ECDSA keys.
-> 
-> Trigger the creation of an RSA module signing key if it is not an RSA key.
-> 
-> Fixes: cfc411e7fff3 ("Move certificate handling to its own directory")
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Tested-by: Mimi Zohar <zohar@linux.ibm.com>
+On Thu, May 20, 2021 at 10:56:13AM +0200, Christian Brauner wrote:
+> On Thu, May 20, 2021 at 03:16:10AM -0500, Tianyin Xu wrote:
+> > On Mon, May 17, 2021 at 10:40 AM Tycho Andersen <tycho@tycho.pizza> wrote:
+> > >
+> > > On Sun, May 16, 2021 at 03:38:00AM -0500, Tianyin Xu wrote:
+> > > > On Sat, May 15, 2021 at 10:49 AM Andy Lutomirski <luto@kernel.org> wrote:
+> > > > >
+> > > > > On 5/10/21 10:21 PM, YiFei Zhu wrote:
+> > > > > > On Mon, May 10, 2021 at 12:47 PM Andy Lutomirski <luto@kernel.org> wrote:
+> > > > > >> On Mon, May 10, 2021 at 10:22 AM YiFei Zhu <zhuyifei1999@gmail.com> wrote:
+> > > > > >>>
+> > > > > >>> From: YiFei Zhu <yifeifz2@illinois.edu>
+> > > > > >>>
+> > > > > >>> Based on: https://urldefense.com/v3/__https://lists.linux-foundation.org/pipermail/containers/2018-February/038571.html__;!!DZ3fjg!thbAoRgmCeWjlv0qPDndNZW1j6Y2Kl_huVyUffr4wVbISf-aUiULaWHwkKJrNJyo$
+> > > > > >>>
+> > > > > >>> This patchset enables seccomp filters to be written in eBPF.
 
-I've applied these to
+Before I dive in, I do want to say that this is very interesting work.
+Thanks for working on it, even if we're all so grumpy about accepting
+it. :)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> > > > > >>> Supporting eBPF filters has been proposed a few times in the past.
+> > > > > >>> The main concerns were (1) use cases and (2) security. We have
+> > > > > >>> identified many use cases that can benefit from advanced eBPF
+> > > > > >>> filters, such as:
+> > > > > >>
+> > > > > >> I haven't reviewed this carefully, but I think we need to distinguish
+> > > > > >> a few things:
+> > > > > >>
+> > > > > >> 1. Using the eBPF *language*.
 
-Can revert too but do not mind taking care of these patches as they are
-not intrusive in any possible way.
+Likely everyone is aware, but I'll point out for anyone new reading this
+thread: seccomp uses eBPF under the hood: all the cBPF is transformed to
+eBPF at filter attach time. But yes, I get the point: using the _entire_
+eBPF language. Though I'd remind folks that seccomp doesn't even use
+the entire cBPF language...
 
-/Jarkko
+> [...] but Andy's point stands that this brings a slew of issues on
+> the table that need clear answers. Bringing stateful ebpf features into
+> seccomp is a pretty big step and especially around the
+> privilege/security model it looks pretty handwavy right now.
+
+This is the blocker as far as I'm concerned: there is no story for
+unprivileged eBPF. And even IF there was a story there, I find the rate
+of security-related flaws in eBPF to be way too high for a sandboxing
+primitive to depend on. There have been around a dozen a year for the
+last 4 years:
+
+$ git log --oneline --no-merges --pretty=format:'%as %h %s' \
+   -i -E \ --all-match --grep '^Fixes:' --grep \
+   '(over|under)flow|\bleak|escalat|expos(e[ds]?|ure)\b|use[- ]?after[- ]?free' \
+   -- kernel/bpf/ | cut -d- -f1 | sort | uniq -c
+      4 2015
+      4 2016
+     13 2017
+     16 2018
+     18 2019
+     12 2020
+      6 2021
+
+I just can't bring myself to accept that level of risk for seccomp. (And
+yes, this might be mitigated by blocking the bpf() syscall within a
+filter, but then eBPF seccomp would become kind of useless inside a
+container launcher, etc etc.)
+
+-Kees
+
+-- 
+Kees Cook
