@@ -2,157 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84AD2C47096
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Jun 2021 14:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0D1C47082
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Jun 2021 15:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 616B4613E9
-	for <linux-security-module@archiver.kernel.org>; Thu,  3 Jun 2021 14:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 129ED613DC
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Jun 2021 15:54:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230319AbhFCOca (ORCPT
+        id S229753AbhFCPzv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 3 Jun 2021 10:32:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:64351 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230309AbhFCOc3 (ORCPT
+        Thu, 3 Jun 2021 11:55:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229726AbhFCPzv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 3 Jun 2021 10:32:29 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 153EThrh174432;
-        Thu, 3 Jun 2021 10:30:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=1aBilWL/FxXL3IiG6OCyb7k4hSRu+l/CTQhK7VJwYZk=;
- b=cjLvY+kRW0SGGduKOdOcGyOltrTVZmmRoAqXN1NA94aC4pZZFxh7RwG6afhRdJF+dR64
- LIbcfMDmmg/GXxRESA01D3A4Q7RhTvF9iRyVTWqWSFlOjHFRIwfntNwqw6WSmUhSTwdm
- 6EAHaVvh0q9ipIpUkbpPNWQEnFvJuZsUC8Zi6TvW7k+Fgtgu+ZgwnxRl7lTm/1nsDHYc
- OLY2zbG94F1M9evl9WTXyFbvo+nasr2l1LUrmuNWWU01QCXOvQIkovjZEB8lBcc0asnJ
- zENuaqjcxxNGrHWXH2PIL47kJ1XcvCpdDuSQJVTQrN6dfM4qnMyXo20gwafCJsJW91z+ ag== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 38xy3s3x31-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Jun 2021 10:30:35 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 153EHhFP016836;
-        Thu, 3 Jun 2021 14:30:33 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma04ams.nl.ibm.com with ESMTP id 38ud88b1ur-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 03 Jun 2021 14:30:33 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 153EUVBo27656570
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 3 Jun 2021 14:30:31 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D2214204C;
-        Thu,  3 Jun 2021 14:30:31 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F6B742041;
-        Thu,  3 Jun 2021 14:30:30 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.13.122])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  3 Jun 2021 14:30:29 +0000 (GMT)
-Message-ID: <883d61fcbaf173759ca5674173c6b80ecd7d0b69.camel@linux.ibm.com>
-Subject: Re: [RESEND][PATCH v2 6/7] ima: Define new template evm-sig
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, mjg59@srcf.ucam.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 03 Jun 2021 10:30:29 -0400
-In-Reply-To: <20210603131705.1426671-1-roberto.sassu@huawei.com>
-References: <9e5f5ddca94fb1915fb15302e2b7b5f2bf4a68a7.camel@linux.ibm.com>
-         <20210603131705.1426671-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
+        Thu, 3 Jun 2021 11:55:51 -0400
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C792EC06174A
+        for <linux-security-module@vger.kernel.org>; Thu,  3 Jun 2021 08:54:06 -0700 (PDT)
+Received: by mail-il1-x133.google.com with SMTP id r6so6037134ilj.1
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Jun 2021 08:54:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=buCUvWOaV46TEe0pfybKHgNeLuajhkCoUvc4V9kk0GM=;
+        b=AvHRoUndMbsOR2LZQbV9UyOHSi2H1HcMJtDtgjOBthii3UKRGsG7GL9gvctRI4YTI2
+         0X9ilAdtUWDZFiGmyoPZBn+lXmQfQZ6KY1ZpZvgZhJaJ3ULWIl/8uS7SPC8m+7FcnOxS
+         clyfp/+5Vqub24anQIDa/6/e0+sFnJ7s4mkbPZW7i3fnrqBxXoh3C7Ww4vlAz2rtqMe9
+         CtP5aaQ0MyyliBAq/hWpqGP8hPmdjDDu02ogwMSzqRt88NEhbzkmE7EgRb9TkzFDow0c
+         0UAK0ZAB6xYTithTdVkeFKWhJCWDAMu8QETBbIN3cbEdaR/c/XH5/Vhi/x28M2u4PqQB
+         sVzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=buCUvWOaV46TEe0pfybKHgNeLuajhkCoUvc4V9kk0GM=;
+        b=Nv2BF8FacLEnf5ehSFKuwpj/Yvnyw59x+w5i5hKxCzn7aEw/F8EUNO/+DP8oPzldlg
+         weHoJrZDZ+PPjiNRD+XAbLAwGLtPRCPyKasJ0kzmUihOvHLeyhwfxo7CZq1aaoSpoZ2p
+         CroME62J5266evpAWSROzAzKKmoM5AolLnOWLvBIRCrqH4biDw41ZndMkNaW0GM18a/d
+         cYXKgddUF69c4JvWvswWn/X+JvL4tN+7Un90CVQi3RQ++KDkHMpw4ZrOtiyX+5kTzSuu
+         tZ14qm8GM3IMDK2IUhHUDSfVNne2OpMsvjJf9KqCBTSP0xsIZk2Q/LYeaat8pazsS6SU
+         EIOQ==
+X-Gm-Message-State: AOAM531buQVPdtham25mE9O1bj6/dgmUnsRMhXXO6jcHhN9+OwC/Fq2m
+        H1lvNcGJwf6vkezAAWXmBRj7aw==
+X-Google-Smtp-Source: ABdhPJxTgRBRHHntkEyxXKkKZCy9JIZBYhMq02FcIt13uKSk14obLbdz2JV2Qm8ADOaXFhFzOvBNQg==
+X-Received: by 2002:a05:6e02:13a9:: with SMTP id h9mr62415ilo.96.1622735645969;
+        Thu, 03 Jun 2021 08:54:05 -0700 (PDT)
+Received: from [192.168.1.30] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id s6sm787512ilt.50.2021.06.03.08.54.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 03 Jun 2021 08:54:05 -0700 (PDT)
+Subject: Re: [RFC PATCH 2/9] audit,io_uring,io-wq: add some basic audit
+ support to io_uring
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+References: <162163367115.8379.8459012634106035341.stgit@sifl>
+ <162163379461.8379.9691291608621179559.stgit@sifl>
+ <f07bd213-6656-7516-9099-c6ecf4174519@gmail.com>
+ <CAHC9VhRjzWxweB8d8fypUx11CX6tRBnxSWbXH+5qM1virE509A@mail.gmail.com>
+ <162219f9-7844-0c78-388f-9b5c06557d06@gmail.com>
+ <CAHC9VhSJuddB+6GPS1+mgcuKahrR3UZA=1iO8obFzfRE7_E0gA@mail.gmail.com>
+ <8943629d-3c69-3529-ca79-d7f8e2c60c16@kernel.dk>
+ <CAHC9VhTYBsh4JHhqV0Uyz=H5cEYQw48xOo=CUdXV0gDvyifPOQ@mail.gmail.com>
+ <9e69e4b6-2b87-a688-d604-c7f70be894f5@kernel.dk>
+ <3bef7c8a-ee70-d91d-74db-367ad0137d00@kernel.dk>
+ <fa7bf4a5-5975-3e8c-99b4-c8d54c57da10@kernel.dk>
+ <a7669e4a-e7a7-7e94-f6ce-fa48311f7175@kernel.dk>
+ <CAHC9VhSKPzADh=qcPp7r7ZVD2cpr2m8kQsui43LAwPr-9BNaxQ@mail.gmail.com>
+ <b20f0373-d597-eb0e-5af3-6dcd8c6ba0dc@kernel.dk>
+ <CAHC9VhRZEwtsxjhpZM1DXGNJ9yL59B7T_p2B60oLmC_YxCrOiw@mail.gmail.com>
+ <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <46381e4e-a65d-f217-1d0d-43d1fa8a99aa@kernel.dk>
+Date:   Thu, 3 Jun 2021 09:54:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <CAHC9VhSK9PQdxvXuCA2NMC3UUEU=imCz_n7TbWgKj2xB2T=fOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uAraSaVHs9iDztWZUqJG-cHscB1hixpS
-X-Proofpoint-ORIG-GUID: uAraSaVHs9iDztWZUqJG-cHscB1hixpS
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-03_09:2021-06-02,2021-06-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 spamscore=0 phishscore=0
- bulkscore=0 clxscore=1015 priorityscore=1501 suspectscore=0 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106030097
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-06-03 at 15:17 +0200, Roberto Sassu wrote:
-> With the recent introduction of the evmsig template field, remote verifiers
-> can obtain the EVM portable signature instead of the IMA signature, to
-> verify file metadata.
+On 5/28/21 10:02 AM, Paul Moore wrote:
+> On Wed, May 26, 2021 at 4:19 PM Paul Moore <paul@paul-moore.com> wrote:
+>> ... If we moved the _entry
+>> and _exit calls into the individual operation case blocks (quick
+>> openat example below) so that only certain operations were able to be
+>> audited would that be acceptable assuming the high frequency ops were
+>> untouched?  My initial gut feeling was that this would involve >50% of
+>> the ops, but Steve Grubb seems to think it would be less; it may be
+>> time to look at that a bit more seriously, but if it gets a NACK
+>> regardless it isn't worth the time - thoughts?
+>>
+>>   case IORING_OP_OPENAT:
+>>     audit_uring_entry(req->opcode);
+>>     ret = io_openat(req, issue_flags);
+>>     audit_uring_exit(!ret, ret);
+>>     break;
 > 
-> After introducing the new fields to include file metadata in the
-> measurement list, this patch finally defines the evm-sig template, whose
-> format is:
-> 
-> d-ng|n-ng|evmsig|xattrnames|xattrlengths|xattrvalues|iuid|igid|imode
-> 
-> xattrnames, xattrlengths and xattrvalues are populated only from defined
-> EVM protected xattrs, i.e. the ones that EVM considers to verify the
-> portable signature. xattrnames and xattrlengths are populated only if the
-> xattr is present.
-> 
-> xattrnames and xattrlengths are not necessary for verifying the EVM
-> portable signature, but they are included for completeness of information,
-> if a remote verifier wants to infer more from file metadata.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  Documentation/security/IMA-templates.rst | 1 +
->  security/integrity/ima/ima_template.c    | 5 ++++-
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/security/IMA-templates.rst b/Documentation/security/IMA-templates.rst
-> index 6a58760a0a35..5adc22f99496 100644
-> --- a/Documentation/security/IMA-templates.rst
-> +++ b/Documentation/security/IMA-templates.rst
-> @@ -91,6 +91,7 @@ Below, there is the list of defined template descriptors:
->   - "ima-sig": its format is ``d-ng|n-ng|sig``;
->   - "ima-buf": its format is ``d-ng|n-ng|buf``;
->   - "ima-modsig": its format is ``d-ng|n-ng|sig|d-modsig|modsig``;
-> + - "evm-sig": its format is ``d-ng|n-ng|evmsig|xattrnames|xattrlengths|xattrvalues|iuid|igid|imode``;
->  
->  
->  Use
-> diff --git a/security/integrity/ima/ima_template.c b/security/integrity/ima/ima_template.c
-> index 159a31d2fcdf..a85963853a91 100644
-> --- a/security/integrity/ima/ima_template.c
-> +++ b/security/integrity/ima/ima_template.c
-> @@ -22,6 +22,8 @@ static struct ima_template_desc builtin_templates[] = {
->  	{.name = "ima-sig", .fmt = "d-ng|n-ng|sig"},
->  	{.name = "ima-buf", .fmt = "d-ng|n-ng|buf"},
->  	{.name = "ima-modsig", .fmt = "d-ng|n-ng|sig|d-modsig|modsig"},
-> +	{.name = "evm-sig",
-> +	 .fmt = "d-ng|n-ng|evmsig|xattrnames|xattrlengths|xattrvalues|iuid|igid|imode"},
->  	{.name = "", .fmt = ""},	/* placeholder for a custom format */
->  };
->  
-> @@ -69,7 +71,8 @@ static const struct ima_template_field supported_fields[] = {
->   * need to be accounted for since they shouldn't be defined in the same template
->   * description as 'd-ng' and 'n-ng' respectively.
->   */
-> -#define MAX_TEMPLATE_NAME_LEN sizeof("d-ng|n-ng|sig|buf|d-modisg|modsig")
-> +#define MAX_TEMPLATE_NAME_LEN \
-> +	sizeof("d-ng|n-ng|evmsig|xattrnames|xattrlengths|xattrvalues|iuid|igid|imode")
->  
->  static struct ima_template_desc *ima_template;
->  static struct ima_template_desc *ima_buf_template;
+> I wanted to pose this question again in case it was lost in the
+> thread, I suspect this may be the last option before we have to "fix"
+> things at the Kconfig level.  I definitely don't want to have to go
+> that route, and I suspect most everyone on this thread feels the same,
+> so I'm hopeful we can find a solution that is begrudgingly acceptable
+> to both groups.
 
-Thanks, Roberto.
+Sorry for the lack of response here, but to sum up my order of
+preference:
 
-Updated and merged next-integrity-testing, next-integrity branches.
+1) It's probably better to just make the audit an opt-out in io_op_defs
+   for each opcode, and avoid needing boiler plate code for each op
+   handler. The opt-out would ensure that new opcodes get it by default
+   it someone doesn't know what it is, and the io_op_defs addition would
+   mean that it's in generic code rather then in the handlers. Yes it's
+   a bit slower, but it's saner imho.
 
-thanks,
+2) With the above, I'm fine with adding this to io_uring. I don't think
+   going the route of mutual exclusion in kconfig helps anyone, it'd
+   be counter productive to both sides.
 
-Mimi
+Hope that works and helps move this forward. I'll be mostly out of touch
+the next week and a half, but wanted to ensure that I sent out my
+(brief) thoughts before going away.
 
+-- 
+Jens Axboe
 
