@@ -2,225 +2,107 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2985C47083
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Jun 2021 20:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E99C47096
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Jun 2021 06:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 961D1613DE
-	for <linux-security-module@archiver.kernel.org>; Wed,  2 Jun 2021 20:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE6661246
+	for <linux-security-module@archiver.kernel.org>; Thu,  3 Jun 2021 06:47:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229710AbhFBUtf (ORCPT
+        id S229685AbhFCGtZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 2 Jun 2021 16:49:35 -0400
-Received: from mail-ej1-f45.google.com ([209.85.218.45]:40628 "EHLO
-        mail-ej1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229702AbhFBUte (ORCPT
+        Thu, 3 Jun 2021 02:49:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229635AbhFCGtZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 2 Jun 2021 16:49:34 -0400
-Received: by mail-ej1-f45.google.com with SMTP id jt22so5836986ejb.7
-        for <linux-security-module@vger.kernel.org>; Wed, 02 Jun 2021 13:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fmjdGsZgyfhH82V3nYsUARig/lnO3sllBQpi/gDMFvc=;
-        b=MuvgcTuAIXOaGGA++L/YavJDqGoEu5mG11y7jbFWn+bjS0yuutVVvCSh4/wsETk1cj
-         irDindvdBjVVC5Nypb04oqK5y9kvwErAOXUzBg/D5+uuE6jmwwFmKdrUxjftl6g9XUpw
-         iZ4AVRmt6rkwr2r0x+v6JlPsB1M2TpcIbf3t4t051jj2McFmGwZ9Pp7WEjFULKlG6fY/
-         RT410/1rOrww8zNzjLW91sxSjKjDDx5/KB5gk2ueLb5xDwQf3FVui57Vq3jYZuAO5Wji
-         qSpqbeI9wNbA64Toaoc6mJ6u7x8aeKU+E+v6bhOdEoH3+902WGdj/Xcrpkcc6rAcFONW
-         CFCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fmjdGsZgyfhH82V3nYsUARig/lnO3sllBQpi/gDMFvc=;
-        b=jRkzlua5NXvhoUwkJJXfutjTt7luNAqEz/ITxJ+e6GOrl+yzp7Zsqzmx2aYI2mvrbm
-         rJguBDNwAa+2P5pnC/RVOTuX7N6Oas3xEs4TIemYHglQlxzhWIZ+1KOQx/xfAnyvM1wV
-         CKhCTSQJfAJBPSvjqryzJEHfcRANNVUVN9KeDrLQGzPHlUWm9nTyhaQWSFz6FLYgeldH
-         +anL+hzsY77YtSTRAYE14eJTLyjcyErfeYgGV03//PHFzko3t1dJjEwS7PHgpnfRWtk9
-         y08/P+C+hAKtoXy+r0MU3Z6BoE4SeTiycwG5uliFpG0cR6TAox9ehzKqmkZc9SwnZswR
-         TVnw==
-X-Gm-Message-State: AOAM531nNyPDeZuoGbdukc9kE9quACvd4ViBPQ4tI6Xs7LIBwvBdZ1/x
-        bkBgtWu83a3/XJ0if36hFxe/5D5CP0H8uS6cTonV
-X-Google-Smtp-Source: ABdhPJx/n1S5UyuIfGVXGC2QsiIR2Cy08Xe7mAk9pLAL6gbKDdUveE6w4bsXPazI8bBpKsR9b5qc2FdUOfr3XdARSsY=
-X-Received: by 2002:a17:906:17d8:: with SMTP id u24mr36904730eje.106.1622666810379;
- Wed, 02 Jun 2021 13:46:50 -0700 (PDT)
+        Thu, 3 Jun 2021 02:49:25 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 977A9613B4;
+        Thu,  3 Jun 2021 06:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622702861;
+        bh=whQ5awbfuf7TtbPdUWFwRctWP18k3gRZdJxFleFXT4o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BcWqz17SJhPIKm5LyoKTIC46oMedZf+LuOoFcwvZMgK6dNeENmuU385rSWx2VQdEf
+         jBD7i9H7C1Tvy0CKuWnCmoxNNYxa69AYDYbQ+aE1fNZO6+FZ2iQYrY0S7qpRlDd97R
+         gpuQfP8s9bENHKxQxKMJb6+q44LvXoG//md61u3rSjMW5d1mxXr+DvA1uP3A18Ybqp
+         pFDR8dcqIpXrvax7NxMI9lh4u0CJYp9UshBirA5NOmkRI0r7Ly2wz0cXWWwe0MczTm
+         t+315o11WUsIl2jWywiKhT73gaEgYGjbWDCjx4wkgU5b4uCl3xTzsz1FBkyd695ORO
+         RaRGp4Vy98Rdw==
+Date:   Thu, 3 Jun 2021 09:47:38 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] Add support for ECDSA-signed kernel modules
+Message-ID: <20210603064738.pwfq3n7erzmncdmw@kernel.org>
+References: <20210602143537.545132-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-References: <162163367115.8379.8459012634106035341.stgit@sifl>
- <162163379461.8379.9691291608621179559.stgit@sifl> <20210602172924.GM447005@madcap2.tricolour.ca>
-In-Reply-To: <20210602172924.GM447005@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 2 Jun 2021 16:46:39 -0400
-Message-ID: <CAHC9VhS0sy_Y8yx4uiZeJhAf_a94ipt1EbE16BOVv6tXtWkgMg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/9] audit, io_uring, io-wq: add some basic audit
- support to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210602143537.545132-1-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 2, 2021 at 1:29 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2021-05-21 17:49, Paul Moore wrote:
-> > WARNING - This is a work in progress and should not be merged
-> > anywhere important.  It is almost surely not complete, and while it
-> > probably compiles it likely hasn't been booted and will do terrible
-> > things.  You have been warned.
-> >
-> > This patch adds basic auditing to io_uring operations, regardless of
-> > their context.  This is accomplished by allocating audit_context
-> > structures for the io-wq worker and io_uring SQPOLL kernel threads
-> > as well as explicitly auditing the io_uring operations in
-> > io_issue_sqe().  The io_uring operations are audited using a new
-> > AUDIT_URINGOP record, an example is shown below:
-> >
-> >   % <TODO - insert AUDIT_URINGOP record example>
-> >
-> > Thanks to Richard Guy Briggs for review and feedback.
-> >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  fs/io-wq.c                 |    4 +
-> >  fs/io_uring.c              |   11 +++
-> >  include/linux/audit.h      |   17 ++++
-> >  include/uapi/linux/audit.h |    1
-> >  kernel/audit.h             |    2 +
-> >  kernel/auditsc.c           |  173 ++++++++++++++++++++++++++++++++++++++++++++
-> >  6 files changed, 208 insertions(+)
+On Wed, Jun 02, 2021 at 10:35:35AM -0400, Stefan Berger wrote:
+> This series adds support for ECDSA-signed kernel modules. It also
+> attempts to address a kbuild issue where a developer created an ECDSA
+> key for signing kernel modules and then builds an older version of the
+> kernel, when bisecting the kernel for example, that does not support
+> ECDSA keys.
+> 
+> The first patch addresses the kbuild issue of needing to delete that
+> ECDSA key if it is in certs/signing_key.pem and trigger the creation
+> of an RSA key. However, for this to work this patch would have to be
+> backported to previous versions of the kernel but would also only work
+> for the developer if he/she used a stable version of the kernel to which
+> this patch was applied. So whether this patch actually achieves the
+> wanted effect is not always guaranteed.
+> 
+> The 2nd patch adds the support for the ECSDA-signed kernel modules.
+> 
+> This patch depends on the ECDSA support series currently queued here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/log/?h=ecc
+> 
+>   Stefan
+> 
+> v5:
+>   - do not touch the key files if openssl is not installed; likely
+>     addresses an issue pointed out by kernel test robot
+> 
+> v4:
+>   - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
+>   
+> v3:
+>   - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
+>   - added recommendation to use string hash to Kconfig help text
+> 
+> v2:
+>   - Adjustment to ECDSA key detector string in 2/2
+>   - Rephrased cover letter and patch descriptions with Mimi
+> 
+> 
+> Stefan Berger (2):
+>   certs: Trigger creation of RSA module signing key if it's not an RSA
+>     key
+>   certs: Add support for using elliptic curve keys for signing modules
+> 
+>  certs/Kconfig                         | 26 ++++++++++++++++++++++++++
+>  certs/Makefile                        | 21 +++++++++++++++++++++
+>  crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
+>  3 files changed, 55 insertions(+)
+> 
+> -- 
+> 2.29.2
+> 
+> 
 
-...
+Please instead send a fix.
 
-> > diff --git a/fs/io_uring.c b/fs/io_uring.c
-> > index e481ac8a757a..e9941d1ad8fd 100644
-> > --- a/fs/io_uring.c
-> > +++ b/fs/io_uring.c
-> > @@ -78,6 +78,7 @@
-> >  #include <linux/task_work.h>
-> >  #include <linux/pagemap.h>
-> >  #include <linux/io_uring.h>
-> > +#include <linux/audit.h>
-> >
-> >  #define CREATE_TRACE_POINTS
-> >  #include <trace/events/io_uring.h>
-> > @@ -6105,6 +6106,9 @@ static int io_issue_sqe(struct io_kiocb *req, unsigned int issue_flags)
-> >       if (req->work.creds && req->work.creds != current_cred())
-> >               creds = override_creds(req->work.creds);
-> >
-> > +     if (req->opcode < IORING_OP_LAST)
-> > +             audit_uring_entry(req->opcode);
-
-Note well the override_creds() call right above the audit code that is
-being added, it will be important later in this email.
-
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index cc89e9f9a753..729849d41631 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -1536,6 +1562,52 @@ static void audit_log_proctitle(void)
-> >       audit_log_end(ab);
-> >  }
-> >
-> > +/**
-> > + * audit_log_uring - generate a AUDIT_URINGOP record
-> > + * @ctx: the audit context
-> > + */
-> > +static void audit_log_uring(struct audit_context *ctx)
-> > +{
-> > +     struct audit_buffer *ab;
-> > +     const struct cred *cred;
-> > +
-> > +     /*
-> > +      * TODO: What do we log here?  I'm tossing in a few things to start the
-> > +      *       conversation, but additional thought needs to go into this.
-> > +      */
-> > +
-> > +     ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_URINGOP);
-> > +     if (!ab)
-> > +             return;
-> > +     cred = current_cred();
->
-> This may need to be req->work.creds.  I haven't been following if the
-> io_uring thread inherited the user task's creds (and below, comm and
-> exe).
-
-Nope, we're good.  See the existing code in io_issue_sqe() :)
-
-> > +     audit_log_format(ab, "uring_op=%d", ctx->uring_op);
->
-> arch is stored below in __audit_uring_entry() and never used in the
-> AUDIT_CTX_URING case.  That assignment can either be dropped or printed
-> before uring_op similar to the SYSCALL record.
-
-Good point, I'll drop the code that records the arch from _entry(); it
-is really only useful to give the appropriate context if needed for
-other things in the audit stream, and that isn't the case like it is
-with syscalls.
-
-> There aren't really any arg[0-3] to print.
-
-Which is why I didn't print them.
-
-> io_uring_register and io_uring_setup() args are better covered by other
-> records.  io_uring_enter() has 6 args and the last two aren't covered by
-> SYSCALL anyways.
-
- ???
-
-I think you are confusing the io_uring ops with syscalls; they are
-very different things from an audit perspective and the io_uring
-auditing is not intended to replace syscall records.  The
-io_uring_setup() and io_uring_enter() syscalls will be auditing just
-as any other syscalls would be using the existing syscall audit code.
-
-> > +     if (ctx->return_valid != AUDITSC_INVALID)
-> > +             audit_log_format(ab, " success=%s exit=%ld",
-> > +                              (ctx->return_valid == AUDITSC_SUCCESS ?
-> > +                               "yes" : "no"),
-> > +                              ctx->return_code);
-> > +     audit_log_format(ab,
-> > +                      " items=%d"
-> > +                      " ppid=%d pid=%d auid=%u uid=%u gid=%u"
-> > +                      " euid=%u suid=%u fsuid=%u"
-> > +                      " egid=%u sgid=%u fsgid=%u",
-> > +                      ctx->name_count,
-> > +                      task_ppid_nr(current),
-> > +                      task_tgid_nr(current),
-> > +                      from_kuid(&init_user_ns, audit_get_loginuid(current)),
-> > +                      from_kuid(&init_user_ns, cred->uid),
-> > +                      from_kgid(&init_user_ns, cred->gid),
-> > +                      from_kuid(&init_user_ns, cred->euid),
-> > +                      from_kuid(&init_user_ns, cred->suid),
-> > +                      from_kuid(&init_user_ns, cred->fsuid),
-> > +                      from_kgid(&init_user_ns, cred->egid),
-> > +                      from_kgid(&init_user_ns, cred->sgid),
-> > +                      from_kgid(&init_user_ns, cred->fsgid));
->
-> The audit session ID is still important, relevant and qualifies auid.
-> In keeping with the SYSCALL record format, I think we want to keep
-> ses=audit_get_sessionid(current) in here.
-
-This might be another case of syscall/io_uring confusion.  An io_uring
-op doesn't necessarily have an audit session ID or an audit UID in the
-conventional sense; for example think about SQPOLL works, shared
-rings, etc.
-
-> I'm pretty sure we also want to keep comm= and exe= too, but may have to
-> reach into req->task to get it.  There are two values for comm possible,
-> one from the original task and second "iou-sqp-<pid>" set at the top of
-> io_sq_thread().
-
-I think this is more syscall/io_uring confusion.
-
--- 
-paul moore
-www.paul-moore.com
+/Jarkko
