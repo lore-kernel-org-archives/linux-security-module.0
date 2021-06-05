@@ -2,117 +2,140 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45942C47082
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Jun 2021 18:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47652C48BE8
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Jun 2021 19:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA0961358
-	for <linux-security-module@archiver.kernel.org>; Sat,  5 Jun 2021 18:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32F336136D
+	for <linux-security-module@archiver.kernel.org>; Sat,  5 Jun 2021 19:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229996AbhFESZa (ORCPT
+        id S230126AbhFETKg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Jun 2021 14:25:30 -0400
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:44885 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229994AbhFESZa (ORCPT
+        Sat, 5 Jun 2021 15:10:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229994AbhFETKd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Jun 2021 14:25:30 -0400
-Received: by mail-lj1-f181.google.com with SMTP id d2so11861267ljj.11
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Jun 2021 11:23:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hWseLMsHC1Tl+tjltvawHbNPgfRx7qxCEi8/dkUNOU4=;
-        b=dq91qTUDZfLAHHlQj01Xackwp7mLXGslcYSqKR8QjQWjay1MPlIiBx9Q2OjLRJv3Ny
-         tUvoHIhp+fIOQUEt5cgx436HWwJytvd/+6hnvkb9my5cWuHI21RlTnevNOOSMWGTQ9Xp
-         QlUNP5FJUEwnP+uHbMzVIztOiIoJLIajgm2Dk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hWseLMsHC1Tl+tjltvawHbNPgfRx7qxCEi8/dkUNOU4=;
-        b=EswYbEh7rwNInTknhRpvhJNxX8WmeKLXgB/fZj7VKuruhXjbRupHG4ifdMI41n0AyR
-         /GqiPtS/i3S9zerncCFSU57thM1PyQ/x4MukMA4ZsZxi0M3oFfzn4kg6uB57YiFYNgNz
-         f21/qLLEA/lrOnFFeMMz9EWYFGT6HpqNik9Z4TkC8+TGcm2gtse/UDnG29TAMEJwkxYj
-         SsH8FSbtsMKRD0/64rR9hh1FfSZ5qnY6G5G3lUjne9Xm+Hv8DAxNDqm8BHN6/j3JR7bB
-         7kE34fmbWOZlOtotuY7l2xt8rtflNtTbUwPMBaZ5zX1rnvX959OfHrc98xSKqMypacQa
-         N1XA==
-X-Gm-Message-State: AOAM5312mbKWkUHsxzGl2u1MRVftxittDv1bl/I+t06RI53HjJ7Q9dVn
-        akOsBgbhMtSNUXMNzsj2OvSnjiuqQHWgr5gAVCw=
-X-Google-Smtp-Source: ABdhPJzHzNomLcxLkVhiWIMogBqTFgWCNK+YBXePUmaZmcHPQGN5pAeOQtYr807k6ztPyB8IOyBMQA==
-X-Received: by 2002:a2e:7018:: with SMTP id l24mr8237572ljc.12.1622917345867;
-        Sat, 05 Jun 2021 11:22:25 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id p20sm1142290ljn.86.2021.06.05.11.22.25
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 05 Jun 2021 11:22:25 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id a1so9385946lfr.12
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Jun 2021 11:22:25 -0700 (PDT)
-X-Received: by 2002:a05:6512:374b:: with SMTP id a11mr6305938lfs.377.1622917038058;
- Sat, 05 Jun 2021 11:17:18 -0700 (PDT)
+        Sat, 5 Jun 2021 15:10:33 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C76CD61073;
+        Sat,  5 Jun 2021 19:08:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1622920125;
+        bh=tTJEbMfaqLm+MQIdZ6b17P+wEJbY3/9z+X1SQ27izYw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JkQm3FNW5iQVYmgT/Gt9sN9r1LoTem2cqXUl0EjU+fiv82NY1pLAYU3Bw6unpEki9
+         JXsjuSgQIFHSyh38wM93iu29TbJXvLcRhJNrLaI3uPlTWuv27IKsdkFioKL4INshFP
+         X6wWHZCeoF+O8iMlmhkcXx84GYrwHdtLzik9jQie2+N1FEL3MtfoR0dRqJZtRSpa3B
+         75ZFgP9ntAFhWGSiwsFlzS8kJV4vdjx4gNxci+2IKGEj7omJo8VOW1W/h4rNmExnEf
+         Cyd+38BTHzfhwZ6TVmr+dpfprstE/6hddhXmgX9dnEe4dYMoT8QPViKF/MrmqKI8pR
+         fNqEWypa3GLOg==
+Date:   Sat, 5 Jun 2021 21:08:36 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     "=?UTF-8?B?TsOtY29sYXM=?= F. R. A. Prado" <n@nfraprado.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 00/34] docs: avoid using ReST :doc:`foo` tag
+Message-ID: <20210605210836.540577d4@coco.lan>
+In-Reply-To: <20210605151109.axm3wzbcstsyxczp@notapiano>
+References: <cover.1622898327.git.mchehab+huawei@kernel.org>
+        <20210605151109.axm3wzbcstsyxczp@notapiano>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
- <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net> <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
- <f4373013-88fb-b839-aaaa-3826548ebd0c@iogearbox.net> <CAHC9VhS=BeGdaAi8Ae5Fx42Fzy_ybkcXwMNcPwK=uuA6=+SRcg@mail.gmail.com>
- <c59743f6-0000-1b15-bc16-ff761b443aef@iogearbox.net> <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
- <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com> <64552a82-d878-b6e6-e650-52423153b624@schaufler-ca.com>
-In-Reply-To: <64552a82-d878-b6e6-e650-52423153b624@schaufler-ca.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 5 Jun 2021 11:17:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-Message-ID: <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 5, 2021 at 11:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> You have fallen into a common fallacy. The fact that the "code runs"
-> does not assure that the "system works right". In the security world
-> we face this all the time, often with performance expectations. In this
-> case the BPF design has failed [..]
+Em Sat, 5 Jun 2021 12:11:09 -0300
+N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
 
-I think it's the lockdown patches that have failed. They did the wrong
-thing, they didn't work,
+> Hi Mauro,
+>=20
+> On Sat, Jun 05, 2021 at 03:17:59PM +0200, Mauro Carvalho Chehab wrote:
+> > As discussed at:
+> > 	https://lore.kernel.org/linux-doc/871r9k6rmy.fsf@meer.lwn.net/
+> >=20
+> > It is better to avoid using :doc:`foo` to refer to Documentation/foo.rs=
+t, as the
+> > automarkup.py extension should handle it automatically, on most cases.
+> >=20
+> > There are a couple of exceptions to this rule:
+> >=20
+> > 1. when :doc:  tag is used to point to a kernel-doc DOC: markup;
+> > 2. when it is used with a named tag, e. g. :doc:`some name <foo>`;
+> >=20
+> > It should also be noticed that automarkup.py has currently an issue:
+> > if one use a markup like:
+> >=20
+> > 	Documentation/dev-tools/kunit/api/test.rst
+> > 	  - documents all of the standard testing API excluding mocking
+> > 	    or mocking related features.
+> >=20
+> > or, even:
+> >=20
+> > 	Documentation/dev-tools/kunit/api/test.rst
+> > 	    documents all of the standard testing API excluding mocking
+> > 	    or mocking related features.
+> > =09
+> > The automarkup.py will simply ignore it. Not sure why. This patch series
+> > avoid the above patterns (which is present only on 4 files), but it wou=
+ld be
+> > nice to have a followup patch fixing the issue at automarkup.py. =20
+>=20
+> What I think is happening here is that we're using rST's syntax for defin=
+ition
+> lists [1]. automarkup.py ignores literal nodes, and perhaps a definition =
+is
+> considered a literal by Sphinx. Adding a blank line after the Documentati=
+on/...
+> or removing the additional indentation makes it work, like you did in your
+> 2nd and 3rd patch, since then it's not a definition anymore, although the=
+n the
+> visual output is different as well.
 
-The report in question is for a regression.
+A literal has a different output. I think that this is not the case, but I=
+=20
+didn't check the python code from docutils/Sphinx.
+=20
+> I'm not sure this is something we need to fix. Does it make sense to use
+> definition lists for links like that? If it does, I guess one option woul=
+d be to
+> whitelist definition lists so they aren't ignored by automarkup, but I fe=
+el
+> this could get ugly really quickly.
 
-THERE ARE NO VALID ARGUMENTS FOR REGRESSIONS.
+Yes, we should avoid handling literal blocks, as this can be a nightmare.
 
-Honestly, security people need to understand that "not working" is not
-a success case of security. It's a failure case.
+> FWIW note that it's also possible to use relative paths to docs with auto=
+markup.
 
-Yes, "not working" may be secure. But security in that case is *pointless*.
+Not sure if you meant to say using something like ../driver-api/foo.rst.
+If so, relative paths are a problem, as it will pass unnoticed by this scri=
+pt:
 
-              Linus
+	./scripts/documentation-file-ref-check
+
+which is meant to warn when a file is moved to be elsewhere. Ok, it
+could be taught to use "../" to identify paths, but I suspect that this
+could lead to false positives, like here:
+
+	Documentation/usb/gadget-testing.rst:  # ln -s ../../uncompressed/u
+	Documentation/usb/gadget-testing.rst:  # cd ../../class/fs
+	Documentation/usb/gadget-testing.rst:  # ln -s ../../header/h
+
+If you meant, instead, :doc:`../foo`, this series address those too.
+
+Regards,
+Mauro
