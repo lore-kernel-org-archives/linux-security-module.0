@@ -2,142 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4CCC47082
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Jun 2021 02:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A854DC4743D
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Jun 2021 22:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 854A561285
-	for <linux-security-module@archiver.kernel.org>; Sun,  6 Jun 2021 02:12:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 920B4613B6
+	for <linux-security-module@archiver.kernel.org>; Sun,  6 Jun 2021 22:53:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230198AbhFFCOS (ORCPT
+        id S231280AbhFFWzM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 5 Jun 2021 22:14:18 -0400
-Received: from mail-ed1-f43.google.com ([209.85.208.43]:39624 "EHLO
-        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230116AbhFFCOR (ORCPT
+        Sun, 6 Jun 2021 18:55:12 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:53791 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230368AbhFFWzK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 5 Jun 2021 22:14:17 -0400
-Received: by mail-ed1-f43.google.com with SMTP id dj8so15826304edb.6
-        for <linux-security-module@vger.kernel.org>; Sat, 05 Jun 2021 19:12:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nOTcniWTVc9slYXWLxXSv1uRyKmcmZRO+63M/pSzE/U=;
-        b=cwZ2lIKKIQuoesuejMOtqIBw38LWmdJQRco7DTpm+On7hiyFzSIynCDa52d+sLCIqB
-         2zP8pj4E3rGCuqfhnJ5MRag1NFm53lXVMwQKVQbdijwfbaxWRtV4bmYjHioSZXD6kkwg
-         Dlj3L7D4QLBXl9X//0lK2mPz5kWslHUxKRvcBa2juD05DpNuxQp//Z0f+OYjTO6stdwc
-         EZHN0Y1DxgOncdZ7gzfETOgtK9k4bhYfZebdAtgUMPDxU3VJkT9f7Tfuk6EcJw0zLdbF
-         FqFv+pxxBNtA2aX39hOynje/H5TcETj5t1HDzA84k39g9uwCsZz2riUv/7IvQm3jw6Tq
-         ydjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nOTcniWTVc9slYXWLxXSv1uRyKmcmZRO+63M/pSzE/U=;
-        b=aZsCOhlZ5L5L1A/xuoWXmsCfaA/kaogEpF5UfeG+7t9KQ4zxhRx31D+1s9WWjGkD6I
-         TzBHL6VcDF9e+hDGzEHe0VPjEZYcUnjh47ZWhnPjpEtrDHMzRmMSKgmnJxr0LADjbWNO
-         3/Xl5OwlaXU0fzjBwrKRUX4zUBniM0xDLxx/ugqRwnSmf2gXv2Blui9JUX7oZDfZZVfK
-         f6w+NaJKynE+qy6GxtkMINmLeo1LKUjVISbeA3PaPestb42/qgkD6W9GJkuI8SXwS6eB
-         TV5VyZJw9WiECE4ivLXb0GnhqNQUJXWMmlzSTwbPyTaUsf/s9LIT9VFPQe27UrwXDGMa
-         HIDw==
-X-Gm-Message-State: AOAM5310oXNZwJi+uyOuT7rLZd6RkxHwBXSIzi4z1q1BBUoJjd1w7ewH
-        sfpvkGmjRm+K/rCzSdA6zpJ0vm/mbllgPg3IHBHL
-X-Google-Smtp-Source: ABdhPJwLR1qKiHaU3a0P90iLeTPVN3ZXpgSHJmVvViAS0IGrSqN4ECheDNlb9g/W/t2kLVz7Gr1DZIJGJ5G/2AgcIkk=
-X-Received: by 2002:a05:6402:348f:: with SMTP id v15mr1175334edc.135.1622945471846;
- Sat, 05 Jun 2021 19:11:11 -0700 (PDT)
+        Sun, 6 Jun 2021 18:55:10 -0400
+Received: (Authenticated sender: n@nfraprado.net)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 861051BF203;
+        Sun,  6 Jun 2021 22:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nfraprado.net;
+        s=gm1; t=1623019997;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LEITmbgA+ypfFiT6sDRv13/uCob4oKC9Sq9src0AzZE=;
+        b=chA+i0RmfXwj/WF8vUQcsG8LWn2bONkphlI9FxGByy3xXZzQ3/zHKFPGJxmKXuKUW335J7
+        jYK4CRJ9+UN7xZA7RoqojnjXZW+0cqiNSJEER76idFul1Hmyyid+LU7eBwqw4Yf6VUnAAy
+        EO/oCOnOkrJSrla2lWMUer63YFPTS6rPVGC6R5VJrg9wTSN5B9e0Ariq05tQnFO7ePJjQo
+        bl4pkIEG3/A5X1Ubh0QT5mRcrGJQ8WehYjr1NfQyPqrYiwulB4ynbpB9vRe3MCb4L15B0r
+        jLNt083VPjq8mnz5SK6VyymWvFVmHAPrKBJPANhNFdLyuGqe1sYaP2/+H+QnUQ==
+Date:   Sun, 6 Jun 2021 19:52:25 -0300
+From:   =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <n@nfraprado.net>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 00/34] docs: avoid using ReST :doc:`foo` tag
+Message-ID: <20210606225225.fz4dsyz6im4bqena@notapiano>
+References: <cover.1622898327.git.mchehab+huawei@kernel.org>
+ <20210605151109.axm3wzbcstsyxczp@notapiano>
+ <20210605210836.540577d4@coco.lan>
 MIME-Version: 1.0
-References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
- <01135120-8bf7-df2e-cff0-1d73f1f841c3@iogearbox.net> <CAHC9VhR-kYmMA8gsqkiL5=poN9FoL-uCyx1YOLCoG2hRiUBYug@mail.gmail.com>
- <c7c2d7e1-e253-dce0-d35c-392192e4926e@iogearbox.net> <CAHC9VhS1XRZjKcTFgH1+n5uA-CeT+9BeSP5jvT2+RE5ougLpUg@mail.gmail.com>
- <2e541bdc-ae21-9a07-7ac7-6c6a4dda09e8@iogearbox.net> <CAHC9VhT464vr9sWxqY3PRB4DAccz=LvRMLgWBsSViWMR0JJvOQ@mail.gmail.com>
- <3ca181e3-df32-9ae0-12c6-efb899b7ce7a@iogearbox.net> <CAHC9VhTuPnPs1wMTmoGUZ4fvyy-es9QJpE7O_yTs2JKos4fgbw@mail.gmail.com>
- <f4373013-88fb-b839-aaaa-3826548ebd0c@iogearbox.net> <CAHC9VhS=BeGdaAi8Ae5Fx42Fzy_ybkcXwMNcPwK=uuA6=+SRcg@mail.gmail.com>
- <c59743f6-0000-1b15-bc16-ff761b443aef@iogearbox.net> <CAHC9VhT1JhdRw9P_m3niY-U-vukxTWKTE9q6AMyQ=r_ohpPxMw@mail.gmail.com>
- <CAADnVQ+0bNtDj46Q8s-h=rqJgZz2JaGTeHpbmof3e7fBBQKuDQ@mail.gmail.com>
- <64552a82-d878-b6e6-e650-52423153b624@schaufler-ca.com> <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-In-Reply-To: <CAHk-=wiUVqHN76YUwhkjZzwTdjMMJf_zN4+u7vEJjmEGh3recw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sat, 5 Jun 2021 22:11:00 -0400
-Message-ID: <CAHC9VhRJDr6HO8NbEwcqcXCgpzyLL7KEmKM=VLXGz0zPJG5iXw@mail.gmail.com>
-Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
- permission checks
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        ppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        bpf <bpf@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210605210836.540577d4@coco.lan>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 5, 2021 at 2:17 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Sat, Jun 5, 2021 at 11:11 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >
-> > You have fallen into a common fallacy. The fact that the "code runs"
-> > does not assure that the "system works right". In the security world
-> > we face this all the time, often with performance expectations. In this
-> > case the BPF design has failed [..]
->
-> I think it's the lockdown patches that have failed. They did the wrong
-> thing, they didn't work,
->
-> The report in question is for a regression.
->
-> THERE ARE NO VALID ARGUMENTS FOR REGRESSIONS.
+On Sat, Jun 05, 2021 at 09:08:36PM +0200, Mauro Carvalho Chehab wrote:
+> Em Sat, 5 Jun 2021 12:11:09 -0300
+> Nícolas F. R. A. Prado <n@nfraprado.net> escreveu:
+> 
+> > Hi Mauro,
+> > 
+> > On Sat, Jun 05, 2021 at 03:17:59PM +0200, Mauro Carvalho Chehab wrote:
+> > > As discussed at:
+> > > 	https://lore.kernel.org/linux-doc/871r9k6rmy.fsf@meer.lwn.net/
+> > > 
+> > > It is better to avoid using :doc:`foo` to refer to Documentation/foo.rst, as the
+> > > automarkup.py extension should handle it automatically, on most cases.
+> > > 
+> > > There are a couple of exceptions to this rule:
+> > > 
+> > > 1. when :doc:  tag is used to point to a kernel-doc DOC: markup;
+> > > 2. when it is used with a named tag, e. g. :doc:`some name <foo>`;
+> > > 
+> > > It should also be noticed that automarkup.py has currently an issue:
+> > > if one use a markup like:
+> > > 
+> > > 	Documentation/dev-tools/kunit/api/test.rst
+> > > 	  - documents all of the standard testing API excluding mocking
+> > > 	    or mocking related features.
+> > > 
+> > > or, even:
+> > > 
+> > > 	Documentation/dev-tools/kunit/api/test.rst
+> > > 	    documents all of the standard testing API excluding mocking
+> > > 	    or mocking related features.
+> > > 	
+> > > The automarkup.py will simply ignore it. Not sure why. This patch series
+> > > avoid the above patterns (which is present only on 4 files), but it would be
+> > > nice to have a followup patch fixing the issue at automarkup.py.  
+> > 
+> > What I think is happening here is that we're using rST's syntax for definition
+> > lists [1]. automarkup.py ignores literal nodes, and perhaps a definition is
+> > considered a literal by Sphinx. Adding a blank line after the Documentation/...
+> > or removing the additional indentation makes it work, like you did in your
+> > 2nd and 3rd patch, since then it's not a definition anymore, although then the
+> > visual output is different as well.
+> 
+> A literal has a different output. I think that this is not the case, but I 
+> didn't check the python code from docutils/Sphinx.
 
-To think I was worried we might end this thread without a bit of CAPS
-LOCK, whew! :)
+Okay, I went in deeper to understand the issue and indeed it wasn't what I
+thought. The reason definitions are ignored by automarkup.py is because the main
+loop iterates only over nodes that are of type paragraph:
 
-I don't think anyone in this discussion, even Casey's last comment,
-was denying that there was a problem.  The discussion and the
-disagreements were about what a "proper" fix would be, and how one
-might implement that fix; of course there were different ideas of
-"proper" and implementations vary even when people agree, so things
-were a bit of a mess.  If you want to get upset and shouty, I think
-there are a few things spread across the subsystems involved that
-would be worthy targets, but to say that Casey, myself, or anyone else
-who plays under security/ denied the problem in this thread is not
-fair, or correct, in my opinion.
+    for para in doctree.traverse(nodes.paragraph):
+        for node in para.traverse(nodes.Text):
+            if not isinstance(node.parent, nodes.literal):
+                node.parent.replace(node, markup_refs(name, app, node))
 
-> Honestly, security people need to understand that "not working" is not
-> a success case of security. It's a failure case.
+And inspecting the HTML output from your example, the definition name is inside
+a <dt> tag, and it doesn't have a <p> inside. So in summary, automarkup.py will
+only work on elements which are inside a <p> in the output.
 
-I can't pretend to know what all of the "security people" are
-thinking, but I can say with a good degree of certainty that my goal
-is not to crash, panic, kill, or otherwise disable a user's system.
-When it comes to things like the LSM hooks, my goal is to try and make
-sure we have the right hooks in the right places so that admins and
-users have the tools they need to control access to their data and
-systems in the way that they choose.  Sometimes this puts us at odds
-with other subsystems in the kernel, we saw that in this thread, but
-that's to be expected anytime you have competing priorities.  The
-important part is that eventually we figure out some way to move
-forward, and the fact that we are still all making progress and
-putting out new kernel releases is proof that we are finding a way.
-That's what matters to me, and if I was forced to guess, I would
-imagine that matters quite a lot to most of us here.
+Only applying the automarkup inside paragraphs seems like a good decision (which
+covers text in lists and tables as well), so unless there are other types of
+elements without paragraphs where automarkup should work, I think we should just
+avoid using definition lists pointing to documents like that.
 
--- 
-paul moore
-www.paul-moore.com
+>  
+> > I'm not sure this is something we need to fix. Does it make sense to use
+> > definition lists for links like that? If it does, I guess one option would be to
+> > whitelist definition lists so they aren't ignored by automarkup, but I feel
+> > this could get ugly really quickly.
+> 
+> Yes, we should avoid handling literal blocks, as this can be a nightmare.
+> 
+> > FWIW note that it's also possible to use relative paths to docs with automarkup.
+> 
+> Not sure if you meant to say using something like ../driver-api/foo.rst.
+> If so, relative paths are a problem, as it will pass unnoticed by this script:
+> 
+> 	./scripts/documentation-file-ref-check
+> 
+> which is meant to warn when a file is moved to be elsewhere. Ok, it
+> could be taught to use "../" to identify paths, but I suspect that this
+> could lead to false positives, like here:
+> 
+> 	Documentation/usb/gadget-testing.rst:  # ln -s ../../uncompressed/u
+> 	Documentation/usb/gadget-testing.rst:  # cd ../../class/fs
+> 	Documentation/usb/gadget-testing.rst:  # ln -s ../../header/h
+
+Yes, that's what I meant. 
+
+Ok, that makes sense. Although after automarkup.py starts printing warnings on
+missing references to files (which is a patch I still need to resend), it would
+work out-of-the-box with relative paths. automarkup wouldn't face that false
+positives issue since it ignores literal blocks, which isn't as easy for a
+standalone script. But that's still in the future, we can discuss what to do
+then after it is implemented, so full paths seem better for now.
+
+Thanks,
+Nícolas
+
+> 
+> If you meant, instead, :doc:`../foo`, this series address those too.
+> 
+> Regards,
+> Mauro
