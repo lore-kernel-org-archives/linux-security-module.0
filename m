@@ -2,87 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1049C47082
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 14:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52179C47082
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 17:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B473E61107
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 14:47:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3365661090
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 17:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230209AbhFGOtT (ORCPT
+        id S230267AbhFGRIT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Jun 2021 10:49:19 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:8062 "EHLO
-        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbhFGOtS (ORCPT
+        Mon, 7 Jun 2021 13:08:19 -0400
+Received: from mail-ej1-f50.google.com ([209.85.218.50]:38620 "EHLO
+        mail-ej1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230311AbhFGRIR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Jun 2021 10:49:18 -0400
-Received: from dggeme760-chm.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4FzGNg48DKzYs6T;
-        Mon,  7 Jun 2021 22:44:35 +0800 (CST)
-Received: from localhost.localdomain (10.175.104.82) by
- dggeme760-chm.china.huawei.com (10.3.19.106) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Mon, 7 Jun 2021 22:47:22 +0800
-From:   Zheng Yongjun <zhengyongjun3@huawei.com>
-To:     <paul@paul-moore.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-        <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     Zheng Yongjun <zhengyongjun3@huawei.com>
-Subject: [PATCH net-next] netlabel: Fix spelling mistakes
-Date:   Mon, 7 Jun 2021 23:01:00 +0800
-Message-ID: <20210607150100.2856110-1-zhengyongjun3@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 7 Jun 2021 13:08:17 -0400
+Received: by mail-ej1-f50.google.com with SMTP id og14so22579115ejc.5
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Jun 2021 10:06:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6jG8fG0GqzHaHTewjIgBEd/sf2X5LfQRA/MV1//47rE=;
+        b=whUEEw+Tpa+aHX4KqcRNinkQaQDZZR1eVDWgqy2acmutkSNAKodGfV3Eh3zCFF/r2E
+         EZuI6vEGmpvM9b9tpCC3m4mE6rV4VGvDBbEdp6/eMQIHAfmXLAq+rgKyWXQDYLWxN1DW
+         PkeyeB552VkZiac16yN5s9wfxUBlnIw7Ro7n9VmzUTx861wQKnDEgOobPy2LmTu1Pu3I
+         lPF6JKTP5EKFQ8XbaJ0rb4pswTvk1E4jLVsSz2a8dXxrvvB/QeIxVPpdTlJu0NqHFHjd
+         o8qoGwkTRbeEJOFR0vl6mqJfDhu2pHl0gk1AsW+SSo1T6rJAFL3TuCrYCjzdO57Eff+C
+         q7ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6jG8fG0GqzHaHTewjIgBEd/sf2X5LfQRA/MV1//47rE=;
+        b=MW3nn5hWKModqTeaWFmxMlMcf1fiNsiQkdChpbd8RACUFnbwadmvgVReFNHpl/cRpk
+         tqM5+0AgUESzr8iHXZwo0VkyxRiGOgpbWpQxVddy5ld+B1rdsTSwm/wkEIg06a+0oxj1
+         vrIA6PG/DT7Q5Vr8KoG0i0WZ4no6n4Z11KOsejcOrNazZ4RwMTaB/Nx2f3eROcWNFKvO
+         T9r3CL6jUtaTQI17DJ2Qn8m+Vw/G73xLdZiyRy+I0bTeEUopqOWcvTv1WF3hoD8t03Lc
+         6G2xjFKJ9XrNq6EIksuSF+AE0QieDiRhFwc4ut9xc3tAIx75y50dioKkYcMhAy+ez1F4
+         paCA==
+X-Gm-Message-State: AOAM5319ZmlNnms2iD/AauZcMGTJ+5AasnjQGKPsT1KWt/OWPktiVorN
+        DSEw1BeTTgz/7XW5Ai8H3XOl6yiMIYcu91G4XRrT
+X-Google-Smtp-Source: ABdhPJxSqbbzdEkBauzBSZOj63lXqru92bwaU25QDlfWMPQ0Xv+0ErdjoGY3j8FBExHlfkyjKqjxqNBL+6LMw0E28KE=
+X-Received: by 2002:a17:906:1113:: with SMTP id h19mr18675234eja.398.1623085525430;
+ Mon, 07 Jun 2021 10:05:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.104.82]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggeme760-chm.china.huawei.com (10.3.19.106)
-X-CFilter-Loop: Reflected
+References: <20210607150100.2856110-1-zhengyongjun3@huawei.com>
+In-Reply-To: <20210607150100.2856110-1-zhengyongjun3@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 7 Jun 2021 13:05:14 -0400
+Message-ID: <CAHC9VhRbcBjYSpt0q2LrizWA6O2iPPOSfsEggUxfU4oigk3x2A@mail.gmail.com>
+Subject: Re: [PATCH net-next] netlabel: Fix spelling mistakes
+To:     Zheng Yongjun <zhengyongjun3@huawei.com>
+Cc:     davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Fix some spelling mistakes in comments:
-Interate  ==> Iterate
-sucess  ==> success
+On Mon, Jun 7, 2021 at 10:47 AM Zheng Yongjun <zhengyongjun3@huawei.com> wrote:
+>
+> Fix some spelling mistakes in comments:
+> Interate  ==> Iterate
+> sucess  ==> success
+>
+> Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
+> ---
+>  net/netlabel/netlabel_domainhash.c | 2 +-
+>  net/netlabel/netlabel_kapi.c       | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Zheng Yongjun <zhengyongjun3@huawei.com>
----
- net/netlabel/netlabel_domainhash.c | 2 +-
- net/netlabel/netlabel_kapi.c       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-diff --git a/net/netlabel/netlabel_domainhash.c b/net/netlabel/netlabel_domainhash.c
-index dc8c39f51f7d..8158a25972b4 100644
---- a/net/netlabel/netlabel_domainhash.c
-+++ b/net/netlabel/netlabel_domainhash.c
-@@ -929,7 +929,7 @@ struct netlbl_dommap_def *netlbl_domhsh_getentry_af6(const char *domain,
-  * @cb_arg: argument for the callback function
-  *
-  * Description:
-- * Interate over the domain mapping hash table, skipping the first @skip_bkt
-+ * Iterate over the domain mapping hash table, skipping the first @skip_bkt
-  * buckets and @skip_chain entries.  For each entry in the table call
-  * @callback, if @callback returns a negative value stop 'walking' through the
-  * table and return.  Updates the values in @skip_bkt and @skip_chain on
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index 5e1239cef000..beb0e573266d 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -719,7 +719,7 @@ int netlbl_catmap_walkrng(struct netlbl_lsm_catmap *catmap, u32 offset)
-  * it in @bitmap.  The @offset must be aligned to an unsigned long and will be
-  * updated on return if different from what was requested; if the catmap is
-  * empty at the requested offset and beyond, the @offset is set to (u32)-1.
-- * Returns zero on sucess, negative values on failure.
-+ * Returns zero on success, negative values on failure.
-  *
-  */
- int netlbl_catmap_getlong(struct netlbl_lsm_catmap *catmap,
 -- 
-2.25.1
-
+paul moore
+www.paul-moore.com
