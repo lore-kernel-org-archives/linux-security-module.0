@@ -2,76 +2,82 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE47BC47094
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 17:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 068E6C47095
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 20:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEC9A60FF2
-	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 17:11:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D367061185
+	for <linux-security-module@archiver.kernel.org>; Mon,  7 Jun 2021 20:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbhFGRNP (ORCPT
+        id S230303AbhFGUuJ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Jun 2021 13:13:15 -0400
-Received: from mga11.intel.com ([192.55.52.93]:41309 "EHLO mga11.intel.com"
+        Mon, 7 Jun 2021 16:50:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230374AbhFGRNP (ORCPT
+        id S230209AbhFGUuJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Jun 2021 13:13:15 -0400
-IronPort-SDR: q7Daxz0rRwOcAA0sPlR9u8SpauxDst/tpQnVYGTuFETS1fTVsJgoQ5vTXeLY1hUQxzQ1AaapeW
- dO2kxWuQTf3w==
-X-IronPort-AV: E=McAfee;i="6200,9189,10008"; a="201644239"
-X-IronPort-AV: E=Sophos;i="5.83,255,1616482800"; 
-   d="scan'208";a="201644239"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2021 10:11:23 -0700
-IronPort-SDR: HIpv589rUj3eCUwXDFAcboahUkoDihfgfT1TMDf7nwruUA0Tygk+hMl7IShxFB8PyjM3zK1iZx
- qf2mhma6AoAw==
-X-IronPort-AV: E=Sophos;i="5.83,255,1616482800"; 
-   d="scan'208";a="551960282"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2021 10:11:22 -0700
-Received: from andy by smile with local (Exim 4.94)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1lqImV-000JOQ-Nz; Mon, 07 Jun 2021 20:11:19 +0300
-Date:   Mon, 7 Jun 2021 20:11:19 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1] efi: Don't use knowledge about efi_guid_t internals
-Message-ID: <YL5TN6oTtgggIFvv@smile.fi.intel.com>
-References: <20210209164506.54176-1-andriy.shevchenko@linux.intel.com>
- <CAMj1kXGjoZ4qXxfB-2eH84k9Dg93cWs10DmDkZwv-C3_nKi_Ow@mail.gmail.com>
+        Mon, 7 Jun 2021 16:50:09 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DF14E61139;
+        Mon,  7 Jun 2021 20:48:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623098897;
+        bh=0Uu85hNllNvsWDHLgq688UcbjPL6TiTRY2bV7a76cWU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KVK5+llGnjv9NuHyJne9Bor9u8aK/MI8MXgKCySUCnnNo69xjXI1hzlnaJwgV+9fM
+         ZxA8qt9/mGcHQ6eyvJsnFyHFWdriCsUw6hV6pc4t1cpmtMVUI6hgcfsop9GYtIh+AF
+         +pDj49cdbmsCrKKO7k0s13Wk63vnRW22hWEyBEsNVS6klpr6LS/gULtlLcCxU1FCbj
+         1cv1wCESkXy+poh0o77cvcqCIH3skj42YwkKkROZWD0BIm6sWl1By11sa72a8PQ7Jt
+         Zk5KgkkgusQw9OVFqVsfIRXYMMyhnIxUdHP5yeCBiNt1jPbwK3kkT8AzP7DWwMKH4l
+         o7TjqjO7LqDXA==
+Date:   Mon, 7 Jun 2021 15:49:34 -0500
+From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        linux-hardening@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: [PATCH][next] ima: Fix fall-through warning for Clang
+Message-ID: <20210607204934.GA63263@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGjoZ4qXxfB-2eH84k9Dg93cWs10DmDkZwv-C3_nKi_Ow@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Feb 09, 2021 at 05:51:45PM +0100, Ard Biesheuvel wrote:
-> On Tue, 9 Feb 2021 at 17:45, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > When print GUIDs supply pointer to the efi_guid_t (guid_t) type rather
-> > its internal members.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+In preparation to enable -Wimplicit-fallthrough for Clang, fix a
+fall-through warning by explicitly adding a break statement instead
+of just letting the code fall through to the next case.
 
-Thanks!
+Link: https://github.com/KSPP/linux/issues/115
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+JFYI: We had thousands of these sorts of warnings and now we are down
+      to just 13 in linux-next(20210607). This is one of those last
+      remaining warnings. :)
 
-Can we get this applied, please?
+ security/integrity/ima/ima_template_lib.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
+diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+index 518fd50ea48a..8f96247b4a5c 100644
+--- a/security/integrity/ima/ima_template_lib.c
++++ b/security/integrity/ima/ima_template_lib.c
+@@ -119,6 +119,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+ 		default:
+ 			break;
+ 		}
++		break;
+ 	default:
+ 		break;
+ 	}
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.27.0
 
