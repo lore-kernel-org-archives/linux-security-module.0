@@ -2,186 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-20.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0388FC4743E
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 16:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 296B6C4743D
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 17:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4E8961042
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 16:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12EE76127A
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 17:02:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230261AbhFHQHz (ORCPT
+        id S233607AbhFHREr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jun 2021 12:07:55 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:47562 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230205AbhFHQHy (ORCPT
+        Tue, 8 Jun 2021 13:04:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37160 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232773AbhFHREq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jun 2021 12:07:54 -0400
-Received: from nramas-ThinkStation-P520 (c-73-42-176-67.hsd1.wa.comcast.net [73.42.176.67])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 84BD120B7188;
-        Tue,  8 Jun 2021 09:06:01 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 84BD120B7188
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1623168361;
-        bh=dtIyOy4Ilzq3XGMrQp8PfRC6MPvd5F+IjWQXdREdog4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PzsmbAg0cgBlIsRrfdHTj9feHMHTrfbFu24zLm8xGp33WHBylZkeg89rsQoWSP5u6
-         QAsXRiI69xBVqtKaze/ZOwXIbLqvbqvzGwTwpuuPxJw+KGj7XZqlbWpT1Kvj78v5eR
-         bALfd3QTyfBVzmE+PZ16atVDeswAAYIbx8hr13SI=
-Message-ID: <6f42e07fb057efdc72dc292017f6dbf05c3adfe9.camel@linux.microsoft.com>
-Subject: Re: [PATCH 2/2] evm: output EVM digest calculation info
-From:   nramas <nramas@linux.microsoft.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Russell Coker <russell@coker.com.au>
-Date:   Tue, 08 Jun 2021 09:06:00 -0700
-In-Reply-To: <20210608132950.424148-3-zohar@linux.ibm.com>
-References: <20210608132950.424148-1-zohar@linux.ibm.com>
-         <20210608132950.424148-3-zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5-0ubuntu1 
+        Tue, 8 Jun 2021 13:04:46 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DA6C061795
+        for <linux-security-module@vger.kernel.org>; Tue,  8 Jun 2021 10:02:38 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id g24so12282769pji.4
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jun 2021 10:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=4usFl7sIsVthQj7CAaTLNOirYn+9w5CcbbsPb6gzTZs=;
+        b=JlUf729Lw0qh8gpM+lacYrwI/BZHfR8iaIh6HWob68cqLRbEOcHJt9U9t2YgpQU93j
+         5p+//oTnvpy2Z43uQrbn65F8sQfCvpsHOcdByFr2F9G3lB39uVlA7OfOv5iL0bwRwVfq
+         YTTgYWPVApdUTu3XoW2nGATAhWdVzSTq61Bg8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=4usFl7sIsVthQj7CAaTLNOirYn+9w5CcbbsPb6gzTZs=;
+        b=TaqnyIiWXtOhznvkXAKsTr5qn9hZN3nKrr18Hd/6l+L0U/RJy5ANYWFlDPmedcCawW
+         4ZAg4XCRXM0HTVfnl9c7QMgYBCjjxnMD3d0d40C9DaHIRiB7Nmgy1yxKif2ovFGH7tBT
+         jhiBltv7faNLW7QrfQbtGp6aR1D/vs/jE91moYIYeRGoSY7icC6cVQ6LDOdfJu7MmbF/
+         HqGLV4389PpjpjxE5i/xxFCCXjnEzbsx/VHGzgxGMHKh5AN+7asOTGv8zkL+jOW4NpV2
+         aptHuOkG6jBiantcWHXrGkJQDwNnOEw3267HOOT26AJPoKQ7ttgT5ODa4AZ+nZCdBtsS
+         Mp4A==
+X-Gm-Message-State: AOAM532Bklc/0Ry+VtfjqhpjOEyDY6gQ0IMOXn0rXKzJbRBPhbbZjVuS
+        KqX0Ip+s2WI1GPS/kUbsYNtODw==
+X-Google-Smtp-Source: ABdhPJxaSatIHX/sZrfjfZA+xFPKOXe2WFUxGqcRbH4r+NdC1vX/iNz1cah9e+xIGvpANxz9gqGpmQ==
+X-Received: by 2002:a17:90a:b28d:: with SMTP id c13mr5823656pjr.80.1623171757403;
+        Tue, 08 Jun 2021 10:02:37 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w2sm11476540pfc.126.2021.06.08.10.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Jun 2021 10:02:36 -0700 (PDT)
+Date:   Tue, 8 Jun 2021 10:02:35 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] ima: Fix fall-through warning for Clang
+Message-ID: <202106081002.252C11321F@keescook>
+References: <20210607204934.GA63263@embeddedor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210607204934.GA63263@embeddedor>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, 2021-06-08 at 09:29 -0400, Mimi Zohar wrote:
-> Output the data used in calculating the EVM digest and the resulting
-> digest as ascii hexadecimal strings.
-
-Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-
+On Mon, Jun 07, 2021 at 03:49:34PM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enable -Wimplicit-fallthrough for Clang, fix a
+> fall-through warning by explicitly adding a break statement instead
+> of just letting the code fall through to the next case.
 > 
-> Suggested-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-> (CONFIG_DYNAMIC_DEBUG)
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> Link: https://github.com/KSPP/linux/issues/115
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 > ---
-> Changelog:
-> - Use pr_debug *phN format
-> - Define dump_security_xattr() for larger binary data
-> - Based on CONFIG_DYNAMIC_DEBUG
-> 
->  security/integrity/evm/evm_crypto.c | 42
-> +++++++++++++++++++++++++++++
->  security/integrity/evm/evm_main.c   |  4 +++
->  2 files changed, 46 insertions(+)
-> 
-> diff --git a/security/integrity/evm/evm_crypto.c
-> b/security/integrity/evm/evm_crypto.c
-> index 1628e2ca9862..900cf8a157b6 100644
-> --- a/security/integrity/evm/evm_crypto.c
-> +++ b/security/integrity/evm/evm_crypto.c
-> @@ -10,6 +10,8 @@
->   *	 Using root's kernel master key (kmk), calculate the HMAC
->   */
->  
-> +#define pr_fmt(fmt) "EVM: "fmt
-> +
->  #include <linux/export.h>
->  #include <linux/crypto.h>
->  #include <linux/xattr.h>
-> @@ -175,6 +177,29 @@ static void hmac_add_misc(struct shash_desc
-> *desc, struct inode *inode,
->  	    type != EVM_XATTR_PORTABLE_DIGSIG)
->  		crypto_shash_update(desc, (u8 *)&inode->i_sb->s_uuid,
-> UUID_SIZE);
->  	crypto_shash_final(desc, digest);
-> +
-> +	pr_debug("hmac_misc: (%lu) [%*phN]\n", sizeof(struct h_misc),
-> +		 (int) sizeof(struct h_misc), &hmac_misc);
-> +}
-> +
-> +/*
-> + * Dump large security xattr values as a continuous ascii
-> hexademical string.
-> + * (pr_debug is limited to 64 bytes.)
-> + */
-> +static void dump_security_xattr(const char *prefix, const void *src,
-> size_t count)
-> +{
-> +#if defined(DEBUG) || defined(CONFIG_DYNAMIC_DEBUG)
-> +	char *asciihex, *p;
-> +
-> +	p = asciihex = kmalloc(count * 2 + 1, GFP_KERNEL);
-> +	if (!asciihex)
-> +		return;
-> +
-> +	p = bin2hex(p, src, count);
-> +	*p = 0;
-> +	pr_debug("%s: (%lu) %.*s\n", prefix, count, (int) count * 2,
-> asciihex);
-> +	kfree(asciihex);
-> +#endif
->  }
->  
->  /*
-> @@ -230,6 +255,16 @@ static int evm_calc_hmac_or_hash(struct dentry
-> *dentry,
->  					     req_xattr_value_len);
->  			if (is_ima)
->  				ima_present = true;
-> +
-> +			if (req_xattr_value_len < 64)
-> +				pr_debug("%s: (%lu) [%*phN]\n",
-> req_xattr_name,
-> +					 req_xattr_value_len,
-> +					 (int)req_xattr_value_len,
-> +					 req_xattr_value);
-> +			else
-> +				dump_security_xattr(req_xattr_name,
-> +						    req_xattr_value,
-> +						    req_xattr_value_len
-> );
->  			continue;
->  		}
->  		size = vfs_getxattr_alloc(&init_user_ns, dentry, xattr-
-> >name,
-> @@ -246,6 +281,13 @@ static int evm_calc_hmac_or_hash(struct dentry
-> *dentry,
->  		crypto_shash_update(desc, (const u8 *)xattr_value,
-> xattr_size);
->  		if (is_ima)
->  			ima_present = true;
-> +
-> +		if (xattr_size < 64)
-> +			pr_debug("%s: (%lu) [%*phN]", xattr->name,
-> xattr_size,
-> +				 (int)xattr_size, xattr_value);
-> +		else
-> +			dump_security_xattr(xattr->name, xattr_value,
-> +					    xattr_size);
->  	}
->  	hmac_add_misc(desc, inode, type, data->digest);
->  
-> diff --git a/security/integrity/evm/evm_main.c
-> b/security/integrity/evm/evm_main.c
-> index 2c226e634ae9..059ac17a0041 100644
-> --- a/security/integrity/evm/evm_main.c
-> +++ b/security/integrity/evm/evm_main.c
-> @@ -11,6 +11,8 @@
->   *	evm_inode_removexattr, and evm_verifyxattr
->   */
->  
-> +#define pr_fmt(fmt) "EVM: "fmt
-> +
->  #include <linux/init.h>
->  #include <linux/crypto.h>
->  #include <linux/audit.h>
-> @@ -272,6 +274,8 @@ static enum integrity_status
-> evm_verify_hmac(struct dentry *dentry,
->  		else
->  			evm_status = INTEGRITY_FAIL;
->  	}
-> +	pr_debug("digest: (%d) [%*phN]\n", digest.hdr.length,
-> digest.hdr.length,
-> +		  digest.digest);
->  out:
->  	if (iint)
->  		iint->evm_status = evm_status;
+> JFYI: We had thousands of these sorts of warnings and now we are down
+>       to just 13 in linux-next(20210607). This is one of those last
+>       remaining warnings. :)
 
+Looks right to me; thanks!
+
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+> 
+>  security/integrity/ima/ima_template_lib.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+> index 518fd50ea48a..8f96247b4a5c 100644
+> --- a/security/integrity/ima/ima_template_lib.c
+> +++ b/security/integrity/ima/ima_template_lib.c
+> @@ -119,6 +119,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+>  		default:
+>  			break;
+>  		}
+> +		break;
+>  	default:
+>  		break;
+>  	}
+> -- 
+> 2.27.0
+> 
+
+-- 
+Kees Cook
