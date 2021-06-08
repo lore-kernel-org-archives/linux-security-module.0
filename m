@@ -2,150 +2,277 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8375FC47082
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 06:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D866C48BE5
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 07:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6771B61249
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 06:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51A7F61285
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 07:28:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230184AbhFHG2L (ORCPT
+        id S230226AbhFHHa0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jun 2021 02:28:11 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:49860 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230266AbhFHG2J (ORCPT
+        Tue, 8 Jun 2021 03:30:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40350 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229518AbhFHHaU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jun 2021 02:28:09 -0400
-Received: from [50.53.41.238] (helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1lqVBj-0007ee-Ue; Tue, 08 Jun 2021 06:26:12 +0000
-Subject: Re: [PATCH -next] apparmor: fix doc warning
-To:     ChenXiaoSong <chenxiaosong2@huawei.com>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yukuai3@huawei.com,
-        yi.zhang@huawei.com
-References: <20210607063022.329320-1-chenxiaosong2@huawei.com>
-From:   John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
- azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
- NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
- L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
- YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
- UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
- dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
- OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
- OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
- V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
- MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
- NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
- ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
- d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
- S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
- d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
- WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
- ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
- SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
- bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
- WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
- NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
- NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
- cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
- ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
- QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
- dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
- OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
- NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
- cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
- bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
- V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
- TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
- QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
- OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
- SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
- VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
- QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
- CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
- RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
- T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
- N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
- TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
- L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
- Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
- ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
- dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
- a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
- V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
- aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
- SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
- SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
- SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
- M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
- cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
- TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
- aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
- RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
- Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
- a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
- RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
- VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
- U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
- Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
- ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
- WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
- Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
- Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
- enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
- WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
- NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
- MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
- RVkgQkxPQ0stLS0tLQo=
-Organization: Canonical
-Message-ID: <a837dce7-f28b-6975-2a48-a763451da8a6@canonical.com>
-Date:   Mon, 7 Jun 2021 23:26:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 8 Jun 2021 03:30:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B3D5C61073;
+        Tue,  8 Jun 2021 07:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623137307;
+        bh=O/zMXaiejHSPpLDrpWoLj5vApKw6co+rXXxeAdTs0fQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nLlyZlZD273F402k83SpAE2/yTCnSoxOmIHbl9CNTcXkiOIJIwbU4EIxQMSt2a4ml
+         qYAZ7+GRyFby1j7J/b6Qdg0ngb9aWUorA3LUTEzB/o7nAxtpl99tYE56SX6c/L7cnq
+         JkQNkQc+kckZEP6v8MtI7gBXthqAyHNA2ro1bRHL944hNLYqFQNYNtkG14YdEsbCz8
+         WiPAfikei2ZlyE9DmtO+G5LcsEimR8Zt3bf/sh+4dSJxaQew1IHT6LAPnPOy5G3d1V
+         9RKb6ljsgqP02St+w9CxWqyTHfLgCquU2TvIEjFpSrPZM71r6hel2yJmUWm39106ZP
+         ITZzuhEQ/FbwA==
+Date:   Tue, 8 Jun 2021 09:28:19 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     "=?UTF-8?B?TsOtY29sYXM=?= F. R. A. Prado" <n@nfraprado.net>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 00/34] docs: avoid using ReST :doc:`foo` tag
+Message-ID: <20210608092819.3f4191b3@coco.lan>
+In-Reply-To: <20210608003458.kwhbn6mraekcutlt@notapiano>
+References: <cover.1622898327.git.mchehab+huawei@kernel.org>
+        <20210605151109.axm3wzbcstsyxczp@notapiano>
+        <20210605210836.540577d4@coco.lan>
+        <20210606225225.fz4dsyz6im4bqena@notapiano>
+        <20210607093422.0a369909@coco.lan>
+        <20210608003458.kwhbn6mraekcutlt@notapiano>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20210607063022.329320-1-chenxiaosong2@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/6/21 11:30 PM, ChenXiaoSong wrote:
-> Fix gcc W=1 warning:
-> 
-> security/apparmor/apparmorfs.c:2125: warning: Function parameter or member 'p' not described in '__next_profile'
-> 
-> Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+Em Mon, 7 Jun 2021 21:34:58 -0300
+N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
 
-Thanks I have pulled this into my tree
+> Hi Mauro,
+>=20
+> On Mon, Jun 07, 2021 at 09:34:22AM +0200, Mauro Carvalho Chehab wrote:
+> > Em Sun, 6 Jun 2021 19:52:25 -0300
+> > N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
+> >  =20
+> > > On Sat, Jun 05, 2021 at 09:08:36PM +0200, Mauro Carvalho Chehab wrote=
+: =20
+> > > > Em Sat, 5 Jun 2021 12:11:09 -0300
+> > > > N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
+> > > >    =20
+> > > > > Hi Mauro,
+> > > > >=20
+> > > > > On Sat, Jun 05, 2021 at 03:17:59PM +0200, Mauro Carvalho Chehab w=
+rote:   =20
+> > > > > > As discussed at:
+> > > > > > 	https://lore.kernel.org/linux-doc/871r9k6rmy.fsf@meer.lwn.net/
+> > > > > >=20
+> > > > > > It is better to avoid using :doc:`foo` to refer to Documentatio=
+n/foo.rst, as the
+> > > > > > automarkup.py extension should handle it automatically, on most=
+ cases.
+> > > > > >=20
+> > > > > > There are a couple of exceptions to this rule:
+> > > > > >=20
+> > > > > > 1. when :doc:  tag is used to point to a kernel-doc DOC: markup;
+> > > > > > 2. when it is used with a named tag, e. g. :doc:`some name <foo=
+>`;
+> > > > > >=20
+> > > > > > It should also be noticed that automarkup.py has currently an i=
+ssue:
+> > > > > > if one use a markup like:
+> > > > > >=20
+> > > > > > 	Documentation/dev-tools/kunit/api/test.rst
+> > > > > > 	  - documents all of the standard testing API excluding mocking
+> > > > > > 	    or mocking related features.
+> > > > > >=20
+> > > > > > or, even:
+> > > > > >=20
+> > > > > > 	Documentation/dev-tools/kunit/api/test.rst
+> > > > > > 	    documents all of the standard testing API excluding mocking
+> > > > > > 	    or mocking related features.
+> > > > > > =09
+> > > > > > The automarkup.py will simply ignore it. Not sure why. This pat=
+ch series
+> > > > > > avoid the above patterns (which is present only on 4 files), bu=
+t it would be
+> > > > > > nice to have a followup patch fixing the issue at automarkup.py=
+.     =20
+> > > > >=20
+> > > > > What I think is happening here is that we're using rST's syntax f=
+or definition
+> > > > > lists [1]. automarkup.py ignores literal nodes, and perhaps a def=
+inition is
+> > > > > considered a literal by Sphinx. Adding a blank line after the Doc=
+umentation/...
+> > > > > or removing the additional indentation makes it work, like you di=
+d in your
+> > > > > 2nd and 3rd patch, since then it's not a definition anymore, alth=
+ough then the
+> > > > > visual output is different as well.   =20
+> > > >=20
+> > > > A literal has a different output. I think that this is not the case=
+, but I=20
+> > > > didn't check the python code from docutils/Sphinx.   =20
+> > >=20
+> > > Okay, I went in deeper to understand the issue and indeed it wasn't w=
+hat I
+> > > thought. The reason definitions are ignored by automarkup.py is becau=
+se the main
+> > > loop iterates only over nodes that are of type paragraph:
+> > >=20
+> > >     for para in doctree.traverse(nodes.paragraph):
+> > >         for node in para.traverse(nodes.Text):
+> > >             if not isinstance(node.parent, nodes.literal):
+> > >                 node.parent.replace(node, markup_refs(name, app, node=
+))
+> > >=20
+> > > And inspecting the HTML output from your example, the definition name=
+ is inside
+> > > a <dt> tag, and it doesn't have a <p> inside. So in summary, automark=
+up.py will
+> > > only work on elements which are inside a <p> in the output. =20
+> >=20
+> >=20
+> > Yeah, that's what I was suspecting, based on the comments.
+> >=20
+> > Maybe something similar to the above could be done also for some
+> > non-paragraph data. By looking at:
+> >=20
+> > 	https://docutils.sourceforge.io/docs/ref/doctree.html
+> >=20
+> > It says that the body elements are:
+> >=20
+> > 	admonition, attention, block_quote, bullet_list, caution, citation,=20
+> > 	comment, compound, container, danger, definition_list, doctest_block,=
+=20
+> > 	enumerated_list, error, field_list, figure, footnote, hint, image,=20
+> > 	important, line_block, literal_block, note, option_list, paragraph,=20
+> > 	pending, raw, rubric, substitution_definition, system_message,=20
+> > 	table, target, tip, warning =20
+>=20
+> Ok, I went through each one by searching the term on [1] and inspecting t=
+he
+> element to see if it contained a <p> or not. The vast majority did. These=
+ are
+> the ones I didn't find there or didn't make sense:
+>=20
+> 	comment
+> 	container
+> 	image
+> 	pending
+> 	raw
+> 	substitution_definition
+> 	system_message
+> 	target
+>=20
+> We can safely ignore them. And these are the ones that matter and don't h=
+ave
+> paragraphs:
+>=20
+> 	1. literal_block
+> 	2. doctest_block
+> 	3. definition_list
+> 	4. field_list
+> 	5. option_list
+> 	6. line_block
+>=20
+> 1 and 2 are literals, so we don't care about them.
+>=20
+> 3 is the one you noticed the issue with. It's worth mentioning that the
+> definition term doesn't have a paragraph, but its definition does (as can=
+ be
+> checked by inspecting [2]).
+>=20
+> 4 is basically the same as 3, the rst syntax is different but the output =
+is the
+> same. That said, I believe we only use those to set options at the top of=
+ the
+> file, like in translations, and I can't see automarkup being useful in th=
+ere.
+>=20
+> 5 is similar to 3 and 4, but the term is formatted using <kbd>, so it's l=
+ike a
+> literal and therefore not relevant.
+>=20
+> 6 is useful just to preserve indentation, and I'm pretty sure we don't us=
+e it in
+> the docs.
+>=20
+> So in the end, I think the only contenders to be added to automarkup are
+> definition lists, and even then I still think we should just substitute t=
+hose
+> definition lists with alternatives like you did in your patches. Personal=
+ly I
+> don't see much gain in using definitions instead of a simple paragraph. B=
+ut if
+> you really think it's an improvement in some way, it could probably be ad=
+ded to
+> automarkup in the way you described.
 
-> ---
->  security/apparmor/apparmorfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 5bb9b9910aee..4720b8b9239c 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -2114,7 +2114,7 @@ static struct aa_profile *__first_profile(struct aa_ns *root,
->  
->  /**
->   * __next_profile - step to the next profile in a profile tree
-> - * @profile: current profile in tree (NOT NULL)
-> + * @p: current profile in tree (NOT NULL)
->   *
->   * Perform a depth first traversal on the profile tree in a namespace
->   *
-> 
+Thank you for checking this!
 
+Kernel docs use a lot definition lists. At the initial versions, it was
+equivalent to:
+
+	**Something to be written with emphasis**
+
+	  Some description
+
+Sphinx later changed the look-and-feel for the term, on html output, but
+the thing is that:
+
+	Something to be written with emphasis
+	   Some description
+
+looks a lot better when read as a text file.
+
+Also, on some cases, the first notation doesn't work. The definition-list
+was the only way I know that would allow to apply an emphasis to a literal
+block.
+
+We can avoid using Documentation/foo on description lists: the current 4=20
+cases where doc:`foo` are already addressed in this series, and the output
+is acceptable.
+
+Yet, I have a couple of concerns:
+
+1. It might have some unknown places where a description list is used
+   for Documentation/foo;
+2. It is not trivial to identify if someone add Documentation/foo in
+   the future;
+3. I suspect that there are several places where functions and structs
+   appear at the definition lists.
+
+(1) can probably be checked with a multi-line grep. So, not a big
+    problem;
+
+(2) is something that would require someone to verify from time to
+    time;
+
+but (3) are harder to check and seems to be a valid use-case.
+
+Due to (3), I think we should let automarkup to parse non-literal
+terms on description lists. At very least it should emit a warning when
+it won't be doing auto-conversions for known patterns at definition
+lists (if doing that would generate false-positives).
+
+Thanks,
+Mauro
