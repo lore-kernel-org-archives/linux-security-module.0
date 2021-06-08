@@ -2,112 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06426C47082
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 23:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE57AC4743F
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 23:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D855861278
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 23:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2599611C9
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 23:20:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbhFHXLo (ORCPT
+        id S235218AbhFHXWl (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jun 2021 19:11:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33642 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233927AbhFHXLn (ORCPT
+        Tue, 8 Jun 2021 19:22:41 -0400
+Received: from mail-pf1-f169.google.com ([209.85.210.169]:41706 "EHLO
+        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234389AbhFHXWk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jun 2021 19:11:43 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BC12C061574;
-        Tue,  8 Jun 2021 16:09:34 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id q25so16912338pfh.7;
-        Tue, 08 Jun 2021 16:09:34 -0700 (PDT)
+        Tue, 8 Jun 2021 19:22:40 -0400
+Received: by mail-pf1-f169.google.com with SMTP id x73so16933009pfc.8
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jun 2021 16:20:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=pxB1xtoHHkw69OMEALOXeDp7Pni62I/nw63DWa+Tj/o=;
-        b=iTP8gMp2oYKaN/tIBjZWiVWQcwQg1wIZ9Brf3K/E++4JjjGpFbFR+WNVMk31R1XTGU
-         lZ6y2Lb5wPRsZ+5z2yARawwMQQhUJaWamXla8i8Df1eu47UDOcPDdxRZMqtuI1kHtqSf
-         sifS0mAAXXVUuUZIRt/n62iJO9y0r5OzK9CfauuJrrGAIMStXq/ihADfMK8yngw0NpYt
-         gIzqWCeKZAjGkIwGFSIzbLm4t+Hxo0dEtlHK2tVOWMgKVR5gnnbW3CzddZhciupP3+8q
-         DujFkq6sQsG9661v2SBCFzDdLF6junI4eshji1VpWcD+aiePBCuYqWB0kqeg2a7mFk80
-         lqUA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UYnHXpjkxY6uN8Q/wAdT4oZuTb3kldbBA0o55ZnXLbI=;
+        b=VDGAYt9zeOJIjafEo+B67uPbBGKQhrSGnf7Qo9Ch6H/mTASRST0oDv92Nf7ui6OeS8
+         iB3NOQV0MMtCh2uBcA+Npibc6zFdC9xeu4KT1yRo8M0w7oGssOjX8MMlaVOz2EjWKrbi
+         wCpTzbJv8yEONP8oFpas7EKEl1l7Ccqy2QOmo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=pxB1xtoHHkw69OMEALOXeDp7Pni62I/nw63DWa+Tj/o=;
-        b=C9sch2tAtHAME/CP1QqbgSpw8XBqb9fHw2pihpxOlePrw6bJH6yhhtVXU1j4WO4Ubx
-         RBrbAyoYskvziCpqv3PHQZB2uS5ZSZx99jRDDoGC5W7K7q02AGgfycKDCosN5/GKoFRP
-         AsV0FQ78HetFhYxVUeZqVBH/jMBWWBBwov5ezMssf6DLBoMCigCHJa2OcuE+RcAjmXDz
-         q3kA63Y6Qh8/dtiKML1EYIuxbk/ecE0xMSRB1bQ4BLHHmFHzYFG6GBMigTD3ZgzFcHZb
-         VW3TDiUhKctKVpAP83MmObQD6pfr0o0wgegsY2F+gj3/J+IS7NpsH7qONSFBfw32f4/j
-         XlcQ==
-X-Gm-Message-State: AOAM533kw3IlmWbqrXUs4DTd30K3zlmRVfY6Mbri4rcAXWR34fw5JaQg
-        N3ytKa4xHAB33IFQwu5LH6U=
-X-Google-Smtp-Source: ABdhPJx7uMwq1jcrznElfdv1IOnoq0Xg69qXTt1txWdh4AQ/4VpNFYPgS3FKNfvDbK3C+QQrBqP4yQ==
-X-Received: by 2002:aa7:9537:0:b029:2ea:2312:d2cb with SMTP id c23-20020aa795370000b02902ea2312d2cbmr2036969pfp.27.1623193773574;
-        Tue, 08 Jun 2021 16:09:33 -0700 (PDT)
-Received: from raspberrypi ([125.141.84.155])
-        by smtp.gmail.com with ESMTPSA id f8sm10925846pfv.73.2021.06.08.16.09.31
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UYnHXpjkxY6uN8Q/wAdT4oZuTb3kldbBA0o55ZnXLbI=;
+        b=ZZ9T0Cbf6+cPOMqspBvV/AB4zYF7NxbfAJZ43OCJ3R02SYZeD1rXYtkD59trtTreA9
+         3iilPeDiBWXBbGBxMUjRIKo29ySmhovsnX+3q88h+ZNUq0qV9CMWtbuGOPFVfsaPnMae
+         foK7Ijc+o11mlgu2tDiLtSM298pVXLcPGLz040SnqZTnTsCEKUkwKDvEdhNu+KqUL1TR
+         cU2NfCfaTsiERHSkFrvuFVZlLTZQNB2gvg6Ps05C5bwuJ2cm18tW50g+dpjCvAiXgULw
+         ooysrW5iKZ3WXEWvwWlv0bS/am/iP8W3fEYnpePEp8usk/oNgDFIR5Ozt6qWd1D6c7vZ
+         ftrA==
+X-Gm-Message-State: AOAM532jEYhh9dhojwFFtIaMYHko/4tmh5djDu8O6SMSUG661IcJU3xP
+        8oVX7c0GrQ7W5Z9K88rnl2fgqg==
+X-Google-Smtp-Source: ABdhPJy13j1j0ODNi7LI1+2LKQunbW8Wx/i0jcdBN55+DupC2NcBqv+Cq0yP0XhoUlI386xpojybKg==
+X-Received: by 2002:a62:be03:0:b029:2e9:fe8c:effe with SMTP id l3-20020a62be030000b02902e9fe8ceffemr2325280pff.34.1623194373956;
+        Tue, 08 Jun 2021 16:19:33 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id m2sm16400257pjf.24.2021.06.08.16.19.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Jun 2021 16:09:33 -0700 (PDT)
-Date:   Wed, 9 Jun 2021 00:09:29 +0100
-From:   Austin Kim <austindh.kim@gmail.com>
-To:     mortonm@chromium.org, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, austindh.kim@gmail.com,
-        austin.kim@lge.com
-Subject: [PATCH] LSM: SafeSetID: Mark safesetid_initialized as __initdata
-Message-ID: <20210608230929.GA1214@raspberrypi>
+        Tue, 08 Jun 2021 16:19:32 -0700 (PDT)
+Date:   Tue, 8 Jun 2021 16:19:31 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     John Wood <john.wood@gmx.com>
+Cc:     Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Arnd Bergmann <arnd@arndb.de>, Andi Kleen <ak@linux.intel.com>,
+        valdis.kletnieks@vt.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v8 0/8] Fork brute force attack mitigation
+Message-ID: <202106081616.EC17DC1D0D@keescook>
+References: <20210605150405.6936-1-john.wood@gmx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20210605150405.6936-1-john.wood@gmx.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Mark safesetid_initialized as __initdata since it is only used
-in initialization routine.
+On Sat, Jun 05, 2021 at 05:03:57PM +0200, John Wood wrote:
+> [...]
+> the kselftest to avoid the detection ;) ). So, in this version, to track
+> all the statistical data (info related with application crashes), the
+> extended attributes feature for the executable files are used. The xattr is
+> also used to mark the executables as "not allowed" when an attack is
+> detected. Then, the execve system call rely on this flag to avoid following
+> executions of this file.
 
-Signed-off-by: Austin Kim <austindh.kim@gmail.com>
----
- security/safesetid/lsm.c | 2 +-
- security/safesetid/lsm.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I have some concerns about this being actually usable and not creating
+DoS situations. For example, let's say an attacker had found a hard-to-hit
+bug in "sudo", and starts brute forcing it. When the brute LSM notices,
+it'll make "sudo" unusable for the entire system, yes?
 
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index 1079c6d54784..963f4ad9cb66 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -22,7 +22,7 @@
- #include "lsm.h"
- 
- /* Flag indicating whether initialization completed */
--int safesetid_initialized;
-+int safesetid_initialized __initdata;
- 
- struct setid_ruleset __rcu *safesetid_setuid_rules;
- struct setid_ruleset __rcu *safesetid_setgid_rules;
-diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
-index bde8c43a3767..d346f4849cea 100644
---- a/security/safesetid/lsm.h
-+++ b/security/safesetid/lsm.h
-@@ -19,7 +19,7 @@
- #include <linux/hashtable.h>
- 
- /* Flag indicating whether initialization completed */
--extern int safesetid_initialized;
-+extern int safesetid_initialized __initdata;
- 
- enum sid_policy_type {
- 	SIDPOL_DEFAULT, /* source ID is unaffected by policy */
+And a reboot won't fix it, either, IIUC.
+
+It seems like there is a need to track "user" running "prog", and have
+that be timed out. Are there use-cases here where that wouldn't be
+sufficient?
+
+-Kees
+
 -- 
-2.20.1
-
+Kees Cook
