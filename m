@@ -2,102 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD904C47082
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 01:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFCAC47082
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 01:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9234C61263
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 01:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93516124C
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 01:19:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbhFHBQP (ORCPT
+        id S230475AbhFHBVm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Jun 2021 21:16:15 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:4385 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230209AbhFHBQP (ORCPT
+        Mon, 7 Jun 2021 21:21:42 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:3457 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230272AbhFHBVl (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Jun 2021 21:16:15 -0400
-Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4FzXGv0mBMz6vLY;
-        Tue,  8 Jun 2021 09:10:31 +0800 (CST)
-Received: from dggpeml500020.china.huawei.com (7.185.36.88) by
+        Mon, 7 Jun 2021 21:21:41 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4FzXQ444dfz6wqB;
+        Tue,  8 Jun 2021 09:16:44 +0800 (CST)
+Received: from dggpemm000001.china.huawei.com (7.185.36.245) by
  dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 8 Jun 2021 09:14:21 +0800
-Received: from [10.174.177.174] (10.174.177.174) by
- dggpeml500020.china.huawei.com (7.185.36.88) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 8 Jun 2021 09:14:20 +0800
-Subject: Re: [PATCH -next] capability: fix doc warnings in capability.c
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-CC:     <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <weiyongjun1@huawei.com>,
-        <yuehaibing@huawei.com>, <yangjihong1@huawei.com>,
-        <yukuai3@huawei.com>, <libaokun1@huawei.com>
-References: <20210605062602.678602-1-libaokun1@huawei.com>
- <20210607230913.GA12581@mail.hallyn.com>
-From:   "libaokun (A)" <libaokun1@huawei.com>
-Message-ID: <83a6dfaa-80ef-62ba-313b-fff03efc6d9d@huawei.com>
-Date:   Tue, 8 Jun 2021 09:14:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.0
+ 15.1.2176.2; Tue, 8 Jun 2021 09:19:47 +0800
+Received: from huawei.com (10.175.113.32) by dggpemm000001.china.huawei.com
+ (7.185.36.245) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 8 Jun 2021
+ 09:19:46 +0800
+From:   Nanyong Sun <sunnanyong@huawei.com>
+To:     <paul@paul-moore.com>, <davem@davemloft.net>,
+        <yoshfuji@linux-ipv6.org>, <dsahern@kernel.org>, <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sunnanyong@huawei.com>
+Subject: [PATCH] net: ipv4: fix memory leak in netlbl_cipsov4_add_std
+Date:   Tue, 8 Jun 2021 09:51:58 +0800
+Message-ID: <20210608015158.3848878-1-sunnanyong@huawei.com>
+X-Mailer: git-send-email 2.18.0.huawei.25
 MIME-Version: 1.0
-In-Reply-To: <20210607230913.GA12581@mail.hallyn.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.174]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500020.china.huawei.com (7.185.36.88)
+Content-Type: text/plain
+X-Originating-IP: [10.175.113.32]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm000001.china.huawei.com (7.185.36.245)
 X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Thank you for your advice.
+Reported by syzkaller:
+BUG: memory leak
+unreferenced object 0xffff888105df7000 (size 64):
+comm "syz-executor842", pid 360, jiffies 4294824824 (age 22.546s)
+hex dump (first 32 bytes):
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+backtrace:
+[<00000000e67ed558>] kmalloc include/linux/slab.h:590 [inline]
+[<00000000e67ed558>] kzalloc include/linux/slab.h:720 [inline]
+[<00000000e67ed558>] netlbl_cipsov4_add_std net/netlabel/netlabel_cipso_v4.c:145 [inline]
+[<00000000e67ed558>] netlbl_cipsov4_add+0x390/0x2340 net/netlabel/netlabel_cipso_v4.c:416
+[<0000000006040154>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320 net/netlink/genetlink.c:739
+[<00000000204d7a1c>] genl_family_rcv_msg net/netlink/genetlink.c:783 [inline]
+[<00000000204d7a1c>] genl_rcv_msg+0x2bf/0x4f0 net/netlink/genetlink.c:800
+[<00000000c0d6a995>] netlink_rcv_skb+0x134/0x3d0 net/netlink/af_netlink.c:2504
+[<00000000d78b9d2c>] genl_rcv+0x24/0x40 net/netlink/genetlink.c:811
+[<000000009733081b>] netlink_unicast_kernel net/netlink/af_netlink.c:1314 [inline]
+[<000000009733081b>] netlink_unicast+0x4a0/0x6a0 net/netlink/af_netlink.c:1340
+[<00000000d5fd43b8>] netlink_sendmsg+0x789/0xc70 net/netlink/af_netlink.c:1929
+[<000000000a2d1e40>] sock_sendmsg_nosec net/socket.c:654 [inline]
+[<000000000a2d1e40>] sock_sendmsg+0x139/0x170 net/socket.c:674
+[<00000000321d1969>] ____sys_sendmsg+0x658/0x7d0 net/socket.c:2350
+[<00000000964e16bc>] ___sys_sendmsg+0xf8/0x170 net/socket.c:2404
+[<000000001615e288>] __sys_sendmsg+0xd3/0x190 net/socket.c:2433
+[<000000004ee8b6a5>] do_syscall_64+0x37/0x90 arch/x86/entry/common.c:47
+[<00000000171c7cee>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-I didn't notice the order of the parameters.
+The memory of doi_def->map.std pointing is allocated in
+netlbl_cipsov4_add_std, but no place has freed it. It should be
+freed in cipso_v4_doi_free which frees the cipso DOI resource.
 
-I'm about to send a patch v2 with the changes suggested by you.
+Fixes: 96cb8e3313c7a ("[NetLabel]: CIPSOv4 and Unlabeled packet integration")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Nanyong Sun <sunnanyong@huawei.com>
+---
+ net/ipv4/cipso_ipv4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-ÔÚ 2021/6/8 7:09, Serge E. Hallyn Ð´µÀ:
-> On Sat, Jun 05, 2021 at 02:26:02PM +0800, Baokun Li wrote:
->> Fixes the following W=1 kernel build warning(s):
->>
->> kernel/capability.c:490: warning: Function parameter or
->>   member 'mnt_userns' not described in 'privileged_wrt_inode_uidgid'
->> kernel/capability.c:506: warning: Function parameter or
->>   member 'mnt_userns' not described in 'capable_wrt_inode_uidgid'
->>
->> Signed-off-by: Baokun Li <libaokun1@huawei.com>
->> ---
->>   kernel/capability.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/kernel/capability.c b/kernel/capability.c
->> index 46a361dde042..27a959aa897f 100644
->> --- a/kernel/capability.c
->> +++ b/kernel/capability.c
->> @@ -480,6 +480,7 @@ EXPORT_SYMBOL(file_ns_capable);
->>   /**
->>    * privileged_wrt_inode_uidgid - Do capabilities in the namespace work over the inode?
->>    * @ns: The user namespace in question
->> + * @mnt_userns: User namespace of the mount the inode was found from
->>    * @inode: The inode in question
->>    *
->>    * Return true if the inode uid and gid are within the namespace.
->> @@ -495,6 +496,7 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
->>   /**
->>    * capable_wrt_inode_uidgid - Check nsown_capable and uid and gid mapped
->>    * @inode: The inode in question
->> + * @mnt_userns: User namespace of the mount the inode was found from
-> The mnt_userns comes before the inode in this fn.
->
->>    * @cap: The capability in question
->>    *
->>    * Return true if the current task has the given capability targeted at
->> -- 
->> 2.31.1
-> .
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index d6e3a92841e3..099259fc826a 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -471,6 +471,7 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
+ 		kfree(doi_def->map.std->lvl.local);
+ 		kfree(doi_def->map.std->cat.cipso);
+ 		kfree(doi_def->map.std->cat.local);
++		kfree(doi_def->map.std);
+ 		break;
+ 	}
+ 	kfree(doi_def);
+-- 
+2.18.0.huawei.25
+
