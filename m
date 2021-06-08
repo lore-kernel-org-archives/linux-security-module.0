@@ -2,166 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C92C47094
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 02:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8375FC47082
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 06:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5820861263
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 02:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6771B61249
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 06:26:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230269AbhFHC7L (ORCPT
+        id S230184AbhFHG2L (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 7 Jun 2021 22:59:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48090 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231171AbhFHC7K (ORCPT
+        Tue, 8 Jun 2021 02:28:11 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:49860 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230266AbhFHG2J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 7 Jun 2021 22:59:10 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92417C061574
-        for <linux-security-module@vger.kernel.org>; Mon,  7 Jun 2021 19:57:09 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id u24so22748135edy.11
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Jun 2021 19:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EuJsYuOqrG8SwCz3ljrkwXN4K75nXvxXvYn9NFBNIIk=;
-        b=b/Tb/DenmCtu38YpFqyJ5pZcHaHq4/WyfqjMlIGoJNiMNfANIToEi7K3/qi09KX65a
-         HRsvOsFx+++DN8XaG4MI5HPv4SMOBayo6cqyJGsiG6aGwNoWgOThbdrCnc1M/kiKTDuw
-         +e8aOaNSZer3m2ERgU+iQHrkKM9Ih6pE7oq8p94nEBr5JM3cGp+CaEFXg0uwOaZKTMLi
-         VWfNBoB4fieEEYeHmPRvLyGxPP0rDQCj53AfH2C1O8iLMWQYLKlUGZ/IFMgxHPVAYjNV
-         Vz/YtPwa1I1AqE2X//PBAtJTAGCg5fSzP+dHq5E3HFtwmfeft43ZUpLKzAyaTKk9fqqT
-         Q3RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EuJsYuOqrG8SwCz3ljrkwXN4K75nXvxXvYn9NFBNIIk=;
-        b=QlWGFixNLzUs9mKJizo4pEUaLQe0ooXYs2SiydCNfaq6JSGT3a885g/wT07TUW/Wcl
-         inw+c+d47YSZndjD9C52vLLtyY3CKAHgmBo0vcS6Q8z5M/+mKX+bXB3lz3uavNyhJXnW
-         unOCcDPSHiD1UdpUitTUwodVYcFkO+QUQhJDnP6zw10Hj2/rryGD2yUIii5oX6J0FtHt
-         n8d5EZ0Yz91KzaDDUeGEEwcLUMgHkv/yYyWXCxBKGFrWuLEMPuDOYTQTpsf4Se3VLd/0
-         zzFkKYVFZgnwDZpj8fhIiTcPw5AtWrW/rB93qplbOSCGD4BoifsV/u6vooLLp85OMvce
-         SJfg==
-X-Gm-Message-State: AOAM533y0HAmijkl4jufFHttja+7g+7fh+WSqQ8TZtKS8VmuZy2H1v3q
-        DoVTMDT3SigPcvyUV7d/gQjG47+hjRnS+PLOIrdPNKHMJxyF
-X-Google-Smtp-Source: ABdhPJxmiiOxK28u0wIUfqakPqSPdOGryiWaqVkUadFKJswOOkz07/rWunWEUHe2KpR3G3nPPsBjc/LJMKVW1pJVeqU=
-X-Received: by 2002:a05:6402:1771:: with SMTP id da17mr19127260edb.31.1623121028094;
- Mon, 07 Jun 2021 19:57:08 -0700 (PDT)
+        Tue, 8 Jun 2021 02:28:09 -0400
+Received: from [50.53.41.238] (helo=[192.168.192.153])
+        by youngberry.canonical.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <john.johansen@canonical.com>)
+        id 1lqVBj-0007ee-Ue; Tue, 08 Jun 2021 06:26:12 +0000
+Subject: Re: [PATCH -next] apparmor: fix doc warning
+To:     ChenXiaoSong <chenxiaosong2@huawei.com>, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yukuai3@huawei.com,
+        yi.zhang@huawei.com
+References: <20210607063022.329320-1-chenxiaosong2@huawei.com>
+From:   John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
+ LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptUUlOQkU1bXJQb0JFQURB
+ azE5UHNnVmdCS2tJbW1SMmlzUFE2bzdLSmhUVEtqSmR3VmJrV1NuTm4rbzZVcDVrCm5LUDFm
+ NDlFQlFsY2VXZzF5cC9Od2JSOGFkK2VTRU8vdW1hL0srUHFXdkJwdEtDOVNXRDk3Rkc0dUI0
+ L2Nhb20KTEVVOTdzTFFNdG52R1dkeHJ4VlJHTTRhbnpXWU1neno1VFptSWlWVFo0M091NVZw
+ YVMxVnoxWlN4UDNoL3hLTgpaci9UY1c1V1FhaTh1M1BXVm5ia2poU1pQSHYxQmdoTjY5cXhF
+ UG9tckpCbTFnbXR4M1ppVm1GWGx1d1RtVGdKCk9rcEZvbDduYkowaWxuWUhyQTdTWDNDdFIx
+ dXBlVXBNYS9XSWFuVk85NldkVGpISElhNDNmYmhtUXViZTR0eFMKM0ZjUUxPSlZxUXN4NmxF
+ OUI3cUFwcG05aFExMHFQV3dkZlB5LyswVzZBV3ROdTVBU2lHVkNJbld6bDJIQnFZZAovWmxs
+ OTN6VXErTklvQ244c0RBTTlpSCt3dGFHRGNKeXdJR0luK2VkS050SzcyQU1nQ2hUZy9qMVpv
+ V0g2WmVXClBqdVVmdWJWelp0bzFGTW9HSi9TRjRNbWRRRzFpUU50ZjRzRlpiRWdYdXk5Y0dp
+ MmJvbUYwenZ5QkpTQU5weGwKS05CRFlLek42S3owOUhVQWtqbEZNTmdvbUwvY2pxZ0FCdEF4
+ NTlMK2RWSVpmYUYyODFwSWNVWnp3dmg1K0pvRwplT1c1dUJTTWJFN0wzOG5zem9veWtJSjVY
+ ckFjaGtKeE5mejdrK0ZuUWVLRWtOekVkMkxXYzNRRjRCUVpZUlQ2ClBISGdhM1JneWtXNSsx
+ d1RNcUpJTGRtdGFQYlhyRjNGdm5WMExSUGN2NHhLeDdCM2ZHbTd5Z2Rvb3dBUkFRQUIKdEIx
+ S2IyaHVJRXB2YUdGdWMyVnVJRHhxYjJodVFHcHFiWGd1Ym1WMFBva0NPZ1FUQVFvQUpBSWJB
+ d1VMQ1FnSApBd1VWQ2drSUN3VVdBZ01CQUFJZUFRSVhnQVVDVG8wWVZ3SVpBUUFLQ1JBRkx6
+ WndHTlhEMkx4SkQvOVRKWkNwCndsbmNUZ1llcmFFTWVEZmtXdjhjMUlzTTFqMEFtRTRWdEwr
+ ZkU3ODBaVlA5Z2tqZ2tkWVN4dDdlY0VUUFRLTWEKWlNpc3JsMVJ3cVUwb29nWGRYUVNweHJH
+ SDAxaWN1LzJuMGpjWVNxWUtnZ1B4eTc4QkdzMkxacTRYUGZKVFptSApaR25YR3EvZURyL21T
+ bmowYWF2QkptTVo2amJpUHo2eUh0QllQWjlmZG84YnRjendQNDFZZVdvSXUyNi84SUk2CmYw
+ WG0zVkM1b0FhOHY3UmQrUldaYThUTXdsaHpIRXh4ZWwzanRJN0l6ek9zbm1FOS84RG0wQVJE
+ NWlUTENYd1IKMWN3SS9KOUJGL1MxWHY4UE4xaHVUM0l0Q05kYXRncDh6cW9Ka2dQVmptdnlM
+ NjRRM2ZFa1liZkhPV3NhYmE5LwprQVZ0Qk56OVJURmg3SUhEZkVDVmFUb3VqQmQ3QnRQcXIr
+ cUlqV0ZhZEpEM0k1ZUxDVkp2VnJyb2xyQ0FUbEZ0Ck4zWWtRczZKbjFBaUlWSVUzYkhSOEdq
+ ZXZnejVMbDZTQ0dIZ1Jya3lScG5TWWFVL3VMZ24zN042QVl4aS9RQUwKK2J5M0N5RUZManpX
+ QUV2eVE4YnEzSXVjbjdKRWJoUy9KLy9kVXFMb2VVZjh0c0dpMDB6bXJJVFpZZUZZQVJoUQpN
+ dHNmaXpJclZEdHoxaVBmL1pNcDVnUkJuaXlqcFhuMTMxY20zTTNndjZIclFzQUdubjhBSnJ1
+ OEdEaTVYSllJCmNvLzEreC9xRWlOMm5DbGFBT3BiaHpOMmVVdlBEWTVXMHEzYkEvWnAybWZH
+ NTJ2YlJJK3RRMEJyMUhkL3ZzbnQKVUhPOTAzbU1aZXAyTnpOM0JaNXFFdlB2RzRyVzVacTJE
+ cHliV2JRclNtOW9iaUJLYjJoaGJuTmxiaUE4YW05bwpiaTVxYjJoaGJuTmxia0JqWVc1dmJt
+ bGpZV3d1WTI5dFBva0NOd1FUQVFvQUlRVUNUbzBYV2dJYkF3VUxDUWdICkF3VVZDZ2tJQ3dV
+ V0FnTUJBQUllQVFJWGdBQUtDUkFGTHpad0dOWEQySXRNRC85anliYzg3ZE00dUFIazZ5Tk0K
+ TjBZL0JGbW10VFdWc09CaHFPbm9iNGkzOEJyRE8yQzFoUUNQQ1FlNExMczEvNHB0ZW92UXQ4
+ QjJGeXJQVmp3Zwo3alpUSE5LNzRyNmxDQ1Z4eDN5dTFCN1U5UG80VlRrY3NsVmIxL3FtV3V4
+ OFhXY040eXZrVHFsTCtHeHB5Sm45CjlaWmZmWEpjNk9oNlRtT2ZiS0d2TXV1djVhclNJQTNK
+ SEZMZjlhTHZadEExaXNKVXI3cFM5YXBnOXVUVUdVcDcKd2ZWMFdUNlQzZUczbXRVVTJ1cDVK
+ VjQ4NTBMMDVqSFM2dVdpZS9ZK3lmSk9iaXlyeE4vNlpxVzVHb25oTEJxLwptc3pjVjV2QlQz
+ QkRWZTNSdkY2WGRNOU9oUG4xK1k4MXg1NCt2UTExM044aUx3RjdHR2ExNFp5SVZBTlpEMEkw
+ CkhqUnZhMmsvUnFJUlR6S3l1UEg1cGtsY0tIVlBFRk1tT3pNVCtGT294Tmp2Uys3K3dHMktN
+ RFlFbUhQcjFQSkIKWlNaZUh6SzE5dGZhbFBNcHBGeGkrc3lZTGFnTjBtQjdKSFF3WTdjclV1
+ T0RoeWNxNjBZVnoxdGFFeWd1M1l2MgoyL0kxRUNHSHZLSEc2d2M5MG80M0MvZWxIRUNYbkVo
+ N3RLcGxEY3BJQytPQ21NeEtIaFI0NitYY1p2Z3c0RGdiCjdjYTgzZVFSM0NHODlMdlFwVzJM
+ TEtFRUJEajdoWmhrTGJra1BSWm0zdzhKWTQ0YXc4VnRneFdkblNFTUNMeEwKSU9OaDZ1Wjcv
+ L0RZVnRjSWFNSllrZWJhWnRHZENwMElnVVpiMjQvVmR2WkNZYk82MkhrLzNWbzFuWHdIVUVz
+ Mwo2RC92MWJUMFJaRmk2OUxnc0NjT2N4NGdZTGtDRFFST1pxejZBUkFBb3F3NmtrQmhXeU0x
+ ZnZnYW1BVmplWjZuCktFZm5SV2JrQzk0TDFFc0pMdXAzV2IyWDBBQk5PSFNrYlNENHBBdUMy
+ dEtGL0VHQnQ1Q1A3UWRWS1JHY1F6QWQKNmIyYzFJZHk5Ukx3Nnc0Z2krbm4vZDFQbTFra1lo
+ a1NpNXpXYUlnMG01UlFVaytFbDh6a2Y1dGNFLzFOMFo1TwpLMkpoandGdTViWDBhMGw0Y0ZH
+ V1ZRRWNpVk1ES1J0eE1qRXRrM1N4RmFsbTZaZFEycHAyODIyY2xucTR6WjltCld1MWQyd2F4
+ aXorYjVJYTR3ZURZYTduNDFVUmNCRVViSkFnbmljSmtKdENUd3lJeElXMktuVnlPcmp2a1F6
+ SUIKdmFQMEZkUDJ2dlpvUE1kbENJek9sSWtQTGd4RTBJV3VlVFhlQkpoTnMwMXBiOGJMcW1U
+ SU1sdTRMdkJFTEEvdgplaWFqajVzOHk1NDJIL2FIc2ZCZjRNUVVoSHhPL0JaVjdoMDZLU1Vm
+ SWFZN09nQWdLdUdOQjNVaWFJVVM1K2E5CmduRU9RTER4S1J5L2E3UTF2OVMrTnZ4KzdqOGlI
+ M2prUUpoeFQ2WkJoWkdSeDBna0gzVCtGMG5ORG01TmFKVXMKYXN3Z0pycUZaa1VHZDJNcm0x
+ cW5Ld1hpQXQ4U0ljRU5kcTMzUjBLS0tSQzgwWGd3ajhKbjMwdlhMU0crTk8xRwpIMFVNY0F4
+ TXd5L3B2azZMVTVKR2paUjczSjVVTFZoSDRNTGJEZ2dEM21QYWlHOCtmb3RUckpVUHFxaGc5
+ aHlVCkVQcFlHN3NxdDc0WG43OStDRVpjakxIenlsNnZBRkUyVzBreGxMdFF0VVpVSE8zNmFm
+ RnY4cUdwTzNacVB2akIKVXVhdFhGNnR2VVFDd2YzSDZYTUFFUUVBQVlrQ0h3UVlBUW9BQ1FV
+ Q1RtYXMrZ0liREFBS0NSQUZMelp3R05YRAoyRC9YRC8wZGRNLzRhaTFiK1RsMWp6bkthalgz
+ a0crTWVFWWVJNGY0MHZjbzNyT0xyblJHRk9jYnl5ZlZGNjlNCktlcGllNE93b0kxamNUVTBB
+ RGVjbmJXbkROSHByMFNjenhCTXJvM2Juckxoc212anVuVFlJdnNzQlp0QjRhVkoKanVMSUxQ
+ VWxuaEZxYTdmYlZxMFpRamJpVi9ydDJqQkVOZG05cGJKWjZHam5wWUljQWJQQ0NhL2ZmTDQv
+ U1FSUwpZSFhvaEdpaVM0eTVqQlRtSzVsdGZld0xPdzAyZmtleEgrSUpGcnJHQlhEU2c2bjJT
+ Z3hubisrTkYzNGZYY205CnBpYXczbUtzSUNtKzBoZE5oNGFmR1o2SVdWOFBHMnRlb29WRHA0
+ ZFlpaCsreFgvWFM4ekJDYzFPOXc0bnpsUDIKZ0t6bHFTV2JoaVdwaWZSSkJGYTRXdEFlSlRk
+ WFlkMzdqL0JJNFJXV2hueXc3YUFQTkdqMzN5dEdITlVmNlJvMgovanRqNHRGMXkvUUZYcWpK
+ Ry93R2pwZHRSZmJ0VWpxTEhJc3ZmUE5OSnEvOTU4cDc0bmRBQ2lkbFdTSHpqK09wCjI2S3Bi
+ Rm5td05PMHBzaVVzbmh2SEZ3UE8vdkFibDNSc1I1KzBSbytodnMyY0VtUXV2OXIvYkRsQ2Zw
+ enAydDMKY0srcmh4VXFpc094OERaZnoxQm5rYW9DUkZidnZ2ays3TC9mb21QbnRHUGtxSmNp
+ WUU4VEdIa1p3MWhPa3UrNApPb00yR0I1bkVEbGorMlRGL2pMUStFaXBYOVBrUEpZdnhmUmxD
+ NmRLOFBLS2ZYOUtkZm1BSWNnSGZuVjFqU24rCjh5SDJkakJQdEtpcVcwSjY5YUlzeXg3aVYv
+ MDNwYVBDakpoN1hxOXZBenlkTjVVL1VBPT0KPTZQL2IKLS0tLS1FTkQgUEdQIFBVQkxJQyBL
+ RVkgQkxPQ0stLS0tLQo=
+Organization: Canonical
+Message-ID: <a837dce7-f28b-6975-2a48-a763451da8a6@canonical.com>
+Date:   Mon, 7 Jun 2021 23:26:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20210608015158.3848878-1-sunnanyong@huawei.com>
- <CAHC9VhTqDjN1VwakrYZznaMVTyqkEKcYLo=bPtHsOXugS_mexQ@mail.gmail.com> <CAD-N9QXFbO_FVBTHN6k+ZPw7GF6bKp+f4wK_LfMQLRsdML=XcA@mail.gmail.com>
-In-Reply-To: <CAD-N9QXFbO_FVBTHN6k+ZPw7GF6bKp+f4wK_LfMQLRsdML=XcA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 7 Jun 2021 22:56:57 -0400
-Message-ID: <CAHC9VhQZVOmy7n14nTSRGHzwN-y=E_JTUP+NpRCgD8rJN5sOGA@mail.gmail.com>
-Subject: Re: [PATCH] net: ipv4: fix memory leak in netlbl_cipsov4_add_std
-To:     Dongliang Mu <mudongliangabcd@gmail.com>
-Cc:     Nanyong Sun <sunnanyong@huawei.com>, davem@davemloft.net,
-        yoshfuji@linux-ipv6.org, dsahern@kernel.org,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210607063022.329320-1-chenxiaosong2@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 7, 2021 at 10:31 PM Dongliang Mu <mudongliangabcd@gmail.com> wrote:
-> On Tue, Jun 8, 2021 at 9:57 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Mon, Jun 7, 2021 at 9:19 PM Nanyong Sun <sunnanyong@huawei.com> wrote:
-> > >
-> > > Reported by syzkaller:
-> > > BUG: memory leak
-> > > unreferenced object 0xffff888105df7000 (size 64):
-> > > comm "syz-executor842", pid 360, jiffies 4294824824 (age 22.546s)
-> > > hex dump (first 32 bytes):
-> > > 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-> > > 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
-> > > backtrace:
-> > > [<00000000e67ed558>] kmalloc include/linux/slab.h:590 [inline]
-> > > [<00000000e67ed558>] kzalloc include/linux/slab.h:720 [inline]
-> > > [<00000000e67ed558>] netlbl_cipsov4_add_std net/netlabel/netlabel_cipso_v4.c:145 [inline]
-> > > [<00000000e67ed558>] netlbl_cipsov4_add+0x390/0x2340 net/netlabel/netlabel_cipso_v4.c:416
-> > > [<0000000006040154>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320 net/netlink/genetlink.c:739
-> > > [<00000000204d7a1c>] genl_family_rcv_msg net/netlink/genetlink.c:783 [inline]
-> > > [<00000000204d7a1c>] genl_rcv_msg+0x2bf/0x4f0 net/netlink/genetlink.c:800
-> > > [<00000000c0d6a995>] netlink_rcv_skb+0x134/0x3d0 net/netlink/af_netlink.c:2504
-> > > [<00000000d78b9d2c>] genl_rcv+0x24/0x40 net/netlink/genetlink.c:811
-> > > [<000000009733081b>] netlink_unicast_kernel net/netlink/af_netlink.c:1314 [inline]
-> > > [<000000009733081b>] netlink_unicast+0x4a0/0x6a0 net/netlink/af_netlink.c:1340
-> > > [<00000000d5fd43b8>] netlink_sendmsg+0x789/0xc70 net/netlink/af_netlink.c:1929
-> > > [<000000000a2d1e40>] sock_sendmsg_nosec net/socket.c:654 [inline]
-> > > [<000000000a2d1e40>] sock_sendmsg+0x139/0x170 net/socket.c:674
-> > > [<00000000321d1969>] ____sys_sendmsg+0x658/0x7d0 net/socket.c:2350
-> > > [<00000000964e16bc>] ___sys_sendmsg+0xf8/0x170 net/socket.c:2404
-> > > [<000000001615e288>] __sys_sendmsg+0xd3/0x190 net/socket.c:2433
-> > > [<000000004ee8b6a5>] do_syscall_64+0x37/0x90 arch/x86/entry/common.c:47
-> > > [<00000000171c7cee>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > >
-> > > The memory of doi_def->map.std pointing is allocated in
-> > > netlbl_cipsov4_add_std, but no place has freed it. It should be
-> > > freed in cipso_v4_doi_free which frees the cipso DOI resource.
-> > >
-> > > Fixes: 96cb8e3313c7a ("[NetLabel]: CIPSOv4 and Unlabeled packet integration")
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Signed-off-by: Nanyong Sun <sunnanyong@huawei.com>
-> > > ---
-> > >  net/ipv4/cipso_ipv4.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> >
-> > Nice catch, thanks for fixing this.
-> >
-> > Acked-by: Paul Moore <paul@paul-moore.com>
-> >
-> > > diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> > > index d6e3a92841e3..099259fc826a 100644
-> > > --- a/net/ipv4/cipso_ipv4.c
-> > > +++ b/net/ipv4/cipso_ipv4.c
-> > > @@ -471,6 +471,7 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
-> > >                 kfree(doi_def->map.std->lvl.local);
-> > >                 kfree(doi_def->map.std->cat.cipso);
-> > >                 kfree(doi_def->map.std->cat.local);
-> > > +               kfree(doi_def->map.std);
-> > >                 break;
-> > >         }
-> > >         kfree(doi_def);
->
-> Hi kernel developers,
->
-> I doubt this patch may cause invalid free in other functions where
-> map.std is not allocated or initialized, such as
-> netlbl_cipsov4_add_local, netlbl_cipsov4_add_pass.
+On 6/6/21 11:30 PM, ChenXiaoSong wrote:
+> Fix gcc W=1 warning:
+> 
+> security/apparmor/apparmorfs.c:2125: warning: Function parameter or member 'p' not described in '__next_profile'
+> 
+> Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
 
-It isn't perfectly clear to me if you are implying there is a problem
-with the proposed patch or not, so I thought it might help to try and
-add some clarity.
+Thanks I have pulled this into my tree
 
-The patch above frees the cipso_v4_doi->map.std field, which is only
-valid when the cipso_v4_doi->type field is equal to
-CIPSO_V4_MAP_TRANS.  This is why the cipso_v4_doi_free() function
-checks the type field before freeing the cipso_v4_doi->map related
-fields, and why the proposed patch places the new kfree() inside that
-conditional code block.
+> ---
+>  security/apparmor/apparmorfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+> index 5bb9b9910aee..4720b8b9239c 100644
+> --- a/security/apparmor/apparmorfs.c
+> +++ b/security/apparmor/apparmorfs.c
+> @@ -2114,7 +2114,7 @@ static struct aa_profile *__first_profile(struct aa_ns *root,
+>  
+>  /**
+>   * __next_profile - step to the next profile in a profile tree
+> - * @profile: current profile in tree (NOT NULL)
+> + * @p: current profile in tree (NOT NULL)
+>   *
+>   * Perform a depth first traversal on the profile tree in a namespace
+>   *
+> 
 
-If we look at netlalbel_cipsov4_add_pass() we see that the first thing
-it does after allocating a cipso_v4_doi struct is to set the type
-field to CIPSO_V4_MAP_PASS.  Any calls to cipso_v4_doi_free after this
-point will not end up calling the proposed kfree() addition due to the
-cipso_v4_doi->type check.
-
-We see something very similar with netlbl_cipsov4_add_local(),
-although in this case the type field is set to CIPSO_V4_MAP_LOCAL.
-This type value will also not trigger the proposed kfree().
-
-If you are aware of any other potential issues with this patch please
-do let us know, but from what I can see, the two concerns you
-presented here are not problems with the current or proposed code.
-
--- 
-paul moore
-www.paul-moore.com
