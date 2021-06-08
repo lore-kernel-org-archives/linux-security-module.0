@@ -2,277 +2,202 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D866C48BE5
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 07:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46432C47082
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 11:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51A7F61285
-	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 07:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 215C46128A
+	for <linux-security-module@archiver.kernel.org>; Tue,  8 Jun 2021 11:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbhFHHa0 (ORCPT
+        id S231642AbhFHLEB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 8 Jun 2021 03:30:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229518AbhFHHaU (ORCPT
+        Tue, 8 Jun 2021 07:04:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:30608 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231488AbhFHLEA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 8 Jun 2021 03:30:20 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B3D5C61073;
-        Tue,  8 Jun 2021 07:28:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623137307;
-        bh=O/zMXaiejHSPpLDrpWoLj5vApKw6co+rXXxeAdTs0fQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nLlyZlZD273F402k83SpAE2/yTCnSoxOmIHbl9CNTcXkiOIJIwbU4EIxQMSt2a4ml
-         qYAZ7+GRyFby1j7J/b6Qdg0ngb9aWUorA3LUTEzB/o7nAxtpl99tYE56SX6c/L7cnq
-         JkQNkQc+kckZEP6v8MtI7gBXthqAyHNA2ro1bRHL944hNLYqFQNYNtkG14YdEsbCz8
-         WiPAfikei2ZlyE9DmtO+G5LcsEimR8Zt3bf/sh+4dSJxaQew1IHT6LAPnPOy5G3d1V
-         9RKb6ljsgqP02St+w9CxWqyTHfLgCquU2TvIEjFpSrPZM71r6hel2yJmUWm39106ZP
-         ITZzuhEQ/FbwA==
-Date:   Tue, 8 Jun 2021 09:28:19 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     "=?UTF-8?B?TsOtY29sYXM=?= F. R. A. Prado" <n@nfraprado.net>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        coresight@lists.linaro.org, devicetree@vger.kernel.org,
-        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 00/34] docs: avoid using ReST :doc:`foo` tag
-Message-ID: <20210608092819.3f4191b3@coco.lan>
-In-Reply-To: <20210608003458.kwhbn6mraekcutlt@notapiano>
-References: <cover.1622898327.git.mchehab+huawei@kernel.org>
-        <20210605151109.axm3wzbcstsyxczp@notapiano>
-        <20210605210836.540577d4@coco.lan>
-        <20210606225225.fz4dsyz6im4bqena@notapiano>
-        <20210607093422.0a369909@coco.lan>
-        <20210608003458.kwhbn6mraekcutlt@notapiano>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+        Tue, 8 Jun 2021 07:04:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1623150127;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LH+kGGXvul4/VtBvp8swcElDLFMoCOqrADXXWgo8nOs=;
+        b=gVeHG8XXgfKJ1ayNAf2VUgL4KsZUCHxD8a8RZLyzNYraPeFXq9S/AxnoXOkSrto6EfvCdc
+        SikPkf5xvKlx6L3tbj7JLMgeI1d7crkOmcrDD+trVBczhgpEkp9yFttubdriC634jc6zsr
+        GH00Qdc0i8lHlOtCQy7kM6GMGglPnnE=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-311-CSA9XcGhOiqcqCIEVesBJA-1; Tue, 08 Jun 2021 07:02:06 -0400
+X-MC-Unique: CSA9XcGhOiqcqCIEVesBJA-1
+Received: by mail-yb1-f198.google.com with SMTP id g9-20020a25ae490000b029052f9e5b7d3fso26197589ybe.4
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Jun 2021 04:02:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LH+kGGXvul4/VtBvp8swcElDLFMoCOqrADXXWgo8nOs=;
+        b=cRfokiR3iAL5mmtBhaxA0bhDIpSS1MujZU86u1sNRNvgiOCpMLOh7+bbSKnJhM00+Q
+         ZL3bxVv1sHIizZPHlB9U5q8Gwmz223in3fvy30lovS0dZKvk4OAWMZVhBv+MEiU4A0cl
+         5OS70fmaMXvCcoShowpduQ+wi0pHKI35lFgU3NDXHNnl3GLEzcGc3T40+v2VYCI0a+CK
+         qxQ7I9JAetRaTL8Kvoe2O93srOKy9xeTFBBU/1pdb81rLiV6SmGo2TUHqwfi29SQyOlB
+         uzSAoxlab1lG54sVpDDSQZ/3VU39W27owfel9/dlI15B0fqEhLmghRP4di2rcIMBhK7L
+         +Q/w==
+X-Gm-Message-State: AOAM531fbKRTmMXxgh1ImarE12vqP4x8qWoFpkdTXBZpyCNk3vJ5pDiV
+        i8D35Vbq07MiVdwwMAmPTp/dlXtOT6T4xdvQx21A0Laf+jfAzq/4xuhWhS7JJa9S4ZRzBSM3n69
+        BaExYpthEsVONj0Iui19v58VnG1gZeXiQEDpN4NWqAlp9VUAk8HBs
+X-Received: by 2002:a25:a289:: with SMTP id c9mr32424321ybi.26.1623150125802;
+        Tue, 08 Jun 2021 04:02:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwoJTMJYLIo5JLaPCKlMaY1uD307CdnL8W3DmtqP8Cl7oP8zg5QoWPG6RgZg/bw1HmnyqkVBMTehY7r2dHLJUY=
+X-Received: by 2002:a25:a289:: with SMTP id c9mr32424289ybi.26.1623150125563;
+ Tue, 08 Jun 2021 04:02:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20210517092006.803332-1-omosnace@redhat.com> <CAHC9VhTasra0tU=bKwVqAwLRYaC+hYakirRz0Mn5jbVMuDkwrA@mail.gmail.com>
+ <CAFqZXNsh9njbFUNBugidbdiNqD3QbKzsw=KgNKSmW5hv-fD6tA@mail.gmail.com> <CAHC9VhQj_FvBqSGE+eZtbzvDoRAEbbo-6t_2E6MVuyiGA9N8Hw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQj_FvBqSGE+eZtbzvDoRAEbbo-6t_2E6MVuyiGA9N8Hw@mail.gmail.com>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 8 Jun 2021 13:01:54 +0200
+Message-ID: <CAFqZXNsVFv2yh5cXwWYXscYTAuoCKk4H-JbPAYzDbwKUzSDP3A@mail.gmail.com>
+Subject: Re: [PATCH v2] lockdown,selinux: avoid bogus SELinux lockdown
+ permission checks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, network dev <netdev@vger.kernel.org>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Em Mon, 7 Jun 2021 21:34:58 -0300
-N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
+On Thu, Jun 3, 2021 at 7:46 PM Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, Jun 2, 2021 at 9:40 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > On Fri, May 28, 2021 at 3:37 AM Paul Moore <paul@paul-moore.com> wrote:
+[...]
+> > > I know you and Casey went back and forth on this in v1, but I agree
+> > > with Casey that having two LSM hooks here is a mistake.  I know it
+> > > makes backports hard, but spoiler alert: maintaining complex software
+> > > over any non-trivial period of time is hard, reeeeally hard sometimes
+> > > ;)
+> >
+> > Do you mean having two slots in lsm_hook_defs.h or also having two
+> > security_*() functions? (It's not clear to me if you're just
+> > reiterating disagreement with v1 or if you dislike the simplified v2
+> > as well.)
+>
+> To be clear I don't think there should be two functions for this, just
+> make whatever changes are necessary to the existing
+> security_locked_down() LSM hook.  Yes, the backport is hard.  Yes, it
+> will touch a lot of code.  Yes, those are lame excuses to not do the
+> right thing.
 
-> Hi Mauro,
->=20
-> On Mon, Jun 07, 2021 at 09:34:22AM +0200, Mauro Carvalho Chehab wrote:
-> > Em Sun, 6 Jun 2021 19:52:25 -0300
-> > N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
-> >  =20
-> > > On Sat, Jun 05, 2021 at 09:08:36PM +0200, Mauro Carvalho Chehab wrote=
-: =20
-> > > > Em Sat, 5 Jun 2021 12:11:09 -0300
-> > > > N=C3=ADcolas F. R. A. Prado <n@nfraprado.net> escreveu:
-> > > >    =20
-> > > > > Hi Mauro,
-> > > > >=20
-> > > > > On Sat, Jun 05, 2021 at 03:17:59PM +0200, Mauro Carvalho Chehab w=
-rote:   =20
-> > > > > > As discussed at:
-> > > > > > 	https://lore.kernel.org/linux-doc/871r9k6rmy.fsf@meer.lwn.net/
-> > > > > >=20
-> > > > > > It is better to avoid using :doc:`foo` to refer to Documentatio=
-n/foo.rst, as the
-> > > > > > automarkup.py extension should handle it automatically, on most=
- cases.
-> > > > > >=20
-> > > > > > There are a couple of exceptions to this rule:
-> > > > > >=20
-> > > > > > 1. when :doc:  tag is used to point to a kernel-doc DOC: markup;
-> > > > > > 2. when it is used with a named tag, e. g. :doc:`some name <foo=
->`;
-> > > > > >=20
-> > > > > > It should also be noticed that automarkup.py has currently an i=
-ssue:
-> > > > > > if one use a markup like:
-> > > > > >=20
-> > > > > > 	Documentation/dev-tools/kunit/api/test.rst
-> > > > > > 	  - documents all of the standard testing API excluding mocking
-> > > > > > 	    or mocking related features.
-> > > > > >=20
-> > > > > > or, even:
-> > > > > >=20
-> > > > > > 	Documentation/dev-tools/kunit/api/test.rst
-> > > > > > 	    documents all of the standard testing API excluding mocking
-> > > > > > 	    or mocking related features.
-> > > > > > =09
-> > > > > > The automarkup.py will simply ignore it. Not sure why. This pat=
-ch series
-> > > > > > avoid the above patterns (which is present only on 4 files), bu=
-t it would be
-> > > > > > nice to have a followup patch fixing the issue at automarkup.py=
-.     =20
-> > > > >=20
-> > > > > What I think is happening here is that we're using rST's syntax f=
-or definition
-> > > > > lists [1]. automarkup.py ignores literal nodes, and perhaps a def=
-inition is
-> > > > > considered a literal by Sphinx. Adding a blank line after the Doc=
-umentation/...
-> > > > > or removing the additional indentation makes it work, like you di=
-d in your
-> > > > > 2nd and 3rd patch, since then it's not a definition anymore, alth=
-ough then the
-> > > > > visual output is different as well.   =20
-> > > >=20
-> > > > A literal has a different output. I think that this is not the case=
-, but I=20
-> > > > didn't check the python code from docutils/Sphinx.   =20
-> > >=20
-> > > Okay, I went in deeper to understand the issue and indeed it wasn't w=
-hat I
-> > > thought. The reason definitions are ignored by automarkup.py is becau=
-se the main
-> > > loop iterates only over nodes that are of type paragraph:
-> > >=20
-> > >     for para in doctree.traverse(nodes.paragraph):
-> > >         for node in para.traverse(nodes.Text):
-> > >             if not isinstance(node.parent, nodes.literal):
-> > >                 node.parent.replace(node, markup_refs(name, app, node=
-))
-> > >=20
-> > > And inspecting the HTML output from your example, the definition name=
- is inside
-> > > a <dt> tag, and it doesn't have a <p> inside. So in summary, automark=
-up.py will
-> > > only work on elements which are inside a <p> in the output. =20
-> >=20
-> >=20
-> > Yeah, that's what I was suspecting, based on the comments.
-> >=20
-> > Maybe something similar to the above could be done also for some
-> > non-paragraph data. By looking at:
-> >=20
-> > 	https://docutils.sourceforge.io/docs/ref/doctree.html
-> >=20
-> > It says that the body elements are:
-> >=20
-> > 	admonition, attention, block_quote, bullet_list, caution, citation,=20
-> > 	comment, compound, container, danger, definition_list, doctest_block,=
-=20
-> > 	enumerated_list, error, field_list, figure, footnote, hint, image,=20
-> > 	important, line_block, literal_block, note, option_list, paragraph,=20
-> > 	pending, raw, rubric, substitution_definition, system_message,=20
-> > 	table, target, tip, warning =20
->=20
-> Ok, I went through each one by searching the term on [1] and inspecting t=
-he
-> element to see if it contained a <p> or not. The vast majority did. These=
- are
-> the ones I didn't find there or didn't make sense:
->=20
-> 	comment
-> 	container
-> 	image
-> 	pending
-> 	raw
-> 	substitution_definition
-> 	system_message
-> 	target
->=20
-> We can safely ignore them. And these are the ones that matter and don't h=
-ave
-> paragraphs:
->=20
-> 	1. literal_block
-> 	2. doctest_block
-> 	3. definition_list
-> 	4. field_list
-> 	5. option_list
-> 	6. line_block
->=20
-> 1 and 2 are literals, so we don't care about them.
->=20
-> 3 is the one you noticed the issue with. It's worth mentioning that the
-> definition term doesn't have a paragraph, but its definition does (as can=
- be
-> checked by inspecting [2]).
->=20
-> 4 is basically the same as 3, the rst syntax is different but the output =
-is the
-> same. That said, I believe we only use those to set options at the top of=
- the
-> file, like in translations, and I can't see automarkup being useful in th=
-ere.
->=20
-> 5 is similar to 3 and 4, but the term is formatted using <kbd>, so it's l=
-ike a
-> literal and therefore not relevant.
->=20
-> 6 is useful just to preserve indentation, and I'm pretty sure we don't us=
-e it in
-> the docs.
->=20
-> So in the end, I think the only contenders to be added to automarkup are
-> definition lists, and even then I still think we should just substitute t=
-hose
-> definition lists with alternatives like you did in your patches. Personal=
-ly I
-> don't see much gain in using definitions instead of a simple paragraph. B=
-ut if
-> you really think it's an improvement in some way, it could probably be ad=
-ded to
-> automarkup in the way you described.
+OK, I guess I'll just go with the bigger patch.
 
-Thank you for checking this!
+> > > > The callers migrated to the new hook, passing NULL as cred:
+> > > > 1. arch/powerpc/xmon/xmon.c
+> > > >      Here the hook seems to be called from non-task context and is only
+> > > >      used for redacting some sensitive values from output sent to
+> > > >      userspace.
+> > >
+> > > This definitely sounds like kernel_t based on the description above.
+> >
+> > Here I'm a little concerned that the hook might be called from some
+> > unusual interrupt, which is not masked by spin_lock_irqsave()... We
+> > ran into this with PMI (Platform Management Interrupt) before, see
+> > commit 5ae5fbd21079 ("powerpc/perf: Fix handling of privilege level
+> > checks in perf interrupt context"). While I can't see anything that
+> > would suggest something like this happening here, the whole thing is
+> > so foreign to me that I'm wary of making assumptions :)
+> >
+> > @Michael/PPC devs, can you confirm to us that xmon_is_locked_down() is
+> > only called from normal syscall/interrupt context (as opposed to
+> > something tricky like PMI)?
+>
+> You did submit the code change so I assumed you weren't concerned
+> about it :)  If it is a bad hook placement that is something else
+> entirely.
 
-Kernel docs use a lot definition lists. At the initial versions, it was
-equivalent to:
+What I submitted effectively avoided the SELinux hook to be called, so
+I didn't bother checking deeper in what context those hook calls would
+occur.
 
-	**Something to be written with emphasis**
+> Hopefully we'll get some guidance from the PPC folks.
+>
+> > > > 4. net/xfrm/xfrm_user.c:copy_to_user_*()
+> > > >      Here a cryptographic secret is redacted based on the value returned
+> > > >      from the hook. There are two possible actions that may lead here:
+> > > >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+> > > >         task context is relevant, since the dumped data is sent back to
+> > > >         the current task.
+> > >
+> > > If the task context is relevant we should use it.
+> >
+> > Yes, but as I said it would create an asymmetry with case b), which
+> > I'll expand on below...
+> >
+> > > >      b) When deleting an SA via XFRM_MSG_DELSA, the dumped SAs are
+> > > >         broadcasted to tasks subscribed to XFRM events - here the
+> > > >         SELinux check is not meningful as the current task's creds do
+> > > >         not represent the tasks that could potentially see the secret.
+> > >
+> > > This looks very similar to the BPF hook discussed above, I believe my
+> > > comments above apply here as well.
+> >
+> > Using the current task is just logically wrong in this case. The
+> > current task here is just simply deleting an SA that happens to have
+> > some secret value in it. When deleting an SA, a notification is sent
+> > to a group of subscribers (some group of other tasks), which includes
+> > a dump of the secret value. The current task isn't doing any attempt
+> > to breach lockdown, it's just deleting an SA.
+> >
+> > It also makes it really awkward to make policy decisions around this.
+> > Suppose that domains A, B, and C need to be able to add/delete SAs and
+> > domains D, E, and F need to receive notifications about changes in
+> > SAs. Then if, say, domain E actually needs to see the secret values in
+> > the notifications, you must grant the confidentiality permission to
+> > all of A, B, C to keep things working. And now you have opened up the
+> > door for A, B, C to do other lockdown-confidentiality stuff, even
+> > though these domains themselves actually don't request/need any
+> > confidential data from the kernel. That's just not logical and you may
+> > actually end up (slightly) worse security-wise than if you just
+> > skipped checking for XFRM secrets altogether, because you need to
+> > allow confidentiality to domains for which it may be excessive.
+>
+> It sounds an awful lot like the lockdown hook is in the wrong spot.
+> It sounds like it would be a lot better to relocate the hook than
+> remove it.
 
-	  Some description
+I don't see how you would solve this by moving the hook. Where do you
+want to relocate it? The main obstacle is that the message containing
+the SA dump is sent to consumers via a simple netlink broadcast, which
+doesn't provide a facility to redact the SA secret on a per-consumer
+basis. I can't see any way to make the checks meaningful for SELinux
+without a major overhaul of the broadcast logic.
 
-Sphinx later changed the look-and-feel for the term, on html output, but
-the thing is that:
+IMO, switching the subject to kernel_t either in both cases or at
+least in case b) is the best compromise between usability, security,
+and developers' time / code complexity. I don't think controlling
+which of the CAP_NET_ADMIN domains can/can't see/leak SA secrets is
+worth obsessing about.
 
-	Something to be written with emphasis
-	   Some description
+--
+Ondrej Mosnacek
+Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
-looks a lot better when read as a text file.
-
-Also, on some cases, the first notation doesn't work. The definition-list
-was the only way I know that would allow to apply an emphasis to a literal
-block.
-
-We can avoid using Documentation/foo on description lists: the current 4=20
-cases where doc:`foo` are already addressed in this series, and the output
-is acceptable.
-
-Yet, I have a couple of concerns:
-
-1. It might have some unknown places where a description list is used
-   for Documentation/foo;
-2. It is not trivial to identify if someone add Documentation/foo in
-   the future;
-3. I suspect that there are several places where functions and structs
-   appear at the definition lists.
-
-(1) can probably be checked with a multi-line grep. So, not a big
-    problem;
-
-(2) is something that would require someone to verify from time to
-    time;
-
-but (3) are harder to check and seems to be a valid use-case.
-
-Due to (3), I think we should let automarkup to parse non-literal
-terms on description lists. At very least it should emit a warning when
-it won't be doing auto-conversions for known patterns at definition
-lists (if doing that would generate false-positives).
-
-Thanks,
-Mauro
