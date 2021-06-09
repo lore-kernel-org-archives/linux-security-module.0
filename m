@@ -1,72 +1,77 @@
 Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=BAYES_50,DKIMWL_BL,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A474BC48BCF
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jun 2021 12:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02527C48BCF
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jun 2021 13:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89BB4613BC
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jun 2021 12:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D77BB613AC
+	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jun 2021 13:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234090AbhFIMqJ (ORCPT
+        id S231477AbhFINJR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Jun 2021 08:46:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53084 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229588AbhFIMqJ (ORCPT
+        Wed, 9 Jun 2021 09:09:17 -0400
+Received: from flippie-beckerswealth-sa.xyz ([62.173.147.2]:55652 "EHLO
+        host.flippie-beckerswealth-sa.xyz" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235815AbhFINJN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Jun 2021 08:46:09 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 266616128A;
-        Wed,  9 Jun 2021 12:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623242654;
-        bh=We1DBBAALTBp1bajPkqkYTVL2X6KZ1QbIzNi3rCtTOo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b2JSYgx5ai8OmKZ3iST6pbh269okTzcQCA2nj4UsFejbeMS+2lSeE6da2FW5/iXe2
-         RSXi+KW8qE+1hT9Gi1H0YVfCdAfEY6GpBkDyu6PX8zPIBdXL38P9fyVLifiWvsVMRe
-         xUNzmAE43WmPzqedAsGp2DZql3yiJPj3FO5+yMEiZhqqkg+tk5JcnkHWuWdGr42UrV
-         s4nJYWAU/dxrv8svsYRLjp0OfZ7t9Kwv8odPwx6SN8wL5mH8MbkPtBuGC+uMfxPQXh
-         UolVHFSs9JJqsj7ocpYZoqGAp0CqVKMOdBgltCaf5dpCoYfIrLSmQ+CAb+w0vz/qgF
-         6Apa06G9BgpLg==
-Date:   Wed, 9 Jun 2021 15:44:12 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] Add support for ECDSA-signed kernel modules
-Message-ID: <20210609124412.engcrbo3fezuzyoq@kernel.org>
-References: <20210602143537.545132-1-stefanb@linux.ibm.com>
- <20210603064738.pwfq3n7erzmncdmw@kernel.org>
- <8b79651b-1fe4-48c0-3498-529344ac6243@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b79651b-1fe4-48c0-3498-529344ac6243@linux.ibm.com>
+        Wed, 9 Jun 2021 09:09:13 -0400
+Received: from flippie-beckerswealth-sa.xyz (ec2-3-131-99-163.us-east-2.compute.amazonaws.com [3.131.99.163])
+        by host.flippie-beckerswealth-sa.xyz (Postfix) with ESMTPA id 78D3A3120CE0
+        for <linux-security-module@vger.kernel.org>; Wed,  9 Jun 2021 15:10:29 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerswealth-sa.xyz 78D3A3120CE0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippie-beckerswealth-sa.xyz; s=default; t=1623240631;
+        bh=h0ivQLrZuUWuyEKz/TWb+FP9AASpHhVqOsJtRcwKQV4=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=EFxyhQKm58LzBgJRnlgCCYMA0EAtguJ8sVWauw2iHCJgBRl9Dvo/ZJDVLC6j/5BPm
+         70028fIJvT+tFwcBTOMV4veq6g3MTHQdg7zYLJKKObxWfWSd9Z/BD3Q+c+mgQ8mm3p
+         PbelnrlCM8HbrGQ0LkQxgEjzXBVodlFg9Uu1+NW4=
+DKIM-Filter: OpenDKIM Filter v2.11.0 host.flippie-beckerswealth-sa.xyz 78D3A3120CE0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=flippie-beckerswealth-sa.xyz; s=default; t=1623240630;
+        bh=h0ivQLrZuUWuyEKz/TWb+FP9AASpHhVqOsJtRcwKQV4=;
+        h=Reply-To:From:To:Subject:Date:From;
+        b=in6c27jvTGY/YJaXy5cF5PEyZD9/ZKWL+h+ZSenyEm4UAfDezDzQdFgCiG/G22aU1
+         X2C6R24EeITWxSj/xsUiwwGGdT3KGXKpI+HGWSTgZDZHyxfHcdGkwSG/cxBe1pGusS
+         VqOBE0o9UMQJaxJngxc+3vUKTwAUxNEe0GPT30P8=
+Reply-To: jmasuku40@flippiebeckerwealthservices.com
+From:   Jotham Masuku <jmasuku40@flippie-beckerswealth-sa.xyz>
+To:     linux-security-module@vger.kernel.org
+Subject: Proposal
+Date:   09 Jun 2021 12:10:29 +0000
+Message-ID: <20210609121029.78D59868E69488FB@flippie-beckerswealth-sa.xyz>
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Jun 03, 2021 at 08:32:59AM -0400, Stefan Berger wrote:
-> 
-> On 6/3/21 2:47 AM, Jarkko Sakkinen wrote:
-> > 
-> > > -- 
-> > > 2.29.2
-> > > 
-> > > 
-> > Please instead send a fix.
-> 
-> We have a Fixes tag in 1/2, so we want this to propagate to older kernels
-> and need the fix in 1/2 for that reason.
-> 
->    Stefan
+Hello there,
 
-So please do an additional fix and send it.
+I hope this message finds you in good spirits especially during=20
+this challenging time of coronavirus pandemic. I hope you and=20
+your family are well and keeping safe. Anyway, I am Jotham=20
+Masuku, a broker working with Flippiebecker Wealth. I got your=20
+contact (along with few other contacts) through an online=20
+business directory and I thought I should contact you to see if=20
+you are interested in this opportunity. I am contacting you=20
+because one of my high profile clients is interested in investing=20
+abroad and has asked me to look for individuals and companies=20
+with interesting business ideas and projects that he can invest=20
+in. He wants to invest a substantial amount of asset abroad.
 
-/Jarkko
+Please kindly respond back to this email if you are interested in=20
+this opportunity. Once I receive your response, I will give you=20
+more details and we can plan a strategy that will be beneficial=20
+to all parties.
+
+Best regards
+
+J Masuku
+Flippiebecker Wealth
