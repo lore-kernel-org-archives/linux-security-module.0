@@ -3,106 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6607EC48BE0
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 13:00:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012EAC47094
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 14:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49E53613F1
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 13:00:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9B41613FE
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 14:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230517AbhFJNCR (ORCPT
+        id S231336AbhFJOWP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 09:02:17 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:1292 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230526AbhFJNCP (ORCPT
+        Thu, 10 Jun 2021 10:22:15 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45268 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230267AbhFJOWN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 09:02:15 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15ACY8Iu102396;
-        Thu, 10 Jun 2021 09:00:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=eaoMWKibC48ywMBBJLm1Ve95rH5kpz0SL62FgerNIi4=;
- b=dm/W68RURyeUskWx4PLUG5VZiaizheaMVkMyUZ3ubC1RyNb5w2JWctVxqH6Ct5iUnM+T
- uRvTybpKcvHr6ANptGZtB6q0k8ncsdD4k/xOjpgPvHFcPmrtcbdTXOtT2rnMd+SUa+VQ
- NVGvwGa0/tfpeCouhoSMuTTU/083pi+uLUf1+8FaoaL0FsVGzZmB1XGS+6DZyQYOdVBD
- MlS0HsgsDX5ol0OvWNlDCk1McaXc+ZrVmV7Jp49JeUU2AZWfre5bMHZSLbn2jkk7F+oE
- XMejNo+J+Xe8X7CSHAjYxOErLjXUveY7dz42bPu8pv4T/BPqZ7RlXyzr5wuvm5i4G2Kp YQ== 
+        Thu, 10 Jun 2021 10:22:13 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15AEENVB055864;
+        Thu, 10 Jun 2021 10:20:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=f+GezljSdiJkbrktAHsZueMoVCCsL7CmeGI26dX+WHM=;
+ b=dDXd2IQPWrl0IYR+bMqeHQOz2uCKga9izEsuCWjDu81+gjvVRPAGk0Ft/fpT1rKtXuh1
+ thpcpJBgg/2HgHqzTPQ4pOnaoxAMwOpy229ksySXnu/DzjYVQKpMeO3Rpa6UA96AU/nU
+ rpjkXVEmrIYJrITYRQ+9e6X8NAYJopIkyaSXt7My+CssWWO2B3zeljbW+sNU4K94kHda
+ cICxFaayG8prY23cHSaJxh92HXDOvucV5C68Q03YhA3iabdUyMlirhhsPevFJiculFNY
+ FKWVusxiaO3jqE01HtfUZqpQbULiJr3DXyoyyQh8TgqYxpFei/XT1rEt8BIpSNBJL5Hv CA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 393j8f9x66-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 393man86yc-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Jun 2021 09:00:14 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15ACY9Ir104320;
-        Thu, 10 Jun 2021 09:00:14 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 393j8f9x56-1
+        Thu, 10 Jun 2021 10:20:07 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15AEFNvM062503;
+        Thu, 10 Jun 2021 10:20:06 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 393man86xf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Jun 2021 09:00:14 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15ACvYfA013223;
-        Thu, 10 Jun 2021 12:59:23 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma03wdc.us.ibm.com with ESMTP id 3900wa8588-1
+        Thu, 10 Jun 2021 10:20:06 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15AEG7Ds013524;
+        Thu, 10 Jun 2021 14:20:05 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04ams.nl.ibm.com with ESMTP id 3900w8avdm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Jun 2021 12:59:23 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15ACxNe56226718
+        Thu, 10 Jun 2021 14:20:05 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15AEJBRe26739060
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 12:59:23 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 319F1112075;
-        Thu, 10 Jun 2021 12:59:23 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C0C811206F;
-        Thu, 10 Jun 2021 12:59:23 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jun 2021 12:59:23 +0000 (GMT)
-Subject: Re: [PATCH v6 0/4] Add support for ECDSA-signed kernel modules
-To:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
-        dwmw2@infradead.org, zohar@linux.ibm.com, jarkko@kernel.org
-Cc:     nayna@linux.ibm.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210610125623.1553792-1-stefanb@linux.ibm.com>
-From:   Stefan Berger <stefanb@linux.ibm.com>
-Message-ID: <81ab17a5-1b35-17a0-e7c9-102df873ef70@linux.ibm.com>
-Date:   Thu, 10 Jun 2021 08:59:22 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <20210610125623.1553792-1-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 10 Jun 2021 14:19:11 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4BA6D4C05A;
+        Thu, 10 Jun 2021 14:20:01 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 410024C058;
+        Thu, 10 Jun 2021 14:19:59 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.91.59])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Jun 2021 14:19:59 +0000 (GMT)
+Message-ID: <b3c1f5a0a37419fac51d570cd1c8e521f59cee14.camel@linux.ibm.com>
+Subject: Re: ima - wait for tpm load
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     "Jorge Ramirez-Ortiz, Foundries" <jorge@foundries.io>,
+        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>
+Date:   Thu, 10 Jun 2021 10:19:58 -0400
+In-Reply-To: <20210610071633.GA30216@trex>
+References: <20210610071633.GA30216@trex>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Cq_DAdgiB_feTJN5nYJ0Ml92zkLF_cEh
-X-Proofpoint-GUID: qRJ5koOk8i0St5gTnEG9eo_Xk_vBHBj4
+X-Proofpoint-ORIG-GUID: 0U3gc6pr1KzWqWTNLPRcz7M3gCbXPNHb
+X-Proofpoint-GUID: rlXwXebxr61XdBXnHvUQfvIM0CGIRX5e
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
  definitions=2021-06-10_07:2021-06-10,2021-06-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 adultscore=0 spamscore=0
- malwarescore=0 mlxlogscore=965 mlxscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
- definitions=main-2106100081
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2106100091
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+[Cc'ing Jarkko]
 
-On 6/10/21 8:56 AM, Stefan Berger wrote:
->
-> v6:
->    - Patch 2/4 is fixing V4's 1/2 and 4/4 is fixing V4's 2/2. Both fixup
->      patches to be squashed.
+On Thu, 2021-06-10 at 09:16 +0200, Jorge Ramirez-Ortiz, Foundries
+wrote:
+> I am enabling IMA on a ZynqMP based platform using an SPI based TPM
+> from Infineon.
+> 
+> The SPI TPM driver is built-in but since the IMA is initalized from a
+> late_initcall, IMA never finds the TPM.
+> 
+> Is there a recomended way to work around this issue?
+> 
+> fio@uz3cg-dwg:~$ dmesg | grep tpm
+> [    3.381181] tpm_tis_spi spi1.1: 2.0 TPM (device-id 0x1B, rev-id 22)
+> [    3.423608] tpm tpm0: A TPM error (256) occurred attempting the self test
+> [    3.430406] tpm tpm0: starting up the TPM manually
+> 
+> fio@uz3cg-dwg:~$ dmesg | grep ima
+> [    3.525741] ima: No TPM chip found, activating TPM-bypass!
+> [    3.531233] ima: Allocated hash algorithm: sha1
 
+Lengthening the TPM timeout, executing the TPM self test have been past
+reasons for the TPM not to initialize prior to IMA.
 
-Jarkko, take 2/4 and 4/4 and squash them into the respective queued 
-patches. 1/4 and 3/4 are untouched other than what the rebase did to 3/4.
+(Missing from this bug report is the kernel version.)
 
-   Stefan
+thanks,
+
+Mimi
 
