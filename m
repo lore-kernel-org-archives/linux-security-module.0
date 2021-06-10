@@ -2,94 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E541C47094
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 07:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34642C47094
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 07:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 326CE6124C
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 07:16:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F855613C8
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 07:42:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229725AbhFJHSd (ORCPT
+        id S230216AbhFJHok (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 03:18:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbhFJHSc (ORCPT
+        Thu, 10 Jun 2021 03:44:40 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:9060 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229634AbhFJHoj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 03:18:32 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3D2DC061574
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Jun 2021 00:16:36 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id m41-20020a05600c3b29b02901b9e5d74f02so2621144wms.3
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Jun 2021 00:16:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=foundries.io; s=google;
-        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=3FKf2+gkMWIhlRbcIHR68ePBWDdt54bok6Q03a/gikU=;
-        b=MUG9lRTWFssDqV6Jfp/9MhtqN3eDPBZhN4PYQUvQkGYJ8fIRx30Tn+87YBoy1m2wm3
-         DTKhwAwVKYoUvxFYSuAS5bRfyPVzBBH9CGIh1Ag2hHdgSCrpgLFWcezZC6Axer/1KWMT
-         BVxMPHMTzJlHxt00s3BdQWv5MgjvFjTED5ckdEqVcSOUIlfYv5Bj7rg9eCGd+XObIArh
-         HyL2g9wNRMHuXxgOveplHjUFK6jB1i5o91FVp+a0LkjjkQF5S7+Wfy+kqZ52bLYXHkDs
-         iq3Ersrh1/iq5uQvRNGnwgUvATgkSNbPu4n4dvLCASNPCPbQa8nATBA77W34A8z4xVfO
-         kiLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=3FKf2+gkMWIhlRbcIHR68ePBWDdt54bok6Q03a/gikU=;
-        b=H7+waC3AgzB8Rjb3hNqeiBgpTK3RZScOArpNxgDgSydeowyhR4M9CqtqR71ZCm2Ewj
-         i2qRRriuaLVGbugJSh/N13ul2/a0Jkm76wnSS8CrnmV6A6M7JckpT/SSnURsXmxtCT9t
-         7dshDFHab0IHfp0TSybAhk0RGHQMzoN6jq6r6PPUDkBEeEWIXQWAWUX4rd8zBLLQX6lC
-         XcAyIstUVZ266qrPtC12JFMDXhySQcKkpb2duOj6xyn6vxBiKkMIZOvzBKcPGSKQ8W4m
-         e9EkTZzXXbrmKOxtpk80OC5xrGQS83mQu0KM4Lk9qjdmUWotsG7+VbkMp6Z+Aiime+9+
-         81vA==
-X-Gm-Message-State: AOAM531bmk92DJrV4dCLRtMQzyThGT78lnXIGGgsKjiHg6P6omIFFY71
-        r1i1pOXjmScqdhOEaI+VGyPRHg==
-X-Google-Smtp-Source: ABdhPJzajlyBEFmkfPc4QpDBXyGS2DoZ3n0rGa+jAjMCVHOCmlhZIn3rUP9QN06Z326tVRqf8SersQ==
-X-Received: by 2002:a05:600c:1c8e:: with SMTP id k14mr3586505wms.61.1623309395407;
-        Thu, 10 Jun 2021 00:16:35 -0700 (PDT)
-Received: from trex (138.red-79-146-80.dynamicip.rima-tde.net. [79.146.80.138])
-        by smtp.gmail.com with ESMTPSA id v7sm2348769wru.66.2021.06.10.00.16.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jun 2021 00:16:34 -0700 (PDT)
-From:   "Jorge Ramirez-Ortiz, Foundries" <jorge@foundries.io>
-X-Google-Original-From: "Jorge Ramirez-Ortiz, Foundries" <JorgeRamirez-Ortiz>
-Date:   Thu, 10 Jun 2021 09:16:33 +0200
-To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: ima - wait for tpm load
-Message-ID: <20210610071633.GA30216@trex>
+        Thu, 10 Jun 2021 03:44:39 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G0wqC69m8zYrLt;
+        Thu, 10 Jun 2021 15:39:51 +0800 (CST)
+Received: from dggemi758-chm.china.huawei.com (10.1.198.144) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
+ 15.1.2176.2; Thu, 10 Jun 2021 15:42:42 +0800
+Received: from huawei.com (10.175.101.6) by dggemi758-chm.china.huawei.com
+ (10.1.198.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Thu, 10
+ Jun 2021 15:42:41 +0800
+From:   ChenXiaoSong <chenxiaosong2@huawei.com>
+To:     <takedakn@nttdata.co.jp>, <penguin-kernel@I-love.SAKURA.ne.jp>,
+        <jmorris@namei.org>, <serge@hallyn.com>
+CC:     <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>, <chenxiaosong2@huawei.com>
+Subject: [PATCH -next] tomoyo: fix doc warnings
+Date:   Thu, 10 Jun 2021 15:49:00 +0800
+Message-ID: <20210610074900.58736-1-chenxiaosong2@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.101.6]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggemi758-chm.china.huawei.com (10.1.198.144)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-I am enabling IMA on a ZynqMP based platform using an SPI based TPM
-from Infineon.
+Fix gcc W=1 warnings:
 
-The SPI TPM driver is built-in but since the IMA is initalized from a
-late_initcall, IMA never finds the TPM.
+security/tomoyo/audit.c:331: warning: Function parameter or member 'matched_acl' not described in 'tomoyo_get_audit'
+security/tomoyo/securityfs_if.c:146: warning: Function parameter or member 'inode' not described in 'tomoyo_release'
+security/tomoyo/tomoyo.c:122: warning: Function parameter or member 'path' not described in 'tomoyo_inode_getattr'
+security/tomoyo/tomoyo.c:497: warning: Function parameter or member 'clone_flags' not described in 'tomoyo_task_alloc'
+security/tomoyo/util.c:92: warning: Function parameter or member 'time64' not described in 'tomoyo_convert_time'
 
-Is there a recomended way to work around this issue?
+Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+---
+ security/tomoyo/audit.c         | 1 +
+ security/tomoyo/securityfs_if.c | 1 +
+ security/tomoyo/tomoyo.c        | 5 ++---
+ security/tomoyo/util.c          | 2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
-fio@uz3cg-dwg:~$ dmesg | grep tpm
-[    3.381181] tpm_tis_spi spi1.1: 2.0 TPM (device-id 0x1B, rev-id 22)
-[    3.423608] tpm tpm0: A TPM error (256) occurred attempting the self test
-[    3.430406] tpm tpm0: starting up the TPM manually
+diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
+index b51bad121c11..d79bf07e16be 100644
+--- a/security/tomoyo/audit.c
++++ b/security/tomoyo/audit.c
+@@ -320,6 +320,7 @@ static unsigned int tomoyo_log_count;
+  * @ns:          Pointer to "struct tomoyo_policy_namespace".
+  * @profile:     Profile number.
+  * @index:       Index number of functionality.
++ * @matched_acl: Pointer to "struct tomoyo_acl_info".
+  * @is_granted:  True if granted log, false otherwise.
+  *
+  * Returns true if this request should be audited, false otherwise.
+diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
+index 065f4941c4d8..a2705798476f 100644
+--- a/security/tomoyo/securityfs_if.c
++++ b/security/tomoyo/securityfs_if.c
+@@ -139,6 +139,7 @@ static int tomoyo_open(struct inode *inode, struct file *file)
+ /**
+  * tomoyo_release - close() for /sys/kernel/security/tomoyo/ interface.
+  *
++ * @inode: Pointer to "struct inode".
+  * @file:  Pointer to "struct file".
+  *
+  */
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 1f3cd432d830..b7d484b43054 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -113,8 +113,7 @@ static int tomoyo_bprm_check_security(struct linux_binprm *bprm)
+ /**
+  * tomoyo_inode_getattr - Target for security_inode_getattr().
+  *
+- * @mnt:    Pointer to "struct vfsmount".
+- * @dentry: Pointer to "struct dentry".
++ * @path:    Pointer to "struct path".
+  *
+  * Returns 0 on success, negative value otherwise.
+  */
+@@ -488,7 +487,7 @@ struct lsm_blob_sizes tomoyo_blob_sizes __lsm_ro_after_init = {
+  * tomoyo_task_alloc - Target for security_task_alloc().
+  *
+  * @task:  Pointer to "struct task_struct".
+- * @flags: clone() flags.
++ * @clone_flags: clone() flags.
+  *
+  * Returns 0.
+  */
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index e89cac913583..84d6ba8ba8b9 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -83,7 +83,7 @@ const u8 tomoyo_index2category[TOMOYO_MAX_MAC_INDEX] = {
+ /**
+  * tomoyo_convert_time - Convert time_t to YYYY/MM/DD hh/mm/ss.
+  *
+- * @time:  Seconds since 1970/01/01 00:00:00.
++ * @time64:  Seconds since 1970/01/01 00:00:00.
+  * @stamp: Pointer to "struct tomoyo_time".
+  *
+  * Returns nothing.
+-- 
+2.25.4
 
-fio@uz3cg-dwg:~$ dmesg | grep ima
-[    3.525741] ima: No TPM chip found, activating TPM-bypass!
-[    3.531233] ima: Allocated hash algorithm: sha1
-
-TIA
-
-jorge
