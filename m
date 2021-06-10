@@ -2,124 +2,169 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C49C48BDF
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 22:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B46BFC48BE0
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 23:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8176060231
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 22:33:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FE7D61404
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 23:40:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229963AbhFJWfq (ORCPT
+        id S229578AbhFJXmU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 18:35:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40300 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230169AbhFJWfp (ORCPT
+        Thu, 10 Jun 2021 19:42:20 -0400
+Received: from mail-ej1-f47.google.com ([209.85.218.47]:37546 "EHLO
+        mail-ej1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230247AbhFJXmS (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 18:35:45 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74922C061574;
-        Thu, 10 Jun 2021 15:33:32 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id j12so888285pgh.7;
-        Thu, 10 Jun 2021 15:33:32 -0700 (PDT)
+        Thu, 10 Jun 2021 19:42:18 -0400
+Received: by mail-ej1-f47.google.com with SMTP id ce15so1704432ejb.4
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Jun 2021 16:40:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=lugcbuxkrChZyEnzTfnVK2MptC5yQKam5ahevcJu0YU=;
-        b=snoCWNXSRJAxUP91EbC+Kk7qUaZobiVEcS/9FEgPpLE1v/FaA0jzCnP0fACDgBn6uE
-         jx9dNo/4slT7Du/OkVN5gn2AcvjAbCRmGnVbLriBwHt2x+BZ+WVy804Mo7yJzFrDYuLS
-         x5ClwtOOhENvZQNqwCplq1BOXJqhQblFpFJez+592rmIGnkfieR5s+9VAFUgi2ofr8Zl
-         fSkDCJfxl2sSXKrCs+vsNbOxL3Smn2mtTbShP2g2wH/mWwRnnqQDH7ZDnqFOTPszkI4L
-         mr+VvpBXBdFPd1AUJ22ImYuq2R5/C76A4jaVCKW1RfBjGKS2E4Ph+5H1jLQgbSptPtld
-         Zd8w==
+         :cc;
+        bh=PbPy0sLFc6s1iVCDr+0Neuhg5szqPhBqV3IvM8xe9Rc=;
+        b=MdASbkKBw1qZi8qXv8QILiOVDXfXorlejkwLkYa9mTv0mfWe3/65hu6qCgVdU+GaQG
+         08XIP2PKL6Vbau47nQbrwBYpvOZu09GKmjDFd5ci9XLj+MleAhQ2g/WThXeEqQYaCUPY
+         S+EqIQ+mSlG5UR5/3VnMhwsm+BVXq05gGJkev2hoA+n/NREA5yEjLOcDPSYksV5h9dpt
+         OtQNFcaE/bV24bFxHy4liEWcWHi8ADsxK1Rnmz7iBVVV9aYniCWpLujCbFy9pTIPMdkj
+         0AVtmZFR1A/B0GiBPUsl6ElPL1Hjhihiea1rOLNjpIWi4dSamfNWQjr28g/8dNs8dAhm
+         ANOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=lugcbuxkrChZyEnzTfnVK2MptC5yQKam5ahevcJu0YU=;
-        b=NJdiyy900AnRDNg4+gulYAveRUGskQKb1Z1MftaA+7UaOrMFCIQUh3l/IHkoyr4Cb4
-         SOifQyD/NaEfKXVrhS2DeInhHaNuwjJKzjRJla3Cl2Cc8L3g5FHHWOwefDreYmoYkir4
-         4aCi8tEdTLLsmMH62r1gfzIDeBXJpqA/xuQvb3KKeIf7tAsh6baHkm+dHmSseOpziK+y
-         9mNWFz8AsOC3IPe4lTo3vvJMTnskjUCpVAiH6pUnJfwujDunu56BxOe/wJ0v9bT4fqPi
-         rRusD4VaAbp/iROHSEwTX4vwcOZhM/JKtlvsmvzLwn7gH+n3k7Uedt85Jf0tPCVaI8uy
-         yH3g==
-X-Gm-Message-State: AOAM533/N6cr7sbtzHENw2bInofVNEn7XAYoPVT50z/OqpC3OUVfDCs1
-        B6FyQ03Afk9azqqUfJ7Pq7lLL4lqt2vS4QUCILI=
-X-Google-Smtp-Source: ABdhPJzw/M+Rbz6xspkYNtyTYZlV5R4GDO5w5DIIsku5bQHN59XgVwtOsrMYPoLBJOQmzOxqvSbXfeVUGKBA41SaEbU=
-X-Received: by 2002:a63:f815:: with SMTP id n21mr621499pgh.2.1623364411976;
- Thu, 10 Jun 2021 15:33:31 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=PbPy0sLFc6s1iVCDr+0Neuhg5szqPhBqV3IvM8xe9Rc=;
+        b=NFw+QwHobcXts+kKWHmJ8X1uWTb41Bwstp4Q02kCtEV1klvWnTK17PC9DmXHzaI95f
+         TbHmWPGHYGB7LTXg4XWVhS9CdXzPVJTgQw3zTlD+iDCwQIjOxwXN+BcOAE7X3BpKtp12
+         iN1j+D6g82V5wH58eHOY1U8ZzaRFQ/Zv+7PM0UAs6b7dSiRh3YOvEoBeI4Si9jBXYq1b
+         4sjB97Id4a5zJhD2RbPI4cQ06V8njnfpukTgl15RClVkaT9DIsvGHm1qK6PQrY8V/ns2
+         su/BaPF0ckrN7+ZG731keY6awWJRd1dSP6s2et0SMhRAnnFCaBKtmR8CHj3wqbsLrA2r
+         rHSA==
+X-Gm-Message-State: AOAM531rIedp66GJAJnz1Av7yH9cOjqpCBRTMpCoEHE6+CvCK/yjHN/e
+        FzU+W96fVP76sWADPYFvrHw62D9k295tfySFk5LCnXMH8/OK
+X-Google-Smtp-Source: ABdhPJx3HkT0cnFJM6rU/xn9g9XPuNXhwJemA19TgZ/Z+YQGjVGxZ2pUb4AP1eoSda2Zuba1PC1W/lpXBbVk/1gaYhU=
+X-Received: by 2002:a17:906:2c54:: with SMTP id f20mr812366ejh.91.1623368345578;
+ Thu, 10 Jun 2021 16:39:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210608230929.GA1214@raspberrypi> <CAJ-EccMvTNpnZXAF6n2x7oXu_hsSOnbJvvQA6NsK1VG26t5CeQ@mail.gmail.com>
-In-Reply-To: <CAJ-EccMvTNpnZXAF6n2x7oXu_hsSOnbJvvQA6NsK1VG26t5CeQ@mail.gmail.com>
-From:   Austin Kim <austindh.kim@gmail.com>
-Date:   Fri, 11 Jun 2021 07:33:23 +0900
-Message-ID: <CADLLry6p+NvQFqXSunZ645DiRYSAsuT5vMe6F2Tofj8+Dcrxyw@mail.gmail.com>
-Subject: Re: [PATCH] LSM: SafeSetID: Mark safesetid_initialized as __initdata
-To:     Micah Morton <mortonm@chromium.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?6rmA64+Z7ZiE?= <austin.kim@lge.com>
+References: <20210610020108.1356361-1-liushixin2@huawei.com>
+In-Reply-To: <20210610020108.1356361-1-liushixin2@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 10 Jun 2021 19:38:54 -0400
+Message-ID: <CAHC9VhQM4YP527Z9ijTBk2i++S=viZ1hKVo6GgCOUcNCVgB2vw@mail.gmail.com>
+Subject: Re: [PATCH -next] netlabel: Fix memory leak in netlbl_mgmt_add_common
+To:     Liu Shixin <liushixin2@huawei.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-2021=EB=85=84 6=EC=9B=94 11=EC=9D=BC (=EA=B8=88) =EC=98=A4=EC=A0=84 1:50, M=
-icah Morton <mortonm@chromium.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+On Wed, Jun 9, 2021 at 9:29 PM Liu Shixin <liushixin2@huawei.com> wrote:
 >
-> Thanks for the patch. Looks right, since that variable is only used in
-> safesetid_security_init() and safesetid_init_securityfs(), which are
-> both marked __init. I can merge it to the safesetid-next branch today
-> and send the patch through my tree during the 5.14 merge window.
-
-Great. Thanks!
-
+> Hulk Robot reported memory leak in netlbl_mgmt_add_common.
+> The problem is non-freed map in case of netlbl_domhsh_add() failed.
 >
-> On Tue, Jun 8, 2021 at 1:09 PM Austin Kim <austindh.kim@gmail.com> wrote:
-> >
-> > Mark safesetid_initialized as __initdata since it is only used
-> > in initialization routine.
-> >
-> > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
-> > ---
-> >  security/safesetid/lsm.c | 2 +-
-> >  security/safesetid/lsm.h | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-> > index 1079c6d54784..963f4ad9cb66 100644
-> > --- a/security/safesetid/lsm.c
-> > +++ b/security/safesetid/lsm.c
-> > @@ -22,7 +22,7 @@
-> >  #include "lsm.h"
-> >
-> >  /* Flag indicating whether initialization completed */
-> > -int safesetid_initialized;
-> > +int safesetid_initialized __initdata;
-> >
-> >  struct setid_ruleset __rcu *safesetid_setuid_rules;
-> >  struct setid_ruleset __rcu *safesetid_setgid_rules;
-> > diff --git a/security/safesetid/lsm.h b/security/safesetid/lsm.h
-> > index bde8c43a3767..d346f4849cea 100644
-> > --- a/security/safesetid/lsm.h
-> > +++ b/security/safesetid/lsm.h
-> > @@ -19,7 +19,7 @@
-> >  #include <linux/hashtable.h>
-> >
-> >  /* Flag indicating whether initialization completed */
-> > -extern int safesetid_initialized;
-> > +extern int safesetid_initialized __initdata;
-> >
-> >  enum sid_policy_type {
-> >         SIDPOL_DEFAULT, /* source ID is unaffected by policy */
-> > --
-> > 2.20.1
-> >
+> BUG: memory leak
+> unreferenced object 0xffff888100ab7080 (size 96):
+>   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
+>   hex dump (first 32 bytes):
+>     05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
+>   backtrace:
+>     [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
+>     [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
+>     [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
+>     [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
+>     [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
+>     [<0000000020e96fdd>] genl_rcv+0x24/0x40
+>     [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
+>     [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
+>     [<000000006e43415f>] sock_sendmsg+0x139/0x170
+>     [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
+>     [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
+>     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
+>     [<00000000643ac172>] do_syscall_64+0x37/0x90
+>     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+>
+> Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> ---
+>  net/netlabel/netlabel_mgmt.c | 20 ++++++++++++++++----
+>  1 file changed, 16 insertions(+), 4 deletions(-)
+>
+> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+> index e664ab990941..e7f00c0f441e 100644
+> --- a/net/netlabel/netlabel_mgmt.c
+> +++ b/net/netlabel/netlabel_mgmt.c
+> @@ -191,6 +191,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>                 entry->family = AF_INET;
+>                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+>                 entry->def.addrsel = addrmap;
+> +
+> +               ret_val = netlbl_domhsh_add(entry, audit_info);
+> +               if (ret_val != 0) {
+> +                       kfree(map);
+> +                       goto add_free_addrmap;
+> +               }
+>  #if IS_ENABLED(CONFIG_IPV6)
+>         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
+>                 struct in6_addr *addr;
+> @@ -243,13 +249,19 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>                 entry->family = AF_INET6;
+>                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+>                 entry->def.addrsel = addrmap;
+> +
+> +               ret_val = netlbl_domhsh_add(entry, audit_info);
+> +               if (ret_val != 0) {
+> +                       kfree(map);
+> +                       goto add_free_addrmap;
+> +               }
+>  #endif /* IPv6 */
+> +       } else {
+> +               ret_val = netlbl_domhsh_add(entry, audit_info);
+> +               if (ret_val != 0)
+> +                       goto add_free_addrmap;
+>         }
+>
+> -       ret_val = netlbl_domhsh_add(entry, audit_info);
+> -       if (ret_val != 0)
+> -               goto add_free_addrmap;
+> -
+>         return 0;
+
+Thanks for the report and a fix, although I think there may be a
+simpler fix that results in less code duplication; some quick pseudo
+code below:
+
+  int netlbl_mgmt_add_common(...)
+  {
+     void *map_p = NULL;
+
+     if (NLBL_MGMT_A_IPV4ADDR) {
+       struct netlbl_domaddr4_map *map;
+       map_p = map;
+
+     } else if (NLBL_MGMT_A_IPV6ADDR) {
+       struct netlbl_domaddr4_map *map;
+       map_p = map;
+    }
+
+  add_free_addrmap:
+    kfree(map_p);
+    kfree(addrmap);
+  }
+
+... this approach would even simplify the error handling after the
+netlbl_af{4,6}list_add() calls a bit too (you could jump straight to
+add_free_addrmap).
+
+-- 
+paul moore
+www.paul-moore.com
