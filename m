@@ -2,116 +2,128 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FDFC48BCD
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jun 2021 16:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AA9C48BD1
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 01:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02209613C8
-	for <linux-security-module@archiver.kernel.org>; Wed,  9 Jun 2021 16:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46AD7613FF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 01:29:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230242AbhFIQy0 (ORCPT
+        id S229507AbhFJBbK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 9 Jun 2021 12:54:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42616 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbhFIQy0 (ORCPT
+        Wed, 9 Jun 2021 21:31:10 -0400
+Received: from szxga01-in.huawei.com ([45.249.212.187]:8122 "EHLO
+        szxga01-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229634AbhFJBbK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 9 Jun 2021 12:54:26 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EF2CC061760
-        for <linux-security-module@vger.kernel.org>; Wed,  9 Jun 2021 09:52:31 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id x10so12848881plg.3
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Jun 2021 09:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=LD9HSxwVBYD4Eigmm4/eFaSooe5X81yBa6b9diyTxLk=;
-        b=N47Q7iKRccjNkYwWKqUHqFn73mIgkb6yUnEgVpfiCnpd7KGAo+RwkJGh7fCyhsJ5rJ
-         PHoctqrgLpYFlXiogoGImI85Yu3OsLM3sfJYRnwP4OzsOAGtIgoKDG+IYVT+VOE0fTE/
-         27PJSIvlhBf+evKmhRLXx/yOa0KOermG9co7o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=LD9HSxwVBYD4Eigmm4/eFaSooe5X81yBa6b9diyTxLk=;
-        b=Tai9JyTd8W5PHYiG66OMfcK1h39wG4V08geuuUtYUNRZUa3beldN1bC4+o21bzgscB
-         FcJ4DA/Un9vprPYmkaUOnCzw2ujLx27qf/RnoA3aOQ9p79hoVwWslqJ2J8w10+7I/hWh
-         RDA7j1Dm4RKcGM4QU5IxNViP6an6dTbg1tc1Q5bmbK25ia5kgJmifvxHbWrL+WX5K1Fj
-         aeVgDZuhDhO7FhZruwFVIRHUtUQWjSb/2dgphhTc/3CJX6QqKY6hl8EBt5CkMKF+2HuY
-         wLkHMhS83H1nyxKUH2DHIwBnO5D5ZuCWzHWlHlIZB4R9NE+Tmnt9m7ljQ0UW2ZfgawOA
-         kTHg==
-X-Gm-Message-State: AOAM5306w/3YTfZuyjM5VKwmoCzV/9lycumr3Fog97l1sSBHM6bUjkOa
-        6ACzSnwxsEXaLOFTfGb1sPyXtQ==
-X-Google-Smtp-Source: ABdhPJzNXeQzlTinS1wmW8MEliQZalVLosypCXm6YUl9Lebh2/tT7cpsPFLagkE3mdC+ClBbYzFVAQ==
-X-Received: by 2002:a17:902:988f:b029:114:12d2:d548 with SMTP id s15-20020a170902988fb029011412d2d548mr479973plp.73.1623257550841;
-        Wed, 09 Jun 2021 09:52:30 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k30sm305187pgf.59.2021.06.09.09.52.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Jun 2021 09:52:30 -0700 (PDT)
-Date:   Wed, 9 Jun 2021 09:52:29 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     John Wood <john.wood@gmx.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Arnd Bergmann <arnd@arndb.de>, valdis.kletnieks@vt.edu,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: Re: [PATCH v8 0/8] Fork brute force attack mitigation
-Message-ID: <202106090951.8C1B5BAD@keescook>
-References: <20210605150405.6936-1-john.wood@gmx.com>
- <202106081616.EC17DC1D0D@keescook>
- <cbfd306b-6e37-a697-ebdb-4a5029d36583@linux.intel.com>
+        Wed, 9 Jun 2021 21:31:10 -0400
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4G0mXG4Jb6zYn9q;
+        Thu, 10 Jun 2021 09:26:22 +0800 (CST)
+Received: from dggpemm500009.china.huawei.com (7.185.36.225) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 10 Jun 2021 09:29:12 +0800
+Received: from huawei.com (10.175.113.32) by dggpemm500009.china.huawei.com
+ (7.185.36.225) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 10 Jun
+ 2021 09:29:12 +0800
+From:   Liu Shixin <liushixin2@huawei.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Liu Shixin <liushixin2@huawei.com>
+Subject: [PATCH -next] netlabel: Fix memory leak in netlbl_mgmt_add_common
+Date:   Thu, 10 Jun 2021 10:01:08 +0800
+Message-ID: <20210610020108.1356361-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.18.0.huawei.25
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbfd306b-6e37-a697-ebdb-4a5029d36583@linux.intel.com>
+Content-Type: text/plain
+X-Originating-IP: [10.175.113.32]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemm500009.china.huawei.com (7.185.36.225)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 08, 2021 at 04:38:15PM -0700, Andi Kleen wrote:
-> 
-> On 6/8/2021 4:19 PM, Kees Cook wrote:
-> > On Sat, Jun 05, 2021 at 05:03:57PM +0200, John Wood wrote:
-> > > [...]
-> > > the kselftest to avoid the detection ;) ). So, in this version, to track
-> > > all the statistical data (info related with application crashes), the
-> > > extended attributes feature for the executable files are used. The xattr is
-> > > also used to mark the executables as "not allowed" when an attack is
-> > > detected. Then, the execve system call rely on this flag to avoid following
-> > > executions of this file.
-> > I have some concerns about this being actually usable and not creating
-> > DoS situations. For example, let's say an attacker had found a hard-to-hit
-> > bug in "sudo", and starts brute forcing it. When the brute LSM notices,
-> > it'll make "sudo" unusable for the entire system, yes?
-> > 
-> > And a reboot won't fix it, either, IIUC.
-> > 
-> The whole point of the mitigation is to trade potential attacks against DOS.
-> 
-> If you're worried about DOS the whole thing is not for you.
+Hulk Robot reported memory leak in netlbl_mgmt_add_common.
+The problem is non-freed map in case of netlbl_domhsh_add() failed.
 
-Right, but there's no need to make a system unusable for everyone else.
-There's nothing here that relaxes the defense (i.e. stop spawning apache
-for 10 minutes). Writing it to disk with nothing that undoes it seems a
-bit too much. :)
+BUG: memory leak
+unreferenced object 0xffff888100ab7080 (size 96):
+  comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
+  hex dump (first 32 bytes):
+    05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
+  backtrace:
+    [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
+    [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
+    [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
+    [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
+    [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
+    [<0000000020e96fdd>] genl_rcv+0x24/0x40
+    [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
+    [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
+    [<000000006e43415f>] sock_sendmsg+0x139/0x170
+    [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
+    [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
+    [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
+    [<00000000643ac172>] do_syscall_64+0x37/0x90
+    [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
+Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+---
+ net/netlabel/netlabel_mgmt.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+index e664ab990941..e7f00c0f441e 100644
+--- a/net/netlabel/netlabel_mgmt.c
++++ b/net/netlabel/netlabel_mgmt.c
+@@ -191,6 +191,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 		entry->family = AF_INET;
+ 		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+ 		entry->def.addrsel = addrmap;
++
++		ret_val = netlbl_domhsh_add(entry, audit_info);
++		if (ret_val != 0) {
++			kfree(map);
++			goto add_free_addrmap;
++		}
+ #if IS_ENABLED(CONFIG_IPV6)
+ 	} else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
+ 		struct in6_addr *addr;
+@@ -243,13 +249,19 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 		entry->family = AF_INET6;
+ 		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+ 		entry->def.addrsel = addrmap;
++
++		ret_val = netlbl_domhsh_add(entry, audit_info);
++		if (ret_val != 0) {
++			kfree(map);
++			goto add_free_addrmap;
++		}
+ #endif /* IPv6 */
++	} else {
++		ret_val = netlbl_domhsh_add(entry, audit_info);
++		if (ret_val != 0)
++			goto add_free_addrmap;
+ 	}
+ 
+-	ret_val = netlbl_domhsh_add(entry, audit_info);
+-	if (ret_val != 0)
+-		goto add_free_addrmap;
+-
+ 	return 0;
+ 
+ add_free_addrmap:
 -- 
-Kees Cook
+2.18.0.huawei.25
+
