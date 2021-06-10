@@ -2,166 +2,196 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=BAYES_00,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 852DBC48BD1
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 09:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD2EC47094
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 10:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66EA061406
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 09:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A72A613C6
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 10:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230033AbhFJJwU (ORCPT
+        id S230059AbhFJKrP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 05:52:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40246 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229910AbhFJJwU (ORCPT
+        Thu, 10 Jun 2021 06:47:15 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:5485 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230033AbhFJKrO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 05:52:20 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 142D7C061574;
-        Thu, 10 Jun 2021 02:50:10 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id a20so1569929wrc.0;
-        Thu, 10 Jun 2021 02:50:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ttr6YN1lz3HlA7JpnhNQqRjKhBQi4menpBStyTqJFI0=;
-        b=aGFtsBpo7/zgt1hm3mMxBXTN35Ob9QVJ3Fd+e5btkS8d483FCslcwRhZ60IbIvhVdh
-         pGslzkesy3RQy6tCeMeA7eO5NsC5ovqRb6eI7XhxYOCXVRt1xt9f418vLf1l79SzJE1I
-         i9QNUlD71x+LD1PqXVMcTL+ffKk5hkSsVvKMRdzxAX8IrMbXsugWsSqotEQ7apMPZS2h
-         T7cwH4VkKb/8dzCHoBbZ9GTvD4qbx1Lkyy0EUIDEt6CDuu00xvVlTqLyFTqmrNMLES4h
-         0vxZAadPBsMGRYzj1ZBFq3kw73ZPb6dzZXUgI6gM9svc6WxTbSem4pq/kyRpkwqECQqo
-         JxqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ttr6YN1lz3HlA7JpnhNQqRjKhBQi4menpBStyTqJFI0=;
-        b=acKyN/YXysmQLiSw3YW+Mbv+oatEnnk92h6HvZw7fWo8WMjOrO4ktEMWpD5IUYc51z
-         MpGb6wFbMUB95N77GERxCATxCAPCiMO+noLw+gwh+SvLPjSyhUPs7hjTwduk/p5GtUt2
-         iocAW4i7DpkQmTuWQ0TPSCqTddtFLGgEvKfGOuKi7keTwm5JzGKiwdd1lYA5UTOkdr3E
-         f/ZvlOqvd+a+bUtNPkfk0ko9iZK33PbyZ+uS6/bTM8SJbD6fmBUu1yPmyLK0AzvSPqOj
-         a7ofZsFHWKwB4k9AmEzKszUDzlYRv8elmutziuNwM7ySXypn2/AflumrKCy2uXtdigVu
-         fx2A==
-X-Gm-Message-State: AOAM531IQO2lOGSMxbLv2poiGKb+C7FmGAVU501OONRpcymwTU5F4Sqv
-        r0SgFTL9ENCbMm4reA49M/iZJ8rEXA6XKQ==
-X-Google-Smtp-Source: ABdhPJyIfVDgdrW8pz+W8ACyqC9SBgmnQiwZRDdDgVt0vwXbQaoWTl5RrGgiyzkeIthPX1tcF2l75A==
-X-Received: by 2002:a05:6000:1563:: with SMTP id 3mr4325714wrz.59.1623318608487;
-        Thu, 10 Jun 2021 02:50:08 -0700 (PDT)
-Received: from localhost.localdomain (190.1.93.209.dyn.plus.net. [209.93.1.190])
-        by smtp.gmail.com with ESMTPSA id p16sm3006200wrs.52.2021.06.10.02.50.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jun 2021 02:50:08 -0700 (PDT)
-From:   Dhiraj Shah <find.dhiraj@gmail.com>
-Cc:     find.dhiraj@gmail.com, James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm2_load_command leaks memory
-Date:   Thu, 10 Jun 2021 10:49:51 +0100
-Message-Id: <20210610094952.17068-1-find.dhiraj@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
+        Thu, 10 Jun 2021 06:47:14 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G10ss2tqKzZfXP;
+        Thu, 10 Jun 2021 18:42:25 +0800 (CST)
+Received: from dggpemm500009.china.huawei.com (7.185.36.225) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 10 Jun 2021 18:45:16 +0800
+Received: from [10.174.179.24] (10.174.179.24) by
+ dggpemm500009.china.huawei.com (7.185.36.225) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 10 Jun 2021 18:45:15 +0800
+Subject: Re: [PATCH -next] netlabel: Fix memory leak in netlbl_mgmt_add_common
+To:     Dongliang Mu <mudongliangabcd@gmail.com>
+References: <20210610020108.1356361-1-liushixin2@huawei.com>
+ <CAD-N9QWypyEa65-sz3rrtM2o5xzQd_5kJPyC4n+nK5JTviQvEQ@mail.gmail.com>
+CC:     Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, <netdev@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+From:   Liu Shixin <liushixin2@huawei.com>
+Message-ID: <ea1c6878-94d4-63ba-5dea-1190c146581d@huawei.com>
+Date:   Thu, 10 Jun 2021 18:45:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <CAD-N9QWypyEa65-sz3rrtM2o5xzQd_5kJPyC4n+nK5JTviQvEQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.24]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm500009.china.huawei.com (7.185.36.225)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-tpm2_key_decode allocates memory which is stored in blob and it's not freed.
+On 2021/6/10 11:08, Dongliang Mu wrote:
+> On Thu, Jun 10, 2021 at 9:31 AM Liu Shixin <liushixin2@huawei.com> wrote:
+>> Hulk Robot reported memory leak in netlbl_mgmt_add_common.
+>> The problem is non-freed map in case of netlbl_domhsh_add() failed.
+>>
+>> BUG: memory leak
+>> unreferenced object 0xffff888100ab7080 (size 96):
+>>   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
+>>   hex dump (first 32 bytes):
+>>     05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>>     fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
+>>   backtrace:
+>>     [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
+>>     [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
+>>     [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
+>>     [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
+>>     [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
+>>     [<0000000020e96fdd>] genl_rcv+0x24/0x40
+>>     [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
+>>     [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
+>>     [<000000006e43415f>] sock_sendmsg+0x139/0x170
+>>     [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
+>>     [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
+>>     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
+>>     [<00000000643ac172>] do_syscall_64+0x37/0x90
+>>     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+>>
+>> Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+>> Reported-by: Hulk Robot <hulkci@huawei.com>
+>> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+>> ---
+>>  net/netlabel/netlabel_mgmt.c | 20 ++++++++++++++++----
+>>  1 file changed, 16 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+>> index e664ab990941..e7f00c0f441e 100644
+>> --- a/net/netlabel/netlabel_mgmt.c
+>> +++ b/net/netlabel/netlabel_mgmt.c
+>> @@ -191,6 +191,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>>                 entry->family = AF_INET;
+>>                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+>>                 entry->def.addrsel = addrmap;
+>> +
+>> +               ret_val = netlbl_domhsh_add(entry, audit_info);
+>> +               if (ret_val != 0) {
+>> +                       kfree(map);
+>> +                       goto add_free_addrmap;
+>> +               }
+>>  #if IS_ENABLED(CONFIG_IPV6)
+>>         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
+>>                 struct in6_addr *addr;
+>> @@ -243,13 +249,19 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>>                 entry->family = AF_INET6;
+>>                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+>>                 entry->def.addrsel = addrmap;
+>> +
+>> +               ret_val = netlbl_domhsh_add(entry, audit_info);
+>> +               if (ret_val != 0) {
+>> +                       kfree(map);
+>> +                       goto add_free_addrmap;
+>> +               }
+>>  #endif /* IPv6 */
+>> +       } else {
+>> +               ret_val = netlbl_domhsh_add(entry, audit_info);
+>> +               if (ret_val != 0)
+>> +                       goto add_free_addrmap;
+>>         }
+>>
+>> -       ret_val = netlbl_domhsh_add(entry, audit_info);
+>> -       if (ret_val != 0)
+>> -               goto add_free_addrmap;
+>> -
+> Hi Shixin,
+>
+> I have a small suggestion about this patch: you can move the variable
+> map out of if/else if branches, like the following code snippet.
+>
+> Be aware to assign the variable map to NULL at first. Then kfree in
+> the last else branch will do nothing.
+>
+> I don't test the following diff, if there are any issues, please let me know.
+>
+> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+> index ca52f5085989..1824bcd2272b 100644
+> --- a/net/netlabel/netlabel_mgmt.c
+> +++ b/net/netlabel/netlabel_mgmt.c
+> @@ -78,6 +78,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>  {
+>         int ret_val = -EINVAL;
+>         struct netlbl_domaddr_map *addrmap = NULL;
+> +       struct netlbl_domaddr4_map *map = NULL;
+>         struct cipso_v4_doi *cipsov4 = NULL;
+>  #if IS_ENABLED(CONFIG_IPV6)
+>         struct calipso_doi *calipso = NULL;
+> @@ -147,7 +148,6 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>         if (info->attrs[NLBL_MGMT_A_IPV4ADDR]) {
+>                 struct in_addr *addr;
+>                 struct in_addr *mask;
+> -               struct netlbl_domaddr4_map *map;
+>
+>                 addrmap = kzalloc(sizeof(*addrmap), GFP_KERNEL);
+>                 if (addrmap == NULL) {
+> @@ -195,7 +195,6 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
+>                 struct in6_addr *addr;
+>                 struct in6_addr *mask;
+> -               struct netlbl_domaddr6_map *map;
+>
+>                 addrmap = kzalloc(sizeof(*addrmap), GFP_KERNEL);
+>                 if (addrmap == NULL) {
+> @@ -247,8 +246,10 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+>         }
+>
+>         ret_val = netlbl_domhsh_add(entry, audit_info);
+> -       if (ret_val != 0)
+> +       if (ret_val != 0) {
+> +               kfree(map);
+>                 goto add_free_addrmap;
+> +       }
+>
+>         return 0;
+>
+The type of map can be struct netlbl_domaddr4_map or struct netlbl_domaddr6_map
+under different conditions. It seems like I can't put them together simply.
 
-Signed-off-by: Dhiraj Shah <find.dhiraj@gmail.com>
----
- security/keys/trusted-keys/trusted_tpm2.c | 41 +++++++++++++++--------
- 1 file changed, 27 insertions(+), 14 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-index 0165da386289..52dd43bb8cdb 100644
---- a/security/keys/trusted-keys/trusted_tpm2.c
-+++ b/security/keys/trusted-keys/trusted_tpm2.c
-@@ -378,22 +378,31 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 	}
- 
- 	/* new format carries keyhandle but old format doesn't */
--	if (!options->keyhandle)
--		return -EINVAL;
-+	if (!options->keyhandle) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
- 
- 	/* must be big enough for at least the two be16 size counts */
--	if (payload->blob_len < 4)
--		return -EINVAL;
-+	if (payload->blob_len < 4) {
-+		rc = -EINVAL;
-+		goto err;
-+	}
- 
- 	private_len = get_unaligned_be16(blob);
- 
- 	/* must be big enough for following public_len */
--	if (private_len + 2 + 2 > (payload->blob_len))
--		return -E2BIG;
-+	if (private_len + 2 + 2 > (payload->blob_len)) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	public_len = get_unaligned_be16(blob + 2 + private_len);
--	if (private_len + 2 + public_len + 2 > payload->blob_len)
--		return -E2BIG;
-+
-+	if (private_len + 2 + public_len + 2 > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
- 	pub = blob + 2 + private_len + 2;
- 	/* key attributes are always at offset 4 */
-@@ -406,13 +415,16 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 		payload->migratable = 1;
- 
- 	blob_len = private_len + public_len + 4;
--	if (blob_len > payload->blob_len)
--		return -E2BIG;
- 
--	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
--	if (rc)
--		return rc;
-+	if (blob_len > payload->blob_len) {
-+		rc = -E2BIG;
-+		goto err;
-+	}
- 
-+	if (tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD) != 0)
-+		rc = -ENOMEM;
-+		goto out;
-+	}
- 	tpm_buf_append_u32(&buf, options->keyhandle);
- 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
- 			     NULL /* nonce */, 0,
-@@ -433,9 +445,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
- 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
- 
- out:
-+	tpm_buf_destroy(&buf);
-+err:
- 	if (blob != payload->blob)
- 		kfree(blob);
--	tpm_buf_destroy(&buf);
- 
- 	if (rc > 0)
- 		rc = -EPERM;
--- 
-2.30.1 (Apple Git-130)
+Thanks,
+>
+>
+>
+>>         return 0;
+>>
+>>  add_free_addrmap:
+>> --
+>> 2.18.0.huawei.25
+>>
+> .
+>
 
