@@ -2,122 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 012EAC47094
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 14:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25902C47094
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 15:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9B41613FE
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 14:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02EE4613FF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 15:06:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231336AbhFJOWP (ORCPT
+        id S230445AbhFJPIE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 10:22:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45268 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230267AbhFJOWN (ORCPT
+        Thu, 10 Jun 2021 11:08:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230410AbhFJPIE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 10:22:13 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15AEENVB055864;
-        Thu, 10 Jun 2021 10:20:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=f+GezljSdiJkbrktAHsZueMoVCCsL7CmeGI26dX+WHM=;
- b=dDXd2IQPWrl0IYR+bMqeHQOz2uCKga9izEsuCWjDu81+gjvVRPAGk0Ft/fpT1rKtXuh1
- thpcpJBgg/2HgHqzTPQ4pOnaoxAMwOpy229ksySXnu/DzjYVQKpMeO3Rpa6UA96AU/nU
- rpjkXVEmrIYJrITYRQ+9e6X8NAYJopIkyaSXt7My+CssWWO2B3zeljbW+sNU4K94kHda
- cICxFaayG8prY23cHSaJxh92HXDOvucV5C68Q03YhA3iabdUyMlirhhsPevFJiculFNY
- FKWVusxiaO3jqE01HtfUZqpQbULiJr3DXyoyyQh8TgqYxpFei/XT1rEt8BIpSNBJL5Hv CA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 393man86yc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Jun 2021 10:20:07 -0400
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15AEFNvM062503;
-        Thu, 10 Jun 2021 10:20:06 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 393man86xf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Jun 2021 10:20:06 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15AEG7Ds013524;
-        Thu, 10 Jun 2021 14:20:05 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma04ams.nl.ibm.com with ESMTP id 3900w8avdm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 10 Jun 2021 14:20:05 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15AEJBRe26739060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jun 2021 14:19:11 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4BA6D4C05A;
-        Thu, 10 Jun 2021 14:20:01 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 410024C058;
-        Thu, 10 Jun 2021 14:19:59 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.91.59])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jun 2021 14:19:59 +0000 (GMT)
-Message-ID: <b3c1f5a0a37419fac51d570cd1c8e521f59cee14.camel@linux.ibm.com>
-Subject: Re: ima - wait for tpm load
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     "Jorge Ramirez-Ortiz, Foundries" <jorge@foundries.io>,
-        dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko@kernel.org>
-Date:   Thu, 10 Jun 2021 10:19:58 -0400
-In-Reply-To: <20210610071633.GA30216@trex>
-References: <20210610071633.GA30216@trex>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0U3gc6pr1KzWqWTNLPRcz7M3gCbXPNHb
-X-Proofpoint-GUID: rlXwXebxr61XdBXnHvUQfvIM0CGIRX5e
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
- definitions=2021-06-10_07:2021-06-10,2021-06-10 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- bulkscore=0 impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106100091
+        Thu, 10 Jun 2021 11:08:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0C761613DD
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Jun 2021 15:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623337568;
+        bh=V7eNmiMbl6bCy9ghEtEcjAOUpi2+bknVdLKMfwFCIDc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=jXy1KynAzoRlPpgft9TpuMfwoaAx+YFugg2opUtQKbYbv945aKKgb2NPHHH8bJ7Z3
+         E3iz1MuhfYICmQx8KHSU6xoDUOdeIZeY2erideLOKEVntuLNbGWgox/IWoZBal44XQ
+         t994/HXNYKK5vY33zsRryyRQnRU359+CdZamDC3sS3Nuoj0J67GKkv44yvbAOnrxrW
+         mH/0NPEdeBF0tQj9gyym+Tf+G0HaatEG5yeu5wr4B8VG92gLf9dwjUTV0pzfS8UNyF
+         fp16tMBxeee1qHX3z+EgrQTzYGS6gnaM5auPIOhljh++8ZcSXn7P2aE4uYgW2dUup9
+         N0sPb6pon/q2g==
+Received: by mail-ot1-f41.google.com with SMTP id w23-20020a9d5a970000b02903d0ef989477so23385388oth.9
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Jun 2021 08:06:08 -0700 (PDT)
+X-Gm-Message-State: AOAM5326GcC+6aPKzTRhTh5a4KJOdMp0JqzC9CbjlezqOI685daKVn56
+        yjFwwMpzSDQ7ilJGzRf6zdODLTkVm3v4eVRQ+NM=
+X-Google-Smtp-Source: ABdhPJwRT6ucdaFMnGkpJauNMiRRUMwPStLfcFpGez4Te42VL6DRUXOLNGxTk7iK2UryC6QDMO5uXAijMXRWnEiAcuk=
+X-Received: by 2002:a9d:4c83:: with SMTP id m3mr2795425otf.77.1623337567444;
+ Thu, 10 Jun 2021 08:06:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210209164506.54176-1-andriy.shevchenko@linux.intel.com>
+ <CAMj1kXGjoZ4qXxfB-2eH84k9Dg93cWs10DmDkZwv-C3_nKi_Ow@mail.gmail.com> <YL5TN6oTtgggIFvv@smile.fi.intel.com>
+In-Reply-To: <YL5TN6oTtgggIFvv@smile.fi.intel.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Thu, 10 Jun 2021 17:05:55 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFHG4G+KCv4KaL6XYtAPs99bsQ-0fik8oKv4GWDw2+GJg@mail.gmail.com>
+Message-ID: <CAMj1kXFHG4G+KCv4KaL6XYtAPs99bsQ-0fik8oKv4GWDw2+GJg@mail.gmail.com>
+Subject: Re: [PATCH v1] efi: Don't use knowledge about efi_guid_t internals
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-[Cc'ing Jarkko]
+On Mon, 7 Jun 2021 at 19:11, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Tue, Feb 09, 2021 at 05:51:45PM +0100, Ard Biesheuvel wrote:
+> > On Tue, 9 Feb 2021 at 17:45, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > When print GUIDs supply pointer to the efi_guid_t (guid_t) type rather
+> > > its internal members.
+> > >
+> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> >
+> > Acked-by: Ard Biesheuvel <ardb@kernel.org>
+>
+> Thanks!
+>
+> Can we get this applied, please?
+>
 
-On Thu, 2021-06-10 at 09:16 +0200, Jorge Ramirez-Ortiz, Foundries
-wrote:
-> I am enabling IMA on a ZynqMP based platform using an SPI based TPM
-> from Infineon.
-> 
-> The SPI TPM driver is built-in but since the IMA is initalized from a
-> late_initcall, IMA never finds the TPM.
-> 
-> Is there a recomended way to work around this issue?
-> 
-> fio@uz3cg-dwg:~$ dmesg | grep tpm
-> [    3.381181] tpm_tis_spi spi1.1: 2.0 TPM (device-id 0x1B, rev-id 22)
-> [    3.423608] tpm tpm0: A TPM error (256) occurred attempting the self test
-> [    3.430406] tpm tpm0: starting up the TPM manually
-> 
-> fio@uz3cg-dwg:~$ dmesg | grep ima
-> [    3.525741] ima: No TPM chip found, activating TPM-bypass!
-> [    3.531233] ima: Allocated hash algorithm: sha1
-
-Lengthening the TPM timeout, executing the TPM self test have been past
-reasons for the TPM not to initialize prior to IMA.
-
-(Missing from this bug report is the kernel version.)
-
-thanks,
-
-Mimi
-
+Apologies, this one slipped behind the desk.
