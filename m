@@ -2,196 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD2EC47094
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 10:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BFEC48BE0
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 11:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A72A613C6
-	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 10:45:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A17AF613FF
+	for <linux-security-module@archiver.kernel.org>; Thu, 10 Jun 2021 11:50:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230059AbhFJKrP (ORCPT
+        id S230248AbhFJLwF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 06:47:15 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:5485 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230033AbhFJKrO (ORCPT
+        Thu, 10 Jun 2021 07:52:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:5228 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230215AbhFJLwF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 06:47:14 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.57])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4G10ss2tqKzZfXP;
-        Thu, 10 Jun 2021 18:42:25 +0800 (CST)
-Received: from dggpemm500009.china.huawei.com (7.185.36.225) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 10 Jun 2021 18:45:16 +0800
-Received: from [10.174.179.24] (10.174.179.24) by
- dggpemm500009.china.huawei.com (7.185.36.225) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 10 Jun 2021 18:45:15 +0800
-Subject: Re: [PATCH -next] netlabel: Fix memory leak in netlbl_mgmt_add_common
-To:     Dongliang Mu <mudongliangabcd@gmail.com>
-References: <20210610020108.1356361-1-liushixin2@huawei.com>
- <CAD-N9QWypyEa65-sz3rrtM2o5xzQd_5kJPyC4n+nK5JTviQvEQ@mail.gmail.com>
-CC:     Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, <netdev@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-From:   Liu Shixin <liushixin2@huawei.com>
-Message-ID: <ea1c6878-94d4-63ba-5dea-1190c146581d@huawei.com>
-Date:   Thu, 10 Jun 2021 18:45:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        Thu, 10 Jun 2021 07:52:05 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15ABXaLF183501;
+        Thu, 10 Jun 2021 07:50:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=sOsx0by8qj910X989Lv9ljQz1oCfdyYidDzCaLjOnTg=;
+ b=ijtqNJmOo2TDpS0meMgb+r59PqcV9M6g+HpaZPdIMEwipmECcEOZl/aVRUR/6vj5JPRI
+ vW1gaVxWSLaDxLkQDvGeIIJ3ZCDnOIWtUvMfBZbZi0pUqBf4mkmCXElxg22HMx9sPx7c
+ VQ9HzmWlTh6hfl7YPrK7GmH7XKBd0/RGJMij1BTUrPt7g3GxtCWA/uLFKyJuEUaiEcc8
+ sbvo+OgOTySTqLMBlxVNkbeqXQr1TvT0KvGJCluAYHEoBldzvh7kPrUBPCA1tJY5Q9J1
+ lG3w5Tj9w6y8jE1VUNgOrngbDlhnvxoZcoj8AWdjJc+eni8xgAvbt00RYWluQYMo4Itu 7g== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 393guhah2s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Jun 2021 07:50:03 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15ABYetF187223;
+        Thu, 10 Jun 2021 07:50:03 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 393guhah22-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Jun 2021 07:50:03 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15ABlZDQ027823;
+        Thu, 10 Jun 2021 11:50:01 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03wdc.us.ibm.com with ESMTP id 3900wa7qrj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Jun 2021 11:50:01 +0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15ABo1SM38273324
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jun 2021 11:50:01 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6E4F9AE063;
+        Thu, 10 Jun 2021 11:50:01 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 58FBCAE060;
+        Thu, 10 Jun 2021 11:50:01 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Jun 2021 11:50:01 +0000 (GMT)
+Subject: Re: [PATCH v5 0/2] Add support for ECDSA-signed kernel modules
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210602143537.545132-1-stefanb@linux.ibm.com>
+ <20210603064738.pwfq3n7erzmncdmw@kernel.org>
+ <8b79651b-1fe4-48c0-3498-529344ac6243@linux.ibm.com>
+ <20210609124412.engcrbo3fezuzyoq@kernel.org>
+ <f22e7ae1-8779-e995-091c-8a899fd7fd76@linux.ibm.com>
+ <20210610090323.f7b47xqxbkwnm5cx@kernel.org>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <66d4a4be-c01c-7f33-9a7f-20cfdb5dcf96@linux.ibm.com>
+Date:   Thu, 10 Jun 2021 07:50:01 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <CAD-N9QWypyEa65-sz3rrtM2o5xzQd_5kJPyC4n+nK5JTviQvEQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.179.24]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm500009.china.huawei.com (7.185.36.225)
-X-CFilter-Loop: Reflected
+In-Reply-To: <20210610090323.f7b47xqxbkwnm5cx@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: dlR1wW0VT6VLBzpDlzMqUeHn6uKE9cdf
+X-Proofpoint-ORIG-GUID: FL6cxQpNyhmm27US8oOx8axdF_GmBkMr
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.761
+ definitions=2021-06-10_07:2021-06-10,2021-06-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 phishscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 bulkscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2106100072
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021/6/10 11:08, Dongliang Mu wrote:
-> On Thu, Jun 10, 2021 at 9:31 AM Liu Shixin <liushixin2@huawei.com> wrote:
->> Hulk Robot reported memory leak in netlbl_mgmt_add_common.
->> The problem is non-freed map in case of netlbl_domhsh_add() failed.
->>
->> BUG: memory leak
->> unreferenced object 0xffff888100ab7080 (size 96):
->>   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
->>   hex dump (first 32 bytes):
->>     05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->>     fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
->>   backtrace:
->>     [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
->>     [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
->>     [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
->>     [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
->>     [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
->>     [<0000000020e96fdd>] genl_rcv+0x24/0x40
->>     [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
->>     [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
->>     [<000000006e43415f>] sock_sendmsg+0x139/0x170
->>     [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
->>     [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
->>     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
->>     [<00000000643ac172>] do_syscall_64+0x37/0x90
->>     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
->>
->> Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
->> ---
->>  net/netlabel/netlabel_mgmt.c | 20 ++++++++++++++++----
->>  1 file changed, 16 insertions(+), 4 deletions(-)
->>
->> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
->> index e664ab990941..e7f00c0f441e 100644
->> --- a/net/netlabel/netlabel_mgmt.c
->> +++ b/net/netlabel/netlabel_mgmt.c
->> @@ -191,6 +191,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->>                 entry->family = AF_INET;
->>                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
->>                 entry->def.addrsel = addrmap;
->> +
->> +               ret_val = netlbl_domhsh_add(entry, audit_info);
->> +               if (ret_val != 0) {
->> +                       kfree(map);
->> +                       goto add_free_addrmap;
->> +               }
->>  #if IS_ENABLED(CONFIG_IPV6)
->>         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
->>                 struct in6_addr *addr;
->> @@ -243,13 +249,19 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->>                 entry->family = AF_INET6;
->>                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
->>                 entry->def.addrsel = addrmap;
->> +
->> +               ret_val = netlbl_domhsh_add(entry, audit_info);
->> +               if (ret_val != 0) {
->> +                       kfree(map);
->> +                       goto add_free_addrmap;
->> +               }
->>  #endif /* IPv6 */
->> +       } else {
->> +               ret_val = netlbl_domhsh_add(entry, audit_info);
->> +               if (ret_val != 0)
->> +                       goto add_free_addrmap;
->>         }
->>
->> -       ret_val = netlbl_domhsh_add(entry, audit_info);
->> -       if (ret_val != 0)
->> -               goto add_free_addrmap;
->> -
-> Hi Shixin,
->
-> I have a small suggestion about this patch: you can move the variable
-> map out of if/else if branches, like the following code snippet.
->
-> Be aware to assign the variable map to NULL at first. Then kfree in
-> the last else branch will do nothing.
->
-> I don't test the following diff, if there are any issues, please let me know.
->
-> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-> index ca52f5085989..1824bcd2272b 100644
-> --- a/net/netlabel/netlabel_mgmt.c
-> +++ b/net/netlabel/netlabel_mgmt.c
-> @@ -78,6 +78,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->  {
->         int ret_val = -EINVAL;
->         struct netlbl_domaddr_map *addrmap = NULL;
-> +       struct netlbl_domaddr4_map *map = NULL;
->         struct cipso_v4_doi *cipsov4 = NULL;
->  #if IS_ENABLED(CONFIG_IPV6)
->         struct calipso_doi *calipso = NULL;
-> @@ -147,7 +148,6 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->         if (info->attrs[NLBL_MGMT_A_IPV4ADDR]) {
->                 struct in_addr *addr;
->                 struct in_addr *mask;
-> -               struct netlbl_domaddr4_map *map;
->
->                 addrmap = kzalloc(sizeof(*addrmap), GFP_KERNEL);
->                 if (addrmap == NULL) {
-> @@ -195,7 +195,6 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
->                 struct in6_addr *addr;
->                 struct in6_addr *mask;
-> -               struct netlbl_domaddr6_map *map;
->
->                 addrmap = kzalloc(sizeof(*addrmap), GFP_KERNEL);
->                 if (addrmap == NULL) {
-> @@ -247,8 +246,10 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->         }
->
->         ret_val = netlbl_domhsh_add(entry, audit_info);
-> -       if (ret_val != 0)
-> +       if (ret_val != 0) {
-> +               kfree(map);
->                 goto add_free_addrmap;
-> +       }
->
->         return 0;
->
-The type of map can be struct netlbl_domaddr4_map or struct netlbl_domaddr6_map
-under different conditions. It seems like I can't put them together simply.
 
-Thanks,
->
->
->
->>         return 0;
+On 6/10/21 5:03 AM, Jarkko Sakkinen wrote:
+> On Wed, Jun 09, 2021 at 09:58:29AM -0400, Stefan Berger wrote:
+>> On 6/9/21 8:44 AM, Jarkko Sakkinen wrote:
+>>> On Thu, Jun 03, 2021 at 08:32:59AM -0400, Stefan Berger wrote:
+>>>> On 6/3/21 2:47 AM, Jarkko Sakkinen wrote:
+>>>>>> -- 
+>>>>>> 2.29.2
+>>>>>>
+>>>>>>
+>>>>> Please instead send a fix.
+>>>> We have a Fixes tag in 1/2, so we want this to propagate to older kernels
+>>>> and need the fix in 1/2 for that reason.
+>>>>
+>>>>      Stefan
+>>> So please do an additional fix and send it.
+>> 1/2 is supposed to propagate to older kernels and needs to change as posted
+>> here in v5 (assuming that this does indeed fix what the build bot was
+>> complaining about). 2/2 also changes. A fix on top of v4 would fix 2/2 but
+>> won't apply cleanly to 1/2 as cannot easily propagate to older kernels. Is
+>> that what we want? Why can you not remove v4 from your queue and replace it
+>> with v5?
 >>
->>  add_free_addrmap:
->> --
->> 2.18.0.huawei.25
->>
-> .
->
+>>     Stefan
+> What you can do is to send fix or fixes with appropriate fixes tags and
+> I can then squash them for appropriate patches. That's less work for me.
+
+
+Once you squash a fix on top of existing 1/2 , existing 2/2 will not 
+apply anymore. I am not sure what to send you. I think it would take 
+less time to remove the existing 2 patches and replace them with v5.
+
+    Stefan
+
 
