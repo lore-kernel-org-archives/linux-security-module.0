@@ -2,98 +2,186 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769A8C48BD1
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jun 2021 02:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97559C4743D
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jun 2021 04:06:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57E3561285
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jun 2021 02:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 786086023B
+	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jun 2021 04:06:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbhFKCbr (ORCPT
+        id S229562AbhFKEIK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 10 Jun 2021 22:31:47 -0400
-Received: from mail-pf1-f173.google.com ([209.85.210.173]:45718 "EHLO
-        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230160AbhFKCbq (ORCPT
+        Fri, 11 Jun 2021 00:08:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56856 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229510AbhFKEIK (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 10 Jun 2021 22:31:46 -0400
-Received: by mail-pf1-f173.google.com with SMTP id d16so3190642pfn.12;
-        Thu, 10 Jun 2021 19:29:40 -0700 (PDT)
+        Fri, 11 Jun 2021 00:08:10 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A35EDC061574;
+        Thu, 10 Jun 2021 21:06:12 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id r7so21142289edv.12;
+        Thu, 10 Jun 2021 21:06:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=AKU124jU/u06/XqITKyhGdyjgwHpz1y19GKnJe70/50=;
-        b=Fzd+9ay/my62ld1LfHLOT9s0mdEJYwyL+xSYOozDWoaFF7N6NIzgDH6+61AlORTrn4
-         cchKq8nuZnE9/bCSK7zUZoic4PBVaRbx6y7aD+tULv8JiYfqOb942D1ZCHQ6a4TnH3wX
-         3KfMkkEQ2Pp+whm7/Q5ImzqXw2Hk75/BYZj4r08Xm7AvlofuEB+oVuOaR/pl1PBoHA6m
-         ZcVRlwR1Swmn+pC2zTxPHE6oy+vaobauFcbnxSHzwlYaULUPv9M78sKvvzVvs1itCxNG
-         1MqTyhOFQoJ6+hdJDAxCPJM+Jg4uqbksTx3W/TUcc7VmRvAgJVEN0na2WJm/nKjVz6F4
-         j9SA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2ru5NTnEQDZPpXWhXfz8XIfDBceAFX5z5yz+wskB7s4=;
+        b=rnpRxAB7xEyWP4hzkTxgysmXz/FyKywiZroIuzOkJBL3KRh9oRzDqy9J1043TgAl78
+         4PCR/+AyRlPkWgUWEURWlk45lNUpoRD28S0fu1U9Y+8Kmd7lYYXRGgcT91qHdDp9D27K
+         9XulUPUBnqYbSuY2eoHCNcNy2fp3Q2CJJTiydH5qRFNawrsWkDRlMkn0lQzls28vENCy
+         sLhyt7yAddWTPYbEeHla0wUO8caJaToOVsgSgPnw6NUG9W0qUNlpCzdtmfUQvSmRa74r
+         +IryXDd/qyV/w5RSEICTxz9CtVxWKJVRGGIxfQiYTbsZyIYzT/re7ktckx+OvIgGXGux
+         GlXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=AKU124jU/u06/XqITKyhGdyjgwHpz1y19GKnJe70/50=;
-        b=oykq0BmBkt8cwQDjB283bIfuKWlCsCFcqikn9H9KWpz+c94XBoZ+4AJIGAEBy246NG
-         bvx5HGZNkiPLkG9knEsca+p74v0iqK6p2iZjSdEG06hmC9Fdeb/mf9TETVftUjS8Ls+c
-         BaFziTZzRC/Xk0Rx5FsGiiTh/rXHTQnRWD0O0/jXD6PipcEu6D/v2KSpqrEtZ6sGKtKQ
-         nSJjpL47yFMG6OFbr79cdiqFh24mNyK+zPD6wWx9BnEBcHFY2NwYpld4c9YPNeRrwgbN
-         JXprv1ie3HA5zG2HxY545I9KvdXnowBVNFhw4LcoAaxz6FFKpRsmzxoWWqb0JLqv8K0i
-         U94Q==
-X-Gm-Message-State: AOAM530fqbM1obMnHAO5Mr5JjH9ZwhEmkpthxLKbjIuwhH/nyjw8/UJj
-        UsOfVMsP0ZRst433SEgYklrhWk3i4/vUTDU5
-X-Google-Smtp-Source: ABdhPJwiGSeqwF9faWHvjK33uS9mdi3TKiOgnJyIWzJ40zYtTtoGSDqc6JjpUcs2B9JpG6fMr1TdNQ==
-X-Received: by 2002:a62:860a:0:b029:2ec:81e1:23e4 with SMTP id x10-20020a62860a0000b02902ec81e123e4mr5894381pfd.11.1623378519956;
-        Thu, 10 Jun 2021 19:28:39 -0700 (PDT)
-Received: from raspberrypi ([125.141.84.155])
-        by smtp.gmail.com with ESMTPSA id 65sm3586605pfu.159.2021.06.10.19.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Jun 2021 19:28:39 -0700 (PDT)
-Date:   Fri, 11 Jun 2021 03:28:35 +0100
-From:   Austin Kim <austindh.kim@gmail.com>
-To:     jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, austin.kim@lge.com,
-        austindh.kim@gmail.com
-Subject: [PATCH] audit: remove unnecessary 'ret' initialization
-Message-ID: <20210611022835.GA1031@raspberrypi>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2ru5NTnEQDZPpXWhXfz8XIfDBceAFX5z5yz+wskB7s4=;
+        b=B3z2Y2Dr+uAhd3dw+p4bP5/hzncGQ37BXPNBVOGaONXN5RJP+bJIP/mrGJEjzOdUia
+         5Q7aTIVck+GQ8fH56x10+MSy2aXKD2HE9tWqpDbu5U8j73ZLxBYYL40YlzvMt7PQnKU0
+         UiwvH2BQt2CB68DzzdJtXUyHklGC3XGuaZ2zJNpCIDWIxoMsX2Q8xdyM+dC7yVWUQyhY
+         NiNczmIckNYXOGzayeMkFsKu96vGCFs6N+jKPVr1htW1XDWCVgqD4f8gzdGln93W1BXB
+         9Xo4LJszlXm5k/tqxnTYwE7nMj55E77RMekg3X87dyLmgn5hF8nglGlHCqRKeDtbeqkJ
+         k4Bg==
+X-Gm-Message-State: AOAM531IFeX6C0Gk3fckaEWTWaoA7QclKSegpS3FLWYGil12IyLUmMos
+        zgriaHlirg8eabgqPH+ij5MBhz1cZ58nlq4TZUYL1zrpsrU2hf0Xljrp19cW
+X-Google-Smtp-Source: ABdhPJz8ubjy2qKc6iuAXBIjZx2bDZsZQ8aahgIxvFMKlgr6sTd3csIARxbzFcY7SbbBISWU2240qfpEug+Kg5ErQ3c=
+X-Received: by 2002:a05:6402:34c6:: with SMTP id w6mr1598733edc.174.1623384371192;
+ Thu, 10 Jun 2021 21:06:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210610020108.1356361-1-liushixin2@huawei.com> <CAHC9VhQM4YP527Z9ijTBk2i++S=viZ1hKVo6GgCOUcNCVgB2vw@mail.gmail.com>
+In-Reply-To: <CAHC9VhQM4YP527Z9ijTBk2i++S=viZ1hKVo6GgCOUcNCVgB2vw@mail.gmail.com>
+From:   Dongliang Mu <mudongliangabcd@gmail.com>
+Date:   Fri, 11 Jun 2021 12:05:44 +0800
+Message-ID: <CAD-N9QVNhOoj17tC4OTGbbhYmM0kxnk=Q_XKD0iQ8G4tORqPGQ@mail.gmail.com>
+Subject: Re: [PATCH -next] netlabel: Fix memory leak in netlbl_mgmt_add_common
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Liu Shixin <liushixin2@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Austin Kim <austin.kim@lge.com>
+On Fri, Jun 11, 2021 at 7:43 AM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Jun 9, 2021 at 9:29 PM Liu Shixin <liushixin2@huawei.com> wrote:
+> >
+> > Hulk Robot reported memory leak in netlbl_mgmt_add_common.
+> > The problem is non-freed map in case of netlbl_domhsh_add() failed.
+> >
+> > BUG: memory leak
+> > unreferenced object 0xffff888100ab7080 (size 96):
+> >   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
+> >   hex dump (first 32 bytes):
+> >     05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> >     fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
+> >   backtrace:
+> >     [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
+> >     [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
+> >     [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
+> >     [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
+> >     [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
+> >     [<0000000020e96fdd>] genl_rcv+0x24/0x40
+> >     [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
+> >     [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
+> >     [<000000006e43415f>] sock_sendmsg+0x139/0x170
+> >     [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
+> >     [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
+> >     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
+> >     [<00000000643ac172>] do_syscall_64+0x37/0x90
+> >     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+> >
+> > Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> > ---
+> >  net/netlabel/netlabel_mgmt.c | 20 ++++++++++++++++----
+> >  1 file changed, 16 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+> > index e664ab990941..e7f00c0f441e 100644
+> > --- a/net/netlabel/netlabel_mgmt.c
+> > +++ b/net/netlabel/netlabel_mgmt.c
+> > @@ -191,6 +191,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+> >                 entry->family = AF_INET;
+> >                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+> >                 entry->def.addrsel = addrmap;
+> > +
+> > +               ret_val = netlbl_domhsh_add(entry, audit_info);
+> > +               if (ret_val != 0) {
+> > +                       kfree(map);
+> > +                       goto add_free_addrmap;
+> > +               }
+> >  #if IS_ENABLED(CONFIG_IPV6)
+> >         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
+> >                 struct in6_addr *addr;
+> > @@ -243,13 +249,19 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+> >                 entry->family = AF_INET6;
+> >                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+> >                 entry->def.addrsel = addrmap;
+> > +
+> > +               ret_val = netlbl_domhsh_add(entry, audit_info);
+> > +               if (ret_val != 0) {
+> > +                       kfree(map);
+> > +                       goto add_free_addrmap;
+> > +               }
+> >  #endif /* IPv6 */
+> > +       } else {
+> > +               ret_val = netlbl_domhsh_add(entry, audit_info);
+> > +               if (ret_val != 0)
+> > +                       goto add_free_addrmap;
+> >         }
+> >
+> > -       ret_val = netlbl_domhsh_add(entry, audit_info);
+> > -       if (ret_val != 0)
+> > -               goto add_free_addrmap;
+> > -
+> >         return 0;
+>
+> Thanks for the report and a fix, although I think there may be a
+> simpler fix that results in less code duplication; some quick pseudo
+> code below:
+>
+>   int netlbl_mgmt_add_common(...)
+>   {
+>      void *map_p = NULL;
+>
+>      if (NLBL_MGMT_A_IPV4ADDR) {
+>        struct netlbl_domaddr4_map *map;
+>        map_p = map;
 
-The variable 'ret' is set to 0 when declared.
-The 'ret' is unused until it is set to 0 again.
+It's better to use a separate map_p pointer, not like the draft patch
+I sent yesterday.
 
-So it had better remove unnecessary initialization.
+>
+>      } else if (NLBL_MGMT_A_IPV6ADDR) {
+>        struct netlbl_domaddr4_map *map;
+>        map_p = map;
+>     }
+>
+>   add_free_addrmap:
+>     kfree(map_p);
+>     kfree(addrmap);
+>   }
 
-Signed-off-by: Austin Kim <austin.kim@lge.com>
----
- security/lsm_audit.c | 1 -
- 1 file changed, 1 deletion(-)
+Simple comment here: we should separate kfree(map_p) and
+kfree(addrmap) into different goto labels, just like the draft patch I
+sent yesterday.
 
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 82ce14933513..5a5016ef43b0 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -119,7 +119,6 @@ int ipv6_skb_to_auditdata(struct sk_buff *skb,
- 		return -EINVAL;
- 	ad->u.net->v6info.saddr = ip6->saddr;
- 	ad->u.net->v6info.daddr = ip6->daddr;
--	ret = 0;
- 	/* IPv6 can have several extension header before the Transport header
- 	 * skip them */
- 	offset = skb_network_offset(skb);
--- 
-2.20.1
-
+>
+> ... this approach would even simplify the error handling after the
+> netlbl_af{4,6}list_add() calls a bit too (you could jump straight to
+> add_free_addrmap).
+>
+> --
+> paul moore
+> www.paul-moore.com
