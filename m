@@ -2,167 +2,161 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A7F7C48BE0
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jun 2021 17:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA0DC48BCF
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Jun 2021 06:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 367736136D
-	for <linux-security-module@archiver.kernel.org>; Fri, 11 Jun 2021 17:36:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74F28611ED
+	for <linux-security-module@archiver.kernel.org>; Sun, 13 Jun 2021 06:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbhFKRil (ORCPT
+        id S229986AbhFMGsB (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 11 Jun 2021 13:38:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39704 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230083AbhFKRik (ORCPT
+        Sun, 13 Jun 2021 02:48:01 -0400
+Received: from m12-14.163.com ([220.181.12.14]:37430 "EHLO m12-14.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229979AbhFMGsB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 11 Jun 2021 13:38:40 -0400
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39305C061574
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Jun 2021 10:36:42 -0700 (PDT)
-Received: by mail-ed1-x530.google.com with SMTP id f5so33013507eds.0
-        for <linux-security-module@vger.kernel.org>; Fri, 11 Jun 2021 10:36:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kicSdfyPUPG0oZw0Yyms2mDBTb2EqDMsn04Ocyed7OA=;
-        b=xB5cCJAthgJGLgDcW5FU+YuJlwc9WkRntsmvFSTnAC8U6tvjQ5SDTlmFxMTNrH1pSp
-         X+L07kyYXu8Tz+dl1ZA6u6m0+mb9UDaM4ofl5hLaFgJlZoiA3ue6VvFqv96WlefCBOse
-         HqKqcBp+bsDnAtZbcDTAaOIGvRUZ4dxXVQEc0G6D1wXMqiUZwLI2P3qiwDFMrH214BeJ
-         DHtTrO/kvGwCqketn8SYpwictc/Hf/z+NyBnso7vry4ONhbf4uTTK4/R4wRCA5cg9NWs
-         9xGNVVcP6ZP0T1l0ldjLugscRSXyvQ59DibfLXUvflBIyDwSn1MXCy+anjNcIxMjNzUz
-         X7iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kicSdfyPUPG0oZw0Yyms2mDBTb2EqDMsn04Ocyed7OA=;
-        b=P8uA1cvOBuX0/sIG22djdmQZ0eb+JxPdzCLNmYdilH+blMAUHyN553Tib/y5dBnKCx
-         wWXT6DtYioqqRgNBR2JTaHFQb0VUJa2CSILh0/mdCeHWKI67Jie5A8WY3wRUo7nsISg+
-         xQi3nCjWATeojNX+qwLmQx/yM8R3QyRTidynXZtCl/fmuSfOAgtTwCQ4HCYRcAD0feZm
-         tzMtW73QztoZuWTNPSSJImzTKTfpp4sUQZjJ5ZV17HWBG1Fe6nz31njsKNCcz+m6cBun
-         bbABZzj6EvXfLo/HjW3BsAmmYFrhtjQmlqmgRK2hVx9EFP7b159W+WqBz59WzS9ZXn97
-         RUdQ==
-X-Gm-Message-State: AOAM530XDdZ/CnrpeabTzGGKPBhWvL1RsD20zgeatIjJdYPQ6+XTQpji
-        rIun6X3r6CVBCFaeIzxtyF3S1VHzIMYcb0XPI1b3
-X-Google-Smtp-Source: ABdhPJwxcUeB13OSebDiZwZ8pswKPJkD8oPnqPRTubV8D4BitINoO9F6PgQpRJGMuHWIf1jckj+ZuaRPqDN+Jb03uc4=
-X-Received: by 2002:aa7:c0d3:: with SMTP id j19mr5029543edp.196.1623432998161;
- Fri, 11 Jun 2021 10:36:38 -0700 (PDT)
+        Sun, 13 Jun 2021 02:48:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=+GKmK
+        TI4RYtXz8Sc9ZBp4cs0XGgq7AZpUGAzKjq4WhI=; b=XLYqdcH2DF91JkKCjl8kj
+        Lbq8J8/Xu/kCvLNLyrpJzBvUmRl6IZX2X/bva2X4EEZBC5JsDhCj/n7/9MzbLifx
+        zcAEbziApATxxATicI3NTgUREJ5C5g45Yspv8Wwrex264TUNiXjm3KD/4Bj9AqWS
+        QHDJUOVM1Vz1zJzwP7wWvQ=
+Received: from ubuntu.localdomain (unknown [183.159.69.187])
+        by smtp10 (Coremail) with SMTP id DsCowACHhD0xqcVgnClcOg--.2017S4;
+        Sun, 13 Jun 2021 14:44:02 +0800 (CST)
+From:   Li Qiang <liq3ea@163.com>
+To:     akpm@linux-foundation.org, jmorris@namei.org, serge@hallyn.com,
+        keescook@chromium.org, paul@paul-moore.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-security-module@vger.kernel.org, liq3ea@gmail.com,
+        Li Qiang <liq3ea@163.com>
+Subject: [PATCH] security: add LSM hook at the memfd_create point
+Date:   Sat, 12 Jun 2021 23:43:59 -0700
+Message-Id: <20210613064359.389683-1-liq3ea@163.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210611082119.2117194-1-liushixin2@huawei.com>
-In-Reply-To: <20210611082119.2117194-1-liushixin2@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Jun 2021 13:36:27 -0400
-Message-ID: <CAHC9VhTEYjQjFH9D4ozFbYcg=6ebMeVgN2dmYvb0ifdvadc2fA@mail.gmail.com>
-Subject: Re: [PATCH -next v2] netlabel: Fix memory leak in netlbl_mgmt_add_common
-To:     Liu Shixin <liushixin2@huawei.com>
-Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: DsCowACHhD0xqcVgnClcOg--.2017S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWr1xJFW3KryxKr4xGF4rKrg_yoW5uw43pF
+        4kCF4rta18AFy7Z393C3W7G3W3J3yFgr47XrW2gw1UAF1Iqw4vqF4DuF1Ykrn5GrZrZFW0
+        9ayxWrW3CrWjqaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UI1v3UUUUU=
+X-Originating-IP: [183.159.69.187]
+X-CM-SenderInfo: 5oltjvrd6rljoofrz/1tbiTxCwbVsGZJBP6gABsP
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jun 11, 2021 at 3:50 AM Liu Shixin <liushixin2@huawei.com> wrote:
->
-> Hulk Robot reported memory leak in netlbl_mgmt_add_common.
-> The problem is non-freed map in case of netlbl_domhsh_add() failed.
->
-> BUG: memory leak
-> unreferenced object 0xffff888100ab7080 (size 96):
->   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
->   hex dump (first 32 bytes):
->     05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
->   backtrace:
->     [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
->     [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
->     [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
->     [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
->     [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
->     [<0000000020e96fdd>] genl_rcv+0x24/0x40
->     [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
->     [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
->     [<000000006e43415f>] sock_sendmsg+0x139/0x170
->     [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
->     [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
->     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
->     [<00000000643ac172>] do_syscall_64+0x37/0x90
->     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
->
-> Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> ---
-> v1->v2: According to Dongliang's and Paul's advices, simplify the code.
->
->  net/netlabel/netlabel_mgmt.c | 22 +++++++++++++---------
->  1 file changed, 13 insertions(+), 9 deletions(-)
->
-> diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-> index e664ab990941..fa9e68e5f826 100644
-> --- a/net/netlabel/netlabel_mgmt.c
-> +++ b/net/netlabel/netlabel_mgmt.c
-> @@ -76,6 +76,7 @@ static const struct nla_policy netlbl_mgmt_genl_policy[NLBL_MGMT_A_MAX + 1] = {
->  static int netlbl_mgmt_add_common(struct genl_info *info,
->                                   struct netlbl_audit *audit_info)
->  {
-> +       void * pmap = NULL;
+memfd_create is often used in the fileless attack.
+Let's create a LSM hook so that we can detect and prevent
+anonymous file creation.
 
-You should use the 'void *pmap = NULL;' style that is used in the rest
-of this function, and most everywhere in the kernel.
+Signed-off-by: Li Qiang <liq3ea@163.com>
+---
+ include/linux/lsm_hook_defs.h |  4 ++++
+ include/linux/lsm_hooks.h     |  5 +++++
+ include/linux/security.h      | 15 +++++++++++++++
+ mm/memfd.c                    |  6 ++++++
+ security/security.c           |  7 +++++++
+ 5 files changed, 37 insertions(+)
 
->         int ret_val = -EINVAL;
->         struct netlbl_domaddr_map *addrmap = NULL;
->         struct cipso_v4_doi *cipsov4 = NULL;
-> @@ -175,6 +176,8 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->                         ret_val = -ENOMEM;
->                         goto add_free_addrmap;
->                 }
-> +
-> +               pmap = map;
-
-There is no need for the extra vertical whitespace here.
-
->                 map->list.addr = addr->s_addr & mask->s_addr;
->                 map->list.mask = mask->s_addr;
->                 map->list.valid = 1;
-> @@ -183,14 +186,13 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->                         map->def.cipso = cipsov4;
->
->                 ret_val = netlbl_af4list_add(&map->list, &addrmap->list4);
-> -               if (ret_val != 0) {
-> -                       kfree(map);
-> -                       goto add_free_addrmap;
-> -               }
-> +               if (ret_val != 0)
-> +                       goto add_free_map;
->
->                 entry->family = AF_INET;
->                 entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
->                 entry->def.addrsel = addrmap;
-> +
-
-Please don't add extra vertical whitespace here.
-
->  #if IS_ENABLED(CONFIG_IPV6)
->         } else if (info->attrs[NLBL_MGMT_A_IPV6ADDR]) {
->                 struct in6_addr *addr;
-> @@ -223,6 +225,8 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
->                         ret_val = -ENOMEM;
->                         goto add_free_addrmap;
->                 }
-> +
-> +               pmap = map;
-
-Same thing, no extra vertical whitespace please.
-
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 04c01794de83..955556d0d084 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -403,3 +403,7 @@ LSM_HOOK(void, LSM_RET_VOID, perf_event_free, struct perf_event *event)
+ LSM_HOOK(int, 0, perf_event_read, struct perf_event *event)
+ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+ #endif /* CONFIG_PERF_EVENTS */
++
++#ifdef CONFIG_MEMFD_CREATE
++LSM_HOOK(int, 0, memfd_create, const char *name, unsigned int flags)
++#endif /* CONFIG_MEMFD_CREATE */
+diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+index 5c4c5c0602cb..e9c31dbb2783 100644
+--- a/include/linux/lsm_hooks.h
++++ b/include/linux/lsm_hooks.h
+@@ -1557,6 +1557,11 @@
+  * 	Read perf_event security info if allowed.
+  * @perf_event_write:
+  * 	Write perf_event security info if allowed.
++ *
++ * Security hooks for anonymous file
++ *
++ * @memfd_create:
++ *	Check whether anonymous file creation is allowed
+  */
+ union security_list_options {
+ 	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 06f7c50ce77f..44b43a7569b5 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2037,4 +2037,19 @@ static inline int security_perf_event_write(struct perf_event *event)
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_PERF_EVENTS */
+ 
++#ifdef CONFIG_MEMFD_CREATE
++#ifdef CONFIG_SECURITY
++
++extern int security_memfd_create(const char *name, unsigned int flags);
++
++#else
++
++static inline int security_memfd_create(const char *name, unsigned int flags)
++{
++	return 0;
++}
++
++#endif /* CONFIG_SECURITY */
++#endif /* CONFIG_MEMFD_CREATE */
++
+ #endif /* ! __LINUX_SECURITY_H */
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 2647c898990c..dbd309e455d2 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -18,6 +18,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/memfd.h>
++#include <linux/security.h>
+ #include <uapi/linux/memfd.h>
+ 
+ /*
+@@ -290,6 +291,11 @@ SYSCALL_DEFINE2(memfd_create,
+ 		goto err_name;
+ 	}
+ 
++	if (security_memfd_create(name, flags)) {
++		error = -EPERM;
++		goto err_name;
++	}
++
+ 	fd = get_unused_fd_flags((flags & MFD_CLOEXEC) ? O_CLOEXEC : 0);
+ 	if (fd < 0) {
+ 		error = fd;
+diff --git a/security/security.c b/security/security.c
+index b38155b2de83..5723408c5d0b 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2624,3 +2624,10 @@ int security_perf_event_write(struct perf_event *event)
+ 	return call_int_hook(perf_event_write, 0, event);
+ }
+ #endif /* CONFIG_PERF_EVENTS */
++
++#ifdef CONFIG_MEMFD_CREATE
++int security_memfd_create(const char *name, unsigned int flags)
++{
++	return call_int_hook(memfd_create, 0, name, flags);
++}
++#endif /* CONFIG_MEMFD_CREATE */
 -- 
-paul moore
-www.paul-moore.com
+2.25.1
+
