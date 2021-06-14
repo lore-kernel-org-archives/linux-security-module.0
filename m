@@ -2,96 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974DFC2B9F4
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jun 2021 18:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 081AFC2B9F4
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jun 2021 19:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76302610A3
-	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jun 2021 18:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B0C6124B
+	for <linux-security-module@archiver.kernel.org>; Mon, 14 Jun 2021 19:19:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234155AbhFNSGI (ORCPT
+        id S233784AbhFNTVz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Jun 2021 14:06:08 -0400
-Received: from mail-lj1-f174.google.com ([209.85.208.174]:36504 "EHLO
-        mail-lj1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233358AbhFNSGI (ORCPT
+        Mon, 14 Jun 2021 15:21:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39554 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233048AbhFNTVy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Jun 2021 14:06:08 -0400
-Received: by mail-lj1-f174.google.com with SMTP id 131so21416636ljj.3
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Jun 2021 11:04:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hth5OJx5DLnrqVkGsO9sFZaOxm24SUjgcf7q16vYO9k=;
-        b=SYh2bWEUABHXqRB6ouYLMnFXIxkuBj3g9OGoJcjymr/uDkZ0b2ocpQIxY7OD3aoqry
-         y/WDysWKakiopu5mag8D+4V2VdjD01blp+N5edF/BQ0EXgzT8QLbBsWXILbf7+h84XUb
-         ftZIOw1NIhwgxMzRUzmXKeXGQC6u8yO//bp98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hth5OJx5DLnrqVkGsO9sFZaOxm24SUjgcf7q16vYO9k=;
-        b=DUWug5xEhfeNZgEMRhSXNRoZlukkoi9gJGudMnY0BQ+ifMZEIsAbUzjiSAMh8MR9aO
-         056FhiKhG2hdDH8BIvMdhRKXHZhaYsnREpZPlAFY2vb0g0uJ3jnwgKhITtEZCqTl2STJ
-         lyatkdISGkL8gD+Wg4/fNP7ohTGX4UxOvA0sTi02l7zXeudKc3214b9nazfxoOAnKrsW
-         5I8n2dYFDSevJSortBgG7QyQquIDMYKKAT6FksjArHjNcENuJ7A7vAP0DyEzLGd+sAoC
-         oYvZ8EhyocDrZJutgLwWKOe3LMEGO3kmbC7ICAyXPmZpxP3DKHgFia0KpDzndnqHH7ue
-         GhAQ==
-X-Gm-Message-State: AOAM530NOrVa41o7gSBgEUMCQX+NzSkEnMfZ9mpnvCv4yd1jqI2C6pTC
-        sdvQbLkF20I4zJJO59H+lakxhUBl6bvRpNy5qxM=
-X-Google-Smtp-Source: ABdhPJzve0DAaB3i1iNU+6eOd8Eg/bRl33uKHSxb7nk9+oM+HBxVOMJaRKigMxHadEPIWPVKOZFkVQ==
-X-Received: by 2002:a05:651c:391:: with SMTP id e17mr14511978ljp.257.1623693783636;
-        Mon, 14 Jun 2021 11:03:03 -0700 (PDT)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id m29sm1547462lfp.203.2021.06.14.11.03.02
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Jun 2021 11:03:02 -0700 (PDT)
-Received: by mail-lf1-f44.google.com with SMTP id f30so22556556lfj.1
-        for <linux-security-module@vger.kernel.org>; Mon, 14 Jun 2021 11:03:02 -0700 (PDT)
-X-Received: by 2002:a05:6512:3f82:: with SMTP id x2mr12358175lfa.421.1623693782157;
- Mon, 14 Jun 2021 11:03:02 -0700 (PDT)
+        Mon, 14 Jun 2021 15:21:54 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DDE5461076;
+        Mon, 14 Jun 2021 19:19:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623698391;
+        bh=NQBklGVerSpRXCeIFhcT9srvsqM7Ilq8/ae/R7QiO8k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VbuCgKGrQtzWpphJqRBuup/QMyyieIWlT8MaOR0amac2RPFzK4hHxClIBbXaY/lCs
+         a3Xy0T/iOKMY8VMyLPB3emTUcf1hSEncDUkTKRDOvQLY5FvZKSA7k0aTBjFzakJ55I
+         Gp7vRtarSmSuAq9B/+uCKBqChCw4diQSo8r43+WqE3teuBtrANLlBD+3+QgO5jNdVY
+         FRLQzxJqvXF8lR65Im54A4wVW5DxBGCYyfkLs9aR92zr47W4IAZAmYoW4pGC62Nysh
+         YuUxqvvIVZXnYvkIlkVe2liUclfJmvicz1zJz4C2stbTjKuZUnZPPVlryhnfD7Bcb9
+         938yesVJT+BZA==
+Date:   Mon, 14 Jun 2021 22:19:48 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] Add support for ECDSA-signed kernel modules
+Message-ID: <20210614191948.io4waff5aisah36q@kernel.org>
+References: <20210610125623.1553792-1-stefanb@linux.ibm.com>
 MIME-Version: 1.0
-References: <20210608171221.276899-1-keescook@chromium.org>
- <20210614100234.12077-1-youling257@gmail.com> <202106140826.7912F27CD@keescook>
- <202106140941.7CE5AE64@keescook>
-In-Reply-To: <202106140941.7CE5AE64@keescook>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 14 Jun 2021 11:02:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whLBq63v_h71YuBM2aNjCSBprkBEO3fevbWnkp8TDeh5g@mail.gmail.com>
-Message-ID: <CAHk-=whLBq63v_h71YuBM2aNjCSBprkBEO3fevbWnkp8TDeh5g@mail.gmail.com>
-Subject: Re: [PATCH] proc: Track /proc/$pid/attr/ opener mm_struct
-To:     Kees Cook <keescook@chromium.org>
-Cc:     youling257 <youling257@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, regressions@lists.linux.dev,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210610125623.1553792-1-stefanb@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 14, 2021 at 9:45 AM Kees Cook <keescook@chromium.org> wrote:
->
->         /* A task may only write when it was the opener. */
-> -       if (file->private_data != current->mm)
-> +       if (!file->private_data || file->private_data != current->mm)
+On Thu, Jun 10, 2021 at 08:56:19AM -0400, Stefan Berger wrote:
+> This series adds support for ECDSA-signed kernel modules. It also
+> attempts to address a kbuild issue where a developer created an ECDSA
+> key for signing kernel modules and then builds an older version of the
+> kernel, when bisecting the kernel for example, that does not support
+> ECDSA keys.
+> 
+> The first patch addresses the kbuild issue of needing to delete that
+> ECDSA key if it is in certs/signing_key.pem and trigger the creation
+> of an RSA key. However, for this to work this patch would have to be
+> backported to previous versions of the kernel but would also only work
+> for the developer if he/she used a stable version of the kernel to which
+> this patch was applied. So whether this patch actually achieves the
+> wanted effect is not always guaranteed.
+> 
+> The 2nd patch adds the support for the ECSDA-signed kernel modules.
+> 
+> This patch depends on the ECDSA support series currently queued here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/log/?h=ecc
+> 
+>   Stefan
+> 
+> v6:
+>   - Patch 2/4 is fixing V4's 1/2 and 4/4 is fixing V4's 2/2. Both fixup
+>     patches to be squashed.
+> 
+> v5:
+>   - do not touch the key files if openssl is not installed; likely
+>     addresses an issue pointed out by kernel test robot
+> 
+> v4:
+>   - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
+>   
+> v3: - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
+>   - added recommendation to use string hash to Kconfig help text
+> 
+> v2:
+>   - Adjustment to ECDSA key detector string in 2/2
+>   - Rephrased cover letter and patch descriptions with Mimi
+> 
+> 
+> Stefan Berger (4):
+>   certs: Trigger creation of RSA module signing key if it's not an RSA
+>     key
+>   certs: Check whether openssl tool is available
+>   certs: Add support for using elliptic curve keys for signing modules
+>   certs: Adjustment due to 'Check whether openssl tool is available'
+> 
+>  certs/Kconfig                         | 26 ++++++++++++++++++++++++++
+>  certs/Makefile                        | 21 +++++++++++++++++++++
+>  crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
+>  3 files changed, 55 insertions(+)
+> 
+> -- 
+> 2.29.2
+> 
+> 
 
-I don't think this is necessary.
+Since you know the commit ID's in
 
-If file->private_data is NULL, then the old test for private_data !=
-current->mm will still work just fine.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
 
-Because if you can fool kernel threads to do the write for you, you
-have bigger security issues than that test.
+you could just use fixes-tags and send exactly two patch series. Works
+better with various tools (e.g. https://pypi.org/project/b4/)
 
-               Linus
+/Jarkko
