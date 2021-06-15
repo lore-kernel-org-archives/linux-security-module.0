@@ -2,115 +2,87 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F7FC48BDF
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 20:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED96C48BDF
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 20:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C05D613B6
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 20:29:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EDE6611C0
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 20:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229979AbhFOUbW (ORCPT
+        id S230503AbhFOUm3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Jun 2021 16:31:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36704 "EHLO
+        Tue, 15 Jun 2021 16:42:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229898AbhFOUbW (ORCPT
+        with ESMTP id S229898AbhFOUm1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Jun 2021 16:31:22 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57416C061574
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Jun 2021 13:29:17 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id s15so11923291edt.13
-        for <linux-security-module@vger.kernel.org>; Tue, 15 Jun 2021 13:29:17 -0700 (PDT)
+        Tue, 15 Jun 2021 16:42:27 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1546EC061767
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jun 2021 13:40:22 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id f30so389431lfj.1
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jun 2021 13:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2tUb3d+vrU01SWNkHnqFTp6elP7WYKyt6weZt4gpH4c=;
-        b=C/5aCfxMDXSWhUT85X6FPMeKiIG3eCf+CiG388aSOsCzVxxv5aUtvXkMKfZpqeLgpN
-         fgcM5N8j89oL+w3ZpjZPwEWjWHi2z2VaseFPqcMwyqdgN3nV5MMxGwOT/FglPkhBsV5i
-         TivylFGYXHo2LuYghMO2RtojnU5N/Gcao841b15cz6djORQYc7QFzSvGHQeBGyWJflFx
-         ZJWeO6LTWwS1IYQLQ4uCTk9UvjjH/Cv67l2kXMMw8LOOzOCRRnqX4lFWIiri/IsmgIyJ
-         Wcpd0wwUjs7tvN54hzMk0Z8fb6GloOjscB0TqT4YYsQ9w/MG6AZSH5Z3jTni91p1Ht0f
-         Ri5w==
+        bh=mI+Uy62aXOt4Prq2PUS7VjWc/+uB2vw7iQueiUDdSS8=;
+        b=Mh7FeTdwsPNuQXmG7HfR3LIBdVoplRNF5u49c3WP1H7V7D/qBiWT4GvO9Y7dzzPcn+
+         ew8Ag5oOZ8bgypyaT2/P1u8tQ5PbJetE4Ut9i9UzFsBjnbjO828Gsuq37QBJEu78eKOt
+         Sp3tWASzcB6xeHqyrYFLI808p9ELdvkHism3yPJsmQz8MOMrKe1ixjfHTBXT4yZdKdad
+         tmLWT5MqbxYcCWpyR9XO7lri4REO9Y3KpaIZEiuveOuK65fvCplnDv4onYmdaK+gwiIu
+         akr9s0n4/tEXQMlUWmPYPh6ACLN6zEHT5SysQUapNW7MvBt2OJGJs8yxLcrVSVFROIPr
+         rCoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2tUb3d+vrU01SWNkHnqFTp6elP7WYKyt6weZt4gpH4c=;
-        b=D8NSzMTCdgt1B/hEIb5b1AcJ9S6KdzFWUZCQq7eoI3pQ4SPEwzDa51BmGuGnb/ATWN
-         B93v/kEtmU6i5sMKVUm8r8+iUt/IHUb+lfZaAxP4JvT1ef3qrf+0iKFOliRE80w6+hUL
-         vUFcr55fBaNm+nqakgRT1w1XZ7eNIW5vMnxfMNcUdV4J6zolMnLUvtWj5f2T39IQL9Vn
-         7AuTbMhE3pqUIj1Prb48SDZSyRJxleIk7Ky2YlNho+Hpl2LIvvWpdPjiDtJsesIHQ1Jl
-         ewW1gdGVdMDWWxAORnnLJxMs7b7gfNg5ssT5x3Gcg6hrgekt4mGFXHvpQhLzU+XJbsv5
-         j5sQ==
-X-Gm-Message-State: AOAM5307Y4RAmd0YGRBIflnvXSBFGUI0+H0HAMFfHWqT0by9XPvbDC39
-        xcTPvPw8yhy/UPaQPLM8gL3OSXg2zKBHcFvsQFBp
-X-Google-Smtp-Source: ABdhPJyIIf4T2qpxVYty/GeKWpL9QElM+VR5KcvlIvOv6Q3SbIJCtwCMaN1Q56/SUMI/5U1TH0kNi4wFZuV4iL2X08M=
-X-Received: by 2002:a05:6402:1771:: with SMTP id da17mr1679082edb.31.1623788955775;
- Tue, 15 Jun 2021 13:29:15 -0700 (PDT)
+        bh=mI+Uy62aXOt4Prq2PUS7VjWc/+uB2vw7iQueiUDdSS8=;
+        b=eru38i/rOOEl4qFZrM8bu3UlMruLQ3qTPlA6zVQWdiIQIF6u5yLe2K0Gf9wDSNy5n4
+         XA8gmRlKpgEDj4cP3XHnbY0/opezyvCnlsnZ6cToEXgccKM95pYz2zMyxRyAQXr6lTDM
+         09pSPPMJW9fzsTGgfaJ1HFWVwZTeMymo6V5mTLSW80SRw61lvzaA3IlUQXmNvNHueVxx
+         oXdgs8jLwtWhsiWPH8i0m4qqWq32JEuYMs+ddVKiDMNSRaRwINcwOsxsOxOs1vEpv7Al
+         Gmp3oPVQ5P1GDgHB9A7js2UM36HCRBthupWSmna1n0pfzBYk5K9a2PbKzEVIOGZ+q73N
+         /snw==
+X-Gm-Message-State: AOAM530kx/1K5sAN5SDn/DU0h7iT4/wucIuSi2fTFc482HiBi1l0MJXJ
+        NznEhykaoc165Ba61+kNZbYJmGhJZxA0mgqULA4sNg==
+X-Google-Smtp-Source: ABdhPJx1gbrC8KfLRm7B88Z6r8LHurBrUrh8s9fWk20QPNqr6pDnATaWEh20Le8JHYfS0fYEB46Ujv1/uF4jUbe2hao=
+X-Received: by 2002:a05:6512:3287:: with SMTP id p7mr830016lfe.213.1623789620074;
+ Tue, 15 Jun 2021 13:40:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210615021444.2306687-1-liushixin2@huawei.com>
-In-Reply-To: <20210615021444.2306687-1-liushixin2@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 15 Jun 2021 16:29:04 -0400
-Message-ID: <CAHC9VhRGsDZE5JVctD8DuX6nghh1nLK6qUNsO=S5HNcddEibVQ@mail.gmail.com>
-Subject: Re: [PATCH -next v3] netlabel: Fix memory leak in netlbl_mgmt_add_common
-To:     Liu Shixin <liushixin2@huawei.com>
-Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210513193204.816681-1-davidgow@google.com> <20210513193204.816681-9-davidgow@google.com>
+In-Reply-To: <20210513193204.816681-9-davidgow@google.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Tue, 15 Jun 2021 13:40:09 -0700
+Message-ID: <CAFd5g46n10ELbGYf8gR_uUT0kfxDDe4nFoGh-t64zzX747pnUA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/10] apparmor: test: Remove some casts which are
+ no-longer required
+To:     David Gow <davidgow@google.com>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 14, 2021 at 9:43 PM Liu Shixin <liushixin2@huawei.com> wrote:
+On Thu, May 13, 2021 at 12:36 PM David Gow <davidgow@google.com> wrote:
 >
-> Hulk Robot reported memory leak in netlbl_mgmt_add_common.
-> The problem is non-freed map in case of netlbl_domhsh_add() failed.
+> With some of the stricter type checking in KUnit's EXPECT macros
+> removed, several casts in policy_unpack_test are no longer required.
 >
-> BUG: memory leak
-> unreferenced object 0xffff888100ab7080 (size 96):
->   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
->   hex dump (first 32 bytes):
->     05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
->   backtrace:
->     [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
->     [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
->     [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
->     [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
->     [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
->     [<0000000020e96fdd>] genl_rcv+0x24/0x40
->     [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
->     [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
->     [<000000006e43415f>] sock_sendmsg+0x139/0x170
->     [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
->     [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
->     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
->     [<00000000643ac172>] do_syscall_64+0x37/0x90
->     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+> Remove the unnecessary casts, making the conditions clearer.
 >
-> Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> ---
-> v1->v2: According to Dongliang's and Paul's advices, simplify the code.
-> v2->v3: Fix the style error.
->
->  net/netlabel/netlabel_mgmt.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
+> Signed-off-by: David Gow <davidgow@google.com>
 
-Thanks for the updated patch, it looks good to me.  I see it's already
-been merged, but for posterity's sake ...
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-
--- 
-paul moore
-www.paul-moore.com
+Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
