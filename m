@@ -2,159 +2,127 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B06DC2B9F4
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 02:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B13C49361
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 13:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F85F613D3
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 02:26:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E74046146D
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 13:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230252AbhFOC2x (ORCPT
+        id S230146AbhFONHN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Jun 2021 22:28:53 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:6364 "EHLO
-        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbhFOC2w (ORCPT
+        Tue, 15 Jun 2021 09:07:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55034 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229977AbhFONHL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Jun 2021 22:28:52 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G3rZS16pFz62Gt;
-        Tue, 15 Jun 2021 09:38:56 +0800 (CST)
-Received: from dggpemm500009.china.huawei.com (7.185.36.225) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Tue, 15 Jun 2021 09:42:53 +0800
-Received: from huawei.com (10.175.113.32) by dggpemm500009.china.huawei.com
- (7.185.36.225) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 15 Jun
- 2021 09:42:53 +0800
-From:   Liu Shixin <liushixin2@huawei.com>
-To:     Paul Moore <paul@paul-moore.com>,
-        Dongliang Mu <mudongliangabcd@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Jakub Kicinski" <kuba@kernel.org>
-CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Liu Shixin <liushixin2@huawei.com>
-Subject: [PATCH -next v3] netlabel: Fix memory leak in netlbl_mgmt_add_common
-Date:   Tue, 15 Jun 2021 10:14:44 +0800
-Message-ID: <20210615021444.2306687-1-liushixin2@huawei.com>
-X-Mailer: git-send-email 2.18.0.huawei.25
+        Tue, 15 Jun 2021 09:07:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AC38B61001;
+        Tue, 15 Jun 2021 13:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623762307;
+        bh=aGEKMIS0PUOJ/1fjleH9M9mgh0PdhlRGN7kd+G3Hjn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rt6yV4rsIBq+vFZL/WT3d87b3ZpHqar7FYyuZyzWmzguq4QfJNHOs2SproeQ1wkyp
+         ZRlKQrJKpH0BIgx/+A45LTmp2KU8BFiz73xjtzL3PUDdQ0C5GmBN8Z9Y2PV4SfwzzN
+         HF4U1V7AoIVsUEEYGkh1xXzo8pjy842YZTws+xyVNLZDCmYRfz/KLcm6RczPB6m7WF
+         6Ft5DzhvjopxvbTpw4oUorTWHeEqRM4efJ4BDLqv50cul+C27tI93CPFiNCHiZY+wv
+         SNzT4EAHQoTuzoWg7E9MfUMzJP1uRYslNjakaC8N+gYZjS0cfjDUTYVdV07ox1PQgG
+         qWyqVCjdSUhYw==
+Date:   Tue, 15 Jun 2021 16:05:04 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     jeyu@kernel.org, keyrings@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, zohar@linux.ibm.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] Add support for ECDSA-signed kernel modules
+Message-ID: <20210615130504.ngizto6nv33qqirf@kernel.org>
+References: <20210610125623.1553792-1-stefanb@linux.ibm.com>
+ <20210614191948.io4waff5aisah36q@kernel.org>
+ <95fac042-d348-91d9-f6d0-6a1ec21cebe4@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.113.32]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500009.china.huawei.com (7.185.36.225)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95fac042-d348-91d9-f6d0-6a1ec21cebe4@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hulk Robot reported memory leak in netlbl_mgmt_add_common.
-The problem is non-freed map in case of netlbl_domhsh_add() failed.
+On Mon, Jun 14, 2021 at 03:20:43PM -0400, Stefan Berger wrote:
+> 
+> On 6/14/21 3:19 PM, Jarkko Sakkinen wrote:
+> > On Thu, Jun 10, 2021 at 08:56:19AM -0400, Stefan Berger wrote:
+> > > This series adds support for ECDSA-signed kernel modules. It also
+> > > attempts to address a kbuild issue where a developer created an ECDSA
+> > > key for signing kernel modules and then builds an older version of the
+> > > kernel, when bisecting the kernel for example, that does not support
+> > > ECDSA keys.
+> > > 
+> > > The first patch addresses the kbuild issue of needing to delete that
+> > > ECDSA key if it is in certs/signing_key.pem and trigger the creation
+> > > of an RSA key. However, for this to work this patch would have to be
+> > > backported to previous versions of the kernel but would also only work
+> > > for the developer if he/she used a stable version of the kernel to which
+> > > this patch was applied. So whether this patch actually achieves the
+> > > wanted effect is not always guaranteed.
+> > > 
+> > > The 2nd patch adds the support for the ECSDA-signed kernel modules.
+> > > 
+> > > This patch depends on the ECDSA support series currently queued here:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git/log/?h=ecc
+> > > 
+> > >    Stefan
+> > > 
+> > > v6:
+> > >    - Patch 2/4 is fixing V4's 1/2 and 4/4 is fixing V4's 2/2. Both fixup
+> > >      patches to be squashed.
+> > > 
+> > > v5:
+> > >    - do not touch the key files if openssl is not installed; likely
+> > >      addresses an issue pointed out by kernel test robot
+> > > 
+> > > v4:
+> > >    - extending 'depends on' with MODULES to (IMA_APPRAISE_MODSIG && MODULES)
+> > > v3: - added missing OIDs for ECDSA signed hashes to pkcs7_sig_note_pkey_algo
+> > >    - added recommendation to use string hash to Kconfig help text
+> > > 
+> > > v2:
+> > >    - Adjustment to ECDSA key detector string in 2/2
+> > >    - Rephrased cover letter and patch descriptions with Mimi
+> > > 
+> > > 
+> > > Stefan Berger (4):
+> > >    certs: Trigger creation of RSA module signing key if it's not an RSA
+> > >      key
+> > >    certs: Check whether openssl tool is available
+> > >    certs: Add support for using elliptic curve keys for signing modules
+> > >    certs: Adjustment due to 'Check whether openssl tool is available'
+> > > 
+> > >   certs/Kconfig                         | 26 ++++++++++++++++++++++++++
+> > >   certs/Makefile                        | 21 +++++++++++++++++++++
+> > >   crypto/asymmetric_keys/pkcs7_parser.c |  8 ++++++++
+> > >   3 files changed, 55 insertions(+)
+> > > 
+> > > -- 
+> > > 2.29.2
+> > > 
+> > > 
+> > Since you know the commit ID's in
+> > 
+> >    git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git
+> > 
+> > you could just use fixes-tags and send exactly two patch series. Works
+> > better with various tools (e.g. https://pypi.org/project/b4/)
+> > 
+> > /Jarkko
+> 
+> 
+> So you are not taking v6's 2/4 and 4/4 ?
 
-BUG: memory leak
-unreferenced object 0xffff888100ab7080 (size 96):
-  comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
-  hex dump (first 32 bytes):
-    05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
-  backtrace:
-    [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
-    [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
-    [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
-    [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
-    [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
-    [<0000000020e96fdd>] genl_rcv+0x24/0x40
-    [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
-    [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
-    [<000000006e43415f>] sock_sendmsg+0x139/0x170
-    [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
-    [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
-    [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
-    [<00000000643ac172>] do_syscall_64+0x37/0x90
-    [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+I applied the fixes and squashed them to appriopriate commits.
 
-Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
----
-v1->v2: According to Dongliang's and Paul's advices, simplify the code.
-v2->v3: Fix the style error.
-
- net/netlabel/netlabel_mgmt.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
-index e664ab990941..032b7d7b32c7 100644
---- a/net/netlabel/netlabel_mgmt.c
-+++ b/net/netlabel/netlabel_mgmt.c
-@@ -76,6 +76,7 @@ static const struct nla_policy netlbl_mgmt_genl_policy[NLBL_MGMT_A_MAX + 1] = {
- static int netlbl_mgmt_add_common(struct genl_info *info,
- 				  struct netlbl_audit *audit_info)
- {
-+	void *pmap = NULL;
- 	int ret_val = -EINVAL;
- 	struct netlbl_domaddr_map *addrmap = NULL;
- 	struct cipso_v4_doi *cipsov4 = NULL;
-@@ -175,6 +176,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 			ret_val = -ENOMEM;
- 			goto add_free_addrmap;
- 		}
-+		pmap = map;
- 		map->list.addr = addr->s_addr & mask->s_addr;
- 		map->list.mask = mask->s_addr;
- 		map->list.valid = 1;
-@@ -183,10 +185,8 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 			map->def.cipso = cipsov4;
- 
- 		ret_val = netlbl_af4list_add(&map->list, &addrmap->list4);
--		if (ret_val != 0) {
--			kfree(map);
--			goto add_free_addrmap;
--		}
-+		if (ret_val != 0)
-+			goto add_free_map;
- 
- 		entry->family = AF_INET;
- 		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
-@@ -223,6 +223,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 			ret_val = -ENOMEM;
- 			goto add_free_addrmap;
- 		}
-+		pmap = map;
- 		map->list.addr = *addr;
- 		map->list.addr.s6_addr32[0] &= mask->s6_addr32[0];
- 		map->list.addr.s6_addr32[1] &= mask->s6_addr32[1];
-@@ -235,10 +236,8 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 			map->def.calipso = calipso;
- 
- 		ret_val = netlbl_af6list_add(&map->list, &addrmap->list6);
--		if (ret_val != 0) {
--			kfree(map);
--			goto add_free_addrmap;
--		}
-+		if (ret_val != 0)
-+			goto add_free_map;
- 
- 		entry->family = AF_INET6;
- 		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
-@@ -248,10 +247,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
- 
- 	ret_val = netlbl_domhsh_add(entry, audit_info);
- 	if (ret_val != 0)
--		goto add_free_addrmap;
-+		goto add_free_map;
- 
- 	return 0;
- 
-+add_free_map:
-+	kfree(pmap);
- add_free_addrmap:
- 	kfree(addrmap);
- add_doi_put_def:
--- 
-2.18.0.huawei.25
-
+/Jarkko
