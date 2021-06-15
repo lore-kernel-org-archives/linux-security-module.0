@@ -2,134 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D23C49361
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 02:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B06DC2B9F4
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 02:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0C66128B
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 02:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F85F613D3
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 02:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230440AbhFOC0t (ORCPT
+        id S230252AbhFOC2x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 14 Jun 2021 22:26:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43706 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230141AbhFOC0s (ORCPT
+        Mon, 14 Jun 2021 22:28:53 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6364 "EHLO
+        szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230181AbhFOC2w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 14 Jun 2021 22:26:48 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A351C061767;
-        Mon, 14 Jun 2021 19:24:44 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id q21so18237515ybg.8;
-        Mon, 14 Jun 2021 19:24:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=brCiM+F9mGjut7Dannz5jBzKbs3SodWAdjrUja4GsqQ=;
-        b=HEnAn1olYigaQNwMq7Pg7M9qQXgha1+G3M8Te9QROcv+UPfHbzA+pyQiY/uyUplDho
-         syI/EJ0aS5ILxHohmJkYvgPeUXUvFw0UJ+48gj22wbC9kvUQClmfmZLzrrJbqUr54NI0
-         XIPfavRvfpItyC7jNpihhrsAwdizq3bVqYy7pjJaGlXxf3djw8Jxhaht1pwkyi2g4zHJ
-         FBd13UJ9//BjvbwrXSxXwhNaY/NP7dlPuCEN+qXeWFvbgTzpKowrQL5FWyqdTsKjKqa6
-         /fQvn05zs7IeWE/WtYl+/6FFwsh8P8pcdZxWFaHG//HqMHlmCCUOI3OY9ukreN48hS1s
-         4Y1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=brCiM+F9mGjut7Dannz5jBzKbs3SodWAdjrUja4GsqQ=;
-        b=hu7Lgg6fZKxGOCmF2jPdWlZstPkRcwPzYuATAMWfheKB57NJo2cicr+7zXfuhrXirU
-         HEPOU62W6QVb7OGmmov2p2YbZNIAMSb0FpZgqA6P15U+fMJs/mrzMrMzZGznv33XWt+l
-         186CPmfgGHV6F+aBUQOFWTB08tYWNwuiwk1aksSjI5JoP90ExJwMsTKp/qeE/4kR+eDu
-         d2ztqTg/VH1id77/VnKwSErlcXuGnWTWz5Zvv7xcPYTQn3CfPLrT4tONmsY/aPnl5V10
-         MgF0EalZInTFTYc7tQtD1yOBEvdRd37Gt+RRwt6jafersu8bGX0uFwqxJmIhYbEdMbgQ
-         RFKQ==
-X-Gm-Message-State: AOAM531pbXe1C0qX/8ya7qst07n5HlKT3r8JJ5qkXYpC3vnx9E9xXYU9
-        BwCVsIpuZVPL6vEHMwbjTXFmSh+tH2zm0mvUjtPfPg3I1QncL5G6dVo=
-X-Google-Smtp-Source: ABdhPJyUqha2rTwXMjRmWbkZlGSaerkycxLOhzZXfvz9QhQZI+3ohv8S/fa3vJSq4wM88YAm4nAw8FYUi/yX/sKJTsg=
-X-Received: by 2002:a9d:730a:: with SMTP id e10mr13703661otk.97.1623722136501;
- Mon, 14 Jun 2021 18:55:36 -0700 (PDT)
+        Mon, 14 Jun 2021 22:28:52 -0400
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4G3rZS16pFz62Gt;
+        Tue, 15 Jun 2021 09:38:56 +0800 (CST)
+Received: from dggpemm500009.china.huawei.com (7.185.36.225) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Tue, 15 Jun 2021 09:42:53 +0800
+Received: from huawei.com (10.175.113.32) by dggpemm500009.china.huawei.com
+ (7.185.36.225) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Tue, 15 Jun
+ 2021 09:42:53 +0800
+From:   Liu Shixin <liushixin2@huawei.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Dongliang Mu <mudongliangabcd@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Jakub Kicinski" <kuba@kernel.org>
+CC:     <netdev@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Liu Shixin <liushixin2@huawei.com>
+Subject: [PATCH -next v3] netlabel: Fix memory leak in netlbl_mgmt_add_common
+Date:   Tue, 15 Jun 2021 10:14:44 +0800
+Message-ID: <20210615021444.2306687-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.18.0.huawei.25
 MIME-Version: 1.0
-Received: by 2002:a9d:f03:0:0:0:0:0 with HTTP; Mon, 14 Jun 2021 18:55:35 -0700 (PDT)
-In-Reply-To: <202106141503.B3144DFE@keescook>
-References: <20210608171221.276899-1-keescook@chromium.org>
- <20210614100234.12077-1-youling257@gmail.com> <202106140826.7912F27CD@keescook>
- <202106140941.7CE5AE64@keescook> <CAOzgRdZJeN6sQWP=Ou0H3bTrp+7ijKuJikG-f4eer5f1oVjrCQ@mail.gmail.com>
- <202106141503.B3144DFE@keescook>
-From:   youling 257 <youling257@gmail.com>
-Date:   Tue, 15 Jun 2021 09:55:35 +0800
-Message-ID: <CAOzgRdahaEjtk4jS5N=FQEDbsZVnB+-=xD+-WtV9zD9Tgbm0Hg@mail.gmail.com>
-Subject: Re: [PATCH] proc: Track /proc/$pid/attr/ opener mm_struct
-To:     Kees Cook <keescook@chromium.org>
-Cc:     torvalds@linux-foundation.org, christian.brauner@ubuntu.com,
-        andrea.righi@canonical.com, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, regressions@lists.linux.dev,
-        linux-security-module@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.113.32]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500009.china.huawei.com (7.185.36.225)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-if try to find problem on userspace, i used linux 5.13rc6 on old
-android 7 cm14.1, not aosp android 11.
-http://git.osdn.net/view?p=android-x86/system-core.git;a=blob;f=init/service.cpp;h=a5334f447fc2fc34453d2f6a37523bedccadc690;hb=refs/heads/cm-14.1-x86#l457
+Hulk Robot reported memory leak in netlbl_mgmt_add_common.
+The problem is non-freed map in case of netlbl_domhsh_add() failed.
 
- 457         if (!seclabel_.empty()) {
- 458             if (setexeccon(seclabel_.c_str()) < 0) {
- 459                 ERROR("cannot setexeccon('%s'): %s\n",
- 460                       seclabel_.c_str(), strerror(errno));
- 461                 _exit(127);
- 462             }
- 463         }
+BUG: memory leak
+unreferenced object 0xffff888100ab7080 (size 96):
+  comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
+  hex dump (first 32 bytes):
+    05 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    fe 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01  ................
+  backtrace:
+    [<0000000008b40026>] netlbl_mgmt_add_common.isra.0+0xb2a/0x1b40
+    [<000000003be10950>] netlbl_mgmt_add+0x271/0x3c0
+    [<00000000c70487ed>] genl_family_rcv_msg_doit.isra.0+0x20e/0x320
+    [<000000001f2ff614>] genl_rcv_msg+0x2bf/0x4f0
+    [<0000000089045792>] netlink_rcv_skb+0x134/0x3d0
+    [<0000000020e96fdd>] genl_rcv+0x24/0x40
+    [<0000000042810c66>] netlink_unicast+0x4a0/0x6a0
+    [<000000002e1659f0>] netlink_sendmsg+0x789/0xc70
+    [<000000006e43415f>] sock_sendmsg+0x139/0x170
+    [<00000000680a73d7>] ____sys_sendmsg+0x658/0x7d0
+    [<0000000065cbb8af>] ___sys_sendmsg+0xf8/0x170
+    [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
+    [<00000000643ac172>] do_syscall_64+0x37/0x90
+    [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-2021-06-15 6:50 GMT+08:00, Kees Cook <keescook@chromium.org>:
-> On Tue, Jun 15, 2021 at 02:46:19AM +0800, youling 257 wrote:
->> I test this patch cause "init: cannot setexeccon(u:r:ueventd:s0)
->> operation not permitted.
->> init ctrl_write_limited.
->
-> Thanks for testing!
->
-> This appears to come from here:
-> https://github.com/aosp-mirror/platform_system_core/blob/master/init/service.cpp#L242
->
->
-> In setexeccon(), I see (pid=0, attr="exec"):
->
->         fd = openattr(pid, attr, O_RDWR | O_CLOEXEC);
-> ...
->                         ret = write(fd, context2, strlen(context2) + 1);
-> ...
->         close(fd);
->
->
-> and openattr() is doing:
-> ...
->                 rc = asprintf(&path, "/proc/thread-self/attr/%s", attr);
->                 if (rc < 0)
->                         return -1;
->                 fd = open(path, flags | O_CLOEXEC);
-> ...
->
-> I'm not sure how the above could fail. (mm_access() always allows
-> introspection...)
->
-> The only way I can understand the check failing is if a process did:
->
-> open, exec, write
->
-> But setexeccon() is not doing anything between the open and the write...
->
-> I will keep looking...
->
-> -Kees
->
-> --
-> Kees Cook
->
+Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+---
+v1->v2: According to Dongliang's and Paul's advices, simplify the code.
+v2->v3: Fix the style error.
+
+ net/netlabel/netlabel_mgmt.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/net/netlabel/netlabel_mgmt.c b/net/netlabel/netlabel_mgmt.c
+index e664ab990941..032b7d7b32c7 100644
+--- a/net/netlabel/netlabel_mgmt.c
++++ b/net/netlabel/netlabel_mgmt.c
+@@ -76,6 +76,7 @@ static const struct nla_policy netlbl_mgmt_genl_policy[NLBL_MGMT_A_MAX + 1] = {
+ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 				  struct netlbl_audit *audit_info)
+ {
++	void *pmap = NULL;
+ 	int ret_val = -EINVAL;
+ 	struct netlbl_domaddr_map *addrmap = NULL;
+ 	struct cipso_v4_doi *cipsov4 = NULL;
+@@ -175,6 +176,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 			ret_val = -ENOMEM;
+ 			goto add_free_addrmap;
+ 		}
++		pmap = map;
+ 		map->list.addr = addr->s_addr & mask->s_addr;
+ 		map->list.mask = mask->s_addr;
+ 		map->list.valid = 1;
+@@ -183,10 +185,8 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 			map->def.cipso = cipsov4;
+ 
+ 		ret_val = netlbl_af4list_add(&map->list, &addrmap->list4);
+-		if (ret_val != 0) {
+-			kfree(map);
+-			goto add_free_addrmap;
+-		}
++		if (ret_val != 0)
++			goto add_free_map;
+ 
+ 		entry->family = AF_INET;
+ 		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+@@ -223,6 +223,7 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 			ret_val = -ENOMEM;
+ 			goto add_free_addrmap;
+ 		}
++		pmap = map;
+ 		map->list.addr = *addr;
+ 		map->list.addr.s6_addr32[0] &= mask->s6_addr32[0];
+ 		map->list.addr.s6_addr32[1] &= mask->s6_addr32[1];
+@@ -235,10 +236,8 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 			map->def.calipso = calipso;
+ 
+ 		ret_val = netlbl_af6list_add(&map->list, &addrmap->list6);
+-		if (ret_val != 0) {
+-			kfree(map);
+-			goto add_free_addrmap;
+-		}
++		if (ret_val != 0)
++			goto add_free_map;
+ 
+ 		entry->family = AF_INET6;
+ 		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
+@@ -248,10 +247,12 @@ static int netlbl_mgmt_add_common(struct genl_info *info,
+ 
+ 	ret_val = netlbl_domhsh_add(entry, audit_info);
+ 	if (ret_val != 0)
+-		goto add_free_addrmap;
++		goto add_free_map;
+ 
+ 	return 0;
+ 
++add_free_map:
++	kfree(pmap);
+ add_free_addrmap:
+ 	kfree(addrmap);
+ add_doi_put_def:
+-- 
+2.18.0.huawei.25
+
