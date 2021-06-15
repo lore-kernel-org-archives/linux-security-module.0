@@ -2,60 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767A1C48BE5
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 18:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F7FC48BDF
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 20:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59FA2613C7
-	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 18:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C05D613B6
+	for <linux-security-module@archiver.kernel.org>; Tue, 15 Jun 2021 20:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231503AbhFOSWQ (ORCPT
+        id S229979AbhFOUbW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 15 Jun 2021 14:22:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231447AbhFOSWO (ORCPT
+        Tue, 15 Jun 2021 16:31:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36704 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229898AbhFOUbW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 15 Jun 2021 14:22:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0A622613DB;
-        Tue, 15 Jun 2021 18:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1623781210;
-        bh=HRRaznNGBoxwvKxvfU0Nvk1ndcMGA+i5SIfOCPR0wjU=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=PKYEIJ9RyNv9XfJQoQJyuO5fWEwzZtJ+gLku9UoOkcUaWS7G+6gP9YLecwLdQtYb2
-         uMgHoKkkIlfbEgnVDXOGFlg71/7Du7PHVMa8KiDiLW46n3RPYBMOxSZx2EN7ph0Ysc
-         UU0nKaZTLiNNMDKEOkz7HPlnNlmxQziQApQP3ylpki5CMTOu3qWnYTXj+oVEx+puB3
-         DQmcmyArlItbvWvY10yJ/o1/01r1XyxqxNx6bAQF4tMLvx9s+yzL8S9ywHviab0mah
-         OXm506Atfv2AaiCvQMj5HXB+UWJkYUigwt+RTRV23RtAaklW66Pj145Aqnk9LEKs9C
-         rLlo3dzeQ7wCQ==
-Content-Type: text/plain; charset="utf-8"
+        Tue, 15 Jun 2021 16:31:22 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57416C061574
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jun 2021 13:29:17 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id s15so11923291edt.13
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Jun 2021 13:29:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2tUb3d+vrU01SWNkHnqFTp6elP7WYKyt6weZt4gpH4c=;
+        b=C/5aCfxMDXSWhUT85X6FPMeKiIG3eCf+CiG388aSOsCzVxxv5aUtvXkMKfZpqeLgpN
+         fgcM5N8j89oL+w3ZpjZPwEWjWHi2z2VaseFPqcMwyqdgN3nV5MMxGwOT/FglPkhBsV5i
+         TivylFGYXHo2LuYghMO2RtojnU5N/Gcao841b15cz6djORQYc7QFzSvGHQeBGyWJflFx
+         ZJWeO6LTWwS1IYQLQ4uCTk9UvjjH/Cv67l2kXMMw8LOOzOCRRnqX4lFWIiri/IsmgIyJ
+         Wcpd0wwUjs7tvN54hzMk0Z8fb6GloOjscB0TqT4YYsQ9w/MG6AZSH5Z3jTni91p1Ht0f
+         Ri5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2tUb3d+vrU01SWNkHnqFTp6elP7WYKyt6weZt4gpH4c=;
+        b=D8NSzMTCdgt1B/hEIb5b1AcJ9S6KdzFWUZCQq7eoI3pQ4SPEwzDa51BmGuGnb/ATWN
+         B93v/kEtmU6i5sMKVUm8r8+iUt/IHUb+lfZaAxP4JvT1ef3qrf+0iKFOliRE80w6+hUL
+         vUFcr55fBaNm+nqakgRT1w1XZ7eNIW5vMnxfMNcUdV4J6zolMnLUvtWj5f2T39IQL9Vn
+         7AuTbMhE3pqUIj1Prb48SDZSyRJxleIk7Ky2YlNho+Hpl2LIvvWpdPjiDtJsesIHQ1Jl
+         ewW1gdGVdMDWWxAORnnLJxMs7b7gfNg5ssT5x3Gcg6hrgekt4mGFXHvpQhLzU+XJbsv5
+         j5sQ==
+X-Gm-Message-State: AOAM5307Y4RAmd0YGRBIflnvXSBFGUI0+H0HAMFfHWqT0by9XPvbDC39
+        xcTPvPw8yhy/UPaQPLM8gL3OSXg2zKBHcFvsQFBp
+X-Google-Smtp-Source: ABdhPJyIIf4T2qpxVYty/GeKWpL9QElM+VR5KcvlIvOv6Q3SbIJCtwCMaN1Q56/SUMI/5U1TH0kNi4wFZuV4iL2X08M=
+X-Received: by 2002:a05:6402:1771:: with SMTP id da17mr1679082edb.31.1623788955775;
+ Tue, 15 Jun 2021 13:29:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH -next v3] netlabel: Fix memory leak in netlbl_mgmt_add_common
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162378121000.26290.15147502138863217161.git-patchwork-notify@kernel.org>
-Date:   Tue, 15 Jun 2021 18:20:10 +0000
 References: <20210615021444.2306687-1-liushixin2@huawei.com>
 In-Reply-To: <20210615021444.2306687-1-liushixin2@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 15 Jun 2021 16:29:04 -0400
+Message-ID: <CAHC9VhRGsDZE5JVctD8DuX6nghh1nLK6qUNsO=S5HNcddEibVQ@mail.gmail.com>
+Subject: Re: [PATCH -next v3] netlabel: Fix memory leak in netlbl_mgmt_add_common
 To:     Liu Shixin <liushixin2@huawei.com>
-Cc:     paul@paul-moore.com, mudongliangabcd@gmail.com,
-        davem@davemloft.net, kuba@kernel.org, netdev@vger.kernel.org,
+Cc:     Dongliang Mu <mudongliangabcd@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Tue, 15 Jun 2021 10:14:44 +0800 you wrote:
+On Mon, Jun 14, 2021 at 9:43 PM Liu Shixin <liushixin2@huawei.com> wrote:
+>
 > Hulk Robot reported memory leak in netlbl_mgmt_add_common.
 > The problem is non-freed map in case of netlbl_domhsh_add() failed.
-> 
+>
 > BUG: memory leak
 > unreferenced object 0xffff888100ab7080 (size 96):
 >   comm "syz-executor537", pid 360, jiffies 4294862456 (age 22.678s)
@@ -77,16 +95,22 @@ On Tue, 15 Jun 2021 10:14:44 +0800 you wrote:
 >     [<0000000019932b6c>] __sys_sendmsg+0xd3/0x190
 >     [<00000000643ac172>] do_syscall_64+0x37/0x90
 >     [<000000009b79d6dc>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> [...]
+>
+> Fixes: 63c416887437 ("netlabel: Add network address selectors to the NetLabel/LSM domain mapping")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> ---
+> v1->v2: According to Dongliang's and Paul's advices, simplify the code.
+> v2->v3: Fix the style error.
+>
+>  net/netlabel/netlabel_mgmt.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
 
-Here is the summary with links:
-  - [-next,v3] netlabel: Fix memory leak in netlbl_mgmt_add_common
-    https://git.kernel.org/netdev/net-next/c/b8f6b0522c29
+Thanks for the updated patch, it looks good to me.  I see it's already
+been merged, but for posterity's sake ...
 
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-
+-- 
+paul moore
+www.paul-moore.com
