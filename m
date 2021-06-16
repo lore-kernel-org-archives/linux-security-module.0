@@ -2,106 +2,189 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D25FAC48BE8
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jun 2021 05:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F103EC49EB7
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jun 2021 06:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE553613BF
-	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jun 2021 05:56:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D830E613EA
+	for <linux-security-module@archiver.kernel.org>; Wed, 16 Jun 2021 06:27:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231179AbhFPF6Q (ORCPT
+        id S231719AbhFPG35 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 16 Jun 2021 01:58:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56614 "EHLO mail.kernel.org"
+        Wed, 16 Jun 2021 02:29:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229483AbhFPF6Q (ORCPT
+        id S231391AbhFPG3x (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 16 Jun 2021 01:58:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 959FC613BF;
-        Wed, 16 Jun 2021 05:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623822970;
-        bh=dMV6mj8avOtYIM6fDZMCQ/7U10m1DHYngtE/rADgayQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=F2huXltdBPNovJk4HlG+2LtNSHW/oGSzMB5+Yin2VSRvdVPwqDhOl5UCfbGUMjcvn
-         GyuOQt2sd+J+7oVVQiYx+eQ0fTqLtU65l4K2O3lHFG5iiH9ZpJVIXoPqPVNDTGK8UF
-         QqhjtYxqRAe5kPEaANQzdh/E3Pn+YnmlPLYv3W90=
-Date:   Wed, 16 Jun 2021 07:56:06 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        youling 257 <youling257@gmail.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, regressions@lists.linux.dev,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>
-Subject: Re: [PATCH] proc: Track /proc/$pid/attr/ opener mm_struct
-Message-ID: <YMmSdqnspAXG1CyT@kroah.com>
-References: <20210608171221.276899-1-keescook@chromium.org>
- <20210614100234.12077-1-youling257@gmail.com>
- <202106140826.7912F27CD@keescook>
- <202106140941.7CE5AE64@keescook>
- <CAOzgRdZJeN6sQWP=Ou0H3bTrp+7ijKuJikG-f4eer5f1oVjrCQ@mail.gmail.com>
- <202106141503.B3144DFE@keescook>
- <CAOzgRdahaEjtk4jS5N=FQEDbsZVnB+-=xD+-WtV9zD9Tgbm0Hg@mail.gmail.com>
- <CAHk-=winAqy0sjgog9oEsjoBWOGJscFYEc3-=nvtzbyjTw_b+g@mail.gmail.com>
- <202106151449.816D7DA682@keescook>
+        Wed, 16 Jun 2021 02:29:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id AE9C5613BF;
+        Wed, 16 Jun 2021 06:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1623824867;
+        bh=HFXY5XjspzH1kzu2GrbFUWzI5z4ecY6jF7OZRuh585A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=i8M85VxHQbZ50V8fMJseWf0vWBO55h7qx/5DDF1AEmTSMWhUjzMvzzmjKrtF8AKcR
+         jwPUkMGj6skaSwKc3Nb/ClX/mf9rqCBl4EoOzg6hiQVc5LWnY4qtyfrSEJ7VphRRWH
+         KduL0CAw/YrDU6ESOYozK0J7Mwh6gXRMtkihQq/zF3LS+B2iz9xXROxs8p6G/3birc
+         rMWLHc4+eJCtsbE9xfUQ8QL3jC1cqZQSUtH6lpM1ZAmA6n8MNE4ItYkhgEns7gOcfF
+         tDqXX7qE2sdpEWYSQWyUHfCyD8Rd8Zrw4MW3EN7CUxyupE2Yrivwa8Z0A4F/HN3xgi
+         IJ4MvA1+etqjg==
+Received: by mail.kernel.org with local (Exim 4.94.2)
+        (envelope-from <mchehab@kernel.org>)
+        id 1ltP1d-004kIJ-Rv; Wed, 16 Jun 2021 08:27:45 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+        coresight@lists.linaro.org, devicetree@vger.kernel.org,
+        kunit-dev@googlegroups.com, kvm@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v2 00/29] docs: avoid using ReST :doc:`foo` tag
+Date:   Wed, 16 Jun 2021 08:27:15 +0200
+Message-Id: <cover.1623824363.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202106151449.816D7DA682@keescook>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 15, 2021 at 02:50:39PM -0700, Kees Cook wrote:
-> On Tue, Jun 15, 2021 at 11:19:04AM -0700, Linus Torvalds wrote:
-> > On Mon, Jun 14, 2021 at 6:55 PM youling 257 <youling257@gmail.com> wrote:
-> > >
-> > > if try to find problem on userspace, i used linux 5.13rc6 on old
-> > > android 7 cm14.1, not aosp android 11.
-> > > http://git.osdn.net/view?p=android-x86/system-core.git;a=blob;f=init/service.cpp;h=a5334f447fc2fc34453d2f6a37523bedccadc690;hb=refs/heads/cm-14.1-x86#l457
-> > >
-> > >  457         if (!seclabel_.empty()) {
-> > >  458             if (setexeccon(seclabel_.c_str()) < 0) {
-> > >  459                 ERROR("cannot setexeccon('%s'): %s\n",
-> > >  460                       seclabel_.c_str(), strerror(errno));
-> > >  461                 _exit(127);
-> > >  462             }
-> > >  463         }
-> > 
-> > I have no idea where the cm14.1 libraries are. Does anybody know where
-> > the matching source code for setexeccon() would be?
-> > 
-> > For me - obviously not on cm14.1 - all "setexeccon()" does is
-> > 
-> >    n = openat(AT_FDCWD, "/proc/thread-self/attr/exec", O_RDWR|O_CLOEXEC)
-> >    write(n, string, len)
-> >    close(n)
-> > 
-> > and if that fails, it would seem to indicate that proc_mem_open()
-> > failed. Which would be mm_access() failing. But I don't see how that
-> > can be the case, because mm_access() explicitly allows "mm ==
-> > current->mm" (which the above clearly should be).
-> 
-> Yeah, that was what I saw too.
-> 
-> > youling, can you double-check with the current -git tree? But as far
-> > as I can tell, my minimal patch is exactly the same as Kees' patch
-> > (just smaller and simpler).
-> 
-> FWIW, for that patch:
-> 
-> Acked-by: Kees Cook <keescook@chromium.org>
-> Cc: stable@vger.kernel.org
+(Maintainers bcc, to avoid too many recipient troubles)
 
-Thanks, I'll go pick it up now.
+As discussed at:
+	https://lore.kernel.org/linux-doc/871r9k6rmy.fsf@meer.lwn.net/
 
-greg k-h
+It is better to avoid using :doc:`foo` to refer to Documentation/foo.rst, as the
+automarkup.py extension should handle it automatically, on most cases.
+
+There are a couple of exceptions to this rule:
+
+1. when :doc:  tag is used to point to a kernel-doc DOC: markup;
+2. when it is used with a named tag, e. g. :doc:`some name <foo>`;
+
+On this series:
+
+Patch 1 manually adjust the references inside driver-api/pm/devices.rst,
+as there it uses :file:`foo` to refer to some Documentation/ files;
+
+Patch 2 converts a table at Documentation/dev-tools/kunit/api/index.rst
+into a list, carefully avoiding the 
+
+The remaining patches convert the other occurrences via a replace script.
+They were manually edited, in order to honour 80-columns where possible.
+
+This series based on docs-next branch. In order to avoid merge conflicts,
+I rebased it internally against yesterday's linux-next, dropping a patch
+and a hunk that would have caused conflicts there.
+
+I'll re-send the remaining patch (plus another patch) with conflicting
+changes, together with any other doc:`filename` reference that might
+still be upstream by 5.14-rc1.
+
+---
+
+v2:
+   - dropped media patches (as I merged via my own tree);
+   - removed one patch that would conflict at linux-next (adm1177.rst);
+   - removed one hunk fron kunit patch that would also conflict at
+     linux-next.
+
+Mauro Carvalho Chehab (29):
+  docs: devices.rst: better reference documentation docs
+  docs: dev-tools: kunit: don't use a table for docs name
+  docs: admin-guide: pm: avoid using ReST :doc:`foo` markup
+  docs: admin-guide: hw-vuln: avoid using ReST :doc:`foo` markup
+  docs: admin-guide: sysctl: avoid using ReST :doc:`foo` markup
+  docs: block: biodoc.rst: avoid using ReST :doc:`foo` markup
+  docs: bpf: bpf_lsm.rst: avoid using ReST :doc:`foo` markup
+  docs: core-api: avoid using ReST :doc:`foo` markup
+  docs: dev-tools: testing-overview.rst: avoid using ReST :doc:`foo`
+    markup
+  docs: dev-tools: kunit: avoid using ReST :doc:`foo` markup
+  docs: devicetree: bindings: submitting-patches.rst: avoid using ReST
+    :doc:`foo` markup
+  docs: doc-guide: avoid using ReST :doc:`foo` markup
+  docs: driver-api: avoid using ReST :doc:`foo` markup
+  docs: driver-api: gpio: using-gpio.rst: avoid using ReST :doc:`foo`
+    markup
+  docs: driver-api: surface_aggregator: avoid using ReST :doc:`foo`
+    markup
+  docs: driver-api: usb: avoid using ReST :doc:`foo` markup
+  docs: firmware-guide: acpi: avoid using ReST :doc:`foo` markup
+  docs: i2c: avoid using ReST :doc:`foo` markup
+  docs: kernel-hacking: hacking.rst: avoid using ReST :doc:`foo` markup
+  docs: networking: devlink: avoid using ReST :doc:`foo` markup
+  docs: PCI: endpoint: pci-endpoint-cfs.rst: avoid using ReST :doc:`foo`
+    markup
+  docs: PCI: pci.rst: avoid using ReST :doc:`foo` markup
+  docs: process: submitting-patches.rst: avoid using ReST :doc:`foo`
+    markup
+  docs: security: landlock.rst: avoid using ReST :doc:`foo` markup
+  docs: trace: coresight: coresight.rst: avoid using ReST :doc:`foo`
+    markup
+  docs: trace: ftrace.rst: avoid using ReST :doc:`foo` markup
+  docs: userspace-api: landlock.rst: avoid using ReST :doc:`foo` markup
+  docs: virt: kvm: s390-pv-boot.rst: avoid using ReST :doc:`foo` markup
+  docs: x86: avoid using ReST :doc:`foo` markup
+
+ .../PCI/endpoint/pci-endpoint-cfs.rst         |  2 +-
+ Documentation/PCI/pci.rst                     |  6 +--
+ .../special-register-buffer-data-sampling.rst |  3 +-
+ Documentation/admin-guide/pm/intel_idle.rst   | 16 +++++---
+ Documentation/admin-guide/pm/intel_pstate.rst |  9 +++--
+ Documentation/admin-guide/sysctl/abi.rst      |  2 +-
+ Documentation/admin-guide/sysctl/kernel.rst   | 37 ++++++++++---------
+ Documentation/block/biodoc.rst                |  2 +-
+ Documentation/bpf/bpf_lsm.rst                 | 13 ++++---
+ .../core-api/bus-virt-phys-mapping.rst        |  2 +-
+ Documentation/core-api/dma-api.rst            |  5 ++-
+ Documentation/core-api/dma-isa-lpc.rst        |  2 +-
+ Documentation/core-api/index.rst              |  4 +-
+ Documentation/dev-tools/kunit/api/index.rst   |  8 ++--
+ Documentation/dev-tools/kunit/faq.rst         |  2 +-
+ Documentation/dev-tools/kunit/index.rst       | 14 +++----
+ Documentation/dev-tools/kunit/start.rst       |  4 +-
+ Documentation/dev-tools/kunit/tips.rst        |  5 ++-
+ Documentation/dev-tools/kunit/usage.rst       |  8 ++--
+ Documentation/dev-tools/testing-overview.rst  | 16 ++++----
+ .../bindings/submitting-patches.rst           | 11 +++---
+ Documentation/doc-guide/contributing.rst      |  8 ++--
+ Documentation/driver-api/gpio/using-gpio.rst  |  4 +-
+ Documentation/driver-api/ioctl.rst            |  2 +-
+ Documentation/driver-api/pm/devices.rst       |  8 ++--
+ .../surface_aggregator/clients/index.rst      |  3 +-
+ .../surface_aggregator/internal.rst           | 15 ++++----
+ .../surface_aggregator/overview.rst           |  6 ++-
+ Documentation/driver-api/usb/dma.rst          |  6 +--
+ .../acpi/dsd/data-node-references.rst         |  3 +-
+ .../firmware-guide/acpi/dsd/graph.rst         |  2 +-
+ .../firmware-guide/acpi/enumeration.rst       |  7 ++--
+ Documentation/i2c/instantiating-devices.rst   |  2 +-
+ Documentation/i2c/old-module-parameters.rst   |  3 +-
+ Documentation/i2c/smbus-protocol.rst          |  4 +-
+ Documentation/kernel-hacking/hacking.rst      |  4 +-
+ .../networking/devlink/devlink-region.rst     |  2 +-
+ .../networking/devlink/devlink-trap.rst       |  4 +-
+ Documentation/process/submitting-patches.rst  | 32 ++++++++--------
+ Documentation/security/landlock.rst           |  3 +-
+ Documentation/trace/coresight/coresight.rst   |  8 ++--
+ Documentation/trace/ftrace.rst                |  2 +-
+ Documentation/userspace-api/landlock.rst      | 11 +++---
+ Documentation/virt/kvm/s390-pv-boot.rst       |  2 +-
+ Documentation/x86/boot.rst                    |  4 +-
+ Documentation/x86/mtrr.rst                    |  2 +-
+ 46 files changed, 171 insertions(+), 147 deletions(-)
+
+-- 
+2.31.1
+
+
