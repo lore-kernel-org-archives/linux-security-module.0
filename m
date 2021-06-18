@@ -2,154 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED5EC49361
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jun 2021 17:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E92C49EA4
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jun 2021 22:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0967611CD
-	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jun 2021 17:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA7CA613BD
+	for <linux-security-module@archiver.kernel.org>; Fri, 18 Jun 2021 22:18:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236066AbhFRRYg (ORCPT
+        id S234898AbhFRWU1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 18 Jun 2021 13:24:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11134 "EHLO
-        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235807AbhFRRYd (ORCPT
+        Fri, 18 Jun 2021 18:20:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38648 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234902AbhFRWUZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 18 Jun 2021 13:24:33 -0400
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15IH4FiH069311;
-        Fri, 18 Jun 2021 13:22:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=CZfr7uMYRrnNfPYQsUrgOexzfNfFPUR4wuHHN0MIa/Y=;
- b=tR4sEZDAIGAsHAI98VdohXr2fnLgI3K6ZGL9XyBYstKpjz8PT1HWXsQVrzycFdMy9RMW
- VQj66sSLHxZcD49vcSCpa6I25ErPF1h/KZkyV0aLBwt57KTV1+IRPSkS9wbrWid9u1HO
- dU0JxjCh/3SXiPY2FDzwJyDIX2TyUyz8qgJfB6bbG2nnKzX8lGLfc94gX0nq62sBoYJi
- oFe+pAo8jCjrdLAbU1lL/mkaahcyxgyikSDRlinVMcuUM9oRmwKC8IKcwGnI9XcQFGQW
- PwbVUhdytdZGJq45Qbv9GbQJENnysx4src5ls5tjf68Gaml2yB/nHoGZ0k4wc52dsOPj qA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 398xk42dne-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 13:22:15 -0400
-Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15IH4RUE072513;
-        Fri, 18 Jun 2021 13:22:15 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 398xk42dmt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 13:22:14 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15IHDHYm016853;
-        Fri, 18 Jun 2021 17:22:13 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06fra.de.ibm.com with ESMTP id 394m6h9w5j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Jun 2021 17:22:13 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15IHMANQ20971802
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Jun 2021 17:22:10 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A15F5A4060;
-        Fri, 18 Jun 2021 17:22:10 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2FEA4A405C;
-        Fri, 18 Jun 2021 17:22:08 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.93.34])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Jun 2021 17:22:08 +0000 (GMT)
-Message-ID: <2a57faec7fcc69cc1ae6939930adafa5eb164e0c.camel@linux.ibm.com>
-Subject: Re: [PATCH] fs: Return raw xattr for security.* if there is size
- disagreement with LSMs
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "stephen.smalley.work@gmail.com" <stephen.smalley.work@gmail.com>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Date:   Fri, 18 Jun 2021 13:22:07 -0400
-In-Reply-To: <CAHC9VhRb_Xg11c-qhQUY_KPf6dyHn06NYACigjN4ee+p8NtB6A@mail.gmail.com>
-References: <ee75bde9a17f418984186caa70abd33b@huawei.com>
-         <20210616132227.999256-1-roberto.sassu@huawei.com>
-         <6e1c9807-d7e8-7c26-e0ee-975afa4b9515@linux.ibm.com>
-         <9cb676de40714d0288f85292c1f1a430@huawei.com>
-         <d822efcc0bb05178057ab2f52293575124cde1fc.camel@linux.ibm.com>
-         <CAHC9VhTv6Zn8gYaB6cG4wPzy_Ty0XjOM-QL4cZ525RnhFY4bTQ@mail.gmail.com>
-         <c92d0ac71a8db8bb016a7e94b83c193956d71a26.camel@linux.ibm.com>
-         <CAHC9VhRb_Xg11c-qhQUY_KPf6dyHn06NYACigjN4ee+p8NtB6A@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -qghBSUzKP886Dw21Oc7aqDouAJOgV6E
-X-Proofpoint-GUID: 3FIqQmJU-kr9FUpqww-lxB5Ok5Tjk7R1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-18_10:2021-06-18,2021-06-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- mlxlogscore=999 phishscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2104190000 definitions=main-2106180100
+        Fri, 18 Jun 2021 18:20:25 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC7AFC061768
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Jun 2021 15:18:15 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id h12so5420806plf.4
+        for <linux-security-module@vger.kernel.org>; Fri, 18 Jun 2021 15:18:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FE3ige4IUrzO4rZznPTG12clkaJsue7K7FUGlSBMAfs=;
+        b=Yf/hd/nvGltzFs93oV+O815gndRr0N0A4GD+hlEjUljs8fR/r42/5waH+foBbKS7WR
+         4ieWebjxoeI31qMYukpCCF4suivtuw0KIX1kY4xCHCyeA8Pd+qdR2kMIky/pA2j/9n1z
+         T5UtTANEkuiNSh3GT2iBd2oGjOT4PXXJ8YxOU/uBtqj1IiaNYwuRoT9AQFd4bB3iGSod
+         26qHtN9qmDpGolnh/MwXPQ8M2sR3UfA7xZml5iJWrbGghC/MI1rSVb3r8vzpAHp9WgHN
+         rQlO7Wfj93/2gQ031V5AE3UWSmVQEAXyZXRDPtXzUcgRjadraLTfDfG3fXk5uJ+V0D/n
+         TtDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FE3ige4IUrzO4rZznPTG12clkaJsue7K7FUGlSBMAfs=;
+        b=BBFJ/cBjUb7tRg7zaldynOQgleMcI6i2c9bxgigaXFU9sSSw/Gpye0WrboQCWNbR8m
+         P/5QIS9bidxQrZ1bZcO+TZXwRUXuTYC0WPTZIeHZn8LhRFvKdrKpagt+/1I+ibCCY3ub
+         jBDycMRCIu5yR45vmDHsURzGMvxG87+kK/Oa+ztgdQ9j6rmS2zbg89d9dOtVhj2rRO6E
+         BHD3qlLasdUGutNCTc9FD3zlGzjEMYxtoZZPsFX9B8X7SKTq4OFc+1eOTX0IAjB8xhx6
+         UkJrVdzyynauNwXnuYWvsCxgvo/EMle4MFqua6ItAfU0/wd1OzsgKdeQHN1VRNZMgF6S
+         UeBQ==
+X-Gm-Message-State: AOAM531WMJT1nGf5DkEXWSysvrLkP4DXruvLsM2zw442+FeuoloSsRWI
+        Dghw2OrWDbmDgzvohPTycs+LgBarxtwpcCYHIAz/WA==
+X-Google-Smtp-Source: ABdhPJw3BE/jkA8KN4GViEwVomKCDOYCAzb4JhqF7GBtQ+4ny9zul9rQENwJ5XFkX0U2csBd6emTDpwOakbDlUjAcRc=
+X-Received: by 2002:a17:90a:fc88:: with SMTP id ci8mr24404565pjb.13.1624054695229;
+ Fri, 18 Jun 2021 15:18:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210616085118.1141101-1-omosnace@redhat.com>
+In-Reply-To: <20210616085118.1141101-1-omosnace@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 18 Jun 2021 15:18:04 -0700
+Message-ID: <CAPcyv4jvR8CT4rYODR5KUHNdiqMwQSwJZ+OkVf61kLT3JfjC_Q@mail.gmail.com>
+Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        X86 ML <x86@kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        linux-serial@vger.kernel.org, bpf@vger.kernel.org,
+        Netdev <netdev@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 2021-06-18 at 12:35 -0400, Paul Moore wrote:
-> On Fri, Jun 18, 2021 at 12:04 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Thu, 2021-06-17 at 23:18 -0400, Paul Moore wrote:
-> > > On Thu, Jun 17, 2021 at 11:28 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > On Thu, 2021-06-17 at 07:09 +0000, Roberto Sassu wrote:
-> > >
-> > > ...
-> > >
-> > > > > An alternative would be to do the EVM verification twice if the
-> > > > > first time didn't succeed (with vfs_getxattr_alloc() and with the
-> > > > > new function that behaves like vfs_getxattr()).
-> > > >
-> > > > Unfortunately, I don't see an alternative.
-> > >
-> > > ... and while unfortunate, the impact should be non-existant if you
-> > > are using the right tools to label files or ensuring that you are
-> > > formatting labels properly if doing it by hand.
-> > >
-> > > Handling a corner case is good, but I wouldn't add a lot of code
-> > > complexity trying to optimize it.
-> >
-> > From userspace it's really difficult to understand the EVM signature
-> > verification failure is due to the missing NULL.
-> 
-> I would argue that any signature verification failure, regardless of
-> the mechanism, is hard to understand.  It either passes or it fails,
-> and if it fails good luck trying to determine what exactly isn't
-> matching up; especially if you really don't know the Right Value.
+On Wed, Jun 16, 2021 at 1:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
+> lockdown") added an implementation of the locked_down LSM hook to
+> SELinux, with the aim to restrict which domains are allowed to perform
+> operations that would breach lockdown.
+>
+> However, in several places the security_locked_down() hook is called in
+> situations where the current task isn't doing any action that would
+> directly breach lockdown, leading to SELinux checks that are basically
+> bogus.
+>
+> To fix this, add an explicit struct cred pointer argument to
+> security_lockdown() and define NULL as a special value to pass instead
+> of current_cred() in such situations. LSMs that take the subject
+> credentials into account can then fall back to some default or ignore
+> such calls altogether. In the SELinux lockdown hook implementation, use
+> SECINITSID_KERNEL in case the cred argument is NULL.
+>
+> Most of the callers are updated to pass current_cred() as the cred
+> pointer, thus maintaining the same behavior. The following callers are
+> modified to pass NULL as the cred pointer instead:
+> 1. arch/powerpc/xmon/xmon.c
+>      Seems to be some interactive debugging facility. It appears that
+>      the lockdown hook is called from interrupt context here, so it
+>      should be more appropriate to request a global lockdown decision.
+> 2. fs/tracefs/inode.c:tracefs_create_file()
+>      Here the call is used to prevent creating new tracefs entries when
+>      the kernel is locked down. Assumes that locking down is one-way -
+>      i.e. if the hook returns non-zero once, it will never return zero
+>      again, thus no point in creating these files. Also, the hook is
+>      often called by a module's init function when it is loaded by
+>      userspace, where it doesn't make much sense to do a check against
+>      the current task's creds, since the task itself doesn't actually
+>      use the tracing functionality (i.e. doesn't breach lockdown), just
+>      indirectly makes some new tracepoints available to whoever is
+>      authorized to use them.
+> 3. net/xfrm/xfrm_user.c:copy_to_user_*()
+>      Here a cryptographic secret is redacted based on the value returned
+>      from the hook. There are two possible actions that may lead here:
+>      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
+>         task context is relevant, since the dumped data is sent back to
+>         the current task.
+>      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
+>         dumped SA is broadcasted to tasks subscribed to XFRM events -
+>         here the current task context is not relevant as it doesn't
+>         represent the tasks that could potentially see the secret.
+>      It doesn't seem worth it to try to keep using the current task's
+>      context in the a) case, since the eventual data leak can be
+>      circumvented anyway via b), plus there is no way for the task to
+>      indicate that it doesn't care about the actual key value, so the
+>      check could generate a lot of "false alert" denials with SELinux.
+>      Thus, let's pass NULL instead of current_cred() here faute de
+>      mieux.
+>
+> Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
+> Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+[..]
+> diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> index 2acc6173da36..c1747b6555c7 100644
+> --- a/drivers/cxl/mem.c
+> +++ b/drivers/cxl/mem.c
+> @@ -568,7 +568,7 @@ static bool cxl_mem_raw_command_allowed(u16 opcode)
+>         if (!IS_ENABLED(CONFIG_CXL_MEM_RAW_COMMANDS))
+>                 return false;
+>
+> -       if (security_locked_down(LOCKDOWN_NONE))
+> +       if (security_locked_down(current_cred(), LOCKDOWN_NONE))
 
-In this case, the discussion is about signing and verifying file meta-
-data hashes.  With EVM portable and immutable signatures, the file
-meta-data is known.  The userspace tool evmct is able to verify the
-file meta-data signature, which the kernel rejects.
+Acked-by: Dan Williams <dan.j.williams@intel.com>
 
-> What I mean by the corner case was the fact that the recommended tools
-> should always do the right thing with respect to '\0' termination,
-> this should really only be an issue if someone is winging it and doing
-> it by hand or with their own tools.
-
-I'm not disagreeing with you.  However, it's still annoying, confusing,
-and really frustrating.   That's why we're at least including debugging
-information.  In addtion, Roberto will provide the reason.
-
-thanks,
-
-Mimi
-
+...however that usage looks wrong. The expectation is that if kernel
+integrity protections are enabled then raw command access should be
+disabled. So I think that should be equivalent to LOCKDOWN_PCI_ACCESS
+in terms of the command capabilities to filter.
