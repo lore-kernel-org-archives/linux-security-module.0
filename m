@@ -2,135 +2,186 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 459D5C48BE5
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Jun 2021 13:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB300C49EA4
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jun 2021 02:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32CF1611BD
-	for <linux-security-module@archiver.kernel.org>; Mon, 21 Jun 2021 13:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF1FF6134F
+	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jun 2021 02:52:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229807AbhFUN2K (ORCPT
+        id S231293AbhFVCy7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 21 Jun 2021 09:28:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49788 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229708AbhFUN2J (ORCPT
+        Mon, 21 Jun 2021 22:54:59 -0400
+Received: from namei.org ([65.99.196.166]:54102 "EHLO mail.namei.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230045AbhFVCy6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 21 Jun 2021 09:28:09 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 15LD40dU034007;
-        Mon, 21 Jun 2021 09:25:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=hqFx3xpS6aZ8X/y5N6zKbrcRBhuvPaEnZk+43JmXGQg=;
- b=c08qRUidjPVVkF3rA0OgQOHkTSOLo2rWmIHYkwJjzMUT4s9m5rHjWWlcRGiCZ3HMRN4u
- PItFaQUPN02VUru4ZFhFv1UqeOVLj1Z/eOmOpdpZTNsXPNvd8GgOxnFZ0Cw3c2g7oSol
- q+A/mPhozVeRL/R4Le3OxxPuPzsEXVWuDOR/yh35MCGx32n7LakHv0w0xpV3qqdmj0is
- 7rFSBj9G17QFowCl6/HgjkMMQgJcktwpk8FXHSp1H9h+cWFiagEmbsgZHFoNDOCPdzwP
- DV/MgEAPJbq7dZEHMN8LcJ2842Zm3joQOrWFAxOtOpVDBFve1Q5Ntg1sUPQ4KCpJE2ST aQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39at103j23-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Jun 2021 09:25:50 -0400
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 15LD4uN7040446;
-        Mon, 21 Jun 2021 09:25:49 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39at103hy2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Jun 2021 09:25:49 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 15LD76lI004957;
-        Mon, 21 Jun 2021 13:25:45 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3998788wun-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 21 Jun 2021 13:25:45 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 15LDPhTA23920928
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 21 Jun 2021 13:25:43 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4B115A4040;
-        Mon, 21 Jun 2021 13:25:43 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 25166A4055;
-        Mon, 21 Jun 2021 13:25:41 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.107.100])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 21 Jun 2021 13:25:40 +0000 (GMT)
-Message-ID: <46ce17543ea05839467fab8865826a0492e8632b.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] evm: Check xattr size discrepancy between kernel and
- user
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-        stefanb@linux.ibm.com
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Date:   Mon, 21 Jun 2021 09:25:40 -0400
-In-Reply-To: <20210621122912.1472470-1-roberto.sassu@huawei.com>
-References: <20210621122912.1472470-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-14.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: gozS-3LOno6sEm8WACG_HJ6wV4y_7m1U
-X-Proofpoint-GUID: YVs83M9VRHzuHxTHHIXgjLXdPa8FQMCR
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 21 Jun 2021 22:54:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.namei.org (Postfix) with ESMTPS id AAD9054D;
+        Tue, 22 Jun 2021 02:46:43 +0000 (UTC)
+Date:   Tue, 22 Jun 2021 12:46:43 +1000 (AEST)
+From:   James Morris <jmorris@namei.org>
+To:     linux-security-module@vger.kernel.org
+cc:     linux-kernel@vger.kernel.org, lwn@lwn.net,
+        fedora-selinux-list@redhat.com, linux-crypto@vger.kernel.org,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org, selinux@vger.kernel.org,
+        Audit-ML <linux-audit@redhat.com>, gentoo-hardened@gentoo.org,
+        keyrings@linux-nfs.org, tpmdd-devel@lists.sourceforge.net,
+        Linux Security Summit Program Committee 
+        <lss-pc@lists.linuxfoundation.org>
+Subject: Re: [ANNOUNCE][CFP] Linux Security Summit 2021
+In-Reply-To: <5b3a0bf-226d-6ee-d0b-d6673eff32b2@namei.org>
+Message-ID: <2db579ee-1d1c-102c-c2d4-c268d89aae8c@namei.org>
+References: <c244f77-56a1-c089-521d-2e670488c10@namei.org> <5b3a0bf-226d-6ee-d0b-d6673eff32b2@namei.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-06-21_06:2021-06-21,2021-06-21 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- bulkscore=0 mlxscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- phishscore=0 lowpriorityscore=0 adultscore=0 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2106210078
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 2021-06-21 at 14:29 +0200, Roberto Sassu wrote:
-> The kernel and the user obtain an xattr value in two different ways:
-> 
-> kernel (EVM): uses vfs_getxattr_alloc() which obtains the xattr value from
->               the filesystem handler (raw value);
-> 
-> user (ima-evm-utils): uses vfs_getxattr() which obtains the xattr value
->                       from the LSMs (normalized value).
-> 
-> Normally, this does not have an impact unless security.selinux is set with
-> setfattr, with a value not terminated by '\0' (this is not the recommended
-> way, security.selinux should be set with the appropriate tools such as
-> chcon and restorecon).
-> 
-> In this case, the kernel and the user see two different xattr values: the
-> former sees the xattr value without '\0' (raw value), the latter sees the
-> value with '\0' (value normalized by SELinux).
-> 
-> This could result in two different verification outcomes from EVM and
-> ima-evm-utils, if a signature was calculated with a security.selinux value
-> terminated by '\0' and the value set in the filesystem is not terminated by
-> '\0'. The former would report verification failure due to the missing '\0',
-> while the latter would report verification success (because it gets the
-> normalized value with '\0').
-> 
-> This patch mitigates this issue by comparing in evm_calc_hmac_or_hash() the
-> size of the xattr returned by the two xattr functions and by warning the
-> user if there is a discrepancy.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+Two further (and hopefully final) changes:
 
-Thanks, Roberto.
+  - LSS 2021 will now be a hybrid event, catering to both in-person and 
+    remote attendees and presenters
 
-Applied to: git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-
-integrity.git next-integrity-testing branch.
+  - The CFP is extended to July 11th.
 
-Mimi
+
+
+On Wed, 26 May 2021, James Morris wrote:
+
+> Note that the venue of LSS 2021 has now changed to Seattle, USA.
+> 
+> See https://events.linuxfoundation.org/linux-security-summit-north-america/
+> 
+> The new event dates are 29 September to 01 October.
+> 
+> The CFP closes on June 27th.
+> 
+> 
+> 
+> 
+> 
+> On Tue, 9 Feb 2021, James Morris wrote:
+> 
+> > ==============================================================================
+> >                    ANNOUNCEMENT AND CALL FOR PARTICIPATION
+> > 
+> >                          LINUX SECURITY SUMMIT 2021
+> >                              
+> >                               27-29 September
+> >                               Dublin, Ireland
+> > ==============================================================================
+> > 
+> > DESCRIPTION
+> >  
+> > Linux Security Summit (LSS) is a technical forum for collaboration between
+> > Linux developers, researchers, and end-users.  Its primary aim is to foster
+> > community efforts in analyzing and solving Linux security challenges.
+> > 
+> >  The program committee currently seeks proposals for:
+> >  
+> >    * Refereed Presentations:
+> >      45 minutes in length.
+> >  
+> >    * Panel Discussion Topics:
+> >      45 minutes in length.
+> >  
+> >    * Short Topics:
+> >      30 minutes in total, including at least 10 minutes discussion.
+> >  
+> >    * Tutorials
+> >      90 minutes in length.
+> >  
+> > Tutorial sessions should be focused on advanced Linux security defense
+> > topics within areas such as the kernel, compiler, and security-related
+> > libraries.  Priority will be given to tutorials created for this conference,
+> > and those where the presenter a leading subject matter expert on the topic.
+> >  
+> > Topic areas include, but are not limited to:
+> >  
+> >    * Kernel self-protection
+> >    * Access control
+> >    * Cryptography and key management
+> >    * Integrity policy and enforcement
+> >    * Hardware Security
+> >    * IoT and embedded security
+> >    * Virtualization and containers
+> >    * System-specific system hardening
+> >    * Case studies
+> >    * Security tools
+> >    * Security UX
+> >    * Emerging technologies, threats & techniques
+> > 
+> >   Proposals should be submitted via:
+> >     https://events.linuxfoundation.org/linux-security-summit-europe/program/cfp/
+> > 
+> > 
+> > ** Note that for 2021, the North American and European events are combined into
+> > a single event planned for Dublin, Ireland. **
+> >  
+> > 
+> > DATES
+> >  
+> >   * CFP close:            June 27
+> >   * CFP notifications:    July 20
+> >   * Schedule announced:   July 22
+> >   * Event:                September 27-29
+> > 
+> > WHO SHOULD ATTEND
+> >  
+> > We're seeking a diverse range of attendees and welcome participation by
+> > people involved in Linux security development, operations, and research.
+> >  
+> > LSS is a unique global event that provides the opportunity to present and
+> > discuss your work or research with key Linux security community members and
+> > maintainers.  It's also useful for those who wish to keep up with the latest
+> > in Linux security development and to provide input to the development
+> > process.
+> > 
+> > WEB SITE
+> > 
+> >     https://events.linuxfoundation.org/linux-security-summit-europe/
+> > 
+> > TWITTER
+> > 
+> >   For event updates and announcements, follow:
+> > 
+> >     https://twitter.com/LinuxSecSummit
+> >   
+> >     #linuxsecuritysummit
+> > 
+> > PROGRAM COMMITTEE
+> > 
+> >   The program committee for LSS 2021 is:
+> > 
+> >     * James Morris, Microsoft
+> >     * Serge Hallyn, Cisco
+> >     * Paul Moore, Cisco
+> >     * Stephen Smalley, NSA
+> >     * Elena Reshetova, Intel
+> >     * John Johansen, Canonical
+> >     * Kees Cook, Google
+> >     * Casey Schaufler, Intel
+> >     * Mimi Zohar, IBM
+> >     * David A. Wheeler, Institute for Defense Analyses
+> > 
+> >   The program committee may be contacted as a group via email:
+> >     lss-pc () lists.linuxfoundation.org
+> > 
+> > 
+> 
+> -- 
+> James Morris
+> <jmorris@namei.org>
+> 
+> 
+
+-- 
+James Morris
+<jmorris@namei.org>
 
