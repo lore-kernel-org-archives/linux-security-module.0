@@ -2,211 +2,112 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6962C2B9F4
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jun 2021 12:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A7FC4743C
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jun 2021 12:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9546161003
-	for <linux-security-module@archiver.kernel.org>; Tue, 22 Jun 2021 12:45:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AB366108E
+	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jun 2021 12:29:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231837AbhFVMsJ (ORCPT
+        id S231126AbhFWMbn (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 22 Jun 2021 08:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50022 "EHLO
+        Wed, 23 Jun 2021 08:31:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231792AbhFVMsI (ORCPT
+        with ESMTP id S231486AbhFWMbf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 22 Jun 2021 08:48:08 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06050C061574
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Jun 2021 05:45:53 -0700 (PDT)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1lvfma-0002yw-65; Tue, 22 Jun 2021 14:45:36 +0200
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1lvfmY-0000ic-Hs; Tue, 22 Jun 2021 14:45:34 +0200
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     kernel@pengutronix.de, Jan Luebbe <jlu@pengutronix.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v2 2/6] KEYS: trusted: Allow import from existing key material for development
-Date:   Tue, 22 Jun 2021 14:45:19 +0200
-Message-Id: <342fe12286b5582b11e8c899bd9a63db2d4bf61c.1624365751.git-series.a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <cover.0e5d15050ce7cbc93b9b2f950cbd035bffc655fd.1624365751.git-series.a.fatoum@pengutronix.de>
-References: <cover.0e5d15050ce7cbc93b9b2f950cbd035bffc655fd.1624365751.git-series.a.fatoum@pengutronix.de>
+        Wed, 23 Jun 2021 08:31:35 -0400
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4898DC035468
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Jun 2021 05:26:55 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4G92ZP0TT1zMprpm;
+        Wed, 23 Jun 2021 14:26:53 +0200 (CEST)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4G92ZN3lv2zlmrrs;
+        Wed, 23 Jun 2021 14:26:52 +0200 (CEST)
+Subject: Re: [PATCH v2 27/29] docs: userspace-api: landlock.rst: avoid using
+ ReST :doc:`foo` markup
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <cover.1623824363.git.mchehab+huawei@kernel.org>
+ <24888a9c5da3c505b2bc274fcd83be348dbaf972.1623824363.git.mchehab+huawei@kernel.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Message-ID: <7ebe5a4d-8835-6737-c006-3d065e50dc8a@digikod.net>
+Date:   Wed, 23 Jun 2021 14:26:43 +0200
+User-Agent: 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <24888a9c5da3c505b2bc274fcd83be348dbaf972.1623824363.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-A key aspect of trusted keys is that they are never disclosed to
-userspace in plain text. For development and debugging, it can be still
-useful to be able to supply a key in plain text from userspace.
 
-Implement an optional knob to support this according to the semantics
-Jan and Mimi had agreed on here[1].
+On 16/06/2021 08:27, Mauro Carvalho Chehab wrote:
+> The :doc:`foo` tag is auto-generated via automarkup.py.
+> So, use the filename at the sources, instead of :doc:`foo`.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  Documentation/userspace-api/landlock.rst | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 
-[1] https://lore.kernel.org/linux-integrity/e8f149cddce55a4e4615396108e4c900cbec75a8.camel@pengutronix.de/
+Acked-by: Mickaël Salaün <mic@linux.microsoft.com>
 
-Suggested-by: Jan Luebbe <jlu@pengutronix.de>
-Cc: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-Manual resend.
+Like others, I think it would be nice to explain the reason of this
+change in the commit message, and why it is better than the current way
+to do it.
 
-To: James Bottomley <jejb@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-To: Mimi Zohar <zohar@linux.ibm.com>
-To: David Howells <dhowells@redhat.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Eric Biggers <ebiggers@kernel.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: "Horia GeantÄƒ" <horia.geanta@nxp.com>
-Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
-Cc: Udit Agarwal <udit.agarwal@nxp.com>
-Cc: Jan Luebbe <j.luebbe@pengutronix.de>
-Cc: David Gstir <david@sigma-star.at>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Franck LENORMAND <franck.lenormand@nxp.com>
-Cc: Sumit Garg <sumit.garg@linaro.org>
-Cc: keyrings@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
----
- Documentation/security/keys/trusted-encrypted.rst | 14 +++++++++++-
- security/keys/trusted-keys/Kconfig                | 15 +++++++++++-
- security/keys/trusted-keys/trusted_core.c         | 21 ++++++++++++++--
- 3 files changed, 48 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/security/keys/trusted-encrypted.rst b/Documentation/security/keys/trusted-encrypted.rst
-index 80d5a5af62a1..cc2e677b3bb6 100644
---- a/Documentation/security/keys/trusted-encrypted.rst
-+++ b/Documentation/security/keys/trusted-encrypted.rst
-@@ -188,6 +188,20 @@ Usage::
- specific to TEE device implementation.  The key length for new keys is always
- in bytes. Trusted Keys can be 32 - 128 bytes (256 - 1024 bits).
- 
-+Trusted Keys: import plain-text key for development
-+---------------------------------------------------
-+
-+Usage::
-+
-+    keyctl add trusted name "import hex_key_material" ring
-+
-+For kernels built with ``CONFIG_TRUSTED_KEYS_DEVELOPMENT_IMPORT=y``, new
-+trusted keys can be created from existing key material supplied by userspace,
-+instead of using random numbers. Once defined, as with random trusted keys,
-+userspace cannot extract the plain-text key material again and will only
-+ever see encrypted blobs. This option should *not* be enabled for production
-+kernels.
-+
- Encrypted Keys usage
- --------------------
- 
-diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-index 24af4aaceebf..8bd69b252bf9 100644
---- a/security/keys/trusted-keys/Kconfig
-+++ b/security/keys/trusted-keys/Kconfig
-@@ -23,3 +23,18 @@ config TRUSTED_KEYS_TEE
- if !TRUSTED_KEYS_TPM && !TRUSTED_KEYS_TEE
- comment "No trust source selected!"
- endif
-+
-+config TRUSTED_KEYS_DEVELOPMENT_IMPORT
-+        bool "Allow creating TRUSTED KEYS from existing key material for development"
-+        help
-+          This option adds support for creating new trusted keys from
-+          existing key material supplied by userspace, instead of using
-+          random numbers. Once defined,  as with random trusted keys,
-+          userspace cannot extract the plain-text key material again
-+          and will only ever see encrypted blobs.
-+
-+          This option should *only* be enabled for debugging/development.
-+          Also, consider using 'keyctl padd' instead of 'keyctl add' to
-+          avoid exposing the plain-text key on the process command line.
-+
-+          If you are unsure as to whether this is required, answer N.
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index 8cab69e5d0da..2223e11c8bb5 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -46,12 +46,13 @@ static unsigned char migratable;
- 
- enum {
- 	Opt_err,
--	Opt_new, Opt_load, Opt_update,
-+	Opt_new, Opt_load, Opt_import, Opt_update,
- };
- 
- static const match_table_t key_tokens = {
- 	{Opt_new, "new"},
- 	{Opt_load, "load"},
-+	{Opt_import, "import"},
- 	{Opt_update, "update"},
- 	{Opt_err, NULL}
- };
-@@ -100,6 +101,21 @@ static int datablob_parse(char **datablob, struct trusted_key_payload *p)
- 			return -EINVAL;
- 		ret = Opt_load;
- 		break;
-+	case Opt_import:
-+		if (!IS_ENABLED(CONFIG_TRUSTED_KEYS_DEVELOPMENT_IMPORT))
-+			return -EINVAL;
-+		/* first argument is unsealed blob */
-+		c = strsep(datablob, " \t");
-+		if (!c)
-+			return -EINVAL;
-+		p->key_len = strlen(c) / 2;
-+		if (p->key_len < MIN_KEY_SIZE || p->key_len > MAX_KEY_SIZE)
-+			return -EINVAL;
-+		ret = hex2bin(p->key, c, p->key_len);
-+		if (ret < 0)
-+			return -EINVAL;
-+		ret = Opt_import;
-+		break;
- 	case Opt_update:
- 		ret = Opt_update;
- 		break;
-@@ -187,7 +203,8 @@ static int trusted_instantiate(struct key *key,
- 			ret = -EIO;
- 			goto out;
- 		}
--
-+		fallthrough;
-+	case Opt_import:
- 		ret = static_call(trusted_key_seal)(payload, datablob);
- 		if (ret < 0)
- 			pr_info("key_seal failed (%d)\n", ret);
--- 
-git-series 0.9.1
+> 
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index 62c9361a3c7f..f35552ff19ba 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -145,7 +145,8 @@ Bind mounts and OverlayFS
+>  
+>  Landlock enables to restrict access to file hierarchies, which means that these
+>  access rights can be propagated with bind mounts (cf.
+> -:doc:`/filesystems/sharedsubtree`) but not with :doc:`/filesystems/overlayfs`.
+> +Documentation/filesystems/sharedsubtree.rst) but not with
+> +Documentation/filesystems/overlayfs.rst.
+>  
+>  A bind mount mirrors a source file hierarchy to a destination.  The destination
+>  hierarchy is then composed of the exact same files, on which Landlock rules can
+> @@ -170,8 +171,8 @@ Inheritance
+>  
+>  Every new thread resulting from a :manpage:`clone(2)` inherits Landlock domain
+>  restrictions from its parent.  This is similar to the seccomp inheritance (cf.
+> -:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
+> -:manpage:`credentials(7)`.  For instance, one process's thread may apply
+> +Documentation/userspace-api/seccomp_filter.rst) or any other LSM dealing with
+> +task's :manpage:`credentials(7)`.  For instance, one process's thread may apply
+>  Landlock rules to itself, but they will not be automatically applied to other
+>  sibling threads (unlike POSIX thread credential changes, cf.
+>  :manpage:`nptl(7)`).
+> @@ -278,7 +279,7 @@ Memory usage
+>  ------------
+>  
+>  Kernel memory allocated to create rulesets is accounted and can be restricted
+> -by the :doc:`/admin-guide/cgroup-v1/memory`.
+> +by the Documentation/admin-guide/cgroup-v1/memory.rst.
+>  
+>  Questions and answers
+>  =====================
+> @@ -303,7 +304,7 @@ issues, especially when untrusted processes can manipulate them (cf.
+>  Additional documentation
+>  ========================
+>  
+> -* :doc:`/security/landlock`
+> +* Documentation/security/landlock.rst
+>  * https://landlock.io
+>  
+>  .. Links
+> 
