@@ -2,112 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-19.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A7FC4743C
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jun 2021 12:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC7AC49EA5
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jun 2021 15:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB366108E
-	for <linux-security-module@archiver.kernel.org>; Wed, 23 Jun 2021 12:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7DC6613DA
+	for <linux-security-module@archiver.kernel.org>; Thu, 24 Jun 2021 15:25:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231126AbhFWMbn (ORCPT
+        id S232206AbhFXP1k (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 23 Jun 2021 08:31:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60268 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231486AbhFWMbf (ORCPT
+        Thu, 24 Jun 2021 11:27:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45183 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231708AbhFXP1j (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 23 Jun 2021 08:31:35 -0400
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fac])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4898DC035468
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Jun 2021 05:26:55 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4G92ZP0TT1zMprpm;
-        Wed, 23 Jun 2021 14:26:53 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4G92ZN3lv2zlmrrs;
-        Wed, 23 Jun 2021 14:26:52 +0200 (CEST)
-Subject: Re: [PATCH v2 27/29] docs: userspace-api: landlock.rst: avoid using
- ReST :doc:`foo` markup
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-References: <cover.1623824363.git.mchehab+huawei@kernel.org>
- <24888a9c5da3c505b2bc274fcd83be348dbaf972.1623824363.git.mchehab+huawei@kernel.org>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <7ebe5a4d-8835-6737-c006-3d065e50dc8a@digikod.net>
-Date:   Wed, 23 Jun 2021 14:26:43 +0200
-User-Agent: 
+        Thu, 24 Jun 2021 11:27:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624548320;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=yv7m1AvCn7O6dTH1q9vdjmlX/RhwF6AeGVa6Oa4+0Qw=;
+        b=MdWVBAv+FCDSXegECxJ/N0ebI1Ym4RXYnx2IggZwB1aHd71iqlMlp0fYIM0fWoabvdg+zA
+        Ni64SnfPS5i8P7kmIUAt2+IRaibbOy3oEUY28jY1seiAB/KG/twlHkeUffwowaVwKGp1vr
+        g0nT+j1q/xGUvQlqs6wx/Qw55BPNZ0o=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-154-2HeUnOc6Ml-xJ3pyjNUCBg-1; Thu, 24 Jun 2021 11:25:18 -0400
+X-MC-Unique: 2HeUnOc6Ml-xJ3pyjNUCBg-1
+Received: by mail-ej1-f72.google.com with SMTP id w13-20020a170906384db02903d9ad6b26d8so2166997ejc.0
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Jun 2021 08:25:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yv7m1AvCn7O6dTH1q9vdjmlX/RhwF6AeGVa6Oa4+0Qw=;
+        b=EQjOyPsMIqV7zzKywVAs4QQoHxfcUxbFlma7N/tQ9JHQSM6+dvZnD8Jr1wdW0o06s9
+         sF+ccTnr04Z0F5+7QovL7ln08mYnIzOh8dOUWHMVscV7cuTw5qeTtUeDPPfMVB3YNIi4
+         0wzNLR0UJ6UR8AW6jhIZuw99cQUFO5AM8S9SihbYtkMfY5Fxf7k2e/G40VByLokVeXFl
+         kwtQmxoaez7UeEWTrSrrTO09b7SnZfp8IqxploRE8gpdFH4EcPqv3doWWt39IuYxfYzW
+         ndsCwPxA1exUTsKYz6BTb1Ju/Z9z1X5Zcn2ptZdRwNyNM0c82tHetLLVQ0pBDvv6/+g0
+         49ng==
+X-Gm-Message-State: AOAM533XZ94meTmg2Q17gJGriGZ1BabDf8aYIxQO8BeRdb6XooRoN0+m
+        4v76gT18H7ybOC/TeSlyEsV9bUSOjuH8NCfFt1Vmd00MYfG2UXcH9J5jNQPyvL96mO6lX97o1Q/
+        nIexZvaMJofNC5xJScvply88KcJXXyFl4wFQk
+X-Received: by 2002:a17:906:22c6:: with SMTP id q6mr5836129eja.275.1624548317667;
+        Thu, 24 Jun 2021 08:25:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxDFvu9eksuXynDzV/xksZCJe2btC6g1NOCWnVD/di1wd6CsF0Z7byzAfEPlhofKBrJp+8MwA==
+X-Received: by 2002:a17:906:22c6:: with SMTP id q6mr5836107eja.275.1624548317485;
+        Thu, 24 Jun 2021 08:25:17 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:8308:b105:dd00:d067:83f0:d612:b70f])
+        by smtp.gmail.com with ESMTPSA id a2sm1399830ejp.1.2021.06.24.08.25.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jun 2021 08:25:17 -0700 (PDT)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Lokesh Gidra <lokeshgidra@google.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Robert O'Callahan <roc@ocallahan.org>
+Subject: [RFC PATCH] userfaultfd: open userfaultfds with O_RDONLY
+Date:   Thu, 24 Jun 2021 17:25:15 +0200
+Message-Id: <20210624152515.1844133-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-In-Reply-To: <24888a9c5da3c505b2bc274fcd83be348dbaf972.1623824363.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Since userfaultfd doesn't implement a write operation, it is more
+appropriate to open it read-only.
 
-On 16/06/2021 08:27, Mauro Carvalho Chehab wrote:
-> The :doc:`foo` tag is auto-generated via automarkup.py.
-> So, use the filename at the sources, instead of :doc:`foo`.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/userspace-api/landlock.rst | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+When userfaultfds are opened read-write like it is now, and such fd is
+passed from one process to another, SELinux will check both read and
+write permissions for the target process, even though it can't actually
+do any write operation on the fd later.
 
-Acked-by: Mickaël Salaün <mic@linux.microsoft.com>
+Inspired by the following bug report, which has hit the SELinux scenario
+described above:
+https://bugzilla.redhat.com/show_bug.cgi?id=1974559
 
-Like others, I think it would be nice to explain the reason of this
-change in the commit message, and why it is better than the current way
-to do it.
+Reported-by: Robert O'Callahan <roc@ocallahan.org>
+Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
 
-> 
-> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> index 62c9361a3c7f..f35552ff19ba 100644
-> --- a/Documentation/userspace-api/landlock.rst
-> +++ b/Documentation/userspace-api/landlock.rst
-> @@ -145,7 +145,8 @@ Bind mounts and OverlayFS
->  
->  Landlock enables to restrict access to file hierarchies, which means that these
->  access rights can be propagated with bind mounts (cf.
-> -:doc:`/filesystems/sharedsubtree`) but not with :doc:`/filesystems/overlayfs`.
-> +Documentation/filesystems/sharedsubtree.rst) but not with
-> +Documentation/filesystems/overlayfs.rst.
->  
->  A bind mount mirrors a source file hierarchy to a destination.  The destination
->  hierarchy is then composed of the exact same files, on which Landlock rules can
-> @@ -170,8 +171,8 @@ Inheritance
->  
->  Every new thread resulting from a :manpage:`clone(2)` inherits Landlock domain
->  restrictions from its parent.  This is similar to the seccomp inheritance (cf.
-> -:doc:`/userspace-api/seccomp_filter`) or any other LSM dealing with task's
-> -:manpage:`credentials(7)`.  For instance, one process's thread may apply
-> +Documentation/userspace-api/seccomp_filter.rst) or any other LSM dealing with
-> +task's :manpage:`credentials(7)`.  For instance, one process's thread may apply
->  Landlock rules to itself, but they will not be automatically applied to other
->  sibling threads (unlike POSIX thread credential changes, cf.
->  :manpage:`nptl(7)`).
-> @@ -278,7 +279,7 @@ Memory usage
->  ------------
->  
->  Kernel memory allocated to create rulesets is accounted and can be restricted
-> -by the :doc:`/admin-guide/cgroup-v1/memory`.
-> +by the Documentation/admin-guide/cgroup-v1/memory.rst.
->  
->  Questions and answers
->  =====================
-> @@ -303,7 +304,7 @@ issues, especially when untrusted processes can manipulate them (cf.
->  Additional documentation
->  ========================
->  
-> -* :doc:`/security/landlock`
-> +* Documentation/security/landlock.rst
->  * https://landlock.io
->  
->  .. Links
-> 
+I marked this as RFC, because I'm not sure if this has any unwanted side
+effects. I only ran this patch through selinux-testsuite, which has a
+simple userfaultfd subtest, and a reproducer from the Bugzilla report.
+
+Please tell me whether this makes sense and/or if it passes any
+userfaultfd tests you guys might have.
+
+ fs/userfaultfd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+index 14f92285d04f..24e14c36068f 100644
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -986,7 +986,7 @@ static int resolve_userfault_fork(struct userfaultfd_ctx *new,
+ 	int fd;
+ 
+ 	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, new,
+-			O_RDWR | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
++			O_RDONLY | (new->flags & UFFD_SHARED_FCNTL_FLAGS), inode);
+ 	if (fd < 0)
+ 		return fd;
+ 
+@@ -2088,7 +2088,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
+ 	mmgrab(ctx->mm);
+ 
+ 	fd = anon_inode_getfd_secure("[userfaultfd]", &userfaultfd_fops, ctx,
+-			O_RDWR | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
++			O_RDONLY | (flags & UFFD_SHARED_FCNTL_FLAGS), NULL);
+ 	if (fd < 0) {
+ 		mmdrop(ctx->mm);
+ 		kmem_cache_free(userfaultfd_ctx_cachep, ctx);
+-- 
+2.31.1
+
