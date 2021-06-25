@@ -2,48 +2,42 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB54C49ECB
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800E3C49EB9
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E17B6193F
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A4D6193F
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbhFYQ7F (ORCPT
+        id S230151AbhFYQ7H (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Jun 2021 12:59:05 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3308 "EHLO
+        Fri, 25 Jun 2021 12:59:07 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3311 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbhFYQ67 (ORCPT
+        with ESMTP id S229738AbhFYQ7A (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Jun 2021 12:58:59 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GBNDy142vz6G8m4;
-        Sat, 26 Jun 2021 00:46:26 +0800 (CST)
+        Fri, 25 Jun 2021 12:59:00 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GBNJ25g9kz6G83c;
+        Sat, 26 Jun 2021 00:49:06 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 25 Jun 2021 18:56:35 +0200
+ 15.1.2176.2; Fri, 25 Jun 2021 18:56:37 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        <selinux@vger.kernel.org>,
-        Prakhar Srivastava <prsriva02@gmail.com>,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Subject: [RFC][PATCH 01/12] ima: Add digest, algo, measured parameters to ima_measure_critical_data()
-Date:   Fri, 25 Jun 2021 18:56:03 +0200
-Message-ID: <20210625165614.2284243-2-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 04/12] digest_lists: Objects
+Date:   Fri, 25 Jun 2021 18:56:06 +0200
+Message-ID: <20210625165614.2284243-5-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210625165614.2284243-1-roberto.sassu@huawei.com>
 References: <20210625165614.2284243-1-roberto.sassu@huawei.com>
@@ -57,269 +51,323 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-ima_measure_critical_data() allows any caller in the kernel to provide a
-buffer, so that is measured by IMA if an appropriate policy is set. Some
-information that could be useful to the callers are the digest of the
-buffer included in the new measurement entry, the digest algorithm and
-whether the buffer was measured.
+This patch defines the objects to manage digest lists:
 
-This patch modifies the definition of ima_measure_critical_data() to
-include three new parameters: digest, algo and measured. If they are NULL,
-the function behaves as before and just measures the buffer, if requested
-with the IMA policy. Otherwise, it also writes the digest, algorithm and
-whether the buffer is measured to the provided pointers.
+- digest_list_item: represents a digest list;
+- digest_list_item_ref: represents a reference to a digest list, i.e. the
+  location at which a digest within a digest list can be accessed;
+- digest_item: represents a unique digest.
 
-If the pointers are not NULL, the digest is calculated also if there is no
-matching rule in the IMA policy.
+It also defines some helpers for the objects. More information can be found
+in Documentation/security/digest_lists.rst.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: selinux@vger.kernel.org
-Cc: Prakhar Srivastava <prsriva02@gmail.com>
-Cc: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Cc: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- include/linux/ima.h                          |  8 +++--
- security/integrity/ima/ima.h                 |  3 +-
- security/integrity/ima/ima_appraise.c        |  3 +-
- security/integrity/ima/ima_asymmetric_keys.c |  3 +-
- security/integrity/ima/ima_init.c            |  3 +-
- security/integrity/ima/ima_main.c            | 32 ++++++++++++++++----
- security/integrity/ima/ima_queue_keys.c      |  2 +-
- security/selinux/ima.c                       |  5 +--
- 8 files changed, 44 insertions(+), 15 deletions(-)
+ Documentation/security/digest_lists.rst       | 156 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ .../integrity/digest_lists/digest_lists.h     | 117 +++++++++++++
+ 3 files changed, 274 insertions(+)
+ create mode 100644 security/integrity/digest_lists/digest_lists.h
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 61d5723ec303..f7fd931456c7 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -11,6 +11,7 @@
- #include <linux/fs.h>
- #include <linux/security.h>
- #include <linux/kexec.h>
+diff --git a/Documentation/security/digest_lists.rst b/Documentation/security/digest_lists.rst
+index 995260294783..1031667324c9 100644
+--- a/Documentation/security/digest_lists.rst
++++ b/Documentation/security/digest_lists.rst
+@@ -345,3 +345,159 @@ with digest lists:
+ 
+ - ``DIGEST_LIST_ADD``: the digest list is being added;
+ - ``DIGEST_LIST_DEL``: the digest list is being deleted.
++
++
++Objects
++-------
++
++This section defines the objects to manage digest lists:
++
++- ``digest_list_item``: represents a digest list;
++- ``digest_list_item_ref``: represents a reference to a digest list,
++  i.e. the location at which a digest within a digest list can be accessed;
++- ``digest_item``: represents a unique digest.
++
++They are represented in the following class diagram:
++
++::
++
++ digest_offset,-----------+
++ hdr_offset               |
++                          |
++ +------------------+     |     +----------------------+
++ | digest_list_item |--- N:1 ---| digest_list_item_ref |
++ +------------------+           +----------------------+
++                                           |
++                                          1:N
++                                           |
++                                    +-------------+
++                                    | digest_item |
++                                    +-------------+
++
++A ``digest_list_item`` is associated to one or multiple
++``digest_list_item_ref``, one for each digest it contains. However,
++a ``digest_list_item_ref`` is associated to only one ``digest_list_item``,
++as it represents a single location within a specific digest list.
++
++Given that a ``digest_list_item_ref`` represents a single location, it is
++associated to only one ``digest_item``. However, a ``digest_item`` can have
++multiple references (as it might appears multiple times within the same
++digest list or in different digest lists, if it is duplicated).
++
++
++A ``digest_list_item`` is defined as:
++
++::
++
++	struct digest_list_item {
++		loff_t size;
++		u8 *buf;
++		u8 actions;
++		u8 digest[64];
++		enum hash_algo algo;
++		const char *label;
++	};
++
++- ``size``: size of the digest list buffer;
++- ``buf``: digest list buffer;
++- ``actions``: actions performed on the digest list;
++- ``digest``: digest of the digest list;
++- ``algo``: digest algorithm;
++- ``label``: label used to identify the digest list (e.g. file name).
++
++A ``digest_list_item_ref`` is defined as:
++
++::
++
++	struct digest_list_item_ref {
++		struct digest_list_item *digest_list;
++		loff_t digest_offset;
++		loff_t hdr_offset;
++	};
++
++- ``digest_list``: pointer to a ``digest_list_item`` structure;
++- ``digest_offset``: offset of the digest related to the digest list
++  buffer;
++- ``hdr_offset``: offset of the header of the digest block containing the
++  digest.
++
++A ``digest_item`` is defined as:
++
++::
++
++	struct digest_item {
++		struct hlist_node hnext;
++		struct digest_list_item_ref *refs;
++	};
++
++- ``hnext``: pointers of the hash table;
++- ``refs``: array of ``digest_list_item_ref`` structures including a
++  terminator (protected by RCU).
++
++All digest list references are stored for a given digest, so that a query
++result can include the OR of the modifiers and actions of each referenced
++digest list.
++
++The relationship between the described objects can be graphically
++represented as:
++
++::
++
++ Hash table            +-------------+         +-------------+
++ PARSER      +-----+   | digest_item |         | digest_item |
++ FILE        | key |-->|             |-->...-->|             |
++ METADATA    +-----+   |ref0|...|refN|         |ref0|...|refN|
++                       +-------------+         +-------------+
++            ref0:         |                               | refN:
++            digest_offset | +-----------------------------+ digest_offset
++            hdr_offset    | |                               hdr_offset
++                          V V
++                     +--------------------+
++                     |  digest_list_item  |
++                     |                    |
++                     | size, buf, actions |
++                     +--------------------+
++                          ^
++                          |
++ Hash table            +-------------+         +-------------+
++ DIGEST_LIST +-----+   |ref0         |         |ref0         |
++             | key |-->|             |-->...-->|             |
++             +-----+   | digest_item |         | digest_item |
++                       +-------------+         +-------------+
++
++The reference for the digest of the digest list differs from the references
++for the other digest types. ``digest_offset`` and ``hdr_offset`` are set to
++zero, so that the digest of the digest list is retrieved from the
++``digest_list_item`` structure directly (see ``get_digest()`` below).
++
++Finally, this section defines useful helpers to access a digest or the
++header the digest belongs to. For example:
++
++::
++
++ static inline struct compact_list_hdr *get_hdr(
++                                      struct digest_list_item *digest_list,
++                                      loff_t hdr_offset)
++ {
++         return (struct compact_list_hdr *)(digest_list->buf + hdr_offset);
++ }
++
++the header can be obtained by summing the address of the digest list buffer
++in the ``digest_list_item`` structure with ``hdr_offset``.
++
++Similarly:
++
++::
++
++ static inline u8 *get_digest(struct digest_list_item *digest_list,
++                              loff_t digest_offset, loff_t hdr_offset)
++ {
++         /* Digest list digest is stored in a different place. */
++         if (!digest_offset)
++                 return digest_list->digest;
++         return digest_list->buf + digest_offset;
++ }
++
++the digest can be obtained by summing the address of the digest list buffer
++with ``digest_offset`` (except for the digest lists, where the digest is
++stored in the ``digest`` field of the ``digest_list_item`` structure).
+diff --git a/MAINTAINERS b/MAINTAINERS
+index ccf555862673..9a7e9f16eee8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8387,6 +8387,7 @@ L:	linux-integrity@vger.kernel.org
+ S:	Supported
+ T:	git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+ F:	Documentation/security/digest_lists.rst
++F:	security/integrity/digest_lists/digest_list.h
+ F:	uapi/linux/digest_lists.h
+ 
+ HUAWEI ETHERNET DRIVER
+diff --git a/security/integrity/digest_lists/digest_lists.h b/security/integrity/digest_lists/digest_lists.h
+new file mode 100644
+index 000000000000..81b6cb10f4f1
+--- /dev/null
++++ b/security/integrity/digest_lists/digest_lists.h
+@@ -0,0 +1,117 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2005,2006,2007,2008 IBM Corporation
++ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation, version 2 of the
++ * License.
++ *
++ * File: digest_lists.h
++ *      Unexported definitions for digest lists.
++ */
++
++#ifndef __DIGEST_LISTS_INTERNAL_H
++#define __DIGEST_LISTS_INTERNAL_H
++
++#include <linux/types.h>
++#include <linux/crypto.h>
++#include <linux/fs.h>
++#include <linux/security.h>
++#include <linux/hash.h>
++#include <linux/tpm.h>
++#include <linux/audit.h>
 +#include <crypto/hash_info.h>
- struct linux_binprm;
- 
- #ifdef CONFIG_IMA
-@@ -36,7 +37,8 @@ extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
- extern void ima_measure_critical_data(const char *event_label,
- 				      const char *event_name,
- 				      const void *buf, size_t buf_len,
--				      bool hash);
-+				      bool hash, u8 *digest,
-+				      enum hash_algo *algo, bool *measured);
- 
- #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
- extern void ima_appraise_parse_cmdline(void);
-@@ -140,7 +142,9 @@ static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {
- static inline void ima_measure_critical_data(const char *event_label,
- 					     const char *event_name,
- 					     const void *buf, size_t buf_len,
--					     bool hash) {}
-+					     bool hash, u8 *digest,
-+					     enum hash_algo *algo,
-+					     bool *measured) {}
- 
- #endif /* CONFIG_IMA */
- 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index f0e448ed1f9f..fff31065d600 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -268,7 +268,8 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 				struct inode *inode, const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
- 				int pcr, const char *func_data,
--				bool buf_hash);
-+				bool buf_hash, u8 *digest, enum hash_algo *algo,
-+				bool *measured);
- void ima_audit_measurement(struct integrity_iint_cache *iint,
- 			   const unsigned char *filename);
- int ima_alloc_init_template(struct ima_event_data *event_data,
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index ef9dcfce45d4..3fcbf1bfa449 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -357,7 +357,8 @@ int ima_check_blacklist(struct integrity_iint_cache *iint,
- 		if ((rc == -EPERM) && (iint->flags & IMA_MEASURE))
- 			process_buffer_measurement(&init_user_ns, NULL, digest, digestsize,
- 						   "blacklisted-hash", NONE,
--						   pcr, NULL, false);
-+						   pcr, NULL, false, NULL, NULL,
-+						   NULL);
- 	}
- 
- 	return rc;
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index c985418698a4..4370bf7b8866 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -62,5 +62,6 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	 */
- 	process_buffer_measurement(&init_user_ns, NULL, payload, payload_len,
- 				   keyring->description, KEY_CHECK, 0,
--				   keyring->description, false);
-+				   keyring->description, false, NULL, NULL,
-+				   NULL);
- }
-diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-index 5076a7d9d23e..a4dcd15187a8 100644
---- a/security/integrity/ima/ima_init.c
-+++ b/security/integrity/ima/ima_init.c
-@@ -154,7 +154,8 @@ int __init ima_init(void)
- 	ima_init_key_queue();
- 
- 	ima_measure_critical_data("kernel_info", "kernel_version",
--				  UTS_RELEASE, strlen(UTS_RELEASE), false);
-+				  UTS_RELEASE, strlen(UTS_RELEASE), false, NULL,
-+				  NULL, NULL);
- 
- 	return rc;
- }
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 287b90509006..04d1aed5adae 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -833,6 +833,9 @@ int ima_post_load_data(char *buf, loff_t size,
-  * @pcr: pcr to extend the measurement
-  * @func_data: func specific data, may be NULL
-  * @buf_hash: measure buffer data hash
-+ * @digest: buffer digest will be written to
-+ * @algo: digest algorithm
-+ * @measured: whether the buffer has been measured by IMA
-  *
-  * Based on policy, either the buffer data or buffer data hash is measured
-  */
-@@ -840,7 +843,8 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 				struct inode *inode, const void *buf, int size,
- 				const char *eventname, enum ima_hooks func,
- 				int pcr, const char *func_data,
--				bool buf_hash)
-+				bool buf_hash, u8 *digest, enum hash_algo *algo,
-+				bool *measured)
- {
- 	int ret = 0;
- 	const char *audit_cause = "ENOMEM";
-@@ -861,7 +865,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 	int action = 0;
- 	u32 secid;
- 
--	if (!ima_policy_flag)
-+	if (!ima_policy_flag && (!digest || !algo || !measured))
- 		return;
- 
- 	template = ima_template_desc_buf();
-@@ -883,7 +887,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 		action = ima_get_action(mnt_userns, inode, current_cred(),
- 					secid, 0, func, &pcr, &template,
- 					func_data);
--		if (!(action & IMA_MEASURE))
-+		if (!(action & IMA_MEASURE) && (!digest || !algo || !measured))
- 			return;
- 	}
- 
-@@ -914,6 +918,15 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 		event_data.buf_len = digest_hash_len;
- 	}
- 
-+	if (digest && algo) {
-+		memcpy(digest, iint.ima_hash->digest,
-+		       hash_digest_size[ima_hash_algo]);
-+		*algo = ima_hash_algo;
-+	}
++#include <linux/hash_info.h>
++#include <uapi/linux/digest_lists.h>
 +
-+	if (!(action & IMA_MEASURE))
-+		return;
++#define MAX_DIGEST_SIZE	64
++#define HASH_BITS 10
++#define MEASURE_HTABLE_SIZE (1 << HASH_BITS)
 +
- 	ret = ima_alloc_init_template(&event_data, &entry, template);
- 	if (ret < 0) {
- 		audit_cause = "alloc_entry";
-@@ -924,8 +937,11 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
- 	if (ret < 0) {
- 		audit_cause = "store_entry";
- 		ima_free_template_entry(entry);
-+		goto out;
- 	}
- 
-+	if (measured)
-+		*measured = true;
- out:
- 	if (ret < 0)
- 		integrity_audit_message(AUDIT_INTEGRITY_PCR, NULL, eventname,
-@@ -956,7 +972,7 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- 
- 	process_buffer_measurement(file_mnt_user_ns(f.file), file_inode(f.file),
- 				   buf, size, "kexec-cmdline", KEXEC_CMDLINE, 0,
--				   NULL, false);
-+				   NULL, false, NULL, NULL, NULL);
- 	fdput(f);
- }
- 
-@@ -967,6 +983,9 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
-  * @buf: pointer to buffer data
-  * @buf_len: length of buffer data (in bytes)
-  * @hash: measure buffer data hash
-+ * @digest: buffer digest will be written to
-+ * @algo: digest algorithm
-+ * @measured: whether the buffer has been measured by IMA
-  *
-  * Measure data critical to the integrity of the kernel into the IMA log
-  * and extend the pcr.  Examples of critical data could be various data
-@@ -976,14 +995,15 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
- void ima_measure_critical_data(const char *event_label,
- 			       const char *event_name,
- 			       const void *buf, size_t buf_len,
--			       bool hash)
-+			       bool hash, u8 *digest, enum hash_algo *algo,
-+			       bool *measured)
- {
- 	if (!event_name || !event_label || !buf || !buf_len)
- 		return;
- 
- 	process_buffer_measurement(&init_user_ns, NULL, buf, buf_len, event_name,
- 				   CRITICAL_DATA, 0, event_label,
--				   hash);
-+				   hash, digest, algo, measured);
- }
- 
- static int __init init_ima(void)
-diff --git a/security/integrity/ima/ima_queue_keys.c b/security/integrity/ima/ima_queue_keys.c
-index 979ef6c71f3d..97ed974651fd 100644
---- a/security/integrity/ima/ima_queue_keys.c
-+++ b/security/integrity/ima/ima_queue_keys.c
-@@ -165,7 +165,7 @@ void ima_process_queued_keys(void)
- 						   entry->keyring_name,
- 						   KEY_CHECK, 0,
- 						   entry->keyring_name,
--						   false);
-+						   false, NULL, NULL, NULL);
- 		list_del(&entry->list);
- 		ima_free_key_entry(entry);
- 	}
-diff --git a/security/selinux/ima.c b/security/selinux/ima.c
-index 34d421861bfc..af1016dbb5aa 100644
---- a/security/selinux/ima.c
-+++ b/security/selinux/ima.c
-@@ -86,7 +86,8 @@ void selinux_ima_measure_state_locked(struct selinux_state *state)
- 	}
- 
- 	ima_measure_critical_data("selinux", "selinux-state",
--				  state_str, strlen(state_str), false);
-+				  state_str, strlen(state_str), false, NULL,
-+				  NULL, NULL);
- 
- 	kfree(state_str);
- 
-@@ -103,7 +104,7 @@ void selinux_ima_measure_state_locked(struct selinux_state *state)
- 	}
- 
- 	ima_measure_critical_data("selinux", "selinux-policy-hash",
--				  policy, policy_len, true);
-+				  policy, policy_len, true, NULL, NULL, NULL);
- 
- 	vfree(policy);
- }
++struct digest_list_item {
++	loff_t size;
++	u8 *buf;
++	u8 actions;
++	u8 digest[64];
++	enum hash_algo algo;
++	const char *label;
++};
++
++struct digest_list_item_ref {
++	struct digest_list_item *digest_list;
++	loff_t digest_offset;
++	loff_t hdr_offset;
++};
++
++struct digest_item {
++	/* hash table pointers */
++	struct hlist_node hnext;
++	/* digest list references (protected by RCU) */
++	struct digest_list_item_ref *refs;
++};
++
++struct h_table {
++	atomic_long_t len;
++	struct hlist_head queue[MEASURE_HTABLE_SIZE];
++};
++
++static inline unsigned int hash_key(u8 *digest)
++{
++	return (digest[0] | digest[1] << 8) % MEASURE_HTABLE_SIZE;
++}
++
++static inline struct compact_list_hdr *get_hdr(
++					struct digest_list_item *digest_list,
++					loff_t hdr_offset)
++{
++	return (struct compact_list_hdr *)(digest_list->buf + hdr_offset);
++}
++
++static inline enum hash_algo get_algo(struct digest_list_item *digest_list,
++				      loff_t digest_offset, loff_t hdr_offset)
++{
++	/* Digest list digest algorithm is stored in a different place. */
++	if (!digest_offset)
++		return digest_list->algo;
++
++	return get_hdr(digest_list, hdr_offset)->algo;
++}
++
++static inline u8 *get_digest(struct digest_list_item *digest_list,
++			     loff_t digest_offset, loff_t hdr_offset)
++{
++	/* Digest list digest is stored in a different place. */
++	if (!digest_offset)
++		return digest_list->digest;
++
++	return digest_list->buf + digest_offset;
++}
++
++static inline struct compact_list_hdr *get_hdr_ref(
++					struct digest_list_item_ref *ref)
++{
++	return get_hdr(ref->digest_list, ref->hdr_offset);
++}
++
++static inline enum hash_algo get_algo_ref(struct digest_list_item_ref *ref)
++{
++	/* Digest list digest algorithm is stored in a different place. */
++	if (!ref->digest_offset)
++		return ref->digest_list->algo;
++
++	return get_hdr_ref(ref)->algo;
++}
++
++static inline u8 *get_digest_ref(struct digest_list_item_ref *ref)
++{
++	/* Digest list digest is stored in a different place. */
++	if (!ref->digest_offset)
++		return ref->digest_list->digest;
++
++	return ref->digest_list->buf + ref->digest_offset;
++}
++#endif /*__DIGEST_LISTS_INTERNAL_H*/
 -- 
 2.25.1
 
