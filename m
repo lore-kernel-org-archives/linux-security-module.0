@@ -2,32 +2,32 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03ADDC49EAF
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDA4C49EAF
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D900661990
-	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D31636193F
+	for <linux-security-module@archiver.kernel.org>; Fri, 25 Jun 2021 16:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230137AbhFYQ7G (ORCPT
+        id S230092AbhFYRAV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 25 Jun 2021 12:59:06 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3309 "EHLO
+        Fri, 25 Jun 2021 13:00:21 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3313 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbhFYQ7A (ORCPT
+        with ESMTP id S229653AbhFYRAU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 25 Jun 2021 12:59:00 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GBNJ13yfbz6G7xF;
-        Sat, 26 Jun 2021 00:49:05 +0800 (CST)
+        Fri, 25 Jun 2021 13:00:20 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GBNGW44gnz6G8kB;
+        Sat, 26 Jun 2021 00:47:47 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Fri, 25 Jun 2021 18:56:36 +0200
+ 15.1.2176.2; Fri, 25 Jun 2021 18:57:56 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>
 CC:     <linux-integrity@vger.kernel.org>,
@@ -35,9 +35,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH 02/12] digest_lists: Overview
-Date:   Fri, 25 Jun 2021 18:56:04 +0200
-Message-ID: <20210625165614.2284243-3-roberto.sassu@huawei.com>
+Subject: [RFC][PATCH 06/12] digest_lists: Parser
+Date:   Fri, 25 Jun 2021 18:56:08 +0200
+Message-ID: <20210625165614.2284243-7-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210625165614.2284243-1-roberto.sassu@huawei.com>
 References: <20210625165614.2284243-1-roberto.sassu@huawei.com>
@@ -51,278 +51,377 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch adds an overview of Huawei Digest Lists to
-Documentation/security/digest_lists.rst.
+This patch introduces the necessary functions to parse a digest list and
+to execute the requested operation.
+
+The main function is digest_list_parse(), which coordinates the various
+steps required to add or delete a digest list, and has the logic to roll
+back when one of the steps fails.
+
+A more detailed description about the steps can be found in
+Documentation/security/digest_lists.rst
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- Documentation/security/digest_lists.rst | 228 ++++++++++++++++++++++++
- Documentation/security/index.rst        |   1 +
- MAINTAINERS                             |   7 +
- 3 files changed, 236 insertions(+)
- create mode 100644 Documentation/security/digest_lists.rst
+ Documentation/security/digest_lists.rst       |  33 +++
+ MAINTAINERS                                   |   1 +
+ security/integrity/digest_lists/Makefile      |   2 +-
+ .../integrity/digest_lists/digest_lists.h     |   3 +
+ security/integrity/digest_lists/parser.c      | 270 ++++++++++++++++++
+ 5 files changed, 308 insertions(+), 1 deletion(-)
+ create mode 100644 security/integrity/digest_lists/parser.c
 
 diff --git a/Documentation/security/digest_lists.rst b/Documentation/security/digest_lists.rst
-new file mode 100644
-index 000000000000..8980be7836f8
---- /dev/null
+index 8f1d15a37dbd..04ea4b3790e0 100644
+--- a/Documentation/security/digest_lists.rst
 +++ b/Documentation/security/digest_lists.rst
-@@ -0,0 +1,228 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===================
-+Huawei Digest Lists
-+===================
-+
-+Introduction
-+============
-+
-+Huawei Digest Lists is a simple in kernel database for storing file and
-+metadata digests and for reporting to its users (e.g. Integrity Measurement
-+Architecture or IMA) whether the digests are in the database or not. The
-+choice of placing it in the kernel and not in a user space process is
-+explained later in the Security Assumptions section.
-+
-+The database is populated by directly uploading the so called digest lists,
-+a set of digests concatenated together and preceded by a header including
-+information about them (e.g. whether the file or metadata with a given
-+digest is immutable or not). Digest lists are stored in the kernel memory
-+as they are, the kernel just builds indexes to easily lookup digests.
-+
-+The kernel supports only one digest list format called ``compact``. However,
-+alternative formats (e.g. the RPM header) can be supported through a user
-+space parser that, by invoking the appropriate library (more can be added),
-+converts the original digest list to the compact format and uploads it to
-+the kernel.
-+
-+The database keeps track of whether digest lists have been processed in
-+some way (e.g. measured or appraised by IMA). This is important for example
-+for remote attestation, so that remote verifiers understand what has been
-+loaded in the database.
-+
-+It is a transactional database, i.e. it has the ability to roll back to the
-+beginning of the transaction if an error occurred during the addition of a
-+digest list (the deletion operation always succeeds). This capability has
-+been tested with an ad-hoc fault injection mechanism capable of simulating
-+failures during the operations.
-+
-+Finally, the database exposes to user space, through securityfs, the digest
-+lists currently loaded, the number of digests added, a query interface and
-+an interface to set digest list labels.
-+
-+
-+Binary Integrity
-+----------------
-+
-+Integrity is a fundamental security property in information systems.
-+Integrity could be described as the condition in which a generic
-+component is just after it has been released by the entity that created it.
-+
-+One way to check whether a component is in this condition (called binary
-+integrity) is to calculate its digest and to compare it with a reference
-+value (i.e. the digest calculated in controlled conditions, when the
-+component is released).
-+
-+IMA, a software part of the integrity subsystem, can perform such
-+evaluation and execute different actions:
-+
-+- store the digest in an integrity-protected measurement list, so that it
-+  can be sent to a remote verifier for analysis;
-+- compare the calculated digest with a reference value (usually protected
-+  with a signature) and deny operations if the file is found corrupted;
-+- store the digest in the system log.
-+
-+
-+Contribution
-+------------
-+
-+Huawei Digest Lists facilitates the provisioning of reference values for
-+system and application files from software vendors, to the kernel.
-+
-+Possible sources for digest lists are:
-+
-+- RPM headers;
-+- Debian repository metadata.
-+
-+These sources are already usable without any modification required for
-+Linux vendors.
-+
-+If digest list sources are signed (usually they are, like the ones above),
-+remote verifiers could identify their provenance, or Linux vendors could
-+prevent the loading of unsigned ones or those signed with an untrusted key.
-+
-+
-+Possible Usages
-+---------------
-+
-+Provisioned reference values can be used (e.g. by IMA) to make
-+integrity-related decisions (allow list or deny list).
-+
-+Possible usages for IMA are:
-+
-+- avoid recording measurement of files whose digest is found in the
-+  pre-provisioned reference values:
-+
-+  - reduces the number of TPM operations (PCR extend);
-+  - could make a TPM PCR predictable, as the PCR would not be affected by
-+    the temporal sequence of executions if binaries are known
-+    (no measurement);
-+
-+- exclusively grant access to files whose digest is found in the
-+  pre-provisioned reference values:
-+
-+  - faster verification time (fewer signature verifications);
-+  - no need to generate a signature for every file.
-+
-+
-+Security Assumptions
-+--------------------
-+
-+Since digest lists are stored in the kernel memory, they are no susceptible
-+to attacks by user space processes.
-+
-+A locked-down kernel, that accepts only verified kernel modules, will allow
-+digest lists to be added or deleted only though a well-defined and
-+monitored interface. In this situation, the root user is assumed to be
-+untrusted, i.e. it cannot subvert without being detected the mandatory
-+policy stating which files are accessible by the system.
-+
-+Adoption
-+--------
-+
-+A former version of Huawei Digest Lists is used in the following OSes:
-+
-+- openEuler 20.09
-+  https://github.com/openeuler-mirror/kernel/tree/openEuler-20.09
-+
-+- openEuler 21.03
-+  https://github.com/openeuler-mirror/kernel/tree/openEuler-21.03
-+
-+Originally, Huawei Digest Lists was part of IMA. In this version,
-+it has been redesigned as a standalone module with an API that makes
-+its functionality accessible by IMA and, eventually, other subsystems.
-+
-+User Space Support
-+------------------
-+
-+Digest lists can be generated and managed with ``digest-list-tools``:
-+
-+https://github.com/openeuler-mirror/digest-list-tools
-+
-+It includes two main applications:
-+
-+- ``gen_digest_lists``: generates digest lists from files in the
-+  filesystem or from the RPM database (more digest list sources can be
-+  supported);
-+- ``manage_digest_lists``: converts and uploads digest lists to the
-+  kernel.
-+
-+
-+Simple Usage Example
-+--------------------
-+
-+1. Digest list generation (RPM headers and their signature are copied to
-+   the specified directory):
-+
-+.. code-block:: bash
-+
-+ # mkdir /etc/digest_lists
-+ # gen_digest_lists -t file -f rpm+db -d /etc/digest_lists -o add
-+
-+
-+2. Digest list upload with the user space parser:
-+
-+.. code-block:: bash
-+
-+ # manage_digest_lists -p add-digest -d /etc/digest_lists
-+
-+3. First digest list query:
-+
-+.. code-block:: bash
-+
-+ # echo sha256-$(sha256sum /bin/cat) > /sys/kernel/security/integrity/digest_lists/digest_query
-+ # cat /sys/kernel/security/integrity/digest_lists/digest_query
-+   sha256-[...]-0-file_list-rpm-coreutils-8.32-18.fc33.x86_64 (actions: 0): version: 1, algo: sha256, type: 2, modifiers: 1, count: 106, datalen: 3392
-+
-+4. Second digest list query:
-+
-+.. code-block:: bash
-+
-+ # echo sha256-$(sha256sum /bin/zip) > /sys/kernel/security/integrity/digest_lists/digest_query
-+ # cat /sys/kernel/security/integrity/digest_lists/digest_query
-+   sha256-[...]-0-file_list-rpm-zip-3.0-27.fc33.x86_64 (actions: 0): version: 1, algo: sha256, type: 2, modifiers: 1, count: 4, datalen: 128
-+
-+
-+Architecture
-+============
-+
-+This section introduces the high level architecture.
-+
-+::
-+
-+ 5. add/delete from hash table and add refs to digest list
-+        +---------------------------------------------+
-+        |                            +-----+   +-------------+         +--+
-+        |                            | key |-->| digest refs |-->...-->|  |
-+        V                            +-----+   +-------------+         +--+
-+ +-------------+                     +-----+   +-------------+
-+ | digest list |                     | key |-->| digest refs |
-+ |  (compact)  |                     +-----+   +-------------+
-+ +-------------+                     +-----+   +-------------+
-+        ^ 4. copy to                 | key |-->| digest refs |
-+        |    kernel memory           +-----+   +-------------+ kernel space
-+ --------------------------------------------------------------------------
-+        ^                                          ^             user space
-+        |<----------------+       3b. upload       |
-+ +-------------+   +------------+                  | 6. query digest
-+ | digest list |   | user space | 2b. convert
-+ |  (compact)  |   |   parser   |
-+ +-------------+   +------------+
-+ 1a. upload               ^       1b. read
-+                          |
-+                   +------------+
-+                   | RPM header |
-+                   +------------+
-+
-+
-+As mentioned before, digest lists can be uploaded directly if they are in
-+the compact format (step 1a) or can be uploaded indirectly by the user
-+space parser if they are in an alternative format (steps 1b-3b).
-+
-+During upload, the kernel makes a copy of the digest list to the kernel
-+memory (step 4), and creates the necessary structures to index the digests
-+(hash table and an array of digest list references to locate the digests in
-+the digest list) (step 5).
-+
-+Finally, digests can be searched from user space through a securityfs file
-+(step 6) or by the kernel itself.
-diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-index 16335de04e8c..80877b520403 100644
---- a/Documentation/security/index.rst
-+++ b/Documentation/security/index.rst
-@@ -17,3 +17,4 @@ Security Documentation
-    tpm/index
-    digsig
-    landlock
-+   digest_lists
+@@ -611,3 +611,36 @@ hash table for the ``COMPACT_DIGEST_LIST`` type. Deletion can be done only
+ if the digest list is found. ``digest_list_del()`` then deletes the
+ ``digest_list_item``, the special ``digest_list_item_ref`` and the
+ ``digest_item``.
++
++
++Parser
++------
++
++This section introduces the necessary functions to parse a digest list and
++to execute the requested operation.
++
++The main function is ``digest_list_parse()``, which coordinates the
++various steps required to add or delete a digest list, and has the logic
++to roll back when one of the steps fails.
++
++#. Calls ``digest_list_validate()`` to validate the passed buffer
++   containing the digest list to ensure that the format is correct.
++
++#. Calls ``get_digest_list()`` to create a new ``digest_list_item`` for the
++   add operation, or to retrieve the existing one for the delete operation.
++   ``get_digest_list()`` refuses to add digest lists that were previously
++   added and to delete digest lists that weren't previously added. Also,
++   ``get_digest_list()`` refuses to delete digest lists that are not
++   processed in the same way as when they were added (it would guarantee
++   that also deletion is notified to remote verifiers).
++
++#. Calls ``_digest_list_parse()`` which takes the created/retrieved
++   ``digest_list_item`` and adds or delete the digests included in the
++   digest list.
++
++#. If an error occurred, performs a rollback to the previous state, by
++   calling ``_digest_list_parse()`` with the opposite operation and the
++   buffer size at the time the error occurred.
++
++#. ``digest_list_parse()`` deletes the ``digest_list_item`` on unsuccessful
++   add or successful delete.
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8c5ee008301a..cba3d82fee43 100644
+index a9eb52e65b12..31d280acf5fb 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -8381,6 +8381,13 @@ W:	http://www.st.com/
- F:	Documentation/devicetree/bindings/iio/humidity/st,hts221.yaml
- F:	drivers/iio/humidity/hts221*
+@@ -8390,6 +8390,7 @@ F:	Documentation/security/digest_lists.rst
+ F:	include/linux/digest_list.h
+ F:	security/integrity/digest_lists/digest_list.h
+ F:	security/integrity/digest_lists/methods.c
++F:	security/integrity/digest_lists/parser.c
+ F:	uapi/linux/digest_lists.h
  
-+HUAWEI DIGEST LISTS
-+M:	Roberto Sassu <roberto.sassu@huawei.com>
-+L:	linux-integrity@vger.kernel.org
-+S:	Supported
-+T:	git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
-+F:	Documentation/security/digest_lists.rst
-+
  HUAWEI ETHERNET DRIVER
- M:	Bin Luo <luobin9@huawei.com>
- L:	netdev@vger.kernel.org
+diff --git a/security/integrity/digest_lists/Makefile b/security/integrity/digest_lists/Makefile
+index 0ba66ab2e260..86cca5bb7824 100644
+--- a/security/integrity/digest_lists/Makefile
++++ b/security/integrity/digest_lists/Makefile
+@@ -5,4 +5,4 @@
+ 
+ obj-$(CONFIG_DIGEST_LISTS) += digest_lists.o
+ 
+-digest_lists-y := methods.o
++digest_lists-y := methods.o parser.o
+diff --git a/security/integrity/digest_lists/digest_lists.h b/security/integrity/digest_lists/digest_lists.h
+index aadce9ca8f5f..442ab116a6a5 100644
+--- a/security/integrity/digest_lists/digest_lists.h
++++ b/security/integrity/digest_lists/digest_lists.h
+@@ -148,4 +148,7 @@ struct digest_item *digest_list_add(u8 *digest, enum hash_algo algo,
+ 				    const char *label);
+ struct digest_item *digest_list_del(u8 *digest, enum hash_algo algo, u8 actions,
+ 				    struct digest_list_item *digest_list);
++
++int digest_list_parse(loff_t size, void *buf, enum ops op, u8 actions,
++		      u8 *digest, enum hash_algo algo, const char *label);
+ #endif /*__DIGEST_LISTS_INTERNAL_H*/
+diff --git a/security/integrity/digest_lists/parser.c b/security/integrity/digest_lists/parser.c
+new file mode 100644
+index 000000000000..7ed6765a9dc4
+--- /dev/null
++++ b/security/integrity/digest_lists/parser.c
+@@ -0,0 +1,270 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2005,2006,2007,2008 IBM Corporation
++ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
++ *
++ * Author: Roberto Sassu <roberto.sassu@huawei.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation, version 2 of the
++ * License.
++ *
++ * File: parser.c
++ *      Functions to parse digest lists.
++ */
++
++#include <linux/vmalloc.h>
++#include <linux/module.h>
++
++#include "digest_lists.h"
++#include "../integrity.h"
++
++/**
++ * digest_list_validate - validate format of digest list
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ *
++ * This function validates the format of the passed digest list.
++ *
++ * Returns 0 if the digest list was successfully validated, -EINVAL otherwise.
++ */
++static int digest_list_validate(loff_t size, void *buf)
++{
++	void *bufp = buf, *bufendp = buf + size;
++	struct compact_list_hdr *hdr;
++	size_t digest_len;
++
++	while (bufp < bufendp) {
++		if (bufp + sizeof(*hdr) > bufendp) {
++			pr_err("invalid data\n");
++			return -EINVAL;
++		}
++
++		hdr = bufp;
++
++		if (hdr->version != 1) {
++			pr_err("unsupported version\n");
++			return -EINVAL;
++		}
++
++		hdr->type = le16_to_cpu(hdr->type);
++		hdr->modifiers = le16_to_cpu(hdr->modifiers);
++		hdr->algo = le16_to_cpu(hdr->algo);
++		hdr->count = le32_to_cpu(hdr->count);
++		hdr->datalen = le32_to_cpu(hdr->datalen);
++
++		if (hdr->algo >= HASH_ALGO__LAST) {
++			pr_err("invalid hash algorithm\n");
++			return -EINVAL;
++		}
++
++		digest_len = hash_digest_size[hdr->algo];
++
++		if (hdr->type >= COMPACT__LAST ||
++		    hdr->type == COMPACT_DIGEST_LIST) {
++			pr_err("invalid type %d\n", hdr->type);
++			return -EINVAL;
++		}
++
++		bufp += sizeof(*hdr);
++
++		if (hdr->datalen != hdr->count * digest_len ||
++		    bufp + hdr->datalen > bufendp) {
++			pr_err("invalid data\n");
++			return -EINVAL;
++		}
++
++		bufp += hdr->count * digest_len;
++	}
++
++	return 0;
++}
++
++/**
++ * _digest_list_parse - parse digest list and add/delete digests
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ * @op: operation to be performed
++ * @digest_list: digest list digests being added/deleted belong to
++ *
++ * This function parses the digest list and adds or delete the digests in the
++ * found digest blocks.
++ *
++ * Returns the buffer size if all digests were successfully added or deleted,
++ * the size of the already parsed buffer on error.
++ */
++static int _digest_list_parse(loff_t size, void *buf, enum ops op,
++			      struct digest_list_item *digest_list)
++{
++	void *bufp = buf, *bufendp = buf + size;
++	struct compact_list_hdr *hdr;
++	struct digest_item *d;
++	size_t digest_len;
++	int i;
++
++	while (bufp < bufendp) {
++		if (bufp + sizeof(*hdr) > bufendp)
++			break;
++
++		hdr = bufp;
++		bufp += sizeof(*hdr);
++
++		digest_len = hash_digest_size[hdr->algo];
++
++		for (i = 0; i < hdr->count && bufp + digest_len <= bufendp;
++		     i++, bufp += digest_len) {
++			switch (op) {
++			case DIGEST_LIST_ADD:
++				d = digest_add(bufp, hdr->algo, hdr->type,
++					       digest_list, bufp - buf,
++					       (void *)hdr - buf);
++				break;
++			case DIGEST_LIST_DEL:
++				d = digest_del(bufp, hdr->algo, hdr->type,
++					       digest_list, bufp - buf,
++					       (void *)hdr - buf);
++				break;
++			default:
++				break;
++			}
++
++			if (IS_ERR(d)) {
++				pr_err("failed to %s a digest from %s\n",
++				       (op == DIGEST_LIST_ADD) ?
++				       "add" : "delete", digest_list->label);
++				goto out;
++			}
++		}
++	}
++out:
++	return bufp - buf;
++}
++
++/**
++ * get_digest_list - get the digest list extracted digests will be associated to
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ * @op: digest list operation
++ * @actions: actions performed on the digest list being processed
++ * @digest: digest of the digest list
++ * @algo: digest algorithm
++ * @label: label to identify the digest list (e.g. file name)
++ *
++ * This function retrieves the digest list item for the passed digest and
++ * algorithm. If it is not found at addition time, this function creates a new
++ * one.
++ *
++ * This function also ensures that the actions done at the time of deletion
++ * match the actions done at the time of addition (it would guarantee that also
++ * deletion is notified to remote verifiers).
++ *
++ * Returns the retrieved/created digest list item on success, an error pointer
++ * otherwise.
++ */
++static struct digest_list_item *get_digest_list(loff_t size, void *buf,
++						enum ops op, u8 actions,
++						u8 *digest, enum hash_algo algo,
++						const char *label)
++{
++	struct digest_item *d;
++	struct digest_list_item *digest_list;
++	int digest_len = hash_digest_size[algo];
++
++	switch (op) {
++	case DIGEST_LIST_ADD:
++		/* Add digest list to be associated to each digest. */
++		d = digest_list_add(digest, algo, size, buf, actions, label);
++		if (IS_ERR(d))
++			return (void *)d;
++
++		digest_list = d->refs[0].digest_list;
++		break;
++	case DIGEST_LIST_DEL:
++		/* Lookup digest list to delete the references. */
++		d = digest_lookup(digest, algo, COMPACT_DIGEST_LIST, NULL,
++				  NULL);
++		if (!d) {
++			print_hex_dump(KERN_ERR,
++				       "digest list digest not found: ",
++				       DUMP_PREFIX_NONE, digest_len, 1, digest,
++				       digest_len, true);
++			return ERR_PTR(-ENOENT);
++		}
++
++		digest_list = d->refs[0].digest_list;
++
++		/* Reject deletion if actions on delete differ from add. */
++		if (digest_list->actions != actions) {
++			pr_err("actions mismatch, add: %d, del: %d\n",
++			       digest_list->actions, actions);
++			return ERR_PTR(-EPERM);
++		}
++
++		break;
++	default:
++		return ERR_PTR(-EINVAL);
++	}
++
++	return digest_list;
++}
++
++/**
++ * digest_list_parse - parse a digest list
++ * @size: buffer size
++ * @buf: buffer containing the digest list
++ * @op: digest list operation
++ * @actions: actions performed on the digest list being processed
++ * @digest: digest of the digest list
++ * @algo: digest algorithm
++ * @label: label to identify the digest list (e.g. file name)
++ *
++ * This function parses the passed digest list and executed the requested
++ * operation. If the operation cannot be successfully executed, this function
++ * performs a rollback to the previous state.
++ *
++ * Returns the buffer size on success, a negative value otherwise.
++ */
++int digest_list_parse(loff_t size, void *buf, enum ops op, u8 actions,
++		      u8 *digest, enum hash_algo algo, const char *label)
++{
++	struct digest_item *d;
++	struct digest_list_item *digest_list;
++	enum ops rollback_op = (op == DIGEST_LIST_ADD) ?
++			       DIGEST_LIST_DEL : DIGEST_LIST_ADD;
++	int ret, rollback_size;
++
++	ret = digest_list_validate(size, buf);
++	if (ret < 0)
++		return ret;
++
++	digest_list = get_digest_list(size, buf, op, actions, digest, algo,
++				      label);
++	if (IS_ERR(digest_list))
++		return PTR_ERR(digest_list);
++
++	ret = _digest_list_parse(size, buf, op, digest_list);
++	if (ret < 0)
++		goto out;
++
++	if (ret != size) {
++		rollback_size = ret;
++
++		ret = _digest_list_parse(rollback_size, buf, rollback_op,
++					 digest_list);
++		if (ret != rollback_size)
++			pr_err("rollback failed\n");
++
++		ret = -EINVAL;
++	}
++out:
++	/* Delete digest list on unsuccessful add or successful delete. */
++	if ((op == DIGEST_LIST_ADD && ret < 0) ||
++	    (op == DIGEST_LIST_DEL && ret == size)) {
++		d = digest_list_del(digest, algo, actions, digest_list);
++		if (IS_ERR(d))
++			return PTR_ERR(d);
++	}
++
++	return ret;
++}
 -- 
 2.25.1
 
