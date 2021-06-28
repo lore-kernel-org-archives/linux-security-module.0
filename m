@@ -2,80 +2,57 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E2CC11F66
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 19:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEB7C11F66
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 20:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C57161159
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 19:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F5E61CDC
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 20:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236591AbhF1TdI (ORCPT
+        id S235149AbhF1Umg (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jun 2021 15:33:08 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:42352 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236582AbhF1TdI (ORCPT
+        Mon, 28 Jun 2021 16:42:36 -0400
+Received: from mail-bn7nam10on2049.outbound.protection.outlook.com ([40.107.92.49]:29470
+        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S233593AbhF1Umf (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jun 2021 15:33:08 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 1791B20325;
-        Mon, 28 Jun 2021 19:30:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624908641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vEQN+ccfOjcpFsKF9tjkkDsFaoGwhe01Beu6Uhltj9o=;
-        b=KUVrjBJerwzMYPd+lZdMk1zvDrO5H78ZthMidfFr0lN4i2RwtVwO6lDpo/aIamAToJsEis
-        55Lj0NFL5dkNHH8u+osiOfPEgte/+CrVniZFDX889a6eIHI0nE6/7UeGbzXje5DmgxXvdl
-        2fN5r+zrsuPpOmNZGuw7hCzjbNhAxZ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624908641;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vEQN+ccfOjcpFsKF9tjkkDsFaoGwhe01Beu6Uhltj9o=;
-        b=aC+0FI3oJVelbkw2MSiOs94AD5YXdDgLOP7S5XaDEIOP628vj+WaEPdz2scDT7de3adsoJ
-        +K+fWbDwlm1jjXCw==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 03CC611906;
-        Mon, 28 Jun 2021 19:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624908641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vEQN+ccfOjcpFsKF9tjkkDsFaoGwhe01Beu6Uhltj9o=;
-        b=KUVrjBJerwzMYPd+lZdMk1zvDrO5H78ZthMidfFr0lN4i2RwtVwO6lDpo/aIamAToJsEis
-        55Lj0NFL5dkNHH8u+osiOfPEgte/+CrVniZFDX889a6eIHI0nE6/7UeGbzXje5DmgxXvdl
-        2fN5r+zrsuPpOmNZGuw7hCzjbNhAxZ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624908641;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vEQN+ccfOjcpFsKF9tjkkDsFaoGwhe01Beu6Uhltj9o=;
-        b=aC+0FI3oJVelbkw2MSiOs94AD5YXdDgLOP7S5XaDEIOP628vj+WaEPdz2scDT7de3adsoJ
-        +K+fWbDwlm1jjXCw==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id xrVsO2Aj2mAZHwAALh3uQQ
-        (envelope-from <bp@suse.de>); Mon, 28 Jun 2021 19:30:40 +0000
-Date:   Mon, 28 Jun 2021 21:30:40 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Laszlo Ersek <lersek@redhat.com>,
+        Mon, 28 Jun 2021 16:42:35 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=P2zKuGcQaiq2tnVX5/ylbErITMzaslCSesJpeljkWEYGlBPb73bLe7EudqZhJPyUw3CdWmbK4WbI4xvA+MOMCQekX61Aatv+GzaAEUbBrvoFSly/rchA6ATAuNk/0B0wkMspppo4A3x+Cn5R2NtNLjTVa8TaTYvO2x8ZhXoh8851uFapMbnZqXLlungStcBAZAsxprcWFj+2xZ5ZG9A5i8YMkAA7Y2tgRtubOWoutETV3785SRlESTNPF2eHzaW1dy93VgYu3+rUP2GiGdFnHlj6RAR+xXYgZ/Ui5gOHpJ/dGWVvCZuK/xVZoPqqaAhngQCyTt4lwyeAk8gFvTY6kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wj2LjUrGjCsrJcwTDwu9eLefXpbf7LtWn8VOoqwMj/o=;
+ b=LxIhaEKxd8H6MDd2u1vGsP2IRbKjXfESPuEz28LCxKys1kgOgAOU1a5lEfcJ0W4yARRrDZqRbK0WmT6VN6yXErvKBOT0TVWzTntQNGu3Pu0qRCQJyPgZUpqWlVEyDF2RtWztmixrZvUzlw/RkHhycjZVkj86mLzumK29ktShlkuRbSKZLrud+NkLApuRoNA1+NWRFBVV/9VIYjaNK/o7Vd5ZaPwTVE5crH6GtLvyg1eLjbtf5u9eu310L3F4QPmgO26uXnUNG12tr4qJBruAEb/vqybdrtaZgjyAiJPtiUy5m1EMa2w/AN5hWvXBRJOx712slVvTrI7Bh1/eJyjeVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Wj2LjUrGjCsrJcwTDwu9eLefXpbf7LtWn8VOoqwMj/o=;
+ b=tLNPoODM/K5DrUZc5CxKRBulJLdMIKjLJbaRcCN4DjaTRVeZoZS/Vw3yr3k75kZRKbGBI/H4c2Y5zyJ1szADC23ahXbyKT7yJw7MHyJ4EUfdgnsMlaySEOezOgJJRr+uJn0ury1YQ9iMDu/mgPjvhHBU4/H+mxk37wR6ofKNwH4=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
+Received: from DM5PR12MB1355.namprd12.prod.outlook.com (2603:10b6:3:6e::7) by
+ DM6PR12MB3465.namprd12.prod.outlook.com (2603:10b6:5:3a::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.4264.23; Mon, 28 Jun 2021 20:40:05 +0000
+Received: from DM5PR12MB1355.namprd12.prod.outlook.com
+ ([fe80::6437:2e87:f7dc:a686]) by DM5PR12MB1355.namprd12.prod.outlook.com
+ ([fe80::6437:2e87:f7dc:a686%12]) with mapi id 15.20.4264.026; Mon, 28 Jun
+ 2021 20:40:04 +0000
+Subject: Re: [RFC PATCH v2 2/3] efi: Reserve confidential computing secret
+ area
+To:     Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org
+Cc:     Laszlo Ersek <lersek@redhat.com>,
         Ashish Kalra <ashish.kalra@amd.com>,
         Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
         Ard Biesheuvel <ardb@kernel.org>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
@@ -85,92 +62,122 @@ Cc:     linux-efi@vger.kernel.org, Laszlo Ersek <lersek@redhat.com>,
         Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
         Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/3] virt: Add sev_secret module to expose
- confidential computing secrets
-Message-ID: <YNojYBIwk0xCHQ0v@zn.tnic>
 References: <20210628183431.953934-1-dovmurik@linux.ibm.com>
- <20210628183431.953934-4-dovmurik@linux.ibm.com>
-MIME-Version: 1.0
+ <20210628183431.953934-3-dovmurik@linux.ibm.com>
+From:   Tom Lendacky <thomas.lendacky@amd.com>
+Message-ID: <9b9b682f-297e-9ebd-4d67-43c3ed9ad8c5@amd.com>
+Date:   Mon, 28 Jun 2021 15:40:02 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+In-Reply-To: <20210628183431.953934-3-dovmurik@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210628183431.953934-4-dovmurik@linux.ibm.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [67.79.209.213]
+X-ClientProxiedBy: SN7PR04CA0061.namprd04.prod.outlook.com
+ (2603:10b6:806:121::6) To DM5PR12MB1355.namprd12.prod.outlook.com
+ (2603:10b6:3:6e::7)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from office-ryzen.texastahm.com (67.79.209.213) by SN7PR04CA0061.namprd04.prod.outlook.com (2603:10b6:806:121::6) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4264.19 via Frontend Transport; Mon, 28 Jun 2021 20:40:03 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0b52bcdf-0c44-4758-a08f-08d93a74e8c7
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3465:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR12MB3465A4648E0A0A932D7C4D22EC039@DM6PR12MB3465.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: zOcnrJKFRAOXWQN9Xo28N6Xjy8bGED4QC36zFpG1PVDU3duM8kys5tQ14QwbU3Y05e6cLy1sr0gs/CUZ7mrR1vjwNRreOH96/9qJ1S5OCu1eVwIhVAqzmzaWsA/2H+CnagqzFDjJ67OZZPTdaXf/kMtHx8T9FIQadntdGZ7LmyRMM2QuIjVqUNctL8YYr2NJds9szUg2OSpn/vtkfSMnbjGk8TgdOGr89GY/K28Y5MbYhTyscOCbu6AieMJCcGUBcuLdb8sw3XwEbd2ugfhV8+WCkMwNElgYfyXCMd5DE3k4LhOY9Z/+eptMcQ/B18LRC/7bI266VyENzqlyQVCzoFjj1JlBfZneMgoO6c6U/y80VA4UiS7/KCARYkyTB9MonwVCptLWmz7FoWiql3lyDSFROClJCg6YDVqBHyrx16uGeSoMJ7nZdN5EzQlXh0JQAHK5eeYrxxa5s3U9Mvc1ZWkPB7lAzJ959SZNvgsfL/GlQll8jalX0Dkxo+ZLRMfgxfseW3z2SLbOUB+8M2VhR2F3jqDgGACzIzGmK0/xusXnPrvor6TvtXd+BmuWvUcCs8DfBlq246+TqEbUqYP5KlXic1QuHA61u3AiRP7Emzvx8FobZY8jPbonS+c7odqVH3ORANn8CuxIkS1ws3+aVH9cGhuep71MbyaZXtGkE+har07PgXfBOR1xaOlOQfAp5/xpJ6IMjQ2eVPoCJIa/Gr+MOGZRKrWw0rJb+PL63SaJCxK6/XbzSwb1HZdhKMMVL7xXkQuopqZc9pRAazNQrQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR12MB1355.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(346002)(396003)(39860400002)(376002)(366004)(6506007)(53546011)(54906003)(6486002)(26005)(31686004)(16526019)(316002)(5660300002)(186003)(83380400001)(7416002)(86362001)(2906002)(2616005)(66946007)(31696002)(66556008)(66476007)(6512007)(4326008)(8676002)(956004)(478600001)(8936002)(36756003)(38100700002)(219293001)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZldNUmkwMldINjRtZEtJZ0ExODFoQlYxdHUxaUROdG1wUExLOGx4RkRrRERh?=
+ =?utf-8?B?YlplM0xCbkxsdGJWSEVVU0FHdGc0dDlkVTlVRXVSbkFhb0xtRmpMWXFmeUJ1?=
+ =?utf-8?B?NHZnQ0hlckRmYTJmaS9PeEd2MVVjbXdUbzN3bG93MmI5WGVuNVN4L3NuVWJ1?=
+ =?utf-8?B?SGsrOElHR3VDT3g2TVVtUTcyYWxJYnpDWDEvdHVmOFBIL0ovZHBUQmY4ckRI?=
+ =?utf-8?B?NXNsQzVBejJuRDBZbFdNQ2VwcWhRRlppZ1ROTU1DbUlpZTkzZjkveGxBNlll?=
+ =?utf-8?B?ZTVMaDhvamo1bWpPRjY5SW5wMjhGOVBVS2puUlBjTnh6UXAxMGpoSzZ6Tkln?=
+ =?utf-8?B?MkVJaE9teG1ndEJCVWRxS2gwcWdJcHE5ZTZSU1praWFtWURmMjFTU2NkdDFB?=
+ =?utf-8?B?RE9EdjJBeldRWTV2K3RHbEtmZEhuSEc5WUVPM2E5dlVnb05hY0xZY25kNFhh?=
+ =?utf-8?B?QmdOTGVEMzYzZmd4ektUcE9BeU9mMkpydVFkNEU0SjlFN0dtZUgxcSsxVno1?=
+ =?utf-8?B?YWRFWmNQMnpGQjBMUEM1MlM0aFhOQVZVdFpSenZFVG1OaXBrVjVJUG1HVTQx?=
+ =?utf-8?B?N0JGd21TbmlFRDJnOGg3OE5kUDdKc1hYVldQajRtTUN6aElVYzByeVl4Wi9t?=
+ =?utf-8?B?Sk1IRGV1aXNOckcrQjNBKzZlTmVCVFhUc2ZZamlST3lFb2tNdytwWGhhOThV?=
+ =?utf-8?B?U0gyZ0RCSFJzNFdBeHYzU0g3OXJSa2wwQWVTbm1kcXcwMlBDTGk5VlNXWGdR?=
+ =?utf-8?B?Nk1hdG85M2cvWWpxV3pZd21mVi9iTU5wVEtoUXpoZjJ2WENkczJGYVNtakxo?=
+ =?utf-8?B?L1lYNzMyejZEVnlzM3dkdzBVQ1k2eVIrREI1VExmYWVHS3NVNGV2alp1UmJE?=
+ =?utf-8?B?OXZXa09ibXRkLyszTmZQV1JJd2pqSFNzSitGbUJNL0xVR2NZTGd5bmx4VURD?=
+ =?utf-8?B?eGN0Q0t4VEVLc2JtYldoL1pINi9mOWRhUU5qdVRaOWpnUmgyVTdaOHJRMHF6?=
+ =?utf-8?B?WDh5bTZUeGhWeW5tNGNOWEpQdm1lRFJtclFIZldIai9jK1NOeFR0RWpxRU1t?=
+ =?utf-8?B?Uml0MXZJelZ4TFBNRHQ5U2h5WnVDSTlVS0RzSnh4SWRmRFB4YkhKbzBVUnFx?=
+ =?utf-8?B?UXgrMEl5WGRISXdudVJYU0RjdnZ2a0pvNkdHalBaalVNUUx6bzhFSnVmV2Ns?=
+ =?utf-8?B?R3hDVGEvSUZHRDF1b3Znd0lSSE4ydVVLc01BaGIySkhuV2M5RkFxeTR6MDlt?=
+ =?utf-8?B?MW1ZWStWVnBnUzhhQW9pOXFBZnVVQ2VxMGhMR215cXU1bEFIK3VSNFNxOFky?=
+ =?utf-8?B?QTkrd2xMTm9WeDVtc043dXJEYVdwVHphL2VpK3A0bjNScEpxUXdtLzV2ODRK?=
+ =?utf-8?B?RzJrSnpxN2pKUnJnL3p5aWxJYU9FRCtDMzk0MXpHTjNZVnRHd3ZDeUxaam5h?=
+ =?utf-8?B?Qlo5cGV3U2tpL2RTQlBOVnBaU0hCR2NWRjNWZU91b25PZW4vYkk2Y3EraSti?=
+ =?utf-8?B?ZmlBWXd0ZzhJOWJRNkRPeGJSUFhSL3diakFoamczaUt5enBOamZMeFgwVkl3?=
+ =?utf-8?B?UC9LSlZXaDlEUnBLNndUVDdWLzdGQ0V2MUJKR3JNYVc3VHp4eSsvSVlxaU9p?=
+ =?utf-8?B?NnQ2UEZ1aVU5S1U3QVZZWHdQcXVKODZCMzdnR0l2Q1paZ0tTTzE1R2xob0VL?=
+ =?utf-8?B?dUxYemVuNUVVaUdGa1lHeHV2dEgvTmE3ZlZNeGRsVGNEMXQyTXJXakhlVUNK?=
+ =?utf-8?Q?HaKNxh+9uoQp5Sg8yW5jyb00NfPBrZfk42esJnU?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b52bcdf-0c44-4758-a08f-08d93a74e8c7
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR12MB1355.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jun 2021 20:40:04.8658
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sF9mKDEfdYthohTGfYw3ixlr7/Yj0zLTXqTXDi3+SvMfaZORS9End4dLmP+aYSMZOK/vqUcDdc8SBD0c0lGW6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3465
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jun 28, 2021 at 06:34:31PM +0000, Dov Murik wrote:
-> The new sev_secret module exposes the confidential computing secret area
-> via securityfs interface.
-> 
-> When the module is loaded (and securityfs is mounted, typically under
-> /sys/kernel/security), an "sev_secret" directory is created in
-> securityfs.  In it, a file is created for each secret entry.  The name
-> of each such file is the GUID of the secret entry, and its content is
-> the secret data.
-> 
-> This allows applications running in a confidential computing setting to
-> read secrets provided by the guest owner via a secure secret injection
-> mechanism (such as AMD SEV's LAUNCH_SECRET command).
-> 
-> Removing (unlinking) files in the "sev_secret" directory will zero out
-> the secret in memory, and remove the filesystem entry.  If the module
-> is removed and loaded again, that secret will not appear in the
-> filesystem.
+On 6/28/21 1:34 PM, Dov Murik wrote:
+> When efi-stub copies an EFI-provided confidential computing secret area,
+> reserve that memory block for future use within the kernel.
 > 
 > Signed-off-by: Dov Murik <dovmurik@linux.ibm.com>
 > ---
->  drivers/virt/Kconfig                 |   2 +
->  drivers/virt/Makefile                |   1 +
->  drivers/virt/sev_secret/Kconfig      |  11 +
->  drivers/virt/sev_secret/Makefile     |   2 +
->  drivers/virt/sev_secret/sev_secret.c | 298 +++++++++++++++++++++++++++
->  5 files changed, 314 insertions(+)
->  create mode 100644 drivers/virt/sev_secret/Kconfig
->  create mode 100644 drivers/virt/sev_secret/Makefile
->  create mode 100644 drivers/virt/sev_secret/sev_secret.c
+>  drivers/firmware/efi/Makefile                 |  2 +-
+>  drivers/firmware/efi/confidential-computing.c | 41 +++++++++++++++++++
+>  drivers/firmware/efi/efi.c                    |  5 +++
+>  include/linux/efi.h                           |  4 ++
+>  4 files changed, 51 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/firmware/efi/confidential-computing.c
+> 
+> diff --git a/include/linux/efi.h b/include/linux/efi.h
+> index 4f647f1ee298..e9740bd16db0 100644
+> --- a/include/linux/efi.h
+> +++ b/include/linux/efi.h
+> @@ -551,6 +551,8 @@ extern struct efi {
+>  	unsigned long			tpm_log;		/* TPM2 Event Log table */
+>  	unsigned long			tpm_final_log;		/* TPM2 Final Events Log table */
+>  	unsigned long			mokvar_table;		/* MOK variable config table */
+> +	unsigned long			confidential_computing_secret;	/* Confidential computing */
+> +									/* secret table           */
 
-Same question here: maybe have 
+If there is any possibility that someone could reuse a form of this
+confidential computing secret table in a bare metal system, then this
+table needs to be added to the efi_tables[] array in
+arch/x86/platform/efi/efi.c. Otherwise, it will be mapped improperly on a
+system with SME active.
 
-drivers/virt/coco/
+Thanks,
+Tom
 
-and put all coco guest stuff in there.
-
-> diff --git a/drivers/virt/Kconfig b/drivers/virt/Kconfig
-> index 8061e8ef449f..c222cc625891 100644
-> --- a/drivers/virt/Kconfig
-> +++ b/drivers/virt/Kconfig
-> @@ -36,4 +36,6 @@ source "drivers/virt/vboxguest/Kconfig"
->  source "drivers/virt/nitro_enclaves/Kconfig"
 >  
->  source "drivers/virt/acrn/Kconfig"
+>  	efi_get_time_t			*get_time;
+>  	efi_set_time_t			*set_time;
+> @@ -1190,6 +1192,8 @@ extern int efi_tpm_final_log_size;
+>  
+>  extern unsigned long rci2_table_phys;
+>  
+> +extern int efi_confidential_computing_secret_area_reserve(void);
 > +
-> +source "drivers/virt/sev_secret/Kconfig"
->  endif
-> diff --git a/drivers/virt/Makefile b/drivers/virt/Makefile
-> index 3e272ea60cd9..0765e5418d1d 100644
-> --- a/drivers/virt/Makefile
-> +++ b/drivers/virt/Makefile
-> @@ -8,3 +8,4 @@ obj-y				+= vboxguest/
->  
->  obj-$(CONFIG_NITRO_ENCLAVES)	+= nitro_enclaves/
->  obj-$(CONFIG_ACRN_HSM)		+= acrn/
-> +obj-y				+= sev_secret/
-> diff --git a/drivers/virt/sev_secret/Kconfig b/drivers/virt/sev_secret/Kconfig
-> new file mode 100644
-> index 000000000000..4505526b8ef1
-> --- /dev/null
-> +++ b/drivers/virt/sev_secret/Kconfig
-> @@ -0,0 +1,11 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config AMD_SEV_SECRET_SECURITYFS
-> +	tristate "AMD SEV secret area securityfs support"
-> +	depends on EFI
-
-That probably needs to depend on CONFIG_AMD_MEM_ENCRYPT - otherwise
-what's the point for it.
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
+>  /*
+>   * efi_runtime_service() function identifiers.
+>   * "NONE" is used by efi_recover_from_page_fault() to check if the page
+> 
