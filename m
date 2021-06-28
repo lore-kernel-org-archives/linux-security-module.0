@@ -2,262 +2,224 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A30CC11F64
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 18:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91887C11F66
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 19:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B0EC61954
-	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 18:55:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 756C261C98
+	for <linux-security-module@archiver.kernel.org>; Mon, 28 Jun 2021 19:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235585AbhF1S6R (ORCPT
+        id S236500AbhF1Ta6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 28 Jun 2021 14:58:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:47712 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233768AbhF1S6Q (ORCPT
+        Mon, 28 Jun 2021 15:30:58 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:42144 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233366AbhF1Ta4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 28 Jun 2021 14:58:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1624906549;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
+        Mon, 28 Jun 2021 15:30:56 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 45A3320321;
+        Mon, 28 Jun 2021 19:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624908509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8HinIvCMtHYb1qVrOJ0tRZVpQdvLsbcc131aWbfWsnw=;
-        b=SbUGlsIVl78h0uiaemPWM9cGzfxZKn3Rt6n7IizhzS0V1sNU8zsSocDshgkybG0mgfwgK9
-        rTSMZO4DbfQOULSxs8ZT5SE30obdTmrqXNcr+eVk5AuNr0fcS/7XBG+rRwa5d5cKt9hM4k
-        DNRznjKrR0iCeylsVPvunnuRxnsNHGA=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-393-dqBQ3nuBPS6TTrABNYhZKA-1; Mon, 28 Jun 2021 14:55:48 -0400
-X-MC-Unique: dqBQ3nuBPS6TTrABNYhZKA-1
-Received: by mail-qk1-f199.google.com with SMTP id q186-20020ae9dcc30000b02903b34b320178so9226156qkf.1
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Jun 2021 11:55:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=8HinIvCMtHYb1qVrOJ0tRZVpQdvLsbcc131aWbfWsnw=;
-        b=sLr7DYqveyPhmT9Cetqo19aYtevk+4WGVMb0ZSO/evFeK/slUZQC6PacxO6cnW/xqQ
-         fYjmcafuCrprupYKLI3r0RBGEQU53nWaH1jc72LGH0G738E9+dZEjpxtM1mQUZ3pquox
-         aY7hIJSYGWLsYXIvmwuszOnu9uHha6fIr3ZucgFw8oixZL++7NgXZZW5tD4piXRf4lYz
-         S4TVRj1Aixq804WHZHpM4qUnnTHzLPs1ACaKdrk25q9+NDKFIkxLpxi9hQw1VdvuxOxZ
-         nJq1XQ4R+oTFb1ZqwQmn+PNxoKLwXp0p8L92XL/XBxoVxZX9IMiUHMsrxJPJ71LvpHYt
-         KvHw==
-X-Gm-Message-State: AOAM530Md/kqX0wTWCzdXpQ6fQ2dppDd8zYlD0jjftkpMOeXyS+kAYsD
-        0TmrFXg4ik4tyN3nj29j/IiEfizgGX0lLf/uKmyveZTQiW+HAVu7bvwHqx6jx/7v5+2y+uM5MSw
-        yPqQEyRtOMrke8az/B58NN+mKBezur978VKGC
-X-Received: by 2002:a05:622a:1103:: with SMTP id e3mr19263976qty.390.1624906547850;
-        Mon, 28 Jun 2021 11:55:47 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxqEW/3cBf2LZoNrjSfaumssIJCB2Hs91eIgGjWvxLJcGsx/bwi1i70Q1f4gaNmEkrdoTFZCQ==
-X-Received: by 2002:a05:622a:1103:: with SMTP id e3mr19263956qty.390.1624906547630;
-        Mon, 28 Jun 2021 11:55:47 -0700 (PDT)
-Received: from localhost.localdomain (cpe-74-65-150-180.maine.res.rr.com. [74.65.150.180])
-        by smtp.gmail.com with ESMTPSA id e12sm6878175qtj.3.2021.06.28.11.55.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jun 2021 11:55:46 -0700 (PDT)
-Reply-To: dwalsh@redhat.com
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "dgilbert@redhat.com" <dgilbert@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-References: <20210625191229.1752531-1-vgoyal@redhat.com>
- <BN0PR11MB57275823CE05DED7BC755460FD069@BN0PR11MB5727.namprd11.prod.outlook.com>
- <20210628131708.GA1803896@redhat.com>
- <1b446468-dcf8-9e21-58d3-c032686eeee5@redhat.com>
- <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
-From:   Daniel Walsh <dwalsh@redhat.com>
-Organization: Red Hat
-Message-ID: <69016bdc-fcf1-34df-1663-42d8f57c927c@redhat.com>
-Date:   Mon, 28 Jun 2021 14:55:45 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        bh=spjOhj0RdTmIQg2aukZN3q0munQsuSA5Y7L7wCqfguI=;
+        b=kum9qLfsUlboKei5qvWrTyknt6PtK1EN7QZexnJ1vuhznvjeAbpsjaNxH9g6T6F/bjHARF
+        aIzGndtqvvW7YX5Z6EKHXBSP5A4QLQ1UgfdM9g6JJylddD4X5kBmEl2efNfrpiJd8KNVTh
+        egFEkYklOK96OHfSBnrt9SqMWuYll7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624908509;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=spjOhj0RdTmIQg2aukZN3q0munQsuSA5Y7L7wCqfguI=;
+        b=lR6DRgFnjpYpWtf0FZBi3UndqvxL29rmrIlowjyCBmBg5zjNVuDgHkAhtlouhBwcROvBz6
+        S01AVt54VGLmDVAQ==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 2F80B11906;
+        Mon, 28 Jun 2021 19:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1624908509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=spjOhj0RdTmIQg2aukZN3q0munQsuSA5Y7L7wCqfguI=;
+        b=kum9qLfsUlboKei5qvWrTyknt6PtK1EN7QZexnJ1vuhznvjeAbpsjaNxH9g6T6F/bjHARF
+        aIzGndtqvvW7YX5Z6EKHXBSP5A4QLQ1UgfdM9g6JJylddD4X5kBmEl2efNfrpiJd8KNVTh
+        egFEkYklOK96OHfSBnrt9SqMWuYll7o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1624908509;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=spjOhj0RdTmIQg2aukZN3q0munQsuSA5Y7L7wCqfguI=;
+        b=lR6DRgFnjpYpWtf0FZBi3UndqvxL29rmrIlowjyCBmBg5zjNVuDgHkAhtlouhBwcROvBz6
+        S01AVt54VGLmDVAQ==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id koyBCt0i2mA1HgAALh3uQQ
+        (envelope-from <bp@suse.de>); Mon, 28 Jun 2021 19:28:29 +0000
+Date:   Mon, 28 Jun 2021 21:28:09 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Laszlo Ersek <lersek@redhat.com>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 0/3] Allow access to confidential computing secret
+ area
+Message-ID: <YNoiydeow+ftvfYX@zn.tnic>
+References: <20210628183431.953934-1-dovmurik@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dwalsh@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20210628183431.953934-1-dovmurik@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 6/28/21 12:04, Casey Schaufler wrote:
-> On 6/28/2021 6:36 AM, Daniel Walsh wrote:
->> On 6/28/21 09:17, Vivek Goyal wrote:
->>> On Fri, Jun 25, 2021 at 09:49:51PM +0000, Schaufler, Casey wrote:
->>>>> -----Original Message-----
->>>>> From: Vivek Goyal <vgoyal@redhat.com>
->>>>> Sent: Friday, June 25, 2021 12:12 PM
->>>>> To: linux-fsdevel@vger.kernel.org; linux-kernel@vger.kernel.org;
->>>>> viro@zeniv.linux.org.uk
->>>>> Cc: virtio-fs@redhat.com; dwalsh@redhat.com; dgilbert@redhat.com;
->>>>> berrange@redhat.com; vgoyal@redhat.com
->>>> Please include Linux Security Module list <linux-security-module@vger.kernel.org>
->>>> and selinux@vger.kernel.org on this topic.
->>>>
->>>>> Subject: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special files if
->>>>> caller has CAP_SYS_RESOURCE
->>>>>
->>>>> Hi,
->>>>>
->>>>> In virtiofs, actual file server is virtiosd daemon running on host.
->>>>> There we have a mode where xattrs can be remapped to something else.
->>>>> For example security.selinux can be remapped to
->>>>> user.virtiofsd.securit.selinux on the host.
->>>> This would seem to provide mechanism whereby a user can violate
->>>> SELinux policy quite easily.
->>> Hi Casey,
->>>
->>> As david already replied, we are not bypassing host's SELinux policy (if
->>> there is one). We are just trying to provide a mode where host and
->>> guest's SELinux policies could co-exist without interefering
->>> with each other.
->>>
->>> By remappming guests SELinux xattrs (and not host's SELinux xattrs),
->>> a file probably will have two xattrs
->>>
->>> "security.selinux" and "user.virtiofsd.security.selinux". Host will
->>> enforce SELinux policy based on security.selinux xattr and guest
->>> will see the SELinux info stored in "user.virtiofsd.security.selinux"
->>> and guest SELinux policy will enforce rules based on that.
->>> (user.virtiofsd.security.selinux will be remapped to "security.selinux"
->>> when guest does getxattr()).
->>>
->>> IOW, this mode is allowing both host and guest SELinux policies to
->>> co-exist and not interefere with each other. (Remapping guests's
->>> SELinux xattr is not changing hosts's SELinux label and is not
->>> bypassing host's SELinux policy).
->>>
->>> virtiofsd also provides for the mode where if guest process sets
->>> SELinux xattr it shows up as security.selinux on host. But now we
->>> have multiple issues. There are two SELinux policies (host and guest)
->>> which are operating on same lable. And there is a very good chance
->>> that two have not been written in such a way that they work with
->>> each other. In fact there does not seem to exist a notion where
->>> two different SELinux policies are operating on same label.
->>>
->>> At high level, this is in a way similar to files created on
->>> virtio-blk devices. Say this device is backed by a foo.img file
->>> on host. Now host selinux policy will set its own label on
->>> foo.img and provide access control while labels created by guest
->>> are not seen or controlled by host's SELinux policy. Only guest
->>> SELinux policy works with those labels.
->>>
->>> So this is similar kind of attempt. Provide isolation between
->>> host and guests's SELinux labels so that two policies can
->>> co-exist and not interfere with each other.
->>>
->>>>> This remapping is useful when SELinux is enabled in guest and virtiofs
->>>>> as being used as rootfs. Guest and host SELinux policy might not match
->>>>> and host policy might deny security.selinux xattr setting by guest
->>>>> onto host. Or host might have SELinux disabled and in that case to
->>>>> be able to set security.selinux xattr, virtiofsd will need to have
->>>>> CAP_SYS_ADMIN (which we are trying to avoid). Being able to remap
->>>>> guest security.selinux (or other xattrs) on host to something else
->>>>> is also better from security point of view.
->>>> Can you please provide some rationale for this assertion?
->>>> I have been working with security xattrs longer than anyone
->>>> and have trouble accepting the statement.
->>> If guest is not able to interfere or change host's SELinux labels
->>> directly, it sounded better.
->>>
->>> Irrespective of this, my primary concern is that to allow guest
->>> VM to be able to use SELinux seamlessly in diverse host OS
->>> environments (typical of cloud deployments). And being able to
->>> provide a mode where host and guest's security labels can
->>> co-exist and policies can work independently, should be able
->>> to achieve that goal.
->>>
->>>>> But when we try this, we noticed that SELinux relabeling in guest
->>>>> is failing on some symlinks. When I debugged a little more, I
->>>>> came to know that "user.*" xattrs are not allowed on symlinks
->>>>> or special files.
->>>>>
->>>>> "man xattr" seems to suggest that primary reason to disallow is
->>>>> that arbitrary users can set unlimited amount of "user.*" xattrs
->>>>> on these files and bypass quota check.
->>>>>
->>>>> If that's the primary reason, I am wondering is it possible to relax
->>>>> the restrictions if caller has CAP_SYS_RESOURCE. This capability
->>>>> allows caller to bypass quota checks. So it should not be
->>>>> a problem atleast from quota perpective.
->>>>>
->>>>> That will allow me to give CAP_SYS_RESOURCE to virtiofs deamon
->>>>> and remap xattrs arbitrarily.
->>>> On a Smack system you should require CAP_MAC_ADMIN to remap
->>>> security. xattrs. I sounds like you're in serious danger of running afoul
->>>> of LSM attribute policy on a reasonable general level.
->>> I think I did not explain xattr remapping properly and that's why this
->>> confusion is there. Only guests's xattrs will be remapped and not
->>> hosts's xattr. So one can not bypass any access control implemented
->>> by any of the LSM on host.
->>>
->>> Thanks
->>> Vivek
->>>
->> I want to point out that this solves a  couple of other problems also.
-> I am not (usually) adverse to solving problems. My concern is with
-> regard to creating new ones.
->
->> Currently virtiofsd attempts to write security attributes on the host, which is denied by default on systems without SELinux and no CAP_SYS_ADMIN.
-> Right. Which is as it should be.
-> Also, s/SELinux/a LSM that uses security xattrs/
->
->>    This means if you want to run a container or VM
-> A container uses the kernel from the host. A VM uses the kernel
-> from the guest. Unless you're calling a VM a container for
-> marketing purposes. If this scheme works for non-VM based containers
-> there's a problem.
-That is your definition of a container.  Our definition includes 
-container workloads within kvm separation along with their own kernels. 
-(Kata and libkrun).  As opposed to VM workloads which run full operating 
-system workloads including systemd, logging, cron, sshd ...
->> on a host without SELinux support but the VM has SELinux enabled, then virtiofsd needs CAP_SYS_ADMIN.  It would be much more secure if it only needed CAP_SYS_RESOURCE.
-> I don't know, so I'm asking. Does virtiofsd really get run with limited capabilities,
-> or does it get run as root like most system daemons? If it runs as root the argument
-> has no legs.
-I believe it should almost always get run with limited privileges, we 
-are opening a whole from the kvm separated workload into the host.  If 
-there is a bug in virtiofsd, it can attack the host.
->>    If the host has SELinux enabled then it can run without CAP_SYS_ADMIN or CAP_SYS_RESOURCE, but it will only be allowed to write labels that the host system understands, any label not understood will be blocked. Not only this, but the label that is running virtiofsd pretty much has to run as unconfined, since it could be writing any SELinux label.
-> You could fix that easily enough by teaching SELinux about the proper
-> use of CAP_MAC_ADMIN. Alas, I understand that there's no way that's
-> going to happen, and why it would be considered philosophically repugnant
-> in the SELinux community.
-Sure, but this ignores the more important next comment.
->> If virtiofsd is writing Userxattrs with CAP_SYS_RESOURCE, then we can run with a confined SELinux label only allowing it to sexattr on the content in the designated directory, make the container/vm much more secure.
->>
-> User xattrs are less protected than security xattrs. You are exposing the
-> security xattrs on the guest to the possible whims of a malicious, unprivileged
-> actor on the host. All it needs is the right UID.
->
-> We have unused xattr namespaces. Would using the "trusted" namespace
-> work for your purposes?
->
-No because they bring their own issues, and can not be used without 
-CAP_SYS_ADMIN.
+Just a couple of notes below:
 
-My number one concern is attacks from the kvm separated work space 
-against the host, since virtiofsd is opening up the attack vector.  
-Running it with the least privs possible from the MAC and DAC point of 
-view is the goal.
+On Mon, Jun 28, 2021 at 06:34:28PM +0000, Dov Murik wrote:
+> Confidential computing hardware such as AMD SEV (Secure Encrypted
+> Virtualization) allows guest owners to inject secrets into the VMs
+> memory without the host/hypervisor being able to read them.  In SEV,
+> secret injection is performed early in the VM launch process, before the
+> guest starts running.
+> 
+> Support for secret injection is already available in OVMF (in its AmdSev
+> package; see edk2 commit 01726b6d23d4 "OvmfPkg/AmdSev: Expose the Sev
+> Secret area using a configuration table" [1]), but the secrets were not
+> available in the guest kernel.
+> 
+> The patch series copies the secrets from the EFI-provided memory to
+> kernel reserved memory, and optionally exposes them to userspace via
+> securityfs using a new sev_secret kernel module.
+> 
+> The first patch in efi/libstub copies the secret area from the EFI
+> memory to specially allocated memory; the second patch reserves that
+> memory block; and the third patch introduces the new sev_secret module
+> that exposes the content of the secret entries as securityfs files, and
+> allows clearing out secrets with a file unlink interface.
+> 
+> This has been tested with AMD SEV guests, but the kernel side of
+> handling the secret area has no SEV-specific dependencies, and therefore
+> should be usable for any confidential computing hardware that can
+> publish the secret area via the standard EFI config table entry.
+> 
+> Here is a simple example for usage of the sev_secret module in a guest to which
+> secrets were injected during launch:
+
+That's all fine and good but I miss the "why" in this explanation. I.e.,
+a proper use case of a guest owner providing those sekrits to the guest
+would be good.
+
+> 
+> # modprobe sev_secret
+> # ls -la /sys/kernel/security/sev_secret/
+
+So that sysfs URL becomes an ABI. Shouldn't this be:
+
+/sys/kernel/security/coco/
+
+instead which stands for "confidential computing" and contains all kinds
+of protected guest things. TDX might wanna do something similar there,
+for example.
+
+> total 0
+> drwxr-xr-x 2 root root 0 Jun 28 11:54 .
+> drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+> -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
+> -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
+> -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
+> -r--r----- 1 root root 0 Jun 28 11:54 e6f5a162-d67f-4750-a67c-5d065f2a9910
+> 
+> # xxd /sys/kernel/security/sev_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
+> 00000000: 7468 6573 652d 6172 652d 7468 652d 6b61  these-are-the-ka
+> 00000010: 7461 2d73 6563 7265 7473 0001 0203 0405  ta-secrets......
+> 00000020: 0607                                     ..
+> 
+> # rm /sys/kernel/security/sev_secret/e6f5a162-d67f-4750-a67c-5d065f2a9910
+> 
+> # ls -la /sys/kernel/security/sev_secret/
+> total 0
+> drwxr-xr-x 2 root root 0 Jun 28 11:55 .
+> drwxr-xr-x 3 root root 0 Jun 28 11:54 ..
+> -r--r----- 1 root root 0 Jun 28 11:54 736870e5-84f0-4973-92ec-06879ce3da0b
+> -r--r----- 1 root root 0 Jun 28 11:54 83c83f7f-1356-4975-8b7e-d3a0b54312c6
+> -r--r----- 1 root root 0 Jun 28 11:54 9553f55d-3da2-43ee-ab5d-ff17f78864d2
+> 
+> 
+> [1] https://github.com/tianocore/edk2/commit/01726b6d23d4
+> 
+> v2 changes:
+>  - Add unlink support in sev_secret securityfs.
+> 
+> 
+> Dov Murik (3):
+>   efi/libstub: Copy confidential computing secret area
+>   efi: Reserve confidential computing secret area
+>   virt: Add sev_secret module to expose confidential computing secrets
+> 
+>  drivers/firmware/efi/Makefile                 |   2 +-
+>  drivers/firmware/efi/confidential-computing.c |  41 +++
+>  drivers/firmware/efi/efi.c                    |   5 +
+>  drivers/firmware/efi/libstub/Makefile         |   3 +-
+>  .../efi/libstub/confidential-computing.c      |  68 ++++
+>  drivers/firmware/efi/libstub/efi-stub.c       |   2 +
+>  drivers/firmware/efi/libstub/efistub.h        |   2 +
+>  drivers/firmware/efi/libstub/x86-stub.c       |   2 +
+>  drivers/virt/Kconfig                          |   2 +
+>  drivers/virt/Makefile                         |   1 +
+>  drivers/virt/sev_secret/Kconfig               |  11 +
+>  drivers/virt/sev_secret/Makefile              |   2 +
+>  drivers/virt/sev_secret/sev_secret.c          | 298 ++++++++++++++++++
+>  include/linux/efi.h                           |  11 +
+>  14 files changed, 448 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/firmware/efi/confidential-computing.c
+>  create mode 100644 drivers/firmware/efi/libstub/confidential-computing.c
+>  create mode 100644 drivers/virt/sev_secret/Kconfig
+>  create mode 100644 drivers/virt/sev_secret/Makefile
+>  create mode 100644 drivers/virt/sev_secret/sev_secret.c
+
+Those "confidential-computing.c" filenames are too long. I'd vote for
+coco.c.
+
+Same for your naming: efi_copy_confidential_computing_secret_area() -
+that is a wow and doesn't look like kernel code to me. :)
+
+Another example why it is too long:
+
++       {LINUX_EFI_CONFIDENTIAL_COMPUTING_SECRET_AREA_GUID,
++                                               &efi.confidential_computing_secret,
++                                                                       "ConfCompSecret"},
+
+I'd do
+
+	{ LINUX_EFI_COCO_SECRET_AREA_GUID, &efi.coco_secret, "ConfCompSecret" },
 
 
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
