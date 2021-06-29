@@ -5,111 +5,105 @@ X-Spam-Level:
 X-Spam-Status: No, score=-14.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E2FC11F66
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 13:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB942C11F68
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 13:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23B2661D90
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 13:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3D8F61984
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 13:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234171AbhF2NoU (ORCPT
+        id S234163AbhF2NxW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jun 2021 09:44:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34990 "EHLO
+        Tue, 29 Jun 2021 09:53:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234152AbhF2NoS (ORCPT
+        with ESMTP id S233050AbhF2NxW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jun 2021 09:44:18 -0400
-Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26A1C061767;
-        Tue, 29 Jun 2021 06:41:49 -0700 (PDT)
-Received: by mail-pl1-x634.google.com with SMTP id z4so1613791plg.8;
-        Tue, 29 Jun 2021 06:41:49 -0700 (PDT)
+        Tue, 29 Jun 2021 09:53:22 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EA2FC061760;
+        Tue, 29 Jun 2021 06:50:55 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id e33so18559784pgm.3;
+        Tue, 29 Jun 2021 06:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ecjztdsCL8Idb2y9jlcEGJ5wyQnjg16C2snI3Rv+1Vk=;
-        b=J29cMXnef+QyTdsvQH6LJXpDoflmXHlZYU9hM+xHk8/sCc4AcL2n/goZMtNLlI31Nb
-         vgkvEINjInTr7Y7NKwqT/mb3ZuXQxiu378nTJ38UPOs6tO2iCXCNfMZkDcxsseHy4rlb
-         +Xg5K/hl4b0zjCs2UFfU4JSf/JztwH/zIk+tRJx5/sAjn8aCu/oZHcgDHeuk5LjnTv7i
-         8EhdYIaQL/Fd63gQpUGNuxS8TcXh1N0hE3ykPuusPjCzofX9XPjbe4d6My0eTmlk95l1
-         uS8d/sjiIPWVcnL11k1q6eyQnVo6UQPdz+lxdawwMQukRG/BvUMN1i2AvH/quIGoE7NJ
-         2p6g==
+         :content-transfer-encoding:user-agent;
+        bh=NVE/yWmG13Srx+k1GcLPqraZFRtg51oSQRZanYNNkUA=;
+        b=VIFvQyHPYh23zuWVsCyyFUcNrJ/3dFcxDbFMj2Fn0Om7lzOlVqk4qQ/dSZAW8Xm0Hq
+         Oee5pq6NoIX0+OsyydHRUqfsy4SFZ33hCg/+eyx3Ja9A0Zl9LYQ/poqLnfqpt1JVhBt+
+         /8ZZ1+LvFHv94StQNO6Y1vO8CmTsb58RL2r9MNwmSm8ho7m6yx6LDXhX1nrrsC4jtX1/
+         5iw/tC5NHYWGMRAMf4V8a6p2mnTht23DoAeDWTVabp5Bm+9LCeo7zrwfVd4FMw0dD1/D
+         r8LEXFtCZ+8DATirZy4A9YgJcePV+rfwVIfVAT8u6ni71Dgyub6Ad85T1JewkCXUsR8C
+         dQjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ecjztdsCL8Idb2y9jlcEGJ5wyQnjg16C2snI3Rv+1Vk=;
-        b=VqDXMrSQzlrqZNPci10S4jfOaFr1mwawhmt0Kh2TNMv7H3uKmxXB0jckoh7XuFytrs
-         QRwEIaoZgOuklWucXSk5hUdUTMDqZxavMgHH/TpRWbgSh6tx+WEr7JxlT5aKTd35pHuq
-         n8R5iO8Rv7Bj9jLJg00x7GalyJfGQzra/gJMps0wfkcfdK2/fdxmXMb2AycsH6Y22x9e
-         A7lDXMw/OU2Dk/4/IJHzJTX0couUZ7zTWfq0I87EpA+61P39Bs6XUKTqJX8xjwyjLu3r
-         PzkzNvApIebEHjOeknt/i4WBJjEyVN2pm3CBGnvaCBCnEafYqILxNTDVcd0lp6Dylv9W
-         8Pfw==
-X-Gm-Message-State: AOAM532UzKBc0wcm0tcA6BzY66SzChx0eVQfDss0XeQeMhmzblPwi7nS
-        WyMkslbXOBKp9vWLYY25Sxs=
-X-Google-Smtp-Source: ABdhPJxch+337l3DMWR6X1WBiZfMTvf02kfOP2I/M+loIyKaYKq7kgcBtWGpwd5hjD9GoJvRMusfDw==
-X-Received: by 2002:a17:90b:3912:: with SMTP id ob18mr44526657pjb.178.1624974109497;
-        Tue, 29 Jun 2021 06:41:49 -0700 (PDT)
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=NVE/yWmG13Srx+k1GcLPqraZFRtg51oSQRZanYNNkUA=;
+        b=R3HNJt3BQ6Q33WS4tTBVM0RyUF9rWdYE0Ow9Kh7WhnISr76bsTMnfzs3DbHDQFphzV
+         Gb9JecTe9BkOKMvS50PlkJylc0yMY/fEnojO8tUiL6hAWfDMXIh6Mpg5DRZUKh4VBtmV
+         rJZ8z3PkYesmm5AE3tWJTqgs6FU8u0S/XeCTTUq+D9qd40uhZ2C0dlJuQi/o7GU5EFb7
+         8AgHermbhDaO+dAMJC72V2919ppPsW7q91Nxpyg4rr5bxRhuS2AfjdzOBPbz77r0DLVY
+         wYoTc0KXuBAcDtIx20gmucPrrHmwxys8y6w/clP3SauCKN8t7XLLciZp0nmd28E9MdzM
+         AuHg==
+X-Gm-Message-State: AOAM5308Dp4NTDojWW36kH4S5FQRoofAvzFaoBbXuZrmG0zWNh4bQXUc
+        0yBqH87b/DKvC/gpvKlmkI0=
+X-Google-Smtp-Source: ABdhPJwspCAT3P99G3AiRVnyDOfH56x5L7uz7zqufnDraLp7J8M5RmBzZn7hn0awoFBJ6zhjBnJHcw==
+X-Received: by 2002:aa7:900f:0:b029:306:24ca:108f with SMTP id m15-20020aa7900f0000b029030624ca108fmr30110894pfo.77.1624974655153;
+        Tue, 29 Jun 2021 06:50:55 -0700 (PDT)
 Received: from raspberrypi ([125.141.84.155])
-        by smtp.gmail.com with ESMTPSA id y5sm3676469pjy.2.2021.06.29.06.41.47
+        by smtp.gmail.com with ESMTPSA id b9sm16774593pfm.124.2021.06.29.06.50.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jun 2021 06:41:49 -0700 (PDT)
-Date:   Tue, 29 Jun 2021 14:41:44 +0100
+        Tue, 29 Jun 2021 06:50:54 -0700 (PDT)
+Date:   Tue, 29 Jun 2021 14:50:50 +0100
 From:   Austin Kim <austindh.kim@gmail.com>
-To:     casey@schaufler-ca.com, jmorris@namei.org, serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lge.com,
+To:     zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, austin.kim@lge.com,
         austindh.kim@gmail.com
-Subject: [PATCH] smack: mark 'smack_enabled' global variable as __initdata
-Message-ID: <20210629134144.GA1168@raspberrypi>
+Subject: [PATCH] IMA: remove -Wmissing-prototypes warning
+Message-ID: <20210629135050.GA1373@raspberrypi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Austin Kim <austin.kim@lge.com>
 
-Mark 'smack_enabled' as __initdata
-since it is only used during initialization code.
+With W=1 build, the compiler throws warning message as below:
+
+   security/integrity/ima/ima_mok.c:24:12: warning:
+   no previous prototype for ‘ima_mok_init’ [-Wmissing-prototypes]
+       __init int ima_mok_init(void)
+
+Silence the warning by adding static keyword to ima_mok_init().
 
 Signed-off-by: Austin Kim <austin.kim@lge.com>
 ---
- security/smack/smack.h     | 2 +-
- security/smack/smack_lsm.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ security/integrity/ima/ima_mok.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index c3cfbdf4944a..99c3422596ab 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -302,7 +302,7 @@ int smack_populate_secattr(struct smack_known *skp);
+diff --git a/security/integrity/ima/ima_mok.c b/security/integrity/ima/ima_mok.c
+index 1e5c01916173..95cc31525c57 100644
+--- a/security/integrity/ima/ima_mok.c
++++ b/security/integrity/ima/ima_mok.c
+@@ -21,7 +21,7 @@ struct key *ima_blacklist_keyring;
  /*
-  * Shared data.
+  * Allocate the IMA blacklist keyring
   */
--extern int smack_enabled;
-+extern int smack_enabled __initdata;
- extern int smack_cipso_direct;
- extern int smack_cipso_mapped;
- extern struct smack_known *smack_net_ambient;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 223a6da0e6dc..cacbe7518519 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -54,7 +54,7 @@
- static DEFINE_MUTEX(smack_ipv6_lock);
- static LIST_HEAD(smk_ipv6_port_list);
- struct kmem_cache *smack_rule_cache;
--int smack_enabled;
-+int smack_enabled __initdata;
+-__init int ima_mok_init(void)
++static __init int ima_mok_init(void)
+ {
+ 	struct key_restriction *restriction;
  
- #define A(s) {"smack"#s, sizeof("smack"#s) - 1, Opt_##s}
- static struct {
 -- 
 2.20.1
 
