@@ -2,152 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1576AC11F67
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 21:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3A2C11F67
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 22:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E428B61D9E
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 21:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AD4161CC7
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 22:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235640AbhF2Vim (ORCPT
+        id S235432AbhF2Wna (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jun 2021 17:38:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
+        Tue, 29 Jun 2021 18:43:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235631AbhF2Vim (ORCPT
+        with ESMTP id S235149AbhF2Wna (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jun 2021 17:38:42 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B84FCC061766
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Jun 2021 14:36:13 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id s15so64466edt.13
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Jun 2021 14:36:13 -0700 (PDT)
+        Tue, 29 Jun 2021 18:43:30 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A3AC061760;
+        Tue, 29 Jun 2021 15:41:01 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id x16so571716pfa.13;
+        Tue, 29 Jun 2021 15:41:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=kVbXk/jGkX9FNNfyx7X6Mxyt8GqROWHeQ+D0oZ/1rWQ=;
-        b=CKkESIfcf8PxrA+EjyxdXfq/B8pdPyMMuQzo4iLBkBNAO+/4WefIuWjHuhMptM7CvA
-         E8zQicV5wwjKbD1D09KAfTx5xWZUjc7tSGATHt2tlTsRBGWcQbfIoiXzHlgVRgB+PhEb
-         ixtemYRI4pIsOmEdxuzy7ig+vVJ7n6bvqK6hjC3v1c7wnYpw8gbhzIBd+9++G4i1ZcUj
-         /XF8o9HILnUSDESr4I/EeOBN7JOj1xd25r+kTC7lImvpAJvlhjewqFs/vuCISC0puVVc
-         hqVM1uOvEYfJqH3j7VMTRpy0dPF6D0sxLuWdMFQoz4ojezvUOdh9wRj4VivXclaCcg3i
-         4gwg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=P+tvoezemK7sRfCs8ijjTjFf88uwIw3vayGLLc42vlI=;
+        b=SIfctPZHI0xI5w5+zG5kXj3dKKDp2neIvQdMyhAIrxHZXJeLEsrh0xzaDiku+igNwJ
+         SjlGSRLIyEs5ZY/qGXYqtYEpj6QBL0s4+BGoDiXJhSoxm8jghFxx8ET+DlyOzg08EigO
+         Jw+jFzIdtl8qZtM8kobz/M5oQ8pwTqWaNgFYwWWSYAhcIxfwvrds68VEUP2LWaKdpi9p
+         uE1FLvgQLkswsNkfS7vAoNPkdjUUosPotUUFAqn0hkBhpGP49VO7Eo+y52hlQtvt24R6
+         5Sx7nguXSiGxnqN+hZLt05msZgmxDPdLOxxsDj1XhMj5H3/6k7qhU2GJYgOhOHne1pcJ
+         z1Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=kVbXk/jGkX9FNNfyx7X6Mxyt8GqROWHeQ+D0oZ/1rWQ=;
-        b=chpmKEEOl1V5X/o4kh6WPyxVnICz7gQltzWcsUslMp7ghadfqnrPovPiWGpKlorQwx
-         mQsgx2BnPSUrD6Rh8rYBJv6xzBLAG/Y4dnTChKM3bzHCZZ57JhB7ASnpxiDL0NRwji0G
-         NTGAsZIAFfPkOa0a5kX6kHra0GHFv6TjhGsQ8iMKksNZUo+Dem8FNpscZffhyorohh6l
-         wyo1HoZGuRKl1ihehDXhLnY7DdGUj51HBfSAg12D3kagyS43UTCvBhMkaRK2m/ihFc6P
-         aNFQv9noywpH7mYUkg3AwVp3G6MgopKwnGn5As0CZVH5UzN4t/6GK9bVHzK6UXOrPtxW
-         wd4g==
-X-Gm-Message-State: AOAM531fu9L64P04uK752ZC/FR13x1dFQd6ymdYa3d1db8dU7ArXqL8v
-        uaAzVWDBVPs6e+TeQxFFkFSfYoRiodNJgkrZeBHbFlTNE12r
-X-Google-Smtp-Source: ABdhPJzN1aqZZm7XMoJpKd6Ir0SHqTfq4WjM5AgSiiYOq+rtX1qeG1OUxTUxRqVSF3naE5Hk5Ki+h3+0gV9c4wgj22Y=
-X-Received: by 2002:a05:6402:1d17:: with SMTP id dg23mr42849509edb.128.1625002572146;
- Tue, 29 Jun 2021 14:36:12 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=P+tvoezemK7sRfCs8ijjTjFf88uwIw3vayGLLc42vlI=;
+        b=C3Ovujr7d3evmi9uduV/g07evZujxIheNOxZKWQ699dPMVXgVFn2GtltdruKY/qqs7
+         Hlh4ClIIZCAuaITGc4hzuGdkehIsqubgY3oWcbJQB0un+CT8czTlLtAxs8DfizKX5Evg
+         EkRlOAreDaX5qZphYzLIEKvnEFSMexUu1DRQN+vxi/6o35Tt13VBzREMu5kPI1D/HINF
+         nghJ2y/detaWdF45g07NRy27TDonoAYCL1BNCZYKz7HVzKXoorGTRrSIHRZzrprOSNxQ
+         EwwWt/Woh6r5aNBiHHLpIDC6E3pMysRUJ8ZjnQYsELXsO0oeaZe75SXM/maNpWxh2LB1
+         66qw==
+X-Gm-Message-State: AOAM532EcdrVqZaXOtfpE/WSkf1B1xyX+jmkooYrGMDo9lj3DMqqxtBu
+        LUBci141Uu3KfOejs8ogZjqUsfekK5YsGijs6KM=
+X-Google-Smtp-Source: ABdhPJxIl8Vocc3Fb9/z6Xj8wolKdcTBXZA1v0f0l4OzmpcqdqRIIrAGt9qZj79bYAaxmwTKdGIhxyX3PrjKOPIhmrQ=
+X-Received: by 2002:a63:7d5:: with SMTP id 204mr4414226pgh.309.1625006461498;
+ Tue, 29 Jun 2021 15:41:01 -0700 (PDT)
 MIME-Version: 1.0
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 29 Jun 2021 17:36:01 -0400
-Message-ID: <CAHC9VhQb03J_9yWKViZb+wD=pMfFQb+FyYwHYndYZTfRdJ8oLg@mail.gmail.com>
-Subject: [GIT PULL] SELinux patches for v5.14
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20210629135050.GA1373@raspberrypi> <fe6c853842425e675024731525e0f244da368e8e.camel@linux.ibm.com>
+In-Reply-To: <fe6c853842425e675024731525e0f244da368e8e.camel@linux.ibm.com>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Wed, 30 Jun 2021 07:40:50 +0900
+Message-ID: <CADLLry5D9T_icTSGOggb=3vJqYq9Qvq-WEhmfgJMCSGuPV0AAg@mail.gmail.com>
+Subject: Re: [PATCH] IMA: remove -Wmissing-prototypes warning
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?6rmA64+Z7ZiE?= <austin.kim@lge.com>,
+        Petko Manolov <petkan@mip-labs.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+2021=EB=85=84 6=EC=9B=94 29=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 11:30, =
+Mimi Zohar <zohar@linux.ibm.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> [Cc: Petko Manolov <petkan@mip-labs.com>]
+>
+> Hi Austin,
+>
+> On Tue, 2021-06-29 at 14:50 +0100, Austin Kim wrote:
+> > From: Austin Kim <austin.kim@lge.com>
+> >
+> > With W=3D1 build, the compiler throws warning message as below:
+> >
+> >    security/integrity/ima/ima_mok.c:24:12: warning:
+> >    no previous prototype for =E2=80=98ima_mok_init=E2=80=99 [-Wmissing-=
+prototypes]
+> >        __init int ima_mok_init(void)
+> >
+> > Silence the warning by adding static keyword to ima_mok_init().
+> >
+> > Signed-off-by: Austin Kim <austin.kim@lge.com>
+> > ---
+> >  security/integrity/ima/ima_mok.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/security/integrity/ima/ima_mok.c b/security/integrity/ima/=
+ima_mok.c
+> > index 1e5c01916173..95cc31525c57 100644
+> > --- a/security/integrity/ima/ima_mok.c
+> > +++ b/security/integrity/ima/ima_mok.c
+> > @@ -21,7 +21,7 @@ struct key *ima_blacklist_keyring;
+> >  /*
+> >   * Allocate the IMA blacklist keyring
+> >   */
+> > -__init int ima_mok_init(void)
+> > +static __init int ima_mok_init(void)
+> >  {
+> >       struct key_restriction *restriction;
+> >
+>
+> Thank you for the patch, which does fix the warning.   The .ima_mok
+> keyring was removed a while ago.  With all the recent work on the
+> system blacklist, I'm wondering if anyone is still using the IMA
+> blacklist keyring or whether it should be removed as well.
 
-Here is the SELinux pull request for v5.14, the highlights are below:
+Oh! Thanks for information.
 
-* The slow_avc_audit() function is now non-blocking so we can remove
-the AVC_NONBLOCKING tricks; this also includes the 'flags' variant of
-avc_has_perm().
-
-* Use kmemdup() instead of kcalloc()+copy when copying parts of the
-SELinux policydb.
-
-* The InfiniBand device name is now passed by reference when possible
-in the SELinux code, removing a strncpy().
-
-* Minor cleanups including: constification of avtab function args,
-removal of useless LSM/XFRM function args, SELinux kdoc fixes, and
-removal of redundant assignments.
-
-Everything has been tested against the selinux-testsuite and as of a
-few moments ago the tag applies cleanly to your tree; please merge
-this for v5.14.
-
-Thanks,
--Paul
-
---
-The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
-
- Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
-
-are available in the Git repository at:
-
- git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-   tags/selinux-pr-20210629
-
-for you to fetch changes up to d99cf13f14200cdb5cbb704345774c9c0698612d:
-
- selinux: kill 'flags' argument in avc_has_perm_flags() and avc_audit()
-   (2021-06-11 13:11:45 -0400)
-
-----------------------------------------------------------------
-selinux/stable-5.14 PR 20210629
-
-----------------------------------------------------------------
-Al Viro (2):
-     selinux: slow_avc_audit has become non-blocking
-     selinux: kill 'flags' argument in avc_has_perm_flags() and avc_audit()
-
-Jiapeng Chong (1):
-     selinux: Remove redundant assignment to rc
-
-Minchan Kim (1):
-     selinux: use __GFP_NOWARN with GFP_NOWAIT in the AVC
-
-Ondrej Mosnacek (3):
-     selinux: simplify duplicate_policydb_cond_list() by using kmemdup()
-     selinux: constify some avtab function arguments
-     lsm_audit,selinux: pass IB device name by reference
-
-Souptick Joarder (1):
-     selinux: Corrected comment to match kernel-doc comment
-
-Yang Li (1):
-     selinux: Fix kernel-doc
-
-Zhongjun Tan (1):
-     selinux: delete selinux_xfrm_policy_lookup() useless argument
-
-include/linux/lsm_audit.h         |  8 ++---
-include/linux/lsm_hook_defs.h     |  3 +-
-include/linux/security.h          |  4 +--
-net/xfrm/xfrm_policy.c            |  6 ++--
-security/security.c               |  4 +--
-security/selinux/avc.c            | 61 ++++++++--------------------------
-security/selinux/hooks.c          | 22 ++++----------
-security/selinux/include/avc.h    | 13 +--------
-security/selinux/include/xfrm.h   |  2 +-
-security/selinux/ss/avtab.c       | 28 +++++++++---------
-security/selinux/ss/avtab.h       | 16 +++++-----
-security/selinux/ss/conditional.c | 14 +++++----
-security/selinux/ss/policydb.c    |  1 -
-security/selinux/ss/services.c    | 27 +++++++++++++----
-security/selinux/xfrm.c           |  2 +-
-15 files changed, 90 insertions(+), 121 deletions(-)
-
--- 
-paul moore
-www.paul-moore.com
+>
+> thanks,
+>
+> Mimi
+>
