@@ -2,126 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3A2C11F67
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 22:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81CDC11F67
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 22:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3AD4161CC7
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 22:41:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4C0C61CE4
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 22:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235432AbhF2Wna (ORCPT
+        id S235455AbhF2Wvc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jun 2021 18:43:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235149AbhF2Wna (ORCPT
+        Tue, 29 Jun 2021 18:51:32 -0400
+Received: from smtp-out2.suse.de ([195.135.220.29]:40918 "EHLO
+        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235371AbhF2Wvc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jun 2021 18:43:30 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A3AC061760;
-        Tue, 29 Jun 2021 15:41:01 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id x16so571716pfa.13;
-        Tue, 29 Jun 2021 15:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=P+tvoezemK7sRfCs8ijjTjFf88uwIw3vayGLLc42vlI=;
-        b=SIfctPZHI0xI5w5+zG5kXj3dKKDp2neIvQdMyhAIrxHZXJeLEsrh0xzaDiku+igNwJ
-         SjlGSRLIyEs5ZY/qGXYqtYEpj6QBL0s4+BGoDiXJhSoxm8jghFxx8ET+DlyOzg08EigO
-         Jw+jFzIdtl8qZtM8kobz/M5oQ8pwTqWaNgFYwWWSYAhcIxfwvrds68VEUP2LWaKdpi9p
-         uE1FLvgQLkswsNkfS7vAoNPkdjUUosPotUUFAqn0hkBhpGP49VO7Eo+y52hlQtvt24R6
-         5Sx7nguXSiGxnqN+hZLt05msZgmxDPdLOxxsDj1XhMj5H3/6k7qhU2GJYgOhOHne1pcJ
-         z1Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=P+tvoezemK7sRfCs8ijjTjFf88uwIw3vayGLLc42vlI=;
-        b=C3Ovujr7d3evmi9uduV/g07evZujxIheNOxZKWQ699dPMVXgVFn2GtltdruKY/qqs7
-         Hlh4ClIIZCAuaITGc4hzuGdkehIsqubgY3oWcbJQB0un+CT8czTlLtAxs8DfizKX5Evg
-         EkRlOAreDaX5qZphYzLIEKvnEFSMexUu1DRQN+vxi/6o35Tt13VBzREMu5kPI1D/HINF
-         nghJ2y/detaWdF45g07NRy27TDonoAYCL1BNCZYKz7HVzKXoorGTRrSIHRZzrprOSNxQ
-         EwwWt/Woh6r5aNBiHHLpIDC6E3pMysRUJ8ZjnQYsELXsO0oeaZe75SXM/maNpWxh2LB1
-         66qw==
-X-Gm-Message-State: AOAM532EcdrVqZaXOtfpE/WSkf1B1xyX+jmkooYrGMDo9lj3DMqqxtBu
-        LUBci141Uu3KfOejs8ogZjqUsfekK5YsGijs6KM=
-X-Google-Smtp-Source: ABdhPJxIl8Vocc3Fb9/z6Xj8wolKdcTBXZA1v0f0l4OzmpcqdqRIIrAGt9qZj79bYAaxmwTKdGIhxyX3PrjKOPIhmrQ=
-X-Received: by 2002:a63:7d5:: with SMTP id 204mr4414226pgh.309.1625006461498;
- Tue, 29 Jun 2021 15:41:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210629135050.GA1373@raspberrypi> <fe6c853842425e675024731525e0f244da368e8e.camel@linux.ibm.com>
-In-Reply-To: <fe6c853842425e675024731525e0f244da368e8e.camel@linux.ibm.com>
-From:   Austin Kim <austindh.kim@gmail.com>
-Date:   Wed, 30 Jun 2021 07:40:50 +0900
-Message-ID: <CADLLry5D9T_icTSGOggb=3vJqYq9Qvq-WEhmfgJMCSGuPV0AAg@mail.gmail.com>
-Subject: Re: [PATCH] IMA: remove -Wmissing-prototypes warning
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     dmitry.kasatkin@gmail.com, James Morris <jmorris@namei.org>,
+        Tue, 29 Jun 2021 18:51:32 -0400
+Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 205A71FDDA;
+        Tue, 29 Jun 2021 22:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1625006943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SlvM3MzcnkI5ct41kravAhdLb8Av6htcPQ3tAc07kmY=;
+        b=ljGaQc3VJLB2w+oNaBigYEtTsLD44cQcnKzJcpRXjVEBNZYFQSo/UD03tJuQGjVqDjAOBQ
+        VHiNzEz6QQwlFfyXQ7s6A0OkuLHup9KzDOeeNKE27lXp8Fep8m1fB0Ys3wMiOejDGjpD2D
+        KTLlDkhxxtN/Yg2ggdLNeeie7zj8HX8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1625006943;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SlvM3MzcnkI5ct41kravAhdLb8Av6htcPQ3tAc07kmY=;
+        b=/GpuesW/GrvcNHBpUkzkoLxs+SajReBCJCfO3O7+/BZJa3Bwcz2CTrNQI3Am/kHASYejbk
+        jhE3+mC7JwujOVBQ==
+Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
+        by imap.suse.de (Postfix) with ESMTP id 0DD2C11906;
+        Tue, 29 Jun 2021 22:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1625006943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SlvM3MzcnkI5ct41kravAhdLb8Av6htcPQ3tAc07kmY=;
+        b=ljGaQc3VJLB2w+oNaBigYEtTsLD44cQcnKzJcpRXjVEBNZYFQSo/UD03tJuQGjVqDjAOBQ
+        VHiNzEz6QQwlFfyXQ7s6A0OkuLHup9KzDOeeNKE27lXp8Fep8m1fB0Ys3wMiOejDGjpD2D
+        KTLlDkhxxtN/Yg2ggdLNeeie7zj8HX8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1625006943;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=SlvM3MzcnkI5ct41kravAhdLb8Av6htcPQ3tAc07kmY=;
+        b=/GpuesW/GrvcNHBpUkzkoLxs+SajReBCJCfO3O7+/BZJa3Bwcz2CTrNQI3Am/kHASYejbk
+        jhE3+mC7JwujOVBQ==
+Received: from director2.suse.de ([192.168.254.72])
+        by imap3-int with ESMTPSA
+        id 47eGA1+j22A8XgAALh3uQQ
+        (envelope-from <bp@suse.de>); Tue, 29 Jun 2021 22:49:03 +0000
+Date:   Wed, 30 Jun 2021 00:48:48 +0200
+From:   Borislav Petkov <bp@suse.de>
+To:     Dov Murik <dovmurik@linux.ibm.com>
+Cc:     linux-efi@vger.kernel.org, Laszlo Ersek <lersek@redhat.com>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?6rmA64+Z7ZiE?= <austin.kim@lge.com>,
-        Petko Manolov <petkan@mip-labs.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andi Kleen <ak@linux.intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 3/3] virt: Add sev_secret module to expose
+ confidential computing secrets
+Message-ID: <YNujUGuIpMc8VJPS@zn.tnic>
+References: <20210628183431.953934-1-dovmurik@linux.ibm.com>
+ <20210628183431.953934-4-dovmurik@linux.ibm.com>
+ <YNojYBIwk0xCHQ0v@zn.tnic>
+ <6e35f6db-9c5b-3c75-a66b-de1392295f6a@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6e35f6db-9c5b-3c75-a66b-de1392295f6a@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-2021=EB=85=84 6=EC=9B=94 29=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 11:30, =
-Mimi Zohar <zohar@linux.ibm.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> [Cc: Petko Manolov <petkan@mip-labs.com>]
->
-> Hi Austin,
->
-> On Tue, 2021-06-29 at 14:50 +0100, Austin Kim wrote:
-> > From: Austin Kim <austin.kim@lge.com>
-> >
-> > With W=3D1 build, the compiler throws warning message as below:
-> >
-> >    security/integrity/ima/ima_mok.c:24:12: warning:
-> >    no previous prototype for =E2=80=98ima_mok_init=E2=80=99 [-Wmissing-=
-prototypes]
-> >        __init int ima_mok_init(void)
-> >
-> > Silence the warning by adding static keyword to ima_mok_init().
-> >
-> > Signed-off-by: Austin Kim <austin.kim@lge.com>
-> > ---
-> >  security/integrity/ima/ima_mok.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/security/integrity/ima/ima_mok.c b/security/integrity/ima/=
-ima_mok.c
-> > index 1e5c01916173..95cc31525c57 100644
-> > --- a/security/integrity/ima/ima_mok.c
-> > +++ b/security/integrity/ima/ima_mok.c
-> > @@ -21,7 +21,7 @@ struct key *ima_blacklist_keyring;
-> >  /*
-> >   * Allocate the IMA blacklist keyring
-> >   */
-> > -__init int ima_mok_init(void)
-> > +static __init int ima_mok_init(void)
-> >  {
-> >       struct key_restriction *restriction;
-> >
->
-> Thank you for the patch, which does fix the warning.   The .ima_mok
-> keyring was removed a while ago.  With all the recent work on the
-> system blacklist, I'm wondering if anyone is still using the IMA
-> blacklist keyring or whether it should be removed as well.
+On Tue, Jun 29, 2021 at 10:23:49AM +0300, Dov Murik wrote:
+> But not if it's a generic driver that is useful for other confidential
+> computing implementations.  Consider some non-encrypting guest memory
+> isolation mechanism where the host can't read most guest pages; this
+> module might be useful there too.
 
-Oh! Thanks for information.
+Anything concrete or just hypothetical?
 
->
-> thanks,
->
-> Mimi
->
+In any case, if this thing is generic, it should not have "AMD" and
+"SEV" in the strings.
+
+> Also, isn't it a bit weird to depend on CONFIG_AMD_MEM_ENCRYPT but not
+> use any of its APIs?
+
+Yeah, see above.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
