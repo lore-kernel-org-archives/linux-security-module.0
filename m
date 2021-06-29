@@ -2,195 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1B9C11F68
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 17:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6A1C11F6A
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 17:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC5161DE3
-	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 17:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76C1B61DD1
+	for <linux-security-module@archiver.kernel.org>; Tue, 29 Jun 2021 17:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232484AbhF2RgC (ORCPT
+        id S233801AbhF2RiG (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 29 Jun 2021 13:36:02 -0400
-Received: from smtp-out2.suse.de ([195.135.220.29]:57446 "EHLO
-        smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232308AbhF2Rf6 (ORCPT
+        Tue, 29 Jun 2021 13:38:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:25114 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233729AbhF2RiF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 29 Jun 2021 13:35:58 -0400
-Received: from imap.suse.de (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        (using TLSv1.2 with cipher ECDHE-ECDSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 29 Jun 2021 13:38:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1624988137;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Bw4iyOmvFsi3WeW4Hho/J/8y6gu9gKbdb/tr5Wd9dXw=;
+        b=XioErTtIB28GHemBASAdxUgu/GV9dNcHZJhtzsflz/gQfynBIgLDNo69euj+3I7SqtsyCT
+        0c5/RpC925G+vb1wEr1Ner3rMJqstsow6/iYDXNh7T3d5ht+NWqTqLfRRzsI0Dbh33cAux
+        ML7ChxMyXe06Si/MbuMUhUVrVD0zl7I=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-578-xmFtjdmxPgiq-LSsBhZPyw-1; Tue, 29 Jun 2021 13:35:35 -0400
+X-MC-Unique: xmFtjdmxPgiq-LSsBhZPyw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 8EFC31FD8F;
-        Tue, 29 Jun 2021 17:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624988009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4ATW6Ca30ZVV7Zzd+CeAnHIUpIriktflFykS2CyCKVU=;
-        b=uxNn0trq96rjaJlhGmwt9nsqODDA6IvN3PPpJ5pLk6OxC6qBfAgIVpB5NRGMBE6k8IOXmv
-        ZSr1dwfkXmzSEkbW7k/NgzESvoQka9c2YO3aHmlvDbMXOxpDaDv3x93LomyFeoXQWtl7KR
-        B5yx/g/zAs4hqWi4ySdPiunHS+DKSKg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624988009;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4ATW6Ca30ZVV7Zzd+CeAnHIUpIriktflFykS2CyCKVU=;
-        b=Zka4re+vRWBErBR3ow9OxmqXnLm6TloqkjJiAV7fQVsYLeVWuXjSfTukR3Tr5dKPJE6Dm0
-        FDRQ/vAhvGvrrBBg==
-Received: from imap3-int (imap-alt.suse-dmz.suse.de [192.168.254.47])
-        by imap.suse.de (Postfix) with ESMTP id 7477A11906;
-        Tue, 29 Jun 2021 17:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1624988009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4ATW6Ca30ZVV7Zzd+CeAnHIUpIriktflFykS2CyCKVU=;
-        b=uxNn0trq96rjaJlhGmwt9nsqODDA6IvN3PPpJ5pLk6OxC6qBfAgIVpB5NRGMBE6k8IOXmv
-        ZSr1dwfkXmzSEkbW7k/NgzESvoQka9c2YO3aHmlvDbMXOxpDaDv3x93LomyFeoXQWtl7KR
-        B5yx/g/zAs4hqWi4ySdPiunHS+DKSKg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1624988009;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4ATW6Ca30ZVV7Zzd+CeAnHIUpIriktflFykS2CyCKVU=;
-        b=Zka4re+vRWBErBR3ow9OxmqXnLm6TloqkjJiAV7fQVsYLeVWuXjSfTukR3Tr5dKPJE6Dm0
-        FDRQ/vAhvGvrrBBg==
-Received: from director2.suse.de ([192.168.254.72])
-        by imap3-int with ESMTPSA
-        id H0KjHGlZ22C1YAAALh3uQQ
-        (envelope-from <bp@suse.de>); Tue, 29 Jun 2021 17:33:29 +0000
-Date:   Tue, 29 Jun 2021 19:33:24 +0200
-From:   Borislav Petkov <bp@suse.de>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Laszlo Ersek <lersek@redhat.com>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] Allow access to confidential computing secret
- area
-Message-ID: <YNtZZLWOO+qO/oAu@zn.tnic>
-References: <20210628183431.953934-1-dovmurik@linux.ibm.com>
- <YNoiydeow+ftvfYX@zn.tnic>
- <90fa45e6-8c24-6c72-2ef5-35a4b3c4d5d7@linux.ibm.com>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04D811927801;
+        Tue, 29 Jun 2021 17:35:34 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-116-194.rdu2.redhat.com [10.10.116.194])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8AFE360854;
+        Tue, 29 Jun 2021 17:35:30 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 262F822054F; Tue, 29 Jun 2021 13:35:30 -0400 (EDT)
+Date:   Tue, 29 Jun 2021 13:35:30 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>, dwalsh@redhat.com,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
+        "berrange@redhat.com" <berrange@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
+ files if caller has CAP_SYS_RESOURCE
+Message-ID: <20210629173530.GD5231@redhat.com>
+References: <BN0PR11MB57275823CE05DED7BC755460FD069@BN0PR11MB5727.namprd11.prod.outlook.com>
+ <20210628131708.GA1803896@redhat.com>
+ <1b446468-dcf8-9e21-58d3-c032686eeee5@redhat.com>
+ <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
+ <YNn4p+Zn444Sc4V+@work-vm>
+ <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
+ <YNrhQ9XfcHTtM6QA@work-vm>
+ <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
+ <20210629152007.GC5231@redhat.com>
+ <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <90fa45e6-8c24-6c72-2ef5-35a4b3c4d5d7@linux.ibm.com>
+In-Reply-To: <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jun 29, 2021 at 10:16:22AM +0300, Dov Murik wrote:
-> OK, I'll add it in the cover letter; something along the lines of:
->
-> An example would be a guest performing computations on encrypted files.
->  The Guest Owner provides the decryption key (= secret) using the secret
-> injection mechanism.  The guest application reads the secret from the
-> sev_secret filesystem and proceeds to decrypt the files into memory and
-> then performs the needed computations on the content.
->
-> Host can't read the files from the disk image because they are
-> encrypted. Host can't read the decryption key because it is passed using
-> the secret injection mechanism (= secure channel). Host can't read the
-> decrypted content from memory because it's a confidential
-> (memory-encrypted) guest.
-
-Yap, much better, thanks!
-
-And that whole deal with the providing the secret this way is because
-you want to be starting the same guest image in the cloud over and over
-again but each guest owner would have their own decryption key which
-they would supply this way.
-
-Yap, good.
-
-> On one hand, I agree.  This entire series has no SEV-specific code (but
-> I tested it only on SEV).
+On Tue, Jun 29, 2021 at 09:13:48AM -0700, Casey Schaufler wrote:
+> On 6/29/2021 8:20 AM, Vivek Goyal wrote:
+> > On Tue, Jun 29, 2021 at 07:38:15AM -0700, Casey Schaufler wrote:
+> >
+> > [..]
+> >>>>>> User xattrs are less protected than security xattrs. You are exposing the
+> >>>>>> security xattrs on the guest to the possible whims of a malicious, unprivileged
+> >>>>>> actor on the host. All it needs is the right UID.
+> >>>>> Yep, we realise that; but when you're mainly interested in making sure
+> >>>>> the guest can't attack the host, that's less worrying.
+> >>>> That's uncomfortable.
+> >>> Why exactly?
+> >> If a mechanism is designed with a known vulnerability you
+> >> fail your validation/evaluation efforts.
+> > We are working with the constraint that shared directory should not be
+> > accessible to unpriviliged users on host. And with that constraint, what
+> > you are referring to is not a vulnerability.
 > 
-> On the other hand, secret injection mechanisms in SEV-SNP and TDX are
-> different beasts than the one used here (SEV).  In SEV the secrets must
-> be injected at VM launch time; so when OVMF runs and kernel efistub runs
-> the secrets are already there (patches 1+2).  However, in SNP there's no
-> secret injection at launch; (/me hand-waving) the guest can securely
-> talk with the PSP hardware, check the attestation, and if OK then
-> securely contact some Guest Owner secret provider to get the required
-> secrets.  Not sure it makes sense for the kernel to be part of this
-> "getting secrets from secret provider and exposing them in securityfs".
-
-Which begs the question: why are you even doing this for only SEV
-instead of supporting SEV-SNP/TDX only?
-
-I'm under the impression that people should run only SNP and the
-equivalent of that in TDX, guests but not those earlier technologies
-which are lacking in some situations.
-
-> So maybe for regular SEV we'll use this sev_secret module to get one
-> secret which will allow the guest to contact to the Guest Owner secret
-> provider (and from here continue like SNP or TDX).  Brijesh (AMD) also
-> suggested collapsing the proposed sev_secret module into the new
-> sev-guest module ("[PATCH Part1 RFC v3 22/22] virt: Add SEV-SNP guest
-> driver", sent 2021-06-02),
-
-Which reminds me - I still need to take a look at that one.
-
-> and the logic suggested here will be used when SNP is not active.
->
-> Or taking a step back: Maybe the kernel should not try to unify
-> SEV/SEV-SNP/TDX/PEF/s390x-SE.  Each should have its own API.  A
-> userspace process will have to understand what is available and get the
-> required info to run the application in a confidential environment.
+> Sure, that's quite reasonable for your use case. It doesn't mean
+> that the vulnerability doesn't exist, it means you've mitigated it. 
 > 
-> Or maybe we can find an API that fits all these confidential computing
-> mechanisms and expose a unified API that hides the underlying
-> implementation.
 > 
-> (I'm not really sure - that's the reason this is an RFC series.)
-
-I'm gravitating towards a common API so that userspace doesn't have to
-care. But that comes at the price of having to define that API properly
-so that it fits them all. And we all know how that bikeshedding works.
-
-:-\
-
-> When I wrote this I didn't yet encounter "coco" as an abbreviation. Now
-> there's a linux-coco mailing list, but I saw no other mentions of it in
-> the kernel (as an abbreviation for confidential computing).
-
-That's what Joerg and me came up with - "coco" :-)
-
-> I agree that the full term is too long; I considered conf-comp (but in
-> my mind "conf" is short for "configuration").  I used it in one place:
-> "ConfCompSecret" in patch 2/3.
+> >> Your mechanism is
+> >> less general because other potential use cases may not be
+> >> as cavalier about the vulnerability.
+> > Prefixing xattrs with "user.virtiofsd" is just one of the options.
+> > virtiofsd has the capability to prefix "trusted.virtiofsd" as well.
+> > We have not chosen that because we don't want to give it CAP_SYS_ADMIN.
+> >
+> > So other use cases which don't like prefixing "user.virtiofsd", can
+> > give CAP_SYS_ADMIN and work with it.
+> >
+> >> I think that you can
+> >> approach this differently, get a solution that does everything
+> >> you want, and avoid the known problem.
+> > What's the solution? Are you referring to using "trusted.*" instead? But
+> > that has its own problem of giving CAP_SYS_ADMIN to virtiofsd.
 > 
-> If as a community we settle on coco / CoCo / COCO then I agree these
-> should be renamed.
-> 
-> (in QEMU they use CGS = Confidential Guest Support [1].)
+> I'm coming to the conclusion that xattr namespaces, analogous
+> to user namespaces, are the correct solution. They generalize
+> for multiple filesystem and LSM use cases. The use of namespaces
+> is well understood, especially in the container community. It
+> looks to me as if it would address your use case swimmingly.
 
-That's not bad too.
+Even if xattrs were namespaced, I am not sure it solves the issue
+of unpriviliged UID being able to modify security xattrs of file.
+If it happens to be correct UID, it should be able to spin up a
+user namespace and modify namespaced xattrs?
 
-Thx.
+Anyway, once namespaced xattrs are available, I will gladly make use
+of it. But that probably should not be a blocker for this patch.
 
--- 
-Regards/Gruss,
-    Boris.
+Vivek
 
-SUSE Software Solutions Germany GmbH, GF: Felix Imendörffer, HRB 36809, AG Nürnberg
