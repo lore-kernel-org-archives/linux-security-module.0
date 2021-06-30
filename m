@@ -2,154 +2,93 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 954B1C11F65
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 16:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F8A7C11F65
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 19:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77A6861456
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 16:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31C8261449
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 19:18:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230191AbhF3QMO (ORCPT
+        id S233400AbhF3TU2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jun 2021 12:12:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:32768 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231414AbhF3QML (ORCPT
+        Wed, 30 Jun 2021 15:20:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233536AbhF3TU2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jun 2021 12:12:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625069382;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=52V6002QO3cX0YhTEgm8sdsHZhDo4SqxSLMck++RLBo=;
-        b=Rzv72QdaCJke0/kFT1V1m97U0b/qRU+ukqTtLT6lHdaV3tJsvra2LiwwqSYuQo7yOxhB0N
-        w1cXvXuQVCYxIbcTglQPLHJ18rydoMG5VjxUrWIar+naea3Cjz5tL1jnKBraVMgMhF+Et7
-        Q4gSk9P0UFlZARDcDdu86bxlo9iBVlw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-122-AQW-WcG6PSq609UJqweyuA-1; Wed, 30 Jun 2021 12:09:38 -0400
-X-MC-Unique: AQW-WcG6PSq609UJqweyuA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 542EB18414A2;
-        Wed, 30 Jun 2021 16:09:37 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-222.rdu2.redhat.com [10.10.115.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A7E2E5C1A3;
-        Wed, 30 Jun 2021 16:09:33 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 4052122054F; Wed, 30 Jun 2021 12:09:33 -0400 (EDT)
-Date:   Wed, 30 Jun 2021 12:09:33 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Daniel Walsh <dwalsh@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <20210630160933.GC75386@redhat.com>
-References: <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
- <YNrhQ9XfcHTtM6QA@work-vm>
- <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
- <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
- <YNvvLIv16jY8mfP8@mit.edu>
- <YNwmXOqT7LgbeVPn@work-vm>
- <YNyECw/1FzDCW3G8@mit.edu>
+        Wed, 30 Jun 2021 15:20:28 -0400
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FE8C0617AE
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 12:17:59 -0700 (PDT)
+Received: by mail-lj1-x230.google.com with SMTP id q4so4757838ljp.13
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 12:17:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4T+GID+oMnIZlCqDCJF0ldXeQDAkPgspY/ySOTASFzI=;
+        b=OsGeYpUKTFPyN5n360XNZX8s/aqdMHN9tQztcumkZMUEG0EKEgHA2J/bHBhbdu8wiR
+         ClWnoPCQmYWxP2n/dlnN1fE0QB/HOvPEfl0TYUAdfEux0/vvSPpQzzuxcD9wpjOUwDnm
+         ODKvHI15ym8cJPnCdDXTIIdO883VCyNE7rJaA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4T+GID+oMnIZlCqDCJF0ldXeQDAkPgspY/ySOTASFzI=;
+        b=TyhjhbLiszZSa+kiIL5nadpxka++U4SBq/Qi4CTNX2GQS7yJtg1ON8EZwpJmjoCmJ7
+         M5OWxGxlFkinp2cw2/gzDLVuizbt7TkHUl07MII86TH+FrYNU8/qNU/RHc6xzjMoZ7W3
+         rSfj4S/XeSog9SPM3KoTuf63W4by2HhLhV5jR3/KzZPN6NQUNn4EWr7DiR9Jluou7usB
+         bgEuy6tK0tleHWWyp6wa0dFWYfHubeB5dMnwCkV/bWcsRQ/dIML1DtRQgnJ9tMe4B+Ie
+         WIEiD98XZMEQ3X/TF/YfQnbSSEq+iPrPDs9BV9mPyybQ75HdMBrqrkOKtXA9ZxC1GpIt
+         kv1Q==
+X-Gm-Message-State: AOAM5337K2s+Yo8/SD5YD5anCtZugzzyhhibAvSmMkyI67IuEbF8BtaZ
+        59c8wWn+XDVda0aluIzh6KqWsRXzmukhSE/CzmM=
+X-Google-Smtp-Source: ABdhPJwPjLlfllVP9rM5PwmuMZ75Y5zE2kWOVSKm9RbR7q1GhCjzrFwR+r+8LduWIQanbU5MRYp7cQ==
+X-Received: by 2002:a2e:9e95:: with SMTP id f21mr8719783ljk.137.1625080677107;
+        Wed, 30 Jun 2021 12:17:57 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id bq4sm1998556lfb.97.2021.06.30.12.17.55
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jun 2021 12:17:56 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id a18so7083312lfs.10
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 12:17:55 -0700 (PDT)
+X-Received: by 2002:a19:7d04:: with SMTP id y4mr27583898lfc.201.1625080675538;
+ Wed, 30 Jun 2021 12:17:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNyECw/1FzDCW3G8@mit.edu>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+References: <20210629213421.60320-1-stefanb@linux.vnet.ibm.com> <20210629213421.60320-2-stefanb@linux.vnet.ibm.com>
+In-Reply-To: <20210629213421.60320-2-stefanb@linux.vnet.ibm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 30 Jun 2021 12:17:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgVZ6PUJ6Q=vqnhSkHnE2Rvr72xPFjoRU4=HHn-Rqxu4w@mail.gmail.com>
+Message-ID: <CAHk-=wgVZ6PUJ6Q=vqnhSkHnE2Rvr72xPFjoRU4=HHn-Rqxu4w@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] certs: Trigger creation of RSA module signing key
+ if it's not an RSA key
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, keyrings@vger.kernel.org,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 30, 2021 at 10:47:39AM -0400, Theodore Ts'o wrote:
-> On Wed, Jun 30, 2021 at 09:07:56AM +0100, Dr. David Alan Gilbert wrote:
-> > * Theodore Ts'o (tytso@mit.edu) wrote:
-> > > On Tue, Jun 29, 2021 at 04:28:24PM -0400, Daniel Walsh wrote:
-> > > > All this conversation is great, and I look forward to a better solution, but
-> > > > if we go back to the patch, it was to fix an issue where the kernel is
-> > > > requiring CAP_SYS_ADMIN for writing user Xattrs on link files and other
-> > > > special files.
-> > > > 
-> > > > The documented reason for this is to prevent the users from using XATTRS to
-> > > > avoid quota.
-> > > 
-> > > Huh?  Where is it so documented?
-> > 
-> > man xattr(7):
-> >        The  file permission bits of regular files and directories are
-> >        interpreted differently from the file permission bits of special
-> >        files and symbolic links.  For regular files and directories the
-> >        file permission bits define access to the file's contents,
-> >        while for device special files they define access to the device
-> >        described by the special file.  The file permissions of symbolic
-> >        links are not used in access checks.
-> 
-> All of this is true...
-> 
-> >         *** These differences would
-> >        allow users to consume filesystem resources in a way not
-> >        controllable by disk quotas for group or world writable special
-> >        files and directories.****
-> 
-> Anyone with group write access to a regular file can append to the
-> file, and the blocks written will be charged the owner of the file.
-> So it's perfectly "controllable" by the quota system; if you have
-> group write access to a file, you can charge against the user's quota.
-> This is Working As Intended.
-> 
-> And the creation of device special files take the umask into account,
-> just like regular files, so if you have a umask that allows newly
-> created files to be group writeable, the same issue would occur for
-> regular files as device files.  Given that most users have a umask of
-> 0077 or 0022, this is generally Not A Problem.
-> 
-> I think I see the issue which drove the above text, though, which is
-> that Linux's syscall(2) is creating symlinks which do not take umask
-> into account; that is, the permissions are always mode ST_IFLNK|0777.
+On Tue, Jun 29, 2021 at 2:34 PM Stefan Berger
+<stefanb@linux.vnet.ibm.com> wrote:
+>
+> Address a kbuild issue where a developer created an ECDSA key for signing
+> kernel modules and then builds an older version of the kernel, when bi-
+> secting the kernel for example, that does not support ECDSA keys.
 
-IIUC, idea is to use permission bits on symlink to decide whether caller
-can read/write user.* xattrs (like regular file). Hence create symlinks
-while honoring umask (or default posix acl on dir) and modify relevant
-code for file creation. Also that possibly will require changing chmod
-to allow chaging mode on chmod. 
+Thanks, these two don't confuse me any more.
 
-Vivek
-
-> 
-> Hence, it might be that the right answer is to remove this fairly
-> arbitrary restriction entirely, and change symlink(2) so that it
-> creates files which respects the umask.  Posix and SUS doesn't specify
-> what the permissions are that are used, and historically (before the
-> advent of xattrs) I suspect since it didn't matter, no one cared about
-> whether or not umask was applied.
-> 
-> Some people might object to such a change arguing that with
-> pre-existing file systems where there are symlinks which
-> world-writeable, this might cause people to be able to charge up to
-> 32k (or whatever the maximum size of the xattr supported by the file
-> system) for each symlink.  However, (a) very few people actually use
-> quotas, and this would only be an issue for those users, and (b) the
-> amount of quota "abuse" that could be carried out this way is small
-> enough that I'm not sure it matters.
-> 
->      	    	  	      	  - Ted
-> 
-
+                Linus
