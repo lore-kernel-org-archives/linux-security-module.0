@@ -2,88 +2,118 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43626C11F65
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 20:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558EFC11F65
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 20:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29EA161454
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 20:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B01761457
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 20:33:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234905AbhF3UYy (ORCPT
+        id S234426AbhF3Ufj (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jun 2021 16:24:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49140 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234890AbhF3UYy (ORCPT
+        Wed, 30 Jun 2021 16:35:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47005 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234478AbhF3Ufi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jun 2021 16:24:54 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E936BC061756
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 13:22:23 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id l24so5007426edr.11
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 13:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=PImIOt51jDKDCmCJ/0hr5VWTombGFAivqhWe2AxFwn8=;
-        b=QOxYdtn/vWyv8gwk/dWsQZjWjHT2G4lNmAfD/biG3tk5sy6DZUSmpiCGkYj/LpGkww
-         8gA3xS19cxhZa7iNGZF6OvZFPtOMnYFxLdt3xvWYxnf149qH3eAj+GN1TQDfdQVp60Jb
-         evhD6bMXLujlV/obFZn1I8sE2Mm3QvaSqIZBI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=PImIOt51jDKDCmCJ/0hr5VWTombGFAivqhWe2AxFwn8=;
-        b=f4ijl7ZDcYmQl7joje/55AjMgCVTeMDkwMsl0ZyoUc4b1r/PrRRaG1BHbbtlJuA2HB
-         T5ytpsn21ceJUD604YBuZLSL/5LXySXp0N9IJgGwh2Hga28vYX8GQi9kC29hxoPC0cgu
-         lgo0phz7r/J1y+FcLCPMGA16UTzbUYyMZ79wcZ2Koj7Vj4OcJt/TfazvwbItQKaGCaP9
-         Frq+5Rgf4ubMnHiQI13eEx+zkthhBeJ5zzGLN4G9FiWv42iUW3ORQ8bAS5pOs2qzlSdR
-         YIWlHRq0c/hpkQhvrFeFX31SCPhX/yXaBFzpC9zR0626cOf+TNroOnwIjYheezkuo7Wg
-         Laeg==
-X-Gm-Message-State: AOAM532LEjTkLlufGp2xUEr5EqhIG7nvbJXBLwEdG1kQ8HUOG/VIRYXO
-        ULUu63PEbdqyCuWoLt7FopJH9NaIGblCQ1X4gsyfaw==
-X-Google-Smtp-Source: ABdhPJy7u84dJq/DmHkKhh2+ktLunIqakK5FT1750p6s3XEvk6F66J/QiB96iLt40pM7ZRmwckZk+cfrBJtZbwJ3F6Q=
-X-Received: by 2002:a05:6402:10cc:: with SMTP id p12mr49652298edu.328.1625084542606;
- Wed, 30 Jun 2021 13:22:22 -0700 (PDT)
+        Wed, 30 Jun 2021 16:35:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625085188;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1BKKapww4d5wegIAyWjvMjJRL130mUGbMRABPEvALVk=;
+        b=RreKXCUdGt190xa4u/9Ah3FSZ66q61MsojLvOB/oyoagBVnFjRuVFlYuVNwHN0lHHxnwVF
+        gojT3ier9ckWFgQN8U0vDhkOlSwqd9WGhTceKfivdrFGOwCEgl98bt9Z1npmT2L8QO0tVR
+        myUBMnb09Fv4mMs+AXUqdtHUTikdgxk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-316-3HmKpcuZNr2C0JrClYUolw-1; Wed, 30 Jun 2021 16:33:04 -0400
+X-MC-Unique: 3HmKpcuZNr2C0JrClYUolw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 51B45100CCC0;
+        Wed, 30 Jun 2021 20:33:03 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-115-222.rdu2.redhat.com [10.10.115.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7088B10027A5;
+        Wed, 30 Jun 2021 20:32:59 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 9E1AE22054F; Wed, 30 Jun 2021 16:32:58 -0400 (EDT)
+Date:   Wed, 30 Jun 2021 16:32:58 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Daniel Walsh <dwalsh@redhat.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Schaufler, Casey" <casey.schaufler@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
+        "berrange@redhat.com" <berrange@redhat.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
+ files if caller has CAP_SYS_RESOURCE
+Message-ID: <20210630203258.GE75386@redhat.com>
+References: <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
+ <20210629152007.GC5231@redhat.com>
+ <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
+ <20210629173530.GD5231@redhat.com>
+ <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
+ <YNvvLIv16jY8mfP8@mit.edu>
+ <YNwmXOqT7LgbeVPn@work-vm>
+ <YNyECw/1FzDCW3G8@mit.edu>
+ <YNyHVhGPe1bFAt+C@work-vm>
+ <YNzNLTxflKbDi8W2@mit.edu>
 MIME-Version: 1.0
-From:   Micah Morton <mortonm@chromium.org>
-Date:   Wed, 30 Jun 2021 10:22:11 -1000
-Message-ID: <CAJ-EccODUD45ZFgqqSxwZ9-DkqJL7F9fYOiHt+2tLZBss3VoAA@mail.gmail.com>
-Subject: [GIT PULL] SafeSetID changes for v5.14
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YNzNLTxflKbDi8W2@mit.edu>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The following changes since commit 614124bea77e452aa6df7a8714e8bc820b489922:
+On Wed, Jun 30, 2021 at 03:59:41PM -0400, Theodore Ts'o wrote:
+> On Wed, Jun 30, 2021 at 04:01:42PM +0100, Dr. David Alan Gilbert wrote:
+> > 
+> > Even if you fix symlinks, I don't think it fixes device nodes or
+> > anything else where the permissions bitmap isn't purely used as the
+> > permissions on the inode.
+> 
+> I think we're making a mountain out of a molehill.  Again, very few
+> people are using quota these days.  And if you give someone write
+> access to a 8TB disk, do you really care if they can "steal" 32k worth
+> of space (which is the maximum size of an xattr, enforced by the VFS).
 
-  Linux 5.13-rc5 (2021-06-06 15:47:27 -0700)
+So that should be N * 32K per inode, where N is number of user xattrs
+one can write on the inode. (user.1, user.2, user.3, .., user.N)?
 
-are available in the Git repository at:
+Vivek
 
-  https://github.com/micah-morton/linux.git tags/safesetid-5.14
+> 
+> OK, but what about character mode devices?  First of all, most users
+> don't have access to huge number of devices, but let's assume
+> something absurd.  Let's say that a user has write access to *1024*
+> devices.  (My /dev has 233 character mode devices, and I have write
+> access to well under a dozen.)
+> 
+> An 8TB disk costs about $200.  So how much of the "stolen" quota space
+> are we talking about, assuming the user has access to 1024 devices,
+> and the file system actually supports a 32k xattr.
+> 
+>     32k * 1024 * $200 / 8TB / (1024*1024*1024) = $0.000763 = 0.0763 cents
+> 
+> A 2TB SSD is less around $180, so even if we calculate the prices
+> based on SSD space, we're still talking about a quarter of a penny.
+> 
+> Why are we worrying about this?
+> 
+> 						- Ted
+> 
 
-for you to fetch changes up to 1b8b719229197b7afa1b1191e083fb41ace095c5:
-
-  LSM: SafeSetID: Mark safesetid_initialized as __initdata (2021-06-10
-09:52:32 -0700)
-
-----------------------------------------------------------------
-Just a single change that marks a variable as __initdata.
-
-This change has been in -next for a few weeks now.
-
-No other work was done on SafeSetID for the 5.14 merge window.
-
-----------------------------------------------------------------
-Austin Kim (1):
-      LSM: SafeSetID: Mark safesetid_initialized as __initdata
-
- security/safesetid/lsm.c | 2 +-
- security/safesetid/lsm.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
