@@ -2,167 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-26.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058C5C11F65
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 08:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D5AC11F69
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 09:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E4F0861D0B
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 08:08:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B6661D08
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 09:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbhF3IKd (ORCPT
+        id S233766AbhF3JkO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jun 2021 04:10:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26085 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S233050AbhF3IKa (ORCPT
+        Wed, 30 Jun 2021 05:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45886 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233750AbhF3JkN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jun 2021 04:10:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625040481;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=spXMVCuw6N13xLjcZGemYJM/fS6G+xh95O5x4vR27TA=;
-        b=CcYmw4nplxYtpC1ZViJHKRq54xunSliY9+EhQ2/fd0BhkNJE5YUwpuTqNXjBkFrEWJiuRa
-        5NnpPtQyDlNVWFiyAVVghViEEy4Ybg6b+arZeOxSWPK4rYm1TMlQZpvJQ6GkWik9F1XJaD
-        H2zCHJOIDtg8gVnh0lGbe7oeB2yfX7Q=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-27-x1suXTlMOpWTKnE_shLBrQ-1; Wed, 30 Jun 2021 04:08:00 -0400
-X-MC-Unique: x1suXTlMOpWTKnE_shLBrQ-1
-Received: by mail-wr1-f72.google.com with SMTP id h104-20020adf90710000b029010de8455a3aso554269wrh.12
-        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 01:08:00 -0700 (PDT)
+        Wed, 30 Jun 2021 05:40:13 -0400
+Received: from mail-wm1-x349.google.com (mail-wm1-x349.google.com [IPv6:2a00:1450:4864:20::349])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7687C061766
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 02:37:43 -0700 (PDT)
+Received: by mail-wm1-x349.google.com with SMTP id 13-20020a1c010d0000b02901eca51685daso2504090wmb.3
+        for <linux-security-module@vger.kernel.org>; Wed, 30 Jun 2021 02:37:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=JhgrCS9Vj640V8x1cFNbO5yNaZtMM+Zz5JPkP+NN88k=;
+        b=hOGR+88o6wgh2BS77C9e3IW5lpLeoKlfQpOyo0vBRi0/nOkMjDwyqlhB1sCe+OArkh
+         9qxed+lEX/yr9DODAh2C+/67NHa38Ru3QIfEuTWy+N0mZPdR3yc9FmtU7HR5TSYrw4XR
+         Pnbphx2nxpTq0y3aE6Xf1wIJNFBrQor8dRtXxpwz+UWHJbubCIMHVOdhrDBe7YaQ9KF1
+         N4zqbDnQD4evL1iqNYm8CkXIeoIU8aKeMUq622KMpnRNff716iQW6ahiSRDH2jjddvWf
+         dHcLiyQq9vn9oEC7xE6//J8vX3Onwt2Syz6i/JKPiGuxKlfK/BuNH3TSq8mNnz0JrMNR
+         /Kmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=spXMVCuw6N13xLjcZGemYJM/fS6G+xh95O5x4vR27TA=;
-        b=BmTTYpf+u6sFg8TPRwCeQ1proTBi4urdjLqcbrukhlMNZhN9HgnB+41JrA30cMcdTu
-         iaWeI/IadvmXApI5C3JS4xAKfPXoEvwGteUSCCdqIA45aHdGqBMfAzU2EBslMTVianCF
-         9r4GMe6M1UIcVJjPJ/Hp9yDTOukBPy/gdZ6wRsUlbewtQP3mWB/ymQicAKeLVOVwLWCo
-         jr2hhgVQzuia5HNeqMCsv+vfWPC/FWCRtrXs0UXDLl2Ao50nLPRUCf+VXxszeoK8nl5N
-         6Z+b7hwp2cvJZNIbQAJyKnSTJurvvbCsYprzPd9GIvcEnklVtzwewfJYG+1yaRXSWgvb
-         DO6Q==
-X-Gm-Message-State: AOAM532TrHyNQxLGgG0gvXQcMP2aZXxIjgA3IlKL47vzBJiheUTZK3IY
-        2/s4hv238B5CLhZC32gBMFW7Y/bWkCwClBrei6P9D1t+ruYDFGSnUhJjF8U05kGH5JpqO0c/q15
-        ZFxw3DSBiemuq9Gwe6Xs8YeNz4y0/LWpJ0JV7
-X-Received: by 2002:a05:600c:4f8a:: with SMTP id n10mr3045915wmq.11.1625040479514;
-        Wed, 30 Jun 2021 01:07:59 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxhZXi0exlmVWXNW1b1HA6azTiENG2juGHvNPkDsRCdeTCmLeynlOmWabasKRpCJAXel/C2Tw==
-X-Received: by 2002:a05:600c:4f8a:: with SMTP id n10mr3045884wmq.11.1625040479197;
-        Wed, 30 Jun 2021 01:07:59 -0700 (PDT)
-Received: from work-vm (cpc109021-salf6-2-0-cust453.10-2.cable.virginm.net. [82.29.237.198])
-        by smtp.gmail.com with ESMTPSA id m7sm22064425wrv.35.2021.06.30.01.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jun 2021 01:07:58 -0700 (PDT)
-Date:   Wed, 30 Jun 2021 09:07:56 +0100
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Daniel Walsh <dwalsh@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <YNwmXOqT7LgbeVPn@work-vm>
-References: <5d8f033c-eba2-7a8b-f19a-1005bbb615ea@schaufler-ca.com>
- <YNn4p+Zn444Sc4V+@work-vm>
- <a13f2861-7786-09f4-99a8-f0a5216d0fb1@schaufler-ca.com>
- <YNrhQ9XfcHTtM6QA@work-vm>
- <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
- <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
- <YNvvLIv16jY8mfP8@mit.edu>
-MIME-Version: 1.0
-In-Reply-To: <YNvvLIv16jY8mfP8@mit.edu>
-User-Agent: Mutt/2.0.7 (2021-05-04)
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dgilbert@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=JhgrCS9Vj640V8x1cFNbO5yNaZtMM+Zz5JPkP+NN88k=;
+        b=l478V+HdzT5g40nE5RoFWszpJFybIHNC2t+6AcDinGgAdgDQ8VjWLTKOlMZDfpYSIu
+         3AmXElQCso9kXzfLvOvKVdqQ7OjYbxSvop6Y2GgDU1OADZwqbnY7VQs+H5NtvuBvP4FV
+         MmztWlA+snLA+haKwect05MnG1P0Q5q+HvREaDCXo783p9ADQyGSPNPYyBmedGJDZuLh
+         5kVasTi1d14K1kM2vulcJlCV3NNWa6XEskAJ2YcCb0l2hPe7tYZUnd+hDfNwqqQAffLE
+         X/QeiQlvEFA+6NfEyRc6K282K5UpgRuFvWiJCA3AdcBP8letSxTHzsM9VbJx3bG1kbBB
+         MkUA==
+X-Gm-Message-State: AOAM533ZpmYHXFGpHR+JDUEOtDXwTOtjNwipwIcBc1nstJT0Wyf3uptt
+        ey01Gsc6sebOPbx7sPQQMq8YkYBPsg==
+X-Google-Smtp-Source: ABdhPJy8vek+rU0qtXlFDtYJdt3+PNfx3+B41Bo8Y+sjctSSWlzprffXwO4wD8JBVvpgXgYl9+b5QOromw==
+X-Received: from elver.muc.corp.google.com ([2a00:79e0:15:13:d0e2:84e5:6f2a:9752])
+ (user=elver job=sendgmr) by 2002:a1c:e486:: with SMTP id b128mr3501221wmh.58.1625045861994;
+ Wed, 30 Jun 2021 02:37:41 -0700 (PDT)
+Date:   Wed, 30 Jun 2021 11:37:09 +0200
+Message-Id: <20210630093709.3612997-1-elver@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.32.0.93.g670b81a890-goog
+Subject: [PATCH] perf: Require CAP_KILL if sigtrap is requested
+From:   Marco Elver <elver@google.com>
+To:     elver@google.com, peterz@infradead.org
+Cc:     tglx@linutronix.de, mingo@kernel.org, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, serge@hallyn.com, mingo@redhat.com,
+        acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-security-module@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Eric Biederman <ebiederm@xmission.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Theodore Ts'o (tytso@mit.edu) wrote:
-> On Tue, Jun 29, 2021 at 04:28:24PM -0400, Daniel Walsh wrote:
-> > All this conversation is great, and I look forward to a better solution, but
-> > if we go back to the patch, it was to fix an issue where the kernel is
-> > requiring CAP_SYS_ADMIN for writing user Xattrs on link files and other
-> > special files.
-> > 
-> > The documented reason for this is to prevent the users from using XATTRS to
-> > avoid quota.
-> 
-> Huh?  Where is it so documented?
+If perf_event_open() is called with another task as target and
+perf_event_attr::sigtrap is set, and the target task's user does not
+match the calling user, also require the CAP_KILL capability.
 
-man xattr(7):
+Otherwise, with the CAP_PERFMON capability alone it would be possible
+for a user to send SIGTRAP signals via perf events to another user's
+tasks. This could potentially result in those tasks being terminated if
+they cannot handle SIGTRAP signals.
 
-       The  file permission bits of regular files and directories are
-       interpreted differently from the file permission bits of special
-       files and symbolic links.  For regular files and directories the
-       file permission bits define ac‐ cess to the file's contents,
-       while for device special files they define access to the device
-       described by the special file.  The file permissions of symbolic
-       links are not used in access checks. *** These differences would
-       al‐ low users to consume filesystem resources in a way not
-       controllable by disk quotas for group or world writable special
-       files and directories.****
+Fixes: 97ba62b27867 ("perf: Add support for SIGTRAP on perf events")
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Marco Elver <elver@google.com>
+---
+ include/linux/capability.h |  5 +++++
+ kernel/events/core.c       | 13 ++++++++++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
 
-       ***For  this reason, user extended attributes are allowed only
-       for regular files and directories ***, and access to user extended
-       attributes is restricted to the owner and to users with appropriate
-       capabilities for directories with the sticky bit set (see the
-       chmod(1) manual page for an explanation of the sticky bit).
-
-(***'s my addition)
-
-
-Dave
-
->  How file systems store and account
-> for space used by extended attributes is a file-system specific
-> question, but presumably any way that xattr's on regular files are
-> accounted could also be used for xattr's on special files.
-> 
-> Also, xattr's are limited to 32k, so it's not like users can evade
-> _that_ much quota space, at least not without it being pretty painful.
-> (Assuming that quota is even enabled, which most of the time, it
-> isn't.)
-> 
-> 						- Ted
-> 
-> P.S.  I'll note that if ext4's ea_in_inode is enabled, for large
-> xattr's, if you have 2 million files that all have the same 12k
-> windows SID stored as an xattr, ext4 will store that xattr only once.
-> Those two million files might be owned by different uids, so we made
-> an explicit design choice not to worry about accounting for the quota
-> for said 12k xattr value.  After all, if you can save the space and
-> access cost of 2M * 12k if each file had to store its own copy of that
-> xattr, perhaps not including it in the quota calculation isn't that
-> bad.  :-)
-> 
-> We also don't account for the disk space used by symbolic links (since
-> sometimes they can be stored in the inode as fast symlinks, and
-> sometimes they might consume a data block).  But again, that's a file
-> system specific implementation question.
-> 
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 65efb74c3585..1c6be4743dbe 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -264,6 +264,11 @@ static inline bool bpf_capable(void)
+ 	return capable(CAP_BPF) || capable(CAP_SYS_ADMIN);
+ }
+ 
++static inline bool kill_capable(void)
++{
++	return capable(CAP_KILL) || capable(CAP_SYS_ADMIN);
++}
++
+ static inline bool checkpoint_restore_ns_capable(struct user_namespace *ns)
+ {
+ 	return ns_capable(ns, CAP_CHECKPOINT_RESTORE) ||
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index fe88d6eea3c2..1ab4bc867531 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -12152,10 +12152,21 @@ SYSCALL_DEFINE5(perf_event_open,
+ 	}
+ 
+ 	if (task) {
++		bool is_capable;
++
+ 		err = down_read_interruptible(&task->signal->exec_update_lock);
+ 		if (err)
+ 			goto err_file;
+ 
++		is_capable = perfmon_capable();
++		if (attr.sigtrap) {
++			/*
++			 * perf_event_attr::sigtrap sends signals to the other
++			 * task. Require the current task to have CAP_KILL.
++			 */
++			is_capable &= kill_capable();
++		}
++
+ 		/*
+ 		 * Preserve ptrace permission check for backwards compatibility.
+ 		 *
+@@ -12165,7 +12176,7 @@ SYSCALL_DEFINE5(perf_event_open,
+ 		 * perf_event_exit_task() that could imply).
+ 		 */
+ 		err = -EACCES;
+-		if (!perfmon_capable() && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
++		if (!is_capable && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+ 			goto err_cred;
+ 	}
+ 
 -- 
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+2.32.0.93.g670b81a890-goog
 
