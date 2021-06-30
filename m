@@ -2,118 +2,65 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558EFC11F65
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 20:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01519C11F69
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 22:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B01761457
-	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 20:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5CD961469
+	for <linux-security-module@archiver.kernel.org>; Wed, 30 Jun 2021 22:34:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234426AbhF3Ufj (ORCPT
+        id S231864AbhF3Wgd (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 30 Jun 2021 16:35:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47005 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234478AbhF3Ufi (ORCPT
+        Wed, 30 Jun 2021 18:36:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57734 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229818AbhF3Wgc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 30 Jun 2021 16:35:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1625085188;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1BKKapww4d5wegIAyWjvMjJRL130mUGbMRABPEvALVk=;
-        b=RreKXCUdGt190xa4u/9Ah3FSZ66q61MsojLvOB/oyoagBVnFjRuVFlYuVNwHN0lHHxnwVF
-        gojT3ier9ckWFgQN8U0vDhkOlSwqd9WGhTceKfivdrFGOwCEgl98bt9Z1npmT2L8QO0tVR
-        myUBMnb09Fv4mMs+AXUqdtHUTikdgxk=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-316-3HmKpcuZNr2C0JrClYUolw-1; Wed, 30 Jun 2021 16:33:04 -0400
-X-MC-Unique: 3HmKpcuZNr2C0JrClYUolw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 51B45100CCC0;
-        Wed, 30 Jun 2021 20:33:03 +0000 (UTC)
-Received: from horse.redhat.com (ovpn-115-222.rdu2.redhat.com [10.10.115.222])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7088B10027A5;
-        Wed, 30 Jun 2021 20:32:59 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9E1AE22054F; Wed, 30 Jun 2021 16:32:58 -0400 (EDT)
-Date:   Wed, 30 Jun 2021 16:32:58 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Daniel Walsh <dwalsh@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "virtio-fs@redhat.com" <virtio-fs@redhat.com>,
-        "berrange@redhat.com" <berrange@redhat.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/1] xattr: Allow user.* xattr on symlink/special
- files if caller has CAP_SYS_RESOURCE
-Message-ID: <20210630203258.GE75386@redhat.com>
-References: <e6f9ed0d-c101-01df-3dff-85c1b38f9714@schaufler-ca.com>
- <20210629152007.GC5231@redhat.com>
- <78663f5c-d2fd-747a-48e3-0c5fd8b40332@schaufler-ca.com>
- <20210629173530.GD5231@redhat.com>
- <f4992b3a-a939-5bc4-a5da-0ce8913bd569@redhat.com>
- <YNvvLIv16jY8mfP8@mit.edu>
- <YNwmXOqT7LgbeVPn@work-vm>
- <YNyECw/1FzDCW3G8@mit.edu>
- <YNyHVhGPe1bFAt+C@work-vm>
- <YNzNLTxflKbDi8W2@mit.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YNzNLTxflKbDi8W2@mit.edu>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+        Wed, 30 Jun 2021 18:36:32 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPS id 0DE6961469;
+        Wed, 30 Jun 2021 22:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625092443;
+        bh=TFMn0fKbMGoLdQaWKKcnvS4bWRJTTA+Uej136tQWgys=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Pzx7XcH4jZDSVecN+RdnWMGt1lskSgZffAHBtp+vHH+uTqOJQakOy9rYCkAWk9QQ+
+         ynGQv+EZd9tdgG1axqCPqHi947LaIRHxQOAUYyNYr915rGL4V3y6OZOJ1w6wr1kAl5
+         pMKZNbIT463p+OkRvbCJrnDpfPHL0cEsOdN911Okt+vdLUGDjq6YUkWYfe7gYU6sxL
+         pSMhCFlQoHBnQEJXpALbvQds4GAHDcGIT2HTj+cn6WopQPhqTlg7d/R9C5OoU/g4Sm
+         so0tgQWo+KxGvly6DYzwPkwRCyg7/xjdbd1sGiLfdsVKbY0vcUmjPgt5tvakBCtQhb
+         Ca3yDa1XzWE1A==
+Subject: Re: [GIT PULL] SELinux patches for v5.14
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAHC9VhQb03J_9yWKViZb+wD=pMfFQb+FyYwHYndYZTfRdJ8oLg@mail.gmail.com>
+References: <CAHC9VhQb03J_9yWKViZb+wD=pMfFQb+FyYwHYndYZTfRdJ8oLg@mail.gmail.com>
+X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAHC9VhQb03J_9yWKViZb+wD=pMfFQb+FyYwHYndYZTfRdJ8oLg@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20210629
+X-PR-Tracked-Commit-Id: d99cf13f14200cdb5cbb704345774c9c0698612d
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6bd344e55f73f7ae671bf5c1ebe5bd814f3c4b27
+Message-Id: <162509244290.2480.16459133091878287398.pr-tracker-bot@kernel.org>
+Date:   Wed, 30 Jun 2021 22:34:02 +0000
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jun 30, 2021 at 03:59:41PM -0400, Theodore Ts'o wrote:
-> On Wed, Jun 30, 2021 at 04:01:42PM +0100, Dr. David Alan Gilbert wrote:
-> > 
-> > Even if you fix symlinks, I don't think it fixes device nodes or
-> > anything else where the permissions bitmap isn't purely used as the
-> > permissions on the inode.
-> 
-> I think we're making a mountain out of a molehill.  Again, very few
-> people are using quota these days.  And if you give someone write
-> access to a 8TB disk, do you really care if they can "steal" 32k worth
-> of space (which is the maximum size of an xattr, enforced by the VFS).
+The pull request you sent on Tue, 29 Jun 2021 17:36:01 -0400:
 
-So that should be N * 32K per inode, where N is number of user xattrs
-one can write on the inode. (user.1, user.2, user.3, .., user.N)?
+> git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20210629
 
-Vivek
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6bd344e55f73f7ae671bf5c1ebe5bd814f3c4b27
 
-> 
-> OK, but what about character mode devices?  First of all, most users
-> don't have access to huge number of devices, but let's assume
-> something absurd.  Let's say that a user has write access to *1024*
-> devices.  (My /dev has 233 character mode devices, and I have write
-> access to well under a dozen.)
-> 
-> An 8TB disk costs about $200.  So how much of the "stolen" quota space
-> are we talking about, assuming the user has access to 1024 devices,
-> and the file system actually supports a 32k xattr.
-> 
->     32k * 1024 * $200 / 8TB / (1024*1024*1024) = $0.000763 = 0.0763 cents
-> 
-> A 2TB SSD is less around $180, so even if we calculate the prices
-> based on SSD space, we're still talking about a quarter of a penny.
-> 
-> Why are we worrying about this?
-> 
-> 						- Ted
-> 
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
