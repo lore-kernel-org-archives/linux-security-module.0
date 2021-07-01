@@ -2,98 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2763C11F6D
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 20:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 266FEC11F6A
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 21:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99FB4613FE
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 20:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0657261416
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 21:41:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234435AbhGAUpa convert rfc822-to-8bit (ORCPT
+        id S234270AbhGAVn7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Jul 2021 16:45:30 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:51298 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbhGAUp3 (ORCPT
+        Thu, 1 Jul 2021 17:43:59 -0400
+Received: from out02.mta.xmission.com ([166.70.13.232]:58272 "EHLO
+        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229934AbhGAVn6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Jul 2021 16:45:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 6216D6108476;
-        Thu,  1 Jul 2021 22:42:56 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id kLydErpcW5Ws; Thu,  1 Jul 2021 22:42:55 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id C39FC6108472;
-        Thu,  1 Jul 2021 22:42:55 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LbgvkTJUFHdW; Thu,  1 Jul 2021 22:42:55 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 844066083273;
-        Thu,  1 Jul 2021 22:42:55 +0200 (CEST)
-Date:   Thu, 1 Jul 2021 22:42:55 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        kernel <kernel@pengutronix.de>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        horia geanta <horia.geanta@nxp.com>,
-        aymen sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        davem <davem@davemloft.net>, Udit Agarwal <udit.agarwal@nxp.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        david <david@sigma-star.at>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "open list, ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>
-Message-ID: <1850833581.13438.1625172175436.JavaMail.zimbra@nod.at>
-In-Reply-To: <39e6d65ca5d2a0a35fb71d6c1f85add8ee489a19.1624364386.git-series.a.fatoum@pengutronix.de>
-References: <cover.1dfbb73645d917b3c76d01290804a3410bd9932e.1624364386.git-series.a.fatoum@pengutronix.de> <39e6d65ca5d2a0a35fb71d6c1f85add8ee489a19.1624364386.git-series.a.fatoum@pengutronix.de>
-Subject: Re: [PATCH v2 6/6] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
+        Thu, 1 Jul 2021 17:43:58 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lz4R2-00CqTz-JP; Thu, 01 Jul 2021 15:41:24 -0600
+Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:51614 helo=email.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1lz4R1-00CJeQ-F2; Thu, 01 Jul 2021 15:41:24 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Marco Elver <elver@google.com>
+Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
+        omosnace@redhat.com, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
+        Dmitry Vyukov <dvyukov@google.com>
+References: <20210701083842.580466-1-elver@google.com>
+Date:   Thu, 01 Jul 2021 16:41:15 -0500
+In-Reply-To: <20210701083842.580466-1-elver@google.com> (Marco Elver's message
+        of "Thu, 1 Jul 2021 10:38:43 +0200")
+Message-ID: <87h7hdn24k.fsf@disp2133>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF78 (Linux)/8.8.12_GA_3809)
-Thread-Topic: KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
-Thread-Index: g8issG6CVMbkLEBHiev9vrinZL1Dqw==
+Content-Type: text/plain
+X-XM-SPF: eid=1lz4R1-00CJeQ-F2;;;mid=<87h7hdn24k.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1+7+SbuL4vTLyI6IaqmY8TWPh1qYr3dYsI=
+X-SA-Exim-Connect-IP: 68.227.160.95
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2] perf: Require CAP_KILL if sigtrap is requested
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Ahmad,
+Marco Elver <elver@google.com> writes:
 
------ Ursprüngliche Mail -----
-> Von: "Ahmad Fatoum" <a.fatoum@pengutronix.de>
-> +static struct caam_blob_priv *blobifier;
+> If perf_event_open() is called with another task as target and
+> perf_event_attr::sigtrap is set, and the target task's user does not
+> match the calling user, also require the CAP_KILL capability.
+>
+> Otherwise, with the CAP_PERFMON capability alone it would be possible
+> for a user to send SIGTRAP signals via perf events to another user's
+> tasks. This could potentially result in those tasks being terminated if
+> they cannot handle SIGTRAP signals.
+>
+> Note: The check complements the existing capability check, but is not
+> supposed to supersede the ptrace_may_access() check. At a high level we
+> now have:
+>
+> 	capable of CAP_PERFMON and (CAP_KILL if sigtrap)
+> 		OR
+> 	ptrace_may_access() // also checks for same thread-group and uid
+
+Is there anyway we could have a comment that makes the required
+capability checks clear?
+
+Basically I see an inlined version of kill_ok_by_cred being implemented
+without the comments on why the various pieces make sense.
+
+Certainly ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS) should not
+be a check to allow writing/changing a task.  It needs to be
+PTRACE_MODE_ATTACH_REALCREDS, like /proc/self/mem uses.
+
+Now in practice I think your patch probably has the proper checks in
+place for sending a signal but it is far from clear.
+
+Eric
+
+
+> Fixes: 97ba62b27867 ("perf: Add support for SIGTRAP on perf events")
+> Cc: <stable@vger.kernel.org> # 5.13+
+> Reported-by: Dmitry Vyukov <dvyukov@google.com>
+> Signed-off-by: Marco Elver <elver@google.com>
+> ---
+> v2:
+> * Drop kill_capable() and just check CAP_KILL (reported by Ondrej Mosnacek).
+> * Use ns_capable(__task_cred(task)->user_ns, CAP_KILL) to check for
+>   capability in target task's ns (reported by Ondrej Mosnacek).
+> ---
+>  kernel/events/core.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index fe88d6eea3c2..43c99695dc3f 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12152,10 +12152,23 @@ SYSCALL_DEFINE5(perf_event_open,
+>  	}
+>  
+>  	if (task) {
+> +		bool is_capable;
 > +
-> +#define KEYMOD "kernel:trusted"
-
-I'm still think that hard coding the key modifier is not wise.
-As I said[0], there are folks out there that want to provide their own modifier,
-so it is not only about being binary compatible with other CAAM blob patches in the wild.
-
-I'll happily implement that feature after your patches got merged but IMHO we should first agree on an interface.
-How about allowing another optional parameter to Opt_new and Opt_load and having a key modifier
-per struct trusted_key_payload instance?
-
-Thanks,
-//richard
-
-[0]
-https://patchwork.kernel.org/project/linux-crypto/patch/319e558e1bd19b80ad6447c167a2c3942bdafea2.1615914058.git-series.a.fatoum@pengutronix.de/#24085397
-
+>  		err = down_read_interruptible(&task->signal->exec_update_lock);
+>  		if (err)
+>  			goto err_file;
+>  
+> +		is_capable = perfmon_capable();
+> +		if (attr.sigtrap) {
+> +			/*
+> +			 * perf_event_attr::sigtrap sends signals to the other
+> +			 * task. Require the current task to have CAP_KILL.
+> +			 */
+> +			rcu_read_lock();
+> +			is_capable &= ns_capable(__task_cred(task)->user_ns, CAP_KILL);
+> +			rcu_read_unlock();
+> +		}
+> +
+>  		/*
+>  		 * Preserve ptrace permission check for backwards compatibility.
+>  		 *
+> @@ -12165,7 +12178,7 @@ SYSCALL_DEFINE5(perf_event_open,
+>  		 * perf_event_exit_task() that could imply).
+>  		 */
+>  		err = -EACCES;
+> -		if (!perfmon_capable() && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+> +		if (!is_capable && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+>  			goto err_cred;
+>  	}
