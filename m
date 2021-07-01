@@ -2,144 +2,225 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 266FEC11F6A
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 21:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE3DC11F6B
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 23:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0657261416
-	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 21:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8DAE613D6
+	for <linux-security-module@archiver.kernel.org>; Thu,  1 Jul 2021 23:56:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234270AbhGAVn7 (ORCPT
+        id S234357AbhGAX6f (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 1 Jul 2021 17:43:59 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:58272 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229934AbhGAVn6 (ORCPT
+        Thu, 1 Jul 2021 19:58:35 -0400
+Received: from mail-0201.mail-europe.com ([51.77.79.158]:41754 "EHLO
+        mail-0201.mail-europe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234063AbhGAX6f (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 1 Jul 2021 17:43:58 -0400
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lz4R2-00CqTz-JP; Thu, 01 Jul 2021 15:41:24 -0600
-Received: from ip68-227-160-95.om.om.cox.net ([68.227.160.95]:51614 helo=email.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1lz4R1-00CJeQ-F2; Thu, 01 Jul 2021 15:41:24 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Marco Elver <elver@google.com>
-Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
-        omosnace@redhat.com, serge@hallyn.com,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <20210701083842.580466-1-elver@google.com>
-Date:   Thu, 01 Jul 2021 16:41:15 -0500
-In-Reply-To: <20210701083842.580466-1-elver@google.com> (Marco Elver's message
-        of "Thu, 1 Jul 2021 10:38:43 +0200")
-Message-ID: <87h7hdn24k.fsf@disp2133>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 1 Jul 2021 19:58:35 -0400
+Date:   Thu, 01 Jul 2021 23:55:14 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me; s=protonmail;
+        t=1625183728; bh=vHKTUFhjrBhE16qbi5KjG4YoGMyuu2TJDAhJMIvSDHc=;
+        h=Date:To:From:Cc:Reply-To:Subject:From;
+        b=ZWl1K/duuR6AkGbFqdy6cxxNtf7pKljObHGE4X/oR6EYdDyUwWCwF2Ff/bEdjc9nX
+         ef/FbVZ++YU88xuXpiILi13tx+OleonACFBno8YKNjjiKfNTD0zGi/qFQzQvSjRHyJ
+         4ZWqP8fqn77rZH37BgnXHbwSt20DAWMhVpdgLvjTOQhfS9WlQ6UZmhaeYxxxmLJZP9
+         rHo2jA5qUmZnHl6/dCDgriCLD8rKyIsu1vFt8y2qlUhsd/OgtjpZ2oaMhsJRzv1aO+
+         vzPRrkg/9OdFkwIV2Pk3+FSTQ1/RAtbrOfbUMHwDRlq54u89NrK8RoJsrvDeWwfvIO
+         ewHvePbW8p0tQ==
+To:     John Wood <john.wood@gmx.com>
+From:   Alexander Lobakin <alobakin@pm.me>
+Cc:     Alexander Lobakin <alobakin@pm.me>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Arnd Bergmann <arnd@arndb.de>, Andi Kleen <ak@linux.intel.com>,
+        valdis.kletnieks@vt.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Reply-To: Alexander Lobakin <alobakin@pm.me>
+Subject: Re: [PATCH v8 3/8] security/brute: Detect a brute force attack
+Message-ID: <20210701234807.50453-1-alobakin@pm.me>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1lz4R1-00CJeQ-F2;;;mid=<87h7hdn24k.fsf@disp2133>;;;hst=in01.mta.xmission.com;;;ip=68.227.160.95;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+7+SbuL4vTLyI6IaqmY8TWPh1qYr3dYsI=
-X-SA-Exim-Connect-IP: 68.227.160.95
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2] perf: Require CAP_KILL if sigtrap is requested
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Marco Elver <elver@google.com> writes:
+Hi,
 
-> If perf_event_open() is called with another task as target and
-> perf_event_attr::sigtrap is set, and the target task's user does not
-> match the calling user, also require the CAP_KILL capability.
+From: John Wood <john.wood@gmx.com>
+Date: Sat, 5 Jun 2021 17:04:00 +0200
+
+> For a correct management of a fork brute force attack it is necessary to
+> track all the information related to the application crashes. To do so,
+> use the extended attributes (xattr) of the executable files and define a
+> statistical data structure to hold all the necessary information shared
+> by all the fork hierarchy processes. This info is the number of crashes,
+> the last crash timestamp and the crash period's moving average.
 >
-> Otherwise, with the CAP_PERFMON capability alone it would be possible
-> for a user to send SIGTRAP signals via perf events to another user's
-> tasks. This could potentially result in those tasks being terminated if
-> they cannot handle SIGTRAP signals.
+> The same can be achieved using a pointer to the fork hierarchy
+> statistical data held by the task_struct structure. But this has an
+> important drawback: a brute force attack that happens through the execve
+> system call losts the faults info since these statistics are freed when
+> the fork hierarchy disappears. Using this method makes not possible to
+> manage this attack type that can be successfully treated using extended
+> attributes.
 >
-> Note: The check complements the existing capability check, but is not
-> supposed to supersede the ptrace_may_access() check. At a high level we
-> now have:
+> Also, to avoid false positives during the attack detection it is
+> necessary to narrow the possible cases. So, only the following scenarios
+> are taken into account:
 >
-> 	capable of CAP_PERFMON and (CAP_KILL if sigtrap)
-> 		OR
-> 	ptrace_may_access() // also checks for same thread-group and uid
-
-Is there anyway we could have a comment that makes the required
-capability checks clear?
-
-Basically I see an inlined version of kill_ok_by_cred being implemented
-without the comments on why the various pieces make sense.
-
-Certainly ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS) should not
-be a check to allow writing/changing a task.  It needs to be
-PTRACE_MODE_ATTACH_REALCREDS, like /proc/self/mem uses.
-
-Now in practice I think your patch probably has the proper checks in
-place for sending a signal but it is far from clear.
-
-Eric
-
-
-> Fixes: 97ba62b27867 ("perf: Add support for SIGTRAP on perf events")
-> Cc: <stable@vger.kernel.org> # 5.13+
-> Reported-by: Dmitry Vyukov <dvyukov@google.com>
-> Signed-off-by: Marco Elver <elver@google.com>
-> ---
-> v2:
-> * Drop kill_capable() and just check CAP_KILL (reported by Ondrej Mosnacek).
-> * Use ns_capable(__task_cred(task)->user_ns, CAP_KILL) to check for
->   capability in target task's ns (reported by Ondrej Mosnacek).
-> ---
->  kernel/events/core.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+> 1.- Launching (fork()/exec()) a setuid/setgid process repeatedly until a
+>     desirable memory layout is got (e.g. Stack Clash).
+> 2.- Connecting to an exec()ing network daemon (e.g. xinetd) repeatedly
+>     until a desirable memory layout is got (e.g. what CTFs do for simple
+>     network service).
+> 3.- Launching processes without exec() (e.g. Android Zygote) and
+>     exposing state to attack a sibling.
+> 4.- Connecting to a fork()ing network daemon (e.g. apache) repeatedly
+>     until the previously shared memory layout of all the other children
+>     is exposed (e.g. kind of related to HeartBleed).
 >
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index fe88d6eea3c2..43c99695dc3f 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -12152,10 +12152,23 @@ SYSCALL_DEFINE5(perf_event_open,
->  	}
->  
->  	if (task) {
-> +		bool is_capable;
+> In each case, a privilege boundary has been crossed:
+>
+> Case 1: setuid/setgid process
+> Case 2: network to local
+> Case 3: privilege changes
+> Case 4: network to local
+>
+> To mark that a privilege boundary has been crossed it is only necessary
+> to create a new stats for the executable file via the extended attribute
+> and only if it has no previous statistical data. This is done using four
+> different LSM hooks, one per privilege boundary:
+>
+> setuid/setgid process --> bprm_creds_from_file hook (based on secureexec
+>                           flag).
+> network to local -------> socket_accept hook (taking into account only
+>                           external connections).
+> privilege changes ------> task_fix_setuid and task_fix_setgid hooks.
+>
+> To detect a brute force attack it is necessary that the executable file
+> statistics be updated in every fatal crash and the most important data
+> to update is the application crash period. To do so, use the new
+> "task_fatal_signal" LSM hook added in a previous step.
+>
+> The application crash period must be a value that is not prone to change
+> due to spurious data and follows the real crash period. So, to compute
+> it, the exponential moving average (EMA) is used.
+>
+> Based on the updated statistics two different attacks can be handled. A
+> slow brute force attack that is detected if the maximum number of faults
+> per fork hierarchy is reached and a fast brute force attack that is
+> detected if the application crash period falls below a certain
+> threshold.
+>
+> Moreover, only the signals delivered by the kernel are taken into
+> account with the exception of the SIGABRT signal since the latter is
+> used by glibc for stack canary, malloc, etc failures, which may indicate
+> that a mitigation has been triggered.
+>
+> Signed-off-by: John Wood <john.wood@gmx.com>
+>
+> <snip>
+>
+> +static int brute_get_xattr_stats(struct dentry *dentry, struct inode *in=
+ode,
+> +=09=09=09=09 struct brute_stats *stats)
+> +{
+> +=09int rc;
+> +=09struct brute_raw_stats raw_stats;
 > +
->  		err = down_read_interruptible(&task->signal->exec_update_lock);
->  		if (err)
->  			goto err_file;
->  
-> +		is_capable = perfmon_capable();
-> +		if (attr.sigtrap) {
-> +			/*
-> +			 * perf_event_attr::sigtrap sends signals to the other
-> +			 * task. Require the current task to have CAP_KILL.
-> +			 */
-> +			rcu_read_lock();
-> +			is_capable &= ns_capable(__task_cred(task)->user_ns, CAP_KILL);
-> +			rcu_read_unlock();
-> +		}
+> +=09rc =3D __vfs_getxattr(dentry, inode, XATTR_NAME_BRUTE, &raw_stats,
+> +=09=09=09    sizeof(raw_stats));
+> +=09if (rc < 0)
+> +=09=09return rc;
 > +
->  		/*
->  		 * Preserve ptrace permission check for backwards compatibility.
->  		 *
-> @@ -12165,7 +12178,7 @@ SYSCALL_DEFINE5(perf_event_open,
->  		 * perf_event_exit_task() that could imply).
->  		 */
->  		err = -EACCES;
-> -		if (!perfmon_capable() && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
-> +		if (!is_capable && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
->  			goto err_cred;
->  	}
+> +=09stats->faults =3D le32_to_cpu(raw_stats.faults);
+> +=09stats->nsecs =3D le64_to_cpu(raw_stats.nsecs);
+> +=09stats->period =3D le64_to_cpu(raw_stats.period);
+> +=09stats->flags =3D raw_stats.flags;
+> +=09return 0;
+> +}
+>
+> <snip>
+>
+> +static int brute_task_execve(struct linux_binprm *bprm, struct file *fil=
+e)
+> +{
+> +=09struct dentry *dentry =3D file_dentry(bprm->file);
+> +=09struct inode *inode =3D file_inode(bprm->file);
+> +=09struct brute_stats stats;
+> +=09int rc;
+> +
+> +=09inode_lock(inode);
+> +=09rc =3D brute_get_xattr_stats(dentry, inode, &stats);
+> +=09if (WARN_ON_ONCE(rc && rc !=3D -ENODATA))
+> +=09=09goto unlock;
+
+I think I caught a problem here. Have you tested this with
+initramfs?
+
+According to init/do_mount.c's
+init_rootfs()/rootfs_init_fs_context(), when `root=3D` cmdline
+parameter is not empty, kernel creates rootfs of type ramfs
+(tmpfs otherwise).
+The thing about ramfs is that it doesn't support xattrs.
+
+I'm running this v8 on a regular PC with initramfs and having
+`root=3D` in cmdline, and Brute doesn't allow the kernel to run
+any init processes (/init, /sbin/init, ...) with err =3D=3D -95
+(-EOPNOTSUPP) -- I'm getting a
+
+WARNING: CPU: 0 PID: 173 at brute_task_execve+0x15d/0x200
+<snip>
+Failed to execute /init (error -95)
+
+and so on (and a panic at the end).
+
+If I omit `root=3D` from cmdline, then the kernel runs init process
+just fine -- I guess because initramfs is then placed inside tmpfs
+with xattr support.
+
+As for me, this ramfs/tmpfs selection based on `root=3D` presence
+is ridiculous and I don't see or know any reasons behind that.
+But that's another story, and ramfs might be not the only one
+system without xattr support.
+I think Brute should have a fallback here, e.g. it could simply
+ignore files from xattr-incapable filesystems instead of such
+WARNING splats and stuff.
+
+> +
+> +=09if (rc =3D=3D -ENODATA && bprm->secureexec) {
+> +=09=09brute_reset_stats(&stats);
+> +=09=09rc =3D brute_set_xattr_stats(dentry, inode, &stats);
+> +=09=09if (WARN_ON_ONCE(rc))
+> +=09=09=09goto unlock;
+> +=09}
+> +
+> +=09rc =3D 0;
+> +unlock:
+> +=09inode_unlock(inode);
+> +=09return rc;
+> +}
+> +
+>
+> <snip>
+
+Thanks,
+Al
+
