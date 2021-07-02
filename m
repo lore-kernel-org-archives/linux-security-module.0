@@ -2,126 +2,153 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40365C11F69
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jul 2021 12:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F9CC11F6D
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jul 2021 15:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20D9761413
-	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jul 2021 12:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0ACC61423
+	for <linux-security-module@archiver.kernel.org>; Fri,  2 Jul 2021 15:01:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232583AbhGBMge (ORCPT
+        id S232556AbhGBPEN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 2 Jul 2021 08:36:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232554AbhGBMge (ORCPT
+        Fri, 2 Jul 2021 11:04:13 -0400
+Received: from mout.gmx.net ([212.227.17.22]:45667 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231991AbhGBPEM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 2 Jul 2021 08:36:34 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56541C061764
-        for <linux-security-module@vger.kernel.org>; Fri,  2 Jul 2021 05:34:02 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1lzIMq-0003K9-Jc; Fri, 02 Jul 2021 14:34:00 +0200
-Subject: Re: [PATCH v2 6/6] KEYS: trusted: Introduce support for NXP
- CAAM-based trusted keys
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        David Howells <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        kernel <kernel@pengutronix.de>, James Morris <jmorris@namei.org>,
+        Fri, 2 Jul 2021 11:04:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1625238017;
+        bh=zidR5285gxvu2arbyxmhDqg6e5LTCzi9fQLp50nBsWk=;
+        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=DuwxOwI7319Lhx+I9Dc37PZMe6AbuRiW2QGky5FKmFl1Xg9YxF2MVb5pznrGmPGSG
+         jDEfrCCNH/5D0owzJ+rQfsut4w+8PVHn04RN3vsa/vy15PQMMDwtv0vo+XZM4BbQRQ
+         BbuJ3M+fhEcG2fy8ysO3Su1QGNK3ABFykt/t90p8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from ubuntu ([83.52.228.41]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MxDkm-1l29Sj2INE-00xaUC; Fri, 02
+ Jul 2021 17:00:17 +0200
+Date:   Fri, 2 Jul 2021 16:59:54 +0200
+From:   John Wood <john.wood@gmx.com>
+To:     Alexander Lobakin <alobakin@pm.me>
+Cc:     John Wood <john.wood@gmx.com>, Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        horia geanta <horia.geanta@nxp.com>,
-        aymen sghaier <aymen.sghaier@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        davem <davem@davemloft.net>, Udit Agarwal <udit.agarwal@nxp.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        david <david@sigma-star.at>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        "open list, ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>
-References: <cover.1dfbb73645d917b3c76d01290804a3410bd9932e.1624364386.git-series.a.fatoum@pengutronix.de>
- <39e6d65ca5d2a0a35fb71d6c1f85add8ee489a19.1624364386.git-series.a.fatoum@pengutronix.de>
- <1850833581.13438.1625172175436.JavaMail.zimbra@nod.at>
- <2f608e5a-5a12-6db1-b9bd-a2cd9e3e3671@pengutronix.de>
- <783613027.15909.1625223222889.JavaMail.zimbra@nod.at>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <ac8ef66f-4d57-ead0-d1b3-e97220463241@pengutronix.de>
-Date:   Fri, 2 Jul 2021 14:33:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Arnd Bergmann <arnd@arndb.de>, Andi Kleen <ak@linux.intel.com>,
+        valdis.kletnieks@vt.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Subject: Re: [PATCH v8 3/8] security/brute: Detect a brute force attack
+Message-ID: <20210702145954.GA4513@ubuntu>
+References: <20210701234807.50453-1-alobakin@pm.me>
 MIME-Version: 1.0
-In-Reply-To: <783613027.15909.1625223222889.JavaMail.zimbra@nod.at>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210701234807.50453-1-alobakin@pm.me>
+X-Provags-ID: V03:K1:dlN1ofh6LpaEb5MwTI60oBZZOzpxRydjUFLx8+d3q3xlDqOLQ/g
+ AseUQcRVOSgw+y90S5R3RUUGkX4oXSPdXODz7muskTdGNG4XTvD+dI31GrvERxszJqmj3O+
+ NGR5HMBSM0ueD0/qczK9UGA5RkFsMcK72AJTDElYA0GJzeW/4Rjit8KMkEtMMq+A508WvZ1
+ 9CbOiefkEzVVJqbrQIGyQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:9i/ZvK/cQjw=:a39Z0eLmluy9VDDGJKeaLg
+ TvSqt9FDYwL9BX/25PlbGRXeBfVdd3fgvyeCfs3Cp+XW92EKF2euJ/2+8TNV7UogXY/OPVI6H
+ FiS43ZCv15Ssd8V0eSkpzvQ5M7jHPHu341L84wtUpSzP0G21MSQnvItwJXbGogBsXNar813oT
+ SUjE4WB1mmj64Lhvz5tEcgxk09x+e3yVDtMStATKQafRV93kysgYntaYek7y+rvnVs+Jz9cho
+ 6ftPnQa7oB+fiBrMlvv18UPBM7FYSf5xmj0eyeAcUEngS6J9NnI7vje+YtPv01oFwp53wRMo7
+ Ui1yNLxR6D8tkXq4NAl9MqRVsX0/VbkYgti+7sEL7SXbC8sVtjhNTkCafaP8hGK6fDHserJxV
+ 6MwKbHRunfIlcT6k/5PukZ7cCcG/lwCBLu1BsGz7mJ/H2qiTr9btN92/xs1280gM/u4bTToHc
+ NugNiuR3cZ786M2B2/Qgy6SkwwlRn5b8nIZhWGt30TwI+FU2acVkPZZMqBL7krRB2ftGc32yg
+ 7qv+UruXZ9hYUEi9NSWXhlv0enDJDSEaFoMuU3WCSKx/hmRDlhI66InBaQMe0FQa8svHAzLFb
+ MK7kCn3InBuncnfy+7rF6WUovWzYH51ZqwRXwND50Rbd2KoPpM1AxqVEgql8erI+4ixdfGjSE
+ PrB7w+qQCOLJoT6NtZm5wi7RwlrDounjK5jV1+HzoIXxDcJhS1wpkpT6Bjl1YwB0mrvrtJykq
+ yc1ExbKWcfNOpVAOiDjblN+wy5gHGKO/aFv+OsZ+RKgENsFFnR/QsUU3bqkuvHtb7u+UEIJxd
+ 2HQJgnYxNvMR42G6Q8uozh9FR4jXey86VfhsQO/grEelJeTnD+rtyRXSvQxEysyvT1sSqvDKq
+ lG1OOsPrGn5mwDQHGHrbZWaqXGfVuCM2SqplAnLo0N2FVoAWq8XZEBa0dW5WNW33PEheDT9L1
+ J04TS0Npus+qiII4tcAjQEdRAVaaxJAvqNL9m5HkkZd57G3s8GNl7Wx73D26baD632LFja3Z+
+ Ou5+ote2Rp99OhcFduh5OZLItt1JTTby/dwq6pvw7wAYOSQTUoAtVx4/cNM6tHxSm40iEhx/B
+ CPtyjW63bPVQErsJmi9gsJiBsN5L7c5lBy1
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 02.07.21 12:53, Richard Weinberger wrote:
-> Ahmad,
-> 
-> ----- Ursprüngliche Mail -----
->> Von: "Ahmad Fatoum" <a.fatoum@pengutronix.de>
->>> I'm still think that hard coding the key modifier is not wise.
->>> As I said[0], there are folks out there that want to provide their own modifier,
->>> so it is not only about being binary compatible with other CAAM blob patches in
->>> the wild.
->>
->> I don't think the characterization as a salt is accurate. AFAIU it's more
->> of a namespace, so blobs being loaded are "type-checked" against the modifier.
-> 
-> Well, the CAAM programmer's reference manual states that the blob key is a 128 bit modifier
-> and has two purposes:
-> 1. It can be used as tag to provide separation between blobs to detect accidental replacement of blobs.
-> 2. But it can also be treated as secret to provide additional protection. Because the blob encryption
-> key derivation includes the key modifier.
-> 
-> While you have case 1 in mind, I care about case 2. :-)
+Hi,
 
-Ah, using the key modifier as a passphrase didn't occur to me.
+On Thu, Jul 01, 2021 at 11:55:14PM +0000, Alexander Lobakin wrote:
+> Hi,
+>
+> From: John Wood <john.wood@gmx.com>
+> Date: Sat, 5 Jun 2021 17:04:00 +0200
+>
+> > +static int brute_task_execve(struct linux_binprm *bprm, struct file *=
+file)
+> > +{
+> > +	struct dentry *dentry =3D file_dentry(bprm->file);
+> > +	struct inode *inode =3D file_inode(bprm->file);
+> > +	struct brute_stats stats;
+> > +	int rc;
+> > +
+> > +	inode_lock(inode);
+> > +	rc =3D brute_get_xattr_stats(dentry, inode, &stats);
+> > +	if (WARN_ON_ONCE(rc && rc !=3D -ENODATA))
+> > +		goto unlock;
+>
+> I think I caught a problem here. Have you tested this with
+> initramfs?
 
->>> I'll happily implement that feature after your patches got merged but IMHO we
->>> should first agree on an interface.
->>> How about allowing another optional parameter to Opt_new and Opt_load
->>
->> Sound good to me. pcrlock for TPM trusted keys has the same interface.
->>
->> I'd prefer the new option to accept strings, not hex though.
-> 
-> Both is possible. If the string starts with "0x" it needs to be decoded to a
-> 128 bit key. Otherwise it has to be a up to 16 byte string.
+No, it has not been tested with initramfs :(
 
-Fine by me. Looking forward to your patches. :-)
+> According to init/do_mount.c's
+> init_rootfs()/rootfs_init_fs_context(), when `root=3D` cmdline
+> parameter is not empty, kernel creates rootfs of type ramfs
+> (tmpfs otherwise).
+> The thing about ramfs is that it doesn't support xattrs.
 
+It is a known issue that systems without xattr support are not
+suitable for Brute (there are a note in the documentation).
+However, the purpose is not to panic the system :(
 
-Cheers,
-Ahmad
+> I'm running this v8 on a regular PC with initramfs and having
+> `root=3D` in cmdline, and Brute doesn't allow the kernel to run
+> any init processes (/init, /sbin/init, ...) with err =3D=3D -95
+> (-EOPNOTSUPP) -- I'm getting a
+>
+> WARNING: CPU: 0 PID: 173 at brute_task_execve+0x15d/0x200
+> <snip>
+> Failed to execute /init (error -95)
+>
+> and so on (and a panic at the end).
+>
+> If I omit `root=3D` from cmdline, then the kernel runs init process
+> just fine -- I guess because initramfs is then placed inside tmpfs
+> with xattr support.
+>
+> As for me, this ramfs/tmpfs selection based on `root=3D` presence
+> is ridiculous and I don't see or know any reasons behind that.
+> But that's another story, and ramfs might be not the only one
+> system without xattr support.
+> I think Brute should have a fallback here, e.g. it could simply
+> ignore files from xattr-incapable filesystems instead of such
+> WARNING splats and stuff.
 
-> 
-> Thanks,
-> //richard
-> 
+Ok, it seems reasonable to me: if the file system doesn't support
+xattr, but Brute is enabled, Brute will do nothing and the system
+will work normally.
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+I will work on it for the next version.
+Thanks for the feedback.
+
+John Wood
