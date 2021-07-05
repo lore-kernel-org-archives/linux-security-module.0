@@ -2,95 +2,120 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D7BC07E9C
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jul 2021 11:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02387C07E9E
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jul 2021 12:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B8610613C8
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jul 2021 11:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDA73613FC
+	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jul 2021 12:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbhGEL7s (ORCPT
+        id S231312AbhGEMzL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Jul 2021 07:59:48 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3363 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbhGEL7s (ORCPT
+        Mon, 5 Jul 2021 08:55:11 -0400
+Received: from mail1.protonmail.ch ([185.70.40.18]:25902 "EHLO
+        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230456AbhGEMzL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Jul 2021 07:59:48 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GJP9H6rq4z6FC66;
-        Mon,  5 Jul 2021 19:49:07 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 5 Jul 2021 13:57:09 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>
-CC:     <tusharsu@linux.microsoft.com>, <nramas@linux.microsoft.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH] ima: Support euid keyword for buffer measurement
-Date:   Mon, 5 Jul 2021 13:56:50 +0200
-Message-ID: <20210705115650.3373599-1-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 5 Jul 2021 08:55:11 -0400
+Date:   Mon, 05 Jul 2021 12:52:23 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me; s=protonmail;
+        t=1625489553; bh=dq32cO+ZKMc2KufqrF4+FnLvbFSGJWzWZn6wbfbMESE=;
+        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
+        b=NsJzHSo68u3RONXSa1dsHMZ0kieV61sNhU2UxI7md1kCzE+xhhP+TgNVVpxDRdRQb
+         Sn3LLQT//Pmu3Ib0/flMZLDnR1bLKSB+7xpaeoo4JVSm14ld2ueHbTXw/Xt77Pel75
+         8i/oU66Blr2WCYv2KvXa31TJpaWuOv7TIpwxjmZqASWU1VVdbLLzZAAXD3edz9Evi/
+         j8DcH69GHS2ETAUUOXgVEEiT0ikHTY1FdFGNuOaEWHBrjsr3DT4ki70+lfwMuOiPt3
+         DVKHAEGwM9c9yY7xz9u1iKDGIagPe2Kb/ly9UAoWpctS+tNYsNKPEl1pLRosWbX28a
+         nKzSr5FL3ojLw==
+To:     John Wood <john.wood@gmx.com>
+From:   Alexander Lobakin <alobakin@pm.me>
+Cc:     Alexander Lobakin <alobakin@pm.me>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Arnd Bergmann <arnd@arndb.de>, Andi Kleen <ak@linux.intel.com>,
+        valdis.kletnieks@vt.edu,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-hardening@vger.kernel.org,
+        kernel-hardening@lists.openwall.com
+Reply-To: Alexander Lobakin <alobakin@pm.me>
+Subject: Re: [PATCH v8 3/8] security/brute: Detect a brute force attack
+Message-ID: <20210705124446.45320-1-alobakin@pm.me>
+In-Reply-To: <20210704140108.GA2742@ubuntu>
+References: <20210701234807.50453-1-alobakin@pm.me> <20210702145954.GA4513@ubuntu> <20210702170101.16116-1-alobakin@pm.me> <20210703105928.GA2830@ubuntu> <20210704140108.GA2742@ubuntu>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml751-chm.china.huawei.com (10.201.108.201) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This patch makes the 'euid' keyword available for buffer measurement rules,
-in the same way as for other rules. Currently, there is only support for
-the 'uid' keyword.
+From: John Wood <john.wood@gmx.com>
+Date: Sun, 4 Jul 2021 16:01:08 +0200
 
-With this change, buffer measurement (or non-measurement) can depend also
-on the process effective UID.
+> On Sat, Jul 03, 2021 at 12:59:28PM +0200, John Wood wrote:
+> > Hi,
+> >
+> > On Fri, Jul 02, 2021 at 05:08:09PM +0000, Alexander Lobakin wrote:
+> > >
+> > > On the other hand, it leaves a potentional window for attackers to
+> > > perform brute force from xattr-incapable filesystems. So at the end
+> > > of the day I think that the current implementation (a strong
+> > > rejection of such filesystems) is way more secure than having
+> > > a fallback I proposed.
+> >
+> > I've been thinking more about this: that the Brute LSM depends on xattr
+> > support and I don't like this part. I want that brute force attacks can
+> > be detected and mitigated on every system (with minimal dependencies).
+> > So, now I am working in a solution without this drawback. I have some
+> > ideas but I need to work on it.
+>
+> I have been coding and testing a bit my ideas but:
+>
+> Trying to track the applications faults info using kernel memory ends up
+> in an easy to abuse system (denied of service due to large amount of memo=
+r=3D
+> y
+> in use) :(
+>
+> So, I continue with the v8 idea: xattr to track application crashes info.
+>
+> > > I'm planning to make a patch which will eliminate such weird rootfs
+> > > type selection and just always use more feature-rich tmpfs if it's
+> > > compiled in. So, as an alternative, you could add it to your series
+> > > as a preparatory change and just add a Kconfig dependency on
+> > > CONFIG_TMPFS && CONFIG_TMPFS_XATTR to CONFIG_SECURITY_FORK_BRUTE
+> > > without messing with any fallbacks at all.
+> > > What do you think?
+> >
+> > Great. But I hope this patch will not be necessary for Brute LSM :)
+>
+> My words are no longer valid ;)
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_policy.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Ok, so here's the patch that prefers tmpfs for rootfs over ramfs
+if it's built-in (which is true for 99% of systems): [0]
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index fd5d46e511f1..fdaa030fb04b 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -480,6 +480,16 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
- 	if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
- 		return false;
- 
-+	if (rule->flags & IMA_EUID) {
-+		if (has_capability_noaudit(current, CAP_SETUID)) {
-+			if (!rule->uid_op(cred->euid, rule->uid)
-+			    && !rule->uid_op(cred->suid, rule->uid)
-+			    && !rule->uid_op(cred->uid, rule->uid))
-+				return false;
-+		} else if (!rule->uid_op(cred->euid, rule->uid))
-+			return false;
-+	}
-+
- 	switch (rule->func) {
- 	case KEY_CHECK:
- 		if (!rule->keyrings)
-@@ -1153,7 +1163,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
- 		if (entry->action & ~(MEASURE | DONT_MEASURE))
- 			return false;
- 
--		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-+		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_EUID | IMA_PCR |
- 				     IMA_LABEL))
- 			return false;
- 
--- 
-2.25.1
+For now it hasn't been reviewed by anyone yet, will see. I'm running
+my system with this patch for several days already and there were no
+issues with rootfs or Brute so far.
+
+[0] https://lore.kernel.org/lkml/20210702233727.21301-1-alobakin@pm.me/
+
+> Thanks,
+> John Wood
+
+Thanks,
+Al
 
