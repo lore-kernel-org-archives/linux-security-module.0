@@ -2,120 +2,167 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.7 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02387C07E9E
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jul 2021 12:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A69C07E9C
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 06:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDA73613FC
-	for <linux-security-module@archiver.kernel.org>; Mon,  5 Jul 2021 12:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D419861988
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 06:16:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231312AbhGEMzL (ORCPT
+        id S230036AbhGFGTD (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 5 Jul 2021 08:55:11 -0400
-Received: from mail1.protonmail.ch ([185.70.40.18]:25902 "EHLO
-        mail1.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230456AbhGEMzL (ORCPT
+        Tue, 6 Jul 2021 02:19:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33078 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230110AbhGFGTD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 5 Jul 2021 08:55:11 -0400
-Date:   Mon, 05 Jul 2021 12:52:23 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me; s=protonmail;
-        t=1625489553; bh=dq32cO+ZKMc2KufqrF4+FnLvbFSGJWzWZn6wbfbMESE=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:From;
-        b=NsJzHSo68u3RONXSa1dsHMZ0kieV61sNhU2UxI7md1kCzE+xhhP+TgNVVpxDRdRQb
-         Sn3LLQT//Pmu3Ib0/flMZLDnR1bLKSB+7xpaeoo4JVSm14ld2ueHbTXw/Xt77Pel75
-         8i/oU66Blr2WCYv2KvXa31TJpaWuOv7TIpwxjmZqASWU1VVdbLLzZAAXD3edz9Evi/
-         j8DcH69GHS2ETAUUOXgVEEiT0ikHTY1FdFGNuOaEWHBrjsr3DT4ki70+lfwMuOiPt3
-         DVKHAEGwM9c9yY7xz9u1iKDGIagPe2Kb/ly9UAoWpctS+tNYsNKPEl1pLRosWbX28a
-         nKzSr5FL3ojLw==
-To:     John Wood <john.wood@gmx.com>
-From:   Alexander Lobakin <alobakin@pm.me>
-Cc:     Alexander Lobakin <alobakin@pm.me>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Arnd Bergmann <arnd@arndb.de>, Andi Kleen <ak@linux.intel.com>,
-        valdis.kletnieks@vt.edu,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-hardening@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Reply-To: Alexander Lobakin <alobakin@pm.me>
-Subject: Re: [PATCH v8 3/8] security/brute: Detect a brute force attack
-Message-ID: <20210705124446.45320-1-alobakin@pm.me>
-In-Reply-To: <20210704140108.GA2742@ubuntu>
-References: <20210701234807.50453-1-alobakin@pm.me> <20210702145954.GA4513@ubuntu> <20210702170101.16116-1-alobakin@pm.me> <20210703105928.GA2830@ubuntu> <20210704140108.GA2742@ubuntu>
+        Tue, 6 Jul 2021 02:19:03 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55CA3C061574
+        for <linux-security-module@vger.kernel.org>; Mon,  5 Jul 2021 23:16:24 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id t19so4485862qkg.7
+        for <linux-security-module@vger.kernel.org>; Mon, 05 Jul 2021 23:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i2kc2sPl4mFDGHgoHEBwsK+YcufyFuxpzKrHOh0bOKs=;
+        b=Ap8WxFAvaIZM4zzGb0DkHCpmL312tWNnt5K315MXMLh9mc+84ugfzkt3WZRQVA8oq/
+         e6ZpWCb/lLpnF2aB95WwZQfG36GfvsnkubQCFEgeost/pPZfWx+1vQeBPkIpes0e97Vm
+         NmEizRgK1jeMQK3+KzXLHwhUypPtMSoNSVu2ibj/OYVFZus9423wM7b8I9yk9d5TrG4I
+         mE/tP4aiwXr1iOZgxZL9/xZGcRKIJw4cwLThiDcsd7QwrBfLLI6yjla9fNtmzmAfs83k
+         TPX+o92klxpBprGGkvoJ0OmtdaY+1Ytopb8gx+BPoJffue0ecqEWzxWxrYt6Yezdao1X
+         ltPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i2kc2sPl4mFDGHgoHEBwsK+YcufyFuxpzKrHOh0bOKs=;
+        b=PAV/WWpBrDmBIBf3ko/AUEBxouWq3N+wATvGSPo7XNyr/nft9ZBnUsrR1oASfJdXij
+         7oXiyF/zrfoOSf+0yYW4RoE+/sJD5z7vxc+gmjqc7Hvb+38jSGIn6k25lCrpn/Sj55za
+         EfC5dIFDBDuHsWA5WFBCO1Y2wn4xSmwqdCpHC3Stm53+oi2x4qdW7I9P7KXhJ9WAA1q9
+         q9O+lVh+oPZdeD6mCnv+lh+Vf+hgw8SsOT+1+mR2pMroM7iEKa6u95v0oPYXJfSfye0Z
+         i+5i1IefnJOc3m8yUYbqnp5DdZaxdY9S0/CsYYp+3cXag5iiyLPtatjRHfofC7LzlPAq
+         PRfA==
+X-Gm-Message-State: AOAM533yT1XDXXEcHCxpcHtUv0FIyk/0xhfZ1QxPvnPS0itnnwpqG/Mw
+        u5+aixBOA9rJSA5GbAtkGP4PnmDYH0Igg6/JOYRTRg==
+X-Google-Smtp-Source: ABdhPJzJHfpJ8Cjm37K+ccfE6AIF+fG3X6FSoU1q9BaLRf381cZW/GWLOQl/+5H+zXoOBoiZUrijopPlskRAaVNY7GM=
+X-Received: by 2002:a37:6888:: with SMTP id d130mr18540942qkc.265.1625552183218;
+ Mon, 05 Jul 2021 23:16:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20210705084453.2151729-1-elver@google.com>
+In-Reply-To: <20210705084453.2151729-1-elver@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 6 Jul 2021 08:16:07 +0200
+Message-ID: <CACT4Y+bQovD7=CZajMJ_AZz=Rf37HpDQiTp0qnhi-GhuP0Xdeg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] perf: Fix required permissions if sigtrap is requested
+To:     Marco Elver <elver@google.com>
+Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
+        glider@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-perf-users@vger.kernel.org, ebiederm@xmission.com,
+        omosnace@redhat.com, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: John Wood <john.wood@gmx.com>
-Date: Sun, 4 Jul 2021 16:01:08 +0200
-
-> On Sat, Jul 03, 2021 at 12:59:28PM +0200, John Wood wrote:
-> > Hi,
-> >
-> > On Fri, Jul 02, 2021 at 05:08:09PM +0000, Alexander Lobakin wrote:
-> > >
-> > > On the other hand, it leaves a potentional window for attackers to
-> > > perform brute force from xattr-incapable filesystems. So at the end
-> > > of the day I think that the current implementation (a strong
-> > > rejection of such filesystems) is way more secure than having
-> > > a fallback I proposed.
-> >
-> > I've been thinking more about this: that the Brute LSM depends on xattr
-> > support and I don't like this part. I want that brute force attacks can
-> > be detected and mitigated on every system (with minimal dependencies).
-> > So, now I am working in a solution without this drawback. I have some
-> > ideas but I need to work on it.
+On Mon, Jul 5, 2021 at 10:45 AM Marco Elver <elver@google.com> wrote:
 >
-> I have been coding and testing a bit my ideas but:
+> If perf_event_open() is called with another task as target and
+> perf_event_attr::sigtrap is set, and the target task's user does not
+> match the calling user, also require the CAP_KILL capability or
+> PTRACE_MODE_ATTACH permissions.
 >
-> Trying to track the applications faults info using kernel memory ends up
-> in an easy to abuse system (denied of service due to large amount of memo=
-r=3D
-> y
-> in use) :(
+> Otherwise, with the CAP_PERFMON capability alone it would be possible
+> for a user to send SIGTRAP signals via perf events to another user's
+> tasks. This could potentially result in those tasks being terminated if
+> they cannot handle SIGTRAP signals.
 >
-> So, I continue with the v8 idea: xattr to track application crashes info.
+> Note: The check complements the existing capability check, but is not
+> supposed to supersede the ptrace_may_access() check. At a high level we
+> now have:
 >
-> > > I'm planning to make a patch which will eliminate such weird rootfs
-> > > type selection and just always use more feature-rich tmpfs if it's
-> > > compiled in. So, as an alternative, you could add it to your series
-> > > as a preparatory change and just add a Kconfig dependency on
-> > > CONFIG_TMPFS && CONFIG_TMPFS_XATTR to CONFIG_SECURITY_FORK_BRUTE
-> > > without messing with any fallbacks at all.
-> > > What do you think?
-> >
-> > Great. But I hope this patch will not be necessary for Brute LSM :)
+>         capable of CAP_PERFMON and (CAP_KILL if sigtrap)
+>                 OR
+>         ptrace_may_access(...) // also checks for same thread-group and uid
 >
-> My words are no longer valid ;)
+> Fixes: 97ba62b27867 ("perf: Add support for SIGTRAP on perf events")
+> Cc: <stable@vger.kernel.org> # 5.13+
+> Reported-by: Dmitry Vyukov <dvyukov@google.com>
+> Signed-off-by: Marco Elver <elver@google.com>
 
-Ok, so here's the patch that prefers tmpfs for rootfs over ramfs
-if it's built-in (which is true for 99% of systems): [0]
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
 
-For now it hasn't been reviewed by anyone yet, will see. I'm running
-my system with this patch for several days already and there were no
-issues with rootfs or Brute so far.
-
-[0] https://lore.kernel.org/lkml/20210702233727.21301-1-alobakin@pm.me/
-
-> Thanks,
-> John Wood
-
-Thanks,
-Al
-
+> ---
+> v3:
+> * Upgrade ptrace mode check to ATTACH if attr.sigtrap, otherwise it's
+>   possible to change the target task (send signal) even if only read
+>   ptrace permissions were granted (reported by Eric W. Biederman).
+>
+> v2: https://lkml.kernel.org/r/20210701083842.580466-1-elver@google.com
+> * Drop kill_capable() and just check CAP_KILL (reported by Ondrej Mosnacek).
+> * Use ns_capable(__task_cred(task)->user_ns, CAP_KILL) to check for
+>   capability in target task's ns (reported by Ondrej Mosnacek).
+>
+> v1: https://lkml.kernel.org/r/20210630093709.3612997-1-elver@google.com
+> ---
+>  kernel/events/core.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index fe88d6eea3c2..f79ee82e644a 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -12152,10 +12152,33 @@ SYSCALL_DEFINE5(perf_event_open,
+>         }
+>
+>         if (task) {
+> +               unsigned int ptrace_mode = PTRACE_MODE_READ_REALCREDS;
+> +               bool is_capable;
+> +
+>                 err = down_read_interruptible(&task->signal->exec_update_lock);
+>                 if (err)
+>                         goto err_file;
+>
+> +               is_capable = perfmon_capable();
+> +               if (attr.sigtrap) {
+> +                       /*
+> +                        * perf_event_attr::sigtrap sends signals to the other
+> +                        * task. Require the current task to also have
+> +                        * CAP_KILL.
+> +                        */
+> +                       rcu_read_lock();
+> +                       is_capable &= ns_capable(__task_cred(task)->user_ns, CAP_KILL);
+> +                       rcu_read_unlock();
+> +
+> +                       /*
+> +                        * If the required capabilities aren't available, checks
+> +                        * for ptrace permissions: upgrade to ATTACH, since
+> +                        * sending signals can effectively change the target
+> +                        * task.
+> +                        */
+> +                       ptrace_mode = PTRACE_MODE_ATTACH_REALCREDS;
+> +               }
+> +
+>                 /*
+>                  * Preserve ptrace permission check for backwards compatibility.
+>                  *
+> @@ -12165,7 +12188,7 @@ SYSCALL_DEFINE5(perf_event_open,
+>                  * perf_event_exit_task() that could imply).
+>                  */
+>                 err = -EACCES;
+> -               if (!perfmon_capable() && !ptrace_may_access(task, PTRACE_MODE_READ_REALCREDS))
+> +               if (!is_capable && !ptrace_may_access(task, ptrace_mode))
+>                         goto err_cred;
+>         }
+>
+> --
+> 2.32.0.93.g670b81a890-goog
+>
