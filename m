@@ -2,200 +2,228 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B365CC07E96
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 18:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D79C07E9B
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 19:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9764A61C69
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 18:23:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACA0761C91
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 19:19:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231341AbhGFSZx (ORCPT
+        id S231876AbhGFTVt (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jul 2021 14:25:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56328 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbhGFSZx (ORCPT
+        Tue, 6 Jul 2021 15:21:49 -0400
+Received: from linux.microsoft.com ([13.77.154.182]:41376 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231774AbhGFTVt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jul 2021 14:25:53 -0400
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B603C06175F
-        for <linux-security-module@vger.kernel.org>; Tue,  6 Jul 2021 11:23:14 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GK9sX163QzMqJf4;
-        Tue,  6 Jul 2021 20:23:12 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4GK9sW69gqzlmrrn;
-        Tue,  6 Jul 2021 20:23:11 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Alejandro Colomar <alx.manpages@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        landlock@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v1 4/4] landlock_restrict_self.2: Document new syscall
-Date:   Tue,  6 Jul 2021 20:22:17 +0200
-Message-Id: <20210706182217.32338-5-mic@digikod.net>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210706182217.32338-1-mic@digikod.net>
-References: <20210706182217.32338-1-mic@digikod.net>
+        Tue, 6 Jul 2021 15:21:49 -0400
+Received: from [10.137.112.111] (unknown [131.107.147.111])
+        by linux.microsoft.com (Postfix) with ESMTPSA id 4E1F320B7188;
+        Tue,  6 Jul 2021 12:19:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4E1F320B7188
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1625599150;
+        bh=HAyiPMPlknf585eyjiByUkZYMcEfesGAqJ5IRtDhZNY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=cw2ZMpdXbJc2YaqalFiZFCL2zmBUDnNh/RiSOFP2Wggm2eE5TVzXqFerw1CYvhy+/
+         eM0D7iqhnJp4l+wiiEIS643DB+s02Ry+iUnZuuvIAZWpprtuo1IQsAaTcaUnoEgaiZ
+         0zAPn4Sm907XkbmpCgwGjJNxKOgAohrkVfrMmvgs=
+Subject: Re: [PATCH v3 2/3] ima: Return int in the functions to measure a
+ buffer
+To:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com,
+        paul@paul-moore.com
+Cc:     stephen.smalley.work@gmail.com, prsriva02@gmail.com,
+        tusharsu@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+References: <20210705090922.3321178-1-roberto.sassu@huawei.com>
+ <20210705090922.3321178-3-roberto.sassu@huawei.com>
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+Message-ID: <5bc9d707-b193-6111-fea6-50c70e6f2245@linux.microsoft.com>
+Date:   Tue, 6 Jul 2021 12:21:04 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210705090922.3321178-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On 7/5/2021 2:09 AM, Roberto Sassu wrote:
+> ima_measure_critical_data() and process_buffer_measurement() currently
+> don't return a result. A caller wouldn't be able to know whether those
+> functions were executed successfully.
+> 
+> This patch modifies the return type from void to int, and returns 0 if the
+> buffer has been successfully measured, a negative value otherwise.
+> 
+> Also, this patch does not modify the behavior of existing callers by
+> processing the returned value. For those, the return value is ignored.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>   include/linux/ima.h               | 15 +++++++-----
+>   security/integrity/ima/ima.h      | 10 ++++----
+>   security/integrity/ima/ima_main.c | 40 ++++++++++++++++++-------------
+>   3 files changed, 37 insertions(+), 28 deletions(-)
 
-This is an adaptation of
-https://www.kernel.org/doc/html/v5.13/userspace-api/landlock.html
+Reviewed-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20210706182217.32338-5-mic@digikod.net
----
- man2/landlock_restrict_self.2 | 125 ++++++++++++++++++++++++++++++++++
- 1 file changed, 125 insertions(+)
- create mode 100644 man2/landlock_restrict_self.2
+  -lakshmi
 
-diff --git a/man2/landlock_restrict_self.2 b/man2/landlock_restrict_self.2
-new file mode 100644
-index 000000000000..589fe972487c
---- /dev/null
-+++ b/man2/landlock_restrict_self.2
-@@ -0,0 +1,125 @@
-+.\" Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.\" Copyright © 2019-2020 ANSSI
-+.\" Copyright © 2021 Microsoft Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH LANDLOCK_RESTRICT_SELF 2 2021-06-27 Linux "Linux Programmer's Manual"
-+.SH NAME
-+landlock_restrict_self \- enforce a Landlock ruleset
-+.SH SYNOPSIS
-+.nf
-+.BR "#include <linux/landlock.h>" "  /* Definition of " LANDLOCK_* " constants */"
-+.BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " constants */"
-+.PP
-+.BI "int syscall(SYS_landlock_restrict_self, int " ruleset_fd ,
-+.BI "            __u32 " flags );
-+.SH DESCRIPTION
-+Once a Landlock ruleset is populated with the desired rules, the
-+.BR landlock_restrict_self (2)
-+system call enables enforcing this ruleset on the calling thread.  See
-+.BR landlock (7)
-+for a global overview.
-+.PP
-+A thread can be restricted with multiple rulesets that are then composed
-+together to form the thread's Landlock domain.  This can be seen as a stack
-+of rulesets but it is implemented in a more efficient way.  A domain can
-+only be updated in such a way that the constraints of each past and future
-+composed rulesets will restrict the thread and its future children for
-+their entire life.  It is then possible to gradually enforce tailored
-+access control policies with multiple independant rulesets coming from
-+different sources (e.g., init system configuration, user session policy,
-+built-in application policy).  However, most applications should only need
-+one call to
-+.BR landlock_restrict_self (2)
-+and they should avoid arbitrary numbers of such calls because of the
-+composed rulesets limit.  Instead, developers are encouraged to build a
-+tailored ruleset thanks to multiple calls to
-+.BR landlock_add_rule (2)
-+\&.
-+.PP
-+In order to enforce a ruleset, either the caller must have the
-+.BR CAP_SYS_ADMIN
-+capability in its user namespace, or the thread must already have the
-+.I no_new_privs
-+bit set.  As for
-+.BR seccomp (2)
-+, this avoids scenarios where unprivileged processes can affect the
-+behavior of privileged children (e.g., because of set-user-ID binaries).
-+If that bit was not already set by an ancestor of this thread, the thread
-+must make the following call:
-+.IP
-+.EX
-+prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+.EE
-+.PP
-+.I ruleset_fd
-+is a Landlock ruleset file descriptor obtained with
-+.BR landlock_create_ruleset (2)
-+and fully populated with a set of calls to
-+.BR landlock_add_rule (2)
-+\&.
-+.PP
-+.I flags
-+must be 0.
-+.SH RETURN VALUE
-+On success,
-+.BR landlock_restrict_self (2)
-+returns 0.
-+.SH ERRORS
-+.BR landlock_restrict_self (2)
-+can failed for the following reasons:
-+.TP
-+.BR EOPNOTSUPP
-+Landlock is supported by the kernel but disabled at boot time.
-+.TP
-+.BR EINVAL
-+.I flags
-+is not 0.
-+.TP
-+.BR EBADF
-+.I ruleset_fd
-+is not a file descriptor for the current thread.
-+.TP
-+.BR EBADFD
-+.I ruleset_fd
-+is not a ruleset file descriptor.
-+.TP
-+.BR EPERM
-+.I ruleset_fd
-+has no read access to the underlying ruleset, or the calling thread is not
-+running with
-+.I no_new_privs
-+, or it doesn't have the
-+.BR CAP_SYS_ADMIN
-+in its user namespace.
-+.TP
-+.BR E2BIG
-+The maximum number of composed rulesets is reached for the calling thread.
-+This limit is currently 64.
-+.SH VERSIONS
-+Landlock was added in Linux 5.13.
-+.SH SEE ALSO
-+.BR landlock (7),
-+.BR landlock_create_ruleset (2),
-+.BR landlock_add_rule (2)
--- 
-2.32.0
-
+> 
+> diff --git a/include/linux/ima.h b/include/linux/ima.h
+> index 81e830d01ced..60492263aa64 100644
+> --- a/include/linux/ima.h
+> +++ b/include/linux/ima.h
+> @@ -35,10 +35,10 @@ extern void ima_post_path_mknod(struct user_namespace *mnt_userns,
+>   extern int ima_file_hash(struct file *file, char *buf, size_t buf_size);
+>   extern int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size);
+>   extern void ima_kexec_cmdline(int kernel_fd, const void *buf, int size);
+> -extern void ima_measure_critical_data(const char *event_label,
+> -				      const char *event_name,
+> -				      const void *buf, size_t buf_len,
+> -				      bool hash);
+> +extern int ima_measure_critical_data(const char *event_label,
+> +				     const char *event_name,
+> +				     const void *buf, size_t buf_len,
+> +				     bool hash);
+>   
+>   #ifdef CONFIG_IMA_APPRAISE_BOOTPARAM
+>   extern void ima_appraise_parse_cmdline(void);
+> @@ -144,10 +144,13 @@ static inline int ima_inode_hash(struct inode *inode, char *buf, size_t buf_size
+>   
+>   static inline void ima_kexec_cmdline(int kernel_fd, const void *buf, int size) {}
+>   
+> -static inline void ima_measure_critical_data(const char *event_label,
+> +static inline int ima_measure_critical_data(const char *event_label,
+>   					     const char *event_name,
+>   					     const void *buf, size_t buf_len,
+> -					     bool hash) {}
+> +					     bool hash)
+> +{
+> +	return -ENOENT;
+> +}
+>   
+>   #endif /* CONFIG_IMA */
+>   
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index f0e448ed1f9f..03db221324c3 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -264,11 +264,11 @@ void ima_store_measurement(struct integrity_iint_cache *iint, struct file *file,
+>   			   struct evm_ima_xattr_data *xattr_value,
+>   			   int xattr_len, const struct modsig *modsig, int pcr,
+>   			   struct ima_template_desc *template_desc);
+> -void process_buffer_measurement(struct user_namespace *mnt_userns,
+> -				struct inode *inode, const void *buf, int size,
+> -				const char *eventname, enum ima_hooks func,
+> -				int pcr, const char *func_data,
+> -				bool buf_hash);
+> +int process_buffer_measurement(struct user_namespace *mnt_userns,
+> +			       struct inode *inode, const void *buf, int size,
+> +			       const char *eventname, enum ima_hooks func,
+> +			       int pcr, const char *func_data,
+> +			       bool buf_hash);
+>   void ima_audit_measurement(struct integrity_iint_cache *iint,
+>   			   const unsigned char *filename);
+>   int ima_alloc_init_template(struct ima_event_data *event_data,
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 8ef1fa357e0c..b512c06d8ee1 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -827,7 +827,7 @@ int ima_post_load_data(char *buf, loff_t size,
+>   	return 0;
+>   }
+>   
+> -/*
+> +/**
+>    * process_buffer_measurement - Measure the buffer or the buffer data hash
+>    * @mnt_userns:	user namespace of the mount the inode was found from
+>    * @inode: inode associated with the object being measured (NULL for KEY_CHECK)
+> @@ -840,12 +840,15 @@ int ima_post_load_data(char *buf, loff_t size,
+>    * @buf_hash: measure buffer data hash
+>    *
+>    * Based on policy, either the buffer data or buffer data hash is measured
+> + *
+> + * Return: 0 if the buffer has been successfully measured, a negative value
+> + * otherwise.
+>    */
+> -void process_buffer_measurement(struct user_namespace *mnt_userns,
+> -				struct inode *inode, const void *buf, int size,
+> -				const char *eventname, enum ima_hooks func,
+> -				int pcr, const char *func_data,
+> -				bool buf_hash)
+> +int process_buffer_measurement(struct user_namespace *mnt_userns,
+> +			       struct inode *inode, const void *buf, int size,
+> +			       const char *eventname, enum ima_hooks func,
+> +			       int pcr, const char *func_data,
+> +			       bool buf_hash)
+>   {
+>   	int ret = 0;
+>   	const char *audit_cause = "ENOMEM";
+> @@ -867,7 +870,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
+>   	u32 secid;
+>   
+>   	if (!ima_policy_flag)
+> -		return;
+> +		return -ENOENT;
+>   
+>   	template = ima_template_desc_buf();
+>   	if (!template) {
+> @@ -889,7 +892,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
+>   					secid, 0, func, &pcr, &template,
+>   					func_data);
+>   		if (!(action & IMA_MEASURE))
+> -			return;
+> +			return -ENOENT;
+>   	}
+>   
+>   	if (!pcr)
+> @@ -937,7 +940,7 @@ void process_buffer_measurement(struct user_namespace *mnt_userns,
+>   					func_measure_str(func),
+>   					audit_cause, ret, 0, ret);
+>   
+> -	return;
+> +	return ret;
+>   }
+>   
+>   /**
+> @@ -977,18 +980,21 @@ void ima_kexec_cmdline(int kernel_fd, const void *buf, int size)
+>    * and extend the pcr.  Examples of critical data could be various data
+>    * structures, policies, and states stored in kernel memory that can
+>    * impact the integrity of the system.
+> + *
+> + * Return: 0 if the buffer has been successfully measured, a negative value
+> + * otherwise.
+>    */
+> -void ima_measure_critical_data(const char *event_label,
+> -			       const char *event_name,
+> -			       const void *buf, size_t buf_len,
+> -			       bool hash)
+> +int ima_measure_critical_data(const char *event_label,
+> +			      const char *event_name,
+> +			      const void *buf, size_t buf_len,
+> +			      bool hash)
+>   {
+>   	if (!event_name || !event_label || !buf || !buf_len)
+> -		return;
+> +		return -ENOPARAM;
+>   
+> -	process_buffer_measurement(&init_user_ns, NULL, buf, buf_len, event_name,
+> -				   CRITICAL_DATA, 0, event_label,
+> -				   hash);
+> +	return process_buffer_measurement(&init_user_ns, NULL, buf, buf_len,
+> +					  event_name, CRITICAL_DATA, 0,
+> +					  event_label, hash);
+>   }
+>   
+>   static int __init init_ima(void)
+> 
