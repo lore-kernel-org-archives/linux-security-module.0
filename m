@@ -1,186 +1,89 @@
 Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-23.7 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.9 required=3.0 tests=BAYES_50,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85AAC07E9C
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 06:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DB80C07E96
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 12:39:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A91EC6128E
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 06:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECC06622EB
+	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 12:39:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230127AbhGFGTd (ORCPT
+        id S234907AbhGFMlf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jul 2021 02:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33210 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbhGFGTd (ORCPT
+        Tue, 6 Jul 2021 08:41:35 -0400
+Received: from integrity-funds.com ([140.206.118.236]:2053 "EHLO
+        mail.Integrity-funds.com" rhost-flags-OK-FAIL-OK-OK)
+        by vger.kernel.org with ESMTP id S234858AbhGFMXm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jul 2021 02:19:33 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D7CFC06175F
-        for <linux-security-module@vger.kernel.org>; Mon,  5 Jul 2021 23:16:54 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id a4so11198401qkn.11
-        for <linux-security-module@vger.kernel.org>; Mon, 05 Jul 2021 23:16:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RoGi9t0tW2ZKROiX5vNisDNKd+fSc5OvBjzFvq9gYvY=;
-        b=Gzikz/eEBoqeajZIRReKOOFftA9UC4oI3fDNZSYLwbrN7EhOyOoeZZbyAq7/X0gOp/
-         7ZHFoxagwFKR/kNQPsReYVp3UN8qK9Wmq++mMcdbCp3Z+7soiKCdhZjBi3Jdt5HMmaTD
-         ancHpki5hiBvZImHkvRiV/fWyF/dRYbykcoNMcYvE5RuDT41CvD1ZtMMRUcwM1r6PsLf
-         TH86Owk2G9QAGXBUBGHjv6E+xPI+6s8ykNNsYJpb6GEkk5yWJZUasI0+A04RwOHtPTRX
-         g1z5Y2RRQXZsY8Z59zqhUIJNciL3iOeVw/NFnKBOtubTMxsg804Wrn5vu2rzv8oh5XQ6
-         /P6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RoGi9t0tW2ZKROiX5vNisDNKd+fSc5OvBjzFvq9gYvY=;
-        b=pnhWy30ct/uu/fbgujilT04wIyZHlTSBip94TWXLGSI89dNI2+fJWeIEsONnJ+VHT/
-         VAAAA6EHPxfWECV1tiZSxJMU5CyTN3D2hgZyJG50aRjHpSuATxDMNte0Pk3pMyb4g26+
-         wmg0zQX/D28YExKvqTmjBxdcKqckFqhw5zEI1p50RTmIMcS8D+45eNoje7uWreIrVeiB
-         KGi/ZmTIxz1/hS5NwQPB7R5oJdNfGSYLfcOK3evr8pMfJuURQod0Jgjw3Q3LgUhFwNbV
-         a2bLCGWgEDM/FLqBV+grSdit8udlkDC2gpu8+gWly4wctsak1T5MlYTIoIv4hldyUlBL
-         Q3IQ==
-X-Gm-Message-State: AOAM530THBTXY4VBZ/odsGzeDXAmKy6uwnPuk5iCBBeF6ki5C9KuD4h9
-        E3c4t4HSGhJ31VvJNX4+Mot8z2KzVNLJrvibFxctYw==
-X-Google-Smtp-Source: ABdhPJyElgbPmnSLXpF3gDkS9q6qlbT44UUR+C2RdRC7k5GdNuckFsTGeES9VmBRwkAuEmhnnRsNMypzRe7fvelAWWo=
-X-Received: by 2002:a37:6614:: with SMTP id a20mr10617401qkc.501.1625552213306;
- Mon, 05 Jul 2021 23:16:53 -0700 (PDT)
+        Tue, 6 Jul 2021 08:23:42 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Jul 2021 08:23:42 EDT
+Received: from [192.168.8.101] (77.75.244.16) by
+ PVGOAMAIL01.Integrity-funds.com (172.21.60.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.464.5;
+ Tue, 6 Jul 2021 20:05:50 +0800
+From:   "sms@Integrity-funds.com" <sms@Integrity-funds.com>
+Date:   Tue, 6 Jul 2021 13:05:51 +0100
+Subject: Refinanzierung *Heimwerkerdarlehen *Erfinderdarlehen
+Message-ID: <QCNJ3KVH6EU4.P2W1KOU27CZG@140.206.118.236>
+To:     <linux-security-module@vger.kernel.org>
+Sender: "sms@Integrity-funds.com" <sms@Integrity-funds.com>
+Reply-To: icapital fs <info@icapitalf.com>
 MIME-Version: 1.0
-References: <20210705084453.2151729-1-elver@google.com> <20210705084453.2151729-2-elver@google.com>
-In-Reply-To: <20210705084453.2151729-2-elver@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 6 Jul 2021 08:16:39 +0200
-Message-ID: <CACT4Y+ZjjuW5wZ-QsYj7btZYYyNEiSnGh6JtV3bmSNx9mY_bZw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] perf: Refactor permissions check into perf_check_permission()
-To:     Marco Elver <elver@google.com>
-Cc:     peterz@infradead.org, tglx@linutronix.de, mingo@kernel.org,
-        glider@google.com, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, acme@kernel.org,
-        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        linux-perf-users@vger.kernel.org, ebiederm@xmission.com,
-        omosnace@redhat.com, serge@hallyn.com,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-ClientProxiedBy: PVGOAMAIL02.Integrity-funds.com (172.21.60.4) To
+ PVGOAMAIL01.Integrity-funds.com (172.21.60.3)
+X-Brightmail-Tracker: =?utf-8?B?SDRzSUFBQUFBQUFBQytOZ0ZtcGtsZUpJclNoSkxjcEx6RkZpNDJMeDlmNGlv?=
+ =?utf-8?B?Q3Z2L2lUQjROdVdoYjFzRmg5NkhyRTVNSHA4M2lRWHdCakZtcG1YbEYrUndK?=
+ =?utf-8?B?cHg0dEI2dG9LZHpCV056N3JZR2hpL01YVXhjbkVJQ2J4aGxIaDEvQjVMRnlN?=
+ =?utf-8?B?SEI1dUFwY1RhYTc1ZGpKd2NMQUlxRWxPbUxtVURDUXNMMkVvc2JiTUNDZk1L?=
+ =?utf-8?B?bUV2TTMvT1VGY1FXRWRDVU9EWjlQUnVJTFN4Z0xmSDU3aDFXa0hJaEFTMko5?=
+ =?utf-8?B?emNWSU1vRkpVN09mQUkybkJtb2ZQMHVmWkF3czRDOFJQUFcyY3dndGhEUW9u?=
+ =?utf-8?B?V0xyb0V0a2hBSWxOaTVvQkFrTENIZ0p0SDk4QW96aEIwcWNhSGhPaXVFN1NE?=
+ =?utf-8?B?UnN1MENFNFJ0TDlINTVSZ2JUUDN5THhOWUlHeHRpZTJ2OXJGQ2pOU1JPTGNI?=
+ =?utf-8?B?S2x3c2NXVCtkYWh5WTRtVkcvOHpRdGh4RWwzZnJyTlBZQlNmaGVUbVdRZzN6?=
+ =?utf-8?B?MEp5OHdKRzVsV004Z0ZoN3Y2T3ZvNmVQZ2FHZXA1NUphbnBSWmtsbGJwcHBY?=
+ =?utf-8?B?a3B4WHJKK2JtYkdJR1JzdklmVThNT3hyVnp2K29kWXBUa1lGSVM1ZFZrZnBJ?=
+ =?utf-8?B?Z3hKZVVuMUtaa1ZpY0VWOVVtcE5hZkloUmhvTkRTWUszMmdrb0oxaVVtcDVh?=
+ =?utf-8?B?a1phWkE0eGFtRFFUQitjaFJna09IaVVSWG51UUd0N2lnc1RjNHN4MGlQd3BS?=
+ =?utf-8?B?a1VwY2Q3N0xrQUpBWkJFUm1rZVhDOHNaVnhpbEpVUzVwM2tERlREVTVCYWxK?=
+ =?utf-8?B?dFpnaXIvaWxHY2cxRkptSGNHV0VWbVhnbmM5RmRBaTVtQUZ0ODg5eEJrY1Vr?=
+ =?utf-8?B?aVFrcXFnY2xteml3ZUVhRTNKY3ZmUlM5cE42NmErR0RibVkrS2tkSjI3N1pw?=
+ =?utf-8?B?TE52WXNOei8xdExFNjFhMWU5NEZMclZ5M3lMdEhManIzY0crV1JQblB1SExr?=
+ =?utf-8?B?TEEreHBKaXlGZTdLVnZUS1Nzdm1PbGJaSks0YlkxNUhFZWQ0ZUxkcm9Fekd5?=
+ =?utf-8?B?SWFxeCthbjJJTHFmek1keTlvUDg5TkZSL0ZoSVhUZi9LWXZiVklPR1IxTWZK?=
+ =?utf-8?B?MDJLeWRaczVudWRmdlAzTm5hdUVscnZrTm5CMEI2NXkydW45WmNqdVhsMWZ6?=
+ =?utf-8?B?K2U4QXpvOVdKc2wrdm90bEwxWGJUODNiZjRqTnpQQ1o3ZlRIdmh2dFgvdDVk?=
+ =?utf-8?B?QVkwLy9xeGRNdnQ5MFp2Rnl5OWNmTGl0WGJudzcxaXZZWTl1M1ZaZnN3NXFW?=
+ =?utf-8?B?RVNWTDFUOW55NmVaRGRORjNoMW1XdVAvcWFsOVg4VXV0YzVhcmlkVTV6a3FD?=
+ =?utf-8?Q?CAc+LXiWW4oxEQy3mouJEAK3D/eeUAwAA?=
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 5, 2021 at 10:45 AM Marco Elver <elver@google.com> wrote:
->
-> Refactor the permission check in perf_event_open() into a helper
-> perf_check_permission(). This makes the permission check logic more
-> readable (because we no longer have a negated disjunction). Add a
-> comment mentioning the ptrace check also checks the uid.
->
-> No functional change intended.
->
-> Signed-off-by: Marco Elver <elver@google.com>
+Guten Tag linux-security-module,
 
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Interessieren Sie sich für ein Darlehen? Wir bieten verschiedene Kreditpakete zu günstigen Zinsen an.
 
-> ---
-> v3:
-> * Introduce this patch to refactor the permissions checking logic to
->   make it more readable (reported by Eric W. Biederman).
-> ---
->  kernel/events/core.c | 58 ++++++++++++++++++++++++--------------------
->  1 file changed, 32 insertions(+), 26 deletions(-)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index f79ee82e644a..3008b986994b 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -11912,6 +11912,37 @@ __perf_event_ctx_lock_double(struct perf_event *group_leader,
->         return gctx;
->  }
->
-> +static bool
-> +perf_check_permission(struct perf_event_attr *attr, struct task_struct *task)
-> +{
-> +       unsigned int ptrace_mode = PTRACE_MODE_READ_REALCREDS;
-> +       bool is_capable = perfmon_capable();
-> +
-> +       if (attr->sigtrap) {
-> +               /*
-> +                * perf_event_attr::sigtrap sends signals to the other task.
-> +                * Require the current task to also have CAP_KILL.
-> +                */
-> +               rcu_read_lock();
-> +               is_capable &= ns_capable(__task_cred(task)->user_ns, CAP_KILL);
-> +               rcu_read_unlock();
-> +
-> +               /*
-> +                * If the required capabilities aren't available, checks for
-> +                * ptrace permissions: upgrade to ATTACH, since sending signals
-> +                * can effectively change the target task.
-> +                */
-> +               ptrace_mode = PTRACE_MODE_ATTACH_REALCREDS;
-> +       }
-> +
-> +       /*
-> +        * Preserve ptrace permission check for backwards compatibility. The
-> +        * ptrace check also includes checks that the current task and other
-> +        * task have matching uids, and is therefore not done here explicitly.
-> +        */
-> +       return is_capable || ptrace_may_access(task, ptrace_mode);
-> +}
-> +
->  /**
->   * sys_perf_event_open - open a performance event, associate it to a task/cpu
->   *
-> @@ -12152,43 +12183,18 @@ SYSCALL_DEFINE5(perf_event_open,
->         }
->
->         if (task) {
-> -               unsigned int ptrace_mode = PTRACE_MODE_READ_REALCREDS;
-> -               bool is_capable;
-> -
->                 err = down_read_interruptible(&task->signal->exec_update_lock);
->                 if (err)
->                         goto err_file;
->
-> -               is_capable = perfmon_capable();
-> -               if (attr.sigtrap) {
-> -                       /*
-> -                        * perf_event_attr::sigtrap sends signals to the other
-> -                        * task. Require the current task to also have
-> -                        * CAP_KILL.
-> -                        */
-> -                       rcu_read_lock();
-> -                       is_capable &= ns_capable(__task_cred(task)->user_ns, CAP_KILL);
-> -                       rcu_read_unlock();
-> -
-> -                       /*
-> -                        * If the required capabilities aren't available, checks
-> -                        * for ptrace permissions: upgrade to ATTACH, since
-> -                        * sending signals can effectively change the target
-> -                        * task.
-> -                        */
-> -                       ptrace_mode = PTRACE_MODE_ATTACH_REALCREDS;
-> -               }
-> -
->                 /*
-> -                * Preserve ptrace permission check for backwards compatibility.
-> -                *
->                  * We must hold exec_update_lock across this and any potential
->                  * perf_install_in_context() call for this new event to
->                  * serialize against exec() altering our credentials (and the
->                  * perf_event_exit_task() that could imply).
->                  */
->                 err = -EACCES;
-> -               if (!is_capable && !ptrace_may_access(task, ptrace_mode))
-> +               if (!perf_check_permission(&attr, task))
->                         goto err_cred;
->         }
->
-> --
-> 2.32.0.93.g670b81a890-goog
->
+Wir können Ihnen helfen, Ihr Projekt zu finanzieren, Investitionskapital verfügbar. Sie können alles von € 5.000 - € 10.000.000,00 über einen Zeitraum von 1 bis 30 Jahren ausleihen.
+
+Für weitere Details, E-Mail- info@icapitalf.com
+
+Vielen Dank.
+linux-security-module@vger.kernel.org
+
+________________________________
+
+*****************************************************************************************************************************************************************************************
+
+重要提示：
+
+本邮件及其附件中可能包含机密或特许信息，仅发给指定收件人。
+
+若误收本邮件，请务必通知发送人并直接删去，不得谈论、使用、打印、复制、披露、分发、变更本邮件所载内容。此等行为产生的后果，达诚基金概不承担任何责任。
+
+*****************************************************************************************************************************************************************************************
