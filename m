@@ -2,626 +2,223 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1F4C07E9C
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 01:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE328C07E9B
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 02:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01F7761CAA
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 01:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1FCA61CB6
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 02:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230019AbhGGBNW (ORCPT
+        id S230004AbhGGCrx (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jul 2021 21:13:22 -0400
-Received: from mxout03.lancloud.ru ([45.84.86.113]:35620 "EHLO
-        mxout03.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbhGGBNW (ORCPT
+        Tue, 6 Jul 2021 22:47:53 -0400
+Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:59838 "EHLO
+        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229894AbhGGCrw (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jul 2021 21:13:22 -0400
-Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru C9BD720E56D3
-Received: from LanCloud
-Received: from LanCloud
-Received: from LanCloud
-To:     linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-CC:     Igor Zhbanov <izh1979@gmail.com>, Mimi Zohar <zohar@linux.ibm.com>
-From:   Igor Zhbanov <i.zhbanov@omp.ru>
-Subject: [PATCH 1/1] NAX LSM: Add initial support support
-Message-ID: <db1c1de0-3672-4bae-ef45-c554379f36f4@omp.ru>
-Date:   Wed, 7 Jul 2021 04:03:53 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 6 Jul 2021 22:47:52 -0400
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 1672aKj7004673;
+        Wed, 7 Jul 2021 02:44:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=zHV6mIOdL0wBvrgQOW8vMNFAB8zdE3I/osIowexbogU=;
+ b=nW4aK3GUP382Wr3b5VoGn/3JiX+UF1jdEJ8cNrpydfTxiQ0k3pjVuDmlArXOdec2rQjC
+ a3Rp19tKNE3rZD8jyPu1yij7K/I9g7D2vn7gr7qpYkmHbU7W1v6CDCNeQnDEhBqtJsiL
+ 7/ZIV6rZhTIu25PEhsGmyAGFXDvM52J2yp+RnvEJkh/ZPAg9bTmweKL06Bvei6ZahD39
+ CgOvK51AhsclrYvYxFbAsWoxKUw9bjtI9fsU5I3v7UruHFZs3WPu37eVlqAvVcco7hfh
+ xJzccyvWrjWAKHP0oL3N2fQWDPO77X8LTaitXQbEby0dIiOFc2YvHEzKXbxrmqJ43C3M sA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 39m3mhb2ud-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Jul 2021 02:44:32 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 1672aUVJ193064;
+        Wed, 7 Jul 2021 02:44:30 GMT
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2172.outbound.protection.outlook.com [104.47.73.172])
+        by aserp3030.oracle.com with ESMTP id 39jdxjaahd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 07 Jul 2021 02:44:30 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WUInn5ecEygorVzm2KJQ3Q5v78w3n9Y7EIBMf2VaEy2TC63UkP1qULQC0Zbs+HFMR7GoBs3wVUdcc0tb2hN5brCcdkcOgVjnVT0gcXZKEq7XEdByFBMoVRqAzh74ScWmOcJ/fmmiNi8q+qzl+COoQ4iX9HWlTeYN+InjZatJZA0KFe6DavenUKKrsropHDlQn81SgnXbWcTPrFCeG9ks0QWz9SvzITxmfyal7JZlecLSQPih744FmApjrJlc0KEqa5uWOUnV8U0q43Psnk8J/QlsRYXEKfU2UxgXP4H/SagRlm7CfuhpkLJuZb2hszbnwuXO4Bw9LJmI6/gKMRJROw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zHV6mIOdL0wBvrgQOW8vMNFAB8zdE3I/osIowexbogU=;
+ b=UjC8N7KU/SlAn9a0ZlLF4h6s57Putqk3x9W8/ZkzZrPiwoqhuW9L3+cRhRRmu3yx6y/pm1wzPgkCF+43flDLyyF90smHt5TcHLfOybkpVfmGVc8a1wPIHhESeNH7Tr6M/HtEwjZdNFsb9UEJxuWpqhgT33+6Xhke0IU3o89JWCotSXLK9Gvp/JZwcNZ4mnKXnNIdPAEXG8nN2bhLb9mSHxHfBcaTdKgN3VFyveFr14V8shMUkXdudDHIXUkfZvE5N5IERcXx4fMx31nzveREV1a+0K0J8LXmUXEFrVoDT00749GbvCVdnYHnB81GKtnPrByh3HXDEy18v0WvK0votg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zHV6mIOdL0wBvrgQOW8vMNFAB8zdE3I/osIowexbogU=;
+ b=arPQO0jL0TqLUk/9LWtm3AFzvEU6qiSb1JHt8J8pqDDf9LJbWeMexVcGMaI5lfkyfNnfmcDVOjQP6JkdOLecig52b0q0tzt+HR/NNhW7CAHOw6ZyGGrHqho6PR2xeRIaT/8/z932UlijDahxsYmZSlTgYrbh/ofqLEzMpFNKs2A=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by CH2PR10MB3863.namprd10.prod.outlook.com (2603:10b6:610:c::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4287.24; Wed, 7 Jul
+ 2021 02:44:28 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::a890:e571:de3a:7197]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::a890:e571:de3a:7197%8]) with mapi id 15.20.4287.027; Wed, 7 Jul 2021
+ 02:44:28 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com
+Cc:     eric.snowberg@oracle.com, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        glin@suse.com, konrad.wilk@oracle.com
+Subject: [PATCH RFC 02/12] KEYS: Allow unrestricted keys to be moved to the secondary keyring
+Date:   Tue,  6 Jul 2021 22:43:53 -0400
+Message-Id: <20210707024403.1083977-3-eric.snowberg@oracle.com>
+X-Mailer: git-send-email 2.18.4
+In-Reply-To: <20210707024403.1083977-1-eric.snowberg@oracle.com>
+References: <20210707024403.1083977-1-eric.snowberg@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0245.namprd03.prod.outlook.com
+ (2603:10b6:a03:3a0::10) To CH2PR10MB4150.namprd10.prod.outlook.com
+ (2603:10b6:610:ac::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: ru-RU
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.11.198]
-X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
- LFEX1909.lancloud.ru (fd00:f066::79)
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.us.oracle.com (148.87.23.5) by SJ0PR03CA0245.namprd03.prod.outlook.com (2603:10b6:a03:3a0::10) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4308.20 via Frontend Transport; Wed, 7 Jul 2021 02:44:26 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d4f55a56-db4a-481d-500b-08d940f123c9
+X-MS-TrafficTypeDiagnostic: CH2PR10MB3863:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CH2PR10MB3863936205222E0FBD685D37871A9@CH2PR10MB3863.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: SByp2sc3Pk6id8t38p8I6eeu0TsN+OgIvSQ+ZN71f5FBnO32jb75ZBcroMxSVG7MMGoGSnxxQN0YXkintDgh76d6lGSUpxw/1OAWYtTaCQ8kObeDswEQZz4xhF+uX9o03/ZQ4FS9iuHsDrWFG+tATKT0JXEks6lckt5glEv67WfCoUr6dZZ6/9Ksdox8H6LuKyqjHy8Sx25V4Z9iNzMoges34xxVqpABVqVVj6d85o21XDo7oaAKZ9Z9DVhgDZ425QVYf+Zy49i/frWse+b1RKY69PDf0Av8uTxt31r9NSd3tVuShn7vWojbniPPbS9d60nM3wNyGevGx6VUg00XfWihy6g/t25nsJHIgJarpeb03VpcjZq42Y1P9XDxXSMq4LnHZZ1QkxD4OhIHu0csaDxw9EEZ9N3SQWQgBagwd8kF52T8YXtYn9n1hLOSS0CQMM3j8Qzg6/mX+hXPCPUtc2M0ft78H3TPdFlRTdQNF2+aFEjJtGy0S6OBTB5VOMadJ4Ymbd5xdj02oUDCDBTnvDYAkFtFYQJVcre0hk7Zi8J0EocZv5AuNV+voU1EoOWEmA+mhQBSaWEaBoilpQu90/Cvgkc+brxHO28TNZBsLY4fEbbPwiqqmYl11QDPvTuBDsr/WxaY56IIVKwOG2MtUFthIYGZVOgB4XtlmCVAk6Tgs21b/WfzaFq1hkbl3nsHLBUFXbZOEKE06oWcoFNQEPfQBBDT/kUfydUIUH5YEyo=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(136003)(366004)(346002)(396003)(376002)(921005)(107886003)(6486002)(7696005)(316002)(66946007)(1076003)(44832011)(86362001)(38350700002)(6666004)(36756003)(83380400001)(186003)(4326008)(956004)(26005)(7416002)(8676002)(52116002)(2906002)(38100700002)(2616005)(8936002)(66476007)(5660300002)(478600001)(66556008);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qzKPd+2GL7/0APMSH4Z/DojXVOamHwErvRtggDgmBPb/jSW2eBFQaUjzhG+7?=
+ =?us-ascii?Q?chEUMpAVf3nLC4MRn/ZYp/1B3fIggw2CYtRRmKWudsxsM/U/3Jl6ZfO+FuOv?=
+ =?us-ascii?Q?Fz+7sdT1Ycf0uj653ETeeIHMgHLCCv5TIbwRNHHHLjoM0cCpcWWKACdPkFMv?=
+ =?us-ascii?Q?bC9sCPnZ9LWF0sOqV9305lqvOW4AwJUI/XIpFfQg+CCnnQxWorNh9L1NEVdd?=
+ =?us-ascii?Q?o6JznpnzkYbNsc0Wh8iZ//Td7X9xxAE2U2+R8E4YXmbYh9gy2QavFAnUu2OW?=
+ =?us-ascii?Q?f1yzxwGDCHRvrHjvoVlbRiC4+c+CFF8xGZe1BKO5PIL87bNeyBY0sW0rzS9l?=
+ =?us-ascii?Q?qS6BehYzrusT1Jds+Gk1jB7qkTy7eO2ypLcPEIw6nz9vsLv0of0Fwiv6tMTt?=
+ =?us-ascii?Q?Q9Nn/HFnuJJ/cF/bxdnnZTk/GjoOY3zbGRYbo90XXEPcSmU7RPye31BowK4g?=
+ =?us-ascii?Q?aqA19+6Y50f0tC0OgKTsnFo9j4bYXASg+wKiDM90yp790Pd5HD9C12oozx3a?=
+ =?us-ascii?Q?CBHEq2bS7cUjXePXGrhjLjH5zpgtQ/9HsraiJyLM3Sl/YEfy9KPj0lWaSB2Z?=
+ =?us-ascii?Q?scDZ2q9O8eGN2io4NIuGlR6sRbXxxsaXb7+APwNG2gCMsNZStMNmNwNWS0pF?=
+ =?us-ascii?Q?kSe3W9y/Q+b9Idqdt90SM/y8oM/QbfY7/hh1YBdTx5oZq4PK4FvzYX+o5Jdb?=
+ =?us-ascii?Q?tsZIxOiQP+ntITMEJBibBgq+EEGqoa6mgBPX41R53DpiUiuU+Byd1OBZhuLb?=
+ =?us-ascii?Q?yqb1vwnO0F1sH15WVZaHVFcWEejUmkk5Dyk210Mlue9Tv/S0sATHJ6c5IODS?=
+ =?us-ascii?Q?2bUsa3uqDaSg4v72NbGWBoNIA04FcEMIBiSXy2u7d3oj1ZvZ+8DniftqoekV?=
+ =?us-ascii?Q?DijGHqhD2Fd9Q8lwLwVMfnrP8iK3icggriHkntEXQ3ZZTl15GZtUsAk8GbPo?=
+ =?us-ascii?Q?72/IqCR/PMPoUOI9Lz82joQzt2SLeXKMa4xghpHRLfi8gEoXltxWQp6GD46b?=
+ =?us-ascii?Q?AjEWZ54ntQd+JSDSVy47GHDQh2RK+3Nk8KoaMgI59nc/s8nWwR+6BwWPwCij?=
+ =?us-ascii?Q?baBEXW8eef7LxOOj76FXIKkSJoE4cf/TzkbWhp0KDFl9LPUsS9z4kJ/jrfQ3?=
+ =?us-ascii?Q?BuSQsZ6bNtR80MK2gkv/W2jPui1dyI4JceWa4pe1t772gq6bQmv2ffA0wSJT?=
+ =?us-ascii?Q?YloGFQe/3EESTfPrWy2BphSlO7cad+yfnXmKdSS/Gb8AhcF9vPGhDJOTA3RG?=
+ =?us-ascii?Q?YT0pVEV5pkY5hLA1kQKvETBK4X+DH6amLznUc56IWcB2M1pqNeZtoqG0xikR?=
+ =?us-ascii?Q?ypIPn+8wY6wawzndpaUkHdps?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4f55a56-db4a-481d-500b-08d940f123c9
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2021 02:44:28.3328
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fcHN3yTIp/gpZDt5NY8/dm+YNEG/mFc3p7Ry9xSqVSLsdXW3fVTuYXSpxxV74T7xUZ1sgfcZhxL0gBHF5Dl5lcrWF4OxKaMykJegednsCDM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB3863
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10037 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
+ spamscore=0 adultscore=0 malwarescore=0 mlxscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107070012
+X-Proofpoint-GUID: NG63G9Q4TQQM4Qz2RIm2cz838Jqzt2ME
+X-Proofpoint-ORIG-GUID: NG63G9Q4TQQM4Qz2RIm2cz838Jqzt2ME
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-NAX (No Anonymous Execution) is a Linux Security Module that extends DAC
-by making impossible to make anonymous and modified pages executable for
-privileged processes.
+Allow keys to be moved into the secondary keyring without checking its
+trust chain.  This is available only during kernel initialization.
 
-The module intercepts anonymous executable pages created with mmap() and
-mprotect() system calls.
+This will allow keys in the MOK list to be added during boot.
 
-Depending on the settings, the module can block and log violating system
-calls or log and kill the violating process.
-
-Signed-off-by: Igor Zhbanov <i.zhbanov@omp.ru>
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 ---
- Documentation/admin-guide/LSM/NAX.rst   |  48 ++++
- Documentation/admin-guide/LSM/index.rst |   1 +
- security/Kconfig                        |  11 +-
- security/Makefile                       |   2 +
- security/nax/Kconfig                    |  71 +++++
- security/nax/Makefile                   |   4 +
- security/nax/nax-lsm.c                  | 344 ++++++++++++++++++++++++
- 7 files changed, 476 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/admin-guide/LSM/NAX.rst
- create mode 100644 security/nax/Kconfig
- create mode 100644 security/nax/Makefile
- create mode 100644 security/nax/nax-lsm.c
+ certs/system_keyring.c        | 25 +++++++++++++++++++++++++
+ include/keys/system_keyring.h |  7 +++++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/Documentation/admin-guide/LSM/NAX.rst b/Documentation/admin-guide/LSM/NAX.rst
-new file mode 100644
-index 000000000000..b742f881f3d7
---- /dev/null
-+++ b/Documentation/admin-guide/LSM/NAX.rst
-@@ -0,0 +1,48 @@
-+=======
-+NAX LSM
-+=======
-+
-+:Author: Igor Zhbanov
-+
-+NAX (No Anonymous Execution) is a Linux Security Module that extends DAC
-+by making impossible to make anonymous and modified pages executable for
-+privileged processes. The module intercepts anonymous executable pages
-+created with mmap() and mprotect() system calls.
-+
-+To select it at boot time, specify ``security=nax`` (though this will
-+disable any other LSM).
-+
-+The privileged process is a process for which any of the following is true:
-+
-+- ``uid   == 0``
-+- ``euid  == 0``
-+- ``suid  == 0``
-+- ``fsuid == 0``
-+- ``cap_effective`` has any capability except of ``kernel.nax.allowed_caps``
-+- ``cap_permitted`` has any capability except of ``kernel.nax.allowed_caps``
-+
-+The following sysctl parameters are available:
-+
-+* ``kernel.nax.allowed_caps``:
-+
-+ Hexadecimal number representing allowed capabilities set for the privileged
-+ processes.
-+
-+* ``kernel.nax.enforcing``:
-+
-+ - 0: Only log errors (when enabled by ``kernel.nax.quiet``)
-+ - 1: Forbid unsafe pages mappings (default)
-+
-+* ``kernel.nax.locked``:
-+
-+ - 0: Changing of the module's sysctl parameters is allowed
-+ - 1: Further changing of the module's sysctl parameters is forbidden
-+
-+ Setting this parameter to ``1`` after initial setup during the system boot
-+ will prevent the module disabling at the later time.
-+
-+* ``kernel.nax.quiet``:
-+
-+ - 0: Log violations (default)
-+ - 1: Be quiet
-+ - 2: Kill the violating process and log
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index a6ba95fbaa9f..e9df7fc9a461 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -42,6 +42,7 @@ subdirectories.
+diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+index 692365dee2bd..f02bc5832684 100644
+--- a/certs/system_keyring.c
++++ b/certs/system_keyring.c
+@@ -90,6 +90,31 @@ static __init struct key_restriction *get_builtin_and_secondary_restriction(void
  
-    apparmor
-    LoadPin
-+   NAX
-    SELinux
-    Smack
-    tomoyo
-diff --git a/security/Kconfig b/security/Kconfig
-index 0ced7fd33e4d..771419647ae1 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -239,6 +239,7 @@ source "security/yama/Kconfig"
- source "security/safesetid/Kconfig"
- source "security/lockdown/Kconfig"
- source "security/landlock/Kconfig"
-+source "security/nax/Kconfig"
- 
- source "security/integrity/Kconfig"
- 
-@@ -278,11 +279,11 @@ endchoice
- 
- config LSM
- 	string "Ordered list of enabled LSMs"
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
--	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-+	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-+	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-+	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-+	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-+	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
- 	help
- 	  A comma-separated list of LSMs, in initialization order.
- 	  Any LSMs left off this list will be ignored. This can be
-diff --git a/security/Makefile b/security/Makefile
-index 47e432900e24..5c261bbf4659 100644
---- a/security/Makefile
-+++ b/security/Makefile
-@@ -14,6 +14,7 @@ subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
- subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
- subdir-$(CONFIG_BPF_LSM)		+= bpf
- subdir-$(CONFIG_SECURITY_LANDLOCK)	+= landlock
-+subdir-$(CONFIG_SECURITY_NAX)		+= nax
- 
- # always enable default capabilities
- obj-y					+= commoncap.o
-@@ -34,6 +35,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
- obj-$(CONFIG_CGROUPS)			+= device_cgroup.o
- obj-$(CONFIG_BPF_LSM)			+= bpf/
- obj-$(CONFIG_SECURITY_LANDLOCK)		+= landlock/
-+obj-$(CONFIG_SECURITY_NAX)		+= nax/
- 
- # Object integrity file lists
- subdir-$(CONFIG_INTEGRITY)		+= integrity
-diff --git a/security/nax/Kconfig b/security/nax/Kconfig
-new file mode 100644
-index 000000000000..60ef0964f00a
---- /dev/null
-+++ b/security/nax/Kconfig
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config SECURITY_NAX
-+	bool "NAX support"
-+	depends on SECURITY
-+	default n
-+	help
-+	  This selects NAX (No Anonymous Execution), which extends DAC
-+	  support with additional system-wide security settings beyond
-+	  regular Linux discretionary access controls. Currently available
-+	  is restriction to make anonymous and modified pages executable
-+	  to privileged processes. Like capabilities, this security module
-+	  stacks with other LSMs. Further information can be found in
-+	  Documentation/admin-guide/LSM/NAX.rst.
+ 	return restriction;
+ }
 +
-+	  If you are unsure how to answer this question, answer N.
-+
-+config SECURITY_NAX_LOCKED
-+	bool "Lock NAX settings"
-+	depends on SECURITY_NAX
-+	help
-+	  If selected, it will not be possible to change enforcing and quiet
-+	  settings via sysctl or the kernel command line. If not selected,
-+	  it can be enabled at boot with the kernel parameter "nax_locked=1"
-+	  or "kernel.nax_locked=1" sysctl (if the settings are not locked).
-+
-+config SECURITY_NAX_QUIET
-+	bool "Silence NAX messages"
-+	depends on SECURITY_NAX
-+	help
-+	  If selected, NAX will not print violations. If not selected, it can
-+	  be enabled at boot with the kernel parameter "nax_quiet=1" or
-+	  "kernel.nax_quiet=1" sysctl (if the settings are not locked).
-+
-+choice
-+	prompt "NAX violation action mode"
-+	default SECURITY_NAX_MODE_LOG
-+	depends on SECURITY_NAX
-+	help
-+	  Select the NAX violation action mode.
-+
-+	  In the default permissive mode the violations are only logged
-+	  (if logging is not suppressed). In the enforcing mode the violations
-+	  are prohibited. And in the kill mode the process is terminated.
-+
-+	  The value can be changed at boot with the kernel parameter
-+	  "nax_mode" (0, 1, 2) or "kernel.nax_mode=" (0, 1, 2) sysctl (if the
-+	  settings are not locked).
-+
-+	config SECURITY_NAX_MODE_LOG
-+		bool "Permissive mode"
-+		help
-+		  In this mode violations are only logged (if logging is not
-+		  suppressed).
-+	config SECURITY_NAX_MODE_ENFORCING
-+		bool "Enforcing mode"
-+		help
-+		  In this mode violations are prohibited and logged (if
-+		  logging is not suppressed).
-+	config SECURITY_NAX_MODE_KILL
-+		bool "Kill mode"
-+		help
-+		  In this mode the voilating process is terminated. The event
-+		  is logged (if logging is not suppressed).
-+endchoice
-+
-+config SECURITY_NAX_MODE
-+        int
-+        depends on SECURITY_NAX
-+        default 0 if SECURITY_NAX_MODE_LOG
-+        default 1 if SECURITY_NAX_MODE_ENFORCING
-+        default 2 if SECURITY_NAX_MODE_KILL
-diff --git a/security/nax/Makefile b/security/nax/Makefile
-new file mode 100644
-index 000000000000..9c3372210c77
---- /dev/null
-+++ b/security/nax/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+obj-$(CONFIG_SECURITY_NAX) := nax.o
-+
-+nax-y := nax-lsm.o
-diff --git a/security/nax/nax-lsm.c b/security/nax/nax-lsm.c
-new file mode 100644
-index 000000000000..ef99d9b36a9d
---- /dev/null
-+++ b/security/nax/nax-lsm.c
-@@ -0,0 +1,344 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/* Copyright (C) 2016-2021 Open Mobile Platform LLC.
++/**
++ * move_to_trusted_secondary_keyring - Move to the secondary trusted
++ * keyring with no validation.
++ * @key: The key to add to the secondary trusted keyring
++ * @from_keyring: The keyring containing the key to move from
 + *
-+ * Written by: Igor Zhbanov <i.zhbanov@omp.ru, izh1979@gmail.com>
-+ *
-+ * NAX (No Anonymous Execution) Linux Security Module
-+ * This module prevents execution of the code in anonymous or modified pages.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2, as
-+ * published by the Free Software Foundation. */
-+
-+#define pr_fmt(fmt) "NAX: " fmt
-+
-+#include <linux/capability.h>
-+#include <linux/cred.h>
-+#include <linux/ctype.h>
-+#include <linux/lsm_hooks.h>
-+#include <linux/mman.h>
-+#include <linux/sched.h>
-+#include <linux/securebits.h>
-+#include <linux/security.h>
-+#include <linux/sysctl.h>
-+#include <linux/uidgid.h>
-+
-+#define NAX_MODE_PERMISSIVE 0 /* Log only             */
-+#define NAX_MODE_ENFORCING  1 /* Enforce and log      */
-+#define NAX_MODE_KILL       2 /* Kill process and log */
-+
-+static int mode   = CONFIG_SECURITY_NAX_MODE,
-+	   quiet  = IS_ENABLED(CONFIG_SECURITY_NAX_QUIET),
-+	   locked = IS_ENABLED(CONFIG_SECURITY_NAX_LOCKED);
-+
-+#define ALLOWED_CAPS_HEX_LEN (_KERNEL_CAPABILITY_U32S * 8)
-+
-+static char allowed_caps_hex[ALLOWED_CAPS_HEX_LEN + 1];
-+static kernel_cap_t allowed_caps = CAP_EMPTY_SET;
-+
-+static int
-+is_privileged_process(void)
++ * Move key to the secondary keyring without checking its trust chain.  This
++ * is available only during kernel initialization.
++ */
++__init int move_to_trusted_secondary_keyring(struct key *key, struct key *from_keyring)
 +{
-+	const struct cred *cred;
-+	kuid_t root_uid;
++	int ret;
 +
-+	cred = current_cred();
-+	root_uid = make_kuid(cred->user_ns, 0);
-+	/* We count a process as privileged if it any of its IDs is zero
-+	 * or it has any unsafe capability (even in a user namespace) */
-+	if ((!issecure(SECURE_NOROOT) && (uid_eq(cred->uid,   root_uid) ||
-+					  uid_eq(cred->euid,  root_uid) ||
-+					  uid_eq(cred->suid,  root_uid) ||
-+					  uid_eq(cred->fsuid, root_uid))) ||
-+	    (!cap_issubset(cred->cap_effective, allowed_caps)) ||
-+	    (!cap_issubset(cred->cap_permitted, allowed_caps)))
-+		return 1;
++	ret = key_move(key, from_keyring, secondary_trusted_keys,
++		       KEY_ALLOC_BYPASS_RESTRICTION);
 +
-+	return 0;
++	if (ret)
++		pr_err("Problem loading X.509 certificate %d\n", ret);
++	else
++		pr_notice("Loaded X.509 cert '%s' linked to secondary sys keyring\n",
++			  key->description);
++
++	return ret;
 +}
-+
-+static void
-+log_warn(const char *reason)
+ #endif
+ 
+ /*
+diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+index 6acd3cf13a18..f40837026d6d 100644
+--- a/include/keys/system_keyring.h
++++ b/include/keys/system_keyring.h
+@@ -34,8 +34,15 @@ extern int restrict_link_by_builtin_and_secondary_trusted(
+ 	const struct key_type *type,
+ 	const union key_payload *payload,
+ 	struct key *restriction_key);
++extern __init int move_to_trusted_secondary_keyring(struct key *key,
++						    struct key *from_keyring);
+ #else
+ #define restrict_link_by_builtin_and_secondary_trusted restrict_link_by_builtin_trusted
++static inline __init int move_to_trusted_secondary_keyring(struct key *key,
++							   struct key *from_keyring)
 +{
-+	if (quiet)
-+		return;
-+
-+	pr_warn_ratelimited("%s: pid=%d, uid=%u, comm=\"%s\"\n",
-+		            reason, current->pid,
-+		            from_kuid(&init_user_ns, current_cred()->uid),
-+	                              current->comm);
++	return -EKEYREVOKED;
 +}
-+
-+static void
-+kill_current_task(void)
-+{
-+	pr_warn("Killing pid=%d, uid=%u, comm=\"%s\"\n",
-+		current->pid, from_kuid(&init_user_ns, current_cred()->uid),
-+		current->comm);
-+	force_sig(SIGKILL);
-+}
-+
-+static int
-+nax_mmap_file(struct file *file, unsigned long reqprot,
-+	      unsigned long prot, unsigned long flags)
-+{
-+	int ret = 0;
-+
-+	if (mode == NAX_MODE_PERMISSIVE && quiet)
-+		return 0; /* Skip further checks in this case */
-+
-+	if (!(prot & PROT_EXEC)) /* Not executable memory */
-+		return 0;
-+
-+	if (!is_privileged_process())
-+		return 0; /* Not privileged processes can do anything */
-+
-+	if (!file) { /* Anonymous executable memory */
-+		log_warn("MMAP_ANON_EXEC");
-+		ret = -EACCES;
-+	} else if (prot & PROT_WRITE) { /* Mapping file RWX */
-+		log_warn("MMAP_FILE_WRITE_EXEC");
-+		ret = -EACCES;
-+	}
-+
-+	if (mode == NAX_MODE_KILL)
-+		kill_current_task();
-+
-+	return (mode != NAX_MODE_PERMISSIVE) ? ret : 0;
-+}
-+
-+static int
-+nax_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-+		  unsigned long prot)
-+{
-+	if (mode == NAX_MODE_PERMISSIVE && quiet)
-+		return 0; /* Skip further checks in this case */
-+
-+	if (!(prot & PROT_EXEC)) /* Not executable memory */
-+		return 0;
-+
-+	if (!is_privileged_process())
-+		return 0; /* Not privileged processes can do anything */
-+
-+	if (!(vma->vm_flags & VM_EXEC)) {
-+		int ret = 0;
-+
-+		if (vma->vm_start >= vma->vm_mm->start_brk &&
-+		    vma->vm_end   <= vma->vm_mm->brk) {
-+			log_warn("MPROTECT_EXEC_HEAP");
-+			ret = -EACCES;
-+		} else if (!vma->vm_file &&
-+			   ((vma->vm_start <= vma->vm_mm->start_stack &&
-+			     vma->vm_end   >= vma->vm_mm->start_stack) ||
-+			    vma_is_stack_for_current(vma))) {
-+			log_warn("MPROTECT_EXEC_STACK");
-+			ret = -EACCES;
-+		} else if (vma->vm_file && vma->anon_vma) {
-+			/* We are making executable a file mapping that has
-+			 * had some COW done. Since pages might have been
-+			 * written, check ability to execute the possibly
-+			 * modified content. This typically should only
-+			 * occur for text relocations. */
-+			log_warn("MPROTECT_EXEC_MODIFIED");
-+			ret = -EACCES;
-+		}
-+
-+		if (ret) {
-+			if (mode == NAX_MODE_KILL)
-+				kill_current_task();
-+
-+			return (mode != NAX_MODE_PERMISSIVE) ? ret : 0;
-+		}
-+	}
-+
-+	return nax_mmap_file(vma->vm_file, reqprot, prot,
-+			     vma->vm_flags & VM_SHARED);
-+}
-+
-+static struct security_hook_list nax_hooks[] __lsm_ro_after_init = {
-+	LSM_HOOK_INIT(mmap_file, nax_mmap_file),
-+	LSM_HOOK_INIT(file_mprotect, nax_file_mprotect),
-+};
-+
-+#ifdef CONFIG_SYSCTL
-+
-+static int
-+nax_dointvec_minmax(struct ctl_table *table, int write,
-+		    void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	if (write && (!capable(CAP_SYS_ADMIN) || locked))
-+		return -EPERM;
-+
-+	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+}
-+
-+static int
-+nax_dostring(struct ctl_table *table, int write, void *buffer,
-+             size_t *lenp, loff_t *ppos)
-+{
-+	if (write) {
-+		int error;
-+		char *buf = (char *)buffer;
-+		size_t len = *lenp, i;
-+		kernel_cap_t caps = CAP_EMPTY_SET;
-+
-+		if (!capable(CAP_SYS_ADMIN) || locked)
-+			return -EPERM;
-+
-+		/* Do not allow trailing garbage or excessive length */
-+		if (len == ALLOWED_CAPS_HEX_LEN + 1) {
-+			if (buf[--len] != '\n')
-+				return -EINVAL;
-+		} else if (len > ALLOWED_CAPS_HEX_LEN || len <= 0)
-+			return -EINVAL;
-+
-+		if ((error = proc_dostring(table, write, buffer, lenp, ppos)))
-+			return error;
-+
-+		len = strlen(allowed_caps_hex);
-+		for (i = 0; i < len; i++)
-+			if (!isxdigit(allowed_caps_hex[i]))
-+				return -EINVAL;
-+
-+		for (i = 0; i < _KERNEL_CAPABILITY_U32S; i++) {
-+			unsigned long l;
-+
-+			if (kstrtoul(allowed_caps_hex +
-+			             (len >= 8 ? len - 8 : 0), 16, &l))
-+				return -EINVAL;
-+
-+			caps.cap[i] = l;
-+			if (len < 8)
-+				break;
-+
-+			len -= 8;
-+			allowed_caps_hex[len] = '\0';
-+		}
-+
-+		allowed_caps = cap_intersect(caps, CAP_FULL_SET);
-+		return 0;
-+	} else {
-+		unsigned i;
-+
-+		CAP_FOR_EACH_U32(i)
-+			snprintf(allowed_caps_hex + i * 8, 9, "%08x",
-+			         allowed_caps.cap[CAP_LAST_U32 - i]);
-+
-+		return proc_dostring(table, write, buffer, lenp, ppos);
-+	}
-+}
-+
-+struct ctl_path nax_sysctl_path[] = {
-+	{ .procname = "kernel" },
-+	{ .procname = "nax"    },
-+	{ }
-+};
-+
-+static int max_mode = NAX_MODE_KILL;
-+
-+static struct ctl_table nax_sysctl_table[] = {
-+	{
-+		.procname     = "allowed_caps",
-+		.data         = allowed_caps_hex,
-+		.maxlen       = ALLOWED_CAPS_HEX_LEN + 1,
-+		.mode         = 0644,
-+		.proc_handler = nax_dostring,
-+	}, {
-+		.procname     = "locked",
-+		.data         = &locked,
-+		.maxlen       = sizeof(int),
-+		.mode         = 0644,
-+		.proc_handler = nax_dointvec_minmax,
-+		.extra1       = SYSCTL_ZERO,
-+		.extra2       = SYSCTL_ONE,
-+	}, {
-+		.procname     = "mode",
-+		.data         = &mode,
-+		.maxlen       = sizeof(int),
-+		.mode         = 0644,
-+		.proc_handler = nax_dointvec_minmax,
-+		.extra1       = SYSCTL_ZERO,
-+		.extra2       = &max_mode,
-+	}, {
-+		.procname     = "quiet",
-+		.data         = &quiet,
-+		.maxlen       = sizeof(int),
-+		.mode         = 0644,
-+		.proc_handler = nax_dointvec_minmax,
-+		.extra1       = SYSCTL_ZERO,
-+		.extra2       = SYSCTL_ONE,
-+	},
-+	{ }
-+};
-+
-+static void __init
-+nax_init_sysctl(void)
-+{
-+	if (!register_sysctl_paths(nax_sysctl_path, nax_sysctl_table))
-+		panic("NAX: sysctl registration failed.\n");
-+}
-+
-+#else /* !CONFIG_SYSCTL */
-+
-+static inline void
-+nax_init_sysctl(void)
-+{
-+
-+}
-+
-+#endif /* !CONFIG_SYSCTL */
-+
-+static int __init setup_mode(char *str)
-+{
-+	unsigned long val;
-+
-+	if (!locked && !kstrtoul(str, 0, &val)) {
-+		if (val > max_mode){
-+			pr_err("Invalid 'nax_mode' parameter value (%s)\n",
-+			       str);
-+			val = max_mode;
-+		}
-+
-+		mode = val;
-+	}
-+
-+	return 1;
-+}
-+__setup("nax_mode=", setup_mode);
-+
-+static int __init setup_quiet(char *str)
-+{
-+	unsigned long val;
-+
-+	if (!locked && !kstrtoul(str, 0, &val))
-+		quiet = val ? 1 : 0;
-+
-+	return 1;
-+}
-+__setup("nax_quiet=", setup_quiet);
-+
-+static int __init setup_locked(char *str)
-+{
-+	unsigned long val;
-+
-+	if (!locked && !kstrtoul(str, 0, &val))
-+		locked = val ? 1 : 0;
-+
-+	return 1;
-+}
-+__setup("nax_locked=", setup_locked);
-+
-+static __init int
-+nax_init(void)
-+{
-+	pr_info("Starting.\n");
-+	security_add_hooks(nax_hooks, ARRAY_SIZE(nax_hooks), "nax");
-+	nax_init_sysctl();
-+
-+	return 0;
-+}
-+
-+DEFINE_LSM(nax) = {
-+	.name = "nax",
-+	.init = nax_init,
-+};
+ #endif
+ 
+ extern struct pkcs7_message *pkcs7;
 -- 
-2.26.2
+2.18.4
 
