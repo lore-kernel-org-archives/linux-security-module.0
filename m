@@ -2,108 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8880BC07E9B
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 07:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEA7C07E95
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 10:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6919161CAA
-	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 07:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 241D461A2B
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 10:14:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230312AbhGGHSL (ORCPT
+        id S231194AbhGGKRZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 7 Jul 2021 03:18:11 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3370 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230367AbhGGHSL (ORCPT
+        Wed, 7 Jul 2021 06:17:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39942 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231137AbhGGKRZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 7 Jul 2021 03:18:11 -0400
-Received: from fraeml707-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GKVhM3gDwz6H8Hd;
-        Wed,  7 Jul 2021 15:01:23 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml707-chm.china.huawei.com (10.206.15.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 7 Jul 2021 09:15:29 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Wed, 7 Jul 2021 09:15:29 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-CC:     "tusharsu@linux.microsoft.com" <tusharsu@linux.microsoft.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] ima: Support euid keyword for buffer measurement
-Thread-Topic: [PATCH] ima: Support euid keyword for buffer measurement
-Thread-Index: AQHXcZTiYWuli3uSt0eEvrRscw2zRas2Nd6AgADj8nA=
-Date:   Wed, 7 Jul 2021 07:15:29 +0000
-Message-ID: <35a1ef50bf534933a10fd350aee9baa2@huawei.com>
-References: <20210705115650.3373599-1-roberto.sassu@huawei.com>
- <2996f5ae-d76f-5fc9-bf90-857d4fc6644a@linux.microsoft.com>
-In-Reply-To: <2996f5ae-d76f-5fc9-bf90-857d4fc6644a@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.221.98.153]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 7 Jul 2021 06:17:25 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D689C061574;
+        Wed,  7 Jul 2021 03:14:45 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id b5-20020a17090a9905b029016fc06f6c5bso1309439pjp.5;
+        Wed, 07 Jul 2021 03:14:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/v1v63E0rW3Sz0wWz+xxvrNljXSoGIcWgLgvmV340X0=;
+        b=r/ffmgD5xpCW0UJzyqwV9Mx7X8KN1SMy7aB/k3mI0d4pAONd+gY31jASH6L9nCcTaS
+         0MGJ+jU9vM3u7wCsppsvc+O/NXDbBEBpGChF78KO1cOMV8SGs04rTTxf+0MXZ1BS25qE
+         3vws7QMETu80NK3u9QrnmfahUigoLLj/mIx1Uc4aN+rPQfPh2cN+FZ0QXktseSVfddkr
+         YyfX+lliHgO1yyz7n+bHbn5NpbFgOIGVJp+UqXnEMM3f+0TZ0brlXLV+a3hl7MZq8m36
+         Khh1g4Yt/r+keuwQzUcS3SsaMW7xCmKo3wGcYogaHhfUkEhUa4qCltalihP+/7/uZh4M
+         twyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/v1v63E0rW3Sz0wWz+xxvrNljXSoGIcWgLgvmV340X0=;
+        b=eTRHR/quupv60CXAliiUSGpFOVx+abhYh596jJ6YsERiznYugo/jHLEVk8Fa1SISwC
+         7dPZU09lDwaA9vOxQzOMA8xycn2qrObO1M4PGGCzdlQRHN2txdfjrG+fQZetfyzNLzVI
+         ARU73iHpmUGGBd16qy4YUe53dlqvFOzoJlBxo3NiI2xl46Qtx8BNzQRlF9uI0i2QjCSN
+         xzqS7uD9gsx1qXq3CydoPCNpURsaU/++OnlYJFtvqRq+r3ertxABD4smdRlHZSb83E/g
+         NntJhAd5LBBXp618NulDGnXSMArxU9XPbZltjl8/06QcIJr0z4A1G4izVFn7gr4UVdGo
+         rYcA==
+X-Gm-Message-State: AOAM5333phzNkl4QenboEASl3XZQBAPc3QUPMdTsHVTovS0zl6x7vAdw
+        NeuWNmqkitsq+suHZoW0JKCaWR67CuwU0PvEQnumoSKSfzg=
+X-Google-Smtp-Source: ABdhPJzpnGJQbb/lAV153VUGKVOlFScbGXYNHs+4YUpNuPaJ2LzDco2arjS97UhJIDDiS5YwLG1j3xr4wfUyHbJ41NM=
+X-Received: by 2002:a17:903:31c3:b029:ed:6f74:49c7 with SMTP id
+ v3-20020a17090331c3b02900ed6f7449c7mr20212312ple.12.1625652885021; Wed, 07
+ Jul 2021 03:14:45 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <20210629134144.GA1168@raspberrypi>
+In-Reply-To: <20210629134144.GA1168@raspberrypi>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Wed, 7 Jul 2021 19:14:33 +0900
+Message-ID: <CADLLry4_qB607aC2WdjvH6+QWijPNU4cQNhacr-mLOBN-heZAA@mail.gmail.com>
+Subject: Re: [PATCH] smack: mark 'smack_enabled' global variable as __initdata
+To:     casey@schaufler-ca.com, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-team@lge.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-PiBGcm9tOiBMYWtzaG1pIFJhbWFzdWJyYW1hbmlhbiBbbWFpbHRvOm5yYW1hc0BsaW51eC5taWNy
-b3NvZnQuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBKdWx5IDYsIDIwMjEgOTozMCBQTQ0KPiBPbiA3
-LzUvMjAyMSA0OjU2IEFNLCBSb2JlcnRvIFNhc3N1IHdyb3RlOg0KPiANCj4gSGkgUm9iZXJ0bywN
-Cj4gDQo+ID4gVGhpcyBwYXRjaCBtYWtlcyB0aGUgJ2V1aWQnIGtleXdvcmQgYXZhaWxhYmxlIGZv
-ciBidWZmZXIgbWVhc3VyZW1lbnQgcnVsZXMsDQo+ID4gaW4gdGhlIHNhbWUgd2F5IGFzIGZvciBv
-dGhlciBydWxlcy4gQ3VycmVudGx5LCB0aGVyZSBpcyBvbmx5IHN1cHBvcnQgZm9yDQo+ID4gdGhl
-ICd1aWQnIGtleXdvcmQuDQo+ID4NCj4gPiBXaXRoIHRoaXMgY2hhbmdlLCBidWZmZXIgbWVhc3Vy
-ZW1lbnQgKG9yIG5vbi1tZWFzdXJlbWVudCkgY2FuIGRlcGVuZA0KPiBhbHNvDQo+ID4gb24gdGhl
-IHByb2Nlc3MgZWZmZWN0aXZlIFVJRC4NCj4gDQo+IFdobyAoa2VybmVsIGNvbXBvbmVudCkgd2ls
-bCBiZSB1c2luZyB0aGlzPw0KDQpIaSBMYWtzaG1pDQoNCkknbSB1c2luZyBpdCBpbiBhIChub3Qg
-eWV0IHN1Ym1pdHRlZCkgdGVzdCBmb3IgZGlnZXN0IGxpc3RzLg0KDQpJdCBpcyBpbiBhIGRvbnRf
-bWVhc3VyZSBydWxlIHRvIHRyeSB0byB1bmxvYWQgYSBkaWdlc3QgbGlzdA0Kd2l0aG91dCBtZWFz
-dXJlbWVudCBhbmQgdG8gY2hlY2sgdGhhdCB0aGlzIGlzIG5vdCBhbGxvd2VkDQppZiB0aGUgZGln
-ZXN0IGxpc3Qgd2FzIG1lYXN1cmVkIGF0IGFkZGl0aW9uIHRpbWUgKHRvIGVuc3VyZQ0KY29tcGxl
-dGVuZXNzIG9mIGluZm9ybWF0aW9uKS4NCg0KPiBNYXliZSB5b3UgY291bGQgbWFrZSB0aGlzIGNo
-YW5nZSBhcyBwYXJ0IG9mIHRoZSBwYXRjaCBzZXQgaW4gd2hpY2ggdGhlDQo+IGFib3ZlICJldWlk
-IiBzdXBwb3J0IHdpbGwgYmUgdXNlZC4NCg0KSSB3YW50ZWQgdG8gc2VuZCB0aGUgZGlnZXN0IGxp
-c3RzIHBhdGNoIHNldCB3aXRob3V0IGFueXRoaW5nDQplbHNlLiBJIGNvdWxkIHJlc2VuZCB0aGUg
-cGF0Y2ggYXMgcGFydCBvZiB0aGF0IHBhdGNoIHNldCBpZiBpdCBpcw0KcHJlZmVycmVkLg0KDQpU
-aGFua3MNCg0KUm9iZXJ0bw0KDQpIVUFXRUkgVEVDSE5PTE9HSUVTIER1ZXNzZWxkb3JmIEdtYkgs
-IEhSQiA1NjA2Mw0KTWFuYWdpbmcgRGlyZWN0b3I6IExpIFBlbmcsIExpIEppYW4sIFNoaSBZYW5s
-aQ0KDQo+IHRoYW5rcywNCj4gICAtbGFrc2htaQ0KPiANCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6
-IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT4NCj4gPiAtLS0NCj4gPiAg
-IHNlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3BvbGljeS5jIHwgMTIgKysrKysrKysrKystDQo+
-ID4gICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiA+
-DQo+ID4gZGlmZiAtLWdpdCBhL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3BvbGljeS5jDQo+
-IGIvc2VjdXJpdHkvaW50ZWdyaXR5L2ltYS9pbWFfcG9saWN5LmMNCj4gPiBpbmRleCBmZDVkNDZl
-NTExZjEuLmZkYWEwMzBmYjA0YiAxMDA2NDQNCj4gPiAtLS0gYS9zZWN1cml0eS9pbnRlZ3JpdHkv
-aW1hL2ltYV9wb2xpY3kuYw0KPiA+ICsrKyBiL3NlY3VyaXR5L2ludGVncml0eS9pbWEvaW1hX3Bv
-bGljeS5jDQo+ID4gQEAgLTQ4MCw2ICs0ODAsMTYgQEAgc3RhdGljIGJvb2wgaW1hX21hdGNoX3J1
-bGVfZGF0YShzdHJ1Y3QNCj4gaW1hX3J1bGVfZW50cnkgKnJ1bGUsDQo+ID4gICAJaWYgKChydWxl
-LT5mbGFncyAmIElNQV9VSUQpICYmICFydWxlLT51aWRfb3AoY3JlZC0+dWlkLCBydWxlLT51aWQp
-KQ0KPiA+ICAgCQlyZXR1cm4gZmFsc2U7DQo+ID4NCj4gPiArCWlmIChydWxlLT5mbGFncyAmIElN
-QV9FVUlEKSB7DQo+ID4gKwkJaWYgKGhhc19jYXBhYmlsaXR5X25vYXVkaXQoY3VycmVudCwgQ0FQ
-X1NFVFVJRCkpIHsNCj4gPiArCQkJaWYgKCFydWxlLT51aWRfb3AoY3JlZC0+ZXVpZCwgcnVsZS0+
-dWlkKQ0KPiA+ICsJCQkgICAgJiYgIXJ1bGUtPnVpZF9vcChjcmVkLT5zdWlkLCBydWxlLT51aWQp
-DQo+ID4gKwkJCSAgICAmJiAhcnVsZS0+dWlkX29wKGNyZWQtPnVpZCwgcnVsZS0+dWlkKSkNCj4g
-PiArCQkJCXJldHVybiBmYWxzZTsNCj4gPiArCQl9IGVsc2UgaWYgKCFydWxlLT51aWRfb3AoY3Jl
-ZC0+ZXVpZCwgcnVsZS0+dWlkKSkNCj4gPiArCQkJcmV0dXJuIGZhbHNlOw0KPiA+ICsJfQ0KPiA+
-ICsNCj4gPiAgIAlzd2l0Y2ggKHJ1bGUtPmZ1bmMpIHsNCj4gPiAgIAljYXNlIEtFWV9DSEVDSzoN
-Cj4gPiAgIAkJaWYgKCFydWxlLT5rZXlyaW5ncykNCj4gPiBAQCAtMTE1Myw3ICsxMTYzLDcgQEAg
-c3RhdGljIGJvb2wgaW1hX3ZhbGlkYXRlX3J1bGUoc3RydWN0DQo+IGltYV9ydWxlX2VudHJ5ICpl
-bnRyeSkNCj4gPiAgIAkJaWYgKGVudHJ5LT5hY3Rpb24gJiB+KE1FQVNVUkUgfCBET05UX01FQVNV
-UkUpKQ0KPiA+ICAgCQkJcmV0dXJuIGZhbHNlOw0KPiA+DQo+ID4gLQkJaWYgKGVudHJ5LT5mbGFn
-cyAmIH4oSU1BX0ZVTkMgfCBJTUFfVUlEIHwgSU1BX1BDUiB8DQo+ID4gKwkJaWYgKGVudHJ5LT5m
-bGFncyAmIH4oSU1BX0ZVTkMgfCBJTUFfVUlEIHwgSU1BX0VVSUQgfA0KPiBJTUFfUENSIHwNCj4g
-PiAgIAkJCQkgICAgIElNQV9MQUJFTCkpDQo+ID4gICAJCQlyZXR1cm4gZmFsc2U7DQo+ID4NCj4g
-Pg0K
+2021=EB=85=84 6=EC=9B=94 29=EC=9D=BC (=ED=99=94) =EC=98=A4=ED=9B=84 10:41, =
+Austin Kim <austindh.kim@gmail.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+> From: Austin Kim <austin.kim@lge.com>
+>
+> Mark 'smack_enabled' as __initdata
+> since it is only used during initialization code.
+>
+> Signed-off-by: Austin Kim <austin.kim@lge.com>
+> ---
+>  security/smack/smack.h     | 2 +-
+>  security/smack/smack_lsm.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index c3cfbdf4944a..99c3422596ab 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -302,7 +302,7 @@ int smack_populate_secattr(struct smack_known *skp);
+>  /*
+>   * Shared data.
+>   */
+> -extern int smack_enabled;
+> +extern int smack_enabled __initdata;
+>  extern int smack_cipso_direct;
+>  extern int smack_cipso_mapped;
+>  extern struct smack_known *smack_net_ambient;
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index 223a6da0e6dc..cacbe7518519 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -54,7 +54,7 @@
+>  static DEFINE_MUTEX(smack_ipv6_lock);
+>  static LIST_HEAD(smk_ipv6_port_list);
+>  struct kmem_cache *smack_rule_cache;
+> -int smack_enabled;
+> +int smack_enabled __initdata;
+>
+>  #define A(s) {"smack"#s, sizeof("smack"#s) - 1, Opt_##s}
+>  static struct {
+> --
+> 2.20.1
+>
+
+Dear Maintainers
+
+Would you please review the above patch if you are available?
+It might not take long.
+
+Thanks.
+Austin Kim
