@@ -2,108 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-24.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B401CC07E9C
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 19:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97660C07E9C
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 01:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98B3461206
-	for <linux-security-module@archiver.kernel.org>; Tue,  6 Jul 2021 19:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C8E961CAC
+	for <linux-security-module@archiver.kernel.org>; Wed,  7 Jul 2021 01:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229781AbhGFTac (ORCPT
+        id S230018AbhGGBNO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 6 Jul 2021 15:30:32 -0400
-Received: from linux.microsoft.com ([13.77.154.182]:42450 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229730AbhGFTac (ORCPT
+        Tue, 6 Jul 2021 21:13:14 -0400
+Received: from mxout04.lancloud.ru ([45.84.86.114]:37018 "EHLO
+        mxout04.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229834AbhGGBNN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 6 Jul 2021 15:30:32 -0400
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 5BA5B20B7188;
-        Tue,  6 Jul 2021 12:27:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5BA5B20B7188
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1625599673;
-        bh=ryjydfJPAKvDWqmnuLYjXsYmMMZaDBUiObj4MocZElo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Bl/TCf9udxXUZhstiHlaeRDUFCZ+x9yZkTseKahwkqNkCPu9eTn70a9zS2+PfqBe5
-         ZPoxQQLbJfnkr0fVeWG91ywfhnkWdkWbalTRWq2OanCt2MCm/6Sdu2IWO5e52bV/6L
-         9IRgfMuZoPYkOZKjok7EtGaffZzRWZJixbKIwDCY=
-Subject: Re: [PATCH] ima: Support euid keyword for buffer measurement
-To:     Roberto Sassu <roberto.sassu@huawei.com>, zohar@linux.ibm.com
-Cc:     tusharsu@linux.microsoft.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210705115650.3373599-1-roberto.sassu@huawei.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <2996f5ae-d76f-5fc9-bf90-857d4fc6644a@linux.microsoft.com>
-Date:   Tue, 6 Jul 2021 12:29:47 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 6 Jul 2021 21:13:13 -0400
+X-Greylist: delayed 404 seconds by postgrey-1.27 at vger.kernel.org; Tue, 06 Jul 2021 21:13:13 EDT
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout04.lancloud.ru 83D782099DE9
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+To:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+CC:     Igor Zhbanov <izh1979@gmail.com>, Mimi Zohar <zohar@linux.ibm.com>
+From:   Igor Zhbanov <i.zhbanov@omp.ru>
+Subject: [PATCH 0/1] NAX (No Anonymous Execution) LSM
+Message-ID: <de5aed7d-e7bf-d9a7-1b30-c73939204ecb@omp.ru>
+Date:   Wed, 7 Jul 2021 04:03:50 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20210705115650.3373599-1-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Language: ru-RU
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT01.lancloud.ru (fd00:f066::141) To
+ LFEX1909.lancloud.ru (fd00:f066::79)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/5/2021 4:56 AM, Roberto Sassu wrote:
+[Overview]
 
-Hi Roberto,
+Fileless malware attacks are becoming more and more popular, and even
+ready-to-use frameworks are available [1], [2], [3]. They are based on
+running of the malware code from anonymous executable memory pages (which
+are not backed by an executable file or a library on a filesystem.) This
+allows effectively hiding malware presence in a system, making filesystem
+integrity checking tools unable to detect the intrusion.
 
-> This patch makes the 'euid' keyword available for buffer measurement rules,
-> in the same way as for other rules. Currently, there is only support for
-> the 'uid' keyword.
-> 
-> With this change, buffer measurement (or non-measurement) can depend also
-> on the process effective UID.
+Typically, the malware first needs to intercept the execution flow (e.g.,
+by the means of ROP-based exploit). Then it needs to download the main
+part (in the form of normal executable or library) from its server,
+because it is hard to implement the entire exploit in ROP-based form.
+There are a number of security mechanisms that can ensure the integrity
+of the file-system, but we need to ensure the integrity of the code in
+memory too, to be sure, that only authorized code is running in the
+system.
 
-Who (kernel component) will be using this?
+The proposed LSM is preventing the creation of anonymous executable pages
+for the privileged processes. The LSM intercepts mmap() and mprotect()
+system calls and handles it similarly to SELinux handlers.
 
-Maybe you could make this change as part of the patch set in which the 
-above "euid" support will be used.
+The module allows to block the violating system call or to kill the
+violating process, along with rate-limited logging.
 
-thanks,
-  -lakshmi
+Currently, the module restricts only the privileged processes. The
+privileged process is a process for which any of the following is true:
++ uid   == 0 && !issecure(SECURE_NOROOT)
++ euid  == 0 && !issecure(SECURE_NOROOT)
++ suid  == 0 && !issecure(SECURE_NOROOT)
++ fsuid == 0 && !issecure(SECURE_NOROOT)
++ cap_effective has any capability except of kernel.nax.allowed_caps
++ cap_permitted has any capability except of kernel.nax.allowed_caps
 
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->   security/integrity/ima/ima_policy.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index fd5d46e511f1..fdaa030fb04b 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -480,6 +480,16 @@ static bool ima_match_rule_data(struct ima_rule_entry *rule,
->   	if ((rule->flags & IMA_UID) && !rule->uid_op(cred->uid, rule->uid))
->   		return false;
->   
-> +	if (rule->flags & IMA_EUID) {
-> +		if (has_capability_noaudit(current, CAP_SETUID)) {
-> +			if (!rule->uid_op(cred->euid, rule->uid)
-> +			    && !rule->uid_op(cred->suid, rule->uid)
-> +			    && !rule->uid_op(cred->uid, rule->uid))
-> +				return false;
-> +		} else if (!rule->uid_op(cred->euid, rule->uid))
-> +			return false;
-> +	}
-> +
->   	switch (rule->func) {
->   	case KEY_CHECK:
->   		if (!rule->keyrings)
-> @@ -1153,7 +1163,7 @@ static bool ima_validate_rule(struct ima_rule_entry *entry)
->   		if (entry->action & ~(MEASURE | DONT_MEASURE))
->   			return false;
->   
-> -		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_PCR |
-> +		if (entry->flags & ~(IMA_FUNC | IMA_UID | IMA_EUID | IMA_PCR |
->   				     IMA_LABEL))
->   			return false;
->   
-> 
+The sysctl parameter kernel.nax.allowed_caps allows to define safe
+capabilities set for the privileged processes.
+
+[JIT]
+
+Because of blocked anonymous code execution, JIT-compiled code, some
+interpreters (which are using JIT) and libffi-based projects can be
+broken.
+
+Our observation shows that such processes are typically running by a
+user, so they will not be privileged, so they will be allowed to use
+anonymous executable pages.
+
+But for small embedded set-ups it could be possible to get rid of such
+processes at all, so the module could be enabled without further
+restrictions to protect both privileged and non-privileged processes.
+
+In addition, libffi can be modified not to use anonymous executable
+pages.
+
+[Similar implementations]
+
+Although SELinux could be used to enable similar functionality, this LSM
+is simpler. It could be used in set-ups, where SELinux would be overkill.
+
+There is also SARA LSM module, which solves similar task, but it is more
+complex.
+
+[Cooperation with other security mechanisms]
+
+NAX LSM is more useful in conjunction with IMA. IMA would be responsible
+for integrity checking of file-based executables and libraries, and
+NAX LSM would be responsible for preventing of anonymous code execution.
+
+Alternatively, NAX LSM can be used with read-only root file system,
+protected by dm-verity/fs-verity.
+
+[TODO]
+- Implement xattrs support for marking privileged binaries on a per-file
+  basis.
+- Store NAX attributes in the per-task LSM blob to implement special
+  launchers for the privileged processes, so all of the children processes
+  of such a launcher would be allowed to have anonymous executable pages
+  (but not to grandchildren).
+
+[Links]
+
+[1] https://blog.fbkcs.ru/elf-in-memory-execution/
+[2] https://magisterquis.github.io/2018/03/31/in-memory-only-elf-execution.html
+[3] https://www.prodefence.org/fireelf-fileless-linux-malware-framework/
+
+P.S. I may continue to work on this LSM from my personal e-mail
+izh1979@gmail.com.
+
+Igor Zhbanov (1):
+  NAX LSM: Add initial support support
+
+ Documentation/admin-guide/LSM/NAX.rst   |  48 ++++
+ Documentation/admin-guide/LSM/index.rst |   1 +
+ security/Kconfig                        |  11 +-
+ security/Makefile                       |   2 +
+ security/nax/Kconfig                    |  71 +++++
+ security/nax/Makefile                   |   4 +
+ security/nax/nax-lsm.c                  | 344 ++++++++++++++++++++++++
+ 7 files changed, 476 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/NAX.rst
+ create mode 100644 security/nax/Kconfig
+ create mode 100644 security/nax/Makefile
+ create mode 100644 security/nax/nax-lsm.c
+
+-- 
+2.26.2
+
