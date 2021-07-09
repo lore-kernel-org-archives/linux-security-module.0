@@ -2,130 +2,172 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2683CC07E9E
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jul 2021 16:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C876C07E9B
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jul 2021 16:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFEB613D1
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jul 2021 16:00:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B7F613C9
+	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jul 2021 16:00:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232493AbhGIQCm (ORCPT
+        id S232520AbhGIQDC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jul 2021 12:02:42 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55718 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S232351AbhGIQCl (ORCPT
+        Fri, 9 Jul 2021 12:03:02 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47133 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232518AbhGIQC6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jul 2021 12:02:41 -0400
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 169FWtDj181659;
-        Fri, 9 Jul 2021 11:59:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=1Po+rMtMFJxfuFZqCeL6KxfLyqZR7O/9IyCglXOMvmw=;
- b=QRcFJ4IFOXT2/bFp1H7JBrOUzU/3dt7tXIjJjZcE9t6SkXFDRba3nFZEeZN0NZE8glbr
- PIEOQD1ixymNS4gABUbSJIQq1xk7Tn8O3qyB5wuo83sZKqc0UJVqZ0g/5YnIKLmzZ4ZK
- KdgjFia1ELuvwZ1oqMCyaW8bIiQ1Cz+WYWGdeTTwfmwueKmTf9qm2//w73qbG5YqOthW
- Dmjxp2Nrt+0OgszOoQc54rR6bvWD/gsJ78vV5E9u/gF2W/Dc9bOqaYRrklnpa0cTiLqZ
- 9QRyVwu2VUonUvJsPjD5cBl4e/wFpjNz+eZ4BFWThfDuY+sgbOkYFmAuaNF8QFVkHpb1 zA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39phqkwh5x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Jul 2021 11:59:24 -0400
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 169FX7Bo182394;
-        Fri, 9 Jul 2021 11:59:23 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39phqkwh5e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Jul 2021 11:59:23 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 169FwB1J028432;
-        Fri, 9 Jul 2021 15:59:22 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma04wdc.us.ibm.com with ESMTP id 39ju3dn5hq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 09 Jul 2021 15:59:22 +0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 169FxLoY37945660
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 9 Jul 2021 15:59:21 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 740BE124073;
-        Fri,  9 Jul 2021 15:59:21 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A5A6C124066;
-        Fri,  9 Jul 2021 15:59:16 +0000 (GMT)
-Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.163.3.233])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  9 Jul 2021 15:59:15 +0000 (GMT)
-Subject: Re: [PATCH RFC 00/12] Enroll kernel keys thru MOK
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        nramas@linux.microsoft.com, lszubowi@redhat.com,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
-        glin@suse.com, "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-References: <20210707024403.1083977-1-eric.snowberg@oracle.com>
- <42b787dd3a20fe37c4de60daf75db06e409cfb6d.camel@linux.ibm.com>
- <5BFB3C52-36D4-47A5-B1B8-977717C555A0@oracle.com>
- <886f30dcf7b3d48644289acc3601c2f0207b19b6.camel@linux.ibm.com>
- <D34A6328-91CA-4E1E-845C-FAC9B424819B@oracle.com>
- <c0cf7f883a9252c17427f1f992e4973e78481304.camel@linux.ibm.com>
- <21EFCB58-2D89-4D30-8DA2-B952A7E1B1BD@oracle.com>
- <490941a5197bf4bcf0d6f95610085ee4d46ed9bb.camel@linux.ibm.com>
- <839EF700-7A2C-4282-AF97-768FAD1A9957@oracle.com>
- <ef480c8f83780eea4ff8fdcd35c6208760b5e1d7.camel@linux.ibm.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Message-ID: <51434508-e2ad-c9f9-2612-2a9162cec71d@linux.vnet.ibm.com>
-Date:   Fri, 9 Jul 2021 11:59:15 -0400
+        Fri, 9 Jul 2021 12:02:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1625846414;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=W8zd5CeolMZZOgiP9R7Wu16S5BIqDudS+X6cBxCBcfY=;
+        b=BpRWzC+aFHLMSkjOIPGpTUx1+Sl3jN1ExaJu90z5N6es1NVs8NMpbPYruaRDj0LXDe/qyq
+        kwnFyIRVm9actLD4YcUuogMGHtjSKMtkX4miH8+mq/bCBBjn68i/b/z/gw/oZh2feW9i6O
+        fmlgALqzaFvFz+JvgSgmHXJZbQrSMfw=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-482-OUHPQDrZMAiD1FiZulHm9A-1; Fri, 09 Jul 2021 12:00:13 -0400
+X-MC-Unique: OUHPQDrZMAiD1FiZulHm9A-1
+Received: by mail-qt1-f200.google.com with SMTP id w3-20020ac80ec30000b029024e8c2383c1so6042625qti.5
+        for <linux-security-module@vger.kernel.org>; Fri, 09 Jul 2021 09:00:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=W8zd5CeolMZZOgiP9R7Wu16S5BIqDudS+X6cBxCBcfY=;
+        b=D/mY2wAge4NCBRRhGW7QZF4jynBpooU5SEnq6b9UstLKoZ9bsGQ4t3HduHr2ketLLX
+         7VyGZFEee+hiU+szOXeOCuFO6KfI21tvbwrSbDaqTyo0Ir3nhBMGV5G3/5l2I+TvsCBX
+         GFteeI+kEvenQINddqvSsWirglHbDrU0mdBouFLBqqe4H1Zyh3amvFrffN6F0KnQQZoY
+         vVcAiRWoJ6UdO1sRkTEIPDSaW9NmS0gqFm1dEWUUm0Iim/6UJD9M4Ttw7up665Ogqp1S
+         4THWYtqpg3U09qh0Cz49mysi/OG8OjZfsWeCIAw8nUtjT4UQho22dRAZaJMAYs2bdY2N
+         4tjg==
+X-Gm-Message-State: AOAM533bN5Kxzs32CzK+mHBY6ULrK3Fixt6mz1d1naMGrD3XbOdvvAG8
+        p4KFuSAju8vEWeBoqOerIjOrz0EtenxBXMj/+HbkBVY7c+QY6sfbg9hwKFCXZRy6rkAsG9OhpMk
+        et00c3iNGsEWj5IWf9lSC/FGjHjD8ea5vO+L2
+X-Received: by 2002:a05:620a:14b5:: with SMTP id x21mr1254265qkj.148.1625846412889;
+        Fri, 09 Jul 2021 09:00:12 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy7fgfym/vObH9dS3BXtTYjPpC0DOawx2XrMA8j/rEnnVa/GS7s/gG7r6kSkkmhMgMhzYecxw==
+X-Received: by 2002:a05:620a:14b5:: with SMTP id x21mr1253860qkj.148.1625846409623;
+        Fri, 09 Jul 2021 09:00:09 -0700 (PDT)
+Received: from localhost.localdomain (cpe-74-65-150-180.maine.res.rr.com. [74.65.150.180])
+        by smtp.gmail.com with ESMTPSA id d8sm2623910qkk.119.2021.07.09.09.00.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 09 Jul 2021 09:00:09 -0700 (PDT)
+Reply-To: dwalsh@redhat.com
+Subject: Re: [RFC PATCH v2 0/1] Relax restrictions on user.* xattr
+To:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk
+Cc:     virtio-fs@redhat.com, dgilbert@redhat.com,
+        christian.brauner@ubuntu.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com, jack@suse.cz
+References: <20210708175738.360757-1-vgoyal@redhat.com>
+From:   Daniel Walsh <dwalsh@redhat.com>
+Organization: Red Hat
+Message-ID: <76d4a0ed-7582-cc73-a447-5f2d133c3c24@redhat.com>
+Date:   Fri, 9 Jul 2021 12:00:07 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.0
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-In-Reply-To: <ef480c8f83780eea4ff8fdcd35c6208760b5e1d7.camel@linux.ibm.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+In-Reply-To: <20210708175738.360757-1-vgoyal@redhat.com>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dwalsh@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: m6PXIplm1CJI8HDYe7ntOIno-_i_X63y
-X-Proofpoint-GUID: WKRt1Pulw0vog-lQfrySLYMyxXTXdSvD
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-09_09:2021-07-09,2021-07-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 suspectscore=0 priorityscore=1501
- mlxscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 clxscore=1011
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107090078
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 7/8/21 13:57, Vivek Goyal wrote:
+> Hi,
+>
+> This is V2 of the patch. Posted V1 here.
+>
+> https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
+>
+> Right now we don't allow setting user.* xattrs on symlinks and special
+> files at all. Initially I thought that real reason behind this
+> restriction is quota limitations but from last conversation it seemed
+> that real reason is that permission bits on symlink and special files
+> are special and different from regular files and directories, hence
+> this restriction is in place.
+>
+> Given it probably is not a quota issue (I tested with xfs user quota
+> enabled and quota restrictions kicked in on symlink), I dropped the
+> idea of allowing user.* xattr if process has CAP_SYS_RESOURCE.
+>
+> Instead this version of patch allows reading/writing user.* xattr
+> on symlink and special files if caller is owner or priviliged (has
+> CAP_FOWNER) w.r.t inode.
+>
+> We need this for virtiofs daemon. I also found one more user. Giuseppe,
+> seems to set user.* xattr attrs on unpriviliged fuse-overlay as well
+> and he ran into similar issue. So fuse-overlay should benefit from
+> this change as well.
+>
+> Who wants to set user.* xattr on symlink/special files
+> -----------------------------------------------------
+>
+> In virtiofs, actual file server is virtiosd daemon running on host.
+> There we have a mode where xattrs can be remapped to something else.
+> For example security.selinux can be remapped to
+> user.virtiofsd.securit.selinux on the host.
+>
+> This remapping is useful when SELinux is enabled in guest and virtiofs
+> as being used as rootfs. Guest and host SELinux policy might not match
+> and host policy might deny security.selinux xattr setting by guest
+> onto host. Or host might have SELinux disabled and in that case to
+> be able to set security.selinux xattr, virtiofsd will need to have
+> CAP_SYS_ADMIN (which we are trying to avoid). Being able to remap
+> guest security.selinux (or other xattrs) on host to something else
+> is also better from security point of view.
+>
+> But when we try this, we noticed that SELinux relabeling in guest
+> is failing on some symlinks. When I debugged a little more, I
+> came to know that "user.*" xattrs are not allowed on symlinks
+> or special files.
+>
+> So if we allow owner (or CAP_FOWNER) to set user.* xattr, it will
+> allow virtiofs to arbitrarily remap guests's xattrs to something
+> else on host and that solves this SELinux issue nicely and provides
+> two SELinux policies (host and guest) to co-exist nicely without
+> interfering with each other.
+>
+> Thanks
+> Vivek
+>
+>
+> Vivek Goyal (1):
+>    xattr: Allow user.* xattr on symlink and special files
+>
+>   fs/xattr.c | 10 ++++++----
+>   1 file changed, 6 insertions(+), 4 deletions(-)
+>
+I just wanted to point out that the work Giuseppe is doing is to support 
+nfs homedirs with container runtimes like Rootless Podman.
 
-On 7/8/21 9:10 PM, Mimi Zohar wrote:
-> Definitely not ".trusted_platform" keyring, as it would be too
-> confusing with the existing "trusted" key type [1].  At least for now,
-> leave it as ".mok".
 
-Since this keyring is meant only for "CA" keys, can we name it as ".ca" ?
+Basically fuse-overlayfs on top of NFS homedir needs to be able to use 
+user xattrs to set file permissions and ownership fields to be 
+represented to containers.
 
-Thanks & Regards,
+Currently NFS Servers do not understand User Namespace and seeing a 
+client user attempting to chown to a different user, is blocked on the 
+server, even though user namespace on the client allows it.Â  
+fuse-overlay intercepts the chown from the container and writes out the 
+user.Xattr the permissions and owner/group as user.Xattrs.Â  And all the 
+server sees is the user modifying the xattrs now chowning the real UID 
+of the file.
 
-     - Nayna
 
