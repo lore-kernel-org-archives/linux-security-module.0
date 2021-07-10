@@ -2,71 +2,90 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83D1C07E9B
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jul 2021 20:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 105E2C07E95
+	for <linux-security-module@archiver.kernel.org>; Sat, 10 Jul 2021 07:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3A5F613C8
-	for <linux-security-module@archiver.kernel.org>; Fri,  9 Jul 2021 20:37:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2995613D2
+	for <linux-security-module@archiver.kernel.org>; Sat, 10 Jul 2021 07:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229552AbhGIUjz (ORCPT
+        id S230317AbhGJHF5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 9 Jul 2021 16:39:55 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:45661 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S229506AbhGIUjz (ORCPT
+        Sat, 10 Jul 2021 03:05:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55252 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231745AbhGJHF4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 9 Jul 2021 16:39:55 -0400
-Received: from cwcc.thunk.org (pool-72-74-133-215.bstnma.fios.verizon.net [72.74.133.215])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 169KaXOm025930
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 9 Jul 2021 16:36:41 -0400
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 320F815C3C9E; Fri,  9 Jul 2021 16:36:33 -0400 (EDT)
-Date:   Fri, 9 Jul 2021 16:36:33 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
-        dgilbert@redhat.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        miklos@szeredi.hu, gscrivan@redhat.com, jack@suse.cz,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
- files
-Message-ID: <YOizURuWJO9DYGGk@mit.edu>
-References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
- <20210709091915.2bd4snyfjndexw2b@wittgenstein>
- <20210709152737.GA398382@redhat.com>
- <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+        Sat, 10 Jul 2021 03:05:56 -0400
+Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDBF3C0613DD;
+        Sat, 10 Jul 2021 00:03:11 -0700 (PDT)
+Received: by mail-lj1-x22a.google.com with SMTP id t30so11988692ljo.5;
+        Sat, 10 Jul 2021 00:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9n6Nw9X4f0+06wXfdQA+e6xY6av5OO97df8Pa/9JS1s=;
+        b=cBqFvWOzYcfH+3/HuPugzTxBqcFH6EZ1T353zs2FGxUqiJg2AdywB3bzhQKD7KfEBD
+         OTosqH1VNcLTBgOgpgAcJbZhJxRN7bJ/EtnJ4j5QeWAY3eeY9CuK472VC3q+2q3/dLJx
+         IblsF1oGdqJbgJBPTRWZh2IJllCGcoCk6iDiWCRPoEoavOfM2VOpcKuJZTdv823C9Ag1
+         oONcwVZaEche8jm+ziyr0jKFx7XLUOkmd1C0WqW8oNngCfcVomUXhJawS8yVPiDzn2eH
+         XinbOD6w3IkZur10uCFA4WJMbvAzYnvxUvg56F0sS0D+N80vUq476uZ94TKcXXUa8BoS
+         Kv9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9n6Nw9X4f0+06wXfdQA+e6xY6av5OO97df8Pa/9JS1s=;
+        b=CUcx9yc7qiCTh0F2zm/XYhGWSuHmTXcAKy6oN5uuyOOQ+LxyNwM48OyY6QquV18LCG
+         H52f3kQdakYJDlZbJaYs2YpXD043IsUGbEUATsZQ8eo89hSkFnQjyTCkRhJNugUOo//O
+         fjUWD9TKR7h7rS0JDw53XPyiPduVc1XCDWHLLsXLxAkBCJAscmkmyh1kQ0z3Jlc1Jhv/
+         CzJYAkjBzO4widQicwxp+vf4VKhAazMm5ZovFdA7cCnrTRmQuzqkRXotzz5DA/eSH5fI
+         PUjxlKynacsHdF7VPrvTbKvP9zvfmueyx+33uxlyl+/JuynqcAJDGOcY26OlMv/QVHei
+         dsLA==
+X-Gm-Message-State: AOAM5300/GMWItSZv3GekRRQYzcmw1ogliPTkxd6UYpdEmhNK1ZPlgqm
+        zLt2UuKF/G5oHO/ul0QxU04=
+X-Google-Smtp-Source: ABdhPJysk4zRSmTOGqBuXkW4kOOEsv29VlQ0ws0NMW7QrmbIASbYGqzBnYA7GP721CGfDkt3yCZ2SQ==
+X-Received: by 2002:a2e:95cc:: with SMTP id y12mr25064394ljh.360.1625900589849;
+        Sat, 10 Jul 2021 00:03:09 -0700 (PDT)
+Received: from localhost.localdomain ([94.103.225.155])
+        by smtp.gmail.com with ESMTPSA id l7sm638891lfg.203.2021.07.10.00.03.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Jul 2021 00:03:09 -0700 (PDT)
+From:   Pavel Skripkin <paskripkin@gmail.com>
+To:     paul@paul-moore.com, davem@davemloft.net, yoshfuji@linux-ipv6.org,
+        dsahern@kernel.org, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Skripkin <paskripkin@gmail.com>
+Subject: [PATCH 0/2] net: cipso: bug fixes
+Date:   Sat, 10 Jul 2021 10:03:06 +0300
+Message-Id: <cover.1625900431.git.paskripkin@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Jul 09, 2021 at 08:34:41AM -0700, Casey Schaufler wrote:
-> >> One question, do all filesystem supporting xattrs deal with setting them
-> >> on symlinks/device files correctly?
-> > Wrote a simple bash script to do setfattr/getfattr user.foo xattr on
-> > symlink and device node on ext4, xfs and btrfs and it works fine.
-> 
-> How about nfs, tmpfs, overlayfs and/or some of the other less conventional
-> filesystems?
+This small patch series fixes 2 bugs in cipso code. The first one was
+found by syzbot and the second was found while testing fix for the
+fisrt one. All 2 bugs can be triggered by reproducer provided by syzbot:
 
-As a suggestion, perhaps you could take your bash script and turn it
-into an xfstests test so we can more easily test various file systems,
-both now and once the commit is accepted, to look for regressions?
+https://syzkaller.appspot.com/bug?id=d4bc7d67efe79c6ead3cb6bd94b84dbd287f1069
 
-Cheers,
+Pavel Skripkin (2):
+  net: cipso: fix warnings in netlbl_cipsov4_add_std
+  net: cipso: fix memory leak in cipso_v4_doi_free
 
-					- Ted
+ net/ipv4/cipso_ipv4.c            | 1 +
+ net/netlabel/netlabel_cipso_v4.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+-- 
+2.32.0
+
