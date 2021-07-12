@@ -2,218 +2,176 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA66C07E9C
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 15:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 615E2C07E99
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 16:25:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D53D8611C1
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 15:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 413C061222
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 16:25:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbhGLQA3 (ORCPT
+        id S233633AbhGLQ2A (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jul 2021 12:00:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48488 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234360AbhGLQA1 (ORCPT
+        Mon, 12 Jul 2021 12:28:00 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36276 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233719AbhGLQ17 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jul 2021 12:00:27 -0400
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [IPv6:2001:1600:4:17::8faa])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD53CC0613E5
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jul 2021 08:57:38 -0700 (PDT)
-Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GNpLn0rWfzMprhw;
-        Mon, 12 Jul 2021 17:57:37 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4GNpLm62YPzlh8mk;
-        Mon, 12 Jul 2021 17:57:36 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Alejandro Colomar <alx.manpages@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        landlock@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v2 4/4] landlock_restrict_self.2: Document new syscall
-Date:   Mon, 12 Jul 2021 17:57:45 +0200
-Message-Id: <20210712155745.831580-5-mic@digikod.net>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210712155745.831580-1-mic@digikod.net>
-References: <20210712155745.831580-1-mic@digikod.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 12 Jul 2021 12:27:59 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16CG3m2t172344;
+        Mon, 12 Jul 2021 12:25:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=UROfSqQwvdh21eBG4v+9kqE03iACV/yRY/pRhj07gTU=;
+ b=RBENKBE1nduXCNo5kVKcr/rf3w5EQTp+o9E21ubvz4aO1WBWQsEOD6ZXYYpZ1sRSXSNt
+ YtP/wnNOJgkXVtLoj6rAmqeqFjC5kRJyXcrkDehA7H2MBDpCT7Ut9PUHIA5DvUBAPdzg
+ GR7B/7RQPChWmjlLO5xF4vcyA3NIQLOym37rQg5yRz3rHRoe1ZpeW9u0DEMO8ohIGXfg
+ ssNV1xdwdESG1vlNiXsQribi9cRfKF2cyM2lkBdHKP2CFW3+O2Ao5LIg7HxXulhEv1Tj
+ dK5hzU2yVv12SBKtzQ7vKMzIVIXjE8zwCo5QegelkJD/lJTTUtOdufvLclMVWuClCUvc kA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39qrf78259-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jul 2021 12:25:10 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16CG4Djs174082;
+        Mon, 12 Jul 2021 12:25:09 -0400
+Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39qrf7824g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jul 2021 12:25:09 -0400
+Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
+        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16CGHOBb015811;
+        Mon, 12 Jul 2021 16:25:08 GMT
+Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
+        by ppma05wdc.us.ibm.com with ESMTP id 39q36b97y4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Jul 2021 16:25:08 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16CGP7Pv40632654
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 12 Jul 2021 16:25:07 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C429112065;
+        Mon, 12 Jul 2021 16:25:07 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8CFEB112062;
+        Mon, 12 Jul 2021 16:25:07 +0000 (GMT)
+Received: from sbct-2.. (unknown [9.47.158.152])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 12 Jul 2021 16:25:07 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     peterhuewe@gmx.de, jarkko@kernel.org
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Nageswara R Sastry <rnsastry@linux.ibm.com>
+Subject: [PATCH] tpm: ibmvtpm: Avoid error message when process gets signal while waiting
+Date:   Mon, 12 Jul 2021 12:25:05 -0400
+Message-Id: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.31.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: KqhbcAIHfhqht3bpdAe-BA8-bSBCTZLz
+X-Proofpoint-GUID: -xxLZQg3vsEtGn4ehvzhCPK2AVYLno5t
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-12_09:2021-07-12,2021-07-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ adultscore=0 mlxlogscore=999 phishscore=0 lowpriorityscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107120122
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-This is an adaptation of
-https://www.kernel.org/doc/html/v5.13/userspace-api/landlock.html
+When rngd is run as root then lots of these types of message will appear
+in the kernel log if the TPM has been configure to provide random bytes:
 
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20210712155745.831580-5-mic@digikod.net
+[ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
+
+The issue is caused by the following call that is interrupted while
+waiting for the TPM's response.
+
+sig = wait_event_interruptible(ibmvtpm->wq,
+                               !ibmvtpm->tpm_processing_cmd);
+
+The solution is to use wait_event() instead.
+
+To recreat the issue start rngd like this:
+
+sudo rngd -r /dev/hwrng -t
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
+Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
+Cc: Nayna Jain <nayna@linux.ibm.com>
+Cc: George Wilson <gcwilson@linux.ibm.com>
+Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
+ drivers/char/tpm/tpm_ibmvtpm.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-Changes since v1:
-* Replace all ".I" with ".IR", except when used for titles.
-* Append punctuation to ".IR" and ".BR" when it makes sense (requested
-  by Alejandro Colomar).
-* Cut lines according to the semantic newline rules (requested by
-  Alejandro Colomar).
-* Remove roman style from ".TP" section titles (requested by Alejandro
-  Colomar).
-* Add comma after "i.e." and "e.g.".
-* Add a "CONFORMING TO" section.
-* Replace "(2)" with "()" for the described syscall name.
----
- man2/landlock_restrict_self.2 | 130 ++++++++++++++++++++++++++++++++++
- 1 file changed, 130 insertions(+)
- create mode 100644 man2/landlock_restrict_self.2
-
-diff --git a/man2/landlock_restrict_self.2 b/man2/landlock_restrict_self.2
-new file mode 100644
-index 000000000000..41b21278905a
---- /dev/null
-+++ b/man2/landlock_restrict_self.2
-@@ -0,0 +1,130 @@
-+.\" Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.\" Copyright © 2019-2020 ANSSI
-+.\" Copyright © 2021 Microsoft Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH LANDLOCK_RESTRICT_SELF 2 2021-06-27 Linux "Linux Programmer's Manual"
-+.SH NAME
-+landlock_restrict_self \- enforce a Landlock ruleset
-+.SH SYNOPSIS
-+.nf
-+.BR "#include <linux/landlock.h>" "  /* Definition of " LANDLOCK_* " constants */"
-+.BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " constants */"
-+.PP
-+.BI "int syscall(SYS_landlock_restrict_self, int " ruleset_fd ,
-+.BI "            __u32 " flags );
-+.SH DESCRIPTION
-+Once a Landlock ruleset is populated with the desired rules, the
-+.BR landlock_restrict_self ()
-+system call enables enforcing this ruleset on the calling thread.
-+See
-+.BR landlock (7)
-+for a global overview.
-+.PP
-+A thread can be restricted with multiple rulesets that are then composed
-+together to form the thread's Landlock domain.
-+This can be seen as a stack of rulesets but it is implemented in a more
-+efficient way.
-+A domain can only be updated in such a way that the constraints of each
-+past and future composed rulesets will restrict the thread and its future
-+children for their entire life.
-+It is then possible to gradually enforce tailored access control policies
-+with multiple independant rulesets coming from different sources
-+(e.g., init system configuration, user session policy,
-+built-in application policy).
-+However, most applications should only need one call to
-+.BR landlock_restrict_self ()
-+and they should avoid arbitrary numbers of such calls because of the
-+composed rulesets limit.
-+Instead, developers are encouraged to build a tailored ruleset thanks to
-+multiple calls to
-+.BR landlock_add_rule (2).
-+.PP
-+In order to enforce a ruleset, either the caller must have the
-+.BR CAP_SYS_ADMIN
-+capability in its user namespace, or the thread must already have the
-+.IR no_new_privs
-+bit set.
-+As for
-+.BR seccomp (2),
-+this avoids scenarios where unprivileged processes can affect the behavior
-+of privileged children (e.g., because of set-user-ID binaries).
-+If that bit was not already set by an ancestor of this thread,
-+the thread must make the following call:
-+.IP
-+.EX
-+prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+.EE
-+.PP
-+.IR ruleset_fd
-+is a Landlock ruleset file descriptor obtained with
-+.BR landlock_create_ruleset (2)
-+and fully populated with a set of calls to
-+.BR landlock_add_rule (2).
-+.PP
-+.IR flags
-+must be 0.
-+.SH RETURN VALUE
-+On success,
-+.BR landlock_restrict_self ()
-+returns 0.
-+.SH ERRORS
-+.BR landlock_restrict_self ()
-+can failed for the following reasons:
-+.TP
-+.B EOPNOTSUPP
-+Landlock is supported by the kernel but disabled at boot time.
-+.TP
-+.B EINVAL
-+.IR flags
-+is not 0.
-+.TP
-+.B EBADF
-+.IR ruleset_fd
-+is not a file descriptor for the current thread.
-+.TP
-+.B EBADFD
-+.IR ruleset_fd
-+is not a ruleset file descriptor.
-+.TP
-+.B EPERM
-+.IR ruleset_fd
-+has no read access to the underlying ruleset,
-+or the calling thread is not running with
-+.IR no_new_privs ,
-+or it doesn't have the
-+.BR CAP_SYS_ADMIN
-+in its user namespace.
-+.TP
-+.B E2BIG
-+The maximum number of composed rulesets is reached for the calling thread.
-+This limit is currently 64.
-+.SH VERSIONS
-+Landlock was added in Linux 5.13.
-+.SH CONFORMING TO
-+This system call is Linux-specific.
-+.SH SEE ALSO
-+.BR landlock (7),
-+.BR landlock_create_ruleset (2),
-+.BR landlock_add_rule (2)
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 903604769de9..99b0442a5fdf 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -106,16 +106,13 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
+ 	u16 len;
+-	int sig;
+ 
+ 	if (!ibmvtpm->rtce_buf) {
+ 		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
+ 		return 0;
+ 	}
+ 
+-	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+-	if (sig)
+-		return -EINTR;
++	wait_event(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+ 
+ 	len = ibmvtpm->res_len;
+ 
+@@ -206,7 +203,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
+ 	bool retry = true;
+-	int rc, sig;
++	int rc;
+ 
+ 	if (!ibmvtpm->rtce_buf) {
+ 		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
+@@ -224,9 +221,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		dev_info(ibmvtpm->dev,
+ 		         "Need to wait for TPM to finish\n");
+ 		/* wait for previous command to finish */
+-		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+-		if (sig)
+-			return -EINTR;
++		wait_event(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+ 	}
+ 
+ 	spin_lock(&ibmvtpm->rtce_lock);
+@@ -551,7 +546,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
+ 			/* len of the data in rtce buffer */
+ 			ibmvtpm->res_len = be16_to_cpu(crq->len);
+ 			ibmvtpm->tpm_processing_cmd = false;
+-			wake_up_interruptible(&ibmvtpm->wq);
++			wake_up(&ibmvtpm->wq);
+ 			return;
+ 		default:
+ 			return;
 -- 
-2.32.0
+2.31.1
 
