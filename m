@@ -2,41 +2,51 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44BAC07E9C
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 19:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F95C07E9C
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 21:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E2616121E
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 19:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D75611CD
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 21:22:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236397AbhGLTeb (ORCPT
+        id S234699AbhGLVZA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jul 2021 15:34:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42158 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236190AbhGLTe2 (ORCPT
+        Mon, 12 Jul 2021 17:25:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:53982 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234654AbhGLVZA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jul 2021 15:34:28 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56C29C0613DD;
-        Mon, 12 Jul 2021 12:31:40 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 485F269D6; Mon, 12 Jul 2021 15:31:39 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 485F269D6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1626118299;
-        bh=Zn3SvcMF3FFO49+WTI8pt7ML3V5uhGmeYXXeqsXQrcY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=v8DlyIayyg8yDjwJfuxsFYTJvh+t9cDW+Uz+VYzSDSXEbEke0mosrcMLlzmpjVmDX
-         06wu4GYGB/ZF34UAZkd7LRQK1LLMfmlqQkWptRk7aDVwFxxNO8dF2uGtyK7jm+7Tbu
-         RIR8atVX3reEl7AA0HxjsvEmxSoIIB5kZMNxDEwg=
-Date:   Mon, 12 Jul 2021 15:31:39 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Vivek Goyal <vgoyal@redhat.com>
+        Mon, 12 Jul 2021 17:25:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626124931;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NqyKWbYzvJesNMAyFevO8Qmaq3myoLJAWjEns6F9EMg=;
+        b=aL6z+Dt38T4ZM42TEUGOTmSjID2Y4AhSUnHp62yRs1OaPKORrBngIHbE/gebie3Ktr+byU
+        A5F3Wxgw89sxNzzeZ+celYzjIiPVjOAV9D4NKl37JttDzY2gSfUw0g7r4wbdZD8t/keb7X
+        Rap6eEmZ9UrJk/jvf49LP2Ryq4XiKv8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-325-iiQpJbZiMg2bmALGrPHg3A-1; Mon, 12 Jul 2021 17:22:09 -0400
+X-MC-Unique: iiQpJbZiMg2bmALGrPHg3A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id D649A8042DE;
+        Mon, 12 Jul 2021 21:22:07 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-176.rdu2.redhat.com [10.10.114.176])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0469E5D9CA;
+        Mon, 12 Jul 2021 21:22:01 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 6A25522054F; Mon, 12 Jul 2021 17:22:01 -0400 (EDT)
+Date:   Mon, 12 Jul 2021 17:22:01 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     "J. Bruce Fields" <bfields@fieldses.org>
 Cc:     Bruce Fields <bfields@redhat.com>,
         Casey Schaufler <casey@schaufler-ca.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
@@ -48,9 +58,8 @@ Cc:     Bruce Fields <bfields@redhat.com>,
         jack@suse.cz, Christoph Hellwig <hch@infradead.org>
 Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
  files
-Message-ID: <20210712193139.GA22997@fieldses.org>
-References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
+Message-ID: <20210712212201.GD502004@redhat.com>
+References: <20210708175738.360757-2-vgoyal@redhat.com>
  <20210709091915.2bd4snyfjndexw2b@wittgenstein>
  <20210709152737.GA398382@redhat.com>
  <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
@@ -59,48 +68,74 @@ References: <20210708175738.360757-1-vgoyal@redhat.com>
  <20210712140247.GA486376@redhat.com>
  <20210712154106.GB18679@fieldses.org>
  <20210712174759.GA502004@redhat.com>
+ <20210712193139.GA22997@fieldses.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20210712174759.GA502004@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20210712193139.GA22997@fieldses.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 12, 2021 at 01:47:59PM -0400, Vivek Goyal wrote:
-> On Mon, Jul 12, 2021 at 11:41:06AM -0400, J. Bruce Fields wrote:
-> > Looks like 0xd is what the server returns to access on a device node
-> > with mode bits rw- for the caller.
+On Mon, Jul 12, 2021 at 03:31:39PM -0400, J. Bruce Fields wrote:
+> On Mon, Jul 12, 2021 at 01:47:59PM -0400, Vivek Goyal wrote:
+> > On Mon, Jul 12, 2021 at 11:41:06AM -0400, J. Bruce Fields wrote:
+> > > Looks like 0xd is what the server returns to access on a device node
+> > > with mode bits rw- for the caller.
+> > > 
+> > > Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
+> > > checks" added the ACCESS_X* bits for regular files and directories but
+> > > not others.
+> > > 
+> > > But you don't want to determine permission from the mode bits anyway,
+> > > you want it to depend on the owner,
 > > 
-> > Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
-> > checks" added the ACCESS_X* bits for regular files and directories but
-> > not others.
+> > Thinking more about this part. Current implementation of my patch is
+> > effectively doing both the checks. It checks that you are owner or
+> > have CAP_FOWNER in xattr_permission() and then goes on to call
+> > inode_permission(). And that means file mode bits will also play a
+> > role. If caller does not have write permission on the file, it will
+> > be denied setxattr().
 > > 
-> > But you don't want to determine permission from the mode bits anyway,
-> > you want it to depend on the owner,
+> > If I don't call inode_permission(), and just return 0 right away for
+> > file owner (for symlinks and special files), then just being owner
+> > is enough to write user.* xattr. And then even security modules will
+> > not get a chance to block that operation. IOW, if you are owner of
+> > a symlink or special file, you can write as many user.* xattr as you
+> > like and except quota does not look like anything else can block
+> > it. I am wondering if this approach is ok?
 > 
-> Thinking more about this part. Current implementation of my patch is
-> effectively doing both the checks. It checks that you are owner or
-> have CAP_FOWNER in xattr_permission() and then goes on to call
-> inode_permission(). And that means file mode bits will also play a
-> role. If caller does not have write permission on the file, it will
-> be denied setxattr().
+> Yeah, I'd expect security modules to get a say, and I wouldn't expect
+> mode bits on device nodes to be useful for deciding whether it makes
+> sense for xattrs to be readable or writeable.
+
+Actually, calling inode_permission() for symlinks probably should be
+fine.
+
+Its the device node which is problematic. Because we started with the
+assumption that mode bits there represent access writes for read/writing
+to device (and not to the filesystem). 
+
 > 
-> If I don't call inode_permission(), and just return 0 right away for
-> file owner (for symlinks and special files), then just being owner
-> is enough to write user.* xattr. And then even security modules will
-> not get a chance to block that operation. IOW, if you are owner of
-> a symlink or special file, you can write as many user.* xattr as you
-> like and except quota does not look like anything else can block
-> it. I am wondering if this approach is ok?
+> But, I don't really know.
 
-Yeah, I'd expect security modules to get a say, and I wouldn't expect
-mode bits on device nodes to be useful for deciding whether it makes
-sense for xattrs to be readable or writeable.
+> 
+> Do we have any other use cases besides this case of storing security
+> labels in user xattrs?
 
-But, I don't really know.
+Storing security label was one example. In case of virtiofs, there is
+a good chance that we will end up remapping all the guest xattrs and
+prefix these with "user.virtiofsd".
 
-Do we have any other use cases besides this case of storing security
-labels in user xattrs?
+fuse-overlay is another use case. They are storing real uid/gid in 
+user.* xattrs for files over NFS.
 
---b.
+I think overlayfs can be another benefeciary in some form. Now there
+is support for unpriviliged mouting of overlayfs from inside a user
+namespace. And that uses xattrs "user.overlay" on upper files for
+overlayfs specific metadata. Device nodes are not copied up. But
+they might have an issue with symlinks. Miklos, will know more.
+
+Thanks
+Vivek
+
