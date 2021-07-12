@@ -2,156 +2,131 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3B7C07E9A
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 12:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67933C07E9C
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 14:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 84C26610CD
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 12:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4971E61003
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 14:03:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231420AbhGLMwd convert rfc822-to-8bit (ORCPT
+        id S231510AbhGLOFz (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jul 2021 08:52:33 -0400
-Received: from us-smtp-delivery-44.mimecast.com ([207.211.30.44]:37830 "EHLO
-        us-smtp-delivery-44.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230292AbhGLMwc (ORCPT
+        Mon, 12 Jul 2021 10:05:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36361 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229644AbhGLOFy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jul 2021 08:52:32 -0400
+        Mon, 12 Jul 2021 10:05:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626098586;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6QZTkpToWndbC/JY1O8MzhhwkItgB1oCt3LUvlhk+js=;
+        b=NbB31piU9rOSePeduFeIQGvFXqcotfXDHwagXe2Icf4/S4MDF7/vBs7cIbSYnmmys1aFUg
+        5B9loNMyP/jlUMxyO/OjZknhYg0S52Nu+mqp2OkBbnJ+eDcClVeS01Y65s1ZLB4zIk0N9p
+        uMuTC9OxIPp/9SEVNDma3JRSA1C65j4=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-205-qiylMb6tME2iJBU66RxWTw-1; Mon, 12 Jul 2021 08:49:42 -0400
-X-MC-Unique: qiylMb6tME2iJBU66RxWTw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+ us-mta-18-9z529XwbMaij_RCHZvvi3A-1; Mon, 12 Jul 2021 10:03:02 -0400
+X-MC-Unique: 9z529XwbMaij_RCHZvvi3A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 69A1C804319;
-        Mon, 12 Jul 2021 12:49:39 +0000 (UTC)
-Received: from bahia.lan (ovpn-114-183.ams2.redhat.com [10.36.114.183])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3530961093;
-        Mon, 12 Jul 2021 12:49:31 +0000 (UTC)
-Date:   Mon, 12 Jul 2021 14:49:30 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 99D93101F7C4;
+        Mon, 12 Jul 2021 14:03:00 +0000 (UTC)
+Received: from horse.redhat.com (ovpn-114-176.rdu2.redhat.com [10.10.114.176])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C6C005DF56;
+        Mon, 12 Jul 2021 14:02:47 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 5751522054F; Mon, 12 Jul 2021 10:02:47 -0400 (EDT)
+Date:   Mon, 12 Jul 2021 10:02:47 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Bruce Fields <bfields@redhat.com>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
         Christian Brauner <christian.brauner@ubuntu.com>,
-        <gscrivan@redhat.com>, <tytso@mit.edu>, <miklos@szeredi.hu>,
-        <selinux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <virtio-fs@redhat.com>, <casey.schaufler@intel.com>,
-        <linux-security-module@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <jack@suse.cz>
-Subject: Re: [Virtio-fs] [PATCH v2 1/1] xattr: Allow user.* xattr on symlink
- and special files
-Message-ID: <20210712144849.121c948c@bahia.lan>
-In-Reply-To: <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
+        dgilbert@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
+ files
+Message-ID: <20210712140247.GA486376@redhat.com>
 References: <20210708175738.360757-1-vgoyal@redhat.com>
-        <20210708175738.360757-2-vgoyal@redhat.com>
-        <20210709091915.2bd4snyfjndexw2b@wittgenstein>
-        <20210709152737.GA398382@redhat.com>
-        <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+ <20210708175738.360757-2-vgoyal@redhat.com>
+ <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+ <20210709152737.GA398382@redhat.com>
+ <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+ <20210709175947.GB398382@redhat.com>
+ <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=groug@kaod.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: kaod.org
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 9 Jul 2021 08:34:41 -0700
-Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Fri, Jul 09, 2021 at 04:10:16PM -0400, Bruce Fields wrote:
+> On Fri, Jul 9, 2021 at 1:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > nfs seems to have some issues.
+> 
+> I'm not sure what the expected behavior is for nfs.  All I have for
+> now is some generic troubleshooting ideas, sorry:
+> 
+> > - I can set user.foo xattr on symlink and query it back using xattr name.
+> >
+> >   getfattr -h -n user.foo foo-link.txt
+> >
+> >   But when I try to dump all xattrs on this file, user.foo is being
+> >   filtered out it looks like. Not sure why.
+> 
+> Logging into the server and seeing what's set there could help confirm
+> whether it's the client or server that's at fault.  (Or watching the
+> traffic in wireshark; there are GET/SET/LISTXATTR ops that should be
+> easy to spot.)
+> 
+> > - I can't set "user.foo" xattr on a device node on nfs and I get
+> >   "Permission denied". I am assuming nfs server is returning this.
+> 
+> Wireshark should tell you whether it's the server or client doing that.
+> 
+> The RFC is https://datatracker.ietf.org/doc/html/rfc8276, and I don't
+> see any explicit statement about what the server should do in the case
+> of symlinks or device nodes, but I do see "Any regular file or
+> directory may have a set of extended attributes", so that was clearly
+> the assumption.  Also, NFS4ERR_WRONG_TYPE is listed as a possible
+> error return for the xattr ops.  But on a quick skim I don't see any
+> explicit checks in the nfsd code, so I *think* it's just relying on
+> the vfs for any file type checks.
 
-> On 7/9/2021 8:27 AM, Vivek Goyal wrote:
-> > On Fri, Jul 09, 2021 at 11:19:15AM +0200, Christian Brauner wrote:
-> >> On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
-> >>> Currently user.* xattr are not allowed on symlink and special files.
-> >>>
-> >>> man xattr and recent discussion suggested that primary reason for this
-> >>> restriction is how file permissions for symlinks and special files
-> >>> are little different from regular files and directories.
-> >>>
-> >>> For symlinks, they are world readable/writable and if user xattr were
-> >>> to be permitted, it will allow unpriviliged users to dump a huge amount
-> >>> of user.* xattrs on symlinks without any control.
-> >>>
-> >>> For special files, permissions typically control capability to read/write
-> >>> from devices (and not necessarily from filesystem). So if a user can
-> >>> write to device (/dev/null), does not necessarily mean it should be allowed
-> >>> to write large number of user.* xattrs on the filesystem device node is
-> >>> residing in.
-> >>>
-> >>> This patch proposes to relax the restrictions a bit and allow file owner
-> >>> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
-> >>> on symlink and special files.
-> >>>
-> >>> virtiofs daemon has a need to store user.* xatrrs on all the files
-> >>> (including symlinks and special files), and currently that fails. This
-> >>> patch should help.
-> >>>
-> >>> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
-> >>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-> >>> ---
-> >> Seems reasonable and useful.
-> >> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
-> >>
-> >> One question, do all filesystem supporting xattrs deal with setting them
-> >> on symlinks/device files correctly?
-> > Wrote a simple bash script to do setfattr/getfattr user.foo xattr on
-> > symlink and device node on ext4, xfs and btrfs and it works fine.
-> 
-> How about nfs, tmpfs, overlayfs and/or some of the other less conventional
-> filesystems?
-> 
+Hi Bruce,
 
-How about virtiofs then ? :-)
+Thanks for the response. I am just trying to do set a user.foo xattr on
+a device node on nfs.
 
-> >
-> > https://github.com/rhvgoyal/misc/blob/master/generic-programs/user-xattr-special-files.sh
-> >
-> > I probably can add some more filesystems to test.
-> >
-> > Thanks
-> > Vivek
-> >
-> >>>  fs/xattr.c | 10 ++++++----
-> >>>  1 file changed, 6 insertions(+), 4 deletions(-)
-> >>>
-> >>> diff --git a/fs/xattr.c b/fs/xattr.c
-> >>> index 5c8c5175b385..2f1855c8b620 100644
-> >>> --- a/fs/xattr.c
-> >>> +++ b/fs/xattr.c
-> >>> @@ -120,12 +120,14 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
-> >>>  	}
-> >>>  
-> >>>  	/*
-> >>> -	 * In the user.* namespace, only regular files and directories can have
-> >>> -	 * extended attributes. For sticky directories, only the owner and
-> >>> -	 * privileged users can write attributes.
-> >>> +	 * In the user.* namespace, for symlinks and special files, only
-> >>> +	 * the owner and priviliged users can read/write attributes.
-> >>> +	 * For sticky directories, only the owner and privileged users can
-> >>> +	 * write attributes.
-> >>>  	 */
-> >>>  	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
-> >>> -		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
-> >>> +		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode) &&
-> >>> +		    !inode_owner_or_capable(mnt_userns, inode))
-> >>>  			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
-> >>>  		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
-> >>>  		    (mask & MAY_WRITE) &&
-> >>> -- 
-> >>> 2.25.4
-> >>>
-> 
-> _______________________________________________
-> Virtio-fs mailing list
-> Virtio-fs@redhat.com
-> https://listman.redhat.com/mailman/listinfo/virtio-fs
-> 
+setfattr -n "user.foo" -v "bar" /mnt/nfs/test-dev
+
+and I get -EACCESS.
+
+I put some printk() statements and EACCESS is being returned from here.
+
+nfs4_xattr_set_nfs4_user() {
+        if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
+                if (!(cache.mask & NFS_ACCESS_XAWRITE)) {
+                        return -EACCES;
+                }
+        }
+}
+
+Value of cache.mask=0xd at the time of error.
+
+Thanks
+Vivek
 
