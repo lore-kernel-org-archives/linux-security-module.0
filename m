@@ -2,142 +2,224 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFFDC07E9C
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 15:41:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F06C07E9C
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 15:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87DC26120D
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 15:41:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EA106102A
+	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 15:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235567AbhGLPn5 (ORCPT
+        id S234146AbhGLQAZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jul 2021 11:43:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44646 "EHLO
+        Mon, 12 Jul 2021 12:00:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235563AbhGLPn5 (ORCPT
+        with ESMTP id S233599AbhGLQAZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jul 2021 11:43:57 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE6C3C0613DD;
-        Mon, 12 Jul 2021 08:41:08 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id A55F76210; Mon, 12 Jul 2021 11:41:06 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org A55F76210
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1626104466;
-        bh=58qsbxGOldmXglP0XTIWP5zPM6bP3vD1mti24yWL6p4=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=b3KfNWYgyy+7ug+X4mtbJ0nB2zxIsoueTBluDdvJYz0EI9qtCIkfTUMMjALSXuG6g
-         XiLxIJUyUJ22hrnsxgWppVUz4b6S7c298HXKfUzu3VWtfh2+aWa3Uit6V1x6nKwiMq
-         CvCFga8AvZbqMbjlkCqsDKWZH3QGbznmDh5jMAPg=
-Date:   Mon, 12 Jul 2021 11:41:06 -0400
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Bruce Fields <bfields@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
-        dgilbert@redhat.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
-        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
- files
-Message-ID: <20210712154106.GB18679@fieldses.org>
-References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
- <20210709091915.2bd4snyfjndexw2b@wittgenstein>
- <20210709152737.GA398382@redhat.com>
- <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
- <20210709175947.GB398382@redhat.com>
- <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
- <20210712140247.GA486376@redhat.com>
+        Mon, 12 Jul 2021 12:00:25 -0400
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0075EC0613E5
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jul 2021 08:57:36 -0700 (PDT)
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GNpLk5BplzMpnmp;
+        Mon, 12 Jul 2021 17:57:34 +0200 (CEST)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4GNpLk3CtFzlmrrX;
+        Mon, 12 Jul 2021 17:57:34 +0200 (CEST)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Alejandro Colomar <alx.manpages@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        landlock@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
+Subject: [PATCH v2 2/4] landlock_create_ruleset.2: Document new syscall
+Date:   Mon, 12 Jul 2021 17:57:43 +0200
+Message-Id: <20210712155745.831580-3-mic@digikod.net>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210712155745.831580-1-mic@digikod.net>
+References: <20210712155745.831580-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210712140247.GA486376@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 12, 2021 at 10:02:47AM -0400, Vivek Goyal wrote:
-> On Fri, Jul 09, 2021 at 04:10:16PM -0400, Bruce Fields wrote:
-> > On Fri, Jul 9, 2021 at 1:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > nfs seems to have some issues.
-> > 
-> > I'm not sure what the expected behavior is for nfs.  All I have for
-> > now is some generic troubleshooting ideas, sorry:
-> > 
-> > > - I can set user.foo xattr on symlink and query it back using xattr name.
-> > >
-> > >   getfattr -h -n user.foo foo-link.txt
-> > >
-> > >   But when I try to dump all xattrs on this file, user.foo is being
-> > >   filtered out it looks like. Not sure why.
-> > 
-> > Logging into the server and seeing what's set there could help confirm
-> > whether it's the client or server that's at fault.  (Or watching the
-> > traffic in wireshark; there are GET/SET/LISTXATTR ops that should be
-> > easy to spot.)
-> > 
-> > > - I can't set "user.foo" xattr on a device node on nfs and I get
-> > >   "Permission denied". I am assuming nfs server is returning this.
-> > 
-> > Wireshark should tell you whether it's the server or client doing that.
-> > 
-> > The RFC is https://datatracker.ietf.org/doc/html/rfc8276, and I don't
-> > see any explicit statement about what the server should do in the case
-> > of symlinks or device nodes, but I do see "Any regular file or
-> > directory may have a set of extended attributes", so that was clearly
-> > the assumption.  Also, NFS4ERR_WRONG_TYPE is listed as a possible
-> > error return for the xattr ops.  But on a quick skim I don't see any
-> > explicit checks in the nfsd code, so I *think* it's just relying on
-> > the vfs for any file type checks.
-> 
-> Hi Bruce,
-> 
-> Thanks for the response. I am just trying to do set a user.foo xattr on
-> a device node on nfs.
-> 
-> setfattr -n "user.foo" -v "bar" /mnt/nfs/test-dev
-> 
-> and I get -EACCESS.
-> 
-> I put some printk() statements and EACCESS is being returned from here.
-> 
-> nfs4_xattr_set_nfs4_user() {
->         if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
->                 if (!(cache.mask & NFS_ACCESS_XAWRITE)) {
->                         return -EACCES;
->                 }
->         }
-> }
-> 
-> Value of cache.mask=0xd at the time of error.
+From: Mickaël Salaün <mic@linux.microsoft.com>
 
-Looks like 0xd is what the server returns to access on a device node
-with mode bits rw- for the caller.
+This is an adaptation of
+https://www.kernel.org/doc/html/v5.13/userspace-api/landlock.html
 
-Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
-checks" added the ACCESS_X* bits for regular files and directories but
-not others.
+Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+Link: https://lore.kernel.org/r/20210712155745.831580-3-mic@digikod.net
+---
 
-But you don't want to determine permission from the mode bits anyway,
-you want it to depend on the owner, so I guess we should be calling
-xattr_permission somewhere if we want that behavior.
+Changes since v1:
+* Replace all ".I" with ".IR", except when used for titles.
+* Append punctuation to ".IR" and ".BR" when it makes sense (requested
+  by Alejandro Colomar).
+* Cut lines according to the semantic newline rules (requested by
+  Alejandro Colomar).
+* Remove roman style from ".TP" section titles (requested by Alejandro
+  Colomar).
+* Add comma after "i.e." and "e.g.".
+* Add a "CONFORMING TO" section.
+* Replace "(2)" with "()" for the described syscall name.
+---
+ man2/landlock_create_ruleset.2 | 136 +++++++++++++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
+ create mode 100644 man2/landlock_create_ruleset.2
 
-The RFC assumes user xattrs are for regular files and directories,
-without, as far as I can tell, actually explicitly forbidding them on
-other objects.  We should also raise this with the working group if we
-want to increase the chances that you'll get the behavior you want on
-non-Linux servers.
+diff --git a/man2/landlock_create_ruleset.2 b/man2/landlock_create_ruleset.2
+new file mode 100644
+index 000000000000..38029c2cc48a
+--- /dev/null
++++ b/man2/landlock_create_ruleset.2
+@@ -0,0 +1,136 @@
++.\" Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
++.\" Copyright © 2019-2020 ANSSI
++.\" Copyright © 2021 Microsoft Corporation
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH LANDLOCK_CREATE_RULESET 2 2021-06-27 Linux "Linux Programmer's Manual"
++.SH NAME
++landlock_create_ruleset \- create a new Landlock ruleset
++.SH SYNOPSIS
++.nf
++.BR "#include <linux/landlock.h>" "  /* Definition of " LANDLOCK_* " constants */"
++.BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " constants */"
++.PP
++.BI "int syscall(SYS_landlock_create_ruleset,
++.BI "            const struct landlock_ruleset_attr " attr ,
++.BI "            size_t " size " , __u32 " flags );
++.SH DESCRIPTION
++A Landlock ruleset identifies a set of rules (i.e., actions on objects).
++This
++.BR landlock_create_ruleset ()
++system call enables creating a new file descriptor identifying a ruleset.
++This file descriptor can then be used by
++.BR landlock_add_rule (2)
++and
++.BR landlock_restrict_self (2).
++See
++.BR landlock (7)
++for a global overview.
++.PP
++.IR attr
++specifies the properties of the new ruleset.
++It points to the following structure:
++.IP
++.in +4n
++.EX
++struct landlock_ruleset_attr {
++	__u64 handled_access_fs;
++};
++.EE
++.in
++.IP
++.IR handled_access_fs
++is a bitmask of actions that is handled by this ruleset and should then be
++forbidden if no rule explicitly allow them
++(see
++.BR "Filesystem actions"
++in
++.BR landlock (7)).
++This enables simply restricting ambient rights
++(e.g., global filesystem access) and is needed for compatibility reasons.
++.PP
++.IR size
++must be specified as
++.IR "sizeof(struct landlock_ruleset_attr)"
++for compatibility reasons.
++.PP
++.IR flags
++must be 0 if
++.IR attr
++is used.
++Otherwise,
++.IR flags
++can be set to:
++.TP
++.B LANDLOCK_CREATE_RULESET_VERSION
++If
++.IR attr
++is NULL and
++.IR size
++is 0, then the returned value is the highest supported Landlock ABI version
++(starting at 1).
++This version can be used for a best-effort security approach,
++which is encouraged when user space is not pinned to a specific kernel
++version.
++All features documented in these man pages are available with the version
++1.
++.SH RETURN VALUE
++On success,
++.BR landlock_create_ruleset ()
++returns a new Landlock ruleset file descriptor, or a Landlock ABI version
++according to
++.IR flags .
++.SH ERRORS
++.BR landlock_create_ruleset ()
++can failed for the following reasons:
++.TP
++.B EOPNOTSUPP
++Landlock is supported by the kernel but disabled at boot time.
++.TP
++.B EINVAL
++Unknown
++.IR flags ,
++or unknown access, or too small
++.IR size .
++.TP
++.B E2BIG
++.IR size
++is too big.
++.TP
++.B EFAULT
++.IR attr
++was not a valid address.
++.TP
++.B ENOMSG
++Empty accesses (i.e.,
++.IR attr->handled_access_fs
++is 0).
++.SH VERSIONS
++Landlock was added in Linux 5.13.
++.SH CONFORMING TO
++This system call is Linux-specific.
++.SH SEE ALSO
++.BR landlock (7),
++.BR landlock_add_rule (2),
++.BR landlock_restrict_self (2)
+-- 
+2.32.0
 
-The "User extended attributes" section of the xattr(7) man page will
-need updating.
-
---b.
