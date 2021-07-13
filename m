@@ -2,100 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC21C07E9A
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 23:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E01C11F68
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 02:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05C18600CD
-	for <linux-security-module@archiver.kernel.org>; Mon, 12 Jul 2021 23:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 849E0611F1
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 02:35:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230182AbhGLXr3 (ORCPT
+        id S233559AbhGMChw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jul 2021 19:47:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42512 "EHLO
+        Mon, 12 Jul 2021 22:37:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230043AbhGLXr2 (ORCPT
+        with ESMTP id S233756AbhGMChs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jul 2021 19:47:28 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4A5C0613DD;
-        Mon, 12 Jul 2021 16:44:39 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id v7so19977337pgl.2;
-        Mon, 12 Jul 2021 16:44:39 -0700 (PDT)
+        Mon, 12 Jul 2021 22:37:48 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C35C4C061787
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jul 2021 19:34:57 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id dt7so8778900ejc.12
+        for <linux-security-module@vger.kernel.org>; Mon, 12 Jul 2021 19:34:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ZdcC4EOvokLDp7iGvpkIzf7OidD6sSk4XoFIM4xk3AU=;
-        b=PhvZMt/qVfhwAJzYDBf6zlD0kGcx/nd81RJHYJm8GR1+RxH/GMwlQBDZuaIG37cQUn
-         M9Du3K4PI829rOOvPbmaY8o1mUcsdT4ePldlyE0qI5RtHxDfxdmF/p2m6zCbsQKnYlSK
-         sf0nj5mkoZLjPNjNy+LJ9BfGu56Z2Bm3Wmse3xhi7yqBENtoHeLbGTg49lmATzc9RXAL
-         W7LaXVl/Owf3HHz7hfHfXAw1V1jr7cnlLAf3JqLw8FlNcgtNSnFrkNqKEjmFVpFQYwlD
-         66nDUSPhgqnoXkT5iZmSuuMscOfy76QhVLeVyC3s0uo78rxb4AQ5Pgr+JnuQFUpvSHRQ
-         DrYQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RBPu6xYIBS0viB5UZS492p6zHqYEhcALtpbidr1sCrU=;
+        b=hAqQVpiv52aQMiILfGaILA7UZ3Vb7hpAEZl5MSyT4Y9giLdF8ZWBqgareVlSQUHWpR
+         ZUrim0on5dre3bqN5EGAiRzVWG6nVeaiF+s6JaGu2Q+54HjtAgU1AvqcqlU5GALyqPc8
+         J59ZdfyvvWc0CNOaKSGrAuHZon7DtT9jG9x1ueo2PbGCXBvXV9LCEYmPz0NJvuwLKCb4
+         e5swfb54jlYSJ49YcMdOKdIhN3CYIP2f7H6ObIehgsT00rpoEugEWTcwjWsk6Ijx/OB+
+         sziXashjbhIgbQwAsqKXq8JHPkE9kbOMVO58+jj4MNa7U/Fp8vQxUrXCiR8DuABY3fmZ
+         DToA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ZdcC4EOvokLDp7iGvpkIzf7OidD6sSk4XoFIM4xk3AU=;
-        b=op6I0sOqp5gAAb0cn3oAiJyZa4R8PWfqaqSoqAJjqq0D5l82KJrwkP2P6xrv0VS9Pc
-         QGuxOeygZhY5aG5VMLQ86frO+U6/1GXtIq5XZ5N10M80ZzreNZWmIG+UXdt7cvXLCqls
-         6v3xEypz5ELjRkC95MX3zXGPtvHVnTzLG6IfdPJ70cifhYh4/OO5FDnAnMODVIepYFc4
-         UIp1Y7SYBFqxhmEROcm7YCZkE0waavKBm0VABz3IH7eA8jSOyKgAtkhQh2uyqEySBKTl
-         /KZxBtSIWU5XnIdqFeCb1oidUMpi//kyTiMlKcJqN39bNBv5PtWwbk7m3/6NKkgjr49j
-         /zLg==
-X-Gm-Message-State: AOAM531+p4iauT5P84xWl61UlHUtr/ZByADjVjedLzLz8Wh7LjGWY+RD
-        egHIx0V3qehX7L3NloC670k=
-X-Google-Smtp-Source: ABdhPJxgaP0P3/dbLvfAzSerFWzwB4baHXqHZvqhQobpUQlynxpm5LosOM4joZQrtiRP2JeGCeylRA==
-X-Received: by 2002:a63:b60c:: with SMTP id j12mr1501604pgf.393.1626133479231;
-        Mon, 12 Jul 2021 16:44:39 -0700 (PDT)
-Received: from raspberrypi ([210.183.35.240])
-        by smtp.gmail.com with ESMTPSA id u8sm473837pjf.20.2021.07.12.16.44.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Jul 2021 16:44:38 -0700 (PDT)
-Date:   Tue, 13 Jul 2021 00:44:34 +0100
-From:   Austin Kim <austindh.kim@gmail.com>
-To:     jmorris@namei.org, serge@hallyn.com, keescook@chromium.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, austin.kim@lge.com,
-        kernel-team@lge.com, austindh.kim@gmail.com
-Subject: [PATCH] LSM: add NULL check for kcalloc()
-Message-ID: <20210712234434.GA29205@raspberrypi>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RBPu6xYIBS0viB5UZS492p6zHqYEhcALtpbidr1sCrU=;
+        b=hvWWRXxubx+zqZrtOhF7V+BhXDQ1rczBLYFmqdcMjA8TYSTnfaySpnzmSBTjdggdpV
+         kGcEllhhHWDCJBdOzOl+eOV5dGFRdD+ataOZgmZs/C2oXN+Raw1taLciZRKn/2VDWeh+
+         SSFfVlTVrOsjwc/bGLbxA5Lcs/1PyiJMs4gXPPbA6IDnqe0u2as1B/lUnWGi2E7ojcEY
+         N9oryToMro3dDSoz+JGW+S0JOHCPmIsg57bHhNOILEn1QEXRDE/YnGkaYt10Pw9DjrQ+
+         wZqUbrhRu86qhTDeTvnGgw4fGUW+5XmkcTh+kH80aVfe5KR7H3dbZM4Z2ExYmW0UGjAT
+         52jw==
+X-Gm-Message-State: AOAM531IxwOnpIbKjUOw/Qzu5/RAcG7X9vzmVs3gxYaJd6a7W4Z1XVgU
+        V8N+kWKxs+dpAbIiz7Cmf77rtjU9dAE9l/W8yjfdo2rUZA==
+X-Google-Smtp-Source: ABdhPJyytdq/CE/wkitIkFTYSvvbb5T4D4KC4bniBQLIKEAC15BXF2YMkUTZuWQQktrfljWaz21U9sH3mGdCEuV7T/M=
+X-Received: by 2002:a17:907:10d8:: with SMTP id rv24mr2673354ejb.542.1626143695922;
+ Mon, 12 Jul 2021 19:34:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210616085118.1141101-1-omosnace@redhat.com> <8735tdiyc1.ffs@nanos.tec.linutronix.de>
+In-Reply-To: <8735tdiyc1.ffs@nanos.tec.linutronix.de>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 12 Jul 2021 22:34:45 -0400
+Message-ID: <CAHC9VhRAN4RS2c3cwpr=DQ_45MDqn2QV7nL4J3ZWXKfUNLcjdQ@mail.gmail.com>
+Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        selinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        x86@kernel.org, linux-acpi@vger.kernel.org,
+        linux-cxl@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Austin Kim <austin.kim@lge.com>
+On Sat, Jun 19, 2021 at 1:00 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Wed, Jun 16 2021 at 10:51, Ondrej Mosnacek wrote:
+> > diff --git a/arch/x86/mm/testmmiotrace.c b/arch/x86/mm/testmmiotrace.c
+> > index bda73cb7a044..c43a13241ae8 100644
+> > --- a/arch/x86/mm/testmmiotrace.c
+> > +++ b/arch/x86/mm/testmmiotrace.c
+> > @@ -116,7 +116,7 @@ static void do_test_bulk_ioremapping(void)
+> >  static int __init init(void)
+> >  {
+> >       unsigned long size = (read_far) ? (8 << 20) : (16 << 10);
+> > -     int ret = security_locked_down(LOCKDOWN_MMIOTRACE);
+> > +     int ret = security_locked_down(current_cred(), LOCKDOWN_MMIOTRACE);
+>
+> I have no real objection to those patches, but it strikes me odd that
+> out of the 62 changed places 58 have 'current_cred()' and 4 have NULL as
+> argument.
+>
+> I can't see why this would ever end up with anything else than
+> current_cred() or NULL and NULL being the 'special' case. So why not
+> having security_locked_down_no_cred() and make current_cred() implicit
+> for security_locked_down() which avoids most of the churn and just makes
+> the special cases special. I might be missing something though.
 
-kcalloc() may return NULL when memory allocation fails.
-So it is necessary to add NULL check after the call to kcalloc() is made.
+Unfortunately it is not uncommon for kernel subsystems to add, move,
+or otherwise play around with LSM hooks without checking with the LSM
+folks; generally this is okay, but there have been a few problems in
+the past and I try to keep that in mind when we are introducing new
+hooks or modifying existing ones.  If we have two LSM hooks for
+roughly the same control point it has the potential to cause
+confusion, e.g. do I use the "normal" or the "no_cred" version?  What
+if I don't want to pass a credential, can I just use "no_cred"?  My
+thinking with the single, always-pass-a-cred function is that callers
+don't have to worry about choosing from multiple, similar hooks and
+they know they need to pass a cred which hopefully gets them thinking
+about what cred is appropriate.  It's not foolproof, but I believe the
+single hook approach will be less prone to accidents ... or so I hope
+:)
 
-Signed-off-by: Austin Kim <austin.kim@lge.com>
----
- security/security.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/security/security.c b/security/security.c
-index 09533cbb7221..f885c9e9bc35 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -321,6 +321,8 @@ static void __init ordered_lsm_init(void)
- 
- 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
- 				GFP_KERNEL);
-+	if (ordered_lsms)
-+		return;
- 
- 	if (chosen_lsm_order) {
- 		if (chosen_major_lsm) {
 -- 
-2.20.1
-
+paul moore
+www.paul-moore.com
