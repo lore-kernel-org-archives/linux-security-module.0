@@ -2,191 +2,68 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C60CC11F66
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 05:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB7C0C11F66
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 09:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8561361260
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 05:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 911BA61166
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 09:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232344AbhGMFGC (ORCPT
+        id S234944AbhGMJwF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jul 2021 01:06:02 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26650 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229470AbhGMFGC (ORCPT
+        Tue, 13 Jul 2021 05:52:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36450 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234857AbhGMJwF (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jul 2021 01:06:02 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16D4XlNc007476;
-        Tue, 13 Jul 2021 01:03:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
- references : from : message-id : date : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=wqKVoTRr+k23xUFNBdiIsKFxsmSm7+BEJ5SMeUvMSTM=;
- b=q6ZK57uPMY7jg5pGBATsCrzvhEpZWmQgF0qoA0BpOG7EA3Rvtwv6ynbnfwgxW+wy8WsJ
- vqOoj6k4EHl6fSZvDPWGcRtLPhj9VGIxx4lWmQ4jKhiiaG5pbu13QxWA9aHO+1vEaztw
- TKiPZ6/zp3TTBe7yhJbBNVQ6Hq69sYdKrN5uxlyRCiCObpPDRoDYcjj+kJLIS71A8OvY
- ZSkP13X/Lk7C31SDewBt15BkzkJbbMUvSItW/xtC20UpDIdGUppHMT17LmCBYQ8u0rm5
- D5T2WA21AU7JNkQ8i9vllM1I6IejPXSxxHunDWlFhSAAZM/+Qh83IwDsdYopQShOupDj GA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39qs117600-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jul 2021 01:03:11 -0400
-Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16D4ZNUm011720;
-        Tue, 13 Jul 2021 01:03:11 -0400
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 39qs1175yf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jul 2021 01:03:11 -0400
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16D539el001337;
-        Tue, 13 Jul 2021 05:03:09 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma06fra.de.ibm.com with ESMTP id 39q2th8jfs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Jul 2021 05:03:09 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16D535is16974316
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Jul 2021 05:03:05 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 373ED11C069;
-        Tue, 13 Jul 2021 05:03:05 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9733B11C064;
-        Tue, 13 Jul 2021 05:03:03 +0000 (GMT)
-Received: from Nageswaras-MacBook-Pro-2.local (unknown [9.199.56.128])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 13 Jul 2021 05:03:03 +0000 (GMT)
-Subject: Re: [PATCH] tpm: ibmvtpm: Avoid error message when process gets
- signal while waiting
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>, peterhuewe@gmx.de,
-        jarkko@kernel.org
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>
-References: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
-From:   Nageswara Sastry <rnsastry@linux.ibm.com>
-Message-ID: <47827aae-e80a-950d-7dc9-4c1d9803c129@linux.ibm.com>
-Date:   Tue, 13 Jul 2021 10:33:02 +0530
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.11.0
-In-Reply-To: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: rCYGAG9bvFxo2z3RUqEZrfFx_VavlhkG
-X-Proofpoint-ORIG-GUID: EmIid8v1OjLvnA9j_LIKHNuCPt49fR0v
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 13 Jul 2021 05:52:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37A43C0613DD;
+        Tue, 13 Jul 2021 02:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=DsRs0GWZtjxgV/G+0LfR+smdacS384gtQB/dib23CM0=; b=B7IJS4LyOfpUzyzT/QH90vbIW9
+        0n+XQba6i3wYq4xVYxKcBVocZtWn4HIYzAL6myclgAvoQ0dbAM7PlZf07GesiXZA3j2MR5HB/fDuO
+        Zk0g2R50qMc1DEfyvBVJd9s+qZ6uoFSqlPSR04HGH0m/FLggHRAQq/csieQCoV32++JtGmpEPxJbW
+        x6FsOhBU6WI53Yivyk35MzvyxrqOL+h+7kqOYfz1w0U4LfS58UZ/lYSi8A5ezkDIw3q4uVbuWgptg
+        IsS4U7d2YzM8WsLb82REEr/qhO5SOJOJNaoGKe0oZBqkv9Xg184H9Mvj7TwM1TAKrpdQVEzYslsXv
+        95dgMwbA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1m3F1e-000xYr-VD; Tue, 13 Jul 2021 09:48:32 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8B9839866F6; Tue, 13 Jul 2021 11:48:25 +0200 (CEST)
+Date:   Tue, 13 Jul 2021 11:48:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Marco Elver <elver@google.com>
+Cc:     tglx@linutronix.de, mingo@kernel.org, dvyukov@google.com,
+        glider@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        linux-perf-users@vger.kernel.org, ebiederm@xmission.com,
+        omosnace@redhat.com, serge@hallyn.com,
+        linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] perf: Fix required permissions if sigtrap is
+ requested
+Message-ID: <20210713094825.GC4132@worktop.programming.kicks-ass.net>
+References: <20210705084453.2151729-1-elver@google.com>
+ <CANpmjNP7Z0mxaF+eYCtP1aabPcoh-0aDSOiW6FQsPkR8SbVwnA@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-12_14:2021-07-12,2021-07-12 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- suspectscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0
- bulkscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107130022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNP7Z0mxaF+eYCtP1aabPcoh-0aDSOiW6FQsPkR8SbVwnA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Mon, Jul 12, 2021 at 12:32:33PM +0200, Marco Elver wrote:
+> It'd be good to get this sorted -- please take another look.
 
+Thanks!
 
-On 12/07/21 9:55 pm, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> When rngd is run as root then lots of these types of message will appear
-> in the kernel log if the TPM has been configure to provide random bytes:
-> 
-> [ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
-> 
-> The issue is caused by the following call that is interrupted while
-> waiting for the TPM's response.
-> 
-> sig = wait_event_interruptible(ibmvtpm->wq,
->                                 !ibmvtpm->tpm_processing_cmd);
-> 
-> The solution is to use wait_event() instead.
-> 
-> To recreat the issue start rngd like this:
-> 
-> sudo rngd -r /dev/hwrng -t
-> 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
-> Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
-> Cc: Nayna Jain <nayna@linux.ibm.com>
-> Cc: George Wilson <gcwilson@linux.ibm.com>
-> Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-
-Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-
-> ---
->   drivers/char/tpm/tpm_ibmvtpm.c | 13 ++++---------
->   1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 903604769de9..99b0442a5fdf 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -106,16 +106,13 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
->   {
->   	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
->   	u16 len;
-> -	int sig;
->   
->   	if (!ibmvtpm->rtce_buf) {
->   		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
->   		return 0;
->   	}
->   
-> -	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-> -	if (sig)
-> -		return -EINTR;
-> +	wait_event(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
->   
->   	len = ibmvtpm->res_len;
->   
-> @@ -206,7 +203,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   {
->   	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
->   	bool retry = true;
-> -	int rc, sig;
-> +	int rc;
->   
->   	if (!ibmvtpm->rtce_buf) {
->   		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
-> @@ -224,9 +221,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->   		dev_info(ibmvtpm->dev,
->   		         "Need to wait for TPM to finish\n");
->   		/* wait for previous command to finish */
-> -		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-> -		if (sig)
-> -			return -EINTR;
-> +		wait_event(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
->   	}
->   
->   	spin_lock(&ibmvtpm->rtce_lock);
-> @@ -551,7 +546,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
->   			/* len of the data in rtce buffer */
->   			ibmvtpm->res_len = be16_to_cpu(crq->len);
->   			ibmvtpm->tpm_processing_cmd = false;
-> -			wake_up_interruptible(&ibmvtpm->wq);
-> +			wake_up(&ibmvtpm->wq);
->   			return;
->   		default:
->   			return;
-> 
-
--- 
-Thanks and Regards
-R.Nageswara Sastry
+I'll queue them into perf/urgent.
