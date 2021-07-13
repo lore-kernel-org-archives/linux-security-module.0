@@ -2,104 +2,191 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A90C11F66
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 02:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C60CC11F66
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 05:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C129161248
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 02:40:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8561361260
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 05:03:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233765AbhGMCnB (ORCPT
+        id S232344AbhGMFGC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 12 Jul 2021 22:43:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53104 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbhGMCnB (ORCPT
+        Tue, 13 Jul 2021 01:06:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:26650 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229470AbhGMFGC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 12 Jul 2021 22:43:01 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5223DC0613E9
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jul 2021 19:40:12 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id w14so19291727edc.8
-        for <linux-security-module@vger.kernel.org>; Mon, 12 Jul 2021 19:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6SKPfn6xRnP6RvM1343nJURmtoEoYmDq0f1l/33/h84=;
-        b=x7RRPQyv9jG3OzPccMOSnW3VrdK3C+C7wh57/h4YZqZTFnUPLVZIkbejJqFM1bGJXD
-         hevjB4DEy9ElJW2GegUT1Xz2iGCm80zDMxIHFu6XRcIUtWY+iXCOVvT0Riyb19LtNK/X
-         RALuOfemsmqkkECHX8UFntgZwQiBNizAreHhCk+nxQ9KufS/UsFKP4VvmFp4KT9issBw
-         d3HYbjdCRd67BmavBuE9GJTUdo8fV2oYiXZC7dHoKcGKuGW1xjO37V29xWHAPtcL2ejB
-         2C2bzm6u2g5vlaz5YJv05KqWddMghzzTRd6D0hlHY3+5n9BgfSBLXDolpjLtUY0GcJNu
-         torw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6SKPfn6xRnP6RvM1343nJURmtoEoYmDq0f1l/33/h84=;
-        b=XyIKAWnEFPP25ZiCInI92+RShCZFVWjCjR5Wxaf3BiAjkKMrF5xd+Xq0ycNaAdVfoP
-         T7DvOMG2eNl0CvS89aovsCKUm3RAHa3kmWrum1ecGXm48YYIQqupGvkU24uRXCbCDrm5
-         VyV2rmQ2OTh93EGuI11zsK/RzjFA3bWZz+Wi6UL72q0SUzofeflEnpSZr02L11dXIhL1
-         NC4a28zzmhzmelNpra7+nGIZEJ+j/4OSJ5CLt51WZE/yvndiOlwPyDHpMmKfGnSrYFDV
-         /6APuo2YxTIFZCkzQe9OTFPZ8UjQFOY4uS8x5rp/Qj7ZmlHEygEx/JM9Y8EY0x4BWuQH
-         McwA==
-X-Gm-Message-State: AOAM533wWytSzmV4zRiUhnMSKJ0PrztW9wQdw0ZfK9n1jMD4lkklx6Vo
-        nUh2M9sTUQw3Wcd8exjO1+Tun02jrxa8d5r1udk0
-X-Google-Smtp-Source: ABdhPJyZ/TPOOkCsJy185npELs8RkJjMh8prX3d/UtGFgQ0YS2+kXH0n7ovix3Q1wjS+ou3pLjc8wCtqxZLZR+mgDZA=
-X-Received: by 2002:aa7:dd88:: with SMTP id g8mr2479547edv.196.1626144010862;
- Mon, 12 Jul 2021 19:40:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210705090922.3321178-1-roberto.sassu@huawei.com> <20210705090922.3321178-4-roberto.sassu@huawei.com>
-In-Reply-To: <20210705090922.3321178-4-roberto.sassu@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 12 Jul 2021 22:40:00 -0400
-Message-ID: <CAHC9VhQAM+-TXOHLkcY2VGyJ3PNES0EaNr3PccHT=j3nGAvfPQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] ima: Add digest and digest_len params to the
- functions to measure a buffer
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        prsriva02@gmail.com, tusharsu@linux.microsoft.com,
-        nramas@linux.microsoft.com, linux-integrity@vger.kernel.org,
+        Tue, 13 Jul 2021 01:06:02 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16D4XlNc007476;
+        Tue, 13 Jul 2021 01:03:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=wqKVoTRr+k23xUFNBdiIsKFxsmSm7+BEJ5SMeUvMSTM=;
+ b=q6ZK57uPMY7jg5pGBATsCrzvhEpZWmQgF0qoA0BpOG7EA3Rvtwv6ynbnfwgxW+wy8WsJ
+ vqOoj6k4EHl6fSZvDPWGcRtLPhj9VGIxx4lWmQ4jKhiiaG5pbu13QxWA9aHO+1vEaztw
+ TKiPZ6/zp3TTBe7yhJbBNVQ6Hq69sYdKrN5uxlyRCiCObpPDRoDYcjj+kJLIS71A8OvY
+ ZSkP13X/Lk7C31SDewBt15BkzkJbbMUvSItW/xtC20UpDIdGUppHMT17LmCBYQ8u0rm5
+ D5T2WA21AU7JNkQ8i9vllM1I6IejPXSxxHunDWlFhSAAZM/+Qh83IwDsdYopQShOupDj GA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 39qs117600-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Jul 2021 01:03:11 -0400
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16D4ZNUm011720;
+        Tue, 13 Jul 2021 01:03:11 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 39qs1175yf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Jul 2021 01:03:11 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16D539el001337;
+        Tue, 13 Jul 2021 05:03:09 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma06fra.de.ibm.com with ESMTP id 39q2th8jfs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Jul 2021 05:03:09 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16D535is16974316
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 13 Jul 2021 05:03:05 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 373ED11C069;
+        Tue, 13 Jul 2021 05:03:05 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9733B11C064;
+        Tue, 13 Jul 2021 05:03:03 +0000 (GMT)
+Received: from Nageswaras-MacBook-Pro-2.local (unknown [9.199.56.128])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 13 Jul 2021 05:03:03 +0000 (GMT)
+Subject: Re: [PATCH] tpm: ibmvtpm: Avoid error message when process gets
+ signal while waiting
+To:     Stefan Berger <stefanb@linux.vnet.ibm.com>, peterhuewe@gmx.de,
+        jarkko@kernel.org
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>
+References: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
+From:   Nageswara Sastry <rnsastry@linux.ibm.com>
+Message-ID: <47827aae-e80a-950d-7dc9-4c1d9803c129@linux.ibm.com>
+Date:   Tue, 13 Jul 2021 10:33:02 +0530
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.11.0
+In-Reply-To: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: rCYGAG9bvFxo2z3RUqEZrfFx_VavlhkG
+X-Proofpoint-ORIG-GUID: EmIid8v1OjLvnA9j_LIKHNuCPt49fR0v
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-12_14:2021-07-12,2021-07-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ suspectscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0
+ bulkscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=999 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107130022
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 5, 2021 at 5:09 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
->
-> This patch adds the 'digest' and 'digest_len' parameters to
-> ima_measure_critical_data() and process_buffer_measurement(), so that
-> callers can get the digest of the passed buffer.
->
-> These functions calculate the digest even if there is no suitable rule in
-> the IMA policy and, in this case, they simply return 1 before generating a
-> new measurement entry.
->
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+
+
+On 12/07/21 9:55 pm, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+> 
+> When rngd is run as root then lots of these types of message will appear
+> in the kernel log if the TPM has been configure to provide random bytes:
+> 
+> [ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
+> 
+> The issue is caused by the following call that is interrupted while
+> waiting for the TPM's response.
+> 
+> sig = wait_event_interruptible(ibmvtpm->wq,
+>                                 !ibmvtpm->tpm_processing_cmd);
+> 
+> The solution is to use wait_event() instead.
+> 
+> To recreat the issue start rngd like this:
+> 
+> sudo rngd -r /dev/hwrng -t
+> 
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
+> Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
+> Cc: Nayna Jain <nayna@linux.ibm.com>
+> Cc: George Wilson <gcwilson@linux.ibm.com>
+> Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
+Tested-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+
 > ---
->  include/linux/ima.h                          |  5 +--
->  security/integrity/ima/ima.h                 |  2 +-
->  security/integrity/ima/ima_appraise.c        |  2 +-
->  security/integrity/ima/ima_asymmetric_keys.c |  2 +-
->  security/integrity/ima/ima_init.c            |  3 +-
->  security/integrity/ima/ima_main.c            | 36 ++++++++++++++------
->  security/integrity/ima/ima_queue_keys.c      |  2 +-
->  security/selinux/ima.c                       |  6 ++--
->  8 files changed, 39 insertions(+), 19 deletions(-)
-
-The SELinux changes are trivial and fall into that
-cross-subsystem-ACK-not-really-necessary category, but why not :)
-
-For the SELinux bits:
-Acked-by: Paul Moore <paul@paul-moore.com>
+>   drivers/char/tpm/tpm_ibmvtpm.c | 13 ++++---------
+>   1 file changed, 4 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+> index 903604769de9..99b0442a5fdf 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> @@ -106,16 +106,13 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+>   {
+>   	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
+>   	u16 len;
+> -	int sig;
+>   
+>   	if (!ibmvtpm->rtce_buf) {
+>   		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
+>   		return 0;
+>   	}
+>   
+> -	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+> -	if (sig)
+> -		return -EINTR;
+> +	wait_event(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+>   
+>   	len = ibmvtpm->res_len;
+>   
+> @@ -206,7 +203,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+>   {
+>   	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
+>   	bool retry = true;
+> -	int rc, sig;
+> +	int rc;
+>   
+>   	if (!ibmvtpm->rtce_buf) {
+>   		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
+> @@ -224,9 +221,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+>   		dev_info(ibmvtpm->dev,
+>   		         "Need to wait for TPM to finish\n");
+>   		/* wait for previous command to finish */
+> -		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+> -		if (sig)
+> -			return -EINTR;
+> +		wait_event(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
+>   	}
+>   
+>   	spin_lock(&ibmvtpm->rtce_lock);
+> @@ -551,7 +546,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
+>   			/* len of the data in rtce buffer */
+>   			ibmvtpm->res_len = be16_to_cpu(crq->len);
+>   			ibmvtpm->tpm_processing_cmd = false;
+> -			wake_up_interruptible(&ibmvtpm->wq);
+> +			wake_up(&ibmvtpm->wq);
+>   			return;
+>   		default:
+>   			return;
+> 
 
 -- 
-paul moore
-www.paul-moore.com
+Thanks and Regards
+R.Nageswara Sastry
