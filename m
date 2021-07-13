@@ -2,157 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9423EC07E95
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 14:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C47AC07E96
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 18:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF85610A7
-	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 14:28:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 591C961369
+	for <linux-security-module@archiver.kernel.org>; Tue, 13 Jul 2021 18:07:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236765AbhGMObe (ORCPT
+        id S229478AbhGMSKP (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 13 Jul 2021 10:31:34 -0400
-Received: from sonic308-14.consmr.mail.ne1.yahoo.com ([66.163.187.37]:40082
-        "EHLO sonic308-14.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S236758AbhGMObe (ORCPT
+        Tue, 13 Jul 2021 14:10:15 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:53979 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233889AbhGMSKP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 13 Jul 2021 10:31:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1626186524; bh=18BmMZkvH2tBvb+UvZGjk8mOAMpg1SXeFmAfTWxjld4=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=ArUFeu3bkk7ikJdPTPJueCjsUsNpbGnjxSwelS9i7L/DrB4KXJUz/dqYE4JNW35+D6XK3AzgXY+0g7f7ArO3au+2ICbCxgoNRLuXQLxKmL6iScdccq84epNmKjLHIqZoaKGzgQW36CUMZ8oCPA4U5xEOtBiQPsNg2qe0Ny3GuKelz5R+eliIXOzLmYf+FYxxW5ZnBbPi+3idbcFMVhwK+YSharzRMuBkrtBFzRtXZmPpzyPrueYtkB9smlRaWVuyMTpUor75bkva50w4v2TcSVperlwbVoqsHW79Hanqeqa5J9W20jJ5WqJGgkAs4g0Ef/JkdmLtvTUz6e0eEBtniQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1626186524; bh=j3tFSHKLFo40tIKO5gPl4ZZ91xtSXbDy2j9mtTOrboP=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=GsnTiNKqjtE98dUWkrt2NEpTX4mDJsjL/CiwEkNbUWAEAFS+umgM5BhJyej5xarrnN00/RIXb3B88ziecXBOQ1iqAGtxax2ks9f1kMpqFtpQmUE9UPbmwmtdbVcEdqEcj0DYJN2+7ytDhc6dYTgSCBTrlj+3d+hparrOEKkQwqRDez+WnQUCa70f8RnU0zaxdPeit9E2jrsuxi3fXgFRKsqdnmQuEFB3V8hSYphp+E1qmj6p1yVrD2UmXSyWgI9jWT7GmUMlZz+cWN0s06oKh3ECAfjuIOvZSimd0qCZgRZ2vvhyTWGvY8/3ppNF3weUXH0Uh6XR+sLc6PJDanhe3g==
-X-YMail-OSG: 19SWruUVM1m4X.taiD7Xf0lhV_qfh0BPVbtnr0_MlTlwNusH.C6ayqqU6UbtfeE
- F7RpVgEmS9cJDJFEMd.TBt2dhfx6AUn2fhFPsSSrCuRw8l7XxwrTQvnGL0yw5p0Zc81C20WRcfl3
- CWQlxgNsjHyVmJ7IFOJwo2H.65TuP4DF_erhcWaNd8gj6MJJSTxkSS9kfIA7ptz5mAqTRCjhI6Xy
- AzxA8OThnqQoIAVHFAK3qpC7sqC0ri.GGGDqvSvYbrCr27dlK72i9VndIMJlT6W.OrXMvBrzi6Fm
- 7Yq.Ck9fKR3P8Bczbs3l3m7EyynzBw8IMcVBPXv3rfgAPTK0.RcFk07YjEazx971vBpya70M_dUC
- Yjc9JwfKgtUZUCCOjQx6vTKmd..PSv0f_q8jH3NfVbx0mFvsX72HcrglomXmFtaE2JW0Rth92ljA
- mxw8Dmv.eUlREwUWg7m35xbkkSzFp9Guf0fyQwQaTClh8NkUgIXhxCRPS26S_P5lh2q2g76Jyx2M
- 1h9DqxFmMkF3f0oI6L3rLlu2wvpMIbc3kGk0OlTzpnMnNcD87up8b9ByksVC_y5ygifOHB_5LTMh
- ZFT4JxiyYm7dYUcnyOv8xtSeSyBPF_9wmgHAIJpyyFzwgnK6fgejhk5lS_CsD06avov5Yv5B5eo7
- IOpgrERI3v13aASzxI.Dt1s23fI_azr3.8ejY777VcqhCBzDyPcPc6EoIlJLBXMNuVEq.ZJEZIEi
- PNLV_aitQAW43k4zeDQt4aAyEVyuHTmLYUItfrJLxhIvVdLAp_K0nw12jc.L5w37RfttK0ZnfjW_
- Fkys6YpieRvz_mn_xsAsosfVzmj9viCC6m93VUOIbq20LFziE4vj.puqzQfr7a.8CBfOyCsrhKB2
- FGU9u2BnAS0pLKX6vth8L28Mvu6IC5J9HQzlusTkL6y7lgnWhNRLfiW9ARv.S9ehZ81olCAM0SyL
- .eHYUOBteXY5jQO3UQhXetBO6bTR5V_7zbQWDXOSQVyuYGx1j_2OGY47BCPihPqaMso0dZXQvJcF
- Mdu5JeQCq8senDEZ2rK1rBJgfUwY.VopNhrL55ISFSaggGHm40ybBVN4.v.6shbA941EwCL94Dfn
- kpm2BMYnM6vPSrVQAix8biC3J0wIkkE0.hYd4svqwMEQdXKBBZ3UiMcnZBDkANHDvIYOEhvaV61c
- pEapMO7KxwqPTI4hkGNYSKV3faX5PtgkiEOMT_UdoBpRsmZkP0ni8B0oMNTCfQQ3DQP9CxUMWh.7
- X7rSFTFgfgWnrSiJOiLJNoPLomOz9hIMv14C2fS7JpHRIUB1bKSQJSGG9CfZRtX0RDh6xEh.Ey97
- z4AWw_1wEiX0nQSyCaKL94DoHPukqwhmVknWtkBG7CH81aFc90s_9irIYqfP_beFMl0mfWUqzYAQ
- KSU0GO5b8P4hKUA3RKzlZevryeqaW6p4yvuawhQVKNaIbHxrE38oqacIS596bKl8jYX7qk8xzgsZ
- xGtV.g6a0yjg.FmgbIVXxluUeVzEauCzmAyMaYACtydcgZpY53SNfbWLREeHA8xRH5hPM9Gnvyvv
- 2pWZWpN7P2lKlPJBQ47NcFH1B23k01MEfkm5lgz7jjLue2Pglm__bPxOx.QRkazeJNiV6qOLpyXA
- EadBfEPo0YqtJb45tl9bLTL6MiqjMdWwn1d64_KwJ0Xw9udo3jY2TvBT3OFNdTFE43exNznkPi5i
- T2eCcM5Tpjnh6vwg2.AjzggSDpAY6nIc_sZorP8MJQyn29EoB2qqsNasF67CfYUD4BOz_yiLi.zh
- nJZWFJ0x.oU27Exkv9xMkC9ojrJpYgZR1KOn6vslXov1k9Mdb.7CsXTrOHYdtH_fjYPXrRW1qAz2
- np44GsTnr5VGQZSI5cluHiBZOXhQo35swS92eRMe51FCVMP74bagVHxSg9RbAwuO7MOyCQVb_MF3
- OBNpto1v_rKABfxQ1dEBvEpOLx4eC74.RHmTfNmIsvGTQ1vpa93o82BB_mVruP9NBP_783NZdAYL
- E5RApal2B9g5lMtBc81iPGBLbM7taBz7uE9q4jm6hzsNGDkufWMlsN8dI13VHL0PUOXtd5yY_QFg
- .q7fpUISxsy9Du7nQF2.usvqo6_TxKdFom0qGX9CCIPJm.OFBmh9vYwcqjgeBgVPxemkKhfm6Jfz
- aYBjaFI2fSISYxkAWzRE9RIJsOAH.lAFSODjXBjg6CYVQbdz7ZdjpTJxxFUjaz1w8W3.bYsvvoaN
- Pq3DMm25T4DUJf5Yp13D.Ekz9p9eItVnTFhS7OyXVoKafsOY2Ov0kz7Zlg2otRGkXcEzaM5_5UxR
- bEMVFxu373lDJsSnz3RITxE6iBJiv.IBrlW6lHWAcdor4ZLPgZvSS.K3bMRLmEqSg0m6SdGgVKUB
- YYQIoEix7BpLRCX9pbXfFnxoyBJdb4ibtvUBJVlT76BB6o6SsO7Npfkd2fPrF7WMLKdHV4eXqAwg
- I.Q66mCta5HdnnuiidorGiIsxCWkqH3MAjyP3jIzTLKXMlSwHKviWO8VS_l2knzFp6t1t44Yn58g
- 9.2UXgh5dko9ZXwGgMfqEEv3_jVBVL4PbyuLmEugxQNlZaJshuJlQQRl2Y74Bb4IUCRU76Uihn_x
- PY9lw.7G7BAe8v.AIxqzRizeL00ZYP2XYU2PJHoV5d7ZbyCHkU0Oa4f0tS7ktx97ckiZtlsAYMT6
- lUr23OTd8GdIIUlld2SP_yEdFwygspQR6Z0D34UnNWy4_RYMNyPXvujZHyt4BVgSh681zkRni8lO
- F9xRYJMa1uEB8lmaDYmDtqzMZ__AWcaf8HQQbU5I7H1S8cUdX1HOC1L9GsnRFZshh5vWSBP6j8Me
- nTwDtq.5FXwY21jfOc4lv6GyfZURLNef4iuG.N6dZrbS6xan5AjJrAlDqpW1Iy2iaS9sUCiGBjfZ
- t4WOjFhWZRFrhVX09Ue9ksqgiZI0T3Zx2mMd3yW1BQI6cEAfre4y8paN9PEWXOov3kRLBgXkwDPj
- 2QV7UGRsLGSB99mCj4i0bB8XN3CMxAXgllST5ZSqgXrBYa1dHoaKyVUctJHp8Cda1VTVKi7ikFIS
- sN2L8ROSYgZN0YnQZQ4c0uiIu10faz2uM9oS2wLMKMLKundpTdHPVqKPz_RlmeNpAKjPTN.dUxXF
- 0dPyMTo2preTy5mD_.eYeGYBYxbSKwRwJXJRneYCYN1hPreuNyejbWlXKnY8bGA_ICA8H4bwwYIq
- bxN3aUtt.XSilNh7MaSydXjqOoMMGL2WCYkmRs7MjFix3ZUA.OFReE3py8ooLR0rbU6nXb_24k5x
- gxaUByUJ3kEPFtfHocm2qekG3HgmeVYRva6pZGj.hBOb5KhGoGhVXEBVFFOaeW7AbKQXIMiDjd3h
- OZ84GRVKdk0UZW3kNbgqkG5Af6wCRdT6Xl7Flq2j5fEZUrUe6QJrPkdlXZ_yCKxmSIEdqRvhIx4T
- tPJQw65d.k5BaTbfrG.dB1WWrjSv36UaA8LuNnc7Pgmf3CbwFyK30FcEcL5X3ujb_5a0wULBQ0gi
- xgQbvLn0Y4roma4DjaT0_SmUUvbqfFYza
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 13 Jul 2021 14:28:44 +0000
-Received: by kubenode518.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 59e6becde9cf1fc6afb901009309f8fb;
-          Tue, 13 Jul 2021 14:28:39 +0000 (UTC)
-Subject: Re: [Virtio-fs] [PATCH v2 1/1] xattr: Allow user.* xattr on symlink
- and special files
-To:     Greg Kurz <groug@kaod.org>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        gscrivan@redhat.com, tytso@mit.edu, miklos@szeredi.hu,
-        selinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtio-fs@redhat.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210708175738.360757-1-vgoyal@redhat.com>
- <20210708175738.360757-2-vgoyal@redhat.com>
- <20210709091915.2bd4snyfjndexw2b@wittgenstein>
- <20210709152737.GA398382@redhat.com>
- <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
- <20210712144849.121c948c@bahia.lan>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <cea2f545-ab2d-e9a8-0258-9c8bb443784f@schaufler-ca.com>
-Date:   Tue, 13 Jul 2021 07:28:38 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 13 Jul 2021 14:10:15 -0400
+Received: by mail-il1-f198.google.com with SMTP id j6-20020a926e060000b02901f2f7ba704aso15280097ilc.20
+        for <linux-security-module@vger.kernel.org>; Tue, 13 Jul 2021 11:07:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=hx45N4k+4Z2tVC49Axkuc3Q0IugSpxdue/FcmmF4DmI=;
+        b=CPQUAxit+APEklthGWCytzT6h9lBoPYXKlA6KY0EVq+7CsNBHmRg9mNBLNK12gJREi
+         s+8KykkwhO0kIEo0j13+6cd+HXnLoN2V/hThBRmjKn4t51wF4wM+CIUtkP8aG+qH7/UI
+         JMsfYpA+Qp8QyP14O8byHlt1yIUHo7OgM2iQyIDxLmxUcO81lNmO8JktZGvgvIdTpNiW
+         2EYA29aWEGLJ+cClADSEaPWaWLk8i2S5wjLeR12zDnKIbtWWIw2faxDEOIYvA8EcKqU6
+         vq8KKMYGKcVnWIiKLu+nDX5dmiCBora5PO/4DZ9TDGmieGq3JjZ7omLTiPFO1+G2b5Mb
+         dZNg==
+X-Gm-Message-State: AOAM530AWuD6/YcHLncgoTpIAiRl3JgUqa24q1Y+2FBm5VmG5kHXeDl4
+        FIT/w+RWyAMeGBoRrwlBTBgESt1VlZSgLE/0yEYeT+lW5u3H
+X-Google-Smtp-Source: ABdhPJwakdCmZ54yFmPNoCDulm1hLgI0er72w8b8WJITPiulr6TdM7TldoP9jp+MAsHlQZyYmybsawg2/18l4SJ52vzbL2iQ16di
 MIME-Version: 1.0
-In-Reply-To: <20210712144849.121c948c@bahia.lan>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Mailer: WebService/1.1.18469 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Received: by 2002:a05:6638:618:: with SMTP id g24mr5239391jar.16.1626199644520;
+ Tue, 13 Jul 2021 11:07:24 -0700 (PDT)
+Date:   Tue, 13 Jul 2021 11:07:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002545e805c7051ce0@google.com>
+Subject: [syzbot] memory leak in dev_exception_add
+From:   syzbot <syzbot+988c8a25ad1677559236@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/12/2021 5:49 AM, Greg Kurz wrote:
-> On Fri, 9 Jul 2021 08:34:41 -0700
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> On 7/9/2021 8:27 AM, Vivek Goyal wrote:
->>> On Fri, Jul 09, 2021 at 11:19:15AM +0200, Christian Brauner wrote:
->>>> On Thu, Jul 08, 2021 at 01:57:38PM -0400, Vivek Goyal wrote:
->>>>> Currently user.* xattr are not allowed on symlink and special files.
->>>>>
->>>>> man xattr and recent discussion suggested that primary reason for this
->>>>> restriction is how file permissions for symlinks and special files
->>>>> are little different from regular files and directories.
->>>>>
->>>>> For symlinks, they are world readable/writable and if user xattr were
->>>>> to be permitted, it will allow unpriviliged users to dump a huge amount
->>>>> of user.* xattrs on symlinks without any control.
->>>>>
->>>>> For special files, permissions typically control capability to read/write
->>>>> from devices (and not necessarily from filesystem). So if a user can
->>>>> write to device (/dev/null), does not necessarily mean it should be allowed
->>>>> to write large number of user.* xattrs on the filesystem device node is
->>>>> residing in.
->>>>>
->>>>> This patch proposes to relax the restrictions a bit and allow file owner
->>>>> or priviliged user (CAP_FOWNER), to be able to read/write user.* xattrs
->>>>> on symlink and special files.
->>>>>
->>>>> virtiofs daemon has a need to store user.* xatrrs on all the files
->>>>> (including symlinks and special files), and currently that fails. This
->>>>> patch should help.
->>>>>
->>>>> Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
->>>>> Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
->>>>> ---
->>>> Seems reasonable and useful.
->>>> Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
->>>>
->>>> One question, do all filesystem supporting xattrs deal with setting them
->>>> on symlinks/device files correctly?
->>> Wrote a simple bash script to do setfattr/getfattr user.foo xattr on
->>> symlink and device node on ext4, xfs and btrfs and it works fine.
->> How about nfs, tmpfs, overlayfs and/or some of the other less conventional
->> filesystems?
->>
-> How about virtiofs then ? :-)
+Hello,
 
-One of the "less conventional filesystems", surely.
-�
+syzbot found the following issue on:
 
+HEAD commit:    3dbdb38e Merge branch 'for-5.14' of git://git.kernel.org/p..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1518cffc300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=55ac6a927d7e3fe9
+dashboard link: https://syzkaller.appspot.com/bug?extid=988c8a25ad1677559236
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1500e772300000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+988c8a25ad1677559236@syzkaller.appspotmail.com
+
+BUG: memory leak
+unreferenced object 0xffff88810d3a4300 (size 64):
+  comm "systemd", pid 1, jiffies 4294938536 (age 1351.150s)
+  hex dump (first 32 bytes):
+    01 00 00 00 03 00 00 00 02 00 07 00 00 00 00 00  ................
+    10 04 2b 0d 81 88 ff ff 22 01 00 00 00 00 ad de  ..+.....".......
+  backtrace:
+    [<ffffffff81479633>] kmemdup+0x23/0x50 mm/util.c:128
+    [<ffffffff8217485f>] kmemdup include/linux/fortify-string.h:270 [inline]
+    [<ffffffff8217485f>] dev_exception_add+0x2f/0x160 security/device_cgroup.c:94
+    [<ffffffff82175812>] devcgroup_update_access security/device_cgroup.c:734 [inline]
+    [<ffffffff82175812>] devcgroup_access_write+0x8c2/0x9e0 security/device_cgroup.c:764
+    [<ffffffff813198bd>] cgroup_file_write+0x10d/0x260 kernel/cgroup/cgroup.c:3814
+    [<ffffffff81690535>] kernfs_fop_write_iter+0x1b5/0x270 fs/kernfs/file.c:296
+    [<ffffffff81560eb7>] call_write_iter include/linux/fs.h:2114 [inline]
+    [<ffffffff81560eb7>] new_sync_write+0x1d7/0x2b0 fs/read_write.c:518
+    [<ffffffff81564531>] vfs_write+0x351/0x400 fs/read_write.c:605
+    [<ffffffff8156481d>] ksys_write+0x9d/0x160 fs/read_write.c:658
+    [<ffffffff8439b235>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff8439b235>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84400068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88810d2b0400 (size 64):
+  comm "systemd", pid 1, jiffies 4294938537 (age 1351.140s)
+  hex dump (first 32 bytes):
+    01 00 00 00 05 00 00 00 02 00 07 00 00 00 00 00  ................
+    90 ac 3b 0d 81 88 ff ff 22 01 00 00 00 00 ad de  ..;.....".......
+  backtrace:
+    [<ffffffff81479633>] kmemdup+0x23/0x50 mm/util.c:128
+    [<ffffffff8217485f>] kmemdup include/linux/fortify-string.h:270 [inline]
+    [<ffffffff8217485f>] dev_exception_add+0x2f/0x160 security/device_cgroup.c:94
+    [<ffffffff82175812>] devcgroup_update_access security/device_cgroup.c:734 [inline]
+    [<ffffffff82175812>] devcgroup_access_write+0x8c2/0x9e0 security/device_cgroup.c:764
+    [<ffffffff813198bd>] cgroup_file_write+0x10d/0x260 kernel/cgroup/cgroup.c:3814
+    [<ffffffff81690535>] kernfs_fop_write_iter+0x1b5/0x270 fs/kernfs/file.c:296
+    [<ffffffff81560eb7>] call_write_iter include/linux/fs.h:2114 [inline]
+    [<ffffffff81560eb7>] new_sync_write+0x1d7/0x2b0 fs/read_write.c:518
+    [<ffffffff81564531>] vfs_write+0x351/0x400 fs/read_write.c:605
+    [<ffffffff8156481d>] ksys_write+0x9d/0x160 fs/read_write.c:658
+    [<ffffffff8439b235>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff8439b235>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84400068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88810d3bac80 (size 64):
+  comm "systemd", pid 1, jiffies 4294938537 (age 1351.140s)
+  hex dump (first 32 bytes):
+    01 00 00 00 07 00 00 00 02 00 07 00 00 00 00 00  ................
+    50 84 31 0d 81 88 ff ff 22 01 00 00 00 00 ad de  P.1.....".......
+  backtrace:
+    [<ffffffff81479633>] kmemdup+0x23/0x50 mm/util.c:128
+    [<ffffffff8217485f>] kmemdup include/linux/fortify-string.h:270 [inline]
+    [<ffffffff8217485f>] dev_exception_add+0x2f/0x160 security/device_cgroup.c:94
+    [<ffffffff82175812>] devcgroup_update_access security/device_cgroup.c:734 [inline]
+    [<ffffffff82175812>] devcgroup_access_write+0x8c2/0x9e0 security/device_cgroup.c:764
+    [<ffffffff813198bd>] cgroup_file_write+0x10d/0x260 kernel/cgroup/cgroup.c:3814
+    [<ffffffff81690535>] kernfs_fop_write_iter+0x1b5/0x270 fs/kernfs/file.c:296
+    [<ffffffff81560eb7>] call_write_iter include/linux/fs.h:2114 [inline]
+    [<ffffffff81560eb7>] new_sync_write+0x1d7/0x2b0 fs/read_write.c:518
+    [<ffffffff81564531>] vfs_write+0x351/0x400 fs/read_write.c:605
+    [<ffffffff8156481d>] ksys_write+0x9d/0x160 fs/read_write.c:658
+    [<ffffffff8439b235>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff8439b235>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84400068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+BUG: memory leak
+unreferenced object 0xffff88810d318440 (size 64):
+  comm "systemd", pid 1, jiffies 4294938537 (age 1351.140s)
+  hex dump (first 32 bytes):
+    01 00 00 00 08 00 00 00 02 00 07 00 00 00 00 00  ................
+    d0 aa 3b 0d 81 88 ff ff 22 01 00 00 00 00 ad de  ..;.....".......
+  backtrace:
+    [<ffffffff81479633>] kmemdup+0x23/0x50 mm/util.c:128
+    [<ffffffff8217485f>] kmemdup include/linux/fortify-string.h:270 [inline]
+    [<ffffffff8217485f>] dev_exception_add+0x2f/0x160 security/device_cgroup.c:94
+    [<ffffffff82175812>] devcgroup_update_access security/device_cgroup.c:734 [inline]
+    [<ffffffff82175812>] devcgroup_access_write+0x8c2/0x9e0 security/device_cgroup.c:764
+    [<ffffffff813198bd>] cgroup_file_write+0x10d/0x260 kernel/cgroup/cgroup.c:3814
+    [<ffffffff81690535>] kernfs_fop_write_iter+0x1b5/0x270 fs/kernfs/file.c:296
+    [<ffffffff81560eb7>] call_write_iter include/linux/fs.h:2114 [inline]
+    [<ffffffff81560eb7>] new_sync_write+0x1d7/0x2b0 fs/read_write.c:518
+    [<ffffffff81564531>] vfs_write+0x351/0x400 fs/read_write.c:605
+    [<ffffffff8156481d>] ksys_write+0x9d/0x160 fs/read_write.c:658
+    [<ffffffff8439b235>] do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+    [<ffffffff8439b235>] do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+    [<ffffffff84400068>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+[ 1363.912106][    C1]
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
