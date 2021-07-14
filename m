@@ -2,126 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCBEC47E48
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jul 2021 21:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BE10C12002
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jul 2021 21:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55CE760C3D
-	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jul 2021 21:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40FB361362
+	for <linux-security-module@archiver.kernel.org>; Wed, 14 Jul 2021 21:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235986AbhGNVr4 (ORCPT
+        id S230418AbhGNVyY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 14 Jul 2021 17:47:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50966 "EHLO
+        Wed, 14 Jul 2021 17:54:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235956AbhGNVrz (ORCPT
+        with ESMTP id S229782AbhGNVyY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 14 Jul 2021 17:47:55 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7D9C06175F;
-        Wed, 14 Jul 2021 14:45:03 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id q10so3206440pfj.12;
-        Wed, 14 Jul 2021 14:45:03 -0700 (PDT)
+        Wed, 14 Jul 2021 17:54:24 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CDF7C06175F;
+        Wed, 14 Jul 2021 14:51:32 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id h1so2134813plf.6;
+        Wed, 14 Jul 2021 14:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/ecMCBD0DRX8i6ceCMBbDcAoHrM9zIxqgKO1lRrTFgA=;
-        b=ZU1rg2kxF1xhpB09DWxWH4ZRjGXZTX9WF60dLpoChO4lv7ueN8II8Rohp5s90/BTRe
-         8a5l2kCFNXFmCY/eD1S7M9HhUknYtZNpSBpfQ1qfAhh0yQKHtfUxl8h0ojNACKkvY0bz
-         J1YnxNKCaYzIzEXgEeYA79d2sONF4bQtGwIjil4PeQDj7aHhhjXhAdsyBXJG4sGIP5TT
-         bPUdfZVLoCf5s3OuKPh2KQvJDm/fdyHT8jIuU1lyS6HMYvHxcS7KWFGBenCpK7KXDuDi
-         t+VbQwLsgKkExDC3PD3pv4KLRSJYBVoDaX2DjoSj07tBkqcLnuIbQGX1dmjh6h4RTBEC
-         +eeA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=xSXZsc9S1OE/57FZdD9wfjk5cX6z161zcXWV7Ia5wrw=;
+        b=LB+yhlbbgc0eFOjSGF+B2qd/ql4FjkJ0tFzC3VFAdIl2+Hp31+VRl/MsPWq7msTIo8
+         V0bV3GZY2nMR/MOZJQLRZzyOQ1RvrEOwdxemzGyqVdb6w9Oq349lZHwTs8MvjrSRZ7IR
+         yiYC6lcqYVxZzLCwJITKDhs2Tq7rPQjBfXDHOe9rTwWd5vzMZwhoSr2ZSiQZ1vm0eqos
+         bIYqgGK+O+pyQFDqDJiGYK4KXJ7sE8/fSrZqfDN9C5PPT2Eag2yrWJTZc34/6R4wazNm
+         S4slxCQkdKkcCYUl2zT4KxfVMp+lTyNYZpeL/1Gr8CFZwb2ucFT0+rdPRWMyUPnTUz6e
+         f0wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/ecMCBD0DRX8i6ceCMBbDcAoHrM9zIxqgKO1lRrTFgA=;
-        b=Nnnesi9AUps0lp2aZOEDMGhp5NQrNykvMTrJUg54qQWmGSd+ooP4iVtlV/4g7NB+DM
-         9XNTBI27yAvSIVyIkQ/nXGrkBY6Fhl0Y0R00D3+2P4TZIgdlqZXC4uRD3ZvUMWtOO5wC
-         MNhzC+mb2Kb1s4a24UqvXWC/ZXpB6KYUnJZR2kHTOoqizAc7W17suM23d+Tsejz8J7iG
-         kHgVZbWVXyH8azEZJlzM5+ylyxH2yztPodMWZHfpZgJ65bIvqaL4udyv1lbH8UKsdFfg
-         U7fCPxeoJXsN07gBjuayO5hF+YmA3RVuoF0JOTlqwsWXvZFCNTYs/tX5ktd3FcEyCboM
-         t0sQ==
-X-Gm-Message-State: AOAM533LxLSp/fKvXpEdJIyGXjBE7biq4DOlckXBzv2P9JGC69CZ0KBN
-        T+8JL0/3g7z9TZgYAPf3S25KnNQlCx3cIE0iL0A=
-X-Google-Smtp-Source: ABdhPJyHP9qOXZGGjYLNzUYOXa+IYsiRjHpSR1L7qfsw6lFcTuGCybzVDU32v4snFsCu3o4uuFYO7tTrWLx3Fffne/Q=
-X-Received: by 2002:aa7:81d8:0:b029:308:1d33:a5fa with SMTP id
- c24-20020aa781d80000b02903081d33a5famr51074pfn.55.1626299103098; Wed, 14 Jul
- 2021 14:45:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210712234434.GA29205@raspberrypi> <e0a2655b-3bc6-fd45-bd84-8df2dc6bc5f@namei.org>
-In-Reply-To: <e0a2655b-3bc6-fd45-bd84-8df2dc6bc5f@namei.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=xSXZsc9S1OE/57FZdD9wfjk5cX6z161zcXWV7Ia5wrw=;
+        b=YCRD2B6uF1lpGx+1FpimnTUi2bfnNqpabmfWAPb7juA8dHJMN2JZsAUW0miAiIV3IW
+         I2WUyXuaIO2Ynzu77eUQaQLXBqokx2jKu34n6fSLNxpqyqd8mn6OLu64SdgdeNgOekHu
+         lTHUAdotzM9EUwtWwqBMMv0WszZHm5mOgiyIituGw0iq/9JmmCMC9EtRh4p/A6SU2+9h
+         Rq4xv+vRwZDeAv623ozkvVHweUXogP34Nm3wVvjaTL1aLnKAGlTN3qvnAtcHvn7NBhx6
+         SdLiCkJLsMFpV4tNB85mTLU/d9WJFmvy4kLyRoqANXsbA3nPh5zJJoe+quttsD6Hq8b6
+         GPNA==
+X-Gm-Message-State: AOAM533t2pAQDEgDLRVfdOKge/n8tchrS8Qn+Ydm75SduxGQUXMOAJwp
+        qRzzQiUSZyHczIEt1zp2/s4=
+X-Google-Smtp-Source: ABdhPJz+oG8T4/iIeiWnL3/H83fEezI8x4L0R8OtQeGzCFHIBq8l+Gg5bDpINORjG+ARyxdyO58ifQ==
+X-Received: by 2002:a17:90a:4481:: with SMTP id t1mr13622pjg.232.1626299491614;
+        Wed, 14 Jul 2021 14:51:31 -0700 (PDT)
+Received: from raspberrypi ([210.183.35.240])
+        by smtp.gmail.com with ESMTPSA id 10sm3679597pjc.41.2021.07.14.14.51.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Jul 2021 14:51:31 -0700 (PDT)
+Date:   Wed, 14 Jul 2021 22:51:26 +0100
 From:   Austin Kim <austindh.kim@gmail.com>
-Date:   Thu, 15 Jul 2021 06:44:52 +0900
-Message-ID: <CADLLry6RmSDuB4nmVKDEiqxXmEU0xrhMn2wieuuVTypMWqc4cQ@mail.gmail.com>
-Subject: Re: [PATCH] LSM: add NULL check for kcalloc()
-To:     James Morris <jmorris@namei.org>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?6rmA64+Z7ZiE?= <austin.kim@lge.com>,
-        kernel-team@lge.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To:     jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, austin.kim@lge.com,
+        kernel-team@lge.com, austindh.kim@gmail.com
+Subject: [PATCH v2] LSM: add NULL check for kcalloc()
+Message-ID: <20210714215126.GA818@raspberrypi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-2021=EB=85=84 7=EC=9B=94 15=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 4:12, J=
-ames Morris <jmorris@namei.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> On Tue, 13 Jul 2021, Austin Kim wrote:
->
-> > From: Austin Kim <austin.kim@lge.com>
-> >
-> > kcalloc() may return NULL when memory allocation fails.
-> > So it is necessary to add NULL check after the call to kcalloc() is mad=
-e.
-> >
-> > Signed-off-by: Austin Kim <austin.kim@lge.com>
-> > ---
-> >  security/security.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/security/security.c b/security/security.c
-> > index 09533cbb7221..f885c9e9bc35 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -321,6 +321,8 @@ static void __init ordered_lsm_init(void)
-> >
-> >       ordered_lsms =3D kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
-> >                               GFP_KERNEL);
-> > +     if (ordered_lsms)
-> > +             return;
->
-> Your logic is reversed here.
+From: Austin Kim <austin.kim@lge.com>
 
-I feel very sorry for my terrible mistake.
-'if (ordered_lsms)' should have been 'if (!ordered_lsms)'.
+kcalloc() may return NULL when memory allocation fails.
+So it is necessary to add NULL check after the call to kcalloc() is made.
 
-Let me resend patch(v2) soon.
+Signed-off-by: Austin Kim <austin.kim@lge.com>
+---
+ security/security.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
-Austin Kim
+diff --git a/security/security.c b/security/security.c
+index 09533cbb7221..f885c9e9bc35 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -321,6 +321,8 @@ static void __init ordered_lsm_init(void)
+ 
+ 	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+ 				GFP_KERNEL);
++	if (!ordered_lsms)
++		return;
+ 
+ 	if (chosen_lsm_order) {
+ 		if (chosen_major_lsm) {
+-- 
+2.20.1
 
->
-> Should this also be a kernel panic?
->
-> >
-> >       if (chosen_lsm_order) {
-> >               if (chosen_major_lsm) {
-> > --
-> > 2.20.1
-> >
->
-> --
-> James Morris
-> <jmorris@namei.org>
->
