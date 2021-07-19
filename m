@@ -2,103 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33945C07E9D
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 13:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE4BC07E9B
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 23:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FDE4600D4
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 13:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE0C9610F7
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 23:37:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240628AbhGSNNo (ORCPT
+        id S245328AbhGSWyF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Jul 2021 09:13:44 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:7392 "EHLO
-        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239282AbhGSNNo (ORCPT
+        Mon, 19 Jul 2021 18:54:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:64646 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1353342AbhGSTsB (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Jul 2021 09:13:44 -0400
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GT3C63rq9z7wYk;
-        Mon, 19 Jul 2021 21:50:42 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (7.185.36.114) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 19 Jul 2021 21:54:20 +0800
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 19 Jul 2021 21:54:20 +0800
-Subject: Re: issues about selinux namespace
-To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        <jamorris@linux.microsoft.com>
-CC:     "Likun(OSLab)" <hw.likun@huawei.com>,
-        <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>
-References: <22c0d7a1-b658-64ce-f099-0b3617ef8e38@huawei.com>
- <CAEjxPJ5-w83HMRGuDHHqMthkju3bxT0gZ-EiiTE=t5UhQqQ_ug@mail.gmail.com>
-From:   xiujianfeng <xiujianfeng@huawei.com>
-Message-ID: <ec36e53f-5a6d-b86e-790c-d58b7b503aae@huawei.com>
-Date:   Mon, 19 Jul 2021 21:54:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAEjxPJ5-w83HMRGuDHHqMthkju3bxT0gZ-EiiTE=t5UhQqQ_ug@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.112]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+        Mon, 19 Jul 2021 15:48:01 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16JK5Goq025317;
+        Mon, 19 Jul 2021 16:28:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=dLLn3Ddivbbar2NOdA09Z05PpfxPdWUI/YG/ZtuVCAk=;
+ b=FZMHkmCoQt4LwOip+lhpAmiSRs9RT+G4G93NLiXMWABfSwVCzUmg0VEPw03G7S2EzFbx
+ dkhrKGqXDxsIZHjuipFF/hM/SAxwC1MsSqCYC7n095bDYxc2ksc1TAR981jQdAhvB6mp
+ 74XnO3nmxIdYCVGbghPpzwE3p8aw7FljJGligCYrl/VoEmCAN3bGqW5er0uhHRZTxzVi
+ ySEXWKFizLh5HgMIRlqiuqzyymfcdfFAOYtlNpleCBPoKi0aZuY6LtDEamjWxDzPw5yA
+ WEb2danQXvKNJwhaUDWZ36cSu1QPdJlKgT2RTCURaDRRbWblOSFBBJaCnblJt163B5Vl Lg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39wdkywdjb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Jul 2021 16:28:20 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16JK5T7w026703;
+        Mon, 19 Jul 2021 16:28:19 -0400
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 39wdkywdhp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Jul 2021 16:28:19 -0400
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16JKDJqu022880;
+        Mon, 19 Jul 2021 20:28:17 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma03ams.nl.ibm.com with ESMTP id 39upu88vvs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Jul 2021 20:28:17 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16JKSEh523659004
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Jul 2021 20:28:14 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF211A4085;
+        Mon, 19 Jul 2021 20:28:14 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFEF3A4093;
+        Mon, 19 Jul 2021 20:28:12 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.28.163])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 19 Jul 2021 20:28:12 +0000 (GMT)
+Message-ID: <2f4920dbdb16156e1af5cf78f592a5cf07ec3176.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 2/3] ima: Return int in the functions to measure a
+ buffer
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>, paul@paul-moore.com
+Cc:     stephen.smalley.work@gmail.com, prsriva02@gmail.com,
+        tusharsu@linux.microsoft.com, nramas@linux.microsoft.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Date:   Mon, 19 Jul 2021 16:28:11 -0400
+In-Reply-To: <20210705090922.3321178-3-roberto.sassu@huawei.com>
+References: <20210705090922.3321178-1-roberto.sassu@huawei.com>
+         <20210705090922.3321178-3-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2w5KZhLCtpdbMpDvISgprZ3YBpu6-GOI
+X-Proofpoint-ORIG-GUID: JV2oPkGbMj6r63Rb6FYfBEFd3b74dq70
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-19_10:2021-07-19,2021-07-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ priorityscore=1501 suspectscore=0 mlxlogscore=999 lowpriorityscore=0
+ spamscore=0 phishscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2104190000 definitions=main-2107190114
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-thanks stepthen,  I've found James's patch in 
-https://lwn.net/Articles/737949/,
+Hi Roberto,
 
-but it seems can't resolve my questions, so any futher discussion would 
-be helpfull and welcome.
+On Mon, 2021-07-05 at 11:09 +0200, Roberto Sassu wrote:
+> ima_measure_critical_data() and process_buffer_measurement() currently
+> don't return a result. A caller wouldn't be able to know whether those
+> functions were executed successfully.
 
-在 2021/7/14 20:11, Stephen Smalley 写道:
-> Please take your email to the selinux@vger.kernel.org. You are the
-> second person to ask about selinux namespaces within the past week or
-> so. I did upstream the refactoring and encapsulation of the data
-> structures and code via the selinux_state patches, so those are in the
-> mainline kernel these days, and Paul Moore and I have periodically
-> re-based the remaining patches on top of upstream over in the
-> https://github.com/SELinuxProject/selinux-kernel/tree/working-selinuxns
-> branch. However, I had to drop the inode and superblock per-ns patches
-> temporarily because of changes to LSM (inode blob management moved to
-> the LSM framework out of the security modules), so that would need to
-> be revisited. There was a separate patch from James Morris to support
-> per-namespace security.selinux extended attributes; you can dig that
-> out from the history or mailing lists if you want to revive that. I
-> won't be able to look at it again until October at the earliest.
->
-> On Wed, Jul 14, 2021 at 6:54 AM xiujianfeng <xiujianfeng@huawei.com> wrote:
->> Hi Stephen,
->>
->> I am writing to discuss about selinux namespace because I found your
->> previous work on github and I think selinux namespace is helpful to
->> harden container security. So I try to do further work but there are
->> some issues mentioned in the commit message and I have no idea how to
->> fix them, it would be great if I can get help from you.
->> First is about selinux hook functions, we need to update each hook to
->> perform its processing on current namespace and all of its ancestors,
->> for object, we can have different sid/tag in different namespace based
->> on inode namespace support, but for task, do we need to maintain each
->> security context generated in the corresponding namespace?
->> Second is the lifecycle management of on-disk inode labels. it's not
->> easy to handle this, should we clean all corresponding labels on disk
->> when namespace exit? if we do this, it may cost long time to iterate
->> inode on disk and must relabel files when container restart, if not, the
->> inode xattr space maybe full and cannot write label again when new
->> namespace starts.
->> BTW, do you have plan to finish the work?
->>
->> I look forward to receiving your reply.
->>
->> Best wishes.
-> .
+Missing is an explanation as to why these functions aren't currently
+returning a result.   The LSM/IMA hooks only return a negative result
+for failure to appraise a file's integrity, not measure a file.  Only
+failure to appraise a file's integrity results in preventing the file
+from being read/executed/mmaped.  Other failures are only audited.
+
+> 
+> This patch modifies the return type from void to int, and returns 0 if the
+> buffer has been successfully measured, a negative value otherwise.
+
+Needed here is an explanation as to why ima_measure_critical_data() is
+special.
+
+> 
+> Also, this patch does not modify the behavior of existing callers by
+> processing the returned value. For those, the return value is ignored.
+
+I agree that the existing behavior shouldn't change, but will this
+result in the bots complaining?
+
+thanks,
+
+Mimi
+
