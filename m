@@ -3,150 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0D0C636CE
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 09:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33945C07E9D
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 13:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 776F061181
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 09:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDE4600D4
+	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 13:54:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234946AbhGSIrV (ORCPT
+        id S240628AbhGSNNo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Jul 2021 04:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34504 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235834AbhGSIrF (ORCPT
+        Mon, 19 Jul 2021 09:13:44 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:7392 "EHLO
+        szxga02-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239282AbhGSNNo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Jul 2021 04:47:05 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69884C061762
-        for <linux-security-module@vger.kernel.org>; Mon, 19 Jul 2021 01:28:58 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1m5PHJ-0006Ck-GR; Mon, 19 Jul 2021 11:09:33 +0200
-Subject: Re: [PATCH v2 1/6] KEYS: trusted: allow use of TEE as backend without
- TCG_TPM support
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        kernel <kernel@pengutronix.de>, James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Andreas Rammhold <andreas@rammhold.de>
-References: <cover.1dfbb73645d917b3c76d01290804a3410bd9932e.1624364386.git-series.a.fatoum@pengutronix.de>
- <f8285eb0135ba30c9d846cf9dd395d1f5f8b1efc.1624364386.git-series.a.fatoum@pengutronix.de>
- <CAFA6WYMJp5u_+3bNc0ykFzveakOS4nqJfPvSoaFGQApFctL47A@mail.gmail.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <6003f9a3-1588-c317-4eeb-889d8e6c40e3@pengutronix.de>
-Date:   Mon, 19 Jul 2021 11:09:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Mon, 19 Jul 2021 09:13:44 -0400
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4GT3C63rq9z7wYk;
+        Mon, 19 Jul 2021 21:50:42 +0800 (CST)
+Received: from dggpeml500023.china.huawei.com (7.185.36.114) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Mon, 19 Jul 2021 21:54:20 +0800
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Mon, 19 Jul 2021 21:54:20 +0800
+Subject: Re: issues about selinux namespace
+To:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        <jamorris@linux.microsoft.com>
+CC:     "Likun(OSLab)" <hw.likun@huawei.com>,
+        <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>
+References: <22c0d7a1-b658-64ce-f099-0b3617ef8e38@huawei.com>
+ <CAEjxPJ5-w83HMRGuDHHqMthkju3bxT0gZ-EiiTE=t5UhQqQ_ug@mail.gmail.com>
+From:   xiujianfeng <xiujianfeng@huawei.com>
+Message-ID: <ec36e53f-5a6d-b86e-790c-d58b7b503aae@huawei.com>
+Date:   Mon, 19 Jul 2021 21:54:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAFA6WYMJp5u_+3bNc0ykFzveakOS4nqJfPvSoaFGQApFctL47A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+In-Reply-To: <CAEjxPJ5-w83HMRGuDHHqMthkju3bxT0gZ-EiiTE=t5UhQqQ_ug@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.112]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Sumit,
+thanks stepthen,  I've found James's patch in 
+https://lwn.net/Articles/737949/,
 
-On 19.07.21 10:04, Sumit Garg wrote:
-> Hi Ahmad,
-> 
-> On Tue, 22 Jun 2021 at 18:08, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+but it seems can't resolve my questions, so any futher discussion would 
+be helpfull and welcome.
+
+在 2021/7/14 20:11, Stephen Smalley 写道:
+> Please take your email to the selinux@vger.kernel.org. You are the
+> second person to ask about selinux namespaces within the past week or
+> so. I did upstream the refactoring and encapsulation of the data
+> structures and code via the selinux_state patches, so those are in the
+> mainline kernel these days, and Paul Moore and I have periodically
+> re-based the remaining patches on top of upstream over in the
+> https://github.com/SELinuxProject/selinux-kernel/tree/working-selinuxns
+> branch. However, I had to drop the inode and superblock per-ns patches
+> temporarily because of changes to LSM (inode blob management moved to
+> the LSM framework out of the security modules), so that would need to
+> be revisited. There was a separate patch from James Morris to support
+> per-namespace security.selinux extended attributes; you can dig that
+> out from the history or mailing lists if you want to revive that. I
+> won't be able to look at it again until October at the earliest.
+>
+> On Wed, Jul 14, 2021 at 6:54 AM xiujianfeng <xiujianfeng@huawei.com> wrote:
+>> Hi Stephen,
 >>
->> With recent rework, trusted keys are no longer limited to TPM as trust
->> source. The Kconfig symbol is unchanged however leading to a few issues:
+>> I am writing to discuss about selinux namespace because I found your
+>> previous work on github and I think selinux namespace is helpful to
+>> harden container security. So I try to do further work but there are
+>> some issues mentioned in the commit message and I have no idea how to
+>> fix them, it would be great if I can get help from you.
+>> First is about selinux hook functions, we need to update each hook to
+>> perform its processing on current namespace and all of its ancestors,
+>> for object, we can have different sid/tag in different namespace based
+>> on inode namespace support, but for task, do we need to maintain each
+>> security context generated in the corresponding namespace?
+>> Second is the lifecycle management of on-disk inode labels. it's not
+>> easy to handle this, should we clean all corresponding labels on disk
+>> when namespace exit? if we do this, it may cost long time to iterate
+>> inode on disk and must relabel files when container restart, if not, the
+>> inode xattr space maybe full and cannot write label again when new
+>> namespace starts.
+>> BTW, do you have plan to finish the work?
 >>
->>  - TCG_TPM is required, even if only TEE is to be used
->>  - Enabling TCG_TPM, but excluding it from available trusted sources
->>    is not possible
->>  - TEE=m && TRUSTED_KEYS=y will lead to TEE support being silently
->>    dropped, which is not the best user experience
+>> I look forward to receiving your reply.
 >>
->> Remedy these issues by introducing two new Kconfig symbols:
->> TRUSTED_KEYS_TPM and TRUSTED_KEYS_TEE with the appropriate
->> dependencies.
->>
-> 
-> This should include a fixes tag to the rework commit.
-
-Yes. I wasn't aware of the regression that Andreas (CC'd) recently
-reported. Knowing, it now indeed warrants a backport. Will add in v2.
-
->> diff --git a/security/keys/Kconfig b/security/keys/Kconfig
->> index 64b81abd087e..6fdb953b319f 100644
->> --- a/security/keys/Kconfig
->> +++ b/security/keys/Kconfig
->> @@ -70,23 +70,23 @@ config BIG_KEYS
->>
->>  config TRUSTED_KEYS
->>         tristate "TRUSTED KEYS"
->> -       depends on KEYS && TCG_TPM
->> +       depends on KEYS
-> 
->>         select CRYPTO
->>         select CRYPTO_HMAC
->>         select CRYPTO_SHA1
->>         select CRYPTO_HASH_INFO
-> 
-> Should move these as well to TRUSTED_KEYS_TPM as the core code doesn't
-> mandate their need.
-
-Ok, will test and change appropriately.
-
-> 
->> -       select ASN1_ENCODER
->> -       select OID_REGISTRY
->> -       select ASN1
-
->>  $(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
->> -trusted-y += trusted_tpm2.o
->> -trusted-y += tpm2key.asn1.o
->> +trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm2.o
->> +trusted-$(CONFIG_TRUSTED_KEYS_TPM) += tpm2key.asn1.o
->> +
->> +trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
->>
->>  trusted-$(CONFIG_TEE) += trusted_tee.o
-> 
-> This should be dropped.
-
-Right..
-
-Thanks for the review. I'll isolate this patch for v2.
-
-Cheers,
-Ahmad
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+>> Best wishes.
+> .
