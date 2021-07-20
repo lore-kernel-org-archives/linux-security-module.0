@@ -2,135 +2,150 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A317C07E9B
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 23:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4996C07E95
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Jul 2021 02:57:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C32E610D2
-	for <linux-security-module@archiver.kernel.org>; Mon, 19 Jul 2021 23:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D48E061019
+	for <linux-security-module@archiver.kernel.org>; Tue, 20 Jul 2021 02:57:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239433AbhGSW5M (ORCPT
+        id S1345044AbhGTCRI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 19 Jul 2021 18:57:12 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50274 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1388327AbhGSUuo (ORCPT
+        Mon, 19 Jul 2021 22:17:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231681AbhGTCQW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 19 Jul 2021 16:50:44 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16JL6rd4117934;
-        Mon, 19 Jul 2021 17:30:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Hm3HtHAIClYPJMaHNz5oPOdctUrqaMn0N7JNV1T/h1Q=;
- b=i0zgQV88xet/bnk3XV9SzS69m6R06eGH6osyyO5jJ6DjyQpHGWI7nU/Rt6BJBS/um2I1
- 5a8QMNQ4H3uiaA4b17lOs2no8dE858gQg9vLW2pxobSaJWAj13+KzVWLp/3fTgbaRPqK
- VlwpXO8vYcD+/W3qPfUS9vtPTVeO8BAkyHgox/ImqyXQAsyqYJKVnoEAxhkmBaUR/e0e
- 9gLUeV8gPIY1i5QbftbveTCkGX942TJNniKuNX0n2LA6bsAwhf6WlNOEeYjskC4VW9pU
- 5J17O6QOgt0Y54PIuEB/Twr6Z6EigyCayF2+LPHV12XtE0J8l51Dy86q+oUb+VjmcRQX dA== 
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 39wdmfy6e7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Jul 2021 17:30:42 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16JLQ5ES020509;
-        Mon, 19 Jul 2021 21:30:40 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 39upu88wjp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Jul 2021 21:30:40 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16JLUbL634668862
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Jul 2021 21:30:37 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E702A406A;
-        Mon, 19 Jul 2021 21:30:37 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB873A405F;
-        Mon, 19 Jul 2021 21:30:35 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.28.163])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Jul 2021 21:30:35 +0000 (GMT)
-Message-ID: <2f26bc3df4851b3af93d51742de99b1c4f197e68.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Support euid keyword for buffer measurement
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc:     "tusharsu@linux.microsoft.com" <tusharsu@linux.microsoft.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 19 Jul 2021 17:30:34 -0400
-In-Reply-To: <35a1ef50bf534933a10fd350aee9baa2@huawei.com>
-References: <20210705115650.3373599-1-roberto.sassu@huawei.com>
-         <2996f5ae-d76f-5fc9-bf90-857d4fc6644a@linux.microsoft.com>
-         <35a1ef50bf534933a10fd350aee9baa2@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: amYMOTA2NWrharWdEvohgCd7O69A3qqy
-X-Proofpoint-ORIG-GUID: amYMOTA2NWrharWdEvohgCd7O69A3qqy
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 19 Jul 2021 22:16:22 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A89FC0613DB
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Jul 2021 19:57:00 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id qb4so32037258ejc.11
+        for <linux-security-module@vger.kernel.org>; Mon, 19 Jul 2021 19:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=/TjJ11+mGqv0YTZQILPTlTbnMuqu1sgIatUTm4EDowI=;
+        b=hnQU7KTLH/aX0omnwkEQkfzvKNKseAdXeBZwXCEkrxeZFoAypBDRBkv81LMgvGorKa
+         LUym5vqJoKXWMX+quvGvrM9D9PQCoM8RVbUe3WsXxz99JokSIprBIcfyGInB0kl/Qzgt
+         sNSfsb+U+6P1vw8dr8/3NXNhxygEhFteJOmuEAkIps2IbIxBhwxt+Fe3Lc82+ZH0LYNx
+         GeteuL6LCT1ZvEKnF2MvAhtlXI1EGmDH824eKGC50dZQeoG40IK7Xcl4IOk2z64d6Y4X
+         tr3/UHQVv/tlm5XD7v0zCIW2636hWkiqyXFcXddBXoT/pTQ8ltCkX2pFT/8Es0dbKFBq
+         IL2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=/TjJ11+mGqv0YTZQILPTlTbnMuqu1sgIatUTm4EDowI=;
+        b=SEf3qQYeiTl9QczPfYI1x0tPmTIAi+NBpq/8fwstq0RL0QVtFVOTBubFq00GMTJOpb
+         nBm/AYQwDF/v6J/4ay0tp6rmZYAhg7cqQfS+25UmPXfKweDz68sO+OzwDlvghoskqahe
+         hkLKb0KNZZBi3CLkMRjIz+FE69DU1YB1vILDKWW2R59viIhoz3OFeXK0WhtRozfpxq+b
+         AoVIzCHtUSov3BfSlB5LF+jDWYLYyajtJ1nVWeQFCkJs04JJcs8ce3iLDqEHKPgX9YQQ
+         psxe91ytU8Cl1ve/gTHQi8+6kUJcOnsFOabYibud1To4dxiTa/zoYtazOueQ7tE6vxS8
+         +1Fw==
+X-Gm-Message-State: AOAM532rmDuiHlCEUPDjDdzyDEv0lNT93sf/ui0O9RNdsPPliJ3kS6+C
+        cCox2YfOQwEBt/auQ2cXSWkoSoWPVHKLaE6vtad8
+X-Google-Smtp-Source: ABdhPJxDLvp2yIiHA1FaQDtOHdqVvtMYGHN/3oRWC0YEHLKqZbpFUBZaPZhQsEpB4ND+yH2ngWZYEpJdn2JO0yhcy7M=
+X-Received: by 2002:a17:906:814f:: with SMTP id z15mr30528199ejw.178.1626749818592;
+ Mon, 19 Jul 2021 19:56:58 -0700 (PDT)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-19_11:2021-07-19,2021-07-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0
- phishscore=0 priorityscore=1501 mlxscore=0 mlxlogscore=999 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2104190000 definitions=main-2107190119
+References: <22c0d7a1-b658-64ce-f099-0b3617ef8e38@huawei.com>
+ <CAEjxPJ5-w83HMRGuDHHqMthkju3bxT0gZ-EiiTE=t5UhQqQ_ug@mail.gmail.com> <ec36e53f-5a6d-b86e-790c-d58b7b503aae@huawei.com>
+In-Reply-To: <ec36e53f-5a6d-b86e-790c-d58b7b503aae@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 19 Jul 2021 22:56:47 -0400
+Message-ID: <CAHC9VhR3ZbcNM8awhJs9_NXmdUXHO4XoH8s2d3MjhMXwkgbh=Q@mail.gmail.com>
+Subject: Re: issues about selinux namespace
+To:     xiujianfeng <xiujianfeng@huawei.com>
+Cc:     Stephen Smalley <stephen.smalley.work@gmail.com>,
+        jamorris@linux.microsoft.com, "Likun(OSLab)" <hw.likun@huawei.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
+On Mon, Jul 19, 2021 at 9:55 AM xiujianfeng <xiujianfeng@huawei.com> wrote:
+>
+> thanks stepthen,  I've found James's patch in
+> https://lwn.net/Articles/737949/,
+>
+> but it seems can't resolve my questions, so any futher discussion would
+> be helpfull and welcome.
+>
+> =E5=9C=A8 2021/7/14 20:11, Stephen Smalley =E5=86=99=E9=81=93:
+> > Please take your email to the selinux@vger.kernel.org. You are the
+> > second person to ask about selinux namespaces within the past week or
+> > so. I did upstream the refactoring and encapsulation of the data
+> > structures and code via the selinux_state patches, so those are in the
+> > mainline kernel these days, and Paul Moore and I have periodically
+> > re-based the remaining patches on top of upstream over in the
+> > https://github.com/SELinuxProject/selinux-kernel/tree/working-selinuxns
+> > branch. However, I had to drop the inode and superblock per-ns patches
+> > temporarily because of changes to LSM (inode blob management moved to
+> > the LSM framework out of the security modules), so that would need to
+> > be revisited. There was a separate patch from James Morris to support
+> > per-namespace security.selinux extended attributes; you can dig that
+> > out from the history or mailing lists if you want to revive that. I
+> > won't be able to look at it again until October at the earliest.
+> >
+> > On Wed, Jul 14, 2021 at 6:54 AM xiujianfeng <xiujianfeng@huawei.com> wr=
+ote:
+> >> Hi Stephen,
+> >>
+> >> I am writing to discuss about selinux namespace because I found your
+> >> previous work on github and I think selinux namespace is helpful to
+> >> harden container security. So I try to do further work but there are
+> >> some issues mentioned in the commit message and I have no idea how to
+> >> fix them, it would be great if I can get help from you.
+> >> First is about selinux hook functions, we need to update each hook to
+> >> perform its processing on current namespace and all of its ancestors,
+> >> for object, we can have different sid/tag in different namespace based
+> >> on inode namespace support, but for task, do we need to maintain each
+> >> security context generated in the corresponding namespace?
+> >> Second is the lifecycle management of on-disk inode labels. it's not
+> >> easy to handle this, should we clean all corresponding labels on disk
+> >> when namespace exit? if we do this, it may cost long time to iterate
+> >> inode on disk and must relabel files when container restart, if not, t=
+he
+> >> inode xattr space maybe full and cannot write label again when new
+> >> namespace starts.
+> >> BTW, do you have plan to finish the work?
+> >>
+> >> I look forward to receiving your reply.
+> >>
+> >> Best wishes.
 
-On Wed, 2021-07-07 at 07:15 +0000, Roberto Sassu wrote:
-> > From: Lakshmi Ramasubramanian [mailto:nramas@linux.microsoft.com]
-> > Sent: Tuesday, July 6, 2021 9:30 PM
-> > On 7/5/2021 4:56 AM, Roberto Sassu wrote:
-> > 
-> > Hi Roberto,
-> > 
-> > > This patch makes the 'euid' keyword available for buffer measurement rules,
-> > > in the same way as for other rules. Currently, there is only support for
-> > > the 'uid' keyword.
-> > >
-> > > With this change, buffer measurement (or non-measurement) can depend
-> > also
-> > > on the process effective UID.
-> > 
-> > Who (kernel component) will be using this?
-> 
-> Hi Lakshmi
-> 
-> I'm using it in a (not yet submitted) test for digest lists.
-> 
-> It is in a dont_measure rule to try to unload a digest list
-> without measurement and to check that this is not allowed
-> if the digest list was measured at addition time (to ensure
-> completeness of information).
-> 
-> > Maybe you could make this change as part of the patch set in which the
-> > above "euid" support will be used.
-> 
-> I wanted to send the digest lists patch set without anything
-> else. I could resend the patch as part of that patch set if it is
-> preferred.
+I understand that many mail clients do not encourage inline/bottom
+replies, but when posting to the various Linux Kernel mailing lists
+please make the effort to reply inline, or at the bottom, as
+appropriate.
 
-Unless there is another usecase, please keep it with the digest list
-tests patch set.
+Namespacing the SELinux kernel code is a rather tricky thing, both
+with respect to the design and the mechanics of the implementation.  I
+don't think we have a concrete idea yet on how we want to proceed in
+all of the areas mentioned; designs - and implementations - have been
+offered, but I think we are missing someone to drive the topic forward
+with demonstrations, sample implementations, etc.  It is never a bad
+idea to ask how you can help a project, but in this case I think the
+answer is to step back for a moment, describe your use-case/problem,
+explain how you envision a namespaced SELinux helping you resolve
+this, and finally how you would want the namespaced SELinux
+implementation to work (how would you interact with it both via policy
+and runtime management).
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+On a personal note, the regular rebasing of the SELinux namespace work
+has suffered lately due to other time commitments at work.  I have
+recently (today) started a new position which should allow me to
+dedicate much more of my working hours to upstream development; it may
+take me a couple of weeks to get settled in, but you can expect the
+regular rebasing of selinux/working-selinuxns to resume in the future.
 
-thanks,
-
-Mimi
-
+--=20
+paul moore
+www.paul-moore.com
