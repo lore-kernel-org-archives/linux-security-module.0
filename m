@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED815C6379F
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EF9C64980
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D503861244
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A62961244
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234881AbhGUQE5 (ORCPT
+        id S235098AbhGUQE6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jul 2021 12:04:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:40840 "EHLO
+        Wed, 21 Jul 2021 12:04:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22240 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235338AbhGUQE4 (ORCPT
+        by vger.kernel.org with ESMTP id S234688AbhGUQEu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jul 2021 12:04:56 -0400
+        Wed, 21 Jul 2021 12:04:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626885932;
+        s=mimecast20190719; t=1626885926;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=T+VSQANDtJEmceTdjzdkoW5CoFJtWgBn/llc4BbwYlA=;
-        b=KovYipDFdLE72zMhmx6O5NSdgKZppueEWZkzJseBiyWU4FZ3ocxptSxcQGr+heffu9dE3d
-        5UxF2Itl4HeZnyuNMFzTQp+OekZa9cNmnW+FjsQVVqqAOY12RcfhFPTqYPhZDOUX6TO7wP
-        js6ywVk1sfXRPGbAtN3h+9TZpngbtEA=
+        bh=0gugCLHaVbmv/C295S1bpwRbJv0VkheeePCutWfFf0A=;
+        b=RIPh0mThw67D8Ezm9t9p9EHO+Pl4a6Lioj6IwbivFrbEb97cao87QeCm+iYLndqMgS+ERr
+        rd0c+J5XNeqw+cppC+NN1RyZZSoix9oMccpzD7/L1sJb810Q2wLaburNRHAh+RTx3TbzPt
+        P7/4dUirE8MPD6NRG6GprszRVnh7dEQ=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-74-Ss2ZgFVJM_-NdQlcJEhKnQ-1; Wed, 21 Jul 2021 12:45:28 -0400
-X-MC-Unique: Ss2ZgFVJM_-NdQlcJEhKnQ-1
+ us-mta-215-SXlQRE7mMYSuIzjb2ieV0w-1; Wed, 21 Jul 2021 12:45:25 -0400
+X-MC-Unique: SXlQRE7mMYSuIzjb2ieV0w-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7F2EA824F89;
-        Wed, 21 Jul 2021 16:45:27 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6988481C6DB;
+        Wed, 21 Jul 2021 16:45:23 +0000 (UTC)
 Received: from gerbillo.redhat.com (ovpn-114-219.ams2.redhat.com [10.36.114.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D10AA797CB;
-        Wed, 21 Jul 2021 16:45:25 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F75C797C0;
+        Wed, 21 Jul 2021 16:45:21 +0000 (UTC)
 From:   Paolo Abeni <pabeni@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -50,9 +50,9 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         Florian Westphal <fw@strlen.de>,
         Eric Dumazet <edumazet@google.com>,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: [PATCH RFC 9/9] sk_buff: access secmark via getter/setter
-Date:   Wed, 21 Jul 2021 18:44:41 +0200
-Message-Id: <aa0d2603aeaf70ec4d40997e65a95520087792d3.1626882513.git.pabeni@redhat.com>
+Subject: [PATCH RFC 7/9] sk_buff: move inner header fields after tail
+Date:   Wed, 21 Jul 2021 18:44:39 +0200
+Message-Id: <99ff8a613938fd5bb670e1e7b4e3bb79770c5078.1626882513.git.pabeni@redhat.com>
 In-Reply-To: <cover.1626882513.git.pabeni@redhat.com>
 References: <cover.1626882513.git.pabeni@redhat.com>
 MIME-Version: 1.0
@@ -61,401 +61,114 @@ X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-So we can track the field status and move it after tail.
-
-After this commit the skb lifecycle for simple cases (no ct, no secmark,
-no vlan, no UDP tunnel) uses 3 cacheline instead of 4 cachelines required
-before this series.
-
-e.g. GRO for non vlan traffic will consistently uses 3 cacheline for
-each packet.
+all the inner header fields are valid only if the 'encaspulation'
+flag is set, and the relevant fields are always initialized when
+the field is set: we don't need to initialize them at skb allocation
+time
 
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 ---
- include/linux/skbuff.h           | 40 ++++++++++++++++++++++----------
- net/core/skbuff.c                |  7 +++---
- net/netfilter/nfnetlink_queue.c  |  6 +++--
- net/netfilter/nft_meta.c         |  6 ++---
- net/netfilter/xt_CONNSECMARK.c   |  8 +++----
- net/netfilter/xt_SECMARK.c       |  2 +-
- security/apparmor/lsm.c          | 15 +++++++-----
- security/selinux/hooks.c         | 10 ++++----
- security/smack/smack_lsm.c       |  4 ++--
- security/smack/smack_netfilter.c |  4 ++--
- 10 files changed, 62 insertions(+), 40 deletions(-)
+ v1 -> v2:
+  - add CHECK_SKB_FIELD(__encapsulation_offset) in __copy_skb_header
+---
+ include/linux/skbuff.h | 31 ++++++++++++++++++++++---------
+ net/core/skbuff.c      |  6 ++----
+ 2 files changed, 24 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 7acf2a203918..941c0f858c65 100644
+index ea9fdcc7c7ca..a3e756575aa7 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -688,6 +688,7 @@ typedef unsigned char *sk_buff_data_t;
-  *		CHECKSUM_UNNECESSARY (max 3)
-  *	@dst_pending_confirm: need to confirm neighbour
-  *	@decrypted: Decrypted SKB
-+ *	@secmark_present: the secmark tag is present
-  *	@_state: bitmap reporting the presence of some skb state info
-  *	@has_nfct: @_state bit for nfct info
-  *	@has_dst: @_state bit for dst pointer
-@@ -695,7 +696,7 @@ typedef unsigned char *sk_buff_data_t;
-  *	@active_extensions: @_state bits for active extensions (skb_ext_id types)
-  *	@napi_id: id of the NAPI struct this skb came from
-  *	@sender_cpu: (aka @napi_id) source CPU in XPS
-- *	@secmark: security marking
-+ *	@_secmark: security marking
-  *	@mark: Generic packet mark
-  *	@reserved_tailroom: (aka @mark) number of bytes of free space available
-  *		at the tail of an sk_buff
-@@ -870,6 +871,9 @@ struct sk_buff {
- #endif
- #ifdef CONFIG_TLS_DEVICE
- 	__u8			decrypted:1;
-+#endif
-+#ifdef CONFIG_NETWORK_SECMARK
-+	__u8			secmark_present:1;
- #endif
- 	union {
- 		__u8		_state;		/* state of extended fields */
-@@ -903,9 +907,6 @@ struct sk_buff {
- 		unsigned int	sender_cpu;
- 	};
- #endif
--#ifdef CONFIG_NETWORK_SECMARK
--	__u32		secmark;
--#endif
+@@ -822,6 +822,9 @@ struct sk_buff {
+ 	__u8			ip_summed:2;
+ 	__u8			ooo_okay:1;
  
- 	union {
- 		__u32		mark;
-@@ -961,6 +962,9 @@ struct sk_buff {
- 		};
- 		__u32		vlan_info;
++	/* private: */
++	__u8			__pkt_encapsulation_offset[0];
++	/* public: */
+ 	__u8			l4_hash:1;
+ 	__u8			sw_hash:1;
+ 	__u8			wifi_acked_valid:1;
+@@ -911,15 +914,6 @@ struct sk_buff {
+ 		__u32		reserved_tailroom;
  	};
-+#ifdef CONFIG_NETWORK_SECMARK
-+	__u32			_secmark;
-+#endif
+ 
+-	union {
+-		__be16		inner_protocol;
+-		__u8		inner_ipproto;
+-	};
+-
+-	__u16			inner_transport_header;
+-	__u16			inner_network_header;
+-	__u16			inner_mac_header;
+-
+ 	__be16			protocol;
+ 	__u16			transport_header;
+ 	__u16			network_header;
+@@ -948,6 +942,19 @@ struct sk_buff {
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	unsigned long		 _nfct;
+ #endif
++	union {
++		struct {
++			union {
++			__be16	inner_protocol;
++			__u8	inner_ipproto;
++			};
++
++			__u16	inner_transport_header;
++			__u16	inner_network_header;
++			__u16	inner_mac_header;
++		};
++		__u64		inner_headers;
++	};
  };
  
  #ifdef __KERNEL__
-@@ -4228,6 +4232,23 @@ static inline void skb_remcsum_process(struct sk_buff *skb, void *ptr,
- 	skb->csum = csum_add(skb->csum, delta);
- }
+@@ -2449,6 +2456,12 @@ static inline void skb_tailroom_reserve(struct sk_buff *skb, unsigned int mtu,
+ #define ENCAP_TYPE_ETHER	0
+ #define ENCAP_TYPE_IPPROTO	1
  
-+static inline __u32 skb_secmark(const struct sk_buff *skb)
++static inline void __skb_copy_inner_headers(struct sk_buff *dst, const struct sk_buff *src)
 +{
-+#if IS_ENABLED(CONFIG_NETWORK_SECMARK)
-+	return skb->secmark_present ? skb->_secmark : 0;
-+#else
-+	return NULL;
-+#endif
++	if (src->encapsulation)
++		dst->inner_headers = src->inner_headers;
 +}
 +
-+static inline void skb_set_secmark(struct sk_buff *skb, __u32 secmark)
-+{
-+#if IS_ENABLED(CONFIG_NETWORK_SECMARK)
-+	skb->secmark_present = 1;
-+	skb->_secmark = secmark;
-+#endif
-+}
-+
- static inline struct nf_conntrack *skb_nfct(const struct sk_buff *skb)
+ static inline void skb_set_inner_protocol(struct sk_buff *skb,
+ 					  __be16 protocol)
  {
- #if IS_ENABLED(CONFIG_NF_CONNTRACK)
-@@ -4414,19 +4435,14 @@ static inline void nf_copy(struct sk_buff *dst, const struct sk_buff *src)
- #ifdef CONFIG_NETWORK_SECMARK
- static inline void skb_copy_secmark(struct sk_buff *to, const struct sk_buff *from)
- {
--	to->secmark = from->secmark;
--}
--
--static inline void skb_init_secmark(struct sk_buff *skb)
--{
--	skb->secmark = 0;
-+	to->secmark_present = from->secmark_present;
-+	if (from->_secmark)
-+		to->_secmark = from->_secmark;
- }
- #else
- static inline void skb_copy_secmark(struct sk_buff *to, const struct sk_buff *from)
- { }
- 
--static inline void skb_init_secmark(struct sk_buff *skb)
--{ }
- #endif
- 
- static inline int secpath_exists(const struct sk_buff *skb)
 diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index c59e90db80d5..704aecbde60d 100644
+index 9ed754da6e13..53b8db10e567 100644
 --- a/net/core/skbuff.c
 +++ b/net/core/skbuff.c
-@@ -998,6 +998,10 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
- 	__skb_copy_inner_headers(new, old);
- 	if (old->vlan_present)
- 		new->vlan_info = old->vlan_info;
-+#ifdef CONFIG_NETWORK_SECMARK
-+	if (old->_secmark)
-+		new->_secmark = old->_secmark;
-+#endif
+@@ -995,6 +995,7 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	skb_dst_copy(new, old);
+ 	__skb_ext_copy(new, old);
+ 	__nf_copy(new, old, false);
++	__skb_copy_inner_headers(new, old);
  
  	/* Note : this field could be in headers_start/headers_end section
  	 * It is not yet because we do not want to have a 16 bit hole
-@@ -1019,9 +1023,6 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+@@ -1005,6 +1006,7 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	       offsetof(struct sk_buff, headers_end) -
+ 	       offsetof(struct sk_buff, headers_start));
+ 	CHECK_SKB_FIELD(_state);
++	CHECK_SKB_FIELD(__pkt_encapsulation_offset);
+ 	CHECK_SKB_FIELD(protocol);
+ 	CHECK_SKB_FIELD(csum);
+ 	CHECK_SKB_FIELD(hash);
+@@ -1015,10 +1017,6 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	CHECK_SKB_FIELD(transport_header);
  	CHECK_SKB_FIELD(network_header);
  	CHECK_SKB_FIELD(mac_header);
+-	CHECK_SKB_FIELD(inner_protocol);
+-	CHECK_SKB_FIELD(inner_transport_header);
+-	CHECK_SKB_FIELD(inner_network_header);
+-	CHECK_SKB_FIELD(inner_mac_header);
  	CHECK_SKB_FIELD(mark);
--#ifdef CONFIG_NETWORK_SECMARK
--	CHECK_SKB_FIELD(secmark);
--#endif
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	CHECK_SKB_FIELD(napi_id);
- #endif
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index f774de0fc24f..cf00d4286187 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -304,14 +304,16 @@ static int nfqnl_put_sk_uidgid(struct sk_buff *skb, struct sock *sk)
- static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, char **secdata)
- {
- 	u32 seclen = 0;
-+	u32 secmark;
- #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
- 	if (!skb || !sk_fullsock(skb->sk))
- 		return 0;
- 
- 	read_lock_bh(&skb->sk->sk_callback_lock);
- 
--	if (skb->secmark)
--		security_secid_to_secctx(skb->secmark, secdata, &seclen);
-+	secmark = skb_secmark(skb);
-+	if (secmark)
-+		security_secid_to_secctx(secmark, secdata, &seclen);
- 
- 	read_unlock_bh(&skb->sk->sk_callback_lock);
- #endif
-diff --git a/net/netfilter/nft_meta.c b/net/netfilter/nft_meta.c
-index a7e01e9952f1..da4bc455d8bd 100644
---- a/net/netfilter/nft_meta.c
-+++ b/net/netfilter/nft_meta.c
-@@ -363,7 +363,7 @@ void nft_meta_get_eval(const struct nft_expr *expr,
- #endif
  #ifdef CONFIG_NETWORK_SECMARK
- 	case NFT_META_SECMARK:
--		*dest = skb->secmark;
-+		*dest = skb_secmark(skb);
- 		break;
- #endif
- 	case NFT_META_PKTTYPE:
-@@ -451,7 +451,7 @@ void nft_meta_set_eval(const struct nft_expr *expr,
- 		break;
- #ifdef CONFIG_NETWORK_SECMARK
- 	case NFT_META_SECMARK:
--		skb->secmark = value;
-+		skb_set_secmark(skb, value);
- 		break;
- #endif
- 	default:
-@@ -833,7 +833,7 @@ static void nft_secmark_obj_eval(struct nft_object *obj, struct nft_regs *regs,
- 	const struct nft_secmark *priv = nft_obj_data(obj);
- 	struct sk_buff *skb = pkt->skb;
- 
--	skb->secmark = priv->secid;
-+	skb_set_secmark(skb, priv->secid);
- }
- 
- static int nft_secmark_obj_init(const struct nft_ctx *ctx,
-diff --git a/net/netfilter/xt_CONNSECMARK.c b/net/netfilter/xt_CONNSECMARK.c
-index 76acecf3e757..26f4fbc04c0b 100644
---- a/net/netfilter/xt_CONNSECMARK.c
-+++ b/net/netfilter/xt_CONNSECMARK.c
-@@ -31,13 +31,13 @@ MODULE_ALIAS("ip6t_CONNSECMARK");
-  */
- static void secmark_save(const struct sk_buff *skb)
- {
--	if (skb->secmark) {
-+	if (skb_secmark(skb)) {
- 		struct nf_conn *ct;
- 		enum ip_conntrack_info ctinfo;
- 
- 		ct = nf_ct_get(skb, &ctinfo);
- 		if (ct && !ct->secmark) {
--			ct->secmark = skb->secmark;
-+			ct->secmark = skb_secmark(skb);
- 			nf_conntrack_event_cache(IPCT_SECMARK, ct);
- 		}
- 	}
-@@ -49,13 +49,13 @@ static void secmark_save(const struct sk_buff *skb)
-  */
- static void secmark_restore(struct sk_buff *skb)
- {
--	if (!skb->secmark) {
-+	if (!skb_secmark(skb)) {
- 		const struct nf_conn *ct;
- 		enum ip_conntrack_info ctinfo;
- 
- 		ct = nf_ct_get(skb, &ctinfo);
- 		if (ct && ct->secmark)
--			skb->secmark = ct->secmark;
-+			skb_set_secmark(skb, ct->secmark);
- 	}
- }
- 
-diff --git a/net/netfilter/xt_SECMARK.c b/net/netfilter/xt_SECMARK.c
-index 498a0bf6f044..bc383bc2bba9 100644
---- a/net/netfilter/xt_SECMARK.c
-+++ b/net/netfilter/xt_SECMARK.c
-@@ -36,7 +36,7 @@ secmark_tg(struct sk_buff *skb, const struct xt_secmark_target_info_v1 *info)
- 		BUG();
- 	}
- 
--	skb->secmark = secmark;
-+	skb_set_secmark(skb, secmark);
- 	return XT_CONTINUE;
- }
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index f72406fe1bf2..afbae187b920 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1053,12 +1053,13 @@ static int apparmor_socket_shutdown(struct socket *sock, int how)
- static int apparmor_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- {
- 	struct aa_sk_ctx *ctx = SK_CTX(sk);
-+	u32 secmark = skb_secmark(skb);
- 
--	if (!skb->secmark)
-+	if (!secmark)
- 		return 0;
- 
- 	return apparmor_secmark_check(ctx->label, OP_RECVMSG, AA_MAY_RECEIVE,
--				      skb->secmark, sk);
-+				      secmark, sk);
- }
- #endif
- 
-@@ -1160,12 +1161,13 @@ static int apparmor_inet_conn_request(const struct sock *sk, struct sk_buff *skb
- 				      struct request_sock *req)
- {
- 	struct aa_sk_ctx *ctx = SK_CTX(sk);
-+	u32 secmark = skb_secmark(skb);
- 
--	if (!skb->secmark)
-+	if (!secmark)
- 		return 0;
- 
- 	return apparmor_secmark_check(ctx->label, OP_CONNECT, AA_MAY_CONNECT,
--				      skb->secmark, sk);
-+				      secmark, sk);
- }
- #endif
- 
-@@ -1754,10 +1756,11 @@ static unsigned int apparmor_ip_postroute(void *priv,
- 					  struct sk_buff *skb,
- 					  const struct nf_hook_state *state)
- {
-+	u32 secmark = skb_secmark(skb);
- 	struct aa_sk_ctx *ctx;
- 	struct sock *sk;
- 
--	if (!skb->secmark)
-+	if (!secmark)
- 		return NF_ACCEPT;
- 
- 	sk = skb_to_full_sk(skb);
-@@ -1766,7 +1769,7 @@ static unsigned int apparmor_ip_postroute(void *priv,
- 
- 	ctx = SK_CTX(sk);
- 	if (!apparmor_secmark_check(ctx->label, OP_SENDMSG, AA_MAY_SEND,
--				    skb->secmark, sk))
-+				    secmark, sk))
- 		return NF_ACCEPT;
- 
- 	return NF_DROP_ERR(-ECONNREFUSED);
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index b0032c42333e..898b81ba7566 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5138,7 +5138,7 @@ static int selinux_sock_rcv_skb_compat(struct sock *sk, struct sk_buff *skb,
- 
- 	if (selinux_secmark_enabled()) {
- 		err = avc_has_perm(&selinux_state,
--				   sk_sid, skb->secmark, SECCLASS_PACKET,
-+				   sk_sid, skb_secmark(skb), SECCLASS_PACKET,
- 				   PACKET__RECV, &ad);
- 		if (err)
- 			return err;
-@@ -5214,7 +5214,7 @@ static int selinux_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 
- 	if (secmark_active) {
- 		err = avc_has_perm(&selinux_state,
--				   sk_sid, skb->secmark, SECCLASS_PACKET,
-+				   sk_sid, skb_secmark(skb), SECCLASS_PACKET,
- 				   PACKET__RECV, &ad);
- 		if (err)
- 			return err;
-@@ -5727,7 +5727,7 @@ static unsigned int selinux_ip_forward(struct sk_buff *skb,
- 
- 	if (secmark_active)
- 		if (avc_has_perm(&selinux_state,
--				 peer_sid, skb->secmark,
-+				 peer_sid, skb_secmark(skb),
- 				 SECCLASS_PACKET, PACKET__FORWARD_IN, &ad))
- 			return NF_DROP;
- 
-@@ -5840,7 +5840,7 @@ static unsigned int selinux_ip_postroute_compat(struct sk_buff *skb,
- 
- 	if (selinux_secmark_enabled())
- 		if (avc_has_perm(&selinux_state,
--				 sksec->sid, skb->secmark,
-+				 sksec->sid, skb_secmark(skb),
- 				 SECCLASS_PACKET, PACKET__SEND, &ad))
- 			return NF_DROP_ERR(-ECONNREFUSED);
- 
-@@ -5964,7 +5964,7 @@ static unsigned int selinux_ip_postroute(struct sk_buff *skb,
- 
- 	if (secmark_active)
- 		if (avc_has_perm(&selinux_state,
--				 peer_sid, skb->secmark,
-+				 peer_sid, skb_secmark(skb),
- 				 SECCLASS_PACKET, secmark_perm, &ad))
- 			return NF_DROP_ERR(-ECONNREFUSED);
- 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 223a6da0e6dc..2ed19e2db66a 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3840,10 +3840,10 @@ static int smk_skb_to_addr_ipv6(struct sk_buff *skb, struct sockaddr_in6 *sip)
- #ifdef CONFIG_NETWORK_SECMARK
- static struct smack_known *smack_from_skb(struct sk_buff *skb)
- {
--	if (skb == NULL || skb->secmark == 0)
-+	if (skb == NULL || skb_secmark(skb) == 0)
- 		return NULL;
- 
--	return smack_from_secid(skb->secmark);
-+	return smack_from_secid(skb_secmark(skb));
- }
- #else
- static inline struct smack_known *smack_from_skb(struct sk_buff *skb)
-diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
-index fc7399b45373..881143e62eb4 100644
---- a/security/smack/smack_netfilter.c
-+++ b/security/smack/smack_netfilter.c
-@@ -31,7 +31,7 @@ static unsigned int smack_ipv6_output(void *priv,
- 	if (sk && sk->sk_security) {
- 		ssp = sk->sk_security;
- 		skp = ssp->smk_out;
--		skb->secmark = skp->smk_secid;
-+		skb_set_secmark(skb, skp->smk_secid);
- 	}
- 
- 	return NF_ACCEPT;
-@@ -49,7 +49,7 @@ static unsigned int smack_ipv4_output(void *priv,
- 	if (sk && sk->sk_security) {
- 		ssp = sk->sk_security;
- 		skp = ssp->smk_out;
--		skb->secmark = skp->smk_secid;
-+		skb_set_secmark(skb, skp->smk_secid);
- 	}
- 
- 	return NF_ACCEPT;
+ 	CHECK_SKB_FIELD(secmark);
 -- 
 2.26.3
 
