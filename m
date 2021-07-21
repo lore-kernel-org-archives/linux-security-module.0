@@ -2,173 +2,203 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46EF9C64980
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F961C636CA
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A62961244
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6477961246
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235098AbhGUQE6 (ORCPT
+        id S233554AbhGUQIv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jul 2021 12:04:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:22240 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234688AbhGUQEu (ORCPT
+        Wed, 21 Jul 2021 12:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60710 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233471AbhGUQIu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jul 2021 12:04:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626885926;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0gugCLHaVbmv/C295S1bpwRbJv0VkheeePCutWfFf0A=;
-        b=RIPh0mThw67D8Ezm9t9p9EHO+Pl4a6Lioj6IwbivFrbEb97cao87QeCm+iYLndqMgS+ERr
-        rd0c+J5XNeqw+cppC+NN1RyZZSoix9oMccpzD7/L1sJb810Q2wLaburNRHAh+RTx3TbzPt
-        P7/4dUirE8MPD6NRG6GprszRVnh7dEQ=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-215-SXlQRE7mMYSuIzjb2ieV0w-1; Wed, 21 Jul 2021 12:45:25 -0400
-X-MC-Unique: SXlQRE7mMYSuIzjb2ieV0w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6988481C6DB;
-        Wed, 21 Jul 2021 16:45:23 +0000 (UTC)
-Received: from gerbillo.redhat.com (ovpn-114-219.ams2.redhat.com [10.36.114.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F75C797C0;
-        Wed, 21 Jul 2021 16:45:21 +0000 (UTC)
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Florian Westphal <fw@strlen.de>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: [PATCH RFC 7/9] sk_buff: move inner header fields after tail
-Date:   Wed, 21 Jul 2021 18:44:39 +0200
-Message-Id: <99ff8a613938fd5bb670e1e7b4e3bb79770c5078.1626882513.git.pabeni@redhat.com>
-In-Reply-To: <cover.1626882513.git.pabeni@redhat.com>
-References: <cover.1626882513.git.pabeni@redhat.com>
+        Wed, 21 Jul 2021 12:08:50 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DFE5C061575
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jul 2021 09:49:27 -0700 (PDT)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1m6FP7-0004wh-47; Wed, 21 Jul 2021 18:49:05 +0200
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1m6FP3-0003EK-UF; Wed, 21 Jul 2021 18:49:01 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        James Bottomley <jejb@linux.ibm.com>
+Cc:     kernel@pengutronix.de, David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 0/4] KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
+Date:   Wed, 21 Jul 2021 18:48:51 +0200
+Message-Id: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-all the inner header fields are valid only if the 'encaspulation'
-flag is set, and the relevant fields are always initialized when
-the field is set: we don't need to initialize them at skb allocation
-time
+Series applies on top of
+https://lore.kernel.org/linux-integrity/20210721160258.7024-1-a.fatoum@pengutronix.de/T/#u
 
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
----
- v1 -> v2:
-  - add CHECK_SKB_FIELD(__encapsulation_offset) in __copy_skb_header
----
- include/linux/skbuff.h | 31 ++++++++++++++++++++++---------
- net/core/skbuff.c      |  6 ++----
- 2 files changed, 24 insertions(+), 13 deletions(-)
+v2 -> v3:
+ - Split off first Kconfig preparation patch. It fixes a regression,
+   so sent that out, so it can be applied separately (Sumit)
+ - Split off second key import patch. I'll send that out separately
+   as it's a development aid and not required within the CAAM series
+ - add MAINTAINERS entry
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index ea9fdcc7c7ca..a3e756575aa7 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -822,6 +822,9 @@ struct sk_buff {
- 	__u8			ip_summed:2;
- 	__u8			ooo_okay:1;
- 
-+	/* private: */
-+	__u8			__pkt_encapsulation_offset[0];
-+	/* public: */
- 	__u8			l4_hash:1;
- 	__u8			sw_hash:1;
- 	__u8			wifi_acked_valid:1;
-@@ -911,15 +914,6 @@ struct sk_buff {
- 		__u32		reserved_tailroom;
- 	};
- 
--	union {
--		__be16		inner_protocol;
--		__u8		inner_ipproto;
--	};
--
--	__u16			inner_transport_header;
--	__u16			inner_network_header;
--	__u16			inner_mac_header;
--
- 	__be16			protocol;
- 	__u16			transport_header;
- 	__u16			network_header;
-@@ -948,6 +942,19 @@ struct sk_buff {
- #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
- 	unsigned long		 _nfct;
- #endif
-+	union {
-+		struct {
-+			union {
-+			__be16	inner_protocol;
-+			__u8	inner_ipproto;
-+			};
-+
-+			__u16	inner_transport_header;
-+			__u16	inner_network_header;
-+			__u16	inner_mac_header;
-+		};
-+		__u64		inner_headers;
-+	};
- };
- 
- #ifdef __KERNEL__
-@@ -2449,6 +2456,12 @@ static inline void skb_tailroom_reserve(struct sk_buff *skb, unsigned int mtu,
- #define ENCAP_TYPE_ETHER	0
- #define ENCAP_TYPE_IPPROTO	1
- 
-+static inline void __skb_copy_inner_headers(struct sk_buff *dst, const struct sk_buff *src)
-+{
-+	if (src->encapsulation)
-+		dst->inner_headers = src->inner_headers;
-+}
-+
- static inline void skb_set_inner_protocol(struct sk_buff *skb,
- 					  __be16 protocol)
- {
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 9ed754da6e13..53b8db10e567 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -995,6 +995,7 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
- 	skb_dst_copy(new, old);
- 	__skb_ext_copy(new, old);
- 	__nf_copy(new, old, false);
-+	__skb_copy_inner_headers(new, old);
- 
- 	/* Note : this field could be in headers_start/headers_end section
- 	 * It is not yet because we do not want to have a 16 bit hole
-@@ -1005,6 +1006,7 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
- 	       offsetof(struct sk_buff, headers_end) -
- 	       offsetof(struct sk_buff, headers_start));
- 	CHECK_SKB_FIELD(_state);
-+	CHECK_SKB_FIELD(__pkt_encapsulation_offset);
- 	CHECK_SKB_FIELD(protocol);
- 	CHECK_SKB_FIELD(csum);
- 	CHECK_SKB_FIELD(hash);
-@@ -1015,10 +1017,6 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
- 	CHECK_SKB_FIELD(transport_header);
- 	CHECK_SKB_FIELD(network_header);
- 	CHECK_SKB_FIELD(mac_header);
--	CHECK_SKB_FIELD(inner_protocol);
--	CHECK_SKB_FIELD(inner_transport_header);
--	CHECK_SKB_FIELD(inner_network_header);
--	CHECK_SKB_FIELD(inner_mac_header);
- 	CHECK_SKB_FIELD(mark);
- #ifdef CONFIG_NETWORK_SECMARK
- 	CHECK_SKB_FIELD(secmark);
+v1 -> v2:
+ - Added new commit to make trusted key Kconfig option independent
+   of TPM and added new Kconfig file for trusted keys
+ - Add new commit for importing existing key material
+ - Allow users to force use of kernel RNG (Jarkko)
+ - Enforce maximum keymod size (Horia)
+ - Use append_seq_(in|out)_ptr_intlen instead of append_seq_(in|out)_ptr
+   (Horia)
+ - Make blobifier handle private to CAAM glue code file (Horia)
+ - Extend trusted keys documentation for CAAM
+ - Rebased and updated original cover letter:
+
+The Cryptographic Acceleration and Assurance Module (CAAM) is an IP core
+built into many newer i.MX and QorIQ SoCs by NXP.
+
+Its blob mechanism can AES encrypt/decrypt user data using a unique
+never-disclosed device-specific key.
+
+There has been multiple discussions on how to represent this within the kernel:
+
+The Cryptographic Acceleration and Assurance Module (CAAM) is an IP core
+built into many newer i.MX and QorIQ SoCs by NXP.
+
+Its blob mechanism can AES encrypt/decrypt user data using a unique
+never-disclosed device-specific key. There has been multiple
+discussions on how to represent this within the kernel:
+
+ - [RFC] crypto: caam - add red blobifier
+   Steffen implemented[1] a PoC sysfs driver to start a discussion on how to
+   best integrate the blob mechanism.
+   Mimi suggested that it could be used to implement trusted keys.
+   Trusted keys back then were a TPM-only feature.
+
+ - security/keys/secure_key: Adds the secure key support based on CAAM.
+   Udit added[2] a new "secure" key type with the CAAM as backend. The key
+   material stays within the kernel only.
+   Mimi and James agreed that this needs a generic interface, not specific
+   to CAAM. Mimi suggested trusted keys. Jan noted that this could serve as
+   basis for TEE-backed keys.
+
+ - [RFC] drivers: crypto: caam: key: Add caam_tk key type
+   Franck added[3] a new "caam_tk" key type based on Udit's work. This time
+   it uses CAAM "black blobs" instead of "red blobs", so key material stays
+   within the CAAM and isn't exposed to kernel in plaintext.
+   James voiced the opinion that there should be just one user-facing generic
+   wrap/unwrap key type with multiple possible handlers.
+   David suggested trusted keys.
+
+ - Introduce TEE based Trusted Keys support
+   Sumit reworked[4] trusted keys to support multiple possible backends with
+   one chosen at boot time and added a new TEE backend along with TPM.
+   This now sits in Jarkko's master branch to be sent out for v5.13
+
+This patch series builds on top of Sumit's rework to have the CAAM as yet another
+trusted key backend.
+
+The CAAM bits are based on Steffen's initial patch from 2015. His work had been
+used in the field for some years now, so I preferred not to deviate too much from it.
+
+This series has been tested with dmcrypt[5] on an i.MX6DL.
+
+Looking forward to your feedback.
+
+Cheers,
+Ahmad
+
+ [1]: https://lore.kernel.org/linux-crypto/1447082306-19946-2-git-send-email-s.trumtrar@pengutronix.de/
+ [2]: https://lore.kernel.org/linux-integrity/20180723111432.26830-1-udit.agarwal@nxp.com/
+ [3]: https://lore.kernel.org/lkml/1551456599-10603-2-git-send-email-franck.lenormand@nxp.com/
+ [4]: https://lore.kernel.org/lkml/1604419306-26105-1-git-send-email-sumit.garg@linaro.org/
+ [5]: https://lore.kernel.org/linux-integrity/20210122084321.24012-2-a.fatoum@pengutronix.de/
+
+---
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: "Horia Geantă" <horia.geanta@nxp.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: Aymen Sghaier <aymen.sghaier@nxp.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: "David S. Miller" <davem@davemloft.net>
+To: James Bottomley <jejb@linux.ibm.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Udit Agarwal <udit.agarwal@nxp.com>
+Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Eric Biggers <ebiggers@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+Cc: Sumit Garg <sumit.garg@linaro.org>
+Cc: linux-integrity@vger.kernel.org
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+
+Ahmad Fatoum (4):
+  KEYS: trusted: allow users to use kernel RNG for key material
+  KEYS: trusted: allow trust sources to use kernel RNG for key material
+  crypto: caam - add in-kernel interface for blob generator
+  KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
+
+ Documentation/admin-guide/kernel-parameters.txt   |   8 +-
+ Documentation/security/keys/trusted-encrypted.rst |  60 +++-
+ MAINTAINERS                                       |   9 +-
+ drivers/crypto/caam/Kconfig                       |   3 +-
+ drivers/crypto/caam/Makefile                      |   1 +-
+ drivers/crypto/caam/blob_gen.c                    | 230 +++++++++++++++-
+ include/keys/trusted-type.h                       |   2 +-
+ include/keys/trusted_caam.h                       |  11 +-
+ include/soc/fsl/caam-blob.h                       |  56 ++++-
+ security/keys/trusted-keys/Kconfig                |  11 +-
+ security/keys/trusted-keys/Makefile               |   2 +-
+ security/keys/trusted-keys/trusted_caam.c         |  74 +++++-
+ security/keys/trusted-keys/trusted_core.c         |  23 +-
+ 13 files changed, 477 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/crypto/caam/blob_gen.c
+ create mode 100644 include/keys/trusted_caam.h
+ create mode 100644 include/soc/fsl/caam-blob.h
+ create mode 100644 security/keys/trusted-keys/trusted_caam.c
+
+base-commit: 97408d81ed533b953326c580ff2c3f1948b3fcee
 -- 
-2.26.3
-
+git-series 0.9.1
