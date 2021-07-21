@@ -2,267 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 811D7C12002
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB67C6377B
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 680E961245
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5943C6124B
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbhGUPYo (ORCPT
+        id S233137AbhGUQEi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jul 2021 11:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230342AbhGUPYm (ORCPT
+        Wed, 21 Jul 2021 12:04:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:24921 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232964AbhGUQEh (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jul 2021 11:24:42 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4E8C061575
-        for <linux-security-module@vger.kernel.org>; Wed, 21 Jul 2021 09:05:18 -0700 (PDT)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1m6Ei2-0007F5-OS; Wed, 21 Jul 2021 18:04:34 +0200
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1m6Ehw-0004VU-OE; Wed, 21 Jul 2021 18:04:28 +0200
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     kernel@pengutronix.de, Andreas Rammhold <andreas@rammhold.de>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-Subject: [PATCH v2] KEYS: trusted: fix use as module when CONFIG_TCG_TPM=m
-Date:   Wed, 21 Jul 2021 18:02:59 +0200
-Message-Id: <20210721160258.7024-1-a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.30.2
+        Wed, 21 Jul 2021 12:04:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1626885913;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=8XrJTbfGwQxmmnHQYAiD/fMjI50f42+C+fH1pExCF1E=;
+        b=XxhWpyjC9ez6c4fjVgbiuF2xgYoJRvWQJgNZQzFKI1HlwXHKClFNInd2brQYb89nCEyFq4
+        XZqVhPGsJHTjC2AXCy+IOOKVLcP25yIfbhn8J0zcoEgAUOfrCPoI/GSsShKUu2iUxgHw/r
+        FrMTeRa8vGVy3IJjyFbmCeDdjRkMmJ8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-92-fIm9tmOmPk2MbtfuQLzd2g-1; Wed, 21 Jul 2021 12:45:10 -0400
+X-MC-Unique: fIm9tmOmPk2MbtfuQLzd2g-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8FADC94DC2;
+        Wed, 21 Jul 2021 16:45:08 +0000 (UTC)
+Received: from gerbillo.redhat.com (ovpn-114-219.ams2.redhat.com [10.36.114.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE5B8797C1;
+        Wed, 21 Jul 2021 16:45:05 +0000 (UTC)
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Subject: [PATCH RFC 0/9] sk_buff: optimize layout for GRO
+Date:   Wed, 21 Jul 2021 18:44:32 +0200
+Message-Id: <cover.1626879395.git.pabeni@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Since commit 5d0682be3189 ("KEYS: trusted: Add generic trusted keys
-framework"), trusted.ko built with CONFIG_TCG_TPM=CONFIG_TRUSTED_KEYS=m
-will not register the TPM trusted key type at runtime.
+This is a very early draft - in a different world would be
+replaced by hallway discussion at in-person conference - aimed at
+outlining some ideas and collect feedback on the overall outlook.
+There are still bugs to be fixed, more test and benchmark need, etc.
 
-This is because, after that rework, CONFIG_DEPENDENCY of the TPM
-and TEE backends were checked with #ifdef, but that's only true
-when they're built-in.
+There are 3 main goals:
+- [try to] avoid the overhead for uncommon conditions at GRO time
+  (patches 1-4)
+- enable backpressure for the veth GRO path (patches 5-6)
+- reduce the number of cacheline used by the sk_buff lifecycle
+  from 4 to 3, at least in some common scenarios (patches 1,7-9).
+  The idea here is avoid the initialization of some fields and
+  control their validity with a bitmask, as presented by at least
+  Florian and Jesper in the past.
 
-Fix this by introducing two new boolean Kconfig symbols:
-TRUSTED_KEYS_TPM and TRUSTED_KEYS_TEE with the appropriate
-dependencies and use them to check which backends are available.
+The above requires a bit of code churn in some places and, yes,
+a few new bits in the sk_buff struct (using some existing holes)
 
-This also has a positive effect on user experience:
+Paolo Abeni (9):
+  sk_buff: track nfct status in newly added skb->_state
+  sk_buff: track dst status in skb->_state
+  sk_buff: move the active_extensions into the state bitfield
+  net: optimize GRO for the common case.
+  skbuff: introduce has_sk state bit.
+  veth: use skb_prepare_for_gro()
+  sk_buff: move inner header fields after tail
+  sk_buff: move vlan field after tail.
+  sk_buff: access secmark via getter/setter
 
- - It's now possible to use TEE trusted keys without CONFIG_TCG_TPM
- - It's now possible to enable CONFIG_TCG_TPM, but exclude TPM from
-   available trust sources
- - TEE=m && TRUSTED_KEYS=y no longer leads to TEE support
-   being silently dropped
+ drivers/net/veth.c               |   2 +-
+ include/linux/skbuff.h           | 117 ++++++++++++++++++++++---------
+ include/net/dst.h                |   3 +
+ include/net/sock.h               |   9 +++
+ net/core/dev.c                   |  31 +++++---
+ net/core/skbuff.c                |  40 +++++++----
+ net/netfilter/nfnetlink_queue.c  |   6 +-
+ net/netfilter/nft_meta.c         |   6 +-
+ net/netfilter/xt_CONNSECMARK.c   |   8 +--
+ net/netfilter/xt_SECMARK.c       |   2 +-
+ security/apparmor/lsm.c          |  15 ++--
+ security/selinux/hooks.c         |  10 +--
+ security/smack/smack_lsm.c       |   4 +-
+ security/smack/smack_netfilter.c |   4 +-
+ 14 files changed, 175 insertions(+), 82 deletions(-)
 
-Any code depending on the TPM trusted key backend or symbols exported
-by it will now need to explicitly state that it
-
-  depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
-
-The latter to ensure the dependency is built and the former to ensure
-it's reachable for module builds. This currently only affects
-CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE, so it's fixed up here as well.
-
-Reported-by: Andreas Rammhold <andreas@rammhold.de>
-Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-
-(Implicit) v1 was as a preparatory patch for CAAM trusted keys[1] with the
-goal of fixing the Kconfig inflexibility after the TEE trusted key rework.
-
-Unbeknownst to me, it also fixes a regression, which was later
-reported by Andreas[2] along with a patch.
-
-I split out the fix from the CAAM series and adjusted the commit
-message to explain the regression.
-
-v1 -> v2:
-  - Move rest of TPM-related selects from TRUSTED_KEYS to
-    TRUSTED_KEYS_TPM (Sumit)
-  - Remove left-over line in Makefile (Sumit)
-  - added Fixes: tag
-  - adjust commit message to reference the regression reported
-    by Andreas
-  - have ASYMMETRIC_TPM_KEY_SUBTYPE depend on TRUSTED_KEYS_TPM,
-    because it references global symbols that are exported
-    by the trusted key TPM backend.
-
-[1]: https://lore.kernel.org/linux-integrity/f8285eb0135ba30c9d846cf9dd395d1f5f8b1efc.1624364386.git-series.a.fatoum@pengutronix.de/
-[2]: https://lore.kernel.org/linux-integrity/20210719091335.vwfebcpkf4pag3wm@wrt/T/#t
-
-To: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Morris <jmorris@namei.org>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-To: James Bottomley <jejb@linux.ibm.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-To: Sumit Garg <sumit.garg@linaro.org>
-To: David Howells <dhowells@redhat.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-To: "David S. Miller" <davem@davemloft.net>
-Cc: David Gstir <david@sigma-star.at>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: keyrings@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org
----
- crypto/asymmetric_keys/Kconfig            |  2 +-
- security/keys/Kconfig                     | 18 ++++++--------
- security/keys/trusted-keys/Kconfig        | 29 +++++++++++++++++++++++
- security/keys/trusted-keys/Makefile       |  8 +++----
- security/keys/trusted-keys/trusted_core.c |  4 ++--
- 5 files changed, 43 insertions(+), 18 deletions(-)
- create mode 100644 security/keys/trusted-keys/Kconfig
-
-diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
-index 1f1f004dc757..8886eddbf881 100644
---- a/crypto/asymmetric_keys/Kconfig
-+++ b/crypto/asymmetric_keys/Kconfig
-@@ -25,7 +25,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
- config ASYMMETRIC_TPM_KEY_SUBTYPE
- 	tristate "Asymmetric TPM backed private key subtype"
- 	depends on TCG_TPM
--	depends on TRUSTED_KEYS
-+	depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
- 	select CRYPTO_HMAC
- 	select CRYPTO_SHA1
- 	select CRYPTO_HASH_INFO
-diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-index 64b81abd087e..9ec302962fe2 100644
---- a/security/keys/Kconfig
-+++ b/security/keys/Kconfig
-@@ -70,23 +70,19 @@ config BIG_KEYS
- 
- config TRUSTED_KEYS
- 	tristate "TRUSTED KEYS"
--	depends on KEYS && TCG_TPM
--	select CRYPTO
--	select CRYPTO_HMAC
--	select CRYPTO_SHA1
--	select CRYPTO_HASH_INFO
--	select ASN1_ENCODER
--	select OID_REGISTRY
--	select ASN1
-+	depends on KEYS
- 	help
- 	  This option provides support for creating, sealing, and unsealing
- 	  keys in the kernel. Trusted keys are random number symmetric keys,
--	  generated and RSA-sealed by the TPM. The TPM only unseals the keys,
--	  if the boot PCRs and other criteria match.  Userspace will only ever
--	  see encrypted blobs.
-+	  generated and sealed by a trust source selected at kernel boot-time.
-+	  Userspace will only ever see encrypted blobs.
- 
- 	  If you are unsure as to whether this is required, answer N.
- 
-+if TRUSTED_KEYS
-+source "security/keys/trusted-keys/Kconfig"
-+endif
-+
- config ENCRYPTED_KEYS
- 	tristate "ENCRYPTED KEYS"
- 	depends on KEYS
-diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
-new file mode 100644
-index 000000000000..c163cfeedff6
---- /dev/null
-+++ b/security/keys/trusted-keys/Kconfig
-@@ -0,0 +1,29 @@
-+config TRUSTED_KEYS_TPM
-+	bool "TPM-based trusted keys"
-+	depends on TCG_TPM >= TRUSTED_KEYS
-+	default y
-+	select CRYPTO
-+	select CRYPTO_HMAC
-+	select CRYPTO_SHA1
-+	select CRYPTO_HASH_INFO
-+	select ASN1_ENCODER
-+	select OID_REGISTRY
-+	select ASN1
-+	help
-+	  Enable use of the Trusted Platform Module (TPM) as trusted key
-+	  backend. Trusted keys are are random number symmetric keys,
-+	  which will be generated and RSA-sealed by the TPM.
-+	  The TPM only unseals the keys, if the boot PCRs and other
-+	  criteria match.
-+
-+config TRUSTED_KEYS_TEE
-+	bool "TEE-based trusted keys"
-+	depends on TEE >= TRUSTED_KEYS
-+	default y
-+	help
-+	  Enable use of the Trusted Execution Environment (TEE) as trusted
-+	  key backend.
-+
-+if !TRUSTED_KEYS_TPM && !TRUSTED_KEYS_TEE
-+comment "No trust source selected!"
-+endif
-diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
-index feb8b6c3cc79..2e2371eae4d5 100644
---- a/security/keys/trusted-keys/Makefile
-+++ b/security/keys/trusted-keys/Makefile
-@@ -5,10 +5,10 @@
- 
- obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
- trusted-y += trusted_core.o
--trusted-y += trusted_tpm1.o
-+trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm1.o
- 
- $(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
--trusted-y += trusted_tpm2.o
--trusted-y += tpm2key.asn1.o
-+trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm2.o
-+trusted-$(CONFIG_TRUSTED_KEYS_TPM) += tpm2key.asn1.o
- 
--trusted-$(CONFIG_TEE) += trusted_tee.o
-+trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index d5c891d8d353..8cab69e5d0da 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
- MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
- 
- static const struct trusted_key_source trusted_key_sources[] = {
--#if defined(CONFIG_TCG_TPM)
-+#if defined(CONFIG_TRUSTED_KEYS_TPM)
- 	{ "tpm", &trusted_key_tpm_ops },
- #endif
--#if defined(CONFIG_TEE)
-+#if defined(CONFIG_TRUSTED_KEYS_TEE)
- 	{ "tee", &trusted_key_tee_ops },
- #endif
- };
 -- 
-2.30.2
+2.26.3
 
