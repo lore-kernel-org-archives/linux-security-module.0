@@ -2,142 +2,267 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5A7C636C9
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 13:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 811D7C12002
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 739C061221
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 13:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 680E961245
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235919AbhGUMcT (ORCPT
+        id S230185AbhGUPYo (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jul 2021 08:32:19 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:12232 "EHLO
-        szxga08-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235330AbhGUMcS (ORCPT
+        Wed, 21 Jul 2021 11:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50056 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230342AbhGUPYm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jul 2021 08:32:18 -0400
-Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.54])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4GVG7r277vz1CMGb;
-        Wed, 21 Jul 2021 21:07:04 +0800 (CST)
-Received: from dggpeml500023.china.huawei.com (7.185.36.114) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 21 Jul 2021 21:12:51 +0800
-Received: from [10.67.110.112] (10.67.110.112) by
- dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 21 Jul 2021 21:12:50 +0800
-Subject: Re: issues about selinux namespace
-To:     Paul Moore <paul@paul-moore.com>
-CC:     Stephen Smalley <stephen.smalley.work@gmail.com>,
-        <jamorris@linux.microsoft.com>,
-        "Likun(OSLab)" <hw.likun@huawei.com>,
-        <linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>
-References: <22c0d7a1-b658-64ce-f099-0b3617ef8e38@huawei.com>
- <CAEjxPJ5-w83HMRGuDHHqMthkju3bxT0gZ-EiiTE=t5UhQqQ_ug@mail.gmail.com>
- <ec36e53f-5a6d-b86e-790c-d58b7b503aae@huawei.com>
- <CAHC9VhR3ZbcNM8awhJs9_NXmdUXHO4XoH8s2d3MjhMXwkgbh=Q@mail.gmail.com>
-From:   xiujianfeng <xiujianfeng@huawei.com>
-Message-ID: <55cef216-315b-df0d-8ddb-42a250f86a8b@huawei.com>
-Date:   Wed, 21 Jul 2021 21:12:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.9.1
+        Wed, 21 Jul 2021 11:24:42 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C4E8C061575
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jul 2021 09:05:18 -0700 (PDT)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1m6Ei2-0007F5-OS; Wed, 21 Jul 2021 18:04:34 +0200
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1m6Ehw-0004VU-OE; Wed, 21 Jul 2021 18:04:28 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     kernel@pengutronix.de, Andreas Rammhold <andreas@rammhold.de>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+Subject: [PATCH v2] KEYS: trusted: fix use as module when CONFIG_TCG_TPM=m
+Date:   Wed, 21 Jul 2021 18:02:59 +0200
+Message-Id: <20210721160258.7024-1-a.fatoum@pengutronix.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhR3ZbcNM8awhJs9_NXmdUXHO4XoH8s2d3MjhMXwkgbh=Q@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.110.112]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpeml500023.china.huawei.com (7.185.36.114)
-X-CFilter-Loop: Reflected
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Since commit 5d0682be3189 ("KEYS: trusted: Add generic trusted keys
+framework"), trusted.ko built with CONFIG_TCG_TPM=CONFIG_TRUSTED_KEYS=m
+will not register the TPM trusted key type at runtime.
 
-在 2021/7/20 10:56, Paul Moore 写道:
-> On Mon, Jul 19, 2021 at 9:55 AM xiujianfeng <xiujianfeng@huawei.com> wrote:
->> thanks stepthen,  I've found James's patch in
->> https://lwn.net/Articles/737949/,
->>
->> but it seems can't resolve my questions, so any futher discussion would
->> be helpfull and welcome.
->>
->> 在 2021/7/14 20:11, Stephen Smalley 写道:
->>> Please take your email to the selinux@vger.kernel.org. You are the
->>> second person to ask about selinux namespaces within the past week or
->>> so. I did upstream the refactoring and encapsulation of the data
->>> structures and code via the selinux_state patches, so those are in the
->>> mainline kernel these days, and Paul Moore and I have periodically
->>> re-based the remaining patches on top of upstream over in the
->>> https://github.com/SELinuxProject/selinux-kernel/tree/working-selinuxns
->>> branch. However, I had to drop the inode and superblock per-ns patches
->>> temporarily because of changes to LSM (inode blob management moved to
->>> the LSM framework out of the security modules), so that would need to
->>> be revisited. There was a separate patch from James Morris to support
->>> per-namespace security.selinux extended attributes; you can dig that
->>> out from the history or mailing lists if you want to revive that. I
->>> won't be able to look at it again until October at the earliest.
->>>
->>> On Wed, Jul 14, 2021 at 6:54 AM xiujianfeng <xiujianfeng@huawei.com> wrote:
->>>> Hi Stephen,
->>>>
->>>> I am writing to discuss about selinux namespace because I found your
->>>> previous work on github and I think selinux namespace is helpful to
->>>> harden container security. So I try to do further work but there are
->>>> some issues mentioned in the commit message and I have no idea how to
->>>> fix them, it would be great if I can get help from you.
->>>> First is about selinux hook functions, we need to update each hook to
->>>> perform its processing on current namespace and all of its ancestors,
->>>> for object, we can have different sid/tag in different namespace based
->>>> on inode namespace support, but for task, do we need to maintain each
->>>> security context generated in the corresponding namespace?
->>>> Second is the lifecycle management of on-disk inode labels. it's not
->>>> easy to handle this, should we clean all corresponding labels on disk
->>>> when namespace exit? if we do this, it may cost long time to iterate
->>>> inode on disk and must relabel files when container restart, if not, the
->>>> inode xattr space maybe full and cannot write label again when new
->>>> namespace starts.
->>>> BTW, do you have plan to finish the work?
->>>>
->>>> I look forward to receiving your reply.
->>>>
->>>> Best wishes.
-> I understand that many mail clients do not encourage inline/bottom
-> replies, but when posting to the various Linux Kernel mailing lists
-> please make the effort to reply inline, or at the bottom, as
-> appropriate.
->
-> Namespacing the SELinux kernel code is a rather tricky thing, both
-> with respect to the design and the mechanics of the implementation.  I
-> don't think we have a concrete idea yet on how we want to proceed in
-> all of the areas mentioned; designs - and implementations - have been
-> offered, but I think we are missing someone to drive the topic forward
-> with demonstrations, sample implementations, etc.  It is never a bad
-> idea to ask how you can help a project, but in this case I think the
-> answer is to step back for a moment, describe your use-case/problem,
-> explain how you envision a namespaced SELinux helping you resolve
-> this, and finally how you would want the namespaced SELinux
-> implementation to work (how would you interact with it both via policy
-> and runtime management).
+This is because, after that rework, CONFIG_DEPENDENCY of the TPM
+and TEE backends were checked with #ifdef, but that's only true
+when they're built-in.
 
-thanks for you reply, I digged the history disscussion from 
-https://marc.info/?l=selinux&m=150696042210126&w=2
+Fix this by introducing two new boolean Kconfig symbols:
+TRUSTED_KEYS_TPM and TRUSTED_KEYS_TEE with the appropriate
+dependencies and use them to check which backends are available.
 
-and find one use-case: Running multiple android instances on a single 
-host, this is the same as mine.
+This also has a positive effect on user experience:
 
-Anyway, I'll make a try.
+ - It's now possible to use TEE trusted keys without CONFIG_TCG_TPM
+ - It's now possible to enable CONFIG_TCG_TPM, but exclude TPM from
+   available trust sources
+ - TEE=m && TRUSTED_KEYS=y no longer leads to TEE support
+   being silently dropped
 
->
-> On a personal note, the regular rebasing of the SELinux namespace work
-> has suffered lately due to other time commitments at work.  I have
-> recently (today) started a new position which should allow me to
-> dedicate much more of my working hours to upstream development; it may
-> take me a couple of weeks to get settled in, but you can expect the
-> regular rebasing of selinux/working-selinuxns to resume in the future.
->
+Any code depending on the TPM trusted key backend or symbols exported
+by it will now need to explicitly state that it
+
+  depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
+
+The latter to ensure the dependency is built and the former to ensure
+it's reachable for module builds. This currently only affects
+CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE, so it's fixed up here as well.
+
+Reported-by: Andreas Rammhold <andreas@rammhold.de>
+Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+
+(Implicit) v1 was as a preparatory patch for CAAM trusted keys[1] with the
+goal of fixing the Kconfig inflexibility after the TEE trusted key rework.
+
+Unbeknownst to me, it also fixes a regression, which was later
+reported by Andreas[2] along with a patch.
+
+I split out the fix from the CAAM series and adjusted the commit
+message to explain the regression.
+
+v1 -> v2:
+  - Move rest of TPM-related selects from TRUSTED_KEYS to
+    TRUSTED_KEYS_TPM (Sumit)
+  - Remove left-over line in Makefile (Sumit)
+  - added Fixes: tag
+  - adjust commit message to reference the regression reported
+    by Andreas
+  - have ASYMMETRIC_TPM_KEY_SUBTYPE depend on TRUSTED_KEYS_TPM,
+    because it references global symbols that are exported
+    by the trusted key TPM backend.
+
+[1]: https://lore.kernel.org/linux-integrity/f8285eb0135ba30c9d846cf9dd395d1f5f8b1efc.1624364386.git-series.a.fatoum@pengutronix.de/
+[2]: https://lore.kernel.org/linux-integrity/20210719091335.vwfebcpkf4pag3wm@wrt/T/#t
+
+To: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Morris <jmorris@namei.org>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+To: James Bottomley <jejb@linux.ibm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>
+To: Sumit Garg <sumit.garg@linaro.org>
+To: David Howells <dhowells@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+To: "David S. Miller" <davem@davemloft.net>
+Cc: David Gstir <david@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: keyrings@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-security-module@vger.kernel.org
+Cc: linux-integrity@vger.kernel.org
+---
+ crypto/asymmetric_keys/Kconfig            |  2 +-
+ security/keys/Kconfig                     | 18 ++++++--------
+ security/keys/trusted-keys/Kconfig        | 29 +++++++++++++++++++++++
+ security/keys/trusted-keys/Makefile       |  8 +++----
+ security/keys/trusted-keys/trusted_core.c |  4 ++--
+ 5 files changed, 43 insertions(+), 18 deletions(-)
+ create mode 100644 security/keys/trusted-keys/Kconfig
+
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index 1f1f004dc757..8886eddbf881 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -25,7 +25,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+ config ASYMMETRIC_TPM_KEY_SUBTYPE
+ 	tristate "Asymmetric TPM backed private key subtype"
+ 	depends on TCG_TPM
+-	depends on TRUSTED_KEYS
++	depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
+ 	select CRYPTO_HMAC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_HASH_INFO
+diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+index 64b81abd087e..9ec302962fe2 100644
+--- a/security/keys/Kconfig
++++ b/security/keys/Kconfig
+@@ -70,23 +70,19 @@ config BIG_KEYS
+ 
+ config TRUSTED_KEYS
+ 	tristate "TRUSTED KEYS"
+-	depends on KEYS && TCG_TPM
+-	select CRYPTO
+-	select CRYPTO_HMAC
+-	select CRYPTO_SHA1
+-	select CRYPTO_HASH_INFO
+-	select ASN1_ENCODER
+-	select OID_REGISTRY
+-	select ASN1
++	depends on KEYS
+ 	help
+ 	  This option provides support for creating, sealing, and unsealing
+ 	  keys in the kernel. Trusted keys are random number symmetric keys,
+-	  generated and RSA-sealed by the TPM. The TPM only unseals the keys,
+-	  if the boot PCRs and other criteria match.  Userspace will only ever
+-	  see encrypted blobs.
++	  generated and sealed by a trust source selected at kernel boot-time.
++	  Userspace will only ever see encrypted blobs.
+ 
+ 	  If you are unsure as to whether this is required, answer N.
+ 
++if TRUSTED_KEYS
++source "security/keys/trusted-keys/Kconfig"
++endif
++
+ config ENCRYPTED_KEYS
+ 	tristate "ENCRYPTED KEYS"
+ 	depends on KEYS
+diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
+new file mode 100644
+index 000000000000..c163cfeedff6
+--- /dev/null
++++ b/security/keys/trusted-keys/Kconfig
+@@ -0,0 +1,29 @@
++config TRUSTED_KEYS_TPM
++	bool "TPM-based trusted keys"
++	depends on TCG_TPM >= TRUSTED_KEYS
++	default y
++	select CRYPTO
++	select CRYPTO_HMAC
++	select CRYPTO_SHA1
++	select CRYPTO_HASH_INFO
++	select ASN1_ENCODER
++	select OID_REGISTRY
++	select ASN1
++	help
++	  Enable use of the Trusted Platform Module (TPM) as trusted key
++	  backend. Trusted keys are are random number symmetric keys,
++	  which will be generated and RSA-sealed by the TPM.
++	  The TPM only unseals the keys, if the boot PCRs and other
++	  criteria match.
++
++config TRUSTED_KEYS_TEE
++	bool "TEE-based trusted keys"
++	depends on TEE >= TRUSTED_KEYS
++	default y
++	help
++	  Enable use of the Trusted Execution Environment (TEE) as trusted
++	  key backend.
++
++if !TRUSTED_KEYS_TPM && !TRUSTED_KEYS_TEE
++comment "No trust source selected!"
++endif
+diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+index feb8b6c3cc79..2e2371eae4d5 100644
+--- a/security/keys/trusted-keys/Makefile
++++ b/security/keys/trusted-keys/Makefile
+@@ -5,10 +5,10 @@
+ 
+ obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+ trusted-y += trusted_core.o
+-trusted-y += trusted_tpm1.o
++trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm1.o
+ 
+ $(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
+-trusted-y += trusted_tpm2.o
+-trusted-y += tpm2key.asn1.o
++trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm2.o
++trusted-$(CONFIG_TRUSTED_KEYS_TPM) += tpm2key.asn1.o
+ 
+-trusted-$(CONFIG_TEE) += trusted_tee.o
++trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
+diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+index d5c891d8d353..8cab69e5d0da 100644
+--- a/security/keys/trusted-keys/trusted_core.c
++++ b/security/keys/trusted-keys/trusted_core.c
+@@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
+ MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+ 
+ static const struct trusted_key_source trusted_key_sources[] = {
+-#if defined(CONFIG_TCG_TPM)
++#if defined(CONFIG_TRUSTED_KEYS_TPM)
+ 	{ "tpm", &trusted_key_tpm_ops },
+ #endif
+-#if defined(CONFIG_TEE)
++#if defined(CONFIG_TRUSTED_KEYS_TEE)
+ 	{ "tee", &trusted_key_tee_ops },
+ #endif
+ };
+-- 
+2.30.2
+
