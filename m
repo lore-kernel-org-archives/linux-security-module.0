@@ -2,47 +2,47 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8903DC64996
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F206C6377C
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 774BB61222
-	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48CC761244
+	for <linux-security-module@archiver.kernel.org>; Wed, 21 Jul 2021 16:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235104AbhGUQE7 (ORCPT
+        id S234964AbhGUQE5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jul 2021 12:04:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:45775 "EHLO
+        Wed, 21 Jul 2021 12:04:57 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:57455 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234455AbhGUQEs (ORCPT
+        by vger.kernel.org with ESMTP id S235057AbhGUQE4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jul 2021 12:04:48 -0400
+        Wed, 21 Jul 2021 12:04:56 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1626885924;
+        s=mimecast20190719; t=1626885930;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9zrJJBSp28F7+S8SVJdlDpI62YOFgpVTiDbprhSEFuw=;
-        b=UugzmnLN/uGdigi7Ru7BgPgihVjCSwiPYGJtYqyCrwWCg6SMm4n9tlf29cO9g/yLg2nXnJ
-        yDFHGkgZPIaooSl0Rg/z9919jEXCcmkWXfYQ5AbF9OOI8ctOKVQ5vGVLyV79rMLythjgBv
-        YGVvEmlu9EwO66XEmKI15X5CoPtJE9Y=
+        bh=975rAEQBbYHaPZ9GmjrYnlMR6WbR6sF31REUntWo2Ro=;
+        b=DUv335cRla6VXSl4aeRnh9pPdST5UMNFG+M2zCFY4yc1dniKs/PBVImELs197hhYCqf1te
+        /TsojLfYG785AeA3NBUDBDf/sYe7mNypMQtKfY0rlnIfLjoCMi1Jn1Y5mQrccLWceXgFmq
+        KeohjI+TtWEKmPAVmHZsyozYoE1o4z0=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-136-VJ44S0x4MhK9a1Ctoe-dYg-1; Wed, 21 Jul 2021 12:45:22 -0400
-X-MC-Unique: VJ44S0x4MhK9a1Ctoe-dYg-1
+ us-mta-280-kzK07x3jNqanuoWCuAyCvw-1; Wed, 21 Jul 2021 12:45:26 -0400
+X-MC-Unique: kzK07x3jNqanuoWCuAyCvw-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 39ED91084F67;
-        Wed, 21 Jul 2021 16:45:21 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 79FD7824FA0;
+        Wed, 21 Jul 2021 16:45:25 +0000 (UTC)
 Received: from gerbillo.redhat.com (ovpn-114-219.ams2.redhat.com [10.36.114.219])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DAE2797C0;
-        Wed, 21 Jul 2021 16:45:19 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BF4A3797C0;
+        Wed, 21 Jul 2021 16:45:23 +0000 (UTC)
 From:   Paolo Abeni <pabeni@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -50,9 +50,9 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         Florian Westphal <fw@strlen.de>,
         Eric Dumazet <edumazet@google.com>,
         linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: [PATCH RFC 6/9] veth: use skb_prepare_for_gro()
-Date:   Wed, 21 Jul 2021 18:44:38 +0200
-Message-Id: <1abe7f6e76864ee634f437972f9249f05414f61c.1626882513.git.pabeni@redhat.com>
+Subject: [PATCH RFC 8/9] sk_buff: move vlan field after tail.
+Date:   Wed, 21 Jul 2021 18:44:40 +0200
+Message-Id: <fcc82c64961666cd10c5e275156f80396a709205.1626882513.git.pabeni@redhat.com>
 In-Reply-To: <cover.1626882513.git.pabeni@redhat.com>
 References: <cover.1626882513.git.pabeni@redhat.com>
 MIME-Version: 1.0
@@ -61,27 +61,72 @@ X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Leveraging the previous patch we can now avoid orphaning the
-skb in the veth gro path, allowing correct backpressure.
+Such field validity is already tracked by the existing
+'vlan_present' bit. Move them after tail and conditinally copy
+as needed.
 
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 ---
- drivers/net/veth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/skbuff.h | 10 ++++++++--
+ net/core/skbuff.c      |  5 +++--
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/veth.c b/drivers/net/veth.c
-index 381670c08ba7..50eb43e5bf45 100644
---- a/drivers/net/veth.c
-+++ b/drivers/net/veth.c
-@@ -713,7 +713,7 @@ static struct sk_buff *veth_xdp_rcv_skb(struct veth_rq *rq,
- 	int mac_len, delta, off;
- 	struct xdp_buff xdp;
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index a3e756575aa7..7acf2a203918 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -897,8 +897,6 @@ struct sk_buff {
+ 	__u32			priority;
+ 	int			skb_iif;
+ 	__u32			hash;
+-	__be16			vlan_proto;
+-	__u16			vlan_tci;
+ #if defined(CONFIG_NET_RX_BUSY_POLL) || defined(CONFIG_XPS)
+ 	union {
+ 		unsigned int	napi_id;
+@@ -955,6 +953,14 @@ struct sk_buff {
+ 		};
+ 		__u64		inner_headers;
+ 	};
++
++	union {
++		struct {
++			__be16	vlan_proto;
++			__u16	vlan_tci;
++		};
++		__u32		vlan_info;
++	};
+ };
  
--	skb_orphan_partial(skb);
-+	skb_prepare_for_gro(skb);
+ #ifdef __KERNEL__
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 53b8db10e567..c59e90db80d5 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -996,6 +996,8 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	__skb_ext_copy(new, old);
+ 	__nf_copy(new, old, false);
+ 	__skb_copy_inner_headers(new, old);
++	if (old->vlan_present)
++		new->vlan_info = old->vlan_info;
  
- 	rcu_read_lock();
- 	xdp_prog = rcu_dereference(rq->xdp_prog);
+ 	/* Note : this field could be in headers_start/headers_end section
+ 	 * It is not yet because we do not want to have a 16 bit hole
+@@ -1007,13 +1009,12 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+ 	       offsetof(struct sk_buff, headers_start));
+ 	CHECK_SKB_FIELD(_state);
+ 	CHECK_SKB_FIELD(__pkt_encapsulation_offset);
++	CHECK_SKB_FIELD(__pkt_vlan_present_offset);
+ 	CHECK_SKB_FIELD(protocol);
+ 	CHECK_SKB_FIELD(csum);
+ 	CHECK_SKB_FIELD(hash);
+ 	CHECK_SKB_FIELD(priority);
+ 	CHECK_SKB_FIELD(skb_iif);
+-	CHECK_SKB_FIELD(vlan_proto);
+-	CHECK_SKB_FIELD(vlan_tci);
+ 	CHECK_SKB_FIELD(transport_header);
+ 	CHECK_SKB_FIELD(network_header);
+ 	CHECK_SKB_FIELD(mac_header);
 -- 
 2.26.3
 
