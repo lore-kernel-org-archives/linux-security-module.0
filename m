@@ -2,152 +2,301 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10566C6377B
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jul 2021 01:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD2EC6377D
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jul 2021 04:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED54C61261
-	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jul 2021 01:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1DE861264
+	for <linux-security-module@archiver.kernel.org>; Thu, 22 Jul 2021 04:46:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230210AbhGVAfU (ORCPT
+        id S229502AbhGVEGM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 21 Jul 2021 20:35:20 -0400
-Received: from sonic313-16.consmr.mail.ne1.yahoo.com ([66.163.185.39]:41272
-        "EHLO sonic313-16.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230169AbhGVAfT (ORCPT
+        Thu, 22 Jul 2021 00:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53712 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229488AbhGVEGL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 21 Jul 2021 20:35:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1626916555; bh=Zs5PRqDTSPyCtuu45vKKUeviuxf3LXsqVRryLcTyfl8=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=giV6uSo6WfE0jmbFslrFW62d12g7SE628RTwbbeGI4Vv2s5knDgqIXHwqJkj3kTMb7GqrywtjTqSv5e6cyEPX1h69hk+CS7ctq79SAj8LxUv+n3MGcfX/RBzUgqAIvwSssCBsSE/cp+E1pPpE3SwZaaViEyTxs7ORApGgxwDRBUOj8oiO1tRh5v0eyTfmKn4xpLgTmKO6H6G+MPcMNs37s0FqTMUuUMWad4u1LEUKlWkQMRCFJTwJQOfcpB+/2EMR4WhLpsB7gOsf8bX3krRfY0KqIWHyD1yiGlkdg5WMswfVWfnTxNrIYTC5qQ/JhxMR6gfxvPa+8v3tsbJDDhYeQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1626916555; bh=ttIWdwOGKPZTjAFdOZNqpK+qJGCIjHJ66fNA+Eu1OEN=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=WhxQ4g/e/qeGWuNCTQDyGutS2Um+Ktn77r/xj4K/kQVFbGT4sXyPnggwFvTcFshMpe3faAfkYdWVqTXdc4Tb9SYqNJhRXAW/xW1P2R/vG2xFXMjCn4de3Y3SiCeCzHsGohzIQe0tFHy3f/4gN7whT7gIvDqc8qPSeGtpdJRfq6JWRPEMRqhgfMC+ywU+uNOQAQDAPBOLr1CzIFCfVW8zg/pQSgcU7pPxtWqV1N+iHNqmXnNw7j2Y8jmXHwGUZo6F6Cqy2xwoq4PsQkkrU2OP54RSqvOjlkP9IefMXiBiSU3WNW8SIqlTDy+Axp4gRtOizDrlyUvyQZ0BgpEbi/2Q/A==
-X-YMail-OSG: 9cLK3XIVM1kxiXENb0EpKJqoOSOg4kk_fObNRp2valBWOODGNZLSYEhN8wSoSza
- tPJdDc7CTQ6ujUplYnwvEXxYhD2v5G.BbZEYD0n7qCTztmjtx93JEaEsediQvgcIU7J8Rrjsce2n
- VTSZIcILrS7bBWTywTxPvnOGi_sn1PRI.8f1O4xlwxQxD_YN7SUHmChXqfTU6xHHoB8Fy28E6Cgk
- kr_sRrBY0A4N_sSTopNsgtsHj0kt_AGBRhmhp.xDJHhjNjA7Gyw5Nf1dPZoBrbEUhioZVP68_7mD
- cTKYm5tXmm7n6s7TWuSIUyF_TnxUhafJgi88NJjLKIOD3pc5W_QiJKK067bt6yBN0YvVxnqXw9tO
- 8Jl6gzVrTp7j42Yafhw2BW1tQWrJcrt3Jyye3M73FMTZnY1Cfuq1IwS82Wv3M7gnnuG47n.iIRA8
- RdyWBiAnuz5ZZRwLXz4yNPHhyWinUY8TsfFL96icaFcXTmTNELJe1X..6ZES2WzVQwbYBiDXgmkf
- RcjwgLFl8GEhnFJtk4_A49glsTi6Ip3a3GbYUdNBpCGyfIU.aOiWXEo7qm3y.XBP63_DjYMVjfPg
- 1Vpgaw_Diwee15hbcq7.ioIygVrE6Uoj3xOUtFCDww5pPg_rTxx.EYdYZRo7eEieDuQb5ypA4Cma
- uju2MuGLpojfCT3gXCXCynqdcFWfQD_VjhgHsUxNVYWb7lx5VHcmflkzkFhY7j7LNbxj0IVyFHD9
- kYScvf61oXz0AaoxHnpcYnPnkWjuFmSwN9ew4imSxkSnlzpyVDJr8I8xR_WbymJcTSRwfyMe5p7S
- 8ML4iyg7p.d4rHZQhaPxbva8rLxytyK3hWBukeC6fK96adM4qzy8O92xNO_ZQNeVyXtOGWd7mFLx
- qgPPHeyxYvrDJ.gFIDitp4q2GYri3aPw6zkEXx.4U6Cfx7o61epfTSlpxvz3TT8Kij5RICBJknOk
- tpyKF8hYmsoZUlFeRIrjDN_nEu8xSozz3Gg4BBJxfNyMTUv__msNYPVRkZtgIYMWEIT5CjXKqzSY
- 68NUfoDXMQnHGjU2_FpJM9g61rsxQXLh0PYs_aqdMbPJ4gOeBsY6QLfuQ2UC8Kmm0Tjn1_acLlNC
- nMCySo4ncmqA_M3Mg1uixGPIRH8QK2URmxtVOSlNrb73nitHpMRxCBYhmXbkTmFPmYxi6xgQ.76p
- 1E_JMeIVVkP2nMeIvZsoMbrUkDtD_D.cN8zjkgF_.qcas4k461BMQE2fi7A6_wFIMiVdmr9MB51H
- SDNkCwwn7TrbjYfnv86XZxoudSAVuT3NiFCi_REQTkpYYmrpo3D4ywNcQEN.o80JWYtJZqPPuDHp
- 2jFMsiJxEJf_5u2a5vLgC73.Qlht6KfQvk6PdiJHDAX0KoShmruSNvPx0t1scA8l.L0iK55yY7w9
- .TQkv5r3XkmQUZYmhY9lZACXto7Chic0jy_8For2tOumuJCGDy_x12f2kNdJZdXpqtbHhiHvGp.8
- e5BXZj6yoWjEY.tTJN3MmF1Wi9v6Tac58bnQj5TQcAAhdVA3XjoBE79nDbPgb3WhtgJMxnryIs1e
- eNv.kIYe7Nv2S.r6KYGjaxb2CaF6itUl55bYLU0CRyxVlCGr4rCwz1R8GWKJNRtVupq08Z_mIdEC
- VkybApwrBA4fSSMXsdQgeIhCFhi4hYQHvCOolpRE1f7Ojqbi.YXCbM0AwGEl4T4Kq1CXUY8sJ7F6
- m14YPFE_30CstR9KlMFHZ1Hq5TAYVrZ9KEzUW7ijlSSuotje.x3Aa.fOhimQ.zPpDPwyCH_8b6y6
- 0yO.AjmjmHOfaPpCh_Q1M2eDwMEhdYYIa1KZs_fX._ins_NVXxODykXS9m1kjsOACOq0.Ga9rb4A
- CC.ys46bf.txf45JiHnGQqX8xDZFPLYBNIozppDUKxwsVunnf3PWCadzvsgbQInRi8kBvqF3D1Hi
- WE8I4sALqJ.0pyNimuhWOZRgECZeGYy.Jl.wEGerqxWmaXbWklsn4bA.ThNYv4wlaOH7VRYPQ.10
- jeb4wm.hYqJw7Bit2pYVck75dG.eCV5cPgscVW2h51GLrgnNjbHq6BGD4lZxIOkkaOF35IGJPGWc
- LcoN.OqxKBUHXkL4va9.dOuRFpYawKpxCkxZk0NcU8tl7Uln8XoLpXuQ5rwsTot4KoUWlsT_B0TZ
- NK4dHoY_VtwRQ3j2gCKd4aXpiNV16d98YXUGTdLqLcsQHhA9YfetPWaViZ5V7Z42z8fQmmzWCeP1
- kKjhwNvLDPr4a_vBt4lxvBD59g_d86D7xqE5MdDYtvm_RlxsLice0gAuiMcMRdVBGix8e_2vUQgE
- zB7gunZdoRzwQxDPlwqVGXGAj8HfxOozvq..DQFSufaqxPWTR9D1Barl_9OwxlHo2QP0Dnsh_a8m
- gdDxdNvYro3_N4V8npciyiyue2drHxbOTIdA4PAkohTLyXiD9Q0tGG09wbc1kNk27eTkTnM1neFb
- X9F063Jc3vyyfNpkE8HCEC0Fbcatf9eOTadw9dUYyRG46X_0.e7bJY325fAW7ClQsZRE6ivj3tSm
- VN8AUvkC5uJx3HKmtHE8XxWIA1_d6m0tJOIIgdmsWTf.OIXL9J3CdVAYEbbrWzz1UKpDONHLwVKL
- Xpr5q8_U6wzv2FcxBAdN5kxFS2rLkY7._n.gNJLA4d87NnXN7w8VE1Es6hwpWeweWrHUXz_ArHk5
- bg925HUY1Mv9z6aRCS1JwSZ58X0lTVVrTwF_jSXQ4rE1kEPFeQqqJ2rixTLMXD2UFfS4Ds7J.Tql
- DIagdfT66f1MgJlLOpzMN18J4NKUPwJT4vb6f3lalJExxRF3kP88cf8V79FK_Txvqf3HIRhha.dt
- ox45L_MocPZHXBidzqdw3GmIYymfO7nExp5joLll9wob4JTcDddS8H1rnMaWOXoIMEACVEGphxqc
- cYztrHjbwULRbpGUTUOFmqpZUbuPj7wIoIrQlsod13xLR8o7q21H8XXukYx2j8Ty0Xk21dvK2Ab5
- sVB.dk5V6YZ06o3aYTed4P06Txu47lOWREJfVEkcVC0857dtkyLcgT.VkaF4d7CbV33_DtpK6.Xc
- DpWpCYYcQi.v1Tw.s930TVMM95h1dWrN65NQoqU9aDYmd6jI7.lvT6C7PFbm2BEdlI5iTwqJKetn
- FzQw4vkmD318golBH0wcghmmxI6I-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Thu, 22 Jul 2021 01:15:55 +0000
-Received: by kubenode520.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 2f3755ccd4bf344096bd339e2fe7a05a;
-          Thu, 22 Jul 2021 01:15:49 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, jmorris@namei.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Cc:     casey@schaufler-ca.com, linux-audit@redhat.com,
-        keescook@chromium.org, john.johansen@canonical.com,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        sds@tycho.nsa.gov, linux-kernel@vger.kernel.org
-Subject: [PATCH v28 25/25] AppArmor: Remove the exclusive flag
-Date:   Wed, 21 Jul 2021 17:47:58 -0700
-Message-Id: <20210722004758.12371-26-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210722004758.12371-1-casey@schaufler-ca.com>
-References: <20210722004758.12371-1-casey@schaufler-ca.com>
+        Thu, 22 Jul 2021 00:06:11 -0400
+Received: from mail-lj1-x22e.google.com (mail-lj1-x22e.google.com [IPv6:2a00:1450:4864:20::22e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AC29C0613CF
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jul 2021 21:46:47 -0700 (PDT)
+Received: by mail-lj1-x22e.google.com with SMTP id d17so5719742ljq.12
+        for <linux-security-module@vger.kernel.org>; Wed, 21 Jul 2021 21:46:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m+ImiuWzNqmI8K2PIEg02Mz48WRBGIbjXfLvvXNUNok=;
+        b=uWoobcJ6wPxdEWQ+zIEubTT/8UDlnfjGagPUyBfi8xaCA10fP6SwaCCOkKMCSIDpFf
+         ZzipP3NUALF4BWTE5GSTZtmVLDEdZTH/y+k3wWL0aQTTTkvi79qLts3pRTsakOypiQRm
+         nWN5h8C7U4ia0J/3UaftG5jI4Xp7Iw7GzacJtRjtEKD6fXzOOT4+1r9fWjrCKEXar4xS
+         P+fqjf21PBlGMVJq44L+ZIy8IHW2txYgxm8XbnsJ8B9K/gwnwJVVHxakfe7H8JqohLpF
+         9c+kZPfZsUt5SapY+TluJ34w4B9yJHd9aESho97AfZQiy9g1oAgftcltdWWIcg0+j2Is
+         RUOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m+ImiuWzNqmI8K2PIEg02Mz48WRBGIbjXfLvvXNUNok=;
+        b=gPU63qyjHGRMDRqOOA6j11Izmu57esO+IZt2ldlH3fiw2S3+ePV9hZSocU+UPSqrX8
+         Pzy1nQufMDv3c7T/wAgvoe/uf7SqMcKtCpriTZPewnwhRNpk+el8dxvapu7Idlo6+4wA
+         aKWOoNtr1bVH0EH4ZqH8EeQYwetItplzYXr6RXfy3J+aLVYrV58kyIrH3qisNrBxIY5K
+         qpmtIKihNAo8YgGmnrV6A8VRdYXdaQJpPkCp4KglMq18Fa1vW70+UBpyeGezPqgX7uyS
+         X3THnYRYL2VOZHx9f3CaA2ga2wL1NQjydXmhqfrSb5ZiaE/18L+Zo6nlgWdUHhC7RoPy
+         72ag==
+X-Gm-Message-State: AOAM531JqGfxUYs9pkKXIxeuCOvr33+ZDFqlZhCq2rNJ6NC8vaVGvcoX
+        oAwdXzXU+Va1ksU+DXEMqIyQN9Oyplb7CbQb+pckzA==
+X-Google-Smtp-Source: ABdhPJwpIXZELiOM8RYuH/iMiY6CUV6QgKd0XdEPCLARV9RJGVi/GRVX1zk7gJc80kEYUqwKhvkI+dY2lKZReh8xfjY=
+X-Received: by 2002:a2e:5348:: with SMTP id t8mr32751947ljd.343.1626929205224;
+ Wed, 21 Jul 2021 21:46:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210721160258.7024-1-a.fatoum@pengutronix.de>
+In-Reply-To: <20210721160258.7024-1-a.fatoum@pengutronix.de>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Thu, 22 Jul 2021 10:16:32 +0530
+Message-ID: <CAFA6WYPz048E7+LU=jefU=RrppuYd9Dgn1+jD6Dn8G=J9UJtpw@mail.gmail.com>
+Subject: Re: [PATCH v2] KEYS: trusted: fix use as module when CONFIG_TCG_TPM=m
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        kernel <kernel@pengutronix.de>,
+        Andreas Rammhold <andreas@rammhold.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With the inclusion of the interface LSM process attribute
-mechanism AppArmor no longer needs to be treated as an
-"exclusive" security module. Remove the flag that indicates
-it is exclusive. Remove the stub getpeersec_dgram AppArmor
-hook as it has no effect in the single LSM case and
-interferes in the multiple LSM case.
+On Wed, 21 Jul 2021 at 21:34, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>
+> Since commit 5d0682be3189 ("KEYS: trusted: Add generic trusted keys
+> framework"), trusted.ko built with CONFIG_TCG_TPM=CONFIG_TRUSTED_KEYS=m
+> will not register the TPM trusted key type at runtime.
+>
+> This is because, after that rework, CONFIG_DEPENDENCY of the TPM
+> and TEE backends were checked with #ifdef, but that's only true
+> when they're built-in.
+>
+> Fix this by introducing two new boolean Kconfig symbols:
+> TRUSTED_KEYS_TPM and TRUSTED_KEYS_TEE with the appropriate
+> dependencies and use them to check which backends are available.
+>
+> This also has a positive effect on user experience:
+>
+>  - It's now possible to use TEE trusted keys without CONFIG_TCG_TPM
+>  - It's now possible to enable CONFIG_TCG_TPM, but exclude TPM from
+>    available trust sources
+>  - TEE=m && TRUSTED_KEYS=y no longer leads to TEE support
+>    being silently dropped
+>
+> Any code depending on the TPM trusted key backend or symbols exported
+> by it will now need to explicitly state that it
+>
+>   depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
+>
+> The latter to ensure the dependency is built and the former to ensure
+> it's reachable for module builds. This currently only affects
+> CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE, so it's fixed up here as well.
+>
+> Reported-by: Andreas Rammhold <andreas@rammhold.de>
+> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+>
+> (Implicit) v1 was as a preparatory patch for CAAM trusted keys[1] with the
+> goal of fixing the Kconfig inflexibility after the TEE trusted key rework.
+>
+> Unbeknownst to me, it also fixes a regression, which was later
+> reported by Andreas[2] along with a patch.
+>
+> I split out the fix from the CAAM series and adjusted the commit
+> message to explain the regression.
+>
+> v1 -> v2:
+>   - Move rest of TPM-related selects from TRUSTED_KEYS to
+>     TRUSTED_KEYS_TPM (Sumit)
+>   - Remove left-over line in Makefile (Sumit)
+>   - added Fixes: tag
+>   - adjust commit message to reference the regression reported
+>     by Andreas
+>   - have ASYMMETRIC_TPM_KEY_SUBTYPE depend on TRUSTED_KEYS_TPM,
+>     because it references global symbols that are exported
+>     by the trusted key TPM backend.
+>
+> [1]: https://lore.kernel.org/linux-integrity/f8285eb0135ba30c9d846cf9dd395d1f5f8b1efc.1624364386.git-series.a.fatoum@pengutronix.de/
+> [2]: https://lore.kernel.org/linux-integrity/20210719091335.vwfebcpkf4pag3wm@wrt/T/#t
+>
+> To: Jarkko Sakkinen <jarkko@kernel.org>
+> To: James Morris <jmorris@namei.org>
+> To: "Serge E. Hallyn" <serge@hallyn.com>
+> To: James Bottomley <jejb@linux.ibm.com>
+> To: Mimi Zohar <zohar@linux.ibm.com>
+> To: Sumit Garg <sumit.garg@linaro.org>
+> To: David Howells <dhowells@redhat.com>
+> To: Herbert Xu <herbert@gondor.apana.org.au>
+> To: "David S. Miller" <davem@davemloft.net>
+> Cc: David Gstir <david@sigma-star.at>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-crypto@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> Cc: linux-integrity@vger.kernel.org
+> ---
+>  crypto/asymmetric_keys/Kconfig            |  2 +-
+>  security/keys/Kconfig                     | 18 ++++++--------
+>  security/keys/trusted-keys/Kconfig        | 29 +++++++++++++++++++++++
+>  security/keys/trusted-keys/Makefile       |  8 +++----
+>  security/keys/trusted-keys/trusted_core.c |  4 ++--
+>  5 files changed, 43 insertions(+), 18 deletions(-)
+>  create mode 100644 security/keys/trusted-keys/Kconfig
+>
 
-Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/apparmor/lsm.c | 20 +-------------------
- 1 file changed, 1 insertion(+), 19 deletions(-)
+Looks good to me apart from the minor comment below. With that fixed:
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 65a004597e53..15af5a5cb0c0 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1138,22 +1138,6 @@ static int apparmor_socket_getpeersec_stream(struct socket *sock,
- 	return error;
- }
- 
--/**
-- * apparmor_socket_getpeersec_dgram - get security label of packet
-- * @sock: the peer socket
-- * @skb: packet data
-- * @secid: pointer to where to put the secid of the packet
-- *
-- * Sets the netlabel socket state on sk from parent
-- */
--static int apparmor_socket_getpeersec_dgram(struct socket *sock,
--					    struct sk_buff *skb, u32 *secid)
--
--{
--	/* TODO: requires secid support */
--	return -ENOPROTOOPT;
--}
--
- /**
-  * apparmor_sock_graft - Initialize newly created socket
-  * @sk: child sock
-@@ -1257,8 +1241,6 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- #endif
- 	LSM_HOOK_INIT(socket_getpeersec_stream,
- 		      apparmor_socket_getpeersec_stream),
--	LSM_HOOK_INIT(socket_getpeersec_dgram,
--		      apparmor_socket_getpeersec_dgram),
- 	LSM_HOOK_INIT(sock_graft, apparmor_sock_graft),
- #ifdef CONFIG_NETWORK_SECMARK
- 	LSM_HOOK_INIT(inet_conn_request, apparmor_inet_conn_request),
-@@ -1928,7 +1910,7 @@ static int __init apparmor_init(void)
- 
- DEFINE_LSM(apparmor) = {
- 	.name = "apparmor",
--	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.enabled = &apparmor_enabled,
- 	.blobs = &apparmor_blob_sizes,
- 	.init = apparmor_init,
--- 
-2.31.1
+Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
 
+> diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+> index 1f1f004dc757..8886eddbf881 100644
+> --- a/crypto/asymmetric_keys/Kconfig
+> +++ b/crypto/asymmetric_keys/Kconfig
+> @@ -25,7 +25,7 @@ config ASYMMETRIC_PUBLIC_KEY_SUBTYPE
+>  config ASYMMETRIC_TPM_KEY_SUBTYPE
+>         tristate "Asymmetric TPM backed private key subtype"
+>         depends on TCG_TPM
+> -       depends on TRUSTED_KEYS
+> +       depends on TRUSTED_KEYS && TRUSTED_KEYS_TPM
+>         select CRYPTO_HMAC
+>         select CRYPTO_SHA1
+>         select CRYPTO_HASH_INFO
+> diff --git a/security/keys/Kconfig b/security/keys/Kconfig
+> index 64b81abd087e..9ec302962fe2 100644
+> --- a/security/keys/Kconfig
+> +++ b/security/keys/Kconfig
+> @@ -70,23 +70,19 @@ config BIG_KEYS
+>
+>  config TRUSTED_KEYS
+>         tristate "TRUSTED KEYS"
+> -       depends on KEYS && TCG_TPM
+> -       select CRYPTO
+> -       select CRYPTO_HMAC
+> -       select CRYPTO_SHA1
+> -       select CRYPTO_HASH_INFO
+> -       select ASN1_ENCODER
+> -       select OID_REGISTRY
+> -       select ASN1
+> +       depends on KEYS
+>         help
+>           This option provides support for creating, sealing, and unsealing
+>           keys in the kernel. Trusted keys are random number symmetric keys,
+> -         generated and RSA-sealed by the TPM. The TPM only unseals the keys,
+> -         if the boot PCRs and other criteria match.  Userspace will only ever
+> -         see encrypted blobs.
+> +         generated and sealed by a trust source selected at kernel boot-time.
+> +         Userspace will only ever see encrypted blobs.
+>
+>           If you are unsure as to whether this is required, answer N.
+>
+> +if TRUSTED_KEYS
+> +source "security/keys/trusted-keys/Kconfig"
+> +endif
+> +
+>  config ENCRYPTED_KEYS
+>         tristate "ENCRYPTED KEYS"
+>         depends on KEYS
+> diff --git a/security/keys/trusted-keys/Kconfig b/security/keys/trusted-keys/Kconfig
+> new file mode 100644
+> index 000000000000..c163cfeedff6
+> --- /dev/null
+> +++ b/security/keys/trusted-keys/Kconfig
+> @@ -0,0 +1,29 @@
+> +config TRUSTED_KEYS_TPM
+> +       bool "TPM-based trusted keys"
+> +       depends on TCG_TPM >= TRUSTED_KEYS
+> +       default y
+> +       select CRYPTO
+> +       select CRYPTO_HMAC
+> +       select CRYPTO_SHA1
+> +       select CRYPTO_HASH_INFO
+> +       select ASN1_ENCODER
+> +       select OID_REGISTRY
+> +       select ASN1
+> +       help
+> +         Enable use of the Trusted Platform Module (TPM) as trusted key
+> +         backend. Trusted keys are are random number symmetric keys,
+
+s/are are/are/
+
+-Sumit
+
+> +         which will be generated and RSA-sealed by the TPM.
+> +         The TPM only unseals the keys, if the boot PCRs and other
+> +         criteria match.
+> +
+> +config TRUSTED_KEYS_TEE
+> +       bool "TEE-based trusted keys"
+> +       depends on TEE >= TRUSTED_KEYS
+> +       default y
+> +       help
+> +         Enable use of the Trusted Execution Environment (TEE) as trusted
+> +         key backend.
+> +
+> +if !TRUSTED_KEYS_TPM && !TRUSTED_KEYS_TEE
+> +comment "No trust source selected!"
+> +endif
+> diff --git a/security/keys/trusted-keys/Makefile b/security/keys/trusted-keys/Makefile
+> index feb8b6c3cc79..2e2371eae4d5 100644
+> --- a/security/keys/trusted-keys/Makefile
+> +++ b/security/keys/trusted-keys/Makefile
+> @@ -5,10 +5,10 @@
+>
+>  obj-$(CONFIG_TRUSTED_KEYS) += trusted.o
+>  trusted-y += trusted_core.o
+> -trusted-y += trusted_tpm1.o
+> +trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm1.o
+>
+>  $(obj)/trusted_tpm2.o: $(obj)/tpm2key.asn1.h
+> -trusted-y += trusted_tpm2.o
+> -trusted-y += tpm2key.asn1.o
+> +trusted-$(CONFIG_TRUSTED_KEYS_TPM) += trusted_tpm2.o
+> +trusted-$(CONFIG_TRUSTED_KEYS_TPM) += tpm2key.asn1.o
+>
+> -trusted-$(CONFIG_TEE) += trusted_tee.o
+> +trusted-$(CONFIG_TRUSTED_KEYS_TEE) += trusted_tee.o
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+> index d5c891d8d353..8cab69e5d0da 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
+>  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+>
+>  static const struct trusted_key_source trusted_key_sources[] = {
+> -#if defined(CONFIG_TCG_TPM)
+> +#if defined(CONFIG_TRUSTED_KEYS_TPM)
+>         { "tpm", &trusted_key_tpm_ops },
+>  #endif
+> -#if defined(CONFIG_TEE)
+> +#if defined(CONFIG_TRUSTED_KEYS_TEE)
+>         { "tee", &trusted_key_tee_ops },
+>  #endif
+>  };
+> --
+> 2.30.2
+>
