@@ -2,32 +2,33 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18F5C19F3C
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2231DC4320E
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A898A60F6B
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3EA60F11
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239693AbhGZP74 (ORCPT
+        id S239631AbhGZQAi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jul 2021 11:59:56 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3491 "EHLO
+        Mon, 26 Jul 2021 12:00:38 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3494 "EHLO
         frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239975AbhGZP7G (ORCPT
+        with ESMTP id S239633AbhGZQAV (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jul 2021 11:59:06 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GYQQ86Yg8z6G9Rr;
-        Tue, 27 Jul 2021 00:30:24 +0800 (CST)
+        Mon, 26 Jul 2021 12:00:21 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GYQJp6lCtz6GCVT;
+        Tue, 27 Jul 2021 00:25:46 +0800 (CST)
 Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
  fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 26 Jul 2021 18:39:32 +0200
+ 15.1.2176.2; Mon, 26 Jul 2021 18:40:47 +0200
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
         <mchehab+huawei@kernel.org>
@@ -35,10 +36,11 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH v2 07/12] diglim: Interfaces - digest_lists_loaded
-Date:   Mon, 26 Jul 2021 18:36:55 +0200
-Message-ID: <20210726163700.2092768-8-roberto.sassu@huawei.com>
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [RFC][PATCH v2 10/12] diglim: Interfaces - digests_count
+Date:   Mon, 26 Jul 2021 18:36:58 +0200
+Message-ID: <20210726163700.2092768-11-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210726163700.2092768-1-roberto.sassu@huawei.com>
 References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
@@ -52,404 +54,102 @@ X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce the digest_lists_loaded directory in
-<securityfs>/integrity/diglim.
+Introduce the digests_count interface, which shows the current number of
+digests stored in the hash table by type.
 
-It contains two files for each loaded digest list: one shows the digest
-list in binary format, and the other (with .ascii prefix) shows the digest
-list in ASCII format.
-
-Files are added and removed at the same time digest lists are added and
-removed.
-
+Reported-by: kernel test robot <lkp@intel.com> (frame size warning)
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
- security/integrity/diglim/fs.c | 307 ++++++++++++++++++++++++++++++++-
- 1 file changed, 304 insertions(+), 3 deletions(-)
+ security/integrity/diglim/fs.c | 48 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
 diff --git a/security/integrity/diglim/fs.c b/security/integrity/diglim/fs.c
-index 07a0d75a0e33..caf2923c9146 100644
+index f1c1fc56448a..3b1d9616cb62 100644
 --- a/security/integrity/diglim/fs.c
 +++ b/security/integrity/diglim/fs.c
-@@ -25,6 +25,17 @@
+@@ -23,6 +23,7 @@
+ #include "diglim.h"
+ 
  #define MAX_DIGEST_LIST_SIZE (64 * 1024 * 1024 - 1)
++#define TMPBUF_SIZE 512
  
  static struct dentry *diglim_dir;
-+/**
-+ * DOC: digest_lists_loaded
-+ *
-+ * digest_lists_loaded is a directory containing two files for each
-+ * loaded digest list: one shows the digest list in binary format, and the
-+ * other (with .ascii prefix) shows the digest list in ASCII format.
-+ *
-+ * Files are added and removed at the same time digest lists are added and
-+ * removed.
-+ */
-+static struct dentry *digest_lists_loaded_dir;
  /**
-  * DOC: digest_list_add
+@@ -36,6 +37,13 @@ static struct dentry *diglim_dir;
+  * removed.
+  */
+ static struct dentry *digest_lists_loaded_dir;
++/**
++ * DOC: digests_count
++ *
++ * digests_count shows the current number of digests stored in the hash
++ * table by type.
++ */
++static struct dentry *digests_count;
+ /**
+  * DOC: digest_label
   *
-@@ -47,6 +58,245 @@ static struct dentry *digest_list_add_dentry;
- static struct dentry *digest_list_del_dentry;
+@@ -73,6 +81,39 @@ static struct dentry *digest_list_del_dentry;
+ char digest_query[CRYPTO_MAX_ALG_NAME + 1 + IMA_MAX_DIGEST_SIZE * 2 + 1];
  char digest_label[NAME_MAX + 1];
  
-+static int parse_digest_list_filename(const char *digest_list_filename,
-+				      u8 *digest, enum hash_algo *algo)
++static char *types_str[COMPACT__LAST] = {
++	[COMPACT_PARSER] = "Parser",
++	[COMPACT_FILE] = "File",
++	[COMPACT_METADATA] = "Metadata",
++	[COMPACT_DIGEST_LIST] = "Digest list",
++};
++
++static ssize_t diglim_show_htable_len(struct file *filp, char __user *buf,
++				      size_t count, loff_t *ppos)
 +{
++	char *tmpbuf;
++	ssize_t ret, len = 0;
 +	int i;
 +
-+	for (i = 0; i < HASH_ALGO__LAST; i++)
-+		if (!strncmp(digest_list_filename, hash_algo_name[i],
-+			     strlen(hash_algo_name[i])))
-+			break;
++	tmpbuf = kmalloc(TMPBUF_SIZE, GFP_KERNEL);
++	if (!tmpbuf)
++		return -ENOMEM;
 +
-+	if (i == HASH_ALGO__LAST)
-+		return -ENOENT;
++	for (i = COMPACT_PARSER; i < COMPACT__LAST; i++)
++		len += scnprintf(tmpbuf + len, TMPBUF_SIZE - len,
++				 "%s digests: %lu\n", types_str[i],
++				 htable[i].len);
 +
-+	*algo = i;
-+	return hex2bin(digest, strchr(digest_list_filename, '-') + 1,
-+		       hash_digest_size[*algo]);
++	ret = simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
++	kfree(tmpbuf);
++	return ret;
 +}
 +
-+/* *pos is the offset of the digest list data to show. */
-+static void *digest_list_start(struct seq_file *m, loff_t *pos)
-+{
-+	struct digest_item *d;
-+	u8 digest[IMA_MAX_DIGEST_SIZE];
-+	enum hash_algo algo;
-+	struct digest_list_item *digest_list;
-+	int ret;
-+
-+	if (m->private) {
-+		digest_list = (struct digest_list_item *)m->private;
-+
-+		if (*pos == digest_list->size)
-+			return NULL;
-+
-+		return digest_list->buf + *pos;
-+	}
-+
-+	ret = parse_digest_list_filename(file_dentry(m->file)->d_name.name,
-+					 digest, &algo);
-+	if (ret < 0)
-+		return NULL;
-+
-+	d = __digest_lookup(digest, algo, COMPACT_DIGEST_LIST, NULL, NULL);
-+	if (!d)
-+		return NULL;
-+
-+	digest_list = list_first_entry(&d->refs,
-+				struct digest_list_item_ref, list)->digest_list;
-+	m->private = digest_list;
-+	return digest_list->buf;
-+}
-+
-+static void *digest_list_next(struct seq_file *m, void *v, loff_t *pos)
-+{
-+	struct compact_list_hdr *hdr;
-+	struct digest_list_item *digest_list =
-+					(struct digest_list_item *)m->private;
-+	void *bufp = digest_list->buf;
-+	bool is_header = false;
-+
-+	/* Determine if v points to a header or a digest. */
-+	while (bufp <= v) {
-+		hdr = (struct compact_list_hdr *)bufp;
-+		if (bufp == v) {
-+			is_header = true;
-+			break;
-+		}
-+
-+		bufp += sizeof(*hdr) + hdr->datalen;
-+	}
-+
-+	if (is_header)
-+		*pos += sizeof(*hdr);
-+	else
-+		*pos += hash_digest_size[hdr->algo];
-+
-+	if (*pos == digest_list->size)
-+		return NULL;
-+
-+	return digest_list->buf + *pos;
-+}
-+
-+static void digest_list_stop(struct seq_file *m, void *v)
-+{
-+}
-+
-+static void print_digest(struct seq_file *m, u8 *digest, u32 size)
-+{
-+	u32 i;
-+
-+	for (i = 0; i < size; i++)
-+		seq_printf(m, "%02x", *(digest + i));
-+}
-+
-+static void digest_list_putc(struct seq_file *m, void *data, int datalen)
-+{
-+	while (datalen--)
-+		seq_putc(m, *(char *)data++);
-+}
-+
-+static int digest_list_show_common(struct seq_file *m, void *v, bool binary)
-+{
-+	struct compact_list_hdr *hdr;
-+	struct digest_list_item *digest_list =
-+					(struct digest_list_item *)m->private;
-+	void *bufp = digest_list->buf;
-+	bool is_header = false;
-+
-+	/* Determine if v points to a header or a digest. */
-+	while (bufp <= v) {
-+		hdr = (struct compact_list_hdr *)bufp;
-+		if (bufp == v) {
-+			is_header = true;
-+			break;
-+		}
-+
-+		bufp += sizeof(*hdr) + hdr->datalen;
-+	}
-+
-+	if (is_header) {
-+		if (binary)
-+			digest_list_putc(m, v, sizeof(*hdr));
-+		else
-+			seq_printf(m,
-+				"actions: %d, version: %d, algo: %s, type: %d, modifiers: %d, count: %d, datalen: %d\n",
-+				digest_list->actions, hdr->version,
-+				hash_algo_name[hdr->algo], hdr->type,
-+				hdr->modifiers, hdr->count, hdr->datalen);
-+		return 0;
-+	}
-+
-+	if (binary) {
-+		digest_list_putc(m, v, hash_digest_size[hdr->algo]);
-+	} else {
-+		print_digest(m, v, hash_digest_size[hdr->algo]);
-+		seq_puts(m, "\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static int digest_list_show(struct seq_file *m, void *v)
-+{
-+	return digest_list_show_common(m, v, true);
-+}
-+
-+static int digest_list_ascii_show(struct seq_file *m, void *v)
-+{
-+	return digest_list_show_common(m, v, false);
-+}
-+
-+static const struct seq_operations digest_list_seqops = {
-+	.start = digest_list_start,
-+	.next = digest_list_next,
-+	.stop = digest_list_stop,
-+	.show = digest_list_show
++static const struct file_operations htable_len_ops = {
++	.read = diglim_show_htable_len,
++	.llseek = generic_file_llseek,
 +};
 +
-+static int digest_list_seq_open(struct inode *inode, struct file *file)
-+{
-+	return seq_open(file, &digest_list_seqops);
-+}
-+
-+static const struct file_operations digest_list_ops = {
-+	.open = digest_list_seq_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = seq_release,
-+};
-+
-+static const struct seq_operations digest_list_ascii_seqops = {
-+	.start = digest_list_start,
-+	.next = digest_list_next,
-+	.stop = digest_list_stop,
-+	.show = digest_list_ascii_show
-+};
-+
-+static int digest_list_ascii_seq_open(struct inode *inode, struct file *file)
-+{
-+	return seq_open(file, &digest_list_ascii_seqops);
-+}
-+
-+static const struct file_operations digest_list_ascii_ops = {
-+	.open = digest_list_ascii_seq_open,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+	.release = seq_release,
-+};
-+
-+static int digest_list_get_secfs_files(char *label, u8 *digest,
-+				       enum hash_algo algo, enum ops op,
-+				       struct dentry **dentry,
-+				       struct dentry **dentry_ascii)
-+{
-+	char digest_list_filename[NAME_MAX + 1] = { 0 };
-+	u8 digest_str[IMA_MAX_DIGEST_SIZE * 2 + 1] = { 0 };
-+	char *dot, *label_ptr;
-+
-+	label_ptr = strrchr(label, '/');
-+	if (label_ptr)
-+		label = label_ptr + 1;
-+
-+	bin2hex(digest_str, digest, hash_digest_size[algo]);
-+
-+	snprintf(digest_list_filename, sizeof(digest_list_filename),
-+		 "%s-%s-%s.ascii", hash_algo_name[algo], digest_str, label);
-+
-+	dot = strrchr(digest_list_filename, '.');
-+
-+	*dot = '\0';
-+	if (op == DIGEST_LIST_ADD)
-+		*dentry = securityfs_create_file(digest_list_filename, 0440,
-+						 digest_lists_loaded_dir, NULL,
-+						 &digest_list_ops);
-+	else
-+		*dentry = lookup_positive_unlocked(digest_list_filename,
-+						digest_lists_loaded_dir,
-+						strlen(digest_list_filename));
-+	*dot = '.';
-+	if (IS_ERR(*dentry))
-+		return PTR_ERR(*dentry);
-+
-+	if (op == DIGEST_LIST_ADD)
-+		*dentry_ascii = securityfs_create_file(digest_list_filename,
-+						0440, digest_lists_loaded_dir,
-+						NULL, &digest_list_ascii_ops);
-+	else
-+		*dentry_ascii = lookup_positive_unlocked(digest_list_filename,
-+						digest_lists_loaded_dir,
-+						strlen(digest_list_filename));
-+	if (IS_ERR(*dentry_ascii)) {
-+		if (op == DIGEST_LIST_ADD)
-+			securityfs_remove(*dentry);
-+
-+		return PTR_ERR(*dentry_ascii);
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * digest_list_read: read and parse the digest list from the path
-  */
-@@ -60,6 +310,7 @@ static ssize_t digest_list_read(char *path, enum ops op)
- 	char event_name[NAME_MAX + 9 + 1];
- 	u8 digest[IMA_MAX_DIGEST_SIZE] = { 0 };
- 	enum hash_algo algo;
-+	struct dentry *dentry, *dentry_ascii;
- 	int rc, pathlen = strlen(path);
- 
- 	/* Remove \n. */
-@@ -95,9 +346,27 @@ static ssize_t digest_list_read(char *path, enum ops op)
- 	if (!rc || rc == -EEXIST)
- 		actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
- 
--	rc = digest_list_parse(size, data, op, actions, digest, algo, "");
-+	rc = digest_list_get_secfs_files(path, digest, algo, op, &dentry,
-+					 &dentry_ascii);
-+	if (rc < 0)
-+		goto out_vfree;
-+
-+	rc = digest_list_parse(size, data, op, actions, digest, algo,
-+			       dentry->d_name.name);
- 	if (rc < 0)
- 		pr_err("unable to upload digest list %s (%d)\n", path, rc);
-+
-+	/* Release reference taken in digest_list_get_secfs_files(). */
-+	if (op == DIGEST_LIST_DEL) {
-+		dput(dentry);
-+		dput(dentry_ascii);
-+	}
-+
-+	if ((rc < 0 && op == DIGEST_LIST_ADD) ||
-+	    (rc == size && op == DIGEST_LIST_DEL)) {
-+		securityfs_remove(dentry);
-+		securityfs_remove(dentry_ascii);
-+	}
- out_vfree:
- 	vfree(data);
- out:
-@@ -116,9 +385,10 @@ static ssize_t digest_list_write(struct file *file, const char __user *buf,
- 				 size_t datalen, loff_t *ppos)
+ static int parse_digest_list_filename(const char *digest_list_filename,
+ 				      u8 *digest, enum hash_algo *algo)
  {
- 	char *data;
-+	char *digest_label_ptr;
- 	ssize_t result;
- 	enum ops op = DIGEST_LIST_ADD;
--	struct dentry *dentry = file_dentry(file);
-+	struct dentry *dentry = file_dentry(file), *dentry_ascii;
- 	u8 digest[IMA_MAX_DIGEST_SIZE];
- 	char event_name[NAME_MAX + 11 + 1];
- 	enum hash_algo algo;
-@@ -147,6 +417,10 @@ static ssize_t digest_list_write(struct file *file, const char __user *buf,
- 	if (data[0] == '/') {
- 		result = digest_list_read(data, op);
- 	} else {
-+		/* Remove \n. */
-+		digest_label_ptr = digest_label;
-+		strsep(&digest_label_ptr, "\n");
-+
- 		snprintf(event_name, sizeof(event_name), "%s_buffer_%s",
- 			 op == DIGEST_LIST_ADD ? "add" : "del", digest_label);
+@@ -696,6 +737,12 @@ static int __init diglim_fs_init(void)
+ 	if (IS_ERR(digest_lists_loaded_dir))
+ 		goto out;
  
-@@ -164,12 +438,33 @@ static ssize_t digest_list_write(struct file *file, const char __user *buf,
- 		if (!result || result == -EEXIST)
- 			actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
- 
-+		result = digest_list_get_secfs_files(digest_label[0] != '\0' ?
-+						     digest_label : "parser",
-+						     digest, algo, op,
-+						     &dentry, &dentry_ascii);
-+		if (result < 0)
-+			goto out_kfree;
-+
-+		memset(digest_label, 0, sizeof(digest_label));
-+
- 		result = digest_list_parse(datalen, data, op, actions, digest,
--					   algo, "");
-+					   algo, dentry->d_name.name);
- 		if (result != datalen) {
- 			pr_err("unable to upload generated digest list\n");
- 			result = -EINVAL;
- 		}
-+
-+		/* Release reference taken in digest_list_get_secfs_files(). */
-+		if (op == DIGEST_LIST_DEL) {
-+			dput(dentry);
-+			dput(dentry_ascii);
-+		}
-+
-+		if ((result < 0 && op == DIGEST_LIST_ADD) ||
-+		    (result == datalen && op == DIGEST_LIST_DEL)) {
-+			securityfs_remove(dentry);
-+			securityfs_remove(dentry_ascii);
-+		}
- 	}
- out_kfree:
- 	kfree(data);
-@@ -216,6 +511,11 @@ static int __init diglim_fs_init(void)
- 	if (IS_ERR(diglim_dir))
- 		return -1;
- 
-+	digest_lists_loaded_dir = securityfs_create_dir("digest_lists_loaded",
-+							diglim_dir);
-+	if (IS_ERR(digest_lists_loaded_dir))
++	digests_count = securityfs_create_file("digests_count", 0440,
++					       diglim_dir, NULL,
++					       &htable_len_ops);
++	if (IS_ERR(digests_count))
 +		goto out;
 +
  	digest_list_add_dentry = securityfs_create_file("digest_list_add", 0200,
  						diglim_dir, NULL,
  						&digest_list_upload_ops);
-@@ -232,6 +532,7 @@ static int __init diglim_fs_init(void)
- out:
+@@ -726,6 +773,7 @@ static int __init diglim_fs_init(void)
+ 	securityfs_remove(digest_label_dentry);
  	securityfs_remove(digest_list_del_dentry);
  	securityfs_remove(digest_list_add_dentry);
-+	securityfs_remove(digest_lists_loaded_dir);
++	securityfs_remove(digests_count);
+ 	securityfs_remove(digest_lists_loaded_dir);
  	securityfs_remove(diglim_dir);
  	return -1;
- }
 -- 
 2.25.1
 
