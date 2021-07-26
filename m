@@ -2,407 +2,228 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A956C43216
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A0AC4320A
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 17:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3295260FED
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 854B460F57
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 17:15:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232871AbhGZQBK (ORCPT
+        id S241649AbhGZQen (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jul 2021 12:01:10 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3490 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239967AbhGZP7F (ORCPT
+        Mon, 26 Jul 2021 12:34:43 -0400
+Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:23054 "EHLO
+        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S241016AbhGZQdx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jul 2021 11:59:05 -0400
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GYQQ80yMKz6G9Ny;
-        Tue, 27 Jul 2021 00:30:24 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Mon, 26 Jul 2021 18:39:31 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
-        <mchehab+huawei@kernel.org>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add, digest_list_del
-Date:   Mon, 26 Jul 2021 18:36:54 +0200
-Message-ID: <20210726163700.2092768-7-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210726163700.2092768-1-roberto.sassu@huawei.com>
-References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+        Mon, 26 Jul 2021 12:33:53 -0400
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16QHBn6n007952;
+        Mon, 26 Jul 2021 17:13:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : content-type :
+ mime-version; s=corp-2021-07-09;
+ bh=NmeSW/zO8BVMJZcO+IuH9pOtMzJchYajDu8YD/VIhPE=;
+ b=Ts1cXJ9nDa34ditM8Ka2RMpsS/WrIziCMe1GXEpL6EaZYkRcSP/ekZIZiM0kBkbMay4Z
+ FpooREvcpeOUFw525Fejyf2uL5PBQMqizOS2oTFg2hFu+G33Z6KwLH0AX9eyiYhhZL9B
+ x0wzmMIXOUAz/eNeWbvv+5wlzn710paoMQ7pUbY1XX6syo4jUEavq2wU/s58IneVxcNT
+ Grg27cSUOUxBHFsmFP6YGUbqcXINQkSvo5DHNoFXRfKa44MNlIOXteS+9ZHqymJR4h3q
+ PmsefvCy0VTMXTP2grVBwXD6iLLnjLka+5xA7iyUsWHlO5y0KQiWNT+sd3YiXcDIIb6P 1A== 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references : content-type :
+ mime-version; s=corp-2020-01-29;
+ bh=NmeSW/zO8BVMJZcO+IuH9pOtMzJchYajDu8YD/VIhPE=;
+ b=eWM5kNCLrX3mSWtK9d4Fa8Fvj0/niQ28/UjjszqRfm+gDm84df8d6VIiY9NeJOpomsL4
+ jaKpIB5eVLviigecihG4dtRbDIoIHSdR4F2wy3Jxy3TEFxHOnQCvvq7vpBNqY9BdEvxk
+ csNfl1u9kaU3wB0j5LQQZW+21Us5kObf7+jaOoAnpLZe1atALXWjCDvzQPPHR+uWlyWM
+ GUIzEgUdnwc7NIiSXhCyvXS6Uo4lwSwtPFlYcL/3Gko1rHjCyQmby19nYNEE8k3pPZok
+ RlqxvdEeHZdZiuB1AU5e33twq9s6qQ87xgya4Y3djA+Q0UH5enfk7ix+Hf0AG5Eb8KAg uA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3a1qkqsk20-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 26 Jul 2021 17:13:48 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 16QHBdWS043745;
+        Mon, 26 Jul 2021 17:13:47 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2173.outbound.protection.outlook.com [104.47.57.173])
+        by aserp3030.oracle.com with ESMTP id 3a08wewwmk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 26 Jul 2021 17:13:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gCoF4Atm++nsaGHuMM78BknNRyd1KVMPnJ9GalWEFLX6FqAPpIFNJqZSiYIXBrSH+npoCRsCvrbfBlXrzgNLJLtkLxt/g231D0LzM3yEcSLKsSnQR3acKLEDxq6R7FHxLAwouPyozlOlES4G6zl5bsnnbNu8GIPAXF+hRL6oP6fpVQ/TFfwJC4QsjSG6Rx+TqvhDcSU6h3RCdg+rj6AEptD4osz3ef+26oN+Csm0yqUT856xBBzWmuiVFWQRtYormlfZnFqlgNKBOR4yTAUtqO9XFG/4VTO+j3MtXk4gqUIk81QrmASG7MzKsLIgnertV8VpOUXaDy+hO5FbpcErow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NmeSW/zO8BVMJZcO+IuH9pOtMzJchYajDu8YD/VIhPE=;
+ b=QBn8OINfPozhT+fI68rmmG4kVyaHppRqcuMOsJB1CM+AZn1geQMhvoM1yYS+odl/bqYnzsQ0VNsdOBEmUQdWrYbFGY+xowKI7/rgWjP/WKsHC0CFDZ5SMQGo9beS9RG7bD0QSFTAjvi3g+cp90iisILrmibujODVSCIUhnoJ5k1s3LeAVvCjxhiqpEj6hb67T1juMEyW2DQC8htD29C7N4ii3XjDc3ZcumNGKMY+XlFluxAGTTFj5zzc44WxzeZzRU6HmrVXK+N9thACh86juRmUQL1IyHG006lJZQUijzhn1O/hEWZQEG+r7f6GIfQxHp+3uBUi0rNu7BwK9VLEtA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NmeSW/zO8BVMJZcO+IuH9pOtMzJchYajDu8YD/VIhPE=;
+ b=vWASxXJ+L86+fqXIt+JhrKQAEcEWFCfeiyYW/T8fQTAPb0Dn9RHxo3xz71chlBj2VPNa8+92h5s4HIH+F/wE/y3sDdhLXDI3uvz73ZbxxhILItrZqxQCbVVOh7nKsAyQXryijChCKlbPvbqXvpDKQyZmTWJ7Ulo1kGfwrhk2tqk=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
+ by CH0PR10MB5211.namprd10.prod.outlook.com (2603:10b6:610:df::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.26; Mon, 26 Jul
+ 2021 17:13:45 +0000
+Received: from CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::1d17:4a7d:92cc:8fc3]) by CH2PR10MB4150.namprd10.prod.outlook.com
+ ([fe80::1d17:4a7d:92cc:8fc3%6]) with mapi id 15.20.4352.031; Mon, 26 Jul 2021
+ 17:13:45 +0000
+From:   Eric Snowberg <eric.snowberg@oracle.com>
+To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com
+Cc:     eric.snowberg@oracle.com, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        glin@suse.com, konrad.wilk@oracle.com
+Subject: [PATCH RFC v2 04/12] integrity: add add_to_mok_keyring
+Date:   Mon, 26 Jul 2021 13:13:11 -0400
+Message-Id: <20210726171319.3133879-5-eric.snowberg@oracle.com>
+X-Mailer: git-send-email 2.18.4
+In-Reply-To: <20210726171319.3133879-1-eric.snowberg@oracle.com>
+References: <20210726171319.3133879-1-eric.snowberg@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: SN6PR01CA0004.prod.exchangelabs.com (2603:10b6:805:b6::17)
+ To CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.us.oracle.com (148.87.23.11) by SN6PR01CA0004.prod.exchangelabs.com (2603:10b6:805:b6::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4352.24 via Frontend Transport; Mon, 26 Jul 2021 17:13:42 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 9c38deaf-2c57-4cf7-58cb-08d95058b989
+X-MS-TrafficTypeDiagnostic: CH0PR10MB5211:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <CH0PR10MB52119B0CFA44624BAE22D6C387E89@CH0PR10MB5211.namprd10.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QRnbBJt64VTL9iNJdiw8BADy5TdvDK/fKbJ59Oh5JYmO/goOGURmo5Q5CTN/TZD9Phz7iz2uzSoPx78S457vGYCzJwV0c0/L4mIUpmWzUPa70NL/szNbmAarQbz+CSYjeiWAjgWbBvpLdTqXrIG+IfJ2ipCzMG3fmZApAFBSYVLWymEe+7Tk6aqQwfsnthnyiKRfazzFoul/0r/Mux+MbrkAXsw3msn0RA0MVS2vyOZmik5rld8ATthC4Eqsb11OXkYTiZFxkzswBpIn3/sChauS3xgDYEcx3cuL6zadK5+FLffy1kArERbapp/IKwk0y4X60iJP51chnaDOuhcyiLtUZXpgPiZwBqlVRuULm69xuV1Pf+dpp27cjq97EbALt4AYoZvMd+MdpfzNz0Vo2zFOpwFusqDcaGizCM9Fw9hiGnM19BMkqsaKnIUdppQIK4+xC7Bt8lzfZXu/9yCV+PXtFxzmfxQ0mpkR8+l8fYu6je10INCLBnd8aIU6DS61gTqJw8jO6LdfXxwBhRhGk01jah/bixY7txqvFTgGYdAl4aaWVR5HKo0qfl3KV/yHAwPBnjsE/l0o1eBUiqcDaCNrRoWQX4KOiXXFXjFzl/72vbm7tFYsiWjWGRkYUkzZ26HZwP6bSBeofMsqzpqYRH4Cfrk26XPAlmNt7TKljs6O3Mj4U0npIV6abB/zUmfzzIfcD04773bF+DjDokTGyTKUfM3epEfkYXl0OjaHOr8=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(376002)(366004)(39860400002)(346002)(136003)(396003)(1076003)(2616005)(7416002)(52116002)(7696005)(44832011)(478600001)(36756003)(66946007)(38100700002)(38350700002)(186003)(921005)(956004)(8936002)(2906002)(26005)(86362001)(8676002)(5660300002)(6666004)(4326008)(66556008)(66476007)(6486002)(83380400001)(316002)(107886003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8Kg42MzF2DRRTyq4YNfEsucHaBZgyxjD9R0WSoLbwMvSenkDA4I4oOLarx98?=
+ =?us-ascii?Q?ipZMjuYgJM5tzie3d6KNBkhM82aU2QzxeBUcklvFSgBhJU+yuaCv0FNoSwUF?=
+ =?us-ascii?Q?YOGVuf2EM5oWdQCZcqf5kJpPR5TKEwbovmfa70SF6uwxFlrAHkvClXiMojXd?=
+ =?us-ascii?Q?QxJkxKIeomCCMUTWsKE7cgXhJFlm/zBvPVbtHRR37PcS/KfSoq4Iqz5jeBO6?=
+ =?us-ascii?Q?rqigoY/rphG2NVuWR6EdFqHlkpf4DV6XwrwjJ51xGKyUisfhcJQA9GL5+9Ch?=
+ =?us-ascii?Q?gt8Pcs66Ro6Ixp94d7E24E5tw16gwnVRN7fWS6d7cLznT/PQndHVuQrJBLXI?=
+ =?us-ascii?Q?z622olIRA/Iix2zLqIgb+X6KlkymyKtTxMMgWTwRFl252fXNPtRBgkjjFzpf?=
+ =?us-ascii?Q?XVuGfe1jKewP8A1Lt77FDQE5SnERqi69Zc2U6w6VjQq2cpEk+D4tSimmiVhf?=
+ =?us-ascii?Q?Znkh7Bf1Fw4Vzn25dYxmUMkYNuW+CZV0xTQw/hY6Vk6wtemWy7Asq9aIFIW9?=
+ =?us-ascii?Q?zg37o4rV0RDKjHftlKRRauF3ZPAWIh8iOKtPCl8D0/anKpAksZrH16yLsqFb?=
+ =?us-ascii?Q?8KQDARN9HNLV+SjUk+DZxQUJBaIQkL2mDhr1T6gw2psoQbK21yzvdUmSD8iY?=
+ =?us-ascii?Q?XCouhTpHnPZkJlHHNV3lMoHKhWmwYwy/7FxZxHNmuTGJlcfyKBYP/RZ5ykuS?=
+ =?us-ascii?Q?loROjzk3c4FUhzDAscLSu36lqjCP5Szwrltp8+dWy+daEmyX31phrFgqrJa9?=
+ =?us-ascii?Q?DaCavL0u0HmLyQFmRRBqQnweNtsmSS8e9l5tQ1eQ9CgofPWQXklHEsafKxM6?=
+ =?us-ascii?Q?X8KoPlnpaOweFQGaRSbz6PMuOiu2WLKoHJzT1KaeO+U5b0xQCFVsSX5ucAbc?=
+ =?us-ascii?Q?i4f+UKAKmaRwh/RskdrEBoB1nmgJsM8d/0DwTDWxxhEjJ6bHDS58+z21L2qQ?=
+ =?us-ascii?Q?dB1f+FHLaB66LdsNYNJY0cHHpjuCpPQ+Zl4CjO2da8n/V1NqesXYYnUOC/PY?=
+ =?us-ascii?Q?3LVAFXjKttK9FVGsPuwT2Dihp01OIa0kYKiiLLyg2S7Emyhdjy6zfsEHaDJx?=
+ =?us-ascii?Q?xuwKaMjAi+uiVk5sTYgn4w9arFlNW9rURbYwcXtF8PM2Erpgf6CPslgdO/4o?=
+ =?us-ascii?Q?bQHkVRbHSsPDsB3fM6H5LQcMsz6LumSa6pB8pwYjqZVo0KE4K4coc9WBSLZ0?=
+ =?us-ascii?Q?1X+D8rgBTpCLhMAw8hcDVzp95pIspN0s+iC7twfhPLu+AYqI5x78pkat7Qjv?=
+ =?us-ascii?Q?6BbBGMovN2mb+qNnSwMaeDPr3dM2YkSwBTocdid1CPjG3QKcjykx9MshRp26?=
+ =?us-ascii?Q?AA1GxxK2l+FKsDhIyIeSilpe?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c38deaf-2c57-4cf7-58cb-08d95058b989
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jul 2021 17:13:45.1767
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jtB4BcEMQs+Z5m00Orxcy9dE/CPcxMN6oofa/BeGZJ07228+lyYGVvccahP5icepmLI9qh+rr6QGiadEISfudk2KrQ6+rYSrlHVnCwY6Yi4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5211
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10057 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2104190000
+ definitions=main-2107260100
+X-Proofpoint-GUID: 1VI6GjBJFVArkXw1I3EJFJfaGlllDyLE
+X-Proofpoint-ORIG-GUID: 1VI6GjBJFVArkXw1I3EJFJfaGlllDyLE
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Introduce <securityfs>/integrity/diglim/digest_list_add, which can be used
-to upload a digest list and add the digests to the hash table; passed data
-are interpreted as file path if the first byte is / or as the digest list
-itself otherwise. ima_measure_critical_data() is called to calculate the
-digest of the digest list and eventually, if an appropriate rule is set in
-the IMA policy, to measure it.
+Add the ability to load Machine Owner Key (MOK) keys to the mok keyring.
+If the permissions do not allow the key to be added to the mok keyring
+this is not an error, add it to the platform keyring instead.
 
-Also introduce <securityfs>/integrity/diglim/digest_list_del, which can be
-used to upload a digest list and delete the digests from the hash table;
-data are interpreted in the same way as described for digest_list_add.
-
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 ---
- .../security/diglim/implementation.rst        |   9 +
- MAINTAINERS                                   |   1 +
- include/linux/kernel_read_file.h              |   1 +
- security/integrity/diglim/Makefile            |   2 +-
- security/integrity/diglim/diglim.h            |   2 +
- security/integrity/diglim/fs.c                | 239 ++++++++++++++++++
- security/integrity/integrity.h                |   4 +
- 7 files changed, 257 insertions(+), 1 deletion(-)
- create mode 100644 security/integrity/diglim/fs.c
+v1: Initial version
+v2: Unmodified from v1
+---
+ security/integrity/integrity.h                |  4 ++++
+ .../integrity/platform_certs/mok_keyring.c    | 21 +++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
-diff --git a/Documentation/security/diglim/implementation.rst b/Documentation/security/diglim/implementation.rst
-index 9d679567a037..fc0cd8810a80 100644
---- a/Documentation/security/diglim/implementation.rst
-+++ b/Documentation/security/diglim/implementation.rst
-@@ -244,3 +244,12 @@ back when one of the steps fails.
- 
- #. digest_list_parse() deletes the struct digest_list_item on unsuccessful
-    add or successful delete.
-+
-+
-+Interfaces
-+----------
-+
-+This section introduces the interfaces in
-+``<securityfs>/integrity/diglim`` necessary to interact with DIGLIM.
-+
-+.. kernel-doc:: security/integrity/diglim/fs.c
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 77c3613c600a..0672128fae7f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5464,6 +5464,7 @@ F:	Documentation/security/diglim/introduction.rst
- F:	include/linux/diglim.h
- F:	include/uapi/linux/diglim.h
- F:	security/integrity/diglim/diglim.h
-+F:	security/integrity/diglim/fs.c
- F:	security/integrity/diglim/methods.c
- F:	security/integrity/diglim/parser.c
- 
-diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
-index 575ffa1031d3..636ecdfdc616 100644
---- a/include/linux/kernel_read_file.h
-+++ b/include/linux/kernel_read_file.h
-@@ -14,6 +14,7 @@
- 	id(KEXEC_INITRAMFS, kexec-initramfs)	\
- 	id(POLICY, security-policy)		\
- 	id(X509_CERTIFICATE, x509-certificate)	\
-+	id(DIGEST_LIST, digest-list)	\
- 	id(MAX_ID, )
- 
- #define __fid_enumify(ENUM, dummy) READING_ ## ENUM,
-diff --git a/security/integrity/diglim/Makefile b/security/integrity/diglim/Makefile
-index 34e4e154fff3..ac345afdf5dd 100644
---- a/security/integrity/diglim/Makefile
-+++ b/security/integrity/diglim/Makefile
-@@ -5,4 +5,4 @@
- 
- obj-$(CONFIG_DIGLIM) += diglim.o
- 
--diglim-y := methods.o parser.o
-+diglim-y := methods.o parser.o fs.o
-diff --git a/security/integrity/diglim/diglim.h b/security/integrity/diglim/diglim.h
-index 3adc218a0325..819703175eda 100644
---- a/security/integrity/diglim/diglim.h
-+++ b/security/integrity/diglim/diglim.h
-@@ -22,6 +22,8 @@
- #include <linux/hash_info.h>
- #include <linux/diglim.h>
- 
-+#include "../integrity.h"
-+
- #define MAX_DIGEST_SIZE 64
- #define HASH_BITS 10
- #define DIGLIM_HTABLE_SIZE (1 << HASH_BITS)
-diff --git a/security/integrity/diglim/fs.c b/security/integrity/diglim/fs.c
-new file mode 100644
-index 000000000000..07a0d75a0e33
---- /dev/null
-+++ b/security/integrity/diglim/fs.c
-@@ -0,0 +1,239 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2005,2006,2007,2008 IBM Corporation
-+ * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
-+ *
-+ * Author: Roberto Sassu <roberto.sassu@huawei.com>
-+ *
-+ * Functions for the interfaces exposed in securityfs.
-+ */
-+
-+#include <linux/fcntl.h>
-+#include <linux/kernel_read_file.h>
-+#include <linux/slab.h>
-+#include <linux/init.h>
-+#include <linux/seq_file.h>
-+#include <linux/rculist.h>
-+#include <linux/rcupdate.h>
-+#include <linux/parser.h>
-+#include <linux/vmalloc.h>
-+#include <linux/namei.h>
-+#include <linux/ima.h>
-+
-+#include "diglim.h"
-+
-+#define MAX_DIGEST_LIST_SIZE (64 * 1024 * 1024 - 1)
-+
-+static struct dentry *diglim_dir;
-+/**
-+ * DOC: digest_list_add
-+ *
-+ * digest_list_add can be used to upload a digest list and add the digests
-+ * to the hash table; passed data are interpreted as file path if the first
-+ * byte is ``/`` or as the digest list itself otherwise.
-+ *
-+ * ima_measure_critical_data() is called to calculate the digest of the
-+ * digest list and eventually, if an appropriate rule is set in the IMA
-+ * policy, to measure it.
-+ */
-+static struct dentry *digest_list_add_dentry;
-+/**
-+ * DOC: digest_list_del
-+ *
-+ * digest_list_del can be used to upload a digest list and delete the
-+ * digests from the hash table; data are interpreted in the same way as
-+ * described for digest_list_add.
-+ */
-+static struct dentry *digest_list_del_dentry;
-+char digest_label[NAME_MAX + 1];
-+
-+/*
-+ * digest_list_read: read and parse the digest list from the path
-+ */
-+static ssize_t digest_list_read(char *path, enum ops op)
-+{
-+	void *data = NULL;
-+	char *datap;
-+	size_t size;
-+	u8 actions = 0;
-+	struct file *file;
-+	char event_name[NAME_MAX + 9 + 1];
-+	u8 digest[IMA_MAX_DIGEST_SIZE] = { 0 };
-+	enum hash_algo algo;
-+	int rc, pathlen = strlen(path);
-+
-+	/* Remove \n. */
-+	datap = path;
-+	strsep(&datap, "\n");
-+
-+	file = filp_open(path, O_RDONLY, 0);
-+	if (IS_ERR(file)) {
-+		pr_err("unable to open file: %s (%ld)", path, PTR_ERR(file));
-+		return PTR_ERR(file);
-+	}
-+
-+	rc = kernel_read_file(file, 0, &data, INT_MAX, NULL,
-+			      READING_DIGEST_LIST);
-+	if (rc < 0) {
-+		pr_err("unable to read file: %s (%d)", path, rc);
-+		goto out;
-+	}
-+
-+	size = rc;
-+
-+	snprintf(event_name, sizeof(event_name), "%s_file_%s",
-+		 op == DIGEST_LIST_ADD ? "add" : "del",
-+		 file_dentry(file)->d_name.name);
-+
-+	rc = ima_measure_critical_data("diglim", event_name, data, size, false,
-+				       digest, sizeof(digest));
-+	if (rc < 0 && rc != -EEXIST)
-+		goto out_vfree;
-+
-+	algo = ima_get_current_hash_algo();
-+
-+	if (!rc || rc == -EEXIST)
-+		actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
-+
-+	rc = digest_list_parse(size, data, op, actions, digest, algo, "");
-+	if (rc < 0)
-+		pr_err("unable to upload digest list %s (%d)\n", path, rc);
-+out_vfree:
-+	vfree(data);
-+out:
-+	fput(file);
-+
-+	if (rc < 0)
-+		return rc;
-+
-+	return pathlen;
-+}
-+
-+/*
-+ * digest_list_write: write the digest list path or the digest list itself
-+ */
-+static ssize_t digest_list_write(struct file *file, const char __user *buf,
-+				 size_t datalen, loff_t *ppos)
-+{
-+	char *data;
-+	ssize_t result;
-+	enum ops op = DIGEST_LIST_ADD;
-+	struct dentry *dentry = file_dentry(file);
-+	u8 digest[IMA_MAX_DIGEST_SIZE];
-+	char event_name[NAME_MAX + 11 + 1];
-+	enum hash_algo algo;
-+	u8 actions = 0;
-+
-+	/* No partial writes. */
-+	result = -EINVAL;
-+	if (*ppos != 0)
-+		goto out;
-+
-+	result = -EFBIG;
-+	if (datalen > MAX_DIGEST_LIST_SIZE)
-+		goto out;
-+
-+	data = memdup_user_nul(buf, datalen);
-+	if (IS_ERR(data)) {
-+		result = PTR_ERR(data);
-+		goto out;
-+	}
-+
-+	if (dentry == digest_list_del_dentry)
-+		op = DIGEST_LIST_DEL;
-+
-+	result = -EPERM;
-+
-+	if (data[0] == '/') {
-+		result = digest_list_read(data, op);
-+	} else {
-+		snprintf(event_name, sizeof(event_name), "%s_buffer_%s",
-+			 op == DIGEST_LIST_ADD ? "add" : "del", digest_label);
-+
-+		result = ima_measure_critical_data("diglim", event_name, data,
-+						   datalen, false, digest,
-+						   sizeof(digest));
-+		if (result < 0 && result != -EEXIST) {
-+			pr_err("failed to measure buffer digest (%ld)\n",
-+			       result);
-+			goto out_kfree;
-+		}
-+
-+		algo = ima_get_current_hash_algo();
-+
-+		if (!result || result == -EEXIST)
-+			actions |= (1 << COMPACT_ACTION_IMA_MEASURED);
-+
-+		result = digest_list_parse(datalen, data, op, actions, digest,
-+					   algo, "");
-+		if (result != datalen) {
-+			pr_err("unable to upload generated digest list\n");
-+			result = -EINVAL;
-+		}
-+	}
-+out_kfree:
-+	kfree(data);
-+out:
-+	return result;
-+}
-+
-+static unsigned long flags;
-+
-+/*
-+ * digest_list_open: sequentialize access to the add/del files
-+ */
-+static int digest_list_open(struct inode *inode, struct file *filp)
-+{
-+	if ((filp->f_flags & O_ACCMODE) != O_WRONLY)
-+		return -EACCES;
-+
-+	if (test_and_set_bit(0, &flags))
-+		return -EBUSY;
-+
-+	return 0;
-+}
-+
-+/*
-+ * digest_list_release - release the add/del files
-+ */
-+static int digest_list_release(struct inode *inode, struct file *file)
-+{
-+	clear_bit(0, &flags);
-+	return 0;
-+}
-+
-+static const struct file_operations digest_list_upload_ops = {
-+	.open = digest_list_open,
-+	.write = digest_list_write,
-+	.read = seq_read,
-+	.release = digest_list_release,
-+	.llseek = generic_file_llseek,
-+};
-+
-+static int __init diglim_fs_init(void)
-+{
-+	diglim_dir = securityfs_create_dir("diglim", integrity_dir);
-+	if (IS_ERR(diglim_dir))
-+		return -1;
-+
-+	digest_list_add_dentry = securityfs_create_file("digest_list_add", 0200,
-+						diglim_dir, NULL,
-+						&digest_list_upload_ops);
-+	if (IS_ERR(digest_list_add_dentry))
-+		goto out;
-+
-+	digest_list_del_dentry = securityfs_create_file("digest_list_del", 0200,
-+						diglim_dir, NULL,
-+						&digest_list_upload_ops);
-+	if (IS_ERR(digest_list_del_dentry))
-+		goto out;
-+
-+	return 0;
-+out:
-+	securityfs_remove(digest_list_del_dentry);
-+	securityfs_remove(digest_list_add_dentry);
-+	securityfs_remove(diglim_dir);
-+	return -1;
-+}
-+
-+late_initcall(diglim_fs_init);
 diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index 547425c20e11..ac45e1599c2d 100644
+index e0e17ccba2e6..60d5c7ba05b2 100644
 --- a/security/integrity/integrity.h
 +++ b/security/integrity/integrity.h
-@@ -6,6 +6,9 @@
-  * Mimi Zohar <zohar@us.ibm.com>
-  */
- 
-+#ifndef __INTEGRITY_H
-+#define __INTEGRITY_H
-+
- #ifdef pr_fmt
- #undef pr_fmt
- #endif
-@@ -283,3 +286,4 @@ static inline void __init add_to_platform_keyring(const char *source,
+@@ -278,9 +278,13 @@ integrity_audit_log_start(struct audit_context *ctx, gfp_t gfp_mask, int type)
+ #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+ void __init add_to_platform_keyring(const char *source, const void *data,
+ 				    size_t len);
++void __init add_to_mok_keyring(const char *source, const void *data, size_t len);
+ #else
+ static inline void __init add_to_platform_keyring(const char *source,
+ 						  const void *data, size_t len)
  {
  }
++void __init add_to_mok_keyring(const char *source, const void *data, size_t len)
++{
++}
  #endif
-+#endif /*__INTEGRITY_H*/
+diff --git a/security/integrity/platform_certs/mok_keyring.c b/security/integrity/platform_certs/mok_keyring.c
+index fe4f2d336260..f260edac0863 100644
+--- a/security/integrity/platform_certs/mok_keyring.c
++++ b/security/integrity/platform_certs/mok_keyring.c
+@@ -21,6 +21,27 @@ static __init int mok_keyring_init(void)
+ }
+ device_initcall(mok_keyring_init);
+ 
++void __init add_to_mok_keyring(const char *source, const void *data, size_t len)
++{
++	key_perm_t perm;
++	int rc;
++
++	perm = (KEY_POS_ALL & ~KEY_POS_SETATTR) | KEY_USR_VIEW;
++	rc = integrity_load_cert(INTEGRITY_KEYRING_MOK, source, data, len, perm);
++
++	/*
++	 * If the mok keyring restrictions prevented the cert from loading,
++	 * this is not an error.  Just load it into the platform keyring
++	 * instead.
++	 */
++	if (rc)
++		rc = integrity_load_cert(INTEGRITY_KEYRING_PLATFORM, source,
++					 data, len, perm);
++
++	if (rc)
++		pr_info("Error adding keys to mok keyring %s\n", source);
++}
++
+ /*
+  * Try to load the MokListTrustedRT UEFI variable to see if we should trust
+  * the mok keys within the kernel. It is not an error if this variable
 -- 
-2.25.1
+2.18.4
 
