@@ -2,79 +2,173 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F6FC4338F
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Jul 2021 22:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E48C4320E
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 05:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49AAE60E78
-	for <linux-security-module@archiver.kernel.org>; Sun, 25 Jul 2021 22:52:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4FC6023F
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 05:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229547AbhGYWLs (ORCPT
+        id S229579AbhGZEw4 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sun, 25 Jul 2021 18:11:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44052 "EHLO
+        Mon, 26 Jul 2021 00:52:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbhGYWLs (ORCPT
+        with ESMTP id S229654AbhGZEwz (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sun, 25 Jul 2021 18:11:48 -0400
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [IPv6:2a0a:51c0:0:12e:520::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB856C061757;
-        Sun, 25 Jul 2021 15:52:17 -0700 (PDT)
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-        (envelope-from <fw@strlen.de>)
-        id 1m7myW-0004UM-SO; Mon, 26 Jul 2021 00:52:01 +0200
-Date:   Mon, 26 Jul 2021 00:52:00 +0200
-From:   Florian Westphal <fw@strlen.de>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     Florian Westphal <fw@strlen.de>, Paul Moore <paul@paul-moore.com>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH RFC 0/9] sk_buff: optimize layout for GRO
-Message-ID: <20210725225200.GL9904@breakpoint.cc>
-References: <cover.1626879395.git.pabeni@redhat.com>
- <1252ad17-3460-5e6a-8f0d-05d91a1a7b96@schaufler-ca.com>
- <e6200ddd38510216f9f32051ce1acff21fc9c6d0.camel@redhat.com>
- <2e9e57f0-98f9-b64d-fd82-aecef84835c5@schaufler-ca.com>
- <d3fe6ae85b8fad9090288c553f8d248603758506.camel@redhat.com>
- <CAHC9VhT0uuBdmmT1HhMjjQswiJxWuy3cZdRQZ4Zzf-H8n5arLQ@mail.gmail.com>
- <20210724185141.GJ9904@breakpoint.cc>
- <CAHC9VhSsNWSus4xr7erxQs_4GyfJYb7_6a8juisWue6Xc4fVkQ@mail.gmail.com>
- <20210725162528.GK9904@breakpoint.cc>
- <75982e4e-f6b1-ade2-311f-1532254e2764@schaufler-ca.com>
+        Mon, 26 Jul 2021 00:52:55 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F28DC061760
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Jul 2021 22:33:23 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id d17so13447294lfv.0
+        for <linux-security-module@vger.kernel.org>; Sun, 25 Jul 2021 22:33:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PRU68iKUPw5S0tl4mVxd5yJKI+6qFQ7X97+eA0nBCAE=;
+        b=p6sLAgt5tOdHwc0wNad/P+hdEygwdLuthLS5kmbCb6gazGK8X1ASirlTkcieZGF86K
+         sYjq6RB/lXQ46mN1HDPlF93oERNTXG6b3WkN3YEc5DDKl5rDFu8PGo8+8cmXMIUUpx+D
+         4LW+OWCkmkHeKYwwOpOrPkh0D1+f727nFn0jSDTSHmNZov17Ih9kE1wcCVxA8iKxVnv6
+         3nwWTv90vVtw0hqXi4WuQACKsK4UELXPezda6iEZcs2ibfjqvXb9Ye1KgYbqUmQuJ4QX
+         YUtEkV80FAugV7VEK4wz4I32PPJZAtUGa5CYp52ovSzdnXwtEt9xm7KG5cPWNFM74FXx
+         5BrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PRU68iKUPw5S0tl4mVxd5yJKI+6qFQ7X97+eA0nBCAE=;
+        b=F5Ik09pj3jjKmxbsO3L/6CaAK+voer2+HwKLUFSH1ms8JrBk0/XMNRfn/ckh28/PxJ
+         X0I24PhFWSJgWOREbE5S44lI0c4HJ7l/CspswJhjaeJ3/wHfambz0k10TQ0gmYz6gmrN
+         0giLakxkSplh2Dd9VCKzQV5D8Rr/mbYRA0rXjsI5nrPfXpqzHB7c6pIvYoc1qHtDzEmI
+         P0lEUtryFhSMIgXAuAaxds4TMa5zhFZ7BQSRvM7HHeFN79D0edEJYWWzFGYRdpvYlvXe
+         K+03iCvrnvCLCtKJwij+WPn+O5YUm/ASZwOj9TS0m6zTkCI8zGnmN/ycoaeUJLohbgxO
+         nTeg==
+X-Gm-Message-State: AOAM533yRoDYNK79jLgAWeqRjQQ2YgjQ+DqzYcLTToCRnhMATA3aDqpy
+        AA8GtsdRBks+ObEHkFk5GasbgHtu8UCZb4e2gbYIcQ==
+X-Google-Smtp-Source: ABdhPJySjGAMkvYVAYkYNpAfNDgDRSCahZbm8y1hFRqwSZ3PmVRMxfjoqqrcouvYItmqWhyW1BiT/rzUxlkL0kC3RcE=
+X-Received: by 2002:a19:c757:: with SMTP id x84mr11736748lff.302.1627277601795;
+ Sun, 25 Jul 2021 22:33:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75982e4e-f6b1-ade2-311f-1532254e2764@schaufler-ca.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20210723172121.156687-1-colin.king@canonical.com>
+In-Reply-To: <20210723172121.156687-1-colin.king@canonical.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 26 Jul 2021 11:03:10 +0530
+Message-ID: <CAFA6WYOugaWGj-RoHzikk8L_-vHY6XX8NOKoJL08--Oh4WeM6w@mail.gmail.com>
+Subject: Re: [PATCH] security: keys: trusted: Fix memory leaks on allocated blob
+To:     Colin King <colin.king@canonical.com>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
-> RedHat and android use SELinux and will want this. Ubuntu doesn't
-> yet, but netfilter in in the AppArmor task list. Tizen definitely
-> uses it with Smack. The notion that security modules are only used
-> in fringe cases is antiquated. 
+Hi Colin,
 
-I was not talking about LSM in general, I was referring to the
-extended info that Paul mentioned.
+On Fri, 23 Jul 2021 at 22:51, Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> There are several error return paths that don't kfree the allocated
+> blob, leading to memory leaks. Ensure blob is initialized to null as
+> some of the error return paths in function tpm2_key_decode do not
+> change blob. Add an error return path to kfree blob and use this on
+> the current leaky returns.
+>
 
-If thats indeed going to be used on every distro then skb extensions
-are not suitable for this, it would result in extr akmalloc for every
-skb.
+It looks like there are still leaky return paths left such as
+tpm_buf_init() failure etc. which needs to be fixed as well.
 
-> > It certainly makes more sense to me than doing lookups
-> > in a hashtable based on a ID
-> 
-> Agreed. The data burden required to support a hash scheme
-> for the security module stacking case is staggering.
+With that addressed, feel free to add:
 
-It depends on the type of data (and its lifetime).
+Acked-by: Sumit Garg <sumit.garg@linaro.org>
 
-I suspect you have something that is more like skb->dev/dst,
-i.e. reference to object that persists after the skb is free'd.
+-Sumit
+
+> Addresses-Coverity: ("Resource leak")
+> Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  security/keys/trusted-keys/trusted_tpm2.c | 30 ++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 9 deletions(-)
+>
+> diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+> index 0165da386289..930c67f98611 100644
+> --- a/security/keys/trusted-keys/trusted_tpm2.c
+> +++ b/security/keys/trusted-keys/trusted_tpm2.c
+> @@ -366,7 +366,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>         unsigned int private_len;
+>         unsigned int public_len;
+>         unsigned int blob_len;
+> -       u8 *blob, *pub;
+> +       u8 *blob = NULL, *pub;
+>         int rc;
+>         u32 attrs;
+>
+> @@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>         }
+>
+>         /* new format carries keyhandle but old format doesn't */
+> -       if (!options->keyhandle)
+> -               return -EINVAL;
+> +       if (!options->keyhandle) {
+> +               rc = -EINVAL;
+> +               goto err;
+> +       }
+>
+>         /* must be big enough for at least the two be16 size counts */
+> -       if (payload->blob_len < 4)
+> -               return -EINVAL;
+> +       if (payload->blob_len < 4) {
+> +               rc = -EINVAL;
+> +               goto err;
+> +       }
+>
+>         private_len = get_unaligned_be16(blob);
+>
+>         /* must be big enough for following public_len */
+> -       if (private_len + 2 + 2 > (payload->blob_len))
+> -               return -E2BIG;
+> +       if (private_len + 2 + 2 > (payload->blob_len)) {
+> +               rc = -E2BIG;
+> +               goto err;
+> +       }
+>
+>         public_len = get_unaligned_be16(blob + 2 + private_len);
+> -       if (private_len + 2 + public_len + 2 > payload->blob_len)
+> -               return -E2BIG;
+> +       if (private_len + 2 + public_len + 2 > payload->blob_len) {
+> +               rc = -E2BIG;
+> +               goto err;
+> +       }
+>
+>         pub = blob + 2 + private_len + 2;
+>         /* key attributes are always at offset 4 */
+> @@ -441,6 +449,10 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+>                 rc = -EPERM;
+>
+>         return rc;
+> +
+> +err:
+> +       kfree(blob);
+> +       return rc;
+>  }
+>
+>  /**
+> --
+> 2.31.1
+>
