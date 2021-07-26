@@ -2,139 +2,740 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE3EC4338F
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 15:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A316CC4338F
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA4060E08
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 15:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87AA960F55
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 16:40:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234990AbhGZOf6 (ORCPT
+        id S238990AbhGZP7t (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jul 2021 10:35:58 -0400
-Received: from sonic309-26.consmr.mail.ne1.yahoo.com ([66.163.184.152]:39563
-        "EHLO sonic309-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234840AbhGZOdR (ORCPT
+        Mon, 26 Jul 2021 11:59:49 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3484 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239747AbhGZP5z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jul 2021 10:33:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1627312415; bh=MfaQOxKqX5SB6Ig+FHkMaEEbg/ipEZK0/3EgGqlg+yk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=lAXQqh6dzZLaXhBSMApDo99Cm/6DNIwo4/csRASAG6tHFSTASaK3VMJeBEYrRSmbYiNCjtSHFhThaFljt24yr6RPOPNGKkayGwDE5yzKZAWpE4kVI56C9vufMTJQSOqGGulNOXRG+iAInYiG2sDf7rNaXdHz8DQ05XsQPeqtJKiJEy8Znd4JB0lZ0w9G6WM+MIOa2h9AEtYEMfx/GXiWpqd4QIgwC3ak6uRQtbUY7yE/mt+9GvshXTo+TRQ1FL0r0hrbn40/37GRjWaHhHIG1kq+mlJzetRlk68W53Hiosr/i94/fOIx9HXFls4KmHnNzIuwiZFCNqCUTPhmf5p66g==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1627312415; bh=AbdSOo7XTKhb24Un2wpPlYoaLRNSIVlSS85P5jpW2gl=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=M4FDQ6neq5IVH+0L3yYl4hf0xSeRp82jkeqsGoRz5oukGqPpRYz7hQ6O8oy8hcYy/vr7co1iHwi/TRWNcVpjApKUR9HeaxNVqpNTZvnyvtnfsXHBSUKXNQdTPvslsVM3DMA1G/akwMiD2bLTGWikXfrRO9awkAc3TXUsGWcxTjZRGSDt3D5kwtSM7dQ2mnUGnLbxEKS2lZ2zkUvLf8A1HESThzlb0DtKudaR500BJSms8meCyOfwh/F2mdXE1jYS0vd1Rbp8dzvO3xO1BfIILrLMsvSHC/zg8QpdKNEWR8KXCL8HeQfJn1AjypmWMq6MdN8C5W9HnfAfbGjKZzWXGA==
-X-YMail-OSG: 9jzndLQVM1l7.Mqn2DIy1xE0AS4h_xiCAi8UWivztDtxXqxw8y33cwh34.KKz8J
- 3gDTKHxBJNdCW_v_GAMfBzb1VfMl._ZULixggpTE5ST.c2m.q1KBvV2TTl0vkzqAGWz2Bt2WjDPI
- Y7OYomQP4J1DJfq6_OMVrR3AkqL0djXsAM84SYbNaaAEa0Rs.zYuTuRBGj0VnCP24FD86OUOkfiz
- ACip8vtch77rMwEmN9PvIeQe4kKXhNvT3qpaTe8jVbD2ZuqU.JGc142_jARWNiiBbGCMfV.EpOas
- _M9jHXzInWbr3CntHg1RTtM4E9CD3ko584aN6spl2nMvYUNQeEGLbqKhMpXko52PeisqqJ9RIg57
- I.zacSSMeWwyJ8oKcFMfp5lduRW62.xzyYVUJZiAP.g4jVpx4i4NhaH3R2RE8BK2cEfN8aNT.FhT
- gcDw9OAnO80A1PXVyLr0puffMHDNei70b.fHdTtIGsJtuhJprkPNrMfpwKMf9fbeY.TYp9v5vNQq
- bA2.Gb1oENTM007JoQ1Hwo.jgUHtUlXSLlkNeFlPF2LehU_bEessFVoE_iFGs1oEEWAUEthp3AJl
- nWti4dL.ILucHTg3_6LONlJgONQg5.AI7fbs3mav6tNNsjDxlKDlC5hipL6mIC0.B.V244iAdYnJ
- SKDAALffbZ9MtpcNx8Ibp.5RWOcK7VC_8zSI_KCQu2pp2eInC09M3tkzyOH.viJY3fMjtEc65X2_
- XxMaZC3OqDOxd4HNf2NAGurFbElAxefdtiuy7pcMWmpm1JKUVDax7uJp1WrdfOvPWPoz1pS8g_WN
- iubv4TYz9yU_NMdGT6Wdks0lll_leljMOwZyS1Sfk9JKZTxfXv7uvBdJN_dzjpqYK6LOt1wnxbSE
- G5aQNXzvNvu8c1.MqdLVQRcqBfswdLiyQeUufaCHjfznGJjMRuePluaXcJFGauVyu9u5q2a1NvRf
- NOVSL8YPs47mtKtw6aOxyDu3DNBKA8wfMmc21Lp.k85W2hG5PkbwzIV6n_VOlen.DyKyG5PUi_zt
- jqMX0T3xx0BCzIvm6NexQZ9rMlSM_rVb3JNQ6xCbirtIFZqGA3p_p9ULpXcLf4Xo8_4xBHgMND5o
- VGSwZxkOK6pyLjxv3j7KLWzpkMZ8c2r5IABC6DtCNMf6xS8m_DPOYPTmv4xork5RWFOTq2gyPQh5
- io0Sbmz2ldrzjg4uHIdGsZ4d9B1YiiDvNt1cqFxDEpDvEBws5o3lt66jKSfDfdTHzv5KENrGEn9f
- qcQQApQKkrAX4ktCYePalOcgA4Y6y6qQUv40dBZSgd7mFwJLqcyilJm0sFyWL0SsRzxXpdpmq8j9
- XRDUNZNDdhBsoAWZuf2esu07oD_XZt5t9gqxZ_EtWdAqea.bTus9mwEZZt7d7I4fP5K4B_9LLJvy
- lqWzk0.zTrYe2q87P9PIWIHv3K6voSpeExfdURlE3WPe7zu_YRH1VPjdhO6o35yBn2DnsW5m5mMV
- JSuqC4cmuAdxfYLX7h50Pf.zp6pTALyn6kdMQZ6zzAAfV8KnWbCA.X24SG4MFGnpTwTrrXtx_7Ak
- 1z5k2vB.7.wXL6D4ptH_T7Ye2JLKJUvWqdUzt9NiS0oZEenhlX5e5dPymDljCIiBWdyWCqbMEwCW
- H_vPUqq6.9O8lg5wSXJ.sSovbWiUKxorPCAietNSmwM1fbjGWzFkXZzmr2L4KmS6GeCDOnPDQ4qd
- rD_0U5fl.D1yNtLF3FlAF06EfercGBRBfVLCG2D5qrfHR0O7VnU04LHXlTm.mfJP7pog6f07ithS
- p1UhdlAaqIm95FAi5Ar3m8vyNf1YyQa2AbFBqgXWzDBu1OKgurG5.ziiOZ7v1GzXRofF6IMd2IlH
- DQ.hnGOaA7KhHp.OJ.gbljiCf11DcAVOsY5S6IRYgik2g5LzH.lXOelD97wAGnGgXn_.F2aWLYyh
- rXOK7uWLQjWrVzHPHQzWabp2U5S7ZJUkDRPVPb_t5DyN3i0sZfe0B48tLTYpdS1Sg2PjzH7UH_J7
- 1uSP3XEwXJ561ee2rLpufvRZFd_ro6GXDNAhnYwFz0LhnNtvgrQzaHmqjmmZW.WgQ23A2FQuJI6P
- rMNVOkRtUfMD4bZS77NDgF6kJ41jgGgOICGVG9EkURcOZ54utvionXdjrV8UB9ZCNXyCT9lupJaK
- rXrYaqkn.6mNUcl0HzIbDVbgQRr4qwgklV7Y4Wf.rGorhkCfDDGFNyU3pG_30qdHe5JCPZj5xtdf
- gsrWUv4N2kEcU4LdW7Q5ffRmOAzyYJLZ9QtEhQfSN157GeEEANTQMgMz2mPGHUvi5DoED2UAKbkk
- pIrmrkPtd3GtpvHn52bQBb6iANpiW10Bl5qLJSk2jGYFwhXwMzbdhb2gEK1dDcMmz5PXbHcbBw30
- 69BDLYGAbWnobcz2mprLJQ5nuO4IKaC8FSzEBwtC1hbQhwselVdsgozU4PHIbFv6LddyrTFKoyKU
- nVHQEePbP1Mi3LGZF02w5VdEG9g6zbIgBPMOJk.2cJr2I17M4nFd6UTEaw9wdn2jNNlh.AYet_G2
- 2NQJQmyGGUysqC0usO31anB.a.6_93aSG5Gau1.7h.bSITbNpyXTlpsDSkOS56p8tl0NEFDlpCX.
- CVs5C5weuVJppvHSDF_G4E2w6883hlxC.rLLK7H6TK2NIr96oqkSjnyGRRZnfDcSpRznfeHEMifB
- l3QEU8Aq8LcOaU35rKo2Npi58G35JlxwwamACXJuOw18fV8QHWKv.BnHuJySv8WOcscRNocoUF43
- 0HxgEvhZFglZ42nZuYovM7FnN_nPwqpiBRuakLvl.ThqQ79tLJpuM02lIakHuRjpkLjS78LHlIXF
- 7AUmlBwFdjWMdix0EjAH6x6aHZ7s7YPblAWpGvvxBsJVEI0Kn62URcpRhwLnpsRPd_0rv509yl_v
- .4tsOnAmAnrlkoxis3HdeW9kzQeLiWSRNLSXymbhGOAkawDhL69gqZzpUHsB7Xss8LeXFbpGoW6d
- dPOetrR3BWeH8D2OypRHYj0uUkheiDKXzQbf36he_GYCkHj2vyrHRMRtyjLMM8Iz.ycZvII7cLo6
- p8LWY_nbMFksAgrsqvKidwBcLk8chlTvIqwiCOlpDo27jHSr5zAA82cVU6RZyXx2qD89O
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 26 Jul 2021 15:13:35 +0000
-Received: by kubenode548.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 64455857ee5ba6420f10bf63e3f9a591;
-          Mon, 26 Jul 2021 15:13:28 +0000 (UTC)
-Subject: Re: [PATCH RFC 0/9] sk_buff: optimize layout for GRO
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Paul Moore <paul@paul-moore.com>, Paolo Abeni <pabeni@redhat.com>,
-        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <cover.1626879395.git.pabeni@redhat.com>
- <1252ad17-3460-5e6a-8f0d-05d91a1a7b96@schaufler-ca.com>
- <e6200ddd38510216f9f32051ce1acff21fc9c6d0.camel@redhat.com>
- <2e9e57f0-98f9-b64d-fd82-aecef84835c5@schaufler-ca.com>
- <d3fe6ae85b8fad9090288c553f8d248603758506.camel@redhat.com>
- <CAHC9VhT0uuBdmmT1HhMjjQswiJxWuy3cZdRQZ4Zzf-H8n5arLQ@mail.gmail.com>
- <20210724185141.GJ9904@breakpoint.cc>
- <CAHC9VhSsNWSus4xr7erxQs_4GyfJYb7_6a8juisWue6Xc4fVkQ@mail.gmail.com>
- <20210725162528.GK9904@breakpoint.cc>
- <75982e4e-f6b1-ade2-311f-1532254e2764@schaufler-ca.com>
- <20210725225200.GL9904@breakpoint.cc>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <d0186e8f-41f8-7d4d-5c2c-706bfe3c30cc@schaufler-ca.com>
-Date:   Mon, 26 Jul 2021 08:13:28 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Mon, 26 Jul 2021 11:57:55 -0400
+Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GYQFt2vP2z6GCpt;
+        Tue, 27 Jul 2021 00:23:14 +0800 (CST)
+Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
+ fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Mon, 26 Jul 2021 18:38:14 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
+        <mchehab+huawei@kernel.org>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [RFC][PATCH v2 00/12] integrity: Introduce DIGLIM
+Date:   Mon, 26 Jul 2021 18:36:48 +0200
+Message-ID: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <20210725225200.GL9904@breakpoint.cc>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.18736 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.204.63.22]
+X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
+ fraeml714-chm.china.huawei.com (10.206.15.33)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 7/25/2021 3:52 PM, Florian Westphal wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->> RedHat and android use SELinux and will want this. Ubuntu doesn't
->> yet, but netfilter in in the AppArmor task list. Tizen definitely
->> uses it with Smack. The notion that security modules are only used
->> in fringe cases is antiquated.=20
-> I was not talking about LSM in general, I was referring to the
-> extended info that Paul mentioned.
->
-> If thats indeed going to be used on every distro then skb extensions
-> are not suitable for this, it would result in extr akmalloc for every
-> skb.
+This patch set depends on:
+- https://lore.kernel.org/linux-integrity/20210723085304.1760138-1-roberto.sassu@huawei.com/
+- https://lore.kernel.org/linux-integrity/20210705115650.3373599-1-roberto.sassu@huawei.com/
 
-I am explicitly talking about the use of secmarks. All my
-references are uses of secmarks.
+I still kept pointer math to optimize the size of the digest_list_item_ref
+structure. Replacing offsets with pointers would cause the size of the
+structure to double. I could do this in the next version of the patch set
+if the size change is acceptable.
 
->>> It certainly makes more sense to me than doing lookups
->>> in a hashtable based on a ID
->> Agreed. The data burden required to support a hash scheme
->> for the security module stacking case is staggering.
-> It depends on the type of data (and its lifetime).
->
-> I suspect you have something that is more like skb->dev/dst,
-> i.e. reference to object that persists after the skb is free'd.
 
-Just so. Only to make it more complicated, SELinux and Smack,
-the two LSMs currently using secmarks, use them differently.
-SELinux uses u32 "secids" natively, but Smack suffers serious
-performance degradation because it has to look up (efficiently,
-but look up nonetheless) the real Smack value on every packet.
-Please, I know about hash caches, cache hashes and all sorts
-of clever tricks to reduce the impact. Nothing beats having the
-end value up front.
-=C2=A0
+Digest Lists Integrity Module (DIGLIM) is a new component added to the
+integrity subsystem in the kernel, primarily aiming to aid Integrity
+Measurement Architecture (IMA) in the process of checking the integrity
+of file content and metadata. It accomplishes this task by storing
+reference values coming from software vendors and by reporting whether
+or not the digest of file content or metadata calculated by IMA (or EVM)
+is found among those values. In this way, IMA can decide, depending on
+the result of a query, if a measurement should be taken or access to the
+file should be granted. The Security Assumptions section explains more
+in detail why this component has been placed in the kernel.
 
+The main benefits of using IMA in conjunction with DIGLIM are the
+ability to implement advanced remote attestation schemes based on the
+usage of a TPM key for establishing a TLS secure channel [1][2], and to
+reduce the burden on Linux distribution vendors to extend secure boot at
+OS level to applications.
+
+DIGLIM does not have the complexity of feature-rich databases. In fact,
+its main functionality comes from the hash table primitives already in
+the kernel. It does not have an ad-hoc storage module, it just indexes
+data in a fixed format (digest lists, a set of concatenated digests
+preceded by a header), copied to kernel memory as they are. Lastly, it
+does not support database-oriented languages such as SQL, but only
+accepts a digest and its algorithm as a query.
+
+The only digest list format supported by DIGLIM is called compact.
+However, Linux distribution vendors don't have to generate new digest
+lists in this format for the packages they release, as already available
+information, such as RPM headers and DEB package metadata, can be
+already used as a source for reference values (they already include file
+digests), with a user space parser taking care of the conversion to the
+compact format.
+
+Although one might perceive that storing file or metadata digests for a
+Linux distribution would significantly increase the memory usage, this
+does not seem to be the case. As an anticipation of the evaluation done
+in the Preliminary Performance Evaluation section, protecting binaries
+and shared libraries of a minimal Fedora 33 installation requires 208K
+of memory for the digest lists plus 556K for indexing.
+
+In exchange for a slightly increased memory usage, DIGLIM improves the
+performance of the integrity subsystem. In the considered scenario, IMA
+measurement and appraisal with digest lists requires respectively less
+than one quarter and less than half the time, compared to the current
+solution.
+
+DIGLIM also keeps track of whether digest lists have been processed in
+some way (e.g. measured or appraised by IMA). This is important for
+example for remote attestation, so that remote verifiers understand what
+has been uploaded to the kernel.
+
+DIGLIM behaves like a transactional database, i.e. it has the ability to
+roll back to the beginning of the transaction if an error occurred
+during the addition of a digest list (the deletion operation always
+succeeds). This capability has been tested with an ad-hoc fault
+injection mechanism capable of simulating failures during the
+operations.
+
+Finally, DIGLIM exposes to user space, through securityfs, the digest
+lists currently loaded, the number of digests added, a query interface
+and an interface to set digest list labels.
+
+[1] LSS EU 2019
+
+-   slides:
+    https://static.sched.com/hosted_files/lsseu2019/bd/secure_attested_communication_channels_lss_eu_2019.pdf
+-   video: https://youtu.be/mffdQgkvDNY
+
+[2] FutureTPM EU project, final review meeting demo
+
+-   slides:
+    https://futuretpm.eu/images/07-3-FutureTPM-Final-Review-Slides-WP6-Device-Management-Use-Case-HWDU.pdf
+-   video: https://vimeo.com/528251864/4c1d55abcd
+
+
+Binary Integrity
+
+Integrity is a fundamental security property in information systems.
+Integrity could be described as the condition in which a generic
+component is just after it has been released by the entity that created
+it.
+
+One way to check whether a component is in this condition (called binary
+integrity) is to calculate its digest and to compare it with a reference
+value (i.e. the digest calculated in controlled conditions, when the
+component is released).
+
+IMA, a software part of the integrity subsystem, can perform such
+evaluation and execute different actions:
+
+-   store the digest in an integrity-protected measurement list, so that
+    it can be sent to a remote verifier for analysis;
+-   compare the calculated digest with a reference value (usually
+    protected with a signature) and deny operations if the file is found
+    corrupted;
+-   store the digest in the system log.
+
+
+Contribution
+
+DIGLIM further enhances the capabilities offered by IMA-based solutions
+and, at the same time, makes them more practical to adopt by reusing
+existing sources as reference values for integrity decisions.
+
+Possible sources for digest lists are:
+
+-   RPM headers;
+-   Debian repository metadata.
+
+Benefits for IMA Measurement
+
+One of the issues that arises when files are measured by the OS is that,
+due to parallel execution, the order in which file accesses happen
+cannot be predicted. Since the TPM Platform Configuration Register (PCR)
+extend operation, executed after each file measurement,
+cryptographically binds the current measurement to the previous ones,
+the PCR value at the end of a workload cannot be predicted too.
+
+Thus, even if the usage of a TPM key, bound to a PCR value, should be
+allowed when only good files were accessed, the TPM could unexpectedly
+deny an operation on that key if files accesses did not happen as stated
+by the key policy (which allows only one of the possible sequences).
+
+DIGLIM solves this issue by making the PCR value stable over the time
+and not dependent on file accesses. The following figure depicts the
+current and the new approaches:
+
+    IMA measurement list (current)
+
+    entry#        1st boot               2nd boot               3rd boot
+          +----+---------------+ +----+---------------+ +----+---------------+
+    1:    | 10 | file1 measur. | | 10 | file3 measur. | | 10 | file2 measur. |
+          +----+---------------+ +----+---------------+ +----+---------------+
+    2:    | 10 | file2 measur. | | 10 | file2 measur. | | 10 | file3 measur. |
+          +----+---------------+ +----+---------------+ +----+---------------+
+    3:    | 10 | file3 measur. | | 10 | file1 measur. | | 10 | file4 measur. |
+          +----+---------------+ +----+---------------+ +----+---------------+
+
+    PCR:  Extend              != Extend              != Extend
+          file1, file2, file3    file3, file2, file1    file2, file3, file4
+
+
+    PCR Extend definition:
+
+          PCR(new value) = Hash(Hash(meas. entry), PCR(previous value))
+
+A new entry in the measurement list is created by IMA for each file
+access. Assuming that file1, file2 and file3 are files provided by the
+software vendor, file4 is an unknown file, the first two PCR values
+above represent a good system state, the third a bad system state. The
+PCR values are the result of the PCR extend operation performed for each
+measurement entry with the digest of the measurement entry as an input.
+
+    IMA measurement list (with DIGLIM)
+
+    dlist
+    +--------------+
+    |    header    |
+    +--------------+
+    | file1 digest |
+    | file2 digest |
+    | file3 digest |
+    +--------------+
+
+dlist is a digest list containing the digest of file1, file2 and file3.
+In the intended scenario, it is generated by a software vendor at the
+end of the building process, and retrieved by the administrator of the
+system where the digest list is loaded.
+
+    entry#        1st boot               2nd boot               3rd boot
+          +----+---------------+ +----+---------------+ +----+---------------+
+    0:    | 11 | dlist measur. | | 11 | dlist measur. | | 11 | dlist measur. |
+          +----+---------------+ +----+---------------+ +----+---------------+
+    1:    < file1 measur. skip > < file3 measur. skip > < file2 measur. skip >
+
+    2:    < file2 measur. skip > < file2 measur. skip > < file3 measur. skip >
+                                                        +----+---------------+
+    3:    < file3 measur. skip > < file1 measur. skip > | 11 | file4 measur. |
+                                                        +----+---------------+
+
+    PCR:  Extend               = Extend              != Extend
+          dlist                  dlist                  dlist, file4
+
+The first entry in the measurement list contains the digest of the
+digest list uploaded to the kernel at kernel initialization time.
+
+When a file is accessed, IMA queries DIGLIM with the calculated file
+digest and, if it is found, IMA skips the measurement.
+
+Thus, the only information sent to remote verifiers are: the list of
+files that could possibly be accessed (from the digest list), but not if
+they were accessed and when; the measurement of unknown files.
+
+Despite providing less information, this solution has the advantage that
+the good system state (i.e. when only file1, file2 and file3 are
+accessed) now can be represented with a deterministic PCR value (the PCR
+is extended only with the measurement of the digest list). Also, the bad
+system state can still be distinguished from the good state (the PCR is
+extended also with the measurement of file4).
+
+If a TPM key is bound to the good PCR value, the TPM would allow the key
+to be used if file1, file2 or file3 are accessed, regardless of the
+sequence in which they are accessed (the PCR value does not change), and
+would revoke the permission when the unknown file4 is accessed (the PCR
+value changes). If a system is able to establish a TLS connection with a
+peer, this implicitly means that the system was in a good state (i.e.
+file4 was not accessed, otherwise the TPM would have denied the usage of
+the TPM key due to the key policy).
+
+Benefits for IMA Appraisal
+
+Extending secure boot to applications means being able to verify the
+provenance of files accessed. IMA does it by verifying file signatures
+with a key that it trusts, which requires Linux distribution vendors to
+additionally include in the package header a signature for each file
+that must be verified (there is the dedicated RPMTAG_FILESIGNATURES
+section in the RPM header).
+
+The proposed approach would be instead to verify data provenance from
+already available metadata (file digests) in existing packages. IMA
+would verify the signature of package metadata and search file digests
+extracted from package metadata and added to the hash table in the
+kernel.
+
+For RPMs, file digests can be found in the RPMTAG_FILEDIGESTS section of
+RPMTAG_IMMUTABLE, whose signature is in RPMTAG_RSAHEADER. For DEBs, file
+digests (unsafe to use due to a weak digest algorithm) can be found in
+the md5sum file, which can be indirectly verified from Release.gpg.
+
+The following figure highlights the differences between the current and
+the proposed approach.
+
+    IMA appraisal (current solution, with file signatures):
+
+                                                            appraise
+                                                         +-----------+
+                                                         V           |
+    +-------------------------+-----+         +-------+-----+        |
+    | RPM header              |     | ima rpm | file1 | sig |        |
+    | ...                     |     | plugin  +-------+-----+     +-----+
+    | file1 sig [to be added] | sig |-------->      ...           | IMA |
+    | ...                     |     |         +-------+-----+     +-----+
+    | fileN sig [to be added] |     |         | fileN | sig |
+    +-------------------------+-----+         +-------+-----+
+
+In this case, file signatures must be added to the RPM header, so that
+the ima rpm plugin can extract them together with the file content. The
+RPM header signature is not used.
+
+    IMA appraisal (with DIGLIM):
+
+                                       kernel hash table
+                                       with RPM header content
+                                       +---+    +--------------+
+                                       |   |--->| file1 digest |
+                                       +---+    +--------------+
+                                        ...
+                                       +---+         appraise (file1)
+                                       |   |  <--------------+
+    +----------------+-----+           +---+                 |
+    | RPM header     |     |             ^                   |
+    | ...            |     | digest_list |                   |
+    | file1 digest   | sig | rpm plugin  |    +-------+   +-----+
+    | ...            |     |-------------+--->| file1 |   | IMA |
+    | fileN digest   |     |                  +-------+   +-----+
+    +----------------+-----+                                 |
+                        ^                                    |
+                        +------------------------------------+
+                                appraise (RPM header)
+
+In this case, the RPM header is used as it is, and its signature is used
+for IMA appraisal. Then, the digest_list rpm plugin executes the user
+space parser to parse the RPM header and add the extracted digests to an
+hash table in the kernel. IMA appraisal of the files in the RPM package
+consists in searching their digest in the hash table.
+
+Other than reusing available information as digest list, another
+advantage is the lower computational overhead compared to the solution
+with file signatures (only one signature verification for many files and
+digest lookup, instead of per file signature verification, see
+Preliminary Performance Evaluation for more details).
+
+
+Lifecycle
+
+The lifecycle of DIGLIM is represented in the following figure:
+
+    Vendor premises (release process with modifications):
+
+    +------------+   +-----------------------+   +------------------------+
+    | 1. build a |   | 2. generate and sign  |   | 3. publish the package |
+    |    package |-->|    a digest list from |-->|    and digest list in  |
+    |            |   |    packaged files     |   |    a repository        |
+    +------------+   +-----------------------+   +------------------------+
+                                                                    |
+                                                                    |
+    User premises:                                                  |
+                                                                    V
+    +---------------------+   +------------------------+   +-----------------+
+    | 6. use digest lists |   | 5. download the digest |   | 4. download and |
+    |    for measurement  |<--|    list and upload to  |<--|    install the  |
+    |    and/or appraisal |   |    the kernel          |   |    package      |
+    +---------------------+   +------------------------+   +-----------------+
+
+The figure above represents all the steps when a digest list is
+generated separately. However, as mentioned in Contribution, in most
+cases existing packages can be already used as a source for digest
+lists, limiting the effort for software vendors.
+
+If, for example, RPMs are used as a source for digest lists, the figure
+above becomes:
+
+    Vendor premises (release process without modifications):
+
+    +------------+   +------------------------+
+    | 1. build a |   | 2. publish the package |
+    |    package |-->|    in a repository     |---------------------+
+    |            |   |                        |                     |
+    +------------+   +------------------------+                     |
+                                                                    |
+                                                                    |
+    User premises:                                                  |
+                                                                    V
+    +---------------------+   +------------------------+   +-----------------+
+    | 5. use digest lists |   | 4. extract digest list |   | 3. download and |
+    |    for measurement  |<--|    from the package    |<--|    install the  |
+    |    and/or appraisal |   |    and upload to the   |   |    package      |
+    |                     |   |    kernel              |   |                 |
+    +---------------------+   +------------------------+   +-----------------+
+
+Step 4 can be performed with the digest_list rpm plugin and the user
+space parser, without changes to rpm itself.
+
+
+Security Assumptions
+
+As mentioned in the Introduction, DIGLIM will be primarily used in
+conjunction with IMA to enforce a mandatory policy on all user space
+processes, including those owned by root. Even root, in a system with a
+locked-down kernel, cannot affect the enforcement of the mandatory
+policy or, if changes are permitted, it cannot do so without being
+detected.
+
+Given that the target of the enforcement are user space processes,
+DIGLIM cannot be placed in the target, as a Mandatory Access Control
+(MAC) design is required to have the components responsible to enforce
+the mandatory policy separated from the target.
+
+While locking-down a system and limiting actions with a mandatory policy
+is generally perceived by users as an obstacle, it has noteworthy
+benefits for the users themselves.
+
+First, it would timely block attempts by malicious software to steal or
+misuse user assets. Although users could query the package managers to
+detect them, detection would happen after the fact, or it wouldn't
+happen at all if the malicious software tampered with package managers.
+With a mandatory policy enforced by the kernel, users would still be
+able to decide which software they want to be executed except that,
+unlike package managers, the kernel is not affected by user space
+processes or root.
+
+Second, it might make systems more easily verifiable from outside, due
+to the limited actions the system allows. When users connect to a
+server, not only they would be able to verify the server identity, which
+is already possible with communication protocols like TLS, but also if
+the software running on that server can be trusted to handle their
+sensitive data.
+
+
+Adoption
+
+A former version of DIGLIM is used in the following OSes:
+
+-   openEuler 20.09
+    https://github.com/openeuler-mirror/kernel/tree/openEuler-20.09
+-   openEuler 21.03
+    https://github.com/openeuler-mirror/kernel/tree/openEuler-21.03
+
+Originally, DIGLIM was part of IMA (known as IMA Digest Lists). In this
+version, it has been redesigned as a standalone module with an API that
+makes its functionality accessible by IMA and, eventually, other
+subsystems.
+
+
+User Space Support
+
+Digest lists can be generated and managed with digest-list-tools:
+
+https://github.com/openeuler-mirror/digest-list-tools
+
+It includes two main applications:
+
+-   gen_digest_lists: generates digest lists from files in the
+    filesystem or from the RPM database (more digest list sources can be
+    supported);
+-   manage_digest_lists: converts and uploads digest lists to the
+    kernel.
+
+Integration with rpm is done with the digest_list plugin:
+
+https://gitee.com/src-openeuler/rpm/blob/master/Add-digest-list-plugin.patch
+
+This plugin writes the RPM header and its signature to a file, so that
+the file is ready to be appraised by IMA, and calls the user space
+parser to convert and upload the digest list to the kernel.
+
+
+Simple Usage Example (Tested with Fedora 33)
+
+1.  Digest list generation (RPM headers and their signature are copied
+    to the specified directory):
+
+    # mkdir /etc/digest_lists
+    # gen_digest_lists -t file -f rpm+db -d /etc/digest_lists -o add
+
+2.  Digest list upload with the user space parser:
+
+    # manage_digest_lists -p add-digest -d /etc/digest_lists
+
+3.  First digest list query:
+
+    # echo sha256-$(sha256sum /bin/cat) > /sys/kernel/security/integrity/diglim/digest_query
+    # cat /sys/kernel/security/integrity/diglim/digest_query
+      sha256-[...]-0-file_list-rpm-coreutils-8.32-18.fc33.x86_64 (actions: 0): version: 1, algo: sha256, type: 2, modifiers: 1, count: 106, datalen: 3392
+
+4.  Second digest list query:
+
+    # echo sha256-$(sha256sum /bin/zip) > /sys/kernel/security/integrity/diglim/digest_query
+    # cat /sys/kernel/security/integrity/diglim/digest_query
+      sha256-[...]-0-file_list-rpm-zip-3.0-27.fc33.x86_64 (actions: 0): version: 1, algo: sha256, type: 2, modifiers: 1, count: 4, datalen: 128
+
+
+Preliminary Performance Evaluation
+
+This section provides an initial estimation of the overhead introduced
+by DIGLIM. The estimation has been performed on a Fedora 33 virtual
+machine with 1447 packages installed. The virtual machine has 16 vCPU
+(host CPU: AMD Ryzen Threadripper PRO 3955WX 16-Cores) and 2G of RAM
+(host memory: 64G). The virtual machine also has a vTPM with libtpms and
+swtpm as backend.
+
+After writing the RPM headers to files, the size of the directory
+containing them is 36M.
+
+After converting the RPM headers to the compact digest list, the size of
+the data being uploaded to the kernel is 3.6M.
+
+The time to load the entire RPM database is 0.628s.
+
+After loading the digest lists to the kernel, the slab usage due to
+indexing is (obtained with slab_nomerge in the kernel command line):
+
+    OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+    118144 118144 100%    0,03K    923      128      3692K digest_list_item_ref_cache
+    102400 102400 100%    0,03K    800      128      3200K digest_item_cache
+      2646   2646 100%    0,09K     63       42       252K digest_list_item_cache
+
+The stats, obtained from the digests_count interface, introduced later,
+are:
+
+    Parser digests: 0
+    File digests: 99100
+    Metadata digests: 0
+    Digest list digests: 1423
+
+On this installation, this would be the worst case in which all files
+are measured and/or appraised, which is currently not recommended
+without enforcing an integrity policy protecting mutable files. Infoflow
+LSM is a component to accomplish this task:
+
+https://patchwork.kernel.org/project/linux-integrity/cover/20190818235745.1417-1-roberto.sassu@huawei.com/
+
+The first manageable goal of IMA with DIGLIM is to use an execution
+policy, with measurement and/or appraisal of files executed or mapped in
+memory as executable (in addition to kernel modules and firmware). In
+this case, the digest list contains the digest only for those files. The
+numbers above change as follows.
+
+After converting the RPM headers to the compact digest list, the size of
+the data being uploaded to the kernel is 208K.
+
+The time to load the digest of binaries and shared libraries is 0.062s.
+
+After loading the digest lists to the kernel, the slab usage due to
+indexing is:
+
+    OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+    7168   7168 100%    0,03K     56      128       224K digest_list_item_ref_cache
+    7168   7168 100%    0,03K     56      128       224K digest_item_cache
+    1134   1134 100%    0,09K     27       42       108K digest_list_item_cache
+
+The stats, obtained from the digests_count interface, are:
+
+    Parser digests: 0
+    File digests: 5986
+    Metadata digests: 0
+    Digest list digests: 1104
+
+Comparison with IMA
+
+This section compares the performance between the current solution for
+IMA measurement and appraisal, and IMA with DIGLIM.
+
+Workload A (without DIGLIM):
+
+1.  cat file[0-5985] > /dev/null
+
+Workload B (with DIGLIM):
+
+1.  echo $PWD/0-file_list-compact-file[0-1103] >
+    <securityfs>/integrity/diglim/digest_list_add
+2.  cat file[0-5985] > /dev/null
+
+Workload A execution time without IMA policy:
+
+    real   0m0,155s
+    user   0m0,008s
+    sys    0m0,066s
+
+Measurement
+
+IMA policy:
+
+    measure fowner=2000 func=FILE_CHECK mask=MAY_READ use_diglim=allow pcr=11 ima_template=ima-sig
+
+use_diglim is a policy keyword not yet supported by IMA.
+
+Workload A execution time with IMA and 5986 files with signature
+measured:
+
+    real   0m8,273s
+    user   0m0,008s
+    sys    0m2,537s
+
+Workload B execution time with IMA, 1104 digest lists with signature
+measured and uploaded to the kernel, and 5986 files with signature
+accessed but not measured (due to the file digest being found in the
+hash table):
+
+    real   0m1,837s
+    user   0m0,036s
+    sys    0m0,583s
+
+Appraisal
+
+IMA policy:
+
+    appraise fowner=2000 func=FILE_CHECK mask=MAY_READ use_diglim=allow
+
+use_diglim is a policy keyword not yet supported by IMA.
+
+Workload A execution time with IMA and 5986 files with file signature
+appraised:
+
+    real   0m2,197s
+    user   0m0,011s
+    sys    0m2,022s
+
+Workload B execution time with IMA, 1104 digest lists with signature
+appraised and uploaded to the kernel, and with 5986 files with signature
+not verified (due to the file digest being found in the hash table):
+
+    real   0m0,982s
+    user   0m0,020s
+    sys    0m0,865s
+
+Changelog
+
+v1:
+- remove 'ima: Add digest, algo, measured parameters to
+  ima_measure_critical_data()', replaced by:
+  https://lore.kernel.org/linux-integrity/20210705090922.3321178-1-roberto.sassu@huawei.com/
+- add 'Lifecycle' subsection to better clarify how digest lists are
+  generated and used (suggested by Greg KH)
+- remove 'Possible Usages' subsection and add 'Benefits for IMA
+  Measurement' and 'Benefits for IMA Appraisal' subsubsections
+- add 'Preliminary Performance Evaluation' subsection
+- declare digest_offset and hdr_offset in the digest_list_item_ref
+  structure as u32 (sufficient for digest lists of 4G) to make room for a
+  list_head structure (digest_list_item_ref size: 32)
+- implement digest list reference management with a linked list instead of
+  an array
+- reorder structure members for better alignment (suggested by Mauro)
+- rename digest_lookup() to __digest_lookup() (suggested by Mauro)
+- introduce an object cache for each defined structure
+- replace atomic_long_t with unsigned long in h_table structure definition
+  (suggested by Greg KH)
+- remove GPL2 license text and file names (suggested by Greg KH)
+- ensure that the _reserved field of compact_list_hdr is equal to zero
+  (suggested by Greg KH)
+- dynamically allocate the buffer in digest_lists_show_htable_len() to
+  avoid frame size warning (reported by kernel test robot, dynamic
+  allocation suggested by Mauro)
+- split documentation in multiple files and reference the source code
+  (suggested by Mauro)
+- use #ifdef in include/linux/diglim.h
+- improve generation of event name for IMA measurements
+- add new patch to introduce the 'Remote Attestation' section in the
+  documentation
+- fix assignment of actions variable in digest_list_read() and
+  digest_list_write()
+- always release dentry reference when digest_list_get_secfs_files() is
+  called
+- rewrite add/del and query interfaces to take advantage of m->private
+- prevent deletion of a digest list only if there are actions done at
+  addition time that are not currently being performed
+- fix doc warnings (replace Returns with Return:)
+- perform queries of digest list digests in the existing tests
+- add new tests: digest_list_add_del_test_file_upload_measured,
+  digest_list_check_measurement_list_test_file_upload and
+  digest_list_check_measurement_list_test_buffer_upload
+- don't return a value from digest_del(), digest_list_ref_del, and
+  digest_list_del()
+- improve Makefile for tests
+
+Roberto Sassu (12):
+  diglim: Overview
+  diglim: Basic definitions
+  diglim: Objects
+  diglim: Methods
+  diglim: Parser
+  diglim: Interfaces - digest_list_add, digest_list_del
+  diglim: Interfaces - digest_lists_loaded
+  diglim: Interfaces - digest_label
+  diglim: Interfaces - digest_query
+  diglim: Interfaces - digests_count
+  diglim: Remote Attestation
+  diglim: Tests
+
+ .../security/diglim/architecture.rst          |   45 +
+ .../security/diglim/implementation.rst        |  255 +++
+ Documentation/security/diglim/index.rst       |   14 +
+ .../security/diglim/introduction.rst          |  631 ++++++++
+ .../security/diglim/remote_attestation.rst    |   87 ++
+ Documentation/security/diglim/tests.rst       |   66 +
+ Documentation/security/index.rst              |    1 +
+ MAINTAINERS                                   |   19 +
+ include/linux/diglim.h                        |   28 +
+ include/linux/kernel_read_file.h              |    1 +
+ include/uapi/linux/diglim.h                   |   51 +
+ security/integrity/Kconfig                    |    1 +
+ security/integrity/Makefile                   |    1 +
+ security/integrity/diglim/Kconfig             |   11 +
+ security/integrity/diglim/Makefile            |    8 +
+ security/integrity/diglim/diglim.h            |  157 ++
+ security/integrity/diglim/fs.c                |  782 ++++++++++
+ security/integrity/diglim/methods.c           |  499 ++++++
+ security/integrity/diglim/parser.c            |  274 ++++
+ security/integrity/integrity.h                |    4 +
+ tools/testing/selftests/Makefile              |    1 +
+ tools/testing/selftests/diglim/Makefile       |   19 +
+ tools/testing/selftests/diglim/common.c       |  115 ++
+ tools/testing/selftests/diglim/common.h       |   31 +
+ tools/testing/selftests/diglim/config         |    3 +
+ tools/testing/selftests/diglim/selftest.c     | 1382 +++++++++++++++++
+ 26 files changed, 4486 insertions(+)
+ create mode 100644 Documentation/security/diglim/architecture.rst
+ create mode 100644 Documentation/security/diglim/implementation.rst
+ create mode 100644 Documentation/security/diglim/index.rst
+ create mode 100644 Documentation/security/diglim/introduction.rst
+ create mode 100644 Documentation/security/diglim/remote_attestation.rst
+ create mode 100644 Documentation/security/diglim/tests.rst
+ create mode 100644 include/linux/diglim.h
+ create mode 100644 include/uapi/linux/diglim.h
+ create mode 100644 security/integrity/diglim/Kconfig
+ create mode 100644 security/integrity/diglim/Makefile
+ create mode 100644 security/integrity/diglim/diglim.h
+ create mode 100644 security/integrity/diglim/fs.c
+ create mode 100644 security/integrity/diglim/methods.c
+ create mode 100644 security/integrity/diglim/parser.c
+ create mode 100644 tools/testing/selftests/diglim/Makefile
+ create mode 100644 tools/testing/selftests/diglim/common.c
+ create mode 100644 tools/testing/selftests/diglim/common.h
+ create mode 100644 tools/testing/selftests/diglim/config
+ create mode 100644 tools/testing/selftests/diglim/selftest.c
+
+-- 
+2.25.1
 
