@@ -2,152 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC06C4338F
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 11:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E011C4320E
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 11:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A486F60241
-	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 11:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2063F60C51
+	for <linux-security-module@archiver.kernel.org>; Mon, 26 Jul 2021 11:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232813AbhGZKbR (ORCPT
+        id S233538AbhGZLEI (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jul 2021 06:31:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40226 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232375AbhGZKbR (ORCPT
+        Mon, 26 Jul 2021 07:04:08 -0400
+Received: from smtp-relay-canonical-1.canonical.com ([185.125.188.121]:34996
+        "EHLO smtp-relay-canonical-1.canonical.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233371AbhGZLEH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jul 2021 06:31:17 -0400
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0493C061757;
-        Mon, 26 Jul 2021 04:11:45 -0700 (PDT)
-Received: by mail-lf1-x132.google.com with SMTP id r17so14750758lfe.2;
-        Mon, 26 Jul 2021 04:11:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=n6bJSXqmcuKJfAgVqQXN6el/oURcZ0UU9SDbTUMNCAM=;
-        b=g0xMMZ/KPNpXWtAf3Vg1zFQ0eLd6TQvlY3jGoDtGSvZsBNagZf8KHfo3ktl6kgkENs
-         OMCazNSxkroLdVQONm97uoPloWGucMNkqcQ3MUaNVv6oAO7JRsI8jx+IB7reM2R4e5+l
-         7OxQsX4wUVvpU5ndlams6jhHu+YyMtRCFEn7qWupmUz9IleoQvxRtALdr9Z++fiaxGEd
-         Uz1b+INwfoyN9B6y2vbuAVma+AYt0kyk91IaprJIRS7qokct3U15VuNL/dxP3Eeftixg
-         Av8hLhGU66i8wMkQg3NamgOLeCcTgVNdZGlBdfWI5CgnQnS1eeVnwfEEIy7X5VRouUDF
-         eAaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=n6bJSXqmcuKJfAgVqQXN6el/oURcZ0UU9SDbTUMNCAM=;
-        b=COQt/Il8QFhDmtzVJQ4tx09ICdujUMCyZLI/OiCqunRfbJ/cSrMguImwKuxrZRSz+P
-         6nwS5Wcs8q+Ritmns+lvnbj7jeXrzjKaYr4YcCW9bS3pL/vWV0WO9cHsHXgwadGr+wYe
-         LKCZ5i2P+/4CKuC1OFd86x0+GngZ6LaDBvqPm6qha7VvV0dm/gbOkYKl0xX+boAlqZcq
-         gixpwUxp5cKUNWwOFYxHyvWEri/HG4bv1ptOr466E0OsWpfnVzTiDc/f4ZjKzE4s88aY
-         YBB59CbwbmA8J6JdWDOIVGqRg7yP0CXq56NaG2SDFBN9CN6KkgkYbhnsOxGYY7cG8SDE
-         nKRQ==
-X-Gm-Message-State: AOAM532pRju4p17zOz8U5qSEIABcFfzrbR1vAssOED9UCzV9LwMsErfm
-        z1LgAN9K9CchUdDx9hD6UOk=
-X-Google-Smtp-Source: ABdhPJzdwv+HmcbqytJU0HH8+7k/WPlg+x1ObKdecgnmut1qbxCfWJ5Gg57D3WDolyh9m7MNNn/hRg==
-X-Received: by 2002:ac2:52b4:: with SMTP id r20mr13193991lfm.104.1627297903256;
-        Mon, 26 Jul 2021 04:11:43 -0700 (PDT)
-Received: from localhost.localdomain ([46.61.204.59])
-        by smtp.gmail.com with ESMTPSA id bt12sm2450642lfb.14.2021.07.26.04.11.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jul 2021 04:11:43 -0700 (PDT)
-Date:   Mon, 26 Jul 2021 14:11:40 +0300
-From:   Pavel Skripkin <paskripkin@gmail.com>
-To:     paul@paul-moore.com, davem@davemloft.net, yoshfuji@linux-ipv6.org,
-        dsahern@kernel.org, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+cdd51ee2e6b0b2e18c0d@syzkaller.appspotmail.com
-Subject: Re: [PATCH 1/2] net: cipso: fix warnings in netlbl_cipsov4_add_std
-Message-ID: <20210726141140.24e8db78@gmail.com>
-In-Reply-To: <53de0ccd1aa3fffa6bce2a2ae7a5ca07e0af6d3a.1625900431.git.paskripkin@gmail.com>
-References: <cover.1625900431.git.paskripkin@gmail.com>
-        <53de0ccd1aa3fffa6bce2a2ae7a5ca07e0af6d3a.1625900431.git.paskripkin@gmail.com>
-X-Mailer: Claws Mail 3.17.8git77 (GTK+ 2.24.33; x86_64-suse-linux-gnu)
+        Mon, 26 Jul 2021 07:04:07 -0400
+Received: from localhost (1.general.cking.uk.vpn [10.172.193.212])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 258C13F357;
+        Mon, 26 Jul 2021 11:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1627299874;
+        bh=k6BQBYMxs42A0l5eZc18V3p4ovBk2bBgUoL8N/8VpPs=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=V2nQr5gmN7GdiofCc/F5kLnGNPeOGwMBcaYD1biglTrOmrJsYIq5zmQnR+LmgMNrf
+         cCGd7RgAZio8T68t6nuVKyurJxYN+ilV/VTW4GLT/KSc4NJUsFBaghNxm7dIdFouua
+         sz2ViYIijWuj9uJu7rjJael6ydRxKxHAGJJkapeIgwk9FqxmMYYkUpRH2ZJVwlVxtu
+         adTVR8yaHVxkse/obCsQUoyAWShCH/Zl2Yk2cGx9qV8SUKXj6ec4A7luXgfR6ZHyZQ
+         9LfCTrc0S9CWu3Dh1BU166jFe7E4xY5v/YjdE/v29u4l4AbG1a5xxgTP5bY8zln1lZ
+         JDXp37hlebV0A==
+From:   Colin King <colin.king@canonical.com>
+To:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] security: keys: trusted: Fix memory leaks on allocated blob
+Date:   Mon, 26 Jul 2021 12:44:31 +0100
+Message-Id: <20210726114431.18042-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, 10 Jul 2021 10:03:13 +0300
-Pavel Skripkin <paskripkin@gmail.com> wrote:
+From: Colin Ian King <colin.king@canonical.com>
 
-> Syzbot reported warning in netlbl_cipsov4_add(). The
-> problem was in too big doi_def->map.std->lvl.local_size
-> passed to kcalloc(). Since this value comes from userpace there is
-> no need to warn if value is not correct.
-> 
-> The same problem may occur with other kcalloc() calls in
-> this function, so, I've added __GFP_NOWARN flag to all
-> kcalloc() calls there.
-> 
-> Reported-and-tested-by:
-> syzbot+cdd51ee2e6b0b2e18c0d@syzkaller.appspotmail.com Fixes:
-> 96cb8e3313c7 ("[NetLabel]: CIPSOv4 and Unlabeled packet integration")
-> Signed-off-by: Pavel Skripkin <paskripkin@gmail.com> ---
->  net/netlabel/netlabel_cipso_v4.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/net/netlabel/netlabel_cipso_v4.c
-> b/net/netlabel/netlabel_cipso_v4.c index 4f50a64315cf..50f40943c815
-> 100644 --- a/net/netlabel/netlabel_cipso_v4.c
-> +++ b/net/netlabel/netlabel_cipso_v4.c
-> @@ -187,14 +187,14 @@ static int netlbl_cipsov4_add_std(struct
-> genl_info *info, }
->  	doi_def->map.std->lvl.local =
-> kcalloc(doi_def->map.std->lvl.local_size, sizeof(u32),
-> -					      GFP_KERNEL);
-> +					      GFP_KERNEL |
-> __GFP_NOWARN); if (doi_def->map.std->lvl.local == NULL) {
->  		ret_val = -ENOMEM;
->  		goto add_std_failure;
->  	}
->  	doi_def->map.std->lvl.cipso =
-> kcalloc(doi_def->map.std->lvl.cipso_size, sizeof(u32),
-> -					      GFP_KERNEL);
-> +					      GFP_KERNEL |
-> __GFP_NOWARN); if (doi_def->map.std->lvl.cipso == NULL) {
->  		ret_val = -ENOMEM;
->  		goto add_std_failure;
-> @@ -263,7 +263,7 @@ static int netlbl_cipsov4_add_std(struct
-> genl_info *info, doi_def->map.std->cat.local = kcalloc(
->  					      doi_def->map.std->cat.local_size,
->  					      sizeof(u32),
-> -					      GFP_KERNEL);
-> +					      GFP_KERNEL |
-> __GFP_NOWARN); if (doi_def->map.std->cat.local == NULL) {
->  			ret_val = -ENOMEM;
->  			goto add_std_failure;
-> @@ -271,7 +271,7 @@ static int netlbl_cipsov4_add_std(struct
-> genl_info *info, doi_def->map.std->cat.cipso = kcalloc(
->  					      doi_def->map.std->cat.cipso_size,
->  					      sizeof(u32),
-> -					      GFP_KERNEL);
-> +					      GFP_KERNEL |
-> __GFP_NOWARN); if (doi_def->map.std->cat.cipso == NULL) {
->  			ret_val = -ENOMEM;
->  			goto add_std_failure;
+There are several error return paths that don't kfree the allocated
+blob, leading to memory leaks. Ensure blob is initialized to null as
+some of the error return paths in function tpm2_key_decode do not
+change blob. Add an error return path to kfree blob and use this on
+the current leaky returns.
 
+Addresses-Coverity: ("Resource leak")
+Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+Acked-by: Sumit Garg <sumit.garg@linaro.org>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Hi, net developers!
+---
 
-Is this patch merged somewhere? I've checked net tree and Paul Moore
-tree on https://git.kernel.org/, but didn't find it. Did I miss it
-somewhere? If not, it's just a gentle ping :)
+V2: Add a couple more leaky return path fixes as noted by Sumit Garg
+    Add the if (blob != payload->blob) check on the kfree as
+    noted by Dan Carpenter
 
-Btw: maybe I should send it as separete patch, since 2/2 in this
-series is invalid as already in-tree?
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 39 ++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 12 deletions(-)
 
-
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index 0165da386289..a2cfdfdf17fa 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -366,7 +366,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	unsigned int private_len;
+ 	unsigned int public_len;
+ 	unsigned int blob_len;
+-	u8 *blob, *pub;
++	u8 *blob = NULL, *pub;
+ 	int rc;
+ 	u32 attrs;
  
-With regards,
-Pavel Skripkin
+@@ -378,22 +378,30 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 	}
+ 
+ 	/* new format carries keyhandle but old format doesn't */
+-	if (!options->keyhandle)
+-		return -EINVAL;
++	if (!options->keyhandle) {
++		rc = -EINVAL;
++		goto err;
++	}
+ 
+ 	/* must be big enough for at least the two be16 size counts */
+-	if (payload->blob_len < 4)
+-		return -EINVAL;
++	if (payload->blob_len < 4) {
++		rc = -EINVAL;
++		goto err;
++	}
+ 
+ 	private_len = get_unaligned_be16(blob);
+ 
+ 	/* must be big enough for following public_len */
+-	if (private_len + 2 + 2 > (payload->blob_len))
+-		return -E2BIG;
++	if (private_len + 2 + 2 > (payload->blob_len)) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	public_len = get_unaligned_be16(blob + 2 + private_len);
+-	if (private_len + 2 + public_len + 2 > payload->blob_len)
+-		return -E2BIG;
++	if (private_len + 2 + public_len + 2 > payload->blob_len) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	pub = blob + 2 + private_len + 2;
+ 	/* key attributes are always at offset 4 */
+@@ -406,12 +414,14 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		payload->migratable = 1;
+ 
+ 	blob_len = private_len + public_len + 4;
+-	if (blob_len > payload->blob_len)
+-		return -E2BIG;
++	if (blob_len > payload->blob_len) {
++		rc = -E2BIG;
++		goto err;
++	}
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_LOAD);
+ 	if (rc)
+-		return rc;
++		goto err;
+ 
+ 	tpm_buf_append_u32(&buf, options->keyhandle);
+ 	tpm2_buf_append_auth(&buf, TPM2_RS_PW,
+@@ -441,6 +451,11 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		rc = -EPERM;
+ 
+ 	return rc;
++
++err:
++	if (blob != payload->blob)
++		kfree(blob);
++	return rc;
+ }
+ 
+ /**
+-- 
+2.31.1
 
