@@ -2,157 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3731C43214
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 16:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB5FC4338F
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 16:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4FF561B7B
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 16:13:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0769861B96
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 16:35:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229580AbhG0QNg (ORCPT
+        id S230421AbhG0Qfm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Jul 2021 12:13:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229441AbhG0QNa (ORCPT
+        Tue, 27 Jul 2021 12:35:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49462 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231207AbhG0Qfk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Jul 2021 12:13:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D253461B5F;
-        Tue, 27 Jul 2021 16:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1627402410;
-        bh=cSvv7h1KI4rEs+b/XRGdLLHF0kCjqbmt0F4Q4/KmUFg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xv8/cedoNSRYzYwwcD6vrJcRh3eIMNt6B53Peuj8Gwi0QgaQ6tAEW78TP+cnpeHcY
-         0yVj5udDCtA9i9ywyVsTIw4JkuljUGSwzmxkwlDZ23Mmi+l0coIWNE93O7FOVkOK+k
-         fIj/uoRdVYi40WTN0E1zZgzvAQA+Kk9KkhDMwqiI=
-Date:   Tue, 27 Jul 2021 18:13:28 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH v2 02/12] diglim: Basic definitions
-Message-ID: <YQAwqGOEkmDzZ9MJ@kroah.com>
-References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
- <20210726163700.2092768-3-roberto.sassu@huawei.com>
- <YQAblc+UuMq68jxu@kroah.com>
- <e87ba6f452254067a5eb6d58937d65d1@huawei.com>
- <YQApyqP7J/8GpItS@kroah.com>
- <4746947088404edaa31594fb095a6e46@huawei.com>
+        Tue, 27 Jul 2021 12:35:40 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B6CC061796;
+        Tue, 27 Jul 2021 09:35:38 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id h14so22732940lfv.7;
+        Tue, 27 Jul 2021 09:35:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IpuGLwzf9MyOM5GerH7zJ+gkF+GTFvncfsEHxn0Z2qc=;
+        b=phd8BdyqDObRW6cMo+qe095dPWB83sBip4Mp6fxKy2pGg/ytzKVtm7Vp3IrDA5rGfx
+         aIv47pbUgPVI8oB4VwvRQLYhBtj+60VQXNK4iUoWjlBRWlpxrGwunATbv1bnnWwkoPAv
+         5OVznMvqGMNvP4UjM7ke+UiSOL4NLcd+ZoibN6xR9WxLaLBR1I5D/p/zAf7VNhDIeCWU
+         0buCvKBp1lRKHEcfAgNeFY9aoPb2gis9ZXzTYYv6Ys4v5guEPmFaXGzX9Jl5WMu7s+xv
+         ISaGIlFgNZbRuBZOZZ0SvkoCBle63rvyl0VrllKTChHmbe7oNOFfnb5XgW8LhCoi1DA5
+         7gtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=IpuGLwzf9MyOM5GerH7zJ+gkF+GTFvncfsEHxn0Z2qc=;
+        b=ajI+JkqWiLrPSuyFYpG/tBuk/qZ54AfaNhUvPUiOF5+QwL3ZCnb7FsGqYOHjdDVxgZ
+         SynttkLk1ZK3kUHW0k2fJTeu3N0g0q54dvAElBw4wx2J2mW11QdzO6FLYSBHSItEe4pN
+         goVhtjp6XSt43K6XFF3iwsFnzlzqmU465Aud2BNXYq08murlyfN5FLgRVKmNv9OUNCNp
+         pkiMLvW2oyTxaOdIKm1x9zmuFf6Z9wpmT15KFfow+Hg+1HVlUQ9FKtaLvb14zcciIvSm
+         0Ct+ssHrBkRjG01hqWxM1R0yZrNvo8hwQSMPxiGeDYdM7MXE6NS0cpHEBz8AtvNmYlg5
+         oV+w==
+X-Gm-Message-State: AOAM5325nef+vaKWOfqNXN1jAjc2jpo4TnbBRK57Gp5O18SLCRwsaprz
+        3uuZrZ8uSf20DLj0hKeEDXY=
+X-Google-Smtp-Source: ABdhPJxhfkzJQqO9PLc2J882SQKazuZfbROC8k2BiMiioL2dq4xPajmddJ4pNgXh8GtfKFdF3TAoaQ==
+X-Received: by 2002:a19:f208:: with SMTP id q8mr17190113lfh.195.1627403736339;
+        Tue, 27 Jul 2021 09:35:36 -0700 (PDT)
+Received: from localhost.localdomain ([94.103.227.213])
+        by smtp.gmail.com with ESMTPSA id z8sm336136lfs.177.2021.07.27.09.35.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jul 2021 09:35:35 -0700 (PDT)
+From:   Pavel Skripkin <paskripkin@gmail.com>
+To:     paul@paul-moore.com, davem@davemloft.net, kuba@kernel.org
+Cc:     netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Pavel Skripkin <paskripkin@gmail.com>,
+        syzbot+cdd51ee2e6b0b2e18c0d@syzkaller.appspotmail.com
+Subject: [PATCH RESEND] net: cipso: fix warnings in netlbl_cipsov4_add_std
+Date:   Tue, 27 Jul 2021 19:35:30 +0300
+Message-Id: <20210727163530.3057-1-paskripkin@gmail.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4746947088404edaa31594fb095a6e46@huawei.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 27, 2021 at 04:09:37PM +0000, Roberto Sassu wrote:
-> > From: Greg KH [mailto:gregkh@linuxfoundation.org]
-> > Sent: Tuesday, July 27, 2021 5:44 PM
-> > On Tue, Jul 27, 2021 at 03:35:16PM +0000, Roberto Sassu wrote:
-> > > > From: Greg KH [mailto:gregkh@linuxfoundation.org]
-> > > > Sent: Tuesday, July 27, 2021 4:44 PM
-> > > > On Mon, Jul 26, 2021 at 06:36:50PM +0200, Roberto Sassu wrote:
-> > > > > --- /dev/null
-> > > > > +++ b/include/uapi/linux/diglim.h
-> > > > > @@ -0,0 +1,51 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > > > > +/*
-> > > > > + * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
-> > > > > + *
-> > > > > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > + *
-> > > > > + * DIGLIM definitions exported to user space, useful for generating
-> > digest
-> > > > > + * lists.
-> > > > > + */
-> > > > > +
-> > > > > +#ifndef _UAPI__LINUX_DIGLIM_H
-> > > > > +#define _UAPI__LINUX_DIGLIM_H
-> > > > > +
-> > > > > +#include <linux/types.h>
-> > > > > +#include <linux/hash_info.h>
-> > > > > +
-> > > > > +enum compact_types { COMPACT_KEY, COMPACT_PARSER,
-> > > > COMPACT_FILE,
-> > > > > +		     COMPACT_METADATA, COMPACT_DIGEST_LIST,
-> > > > COMPACT__LAST };
-> > > > > +
-> > > > > +enum compact_modifiers { COMPACT_MOD_IMMUTABLE,
-> > > > COMPACT_MOD__LAST };
-> > > > > +
-> > > > > +enum compact_actions { COMPACT_ACTION_IMA_MEASURED,
-> > > > > +		       COMPACT_ACTION_IMA_APPRAISED,
-> > > > > +		       COMPACT_ACTION_IMA_APPRAISED_DIGSIG,
-> > > > > +		       COMPACT_ACTION__LAST };
-> > > > > +
-> > > > > +enum ops { DIGEST_LIST_ADD, DIGEST_LIST_DEL,
-> > DIGEST_LIST_OP__LAST };
-> > > > > +
-> > > > > +/**
-> > > > > + * struct compact_list_hdr - header of the following concatenated
-> > digests
-> > > > > + * @version: version of the digest list
-> > > > > + * @_reserved: field reserved for future use
-> > > > > + * @type: type of digest list among enum compact_types
-> > > > > + * @modifiers: additional attributes among (1 << enum
-> > compact_modifiers)
-> > > >
-> > > > I do not understand this description, what does it mean?
-> > >
-> > > Hi Greg
-> > >
-> > > yes, it is not very clear.
-> > >
-> > > @modifiers is a bitmask where each bit corresponds to a different
-> > > attribute. enum compact_modifiers defines which bit position is
-> > > assigned to each attribute.
-> > 
-> > Watch out with endian issues and bitmasks...  Anyway, please document
-> > this.
-> > 
-> > >
-> > > > > + * @algo: digest algorithm
-> > > >
-> > > > Is this also a #define or an enum?  Where is the list of them?
-> > >
-> > > @algo is an enum defined in include/uapi/linux/hash_info.h.
-> > 
-> > Please say that.
-> > 
-> > > > > + * @count: number of digests
-> > > > > + * @datalen: length of concatenated digests
-> > > >
-> > > > Where does this count and length come into play as nothing else is in
-> > > > this structure?
-> > >
-> > > Each digest list must begin with this structure. From it, the parser knows
-> > > how much data it should expect afterwards. After the data, there could be
-> > > another or more blocks of this structure and following data.
-> > 
-> > Ah, that was not obvious at all :)
-> > 
-> > Why do you not have a __u8 data[]; type field as the last one here for
-> > that memory so you can access it easier?
-> 
-> After the digest list is parsed, I'm accessing the digest with the offset from
-> the beginning of the digest list. If the offset was relative to the header, it could
-> have been useful. I could add the new field, but I'm afraid of the incompatibility
-> with existing tools that we have.
+Syzbot reported warning in netlbl_cipsov4_add(). The
+problem was in too big doi_def->map.std->lvl.local_size
+passed to kcalloc(). Since this value comes from userpace there is
+no need to warn if value is not correct.
 
-What tools?  This isn't a feature in the kernel yet, so we have no
-legacy to support, right?
+The same problem may occur with other kcalloc() calls in
+this function, so, I've added __GFP_NOWARN flag to all
+kcalloc() calls there.
 
-thanks,
+Reported-and-tested-by: syzbot+cdd51ee2e6b0b2e18c0d@syzkaller.appspotmail.com
+Fixes: 96cb8e3313c7 ("[NetLabel]: CIPSOv4 and Unlabeled packet integration")
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Pavel Skripkin <paskripkin@gmail.com>
+---
+ net/netlabel/netlabel_cipso_v4.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-greg k-h
+diff --git a/net/netlabel/netlabel_cipso_v4.c b/net/netlabel/netlabel_cipso_v4.c
+index baf235721c43..000bb3da4f77 100644
+--- a/net/netlabel/netlabel_cipso_v4.c
++++ b/net/netlabel/netlabel_cipso_v4.c
+@@ -187,14 +187,14 @@ static int netlbl_cipsov4_add_std(struct genl_info *info,
+ 		}
+ 	doi_def->map.std->lvl.local = kcalloc(doi_def->map.std->lvl.local_size,
+ 					      sizeof(u32),
+-					      GFP_KERNEL);
++					      GFP_KERNEL | __GFP_NOWARN);
+ 	if (doi_def->map.std->lvl.local == NULL) {
+ 		ret_val = -ENOMEM;
+ 		goto add_std_failure;
+ 	}
+ 	doi_def->map.std->lvl.cipso = kcalloc(doi_def->map.std->lvl.cipso_size,
+ 					      sizeof(u32),
+-					      GFP_KERNEL);
++					      GFP_KERNEL | __GFP_NOWARN);
+ 	if (doi_def->map.std->lvl.cipso == NULL) {
+ 		ret_val = -ENOMEM;
+ 		goto add_std_failure;
+@@ -263,7 +263,7 @@ static int netlbl_cipsov4_add_std(struct genl_info *info,
+ 		doi_def->map.std->cat.local = kcalloc(
+ 					      doi_def->map.std->cat.local_size,
+ 					      sizeof(u32),
+-					      GFP_KERNEL);
++					      GFP_KERNEL | __GFP_NOWARN);
+ 		if (doi_def->map.std->cat.local == NULL) {
+ 			ret_val = -ENOMEM;
+ 			goto add_std_failure;
+@@ -271,7 +271,7 @@ static int netlbl_cipsov4_add_std(struct genl_info *info,
+ 		doi_def->map.std->cat.cipso = kcalloc(
+ 					      doi_def->map.std->cat.cipso_size,
+ 					      sizeof(u32),
+-					      GFP_KERNEL);
++					      GFP_KERNEL | __GFP_NOWARN);
+ 		if (doi_def->map.std->cat.cipso == NULL) {
+ 			ret_val = -ENOMEM;
+ 			goto add_std_failure;
+-- 
+2.32.0
+
