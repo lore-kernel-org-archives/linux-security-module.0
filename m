@@ -2,93 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A907C432BE
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 02:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A5AC4320A
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 03:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFB1A60FF4
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 02:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33DDD60FF2
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 03:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234533AbhG0CQt (ORCPT
+        id S234516AbhG0CU2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 26 Jul 2021 22:16:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234440AbhG0CQs (ORCPT
+        Mon, 26 Jul 2021 22:20:28 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:2890 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234410AbhG0CU1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 26 Jul 2021 22:16:48 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 2290760FEE;
-        Tue, 27 Jul 2021 02:57:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627354636;
-        bh=iQ9FkdbtV/zROAlVG/8PBSjOtj+aTz+AaFmkHdysXtg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HpyMORbiiNmOKjWizE4f0nrPg8XLbuRguHi7r2Yk5/ja5TNBPSSgPkbqK71qEZOM4
-         aNO08v+UoN6JncvrYwPKxxAGtFuCwXHECUZQE7T6aHzDQMea9VkfyPcE3DY1lsbJ6N
-         J3a+s5FJrfBW1WyrU7T2aPgif3LxpjpXhcaSO6ajPluBGQ9MouJh7febqXdLFJnFJ6
-         8Js9QWy6f0lvhLw7hUI+g/bj2zxzvXELzHRX7VVw7lZ5Iao7oDuxfIllGIG5w7n/4n
-         9OFWBhTDivtL+8yv9QBCWonQQTS+6EaBJAXj9JM2mJcXhETM2Q/sDC/vqz3YCI0Tj1
-         IWNETP86Bw6Jw==
-Date:   Tue, 27 Jul 2021 05:57:14 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Andreas Rammhold <andreas@rammhold.de>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        Mon, 26 Jul 2021 22:20:27 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16R2tlY4002435;
+        Mon, 26 Jul 2021 23:00:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=oI27GRcxHJWr9lqkg06esei3b3YBwK++/04PQ2lt97c=;
+ b=Hoz6mM9+dGgUL36mYXTbRWvllJ7C4lF6DtfLyOqWcTTXXZW1D5iEDPSpp+5Pb+XiV6LH
+ G4iHVX7j992KVMaYUFtEgdAiBNWpIMQg5DQHZBCOyjsVuTDSDUqvcGD001uYq/kp34ps
+ vOwQ1LKoWvcwvbebO0wsqPfgTmna0yXsl5QpU8aBraiB6dX/FxhUR0PwIu9FDeh4xBM9
+ XA2I7dtk9TOKZwse3hB/lmFRq/jk6x29D+OMRm3NjFbsL3PCIKvcOj+LMP/1UnHQDnve
+ f8tnirNQS187iE8EQLwDZpotJiEdebtIjzEVre7epapmATju39gPJvlBnyI6KWAbwLNM QQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3a29sug4t5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Jul 2021 23:00:54 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16R2u1dI002764;
+        Mon, 26 Jul 2021 23:00:54 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3a29sug4sn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 26 Jul 2021 23:00:54 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16R2se5M005523;
+        Tue, 27 Jul 2021 03:00:53 GMT
+Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
+        by ppma04dal.us.ibm.com with ESMTP id 3a235m402m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 27 Jul 2021 03:00:53 +0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16R30q4A34865508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 27 Jul 2021 03:00:52 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D42B12406E;
+        Tue, 27 Jul 2021 03:00:52 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DABCC124064;
+        Tue, 27 Jul 2021 03:00:51 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 27 Jul 2021 03:00:51 +0000 (GMT)
+Subject: Re: [PATCH] tpm: ibmvtpm: Avoid error message when process gets
+ signal while waiting
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH] KEYS: trusted: Fix trusted key backends when building as
- module
-Message-ID: <20210727025714.3zll7spsmo3opont@kernel.org>
-References: <20210716081722.4130161-1-andreas@rammhold.de>
- <0a684d56-66d0-184e-4853-9faafa2d243d@pengutronix.de>
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Nageswara R Sastry <rnsastry@linux.ibm.com>
+References: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
+ <20210727024225.swqy5ypcytsngpd6@kernel.org>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <ad4011fb-fc1f-4019-9856-7d171db3255c@linux.ibm.com>
+Date:   Mon, 26 Jul 2021 23:00:51 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20210727024225.swqy5ypcytsngpd6@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0a684d56-66d0-184e-4853-9faafa2d243d@pengutronix.de>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VJbV6m6T0GeKRpUPKwe0Zecz4zTjEfdT
+X-Proofpoint-GUID: PYlAmXy-Ag_0xi3ZfDfGKXecBOUH1eui
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-26_14:2021-07-26,2021-07-26 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ malwarescore=0 mlxscore=0 bulkscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 impostorscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2107270012
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 19, 2021 at 09:10:01AM +0200, Ahmad Fatoum wrote:
-> Hello Andreas,
-> 
-> On 16.07.21 10:17, Andreas Rammhold wrote:
-> > Before this commit the kernel could end up with no trusted key sources
-> > even thought both of the currently supported backends (tpm & tee) were
-> > compoiled as modules. This manifested in the trusted key type not being
-> > registered at all.
-> 
-> I assume (TPM) trusted key module use worked before the TEE rework? If so,
-> 
-> an appropriate Fixes: Tag would then be in order.
-> 
-> > When checking if a CONFIG_… preprocessor variable is defined we only
-> > test for the builtin (=y) case and not the module (=m) case. By using
-> > the IS_ENABLE(…) macro we to test for both cases.
-> 
-> It looks to me like you could now provoke a link error if TEE is a module
-> and built-in trusted key core tries to link against trusted_key_tee_ops.
-> 
-> One solution for that IS_REACHABLE(). Another is to address the root cause,
-> which is the inflexible trusted keys Kconfig description:
-> 
-> - Trusted keys despite TEE support can still only be built when TCG_TPM is enabled
-> - There is no support to have TEE or TPM enabled without using those for
->   enabled trusted keys as well
-> - As you noticed, module build of the backend has issues
-> 
-> I addressed these three issues in a patch[1], a month ago, but have yet to
-> receive feedback.
 
-Which of the patches is the bug fix?
+On 7/26/21 10:42 PM, Jarkko Sakkinen wrote:
+> On Mon, Jul 12, 2021 at 12:25:05PM -0400, Stefan Berger wrote:
+>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> When rngd is run as root then lots of these types of message will appear
+>> in the kernel log if the TPM has been configure to provide random bytes:
+>>
+>> [ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
+>>
+>> The issue is caused by the following call that is interrupted while
+>> waiting for the TPM's response.
+>>
+>> sig = wait_event_interruptible(ibmvtpm->wq,
+>>                                 !ibmvtpm->tpm_processing_cmd);
+>>
+>> The solution is to use wait_event() instead.
+> Why?
 
-/Jarkko
+So it becomes uninterruptible and these error messages go away.
+
+     Stefan
+
+>
+> /Jarkko
