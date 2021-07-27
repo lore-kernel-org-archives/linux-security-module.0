@@ -2,103 +2,121 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D01C4338F
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 04:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201B7C43214
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 14:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A28860BD3
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 04:25:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068FF61AF0
+	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 14:43:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233496AbhG0EZC (ORCPT
+        id S236936AbhG0Onh (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Jul 2021 00:25:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51048 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231842AbhG0EZA (ORCPT
+        Tue, 27 Jul 2021 10:43:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236901AbhG0Ong (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Jul 2021 00:25:00 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C633C061757
-        for <linux-security-module@vger.kernel.org>; Mon, 26 Jul 2021 21:25:01 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1m8EeJ-00047E-E9; Tue, 27 Jul 2021 06:24:59 +0200
-Subject: Re: [PATCH v2] KEYS: trusted: fix use as module when CONFIG_TCG_TPM=m
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, kernel@pengutronix.de,
-        Andreas Rammhold <andreas@rammhold.de>,
-        David Gstir <david@sigma-star.at>,
-        Richard Weinberger <richard@nod.at>, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-integrity@vger.kernel.org
-References: <20210721160258.7024-1-a.fatoum@pengutronix.de>
- <20210727030433.3dwod2elwtdkhwsc@kernel.org>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <fe39a449-88df-766b-a13a-290f4847d43e@pengutronix.de>
-Date:   Tue, 27 Jul 2021 06:24:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Tue, 27 Jul 2021 10:43:36 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DB7AF61AFA;
+        Tue, 27 Jul 2021 14:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1627397015;
+        bh=qFd46qxbPifoDl2lqdkdIoc082Sb+xM4m6IGi89yhls=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TrvS+IYAOcf97227HS/Q9Iyyf5tkB/2yfsFhEMFuAHFI+ixOqywfPd1Vtsw7VHIlz
+         Py9PO/aNn53s3JvmhPUP/2gg1AZnjSk9FtIyjPIofOOeG8VjoUKk5dhJJN3poBzHaD
+         QolSTbbnuqdSmXgCoQGWapojJbW6nNLPzsbhfdfo=
+Date:   Tue, 27 Jul 2021 16:43:33 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     zohar@linux.ibm.com, mchehab+huawei@kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC][PATCH v2 02/12] diglim: Basic definitions
+Message-ID: <YQAblc+UuMq68jxu@kroah.com>
+References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+ <20210726163700.2092768-3-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20210727030433.3dwod2elwtdkhwsc@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210726163700.2092768-3-roberto.sassu@huawei.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 27.07.21 05:04, Jarkko Sakkinen wrote:
->> Reported-by: Andreas Rammhold <andreas@rammhold.de>
->> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
->> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+On Mon, Jul 26, 2021 at 06:36:50PM +0200, Roberto Sassu wrote:
+> --- /dev/null
+> +++ b/include/uapi/linux/diglim.h
+> @@ -0,0 +1,51 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +/*
+> + * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
+> + *
+> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> + *
+> + * DIGLIM definitions exported to user space, useful for generating digest
+> + * lists.
+> + */
+> +
+> +#ifndef _UAPI__LINUX_DIGLIM_H
+> +#define _UAPI__LINUX_DIGLIM_H
+> +
+> +#include <linux/types.h>
+> +#include <linux/hash_info.h>
+> +
+> +enum compact_types { COMPACT_KEY, COMPACT_PARSER, COMPACT_FILE,
+> +		     COMPACT_METADATA, COMPACT_DIGEST_LIST, COMPACT__LAST };
+> +
+> +enum compact_modifiers { COMPACT_MOD_IMMUTABLE, COMPACT_MOD__LAST };
+> +
+> +enum compact_actions { COMPACT_ACTION_IMA_MEASURED,
+> +		       COMPACT_ACTION_IMA_APPRAISED,
+> +		       COMPACT_ACTION_IMA_APPRAISED_DIGSIG,
+> +		       COMPACT_ACTION__LAST };
+> +
+> +enum ops { DIGEST_LIST_ADD, DIGEST_LIST_DEL, DIGEST_LIST_OP__LAST };
+> +
+> +/**
+> + * struct compact_list_hdr - header of the following concatenated digests
+> + * @version: version of the digest list
+> + * @_reserved: field reserved for future use
+> + * @type: type of digest list among enum compact_types
+> + * @modifiers: additional attributes among (1 << enum compact_modifiers)
+
+I do not understand this description, what does it mean?
+
+> + * @algo: digest algorithm
+
+Is this also a #define or an enum?  Where is the list of them?
+
+> + * @count: number of digests
+> + * @datalen: length of concatenated digests
+
+Where does this count and length come into play as nothing else is in
+this structure?
+
+> + *
+> + * A digest list is a set of blocks composed by struct compact_list_hdr and
+> + * the following concatenated digests.
+> + */
+> +struct compact_list_hdr {
+> +	__u8 version;
+> +	__u8 _reserved;
+
+You MUST check this for 0 today, and document it above.  If not, you can
+never use it in the future.
+
+> +	__le16 type;
+> +	__le16 modifiers;
+> +	__le16 algo;
+> +	__le32 count;
+> +	__le32 datalen;
+> +} __packed;
+> +#endif /*_UAPI__LINUX_DIGLIM_H*/
+> -- 
+> 2.25.1
 > 
-> Is it absolutely need to do all this *just* to fix the bug?
-> 
-> For a pure bug fix the most essential thing is to be able the backport
-> it to stable kernels.
-
-Not much happened in-between, so a backport should be trivial.
-I can provide these if needed.
-
-> I don't really care at all about extra niceties ("it's now possible
-> stuff).
-> 
-> This looks like a bug fix and improvements bundle into a single patch.
-
-You can replace the #ifdefs with #if IS_REACHABLE in trusted_core.c to fix the
-intermediate breakage and then throw that away again to fix the remaining
-dependency of trusted keys on TCG_TPM.
-
-If you prefer that, Andreas perhaps could respin his series with
-s/IS_ENABLED/IS_REACHABLE/?
-
-Cheers,
-Ahmad
-
-
-> 
-> /Jarkko
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
