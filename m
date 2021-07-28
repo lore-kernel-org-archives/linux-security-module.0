@@ -2,41 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85A0C43214
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 13:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655F7C4338F
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 13:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D53460FEB
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 13:08:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 467B96023E
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 13:53:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236558AbhG1NJA (ORCPT
+        id S236658AbhG1Nxj convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jul 2021 09:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58344 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236430AbhG1NIc (ORCPT
+        Wed, 28 Jul 2021 09:53:39 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3516 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236916AbhG1Nrk (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jul 2021 09:08:32 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 3B45160F02;
-        Wed, 28 Jul 2021 13:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627477710;
-        bh=H1S7AlV0COt/bxaXeyQx1d8vL8M0dbUMU7ZJt6NPQao=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lhF2L+uVa1UwdQ7Cqk0pnrjHOQNx7pTKWuDDejBNYjN7A4it/H9lYpeC/cKU1T5bw
-         hQM3Na89GeH11aOtWH5LwuNLnQAzrNKm1hNd9combq4MNd6d5kj5hDdM43SvCKXuKm
-         mQOhkROUEBDNzZVgDZy+12+010DsTRsyj4B8C+cW8N8WMZzTKfcnsxLC5IeSxnLEkM
-         Usd1c13/hPiRiWHeJ/26+IQEYEfcTRZhtc2H+p0eWQJKqapIBSJDHdGLSMPqq0dXGK
-         f+ajcoWDqnl3jOR5pdzhqf7hM7P7LLGGQbhY4LgJjY4meNxxAHNKQB500JiB5bLB/j
-         ByRRqXtjzReFA==
-Date:   Wed, 28 Jul 2021 15:08:23 +0200
-From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        Wed, 28 Jul 2021 09:47:40 -0400
+Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GZZMy2nnbz6GDBX;
+        Wed, 28 Jul 2021 21:32:30 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 28 Jul 2021 15:47:36 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Wed, 28 Jul 2021 15:47:36 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
         "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
         "linux-security-module@vger.kernel.org" 
@@ -44,59 +40,88 @@ Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
         "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC][PATCH v2 02/12] diglim: Basic definitions
-Message-ID: <20210728150823.705623ad@sal.lan>
-In-Reply-To: <eb3b025820574f0d901a38a4ad088018@huawei.com>
+Subject: RE: [RFC][PATCH v2 02/12] diglim: Basic definitions
+Thread-Topic: [RFC][PATCH v2 02/12] diglim: Basic definitions
+Thread-Index: AQHXgjyicwJtnSjv/UmZEg8zsJLYTqtYIhYAgAAkorD///aRgIAAKWmw
+Date:   Wed, 28 Jul 2021 13:47:36 +0000
+Message-ID: <caa43f36ce764f16ba56bc38cbd43319@huawei.com>
 References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
         <20210726163700.2092768-3-roberto.sassu@huawei.com>
         <20210728133102.339c7b8e@coco.lan>
         <eb3b025820574f0d901a38a4ad088018@huawei.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+ <20210728150823.705623ad@sal.lan>
+In-Reply-To: <20210728150823.705623ad@sal.lan>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Em Wed, 28 Jul 2021 11:45:02 +0000
-Roberto Sassu <roberto.sassu@huawei.com> escreveu:
-
-> > From: Mauro Carvalho Chehab [mailto:mchehab+huawei@kernel.org]
-> > Sent: Wednesday, July 28, 2021 1:31 PM
-> > Em Mon, 26 Jul 2021 18:36:50 +0200
-> > Roberto Sassu <roberto.sassu@huawei.com> escreveu:
-> >   
-
-> > > +struct compact_list_hdr {
-> > > +	__u8 version;
-> > > +	__u8 _reserved;
-> > > +	__le16 type;
-> > > +	__le16 modifiers;
-> > > +	__le16 algo;
-> > > +	__le32 count;
-> > > +	__le32 datalen;
-> > > +} __packed;
-> > > +#endif /*_UAPI__LINUX_DIGLIM_H*/  
-> > 
-> > Besides Greg's notes, I'm wondering why to enforce a particular
-> > endness here. I mean, this is uAPI. I would expect it to use the
-> > CPU endianness instead, in order to avoid uneeded conversions.  
+> From: Mauro Carvalho Chehab [mailto:mchehab+huawei@kernel.org]
+> Sent: Wednesday, July 28, 2021 3:08 PM
+> Em Wed, 28 Jul 2021 11:45:02 +0000
+> Roberto Sassu <roberto.sassu@huawei.com> escreveu:
 > 
-> Also Greg had the same concern. I hoped the Lifecycle section clarified
-> the fact that digest lists are generated by software vendors not the
-> local system. Should I add something more in the documentation?
+> > > From: Mauro Carvalho Chehab [mailto:mchehab+huawei@kernel.org]
+> > > Sent: Wednesday, July 28, 2021 1:31 PM
+> > > Em Mon, 26 Jul 2021 18:36:50 +0200
+> > > Roberto Sassu <roberto.sassu@huawei.com> escreveu:
+> > >
+> 
+> > > > +struct compact_list_hdr {
+> > > > +	__u8 version;
+> > > > +	__u8 _reserved;
+> > > > +	__le16 type;
+> > > > +	__le16 modifiers;
+> > > > +	__le16 algo;
+> > > > +	__le32 count;
+> > > > +	__le32 datalen;
+> > > > +} __packed;
+> > > > +#endif /*_UAPI__LINUX_DIGLIM_H*/
+> > >
+> > > Besides Greg's notes, I'm wondering why to enforce a particular
+> > > endness here. I mean, this is uAPI. I would expect it to use the
+> > > CPU endianness instead, in order to avoid uneeded conversions.
+> >
+> > Also Greg had the same concern. I hoped the Lifecycle section clarified
+> > the fact that digest lists are generated by software vendors not the
+> > local system. Should I add something more in the documentation?
+> 
+> It shouldn't matter what kind of endness software vendors use on
+> userspace (either CPU or a fixed endiannes - either LE or BE).
+> 
+> I mean, I won't doubt that some package tools use LE while others
+> would use BE. At some point, this needs to be converted to
+> CPU endiannes.
 
-It shouldn't matter what kind of endness software vendors use on
-userspace (either CPU or a fixed endiannes - either LE or BE).
+If you let digest list generators decide the endianness, probably
+it is necessary to also add the endianness information in the
+structure. Otherwise, the kernel wouldn't know what to do.
 
-I mean, I won't doubt that some package tools use LE while others
-would use BE. At some point, this needs to be converted to 
-CPU endiannes.
+If the kernel knows that the digest list is always in little endian,
+it simply calls le32_to_cpu().
 
-IMO, the best would be to isolate whatever RPM/DEB/... endianness 
-is used on userspace from what the Kernel will use internally.
+> IMO, the best would be to isolate whatever RPM/DEB/... endianness
+> is used on userspace from what the Kernel will use internally.
 
-Just my 2 cents.
+This is a different case. The conversion happens if the digest list
+is not in native format. The kernel can also parse an untouched
+digest list if it is in native format.
 
-Regards,
-Mauro
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> Just my 2 cents.
+> 
+> Regards,
+> Mauro
