@@ -2,81 +2,80 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF16C4320A
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 21:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E81C432BE
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 21:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12EA46103B
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 21:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC746103E
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 21:52:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231521AbhG1Vui (ORCPT
+        id S232022AbhG1VwF (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jul 2021 17:50:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42452 "EHLO mail.kernel.org"
+        Wed, 28 Jul 2021 17:52:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230156AbhG1Vuh (ORCPT
+        id S232011AbhG1VwE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jul 2021 17:50:37 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 1DFD560F59;
-        Wed, 28 Jul 2021 21:50:34 +0000 (UTC)
+        Wed, 28 Jul 2021 17:52:04 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 396A960F12;
+        Wed, 28 Jul 2021 21:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627509035;
-        bh=9HITTAP0mO9pNbJehhI3bMrmmENeTLIzuEJOv4tJcJQ=;
+        s=k20201202; t=1627509122;
+        bh=BFyX2UbVIXF8zczEHxk87K4K2XDamO91r3jwdx4AJwU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rVxmDsiFPJNvir+m2KnZ6wouXCpmyKxHJQZv683A5hhEYOpcuCmj3Pey6pPjiJMer
-         6vaMKV6RgMlNRkVP+qD7T57yyOv4Z/pjxqK2l9t4Rt2JnPhbaoSq6Soqys0i394xXh
-         AAW/kxDoBJB4A1wmql91Sstvnp7Wkd+5VnwoAQb2yxgDxVJtChVfxmvQodf0hwnJLn
-         pKvJEcoeI4dvpcwAMBf49qN1tqC7MgIW2g3MVardb/1qhWj5wRUx5xatz0cuGst7Cq
-         mkHUfuM0ogfbbwacoRaPZj32Nme3PTyogg3lQIik+VgX+thTLwS5ANTQam0ycrRRht
-         hq7YD5KK+y2mA==
-Date:   Thu, 29 Jul 2021 00:50:33 +0300
+        b=V0aiKzfAgvkB6HSHzGaoiqqiuH0enCVJ1s9y/nJB0nwKO+vvp24z8bjm9GNPhBgAq
+         aNCkSiseircZZKNqDgEmTM/Kuqoyf/KJ174iZyLPmXrYXM8AM7bEl48ShFuZZrwj6w
+         lbmSP9+dkHI1WdxxBLJ4uxY1uBStcFG3fBVOwF1Oj3oNeHcEugvtTZSjvOKWEaK7hk
+         rQwHUbTYDeNDq+UTBaLS+GieZY8ocRWKjdFcCf/zZQN8+4VsN4K08iMftSAWZirlYk
+         jQqqZX7pN0QLrUSeyLsMDwlHAEC7Mkhx3MK0PL/kHLtHt/EuyJBudd2BbY7qfjIztD
+         vENWyvh5CvlWQ==
+Date:   Thu, 29 Jul 2021 00:52:00 +0300
 From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>, peterhuewe@gmx.de,
-        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, kernel@pengutronix.de,
+        Andreas Rammhold <andreas@rammhold.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Nageswara R Sastry <rnsastry@linux.ibm.com>
-Subject: Re: [PATCH] tpm: ibmvtpm: Avoid error message when process gets
- signal while waiting
-Message-ID: <20210728215033.dhnekvksekalhcrn@kernel.org>
-References: <20210712162505.205943-1-stefanb@linux.vnet.ibm.com>
- <20210727024225.swqy5ypcytsngpd6@kernel.org>
- <ad4011fb-fc1f-4019-9856-7d171db3255c@linux.ibm.com>
+        linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] KEYS: trusted: fix use as module when CONFIG_TCG_TPM=m
+Message-ID: <20210728215200.nfvnm5s2b27ang7i@kernel.org>
+References: <20210721160258.7024-1-a.fatoum@pengutronix.de>
+ <20210727030433.3dwod2elwtdkhwsc@kernel.org>
+ <fe39a449-88df-766b-a13a-290f4847d43e@pengutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ad4011fb-fc1f-4019-9856-7d171db3255c@linux.ibm.com>
+In-Reply-To: <fe39a449-88df-766b-a13a-290f4847d43e@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Jul 26, 2021 at 11:00:51PM -0400, Stefan Berger wrote:
+On Tue, Jul 27, 2021 at 06:24:49AM +0200, Ahmad Fatoum wrote:
+> On 27.07.21 05:04, Jarkko Sakkinen wrote:
+> >> Reported-by: Andreas Rammhold <andreas@rammhold.de>
+> >> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+> >> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> > 
+> > Is it absolutely need to do all this *just* to fix the bug?
+> > 
+> > For a pure bug fix the most essential thing is to be able the backport
+> > it to stable kernels.
 > 
-> On 7/26/21 10:42 PM, Jarkko Sakkinen wrote:
-> > On Mon, Jul 12, 2021 at 12:25:05PM -0400, Stefan Berger wrote:
-> > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > 
-> > > When rngd is run as root then lots of these types of message will appear
-> > > in the kernel log if the TPM has been configure to provide random bytes:
-> > > 
-> > > [ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
-> > > 
-> > > The issue is caused by the following call that is interrupted while
-> > > waiting for the TPM's response.
-> > > 
-> > > sig = wait_event_interruptible(ibmvtpm->wq,
-> > >                                 !ibmvtpm->tpm_processing_cmd);
-> > > 
-> > > The solution is to use wait_event() instead.
-> > Why?
-> 
-> So it becomes uninterruptible and these error messages go away.
+> Not much happened in-between, so a backport should be trivial.
+> I can provide these if needed.
 
-We do not want to make a process uninterruptible. That would prevent
-killing it.
+"not much" is not good enough. It should be "not anything".
 
 /Jarkko
