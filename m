@@ -2,141 +2,154 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BE5C4338F
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 16:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B1FC432BE
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 16:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D21C60F93
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 16:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E88A660F23
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 16:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237287AbhG1QID (ORCPT
+        id S229614AbhG1QVY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jul 2021 12:08:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57024 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S237402AbhG1QFW (ORCPT
+        Wed, 28 Jul 2021 12:21:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:55699 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229542AbhG1QVY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jul 2021 12:05:22 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 805C160F93;
-        Wed, 28 Jul 2021 16:05:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627488315;
-        bh=mtlOEjAp0ZaGN8O1thI4Ls/GpTvqSvAbJ+P7xB2uW9k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uGb09cwCNSkXfP+k0uos/ECMpj7PWsDGBwTi5+FvDBprC+zJ6BfucHxDsHBbwEQiJ
-         7X7fwv1xOkt8e/MYIsO7NliM7xV6FbJj9upUwPMBeKNqVZPjXpah5kcwQG86/jY6s7
-         olm0khDFNJwAXph5MR1EIh6jn5sI9nF28mKfDLP6g9C0BJcSh+sqTpngCmDT7Q2fNo
-         Wm6BAOjSwA3YpETAXnVH3HCwmc+LvnxmTl4YAbqbs1HLViv/dRl0IXH8J3Wst6H6U1
-         WqFZ9ZFDiB9K/5hoVa2Gpf4JQ8oy63HVN00dXpTp+McuvtwtDETTYLnnJ61YvCtwR5
-         kG8EbXh9kjSRQ==
-Date:   Wed, 28 Jul 2021 09:05:13 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, git@andred.net,
-        Omar Sandoval <osandov@osandov.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [RFC PATCH v1] fscrypt: support encrypted and trusted keys
-Message-ID: <YQGAOTdQRHFv9rlr@gmail.com>
-References: <20210727144349.11215-1-a.fatoum@pengutronix.de>
- <YQA2fHPwH6EsH9BR@sol.localdomain>
- <367ea5bb-76cf-6020-cb99-91b5ca82d679@pengutronix.de>
+        Wed, 28 Jul 2021 12:21:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1627489282;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=N2ROMHHpEqp2zK+5JNFUYl00yJlvuqdMk7fyTdniw0s=;
+        b=DqoVeZSZSax+9ovLRlO+EoDZEjrk14F/zAoJLfUArJZeFgRZZVvFYJnGvdUSqg70N8yTz3
+        EOg+AhvToZ3k+MFqKw4a7VjFDUC6nHBXHJLj/2FIGSdDLG3m68vpthaix2deVANKsfoQoP
+        kBFgGWugYX/GO/9o0dNkZMS5UUtnexE=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-101-va_dSvyZOya9q7XQNtBBxA-1; Wed, 28 Jul 2021 12:21:19 -0400
+X-MC-Unique: va_dSvyZOya9q7XQNtBBxA-1
+Received: by mail-wm1-f71.google.com with SMTP id 25-20020a05600c0219b029024ebb12928cso1114542wmi.3
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jul 2021 09:21:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=N2ROMHHpEqp2zK+5JNFUYl00yJlvuqdMk7fyTdniw0s=;
+        b=ujrdWMzTuky0hyArrIM8fc6+iUJ0gqOAkTnHboKd03kgnU6eSbXqZTUTjzMoaO6OXX
+         EgAmJlwnBWbcz6zPuMhUclUFZeEMK77ynnEIg2ZmLPqPX+wrw7jlApPU30eH3pDMeB9c
+         vHsUfQoiH+JPJ52MrOL490OyT+phRH9ZgdKzor7XWTO1mgDDlqLOTup/wpdTuD7jnXbC
+         nxn3x+saGUZxUUogD3HViCFz3jE/wbwIJAlZQhQdt5R36Ed1nOR3p7UKke8o4Ifc0gmd
+         HOYzZrrpVxStd36QGw5CEzyenE703fa5dy+1fFGbccB/zHckB9k/aYsp3qYAHKtOv+Wp
+         OSNQ==
+X-Gm-Message-State: AOAM531YAzbiqqFBbB8Nzjny2Sab0OkT5MwZGLikQTh6uaxzBP19KsKB
+        ONJ3MkZCCvjivSfk5orFMUIyjz6TeeuV7WQG+dARH0tfYVj6XC5LrxxJql39vhT+YSOeLdiLcKW
+        qeX2Km7kbZohvwe0hJLq1mpKEBfwZm0CkOpqz
+X-Received: by 2002:a05:600c:3554:: with SMTP id i20mr546115wmq.68.1627489277962;
+        Wed, 28 Jul 2021 09:21:17 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzNNG5Lq6mIIGQNCRPOWqDLevyCEmtGBKp0QMEeUSpawS0ZtIhPq1GkHZ2XXOgu0mF9uznUBA==
+X-Received: by 2002:a05:600c:3554:: with SMTP id i20mr546099wmq.68.1627489277751;
+        Wed, 28 Jul 2021 09:21:17 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-97-57.dyn.eolo.it. [146.241.97.57])
+        by smtp.gmail.com with ESMTPSA id p3sm6765905wmp.25.2021.07.28.09.21.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Jul 2021 09:21:17 -0700 (PDT)
+Message-ID: <8a07a88f56f25fbc542d7c07cd1a1c04ba7cf860.camel@redhat.com>
+Subject: Re: [PATCH RFC 0/9] sk_buff: optimize layout for GRO
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Florian Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org
+Date:   Wed, 28 Jul 2021 18:21:16 +0200
+In-Reply-To: <CAHC9VhSTputyDZMrdU0SmO0gg=P3uskT6ejJkfOwn6bFgaFB3A@mail.gmail.com>
+References: <cover.1626879395.git.pabeni@redhat.com>
+         <1252ad17-3460-5e6a-8f0d-05d91a1a7b96@schaufler-ca.com>
+         <e6200ddd38510216f9f32051ce1acff21fc9c6d0.camel@redhat.com>
+         <2e9e57f0-98f9-b64d-fd82-aecef84835c5@schaufler-ca.com>
+         <d3fe6ae85b8fad9090288c553f8d248603758506.camel@redhat.com>
+         <CAHC9VhT0uuBdmmT1HhMjjQswiJxWuy3cZdRQZ4Zzf-H8n5arLQ@mail.gmail.com>
+         <20210724185141.GJ9904@breakpoint.cc>
+         <CAHC9VhSsNWSus4xr7erxQs_4GyfJYb7_6a8juisWue6Xc4fVkQ@mail.gmail.com>
+         <20210725162528.GK9904@breakpoint.cc>
+         <75982e4e-f6b1-ade2-311f-1532254e2764@schaufler-ca.com>
+         <20210725225200.GL9904@breakpoint.cc>
+         <d0186e8f-41f8-7d4d-5c2c-706bfe3c30cc@schaufler-ca.com>
+         <CAHC9VhSTputyDZMrdU0SmO0gg=P3uskT6ejJkfOwn6bFgaFB3A@mail.gmail.com>
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <367ea5bb-76cf-6020-cb99-91b5ca82d679@pengutronix.de>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=pabeni@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 28, 2021 at 10:50:42AM +0200, Ahmad Fatoum wrote:
-> Hello Eric,
-> 
-> On 27.07.21 18:38, Eric Biggers wrote:
-> > On Tue, Jul 27, 2021 at 04:43:49PM +0200, Ahmad Fatoum wrote:
-> >> For both v1 and v2 key setup mechanisms, userspace supplies the raw key
-> >> material to the kernel after which it is never again disclosed to
-> >> userspace.
-> >>
-> >> Use of encrypted and trusted keys offers stronger guarantees:
-> >> The key material is generated within the kernel and is never disclosed to
-> >> userspace in clear text and, in the case of trusted keys, can be
-> >> directly rooted to a trust source like a TPM chip.
+On Mon, 2021-07-26 at 22:51 -0400, Paul Moore wrote:
+> On Mon, Jul 26, 2021 at 11:13 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > On 7/25/2021 3:52 PM, Florian Westphal wrote:
+> > > Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > RedHat and android use SELinux and will want this. Ubuntu doesn't
+> > > > yet, but netfilter in in the AppArmor task list. Tizen definitely
+> > > > uses it with Smack. The notion that security modules are only used
+> > > > in fringe cases is antiquated.
+> > > I was not talking about LSM in general, I was referring to the
+> > > extended info that Paul mentioned.
+> > > 
+> > > If thats indeed going to be used on every distro then skb extensions
+> > > are not suitable for this, it would result in extr akmalloc for every
+> > > skb.
 > > 
-> > Please include a proper justification for this feature
+> > I am explicitly talking about the use of secmarks. All my
+> > references are uses of secmarks.
 > 
-> I've patches pending for extending trusted keys to wrap the key sealing
-> functionality of the CAAM IP on NXP SoCs[1]. I want the kernel to
-> generate key material in the factory, have the CAAM encrypt it using its
-> undisclosed unique key and pass it to userspace as encrypted blob that is
-> persisted to an unencrypted volume. The intention is to thwart offline
-> decryption of an encrypted file system in an embedded system, where a
-> passphrase can't be supplied by an end user.
+> I'm talking about a void* which would contain LSM specific data; as I
+> said earlier, think of inodes.  This LSM specific data would include
+> the existing secmark data as well as network peer security information
+> which would finally (!!!) allow us to handle forwarded traffic and
+> enable a number of other fixes and performance improvements.
 > 
-> Employing TPM and TEE trusted keys with this is already possible with
-> dm-crypt, but I'd like this to be possible out-of-the-box with
-> ubifs + fscrypt as well.
+> (The details are a bit beyond this discussion but it basically
+> revolves around us not having to investigate the import the packet
+> headers every time we want to determine the network peer security
+> attributes, we could store the resolved LSM information in the
+> sk_buff.security blob.)
 
-Why not do the key management in userspace, like tpm-tools
-(https://github.com/tpm2-software/tpm2-tools)?  There are a lot of uses for this
-type of hardware besides in-kernel crypto.  See
-https://wiki.archlinux.org/title/Trusted_Platform_Module for all the things you
-can do with the TPM on Linux, including LUKS encryption; this is all with
-userspace key management.  Wouldn't the CAAM hardware be useful for similar
-purposes and thus need a similar design as well, e.g. with functionality exposed
-through some /dev node for userspace to use?  Or are you saying it will only
-ever be useful for in-kernel crypto?
+I've investigated the feasibility of extending the secmark field to
+long/void*. I think that performance wise it should be doable on top of
+this series: the amount of allocated memory for sk_buff will not
+change, nor the amount of memory memseted at skb initialization time.
 
-> > Note that there are several design flaws with the encrypted and trusted key
-> > types:
-> > 
-> > - By default, trusted keys are generated using the TPM's RNG rather than the
-> >   kernel's RNG, which places all trust in an unauditable black box.
-> 
-> Patch to fix that awaits feedback on linux-integrity[2].
+I stumbled upon some uAPIs issues, as CT/nft expose a secmark related
+field via uAPI, changing that size without breaking esisting user-space 
+looks hard to me.
 
-It does *not* fix it, as your patch only provides an option to use the kernel's
-RNG whereas the default is still the TPM's RNG.
+Additionally, even patch 7/9 is problematic, as there are some in
+kernel users accessing and using the inner_ field regardless skb-
+>encapsulation. That works while inner_* field are always
+initializared/zeored, but will break with the mentioned patch. The fix
+is doable, but large and complex. 
 
-Most people don't change defaults.
+To keep the scope of this series sane, I'll drop in the next iteration
+all the problematic patches - that is: no sk_buff layout change at all.
 
-Essentially your same argument was used for Dual_EC_DRBG; people argued it was
-okay to standardize because people had the option to choose their own constants
-if they felt the default constants were backdoored.  That didn't really matter,
-though, since in practice everyone just used the default constants.
+If there is interest for such thing, it could still be added
+incrementally.
 
-> 
-> > - trusted and encrypted keys aren't restricted to specific uses in the kernel
-> >   (like the fscrypt-provisioning key type is) but rather are general-purpose.
-> >   Hence, it may be possible to leak their contents to userspace by requesting
-> >   their use for certain algorithms/features, e.g. to encrypt a dm-crypt target
-> >   using a weak cipher that is vulnerable to key recovery attacks.
-> 
-> The footgun is already there by allowing users to specify their own
-> 
-> raw key. Users can already use $keyid for dm-crypt and then do
-> 
->   $ keyctl pipe $keyid | fscryptctl add_key /mnt
-> 
-> The responsibility to not reuse key material already lies with the users,
-> regardless if they handle the raw key material directly or indirectly via
-> a trusted key description/ID.
+Cheers,
 
-Elsewhere you are claiming that "trusted" keys can never be disclosed to
-userspace.  So you can't rely on userspace cooperating, right?
+Paolo
 
-- Eric
+
+
