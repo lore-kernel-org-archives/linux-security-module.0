@@ -2,880 +2,893 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-23.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AEBAC4320A
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 10:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A405EC43216
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 11:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0432C60F9E
-	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 10:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AA5760FC4
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 11:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231327AbhG1KTN (ORCPT
+        id S234289AbhG1LKK (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 28 Jul 2021 06:19:13 -0400
-Received: from mail-eopbgr70137.outbound.protection.outlook.com ([40.107.7.137]:35488
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S229574AbhG1KTM (ORCPT
+        Wed, 28 Jul 2021 07:10:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32786 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231994AbhG1LKI (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 28 Jul 2021 06:19:12 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=iJizV81gu46hJDpA6dh2+R7mIbqmIwgz8T8NZnseGut1IQbLd8ZGkPrb/kfd75U2P3IfX1gxxIfzM5xXiUuOuM9ejOT72YPKeo3jiNm0elCbp5xxMv7LWVicY/XS1AXO9vX/TlUgYlTd8z4nZ/u7cFN5ONt9ciW4y4yAM5v41XnrW8okxpKJ+e01YXYZeJZM5UKeDNcrElBMN/4ITl6OcrywGK4SGPV9EpzediaVanZCZYi5Np09ticzthCNVENBqdTdVkkJ+g60URgFrz9xLtby1JdZj3oWQLzuLqg2E3BjlLbR2n70SrXrySEnS62J14Gzgtz58r5mQzlPNRN3xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3KavUuUpMDfTK6i0pbYnUzZSUm2I/VTy6Aih9rEGSqU=;
- b=WjJ88SwCyS+imosXOj67BMzH78b92ZZseJMIM2o0gyr9ScyqieXxPFAMmwG6kcYdlSPZnSlN1bcusGOXAl/n8Jj1vqL8Zit7mzKWC/h/Gwvo0IcPwWMCsHGTL9heKhgBcF1QvxnOwYAqdN6jal7BCec8+mdST5CAae54ICJKKvddtPDhC3f8ffgAz8/lwuxX4wAeDdxJ90+RQgFazNeoxnWB7yzI7l9OLsOvshWcL8UciCBMH5kO1X45wC/YADCUaIkJzsS5qqTcHyG3g+jZh94dMr+9i+xeboBPkMVvFnU4Yzh3p4hun1dQc3lEcGAx3XTg8HGXd+we6NPj0xN0Xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
- dkim=pass header.d=viveris.fr; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=viverislicensing.onmicrosoft.com;
- s=selector2-viverislicensing-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3KavUuUpMDfTK6i0pbYnUzZSUm2I/VTy6Aih9rEGSqU=;
- b=08Vj3iUwj1mfTf2Y3MFL8rtuS10FXMT2IzGDhSGnMg/Avhqv4q3pSIAuL/m+cxMTlFTGon3uZw7XcVgPBYIgA7tLUtFJRlSamd6A0IgBdXuQGP0V4HTuBXDYu3yo5zy/ewrroLCYeAMqg2+5kZmbgpLuR4mxM4a/TVlPcbnMAQg=
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- (2603:10a6:200:96::21) by AM9PR09MB4563.eurprd09.prod.outlook.com
- (2603:10a6:20b:2d5::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4373.18; Wed, 28 Jul
- 2021 10:19:08 +0000
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432]) by AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432%9]) with mapi id 15.20.4352.031; Wed, 28 Jul 2021
- 10:19:08 +0000
-From:   THOBY Simon <Simon.THOBY@viveris.fr>
-To:     Igor Zhbanov <i.zhbanov@omp.ru>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-CC:     Igor Zhbanov <izh1979@gmail.com>, Mimi Zohar <zohar@linux.ibm.com>
-Subject: Re: [PATCH 1/1] NAX LSM: Add initial support support
-Thread-Topic: [PATCH 1/1] NAX LSM: Add initial support support
-Thread-Index: AQHXg5n/AqeKwEHmDUiYDh8DD+AiWg==
-Date:   Wed, 28 Jul 2021 10:19:08 +0000
-Message-ID: <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
-References: <db1c1de0-3672-4bae-ef45-c554379f36f4@omp.ru>
-In-Reply-To: <db1c1de0-3672-4bae-ef45-c554379f36f4@omp.ru>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: omp.ru; dkim=none (message not signed)
- header.d=none;omp.ru; dmarc=none action=none header.from=viveris.fr;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 25ac4844-8176-4bc6-67e4-08d951b122bf
-x-ms-traffictypediagnostic: AM9PR09MB4563:
-x-microsoft-antispam-prvs: <AM9PR09MB456321702DA2CB6E8F6C792894EA9@AM9PR09MB4563.eurprd09.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1002;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: hKi7MhKAYfnh4GFSxF2YAZ9AkazaCg9GFM+tiykIHksk0abExTt1qLEKKFn6NSJDGRT5YvaOT+4P//lJKwkhhtSqQv6xAH9NaHZdJyH+tbbnR1LZqeZ1/uVypVpHj7e1RjqeeS5981YdMn43k9DBilB5o7h7cBRMbLIwBot9syuK8Y+kTI1D6pQ6naMJ+WtqXLo5nDnx8pb6EcSGr095pvY9tVrmnBI+hjLdzLtDYUzbau1AZ74fK7xUJpVrP3FITKlDAMjV27Phga3bd0LJ5rMCrJUGq8Yn+/+y4ZZ4IGcLgwOA+lw6kNU+5PQ2icfJe8Ij9HJKM2EX47AXVS0h5amiFzj+4qzEhIrmz4DeDxxED5HRCPu0uqnqr2huSNtM1/p2D+4By9shChlzmuE3hSvtJti72xaYezmJQApjQvdKZh59iB2qJPrWcu0Z1RS8hA13MkwNOBwGu65pWcpv7LOaZtw8c05I6Jp7iIWeVqlyaLFFBHCOUcB2pKjvYj9ZonDMUiP0v6heUURTlWRVwMHw90ujtXq3p0J+f+gA0XyEJPQXL4yeCCEEZWp13pFRcs6taa4Hdwc1KdIbLRVfGl8w/7IXI/FnWl8d2RvxeceJjiENxuCZT9gJdY46+td5MSZ6m4z5k3rYYXyl/5FgvujkRX3oZChYJ9gv0B8WTR6ePgsKZMBez/2FJvnG4FEXeWm1P0oJlQccJF8mkyxQ2PRby9goIonngnF1TC9O56FkNFOtU7D9/o1IlHro+guFcLSDgCHBvICoqxaCQMrK/w==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(396003)(39830400003)(346002)(136003)(83380400001)(110136005)(54906003)(186003)(8936002)(76116006)(31686004)(91956017)(478600001)(66446008)(64756008)(316002)(66556008)(2906002)(66476007)(6486002)(8676002)(66946007)(38070700005)(6512007)(26005)(122000001)(2616005)(71200400001)(6506007)(4326008)(31696002)(36756003)(38100700002)(53546011)(30864003)(86362001)(5660300002)(2004002)(45980500001)(579004)(559001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?Windows-1252?Q?11u+qn9rf5evMSqVLuxdKuqu90wAh95vGqIj2cvSx5v6Udn1kcpBka+S?=
- =?Windows-1252?Q?Um49VOIXmpLSrhq3N7fbv0fKUO9dszQq/HqlSQILmBbRcLPXz5//LGIn?=
- =?Windows-1252?Q?Oawc45jafQrdJsHY1jHez6Zt6A2iUFawucd92fRorxq/YcsmbTTu+5Df?=
- =?Windows-1252?Q?5y7ytf6Tos2DbmhaFk6FVPQm9fVfnAHSGbIIceFMyidMuQ/PZ4Jyaivy?=
- =?Windows-1252?Q?RdYqJLJ+ze3p540cyRVxdatII6jqDEzRDGtN+ATp7OXq4dhi9uP5nFwF?=
- =?Windows-1252?Q?93KExIrZhNooReQ2AQui1m11QIO0yixsHYxt2DO0Oiv9O0xeawNK/rGq?=
- =?Windows-1252?Q?9HINyAEypGlcdGbliX1ZpWVCo53vevYGi7fWaigxS4UZbK9lAkI+RdDY?=
- =?Windows-1252?Q?GezzmD9Bk5eHu7f/w/mRm+2tvDwcrHMrPgDf087dzJuwZSmGN+EUZwwG?=
- =?Windows-1252?Q?BOcUPX8nnNXoZ3PN5KK1Fkc5xzACTgPtLnNPFfNgZtMPah6Xf1dVksNZ?=
- =?Windows-1252?Q?nKlMi/HzKKATeOVH39l0Chho2SrV27pQItpux7KHHYVkrj1D/3pVH6Sd?=
- =?Windows-1252?Q?cCnvT7M/eszdIqH8FroBbZZoJwONqhqgRo5RaEAt990p5PWD/oXND/Wv?=
- =?Windows-1252?Q?hUuJfpcPD7aYpZOKMYC7goV/0/0IRgZwpmgvtIIYW6XyaSCq7ZOKFqgb?=
- =?Windows-1252?Q?byNi+onFu6dbTvyG9xrbt/JvbGAi3tn/6hy1A91GpmeTBjnWmwC96mlL?=
- =?Windows-1252?Q?SB1yQpHfZivKTzaR08fn4CQh0opaZGzHeCexbKuK1jGW4jTtmTnOj/Fp?=
- =?Windows-1252?Q?q44cdJsjOs9+rN5ibeuG7rKx1qqHgg6YO9fPfU7QG5UQ8PanSNBnhAIR?=
- =?Windows-1252?Q?ALopDB4fvNXTcpkREXVGi60E04x+ANjrrohYlpsXH8+g/geCHcfJve7O?=
- =?Windows-1252?Q?t7B0cTSj1ybK4vFuocig689DMKFHhtTVOUhYXsqrhzIelEgw2C3jpj5K?=
- =?Windows-1252?Q?nwKohff17hcJNJtrsfcs3XpdqVxNECFWB6DLai2wEqYiFHMqQXKP0eeH?=
- =?Windows-1252?Q?g+BaUIK7xRXWErAkQRKIFW9MaRoujH82s6Mt5TYm7S3GH/DtabJwkLN9?=
- =?Windows-1252?Q?de4rR/dPHNXDyNSwSz1CVZ2F5ZTvRAdGbQSng1SrRFirkQEmBHvxbuyX?=
- =?Windows-1252?Q?1KhwfocWkKlFp1MiztMrZmAgNEwTZauWMVM7usJnrYuH0QRekpVcXW4a?=
- =?Windows-1252?Q?f8iLiQrdsW5xwu1qZ9QJ0/DMWzuVIktVgqBqbTqJsvmROMGkBJ7GMRfU?=
- =?Windows-1252?Q?58/m3SYbB3dIvwhQqQplGKWyrhacEK0mKVqNHFO/I7xsvTYF6FhiDL5h?=
- =?Windows-1252?Q?S9quUQJlXi/j/s3e+ntFzeM30/MYUusMtTQMoTxB11Z/5AUC5EYrCjbk?=
- =?Windows-1252?Q?VxMCv5H8TWwhpg/+tg3/8g=3D=3D?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <E000697FEB6DCA42AE4F53966C48070A@eurprd09.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 28 Jul 2021 07:10:08 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1672260F9C;
+        Wed, 28 Jul 2021 11:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627470607;
+        bh=V2NQxQh4OkMBeksIOPX7iWbdoL9UHPP+Sx9ZO5cjjPA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cSkOXaQbN/7llO6azKkF6gK7pZZCFVxu4cEweAXZRG6aDFspJBdduIr5ezeoAtXgT
+         75uyYYZZcgJbfkcSDkHH8HuXFKsu/jpHwkpYSFYHxFas0M9rf2vxXetRFonavKGodf
+         h117IOt4oPFyUwv28rkuMlRqpLBvFddjw3meRegKtuar9XhUrBEsx0iz8oLbQoOwMB
+         NP+NxwmQrAQsKBZzQJkLXQq3Q8n1nx+T1JUYpx4lXGub79lUgnEUL01cHWSGrsThsc
+         QM4rIetigR+YD+55x7IsXUSS8EjEmJZdwvr8LCEaRsXI2+2Lt8D/JofYtbaxlvjd2b
+         5Z3EHXI7VoD3w==
+Date:   Wed, 28 Jul 2021 13:10:00 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     <zohar@linux.ibm.com>, <gregkh@linuxfoundation.org>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC][PATCH v2 01/12] diglim: Overview
+Message-ID: <20210728131000.16788919@coco.lan>
+In-Reply-To: <20210726163700.2092768-2-roberto.sassu@huawei.com>
+References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+        <20210726163700.2092768-2-roberto.sassu@huawei.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: viveris.fr
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25ac4844-8176-4bc6-67e4-08d951b122bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2021 10:19:08.1947
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: R5W+hr2nrGzqpxSGeCkKA/+mw28AfUZmYGtM6J2XAWIelKnIZ2gtbKYefgj4o5uxhfdyJaJiMZz2C7ISOqRKqA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR09MB4563
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Igor,
+Em Mon, 26 Jul 2021 18:36:49 +0200
+Roberto Sassu <roberto.sassu@huawei.com> escreveu:
 
-first, a disclaimer: this is the first time I review a kernel patch, so eve=
-rything I say
-must a taken with a grain of salt (a handful, really).
-
-On 7/7/21 3:03 AM, Igor Zhbanov wrote:
-> NAX (No Anonymous Execution) is a Linux Security Module that extends DAC
-> by making impossible to make anonymous and modified pages executable for
-> privileged processes.
->=20
-> The module intercepts anonymous executable pages created with mmap() and
-> mprotect() system calls.
->=20
-> Depending on the settings, the module can block and log violating system
-> calls or log and kill the violating process.
->=20
-
-From what I see, there is also a log-only mode (MODE_PERMISSIVE) that users=
- may
-use to try this patch before deploying it. You could probably express that.
-
-Something like "This module will log violations, and it can also block the =
-action or kill the offending process,
-depending on the enabled settings." maybe?
-
-> Signed-off-by: Igor Zhbanov <i.zhbanov@omp.ru>
+> Add an overview of DIGLIM to Documentation/security/diglim/introduction.rst
+> and the architecture to Documentation/security/diglim/architecture.rst
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 > ---
->  Documentation/admin-guide/LSM/NAX.rst   |  48 ++++
->  Documentation/admin-guide/LSM/index.rst |   1 +
->  security/Kconfig                        |  11 +-
->  security/Makefile                       |   2 +
->  security/nax/Kconfig                    |  71 +++++
->  security/nax/Makefile                   |   4 +
->  security/nax/nax-lsm.c                  | 344 ++++++++++++++++++++++++
->  7 files changed, 476 insertions(+), 5 deletions(-)
->  create mode 100644 Documentation/admin-guide/LSM/NAX.rst
->  create mode 100644 security/nax/Kconfig
->  create mode 100644 security/nax/Makefile
->  create mode 100644 security/nax/nax-lsm.c
->=20
-> diff --git a/Documentation/admin-guide/LSM/NAX.rst b/Documentation/admin-=
-guide/LSM/NAX.rst
+>  .../security/diglim/architecture.rst          |  45 ++
+>  Documentation/security/diglim/index.rst       |  11 +
+>  .../security/diglim/introduction.rst          | 631 ++++++++++++++++++
+>  Documentation/security/index.rst              |   1 +
+>  MAINTAINERS                                   |   9 +
+>  5 files changed, 697 insertions(+)
+>  create mode 100644 Documentation/security/diglim/architecture.rst
+>  create mode 100644 Documentation/security/diglim/index.rst
+>  create mode 100644 Documentation/security/diglim/introduction.rst
+> 
+> diff --git a/Documentation/security/diglim/architecture.rst b/Documentation/security/diglim/architecture.rst
 > new file mode 100644
-> index 000000000000..b742f881f3d7
+> index 000000000000..a54fe2453715
 > --- /dev/null
-> +++ b/Documentation/admin-guide/LSM/NAX.rst
-> @@ -0,0 +1,48 @@
-> +=3D=3D=3D=3D=3D=3D=3D
-> +NAX LSM
-> +=3D=3D=3D=3D=3D=3D=3D
+> +++ b/Documentation/security/diglim/architecture.rst
+> @@ -0,0 +1,45 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +:Author: Igor Zhbanov
+> +Architecture
+> +============
 > +
-> +NAX (No Anonymous Execution) is a Linux Security Module that extends DAC
-> +by making impossible to make anonymous and modified pages executable for
-> +privileged processes. The module intercepts anonymous executable pages
-> +created with mmap() and mprotect() system calls.
+> +This section introduces the high level architecture of DIGLIM.
 > +
-> +To select it at boot time, specify ``security=3Dnax`` (though this will
-> +disable any other LSM).
+> +::
 > +
-> +The privileged process is a process for which any of the following is tr=
-ue:
+> + 5. add/delete from hash table and add refs to digest list
+> +        +---------------------------------------------+
+> +        |                            +-----+   +-------------+         +--+
+> +        |                            | key |-->| digest refs |-->...-->|  |
+> +        V                            +-----+   +-------------+         +--+
+> + +-------------+                     +-----+   +-------------+
+> + | digest list |                     | key |-->| digest refs |
+> + |  (compact)  |                     +-----+   +-------------+
+> + +-------------+                     +-----+   +-------------+
+> +        ^ 4. copy to                 | key |-->| digest refs |
+> +        |    kernel memory           +-----+   +-------------+ kernel space
+> + --------------------------------------------------------------------------
+> +        ^                                          ^             user space
+> +        |<----------------+       3b. upload       |
+> + +-------------+   +------------+                  | 6. query digest
+> + | digest list |   | user space | 2b. convert
+> + |  (compact)  |   |   parser   |
+> + +-------------+   +------------+
+> + 1a. upload               ^       1b. read
+> +                          |
+> +                   +------------+
+> +                   | RPM header |
+> +                   +------------+
 > +
-> +- ``uid   =3D=3D 0``
-> +- ``euid  =3D=3D 0``
-> +- ``suid  =3D=3D 0``
-> +- ``fsuid =3D=3D 0``
-> +- ``cap_effective`` has any capability except of ``kernel.nax.allowed_ca=
-ps``
-> +- ``cap_permitted`` has any capability except of ``kernel.nax.allowed_ca=
-ps``
 > +
+> +As mentioned before, digest lists can be uploaded directly if they are in
 
-Maybe "except those explicitly allowed in" or "except for the ones allowed =
-in"?
+"before"? This is at the beginning of this document ;-)
 
-> +The following sysctl parameters are available:
-> +
-> +* ``kernel.nax.allowed_caps``:
-> +
-> + Hexadecimal number representing allowed capabilities set for the privil=
-eged
-> + processes.
-> +
+You should probably add a reference to introduction.rst here, like:
 
-Maybe "representing the set of capabilities a non-root process can possess =
-without being considered "privileged" by NAX"?
+	As mentioned at Documentation/security/diglim/introduction.rst, ...
 
-> +* ``kernel.nax.enforcing``:
-> +
-> + - 0: Only log errors (when enabled by ``kernel.nax.quiet``)
-> + - 1: Forbid unsafe pages mappings (default)
-> +
-> +* ``kernel.nax.locked``:
-> +
-> + - 0: Changing of the module's sysctl parameters is allowed
-> + - 1: Further changing of the module's sysctl parameters is forbidden
-> +
-> + Setting this parameter to ``1`` after initial setup during the system b=
-oot
-> + will prevent the module disabling at the later time.
-> +
-> +* ``kernel.nax.quiet``:
-> +
-> + - 0: Log violations (default)
-> + - 1: Be quiet
-> + - 2: Kill the violating process and log
 
-"quiet" probably not the right word to express that fact that it controls t=
-he NAX execution mode.
-Something like "mode" or "level" would probably be clearer.
-But while reading the patch below I believe this doc is simply a little out=
- of date, because quiet can
-only take two values: 0 or 1 (otherwise it would be redundant with the 'enf=
-orcing' sysctl).
-So you should consider updating this document.
+> +the compact format (step 1a) or can be uploaded indirectly by the user
+> +space parser if they are in an alternative format (steps 1b-3b).
+> +
+> +During upload, the kernel makes a copy of the digest list to the kernel
+> +memory (step 4), and creates the necessary structures to index the digests
+> +(hash table and a linked list of digest list references to locate the
+> +digests in the digest list) (step 5).
+> +
+> +Finally, digests can be searched from user space through a securityfs file
+> +(step 6) or by the kernel itself.
 
-> diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admi=
-n-guide/LSM/index.rst
-> index a6ba95fbaa9f..e9df7fc9a461 100644
-> --- a/Documentation/admin-guide/LSM/index.rst
-> +++ b/Documentation/admin-guide/LSM/index.rst
-> @@ -42,6 +42,7 @@ subdirectories.
-> =20
->     apparmor
->     LoadPin
-> +   NAX
->     SELinux
->     Smack
->     tomoyo
-> diff --git a/security/Kconfig b/security/Kconfig
-> index 0ced7fd33e4d..771419647ae1 100644
-> --- a/security/Kconfig
-> +++ b/security/Kconfig
-> @@ -239,6 +239,7 @@ source "security/yama/Kconfig"
->  source "security/safesetid/Kconfig"
->  source "security/lockdown/Kconfig"
->  source "security/landlock/Kconfig"
-> +source "security/nax/Kconfig"
-> =20
->  source "security/integrity/Kconfig"
-> =20
-> @@ -278,11 +279,11 @@ endchoice
-> =20
->  config LSM
->  	string "Ordered list of enabled LSMs"
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selin=
-ux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,se=
-linux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf"=
- if DEFAULT_SECURITY_TOMOYO
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEF=
-AULT_SECURITY_DAC
-> -	default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,sma=
-ck,tomoyo,apparmor,bpf"
-> +	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,smack,s=
-elinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> +	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,apparmo=
-r,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> +	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,=
-bpf" if DEFAULT_SECURITY_TOMOYO
-> +	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if=
- DEFAULT_SECURITY_DAC
-> +	default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,selinux=
-,smack,tomoyo,apparmor,bpf"
+This probably applies to Documentation/security as a hole, but the
+best is to split the documents on two separate parts:
+	- the kAPI and internals;
+	- the admin-guide part.
 
-I don't know the policy with regard to new LSMs, but enabling this one by d=
-efault is maybe a bit violent?
-That said, considering the default mode is SECURITY_NAX_MODE_LOG, this woul=
-d just log kernel messages and
-not break existing systems, so this shouldn't be a problem.
+The audience for the admin-guide is distribution pagagers and
+syssadmins.
 
->  	help
->  	  A comma-separated list of LSMs, in initialization order.
->  	  Any LSMs left off this list will be ignored. This can be
-> diff --git a/security/Makefile b/security/Makefile
-> index 47e432900e24..5c261bbf4659 100644
-> --- a/security/Makefile
-> +++ b/security/Makefile
-> @@ -14,6 +14,7 @@ subdir-$(CONFIG_SECURITY_SAFESETID)    +=3D safesetid
->  subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+=3D lockdown
->  subdir-$(CONFIG_BPF_LSM)		+=3D bpf
->  subdir-$(CONFIG_SECURITY_LANDLOCK)	+=3D landlock
-> +subdir-$(CONFIG_SECURITY_NAX)		+=3D nax
-> =20
->  # always enable default capabilities
->  obj-y					+=3D commoncap.o
-> @@ -34,6 +35,7 @@ obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+=3D lockdown/
->  obj-$(CONFIG_CGROUPS)			+=3D device_cgroup.o
->  obj-$(CONFIG_BPF_LSM)			+=3D bpf/
->  obj-$(CONFIG_SECURITY_LANDLOCK)		+=3D landlock/
-> +obj-$(CONFIG_SECURITY_NAX)		+=3D nax/
-> =20
->  # Object integrity file lists
->  subdir-$(CONFIG_INTEGRITY)		+=3D integrity
-> diff --git a/security/nax/Kconfig b/security/nax/Kconfig
+> diff --git a/Documentation/security/diglim/index.rst b/Documentation/security/diglim/index.rst
 > new file mode 100644
-> index 000000000000..60ef0964f00a
+> index 000000000000..0fc5ab019bc0
 > --- /dev/null
-> +++ b/security/nax/Kconfig
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config SECURITY_NAX
-> +	bool "NAX support"
-> +	depends on SECURITY
-> +	default n
-> +	help
-> +	  This selects NAX (No Anonymous Execution), which extends DAC
-> +	  support with additional system-wide security settings beyond
-> +	  regular Linux discretionary access controls. Currently available
-> +	  is restriction to make anonymous and modified pages executable
-> +	  to privileged processes. Like capabilities, this security module
-> +	  stacks with other LSMs. Further information can be found in
-> +	  Documentation/admin-guide/LSM/NAX.rst.
+> +++ b/Documentation/security/diglim/index.rst
+> @@ -0,0 +1,11 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +	  If you are unsure how to answer this question, answer N.
+> +======================================
+> +Digest Lists Integrity Module (DIGLIM)
+> +======================================
 > +
-> +config SECURITY_NAX_LOCKED
-> +	bool "Lock NAX settings"
-> +	depends on SECURITY_NAX
-> +	help
-> +	  If selected, it will not be possible to change enforcing and quiet
-> +	  settings via sysctl or the kernel command line. If not selected,
-> +	  it can be enabled at boot with the kernel parameter "nax_locked=3D1"
-> +	  or "kernel.nax_locked=3D1" sysctl (if the settings are not locked).
+> +.. toctree::
+> +   :maxdepth: 1
 > +
-> +config SECURITY_NAX_QUIET
-> +	bool "Silence NAX messages"
-> +	depends on SECURITY_NAX
-> +	help
-> +	  If selected, NAX will not print violations. If not selected, it can
-> +	  be enabled at boot with the kernel parameter "nax_quiet=3D1" or
-> +	  "kernel.nax_quiet=3D1" sysctl (if the settings are not locked).
-> +
-
-You probably should document the boot option in the kernel-parameters.txt f=
-ile.
-
-> +choice
-> +	prompt "NAX violation action mode"
-> +	default SECURITY_NAX_MODE_LOG
-> +	depends on SECURITY_NAX
-> +	help
-> +	  Select the NAX violation action mode.
-> +
-> +	  In the default permissive mode the violations are only logged
-> +	  (if logging is not suppressed). In the enforcing mode the violations
-> +	  are prohibited. And in the kill mode the process is terminated.
-> +
-> +	  The value can be changed at boot with the kernel parameter
-> +	  "nax_mode" (0, 1, 2) or "kernel.nax_mode=3D" (0, 1, 2) sysctl (if the
-> +	  settings are not locked).
-> +
-> +	config SECURITY_NAX_MODE_LOG
-> +		bool "Permissive mode"
-> +		help
-> +		  In this mode violations are only logged (if logging is not
-> +		  suppressed).
-> +	config SECURITY_NAX_MODE_ENFORCING
-> +		bool "Enforcing mode"
-> +		help
-> +		  In this mode violations are prohibited and logged (if
-> +		  logging is not suppressed).
-> +	config SECURITY_NAX_MODE_KILL
-> +		bool "Kill mode"
-> +		help
-> +		  In this mode the voilating process is terminated. The event
-
-"violating"
-
-> +		  is logged (if logging is not suppressed).
-> +endchoice
-> +
-> +config SECURITY_NAX_MODE
-> +        int
-> +        depends on SECURITY_NAX
-> +        default 0 if SECURITY_NAX_MODE_LOG
-> +        default 1 if SECURITY_NAX_MODE_ENFORCING
-> +        default 2 if SECURITY_NAX_MODE_KILL
-> diff --git a/security/nax/Makefile b/security/nax/Makefile
+> +   introduction
+> +   architecture
+> diff --git a/Documentation/security/diglim/introduction.rst b/Documentation/security/diglim/introduction.rst
 > new file mode 100644
-> index 000000000000..9c3372210c77
+> index 000000000000..d8d8b2a17222
 > --- /dev/null
-> +++ b/security/nax/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_SECURITY_NAX) :=3D nax.o
+> +++ b/Documentation/security/diglim/introduction.rst
+> @@ -0,0 +1,631 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +nax-y :=3D nax-lsm.o
-> diff --git a/security/nax/nax-lsm.c b/security/nax/nax-lsm.c
-> new file mode 100644
-> index 000000000000..ef99d9b36a9d
-> --- /dev/null
-> +++ b/security/nax/nax-lsm.c
-> @@ -0,0 +1,344 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (C) 2016-2021 Open Mobile Platform LLC.
-> + *
-> + * Written by: Igor Zhbanov <i.zhbanov@omp.ru, izh1979@gmail.com>
-> + *
-> + * NAX (No Anonymous Execution) Linux Security Module
-> + * This module prevents execution of the code in anonymous or modified p=
-ages.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2, as
-> + * published by the Free Software Foundation. */
+> +Introduction
+> +============
+> +
+> +Digest Lists Integrity Module (DIGLIM) is a new component added to the
+> +integrity subsystem in the kernel, primarily aiming to aid Integrity
+
+I would replace:
+
+	"is a new component added to" -> "is a component of"
+
+As this is the kind of text that tends to be outdated with time...
+Imagine someone reading this paragraph maybe 10 years in the future ;-)
+
+> +Measurement Architecture (IMA) in the process of checking the integrity of
+> +file content and metadata. It accomplishes this task by storing reference
+> +values coming from software vendors and by reporting whether or not the
+> +digest of file content or metadata calculated by IMA (or EVM) is found
+> +among those values. In this way, IMA can decide, depending on the result of
+> +a query, if a measurement should be taken or access to the file should be
+> +granted. The `Security Assumptions`_ section explains more in detail why
+> +this component has been placed in the kernel.
+> +
+> +The main benefits of using IMA in conjunction with DIGLIM are the ability
+> +to implement advanced remote attestation schemes based on the usage of a
+> +TPM key for establishing a TLS secure channel [1][2], and to reduce the
+> +burden on Linux distribution vendors to extend secure boot at OS level to
+> +applications.
+> +
+> +DIGLIM does not have the complexity of feature-rich databases. In fact, its
+> +main functionality comes from the hash table primitives already in the
+> +kernel. It does not have an ad-hoc storage module, it just indexes data in
+> +a fixed format (digest lists, a set of concatenated digests preceded by a
+> +header), copied to kernel memory as they are. Lastly, it does not support
+> +database-oriented languages such as SQL, but only accepts a digest and its
+> +algorithm as a query.
+> +
+> +The only digest list format supported by DIGLIM is called ``compact``.
+> +However, Linux distribution vendors don't have to generate new digest lists
+> +in this format for the packages they release, as already available
+> +information, such as RPM headers and DEB package metadata, can be already
+> +used as a source for reference values (they already include file digests),
+
+	-ETOMANY_already
+
+as "already" available... can be "already" ... "already" include...
+
+I would simplify the above text removing such redundancy.
+
+> +with a user space parser taking care of the conversion to the compact
+> +format.
+> +
+> +Although one might perceive that storing file or metadata digests for a
+> +Linux distribution would significantly increase the memory usage, this does
+> +not seem to be the case. As an anticipation of the evaluation done in the
+> +`Preliminary Performance Evaluation`_ section, protecting binaries and
+> +shared libraries of a minimal Fedora 33 installation requires 208K of
+> +memory for the digest lists plus 556K for indexing.
+> +
 
 
-Per checkpatch:
-WARNING: Block comments use a trailing */ on a separate line
-#328: FILE: security/nax/nax-lsm.c:48:
-+	 * or it has any unsafe capability (even in a user namespace) */
+> +In exchange for a slightly increased memory usage, DIGLIM improves the
+> +performance of the integrity subsystem. In the considered scenario, IMA
+> +measurement and appraisal with digest lists requires respectively less than
+> +one quarter and less than half the time, compared to the current solution.
 
-Checkpatch also complains about a few places where you could use tabs inste=
-ad
-of spaces, or add a space, and so on.
+I found this paragraph a little bit confusing to understand. Could you
+please improve the description?
 
-As a general rule, running 'scripts/checkpatch.pl' prior to sending the pat=
-ch is
-considered a good practice (see 'Documentation/process/submitting-patches.r=
-st').
+I mean: 
 
-> +
-> +#define pr_fmt(fmt) "NAX: " fmt
-> +
-> +#include <linux/capability.h>
-> +#include <linux/cred.h>
-> +#include <linux/ctype.h>
-> +#include <linux/lsm_hooks.h>
-> +#include <linux/mman.h>
-> +#include <linux/sched.h>
-> +#include <linux/securebits.h>
-> +#include <linux/security.h>
-> +#include <linux/sysctl.h>
-> +#include <linux/uidgid.h>
-> +
-> +#define NAX_MODE_PERMISSIVE 0 /* Log only             */
-> +#define NAX_MODE_ENFORCING  1 /* Enforce and log      */
-> +#define NAX_MODE_KILL       2 /* Kill process and log */
-> +
-> +static int mode   =3D CONFIG_SECURITY_NAX_MODE,
-> +	   quiet  =3D IS_ENABLED(CONFIG_SECURITY_NAX_QUIET),
-> +	   locked =3D IS_ENABLED(CONFIG_SECURITY_NAX_LOCKED);
-> +
-> +#define ALLOWED_CAPS_HEX_LEN (_KERNEL_CAPABILITY_U32S * 8)
-> +
-> +static char allowed_caps_hex[ALLOWED_CAPS_HEX_LEN + 1];
-> +static kernel_cap_t allowed_caps =3D CAP_EMPTY_SET;
-> +
-> +static int
-> +is_privileged_process(void)
-> +{
-> +	const struct cred *cred;
-> +	kuid_t root_uid;
-> +
-> +	cred =3D current_cred();
-> +	root_uid =3D make_kuid(cred->user_ns, 0);
-> +	/* We count a process as privileged if it any of its IDs is zero
-> +	 * or it has any unsafe capability (even in a user namespace) */
-> +	if ((!issecure(SECURE_NOROOT) && (uid_eq(cred->uid,   root_uid) ||
-> +					  uid_eq(cred->euid,  root_uid) ||
-> +					  uid_eq(cred->suid,  root_uid) ||
-> +					  uid_eq(cred->fsuid, root_uid))) ||
-> +	    (!cap_issubset(cred->cap_effective, allowed_caps)) ||
-> +	    (!cap_issubset(cred->cap_permitted, allowed_caps)))
-> +		return 1;
-> +
-> +	return 0;
-> +}
-> +
-> +static void
-> +log_warn(const char *reason)
-> +{
-> +	if (quiet)
-> +		return;
-> +
-> +	pr_warn_ratelimited("%s: pid=3D%d, uid=3D%u, comm=3D\"%s\"\n",
-> +		            reason, current->pid,
-> +		            from_kuid(&init_user_ns, current_cred()->uid),
-> +	                              current->comm);
-
-Have you considered writing to the audit log instead of the kernel messages=
- directly?
-(not saying that this is necessarily better, but is there a reasoning to pr=
-efer one or
-the other here? Audit logs are often consumed by automated tools and it may=
- be more pratical
-for people to detect and treat violations if the messages were pushed to th=
-e audit log
-- but conversely, that requires defining and maintaining a stable log forma=
-t for consumers)
-
-> +}
-> +
-> +static void
-> +kill_current_task(void)
-> +{
-> +	pr_warn("Killing pid=3D%d, uid=3D%u, comm=3D\"%s\"\n",
-> +		current->pid, from_kuid(&init_user_ns, current_cred()->uid),
-> +		current->comm);
-
-The same question applies here.
-
-> +	force_sig(SIGKILL);
-> +}
-> +
-> +static int
-> +nax_mmap_file(struct file *file, unsigned long reqprot,
-> +	      unsigned long prot, unsigned long flags)
-> +{
-> +	int ret =3D 0;
-> +
-> +	if (mode =3D=3D NAX_MODE_PERMISSIVE && quiet)
-> +		return 0; /* Skip further checks in this case */
-> +
-> +	if (!(prot & PROT_EXEC)) /* Not executable memory */
-> +		return 0;
-> +
-> +	if (!is_privileged_process())
-> +		return 0; /* Not privileged processes can do anything */
-> +
-> +	if (!file) { /* Anonymous executable memory */
-> +		log_warn("MMAP_ANON_EXEC");
-> +		ret =3D -EACCES;
-> +	} else if (prot & PROT_WRITE) { /* Mapping file RWX */
-> +		log_warn("MMAP_FILE_WRITE_EXEC");
-> +		ret =3D -EACCES;
-> +	}
-> +
-> +	if (mode =3D=3D NAX_MODE_KILL)
-> +		kill_current_task();
-> +
-> +	return (mode !=3D NAX_MODE_PERMISSIVE) ? ret : 0;
-> +}
-> +
-> +static int
-> +nax_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-> +		  unsigned long prot)
-> +{
-> +	if (mode =3D=3D NAX_MODE_PERMISSIVE && quiet)
-> +		return 0; /* Skip further checks in this case */
-> +
-> +	if (!(prot & PROT_EXEC)) /* Not executable memory */
-> +		return 0;
-> +
-> +	if (!is_privileged_process())
-> +		return 0; /* Not privileged processes can do anything */
-> +
-> +	if (!(vma->vm_flags & VM_EXEC)) {
-> +		int ret =3D 0;
-> +
-> +		if (vma->vm_start >=3D vma->vm_mm->start_brk &&
-> +		    vma->vm_end   <=3D vma->vm_mm->brk) {
-> +			log_warn("MPROTECT_EXEC_HEAP");
-> +			ret =3D -EACCES;
-> +		} else if (!vma->vm_file &&
-> +			   ((vma->vm_start <=3D vma->vm_mm->start_stack &&
-> +			     vma->vm_end   >=3D vma->vm_mm->start_stack) ||
-> +			    vma_is_stack_for_current(vma))) {
-> +			log_warn("MPROTECT_EXEC_STACK");
-> +			ret =3D -EACCES;
-> +		} else if (vma->vm_file && vma->anon_vma) {
-> +			/* We are making executable a file mapping that has
-> +			 * had some COW done. Since pages might have been
-> +			 * written, check ability to execute the possibly
-> +			 * modified content. This typically should only
-> +			 * occur for text relocations. */
-> +			log_warn("MPROTECT_EXEC_MODIFIED");
-> +			ret =3D -EACCES;
-> +		}
-> +
-> +		if (ret) {
-> +			if (mode =3D=3D NAX_MODE_KILL)
-> +				kill_current_task();
-> +
-> +			return (mode !=3D NAX_MODE_PERMISSIVE) ? ret : 0;
-> +		}
-> +	}
-> +
-> +	return nax_mmap_file(vma->vm_file, reqprot, prot,
-> +			     vma->vm_flags & VM_SHARED);
-
-Considering many checks in nax_mmap_file were already done in this function=
-,
-wouldn't it be simpler to write the rest the function too (and you could di=
-stinguish
-MRPOTECT_ANON_EXEC and MMAP_ANON_EXEC that way). What do you think of somet=
-hing like:
-
-> -
-> -		if (ret) {
-> -			if (mode =3D=3D NAX_MODE_KILL)
-> -				kill_current_task();
-> -
-> -			return (mode !=3D NAX_MODE_PERMISSIVE) ? ret : 0;
-> -		}
-> -	}
-> -
-> -	return nax_mmap_file(vma->vm_file, reqprot, prot,
-> -			     vma->vm_flags & VM_SHARED);
-> +	} else {
-> +		if (!vma->vm_file) { /* Anonymous executable memory */
-> +			log_warn("MRPOTECT_ANON_EXEC");
-> +			ret =3D -EACCES;
-> +		} else if (prot & PROT_WRITE) { /* remapping the file as RWX */
-> +			log_warn("MPROTECT_FILE_WRITE_EXEC");
-> +			ret =3D -EACCES;
-> +		}
-> +	}
-> +
-> +	if (ret && mode =3D=3D NAX_MODE_KILL)
-> +		kill_current_task();
-> +
-> +	return (mode !=3D NAX_MODE_PERMISSIVE) ? ret : 0;
-
-
-> +}
-> +
-> +static struct security_hook_list nax_hooks[] __lsm_ro_after_init =3D {
-> +	LSM_HOOK_INIT(mmap_file, nax_mmap_file),
-> +	LSM_HOOK_INIT(file_mprotect, nax_file_mprotect),
-> +};
-> +
-> +#ifdef CONFIG_SYSCTL
-> +
-> +static int
-> +nax_dointvec_minmax(struct ctl_table *table, int write,
-> +		    void *buffer, size_t *lenp, loff_t *ppos)
-> +{
-> +	if (write && (!capable(CAP_SYS_ADMIN) || locked))
-> +		return -EPERM;
-> +
-> +	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-> +}
-> +
-> +static int
-> +nax_dostring(struct ctl_table *table, int write, void *buffer,
-> +             size_t *lenp, loff_t *ppos)
-> +{
-> +	if (write) {
-> +		int error;
-> +		char *buf =3D (char *)buffer;
-> +		size_t len =3D *lenp, i;
-> +		kernel_cap_t caps =3D CAP_EMPTY_SET;
-
-The kernel style guide mandates that all variables are only defined at the =
-beggining of the
-function, and not at the beggining of any block like C89.
+	what improved by one quarter?
+	what improved by "less than half of the time"?
 
 > +
-> +		if (!capable(CAP_SYS_ADMIN) || locked)
-> +			return -EPERM;
-> +
-> +		/* Do not allow trailing garbage or excessive length */
-> +		if (len =3D=3D ALLOWED_CAPS_HEX_LEN + 1) {
-> +			if (buf[--len] !=3D '\n')
-> +				return -EINVAL> +		} else if (len > ALLOWED_CAPS_HEX_LEN || len <=3D=
- 0)
-> +			return -EINVAL;
-> +
-> +		if ((error =3D proc_dostring(table, write, buffer, lenp, ppos)))
-> +			return error;
+> +DIGLIM also keeps track of whether digest lists have been processed in some
+> +way (e.g. measured or appraised by IMA). This is important for example for
+> +remote attestation, so that remote verifiers understand what has been
+> +uploaded to the kernel.
 > +
 
-Nit: considering that allowed_caps_hex is only used in this function, and t=
-hat it represents a small amount of
-stack space, couldn't you define it directly in the function?
+> +DIGLIM behaves like a transactional database, i.e. it has the ability to
+> +roll back to the beginning of the transaction if an error occurred during
+> +the addition of a digest list (the deletion operation always succeeds).
 
-> +		len =3D strlen(allowed_caps_hex);
-> +		for (i =3D 0; i < len; i++)
-> +			if (!isxdigit(allowed_caps_hex[i]))
-> +				return -EINVAL;> +
-> +		for (i =3D 0; i < _KERNEL_CAPABILITY_U32S; i++) {
-> +			unsigned long l;
-> +
-> +			if (kstrtoul(allowed_caps_hex +
-> +			             (len >=3D 8 ? len - 8 : 0), 16, &l))
-> +				return -EINVAL;
-> +
-> +			caps.cap[i] =3D l;
-> +			if (len < 8)
-> +				break;
-> +
-> +			len -=3D 8;
-> +			allowed_caps_hex[len] =3D '\0';
-> +		}
-> +
-> +		allowed_caps =3D cap_intersect(caps, CAP_FULL_SET);
+I don't think it makes sense to compare it with a transactional database.
 
-This operation doesn't look atomic to me, and I think other operations coul=
-dn run while this
-write is ongoing.
-While users will probably not write to this often (and a proper system woul=
-d be locked anyway,
-otherwise the attacker would just have to write to the NAX "mode" sysctl to=
- disable it and carry
-on his attack), it could break programs (deny the action of kill the proces=
-s) that perform a
-mmap() or a mprotect() and read garbage in allowed_caps because a write to =
-the structure was
-running concurrently.
+I would say, instead, something like:
 
-You should maybe consider a way to ensure either the update is atomic or th=
-e update is in a
-critical section.
+	The inserts on DIGLIM are atomic: if an error occurs during the addition
+	of a digest list, it rolls back the entire insert operation.
 
-> +		return 0;
-> +	} else {
-> +		unsigned i;
-> +
-> +		CAP_FOR_EACH_U32(i)
-> +			snprintf(allowed_caps_hex + i * 8, 9, "%08x",
-> +			         allowed_caps.cap[CAP_LAST_U32 - i]);
-> +
-> +		return proc_dostring(table, write, buffer, lenp, ppos);
-> +	}
-> +}
-> +
-> +struct ctl_path nax_sysctl_path[] =3D {
-> +	{ .procname =3D "kernel" },
-> +	{ .procname =3D "nax"    },
-> +	{ }
-> +};
-> +
-> +static int max_mode =3D NAX_MODE_KILL;
-> +
-> +static struct ctl_table nax_sysctl_table[] =3D {
-> +	{
-> +		.procname     =3D "allowed_caps",
-> +		.data         =3D allowed_caps_hex,
-> +		.maxlen       =3D ALLOWED_CAPS_HEX_LEN + 1,
-> +		.mode         =3D 0644,
-> +		.proc_handler =3D nax_dostring,
-> +	}, {
-> +		.procname     =3D "locked",
-> +		.data         =3D &locked,
-> +		.maxlen       =3D sizeof(int),
-> +		.mode         =3D 0644,
-> +		.proc_handler =3D nax_dointvec_minmax,
-> +		.extra1       =3D SYSCTL_ZERO,
-> +		.extra2       =3D SYSCTL_ONE,
-> +	}, {
-> +		.procname     =3D "mode",
-> +		.data         =3D &mode,
-> +		.maxlen       =3D sizeof(int),
-> +		.mode         =3D 0644,
-> +		.proc_handler =3D nax_dointvec_minmax,
-> +		.extra1       =3D SYSCTL_ZERO,
-> +		.extra2       =3D &max_mode,
-> +	}, {
-> +		.procname     =3D "quiet",
-> +		.data         =3D &quiet,
-> +		.maxlen       =3D sizeof(int),
-> +		.mode         =3D 0644,
-> +		.proc_handler =3D nax_dointvec_minmax,
-> +		.extra1       =3D SYSCTL_ZERO,
-> +		.extra2       =3D SYSCTL_ONE,
-> +	},
-> +	{ }
-> +};
-> +
-> +static void __init
-> +nax_init_sysctl(void)
-> +{
-> +	if (!register_sysctl_paths(nax_sysctl_path, nax_sysctl_table))
-> +		panic("NAX: sysctl registration failed.\n");
-> +}
-> +
-> +#else /* !CONFIG_SYSCTL */
-> +
-> +static inline void
-> +nax_init_sysctl(void)
-> +{
-> +
-> +}
-> +
-> +#endif /* !CONFIG_SYSCTL */
-> +
-> +static int __init setup_mode(char *str)
-> +{
-> +	unsigned long val;
-> +
-> +	if (!locked && !kstrtoul(str, 0, &val)) {
-> +		if (val > max_mode){
-> +			pr_err("Invalid 'nax_mode' parameter value (%s)\n",
-> +			       str);
-> +			val =3D max_mode;
-> +		}
-> +
-> +		mode =3D val;
-> +	}
-> +
-> +	return 1;
-> +}
-> +__setup("nax_mode=3D", setup_mode);
-> +
-> +static int __init setup_quiet(char *str)
-> +{
-> +	unsigned long val;
-> +
-> +	if (!locked && !kstrtoul(str, 0, &val))
-> +		quiet =3D val ? 1 : 0;
 
-The order of the kernel parameters will have an impact on NAX behavior.
+> +This capability has been tested with an ad-hoc fault injection mechanism
+> +capable of simulating failures during the operations.
+> +
+> +Finally, DIGLIM exposes to user space, through securityfs, the digest lists
+> +currently loaded, the number of digests added, a query interface and an
+> +interface to set digest list labels.
+> +
+> +[1] LSS EU 2019
+> +
+> +-   slides:
+> +    https://static.sched.com/hosted_files/lsseu2019/bd/secure_attested_communication_channels_lss_eu_2019.pdf
+> +-   video: https://youtu.be/mffdQgkvDNY
+> +
+> +[2] FutureTPM EU project, final review meeting demo
+> +
+> +-   slides:
+> +    https://futuretpm.eu/images/07-3-FutureTPM-Final-Review-Slides-WP6-Device-Management-Use-Case-HWDU.pdf
+> +-   video: https://vimeo.com/528251864/4c1d55abcd
 
-nax_mode=3D1 nax_locked=3D1 and nax_locked=3D1 nax_mode=3D1 will end up wit=
-h the same behavior.
-in the first case the mode is enforced, in the second case it isn't (well u=
-nless you changed
- the kernel configuration from the default) and it can't be enabled later e=
-ither.
+The above won't generate any cross-references with Sphinx.
 
-Is that desired?
+For it correct syntax, see:
+	https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#citations
+
 
 > +
-> +	return 1;
-> +}
-> +__setup("nax_quiet=3D", setup_quiet);
 > +
-> +static int __init setup_locked(char *str)
-> +{
-> +	unsigned long val;
+> +Binary Integrity
+> +----------------
 > +
-> +	if (!locked && !kstrtoul(str, 0, &val))
-> +		locked =3D val ? 1 : 0;
-> +
-> +	return 1;
-> +}
-> +__setup("nax_locked=3D", setup_locked);
-> +
-> +static __init int
-> +nax_init(void)
-> +{
-> +	pr_info("Starting.\n");
-> +	security_add_hooks(nax_hooks, ARRAY_SIZE(nax_hooks), "nax");
-> +	nax_init_sysctl();
-> +
-> +	return 0;
-> +}
-> +
-> +DEFINE_LSM(nax) =3D {
-> +	.name =3D "nax",
-> +	.init =3D nax_init,
-> +};
->=20
+> +Integrity is a fundamental security property in information systems.
 
-Review aside, this patch is certainly interesting for providing a simple wa=
-y to block anonymous excutable mappins,
-so thanks for the submission.
-I have to wonder: wouldn't it be interesting to add an option to enable NAX=
- for all processes on the system,
-as you mentioned in the cover letter?
+> +Integrity could be described as the condition in which a generic
+> +component is just after it has been released by the entity that created it.
 
-Have a nice day,
-Simon
+Sounds a weird description for me. (ISC)2 defines integrity on its
+glossary[1] as:
+
+	"Guarding against improper information modification or destruction and
+	 includes ensuring information non-repudiation and authenticity."
+
+[1] https://www.isc2.org/Certifications/CISSP/CISSP-Student-Glossary
+
+> +One way to check whether a component is in this condition (called binary
+> +integrity) is to calculate its digest and to compare it with a reference
+> +value (i.e. the digest calculated in controlled conditions, when the
+> +component is released).
+> +
+> +IMA, a software part of the integrity subsystem, can perform such
+> +evaluation and execute different actions:
+> +
+> +- store the digest in an integrity-protected measurement list, so that it
+> +  can be sent to a remote verifier for analysis;
+> +- compare the calculated digest with a reference value (usually protected
+> +  with a signature) and deny operations if the file is found corrupted;
+> +- store the digest in the system log.
+> +
+> +
+
+
+> +Contribution
+> +------------
+
+I would rename this chapter to "Benefits".
+
+> +
+> +DIGLIM further enhances the capabilities offered by IMA-based solutions
+> +and, at the same time, makes them more practical to adopt by reusing
+> +existing sources as reference values for integrity decisions.
+> +
+> +Possible sources for digest lists are:
+> +
+> +- RPM headers;
+> +- Debian repository metadata.
+> +
+> +
+> +Benefits for IMA Measurement
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +One of the issues that arises when files are measured by the OS is that,
+> +due to parallel execution, the order in which file accesses happen cannot
+> +be predicted. Since the TPM Platform Configuration Register (PCR) extend
+> +operation, executed after each file measurement, cryptographically binds
+> +the current measurement to the previous ones, the PCR value at the end of a
+> +workload cannot be predicted too.
+> +
+> +Thus, even if the usage of a TPM key, bound to a PCR value, should be
+> +allowed when only good files were accessed, the TPM could unexpectedly deny
+> +an operation on that key if files accesses did not happen as stated by the
+> +key policy (which allows only one of the possible sequences).
+> +
+> +DIGLIM solves this issue by making the PCR value stable over the time and
+> +not dependent on file accesses. The following figure depicts the current
+> +and the new approaches:
+> +
+> +::
+> +
+> + IMA measurement list (current)
+> +
+> + entry#        1st boot               2nd boot               3rd boot
+> +       +----+---------------+ +----+---------------+ +----+---------------+
+> + 1:    | 10 | file1 measur. | | 10 | file3 measur. | | 10 | file2 measur. |
+> +       +----+---------------+ +----+---------------+ +----+---------------+
+> + 2:    | 10 | file2 measur. | | 10 | file2 measur. | | 10 | file3 measur. |
+> +       +----+---------------+ +----+---------------+ +----+---------------+
+> + 3:    | 10 | file3 measur. | | 10 | file1 measur. | | 10 | file4 measur. |
+> +       +----+---------------+ +----+---------------+ +----+---------------+
+> +
+> + PCR:  Extend              != Extend              != Extend
+> +       file1, file2, file3    file3, file2, file1    file2, file3, file4
+> +
+> +
+> + PCR Extend definition:
+> +
+> +       PCR(new value) = Hash(Hash(meas. entry), PCR(previous value))
+> +
+> +A new entry in the measurement list is created by IMA for each file access.
+> +Assuming that ``file1``, ``file2`` and ``file3`` are files provided by the
+> +software vendor, ``file4`` is an unknown file, the first two PCR values
+> +above represent a good system state, the third a bad system state. The PCR
+> +values are the result of the PCR extend operation performed for each
+> +measurement entry with the digest of the measurement entry as an input.
+> +
+> +::
+> +
+> + IMA measurement list (with DIGLIM)
+> +
+> + dlist
+> + +--------------+
+> + |    header    |
+> + +--------------+
+> + | file1 digest |
+> + | file2 digest |
+> + | file3 digest |
+> + +--------------+
+> +
+> +``dlist`` is a digest list containing the digest of ``file1``, ``file2``
+> +and ``file3``. In the intended scenario, it is generated by a software
+> +vendor at the end of the building process, and retrieved by the
+> +administrator of the system where the digest list is loaded.
+> +
+> +::
+> +
+> + entry#        1st boot               2nd boot               3rd boot
+> +       +----+---------------+ +----+---------------+ +----+---------------+
+> + 0:    | 11 | dlist measur. | | 11 | dlist measur. | | 11 | dlist measur. |
+> +       +----+---------------+ +----+---------------+ +----+---------------+
+> + 1:    < file1 measur. skip > < file3 measur. skip > < file2 measur. skip >
+> +
+> + 2:    < file2 measur. skip > < file2 measur. skip > < file3 measur. skip >
+> +                                                     +----+---------------+
+> + 3:    < file3 measur. skip > < file1 measur. skip > | 11 | file4 measur. |
+> +                                                     +----+---------------+
+> +
+> + PCR:  Extend               = Extend              != Extend
+> +       dlist                  dlist                  dlist, file4
+> +
+> +
+> +The first entry in the measurement list contains the digest of the digest
+> +list uploaded to the kernel at kernel initialization time.
+> +
+> +When a file is accessed, IMA queries DIGLIM with the calculated file digest
+> +and, if it is found, IMA skips the measurement.
+> +
+> +Thus, the only information sent to remote verifiers are: the list of
+> +files that could possibly be accessed (from the digest list), but not if
+> +they were accessed and when; the measurement of unknown files.
+> +
+> +Despite providing less information, this solution has the advantage that
+> +the good system state (i.e. when only ``file1``, ``file2`` and ``file3``
+> +are accessed) now can be represented with a deterministic PCR value (the
+> +PCR is extended only with the measurement of the digest list). Also, the
+> +bad system state can still be distinguished from the good state (the PCR is
+> +extended also with the measurement of ``file4``).
+> +
+> +If a TPM key is bound to the good PCR value, the TPM would allow the key to
+> +be used if ``file1``, ``file2`` or ``file3`` are accessed, regardless of
+> +the sequence in which they are accessed (the PCR value does not change),
+> +and would revoke the permission when the unknown ``file4`` is accessed (the
+> +PCR value changes). If a system is able to establish a TLS connection with
+> +a peer, this implicitly means that the system was in a good state (i.e.
+> +``file4`` was not accessed, otherwise the TPM would have denied the usage
+> +of the TPM key due to the key policy).
+> +
+> +
+> +Benefits for IMA Appraisal
+> +~~~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +Extending secure boot to applications means being able to verify the
+> +provenance of files accessed. IMA does it by verifying file signatures with
+> +a key that it trusts, which requires Linux distribution vendors to
+> +additionally include in the package header a signature for each file that
+> +must be verified (there is the dedicated ``RPMTAG_FILESIGNATURES`` section
+> +in the RPM header).
+> +
+> +The proposed approach would be instead to verify data provenance from
+> +already available metadata (file digests) in existing packages. IMA would
+> +verify the signature of package metadata and search file digests extracted
+> +from package metadata and added to the hash table in the kernel.
+> +
+> +For RPMs, file digests can be found in the ``RPMTAG_FILEDIGESTS`` section
+> +of ``RPMTAG_IMMUTABLE``, whose signature is in ``RPMTAG_RSAHEADER``. For
+> +DEBs, file digests (unsafe to use due to a weak digest algorithm) can be
+> +found in the ``md5sum`` file, which can be indirectly verified from
+> +``Release.gpg``.
+> +
+> +The following figure highlights the differences between the current and the
+> +proposed approach.
+> +
+> +::
+> +
+> + IMA appraisal (current solution, with file signatures):
+> +
+> +                                                         appraise
+> +                                                      +-----------+
+> +                                                      V           |
+> + +-------------------------+-----+         +-------+-----+        |
+> + | RPM header              |     | ima rpm | file1 | sig |        |
+> + | ...                     |     | plugin  +-------+-----+     +-----+
+> + | file1 sig [to be added] | sig |-------->      ...           | IMA |
+> + | ...                     |     |         +-------+-----+     +-----+
+> + | fileN sig [to be added] |     |         | fileN | sig |
+> + +-------------------------+-----+         +-------+-----+
+> +
+> +In this case, file signatures must be added to the RPM header, so that the
+> +``ima`` rpm plugin can extract them together with the file content. The RPM
+> +header signature is not used.
+> +
+> +::
+> +
+> + IMA appraisal (with DIGLIM):
+> +
+> +                                    kernel hash table
+> +                                    with RPM header content
+> +                                    +---+    +--------------+
+> +                                    |   |--->| file1 digest |
+> +                                    +---+    +--------------+
+> +                                     ...
+> +                                    +---+         appraise (file1)
+> +                                    |   |  <--------------+
+> + +----------------+-----+           +---+                 |
+> + | RPM header     |     |             ^                   |
+> + | ...            |     | digest_list |                   |
+> + | file1 digest   | sig | rpm plugin  |    +-------+   +-----+
+> + | ...            |     |-------------+--->| file1 |   | IMA |
+> + | fileN digest   |     |                  +-------+   +-----+
+> + +----------------+-----+                                 |
+> +                     ^                                    |
+> +                     +------------------------------------+
+> +                             appraise (RPM header)
+> +
+> +In this case, the RPM header is used as it is, and its signature is used
+> +for IMA appraisal. Then, the ``digest_list`` rpm plugin executes the user
+> +space parser to parse the RPM header and add the extracted digests to an
+> +hash table in the kernel. IMA appraisal of the files in the RPM package
+> +consists in searching their digest in the hash table.
+> +
+> +Other than reusing available information as digest list, another advantage
+> +is the lower computational overhead compared to the solution with file
+> +signatures (only one signature verification for many files and digest
+> +lookup, instead of per file signature verification, see `Preliminary
+> +Performance Evaluation`_ for more details).
+> +
+> +
+> +Lifecycle
+> +---------
+> +
+> +The lifecycle of DIGLIM is represented in the following figure:
+> +
+> +::
+
+You could just use:
+
+	The lifecycle of DIGLIM is represented in the following figure::
+
+> +
+> + Vendor premises (release process with modifications):
+> +
+> + +------------+   +-----------------------+   +------------------------+
+> + | 1. build a |   | 2. generate and sign  |   | 3. publish the package |
+> + |    package |-->|    a digest list from |-->|    and digest list in  |
+> + |            |   |    packaged files     |   |    a repository        |
+> + +------------+   +-----------------------+   +------------------------+
+> +                                                                 |
+> +                                                                 |
+> + User premises:                                                  |
+> +                                                                 V
+> + +---------------------+   +------------------------+   +-----------------+
+> + | 6. use digest lists |   | 5. download the digest |   | 4. download and |
+> + |    for measurement  |<--|    list and upload to  |<--|    install the  |
+> + |    and/or appraisal |   |    the kernel          |   |    package      |
+> + +---------------------+   +------------------------+   +-----------------+
+> +
+> +The figure above represents all the steps when a digest list is
+> +generated separately. However, as mentioned in `Contribution`_, in most
+> +cases existing packages can be already used as a source for digest lists,
+> +limiting the effort for software vendors.
+> +
+> +If, for example, RPMs are used as a source for digest lists, the figure
+> +above becomes:
+> +
+> +::
+
+Same here.
+
+> +
+> + Vendor premises (release process without modifications):
+> +
+> + +------------+   +------------------------+
+> + | 1. build a |   | 2. publish the package |
+> + |    package |-->|    in a repository     |---------------------+
+> + |            |   |                        |                     |
+> + +------------+   +------------------------+                     |
+> +                                                                 |
+> +                                                                 |
+> + User premises:                                                  |
+> +                                                                 V
+> + +---------------------+   +------------------------+   +-----------------+
+> + | 5. use digest lists |   | 4. extract digest list |   | 3. download and |
+> + |    for measurement  |<--|    from the package    |<--|    install the  |
+> + |    and/or appraisal |   |    and upload to the   |   |    package      |
+> + |                     |   |    kernel              |   |                 |
+> + +---------------------+   +------------------------+   +-----------------+
+> +
+> +Step 4 can be performed with the ``digest_list`` rpm plugin and the user
+> +space parser, without changes to rpm itself.
+> +
+> +
+> +Security Assumptions
+> +--------------------
+> +
+> +As mentioned in the `Introduction`_, DIGLIM will be primarily used in
+> +conjunction with IMA to enforce a mandatory policy on all user space
+> +processes, including those owned by root. Even root, in a system with a
+> +locked-down kernel, cannot affect the enforcement of the mandatory policy
+> +or, if changes are permitted, it cannot do so without being detected.
+> +
+> +Given that the target of the enforcement are user space processes, DIGLIM
+> +cannot be placed in the target, as a Mandatory Access Control (MAC) design
+> +is required to have the components responsible to enforce the mandatory
+> +policy separated from the target.
+> +
+> +While locking-down a system and limiting actions with a mandatory policy is
+> +generally perceived by users as an obstacle, it has noteworthy benefits for
+> +the users themselves.
+> +
+> +First, it would timely block attempts by malicious software to steal or
+> +misuse user assets. Although users could query the package managers to
+> +detect them, detection would happen after the fact, or it wouldn't happen
+> +at all if the malicious software tampered with package managers. With a
+> +mandatory policy enforced by the kernel, users would still be able to
+> +decide which software they want to be executed except that, unlike package
+> +managers, the kernel is not affected by user space processes or root.
+> +
+> +Second, it might make systems more easily verifiable from outside, due to
+> +the limited actions the system allows. When users connect to a server, not
+> +only they would be able to verify the server identity, which is already
+> +possible with communication protocols like TLS, but also if the software
+> +running on that server can be trusted to handle their sensitive data.
+> +
+> +
+> +Adoption
+> +--------
+> +
+> +A former version of DIGLIM is used in the following OSes:
+> +
+> +- openEuler 20.09
+> +  https://github.com/openeuler-mirror/kernel/tree/openEuler-20.09
+> +
+> +- openEuler 21.03
+> +  https://github.com/openeuler-mirror/kernel/tree/openEuler-21.03
+> +
+> +Originally, DIGLIM was part of IMA (known as IMA Digest Lists). In this
+> +version, it has been redesigned as a standalone module with an API that
+> +makes its functionality accessible by IMA and, eventually, other
+> +subsystems.
+> +
+> +User Space Support
+> +------------------
+> +
+> +Digest lists can be generated and managed with ``digest-list-tools``:
+> +
+> +https://github.com/openeuler-mirror/digest-list-tools
+> +
+> +It includes two main applications:
+> +
+> +- ``gen_digest_lists``: generates digest lists from files in the
+> +  filesystem or from the RPM database (more digest list sources can be
+> +  supported);
+> +- ``manage_digest_lists``: converts and uploads digest lists to the
+> +  kernel.
+> +
+> +Integration with rpm is done with the ``digest_list`` plugin:
+> +
+> +https://gitee.com/src-openeuler/rpm/blob/master/Add-digest-list-plugin.patch
+> +
+> +This plugin writes the RPM header and its signature to a file, so that the
+> +file is ready to be appraised by IMA, and calls the user space parser to
+> +convert and upload the digest list to the kernel.
+> +
+> +
+> +Simple Usage Example (Tested with Fedora 33)
+> +--------------------------------------------
+> +
+> +1. Digest list generation (RPM headers and their signature are copied to
+> +   the specified directory):
+> +
+> +.. code-block:: bash
+> +
+> + # mkdir /etc/digest_lists
+> + # gen_digest_lists -t file -f rpm+db -d /etc/digest_lists -o add
+> +
+> +2. Digest list upload with the user space parser:
+> +
+> +.. code-block:: bash
+> +
+> + # manage_digest_lists -p add-digest -d /etc/digest_lists
+> +
+> +3. First digest list query:
+> +
+> +.. code-block:: bash
+> +
+> + # echo sha256-$(sha256sum /bin/cat) > /sys/kernel/security/integrity/diglim/digest_query
+> + # cat /sys/kernel/security/integrity/diglim/digest_query
+> +   sha256-[...]-0-file_list-rpm-coreutils-8.32-18.fc33.x86_64 (actions: 0): version: 1, algo: sha256, type: 2, modifiers: 1, count: 106, datalen: 3392
+> +
+> +4. Second digest list query:
+> +
+> +.. code-block:: bash
+> +
+> + # echo sha256-$(sha256sum /bin/zip) > /sys/kernel/security/integrity/diglim/digest_query
+> + # cat /sys/kernel/security/integrity/diglim/digest_query
+> +   sha256-[...]-0-file_list-rpm-zip-3.0-27.fc33.x86_64 (actions: 0): version: 1, algo: sha256, type: 2, modifiers: 1, count: 4, datalen: 128
+> +
+> +
+> +Preliminary Performance Evaluation
+> +----------------------------------
+> +
+> +This section provides an initial estimation of the overhead introduced by
+> +DIGLIM. The estimation has been performed on a Fedora 33 virtual machine
+> +with 1447 packages installed. The virtual machine has 16 vCPU (host CPU:
+> +AMD Ryzen Threadripper PRO 3955WX 16-Cores) and 2G of RAM (host memory:
+> +64G). The virtual machine also has a vTPM with libtpms and swtpm as
+> +backend.
+> +
+> +After writing the RPM headers to files, the size of the directory
+> +containing them is 36M.
+> +
+> +After converting the RPM headers to the compact digest list, the size of
+> +the data being uploaded to the kernel is 3.6M.
+> +
+> +The time to load the entire RPM database is 0.628s.
+> +
+> +After loading the digest lists to the kernel, the slab usage due to
+> +indexing is (obtained with slab_nomerge in the kernel command line):
+> +
+> +::
+> +
+> + OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+> + 118144 118144 100%    0,03K    923      128      3692K digest_list_item_ref_cache
+> + 102400 102400 100%    0,03K    800      128      3200K digest_item_cache
+> +   2646   2646 100%    0,09K     63       42       252K digest_list_item_cache
+> +
+> +The stats, obtained from the ``digests_count`` interface, introduced later,
+> +are:
+> +
+> +::
+> +
+> + Parser digests: 0
+> + File digests: 99100
+> + Metadata digests: 0
+> + Digest list digests: 1423
+> +
+> +On this installation, this would be the worst case in which all files are
+> +measured and/or appraised, which is currently not recommended without
+> +enforcing an integrity policy protecting mutable files. Infoflow LSM is a
+> +component to accomplish this task:
+> +
+> +https://patchwork.kernel.org/project/linux-integrity/cover/20190818235745.1417-1-roberto.sassu@huawei.com/
+> +
+> +The first manageable goal of IMA with DIGLIM is to use an execution policy,
+> +with measurement and/or appraisal of files executed or mapped in memory as
+> +executable (in addition to kernel modules and firmware). In this
+> +case, the digest list contains the digest only for those files. The numbers
+> +above change as follows.
+> +
+> +After converting the RPM headers to the compact digest list, the size of
+> +the data being uploaded to the kernel is 208K.
+> +
+> +The time to load the digest of binaries and shared libraries is 0.062s.
+> +
+> +After loading the digest lists to the kernel, the slab usage due to
+> +indexing is:
+> +
+> +::
+> +
+> + OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME
+> + 7168   7168 100%    0,03K     56      128       224K digest_list_item_ref_cache
+> + 7168   7168 100%    0,03K     56      128       224K digest_item_cache
+> + 1134   1134 100%    0,09K     27       42       108K digest_list_item_cache
+> +
+> +
+> +The stats, obtained from the ``digests_count`` interface, are:
+> +
+> +::
+> +
+> + Parser digests: 0
+> + File digests: 5986
+> + Metadata digests: 0
+> + Digest list digests: 1104
+> +
+> +
+> +Comparison with IMA
+> +~~~~~~~~~~~~~~~~~~~
+> +
+> +This section compares the performance between the current solution for IMA
+> +measurement and appraisal, and IMA with DIGLIM.
+> +
+> +
+> +Workload A (without DIGLIM):
+> +
+> +#. cat file[0-5985] > /dev/null
+> +
+> +
+> +Workload B (with DIGLIM):
+> +
+> +#. echo $PWD/0-file_list-compact-file[0-1103] > <securityfs>/integrity/diglim/digest_list_add
+> +#. cat file[0-5985] > /dev/null
+> +
+> +
+> +Workload A execution time without IMA policy:
+> +
+> +::
+> +
+> + real	0m0,155s
+> + user	0m0,008s
+> + sys	0m0,066s
+> +
+> +
+> +Measurement
+> +...........
+> +
+> +IMA policy:
+> +
+> +::
+> +
+> + measure fowner=2000 func=FILE_CHECK mask=MAY_READ use_diglim=allow pcr=11 ima_template=ima-sig
+> +
+> +``use_diglim`` is a policy keyword not yet supported by IMA.
+> +
+> +
+> +Workload A execution time with IMA and 5986 files with signature measured:
+> +
+> +::
+> +
+> + real	0m8,273s
+> + user	0m0,008s
+> + sys	0m2,537s
+> +
+> +
+> +Workload B execution time with IMA, 1104 digest lists with signature
+> +measured and uploaded to the kernel, and 5986 files with signature accessed
+> +but not measured (due to the file digest being found in the hash table):
+> +
+> +::
+> +
+> + real	0m1,837s
+> + user	0m0,036s
+> + sys	0m0,583s
+> +
+> +
+> +Appraisal
+> +.........
+> +
+> +IMA policy:
+> +
+> +::
+> +
+> + appraise fowner=2000 func=FILE_CHECK mask=MAY_READ use_diglim=allow
+> +
+> +``use_diglim`` is a policy keyword not yet supported by IMA.
+> +
+> +
+> +Workload A execution time with IMA and 5986 files with file signature
+> +appraised:
+> +
+> +::
+> +
+> + real	0m2,197s
+> + user	0m0,011s
+> + sys	0m2,022s
+> +
+> +
+> +Workload B execution time with IMA, 1104 digest lists with signature
+> +appraised and uploaded to the kernel, and with 5986 files with signature
+> +not verified (due to the file digest being found in the hash table):
+> +
+> +::
+> +
+> + real	0m0,982s
+> + user	0m0,020s
+> + sys	0m0,865s
+> diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+> index 16335de04e8c..6c3aea41c55b 100644
+> --- a/Documentation/security/index.rst
+> +++ b/Documentation/security/index.rst
+> @@ -17,3 +17,4 @@ Security Documentation
+>     tpm/index
+>     digsig
+>     landlock
+> +   diglim/index
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6c8be735cc91..c914dadd7e65 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5452,6 +5452,15 @@ L:	linux-gpio@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/gpio/gpio-gpio-mm.c
+>  
+> +DIGLIM
+> +M:	Roberto Sassu <roberto.sassu@huawei.com>
+> +L:	linux-integrity@vger.kernel.org
+> +S:	Supported
+> +T:	git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
+> +F:	Documentation/security/diglim/architecture.rst
+> +F:	Documentation/security/diglim/index.rst
+> +F:	Documentation/security/diglim/introduction.rst
+> +
+>  DIOLAN U2C-12 I2C DRIVER
+>  M:	Guenter Roeck <linux@roeck-us.net>
+>  L:	linux-i2c@vger.kernel.org
+
+
+
+Thanks,
+Mauro
