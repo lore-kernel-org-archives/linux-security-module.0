@@ -2,76 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CABC4338F
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 20:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59926C4320E
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 06:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5DD560F9E
-	for <linux-security-module@archiver.kernel.org>; Tue, 27 Jul 2021 20:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36F2F60FC2
+	for <linux-security-module@archiver.kernel.org>; Wed, 28 Jul 2021 06:59:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231351AbhG0UAO (ORCPT
+        id S234056AbhG1G7O convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 27 Jul 2021 16:00:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231213AbhG0UAO (ORCPT
+        Wed, 28 Jul 2021 02:59:14 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3508 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229939AbhG1G7J (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 27 Jul 2021 16:00:14 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id 0C5AC60F9E;
-        Tue, 27 Jul 2021 20:00:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1627416014;
-        bh=DWxuwv9MrG9KyWhAm/nAR1pYgmx0UU4riGcmruIdOFw=;
-        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-        b=KKwn3Lxxb9ystuAqticq81hz2A+YvBCYA/fhsnguKXJ5/2Lv/F3N6XKWpB1LbkBsC
-         bQJisElb5Q/ohsD5dvnI8lJ2h2+LbxBpWyrcJ+4JZ2o+RLh/Fl0xX/0RABrrKY8Z0W
-         cNo1elQei2q0qN0BW4170dBaSVFQnYPHo29Ay3/QxNjS+bgsobw6AQnaE+oIXxJT4u
-         AVePmv953SJ+WdqGc3KD8mY0aTw7MSMqt3SavWxAieuGOBD+toZoJ5CNqzk2hWraZ8
-         4KF5YKLDrNHGzCStbbhn3r/KI1dXxxzH5l/AsbFarQ9vnyNGli7oJHJQm0fWkMnUFn
-         6tCBBPKY0HqkQ==
-Content-Type: text/plain; charset="utf-8"
+        Wed, 28 Jul 2021 02:59:09 -0400
+Received: from fraeml709-chm.china.huawei.com (unknown [172.18.147.201])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GZPRP379rz6J6fY;
+        Wed, 28 Jul 2021 14:49:53 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml709-chm.china.huawei.com (10.206.15.37) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Wed, 28 Jul 2021 08:59:06 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Wed, 28 Jul 2021 08:59:06 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [RFC][PATCH v2 02/12] diglim: Basic definitions
+Thread-Topic: [RFC][PATCH v2 02/12] diglim: Basic definitions
+Thread-Index: AQHXgjyicwJtnSjv/UmZEg8zsJLYTqtWxYuAgAAn86D//+j9AIAAI3yw///kswCAARiZMA==
+Date:   Wed, 28 Jul 2021 06:59:06 +0000
+Message-ID: <41b1a66980a04b638bad8ae333e6415a@huawei.com>
+References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+ <20210726163700.2092768-3-roberto.sassu@huawei.com>
+ <YQAblc+UuMq68jxu@kroah.com> <e87ba6f452254067a5eb6d58937d65d1@huawei.com>
+ <YQApyqP7J/8GpItS@kroah.com> <4746947088404edaa31594fb095a6e46@huawei.com>
+ <YQAwqGOEkmDzZ9MJ@kroah.com>
+In-Reply-To: <YQAwqGOEkmDzZ9MJ@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH RESEND] net: cipso: fix warnings in netlbl_cipsov4_add_std
-From:   patchwork-bot+netdevbpf@kernel.org
-Message-Id: <162741601401.17427.16591015519654450734.git-patchwork-notify@kernel.org>
-Date:   Tue, 27 Jul 2021 20:00:14 +0000
-References: <20210727163530.3057-1-paskripkin@gmail.com>
-In-Reply-To: <20210727163530.3057-1-paskripkin@gmail.com>
-To:     Pavel Skripkin <paskripkin@gmail.com>
-Cc:     paul@paul-moore.com, davem@davemloft.net, kuba@kernel.org,
-        netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+cdd51ee2e6b0b2e18c0d@syzkaller.appspotmail.com
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (refs/heads/master):
-
-On Tue, 27 Jul 2021 19:35:30 +0300 you wrote:
-> Syzbot reported warning in netlbl_cipsov4_add(). The
-> problem was in too big doi_def->map.std->lvl.local_size
-> passed to kcalloc(). Since this value comes from userpace there is
-> no need to warn if value is not correct.
+> From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> Sent: Tuesday, July 27, 2021 6:13 PM
+> On Tue, Jul 27, 2021 at 04:09:37PM +0000, Roberto Sassu wrote:
+> > > From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> > > Sent: Tuesday, July 27, 2021 5:44 PM
+> > > On Tue, Jul 27, 2021 at 03:35:16PM +0000, Roberto Sassu wrote:
+> > > > > From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> > > > > Sent: Tuesday, July 27, 2021 4:44 PM
+> > > > > On Mon, Jul 26, 2021 at 06:36:50PM +0200, Roberto Sassu wrote:
+> > > > > > --- /dev/null
+> > > > > > +++ b/include/uapi/linux/diglim.h
+> > > > > > @@ -0,0 +1,51 @@
+> > > > > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > > > > > +/*
+> > > > > > + * Copyright (C) 2017-2021 Huawei Technologies Duesseldorf GmbH
+> > > > > > + *
+> > > > > > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > > > > > + *
+> > > > > > + * DIGLIM definitions exported to user space, useful for generating
+> > > digest
+> > > > > > + * lists.
+> > > > > > + */
+> > > > > > +
+> > > > > > +#ifndef _UAPI__LINUX_DIGLIM_H
+> > > > > > +#define _UAPI__LINUX_DIGLIM_H
+> > > > > > +
+> > > > > > +#include <linux/types.h>
+> > > > > > +#include <linux/hash_info.h>
+> > > > > > +
+> > > > > > +enum compact_types { COMPACT_KEY, COMPACT_PARSER,
+> > > > > COMPACT_FILE,
+> > > > > > +		     COMPACT_METADATA, COMPACT_DIGEST_LIST,
+> > > > > COMPACT__LAST };
+> > > > > > +
+> > > > > > +enum compact_modifiers { COMPACT_MOD_IMMUTABLE,
+> > > > > COMPACT_MOD__LAST };
+> > > > > > +
+> > > > > > +enum compact_actions { COMPACT_ACTION_IMA_MEASURED,
+> > > > > > +		       COMPACT_ACTION_IMA_APPRAISED,
+> > > > > > +		       COMPACT_ACTION_IMA_APPRAISED_DIGSIG,
+> > > > > > +		       COMPACT_ACTION__LAST };
+> > > > > > +
+> > > > > > +enum ops { DIGEST_LIST_ADD, DIGEST_LIST_DEL,
+> > > DIGEST_LIST_OP__LAST };
+> > > > > > +
+> > > > > > +/**
+> > > > > > + * struct compact_list_hdr - header of the following concatenated
+> > > digests
+> > > > > > + * @version: version of the digest list
+> > > > > > + * @_reserved: field reserved for future use
+> > > > > > + * @type: type of digest list among enum compact_types
+> > > > > > + * @modifiers: additional attributes among (1 << enum
+> > > compact_modifiers)
+> > > > >
+> > > > > I do not understand this description, what does it mean?
+> > > >
+> > > > Hi Greg
+> > > >
+> > > > yes, it is not very clear.
+> > > >
+> > > > @modifiers is a bitmask where each bit corresponds to a different
+> > > > attribute. enum compact_modifiers defines which bit position is
+> > > > assigned to each attribute.
+> > >
+> > > Watch out with endian issues and bitmasks...  Anyway, please document
+> > > this.
+> > >
+> > > >
+> > > > > > + * @algo: digest algorithm
+> > > > >
+> > > > > Is this also a #define or an enum?  Where is the list of them?
+> > > >
+> > > > @algo is an enum defined in include/uapi/linux/hash_info.h.
+> > >
+> > > Please say that.
+> > >
+> > > > > > + * @count: number of digests
+> > > > > > + * @datalen: length of concatenated digests
+> > > > >
+> > > > > Where does this count and length come into play as nothing else is in
+> > > > > this structure?
+> > > >
+> > > > Each digest list must begin with this structure. From it, the parser knows
+> > > > how much data it should expect afterwards. After the data, there could
+> be
+> > > > another or more blocks of this structure and following data.
+> > >
+> > > Ah, that was not obvious at all :)
+> > >
+> > > Why do you not have a __u8 data[]; type field as the last one here for
+> > > that memory so you can access it easier?
+> >
+> > After the digest list is parsed, I'm accessing the digest with the offset from
+> > the beginning of the digest list. If the offset was relative to the header, it
+> could
+> > have been useful. I could add the new field, but I'm afraid of the
+> incompatibility
+> > with existing tools that we have.
 > 
-> The same problem may occur with other kcalloc() calls in
-> this function, so, I've added __GFP_NOWARN flag to all
-> kcalloc() calls there.
+> What tools?  This isn't a feature in the kernel yet, so we have no
+> legacy to support, right?
+
+Yes, right. We shouldn't be limited by previously written code.
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
+
+> thanks,
 > 
-> [...]
-
-Here is the summary with links:
-  - [RESEND] net: cipso: fix warnings in netlbl_cipsov4_add_std
-    https://git.kernel.org/netdev/net-next/c/8ca34a13f7f9
-
-You are awesome, thank you!
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> greg k-h
