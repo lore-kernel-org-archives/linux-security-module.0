@@ -2,130 +2,199 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9535DC4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 05:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98410C432BE
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 05:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE6B61052
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 05:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8094C61054
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 05:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233700AbhG2Fb1 (ORCPT
+        id S234258AbhG2F5N (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jul 2021 01:31:27 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:36547 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230300AbhG2Fb0 (ORCPT
+        Thu, 29 Jul 2021 01:57:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233929AbhG2F5M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jul 2021 01:31:26 -0400
-Received: by mail-io1-f70.google.com with SMTP id k20-20020a6b6f140000b029053817be16cdso3171122ioc.3
-        for <linux-security-module@vger.kernel.org>; Wed, 28 Jul 2021 22:31:24 -0700 (PDT)
+        Thu, 29 Jul 2021 01:57:12 -0400
+Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F080C061757
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jul 2021 22:57:09 -0700 (PDT)
+Received: by mail-lf1-x129.google.com with SMTP id z2so8776019lft.1
+        for <linux-security-module@vger.kernel.org>; Wed, 28 Jul 2021 22:57:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XcbhZ5Sjzz8dxY7pTRg9gGEgfRrO83ag5vG41bFy7qA=;
+        b=YQEazPr+8F1apEi6PsoFkWJBawAyqulBeVpaRkq8+OZmhbwY1w8AVgsg+ekg2keP8U
+         AQcbJfUtG6kHUx4bXydpdMV+rM1Fqd1RbfQGFJHSmUF+3eTPZgSJjGCjWMfi3z8FdKHx
+         9eQlqYzm1NR3PI3NeTNFqlYI+ILW5SPY64rTFV2wN12Xu4blbSJRHDWC+QXnXYIVacUP
+         /wg78Zv0mNs3pKalYMNWqLZJSW4c4MvY0wzm5PHUFEMKJeMZFAqGDbbqEpGrlveUhjP1
+         zV+2fMf0vt26mgSFhuuBJgNMNWgrDM67K5+KGvh+xqp0ABvRQsEksxGogLILccUxaclh
+         uAig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=e4hqHnPtqsXF7Nnjw+AMuPPo4nbxLrKlXGDo7Dm2nAg=;
-        b=MdKtJZNbdchTAqmuWVFlDSAU1BYSRibmdsaoLI1nbxKrCFipRitBQMNIiMopPwHCvN
-         pfcOKhe83yn53lWrYTPzJPkPU4MecA92TF3yb9n4puIfs1LYhuHrdN/+JAfyn2jhEls7
-         JI0TvdHmKIqM4oIveanT7Bqt8m2XrN1v0g32DwcCNvo/jGV3I/XXTWZW1YRv8u3QW486
-         2Oah1GrBl/YwVKdwDpLp0tjGuGFQB5PjfPUNxGS8xWr1BcPLz3qg6s9cUy4Rsx0mv3qr
-         0COeHvaIOkYkRXOtalKbkotCN+Qr8qC008Y4oGmBzsIZVz7g9/LwPSDFHPQXkeQlP/jW
-         m6DQ==
-X-Gm-Message-State: AOAM5323rPnT7lbu2QFkq8dK3YJ/42cmA6UR49PM0m6pR0NBVJu/pOFl
-        sCivDLN6oUptG+5E9hBtedbCgHdVBIfgPwdWLWHhMbgRHQD/
-X-Google-Smtp-Source: ABdhPJwEuQqElPH3Rfv4oo156SiLaBFFaTJEdx8sOWr8wEUyBHrlOQVusYTGroaR6xrHJZil2pUbqvLyQFAXcZWkiBDHmLO072hK
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XcbhZ5Sjzz8dxY7pTRg9gGEgfRrO83ag5vG41bFy7qA=;
+        b=odb8ktwsOcLVajWhgbshgQ48XzV5ETEcdKayYxdrsoci6P2Emfp8Nuag1tHByJ+goB
+         qWZ83Y7oTdwfs/U4iO5HfMNwk7EbbpzW0VLJHRHqefUZMel7Y7CoNyVkueOk6aFoD54V
+         76LL2OqbA+fwVFmZsTftu/VIgxcHihSnr9Cs1cxuf++mny0lisLdWdF+qY3WtbdaCrlt
+         +vbAHqkVBfzvBl3Gg9sJuB6Pl5li31GTHwSxtW6VzfUblHQ1iJViF9+eWHkkkUIGRzAI
+         FekZobZ2Fcjgf9LkACrn/wHGJVH1NBMo7DpqJj6rckgTWs3wnEPJ2jfG+6VQMdU3Lu4Z
+         c8eQ==
+X-Gm-Message-State: AOAM533agK/mcui6njiLBRfFd6utYIGQns4esotGpeTmihtuQOrpXBb9
+        EUICZMNZuqsDMhTyVOvXhwmQ3KC+Rdre16O1v1wBFA==
+X-Google-Smtp-Source: ABdhPJzXQMiTbRwHulQZgSyAMiQCjKimBxkJLN8fa+Src+cJukNSOCcSHAMcEv0gZ4fTWkxqcwZgE78x/0et/HUAcqo=
+X-Received: by 2002:a19:c757:: with SMTP id x84mr2581412lff.302.1627538227888;
+ Wed, 28 Jul 2021 22:57:07 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198f:: with SMTP id g15mr2579946ilf.120.1627536683986;
- Wed, 28 Jul 2021 22:31:23 -0700 (PDT)
-Date:   Wed, 28 Jul 2021 22:31:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e874a205c83c6922@google.com>
-Subject: [syzbot] kernel BUG in assoc_array_insert (2)
-From:   syzbot <syzbot+219c8d031f42380c907a@syzkaller.appspotmail.com>
-To:     dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org,
-        keyrings@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, serge@hallyn.com,
-        syzkaller-bugs@googlegroups.com
+References: <20210727144349.11215-1-a.fatoum@pengutronix.de>
+ <YQA2fHPwH6EsH9BR@sol.localdomain> <367ea5bb-76cf-6020-cb99-91b5ca82d679@pengutronix.de>
+ <YQGAOTdQRHFv9rlr@gmail.com>
+In-Reply-To: <YQGAOTdQRHFv9rlr@gmail.com>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Thu, 29 Jul 2021 11:26:56 +0530
+Message-ID: <CAFA6WYO-h+ngCAT_PS=bZTQkBBtOpBRUmZNP4zhvRuLDJYQXkA@mail.gmail.com>
+Subject: Re: [RFC PATCH v1] fscrypt: support encrypted and trusted keys
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fscrypt@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        git@andred.net, Omar Sandoval <osandov@osandov.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+Hi Eric,
 
-syzbot found the following issue on:
+On Wed, 28 Jul 2021 at 21:35, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Wed, Jul 28, 2021 at 10:50:42AM +0200, Ahmad Fatoum wrote:
+> > Hello Eric,
+> >
+> > On 27.07.21 18:38, Eric Biggers wrote:
+> > > On Tue, Jul 27, 2021 at 04:43:49PM +0200, Ahmad Fatoum wrote:
+> > >> For both v1 and v2 key setup mechanisms, userspace supplies the raw key
+> > >> material to the kernel after which it is never again disclosed to
+> > >> userspace.
+> > >>
+> > >> Use of encrypted and trusted keys offers stronger guarantees:
+> > >> The key material is generated within the kernel and is never disclosed to
+> > >> userspace in clear text and, in the case of trusted keys, can be
+> > >> directly rooted to a trust source like a TPM chip.
+> > >
+> > > Please include a proper justification for this feature
+> >
+> > I've patches pending for extending trusted keys to wrap the key sealing
+> > functionality of the CAAM IP on NXP SoCs[1]. I want the kernel to
+> > generate key material in the factory, have the CAAM encrypt it using its
+> > undisclosed unique key and pass it to userspace as encrypted blob that is
+> > persisted to an unencrypted volume. The intention is to thwart offline
+> > decryption of an encrypted file system in an embedded system, where a
+> > passphrase can't be supplied by an end user.
+> >
+> > Employing TPM and TEE trusted keys with this is already possible with
+> > dm-crypt, but I'd like this to be possible out-of-the-box with
+> > ubifs + fscrypt as well.
+>
+> Why not do the key management in userspace, like tpm-tools
+> (https://github.com/tpm2-software/tpm2-tools)?  There are a lot of uses for this
+> type of hardware besides in-kernel crypto.  See
+> https://wiki.archlinux.org/title/Trusted_Platform_Module for all the things you
+> can do with the TPM on Linux, including LUKS encryption; this is all with
+> userspace key management.  Wouldn't the CAAM hardware be useful for similar
+> purposes and thus need a similar design as well, e.g. with functionality exposed
+> through some /dev node for userspace to use?  Or are you saying it will only
+> ever be useful for in-kernel crypto?
 
-HEAD commit:    7d549995d4e0 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17577e1a300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1dee114394f7d2c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=219c8d031f42380c907a
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+AFAIK from my prior experience while working with CAAM engine during
+my time at NXP, it is generally a crypto engine with additional
+security properties like one discussed here to protect keys (blob
+encap and decap) etc. But it doesn't offer user authentication similar
+to what a TPM (ownership) can offer. Although, one should be able to
+expose CAAM via /dev node but I am not sure if that would be really
+useful without user authentication. I think similar should be the case
+for other crypto engines with additional security properties.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+With restriction of CAAM's security properties to kernel crypto we
+could at least ensure a kernel boundary that should offer enough
+resistance from malicious user space attacks.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+219c8d031f42380c907a@syzkaller.appspotmail.com
+>
+> > > Note that there are several design flaws with the encrypted and trusted key
+> > > types:
+> > >
+> > > - By default, trusted keys are generated using the TPM's RNG rather than the
+> > >   kernel's RNG, which places all trust in an unauditable black box.
+> >
 
-------------[ cut here ]------------
-kernel BUG at lib/assoc_array.c:640!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 9793 Comm: kworker/1:8 Not tainted 5.14.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: afs afs_manage_cell_work
-RIP: 0010:assoc_array_insert_into_terminal_node lib/assoc_array.c:640 [inline]
-RIP: 0010:assoc_array_insert+0x1e3e/0x2e70 lib/assoc_array.c:1001
-Code: 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 84 c4 fe ff ff e8 3c ac e0 fd e9 ba fe ff ff e8 02 f2 9a fd <0f> 0b e8 fb f1 9a fd 0f 0b e8 f4 f1 9a fd 0f 0b e8 ed f1 9a fd 0f
-RSP: 0018:ffffc90009c177b0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000000000ff RCX: 0000000000000000
-RDX: ffff888087970100 RSI: ffffffff83d9cece RDI: 0000000000000003
-RBP: 0000000000000011 R08: 0000000000000010 R09: 000000000000000f
-R10: ffffffff83d9c0d9 R11: 000000000000000c R12: 00000000000000ff
-R13: dffffc0000000000 R14: 0000000000000010 R15: 000000000000000c
-FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f1de4db0000 CR3: 0000000020468000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- __key_link_begin+0xec/0x250 security/keys/keyring.c:1314
- construct_alloc_key security/keys/request_key.c:404 [inline]
- construct_key_and_link security/keys/request_key.c:499 [inline]
- request_key_and_link+0x798/0x1260 security/keys/request_key.c:637
- request_key_tag+0x4e/0xb0 security/keys/request_key.c:701
- dns_query+0x257/0x6d0 net/dns_resolver/dns_query.c:128
- afs_dns_query+0x122/0x390 fs/afs/addr_list.c:249
- afs_update_cell fs/afs/cell.c:402 [inline]
- afs_manage_cell fs/afs/cell.c:784 [inline]
- afs_manage_cell_work+0xa05/0x11f0 fs/afs/cell.c:840
- process_one_work+0x98d/0x1630 kernel/workqueue.c:2276
- worker_thread+0x658/0x11f0 kernel/workqueue.c:2422
- kthread+0x3e5/0x4d0 kernel/kthread.c:319
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:295
-Modules linked in:
----[ end trace 02156db422e890c4 ]---
-RIP: 0010:assoc_array_insert_into_terminal_node lib/assoc_array.c:640 [inline]
-RIP: 0010:assoc_array_insert+0x1e3e/0x2e70 lib/assoc_array.c:1001
-Code: 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 84 c4 fe ff ff e8 3c ac e0 fd e9 ba fe ff ff e8 02 f2 9a fd <0f> 0b e8 fb f1 9a fd 0f 0b e8 f4 f1 9a fd 0f 0b e8 ed f1 9a fd 0f
-RSP: 0018:ffffc90009c177b0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000000000ff RCX: 0000000000000000
-RDX: ffff888087970100 RSI: ffffffff83d9cece RDI: 0000000000000003
-RBP: 0000000000000011 R08: 0000000000000010 R09: 000000000000000f
-R10: ffffffff83d9c0d9 R11: 000000000000000c R12: 00000000000000ff
-R13: dffffc0000000000 R14: 0000000000000010 R15: 000000000000000c
-FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000308a888 CR3: 000000007ed4e000 CR4: 00000000001506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+With regards to trusted keys generated using the TEE's RNG, the
+underlying implementation being OP-TEE [1] which is an open source TEE
+implementation built on top of Arm TrustZone providing the hardware
+based isolation among the TEE and Linux. So regarding auditability, it
+should be comparatively easier to audit the TEE components designed
+with a goal of minimal footprint when compared with Linux kernel.
 
+[1] https://github.com/OP-TEE/optee_os
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > Patch to fix that awaits feedback on linux-integrity[2].
+>
+> It does *not* fix it, as your patch only provides an option to use the kernel's
+> RNG whereas the default is still the TPM's RNG.
+>
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Yes in case of TPM, default is still TPM's RNG but with Ahmad's patch
+#2, the trust source backend like CAAM should be able to use kernel's
+RNG by default.
+
+-Sumit
+
+> Most people don't change defaults.
+>
+> Essentially your same argument was used for Dual_EC_DRBG; people argued it was
+> okay to standardize because people had the option to choose their own constants
+> if they felt the default constants were backdoored.  That didn't really matter,
+> though, since in practice everyone just used the default constants.
+>
+> >
+> > > - trusted and encrypted keys aren't restricted to specific uses in the kernel
+> > >   (like the fscrypt-provisioning key type is) but rather are general-purpose.
+> > >   Hence, it may be possible to leak their contents to userspace by requesting
+> > >   their use for certain algorithms/features, e.g. to encrypt a dm-crypt target
+> > >   using a weak cipher that is vulnerable to key recovery attacks.
+> >
+> > The footgun is already there by allowing users to specify their own
+> >
+> > raw key. Users can already use $keyid for dm-crypt and then do
+> >
+> >   $ keyctl pipe $keyid | fscryptctl add_key /mnt
+> >
+> > The responsibility to not reuse key material already lies with the users,
+> > regardless if they handle the raw key material directly or indirectly via
+> > a trusted key description/ID.
+>
+> Elsewhere you are claiming that "trusted" keys can never be disclosed to
+> userspace.  So you can't rely on userspace cooperating, right?
+>
+> - Eric
