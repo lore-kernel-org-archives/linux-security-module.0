@@ -2,152 +2,227 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0766EC4320E
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 21:20:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725FBC4320A
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 22:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9BF460F6F
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 21:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55C0B6056C
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 22:01:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbhG2VU7 (ORCPT
+        id S234123AbhG2WBm (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jul 2021 17:20:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61470 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229891AbhG2VU7 (ORCPT
+        Thu, 29 Jul 2021 18:01:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58298 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234107AbhG2WBm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jul 2021 17:20:59 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16TL4KOb137276;
-        Thu, 29 Jul 2021 17:20:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=jyCvqbHXhoijR/LghlA8ZIbjtVPzpyfvGFlPJTpoWvk=;
- b=FpOx+rK5Ozw7bWGEU+lSOt7dMzsKx+k5DMVtYITm5DVkneZJI8DwR2j4CUjYz1iVy8NF
- FHG3RvhUHjSxvJFQeDAqNW9TNhdo/Xlbu9gEMOUmHAsSLSD1d9wwpv1Xh9COsSt+sUVa
- bBmECM7bkgK8+qSkt6+s6pL7PSKT4cSZys1bTo8x113Uk3IxCe0yzz1u6FBm16Rc6ri9
- YVAvfKqnLHcBtgj2+q2a0YJKUT67CGW/uaBbLpcG/GRgMflsMlWPpvHzjBajfzIwms4u
- ReWrEFu2fU/f/jYFW/qV6win7sIlDkXMwDepq0F0hfHsShp31ES63RA3bjw5Fll8MUVZ +Q== 
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3a43aesbju-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Jul 2021 17:20:49 -0400
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16TL8Lu8032087;
-        Thu, 29 Jul 2021 21:20:47 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma01fra.de.ibm.com with ESMTP id 3a417pgfev-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Jul 2021 21:20:47 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16TLKiRD18153806
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Jul 2021 21:20:44 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2AD74204F;
-        Thu, 29 Jul 2021 21:20:44 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 77E2B42042;
-        Thu, 29 Jul 2021 21:20:43 +0000 (GMT)
-Received: from sig-9-65-212-145.ibm.com (unknown [9.65.212.145])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Jul 2021 21:20:43 +0000 (GMT)
-Message-ID: <c9dffd9d29df095660beaa631ff252c4b33629a0.camel@linux.ibm.com>
-Subject: Re: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
- digest_list_del
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        gregkh@linuxfoundation.org, mchehab+huawei@kernel.org
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 29 Jul 2021 17:20:42 -0400
-In-Reply-To: <20210726163700.2092768-7-roberto.sassu@huawei.com>
-References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
-         <20210726163700.2092768-7-roberto.sassu@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: o_UQqp1R-xJtM5F5zagPBR5ZLTR9wKwZ
-X-Proofpoint-ORIG-GUID: o_UQqp1R-xJtM5F5zagPBR5ZLTR9wKwZ
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-29_17:2021-07-29,2021-07-29 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
- impostorscore=0 suspectscore=0 bulkscore=0 clxscore=1011 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2107290129
+        Thu, 29 Jul 2021 18:01:42 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB29CC061765;
+        Thu, 29 Jul 2021 15:01:38 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id m10-20020a17090a34cab0290176b52c60ddso11521855pjf.4;
+        Thu, 29 Jul 2021 15:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G7IzZslmA118MFcScvf6yYPBrs6UuXOCa4NAljF0kc4=;
+        b=glEGFySN2OBBRtbbPsBsgcpCztB/gzXfomLDxG8UPPbR/4bkw2yfrui68S1ycvu1WS
+         b3/ust4Ar31th7VSxIKsL68jJCGYgVflGp0zqoIXQY6Qin63xKleT1LfHttuLG6RPUUw
+         QIv3EU53WJpSreKqfKbLLKM1P39omR0IHgMhQA4uDdeBXTLh8n+kFbijBiRCCK+QW5ql
+         6T4Ys8UP7NlfwqHZWId2iFhlWImyPEeFi/bpYVeP4T0Uomfjnvw+prMqPtp0Vakm4bgr
+         6vzfPDIyECUUAHomlOpmfCTimX/0DU7upwicbR8SxecmVGd/hSA/0OBYVcpBJi8uFq9L
+         n3aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G7IzZslmA118MFcScvf6yYPBrs6UuXOCa4NAljF0kc4=;
+        b=pswjzYCoaiEAMrdigmbCyfqQaXhzGJ/ax7GxEhY9JbK/vToV3nk044zZTuDIWwkQ8+
+         9D+1G9E2ER71natp9wwjvnoSGr1T9mZzItcDYic79xNT5Yu8+EAeNDmoe4E3bV2itamz
+         6skkZWouZ7CsvKrFirXqOQ3Vy8SVzuLHnZvg8Dbt/17eL/wj0EeI1gRi6iCu10kAt3YM
+         OHtPzFEZRW/zWBXFwlYZjsdOBQ1ZFhO53C/Qq3mbJi1LK+Wzc+s5xFt77SIzc7zUqpAX
+         5FfX2FLS4o8R1gFqYFucmRWeOu0KmPaLA3BlrEWdBYLillAsaUAWQZzOBl6OD329hHwn
+         47yw==
+X-Gm-Message-State: AOAM532rxlQT7cReqYe6x36UoCWIo3M1IhapiAkS73PYhz4wl/yCPRgj
+        2guFYfyaGQH/XqpAi0vNvBA=
+X-Google-Smtp-Source: ABdhPJxpRZYrifihnzWcM+QHEgynAoAUn/C5C2ftscKZmlImXL61pmWpLhQIVB1F57glTzcRJvO47g==
+X-Received: by 2002:a17:902:9f88:b029:12c:c06:2645 with SMTP id g8-20020a1709029f88b029012c0c062645mr6420768plq.21.1627596098422;
+        Thu, 29 Jul 2021 15:01:38 -0700 (PDT)
+Received: from localhost.localdomain ([1.145.37.91])
+        by smtp.gmail.com with ESMTPSA id a18sm4595144pfi.6.2021.07.29.15.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Jul 2021 15:01:37 -0700 (PDT)
+Date:   Fri, 30 Jul 2021 08:01:31 +1000
+From:   "G. Branden Robinson" <g.branden.robinson@gmail.com>
+To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
+        landlock@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>
+Subject: Re: [PATCH v2 1/4] landlock.7: Add a new page to introduce Landlock
+Message-ID: <20210729220129.ymfdnybbpvej4qck@localhost.localdomain>
+References: <20210712155745.831580-1-mic@digikod.net>
+ <20210712155745.831580-2-mic@digikod.net>
+ <3f1b943b-2477-2c4e-c835-d6616888176c@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zsrbbanbf4dzahm3"
+Content-Disposition: inline
+In-Reply-To: <3f1b943b-2477-2c4e-c835-d6616888176c@gmail.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Roberto,
 
-On Mon, 2021-07-26 at 18:36 +0200, Roberto Sassu wrote:
-> /*
-> + * digest_list_read: read and parse the digest list from the path
-> + */
-> +static ssize_t digest_list_read(char *path, enum ops op)
-> +{
-> +       void *data = NULL;
-> +       char *datap;
-> +       size_t size;
-> +       u8 actions = 0;
-> +       struct file *file;
-> +       char event_name[NAME_MAX + 9 + 1];
-> +       u8 digest[IMA_MAX_DIGEST_SIZE] = { 0 };
-> +       enum hash_algo algo;
-> +       int rc, pathlen = strlen(path);
-> +
-> +       /* Remove \n. */
-> +       datap = path;
-> +       strsep(&datap, "\n");
-> +
-> +       file = filp_open(path, O_RDONLY, 0);
-> +       if (IS_ERR(file)) {
-> +               pr_err("unable to open file: %s (%ld)", path, PTR_ERR(file));
-> +               return PTR_ERR(file);
-> +       }
-> +
-> +       rc = kernel_read_file(file, 0, &data, INT_MAX, NULL,
-> +                             READING_DIGEST_LIST);
-> +       if (rc < 0) {
-> +               pr_err("unable to read file: %s (%d)", path, rc);
-> +               goto out;
-> +       }
-> +
-> +       size = rc;
-> +
-> +       snprintf(event_name, sizeof(event_name), "%s_file_%s",
-> +                op == DIGEST_LIST_ADD ? "add" : "del",
-> +                file_dentry(file)->d_name.name);
-> +
-> +       rc = ima_measure_critical_data("diglim", event_name, data, size, false,
-> +                                      digest, sizeof(digest));
-> +       if (rc < 0 && rc != -EEXIST)
-> +               goto out_vfree;
+--zsrbbanbf4dzahm3
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The digest lists could easily be measured while reading the digest list
-file above in kernel_read_file().  What makes it "critical-data"?  In
-the SELinux case, the in memory SELinux policy is being measured and
-re-measured to make sure it hasn't been modified.  Is the digest list
-file data being measured more than once?
+Hi, Alex!
 
-I understand that with your changes to ima_measure_critical_data(),
-which are now in next-integrity-testing branch, allow IMA to calculate
-the file data hash.
+[regrets for the huge CC--those not interested in English/linux-man
+style issues can skip this]
 
-thanks,
+At 2021-07-29T16:56:37+0200, Alejandro Colomar (man-pages) wrote:
+> On 7/12/21 5:57 PM, Micka=EBl Sala=FCn wrote:
+> > +For instance, one process's thread may apply Landlock rules to itself,
+>=20
+> s/process's/process'/
 
-Mimi
+Many English language authorities would disagree with you, but I'll skip
+digging up citations to them because the Linux man-pages project's
+practice is already firmly in the other direction.
 
-> +
-> +       algo = ima_get_current_hash_algo();
-> +
+$ git grep "s's\>" | wc -l
+322
 
+Moreover, "process's" is extensively attested as most of those...
 
+$ git grep "process's" | wc -l
+320
+
+=2E..and a global change in the opposite direction from your
+recommendation is credited to mtk in the Changes.old file.
+
+$ grep -B2 "process' " Changes.old |head -n 3
+A few files
+    mtk
+        s/process' /process's/
+
+Finding examples of the opposite practice is complicated by the use of
+apostrophes as single quotes (these usually _aren't_ confounded by code
+examples, however, since it would be incorrect C language syntax to
+quote a string literal with them).  There are many such occurrences in
+Changes.old; I'll skip them.  The remainder are few enough that I'll
+quote them here.
+
+$ git grep -E "s'(\s|$)" man*
+man2/adjtimex.2:Linux uses David L.\& Mills' clock adjustment algorithm (se=
+e RFC\ 5905).
+man2/move_pages.2:.\" FIXME Describe the result if pointers in the 'pages' =
+array are
+man2/utimensat.2:.\" given a 'times' array in which both tv_nsec fields are=
+ UTIME_NOW, which
+man2/utimensat.2:.\" provides equivalent functionality to specifying 'times=
+' as NULL, the
+man3/getaddrinfo.3:.\" 2008-02-26, mtk; clarify discussion of NULL 'hints' =
+argument; other
+man3/printf.3:thousands' grouping character is used.
+man3/printf.3:the output is to be grouped with thousands' grouping characte=
+rs
+man3/printf.3:.\" no thousands' separator, no NaN or infinity, no "%m$" and=
+ "*m$".
+man3/scanf.3:This specifies that the input number may include thousands'
+man3/xdr.3:the array elements' C form, and their external
+man3/xdr.3:the array elements' C form, and their external
+man5/elf.5:The array element is unused and the other members' values are un=
+defined.
+man5/proc.5:under the default overcommit 'guess' mode (i.e., 0 in
+man5/proc.5:because other nodes' memory may be free,
+man7/bootparam.7:The Linux kernel accepts certain 'command-line options' or=
+ 'boot time
+man7/bootparam.7:parameters' at the moment it is started.
+man7/bootparam.7:The option 'reboot=3Dbios' will
+man7/bootparam.7:A SCSI device can have a number of 'subdevices' contained =
+within
+man7/hier.7:Users' mailboxes.
+man7/mount_namespaces.7:the root directory under several users' home direct=
+ories.
+man7/uri.7:schemes; see those tools' documentation for information on those=
+ schemes.
+man7/uri.7:detects the users' environment (e.g., text or graphics,
+man8/ld.so.8:and do not apply to those objects' children,
+
+Of the above,
+
+1. most are correct uses of the English plural possessive ("nodes'");
+2. a few occur in comments, where they're fine if present as
+   commentary--if they're "commented out" chunks of man page source,
+   they should follow man page formatting rules in the event they
+   require "resurrection";
+3. we see some uses of apostrophes as quotation marks; and
+4. David L. Mills's name is marked as a plural possessive.  The
+   application of apostrophe+s to singular proper names ending in "s" is
+   a debated issue, and there is probably some room for personal
+   preference on the part of the bearer of the name.
+
+Two side issues:
+
+A. Regarding point 3, I'd say this illustrates advantages of using
+special character escape sequences like \[lq] and \[rq] for quotation.
+First, you will get paired quotation marks in UTF-8, PDF, and HTML
+output.  Second, you won't encounter false positives in searches like
+the above.  Third, you semantically enrich the content.  On the
+downside, adopting special character escapes would likely mean having to
+choose between U.S. and U.K. quotation styles[1].
+
+B. Regarding another active thread we're in, I observe
+
+man2/adjtimex.2:Linux uses David L.\& Mills' clock adjustment algorithm (se=
+e RFC\ 5905).
+
+as another case where \~ recommends itself over "\ "; this isn't even a
+code example, and it illustrates the desirability of decoupling
+non-breaking from participation in space adjustment.
+
+Popping the stack, have I persuaded you on the plural possessive front?
+:)
+
+Best regards,
+Branden
+
+[1] https://man7.org/linux/man-pages/man7/groff_char.7.html (search for
+    "the apostrophe")
+
+--zsrbbanbf4dzahm3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmEDJTEACgkQ0Z6cfXEm
+bc6Zyw//WgUu23zxMMBNirfowQgJF1JyjYmdTjF7XgmjUXjcwu1NZrXyqx4R3jxh
+u/9FXRuUoo/zBfl/OxOic4hy6W8jzBKSsHUGO1jZQ8BPV/JnXjdIjoTw6QevbQhr
+1F/rPc42X3pExyEn8cByZY6BcIPTAdKjmvFjaMZ1845iGvYdJQXuYnisfeMXQH0A
+mukuAldSdQM8y+EONDe1sUy5u/qiF1lqQCHo2UgG6XGW0NsOzwgzi8LCYZ4zgADK
+GT5EPc/Ah61OUZQRoR4ShXpqgUIeqjreBNAYvOW6R8Kovxm5HC4TtP/cPaIvqOoC
+n0BGxTm8vXV3/1LlNM+iDtwmwcAxyUKOsolkCEJ8EwpJFFpfqkWaEO3kLfnQ8DBm
+lrLaQtLDBWyFFeNs9i4boKfXRCbrADNRemA0UJmoBENtTxi6c/Iky8inPrJgbo73
+dIQZfBS5MM/WFg9Ss1/Ocr8dOHs8N8GgrRGhRBDwuGWPs1ET2qg992JbOiv7TyBA
+ldngIV+D4oCpBEZpJeFmilizs2JwATGJwL6Cq2zl74N8KGK2YpZ59e17fm6VjpIi
+LOMkl3tbrYqpZgFQtHvyEKNqZZYBH/NoLCXlpOQo9vk+/c9ELLBzI4FcnfIqtzLy
+NilzxhjxcyN7fgp1FF3yP+5dy94KYxsnBBuD3/vAV3CFhLFGyAY=
+=MWQH
+-----END PGP SIGNATURE-----
+
+--zsrbbanbf4dzahm3--
