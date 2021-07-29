@@ -2,133 +2,152 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B18C432BE
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 18:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0766EC4320E
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 21:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D867A60F46
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 18:34:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9BF460F6F
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 21:20:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230376AbhG2SeP (ORCPT
+        id S229942AbhG2VU7 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jul 2021 14:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbhG2SeP (ORCPT
+        Thu, 29 Jul 2021 17:20:59 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:61470 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229891AbhG2VU7 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jul 2021 14:34:15 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44448C0613CF
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jul 2021 11:34:11 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id l4-20020a05600c1d04b02902506f89ad2dso6282634wms.1
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jul 2021 11:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rammhold-de.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ndpw+PbnRaSxxnGPYwf+7x2VYYi7mMPrexiG91YMR7M=;
-        b=MP/oa+Z4eaQicBo2B3IhtWp8wnc3+EOxvkxF+R8qoTCJevNJosYcsfol5GcHQ04mL6
-         RL+oiSW9fq73iBFZiPsJuQoqVw/KwJPAbagjyY54WSFIskppPNokJggOEHkWcxt1P2Ll
-         KWr079wVWc6G7rRAIck8FvKERX4kWLlFPoUx+6MomULySTp824WugLSBrGvlQ4rSOGs4
-         F23bAJRUz7rR9+Ivt/amAywoGXdmYA9TyYUZ6/4b2UdunX91LBCEFQG+lQ/KQj/X8eM0
-         SlcIz1+eV0TOXZbn7AjcmD6a4u0BYrUPJebQoZbMhqMCqKCtjN0Nz5Aq2G9+d/CjaORA
-         hlpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ndpw+PbnRaSxxnGPYwf+7x2VYYi7mMPrexiG91YMR7M=;
-        b=fJs4nQ2GDkBkPK727PoMjIzRvfCnjBDzMP4O98xjvngPJQYCXXSHs0HF+P9txEz4B5
-         VjXjNqE9kJDxz2YFZp1R2LoPJQKPQHt4zQ+8IdZeJt0hc2lXavJAKz8CaLKjaOut0zGc
-         RhJ39V3EcwMk0c5AwknKW8fA4fhQZ/EC/krPN1pM40DyniodpUEl1lOuF4EuZ6hb1rmn
-         aWTMOm6tMgjMHkjkWOfMRMRjeBi712aatvm3XdVKS3z9a7S9X+ARfnTefIMemfeyteQe
-         oQuZxAO6LrvxIOmfY+l4gP1S3aOXDHfJy3cpa6knk8h5rLuVIprMt2D1w/RXANrpb7Dl
-         HQcg==
-X-Gm-Message-State: AOAM530HH/RlXYqO4enHG5XfctLKJVBVj4jSPgJ80kRIBy8Vilv/5CGR
-        caBaPfscSatO3Q9mcZ7BPdFrVg==
-X-Google-Smtp-Source: ABdhPJyw+C9zeJrNdLqT1RyupxaRB35i4i/1b+y3wzRoUuU54pQD8LDvOPZyQRjtVpP/QlsQa/QfjQ==
-X-Received: by 2002:a05:600c:3595:: with SMTP id p21mr5952796wmq.105.1627583649738;
-        Thu, 29 Jul 2021 11:34:09 -0700 (PDT)
-Received: from localhost ([2a00:e67:5c9:a:6941:c1d7:e420:cc22])
-        by smtp.gmail.com with ESMTPSA id y197sm10563444wmc.7.2021.07.29.11.34.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Jul 2021 11:34:08 -0700 (PDT)
-From:   Andreas Rammhold <andreas@rammhold.de>
-To:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andreas Rammhold <andreas@rammhold.de>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] KEYS: trusted: Fix trusted key backends when building as module
-Date:   Thu, 29 Jul 2021 20:33:32 +0200
-Message-Id: <20210729183333.1070629-1-andreas@rammhold.de>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 29 Jul 2021 17:20:59 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16TL4KOb137276;
+        Thu, 29 Jul 2021 17:20:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=jyCvqbHXhoijR/LghlA8ZIbjtVPzpyfvGFlPJTpoWvk=;
+ b=FpOx+rK5Ozw7bWGEU+lSOt7dMzsKx+k5DMVtYITm5DVkneZJI8DwR2j4CUjYz1iVy8NF
+ FHG3RvhUHjSxvJFQeDAqNW9TNhdo/Xlbu9gEMOUmHAsSLSD1d9wwpv1Xh9COsSt+sUVa
+ bBmECM7bkgK8+qSkt6+s6pL7PSKT4cSZys1bTo8x113Uk3IxCe0yzz1u6FBm16Rc6ri9
+ YVAvfKqnLHcBtgj2+q2a0YJKUT67CGW/uaBbLpcG/GRgMflsMlWPpvHzjBajfzIwms4u
+ ReWrEFu2fU/f/jYFW/qV6win7sIlDkXMwDepq0F0hfHsShp31ES63RA3bjw5Fll8MUVZ +Q== 
+Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3a43aesbju-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Jul 2021 17:20:49 -0400
+Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
+        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16TL8Lu8032087;
+        Thu, 29 Jul 2021 21:20:47 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma01fra.de.ibm.com with ESMTP id 3a417pgfev-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 29 Jul 2021 21:20:47 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16TLKiRD18153806
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 29 Jul 2021 21:20:44 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2AD74204F;
+        Thu, 29 Jul 2021 21:20:44 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77E2B42042;
+        Thu, 29 Jul 2021 21:20:43 +0000 (GMT)
+Received: from sig-9-65-212-145.ibm.com (unknown [9.65.212.145])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 29 Jul 2021 21:20:43 +0000 (GMT)
+Message-ID: <c9dffd9d29df095660beaa631ff252c4b33629a0.camel@linux.ibm.com>
+Subject: Re: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
+ digest_list_del
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        gregkh@linuxfoundation.org, mchehab+huawei@kernel.org
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 29 Jul 2021 17:20:42 -0400
+In-Reply-To: <20210726163700.2092768-7-roberto.sassu@huawei.com>
+References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+         <20210726163700.2092768-7-roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: o_UQqp1R-xJtM5F5zagPBR5ZLTR9wKwZ
+X-Proofpoint-ORIG-GUID: o_UQqp1R-xJtM5F5zagPBR5ZLTR9wKwZ
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-07-29_17:2021-07-29,2021-07-29 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0 mlxlogscore=999
+ impostorscore=0 suspectscore=0 bulkscore=0 clxscore=1011 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2107290129
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Before this commit the kernel could end up with no trusted key sources
-even though both of the currently supported backends (TPM and TEE) were
-compiled as modules. This manifested in the trusted key type not being
-registered at all.
+Hi Roberto,
 
-When checking if a CONFIG_… preprocessor variable is defined we only
-test for the builtin (=y) case and not the module (=m) case. By using
-the IS_REACHABLE() macro we do test for both cases.
+On Mon, 2021-07-26 at 18:36 +0200, Roberto Sassu wrote:
+> /*
+> + * digest_list_read: read and parse the digest list from the path
+> + */
+> +static ssize_t digest_list_read(char *path, enum ops op)
+> +{
+> +       void *data = NULL;
+> +       char *datap;
+> +       size_t size;
+> +       u8 actions = 0;
+> +       struct file *file;
+> +       char event_name[NAME_MAX + 9 + 1];
+> +       u8 digest[IMA_MAX_DIGEST_SIZE] = { 0 };
+> +       enum hash_algo algo;
+> +       int rc, pathlen = strlen(path);
+> +
+> +       /* Remove \n. */
+> +       datap = path;
+> +       strsep(&datap, "\n");
+> +
+> +       file = filp_open(path, O_RDONLY, 0);
+> +       if (IS_ERR(file)) {
+> +               pr_err("unable to open file: %s (%ld)", path, PTR_ERR(file));
+> +               return PTR_ERR(file);
+> +       }
+> +
+> +       rc = kernel_read_file(file, 0, &data, INT_MAX, NULL,
+> +                             READING_DIGEST_LIST);
+> +       if (rc < 0) {
+> +               pr_err("unable to read file: %s (%d)", path, rc);
+> +               goto out;
+> +       }
+> +
+> +       size = rc;
+> +
+> +       snprintf(event_name, sizeof(event_name), "%s_file_%s",
+> +                op == DIGEST_LIST_ADD ? "add" : "del",
+> +                file_dentry(file)->d_name.name);
+> +
+> +       rc = ima_measure_critical_data("diglim", event_name, data, size, false,
+> +                                      digest, sizeof(digest));
+> +       if (rc < 0 && rc != -EEXIST)
+> +               goto out_vfree;
 
+The digest lists could easily be measured while reading the digest list
+file above in kernel_read_file().  What makes it "critical-data"?  In
+the SELinux case, the in memory SELinux policy is being measured and
+re-measured to make sure it hasn't been modified.  Is the digest list
+file data being measured more than once?
 
-v2:
-* Fixed commit message
-* Switched from IS_DEFINED() to IS_REACHABLE()
+I understand that with your changes to ima_measure_critical_data(),
+which are now in next-integrity-testing branch, allow IMA to calculate
+the file data hash.
 
+thanks,
 
-Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-Signed-off-by: Andreas Rammhold <andreas@rammhold.de>
----
+Mimi
 
-Here is the version that was proposed by Ahmad [1] in response to the
-feedback received in the "[PATCH v2] KEYS: trusted: fix use as module
-when CONFIG_TCG_TPM=m" discussion [2].
+> +
+> +       algo = ima_get_current_hash_algo();
+> +
 
-I have tested both of the patches on v5.13 and they both fix the problem
-I originally encountered.
-
-[1] https://lore.kernel.org/keyrings/fe39a449-88df-766b-a13a-290f4847d43e@pengutronix.de/
-[2] https://lore.kernel.org/keyrings/20210721160258.7024-1-a.fatoum@pengutronix.de/
-
-
- security/keys/trusted-keys/trusted_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-index d5c891d8d353..5b35f1b87644 100644
---- a/security/keys/trusted-keys/trusted_core.c
-+++ b/security/keys/trusted-keys/trusted_core.c
-@@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
- MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
- 
- static const struct trusted_key_source trusted_key_sources[] = {
--#if defined(CONFIG_TCG_TPM)
-+#if IS_REACHABLE(CONFIG_TCG_TPM)
- 	{ "tpm", &trusted_key_tpm_ops },
- #endif
--#if defined(CONFIG_TEE)
-+#if IS_REACHABLE(CONFIG_TEE)
- 	{ "tee", &trusted_key_tee_ops },
- #endif
- };
--- 
-2.32.0
 
