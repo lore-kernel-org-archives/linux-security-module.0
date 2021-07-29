@@ -2,251 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EC4C4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 16:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33D6C43214
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 18:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 191BE60F4B
-	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 16:19:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86A2E60241
+	for <linux-security-module@archiver.kernel.org>; Thu, 29 Jul 2021 18:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231645AbhG2QTo (ORCPT
+        id S229925AbhG2S2R (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 29 Jul 2021 12:19:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58066 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231668AbhG2QTn (ORCPT
+        Thu, 29 Jul 2021 14:28:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229614AbhG2S2R (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 29 Jul 2021 12:19:43 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 16TGIgJo006512;
-        Thu, 29 Jul 2021 12:19:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=5Zxuck6xXSAocuv1PazxRDLordw2Ud4JT3bPChBew18=;
- b=Evzwb8pGE7dqwsQle25xqb0KHbnieh2V+cQPpxI3v009p8KlmOm1my9sOl4Dhrj1np4b
- nLfXxotdupITwn3TEZkGDtv62wAuJmDQmJJPuv9O8sbG0UzgvIWKKRMJmsVZQ4MtfAwj
- jS7h/N3j8OkCBXiyjjZRuYD9ydS1o+RGeYxx4tmrduVPqRtXO3tDo7zljoCTIlUbkyo9
- CTw179E+UyE9cjiJimkF+qfcg3+X5L3LSG9k/GnWZ9A660B++tj0apKNcfxASxO05Ll0
- NIHpfs2V1IsqkezcA3ogzsZMYyMWYzbGQe+vYrfIxR6LlIXNkeKJzrcDOnwl+JM1//cu 0w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a3yqt012r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Jul 2021 12:19:38 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 16TGJbk0013906;
-        Thu, 29 Jul 2021 12:19:37 -0400
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a3yqt012e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Jul 2021 12:19:37 -0400
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 16TGCwMX017362;
-        Thu, 29 Jul 2021 16:19:37 GMT
-Received: from b01cxnp23034.gho.pok.ibm.com (b01cxnp23034.gho.pok.ibm.com [9.57.198.29])
-        by ppma03dal.us.ibm.com with ESMTP id 3a235skfn2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 29 Jul 2021 16:19:37 +0000
-Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 16TGJZhN42205594
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 29 Jul 2021 16:19:35 GMT
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CF222112062;
-        Thu, 29 Jul 2021 16:19:35 +0000 (GMT)
-Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AFC0A112072;
-        Thu, 29 Jul 2021 16:19:35 +0000 (GMT)
-Received: from sbct-2.. (unknown [9.47.158.152])
-        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 29 Jul 2021 16:19:35 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko@kernel.org
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Nageswara R Sastry <rnsastry@linux.ibm.com>
-Subject: [PATCH] tpm: ibmvtpm: Avoid error message when process gets signal while waiting
-Date:   Thu, 29 Jul 2021 12:19:31 -0400
-Message-Id: <20210729161931.3609894-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.31.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: V3FyMKd6o9AAKRLhO-IlNn338K0xZY0W
-X-Proofpoint-GUID: HnvNjbmutjbe-adenl_3hw59qTn9Lczq
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 29 Jul 2021 14:28:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 1132660EBD;
+        Thu, 29 Jul 2021 18:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627583293;
+        bh=CBrRBRO/tDGawMDo7/5lR6U7y1rcL3K2D2QD62EAY6s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SSnwQJ29s1xjFeEYWBu1pRC14ZtIm/hTtIUu0k3HawS4MB3N4ncTvbVEzae3ViuU7
+         jMa5AUdbBxSVR+sU86OHV8imvEEQ0yRcLvsmV4wgr9p97tx+SeN1m745TVZBloK3NU
+         +PLPoJvqKc+M0iUzkNEBBMzdETD8o3otG55JX/H678jYHFCZICO3RZvay7zsQNEqPU
+         3cPc9DshIMs//k25ZFoTZ6Az0Yyk/ivATKSGF6hGzGUO8ZndNr3l0ZNfodBZozS8lt
+         +bp3xPA5qOIzn21SiBqnQd6NFa3O1VRuEuw5UPvi8FxVaMdAJRFpvLAjIeTYx7kcAj
+         GpNEVPswy/0ig==
+Date:   Thu, 29 Jul 2021 11:28:11 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     Sumit Garg <sumit.garg@linaro.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        linux-fscrypt@vger.kernel.org,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        git@andred.net, Omar Sandoval <osandov@osandov.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [RFC PATCH v1] fscrypt: support encrypted and trusted keys
+Message-ID: <YQLzOwnPF1434kUk@gmail.com>
+References: <20210727144349.11215-1-a.fatoum@pengutronix.de>
+ <YQA2fHPwH6EsH9BR@sol.localdomain>
+ <367ea5bb-76cf-6020-cb99-91b5ca82d679@pengutronix.de>
+ <YQGAOTdQRHFv9rlr@gmail.com>
+ <CAFA6WYO-h+ngCAT_PS=bZTQkBBtOpBRUmZNP4zhvRuLDJYQXkA@mail.gmail.com>
+ <1530428a-ad2c-a169-86a7-24bfafb9b9bd@pengutronix.de>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-07-29_12:2021-07-29,2021-07-29 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 phishscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- impostorscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2107290101
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530428a-ad2c-a169-86a7-24bfafb9b9bd@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+On Thu, Jul 29, 2021 at 11:07:00AM +0200, Ahmad Fatoum wrote:
+> >> Most people don't change defaults.
+> >>
+> >> Essentially your same argument was used for Dual_EC_DRBG; people argued it was
+> >> okay to standardize because people had the option to choose their own constants
+> >> if they felt the default constants were backdoored.  That didn't really matter,
+> >> though, since in practice everyone just used the default constants.
+> 
+> I'd appreciate your feedback on my CAAM series if you think the defaults
+> can be improved. Trusted keys are no longer restricted to TPMs,
+> so users of other backends shouldn't be dismissed, because one backend
+> can be used with fscrypt by alternative means.
 
-When rngd is run as root then lots of these types of message will appear
-in the kernel log if the TPM has been configure to provide random bytes:
+I already gave feedback:
+https://lkml.kernel.org/keyrings/YGOcZtkw3ZM5kvl6@gmail.com
+https://lkml.kernel.org/keyrings/YGUHBelwhvJDhKoo@gmail.com
+https://lkml.kernel.org/keyrings/YGViOc3DG+Pjuur6@sol.localdomain
 
-[ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
+> >>>> - trusted and encrypted keys aren't restricted to specific uses in the kernel
+> >>>>   (like the fscrypt-provisioning key type is) but rather are general-purpose.
+> >>>>   Hence, it may be possible to leak their contents to userspace by requesting
+> >>>>   their use for certain algorithms/features, e.g. to encrypt a dm-crypt target
+> >>>>   using a weak cipher that is vulnerable to key recovery attacks.
+> >>>
+> >>> The footgun is already there by allowing users to specify their own
+> >>>
+> >>> raw key. Users can already use $keyid for dm-crypt and then do
+> >>>
+> >>>   $ keyctl pipe $keyid | fscryptctl add_key /mnt
+> >>>
+> >>> The responsibility to not reuse key material already lies with the users,
+> >>> regardless if they handle the raw key material directly or indirectly via
+> >>> a trusted key description/ID.
+> >>
+> >> Elsewhere you are claiming that "trusted" keys can never be disclosed to
+> >> userspace.  So you can't rely on userspace cooperating, right?
+> 
+> The users I meant are humans, e.g. system integrators. They need to think about
+> 
+> burning fuses, signing bootloaders, verifying kernel and root file systems,
+> 
+> encrypting file systems and safekeeping their crypto keys. Ample opportunity for
+> 
+> stuff to go wrong. They would benefit from having relevant kernel functionality
+> 
+> integrate with each other instead of having to carry downstream patches, which
+> we and many others[1] did for years. We now finally have a chance to drop this
+> technical debt thanks to Sumit's trusted key rework and improve user security
+> along the way.
+> 
+> So, Eric, how should we proceed?
+> 
 
-The issue is caused by the following call that is interrupted while
-waiting for the TPM's response.
+It is probably inevitable that this be added, but you need to document it
+properly and not make misleading claims like "The key material is generated
+within the kernel" (for the TPM "trust" source the default is to use the TPM's
+RNG, *not* the kernel RNG), and "is never disclosed to userspace in clear text"
+(that's only guaranteed to be true for non-malicious userspace).  Also please
+properly document that this is mainly intended for accessing key wrapping
+hardware such as CAAM that can't be accessed from userspace in another way like
+TPMs can.
 
-sig = wait_event_interruptible(ibmvtpm->wq,
-                               !ibmvtpm->tpm_processing_cmd);
-
-Rather than waiting for the response in the low level driver, have it use
-the polling loop in tpm_try_transmit() that uses a command's duration to
-poll until a result has been returned by the TPM, thus ending when the
-timeout has occurred but not responding to signals and ctrl-c anymore.
-To stay in this polling loop we now extend tpm_ibmvtpm_status() to return
-PM_STATUS_BUSY for as long as the vTPM is busy. Since we will need the
-timeouts in this loop now we get the TPM 1.2 and TPM 2 timeouts with
-tpm_get_timeouts().
-
-Rename the tpm_processing_cmd to tpm_status in ibmvtpm_dev and set the
-TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
-
-To recreat the issue start rngd like this:
-
-sudo rngd -r /dev/hwrng -t
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
-Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
-Cc: Nayna Jain <nayna@linux.ibm.com>
-Cc: George Wilson <gcwilson@linux.ibm.com>
-Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm_ibmvtpm.c | 31 ++++++++++++++++++-------------
- drivers/char/tpm/tpm_ibmvtpm.h |  3 ++-
- 2 files changed, 20 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 903604769de9..5d795866b483 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -106,17 +106,12 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
- 	u16 len;
--	int sig;
- 
- 	if (!ibmvtpm->rtce_buf) {
- 		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
- 		return 0;
- 	}
- 
--	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
--	if (sig)
--		return -EINTR;
--
- 	len = ibmvtpm->res_len;
- 
- 	if (count < len) {
-@@ -220,11 +215,12 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 		return -EIO;
- 	}
- 
--	if (ibmvtpm->tpm_processing_cmd) {
-+	if ((ibmvtpm->tpm_status & TPM_STATUS_BUSY)) {
- 		dev_info(ibmvtpm->dev,
- 		         "Need to wait for TPM to finish\n");
- 		/* wait for previous command to finish */
--		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-+		sig = wait_event_interruptible(ibmvtpm->wq,
-+				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
- 		if (sig)
- 			return -EINTR;
- 	}
-@@ -237,7 +233,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 	 * set the processing flag before the Hcall, since we may get the
- 	 * result (interrupt) before even being able to check rc.
- 	 */
--	ibmvtpm->tpm_processing_cmd = true;
-+	ibmvtpm->tpm_status |= TPM_STATUS_BUSY;
- 
- again:
- 	rc = ibmvtpm_send_crq(ibmvtpm->vdev,
-@@ -255,7 +251,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 			goto again;
- 		}
- 		dev_err(ibmvtpm->dev, "tpm_ibmvtpm_send failed rc=%d\n", rc);
--		ibmvtpm->tpm_processing_cmd = false;
-+		ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
- 	}
- 
- 	spin_unlock(&ibmvtpm->rtce_lock);
-@@ -269,7 +265,9 @@ static void tpm_ibmvtpm_cancel(struct tpm_chip *chip)
- 
- static u8 tpm_ibmvtpm_status(struct tpm_chip *chip)
- {
--	return 0;
-+	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
-+
-+	return ibmvtpm->tpm_status;
- }
- 
- /**
-@@ -457,7 +455,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
- 	.send = tpm_ibmvtpm_send,
- 	.cancel = tpm_ibmvtpm_cancel,
- 	.status = tpm_ibmvtpm_status,
--	.req_complete_mask = 0,
-+	.req_complete_mask = TPM_STATUS_BUSY,
- 	.req_complete_val = 0,
- 	.req_canceled = tpm_ibmvtpm_req_canceled,
- };
-@@ -550,7 +548,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
- 		case VTPM_TPM_COMMAND_RES:
- 			/* len of the data in rtce buffer */
- 			ibmvtpm->res_len = be16_to_cpu(crq->len);
--			ibmvtpm->tpm_processing_cmd = false;
-+			ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
- 			wake_up_interruptible(&ibmvtpm->wq);
- 			return;
- 		default:
-@@ -688,8 +686,15 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 		goto init_irq_cleanup;
- 	}
- 
--	if (!strcmp(id->compat, "IBM,vtpm20")) {
-+
-+	if (!strcmp(id->compat, "IBM,vtpm20"))
- 		chip->flags |= TPM_CHIP_FLAG_TPM2;
-+
-+	rc = tpm_get_timeouts(chip);
-+	if (rc)
-+		goto init_irq_cleanup;
-+
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- 		rc = tpm2_get_cc_attrs_tbl(chip);
- 		if (rc)
- 			goto init_irq_cleanup;
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
-index b92aa7d3e93e..252f1cccdfc5 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.h
-+++ b/drivers/char/tpm/tpm_ibmvtpm.h
-@@ -41,7 +41,8 @@ struct ibmvtpm_dev {
- 	wait_queue_head_t wq;
- 	u16 res_len;
- 	u32 vtpm_version;
--	bool tpm_processing_cmd;
-+	u8 tpm_status;
-+#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
- };
- 
- #define CRQ_RES_BUF_SIZE	PAGE_SIZE
--- 
-2.31.1
-
+- Eric
