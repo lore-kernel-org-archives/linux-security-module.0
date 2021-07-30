@@ -2,137 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F54AC432BE
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 04:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CEAC4338F
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 05:25:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB4B60F9B
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 04:54:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F72960EC0
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 05:25:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230518AbhG3Eyc (ORCPT
+        id S230149AbhG3FZT (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Jul 2021 00:54:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40266 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230318AbhG3Eya (ORCPT
+        Fri, 30 Jul 2021 01:25:19 -0400
+Received: from h4.fbrelay.privateemail.com ([131.153.2.45]:36116 "EHLO
+        h4.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S230108AbhG3FZP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Jul 2021 00:54:30 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9C9C0613D3
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jul 2021 21:54:26 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id h14so15263435lfv.7
-        for <linux-security-module@vger.kernel.org>; Thu, 29 Jul 2021 21:54:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=26cLx9q8rosx/ecicZmvDaHKsvwoSzGuRC6wOLHJtNA=;
-        b=yeXSbxyDokjWczrODAJejItwOt0diRi24EVgseJepoyLiTGg0kPU35xi2yf5GagW6+
-         3wG4Bau8c1dHU6UeYua5l5rfEbpGmvsoVlpSal5dvilE6nLhbFVN9Z73CVXoFV90KlQH
-         RIUxRAT6Jt68PZxtDjlVNAce3gBCrjFNG+UFWJ4wYa9b3lUovEPEin/mmo+CoflEVYcT
-         y2sOO3WKfJDF8dPmDiQIttBY63S/MbdfRCzZ1qSQN3x9ZjFBzK4N2pHRv0FnluYi18Sd
-         AdulqBhQc6CkWdduK44cDMDUFVifP9JDps6RZ3YYwRkXoNtg28D7TK/BABEbt4mtnw+H
-         zxPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=26cLx9q8rosx/ecicZmvDaHKsvwoSzGuRC6wOLHJtNA=;
-        b=QCVQQvqwnul1QdXjQtOjdOaX4tvJUJhfKj+scNUJKeXOcLfDawUJduFlGAWrOfS+Tc
-         DwrkS+XLAlSGhBcryzLBsxMNlgc8YCItJlzLr7EvBNeERODWRYXCum9V6ZgTlx4mNRpL
-         EIsNt6iz173zU5qCAeSr27ulVtwCZ9J50ucoChrfZ50L3I/2Ltmc8si/wDw8p+Aszpyu
-         0ttVVrIrj7h0980w8aSNeAEidsflQ1k2ZBAb15L7rpefbYb+8X8SUZAQZWVnPTNXdeDv
-         /ngcNIyy2n2qjWlh5bzZct92gZzpxQ1wyLfLw4dSn/D2fh2E9Gs9zqoIKS1c+UZEnqeU
-         4sjw==
-X-Gm-Message-State: AOAM531RwH1cXpBGZ27HpI8T7cvuW4G1MEA4Xbh/NHHLTR9w96ZMj/nk
-        TX3S6wW2Y3MfvayYvynksEiQTmFc7TwJH+hCO3lBVDbe//8U/r9+
-X-Google-Smtp-Source: ABdhPJxWONtco8cudb0xi/7JqnX8J1mzvb8nmBW+OW7JqUn+9cAKU5U7NTUu+oYM9hY+mM/ySDySXyVichecYCRWqEE=
-X-Received: by 2002:a19:6e0d:: with SMTP id j13mr459081lfc.108.1627620864329;
- Thu, 29 Jul 2021 21:54:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210730012822.3460913-1-andreas@rammhold.de>
-In-Reply-To: <20210730012822.3460913-1-andreas@rammhold.de>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 30 Jul 2021 10:24:12 +0530
-Message-ID: <CAFA6WYNbMD5rEraT5OP1BaZ6bFq6v2OpEKQ2+amHL_+s485P=w@mail.gmail.com>
-Subject: Re: [PATCH v3] KEYS: trusted: Fix trusted key backends when building
- as module
-To:     Andreas Rammhold <andreas@rammhold.de>
-Cc:     James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
+        Fri, 30 Jul 2021 01:25:15 -0400
+Received: from MTA-15-3.privateemail.com (MTA-15-1.privateemail.com [198.54.118.208])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by h3.fbrelay.privateemail.com (Postfix) with ESMTPS id B32F18021A;
+        Fri, 30 Jul 2021 01:25:09 -0400 (EDT)
+Received: from mta-15.privateemail.com (localhost [127.0.0.1])
+        by mta-15.privateemail.com (Postfix) with ESMTP id 59CA718000BB;
+        Fri, 30 Jul 2021 01:25:07 -0400 (EDT)
+Received: from hal-station.. (unknown [10.20.151.210])
+        by mta-15.privateemail.com (Postfix) with ESMTPA id 8E7D118000AD;
+        Fri, 30 Jul 2021 01:25:06 -0400 (EDT)
+From:   Hamza Mahfooz <someguy@effective-light.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Hamza Mahfooz <someguy@effective-light.com>,
+        John Johansen <john.johansen@canonical.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-security-module@vger.kernel.org
+Subject: [PATCH] apparmor: use per file locks for transactional queries
+Date:   Fri, 30 Jul 2021 01:23:55 -0400
+Message-Id: <20210730052355.77289-1-someguy@effective-light.com>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 30 Jul 2021 at 06:58, Andreas Rammhold <andreas@rammhold.de> wrote:
->
-> Before this commit the kernel could end up with no trusted key sources
-> even though both of the currently supported backends (TPM and TEE) were
-> compiled as modules. This manifested in the trusted key type not being
-> registered at all.
->
-> When checking if a CONFIG_=E2=80=A6 preprocessor variable is defined we o=
-nly
-> test for the builtin (=3Dy) case and not the module (=3Dm) case. By using
-> the IS_REACHABLE() macro we do test for both cases.
->
-> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-> Signed-off-by: Andreas Rammhold <andreas@rammhold.de>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
->
-> ---
->
-> v3:
-> * Fixed patch formatting
->
-> v2:
-> * Fixed commit message
-> * Switched from IS_DEFINED() to IS_REACHABLE()
->
->  security/keys/trusted-keys/trusted_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
+As made mention of in commit 1dea3b41e84c5 ("apparmor: speed up
+transactional queries"), a single lock is currently used to synchronize
+transactional queries. We can, use the lock allocated for each file by
+VFS instead.
 
-LGTM.
+Signed-off-by: Hamza Mahfooz <someguy@effective-light.com>
+---
+ security/apparmor/apparmorfs.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Reviewed-by: Sumit Garg <sumit.garg@linaro.org>
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 2ee3b3d29f10..c0b626a271a0 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -812,8 +812,6 @@ struct multi_transaction {
+ };
+ 
+ #define MULTI_TRANSACTION_LIMIT (PAGE_SIZE - sizeof(struct multi_transaction))
+-/* TODO: replace with per file lock */
+-static DEFINE_SPINLOCK(multi_transaction_lock);
+ 
+ static void multi_transaction_kref(struct kref *kref)
+ {
+@@ -847,10 +845,10 @@ static void multi_transaction_set(struct file *file,
+ 	AA_BUG(n > MULTI_TRANSACTION_LIMIT);
+ 
+ 	new->size = n;
+-	spin_lock(&multi_transaction_lock);
++	spin_lock(&file->f_lock);
+ 	old = (struct multi_transaction *) file->private_data;
+ 	file->private_data = new;
+-	spin_unlock(&multi_transaction_lock);
++	spin_unlock(&file->f_lock);
+ 	put_multi_transaction(old);
+ }
+ 
+@@ -879,9 +877,10 @@ static ssize_t multi_transaction_read(struct file *file, char __user *buf,
+ 	struct multi_transaction *t;
+ 	ssize_t ret;
+ 
+-	spin_lock(&multi_transaction_lock);
++	spin_lock(&file->f_lock);
+ 	t = get_multi_transaction(file->private_data);
+-	spin_unlock(&multi_transaction_lock);
++	spin_unlock(&file->f_lock);
++
+ 	if (!t)
+ 		return 0;
+ 
+-- 
+2.32.0
 
--Sumit
-
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/tr=
-usted-keys/trusted_core.c
-> index d5c891d8d353..5b35f1b87644 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp,=
- 0);
->  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
->
->  static const struct trusted_key_source trusted_key_sources[] =3D {
-> -#if defined(CONFIG_TCG_TPM)
-> +#if IS_REACHABLE(CONFIG_TCG_TPM)
->         { "tpm", &trusted_key_tpm_ops },
->  #endif
-> -#if defined(CONFIG_TEE)
-> +#if IS_REACHABLE(CONFIG_TEE)
->         { "tee", &trusted_key_tee_ops },
->  #endif
->  };
-> --
-> 2.32.0
->
