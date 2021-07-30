@@ -2,102 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.4 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CEAC4338F
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 05:25:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A37F9C432BE
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 06:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F72960EC0
-	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 05:25:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875676101C
+	for <linux-security-module@archiver.kernel.org>; Fri, 30 Jul 2021 06:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230149AbhG3FZT (ORCPT
+        id S237358AbhG3GO1 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 30 Jul 2021 01:25:19 -0400
-Received: from h4.fbrelay.privateemail.com ([131.153.2.45]:36116 "EHLO
-        h4.fbrelay.privateemail.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230108AbhG3FZP (ORCPT
+        Fri, 30 Jul 2021 02:14:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237335AbhG3GO1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 30 Jul 2021 01:25:15 -0400
-Received: from MTA-15-3.privateemail.com (MTA-15-1.privateemail.com [198.54.118.208])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by h3.fbrelay.privateemail.com (Postfix) with ESMTPS id B32F18021A;
-        Fri, 30 Jul 2021 01:25:09 -0400 (EDT)
-Received: from mta-15.privateemail.com (localhost [127.0.0.1])
-        by mta-15.privateemail.com (Postfix) with ESMTP id 59CA718000BB;
-        Fri, 30 Jul 2021 01:25:07 -0400 (EDT)
-Received: from hal-station.. (unknown [10.20.151.210])
-        by mta-15.privateemail.com (Postfix) with ESMTPA id 8E7D118000AD;
-        Fri, 30 Jul 2021 01:25:06 -0400 (EDT)
-From:   Hamza Mahfooz <someguy@effective-light.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Hamza Mahfooz <someguy@effective-light.com>,
-        John Johansen <john.johansen@canonical.com>,
+        Fri, 30 Jul 2021 02:14:27 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AFB7C061765
+        for <linux-security-module@vger.kernel.org>; Thu, 29 Jul 2021 23:14:23 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1m9Lmn-00007Y-RD; Fri, 30 Jul 2021 08:14:21 +0200
+Subject: Re: [PATCH v3] KEYS: trusted: Fix trusted key backends when building
+ as module
+To:     Andreas Rammhold <andreas@rammhold.de>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
         James Morris <jmorris@namei.org>,
         "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH] apparmor: use per file locks for transactional queries
-Date:   Fri, 30 Jul 2021 01:23:55 -0400
-Message-Id: <20210730052355.77289-1-someguy@effective-light.com>
-X-Mailer: git-send-email 2.32.0
+        Sumit Garg <sumit.garg@linaro.org>
+Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210730012822.3460913-1-andreas@rammhold.de>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <c8a0e8a1-96ee-3288-ce5b-7f9d77f719c1@pengutronix.de>
+Date:   Fri, 30 Jul 2021 08:14:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
+In-Reply-To: <20210730012822.3460913-1-andreas@rammhold.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-As made mention of in commit 1dea3b41e84c5 ("apparmor: speed up
-transactional queries"), a single lock is currently used to synchronize
-transactional queries. We can, use the lock allocated for each file by
-VFS instead.
+On 30.07.21 03:28, Andreas Rammhold wrote:
+> Before this commit the kernel could end up with no trusted key sources
+> even though both of the currently supported backends (TPM and TEE) were
+> compiled as modules. This manifested in the trusted key type not being
+> registered at all.
+> 
+> When checking if a CONFIG_… preprocessor variable is defined we only
+> test for the builtin (=y) case and not the module (=m) case. By using
+> the IS_REACHABLE() macro we do test for both cases.
+> 
+> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
+> Signed-off-by: Andreas Rammhold <andreas@rammhold.de>
+> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Signed-off-by: Hamza Mahfooz <someguy@effective-light.com>
----
- security/apparmor/apparmorfs.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 
-diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-index 2ee3b3d29f10..c0b626a271a0 100644
---- a/security/apparmor/apparmorfs.c
-+++ b/security/apparmor/apparmorfs.c
-@@ -812,8 +812,6 @@ struct multi_transaction {
- };
- 
- #define MULTI_TRANSACTION_LIMIT (PAGE_SIZE - sizeof(struct multi_transaction))
--/* TODO: replace with per file lock */
--static DEFINE_SPINLOCK(multi_transaction_lock);
- 
- static void multi_transaction_kref(struct kref *kref)
- {
-@@ -847,10 +845,10 @@ static void multi_transaction_set(struct file *file,
- 	AA_BUG(n > MULTI_TRANSACTION_LIMIT);
- 
- 	new->size = n;
--	spin_lock(&multi_transaction_lock);
-+	spin_lock(&file->f_lock);
- 	old = (struct multi_transaction *) file->private_data;
- 	file->private_data = new;
--	spin_unlock(&multi_transaction_lock);
-+	spin_unlock(&file->f_lock);
- 	put_multi_transaction(old);
- }
- 
-@@ -879,9 +877,10 @@ static ssize_t multi_transaction_read(struct file *file, char __user *buf,
- 	struct multi_transaction *t;
- 	ssize_t ret;
- 
--	spin_lock(&multi_transaction_lock);
-+	spin_lock(&file->f_lock);
- 	t = get_multi_transaction(file->private_data);
--	spin_unlock(&multi_transaction_lock);
-+	spin_unlock(&file->f_lock);
-+
- 	if (!t)
- 		return 0;
- 
+> 
+> ---
+> 
+> v3:
+> * Fixed patch formatting
+> 
+> v2:
+> * Fixed commit message
+> * Switched from IS_DEFINED() to IS_REACHABLE()
+> 
+>  security/keys/trusted-keys/trusted_core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+> index d5c891d8d353..5b35f1b87644 100644
+> --- a/security/keys/trusted-keys/trusted_core.c
+> +++ b/security/keys/trusted-keys/trusted_core.c
+> @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
+>  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
+>  
+>  static const struct trusted_key_source trusted_key_sources[] = {
+> -#if defined(CONFIG_TCG_TPM)
+> +#if IS_REACHABLE(CONFIG_TCG_TPM)
+>  	{ "tpm", &trusted_key_tpm_ops },
+>  #endif
+> -#if defined(CONFIG_TEE)
+> +#if IS_REACHABLE(CONFIG_TEE)
+>  	{ "tee", &trusted_key_tee_ops },
+>  #endif
+>  };
+> 
+
+
 -- 
-2.32.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
