@@ -2,199 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C7BC4320A
-	for <linux-security-module@archiver.kernel.org>; Sat, 31 Jul 2021 13:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1868CC432BE
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Aug 2021 08:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0856101C
-	for <linux-security-module@archiver.kernel.org>; Sat, 31 Jul 2021 13:48:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F056E610A2
+	for <linux-security-module@archiver.kernel.org>; Mon,  2 Aug 2021 08:14:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232770AbhGaNsh (ORCPT
+        id S232678AbhHBIOc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 31 Jul 2021 09:48:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46034 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232380AbhGaNsh (ORCPT
+        Mon, 2 Aug 2021 04:14:32 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:3544 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232657AbhHBIOc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 31 Jul 2021 09:48:37 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD090C06175F;
-        Sat, 31 Jul 2021 06:48:30 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so18428006pjh.3;
-        Sat, 31 Jul 2021 06:48:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EqkRIfqcQJGV/a7apNcDDonI4CJx0b/8577c4c/LeCo=;
-        b=IVCfpbm9R9DSrG7R8vEj/MQfH70iHx63QcONL8BdsweSzocMNqrS1f0/NtzX0QnSjM
-         eCH0StH7XrDqQGkYkn2EOIUNDRrFk67e91qTO4z/aFRwEEtPlOL2p29MKUpl2KMFZDfO
-         D0bOPNuqQSbmbcGzALaKukw7h8oEgOTThZPRLG3u/c19ugZ/XPJnbBEtlvkAiubgcTcQ
-         45GkXW3TF4Ctn5MnZ1aKgNsoAx1wt/agQHb5XrBj1hz9KGhR4EV+aFStfoG5jB7tIKz5
-         UDymtpo2CVWxmO7/tWhgnwQJJrNzVRZzOeHtimOTDCrlYusLTs/zti1PxXrFJOifgkIw
-         oq7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EqkRIfqcQJGV/a7apNcDDonI4CJx0b/8577c4c/LeCo=;
-        b=N/Y71/Dr/CuBQSlCdIC9D3PyVrZTrVy+KoRJN3YF3zaJSB6GdzrW3BqmDmLjZGDWPO
-         Py7yttgTHbzz9WPGYVAXk3b+GWubmPWC/sVj6Rb1/ogp8ELUODSnh5gz6NPN4GDXs5Vm
-         gMZJRvMhW+BEA58FEGnD3ZLQwnNRRpUNucuOK1oNaD7m2qTF2D/Ybyne3t2+5wMYCIJy
-         S8HNs7JtM4ztgkOvrXtCLc91OkiXm4rrqBUZIgnSscExU7J/ejWKZJEjHWd8eF5FUHLm
-         +05f1FaQKIUIhqCzAmTEIN4tUSUVEbNByiERC3OZJ+lDH4O/zzxKxzkur1zrNHr3g8OM
-         8MIg==
-X-Gm-Message-State: AOAM5316H5wHQsxTRyAJp8xxzL0SbG8t4V2M3KS787kk4QiJEPBWYzdX
-        AWj5sNktQtekNYoFHitTGUw=
-X-Google-Smtp-Source: ABdhPJy/VTS6AjiYxmMZ7MS9aGfgfE4djuM3A1MQy0SphUeowzaLSchkOkjfcWgqUHL6MwCSCGu1Sw==
-X-Received: by 2002:a17:90a:c7d7:: with SMTP id gf23mr8510414pjb.38.1627739310435;
-        Sat, 31 Jul 2021 06:48:30 -0700 (PDT)
-Received: from localhost.localdomain ([1.145.37.91])
-        by smtp.gmail.com with ESMTPSA id w11sm5495163pjr.44.2021.07.31.06.48.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Jul 2021 06:48:29 -0700 (PDT)
-Date:   Sat, 31 Jul 2021 23:48:23 +1000
-From:   "G. Branden Robinson" <g.branden.robinson@gmail.com>
-To:     "Alejandro Colomar (man-pages)" <alx.manpages@gmail.com>
-Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        landlock@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-man@vger.kernel.org, linux-security-module@vger.kernel.org,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Subject: Re: [PATCH v2 1/4] landlock.7: Add a new page to introduce Landlock
-Message-ID: <20210731134821.qh5ol3wenvb73cjw@localhost.localdomain>
-References: <20210712155745.831580-1-mic@digikod.net>
- <20210712155745.831580-2-mic@digikod.net>
- <3f1b943b-2477-2c4e-c835-d6616888176c@gmail.com>
- <c5036c5c-37a1-57d2-e5dc-1f41a5ed0d31@digikod.net>
- <20210730233931.lbtq67esmeuo4o6d@localhost.localdomain>
- <e88fe0d9-1330-3de4-53e1-4b72360ce7d3@gmail.com>
+        Mon, 2 Aug 2021 04:14:32 -0400
+Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GdW4P1bP5z6F86J;
+        Mon,  2 Aug 2021 16:14:13 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.2; Mon, 2 Aug 2021 10:14:20 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
+ Mon, 2 Aug 2021 10:14:20 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>
+Subject: RE: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
+ digest_list_del
+Thread-Topic: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
+ digest_list_del
+Thread-Index: AQHXgjzPxJ6WuoGgH0KyG3D/y7w0xqtaWSsAgADBDpCAAD+ygIAAIhjQ///1QYCAACKD8IAETzLw
+Date:   Mon, 2 Aug 2021 08:14:20 +0000
+Message-ID: <96c7cd3d19254e84a6cb45b2a940e944@huawei.com>
+References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
+         <20210726163700.2092768-7-roberto.sassu@huawei.com>
+         <c9dffd9d29df095660beaa631ff252c4b33629a0.camel@linux.ibm.com>
+         <ef7c85dcb096479e95c8c60ccda4d700@huawei.com>
+         <1ef95096bee13578b3f906dd9f708c6af9d6ff18.camel@linux.ibm.com>
+         <555bf01bee4b4ea7a9bee658366d535a@huawei.com>
+ <2c731f07bd08f01f2a3e032814bc65ae9a8494ad.camel@linux.ibm.com>
+ <bd0787e0ee4f47baa41abf47976e536c@huawei.com>
+In-Reply-To: <bd0787e0ee4f47baa41abf47976e536c@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.221.98.153]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yvkdh4iyhs7gp6a2"
-Content-Disposition: inline
-In-Reply-To: <e88fe0d9-1330-3de4-53e1-4b72360ce7d3@gmail.com>
-User-Agent: NeoMutt/20180716
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+> From: Roberto Sassu [mailto:roberto.sassu@huawei.com]
+> Sent: Friday, July 30, 2021 4:25 PM
+> > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > Sent: Friday, July 30, 2021 4:03 PM
+> > Hi Roberto,
+> >
+> > On Fri, 2021-07-30 at 13:16 +0000, Roberto Sassu wrote:
+> > > > From: Mimi Zohar [mailto:zohar@linux.ibm.com]
+> > > > Sent: Friday, July 30, 2021 2:40 PM
+> >
+> > > > "critical data", in this context, should probably be used for verifying
+> > > > the in memory file digests and other state information haven't been
+> > > > compromised.
+> > >
+> > > Actually, this is what we are doing currently. To keep the
+> > > implementation simple, once the file or the buffer are uploaded
+> > > to the kernel, they will not be modified, just accessed through
+> > > the indexes.
+> >
+> > My main concern about digest lists is their integrity, from loading the
+> > digest lists to their being stored in memory.  A while back, there was
+> > some work on defining a write once memory allocator.  I don't recall
+> > whatever happened to it.  This would be a perfect usecase for that
+> > memory allocator.
+> 
+> Adding Igor in CC.
+> 
+> Regarding loading, everything uploaded to the kernel is carefully
+> evaluated. This should not be a concern. Regarding making them
+> read-only, probably if you can subvert digest lists you can also
+> remove the read-only protection (unless you use an hypervisor).
 
---yvkdh4iyhs7gp6a2
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I briefly talked with Igor. He also agreed with that, and added that
+it could make it more difficult for an attacker to also disable the
+protection. However, he is not planning to submit an update soon,
+so I wouldn't consider this an option for now.
 
-Hi, Alex,
+Thanks
 
-[man, that CC list makes me cringe--this is all style issues and groff
-release history, skip freely]
+Roberto
 
-At 2021-07-31T12:51:30+0200, Alejandro Colomar (man-pages) wrote:
-> Hi Branden, Micka=EBl,
-> > One of the things I did after the groff 1.22.4 release (December
-> > 2018) was to split groff_man(7) into two pages.  The one you've
-> > linked is the terser reference for seasoned (perhaps salty) man page
-> > writers.  Near the top of it you'll find this.
-[...]
-> Hmmmm, I can't find that text on my Debian Sid (with a bit of experimenta=
-l)
-> groff_man(7).  Not even in the SEE ALSO.
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Li Jian, Shi Yanli
 
-That's because Debian is still shipping groff 1.22.4, even in unstable.
-That's not shocking; I think Colin Watson was hesitant to ship a release
-candidate and that was all the groff team had ready at the time.  (I'm
-the most active developer but not the project lead or release manager;
-I've shied away from those responsibilities.)
+> Thanks
+> 
+> Roberto
+> 
+> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+> Managing Director: Li Peng, Li Jian, Shi Yanli
+> 
+> > thanks,
+> >
+> > Mimi
 
-> Re-reading this, we've been doing it wrong (as you pointed out in
-> another thread) with macro names with variable part.
-
-I do think it is wise to have a markup distinction between constant and
-variable parts of C (or C preprocessor) symbol names.  Admittedly, font
-style distinctions can get lost in terminal copy-and-paste, but we can't
-solve everything in plain text alone.
-
-> I wasn't very convinced by the current usage of the man pages, but it
-> was already current, so I just followed it :/
->=20
-> I'll try to follow this from now.
-
-The man-pages project has some style rules for visible output that are
-not in alignment with what groff does, but the only one that comes to
-mind is the style used for man page names (man-pages: bold; groff:
-italics).  I have a plan for resolving that on the rendering end[1].
-
-> Ahh, I missed this text, as it was neither under .I nor .IR, and only
-> had a fast read of the page.  The 3rd paragraph hints that you should
-> only use .IR when really needed, and use .I otherwise.  But someone
-> new to man-pages, who probably did never read this page (or read some
-> specific paragraphs of it when needed), and found the extensive (and
-> somewhat incorrect) usage of .IR in place of .I in the current man
-> pages, might be confused by all of that inconsistency and hard-to-find
-> (except by those who already know where it is (reference to Pirates of
-> the Caribbean intended :) )) information.
-
-Yes, it would really help if we (groff) could do a release.  :-/
-
-> > I'd appreciate feedback from anyone on how I can improve the above.
->=20
-> I think it's great.  But unless one reads the page with some time (and
-> not only the bullets), one might think that the man page is
-> incomplete.  Maybe groff_man_style(7) is better suited for newbies,
-> but I can't tell...  I couldn't find it.
-
-It's in groff Git and in the man-pages curated collection,
-<https://man7.org/linux/man-pages/man7/groff_man_style.7.html>.
-
-Michael apparently re-pulls from groff Git HEAD every time he does a
-man-pages release, which makes the groff man pages massively more up to
-date (by 2.5 years and counting) than what most distributions have.
-
-> I'm not sure, but maybe (I always get confused by these things)?:
->=20
-> [
-> each _of the_ OverlayFS layers and merge hierarchies _is_ standalone and
-> _contains_
-> _its_ own set of files and directories,
-> which is different from bind mounts.
-> ]
->=20
-> And still I'm not sure about the last "mounts".
-
-Yes, I think that's an improvement, and "bind mounts" could be made
-singular: "a bind mount".
-
-Regards,
-Branden
-
-[1] https://lists.gnu.org/archive/html/groff/2020-08/msg00068.html
-
---yvkdh4iyhs7gp6a2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEh3PWHWjjDgcrENwa0Z6cfXEmbc4FAmEFVJ0ACgkQ0Z6cfXEm
-bc5OoQ/+LkkfwPqKsKTBC9pSv0R0T+p4tpy1y6TmhcKm4rkm57gUR9qTit20cn3V
-gvgFaBkmG1yDFFcWrf6bl1MzvuccCkUuDAY1z7bszmqCrGLison9mtwt+YVAzrFp
-E+0W78llMoKmJWXyBrcqEllzWKboxxsOoORv2rgnXitVkPDHcPgNiuCiZL9qedX4
-xYMpamr2beKytc7jmhHcAxsilJZbW611YuPTMgNEcuSQ0ykPEYpVvjyqA+m84hXZ
-M9Mf/7MUISL+n5aJzimOhfJxFwrFgRM0XJ82RuiwpZw7P6dsC21HkqjC4NTlL6D5
-hFhehboou1yx9jzV1bNkpktsnGH2Gx3zgHMqJNkj6gA1gqKz/7vAH1s5jzZMjAhL
-CquPq3bUAcatoMdYe4TXKHjSP4X/KzY2d65dhl5FaQH5jPn6/IrquWSk+SMis4RT
-zSqdCnLTDVWcD8K2qFusFDXD9L9Ndrq+FDkEEoj1fPdIOmzUkXitjIiM9W9qp9cn
-WrugNd0d/wX6B3srh4fpEbr3IpsoUk0XPo6ZDczKN+EkihJLLPpzbEFA89fUUNxs
-ET1mJ1hzTTbEfUv52eWh11fEDP7gUnp2F2PD0wJAVWHqQDfM1GI2hLpbQMJfxJEL
-1tSdYGbRrpk6qwzxoe7/VU/tt8E/Pe6PMrZH7nf0WHmw6EdzEhU=
-=ijqd
------END PGP SIGNATURE-----
-
---yvkdh4iyhs7gp6a2--
