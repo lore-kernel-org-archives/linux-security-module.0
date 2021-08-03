@@ -2,257 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F198C432BE
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Aug 2021 20:26:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3775DC4338F
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Aug 2021 20:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6106D6052B
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Aug 2021 20:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FA29600CD
+	for <linux-security-module@archiver.kernel.org>; Tue,  3 Aug 2021 20:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbhHCU0n (ORCPT
+        id S231433AbhHCUub (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Aug 2021 16:26:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:19002 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229688AbhHCU0m (ORCPT
+        Tue, 3 Aug 2021 16:50:31 -0400
+Received: from mail-qv1-f48.google.com ([209.85.219.48]:43911 "EHLO
+        mail-qv1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231351AbhHCUub (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Aug 2021 16:26:42 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 173K4Ir8013434;
-        Tue, 3 Aug 2021 16:26:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : content-transfer-encoding : mime-version; s=pp1;
- bh=S27uxvI2pwAJQtLsR9UGJeyznABvEv9jBk5FBJ/cBow=;
- b=CDzkenJBvoTkccesmiaihQaF+mMbZ+tfMCFX2bAQQCqD8gTdGL8s+YybJGLRlGGImZ8x
- ek141/rt6w4HdsXNOoWniNJxZvXCZH741EJUncbcOoR/Ec59ZlHf5012Y9eNA1Z771jd
- 0cX3hEFnj0GBMQYQ/5xrST3SkxBAGhb+d1fkdKRKyfLiJSuirhXJz6+yj3yLxBSpeBKc
- 5xFD4L1WMhHbpbgiFlp5nAiovDFGrdB2NFhsk7MWjcgtQ7oeswYDC+7QWUWXEfbmKu7n
- MqpzcuRMusNy3d6j7TJEdpQXE02IKwSClcXOMP6gJLIto2/qsMdx3DEewPtTlnZngaGg Zw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a76r5kb9t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Aug 2021 16:26:29 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 173K4nEU015291;
-        Tue, 3 Aug 2021 16:26:29 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a76r5kb9b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Aug 2021 16:26:29 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 173KHBFV018937;
-        Tue, 3 Aug 2021 20:26:28 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma05wdc.us.ibm.com with ESMTP id 3a4x5cfhfg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 03 Aug 2021 20:26:28 +0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 173KQR0H51184054
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 3 Aug 2021 20:26:27 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E7A4AE064;
-        Tue,  3 Aug 2021 20:26:27 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 72798AE06A;
-        Tue,  3 Aug 2021 20:26:27 +0000 (GMT)
-Received: from sbct-2.. (unknown [9.47.158.152])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue,  3 Aug 2021 20:26:27 +0000 (GMT)
-From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
-To:     jarkko@kernel.org
-Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Nageswara R Sastry <rnsastry@linux.ibm.com>
-Subject: [PATCH v2] tpm: ibmvtpm: Avoid error message when process gets signal while waiting
-Date:   Tue,  3 Aug 2021 16:26:22 -0400
-Message-Id: <20210803202622.1537040-1-stefanb@linux.vnet.ibm.com>
-X-Mailer: git-send-email 2.31.1
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HVsUldfjHVlMyGofX2GBhkA6klA4ztK2
-X-Proofpoint-ORIG-GUID: SQObnDq0iy9VLTXX46i06fUi9od-XlHx
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 3 Aug 2021 16:50:31 -0400
+Received: by mail-qv1-f48.google.com with SMTP id db14so93545qvb.10
+        for <linux-security-module@vger.kernel.org>; Tue, 03 Aug 2021 13:50:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zHYVWr4mmHyTyCpyV2whxo9UjKhSnFI15vUftGzFR1s=;
+        b=WExrA/Trpt3RBqsN5U/LeS4oNidxtKFrBY8w3v0xH+SccFnpylciUft60hz3jALCg1
+         DPJMKcHR6lGaEBU7/kiFv2xYAdkwzPIGr0TbTSpv2M6vHhHDAMQsxcgj2xIeDr/jL+g3
+         pK/ZKgzBidNVu78xkU5j8k+Z2iGfV0PdGxkdi7rk82g+dtnN7GofcIPKxthNHvEOCtkG
+         naSTs0HtUNEs8TbnFIIJndZbpoCiJsuU34TnthnlmJUBSaJc41IY9NWlor0r3QyqKCX0
+         Tqlh15K2MEnk6lgzdtoipN2vISkz4kJFv5sQbFIWg9znWks+/NWnrtCvLqZuCl8V1JG8
+         /dTg==
+X-Gm-Message-State: AOAM5329NxCR1me2xTR1YMyabumziO3NlSZFiwrXyDA2HT/EzlB1IKst
+        oH6bvro0qO7oSKz1YVb5Two=
+X-Google-Smtp-Source: ABdhPJx1jhPTcmaja+edS6HEOG1tiQk0GYscpWySMBvDFUvOWdi7pgcJhSZX2gD8ZSyCzAH9Xbjm2w==
+X-Received: by 2002:a05:6214:27e4:: with SMTP id jt4mr4112719qvb.45.1628023818500;
+        Tue, 03 Aug 2021 13:50:18 -0700 (PDT)
+Received: from [192.168.1.109] ([213.87.135.90])
+        by smtp.gmail.com with ESMTPSA id a5sm53550qkf.88.2021.08.03.13.50.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Aug 2021 13:50:18 -0700 (PDT)
+Subject: Re: Linux Kernel vulnerability scripting
+To:     "Weber, Matthew L Collins" <Matthew.Weber@collins.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        keescook@chromium.org
+References: <CY1P110MB0102E9CF9461FDAA8C3B8C22F2F09@CY1P110MB0102.NAMP110.PROD.OUTLOOK.COM>
+From:   Denis Efremov <efremov@linux.com>
+Message-ID: <53ad0be9-5fd6-8805-98dc-0d8889c546db@linux.com>
+Date:   Tue, 3 Aug 2021 23:50:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-03_05:2021-08-03,2021-08-03 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- mlxlogscore=999 spamscore=0 lowpriorityscore=0 mlxscore=0 bulkscore=0
- clxscore=1011 priorityscore=1501 adultscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108030126
+In-Reply-To: <CY1P110MB0102E9CF9461FDAA8C3B8C22F2F09@CY1P110MB0102.NAMP110.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+Hi,
 
-When rngd is run as root then lots of these types of message will appear
-in the kernel log if the TPM has been configured to provide random bytes:
+On 8/3/21 11:07 PM, Weber, Matthew L Collins wrote:
+> Hello,
+> 
+> (I didn't want to spam the whole LKML, so I've included the LSM list and top hits with get_maintainer.pl on the scripts and tools folders.)
+> 
+> I'm organizing a project to take some prototype scripting and publicly publish/rewrite.  The script I'd like to add to the kernel code base breaks down a kernel build and identifies the active code (using enabled Kconfig and obj file list). 
 
-[ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
+If I understand you correctly this is what I started to do since the beginning of the year with CVEHound project.
+https://github.com/evdenis/cvehound/
 
-The issue is caused by the following call that is interrupted while
-waiting for the TPM's response.
+Kconfig analysis available with --config option.
 
-sig = wait_event_interruptible(ibmvtpm->wq,
-                               !ibmvtpm->tpm_processing_cmd);
+> It then uses the kernel version and queries a public vulnerability database(NIST NVD) to identify possible patches against known vulnerabilities.
 
-Rather than waiting for the response in the low level driver, have it use
-the polling loop in tpm_try_transmit() that uses a command's duration to
-poll until a result has been returned by the TPM, thus ending when the
-timeout has occurred but not responding to signals and ctrl-c anymore. To
-stay in this polling loop extend tpm_ibmvtpm_status() to return
-TPM_STATUS_BUSY for as long as the vTPM is busy. Since the loop requires
-the TPM's timeouts, get them now using tpm_get_timeouts() after setting
-the TPM2 version flag on the chip.
+I take info about fixed CVEs from MITRE, NIST NVD and other sources (RedHat, Ubuntu, linuxkernelcves, ...).
+Vulnerable version info in the databases is not reliable. Most of the time I need to figure out the bug commit
+and event double check the "Fixes:" tag.
 
-Rename the tpm_processing_cmd to tpm_status in ibmvtpm_dev and set the
-TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
+> The script then attempts to patch the source code to determine which vulnerabilities are still present in the codebase.
 
-To recreat the resolved issue start rngd like this:
+Just application of a patch with -R option will not work in case the code is modified since the fix and in case of backports.
+I describe CVEs with coccinelle patterns. https://coccinelle.gitlabpages.inria.fr/website/
+Coccinelle is already broadly used in kernel (see scripts/coccinelle).
 
-sudo rngd -r /dev/hwrng -t
-sudo rngd -r /dev/tpm0 -t
+> The end goal is to help the user understand the state of the active codebase, whereas most tools stop at the kernel version, and then the activity is all manual.
 
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
-Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
-Cc: Nayna Jain <nayna@linux.ibm.com>
-Cc: George Wilson <gcwilson@linux.ibm.com>
-Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Exactly. CodeBase+KernelConfig.
+Many vendors (e.g. samsung) don't update kernel version info, they just backport fixes.
 
----
+> For an example of what the scripting impact could improve, a recent Kernel 4.14.x dump of vulnerabilities had hundreds that needed to be paired down.
 
-v2:
- - reworded commit text
----
- drivers/char/tpm/tpm_ibmvtpm.c | 31 ++++++++++++++++++-------------
- drivers/char/tpm/tpm_ibmvtpm.h |  3 ++-
- 2 files changed, 20 insertions(+), 14 deletions(-)
+> Our estimate before tooling put the effort at about 10-15mins a CVE (determine active code, review code paths in suggested patches).
 
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 903604769de9..5d795866b483 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -106,17 +106,12 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- {
- 	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
- 	u16 len;
--	int sig;
- 
- 	if (!ibmvtpm->rtce_buf) {
- 		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
- 		return 0;
- 	}
- 
--	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
--	if (sig)
--		return -EINTR;
--
- 	len = ibmvtpm->res_len;
- 
- 	if (count < len) {
-@@ -220,11 +215,12 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 		return -EIO;
- 	}
- 
--	if (ibmvtpm->tpm_processing_cmd) {
-+	if ((ibmvtpm->tpm_status & TPM_STATUS_BUSY)) {
- 		dev_info(ibmvtpm->dev,
- 		         "Need to wait for TPM to finish\n");
- 		/* wait for previous command to finish */
--		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-+		sig = wait_event_interruptible(ibmvtpm->wq,
-+				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
- 		if (sig)
- 			return -EINTR;
- 	}
-@@ -237,7 +233,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 	 * set the processing flag before the Hcall, since we may get the
- 	 * result (interrupt) before even being able to check rc.
- 	 */
--	ibmvtpm->tpm_processing_cmd = true;
-+	ibmvtpm->tpm_status |= TPM_STATUS_BUSY;
- 
- again:
- 	rc = ibmvtpm_send_crq(ibmvtpm->vdev,
-@@ -255,7 +251,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
- 			goto again;
- 		}
- 		dev_err(ibmvtpm->dev, "tpm_ibmvtpm_send failed rc=%d\n", rc);
--		ibmvtpm->tpm_processing_cmd = false;
-+		ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
- 	}
- 
- 	spin_unlock(&ibmvtpm->rtce_lock);
-@@ -269,7 +265,9 @@ static void tpm_ibmvtpm_cancel(struct tpm_chip *chip)
- 
- static u8 tpm_ibmvtpm_status(struct tpm_chip *chip)
- {
--	return 0;
-+	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
-+
-+	return ibmvtpm->tpm_status;
- }
- 
- /**
-@@ -457,7 +455,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
- 	.send = tpm_ibmvtpm_send,
- 	.cancel = tpm_ibmvtpm_cancel,
- 	.status = tpm_ibmvtpm_status,
--	.req_complete_mask = 0,
-+	.req_complete_mask = TPM_STATUS_BUSY,
- 	.req_complete_val = 0,
- 	.req_canceled = tpm_ibmvtpm_req_canceled,
- };
-@@ -550,7 +548,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
- 		case VTPM_TPM_COMMAND_RES:
- 			/* len of the data in rtce buffer */
- 			ibmvtpm->res_len = be16_to_cpu(crq->len);
--			ibmvtpm->tpm_processing_cmd = false;
-+			ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
- 			wake_up_interruptible(&ibmvtpm->wq);
- 			return;
- 		default:
-@@ -688,8 +686,15 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 		goto init_irq_cleanup;
- 	}
- 
--	if (!strcmp(id->compat, "IBM,vtpm20")) {
-+
-+	if (!strcmp(id->compat, "IBM,vtpm20"))
- 		chip->flags |= TPM_CHIP_FLAG_TPM2;
-+
-+	rc = tpm_get_timeouts(chip);
-+	if (rc)
-+		goto init_irq_cleanup;
-+
-+	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- 		rc = tpm2_get_cc_attrs_tbl(chip);
- 		if (rc)
- 			goto init_irq_cleanup;
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
-index b92aa7d3e93e..252f1cccdfc5 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.h
-+++ b/drivers/char/tpm/tpm_ibmvtpm.h
-@@ -41,7 +41,8 @@ struct ibmvtpm_dev {
- 	wait_queue_head_t wq;
- 	u16 res_len;
- 	u32 vtpm_version;
--	bool tpm_processing_cmd;
-+	u8 tpm_status;
-+#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
- };
- 
- #define CRQ_RES_BUF_SIZE	PAGE_SIZE
--- 
-2.31.1
+As for now, I described > 200 kernel CVEs with coccinelle patterns.
+Usually it takes me exactly 10-15 minutes to write a pattern (without testing it).
+I test a pattern to detect a missing fix since the commit the bug was introduced.
+https://github.com/evdenis/cvehound/blob/master/tests/test_05_between_fixes_fix.py
 
+I don't rely on kernel version at all. Usually a pattern contains information about
+bug conditions or/and about missing fix.
+
+I already found some trophies with it like missing backports:
+  https://lkml.org/lkml/2021/1/21/1278
+or partial backports:
+  https://github.com/oracle/linux-uek/commit/ee7ab9e8f9cb844c4fac8ca9bcc1a0f3f8fdc9bb
+  vs
+  https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/block/rbd.c?h=linux-4.4.y&id=e349a5786f4c23eb11d1e7385703ddbf94f3f061
+
+Regards,
+Denis
