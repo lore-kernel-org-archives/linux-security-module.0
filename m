@@ -2,117 +2,173 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3775DC4338F
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Aug 2021 20:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E371C4338F
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 01:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA29600CD
-	for <linux-security-module@archiver.kernel.org>; Tue,  3 Aug 2021 20:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 030C160F8F
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 01:15:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231433AbhHCUub (ORCPT
+        id S232694AbhHDBPY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 3 Aug 2021 16:50:31 -0400
-Received: from mail-qv1-f48.google.com ([209.85.219.48]:43911 "EHLO
-        mail-qv1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbhHCUub (ORCPT
+        Tue, 3 Aug 2021 21:15:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49624 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232332AbhHDBPY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 3 Aug 2021 16:50:31 -0400
-Received: by mail-qv1-f48.google.com with SMTP id db14so93545qvb.10
-        for <linux-security-module@vger.kernel.org>; Tue, 03 Aug 2021 13:50:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zHYVWr4mmHyTyCpyV2whxo9UjKhSnFI15vUftGzFR1s=;
-        b=WExrA/Trpt3RBqsN5U/LeS4oNidxtKFrBY8w3v0xH+SccFnpylciUft60hz3jALCg1
-         DPJMKcHR6lGaEBU7/kiFv2xYAdkwzPIGr0TbTSpv2M6vHhHDAMQsxcgj2xIeDr/jL+g3
-         pK/ZKgzBidNVu78xkU5j8k+Z2iGfV0PdGxkdi7rk82g+dtnN7GofcIPKxthNHvEOCtkG
-         naSTs0HtUNEs8TbnFIIJndZbpoCiJsuU34TnthnlmJUBSaJc41IY9NWlor0r3QyqKCX0
-         Tqlh15K2MEnk6lgzdtoipN2vISkz4kJFv5sQbFIWg9znWks+/NWnrtCvLqZuCl8V1JG8
-         /dTg==
-X-Gm-Message-State: AOAM5329NxCR1me2xTR1YMyabumziO3NlSZFiwrXyDA2HT/EzlB1IKst
-        oH6bvro0qO7oSKz1YVb5Two=
-X-Google-Smtp-Source: ABdhPJx1jhPTcmaja+edS6HEOG1tiQk0GYscpWySMBvDFUvOWdi7pgcJhSZX2gD8ZSyCzAH9Xbjm2w==
-X-Received: by 2002:a05:6214:27e4:: with SMTP id jt4mr4112719qvb.45.1628023818500;
-        Tue, 03 Aug 2021 13:50:18 -0700 (PDT)
-Received: from [192.168.1.109] ([213.87.135.90])
-        by smtp.gmail.com with ESMTPSA id a5sm53550qkf.88.2021.08.03.13.50.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 03 Aug 2021 13:50:18 -0700 (PDT)
-Subject: Re: Linux Kernel vulnerability scripting
-To:     "Weber, Matthew L Collins" <Matthew.Weber@collins.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        keescook@chromium.org
-References: <CY1P110MB0102E9CF9461FDAA8C3B8C22F2F09@CY1P110MB0102.NAMP110.PROD.OUTLOOK.COM>
-From:   Denis Efremov <efremov@linux.com>
-Message-ID: <53ad0be9-5fd6-8805-98dc-0d8889c546db@linux.com>
-Date:   Tue, 3 Aug 2021 23:50:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <CY1P110MB0102E9CF9461FDAA8C3B8C22F2F09@CY1P110MB0102.NAMP110.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Tue, 3 Aug 2021 21:15:24 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17413jga141695;
+        Tue, 3 Aug 2021 21:14:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=r8ah1H336Sc9R6OFxwhQA4dKW5+68cyEFEVqYHZcA+Q=;
+ b=XpBEMLWJR1q9TUHt+OPZsNMSF40SzILYjQ2CIALoJwXqEaJlqwJKsG7ozt8uUsL5NnaD
+ VdVKNjRZy54sU9BpoMZ87j+sBdczIMZBWdze+yiSAnevMMG978t+PMh1JGfqX79ZNYjL
+ KeMBLoPz0iRLz4U7RLE7Lq9RrSw2FoHTaIPhmRz3y1Gl5r+0tnR3W+cnRWzHRnMN+Ctt
+ supZVp60BL2rBGO5tOL9EsJMVVsR/G5zWY/GNNQ1GXwcEilXygPuBag+t++E7b+eGoDk
+ +MQNlKaaGEKZcV30DuULXnjTmSFSjlOqjFjCGnuDvH0GZPDTu+IenPKzv9iIqpHfN20d xQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3a7b77qtex-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Aug 2021 21:14:42 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17414edg144479;
+        Tue, 3 Aug 2021 21:14:41 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3a7b77qted-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 03 Aug 2021 21:14:41 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 1741C1i9021026;
+        Wed, 4 Aug 2021 01:14:39 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma04fra.de.ibm.com with ESMTP id 3a4x597exk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 04 Aug 2021 01:14:39 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 1741EbKE58524022
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 4 Aug 2021 01:14:37 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E935611C066;
+        Wed,  4 Aug 2021 01:14:36 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9EAC811C04A;
+        Wed,  4 Aug 2021 01:14:31 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.88.204])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed,  4 Aug 2021 01:14:31 +0000 (GMT)
+Message-ID: <5ac7f5fc866dd271ecfc9be17fef7fa47babbc6e.camel@linux.ibm.com>
+Subject: Re: [PATCH RFC v2 00/12] Enroll kernel keys thru MOK
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com,
+        keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        glin@suse.com, "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+Date:   Tue, 03 Aug 2021 21:14:30 -0400
+In-Reply-To: <2BBC3A71-6E0D-47A2-842A-11C279A5DC56@oracle.com>
+References: <20210726171319.3133879-1-eric.snowberg@oracle.com>
+         <820cd72cd77c4716bff2bf344c64d7bcb59fc4d3.camel@linux.ibm.com>
+         <2BBC3A71-6E0D-47A2-842A-11C279A5DC56@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: M65tFsTH8Ok_ikX9zRsX1_tTg9e0oufs
+X-Proofpoint-ORIG-GUID: 73SCjQ_TXsQIP2QZf6QHBmhyZVWpWxSC
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-03_08:2021-08-03,2021-08-03 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ mlxscore=0 lowpriorityscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 spamscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108040004
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+Hi Eric,
 
-On 8/3/21 11:07 PM, Weber, Matthew L Collins wrote:
-> Hello,
+On Tue, 2021-08-03 at 13:52 -0600, Eric Snowberg wrote:
+> > On Aug 3, 2021, at 11:01 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > 
+> > On Mon, 2021-07-26 at 13:13 -0400, Eric Snowberg wrote:
+> > 
+> >> When the kernel boots, if MokListTrustedRT is set and
+> >> EFI_VARIABLE_NON_VOLATILE is not set, the MokListRT is loaded into the
+> >> mok keyring instead of the platform keyring. Mimi has suggested that
+> >> only CA keys or keys that can be vouched for by other kernel keys be
+> >> loaded into this keyring. All other certs will load into the platform
+> >> keyring instead.
+> > 
+> > I suggested only loading the CA keys stored in the MOK db onto the MOK
+> > keyring.  Like the builtin trusted keyring, the MOK keyring would also
+> > be linked to the secondary keyring.   Assuming the secondary keyring is
+> > defined, all other properly signed MOK db keys  - signed by keys on the
+> > builtin, secondary or MOK keyring - would be loaded onto the secondary
+> > keyring.
+> > 
+> > As previously discussed, this might require reading the MOK db twice -
+> > once to load the CA keys on the MOK keyring, a second time to load the
+> > remaining properly signed keys onto the secondary keyring.
 > 
-> (I didn't want to spam the whole LKML, so I've included the LSM list and top hits with get_maintainer.pl on the scripts and tools folders.)
+> I’m only loading CA keys or keys that can be vouched for by other kernel 
+> keys into the new mok keyring.
+
+The cover letter implies that this suggestion is coming from me, which
+it definitely is not.  My preference, as I made clear from the very
+beginning, is to load ONLY the MOK DB CA keys onto the mok
+keyring.   (And even go one step farther, requiring the MOK DB CA
+key(s) to be identified on the boot command line.)
+
+> Currently, I’m not doing another pass.  I 
+> could add another pass, but it would not solve the issue with someone trying 
+> to load an intermediate CA along with a leaf cert.  This would require yet 
+> a third pass.  I wasn’t sure if this added complexity was necessary.  
 > 
-> I'm organizing a project to take some prototype scripting and publicly publish/rewrite.  The script I'd like to add to the kernel code base breaks down a kernel build and identifies the active code (using enabled Kconfig and obj file list). 
+> Currently, any CA contained within the MOK db would now be trusted by the 
+> kernel.  Someone using a kernel with the secondary keyring enabled could 
+> load the intermediate and leaf certs themselves following boot.
 
-If I understand you correctly this is what I started to do since the beginning of the year with CVEHound project.
-https://github.com/evdenis/cvehound/
+Correct, as previously discussed, the other signed MOK DB keys may be
+loaded by userspace.   The only reason we're interested in any of the
+other MOK DB keys is prevent a regression.  As you previously pointed
+out all of the MOK DB keys are currently being loaded onto the platform
+keyring.  So leave the existing code, which loads the MOK DB keys onto
+the platform keyring, alone to prevent that regression.  It's already
+being controlled by a UEFI variable.
 
-Kconfig analysis available with --config option.
+> Taking 
+> this into account, if you’d like to see two passes, let me know and I’ll add 
+> that in v3.  If a second pass is done, do you really want these additional 
+> keys added to the secondary keyring or should they go into the mok keyring
+> instead?  I was under the impression the secondary should be empty until a
+> user adds their own keys into it. Thanks.
 
-> It then uses the kernel version and queries a public vulnerability database(NIST NVD) to identify possible patches against known vulnerabilities.
+Again, my preference would be to load ONLY the MOK DB CA keys onto the
+mok keyring.
 
-I take info about fixed CVEs from MITRE, NIST NVD and other sources (RedHat, Ubuntu, linuxkernelcves, ...).
-Vulnerable version info in the databases is not reliable. Most of the time I need to figure out the bug commit
-and event double check the "Fixes:" tag.
+If YOU decide you want to load the signed keys stored in MOK DB, be my
+guest.  However, they should be loaded onto the secondary keyring and a
+new restriction defined, similar to
+"restrict_link_by_builtin_and_secondary_trusted", which includes mok as
+well.
 
-> The script then attempts to patch the source code to determine which vulnerabilities are still present in the codebase.
+thanks,
 
-Just application of a patch with -R option will not work in case the code is modified since the fix and in case of backports.
-I describe CVEs with coccinelle patterns. https://coccinelle.gitlabpages.inria.fr/website/
-Coccinelle is already broadly used in kernel (see scripts/coccinelle).
+Mimi
 
-> The end goal is to help the user understand the state of the active codebase, whereas most tools stop at the kernel version, and then the activity is all manual.
-
-Exactly. CodeBase+KernelConfig.
-Many vendors (e.g. samsung) don't update kernel version info, they just backport fixes.
-
-> For an example of what the scripting impact could improve, a recent Kernel 4.14.x dump of vulnerabilities had hundreds that needed to be paired down.
-
-> Our estimate before tooling put the effort at about 10-15mins a CVE (determine active code, review code paths in suggested patches).
-
-As for now, I described > 200 kernel CVEs with coccinelle patterns.
-Usually it takes me exactly 10-15 minutes to write a pattern (without testing it).
-I test a pattern to detect a missing fix since the commit the bug was introduced.
-https://github.com/evdenis/cvehound/blob/master/tests/test_05_between_fixes_fix.py
-
-I don't rely on kernel version at all. Usually a pattern contains information about
-bug conditions or/and about missing fix.
-
-I already found some trophies with it like missing backports:
-  https://lkml.org/lkml/2021/1/21/1278
-or partial backports:
-  https://github.com/oracle/linux-uek/commit/ee7ab9e8f9cb844c4fac8ca9bcc1a0f3f8fdc9bb
-  vs
-  https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/drivers/block/rbd.c?h=linux-4.4.y&id=e349a5786f4c23eb11d1e7385703ddbf94f3f061
-
-Regards,
-Denis
