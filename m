@@ -2,179 +2,258 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A637C4338F
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 18:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C776C432BE
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 19:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B83760F22
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 18:16:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1267560F58
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 19:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237090AbhHDSRA (ORCPT
+        id S240701AbhHDTs5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Aug 2021 14:17:00 -0400
-Received: from mail-dm6nam08on2075.outbound.protection.outlook.com ([40.107.102.75]:42091
-        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S236761AbhHDSRA (ORCPT
+        Wed, 4 Aug 2021 15:48:57 -0400
+Received: from sonic304-25.consmr.mail.gq1.yahoo.com ([98.137.68.206]:46600
+        "EHLO sonic304-25.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238128AbhHDTs4 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Aug 2021 14:17:00 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mZ92ehMUaM+DRlisr5dVYkPbwnMPsteQ3V67nr6WqE/+LrYwMWLm6IMAmzHolmcfYjfXnhRJTth8qvSbBNSxZLjbmTEuzk/L5Pajhk1VxrHKXSlhsXcE9BIitPNDbzj5Up8KBa9qZP0GM28U1nxFWH/5vF20GA9pR3DH9xFrUVW1rs6E0Df7ooJeDPWV+CWKq7c/EkJ3ZGuQ+ITdnacI1q4UhWTpzK+7cOGFbxwhsCM7WTNz9E6p63NthsYtdyRYUcfr++ze9gkYl1Xsc4Nr6cf+CHW8sPjjax5HnKZqUWx0+XSVFGU+JOZf4UJ7ItubZqB/LzxGhzxxur9rEhlazg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=21k9UmOmECgnE1/EUpietXhisMdQ+uQcI5jWL9ilyiU=;
- b=LhNelUCkU7itgIKNMhhnZNbhgLt3ezGdHxv7CovJlofm/W6XVhkcy4bGh30afo6cv42DRmeudc+uDVTjNfWdzZFNmyDq/5DiW6FfPqnOnIEdUekhqWzcCfC3qU+vZSW1pf1pLwwyCjZyegLQNgfXRwvYH1B2CrqB+m4XS0KjZM1lzUY1ybWGzYkhYsNBsHsNVq3FvR8sWsuaKQ4cc0Vgd83b4eAlDZCR3CD4RR58LabLumnJBZNfqwc8xMZJbFE5pI/RnA1mNOBSfq+k3NNt8DqRdwV43f4o5XO9GQ2ruFJpR3INJpPJu2b8d/9m0ke5kqMN2SrcZpelSP6Vb++0FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=21k9UmOmECgnE1/EUpietXhisMdQ+uQcI5jWL9ilyiU=;
- b=QXAIwMa2LTzkh5fOAcz96BgBYt+TZGg0G40Qmz+N2E6AdIodPXRDZ2Uf+yIO1bs9uETLLiLBiuUtf9v4tpsuyJe4pTnzmjF17xO7xyifHlEaEdh3OzIs0k9FXploDqq+G/MbxmvbN3AS7V1BXahcV8UpvoHW991R5CrlUZk/NDheJ3RMwxq03TxbGuyc7yuDVydUs7dBakfkOeXtT56i5zzlVWveSJ61gFilPPiFxM/e3aJd55Ytd19dWXWSrdtdNnGzLCGrRqi1nTsOkpzgnEYCUC0x7PbRpVH+xCYc/4u+bAR++fBWrBTW3zR2gOffKGrGRNiKTEOkZjU9o9vOlw==
-Authentication-Results: arndb.de; dkim=none (message not signed)
- header.d=none;arndb.de; dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB5278.namprd12.prod.outlook.com (2603:10b6:5:39e::17)
- by DM4PR12MB5216.namprd12.prod.outlook.com (2603:10b6:5:398::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16; Wed, 4 Aug
- 2021 18:16:46 +0000
-Received: from DM4PR12MB5278.namprd12.prod.outlook.com
- ([fe80::c170:83a0:720d:6287]) by DM4PR12MB5278.namprd12.prod.outlook.com
- ([fe80::c170:83a0:720d:6287%5]) with mapi id 15.20.4373.026; Wed, 4 Aug 2021
- 18:16:46 +0000
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
- cap_capable
-To:     syzbot <syzbot+79f4a8692e267bdb7227@syzkaller.appspotmail.com>,
-        jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
-        Arnd Bergmann <arnd@arndb.de>
-References: <00000000000009422905c8bf2102@google.com>
-From:   Nikolay Aleksandrov <nikolay@nvidia.com>
-Message-ID: <5ccf831c-025b-88d0-48f9-d5e0d9377c70@nvidia.com>
-Date:   Wed, 4 Aug 2021 21:16:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-In-Reply-To: <00000000000009422905c8bf2102@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0017.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:16::27) To DM4PR12MB5278.namprd12.prod.outlook.com
- (2603:10b6:5:39e::17)
+        Wed, 4 Aug 2021 15:48:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1628106523; bh=LNGh9NHIhb5fA7uCyCadJ4uM36CMeld28J3HJ9dwjns=; h=Date:From:Subject:To:Cc:References:In-Reply-To:From:Subject:Reply-To; b=CLDhvI13HpJEMniuJqb6+nLsr39dWq/zjg5QBwSM03CZJI4HJpuoIzHSSbJcKQ1q2AlRoZ5YqnLnCS+ce834/AmfOCDEfwy6jxNyBpu7bFzvzDSK1mGsIpI3Kp9oeEo/fv6QDdQo4vEPHxGZJUDh5jqlIgNpIj5aez6R3KemSqTWSr/VslVmfjnuGWb1i9LSJKuZq6aCdwL0CsCFYSo/h6TeAMDGMC3VwppC43Qc/qbzQCW4uQL0NmTSFrhYzbZplwyifdDWEdNriT3l8HYO09q6WEp/otnOY/womgFllOm2f5EnIeI6QyyMZm7nkiG01+aWd82CF5e1jHEmn2ajxw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628106523; bh=ezAPH3oF+ePWSWtV7ABJHkMKCQtAWa8f30ZU7dsUQ1e=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=rTp38fxwi6dWBi8uNTD3Q0xSTbYn38faOh2F586vSxtGoLtTEDqGWMBXbE90Zl5dNk9na6BYiuaeQH20YWKcHQG/IWNvBLPpTL3BeO0V1tLmPcNbj1ZoLcHD4pgeqO1te1pFJgDJdvII4A9TLevmXSKgJqEb5wupwbpBcqRH6wsR3BPV2oH5wPEbv3ezt0bFPpMVGKvOKPIKtXo5BhVXOQcMhu6oxasiDmvZwLpbC8/xwo29C2/toe/cGLlE0xvJ9p/FfeDFaWh7kjtLvpxhBgABeqUYI/kG9OGAbsM/gd2/C5LwlpKYO8MS11XXrkU+dBNLRQ6CwSOo54u4zv8uRQ==
+X-YMail-OSG: wXcBCvIVM1m9uQstF84zyKIGA_LCrsjroEX274nOn5MOKuIKuekLdqZmOSfxHa.
+ f78uIy4.FMsLrDq1Zm89XUtyhoTsL08c8Cp_AxgkgQv_wA5msgWP4KTGmnI5SOXRw.x1DTpUElIS
+ Q1BDesYx72WCSvqqb.bTABrHqA0ry30wgKgSAKhoRZ0cFTgGiGVhr7y3fMaHg.yo7r.YcjECipDA
+ L.DHqVuonKDnLiRYLXYy6BZs5TSQu_9v7m76C1pC6tV8zb9McUou65zABEiAdqHP9ftjUHy.sm9S
+ SR1cNcWpTUlxKfppHifNOLYj3p93YUk7AdtVwGY_5Vyut03wGSJh9vQUti5V4XFR3ISVW54M24v4
+ TNmpYa2ePjLBSUJKYlUV1kawRMYOQ3OLkLCAlp7MIKbZALQueKwgOGUyiR_vRg4hOhs1XLHMjHat
+ 4wJrpeSR6nKVlKZEd9EOgWTXpLAedzOGaa69AB8ZYB0veqPEGRtz3Gi39AnxEOqYuWTFJyZwDiSf
+ f6nAw3WAvAEj19O0KBoGYDNcOlbcMx7ZYD.fpA66E45elFh_zh6FqlILKqpdGaZr1I4prLgy1dzt
+ H917pBTpFCEPsZzJ51EbJ7BEoMe4IrO39ZK700f710.MU9HKpADJI0klc2gINp5eXxy8BwxWWXgp
+ rIKY_LPpJ3frDoagUSJgYasOCvWWiJ6R7ctII5jSozCgcV2nkTl9Mlkr3S54bHaGJSjoVjDyo2cO
+ OdAje1sHqtkF.vHVDsTj9mDxOj5VOszkh8cY88Pg8lxyYnc7lnqH2GcKgnMjMMu7GuKGSpy..JMc
+ E5tEvbNNGP.xOtG2QObWvgzz9lbgzjsRXcIkzEQRlXP7bcN1FWYLJgALJvYxtgA6Z6w_Zu5xGbvU
+ hlrNxrcWyFlYzFZrA6sKnVVXX4po6xiTGSbKQWx1obfO3513Ioky51uyi.ZORz16zLEMMr44VSaG
+ YPgBX35u59ZWcPS1PJHKM1Z8Dj28aaD9JSA7OGXbnGiDmHPOYA7uktOI.b5XOCV4KCiNpnrWA8SY
+ 4.IQxbEJ8i3U9piK0H2V51fPsbu1OnzibBvzc3rqs34Mpu.cwS3v88PFH4x2HLAW9CuBFhKv65h0
+ pD13mWmtUH3GDo2wtvlXP3zJo8wRkseIh2LZZ9_RXhzUvvLXT60uvxqFfAXquGpk6q5pT0TltzSC
+ p2anQrceT.xB.GEOiDK6wrEUJnlCqdSICq84TK07GiHIpH_OuySCQGTsB_OWs81fwWMGj5YygLvy
+ rMD3nC5OgnhpU18YLwkoBy9kuA9Chz9KGVmGFRN1CIlG9Kcezvyd8f2ERFkSINfBZEMZzkfm7jT4
+ oPGMw5_ZFJRSLAojgPgILGdHRBCh76k6669pFLbj2dsR5VJ1tgqszpVFy8C4h2ZhiWIo1mNg9NMO
+ 1zTYcDNhF_PHubqm6HVS1VykWr19LpGAvHG1gCmkYeV1I9Wd_.JVbngd7VsRovFx49Na2ORBdd.k
+ BBZZbmMetQJxrdySKwpXIL3t9vvn_gXdYvzJyaucisYRIjYwolZSGa9.T1VsgO1XCP9Ing9cCnDF
+ 573zymw.rGu9_SP6J.K6RFpf.5HvRn0AOAV6Q98MxjTk0EevQ_SK_rqxi3FfcHdcqSXWlIQnfSjC
+ vae2.d.pmVC0oIB9sZOPy7rkpQLo2UP30zvoetK5Wi8fpiSnKcuDfw9S219s_K0o5C8rDvwTysb0
+ jf0hwCbacoXmDrIyamaaV9IPTwlZYCteyBhWSGDxZA_H3aYP_WYU4q40MqSI_QptppWbFunLUq1l
+ XqJWc7pzJ_RX66FyurILq9gsyQVi2CRXsNfOXDbP4lgA_fbLaffAziCRiK8b_qhF8mZSDUhqqwQp
+ Sy.i7bzy0YuVnH29omr6IDdZ9MGQqD9C_e3Gb5twn21z4EyOSdFG9D_rOMLHyIcZ_RPiKs_mQXCj
+ GxBAH97g1pHaZpvBcAHladkRBL1od8CH4Si9SrBNxkXJBpsMwburXTNGcZNsmg8J12a2BjcxX8GP
+ I4cD7mkEVsqe8F4JBb6XVyfGafwEVHXMKPzDA1AQlA0UISFWop8qzJhJ5vXB.UTE3Fhkf9LOnaL6
+ mITg5bp7QXv._cJeIZMcUYrajCfaWX0JiLRKjf.cLX1XkNDANdZdn_RqeFdawPBoF_ORLPZFXC4m
+ 6eyQ3f7K2d5kIcBK6kO3zDHlJw_KE.iuMrGfEyTT8KiMFR44LNIzSfniDQRkDI3LeM1cKIZPSBeN
+ EZIV5FBa6QR9YW1rAcmbKif9L3.TOyvkz.RNYil2LNOgFyjOdRxuRJ6UA7HcfOIyys0_r7kdI2CH
+ J95szLl4.FORK7I7FfE75Gwu7gbSKHfvlkgRUYFMTc4SSNW.DTg4oPxJf3_mkePP30gp7N51l_Hb
+ qf9oy36ItO_3oe5lkqzUBE.Pi7K2Ti7d49nVFHVo6SeM79Tyc49bisf0QN1lBVaJGvFrex77edV5
+ 5A.gdWuh74EwGYjBU948wkqUmk2DNPn2A70EyeG5quQMVroGvGf0WCcfLj8sp4iZAObl0X9Vf8nu
+ 8XpJZRfeJsJcTUvylXM71iDKLLVteSuJyMIDmpaxJ8ZCmvjmo4mTjzTSDn6L6nuFMc25qtEUxDHE
+ 5RMRfPK3cJNgTS2UZ5VgjhIxjysZ8Y0L5yRSd_mFrezBFvki5eA8GTwXa.ClnNRZUgcPqhITLO.4
+ qv.pfV5_N12StjdoDgb_nvzXC_yJVoYyuVdJR3.h4FwBWeC.p6oPXgz8JZ4wGBDzH3ysaWvqtuIv
+ D69IxyKJXR.fMyh2fSyaxihqDEdrFIY.o9LqJ_9x6jKPnp7BRKyUbIms2PgzQY1aw0mjbjfa6Sde
+ cpyNnx1VvdpyWUifwVuVC5bnktUXEj_DRV.ZrKsmaexgbTM4IPodxK0UyFp81vS3Nwv79HFjC47g
+ NDaOPAFguQoDxESuidKXLaR0U_4wslg9hRU2OTQEGaOG0VtgZvMgYRsMO37Myutp_SN7NOiG38og
+ udjd.YoTtd464y4419Czn8UdBDfL2SsR0hx0_GEbY52QUi.j3f2pvB9Q0FCwUpp0S7W.V9jgu0qy
+ KSscoI40ekYsEw4gmIMzFYbMnC1tBzzidEQk5U.45sS3csmAAQ3toAxPLV8htacqpiCdT8_GgMG0
+ xleeiMQ88k97O9gqTAsxBmyTHa5E0sl1C40ynKJkrl7U6elPM_Jt9_3PX9178lA.Yfhi3XaBnllt
+ ql_XBJhzcBi4D8PzM1AmmE86_JIe6LGT7icQR.ULFCXbKaiW_OlvU7G82ihwbId9ft3cVLbLDPz0
+ ujWD1phtpI2g5n9Sn1ElGXV6gMhzRKPeFdz.QJ_9JimUr_gYvTuWCcIdboqDmkxDKx_64gpJqGqr
+ 99ffk7odGVb1An.zu0Cf9BfV4G7BVZfOgrtLqNkyvhQTJACVgQIoQsc3PPUuCTwpaevjzZBpPt3E
+ qzFO_qQNtOdofvHSkx1CeNR.Td9lwuAi.nUtaoN4GCSAQMzLKRyhs44C5RGvxuXA5nRN4hX1wqRU
+ XKkcOGDMM0ZFXQ6FzDlATWDu5_Bk5mO.HukIHl1xUZnklCwnr1eqh_TRVGkZwr2Oo4p6Hc_0.zVC
+ U0_QsoHMnEXrolX.0Nslqzz4P08kpmFGPhm4zUSNLyFQVDhjFhwDKkgDNfX.iAXi1lIP1m2iw7TD
+ AdnxGvD4pr7PrjJECD4oKlUS4duLFK0iUoeLk0su.RXZYVqHsiXBefDIsLt.pRiADvWiPiPTu7Sv
+ Ykiudmt.ss7wU9uVUW.PQqWb_0iQ_Ha8R0xUSp8vFDBOZdUaA10CB51tEBkuiHRwZNP2mN5diXwI
+ CzSTpILKUrMCTw7YIEiB_qCcOtNA.mAAvpf0tHUyzIwiNRxigxfRiTUd2AOZDa0.pRxS2zb51uYk
+ UUu8PpLUZHTbX
+X-Sonic-MF: <alex_y_xu@yahoo.ca>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.gq1.yahoo.com with HTTP; Wed, 4 Aug 2021 19:48:43 +0000
+Received: by kubenode548.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 2961fbab5bea3292d10f4f927ac96299;
+          Wed, 04 Aug 2021 19:48:40 +0000 (UTC)
+Date:   Wed, 04 Aug 2021 15:48:36 -0400
+From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+Subject: Re: [REGRESSION?] Simultaneous writes to a reader-less, non-full pipe
+ can hang
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     acrichton@mozilla.com, Christian Brauner <christian@brauner.io>,
+        David Howells <dhowells@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        keyrings@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-usb@vger.kernel.org,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ian Kent <raven@themaw.net>
+References: <1628086770.5rn8p04n6j.none.ref@localhost>
+        <1628086770.5rn8p04n6j.none@localhost>
+        <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiLr55zHUWNzmp3DeoO0DUaYp7vAzQB5KUCni5FpwC7Uw@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [10.21.241.206] (213.179.129.39) by ZR0P278CA0017.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15 via Frontend Transport; Wed, 4 Aug 2021 18:16:43 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 7cbae2f7-e571-4ee5-d50e-08d9577404cc
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5216:
-X-Microsoft-Antispam-PRVS: <DM4PR12MB52160B08C2E8486A37B0CB90DFF19@DM4PR12MB5216.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0ankHtgtzz8YoyBb732QX+jH/kdT+IZGHSXIBkIWpN74/7SW1wZZFFZFfYlw1SZRPBENRYbpCNBvHCDLFH/bzhhH275Bhgo3CqdU28fpTTu1cKW4NX7FKeXPEyOrbCHPNQkIy7GTKLNWZqP0tqATWg9vDEFKti9i+HGQNdhZvC1jI51UiUNk9wOE+1vTxkd57qeu64uTahjuY+VNPwLv2TbK/PbrjRoF3KfFiwUh+UaHdnVie6Q0miQGJ/ii02VVXbteXeXzH+Nev3/T2DadE52xt8TwTivyMrerOfTa5/E8I2q0/y3YSOzdzJhQXfXMea90f35P5EJJTW9qILim7S9D+9RZV46zdw6OYdLqiSdV0tdzToQtkTlWa3SDIH43XRvTX8nFnh+lDMbNJVyM924MpJqRMf9tAKaEDsj321me3mXbEQRYLR+5RsIcScDCVxocPxVUybFuc4LKgMeyETR69WUUpsd5jZu986mUuZMlKVggXQtHkHfu4fdS1p86i0zgyuwYLyAuzq0OslDCP8zwpjffCIE+0ZhbmalU6dqS+izYSynn9nZxHEaZw+APR/hRIxTRX9qsgss54KFkQj2U/xMzop8N44mANMOXYEQRfE6fEq8a6Wt4cgNXpjSatG5TYIbUcnrhMTlLgI/232iXYttZqWkqzpEWyFgHR9Hk1ecSqGO2kK8ABQoAmlBmzAeqL273ROff1ylf1oZyOa4y+0w5vYpMP/8eQUrMzbkRrg4lkMsQWJbbyp2yKBVBFLAbrFJqjy6OqHTtvxQOR063a0xcTf8G09o9gHVkEDR+DFfJ2RYL4OA9ciyTeJwB0heGSXaFnTlnY95fkRvTxUlKwUFTsBXtpd9lH/T0YT487+fNrYbT023uJ7bouVil
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5278.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(396003)(39860400002)(136003)(346002)(66556008)(53546011)(66946007)(316002)(26005)(5660300002)(2906002)(2616005)(6486002)(8676002)(83380400001)(31686004)(66476007)(8936002)(110136005)(186003)(956004)(31696002)(86362001)(36756003)(38100700002)(16576012)(6666004)(478600001)(966005)(99710200001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OE5QenJYTm16bzhRd2hQV01yN1dMdkROWHRzbElQQlFIOHY5YWdJeFlkaVI0?=
- =?utf-8?B?bXFFYnhObmMvWDZrZVBMRXlIYlNsdXVLS3V4b083MGM4YjljdHY0bXlMTVZm?=
- =?utf-8?B?WW1TZ3Q5Q0pGWk1iL1RXTGJTRVNVdk0zdEVOS1ZCSXczSGpLLzF6eEdCa0F6?=
- =?utf-8?B?K3NSSysySjJwZVdRWkpSSlB1QnNobnNkZmFoQm1ndkhpZW9wRWVrNmwwaWxS?=
- =?utf-8?B?TFN5VmhNdGdhaFZWOUNnQk9YdkwyU1Q4ZmI5VWhLM3ZPTHRXY3l6cXp0ek50?=
- =?utf-8?B?ditpVUkzS0JDaXlsaXRYUDNBR1RFUlJHYXRQSDlDdXVJMzNXYjBPZ3UrcVpX?=
- =?utf-8?B?V1E3RlBVdUNFMWJ6akJhZDJnMktqYVc2MzB5UURRaCt4aVQydEVwMndUZi9X?=
- =?utf-8?B?Q3lCWi81OE5RbTY0Q25xdzFVc1BGRFZ2THNadFZ1dTNrVHR2UjJqL1FlSC9V?=
- =?utf-8?B?eXdNR1lwNVhyU2doYUZQdFNKanpRUjFwV1l4SE1Jc2ZyRHZ0OEh3L0R5eEVU?=
- =?utf-8?B?OHpjVkpJZzdVV3dVeGJkRVFldStMM0RML2x2T0FoUUM5andHWVZtNE1GWDlJ?=
- =?utf-8?B?aC83Nyt0Uy94UWszcUwwSDRFQmlxcGlFS1U1S1poMVd6d0h6bnNZclFUVUNs?=
- =?utf-8?B?M3hhdTlxcjlLN1pSS3ljcnNuU09iOTdjb0RsVFVDeFhoZlJHU2hLUDNUdnAr?=
- =?utf-8?B?Q0xUU0J0d0R4QXBCWkVVbE95U3VaQ3BkZGxOSFZzUW1jak4xN3crUHljSkVU?=
- =?utf-8?B?VlIybVkzbE1GV1EyOWVDcTU5U3pNbXBMSXBBMnFJeVg5Vm9Qdzh1RENkT3VL?=
- =?utf-8?B?NGZxUXYxTDRlZUU0MVkwdzk5TmFEYjdXL2FKWHowMXpjZDZKVkFFbDlkSmtw?=
- =?utf-8?B?WmlUQXNZK2pRQmdmRDF0ZTA5NDJIUEhVaGY3cUVCRlNkWDY4Rk4vVi8vV2c1?=
- =?utf-8?B?K1I0Mnp0Z3JCT0NFay9JbU9zbERJTzY4cDNiUHVlVm81STdYMWlEL3BrdkJx?=
- =?utf-8?B?N1JWMFlTM04yaE84QmdaOUhlQngrSjViQkNMa3U0MnZiV1dDN2V3cHlFaXND?=
- =?utf-8?B?bHpaeDIrTkVqVHZ1dkdHdm80SXlBdXRPVDg1THV5NnRKMXRkTTAxK1dnaFNE?=
- =?utf-8?B?N25qWHp0eVkyNElraE8zYVVHQ0dpUTJZa1A2MlMrNlNyYjJYMW9WTS9zdUJL?=
- =?utf-8?B?SFBudEduM05vRGFsbll1N2NDQ0FPZ3g3eERYOXFqdUNUTjc4WnllT0hjRnRF?=
- =?utf-8?B?U0grbDZYem00VWpLNXJ1RmpLZnFJWjNKRnY5N0RDV0dNZG02NjRQSlAvcGhK?=
- =?utf-8?B?d0tUQ05nTktsUDlaQmlaVUJIMEE5bHd5UGRuVlR6WXJFSnUvZ1FLT2xXcGVQ?=
- =?utf-8?B?U1ZLQ0lpUjd6S2NUZis0b3d1M0pmc1ByN1F6dE9hV0kwb2xIc0Z4cHZwZ2VD?=
- =?utf-8?B?SGZUS2lMcEVwVE9LUlVpV3M0Z3Yyc2phUW1BeFFTbC9SclViM29PSzFwRkp3?=
- =?utf-8?B?VEZSVXd2dG00aTF5TXBrMWRDUmdnS0NvUWJqa3FBM2dWTEVweVdqdkxPYktk?=
- =?utf-8?B?UGw1Um9mLzl3eXAzNWV2UDJWNmkyRU9yZnlucnRpMEVIWHE2YUJDMDFIbEZR?=
- =?utf-8?B?QXRhYnpKWFVuMFFxTXRBaDhFaXZEWW1SbytTNitIaVl4R09jaGZZUlFibHFX?=
- =?utf-8?B?dkJOQXkyNnpNM2JBNktXVGdKdXdDQnFBVW9qWkJMK1pHbkxZMjB6ejdSVFRS?=
- =?utf-8?Q?BNw9x605mfgf4Bfr9pPYkbM8sAtAM3fTIGhDThD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cbae2f7-e571-4ee5-d50e-08d9577404cc
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5278.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2021 18:16:45.9982
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ogI9Qj+SJw9wFOL7U82+I5M3maCVxRPdef8kHXB9b7qeX2JutDQCO/ZxTbuNl4u01wWs5jgz2q3pEaZyXVIVLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5216
+Message-Id: <1628105897.vb3ko0vb06.none@localhost>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: WebService/1.1.18749 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 04/08/2021 20:28, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    b820c114eba7 net: fec: fix MAC internal delay doesn't work
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11fbdd7a300000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5e6797705e664e3b
-> dashboard link: https://syzkaller.appspot.com/bug?extid=79f4a8692e267bdb7227
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e4952300000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fef2aa300000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+79f4a8692e267bdb7227@syzkaller.appspotmail.com
-> 
-> netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 family 0 port 6081 - 0
-> netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 family 0 port 6081 - 0
-> netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 family 0 port 6081 - 0
-> BUG: unable to handle page fault for address: fffff3008f71a93b
-> #PF: supervisor read access in kernel mode
-> #PF: error_code(0x0000) - not-present page
-> PGD 0 P4D 0 
-> Oops: 0000 [#1] PREEMPT SMP KASAN
-> CPU: 0 PID: 8445 Comm: syz-executor610 Not tainted 5.14.0-rc3-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> RIP: 0010:cap_capable+0xa0/0x280 security/commoncap.c:83
-[snip]
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this issue, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
-> 
+Excerpts from Linus Torvalds's message of August 4, 2021 12:31 pm:
+> Your program is buggy.
+>=20
+> On Wed, Aug 4, 2021 at 8:37 AM Alex Xu (Hello71) <alex_y_xu@yahoo.ca> wro=
+te:
+>>
+>>     pipe(pipefd);
+>>     printf("init buffer: %d\n", fcntl(pipefd[1], F_GETPIPE_SZ));
+>>     printf("new buffer:  %d\n", fcntl(pipefd[1], F_SETPIPE_SZ, 0));
+>=20
+> Yeah, what did you expect this to do? You said you want a minimal
+> buffer, you get a really small buffer.
+>=20
+> Then you try to write multiple messages to the pipe that you just said
+> should have a minimum size.
+>=20
+> Don't do that then.
+>=20
+>> /proc/x/stack shows that the remaining thread is hanging at pipe.c:560.
+>> It looks like not only there needs to be space in the pipe, but also
+>> slots.
+>=20
+> Correct. The fullness of a pipe is not about whether it has the
+> possibility of merging more bytes into an existing not-full slot, but
+> about whether it has empty slots left.
+>=20
+> Part of that is simply the POSIX pipe guarantees - a write of size
+> PIPE_BUF or less is guaranteed to be atomic, so it mustn't be split
+> among buffers.
+>=20
+> So a pipe must not be "writable" unless it has space for at least that
+> much (think select/poll, which don't know the size of the write).
+>=20
+> The fact that we might be able to reuse a partially filled buffer for
+> smaller writes is simply not relevant to that issue.
+>=20
+> And yes, we could have different measures of "could write" for
+> different writes, but we just don't have or want that complexity.
+>=20
+> Please don't mess with F_SETPIPE_SZ unless you have a really good
+> reason to do so, and actually understand what you are doing.
+>=20
+> Doing a F_SETPIPE_SZ, 0 basically means "I want the mimimum pipe size
+> possible". And that one accepts exactly one write at a time.
+>=20
+> Of course, the exact semantics are much more complicated than that
+> "exactly one write". The pipe write code will optimistically merge
+> writes into a previous buffer, which means that depending on the
+> pattern of your writes, the exact number of bytes you can write will
+> be very different.
+>=20
+> But that "merge writes into a previous buffer" only appends to the
+> buffer - not _reuse_ it - so when each buffer is one page in size,
+> what happens is that you can merge up to 4096 bytes worth of writes,
+> but then after that the pipe write will want a new buffer - even if
+> the old buffer is now empty because of old reads.
+>=20
+> That's why your test program won't block immediately: both writers
+> will actually start out happily doing writes into that one buffer that
+> is allocated, but at some point that buffer ends, and it wants to
+> allocate a new buffer.
+>=20
+> But you told it not to allocate more buffers, and the old buffer is
+> never completely empty because your readers never read _everythign_,
+> so it will hang, waiting for you to empty the one minimal buffer it
+> allocated. And that will never happen.
+>=20
+> There's a very real reason why we do *not* by default say "pipes can
+> only ever use only one buffer".
+>=20
+> I don't think this is a regression, but if you have an actual
+> application - not a test program - that does crazy things like this
+> and used to work (I'm not sure it has ever worked, though), we can
+> look into making it work again.
+>=20
+> That said, I suspect the way to make it work is to just say "the
+> minimum pipe size is two slots" rather than change the "we want at
+> least one empty slot". Exactly because of that whole "look, we must
+> not consider a pipe that doesn't have a slot writable".
+>=20
+> Because clearly people don't understand how subtle F_SETPIPE_SZ is.
+> It's not really a "byte count", even though that is how it's
+> expressed.
+>=20
+>                    Linus
+>=20
 
-+CC Arnd
+I agree that if this only affects programs which intentionally adjust=20
+the pipe buffer size, then it is not a huge issue. The problem,=20
+admittedly buried very close to the bottom of my email, is that the=20
+kernel will silently provide one-page pipe buffers if the user has=20
+exceeded 16384 (by default) pipe buffer pages allocated. Try this=20
+slightly more complicated program:
 
-I think this bug is also from the recent ndo_do_ioctl conversion, it seems
-nothing checks if the device is an actual bridge so one could call br_ioctl_call()
-for any device. I'll add this to my list, it's a simple fix.
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdio.h>
+#include <unistd.h>
 
-Sorry for the delay, I will send both bridge ioctl fixes tomorrow.
+static int pipefd[2];
 
-Thanks,
- Nik
+void *thread_start(void *arg) {
+    char buf[1];
+    int i;
+    for (i =3D 0; i < 1000000; i++) {
+        read(pipefd[0], buf, sizeof(buf));
+        if (write(pipefd[1], buf, sizeof(buf)) =3D=3D -1)
+            break;
+    }
+    printf("done %d\n", i);
+    return NULL;
+}
+
+int main() {
+    signal(SIGPIPE, SIG_IGN);
+    // pretend there are a very large number of make processes running
+    for (int i =3D 0; i < 1025; i++)
+    {
+        pipe(pipefd);
+        write(pipefd[1], "aa", 2);
+    }
+    printf("%d %d\n", pipefd[0], pipefd[1]);
+    printf("init buffer: %d\n", fcntl(pipefd[1], F_GETPIPE_SZ));
+    //printf("new buffer:  %d\n", fcntl(pipefd[1], F_SETPIPE_SZ, 0));
+    pthread_t thread1, thread2;
+    pthread_create(&thread1, NULL, thread_start, NULL);
+    pthread_create(&thread2, NULL, thread_start, NULL);
+    sleep(3);
+    close(pipefd[0]);
+    close(pipefd[1]);
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+}
+
+You may need to raise your RLIMIT_NOFILE before running the program.
+
+With default settings (fs.pipe-user-pages-soft =3D 16384) the init buffer=20
+will be 4096, no mangling required. I think this could be probably be=20
+solved if the kernel instead reduced over-quota pipes to two pages=20
+instead of one page. If someone wants to set a one-page pipe buffer,=20
+then they can suffer the consequences, but the kernel shouldn't silently=20
+hand people that footgun.
+
+Regards,
+Alex.
