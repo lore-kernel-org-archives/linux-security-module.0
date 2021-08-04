@@ -2,144 +2,179 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F51DC4338F
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 17:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A637C4338F
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 18:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6F560E53
-	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 17:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B83760F22
+	for <linux-security-module@archiver.kernel.org>; Wed,  4 Aug 2021 18:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239829AbhHDR2f (ORCPT
+        id S237090AbhHDSRA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 4 Aug 2021 13:28:35 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:57194 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbhHDR2f (ORCPT
+        Wed, 4 Aug 2021 14:17:00 -0400
+Received: from mail-dm6nam08on2075.outbound.protection.outlook.com ([40.107.102.75]:42091
+        "EHLO NAM04-DM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S236761AbhHDSRA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 4 Aug 2021 13:28:35 -0400
-Received: by mail-io1-f70.google.com with SMTP id k24-20020a6bef180000b02904a03acf5d82so1891870ioh.23
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Aug 2021 10:28:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JLUWnWN+fs3YDOLTIDChuY6GEfR/lEW2hNSnBNIgd4A=;
-        b=YVKP4f5f6OSuOshRfgXoUqBZniJyKrHV2ocN/rkDypSjqd+kq7ceHRf/3Bbiko8yNt
-         HP0C4KEl5JM+r8bdnVuly93/DqqZOwTeYN9iR3AQyK1VK9pG0MTt9OViSpUkOWIb1Bz5
-         FcVADH1VBmlRUS/uSRtdHpPyfKzRWJ1UtC2TYzM1Lxo66sx+J/AfktA2Vt2Flc93lMb/
-         gnaLGm6pvN1covhlnUfXnbIa9uJ7IfrDhkq1RDfs/vSJJkrmlb5jXi8/Lo4/19ZhfBVI
-         Njf74QmhCd/Un+jSjGYNoMf3Qh75OWYd2eUKuMmlrgX7gCJkqUehC3c4KRSe5/OkKIm+
-         ox7w==
-X-Gm-Message-State: AOAM533w6bM4scITm0psVmRZ7bIr8nvPzQu+fKVCQaQCKABTU5cZDW5b
-        gY4ZOWZTKyZcFgMt2O6CkNXA4Sf45TUOoJzCEONxxj0ls+Lu
-X-Google-Smtp-Source: ABdhPJwVfsk65xG/Rmq41xdGxnTwkZFCsRjwGyGaXVJ92+klx0b1vk8ncl2sQPPTv0S1zdf6DOwsbyxOEUcOPtVcic1/kbdMFH4y
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1046:: with SMTP id p6mr555742ilj.155.1628098102114;
- Wed, 04 Aug 2021 10:28:22 -0700 (PDT)
-Date:   Wed, 04 Aug 2021 10:28:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000009422905c8bf2102@google.com>
-Subject: [syzbot] BUG: unable to handle kernel paging request in cap_capable
-From:   syzbot <syzbot+79f4a8692e267bdb7227@syzkaller.appspotmail.com>
-To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        Wed, 4 Aug 2021 14:17:00 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mZ92ehMUaM+DRlisr5dVYkPbwnMPsteQ3V67nr6WqE/+LrYwMWLm6IMAmzHolmcfYjfXnhRJTth8qvSbBNSxZLjbmTEuzk/L5Pajhk1VxrHKXSlhsXcE9BIitPNDbzj5Up8KBa9qZP0GM28U1nxFWH/5vF20GA9pR3DH9xFrUVW1rs6E0Df7ooJeDPWV+CWKq7c/EkJ3ZGuQ+ITdnacI1q4UhWTpzK+7cOGFbxwhsCM7WTNz9E6p63NthsYtdyRYUcfr++ze9gkYl1Xsc4Nr6cf+CHW8sPjjax5HnKZqUWx0+XSVFGU+JOZf4UJ7ItubZqB/LzxGhzxxur9rEhlazg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=21k9UmOmECgnE1/EUpietXhisMdQ+uQcI5jWL9ilyiU=;
+ b=LhNelUCkU7itgIKNMhhnZNbhgLt3ezGdHxv7CovJlofm/W6XVhkcy4bGh30afo6cv42DRmeudc+uDVTjNfWdzZFNmyDq/5DiW6FfPqnOnIEdUekhqWzcCfC3qU+vZSW1pf1pLwwyCjZyegLQNgfXRwvYH1B2CrqB+m4XS0KjZM1lzUY1ybWGzYkhYsNBsHsNVq3FvR8sWsuaKQ4cc0Vgd83b4eAlDZCR3CD4RR58LabLumnJBZNfqwc8xMZJbFE5pI/RnA1mNOBSfq+k3NNt8DqRdwV43f4o5XO9GQ2ruFJpR3INJpPJu2b8d/9m0ke5kqMN2SrcZpelSP6Vb++0FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=21k9UmOmECgnE1/EUpietXhisMdQ+uQcI5jWL9ilyiU=;
+ b=QXAIwMa2LTzkh5fOAcz96BgBYt+TZGg0G40Qmz+N2E6AdIodPXRDZ2Uf+yIO1bs9uETLLiLBiuUtf9v4tpsuyJe4pTnzmjF17xO7xyifHlEaEdh3OzIs0k9FXploDqq+G/MbxmvbN3AS7V1BXahcV8UpvoHW991R5CrlUZk/NDheJ3RMwxq03TxbGuyc7yuDVydUs7dBakfkOeXtT56i5zzlVWveSJ61gFilPPiFxM/e3aJd55Ytd19dWXWSrdtdNnGzLCGrRqi1nTsOkpzgnEYCUC0x7PbRpVH+xCYc/4u+bAR++fBWrBTW3zR2gOffKGrGRNiKTEOkZjU9o9vOlw==
+Authentication-Results: arndb.de; dkim=none (message not signed)
+ header.d=none;arndb.de; dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB5278.namprd12.prod.outlook.com (2603:10b6:5:39e::17)
+ by DM4PR12MB5216.namprd12.prod.outlook.com (2603:10b6:5:398::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.16; Wed, 4 Aug
+ 2021 18:16:46 +0000
+Received: from DM4PR12MB5278.namprd12.prod.outlook.com
+ ([fe80::c170:83a0:720d:6287]) by DM4PR12MB5278.namprd12.prod.outlook.com
+ ([fe80::c170:83a0:720d:6287%5]) with mapi id 15.20.4373.026; Wed, 4 Aug 2021
+ 18:16:46 +0000
+Subject: Re: [syzbot] BUG: unable to handle kernel paging request in
+ cap_capable
+To:     syzbot <syzbot+79f4a8692e267bdb7227@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
         linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
+        Arnd Bergmann <arnd@arndb.de>
+References: <00000000000009422905c8bf2102@google.com>
+From:   Nikolay Aleksandrov <nikolay@nvidia.com>
+Message-ID: <5ccf831c-025b-88d0-48f9-d5e0d9377c70@nvidia.com>
+Date:   Wed, 4 Aug 2021 21:16:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+In-Reply-To: <00000000000009422905c8bf2102@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0017.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:16::27) To DM4PR12MB5278.namprd12.prod.outlook.com
+ (2603:10b6:5:39e::17)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [10.21.241.206] (213.179.129.39) by ZR0P278CA0017.CHEP278.PROD.OUTLOOK.COM (2603:10a6:910:16::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15 via Frontend Transport; Wed, 4 Aug 2021 18:16:43 +0000
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7cbae2f7-e571-4ee5-d50e-08d9577404cc
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5216:
+X-Microsoft-Antispam-PRVS: <DM4PR12MB52160B08C2E8486A37B0CB90DFF19@DM4PR12MB5216.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 0ankHtgtzz8YoyBb732QX+jH/kdT+IZGHSXIBkIWpN74/7SW1wZZFFZFfYlw1SZRPBENRYbpCNBvHCDLFH/bzhhH275Bhgo3CqdU28fpTTu1cKW4NX7FKeXPEyOrbCHPNQkIy7GTKLNWZqP0tqATWg9vDEFKti9i+HGQNdhZvC1jI51UiUNk9wOE+1vTxkd57qeu64uTahjuY+VNPwLv2TbK/PbrjRoF3KfFiwUh+UaHdnVie6Q0miQGJ/ii02VVXbteXeXzH+Nev3/T2DadE52xt8TwTivyMrerOfTa5/E8I2q0/y3YSOzdzJhQXfXMea90f35P5EJJTW9qILim7S9D+9RZV46zdw6OYdLqiSdV0tdzToQtkTlWa3SDIH43XRvTX8nFnh+lDMbNJVyM924MpJqRMf9tAKaEDsj321me3mXbEQRYLR+5RsIcScDCVxocPxVUybFuc4LKgMeyETR69WUUpsd5jZu986mUuZMlKVggXQtHkHfu4fdS1p86i0zgyuwYLyAuzq0OslDCP8zwpjffCIE+0ZhbmalU6dqS+izYSynn9nZxHEaZw+APR/hRIxTRX9qsgss54KFkQj2U/xMzop8N44mANMOXYEQRfE6fEq8a6Wt4cgNXpjSatG5TYIbUcnrhMTlLgI/232iXYttZqWkqzpEWyFgHR9Hk1ecSqGO2kK8ABQoAmlBmzAeqL273ROff1ylf1oZyOa4y+0w5vYpMP/8eQUrMzbkRrg4lkMsQWJbbyp2yKBVBFLAbrFJqjy6OqHTtvxQOR063a0xcTf8G09o9gHVkEDR+DFfJ2RYL4OA9ciyTeJwB0heGSXaFnTlnY95fkRvTxUlKwUFTsBXtpd9lH/T0YT487+fNrYbT023uJ7bouVil
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5278.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(396003)(39860400002)(136003)(346002)(66556008)(53546011)(66946007)(316002)(26005)(5660300002)(2906002)(2616005)(6486002)(8676002)(83380400001)(31686004)(66476007)(8936002)(110136005)(186003)(956004)(31696002)(86362001)(36756003)(38100700002)(16576012)(6666004)(478600001)(966005)(99710200001)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OE5QenJYTm16bzhRd2hQV01yN1dMdkROWHRzbElQQlFIOHY5YWdJeFlkaVI0?=
+ =?utf-8?B?bXFFYnhObmMvWDZrZVBMRXlIYlNsdXVLS3V4b083MGM4YjljdHY0bXlMTVZm?=
+ =?utf-8?B?WW1TZ3Q5Q0pGWk1iL1RXTGJTRVNVdk0zdEVOS1ZCSXczSGpLLzF6eEdCa0F6?=
+ =?utf-8?B?K3NSSysySjJwZVdRWkpSSlB1QnNobnNkZmFoQm1ndkhpZW9wRWVrNmwwaWxS?=
+ =?utf-8?B?TFN5VmhNdGdhaFZWOUNnQk9YdkwyU1Q4ZmI5VWhLM3ZPTHRXY3l6cXp0ek50?=
+ =?utf-8?B?ditpVUkzS0JDaXlsaXRYUDNBR1RFUlJHYXRQSDlDdXVJMzNXYjBPZ3UrcVpX?=
+ =?utf-8?B?V1E3RlBVdUNFMWJ6akJhZDJnMktqYVc2MzB5UURRaCt4aVQydEVwMndUZi9X?=
+ =?utf-8?B?Q3lCWi81OE5RbTY0Q25xdzFVc1BGRFZ2THNadFZ1dTNrVHR2UjJqL1FlSC9V?=
+ =?utf-8?B?eXdNR1lwNVhyU2doYUZQdFNKanpRUjFwV1l4SE1Jc2ZyRHZ0OEh3L0R5eEVU?=
+ =?utf-8?B?OHpjVkpJZzdVV3dVeGJkRVFldStMM0RML2x2T0FoUUM5andHWVZtNE1GWDlJ?=
+ =?utf-8?B?aC83Nyt0Uy94UWszcUwwSDRFQmlxcGlFS1U1S1poMVd6d0h6bnNZclFUVUNs?=
+ =?utf-8?B?M3hhdTlxcjlLN1pSS3ljcnNuU09iOTdjb0RsVFVDeFhoZlJHU2hLUDNUdnAr?=
+ =?utf-8?B?Q0xUU0J0d0R4QXBCWkVVbE95U3VaQ3BkZGxOSFZzUW1jak4xN3crUHljSkVU?=
+ =?utf-8?B?VlIybVkzbE1GV1EyOWVDcTU5U3pNbXBMSXBBMnFJeVg5Vm9Qdzh1RENkT3VL?=
+ =?utf-8?B?NGZxUXYxTDRlZUU0MVkwdzk5TmFEYjdXL2FKWHowMXpjZDZKVkFFbDlkSmtw?=
+ =?utf-8?B?WmlUQXNZK2pRQmdmRDF0ZTA5NDJIUEhVaGY3cUVCRlNkWDY4Rk4vVi8vV2c1?=
+ =?utf-8?B?K1I0Mnp0Z3JCT0NFay9JbU9zbERJTzY4cDNiUHVlVm81STdYMWlEL3BrdkJx?=
+ =?utf-8?B?N1JWMFlTM04yaE84QmdaOUhlQngrSjViQkNMa3U0MnZiV1dDN2V3cHlFaXND?=
+ =?utf-8?B?bHpaeDIrTkVqVHZ1dkdHdm80SXlBdXRPVDg1THV5NnRKMXRkTTAxK1dnaFNE?=
+ =?utf-8?B?N25qWHp0eVkyNElraE8zYVVHQ0dpUTJZa1A2MlMrNlNyYjJYMW9WTS9zdUJL?=
+ =?utf-8?B?SFBudEduM05vRGFsbll1N2NDQ0FPZ3g3eERYOXFqdUNUTjc4WnllT0hjRnRF?=
+ =?utf-8?B?U0grbDZYem00VWpLNXJ1RmpLZnFJWjNKRnY5N0RDV0dNZG02NjRQSlAvcGhK?=
+ =?utf-8?B?d0tUQ05nTktsUDlaQmlaVUJIMEE5bHd5UGRuVlR6WXJFSnUvZ1FLT2xXcGVQ?=
+ =?utf-8?B?U1ZLQ0lpUjd6S2NUZis0b3d1M0pmc1ByN1F6dE9hV0kwb2xIc0Z4cHZwZ2VD?=
+ =?utf-8?B?SGZUS2lMcEVwVE9LUlVpV3M0Z3Yyc2phUW1BeFFTbC9SclViM29PSzFwRkp3?=
+ =?utf-8?B?VEZSVXd2dG00aTF5TXBrMWRDUmdnS0NvUWJqa3FBM2dWTEVweVdqdkxPYktk?=
+ =?utf-8?B?UGw1Um9mLzl3eXAzNWV2UDJWNmkyRU9yZnlucnRpMEVIWHE2YUJDMDFIbEZR?=
+ =?utf-8?B?QXRhYnpKWFVuMFFxTXRBaDhFaXZEWW1SbytTNitIaVl4R09jaGZZUlFibHFX?=
+ =?utf-8?B?dkJOQXkyNnpNM2JBNktXVGdKdXdDQnFBVW9qWkJMK1pHbkxZMjB6ejdSVFRS?=
+ =?utf-8?Q?BNw9x605mfgf4Bfr9pPYkbM8sAtAM3fTIGhDThD?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7cbae2f7-e571-4ee5-d50e-08d9577404cc
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5278.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2021 18:16:45.9982
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ogI9Qj+SJw9wFOL7U82+I5M3maCVxRPdef8kHXB9b7qeX2JutDQCO/ZxTbuNl4u01wWs5jgz2q3pEaZyXVIVLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5216
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On 04/08/2021 20:28, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    b820c114eba7 net: fec: fix MAC internal delay doesn't work
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11fbdd7a300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5e6797705e664e3b
+> dashboard link: https://syzkaller.appspot.com/bug?extid=79f4a8692e267bdb7227
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e4952300000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fef2aa300000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+79f4a8692e267bdb7227@syzkaller.appspotmail.com
+> 
+> netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 family 0 port 6081 - 0
+> netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 family 0 port 6081 - 0
+> netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 family 0 port 6081 - 0
+> BUG: unable to handle page fault for address: fffff3008f71a93b
+> #PF: supervisor read access in kernel mode
+> #PF: error_code(0x0000) - not-present page
+> PGD 0 P4D 0 
+> Oops: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 0 PID: 8445 Comm: syz-executor610 Not tainted 5.14.0-rc3-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> RIP: 0010:cap_capable+0xa0/0x280 security/commoncap.c:83
+[snip]
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this issue, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
+> 
 
-syzbot found the following issue on:
++CC Arnd
 
-HEAD commit:    b820c114eba7 net: fec: fix MAC internal delay doesn't work
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11fbdd7a300000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5e6797705e664e3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=79f4a8692e267bdb7227
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.1
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127e4952300000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16fef2aa300000
+I think this bug is also from the recent ndo_do_ioctl conversion, it seems
+nothing checks if the device is an actual bridge so one could call br_ioctl_call()
+for any device. I'll add this to my list, it's a simple fix.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+79f4a8692e267bdb7227@syzkaller.appspotmail.com
+Sorry for the delay, I will send both bridge ioctl fixes tomorrow.
 
-netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 family 0 port 6081 - 0
-netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 family 0 port 6081 - 0
-netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 family 0 port 6081 - 0
-BUG: unable to handle page fault for address: fffff3008f71a93b
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0 
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8445 Comm: syz-executor610 Not tainted 5.14.0-rc3-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:cap_capable+0xa0/0x280 security/commoncap.c:83
-Code: 0f 8e d3 01 00 00 41 8b ad e0 00 00 00 49 bc 00 00 00 00 00 fc ff df e8 ce ef da fd 48 8d bb e0 00 00 00 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 74 08 3c 03 0f 8e 64 01 00 00 44 8b bb e0 00
-RSP: 0018:ffffc90001c3f9d8 EFLAGS: 00010a02
-RAX: 1ffff7008f71a93b RBX: ffffb8047b8d48f8 RCX: 0000000000000000
-RDX: ffff88802dad54c0 RSI: ffffffff839aad82 RDI: ffffb8047b8d49d8
-RBP: 0000000000000000 R08: 0000000000000028 R09: ffffffff87f70fe6
-R10: ffffffff814731be R11: 00000000000089a2 R12: dffffc0000000000
-R13: ffffffff8b83b660 R14: ffff8880155fa500 R15: ffff8880155fa500
-FS:  000000000105d300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffff3008f71a93b CR3: 000000002789f000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- security_capable+0x5c/0xc0 security/security.c:805
- ns_capable_common kernel/capability.c:375 [inline]
- ns_capable+0x6f/0x100 kernel/capability.c:396
- add_del_if+0x9b/0x140 net/bridge/br_ioctl.c:89
- br_ioctl_stub+0x1c6/0x7f0 net/bridge/br_ioctl.c:397
- br_ioctl_call+0x5e/0xa0 net/socket.c:1092
- dev_ifsioc+0xc1f/0xf60 net/core/dev_ioctl.c:382
- dev_ioctl+0x1b9/0xee0 net/core/dev_ioctl.c:580
- sock_do_ioctl+0x18b/0x210 net/socket.c:1129
- sock_ioctl+0x2f1/0x640 net/socket.c:1232
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:1069 [inline]
- __se_sys_ioctl fs/ioctl.c:1055 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:1055
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x4430a9
-Code: 28 c3 e8 4a 15 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe266e8a48 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ffe266e8a58 RCX: 00000000004430a9
-RDX: 0000000020000080 RSI: 00000000000089a2 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe266e8a60
-R13: 00007ffe266e8a80 R14: 00000000004b8018 R15: 00000000004004b8
-Modules linked in:
-CR2: fffff3008f71a93b
----[ end trace 5ec5ff62110878d2 ]---
-RIP: 0010:cap_capable+0xa0/0x280 security/commoncap.c:83
-Code: 0f 8e d3 01 00 00 41 8b ad e0 00 00 00 49 bc 00 00 00 00 00 fc ff df e8 ce ef da fd 48 8d bb e0 00 00 00 48 89 f8 48 c1 e8 03 <42> 0f b6 04 20 84 c0 74 08 3c 03 0f 8e 64 01 00 00 44 8b bb e0 00
-RSP: 0018:ffffc90001c3f9d8 EFLAGS: 00010a02
-RAX: 1ffff7008f71a93b RBX: ffffb8047b8d48f8 RCX: 0000000000000000
-RDX: ffff88802dad54c0 RSI: ffffffff839aad82 RDI: ffffb8047b8d49d8
-RBP: 0000000000000000 R08: 0000000000000028 R09: ffffffff87f70fe6
-R10: ffffffff814731be R11: 00000000000089a2 R12: dffffc0000000000
-R13: ffffffff8b83b660 R14: ffff8880155fa500 R15: ffff8880155fa500
-FS:  000000000105d300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: fffff3008f71a93b CR3: 000000002789f000 CR4: 00000000001506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Thanks,
+ Nik
