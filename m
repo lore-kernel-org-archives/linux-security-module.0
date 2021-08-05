@@ -2,186 +2,104 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F07B8C4320E
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 17:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34639C4338F
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 18:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DA84160234
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 17:04:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACC26115B
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 18:29:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236035AbhHERFE convert rfc822-to-8bit (ORCPT
+        id S239269AbhHES3y (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Aug 2021 13:05:04 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3599 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235555AbhHERFD (ORCPT
+        Thu, 5 Aug 2021 14:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41598 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236534AbhHES3y (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Aug 2021 13:05:03 -0400
-Received: from fraeml711-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GgZhv0sXbz6F83j;
-        Fri,  6 Aug 2021 01:04:31 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml711-chm.china.huawei.com (10.206.15.60) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Thu, 5 Aug 2021 19:04:46 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2176.012;
- Thu, 5 Aug 2021 19:04:46 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mchehab+huawei@kernel.org" <mchehab+huawei@kernel.org>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>
-Subject: RE: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
- digest_list_del
-Thread-Topic: [RFC][PATCH v2 06/12] diglim: Interfaces - digest_list_add,
- digest_list_del
-Thread-Index: AQHXgjzPxJ6WuoGgH0KyG3D/y7w0xqtaWSsAgADBDpCAAD+ygIAAIhjQgAS3MgCAACHtEIAAD/DggASUtACAACrdwA==
-Date:   Thu, 5 Aug 2021 17:04:46 +0000
-Message-ID: <d6590f96cfbd4411a0ae6e8589216fe1@huawei.com>
-References: <20210726163700.2092768-1-roberto.sassu@huawei.com>
-         <20210726163700.2092768-7-roberto.sassu@huawei.com>
-         <c9dffd9d29df095660beaa631ff252c4b33629a0.camel@linux.ibm.com>
-         <ef7c85dcb096479e95c8c60ccda4d700@huawei.com>
-         <1ef95096bee13578b3f906dd9f708c6af9d6ff18.camel@linux.ibm.com>
-         <555bf01bee4b4ea7a9bee658366d535a@huawei.com>
-         <3e6a54d4be87a3eafc45c85d013250d17aa0835e.camel@linux.ibm.com>
-          <f7adeb81bab24b689c3e1aa61d83c6f5@huawei.com>
- <e886224b50195a2c1324c91b39514395e9780b06.camel@linux.ibm.com>
-In-Reply-To: <e886224b50195a2c1324c91b39514395e9780b06.camel@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.87.18]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 5 Aug 2021 14:29:54 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E331C0613D5
+        for <linux-security-module@vger.kernel.org>; Thu,  5 Aug 2021 11:29:39 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id d6so9690961edt.7
+        for <linux-security-module@vger.kernel.org>; Thu, 05 Aug 2021 11:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=1c3VrQ3FItr1tlZhwJQtIGHjV4vRn9xHIa6kZJ9nIxc=;
+        b=ENJ2jsN+dNUIpx8dGcAJJc8GzMluVKbrtwQDHErnQEU/A81cSqgkoF7qq0hI7vjVBC
+         6SAeq763ZYep6+7i423qXiE3kOy6oCxfX7Y2JfLsPG1JLfWvy5mJ7LfxrZeBqyMCw4YA
+         oEMOdMhyxUTJvSeiTF2Fg4TObSBepBxN/52U/KCJyHXGzFUXGscu8+7rP/mzed1T9JU8
+         Zrf+y/MbvTrSGMA6Mlh/NoQTO+pIt3N1ECtqu9hZj5Mzh3p5OejjLV65uESnUJQiEP1v
+         hUp8MlMC4lWTtoNH1DbTRLzTji+LBgC6kVMhfyCf37jljEY9wcDDBsVAC9WM3psi7tg7
+         v6wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=1c3VrQ3FItr1tlZhwJQtIGHjV4vRn9xHIa6kZJ9nIxc=;
+        b=U9SQAlklwu3AakCCHIkSz0+5xKGGFTLIr92xGrsjV0VKpvEo/ABsItBPyjMsQgzSVa
+         0+so1l0/StHHk1+NswQfWOnQvrsHnoC8uAdgKavkoLS6eyTWVHTZWj1HOl4LNquv13fE
+         YsGEh4sZM/ddUehdIlA/BnHRKhdpFKpbp4Zx3QTcVHKB5HI7rjN5Hk9Rk55vv0lyBbIK
+         gSoTrK9ocWxpDbh2RqPZVgP5himdN6Sknk1EQUFQAOl4SellonCX36haeBXJ+UNu+ofm
+         9qaiSVONC3iP6nqA66IliDyOOWo0tixnYJphU6Lx3VEZRrz0RH2n3ByIYyiQXEld9oTD
+         0upA==
+X-Gm-Message-State: AOAM532NXoTNvagVoICBRZ/i8316tsuRLhNXZWmpW57ljnH9uz8Twtht
+        dVj5lSrLwjC8AKH8sKsci+Y+3a5z433FAknbeEYb
+X-Google-Smtp-Source: ABdhPJxmgP4jWmPz3uLlSNLgR3I1TzKQRWyBUxibakNf4A77O6mTWX6u7RjsU7kbIgC5PZEppaJdr85FcRRrMvhw6P8=
+X-Received: by 2002:a05:6402:b83:: with SMTP id cf3mr8328900edb.12.1628188177841;
+ Thu, 05 Aug 2021 11:29:37 -0700 (PDT)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 5 Aug 2021 14:29:27 -0400
+Message-ID: <CAHC9VhSW0zVR7wB9dxR-AkQAMK_H_fKQ75tTbMLomkBQzfzciw@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v5.14 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-> From: Mimi Zohar [mailto:zohar@linux.ibm.com]
-> Sent: Thursday, August 5, 2021 5:38 PM
-> [Cc'ing Eric Snowberg]
-> 
-> Hi Roberto,
-> 
-> On Mon, 2021-08-02 at 16:54 +0000, Roberto Sassu wrote:
-> 
-> > > > Properly identifying (all) user space parser(s) would be critical.  It
-> > > > would be simpler and  safer to require the converted data be signed.
-> >
-> > When a process directly uploads a buffer to the kernel, the actions are
-> > added to a digest list depending on the result of ima_measure_critical_data()
-> > and from the actions attached to the process credentials and set by the
-> > new LSM.
-> >
-> > If a process fails the identification, the actions in the process credentials
-> > remain zero and the digest lists the process uploads will be ignored by IMA.
-> >
-> > The actions in the process credentials are set with the actions performed
-> > on the executable by IMA, only if the digest of the executable is found in
-> > a digest list and the digest list type is COMPACT_PARSER. The parser is
-> > statically linked.
-> >
-> > The digest list for the parser can be generated at the end of the
-> > building process and signed similarly to kernel modules (for SUSE,
-> > with pesign-obs-integration). This is the only exception to handle,
-> > other packages are not affected.
-> 
-> Ok, so to boot strap the set of permitted digest list parsers, the
-> digest list signature is an appended signature, generated by the build
-> process.  The key needed for verifying the signature would already be
-> loaded on the builtin keyring.
+Hi Linus,
 
-Hi Mimi
+One small SELinux fix for v5.14-rcX to fix a problem where an error
+code was not being propagated back up to userspace when a bogus
+SELinux policy is loaded into the kernel.  The patch passes the
+selinux-testsuite and merges cleanly with your tree as of a few
+minutes ago; please merge this for the next release.
 
-yes. RPM headers will have an appended signature too, so that
-appraisal will work.
+Thanks,
+-Paul
 
-> > After the parser has been identified, each file operation is monitored.
-> 
-> Does the new LSM need to monitor all file opens?
+--
+The following changes since commit d99cf13f14200cdb5cbb704345774c9c0698612d:
 
-I would say yes. In the threat model, root is untrusted and
-can potentially interfere with the conversion of the original
-digest lists. Other than monitoring file operations, I'm also
-denying ptraces on the parser. Hopefully this would be
-sufficient, but any suggestion is more than welcome.
+ selinux: kill 'flags' argument in avc_has_perm_flags() and avc_audit() (2021-0
+6-11 13:11:45 -0400)
 
-The good thing is that the policy of the new LSM is applied
-to the processes that are successfully identified as parser.
-Other processes are mostly unaffected.
+are available in the Git repository at:
 
-The only limitation the new LSM would introduce is that
-the files being used by the parser are write-locked until
-the parser releases them (if files are already opened for
-writing by other processes, the LSM would mark the parser
-as untrusted and will not apply any IMA actions to the digest
-lists the parser uploads).
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux
+-pr-20210805
 
-It is probably a good idea to send the patch, after I finish
-testing it. I will send also another patch for loading digest
-lists during kernel initialization (with the two new patches
-the non-IMA part would be complete).
+for you to fetch changes up to 4c156084daa8ee70978e4b150b5eb5fc7b1f15be:
 
-> > The LSM has to explicitly perform a second open to ensure that
-> > the file is measured/appraised before the integrity_iint_cache structure
-> > is retrieved (because IMA is called after all LSMs).
-> >
-> > If an action is missing from the integrity_iint_cache structure, it
-> > will be cleared by the LSM in the actions attached to the process
-> > credentials, and will not be added to the digest list being uploaded.
-> >
-> > > I agree, it would be much easier. However, it would require changes
-> > > to the building infrastructure of Linux distribution vendors, which
-> > > might limit the applicability of DIGLIM.
-> > >
-> 
-> I understand, but instead of the distros signing the compact digest
-> lists, with Eric's  "Enroll kernel keys thru MOK" patch set, the
-> customer/end user could have more control over which file digests are
-> permitted on a per system basis.
+ selinux: correct the return value when loads initial sids (2021-08-02 09:59:50
+-0400)
 
-Yes, generating custom digest lists is supported and needed if
-users want to run their own applications, when appraisal is
-enforced. But I like the idea that, if users simply want to just run
-anything the distribution provides, they have everything they
-need. Theoretically, users will be able to run appraisal in enforcing
-mode at the first boot after installation.
+----------------------------------------------------------------
+selinux/stable-5.14 PR 20210805
 
-Thanks
+----------------------------------------------------------------
+Xiu Jianfeng (1):
+     selinux: correct the return value when loads initial sids
 
-Roberto
+security/selinux/ss/policydb.c | 10 ++++------
+1 file changed, 4 insertions(+), 6 deletions(-)
 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Li Jian, Shi Yanli
-
-> > > With the user space parser taking care of the conversion, distributions
-> > > can do appraisal of executables and shared libraries with an update of:
-> > > - the kernel: to add DIGLIM
-> > > - dracut: to add required digest lists in the initial ram disk
-> > > - rpm (plugin): to extract the RPM header and its signature and write
-> > >   them to a file that is uploaded to the kernel by the user space parser
-> > >
-> > > I'm planning to append the signature at the end of the RPM header
-> > > (and use appraise_type=modsig) to avoid the dependency on the
-> > > 'initramfs: add support for xattrs in the initial ram disk' patch set
-> > > (which I might try to resume in the future).
-> 
-> Based on your explanation above, I surmised as much.
-> 
-> thanks,
-> 
-> Mimi
-
+-- 
+paul moore
+www.paul-moore.com
