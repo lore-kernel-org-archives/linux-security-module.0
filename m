@@ -2,113 +2,202 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B164EC43214
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 21:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C655C4320A
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 21:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB6061078
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 21:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1697861154
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 21:53:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234848AbhHEVx0 (ORCPT
+        id S232952AbhHEVx3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Aug 2021 17:53:26 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44626 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S230489AbhHEVxZ (ORCPT
+        Thu, 5 Aug 2021 17:53:29 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59332 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S235464AbhHEVx1 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Aug 2021 17:53:25 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 175LlUVi074391;
+        Thu, 5 Aug 2021 17:53:27 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 175LoV3O017595;
         Thu, 5 Aug 2021 17:53:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=3viWmys/6KCGWuLJRazlUh8H93bdCeaG8kwOG3zhiJM=;
- b=srozVB8y5Im8zcP+X6v8EaeyNqBoOnoTdYMjy09J55SfYkN6Ch92LB/Begg0v6/t07pz
- esd141AM696X3KT2ctJZKqCgVl1qsk1QdV3saV1K0bmBUDeJ3tDmH/tc37/eHrpL6+ik
- 9IT1tBKIzhWiy5oZCSL4xJA5i9c7cXmLP8yrGrHYKpDX2+PYbAPtpkA0YVds0yBlfqoU
- jUefbmCgUqO8X1t8kdQrFExZYN6ff4Xs7Kz7P0/7FSEScsUIGQSzamxPcBOlr7DLrD66
- Qggvvmm23GGVV07Z6L8kVIMdZ5odC6X4JjSIl4bYTgXlVvihiMs6hWzgsbY0YIYzKvlD SA== 
+ : date : message-id : in-reply-to : references : content-transfer-encoding
+ : mime-version; s=pp1; bh=ZyoICrnkxQkw2owjShcf8xvHkTAw42OBHObumETu2Tc=;
+ b=aliap+xQH8al1J9xsxvQ2MuwfnKSH+RKs7f2AyVqyOCdKn37cqBQL1tpRif8yxu1CUsr
+ jgZN7JK6uE2lQbULNTCLd3YFmOzwFFioQmbyM2nBRarjmYmYu0Ev8pDXRFQF/t4qR7OX
+ uNrFG4GoV/8SyMTD1YlICWVgPvYsi5ZF407GoGP4dFBJc4xRFpXc5ysh07rYqoCqB28j
+ VZ7kRJtXnJbu3WP9fGD/0p7gJ2G2xqyJFXL3+U9oUK7pzfUkY/1gGfvIX9el+IhIke4L
+ bIQ7dSqHzEo4KO1iUyl7/FAB1OUcF1gxinicwRa047qW6QtFOj/dfoizmqFibwm2izWn 6w== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a87f6v2ru-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3a8j8hap61-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 05 Aug 2021 17:53:10 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 175LnGGB077569;
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 175LpDZO019169;
         Thu, 5 Aug 2021 17:53:10 -0400
-Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a87f6v2rk-1
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3a8j8hap5t-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 05 Aug 2021 17:53:10 -0400
-Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
-        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 175LplFu009383;
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 175LhHgd025561;
         Thu, 5 Aug 2021 21:53:09 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma01dal.us.ibm.com with ESMTP id 3a4x5gpdqs-1
+Received: from b03cxnp08028.gho.boulder.ibm.com (b03cxnp08028.gho.boulder.ibm.com [9.17.130.20])
+        by ppma04dal.us.ibm.com with ESMTP id 3a7vvaudxf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
         Thu, 05 Aug 2021 21:53:09 +0000
 Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 175Lr6bG8192502
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 175Lr7AM16515350
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 5 Aug 2021 21:53:06 GMT
+        Thu, 5 Aug 2021 21:53:07 GMT
 Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 21C0D6E050;
+        by IMSVA (Postfix) with ESMTP id 661876E05B;
+        Thu,  5 Aug 2021 21:53:07 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5FC16E064;
         Thu,  5 Aug 2021 21:53:06 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9F3736E059;
-        Thu,  5 Aug 2021 21:53:05 +0000 (GMT)
 Received: from sbct-2.. (unknown [9.47.158.152])
         by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  5 Aug 2021 21:53:05 +0000 (GMT)
+        Thu,  5 Aug 2021 21:53:06 +0000 (GMT)
 From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
 To:     jarkko@kernel.org
 Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3 0/2] ibmvtpm: Avoid error message when process gets signal while waiting
-Date:   Thu,  5 Aug 2021 17:52:54 -0400
-Message-Id: <20210805215256.1293987-1-stefanb@linux.vnet.ibm.com>
+        linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Nageswara R Sastry <rnsastry@linux.ibm.com>
+Subject: [PATCH v3 2/2] tpm: ibmvtpm: Avoid error message when process gets signal while waiting
+Date:   Thu,  5 Aug 2021 17:52:56 -0400
+Message-Id: <20210805215256.1293987-3-stefanb@linux.vnet.ibm.com>
 X-Mailer: git-send-email 2.31.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210805215256.1293987-1-stefanb@linux.vnet.ibm.com>
+References: <20210805215256.1293987-1-stefanb@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qRLBZbLr_uKbNwgS7TTgqGFZ4EVfYIjF
-X-Proofpoint-GUID: c7U6Xehts8VAFxWqyb806z2664p04Nbr
+X-Proofpoint-GUID: L_3I9e3EApCbyRoF5w5fsVvYCJvSdieZ
+X-Proofpoint-ORIG-GUID: eg3CDP9k6qipOGKBu0Zk6aHI46HcFLJq
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
  definitions=2021-08-05_11:2021-08-05,2021-08-05 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0 mlxlogscore=981
- suspectscore=0 impostorscore=0 clxscore=1015 mlxscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ priorityscore=1501 mlxscore=0 mlxlogscore=999 lowpriorityscore=0
+ adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.12.0-2107140000 definitions=main-2108050127
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
 From: Stefan Berger <stefanb@linux.ibm.com>
 
-This series of patches fixes an issue related to the ibmvtpm driver causing
-unnecessary kernel log messages when a process is interrupted while waiting
-for the TPM to respond. The aborted wait causes the core TPM driver to emit
-the log message. The solution is to convert the driver to use the normal
-polling loop to wait for TPM responses.
+When rngd is run as root then lots of these types of message will appear
+in the kernel log if the TPM has been configured to provide random bytes:
 
-   Stefan
+[ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
 
-v3:
- - Split into two patches
+The issue is caused by the following call that is interrupted while
+waiting for the TPM's response.
 
-Stefan Berger (2):
-  tpm: ibmvtpm: Rename tpm_process_cmd to tpm_status and define flag
-  tpm: ibmvtpm: Avoid error message when process gets signal while
-    waiting
+sig = wait_event_interruptible(ibmvtpm->wq,
+                        (ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
 
- drivers/char/tpm/tpm_ibmvtpm.c | 31 ++++++++++++++++++-------------
- drivers/char/tpm/tpm_ibmvtpm.h |  3 ++-
- 2 files changed, 20 insertions(+), 14 deletions(-)
+Rather than waiting for the response in the low level driver, have it use
+the polling loop in tpm_try_transmit() that uses a command's duration to
+poll until a result has been returned by the TPM, thus ending when the
+timeout has occurred but not responding to signals and ctrl-c anymore. To
+stay in this polling loop extend tpm_ibmvtpm_status() to return
+TPM_STATUS_BUSY for as long as the vTPM is busy. Since the loop requires
+the TPM's timeouts, get them now using tpm_get_timeouts() after setting
+the TPM2 version flag on the chip.
 
+To recreat the resolved issue start rngd like this:
+
+sudo rngd -r /dev/hwrng -t
+sudo rngd -r /dev/tpm0 -t
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
+Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
+Cc: Nayna Jain <nayna@linux.ibm.com>
+Cc: George Wilson <gcwilson@linux.ibm.com>
+Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
+---
+v3L
+ - split for renaming of tpm_processing_cmd
+
+v2:
+ - reworded commit text
+---
+ drivers/char/tpm/tpm_ibmvtpm.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index cd6457061a2e..5d795866b483 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -106,18 +106,12 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ {
+ 	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
+ 	u16 len;
+-	int sig;
+ 
+ 	if (!ibmvtpm->rtce_buf) {
+ 		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
+ 		return 0;
+ 	}
+ 
+-	sig = wait_event_interruptible(ibmvtpm->wq,
+-				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
+-	if (sig)
+-		return -EINTR;
+-
+ 	len = ibmvtpm->res_len;
+ 
+ 	if (count < len) {
+@@ -271,7 +265,9 @@ static void tpm_ibmvtpm_cancel(struct tpm_chip *chip)
+ 
+ static u8 tpm_ibmvtpm_status(struct tpm_chip *chip)
+ {
+-	return 0;
++	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
++
++	return ibmvtpm->tpm_status;
+ }
+ 
+ /**
+@@ -459,7 +455,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
+ 	.send = tpm_ibmvtpm_send,
+ 	.cancel = tpm_ibmvtpm_cancel,
+ 	.status = tpm_ibmvtpm_status,
+-	.req_complete_mask = 0,
++	.req_complete_mask = TPM_STATUS_BUSY,
+ 	.req_complete_val = 0,
+ 	.req_canceled = tpm_ibmvtpm_req_canceled,
+ };
+@@ -690,8 +686,15 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
+ 		goto init_irq_cleanup;
+ 	}
+ 
+-	if (!strcmp(id->compat, "IBM,vtpm20")) {
++
++	if (!strcmp(id->compat, "IBM,vtpm20"))
+ 		chip->flags |= TPM_CHIP_FLAG_TPM2;
++
++	rc = tpm_get_timeouts(chip);
++	if (rc)
++		goto init_irq_cleanup;
++
++	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		rc = tpm2_get_cc_attrs_tbl(chip);
+ 		if (rc)
+ 			goto init_irq_cleanup;
 -- 
 2.31.1
 
