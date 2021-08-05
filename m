@@ -2,226 +2,181 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D573FC432BE
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 20:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F3EC4320A
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 21:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B135360F70
-	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 20:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DFE861151
+	for <linux-security-module@archiver.kernel.org>; Thu,  5 Aug 2021 21:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236438AbhHEUpF (ORCPT
+        id S232716AbhHEVx0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 5 Aug 2021 16:45:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53614 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232902AbhHEUpF (ORCPT
+        Thu, 5 Aug 2021 17:53:26 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:11422 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229987AbhHEVxZ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 5 Aug 2021 16:45:05 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 09D3761104;
-        Thu,  5 Aug 2021 20:44:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628196290;
-        bh=ky6Qlnkz4Y07RmFf91Q9kfz78wwFWh1HM9aI96tKtJ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=OFMPX/DjiFY0lalXb1/HWQPdpxZwIj73WKxX1QAO1sVs4T9VN5IpTIUUZAuW+Xe5Y
-         Hdi50M8x/4fg7L1CiFE1VBWUjLKKlmGEbPNMZkx0AsHybOQGxwuFGv3qXE+BbX/ULP
-         lBKqKvB3MnG3Ldfp71ke1EKXpSfW0KFPqLf954mGsAKHl4fKVL4FSd7Mu4rKIOmCDc
-         9bmW/wvuSRzSFZd//QxD7KvfliMVY+ci2WN3t/FOoM45YZ155/+tJSemLeWt2fvWSq
-         mI7w36R0wlrFhbffk4gfPAOBEcggaUey8jbSuJWFrPhQ3XG/lmuhbYlZ8z5kqNc1BQ
-         6imBSizFzO2eg==
-Date:   Thu, 5 Aug 2021 23:44:47 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.vnet.ibm.com>
+        Thu, 5 Aug 2021 17:53:25 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 175LXQZr077545;
+        Thu, 5 Aug 2021 17:53:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-transfer-encoding; s=pp1;
+ bh=4NEO9Q341ShW7CdW39sUr17PHph2LQ6gy+/LkF1fJgk=;
+ b=XzBty3khLpuw12T+B8PgJYGLM0C2AbHOWsbhVO7E7wyjtpwfYdfHNK8sBmGQgZqF0851
+ +PP0gMTol7ErusK8sDg8gAA7btiBtUe5M2rl6V/mJzmpcKqSYkqcglkC8/2XSr27wyz2
+ 84n41bdMxbhNqujZI3PPYxVwxy0CnSX9iWI7sUx4bN4ljkgSIic37LFOmf3ERKzNYEgK
+ xBpg6BU/vkr+LrxrDlf0d+iDOm1HwUsciKGiHIgZDOxcKzRo+RiyhAzpXNl10lH0B70a
+ TN0v1LzcSPVovUewz2IIz0tOPIpgd4T5X0WyyF4bcliSpCNAW7ECJpFo81lgHLDySlV5 5Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3a8qaf9csw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Aug 2021 17:53:10 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 175LY7gZ081015;
+        Thu, 5 Aug 2021 17:53:09 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3a8qaf9csg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Aug 2021 17:53:09 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 175LpN1A016949;
+        Thu, 5 Aug 2021 21:53:08 GMT
+Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
+        by ppma03wdc.us.ibm.com with ESMTP id 3a77h53vhn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Aug 2021 21:53:08 +0000
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 175Lr6wM9240890
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Aug 2021 21:53:06 GMT
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BE2116E05F;
+        Thu,  5 Aug 2021 21:53:06 +0000 (GMT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A3296E05E;
+        Thu,  5 Aug 2021 21:53:06 +0000 (GMT)
+Received: from sbct-2.. (unknown [9.47.158.152])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu,  5 Aug 2021 21:53:06 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     jarkko@kernel.org
 Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
         linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Stefan Berger <stefanb@linux.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Nageswara R Sastry <rnsastry@linux.ibm.com>
-Subject: Re: [PATCH v2] tpm: ibmvtpm: Avoid error message when process gets
- signal while waiting
-Message-ID: <20210805204447.o43rftv7mo56keir@kernel.org>
-References: <20210803202622.1537040-1-stefanb@linux.vnet.ibm.com>
+        George Wilson <gcwilson@linux.ibm.com>
+Subject: [PATCH v3 1/2] tpm: ibmvtpm: Rename tpm_process_cmd to tpm_status and define flag
+Date:   Thu,  5 Aug 2021 17:52:55 -0400
+Message-Id: <20210805215256.1293987-2-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210805215256.1293987-1-stefanb@linux.vnet.ibm.com>
+References: <20210805215256.1293987-1-stefanb@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210803202622.1537040-1-stefanb@linux.vnet.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kcR_3yBxen3qt7XyMCddzr7uVu29hbL9
+X-Proofpoint-ORIG-GUID: TzjMDi9T1IsJIzD7X8ygV7YJAABmMSue
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-05_11:2021-08-05,2021-08-05 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ bulkscore=0 mlxlogscore=999 malwarescore=0 phishscore=0 suspectscore=0
+ spamscore=0 adultscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108050127
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 03, 2021 at 04:26:22PM -0400, Stefan Berger wrote:
-> From: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> When rngd is run as root then lots of these types of message will appear
-> in the kernel log if the TPM has been configured to provide random bytes:
-> 
-> [ 7406.275163] tpm tpm0: tpm_transmit: tpm_recv: error -4
-> 
-> The issue is caused by the following call that is interrupted while
-> waiting for the TPM's response.
-> 
-> sig = wait_event_interruptible(ibmvtpm->wq,
->                                !ibmvtpm->tpm_processing_cmd);
-> 
-> Rather than waiting for the response in the low level driver, have it use
-> the polling loop in tpm_try_transmit() that uses a command's duration to
-> poll until a result has been returned by the TPM, thus ending when the
-> timeout has occurred but not responding to signals and ctrl-c anymore. To
-> stay in this polling loop extend tpm_ibmvtpm_status() to return
-> TPM_STATUS_BUSY for as long as the vTPM is busy. Since the loop requires
-> the TPM's timeouts, get them now using tpm_get_timeouts() after setting
-> the TPM2 version flag on the chip.
-> 
-> Rename the tpm_processing_cmd to tpm_status in ibmvtpm_dev and set the
-> TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
-> 
-> To recreat the resolved issue start rngd like this:
-> 
-> sudo rngd -r /dev/hwrng -t
-> sudo rngd -r /dev/tpm0 -t
-> 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1981473
-> Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
-> Cc: Nayna Jain <nayna@linux.ibm.com>
-> Cc: George Wilson <gcwilson@linux.ibm.com>
-> Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> ---
-> 
-> v2:
->  - reworded commit text
-> ---
->  drivers/char/tpm/tpm_ibmvtpm.c | 31 ++++++++++++++++++-------------
->  drivers/char/tpm/tpm_ibmvtpm.h |  3 ++-
->  2 files changed, 20 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 903604769de9..5d795866b483 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -106,17 +106,12 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
->  {
->  	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
->  	u16 len;
-> -	int sig;
->  
->  	if (!ibmvtpm->rtce_buf) {
->  		dev_err(ibmvtpm->dev, "ibmvtpm device is not ready\n");
->  		return 0;
->  	}
->  
-> -	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-> -	if (sig)
-> -		return -EINTR;
-> -
->  	len = ibmvtpm->res_len;
->  
->  	if (count < len) {
-> @@ -220,11 +215,12 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->  		return -EIO;
->  	}
->  
-> -	if (ibmvtpm->tpm_processing_cmd) {
-> +	if ((ibmvtpm->tpm_status & TPM_STATUS_BUSY)) {
->  		dev_info(ibmvtpm->dev,
->  		         "Need to wait for TPM to finish\n");
->  		/* wait for previous command to finish */
-> -		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
-> +		sig = wait_event_interruptible(ibmvtpm->wq,
-> +				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
->  		if (sig)
->  			return -EINTR;
->  	}
-> @@ -237,7 +233,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->  	 * set the processing flag before the Hcall, since we may get the
->  	 * result (interrupt) before even being able to check rc.
->  	 */
-> -	ibmvtpm->tpm_processing_cmd = true;
-> +	ibmvtpm->tpm_status |= TPM_STATUS_BUSY;
->  
->  again:
->  	rc = ibmvtpm_send_crq(ibmvtpm->vdev,
-> @@ -255,7 +251,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
->  			goto again;
->  		}
->  		dev_err(ibmvtpm->dev, "tpm_ibmvtpm_send failed rc=%d\n", rc);
-> -		ibmvtpm->tpm_processing_cmd = false;
-> +		ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
->  	}
->  
->  	spin_unlock(&ibmvtpm->rtce_lock);
-> @@ -269,7 +265,9 @@ static void tpm_ibmvtpm_cancel(struct tpm_chip *chip)
->  
->  static u8 tpm_ibmvtpm_status(struct tpm_chip *chip)
->  {
-> -	return 0;
-> +	struct ibmvtpm_dev *ibmvtpm = dev_get_drvdata(&chip->dev);
-> +
-> +	return ibmvtpm->tpm_status;
->  }
->  
->  /**
-> @@ -457,7 +455,7 @@ static const struct tpm_class_ops tpm_ibmvtpm = {
->  	.send = tpm_ibmvtpm_send,
->  	.cancel = tpm_ibmvtpm_cancel,
->  	.status = tpm_ibmvtpm_status,
-> -	.req_complete_mask = 0,
-> +	.req_complete_mask = TPM_STATUS_BUSY,
->  	.req_complete_val = 0,
->  	.req_canceled = tpm_ibmvtpm_req_canceled,
->  };
-> @@ -550,7 +548,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
->  		case VTPM_TPM_COMMAND_RES:
->  			/* len of the data in rtce buffer */
->  			ibmvtpm->res_len = be16_to_cpu(crq->len);
-> -			ibmvtpm->tpm_processing_cmd = false;
-> +			ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
->  			wake_up_interruptible(&ibmvtpm->wq);
->  			return;
->  		default:
-> @@ -688,8 +686,15 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
->  		goto init_irq_cleanup;
->  	}
->  
-> -	if (!strcmp(id->compat, "IBM,vtpm20")) {
-> +
-> +	if (!strcmp(id->compat, "IBM,vtpm20"))
->  		chip->flags |= TPM_CHIP_FLAG_TPM2;
-> +
-> +	rc = tpm_get_timeouts(chip);
-> +	if (rc)
-> +		goto init_irq_cleanup;
-> +
-> +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->  		rc = tpm2_get_cc_attrs_tbl(chip);
->  		if (rc)
->  			goto init_irq_cleanup;
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
-> index b92aa7d3e93e..252f1cccdfc5 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.h
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.h
-> @@ -41,7 +41,8 @@ struct ibmvtpm_dev {
->  	wait_queue_head_t wq;
->  	u16 res_len;
->  	u32 vtpm_version;
-> -	bool tpm_processing_cmd;
-> +	u8 tpm_status;
-> +#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
->  };
->  
->  #define CRQ_RES_BUF_SIZE	PAGE_SIZE
-> -- 
-> 2.31.1
-> 
-> 
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-Please do not do the rename in the bug fix. If you really want to rename,
-then this must be split into two commits.
+Rename the field tpm_processing_cmd to tpm_status in ibmvtpm_dev and set
+the TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
 
-/Jarkko
+Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Nayna Jain <nayna@linux.ibm.com>
+Cc: George Wilson <gcwilson@linux.ibm.com>
+---
+ drivers/char/tpm/tpm_ibmvtpm.c | 14 ++++++++------
+ drivers/char/tpm/tpm_ibmvtpm.h |  3 ++-
+ 2 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 903604769de9..cd6457061a2e 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -113,7 +113,8 @@ static int tpm_ibmvtpm_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		return 0;
+ 	}
+ 
+-	sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
++	sig = wait_event_interruptible(ibmvtpm->wq,
++				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
+ 	if (sig)
+ 		return -EINTR;
+ 
+@@ -220,11 +221,12 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 		return -EIO;
+ 	}
+ 
+-	if (ibmvtpm->tpm_processing_cmd) {
++	if ((ibmvtpm->tpm_status & TPM_STATUS_BUSY)) {
+ 		dev_info(ibmvtpm->dev,
+ 		         "Need to wait for TPM to finish\n");
+ 		/* wait for previous command to finish */
+-		sig = wait_event_interruptible(ibmvtpm->wq, !ibmvtpm->tpm_processing_cmd);
++		sig = wait_event_interruptible(ibmvtpm->wq,
++				(ibmvtpm->tpm_status & TPM_STATUS_BUSY) == 0);
+ 		if (sig)
+ 			return -EINTR;
+ 	}
+@@ -237,7 +239,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	 * set the processing flag before the Hcall, since we may get the
+ 	 * result (interrupt) before even being able to check rc.
+ 	 */
+-	ibmvtpm->tpm_processing_cmd = true;
++	ibmvtpm->tpm_status |= TPM_STATUS_BUSY;
+ 
+ again:
+ 	rc = ibmvtpm_send_crq(ibmvtpm->vdev,
+@@ -255,7 +257,7 @@ static int tpm_ibmvtpm_send(struct tpm_chip *chip, u8 *buf, size_t count)
+ 			goto again;
+ 		}
+ 		dev_err(ibmvtpm->dev, "tpm_ibmvtpm_send failed rc=%d\n", rc);
+-		ibmvtpm->tpm_processing_cmd = false;
++		ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
+ 	}
+ 
+ 	spin_unlock(&ibmvtpm->rtce_lock);
+@@ -550,7 +552,7 @@ static void ibmvtpm_crq_process(struct ibmvtpm_crq *crq,
+ 		case VTPM_TPM_COMMAND_RES:
+ 			/* len of the data in rtce buffer */
+ 			ibmvtpm->res_len = be16_to_cpu(crq->len);
+-			ibmvtpm->tpm_processing_cmd = false;
++			ibmvtpm->tpm_status &= ~TPM_STATUS_BUSY;
+ 			wake_up_interruptible(&ibmvtpm->wq);
+ 			return;
+ 		default:
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
+index b92aa7d3e93e..252f1cccdfc5 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.h
++++ b/drivers/char/tpm/tpm_ibmvtpm.h
+@@ -41,7 +41,8 @@ struct ibmvtpm_dev {
+ 	wait_queue_head_t wq;
+ 	u16 res_len;
+ 	u32 vtpm_version;
+-	bool tpm_processing_cmd;
++	u8 tpm_status;
++#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
+ };
+ 
+ #define CRQ_RES_BUF_SIZE	PAGE_SIZE
+-- 
+2.31.1
+
