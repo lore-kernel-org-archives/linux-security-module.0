@@ -2,73 +2,129 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6BEC4320E
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 07:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB6DC4320A
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 10:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5039861176
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 07:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3131E61184
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 10:54:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243543AbhHFHL7 (ORCPT
+        id S245124AbhHFKyO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Aug 2021 03:11:59 -0400
-Received: from mail.astralinux.ru ([217.74.38.119]:49304 "EHLO
-        mail.astralinux.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243544AbhHFHL6 (ORCPT
+        Fri, 6 Aug 2021 06:54:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37144 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245089AbhHFKyJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Aug 2021 03:11:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.astralinux.ru (Postfix) with ESMTP id 74A442F62F88;
-        Fri,  6 Aug 2021 10:03:19 +0300 (MSK)
-Received: from mail.astralinux.ru ([127.0.0.1])
-        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id uAUCqItlukqu; Fri,  6 Aug 2021 10:03:18 +0300 (MSK)
-Received: from localhost (localhost [127.0.0.1])
-        by mail.astralinux.ru (Postfix) with ESMTP id 13DC32F62F86;
-        Fri,  6 Aug 2021 10:03:18 +0300 (MSK)
-X-Virus-Scanned: amavisd-new at astralinux.ru
-Received: from mail.astralinux.ru ([127.0.0.1])
-        by localhost (rbta-msk-vsrv-mail01.astralinux.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Pud7jXa3hKpQ; Fri,  6 Aug 2021 10:03:17 +0300 (MSK)
-Received: from mastykin.cct.rbt (unknown [192.168.32.67])
-        by mail.astralinux.ru (Postfix) with ESMTPSA id E5A332F62F80;
-        Fri,  6 Aug 2021 10:03:17 +0300 (MSK)
-From:   Dmitry Mastykin <dmastykin@astralinux.ru>
-To:     casey@schaufler-ca.com, linux-security-module@vger.kernel.org
-Cc:     dmastykin@astralinux.ru, akovalenko@astralinux.ru
-Subject: [PATCH 2/3] security/security: get rid of a duplicated condition
-Date:   Fri,  6 Aug 2021 10:02:44 +0300
-Message-Id: <20210806070245.26338-3-dmastykin@astralinux.ru>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20210806070245.26338-1-dmastykin@astralinux.ru>
-References: <20210806070245.26338-1-dmastykin@astralinux.ru>
+        Fri, 6 Aug 2021 06:54:09 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DF8EC061798
+        for <linux-security-module@vger.kernel.org>; Fri,  6 Aug 2021 03:53:54 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1mBxU5-0002nV-4I; Fri, 06 Aug 2021 12:53:49 +0200
+Subject: Re: [RFC PATCH v1 0/4] keys: introduce key_extract_material helper
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Song Liu <song@kernel.org>, Richard Weinberger <richard@nod.at>
+Cc:     linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-mtd@lists.infradead.org, kernel@pengutronix.de,
+        linux-integrity@vger.kernel.org
+References: <cover.b2fdd70b830d12853b12a12e32ceb0c8162c1346.1626945419.git-series.a.fatoum@pengutronix.de>
+Message-ID: <7bc58825-c6d8-5e6d-4e1c-c4375e19c10e@pengutronix.de>
+Date:   Fri, 6 Aug 2021 12:53:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+MIME-Version: 1.0
+In-Reply-To: <cover.b2fdd70b830d12853b12a12e32ceb0c8162c1346.1626945419.git-series.a.fatoum@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Just remove a typo: the same if() was duplicated.
+Hello everyone,
 
-Signed-off-by: Dmitry Mastykin <dmastykin@astralinux.ru>
----
- security/security.c | 2 --
- 1 file changed, 2 deletions(-)
+On 22.07.21 11:17, Ahmad Fatoum wrote:
+> While keys of differing type have a common struct key definition, there is
+> no common scheme to the payload and key material extraction differs.
+> 
+> For kernel functionality that supports different key types,
+> this means duplicated code for key material extraction and because key type
+> is discriminated by a pointer to a global, users need to replicate
+> reachability checks as well, so builtin code doesn't depend on a key
+> type symbol offered by a module.
+> 
+> Make this easier by adding a common helper with initial support for
+> user, logon, encrypted and trusted keys.
+> 
+> This series contains two example of its use: dm-crypt uses it to reduce
+> boilerplate and ubifs authentication uses it to gain support for trusted
+> and encrypted keys alongside the already supported logon keys.
+> 
+> Looking forward to your feedback,
 
-diff --git a/security/security.c b/security/security.c
-index fd14064e9106..1ab6f56a93b6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2930,8 +2930,6 @@ int security_audit_rule_match(struct lsmblob *blob, u32 field, u32 op,
- 			continue;
- 		if (lsmrule[hp->lsmid->slot] == NULL)
- 			continue;
--		if (lsmrule[hp->lsmid->slot] == NULL)
--			continue;
- 		rc = hp->hook.audit_rule_match(blob->secid[hp->lsmid->slot],
- 					       field, op,
- 					       lsmrule[hp->lsmid->slot]);
+@Mike, Aliasdair: Do you think of key_extract_material as an improvement?
+
+Does someone share the opinion that the helper is useful or should I drop
+it and just send out the ubifs auth patch seperately?
+
+Cheers,
+Ahmad
+
+> Ahmad
+> 
+> ---
+> To: David Howells <dhowells@redhat.com>
+> To: Jarkko Sakkinen <jarkko@kernel.org>
+> To: James Morris <jmorris@namei.org>
+> To: "Serge E. Hallyn" <serge@hallyn.com>
+> To: Alasdair Kergon <agk@redhat.com>
+> To: Mike Snitzer <snitzer@redhat.com>
+> To: dm-devel@redhat.com
+> To: Song Liu <song@kernel.org>
+> To: Richard Weinberger <richard@nod.at>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-raid@vger.kernel.org
+> Cc: linux-integrity@vger.kernel.org
+> Cc: keyrings@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-security-module@vger.kernel.org
+> 
+> Ahmad Fatoum (4):
+>   keys: introduce key_extract_material helper
+>   dm: crypt: use new key_extract_material helper
+>   ubifs: auth: remove never hit key type error check
+>   ubifs: auth: consult encrypted and trusted keys if no logon key was found
+> 
+>  Documentation/filesystems/ubifs.rst |  2 +-
+>  drivers/md/dm-crypt.c               | 65 ++++--------------------------
+>  fs/ubifs/auth.c                     | 25 +++++-------
+>  include/linux/key.h                 | 45 +++++++++++++++++++++-
+>  security/keys/key.c                 | 40 ++++++++++++++++++-
+>  5 files changed, 107 insertions(+), 70 deletions(-)
+> 
+> base-commit: 2734d6c1b1a089fb593ef6a23d4b70903526fe0c
+> 
+
+
 -- 
-2.11.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
