@@ -2,230 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9ABC4338F
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 18:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB70C4338F
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 20:02:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26C57611C3
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 18:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5753D60F22
+	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 20:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238572AbhHFSdq (ORCPT
+        id S244379AbhHFUCU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Aug 2021 14:33:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37480 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234112AbhHFSdp (ORCPT
+        Fri, 6 Aug 2021 16:02:20 -0400
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com ([66.163.184.153]:40176
+        "EHLO sonic309-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S244341AbhHFUCT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Aug 2021 14:33:45 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 176I4MVc102015;
-        Fri, 6 Aug 2021 14:33:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type; s=pp1; bh=AoOfWhGoNl1nzmwxqrEI2DuYnecQ+A/jPVAw3H6AWSA=;
- b=W2XloxkxUbuemrwR4eJ9t3fM9fSaP9m5av0Whgj0NGF3jfbdq68gehZQE8q95M+8Bp7j
- BlNnzmT1V1vqzcrKe5Z7y6bc3hAdM2L/woanK9yMJgPEzUGQJxAmEzAABo7fc9Z4XQ1s
- rjUGcu8eCj3dEHFWhgexK5RkDhhdVej2r2xkYaoQtiDRkIny7N7aM2qgafuGBRrj26h3
- I2a6/PJno72v8BI1m9quG1phknv21lhoWd3PqYs5zOsdMZNNQ75DOj15oC/jaSTrQI6y
- Ou4eDcYgXfdNNo/6VHK/T+Wcdgv2/Wr34MSIQEtUt0vXt5foM2/Vi9Lo+opI7OITy4FA PQ== 
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3a89fnyf5w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Aug 2021 14:33:27 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 176IWJT2032240;
-        Fri, 6 Aug 2021 18:33:26 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma05wdc.us.ibm.com with ESMTP id 3a8mqa1jqm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 06 Aug 2021 18:33:26 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 176IXPN934210120
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 6 Aug 2021 18:33:25 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86B827805C;
-        Fri,  6 Aug 2021 18:33:25 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EC5D57805F;
-        Fri,  6 Aug 2021 18:33:24 +0000 (GMT)
-Received: from [9.211.130.149] (unknown [9.211.130.149])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri,  6 Aug 2021 18:33:24 +0000 (GMT)
-Subject: Re: [PATCH] LSM: add NULL check for kcalloc()
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-team@lge.com
-References: <20210712234434.GA29205@raspberrypi>
- <e0a2655b-3bc6-fd45-bd84-8df2dc6bc5f@namei.org>
- <CADLLry6RmSDuB4nmVKDEiqxXmEU0xrhMn2wieuuVTypMWqc4cQ@mail.gmail.com>
-From:   Ken Goldman <kgold@linux.ibm.com>
-Message-ID: <b58ae08c-c3b9-12a9-f862-bebfed8a01f2@linux.ibm.com>
-Date:   Fri, 6 Aug 2021 14:33:25 -0400
+        Fri, 6 Aug 2021 16:02:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628280123; bh=Vg9BkKAcNzgovnO+fVYtGiA8sh5A5OUYbb1Llzm4qH0=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=JxITSMMB0PHw3lAkPbT06SjkgE0z6nbtgZaCESYxTNP5nfPSaM2S0NZ4jZabxIA2ka+u8sNXAhM0X4pJjOTM24cMAFOlYFgzzNP12oFiXj1J0aIN2oAKMAHeK738teo87pXBbSoJDkJBmij3kwGMAEyefUjBn+DsIlrGJlqDsSRtd3lJtR4pQ/lnjlOBEsZDUVC5MXMbceyeawuySHlqNoyoA1SMUW9pCf7ByUAY9lKKt9cF7lf/FN1ihQE3SQOl+6NM7Ilan7N+fxLUW1orqyeSg4Zlk8flyQqyaUOSMPS5uXNgk6w063Ju/Y4O5dWs273R8fab5YcU5fN7wGlPiQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628280123; bh=XnhZYstefZh+0OC5uSMvCS4Bz6ROTBE7iDd0n9vXcla=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=KapbI12QHa0XbxZy2pJU1qkYVGFW4z0i5HkqxiRc9l363+Sea5M43v7ZP0pZE+KwXILr240hFZmSZpKU81b6rlR1yQs+hGvW2Zzf6woN1MHaLXkBjxJGrSzpVwS6VZHh5avh6Udelp8CTjCg71XwOvbWM80feY6kFyieR+No0BHRRhIWtvbMOZTY15LRL4KsYOk+95OOSEH5M6rp7Erd4iacTeueYgJfdzOdA3z3CB+z9sqha+00QF5EQ6dD0yxW6gbQkhi5SCqRP6/aoA3pTIaaRhOCPgyxgnrsCnpWjR6l7FMNjlI3yag9e9MmuX6tVKqd+YAYx+1H23xstMUTjw==
+X-YMail-OSG: KpEx1jsVM1nWFTBYhj3IuapmfreRB3czHysdUUiO9Y6jzmmgVnqML6beSKjPgHt
+ 0JkIk.TlapP7xcY2ObN6zP66vgqviz98KIGMmsXloLdRDsxCfXwl2HD9mIsWLsPbDaSTLD4gY4Bo
+ ZUb4z1N1PmOxdxaEK3BZ6tZ2UJxoBdcU6gi4AD7jcik219y_8mLZ2tyn6yRem5DAm9PpvgHb._Zs
+ PEHBhwVv6nFtqu0skbZBNPBmG8TcpZyCG3NuSv.p9sT56xvH.Aq5M6kBNFGrW4hsHq.SmZhZiU0Q
+ oayM5s7JHe9dXME5kBuDdDShVr4kgCivhnHH4Fz87zulHb9w9KrifAITt8PLK6R.tkPRTJLUaao9
+ lMLSdFsQmEFP2f2xXOLYEQtsqKmbEMxhqc9FicUpqMjIyu7dHQo8YrBcTejYLFINASZoS.4Eqtx8
+ Wp0_oyCgDprt9fK4hppmXSG3FNeMTJaesIroITb.vTrS9SujkRev3NpaCenXoSYI816PCMVmgD_X
+ I097teUWcgQY2IJ1Dhtr.gf6F1fI0ZU72inh_72kFSEdY0HcY4cZxMemY_LQviqA1ujtRx6Xh7Ve
+ z4hPzfja.Yf8ecxenn8unyGSBTM9WOmlUPNUGialpKmctCgFrysjXXRLDHbeGtjz_fd0bI0jnQPQ
+ Fr45Qkn9VXIwMN.bTSuotESgjT12oLZufw_UFNn0YiC4cbFMQiCEXihBT_A2EYGqwvFp8kJZqei1
+ h5g2PxbzRFyBCryu9_kNL3kB9t6Shcds0Z6Glby08jw9y1Xlsuwm75SI96JFX30_HolcDpnStbrz
+ f.7YEWnZ0q7gBIIRDFcOH2kzKoBglrpG6a5b4pLu5aqX6rZDLS4Wy.9tHgFYTyL3PXaTCI_ULTeN
+ rnHZ1PK3w2zc1NdqgGm6LmZFRGt06.khpTLvv.PO4Lk6fct79P9LmCYSlLrveNkNfQ75raGFTiI9
+ lxNpcpIpI8EmD1Op3oo8Q3GSGOlRgb.GCCtQIA4omVcBQLDqETRyKoB.IAfWpLpIwQuB8WGAd9n8
+ ut6i6T5M6GZjPcOO5w_Hq9nuAbjPBD80VJhY7Tcd3.qDXpi00GJqRKxKrTrQBomdGv.o9p.AgqrY
+ skA9LkRn_dE9j2UzTkbf_DJCdgjU7yo9XTPHxd5o.a_WrgPRYwm2oNsDlrXk13s_jgQS3H_NEPKc
+ l0diIW1YJAvTP9axshaEU7o._TfNrFMKxIpEvnBOZQOjWwlBQ5sQBYXIMVxThOm3XOPI2tbX29xK
+ Hja.9STgCgIqHbSKsANj2nugISaTZDpBTvaOSyHby6.KbAjxtuQRUkbZVUdBoUpQIv2GxHrNcbZx
+ FYmIQ_9eYb0WMXk2xab2AnyPznnaf5VyAVI3_agswrg1a7saPnGlTwV2TjU67OkHkZHhHvO1GFvz
+ Xl34UYfDSeA3Pjgrdb6Hn8vIaZ6eR5FlABi4OvkvcPqTceQB4zfRWIPndgXMMk.djytWgu9vYjYK
+ OaF78mrQDslu1DmEuN.4VFqO0yTR139_tbVZBfMhw1EFao9bgpfCYKlpBvuMuAk8qJp5q6FyrOTO
+ 6C8BQRxltgRFm6U0jQHnysee1mKzEpAD77Lc1K7LTNZ7glShGGA0KvIXI7bxwzGkNWUvu3AhGKSU
+ cuSVFCTwmHR2u4RNBw3lRlanZAoxjvCIUKUVVFK8DWSRzBGTW8t.u.JtNl5fY7scvGfYsJQAKltb
+ UVs5Bo1fZJ7ObUKoC1lv0AnwRWuTGt05MTGWkYKlX7IN6deSiZRM_Z7GGbibbAKDWafGMy9nerZa
+ 8FlCGPrH9ufWpeMp70Z8cKLiJC8rVr1oaQhVqS5SZG8fB76KHUlS5cb4cccd6YSORBPclfO5R8nt
+ wfeVFz_WgY53xHGUanqpdTaYunI2XRyOPzqgCuQK47rL53K3GcdWoPVVJVL5aEK7alaEYiFdpNbr
+ j8.XXc3gjc_Xl.y3VuMHlg6CVszBZqEhaJl3dXHZRImFmKfeOx48zlk5nIZUEzvzOOzsNkbkXYY8
+ xjXqRY8bGgyNA.nWWdUxNSupRdyKAxjJvGRhVProLf2yKEP6gna7qxouyllLa4PgpGJITs8KfrsN
+ fDaZ9qA77tTxdyaS03hYuyO6X9ya5xlB9mKlkyb.iBsau3DuNjkY6G8jvXkw5LYE3KwCTTk5umus
+ jocsIyKH1mWPuYNWXcFZqMwxS_64HBtb0dcgN7HBt9hr_MCWqAkGs9HmYlFFCl96AmTfv_pCxwya
+ YkdUFw0z39y1gMYhoJVW9E.PM5UfFyZxtr9Of10gHUfiAI_YQj08XkTr668W.HhgjjVBsmn9R417
+ FgtXcwizmV.RzCe1eWk984pdxPFx6R4vvisGTO3Evk3jJuaC6vkLk126yjaHLN4HuUKhAXAgiTmQ
+ j4Hn9ANd4jB_0tVmwkbubFsjaS86nSdS_fTnK96N4TOqxT.RDkxvUPp.U5HkKrUhkS9kyx0LdJcF
+ xdA_TrJJhgReZdhaWb.tJKdMur28VTWM5Sq9B2iqqIZInocuG3p90rGxxJImJiVoTkLIFZlLp8J5
+ 3dWVrusbupyHpp.afDFmhJTxSV7NpHNqaKVZ8bbbBWw932Gopy30A29trG5oIDWd4IvTdjA9wwkB
+ ywEvZxcePctKy.Ew3iXThzCP_jeRCBpi8KUSbwSeV
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 6 Aug 2021 20:02:03 +0000
+Received: by kubenode586.mail-prod1.omega.bf1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 75abe7e8df9ee73895c7c4d930a575d8;
+          Fri, 06 Aug 2021 20:01:56 +0000 (UTC)
+Subject: Re: lsm-stacking: fix broken lsm audit
+To:     Dmitry Mastykin <dmastykin@astralinux.ru>,
+        linux-security-module@vger.kernel.org
+Cc:     akovalenko@astralinux.ru, Casey Schaufler <casey@schaufler-ca.com>
+References: <20210806070245.26338-1-dmastykin@astralinux.ru>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <f2eacf08-d1a1-e8a1-eae0-28e4e54b50ff@schaufler-ca.com>
+Date:   Fri, 6 Aug 2021 13:01:55 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
  Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <CADLLry6RmSDuB4nmVKDEiqxXmEU0xrhMn2wieuuVTypMWqc4cQ@mail.gmail.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms040506020904000909030205"
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R47yuhnA32oit6veb7sBrvfxeUI-HiCF
-X-Proofpoint-GUID: R47yuhnA32oit6veb7sBrvfxeUI-HiCF
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-06_06:2021-08-06,2021-08-06 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- priorityscore=1501 bulkscore=0 phishscore=0 adultscore=0 malwarescore=0
- impostorscore=0 mlxscore=0 mlxlogscore=999 lowpriorityscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
- definitions=main-2108060123
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <20210806070245.26338-1-dmastykin@astralinux.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.18796 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This is a cryptographically signed message in MIME format.
+On 8/6/2021 12:02 AM, Dmitry Mastykin wrote:
+> Hello,
+> These patches address the problem of not processing LSM audit rules.
+> Problem was introduced in lsm stacking series.
 
---------------ms040506020904000909030205
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Thank you. I will incorporate these changes in v29.
 
-On 7/14/2021 5:44 PM, Austin Kim wrote:
-> 2021=EB=85=84 7=EC=9B=94 15=EC=9D=BC (=EB=AA=A9) =EC=98=A4=EC=A0=84 4:1=
-2, James Morris <jmorris@namei.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:=
-
->>
->> On Tue, 13 Jul 2021, Austin Kim wrote:
->>
->>> From: Austin Kim <austin.kim@lge.com>
->>>
->>> kcalloc() may return NULL when memory allocation fails.
->>> So it is necessary to add NULL check after the call to kcalloc() is m=
-ade.
->>>
->>> Signed-off-by: Austin Kim <austin.kim@lge.com>
->>> ---
->>>   security/security.c | 2 ++
->>>   1 file changed, 2 insertions(+)
->>>
->>> diff --git a/security/security.c b/security/security.c
->>> index 09533cbb7221..f885c9e9bc35 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -321,6 +321,8 @@ static void __init ordered_lsm_init(void)
->>>
->>>        ordered_lsms =3D kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),=
-
->>>                                GFP_KERNEL);
->>> +     if (ordered_lsms)
->>> +             return;
->>
->> Your logic is reversed here.
->=20
-> I feel very sorry for my terrible mistake.
-> 'if (ordered_lsms)' should have been 'if (!ordered_lsms)'.
->=20
-
-I know it's a bit more typing, but
-
-	if (ordered_lsms =3D=3D NULL)
-
-compiles down to the same binary and avoids there errors that
-try to treat a pointer as a boolean.
-
-
-
---------------ms040506020904000909030205
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-JTNkQWN0YWxpcyUyMFMucC5BLiUyZjAzMzU4NTIwOTY3LGMlM2RJVD9jZXJ0aWZpY2F0ZVJl
-dm9jYXRpb25MaXN0O2JpbmFyeTA9oDugOYY3aHR0cDovL2NybDA1LmFjdGFsaXMuaXQvUmVw
-b3NpdG9yeS9BVVRILVJPT1QvZ2V0TGFzdENSTDAdBgNVHQ4EFgQUvpepqoS/gL8QU30JMvnh
-LjIbz3cwDgYDVR0PAQH/BAQDAgEGMA0GCSqGSIb3DQEBCwUAA4ICAQAmm+cbWQ10sxID6edV
-94SAhc1CwzthHFfHpuYS30gisWUfWpgp43Dg1XzG2in3VGV7XrzCCGZh4JM/XQWp+4oxmyV4
-2Qjz9vc8GRksgo6X2nYObPYZzQjda9wxsCB38i4G3H33w8lf9sFvl0xm4ZXZ2s2bF/PdqvrK
-0ZgvF51+MoIPnli/wJBw3p72xbk5Sb1MneSO3tZ293WFzDmz7tuGU0PfytYUkG7O6annGqbU
-1I6CA6QVKUqeFLPodSODAFqJ3pimKD0vX9MuuSa0QinH7CkiPtZMD0mpwwzIsnSs3qOOl60t
-IZQOTc0I6lCe1LLhrz7Q75J6nNL9N5zVwZ1I3o2Lb8Dt7BA13VFuZvZIzapUGV83R7pmSVaj
-1Bik1nJ/R393e6mwppsT140KDVLh4Oenywmp2VpBDuEj9RgICAO0sibv8n379LbO7ARa0kw9
-y9pggFzN2PAX25b7w0n9m78kpv3z3vW65rs6wl7E8VEHNfv8+cnb81dxN3C51KElz+l31zch
-FTurD5HFEpyEhzO/fMS5AkweRJIzwozxNs7OL/S/SVTpJLJL1ukZ1lnHHX0d3xCzRy/5HqfK
-3uiG22LPB5+RjNDobPAjAz2BKMfkF/+v0pzn8mqqkopQaJzEAbLbMpgQYHRCjvrUxxwjJyUF
-b2Z+40UNtMF4MTK7zTGCA/MwggPvAgEBMIGWMIGBMQswCQYDVQQGEwJJVDEQMA4GA1UECAwH
-QmVyZ2FtbzEZMBcGA1UEBwwQUG9udGUgU2FuIFBpZXRybzEXMBUGA1UECgwOQWN0YWxpcyBT
-LnAuQS4xLDAqBgNVBAMMI0FjdGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEczAhBt
-lC9msSpKrr0rmsrvlS70MA0GCWCGSAFlAwQCAQUAoIICLTAYBgkqhkiG9w0BCQMxCwYJKoZI
-hvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMTA4MDYxODMzMjVaMC8GCSqGSIb3DQEJBDEiBCAY
-LA0B/qvmROLyS3zGeYt0/GWuuNUFoGCN2HRpKFw6OTBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCG
-SAFlAwQBKjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqG
-SIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGnBgkrBgEEAYI3EAQxgZkwgZYw
-gYExCzAJBgNVBAYTAklUMRAwDgYDVQQIDAdCZXJnYW1vMRkwFwYDVQQHDBBQb250ZSBTYW4g
-UGlldHJvMRcwFQYDVQQKDA5BY3RhbGlzIFMucC5BLjEsMCoGA1UEAwwjQWN0YWxpcyBDbGll
-bnQgQXV0aGVudGljYXRpb24gQ0EgRzMCEG2UL2axKkquvSuayu+VLvQwgakGCyqGSIb3DQEJ
-EAILMYGZoIGWMIGBMQswCQYDVQQGEwJJVDEQMA4GA1UECAwHQmVyZ2FtbzEZMBcGA1UEBwwQ
-UG9udGUgU2FuIFBpZXRybzEXMBUGA1UECgwOQWN0YWxpcyBTLnAuQS4xLDAqBgNVBAMMI0Fj
-dGFsaXMgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIENBIEczAhBtlC9msSpKrr0rmsrvlS70MA0G
-CSqGSIb3DQEBAQUABIIBAD641EoyAZ/wKfP8s5JSGGU9WC+jBVGmKU8Hx1xKbLvTtDlqaOwC
-i9/DROOpYckB/OTRFWiKHEUmhRMYoveI622BAUEgJRlrVWnvKmbkhnG+uKt9HZsPBDB/AWWo
-6oyWpFQHbI1GjMASnNlg45Io9V7AGBDEUDh3IHUYgntMuKKNYnPWHVKCapW9vUabamrtmR/l
-3j6b1ACzJjzrU0fJ3cwyuhIuHqea+4PCw5igOzJKdzoSXI5NetP8uvqUIFRwvf1mNeHZ9lVR
-CVWXLlKEUw07tXuyav0m7mOa1/Vk/8fkHBfbS+e/sEdko8Cstfr9s0MugG43SwwAZ3nkS7NU
-fv0AAAAAAAA=
---------------ms040506020904000909030205--
-
+> These patches are for cschaufler/lsm-stacking repository branch stack-5.10-rc4-v23 
+> Some UBUNTU distributions have also this problem.
+>
+> Kind regards,
+> Dmitry Mastykin
