@@ -2,287 +2,144 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CA5C4320E
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 21:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A28F4C4320A
+	for <linux-security-module@archiver.kernel.org>; Sun,  8 Aug 2021 09:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D5EB060E78
-	for <linux-security-module@archiver.kernel.org>; Fri,  6 Aug 2021 21:21:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822E060EBB
+	for <linux-security-module@archiver.kernel.org>; Sun,  8 Aug 2021 09:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239050AbhHFVVR (ORCPT
+        id S230453AbhHHJJy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 6 Aug 2021 17:21:17 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:62528 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237719AbhHFVVQ (ORCPT
+        Sun, 8 Aug 2021 05:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51384 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230301AbhHHJJy (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 6 Aug 2021 17:21:16 -0400
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 176LHdVQ009680;
-        Fri, 6 Aug 2021 21:20:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2021-07-09;
- bh=0/wVmg9lzBkJqJi16PggskP27pYpVFg1/JKTIbsojPk=;
- b=O3g2lRI0iTPCr2obHYaNTxZnsX5CnlD3ttZzj5s1B3arZrcReB5tE39hIwmc51sZR1O0
- vY4ykQFm6eJZ9e1cllxpbypOQlKoHHpdDe/f24H2rZJ6zobFRyhhJqC/iJlYt95VAcXK
- Dzf7/Q08U4cT4muR6htTx9HekGsRxt1YkolfF2wgQcVx31n4gdmab3FnRFt3Dbnp/fVp
- qD26FzvJEUUy7sYGBkIu7uUGZmp+5hsubifXlMfKq4FswpANH1/QtpdscXznJAFBcRHV
- 3vDpy+RMsjfjBkEKkfdwrD6olos2YQXCeF1nPNVXPp5QW4wB7KiwkiR6K2icup/VUe3o Qg== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2020-01-29;
- bh=0/wVmg9lzBkJqJi16PggskP27pYpVFg1/JKTIbsojPk=;
- b=Lgn0ArfflvERjfrttA4VdDlMqKD2KlqeYyT0dPI24kw7kMb5YQTl9aqXMjrC4343vlIv
- FwbXnLF44fs1bBnX71ULPJcdyd/bUacghjrY0bFWMiSWRzgeopdpBWgbL2lAU5Pouz2D
- c0i6C286KbtTDtmHyvyJpahnLaU/GnI8YhrWMRUCsXRsdQurjeOC7OEPWQeBFRc4lV6w
- +viZgCkjy0EYxKwEPmWGWjuyRb917IcuKSKAsvlEfj2Z0wgrKdDXLfxRSXfKujD/B2Mf
- hxHHfJ7gcqdyGkdoRex3Q95u+gQnD+b2ZnfjH0eUZeSVknHQlBeW39+LrHZKj0bWGdwr 5w== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3a9661ry1h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Aug 2021 21:20:27 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 176LGAGn149139;
-        Fri, 6 Aug 2021 21:20:26 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2044.outbound.protection.outlook.com [104.47.51.44])
-        by aserp3020.oracle.com with ESMTP id 3a7r4c950d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 06 Aug 2021 21:20:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OQcJLVhjICa4KN4vo1bwqiWdmnUfwHzG1yP/E/cboeKO7Y/mw0kRmTgtRn/rdMpOS3sM3FC2ZS5LaSEUVzYyljNC7UaIz40KLVH7dTuSbBsZKoMhfQXzO91Xbw0xJPl5Qguve6HNYKcmffSSidmXXkj/lZoyzAuOtBfcP/OcR1fSKiYhD6aXCesnoCikb/g6Tu9lV0/0BQQC1tNm+5dFTTOQIPKNcmrzBqhxkm8/859O5g3xuGEGWYje/lu2yFINIjfaGDUEcuvtyl22NCbRCrsJA0H5aZjBSJPipfr4Mfjo9XBw3rBiFBsMFkmoyiBi00SBQ0jB4YMjPqSOBNjtSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0/wVmg9lzBkJqJi16PggskP27pYpVFg1/JKTIbsojPk=;
- b=nrsc7/GFDyyfoCEgHSTWxtashOEvnvUUx+q7q4PgLO9EPhP2gUvX3XUo1aFeddSSOq6xocgxhL+yEHdEtNYP1CxPzg4aNcgm4hiS/HBWFkyX8C2c3zeJKwdt4vhdvP8kk0HdO5Dny0/s+KzbtG9ehL24pgD5F13KmatjQ7P4KKrvV/u5ouCJ1U6kLrSh1GhnDTfsUeR5mdllj2InT9V3m7wtxosJMvFx94O3qpYvHmVkLvCwUwcvkAsqf61t0xCqMXLuRE1C6FNSLYVA9u4gUizK0H/D0mPtDkTPh73wMM1B/4pCcDUjtK4n8HlaHa6yc/95l6JxyXFh6ylbP7E58w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Sun, 8 Aug 2021 05:09:54 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1637EC061760;
+        Sun,  8 Aug 2021 02:09:36 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so24930047pjh.3;
+        Sun, 08 Aug 2021 02:09:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0/wVmg9lzBkJqJi16PggskP27pYpVFg1/JKTIbsojPk=;
- b=xN0V3WJ6xso+fG1ik8OnX41ApGua2/hA2oFhwK8Didk2vnsCCjoyi1/DZ63dx6oXMzT3YG6P5hTQhAE3Iwyh37vLI5IuhT2rbiSuyaQL9hH3wQZBP4Gt7lB17OliWCghNzmZdmsjrkxBtBjrq/ml/71G2xxNNhwhmc54ucbfoMc=
-Authentication-Results: linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=none action=none header.from=oracle.com;
-Received: from MN2PR10MB4157.namprd10.prod.outlook.com (2603:10b6:208:1dc::18)
- by MN2PR10MB4318.namprd10.prod.outlook.com (2603:10b6:208:1d8::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4394.15; Fri, 6 Aug
- 2021 21:20:23 +0000
-Received: from MN2PR10MB4157.namprd10.prod.outlook.com
- ([fe80::e876:8eb5:23ed:d99b]) by MN2PR10MB4157.namprd10.prod.outlook.com
- ([fe80::e876:8eb5:23ed:d99b%5]) with mapi id 15.20.4394.017; Fri, 6 Aug 2021
- 21:20:23 +0000
-Content-Type: text/plain; charset=utf-8
-Subject: Re: [PATCH RFC v2 10/12] KEYS: link system_trusted_keys to
- mok_trusted_keys
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <dc76d9463bb5e081d10154e909321b0d75391846.camel@linux.ibm.com>
-Date:   Fri, 6 Aug 2021 15:20:17 -0600
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        pjones@redhat.com, glin@suse.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9A8F92EA-9E4A-4995-A1E3-B489207514E7@oracle.com>
-References: <20210726171319.3133879-1-eric.snowberg@oracle.com>
- <20210726171319.3133879-11-eric.snowberg@oracle.com>
- <6c751dadf4ce7385d0391ea26f1c7e4e910219e0.camel@linux.ibm.com>
- <44ADB68B-4310-462B-96A8-2F69759BA2D8@oracle.com>
- <d85bfe88bb4abd06e47a36743f53d0610da0a259.camel@linux.ibm.com>
- <21CB8F51-9066-4095-9C6E-428FF9E86443@oracle.com>
- <dc76d9463bb5e081d10154e909321b0d75391846.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-X-Mailer: Apple Mail (2.3273)
-X-ClientProxiedBy: SN4PR0501CA0063.namprd05.prod.outlook.com
- (2603:10b6:803:41::40) To MN2PR10MB4157.namprd10.prod.outlook.com
- (2603:10b6:208:1dc::18)
+        d=gmail.com; s=20161025;
+        h=cc:to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=vp+J4V9l3LFTS0jqtNCjIc1QlhwFicvyNcSGzXJshgs=;
+        b=YD8DfYorrcdEatdQxxCOpG6B2lewhovoeYQYPUf82QYKJ5sQ+YAMQGxnMFPIUs0GeT
+         N7thCT40cWOtMVAkZ/mWl3l+5dns4H+aJxDUHYmreDxwETZi8e1GJ3FZn7Ia7yM6felA
+         aov+dZeqSSvM6lRLwgKWSjrj0hPvGmDfLkXxz9rsaDU+zcmVnm4+Fyr4wDu4HKpOLsEI
+         dnxB9uw5tznCgSSM8FZ9oXzq7/9jIW3SJm9JPKxTRrrWxe3wMoDh+XqJHF8hCRENmgxo
+         IzxO5GdSHCTMCGHshtsum4BjgsagRpAYnn8bVQch1wC1MdzpI12hygr5cN2JPI15JG9k
+         v55A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=vp+J4V9l3LFTS0jqtNCjIc1QlhwFicvyNcSGzXJshgs=;
+        b=mFM88f3GezYNJWMMaoAzMGBQRdpBn9dljkjDxnlEJIk7QpZC8Ti5sBjrkhSMQ4vAqj
+         Fnd652dBNkSMQDbZMyhfVqcbLHHK9m2wSotjLd4rqdPQKRusF4N4fJ7ZuzSRXPMgB7At
+         7gZdo7QmVMD/9Tg+Nxw5hnozIWF39U3FuiqZjgF88M1LP2tjfyXNYUvXJiXOnAGn+33t
+         SCotR+FJtjj73l2euaJJVDu1F6yPUBuLlfN2exShx5/0GtBB1Yi2KMJLyR0rBvBoNw8p
+         V94YqT+InEC4L5Dj/X6j1HYg9hky79IzDXFUEFpyM2mzM3/XM5qKxEst33MGM3Sb8rk2
+         uEJA==
+X-Gm-Message-State: AOAM533M4Eq2TWUvcoSaVg7TyiCpMQ/1psJj8OvVtedgDcK7uZbq31M8
+        PjGIl7LLRRCl7ODOgQ/eS3GvKCBQLM0=
+X-Google-Smtp-Source: ABdhPJynv2x6ElMPs+z0HGH87bRIsNE7TdgVFVuta56WptbNORt9IAGfqM0hXCKBZ8EXxIh7XYc1ag==
+X-Received: by 2002:a17:902:db08:b029:12c:4619:c643 with SMTP id m8-20020a170902db08b029012c4619c643mr15901773plx.26.1628413775390;
+        Sun, 08 Aug 2021 02:09:35 -0700 (PDT)
+Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
+        by smtp.gmail.com with ESMTPSA id i13sm16309491pfr.79.2021.08.08.02.09.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Aug 2021 02:09:34 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Kir Kolyshkin <kolyshkin@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Subject: Documenting the requirement of CAP_SETFCAP to map UID 0
+Message-ID: <14cbab6f-19f6-a28c-05d8-453ecca62180@gmail.com>
+Date:   Sun, 8 Aug 2021 11:09:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [172.16.177.128] (184.60.195.210) by SN4PR0501CA0063.namprd05.prod.outlook.com (2603:10b6:803:41::40) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.4 via Frontend Transport; Fri, 6 Aug 2021 21:20:21 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 628af2e2-226a-4abe-44d9-08d9592000b0
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4318:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <MN2PR10MB431852F7A8BBA45770AA43AC87F39@MN2PR10MB4318.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1sATdzwauvaa0FMybRzSa4BArcv+zx/OvLPqOOoHHJ/57cv7oJd1a8i4ZaoI0MGLKr4h62JuUK2D7DguloLTknLcwfJTRpMfsuipOZbvqWKpNsJDPIIt503VEkzF65Ugf4PTI3CMwITZyOChE6mr2NDRZykrwHaxGjueubX5VsjISBPU7XEEiBDrqdEdVrTpH+cctoba9IWvdqHWO+BjkY7rfb+l8aM86aLdSi/8GJTegDyroZtCWG+imI6tU9UeHVuKa4hTX/RFrdoM7IkruV1ejxCI0PqUuKNHI85SGLngoyX1cKKYCSkDQw625zaLFQZ6gqxcOUNridAdtN7FT0sBPUbBOsJ60uxFLwJkIpvWpFF9VtX05M5A8pWx30gfw0aASDe/p70YY2cy2hRsYrVlQskISmVffas5RRb6fwFT2aiZAfe85gb4I0Ui3FXi8VHNpRNDtnEsniHsrqcWTG5/Ym1kbbkf82pw5k687YCzQz5ujOvwe8/wAqk4ix4lwlWX0/BQt0aL6IMmAav9V4kgUWIOCZ0FBu/IdBAy2Kwhxs8tWMDEEgZ4yog3pevC4lPuZe506KzCGT99uwPFWOOLdIQt9Wx2APPInE1us14pheAL3sPYQPM1b3XlepK4W4PrbNyA7719sOiUrWCwl0ENPUBcogmn8xowcpxs3/BB5vbeP/5znWsTZv5CHD/0bXbqyhx2xRHaOFPcMxSpgp0EjhgUg78QBTAcn/UoO00=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4157.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(396003)(376002)(136003)(346002)(39860400002)(366004)(52116002)(44832011)(4326008)(8676002)(33656002)(956004)(478600001)(54906003)(316002)(2616005)(8936002)(38100700002)(107886003)(5660300002)(53546011)(6916009)(38350700002)(6666004)(26005)(186003)(16576012)(66556008)(2906002)(6486002)(7416002)(66946007)(86362001)(36756003)(83380400001)(66476007)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OVM5emFlLzhvUDJ4Z0lBMk4zRWt0UVdpejdENUV4V0NYYTNnYXRrUFlRbEZx?=
- =?utf-8?B?M0RzWEpRTmRSb2szaFpxUEhvREk0eXFYYXMrN014RkFNZzBnbStGUUwxWEta?=
- =?utf-8?B?SGREbm13Ty91R01rYld1bGZUWnhWVEo3THNLbnpSVmo4dlN4ZUIyWXlaVkxX?=
- =?utf-8?B?NXBka1E1bWhDaUpyYm8wOWQ4RHdVeVMxak1mYkF3c2pqa0I2N0JLSGtOVFNp?=
- =?utf-8?B?K01MdWRucm11ZDIwY2hKc1I1R0xIVnBhTnlhTTJ3czZjNnNwaXpMT3dhT1dx?=
- =?utf-8?B?QUljWlBSOTJoQS9ZNlNFbWFwMzRVSG1aUEM2WWM3WkVlc1Q3VzlzTGt1VTRF?=
- =?utf-8?B?dHU4N1dkNXJUbTQraFlOdHdETHRtTnB4TEtLV05KUElkaGlqQzRqZHdGcHFM?=
- =?utf-8?B?WDdxVi9BNVNCR3M3SWx5djRiOUFvMFI3U2dsRFphWWNyOWhGZmV0T1M1dnBZ?=
- =?utf-8?B?RENPUDR2N2ZmQjR0VzBXZTl0bk1XaUFRQ2djVHByMkFlVnN6dWcwSzVxNW9X?=
- =?utf-8?B?OCtSNkRzOFNEeTVqaHFKa2ZTU0toZFhsQk1DVGxKb0xCUjNrbXZnQkU0SWcx?=
- =?utf-8?B?eWtpQnpWemdybHNhTXJ3VEVud1h1czJTU2VDbXluNS9Va3hacWtLRStTVkFU?=
- =?utf-8?B?d29YVnZBNFNyMHJSaEtlUld1Rkc0VFpEQjFmRHVxVXdCbUQ5R2FYTnVkYU1U?=
- =?utf-8?B?akovUmt4OUNOSk15bXRvbnN3SVdQTzUydUJybE9MdXNiejhEeUJzWXhoMW9R?=
- =?utf-8?B?eE9LSUFicHFMWFU5RVJIemcrOXFmRU5mVmRSSStTSUFtWTJPcDRhYWUzRGFS?=
- =?utf-8?B?ZEduRCtieFE2Z29pbTlvQ1RreHdlZmNoVFFzdWF5ZFdvYWV2N29ScU5FNDRt?=
- =?utf-8?B?dGc4RW9pVHN6bTIvcmVxRndlQ2xkY1JSWkFzdlI0YW1zM0RTUXQ5T3AycnQr?=
- =?utf-8?B?N3RkWmlxSEtZSUk5cE9NTGNTZGRCSnVRQVEvdTRGTWErYUN4NUdoQzBEMXdm?=
- =?utf-8?B?SERnN1BLUlg2ZllLNXpncnBibEtWdXBuK3kwampTOXFnb00zenJLd09YVzZ4?=
- =?utf-8?B?V2U3M1UzNzNjTHJ0WVgwdG8wWDRUOFdMb1ZsOU95bWZNYVhrb2hBVWhTYVp1?=
- =?utf-8?B?OGtHME4yZjlORXMrVUc1MFJmeUczWEp2OWtpeVR6b2ljcDEyRnNRUkpGYUM0?=
- =?utf-8?B?aVdTWWVicUNBVUNGclRncmZtZzFXMnlnbnVRUmkvL296Q2l6b0h0R2tVOXFk?=
- =?utf-8?B?R0MwTTJFdnNyaDJ4RE1iay8zbTZQR3hzcy9keklSNlJ1eDdxTUZvVWlTOHdK?=
- =?utf-8?B?d2VqZkw2dnVjQ3ZnMkhOaDhBWDRuMUFQVzZ1K0I4U3pwNnZnd29KRms3MVJX?=
- =?utf-8?B?elpsMEw5MmwydjAzTXdXTUhYRmJHZkdOa1dpdkEzZ1QwRlRNdU9UMkJFZWVO?=
- =?utf-8?B?NVR1WjJUUUxUWlF4SkFBZEloYXdCUWpLM0RFYU1FZU9qMVRhenZEcnN0dThM?=
- =?utf-8?B?K2dhSW03TThhVjV6TlB0NjRZUHluaFBBcC9OTDI2MS9QRnVSTVhuVWIzUmJp?=
- =?utf-8?B?U1lNVDQ1VlArRkNGZU1mMjR0TEMrTXZ3R2RCelJpbDhhb2J2eDZUV1d4ZEFC?=
- =?utf-8?B?ZkRxRUo4dGl1QTR2L0pSU2NVU2M4bnJGS1Y4RW9Taitsc2lnaGhNRU5wZ3lW?=
- =?utf-8?B?QTM5UHlQMGhtV2c3MktCR1BOUnVOczNpd3FmUmphMmxHWnA0aUQxcUdySS9M?=
- =?utf-8?Q?bqGUBy8LdIDDnFowUq5y2MuIvNVqxHaL3lFCJXU?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 628af2e2-226a-4abe-44d9-08d9592000b0
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4157.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Aug 2021 21:20:23.6676
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LEeR41NUwX66W368ekQaMDfLDD9Y0/7qzBT6YU0ndJp3w7QrWlN+Ey9FVqhf/+Lo/5BD+BTOlY0HsuBt1ZUaBqp4teTLfUQxIG8m5DCxmVs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4318
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10068 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 adultscore=0
- suspectscore=0 mlxlogscore=999 phishscore=0 spamscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
- definitions=main-2108060139
-X-Proofpoint-GUID: YJt6i-q3GYfod6C7d4JENaVY4DVvRi9m
-X-Proofpoint-ORIG-GUID: YJt6i-q3GYfod6C7d4JENaVY4DVvRi9m
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hello Serge,
 
-> On Aug 6, 2021, at 9:18 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> On Fri, 2021-08-06 at 09:00 -0600, Eric Snowberg wrote:
->>> On Aug 5, 2021, at 9:19 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->>>=20
->>> On Thu, 2021-08-05 at 19:29 -0600, Eric Snowberg wrote:
->>>=20
->>>>> From the thread discussion on 00/12:
->>>>>=20
->>>>> Only the builtin keys should ever be on the builtin keyring.  The
->>>>> builtin keyring would need to be linked to the mok keyring.  But in t=
-he
->>>>> secondary keyring case, the mok keyring would be linked to the
->>>>> secondary keyring, similar to how the builtin keyring is linked to th=
-e
->>>>> secondary keyring.
->>>>>=20
->>>>>      if (key_link(secondary_trusted_keys, builtin_trusted_keys) < 0)
->>>>>              panic("Can't link trusted keyrings\n");
->>>>=20
->>>>=20
->>>> This part is confusing me though.
->>>>=20
->>>> Here are some of the tests I=E2=80=99m performing with the current ser=
-ies:
->>>>=20
->>>> Initial setup:
->>>> Create and enroll my own key into the MOK.
->>>> Sign a kernel, kernel module and IMA key with my new CA key.
->>>> Boot with lockdown enabled (to enforce sig validation).
->>>>=20
->>>> Kernel built with CONFIG_SECONDARY_TRUSTED_KEYRING=3Dy
->>>>=20
->>>> $ keyctl show %:.secondary_trusted_keys
->>>> Keyring
->>>> 530463486 ---lswrv      0     0  keyring: .secondary_trusted_keys
->>>> 411466727 ---lswrv      0     0   \_ keyring: .builtin_trusted_keys
->>>> 979167715 ---lswrv      0     0   |   \_ asymmetric: Build time autoge=
-nerated kernel key: 07a56e29cfa1e21379aff2c522efff7d1963202a
->>>> 534573591 ---lswrv      0     0   |   \_ asymmetric: Oracle-CA: Oracle=
- certificate signing key: aeefb4bfde095cacaabff81dd266974b1b4e23b8
->>>> 968109018 ---lswrv      0     0   \_ keyring: .mok
->>>> 857795115 ---lswrv      0     0       \_ asymmetric: Erics-CA: UEK sig=
-ning key: 9bfa6860483aa46bd83f7fa1289d9fc35799e93b
->>>>=20
->>>> With this setup I can:
->>>> * load a kernel module signed with my CA key
->>>> * run "kexec -ls" with the kernel signed with my CA key
->>>> * run "kexec -ls" with a kernel signed by a key in the platform keyrin=
-g
->>>> * load another key into the secondary trusted keyring that is signed b=
-y my CA key
->>>> * load a key into the ima keyring, signed by my CA key
->>>>=20
->>>> Kernel built without CONFIG_SECONDARY_TRUSTED_KEYRING defined
->>>>=20
->>>> $ keyctl show %:.builtin_trusted_keys
->>>> Keyring
->>>> 812785375 ---lswrv      0     0  keyring: .builtin_trusted_keys
->>>> 455418681 ---lswrv      0     0   \_ keyring: .mok
->>>> 910809006 ---lswrv      0     0   |   \_ asymmetric: Erics-CA: UEK sig=
-ning key: 9bfa6860483aa46bd83f7fa1289d9fc35799e93b
->>>> 115345009 ---lswrv      0     0   \_ asymmetric: Oracle-CA: Oracle cer=
-tificate signing key: aeefb4bfde095cacaabff81dd266974b1b4e23b8
->>>> 513131506 ---lswrv      0     0   \_ asymmetric: Build time autogenera=
-ted kernel key: 22353509f203b55b84f15d0aadeddc134b646185
->>>>=20
->>>> With this setup I can:
->>>> * load a kernel module signed with my CA key
->>>> * run "kexec -ls" with the kernel signed with my CA key
->>>> * run "kexec -ls" with a kernel signed by a key in the platform keyrin=
-g
->>>> * load a key into the ima keyring, signed by my CA key
->>>>=20
->>>> So why would the linking need to be switched?  Is there a test I=E2=80=
-=99m
->>>> missing?  Thanks.
->>>=20
->>> It's a question of semantics.  The builtin keyring name is self
->>> describing.  It should only contain the keys compiled into the kernel
->>> or inserted post build into the reserved memory.  Not only the kernel
->>> uses the builtin keyring, but userspace may as well[1].  Other users of
->>> the builtin keyring might not want to trust the mok keyring as well.
->>=20
->> Should this feature only work with kernels built with=20
->> CONFIG_SECONDARY_TRUSTED_KEYRING defined?  If so, I could drop support i=
-n=20
->> the next version for kernels built without it.
->=20
-> Support for loading the CA keys stored in the MOK db onto the mok
-> keyring, only if the secondary keyring is configured would really
-> simplify the code.   Support for using the mok  keyring without the
-> secondary keyring being configured, could always be added later.  As
-> long as the other distros agree, I'm all for it.
+Your commit:
 
-Agreed, it will simplify the series and there is nothing preventing the=20
-dropped code from being added in the future if a different distro finds
-it necessary. I=E2=80=99ll work on this in the next version along with the =
-other=20
-changes you identified.  Thanks for your review.
+[[
+commit db2e718a47984b9d71ed890eb2ea36ecf150de18
+Author: Serge E. Hallyn <serge@hallyn.com>
+Date:   Tue Apr 20 08:43:34 2021 -0500
 
+    capabilities: require CAP_SETFCAP to map uid 0
+]]
+
+added a new requirement when updating a UID map a user namespace
+with a value of '0 0 *'.
+
+Kir sent a patch to briefly document this change, but I think much more
+should be written. I've attempted to do so. Could you tell me whether the
+following text (to be added in user_namespaces(7)) is accurate please:
+
+[[
+      In  order  for  a  process  to  write  to  the /proc/[pid]/uid_map
+       (/proc/[pid]/gid_map) file, all of the following requirements must
+       be met:
+
+       [...]
+
+       4. If  updating  /proc/[pid]/uid_map to create a mapping that maps
+          UID 0 in the parent namespace, then one of the  following  must
+          be true:
+
+          *  if  writing process is in the parent user namespace, then it
+             must have the CAP_SETFCAP capability in that user namespace;
+             or
+
+          *  if  the writing process is in the child user namespace, then
+             the process that created the user namespace  must  have  had
+             the CAP_SETFCAP capability when the namespace was created.
+
+          This rule has been in place since Linux 5.12.  It eliminates an
+          earlier security bug whereby a UID 0  process  that  lacks  the
+          CAP_SETFCAP capability, which is needed to create a binary with
+          namespaced file capabilities (as described in capabilities(7)),
+          could  nevertheless  create  such  a  binary,  by the following
+          steps:
+
+          *  Create a new user namespace with the identity mapping (i.e.,
+             UID  0 in the new user namespace maps to UID 0 in the parent
+             namespace), so that UID 0 in both namespaces  is  equivalent
+             to the same root user ID.
+
+          *  Since  the  child process has the CAP_SETFCAP capability, it
+             could create a binary with namespaced file capabilities that
+             would  then  be  effective in the parent user namespace (be‐
+             cause the root user IDs are the same in the two namespaces).
+
+       [...]
+]]
+
+Thanks,
+
+Michael
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
