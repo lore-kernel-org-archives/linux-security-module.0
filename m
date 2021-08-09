@@ -2,81 +2,182 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE62C4320A
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Aug 2021 04:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89B7C4338F
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Aug 2021 07:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14E2861040
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Aug 2021 04:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D21960720
+	for <linux-security-module@archiver.kernel.org>; Mon,  9 Aug 2021 07:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232764AbhHIE2Q (ORCPT
+        id S233614AbhHIHww (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Aug 2021 00:28:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41164 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229483AbhHIE2Q (ORCPT
+        Mon, 9 Aug 2021 03:52:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38182 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233569AbhHIHwt (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Aug 2021 00:28:16 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C13F861019;
-        Mon,  9 Aug 2021 04:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628483276;
-        bh=g7PphkAa3cD92atJZV/1mpJ0V0vTYF+zw05ecvPmRM8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Mq24T1NDmDxEicfUHFl9aisZ2oYPmgQ+AoPeZXlz2aqq7lsuXYPcP/9Rio6eLI683
-         MbfYiVTQZAoFhJDi9toRhyuiTTCNaJWatjDqkgvWg3wzDhsxsIc9D3HbcWEsS6c+Ho
-         VBHDFoctwN3YILvl4tkPXgsl5V8V3v0gqNC7OQz79JUUeSupnyTTtTD3+RCZMicMkk
-         jhIVVaIvxs6nfIP0BXiWp8Hu+lQro/HS8Gxur1fEq+Npp0HJyWwjWu9ScjK9FMu3Nv
-         lKXpaHS01/Ie/ivQ1ZuRfwccsnV8H/We13zPZgRjTMkxfVb1QxHZCT/+2WHvnYGeeE
-         aGJgrhQx4EFlQ==
-Date:   Mon, 9 Aug 2021 07:27:53 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>, peterhuewe@gmx.de,
-        jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>
-Subject: Re: [PATCH v3 1/2] tpm: ibmvtpm: Rename tpm_process_cmd to
- tpm_status and define flag
-Message-ID: <20210809042753.lmvqrvcbk6bu5bu6@kernel.org>
-References: <20210805215256.1293987-1-stefanb@linux.vnet.ibm.com>
- <20210805215256.1293987-2-stefanb@linux.vnet.ibm.com>
- <20210806112557.y7q2av6pk7r4xorm@kernel.org>
- <cddf0b42-c69f-c110-9543-e16d30c9927a@linux.ibm.com>
+        Mon, 9 Aug 2021 03:52:49 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E6CEC0613D3
+        for <linux-security-module@vger.kernel.org>; Mon,  9 Aug 2021 00:52:29 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1mD05D-0004PL-Ob; Mon, 09 Aug 2021 09:52:27 +0200
+Subject: Re: [PATCH 2/4] KEYS: trusted: allow trust sources to use kernel RNG
+ for key material
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        kernel <kernel@pengutronix.de>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        David Gstir <david@sigma-star.at>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        "open list:ASYMMETRIC KEYS" <keyrings@vger.kernel.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:SECURITY SUBSYSTEM" 
+        <linux-security-module@vger.kernel.org>
+References: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de>
+ <7b771da7b09a01c8b4da2ed21f05251ea797b2e8.1626885907.git-series.a.fatoum@pengutronix.de>
+ <CAFA6WYOskwZNe5Wb5PTtnSHQBonSXZ48eEex0w9jQ+JW4vG=+w@mail.gmail.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <7537c853-3641-a6d3-91d8-70fea9f01a89@pengutronix.de>
+Date:   Mon, 9 Aug 2021 09:52:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAFA6WYOskwZNe5Wb5PTtnSHQBonSXZ48eEex0w9jQ+JW4vG=+w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cddf0b42-c69f-c110-9543-e16d30c9927a@linux.ibm.com>
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 06, 2021 at 08:08:27AM -0400, Stefan Berger wrote:
-> 
-> On 8/6/21 7:25 AM, Jarkko Sakkinen wrote:
-> > On Thu, Aug 05, 2021 at 05:52:55PM -0400, Stefan Berger wrote:
-> > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > 
-> > > Rename the field tpm_processing_cmd to tpm_status in ibmvtpm_dev and set
-> > > the TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
-> > > 
-> > > Fixes: 6674ff145eef ("tpm_ibmvtpm: properly handle interrupted packet receptions")
-> > > Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Cc: Nayna Jain <nayna@linux.ibm.com>
-> > > Cc: George Wilson <gcwilson@linux.ibm.com>
-> > Please put the bug fix first because otherwise it will be dependent of this
-> > patch, which is bad thing when it comes to backporting.
-> 
-> Yes, and that's why I have this one here also with a Fix tag. I basically
-> don't want to logically '&' with the 'true' flag but want this
-> TPM_STATUS_BUSY flag first.
-> 
->    Stefan
+Hello Sumit,
 
-You can then just change the type to 'u8'.
+On 22.07.21 08:31, Sumit Garg wrote:
+> On Wed, 21 Jul 2021 at 22:19, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>>
+>> The two existing trusted key sources don't make use of the kernel RNG,
+>> but instead let the hardware that does the sealing/unsealing also
+>> generate the random key material. While a previous change offers users
+>> the choice to use the kernel RNG instead for both, new trust sources
+>> may want to unconditionally use the kernel RNG for generating key
+>> material, like it's done elsewhere in the kernel.
+>>
+>> This is especially prudent for hardware that has proven-in-production
+>> HWRNG drivers implemented, as otherwise code would have to be duplicated
+>> only to arrive at a possibly worse result.
+>>
+>> Make this possible by turning struct trusted_key_ops::get_random
+>> into an optional member. If a driver leaves it NULL, kernel RNG
+>> will be used instead.
+>>
+>> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+>> ---
+>> To: James Bottomley <jejb@linux.ibm.com>
+>> To: Jarkko Sakkinen <jarkko@kernel.org>
+>> To: Mimi Zohar <zohar@linux.ibm.com>
+>> To: David Howells <dhowells@redhat.com>
+>> Cc: James Morris <jmorris@namei.org>
+>> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+>> Cc: "Horia GeantÄƒ" <horia.geanta@nxp.com>
+>> Cc: Aymen Sghaier <aymen.sghaier@nxp.com>
+>> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+>> Cc: "David S. Miller" <davem@davemloft.net>
+>> Cc: Udit Agarwal <udit.agarwal@nxp.com>
+>> Cc: Eric Biggers <ebiggers@kernel.org>
+>> Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+>> Cc: David Gstir <david@sigma-star.at>
+>> Cc: Richard Weinberger <richard@nod.at>
+>> Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+>> Cc: Sumit Garg <sumit.garg@linaro.org>
+>> Cc: keyrings@vger.kernel.org
+>> Cc: linux-crypto@vger.kernel.org
+>> Cc: linux-integrity@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-security-module@vger.kernel.org
+>> ---
+>>  include/keys/trusted-type.h               | 2 +-
+>>  security/keys/trusted-keys/trusted_core.c | 2 +-
+>>  2 files changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/keys/trusted-type.h b/include/keys/trusted-type.h
+>> index d89fa2579ac0..4eb64548a74f 100644
+>> --- a/include/keys/trusted-type.h
+>> +++ b/include/keys/trusted-type.h
+>> @@ -64,7 +64,7 @@ struct trusted_key_ops {
+>>         /* Unseal a key. */
+>>         int (*unseal)(struct trusted_key_payload *p, char *datablob);
+>>
+>> -       /* Get a randomized key. */
+>> +       /* Optional: Get a randomized key. */
+>>         int (*get_random)(unsigned char *key, size_t key_len);
+>>
+>>         /* Exit key interface. */
+>> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
+>> index 569af9af8df0..d2b7626cde8b 100644
+>> --- a/security/keys/trusted-keys/trusted_core.c
+>> +++ b/security/keys/trusted-keys/trusted_core.c
+>> @@ -334,7 +334,7 @@ static int __init init_trusted(void)
+>>                         continue;
+>>
+>>                 get_random = trusted_key_sources[i].ops->get_random;
+>> -               if (trusted_kernel_rng)
+>> +               if (trusted_kernel_rng || !get_random)
+>>                         get_random = kernel_get_random;
+>>
+> 
+> For ease of understanding, I would prefer to write it as:
+> 
+>                   get_random = trusted_key_sources[i].ops->get_random ?:
+>                                          kernel_get_random;
+>                   if (trusted_kernel_rng)
+>                         get_random = kernel_get_random;
+> 
+> With that:
+> 
+> Acked-by: Sumit Garg <sumit.garg@linaro.org>
 
-/Jarkko
+I don't think it improves readability to split up the conditional.
+At least I need to take a second pass over the code to understand
+the second conditional.
+
+Cheers,
+Ahmad
+
+> 
+> -Sumit
+> 
+>>                 static_call_update(trusted_key_init,
+>> --
+>> git-series 0.9.1
+> 
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
