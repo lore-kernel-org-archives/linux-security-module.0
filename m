@@ -2,171 +2,159 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 426AAC43214
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Aug 2021 21:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D20FBC4320A
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Aug 2021 04:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A44C6101E
-	for <linux-security-module@archiver.kernel.org>; Mon,  9 Aug 2021 21:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B035260527
+	for <linux-security-module@archiver.kernel.org>; Tue, 10 Aug 2021 04:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236432AbhHIVYs (ORCPT
+        id S233615AbhHJEwc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 9 Aug 2021 17:24:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49690 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236441AbhHIVYq (ORCPT
+        Tue, 10 Aug 2021 00:52:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42724 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231329AbhHJEwc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 9 Aug 2021 17:24:46 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 203B860EB9;
-        Mon,  9 Aug 2021 21:24:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628544264;
-        bh=D2aOWPkZRvo4FPeQiqOYNBi8S+9DKShgichgczsHHWo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iZLhpA+/gitAAaAEJQa+SuwtTRtdWqNg6KiI+uJ7wTvD3Slz3f1q3M9eNHEFeRye0
-         skvrWsmpZpvzteGIgxz4pTEpOgAipWgy9d7eUlNX8TSLP79IWGFGwweo0PtzzXd7OB
-         AEZsAAVVZ292uDGutkHjSqtKaODj/EDag/I63+6go3rh+dCs85LjWzbrvCixe8fofF
-         dgyiqfDqJVa2wzIudk1PTzSFI5sW3HaAMH3j/iQ+w7cgz2z0y4fJVAo4aRdc/zM6FO
-         /bYKoXwAhjmPGJpABv1eqcLcp3CKE5y689yJhJ/+5zZVIW9+Yy4Zn2AvdCx12kotWk
-         fG+pgXQ5/og3w==
-Date:   Mon, 9 Aug 2021 14:24:22 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, kernel@pengutronix.de,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fscrypt: support trusted keys
-Message-ID: <YRGdBiJQ3xqZAT4w@gmail.com>
-References: <20210806150928.27857-1-a.fatoum@pengutronix.de>
+        Tue, 10 Aug 2021 00:52:32 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D822C0613D3;
+        Mon,  9 Aug 2021 21:52:10 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id w14so831679pjh.5;
+        Mon, 09 Aug 2021 21:52:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=pKuRJwP8rC3OTYzaZnoKKKbjB+cT8U3TpcbMo6IGM1I=;
+        b=aXorc5K3tDb6Jt5D/oZMu0WbYdFZPh4REiQKk6h3P2YXpIybWdEYMisoSpl0bdplIZ
+         okK83LJk4+lct7x07AXjqH+ffKN+uMOITVo450HvZZZD/hw+0UQjeU+17xPGJ0HnyMmz
+         VWdaoH/+WUBmTwooB43ArAJW9W4k/7xjlnjV6nLKcFTat9DxnK8AhQrz9VNodoEFYf+B
+         oifvK6ScemIWSkwAghfdkP09Lqjp358QGfdj8HGdL+2zNGUv76o7cS1+RaPKsO+lRSow
+         pf014ftxGarZ+p/gNfqS2oi1rqyKvD1dpmEx0rirlmbDIKapSyQv6fRyUaWr/5kh+Nvr
+         VbHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=pKuRJwP8rC3OTYzaZnoKKKbjB+cT8U3TpcbMo6IGM1I=;
+        b=dO9YbWtP83mBq92wdzvuHbE6T8n+RJfz2TA5u2Y4TGhvfGaX3qzjInfmEWhU/IBnTB
+         6wp/b5FT816gf1Wv8iLkW0/4YKMRaMvo8yRySYIjzxMryx/+TLHhHEVi98DnreDzloE7
+         g4CiEYrKkwfL7KdLaZfyPGBx05Cj3eb/InbSsCKNCoQbfspcfWXee5ktn3QBN2hkfcag
+         gXMLX4nmmZwSYXAnL9HB6OIgQXiCT2rvSsN8iJMNulSxBj4RT5HkXts5Y0wtVF/Mu+iL
+         jPRmm8HMUk7eh0WG+84u7Htcr6JzuMOiw5ulodR5VEsuATio06ANcLTVtKIoJFOf3GcA
+         SiSQ==
+X-Gm-Message-State: AOAM530FLFu/ibrUcMI/zsIxeBCowCV0RmGASVJoYhFshz8g48NNMJJ9
+        5f0/J/JQ0HBUbh5wLERBnTM=
+X-Google-Smtp-Source: ABdhPJw74a13BU5xFHy0dXT/REE8/z+ytaw+hyIvfZ5GzBzrVewUfSW8vW9+3dEuXAK124HxHJcVWg==
+X-Received: by 2002:a17:902:cece:b029:12c:72bb:4d64 with SMTP id d14-20020a170902ceceb029012c72bb4d64mr4549396plg.56.1628571130044;
+        Mon, 09 Aug 2021 21:52:10 -0700 (PDT)
+Received: from [192.168.1.194] ([50.39.237.102])
+        by smtp.gmail.com with ESMTPSA id m1sm18576016pfk.84.2021.08.09.21.52.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Aug 2021 21:52:09 -0700 (PDT)
+Subject: Re: [PATCH 1/1] NAX LSM: Add initial support support
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        Igor Zhbanov <i.zhbanov@omp.ru>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+Cc:     Igor Zhbanov <izh1979@gmail.com>, Mimi Zohar <zohar@linux.ibm.com>
+References: <db1c1de0-3672-4bae-ef45-c554379f36f4@omp.ru>
+ <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <98408368-119a-b00c-97eb-8ea9fd1d5244@gmail.com>
+Date:   Mon, 9 Aug 2021 21:52:07 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210806150928.27857-1-a.fatoum@pengutronix.de>
+In-Reply-To: <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Ahmad,
 
-This generally looks okay, but I have some comments below.
+snip...
 
-On Fri, Aug 06, 2021 at 05:09:28PM +0200, Ahmad Fatoum wrote:
-> Kernel trusted keys don't require userspace knowledge of the raw key
-> material and instead export a sealed blob, which can be persisted to
-> unencrypted storage. Userspace can then load this blob into the kernel,
-> where it's unsealed and from there on usable for kernel crypto.
+>> +#define pr_fmt(fmt) "NAX: " fmt
+>> +
+>> +#include <linux/capability.h>
+>> +#include <linux/cred.h>
+>> +#include <linux/ctype.h>
+>> +#include <linux/lsm_hooks.h>
+>> +#include <linux/mman.h>
+>> +#include <linux/sched.h>
+>> +#include <linux/securebits.h>
+>> +#include <linux/security.h>
+>> +#include <linux/sysctl.h>
+>> +#include <linux/uidgid.h>
+>> +
+>> +#define NAX_MODE_PERMISSIVE 0 /* Log only             */
+>> +#define NAX_MODE_ENFORCING  1 /* Enforce and log      */
+>> +#define NAX_MODE_KILL       2 /* Kill process and log */
+>> +
+>> +static int mode   = CONFIG_SECURITY_NAX_MODE,
+>> +	   quiet  = IS_ENABLED(CONFIG_SECURITY_NAX_QUIET),
+>> +	   locked = IS_ENABLED(CONFIG_SECURITY_NAX_LOCKED);
+>> +
+>> +#define ALLOWED_CAPS_HEX_LEN (_KERNEL_CAPABILITY_U32S * 8)
+>> +
+>> +static char allowed_caps_hex[ALLOWED_CAPS_HEX_LEN + 1];
+>> +static kernel_cap_t allowed_caps = CAP_EMPTY_SET;
+>> +
+>> +static int
+>> +is_privileged_process(void)
+>> +{
+>> +	const struct cred *cred;
+>> +	kuid_t root_uid;
+>> +
+>> +	cred = current_cred();
+>> +	root_uid = make_kuid(cred->user_ns, 0);
+>> +	/* We count a process as privileged if it any of its IDs is zero
+>> +	 * or it has any unsafe capability (even in a user namespace) */
+>> +	if ((!issecure(SECURE_NOROOT) && (uid_eq(cred->uid,   root_uid) ||
+>> +					  uid_eq(cred->euid,  root_uid) ||
+>> +					  uid_eq(cred->suid,  root_uid) ||
+>> +					  uid_eq(cred->fsuid, root_uid))) ||
+>> +	    (!cap_issubset(cred->cap_effective, allowed_caps)) ||
+>> +	    (!cap_issubset(cred->cap_permitted, allowed_caps)))
+>> +		return 1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void
+>> +log_warn(const char *reason)
+>> +{
+>> +	if (quiet)
+>> +		return;
+>> +
+>> +	pr_warn_ratelimited("%s: pid=%d, uid=%u, comm=\"%s\"\n",
+>> +		            reason, current->pid,
+>> +		            from_kuid(&init_user_ns, current_cred()->uid),
+>> +	                              current->comm);
+> Have you considered writing to the audit log instead of the kernel messages directly?
+> (not saying that this is necessarily better, but is there a reasoning to prefer one or
+> the other here? Audit logs are often consumed by automated tools and it may be more pratical
+> for people to detect and treat violations if the messages were pushed to the audit log
+> - but conversely, that requires defining and maintaining a stable log format for consumers)
 
-Please be explicit about where and how the keys get generated in this case.
+It's a good idea to writing to the audit log, HOWEVER I'd want to know 
+what all the rest of the LSMs are doing in a case like this. If all of 
+them just write kernel messages, I'd want this module to also write just 
+kernel messages for consistency sake for use with say, log harvesters 
+for a SIEM/XDR system solution.
 
-> This is incompatible with fscrypt, where userspace is supposed to supply
-> the raw key material. For TPMs, a work around is to do key unsealing in
-> userspace, but this may not be feasible for other trusted key backends.
+Just in general I like the thought of this LSM.  I used to work for a 
+security company in which their cloud "watched" situations where 
+mmap()/mprotect() would use anonymous executable pages for possible 
+"dodgy" behavior.
 
-As far as I can see, "Key unsealing in userspace" actually is the preferred way
-to implement TPM-bound encryption.  So it doesn't seem fair to call it a "work
-around".
+Jay
 
-> +  Most users leave this 0 and specify the raw key directly.
-> +  "trusted" keys are useful to leverage kernel support for sealing
-> +  and unsealing key material. Sealed keys can be persisted to
-> +  unencrypted storage and later be used to decrypt the file system
-> +  without requiring userspace to have knowledge of the raw key
-> +  material.
-> +  "fscrypt-provisioning" key support is intended mainly to allow
-> +  re-adding keys after a filesystem is unmounted and re-mounted,
->    without having to store the raw keys in userspace memory.
->  
->  - ``raw`` is a variable-length field which must contain the actual
->    key, ``raw_size`` bytes long.  Alternatively, if ``key_id`` is
->    nonzero, then this field is unused.
->  
-> +.. note::
-> +
-> +   Users should take care not to reuse the fscrypt key material with
-> +   different ciphers or in multiple contexts as this may make it
-> +   easier to deduce the key.
-> +   This also applies when the key material is supplied indirectly
-> +   via a kernel trusted key. In this case, the trusted key should
-> +   perferably be used only in a single context.
-
-Again, please be explicit about key generation.  Note that key generation is
-already discussed in a different section, "Master Keys".  There should be a
-mention of trusted keys there.  The above note about not reusing keys probably
-belongs there too.  (The section you're editing here is
-"FS_IOC_ADD_ENCRYPTION_KEY", which is primarily intended to just document the
-ioctl, so it's not necessarily the best place for this type of information.)
-
-> @@ -577,28 +578,44 @@ static int get_keyring_key(u32 key_id, u32 type,
->  	key_ref_t ref;
->  	struct key *key;
->  	const struct fscrypt_provisioning_key_payload *payload;
-> -	int err;
-> +	int err = 0;
->  
->  	ref = lookup_user_key(key_id, 0, KEY_NEED_SEARCH);
->  	if (IS_ERR(ref))
->  		return PTR_ERR(ref);
->  	key = key_ref_to_ptr(ref);
->  
-> -	if (key->type != &key_type_fscrypt_provisioning)
-> -		goto bad_key;
-> -	payload = key->payload.data[0];
-> +	if (key->type == &key_type_fscrypt_provisioning) {
-
-This function is getting long; it probably should be broken this up into several
-functions.  E.g.:
-
-static int get_keyring_key(u32 key_id, u32 type,
-                           struct fscrypt_master_key_secret *secret)
-{
-        key_ref_t ref;
-        struct key *key;
-        int err;
-
-        ref = lookup_user_key(key_id, 0, KEY_NEED_SEARCH);
-        if (IS_ERR(ref))
-                return PTR_ERR(ref);
-        key = key_ref_to_ptr(ref);
-
-        if (key->type == &key_type_fscrypt_provisioning) {
-                err = fscrypt_get_provisioning_key(key, type, secret);
-        } else if (IS_REACHABLE(CONFIG_TRUSTED_KEYS) &&
-                   key->type == &key_type_trusted) {
-                err = fscrypt_get_trusted_key(key, secret);
-        } else {
-                err = -EKEYREJECTED;
-        }
-        key_ref_put(ref);
-        return err;
-}
-
-> +		/* Don't allow fscrypt v1 keys to be used as v2 keys and vice versa. */
-
-Please avoid overly-long lines.
-
-> +		tkp = key->payload.data[0];
-> +		if (!tkp || tkp->key_len < FSCRYPT_MIN_KEY_SIZE ||
-> +		    tkp->key_len > FSCRYPT_MAX_KEY_SIZE) {
-> +			up_read(&key->sem);
-> +			err = -EINVAL;
-> +			goto out_put;
-> +		}
-
-What does the !tkp case mean?  For "user" and "logon" keys it means "key
-revoked", but the "trusted" key type doesn't implement revoke.  Is this included
-just to be safe?  That might be reasonable, but perhaps the error code in that
-case (but not the invalid length cases) should be -EKEYREVOKED instead?
-
-- Eric
