@@ -2,110 +2,116 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FDCC43216
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Aug 2021 21:27:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 291ABC4320A
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 00:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16B5861077
-	for <linux-security-module@archiver.kernel.org>; Tue, 10 Aug 2021 21:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D0AE60FD9
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 00:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234564AbhHJV16 (ORCPT
+        id S235600AbhHKAED (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Aug 2021 17:27:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43948 "EHLO mail.kernel.org"
+        Tue, 10 Aug 2021 20:04:03 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:55162 "EHLO mail.hallyn.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233968AbhHJV1w (ORCPT
+        id S234289AbhHKAED (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Aug 2021 17:27:52 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A87D061019;
-        Tue, 10 Aug 2021 21:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628630846;
-        bh=mjloMTiIdTRuQibK5edGwphq2JrQh540Z20LUrsqdPo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VGuJpX+XfmOQoRt/Z+ROdsbw47SJelREzPoqRjL8ak10G0aAanUW0x4ixMkmgh3LF
-         REkjaE+noiZ2oAGLK3t1Dn/PvsrdIlylne3+omQVNFoexbRLXgs5r5EfpvY1efuUZp
-         swc91rXKmS1s+kOSeo0dB8YjlDd03c8KhP0YymmmjDlaGy6KBCpDal6CYQlUNaQ3gw
-         wRMlrxdaJmxvZi96/3b1sGfClbJbtKt62m3FpDFja7Gh8AqeS9MwvNHzJPHxgr7xqx
-         5zA+PAuRxtBj1ge3DqIM8sSfLiPHsr5VDwkfq/nkUm1qCmMyWQ5TMwUteiomQjr8Xg
-         cxU3UDalnpsJg==
-Date:   Tue, 10 Aug 2021 14:27:24 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Jarkko Sakkinen <jarkko@kernel.org>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, kernel@pengutronix.de,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fscrypt: support trusted keys
-Message-ID: <YRLvPJehAeMiYb2Z@gmail.com>
-References: <20210806150928.27857-1-a.fatoum@pengutronix.de>
- <20210809094408.4iqwsx77u64usfx6@kernel.org>
- <YRGVcaquAJiuc8bp@gmail.com>
- <20210810180636.vqwaeftv7alsodgn@kernel.org>
- <YRLJmaafp941uOdA@gmail.com>
- <20210810212140.sdq5dq2wy5uaj7h7@kernel.org>
+        Tue, 10 Aug 2021 20:04:03 -0400
+X-Greylist: delayed 300 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Aug 2021 20:04:02 EDT
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 92CAE472; Tue, 10 Aug 2021 18:58:38 -0500 (CDT)
+Date:   Tue, 10 Aug 2021 18:58:38 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Kir Kolyshkin <kolyshkin@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: Documenting the requirement of CAP_SETFCAP to map UID 0
+Message-ID: <20210810235838.GA4561@mail.hallyn.com>
+References: <14cbab6f-19f6-a28c-05d8-453ecca62180@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20210810212140.sdq5dq2wy5uaj7h7@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14cbab6f-19f6-a28c-05d8-453ecca62180@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 11, 2021 at 12:21:40AM +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 10, 2021 at 11:46:49AM -0700, Eric Biggers wrote:
-> > On Tue, Aug 10, 2021 at 09:06:36PM +0300, Jarkko Sakkinen wrote:
-> > > > > 
-> > > > > I don't think this is right, or at least it does not follow the pattern
-> > > > > in [*]. I.e. you should rather use trusted key to seal your fscrypt key.
-> > > > 
-> > > > What's the benefit of the extra layer of indirection over just using a "trusted"
-> > > > key directly?  The use case for "encrypted" keys is not at all clear to me.
-> > > 
-> > > Because it is more robust to be able to use small amount of trusted keys,
-> > > which are not entirely software based.
-> > > 
-> > > And since it's also a pattern on existing kernel features utilizing trusted
-> > > keys, the pressure here to explain why break the pattern, should be on the
-> > > side of the one who breaks it.
-> > 
-> > This is a new feature, so it's on the person proposing the feature to explain
-> > why it's useful.  The purpose of "encrypted" keys is not at all clear, and the
-> > documentation for them is heavily misleading.  E.g.:
-> > 
-> >     "user space sees, stores, and loads only encrypted blobs"
-> >     (Not necessarily true, as I've explained previously.)
-> > 
-> >     "Encrypted keys do not depend on a trust source" ...  "The main disadvantage
-> >     of encrypted keys is that if they are not rooted in a trusted key"
-> >     (Not necessarily true, and in fact it seems they're only useful when they
-> >     *do* depend on a trust source.  At least that's the use case that is being
-> >     proposed here, IIUC.)
-> > 
-> > I do see a possible use for the layer of indirection that "encrypted" keys are,
-> > which is that it would reduce the overhead of having lots of keys be directly
-> > encrypted by the TPM/TEE/CAAM.  Is this the use case?  If so, it needs to be
-> > explained.
+On Sun, Aug 08, 2021 at 11:09:30AM +0200, Michael Kerrisk (man-pages) wrote:
+> Hello Serge,
 > 
-> If trusted keys are used directly, it's an introduction of a bottleneck.
-> If they are used indirectly, you can still choose to have one trusted
-> key per fscrypt key.
+> Your commit:
 > 
-> Thus, it's obviously a bad idea to use them directly.
+> [[
+> commit db2e718a47984b9d71ed890eb2ea36ecf150de18
+> Author: Serge E. Hallyn <serge@hallyn.com>
+> Date:   Tue Apr 20 08:43:34 2021 -0500
 > 
+>     capabilities: require CAP_SETFCAP to map uid 0
+> ]]
+> 
+> added a new requirement when updating a UID map a user namespace
+> with a value of '0 0 *'.
+> 
+> Kir sent a patch to briefly document this change, but I think much more
+> should be written. I've attempted to do so. Could you tell me whether the
+> following text (to be added in user_namespaces(7)) is accurate please:
 
-So actually explain that in the documentation.  It's not obvious at all.  And
-does this imply that the support for trusted keys in dm-crypt is a mistake?
+Sorry for the delay - this did not go into my main mailbox.
 
-- Eric
+The text looks good.  Thanks!
+
+> [[
+>       In  order  for  a  process  to  write  to  the /proc/[pid]/uid_map
+>        (/proc/[pid]/gid_map) file, all of the following requirements must
+>        be met:
+> 
+>        [...]
+> 
+>        4. If  updating  /proc/[pid]/uid_map to create a mapping that maps
+>           UID 0 in the parent namespace, then one of the  following  must
+>           be true:
+> 
+>           *  if  writing process is in the parent user namespace, then it
+>              must have the CAP_SETFCAP capability in that user namespace;
+>              or
+> 
+>           *  if  the writing process is in the child user namespace, then
+>              the process that created the user namespace  must  have  had
+>              the CAP_SETFCAP capability when the namespace was created.
+> 
+>           This rule has been in place since Linux 5.12.  It eliminates an
+>           earlier security bug whereby a UID 0  process  that  lacks  the
+>           CAP_SETFCAP capability, which is needed to create a binary with
+>           namespaced file capabilities (as described in capabilities(7)),
+>           could  nevertheless  create  such  a  binary,  by the following
+>           steps:
+> 
+>           *  Create a new user namespace with the identity mapping (i.e.,
+>              UID  0 in the new user namespace maps to UID 0 in the parent
+>              namespace), so that UID 0 in both namespaces  is  equivalent
+>              to the same root user ID.
+> 
+>           *  Since  the  child process has the CAP_SETFCAP capability, it
+>              could create a binary with namespaced file capabilities that
+>              would  then  be  effective in the parent user namespace (be‐
+>              cause the root user IDs are the same in the two namespaces).
+> 
+>        [...]
+> ]]
+> 
+> Thanks,
+> 
+> Michael
+> 
+> -- 
+> Michael Kerrisk
+> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+> Linux/UNIX System Programming Training: http://man7.org/training/
