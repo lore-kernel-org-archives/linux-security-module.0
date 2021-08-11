@@ -2,163 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD06C4320E
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 11:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE44C4320A
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 12:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E352A6056C
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 11:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52C0960FA0
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 12:15:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237371AbhHKLfL (ORCPT
+        id S237561AbhHKMQU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Aug 2021 07:35:11 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8898 "EHLO
+        Wed, 11 Aug 2021 08:16:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:62124 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237323AbhHKLfK (ORCPT
+        by vger.kernel.org with ESMTP id S237552AbhHKMPo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Aug 2021 07:35:10 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17BBWsh8128241;
-        Wed, 11 Aug 2021 07:34:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=WKV0mifP9mdv8ecyMfTa0U/d4OeeOKmNT+j0H4eQvJk=;
- b=hH9bPsD7c2pVAMfOhj4RRDHnxRRv2Bzx7DYgxiHRupsbbeBh6W+vBmIYsXxk1TG7Bhid
- 8rKKHR+Y3VJgFF8pCXs0D9awrfRW5aNEnOyWZkZ8UJBOmkeeO1Yc8cQB0kb8YeVe2TcN
- /FQVZtjPg+pAZleKOsrmjttH4PpR5qfi0LGJZ6eYAGJFgkhSJAcml1QQVcwvQfnEM+wQ
- InpRu/GmkR/GPCSqGcxORgZ84oGIAeys2hvhsZKAEr+H8tOGJuWrg+DAaz5P8Rj0PdzY
- AN5c28/RHpjrmcH1h7E0ys0KBnfFQ1p0G5M/PD+fcb6yMfjPKYZhLZLJEbbJbk23AYrv wg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3acbt3jyg6-1
+        Wed, 11 Aug 2021 08:15:44 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17BC43xD171699;
+        Wed, 11 Aug 2021 08:15:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=vz/JF6D9et2ylMltouH3zrYLZOET3avHkTYyvpC8n10=;
+ b=OyhfMP9AB6greSlwzUK/SjRTLCoo/7cXGUMiJgFkF+4Bg23+F1aR4i/7xKbuLqKYb3J8
+ +gIrcHKrgbOKnUvB517PMfwwx85mMpO6A6uTiIgEjFTiBwHGK86Xem4pNOwOxLTUxT/G
+ cs5C1J34mYaUV6uUb8rVbRlt4b4fjR/hA1bf7Nzjqn31RBaNb/sJSl7knm+9e9MPNF4A
+ 3RuPcVbhODJCByXMO2HkCcIuHCgGwFg2a5a6EhvQ/Jj224SWM+Lz6orXM2jPOeO8HUsr
+ lNM81WvF2KTa0IU5RtGvPXAM3jGnEXClYLkDxu8kRDa0nv4nVNQsyNypzsqqDDc/T/NJ Ng== 
+Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3accthaeae-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Aug 2021 07:34:28 -0400
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17BBYR1v138486;
-        Wed, 11 Aug 2021 07:34:28 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3acbt3jyeq-1
+        Wed, 11 Aug 2021 08:15:17 -0400
+Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
+        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17BCCoTJ011035;
+        Wed, 11 Aug 2021 12:15:16 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma03dal.us.ibm.com with ESMTP id 3a9hte6tse-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Aug 2021 07:34:27 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17BBXGG5011004;
-        Wed, 11 Aug 2021 11:34:25 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3a9ht8yxs0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 11 Aug 2021 11:34:24 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17BBYMo128377392
+        Wed, 11 Aug 2021 12:15:16 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17BCFE0H38011302
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Aug 2021 11:34:22 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73D28A4059;
-        Wed, 11 Aug 2021 11:34:22 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39878A404D;
-        Wed, 11 Aug 2021 11:34:19 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.27.84])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Aug 2021 11:34:19 +0000 (GMT)
-Message-ID: <d4f5c2593380c82ceebae2c8782a1c440b35f165.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] fscrypt: support trusted keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, kernel@pengutronix.de,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Wed, 11 Aug 2021 12:15:14 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3FE1112061;
+        Wed, 11 Aug 2021 12:15:14 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83C88112062;
+        Wed, 11 Aug 2021 12:15:14 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Aug 2021 12:15:14 +0000 (GMT)
+Subject: Re: [PATCH v4 2/2] tpm: ibmvtpm: Rename tpm_process_cmd to tpm_status
+ and define flag
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>, nasastry@in.ibm.com,
         linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 11 Aug 2021 07:34:18 -0400
-In-Reply-To: <20210811001743.ofzkwdwa6rcjsf4d@kernel.org>
-References: <20210806150928.27857-1-a.fatoum@pengutronix.de>
-         <20210809094408.4iqwsx77u64usfx6@kernel.org> <YRGVcaquAJiuc8bp@gmail.com>
-         <20210810180636.vqwaeftv7alsodgn@kernel.org> <YRLJmaafp941uOdA@gmail.com>
-         <20210810212140.sdq5dq2wy5uaj7h7@kernel.org> <YRLvPJehAeMiYb2Z@gmail.com>
-         <20210811001743.ofzkwdwa6rcjsf4d@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>
+References: <20210809192159.2176580-1-stefanb@linux.vnet.ibm.com>
+ <20210809192159.2176580-3-stefanb@linux.vnet.ibm.com>
+ <20210810175855.fixtw5jks4gbmkua@kernel.org>
+ <86f6a6c8-87cc-a397-35b3-a30220f12aed@linux.ibm.com>
+ <20210811021030.5meaty2zxf253nfl@kernel.org>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Message-ID: <4eff0296-78da-52b6-322d-56e0f9d78dc2@linux.ibm.com>
+Date:   Wed, 11 Aug 2021 08:15:14 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
+MIME-Version: 1.0
+In-Reply-To: <20210811021030.5meaty2zxf253nfl@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: r6-4IUomzcvJFMnp_seKefxgZMrV5TsK
-X-Proofpoint-ORIG-GUID: 9YaVVr2iQJOX9DHzgWTnnrzbsVhn8PWv
+X-Proofpoint-GUID: XxohQtRH4nD48N9kbmsjsJOLPSV0YN2o
+X-Proofpoint-ORIG-GUID: XxohQtRH4nD48N9kbmsjsJOLPSV0YN2o
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
  definitions=2021-08-11_04:2021-08-11,2021-08-11 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- mlxlogscore=751 adultscore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 mlxscore=0 clxscore=1011
- phishscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2107140000 definitions=main-2108110073
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ spamscore=0 priorityscore=1501 bulkscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 phishscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108110080
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, 2021-08-11 at 03:17 +0300, Jarkko Sakkinen wrote:
-> On Tue, Aug 10, 2021 at 02:27:24PM -0700, Eric Biggers wrote:
-> > On Wed, Aug 11, 2021 at 12:21:40AM +0300, Jarkko Sakkinen wrote:
-> > > On Tue, Aug 10, 2021 at 11:46:49AM -0700, Eric Biggers wrote:
-> > > > On Tue, Aug 10, 2021 at 09:06:36PM +0300, Jarkko Sakkinen wrote:
-> > > > > > > 
-> > > > > > > I don't think this is right, or at least it does not follow the pattern
-> > > > > > > in [*]. I.e. you should rather use trusted key to seal your fscrypt key.
-> > > > > > 
-> > > > > > What's the benefit of the extra layer of indirection over just using a "trusted"
-> > > > > > key directly?  The use case for "encrypted" keys is not at all clear to me.
-> > > > > 
-> > > > > Because it is more robust to be able to use small amount of trusted keys,
-> > > > > which are not entirely software based.
-> > > > > 
-> > > > > And since it's also a pattern on existing kernel features utilizing trusted
-> > > > > keys, the pressure here to explain why break the pattern, should be on the
-> > > > > side of the one who breaks it.
-> > > > 
-> > > > This is a new feature, so it's on the person proposing the feature to explain
-> > > > why it's useful.  The purpose of "encrypted" keys is not at all clear, and the
-> > > > documentation for them is heavily misleading.  E.g.:
-> > > > 
-> > > >     "user space sees, stores, and loads only encrypted blobs"
-> > > >     (Not necessarily true, as I've explained previously.)
-> > > > 
-> > > >     "Encrypted keys do not depend on a trust source" ...  "The main disadvantage
-> > > >     of encrypted keys is that if they are not rooted in a trusted key"
-> > > >     (Not necessarily true, and in fact it seems they're only useful when they
-> > > >     *do* depend on a trust source.  At least that's the use case that is being
-> > > >     proposed here, IIUC.)
-> > > > 
-> > > > I do see a possible use for the layer of indirection that "encrypted" keys are,
-> > > > which is that it would reduce the overhead of having lots of keys be directly
-> > > > encrypted by the TPM/TEE/CAAM.  Is this the use case?  If so, it needs to be
-> > > > explained.
-> > > 
-> > > If trusted keys are used directly, it's an introduction of a bottleneck.
-> > > If they are used indirectly, you can still choose to have one trusted
-> > > key per fscrypt key.
-> > > 
-> > > Thus, it's obviously a bad idea to use them directly.
-> > 
-> > So actually explain that in the documentation.  It's not obvious at all.  And
-> > does this imply that the support for trusted keys in dm-crypt is a mistake?
-> 
-> Looking at dm-crypt implementation, you can choose to use 'encrypted' key
-> type, which you can seal with a trusted key.
-> 
-> Note: I have not been involved when the feature was added to dm-crypt.
 
-At least for TPM 1.2,  "trusted" keys may be sealed to a PCR and then
-extended to prevent subsequent usage.  For example, in the initramfs
-all of the "encrypted" keys could be decrypted by a single "trusted"
-key, before extending the PCR.
+On 8/10/21 10:10 PM, Jarkko Sakkinen wrote:
+> On Tue, Aug 10, 2021 at 09:50:55PM -0400, Stefan Berger wrote:
+>> On 8/10/21 1:58 PM, Jarkko Sakkinen wrote:
+>>> On Mon, Aug 09, 2021 at 03:21:59PM -0400, Stefan Berger wrote:
+>>>> From: Stefan Berger <stefanb@linux.ibm.com>
+>>>>
+>>>> Rename the field tpm_processing_cmd to tpm_status in ibmvtpm_dev and set
+>>>> the TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
+>>>>
+>>>>
+>>>>    		default:
+>>>> diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
+>>>> index 51198b137461..252f1cccdfc5 100644
+>>>> --- a/drivers/char/tpm/tpm_ibmvtpm.h
+>>>> +++ b/drivers/char/tpm/tpm_ibmvtpm.h
+>>>> @@ -41,7 +41,8 @@ struct ibmvtpm_dev {
+>>>>    	wait_queue_head_t wq;
+>>>>    	u16 res_len;
+>>>>    	u32 vtpm_version;
+>>>> -	u8 tpm_processing_cmd;
+>>>> +	u8 tpm_status;
+>>>> +#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
+>>> Declare this already in the fix, and just leave the rename here.
+>> You mean the fix patch does not use 'true' anymore but uses the
+>> TPM_STATUS_BUSY flag already but the name is still tpm_processing_cmd? And
+>> literally only the renaming of this field is done in the 2nd patch?
+> I can fixup these patches, and use '1', instead of true. No need to send
+> new ones.
+>
+> Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-Mimi
+THANKS!
 
+   Stefan
+
+>
+> /Jarkko
