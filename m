@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1CFC43216
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D75EC4320E
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95E386105A
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4811B6104F
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:48:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231956AbhHKUtK (ORCPT
+        id S232058AbhHKUtM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Aug 2021 16:49:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33662 "EHLO
+        Wed, 11 Aug 2021 16:49:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231991AbhHKUtH (ORCPT
+        with ESMTP id S232066AbhHKUtH (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
         Wed, 11 Aug 2021 16:49:07 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BEB2C0617A1
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:32 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id 14so3941051qkc.4
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:32 -0700 (PDT)
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06DC1C0617B1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:39 -0700 (PDT)
+Received: by mail-qt1-x82c.google.com with SMTP id z24so3207652qtn.8
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=subject:from:to:date:message-id:in-reply-to:references:user-agent
          :mime-version:content-transfer-encoding;
-        bh=oJfOMvx0uEFscU0brP+7VtymqCG/HAA8OTlifE5lNnk=;
-        b=PrBT2AwIUDaPO6CxI814Rh7g6Nu8bCNW1gJiXz17DTvp38dIPF+L2ocO/ntU+pXtsq
-         42vzpkTXpkmMmVlq4BS0eU5uZLI7AsMRIZCTy/kG6GHs8OvkB+GU4u1e/AThB8+QW/x0
-         D8bXj8m53tV4KxbZBirJyuSv3J+9JxUC+D2TzaW7f/uWdh7yevZTHMO0Hns59fTIRiDA
-         vUzpJaqN40NnA8/2PY7pbMwz9m8BkOD67EX5cuelUGoAyJOof9Gx1AJV4opAvNfKk/N5
-         OVAKdJNLUD2jiWVZGgjM6FliZGX1MZk1bt89ooI/GSB4Z+/O4yj5SppHutBe8lin9UrA
-         S/vg==
+        bh=DtMiabXVe2t/Zp2eRgjYPiHEYc/TygDlwFzgOsvocec=;
+        b=mHB4Mq/ymO89PaC6GERZsJRMU2RZQzRN80hB6TZ4vTuahsZHQBmqn99UHdEP8pe9Mb
+         BEZOhSaBAYBD/YTghe3J21RBSIFnv/UHY56gNQdXnHWdjFzn+nVc+Vdsek/3vrfYiP4m
+         qLbTIW0s9LGcjoh8mQkcxOwAAL6Q6PPILx4+2upDSOkZT/YK7EXSkr6D4yTj2F/hB4Ka
+         uxj9NzFE8kCOoRzub52RHK9IXRP31WUd1jCjBnQ+vbLVsUNVb09tSfXx7+j1BSF8WxZ3
+         u7oaIXD+3H7FbCM75ydcFU/gqtH5rc2Zjfhv1pAAogL6tUDNo5KWrCvWczVap90qCrbQ
+         A4xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=oJfOMvx0uEFscU0brP+7VtymqCG/HAA8OTlifE5lNnk=;
-        b=nYNSzA8LnHrO6HrFdvdpA6UQvYQKKTosXldhciY/MTx60ufrDuSqJFriX1DsBVM6LO
-         ti7H78vqjhcqDXr8LW/lk9g9FgZY9+FakdMS8QXWpaexNEFRiyYucbPR1yjy8FvR/+1F
-         O/XydHnQYVtoolYpDDAmO/YBHys9dln8IFaXzTMaQtktVZ6IIvK5lXdT8nhOLCcn9CM+
-         aJMuOx9CRJRxrCbkyE+HKt8HdoRhY6YVUu+eqUBnnhlILx2fR4oZjPfbw56xuq2eq8nv
-         s7+LLNZM53MkTUbXwDCFCooh4VYMY+IGSX3qI6Rvopoz/A/HF5P0308UxlKHYGwZhIfa
-         CgpQ==
-X-Gm-Message-State: AOAM532WzGO85blQrDO023fXlzrLh4THQTTGdwWyFKMJ0OgQbuSXgTfT
-        GiKFyujuE6C+FnTBj7hiExyaZ5s+4Fk+7nw=
-X-Google-Smtp-Source: ABdhPJzzhfs/yUlyri5MFzz7505Xzt/eUwGcehJ2Tq55xKSsoEBrv6Y2qpnl2GQj3kxSgYUK1Ypn1w==
-X-Received: by 2002:a05:620a:21cc:: with SMTP id h12mr978924qka.370.1628714911280;
-        Wed, 11 Aug 2021 13:48:31 -0700 (PDT)
+        bh=DtMiabXVe2t/Zp2eRgjYPiHEYc/TygDlwFzgOsvocec=;
+        b=tT/VpwKmblSGC4KesZI62dlsZea9I1rE+4HhPQh+04bFuk2xqNmFj2Gng/gCJdo7sb
+         8DShNVsrKWKjaaOfQ1GeDcdbmYpemA+x7hJSZGjR0rrDeHAh0PTjlobkREOKDb8O6Pqu
+         1q/gH+FMlSX3xzmqu1udVTh5428ZA0RB2Tz+gvHuU4fHmm9ZVF71pZyxv7jhvIp9siWz
+         ZHzoTEHjv/YMJaDbCCh9jLLWru+ORzlggC9dUuJ7KDqpn9Lk1sBqEAcKgj3W6ss4GQ3p
+         SQrlr15G5b1XbUNikDTb1RctkuT+RYoYsb/hBa/Y4deDPLgVgUIVP6A8FCPTavvMe8xi
+         VOCg==
+X-Gm-Message-State: AOAM533FSboVkHQBgnK0K7jz5wANwWZqvy+MGwTAaVWllv2uglq/mFUu
+        UlafDB41+aKbX10Ghu0YKZjBT7Cnb82D8oQ=
+X-Google-Smtp-Source: ABdhPJy9Mr3jPE5RRqWi1zMGvFe0GdY1f67fZWlXvlp2FSzHM5K2j8qGh27zkuz0EAvq3NKzCfyEOA==
+X-Received: by 2002:ac8:b82:: with SMTP id h2mr608579qti.214.1628714917719;
+        Wed, 11 Aug 2021 13:48:37 -0700 (PDT)
 Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id d6sm183892qtn.30.2021.08.11.13.48.30
+        by smtp.gmail.com with ESMTPSA id 12sm164548qkk.67.2021.08.11.13.48.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 13:48:30 -0700 (PDT)
-Subject: [RFC PATCH v2 3/9] audit: dev/test patch to force io_uring auditing
+        Wed, 11 Aug 2021 13:48:37 -0700 (PDT)
+Subject: [RFC PATCH v2 4/9] audit: add filtering for io_uring records
 From:   Paul Moore <paul@paul-moore.com>
 To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         linux-audit@redhat.com, io-uring@vger.kernel.org,
@@ -65,8 +65,8 @@ To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
         Kumar Kartikeya Dwivedi <memxor@gmail.com>,
         Jens Axboe <axboe@kernel.dk>,
         Pavel Begunkov <asml.silence@gmail.com>
-Date:   Wed, 11 Aug 2021 16:48:30 -0400
-Message-ID: <162871491017.63873.478910064364009157.stgit@olly>
+Date:   Wed, 11 Aug 2021 16:48:36 -0400
+Message-ID: <162871491639.63873.699905170296128086.stgit@olly>
 In-Reply-To: <162871480969.63873.9434591871437326374.stgit@olly>
 References: <162871480969.63873.9434591871437326374.stgit@olly>
 User-Agent: StGit/1.1
@@ -76,33 +76,258 @@ Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-WARNING - This patch is intended only to aid in the initial dev/test
-of the audit/io_uring support, it is not intended to be merged.
+WARNING - This is a work in progress and should not be merged
+anywhere important.  It is almost surely not complete, and while it
+probably compiles it likely hasn't been booted and will do terrible
+things.  You have been warned.
 
-With this patch, you can emit io_uring operation audit records with
-the following commands (the first clears any blocking rules):
+This patch adds basic audit io_uring filtering, using as much of the
+existing audit filtering infrastructure as possible.  In order to do
+this we reuse the audit filter rule's syscall mask for the io_uring
+operation and we create a new filter for io_uring operations as
+AUDIT_FILTER_URING_EXIT/audit_filter_list[7].
 
-  % auditctl -D
-  % auditctl -a exit,always -S io_uring_enter
+<TODO - provide some additional guidance for the userspace tools>
 
-Signed-off-by: DO NOT COMMIT
+Thanks to Richard Guy Briggs for his review and feedback.
+
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+
 ---
- kernel/auditsc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+v2:
+- incorporate feedback from Richard
+v1:
+- initial draft
+---
+ include/uapi/linux/audit.h |    3 +-
+ kernel/audit_tree.c        |    3 +-
+ kernel/audit_watch.c       |    3 +-
+ kernel/auditfilter.c       |   15 ++++++++--
+ kernel/auditsc.c           |   65 ++++++++++++++++++++++++++++++++++----------
+ 5 files changed, 68 insertions(+), 21 deletions(-)
 
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index a1997697c8b1..ecf1edd2affa 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -167,8 +167,9 @@
+ #define AUDIT_FILTER_EXCLUDE	0x05	/* Apply rule before record creation */
+ #define AUDIT_FILTER_TYPE	AUDIT_FILTER_EXCLUDE /* obsolete misleading naming */
+ #define AUDIT_FILTER_FS		0x06	/* Apply rule at __audit_inode_child */
++#define AUDIT_FILTER_URING_EXIT	0x07	/* Apply rule at io_uring op exit */
+ 
+-#define AUDIT_NR_FILTERS	7
++#define AUDIT_NR_FILTERS	8
+ 
+ #define AUDIT_FILTER_PREPEND	0x10	/* Prepend to front of list */
+ 
+diff --git a/kernel/audit_tree.c b/kernel/audit_tree.c
+index b2be4e978ba3..31bf34844546 100644
+--- a/kernel/audit_tree.c
++++ b/kernel/audit_tree.c
+@@ -726,7 +726,8 @@ int audit_make_tree(struct audit_krule *rule, char *pathname, u32 op)
+ {
+ 
+ 	if (pathname[0] != '/' ||
+-	    rule->listnr != AUDIT_FILTER_EXIT ||
++	    (rule->listnr != AUDIT_FILTER_EXIT &&
++	     rule->listnr != AUDIT_FILTER_URING_EXIT) ||
+ 	    op != Audit_equal ||
+ 	    rule->inode_f || rule->watch || rule->tree)
+ 		return -EINVAL;
+diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+index 2acf7ca49154..698b62b4a2ec 100644
+--- a/kernel/audit_watch.c
++++ b/kernel/audit_watch.c
+@@ -183,7 +183,8 @@ int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op)
+ 		return -EOPNOTSUPP;
+ 
+ 	if (path[0] != '/' || path[len-1] == '/' ||
+-	    krule->listnr != AUDIT_FILTER_EXIT ||
++	    (krule->listnr != AUDIT_FILTER_EXIT &&
++	     krule->listnr != AUDIT_FILTER_URING_EXIT) ||
+ 	    op != Audit_equal ||
+ 	    krule->inode_f || krule->watch || krule->tree)
+ 		return -EINVAL;
+diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+index db2c6b59dfc3..d75acb014ccd 100644
+--- a/kernel/auditfilter.c
++++ b/kernel/auditfilter.c
+@@ -44,7 +44,8 @@ struct list_head audit_filter_list[AUDIT_NR_FILTERS] = {
+ 	LIST_HEAD_INIT(audit_filter_list[4]),
+ 	LIST_HEAD_INIT(audit_filter_list[5]),
+ 	LIST_HEAD_INIT(audit_filter_list[6]),
+-#if AUDIT_NR_FILTERS != 7
++	LIST_HEAD_INIT(audit_filter_list[7]),
++#if AUDIT_NR_FILTERS != 8
+ #error Fix audit_filter_list initialiser
+ #endif
+ };
+@@ -56,6 +57,7 @@ static struct list_head audit_rules_list[AUDIT_NR_FILTERS] = {
+ 	LIST_HEAD_INIT(audit_rules_list[4]),
+ 	LIST_HEAD_INIT(audit_rules_list[5]),
+ 	LIST_HEAD_INIT(audit_rules_list[6]),
++	LIST_HEAD_INIT(audit_rules_list[7]),
+ };
+ 
+ DEFINE_MUTEX(audit_filter_mutex);
+@@ -151,7 +153,8 @@ char *audit_unpack_string(void **bufp, size_t *remain, size_t len)
+ static inline int audit_to_inode(struct audit_krule *krule,
+ 				 struct audit_field *f)
+ {
+-	if (krule->listnr != AUDIT_FILTER_EXIT ||
++	if ((krule->listnr != AUDIT_FILTER_EXIT &&
++	     krule->listnr != AUDIT_FILTER_URING_EXIT) ||
+ 	    krule->inode_f || krule->watch || krule->tree ||
+ 	    (f->op != Audit_equal && f->op != Audit_not_equal))
+ 		return -EINVAL;
+@@ -248,6 +251,7 @@ static inline struct audit_entry *audit_to_entry_common(struct audit_rule_data *
+ 		pr_err("AUDIT_FILTER_ENTRY is deprecated\n");
+ 		goto exit_err;
+ 	case AUDIT_FILTER_EXIT:
++	case AUDIT_FILTER_URING_EXIT:
+ 	case AUDIT_FILTER_TASK:
+ #endif
+ 	case AUDIT_FILTER_USER:
+@@ -332,6 +336,10 @@ static int audit_field_valid(struct audit_entry *entry, struct audit_field *f)
+ 		if (entry->rule.listnr != AUDIT_FILTER_FS)
+ 			return -EINVAL;
+ 		break;
++	case AUDIT_PERM:
++		if (entry->rule.listnr == AUDIT_FILTER_URING_EXIT)
++			return -EINVAL;
++		break;
+ 	}
+ 
+ 	switch (entry->rule.listnr) {
+@@ -980,7 +988,8 @@ static inline int audit_add_rule(struct audit_entry *entry)
+ 	}
+ 
+ 	entry->rule.prio = ~0ULL;
+-	if (entry->rule.listnr == AUDIT_FILTER_EXIT) {
++	if (entry->rule.listnr == AUDIT_FILTER_EXIT ||
++	    entry->rule.listnr == AUDIT_FILTER_URING_EXIT) {
+ 		if (entry->rule.flags & AUDIT_FILTER_PREPEND)
+ 			entry->rule.prio = ++prio_high;
+ 		else
 diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 62fb502da3fc..928f1dd12460 100644
+index 928f1dd12460..f4a2ca496cac 100644
 --- a/kernel/auditsc.c
 +++ b/kernel/auditsc.c
-@@ -1910,6 +1910,10 @@ void __audit_uring_exit(int success, long code)
- 		audit_log_uring(ctx);
+@@ -805,6 +805,35 @@ static int audit_in_mask(const struct audit_krule *rule, unsigned long val)
+ 	return rule->mask[word] & bit;
+ }
+ 
++/**
++ * audit_filter_uring - apply filters to an io_uring operation
++ * @tsk: associated task
++ * @ctx: audit context
++ */
++static void audit_filter_uring(struct task_struct *tsk,
++			       struct audit_context *ctx)
++{
++	struct audit_entry *e;
++	enum audit_state state;
++
++	if (auditd_test_task(tsk))
++		return;
++
++	rcu_read_lock();
++	list_for_each_entry_rcu(e, &audit_filter_list[AUDIT_FILTER_URING_EXIT],
++				list) {
++		if (audit_in_mask(&e->rule, ctx->uring_op) &&
++		    audit_filter_rules(tsk, &e->rule, ctx, NULL, &state,
++				       false)) {
++			rcu_read_unlock();
++			ctx->current_state = state;
++			return;
++		}
++	}
++	rcu_read_unlock();
++	return;
++}
++
+ /* At syscall exit time, this filter is called if the audit_state is
+  * not low enough that auditing cannot take place, but is also not
+  * high enough that we already know we have to write an audit record
+@@ -1765,7 +1794,7 @@ static void audit_log_exit(void)
+  * __audit_free - free a per-task audit context
+  * @tsk: task whose audit context block to free
+  *
+- * Called from copy_process and do_exit
++ * Called from copy_process, do_exit, and the io_uring code
+  */
+ void __audit_free(struct task_struct *tsk)
+ {
+@@ -1783,15 +1812,21 @@ void __audit_free(struct task_struct *tsk)
+ 	 * random task_struct that doesn't doesn't have any meaningful data we
+ 	 * need to log via audit_log_exit().
+ 	 */
+-	if (tsk == current && !context->dummy &&
+-	    context->context == AUDIT_CTX_SYSCALL) {
++	if (tsk == current && !context->dummy) {
+ 		context->return_valid = AUDITSC_INVALID;
+ 		context->return_code = 0;
+-
+-		audit_filter_syscall(tsk, context);
+-		audit_filter_inodes(tsk, context);
+-		if (context->current_state == AUDIT_STATE_RECORD)
+-			audit_log_exit();
++		if (context->context == AUDIT_CTX_SYSCALL) {
++			audit_filter_syscall(tsk, context);
++			audit_filter_inodes(tsk, context);
++			if (context->current_state == AUDIT_STATE_RECORD)
++				audit_log_exit();
++		} else if (context->context == AUDIT_CTX_URING) {
++			/* TODO: verify this case is real and valid */
++			audit_filter_uring(tsk, context);
++			audit_filter_inodes(tsk, context);
++			if (context->current_state == AUDIT_STATE_RECORD)
++				audit_log_uring(context);
++		}
+ 	}
+ 
+ 	audit_set_context(tsk, NULL);
+@@ -1875,12 +1910,6 @@ void __audit_uring_exit(int success, long code)
+ {
+ 	struct audit_context *ctx = audit_context();
+ 
+-	/*
+-	 * TODO: At some point we will likely want to filter on io_uring ops
+-	 *       and other things similar to what we do for syscalls, but that
+-	 *       is something for another day; just record what we can here.
+-	 */
+-
+ 	if (ctx->context == AUDIT_CTX_SYSCALL) {
+ 		/*
+ 		 * NOTE: See the note in __audit_uring_entry() about the case
+@@ -1903,6 +1932,8 @@ void __audit_uring_exit(int success, long code)
+ 		 * the behavior here.
+ 		 */
+ 		audit_filter_syscall(current, ctx);
++		if (ctx->current_state != AUDIT_STATE_RECORD)
++			audit_filter_uring(current, ctx);
+ 		audit_filter_inodes(current, ctx);
+ 		if (ctx->current_state != AUDIT_STATE_RECORD)
+ 			return;
+@@ -1911,7 +1942,9 @@ void __audit_uring_exit(int success, long code)
  		return;
  	}
-+#if 1
-+	/* XXX - temporary hack to force record generation */
-+	ctx->current_state = AUDIT_STATE_RECORD;
-+#endif
+ #if 1
+-	/* XXX - temporary hack to force record generation */
++	/* XXX - temporary hack to force record generation, we are leaving this
++	 *       enabled, but if you want to actually test the filtering you
++	 *       need to disable this #if/#endif block */
+ 	ctx->current_state = AUDIT_STATE_RECORD;
+ #endif
  
- 	/* this may generate CONFIG_CHANGE records */
+@@ -1919,6 +1952,8 @@ void __audit_uring_exit(int success, long code)
  	if (!list_empty(&ctx->killed_trees))
+ 		audit_kill_trees(ctx);
+ 
++	/* run through both filters to ensure we set the filterkey properly */
++	audit_filter_uring(current, ctx);
+ 	audit_filter_inodes(current, ctx);
+ 	if (ctx->current_state != AUDIT_STATE_RECORD)
+ 		goto out;
 
