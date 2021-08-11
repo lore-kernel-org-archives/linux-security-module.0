@@ -2,90 +2,172 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47751C432BE
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 02:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F0C4338F
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 10:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C0C860184
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 02:10:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7690460D07
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 10:10:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231594AbhHKCK4 (ORCPT
+        id S236976AbhHKKK5 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 10 Aug 2021 22:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231573AbhHKCK4 (ORCPT
+        Wed, 11 Aug 2021 06:10:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236929AbhHKKKx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 10 Aug 2021 22:10:56 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id D970160184;
-        Wed, 11 Aug 2021 02:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628647833;
-        bh=JT0tTCfJOs74pR9exNXGPYUSruB1gH5M38fKvDWrIzs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PK0E6SKAkaAzTR0AnZbVqHMiJFw0yvy7tMZ36JSMA0Jy2DUbdGB14FFAjC5AiwtmM
-         jl54XUhKn8txBpcPegDgFFfyVM9gkEpGzy8gZfpgQxlwWf5NjUbR3x9Nb4DhiCP8Ed
-         17fcKUedfD8HS76O2SZNR6vXszubIx6bbF3LnLlRz9ExW61Dndiwb2VN8YJwdFHvmD
-         citlmZHRZaIhj8odQEsO4TMaqN4sNJ9E/JSDxajvAcFBV22DsLNDrQAiKKmJOp1K/a
-         hvWjACWQ8VYHyM4D2GtMWY9FRx/LfWpKbc2OcKG5HKFiR0BjbugftMBOsR/AeAxfT5
-         8WFYPTXnDbqoQ==
-Date:   Wed, 11 Aug 2021 05:10:30 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     Stefan Berger <stefanb@linux.vnet.ibm.com>, nasastry@in.ibm.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>
-Subject: Re: [PATCH v4 2/2] tpm: ibmvtpm: Rename tpm_process_cmd to
- tpm_status and define flag
-Message-ID: <20210811021030.5meaty2zxf253nfl@kernel.org>
-References: <20210809192159.2176580-1-stefanb@linux.vnet.ibm.com>
- <20210809192159.2176580-3-stefanb@linux.vnet.ibm.com>
- <20210810175855.fixtw5jks4gbmkua@kernel.org>
- <86f6a6c8-87cc-a397-35b3-a30220f12aed@linux.ibm.com>
+        Wed, 11 Aug 2021 06:10:53 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0657C0613D5;
+        Wed, 11 Aug 2021 03:10:29 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id lw7-20020a17090b1807b029017881cc80b7so8751961pjb.3;
+        Wed, 11 Aug 2021 03:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=cc:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NMk4UsFt8BqkCANJdmDLYqpG8iW/sccOsuB7Ch5oLT0=;
+        b=LBUL67G89m36GRNm6NjUGnJ+ppLvHWhk5RB0XPG4MJRdzBkUAgyYgX1xQTRaXDU7Cd
+         fD4tLvulbyuzYBthoyZU+bG0OoVdlq7x+UGvmAPorimtL5gRqzq0w7Ov7a4AjZmV4ree
+         fyvMLQLlZQKvZZJPgICsgfx5AKNzCa5XR0zeMRnxu0kCzSYUi4rP/1H1rox59sto/bk3
+         4BFM5W6XQmGdd7wFwGgKolsytVWMJQCTFwF7zTJQ0LDH5CegAAf9xwx/IHjm21EDYRH1
+         9IZmhR9M7zN3xinGmm/TPd+YgAqHwshDfqr5XvGBU/dtcqHc8sW2cAjsOyVxtYjbYS0c
+         eOEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NMk4UsFt8BqkCANJdmDLYqpG8iW/sccOsuB7Ch5oLT0=;
+        b=R1qAaPPofNG14XD5pdAJlUZUm1Ubyz+e5HnMqmCbOeugCcQQrbcDkKRIkNQDBNs5WK
+         FD8SLw2LBqrwCy4RaHfhygqyLG5D5rqRLyoo4x7RHkbtkUriFJ7AfmPU+cm5Q3C3cNjY
+         4LU11o3NfBT/K4pm0kTxor7x4syHc3+SSXE03dcRbjg+ywVnIMgoq+Rhmk649uRsSbiI
+         oTRR8+N7IVeAh4W9eHqtbqKiltmgvLCE/EEH7nK8cg+6eMsKwpRZKinMrQVc41TqI7Ww
+         8ZesSQcvg9dj4IkHUTFtPL1Qe5X2A2VDTM6IIWjH+bqAk4VJuurKWPnKacVX+5PPrJkm
+         HQ/Q==
+X-Gm-Message-State: AOAM530V2E/rP0DEZxSuF7BtW/fD6IyJTRtmvfb3TT77mGFfrud/1isI
+        5e0rP1FWTYWxGpWGmW5+c85Ri2u2dc0=
+X-Google-Smtp-Source: ABdhPJyWiQZ/JWz8WXT2uP9HNOM5m9NT2taQ0LBpy3soYoniqW5szlqVnDV0OTDH1uppwLvZ9tToUA==
+X-Received: by 2002:a17:90a:ae16:: with SMTP id t22mr25189960pjq.65.1628676629005;
+        Wed, 11 Aug 2021 03:10:29 -0700 (PDT)
+Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
+        by smtp.gmail.com with ESMTPSA id o20sm31795016pgv.80.2021.08.11.03.10.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Aug 2021 03:10:28 -0700 (PDT)
+Cc:     mtk.manpages@gmail.com,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Alejandro Colomar <alx.manpages@gmail.com>,
+        Kir Kolyshkin <kolyshkin@gmail.com>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: Documenting the requirement of CAP_SETFCAP to map UID 0
+To:     "Serge E. Hallyn" <serge@hallyn.com>
+References: <14cbab6f-19f6-a28c-05d8-453ecca62180@gmail.com>
+ <20210810235838.GA4561@mail.hallyn.com>
+From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Message-ID: <9ddba7a5-8776-45d0-4b28-1e009012eee9@gmail.com>
+Date:   Wed, 11 Aug 2021 12:10:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86f6a6c8-87cc-a397-35b3-a30220f12aed@linux.ibm.com>
+In-Reply-To: <20210810235838.GA4561@mail.hallyn.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 10, 2021 at 09:50:55PM -0400, Stefan Berger wrote:
+Hi Serge
+
+On 8/11/21 1:58 AM, Serge E. Hallyn wrote:
+> On Sun, Aug 08, 2021 at 11:09:30AM +0200, Michael Kerrisk (man-pages) wrote:
+>> Hello Serge,
+>>
+Hello Serge,
+
+
+>> Your commit:
+>>
+>> [[
+>> commit db2e718a47984b9d71ed890eb2ea36ecf150de18
+>> Author: Serge E. Hallyn <serge@hallyn.com>
+>> Date:   Tue Apr 20 08:43:34 2021 -0500
+>>
+>>     capabilities: require CAP_SETFCAP to map uid 0
+>> ]]
+>>
+>> added a new requirement when updating a UID map a user namespace
+>> with a value of '0 0 *'.
+>>
+>> Kir sent a patch to briefly document this change, but I think much more
+>> should be written. I've attempted to do so. Could you tell me whether the
+>> following text (to be added in user_namespaces(7)) is accurate please:
 > 
-> On 8/10/21 1:58 PM, Jarkko Sakkinen wrote:
-> > On Mon, Aug 09, 2021 at 03:21:59PM -0400, Stefan Berger wrote:
-> > > From: Stefan Berger <stefanb@linux.ibm.com>
-> > > 
-> > > Rename the field tpm_processing_cmd to tpm_status in ibmvtpm_dev and set
-> > > the TPM_STATUS_BUSY flag while the vTPM is busy processing a command.
-> > > 
-> > > 
-> > >   		default:
-> > > diff --git a/drivers/char/tpm/tpm_ibmvtpm.h b/drivers/char/tpm/tpm_ibmvtpm.h
-> > > index 51198b137461..252f1cccdfc5 100644
-> > > --- a/drivers/char/tpm/tpm_ibmvtpm.h
-> > > +++ b/drivers/char/tpm/tpm_ibmvtpm.h
-> > > @@ -41,7 +41,8 @@ struct ibmvtpm_dev {
-> > >   	wait_queue_head_t wq;
-> > >   	u16 res_len;
-> > >   	u32 vtpm_version;
-> > > -	u8 tpm_processing_cmd;
-> > > +	u8 tpm_status;
-> > > +#define TPM_STATUS_BUSY		(1 << 0) /* vtpm is processing a command */
-> > Declare this already in the fix, and just leave the rename here.
+> Sorry for the delay - this did not go into my main mailbox.
 > 
-> You mean the fix patch does not use 'true' anymore but uses the
-> TPM_STATUS_BUSY flag already but the name is still tpm_processing_cmd? And
-> literally only the renaming of this field is done in the 2nd patch?
+> The text looks good.  Thanks!
 
-I can fixup these patches, and use '1', instead of true. No need to send
-new ones.
+Thanks for checking it!
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Cheers,
 
-/Jarkko
+Michael
+
+>> [[
+>>       In  order  for  a  process  to  write  to  the /proc/[pid]/uid_map
+>>        (/proc/[pid]/gid_map) file, all of the following requirements must
+>>        be met:
+>>
+>>        [...]
+>>
+>>        4. If  updating  /proc/[pid]/uid_map to create a mapping that maps
+>>           UID 0 in the parent namespace, then one of the  following  must
+>>           be true:
+>>
+>>           *  if  writing process is in the parent user namespace, then it
+>>              must have the CAP_SETFCAP capability in that user namespace;
+>>              or
+>>
+>>           *  if  the writing process is in the child user namespace, then
+>>              the process that created the user namespace  must  have  had
+>>              the CAP_SETFCAP capability when the namespace was created.
+>>
+>>           This rule has been in place since Linux 5.12.  It eliminates an
+>>           earlier security bug whereby a UID 0  process  that  lacks  the
+>>           CAP_SETFCAP capability, which is needed to create a binary with
+>>           namespaced file capabilities (as described in capabilities(7)),
+>>           could  nevertheless  create  such  a  binary,  by the following
+>>           steps:
+>>
+>>           *  Create a new user namespace with the identity mapping (i.e.,
+>>              UID  0 in the new user namespace maps to UID 0 in the parent
+>>              namespace), so that UID 0 in both namespaces  is  equivalent
+>>              to the same root user ID.
+>>
+>>           *  Since  the  child process has the CAP_SETFCAP capability, it
+>>              could create a binary with namespaced file capabilities that
+>>              would  then  be  effective in the parent user namespace (be‐
+>>              cause the root user IDs are the same in the two namespaces).
+>>
+>>        [...]
+>> ]]
+>>
+>> Thanks,
+>>
+>> Michael
+>>
+>> -- 
+>> Michael Kerrisk
+>> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+>> Linux/UNIX System Programming Training: http://man7.org/training/
+
+
+-- 
+Michael Kerrisk
+Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
+Linux/UNIX System Programming Training: http://man7.org/training/
