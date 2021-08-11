@@ -2,172 +2,184 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 933F0C4338F
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 10:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C415C4338F
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 10:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7690460D07
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 10:10:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6C2601FF
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 10:23:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236976AbhHKKK5 (ORCPT
+        id S236861AbhHKKXW (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Aug 2021 06:10:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52218 "EHLO
+        Wed, 11 Aug 2021 06:23:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236929AbhHKKKx (ORCPT
+        with ESMTP id S231752AbhHKKXW (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Aug 2021 06:10:53 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0657C0613D5;
-        Wed, 11 Aug 2021 03:10:29 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id lw7-20020a17090b1807b029017881cc80b7so8751961pjb.3;
-        Wed, 11 Aug 2021 03:10:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=cc:subject:to:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NMk4UsFt8BqkCANJdmDLYqpG8iW/sccOsuB7Ch5oLT0=;
-        b=LBUL67G89m36GRNm6NjUGnJ+ppLvHWhk5RB0XPG4MJRdzBkUAgyYgX1xQTRaXDU7Cd
-         fD4tLvulbyuzYBthoyZU+bG0OoVdlq7x+UGvmAPorimtL5gRqzq0w7Ov7a4AjZmV4ree
-         fyvMLQLlZQKvZZJPgICsgfx5AKNzCa5XR0zeMRnxu0kCzSYUi4rP/1H1rox59sto/bk3
-         4BFM5W6XQmGdd7wFwGgKolsytVWMJQCTFwF7zTJQ0LDH5CegAAf9xwx/IHjm21EDYRH1
-         9IZmhR9M7zN3xinGmm/TPd+YgAqHwshDfqr5XvGBU/dtcqHc8sW2cAjsOyVxtYjbYS0c
-         eOEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:cc:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NMk4UsFt8BqkCANJdmDLYqpG8iW/sccOsuB7Ch5oLT0=;
-        b=R1qAaPPofNG14XD5pdAJlUZUm1Ubyz+e5HnMqmCbOeugCcQQrbcDkKRIkNQDBNs5WK
-         FD8SLw2LBqrwCy4RaHfhygqyLG5D5rqRLyoo4x7RHkbtkUriFJ7AfmPU+cm5Q3C3cNjY
-         4LU11o3NfBT/K4pm0kTxor7x4syHc3+SSXE03dcRbjg+ywVnIMgoq+Rhmk649uRsSbiI
-         oTRR8+N7IVeAh4W9eHqtbqKiltmgvLCE/EEH7nK8cg+6eMsKwpRZKinMrQVc41TqI7Ww
-         8ZesSQcvg9dj4IkHUTFtPL1Qe5X2A2VDTM6IIWjH+bqAk4VJuurKWPnKacVX+5PPrJkm
-         HQ/Q==
-X-Gm-Message-State: AOAM530V2E/rP0DEZxSuF7BtW/fD6IyJTRtmvfb3TT77mGFfrud/1isI
-        5e0rP1FWTYWxGpWGmW5+c85Ri2u2dc0=
-X-Google-Smtp-Source: ABdhPJyWiQZ/JWz8WXT2uP9HNOM5m9NT2taQ0LBpy3soYoniqW5szlqVnDV0OTDH1uppwLvZ9tToUA==
-X-Received: by 2002:a17:90a:ae16:: with SMTP id t22mr25189960pjq.65.1628676629005;
-        Wed, 11 Aug 2021 03:10:29 -0700 (PDT)
-Received: from [192.168.1.71] (122-61-176-117-fibre.sparkbb.co.nz. [122.61.176.117])
-        by smtp.gmail.com with ESMTPSA id o20sm31795016pgv.80.2021.08.11.03.10.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Aug 2021 03:10:28 -0700 (PDT)
-Cc:     mtk.manpages@gmail.com,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Alejandro Colomar <alx.manpages@gmail.com>,
-        Kir Kolyshkin <kolyshkin@gmail.com>,
-        linux-man <linux-man@vger.kernel.org>
-Subject: Re: Documenting the requirement of CAP_SETFCAP to map UID 0
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-References: <14cbab6f-19f6-a28c-05d8-453ecca62180@gmail.com>
- <20210810235838.GA4561@mail.hallyn.com>
-From:   "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
-Message-ID: <9ddba7a5-8776-45d0-4b28-1e009012eee9@gmail.com>
-Date:   Wed, 11 Aug 2021 12:10:22 +0200
+        Wed, 11 Aug 2021 06:23:22 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2BFCC0613D3
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 03:22:58 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1mDlNw-0005uA-OH; Wed, 11 Aug 2021 12:22:56 +0200
+Subject: Re: [PATCH 3/4] crypto: caam - add in-kernel interface for blob
+ generator
+To:     David Gstir <david@sigma-star.at>
+Cc:     =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, kernel@pengutronix.de,
+        James Bottomley <jejb@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>,
+        Richard Weinberger <richard@nod.at>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+References: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de>
+ <4078060ab2e44114af8204b4defea4f3d4b9e285.1626885907.git-series.a.fatoum@pengutronix.de>
+ <796E18E6-1329-40D6-B12F-4CE6C90DD988@sigma-star.at>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <7cc83edd-dc39-ee7e-d18c-30b2492247ea@pengutronix.de>
+Date:   Wed, 11 Aug 2021 12:22:47 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-In-Reply-To: <20210810235838.GA4561@mail.hallyn.com>
+In-Reply-To: <796E18E6-1329-40D6-B12F-4CE6C90DD988@sigma-star.at>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Serge
-
-On 8/11/21 1:58 AM, Serge E. Hallyn wrote:
-> On Sun, Aug 08, 2021 at 11:09:30AM +0200, Michael Kerrisk (man-pages) wrote:
->> Hello Serge,
->>
-Hello Serge,
-
-
->> Your commit:
->>
->> [[
->> commit db2e718a47984b9d71ed890eb2ea36ecf150de18
->> Author: Serge E. Hallyn <serge@hallyn.com>
->> Date:   Tue Apr 20 08:43:34 2021 -0500
->>
->>     capabilities: require CAP_SETFCAP to map uid 0
->> ]]
->>
->> added a new requirement when updating a UID map a user namespace
->> with a value of '0 0 *'.
->>
->> Kir sent a patch to briefly document this change, but I think much more
->> should be written. I've attempted to do so. Could you tell me whether the
->> following text (to be added in user_namespaces(7)) is accurate please:
+On 10.08.21 13:29, David Gstir wrote:
+> Hi Ahmad,
 > 
-> Sorry for the delay - this did not go into my main mailbox.
+>> On 21.07.2021, at 18:48, Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
 > 
-> The text looks good.  Thanks!
+> 
+> [...]
+> 
+>> diff --git a/drivers/crypto/caam/blob_gen.c b/drivers/crypto/caam/blob_gen.c
+>> new file mode 100644
+>> index 000000000000..513d3f90e438
+>> --- /dev/null
+>> +++ b/drivers/crypto/caam/blob_gen.c
+>> @@ -0,0 +1,230 @@
+> 
+> [...]
+> 
+>> +
+>> +int caam_encap_blob(struct caam_blob_priv *priv, const char *keymod,
+>> +		    void *input, void *output, size_t length)
+>> +{
+>> +	u32 *desc;
+>> +	struct device *jrdev = &priv->jrdev;
+>> +	dma_addr_t dma_in, dma_out;
+>> +	struct caam_blob_job_result testres;
+>> +	size_t keymod_len = strlen(keymod);
+>> +	int ret;
+>> +
+>> +	if (length <= CAAM_BLOB_OVERHEAD || keymod_len > CAAM_BLOB_KEYMOD_LENGTH)
+> 
+> The docs for this function mention the length <= CAAM_BLOB_MAX_LEN
+> restriction. This is not checked here. Is this intended?
 
-Thanks for checking it!
+Yes.
+
+> Since you already assert that MAX_BLOB_SIZE <= CAAM_BLOB_MAX_LEN
+> in security/keys/trusted-keys/trusted_caam.c, this will never
+> be an issue for CAAM-based trusted-keys though.
+I omitted checks in code, which are verified at compile-time.
+Would you prefer a runtime check to be added as well?
+
+>> +		return -EINVAL;
+>> +
+>> +	desc = caam_blob_alloc_desc(keymod_len);
+>> +	if (!desc) {
+>> +		dev_err(jrdev, "unable to allocate desc\n");
+>> +		return -ENOMEM;
+>> +	}
+>> +
+> 
+> [...]
+> 
+>> diff --git a/include/soc/fsl/caam-blob.h b/include/soc/fsl/caam-blob.h
+>> new file mode 100644
+>> index 000000000000..aebbc9335f64
+>> --- /dev/null
+>> +++ b/include/soc/fsl/caam-blob.h
+>> @@ -0,0 +1,56 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (C) 2020 Pengutronix, Ahmad Fatoum <kernel@pengutronix.de>
+>> + */
+>> +
+>> +#ifndef __CAAM_BLOB_GEN
+>> +#define __CAAM_BLOB_GEN
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define CAAM_BLOB_KEYMOD_LENGTH		16
+>> +#define CAAM_BLOB_OVERHEAD		(32 + 16)
+>> +#define CAAM_BLOB_MAX_LEN		4096
+>> +
+>> +struct caam_blob_priv;
+>> +
+>> +/** caam_blob_gen_init - initialize blob generation
+>> + *
+>> + * returns either pointer to new caam_blob_priv instance
+>> + * or error pointer
+>> + */
+>> +struct caam_blob_priv *caam_blob_gen_init(void);
+>> +
+>> +/** caam_blob_gen_init - free blob generation resources
+> 
+> s/init/exit/
+
+Oh, thanks for catching.
+
+>> + *
+>> + * @priv: instance returned by caam_blob_gen_init
+>> + */
+>> +void caam_blob_gen_exit(struct caam_blob_priv *priv);
+> 
+> 
+> Except these minor things, I noticed no issues with this whole series:
+> 
+> Reviewed-by: David Gstir <david@sigma-star.at>
+
+Thanks! Will include it with the next iteration.
 
 Cheers,
+Ahmad 
 
-Michael
 
->> [[
->>       In  order  for  a  process  to  write  to  the /proc/[pid]/uid_map
->>        (/proc/[pid]/gid_map) file, all of the following requirements must
->>        be met:
->>
->>        [...]
->>
->>        4. If  updating  /proc/[pid]/uid_map to create a mapping that maps
->>           UID 0 in the parent namespace, then one of the  following  must
->>           be true:
->>
->>           *  if  writing process is in the parent user namespace, then it
->>              must have the CAP_SETFCAP capability in that user namespace;
->>              or
->>
->>           *  if  the writing process is in the child user namespace, then
->>              the process that created the user namespace  must  have  had
->>              the CAP_SETFCAP capability when the namespace was created.
->>
->>           This rule has been in place since Linux 5.12.  It eliminates an
->>           earlier security bug whereby a UID 0  process  that  lacks  the
->>           CAP_SETFCAP capability, which is needed to create a binary with
->>           namespaced file capabilities (as described in capabilities(7)),
->>           could  nevertheless  create  such  a  binary,  by the following
->>           steps:
->>
->>           *  Create a new user namespace with the identity mapping (i.e.,
->>              UID  0 in the new user namespace maps to UID 0 in the parent
->>              namespace), so that UID 0 in both namespaces  is  equivalent
->>              to the same root user ID.
->>
->>           *  Since  the  child process has the CAP_SETFCAP capability, it
->>              could create a binary with namespaced file capabilities that
->>              would  then  be  effective in the parent user namespace (be‐
->>              cause the root user IDs are the same in the two namespaces).
->>
->>        [...]
->> ]]
->>
->> Thanks,
->>
->> Michael
->>
->> -- 
->> Michael Kerrisk
->> Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
->> Linux/UNIX System Programming Training: http://man7.org/training/
+> 
+> 
+> 
 
 
 -- 
-Michael Kerrisk
-Linux man-pages maintainer; http://www.kernel.org/doc/man-pages/
-Linux/UNIX System Programming Training: http://man7.org/training/
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
