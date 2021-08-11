@@ -2,136 +2,191 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01ADEC432BE
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 17:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D5FC4338F
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE49760720
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 17:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F3716104F
+	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:48:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231316AbhHKRQg (ORCPT
+        id S232031AbhHKUsp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Aug 2021 13:16:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57480 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231264AbhHKRQ3 (ORCPT
+        Wed, 11 Aug 2021 16:48:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33528 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231823AbhHKUsj (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Aug 2021 13:16:29 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id A77F760720;
-        Wed, 11 Aug 2021 17:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628702165;
-        bh=9h03uKGoS94D5joA0oQ8vjBfh49XzjEF5chJiZqRUSM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=R4lANRmD7F79aJk1QwsPA2lv4OQqEB1kpG2XjTPtoXxx6kuKdityhC7zcwKDhreDm
-         XsJtAmOJwSddjxQ448+ktoeI/eZG+BkVyc8KFEo9igVGQiUXZozh4ciYpL3BBkmy/C
-         MSYHY5jOe/mKDm+DeplA7idJPn7uEyxVgcHpr/tEE0XIP51hv1ElOHYW1uwu9jfjA+
-         5YH/uPw3qKgSzzl5x8Ds9Ib4uFTwfnJNyYHvdvJQ8gOhgKZnARoeLVfV4/WPn2nr8T
-         BtQn83YSoqFY/rAzopncT84KP1iFL+r8KclwjGHTrQL7ZQQK11C+VpuZ4WRpn9JLly
-         baVtflrGpwJlA==
-Date:   Wed, 11 Aug 2021 10:16:03 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
-        Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, kernel@pengutronix.de,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        David Howells <dhowells@redhat.com>,
-        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] fscrypt: support trusted keys
-Message-ID: <YRQF09f8st95yrFZ@gmail.com>
-References: <20210806150928.27857-1-a.fatoum@pengutronix.de>
- <20210809094408.4iqwsx77u64usfx6@kernel.org>
- <YRGVcaquAJiuc8bp@gmail.com>
- <20210810180636.vqwaeftv7alsodgn@kernel.org>
- <YRLJmaafp941uOdA@gmail.com>
- <20210810212140.sdq5dq2wy5uaj7h7@kernel.org>
- <YRLvPJehAeMiYb2Z@gmail.com>
- <20210811001743.ofzkwdwa6rcjsf4d@kernel.org>
- <d4f5c2593380c82ceebae2c8782a1c440b35f165.camel@linux.ibm.com>
+        Wed, 11 Aug 2021 16:48:39 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96634C061765
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:15 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id w197so3969683qkb.1
+        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:date:message-id:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=zBlBSbAuxRUJW1lgOYptxB+0Lua2LslYZABHs/8DQw8=;
+        b=eUl8wgQjb6gGJUCDXI5DKOavtrZkcpwdJMLOEArw3NWOcmgexnHPccbTvRywxHi2VF
+         LZhJPBU7NvwO9SrJ88aTKEAB03QCnDNJyv0Kdl3dBd4Fzi+i+cJ5TX5/GzYCKLyQU6kn
+         m9vVAUDi5C4Cqw7K/ZN13W3ZGBHOlkBOwZ/cu1OI7p7Y8whLOdJiCMrbfxoCXJTUSYrn
+         NTMVuon/k5gDupO3Q2eWAdaeLdf5NE+eV49IiIYmew0R2IZEXTkfBRcN6kk+er+6YV4p
+         zJ0GgFSw3GQNQrVMVI0KIDdyzSmEjomkORiaNnihPL1Ug3UJG4TbANJeRXA3NWLbNm/V
+         aCqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:date:message-id:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=zBlBSbAuxRUJW1lgOYptxB+0Lua2LslYZABHs/8DQw8=;
+        b=enVYLfrxzZcglfocXls0Ud4wPOKVLzib04y48CW53+b8wfRH/SGY3ca5gXoJoSV7tY
+         AihZVaJFR7TcQ4PNT7gr8vDn04ZdNHJl6y7d7YRG6amDgX0369Mr2yeW4dlU1fC+iyfs
+         v3NnSiedFYZFsYepeWZtcfcnHPDm3xvoBycx8WWNwP1Tpv4g2dYH+EGjeM7RhEeBi5RG
+         TdoP8HHEh2BpK6+U03NOtl1F15Dy+z/GM2owSPOsbGnKBB02YE8rNAYURcpKpwMzcIAW
+         JXywCtLJgnqj4oLCOR3PXUF8TgYznvt3Xz0M7pXVIesic2NSkfg8xUNsH2zgdnknYiGO
+         7PYQ==
+X-Gm-Message-State: AOAM5330AdYBHWycpFGEGozCyeH9SuRkTDd2Oed3PNrhZFil6fsRGFyC
+        A0Vk2dT92FQ1Q9Hf6n3NAQB4nNfxEayloT8=
+X-Google-Smtp-Source: ABdhPJydL0ykzGSU3mSv7znsNMhnb+x6axRiQjqG6NUGWFR49FmN7RGZaFHzTlB9WZgH5isKA3x/lQ==
+X-Received: by 2002:a37:b082:: with SMTP id z124mr964004qke.298.1628714892595;
+        Wed, 11 Aug 2021 13:48:12 -0700 (PDT)
+Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
+        by smtp.gmail.com with ESMTPSA id k1sm159186qkj.21.2021.08.11.13.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Aug 2021 13:48:12 -0700 (PDT)
+Subject: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+From:   Paul Moore <paul@paul-moore.com>
+To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Date:   Wed, 11 Aug 2021 16:48:11 -0400
+Message-ID: <162871480969.63873.9434591871437326374.stgit@olly>
+User-Agent: StGit/1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4f5c2593380c82ceebae2c8782a1c440b35f165.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 11, 2021 at 07:34:18AM -0400, Mimi Zohar wrote:
-> On Wed, 2021-08-11 at 03:17 +0300, Jarkko Sakkinen wrote:
-> > On Tue, Aug 10, 2021 at 02:27:24PM -0700, Eric Biggers wrote:
-> > > On Wed, Aug 11, 2021 at 12:21:40AM +0300, Jarkko Sakkinen wrote:
-> > > > On Tue, Aug 10, 2021 at 11:46:49AM -0700, Eric Biggers wrote:
-> > > > > On Tue, Aug 10, 2021 at 09:06:36PM +0300, Jarkko Sakkinen wrote:
-> > > > > > > > 
-> > > > > > > > I don't think this is right, or at least it does not follow the pattern
-> > > > > > > > in [*]. I.e. you should rather use trusted key to seal your fscrypt key.
-> > > > > > > 
-> > > > > > > What's the benefit of the extra layer of indirection over just using a "trusted"
-> > > > > > > key directly?  The use case for "encrypted" keys is not at all clear to me.
-> > > > > > 
-> > > > > > Because it is more robust to be able to use small amount of trusted keys,
-> > > > > > which are not entirely software based.
-> > > > > > 
-> > > > > > And since it's also a pattern on existing kernel features utilizing trusted
-> > > > > > keys, the pressure here to explain why break the pattern, should be on the
-> > > > > > side of the one who breaks it.
-> > > > > 
-> > > > > This is a new feature, so it's on the person proposing the feature to explain
-> > > > > why it's useful.  The purpose of "encrypted" keys is not at all clear, and the
-> > > > > documentation for them is heavily misleading.  E.g.:
-> > > > > 
-> > > > >     "user space sees, stores, and loads only encrypted blobs"
-> > > > >     (Not necessarily true, as I've explained previously.)
-> > > > > 
-> > > > >     "Encrypted keys do not depend on a trust source" ...  "The main disadvantage
-> > > > >     of encrypted keys is that if they are not rooted in a trusted key"
-> > > > >     (Not necessarily true, and in fact it seems they're only useful when they
-> > > > >     *do* depend on a trust source.  At least that's the use case that is being
-> > > > >     proposed here, IIUC.)
-> > > > > 
-> > > > > I do see a possible use for the layer of indirection that "encrypted" keys are,
-> > > > > which is that it would reduce the overhead of having lots of keys be directly
-> > > > > encrypted by the TPM/TEE/CAAM.  Is this the use case?  If so, it needs to be
-> > > > > explained.
-> > > > 
-> > > > If trusted keys are used directly, it's an introduction of a bottleneck.
-> > > > If they are used indirectly, you can still choose to have one trusted
-> > > > key per fscrypt key.
-> > > > 
-> > > > Thus, it's obviously a bad idea to use them directly.
-> > > 
-> > > So actually explain that in the documentation.  It's not obvious at all.  And
-> > > does this imply that the support for trusted keys in dm-crypt is a mistake?
-> > 
-> > Looking at dm-crypt implementation, you can choose to use 'encrypted' key
-> > type, which you can seal with a trusted key.
-> > 
-> > Note: I have not been involved when the feature was added to dm-crypt.
-> 
-> At least for TPM 1.2,  "trusted" keys may be sealed to a PCR and then
-> extended to prevent subsequent usage.  For example, in the initramfs
-> all of the "encrypted" keys could be decrypted by a single "trusted"
-> key, before extending the PCR.
-> 
-> Mimi
-> 
+Draft #2 of the patchset which brings auditing and proper LSM access
+controls to the io_uring subsystem.  The original patchset was posted
+in late May and can be found via lore using the link below:
 
-Neither of you actually answered my question, which is whether the support for
-trusted keys in dm-crypt is a mistake.  I think you're saying that it is?  That
-would imply that fscrypt shouldn't support trusted keys, but rather encrypted
-keys -- which conflicts with Ahmad's patch which is adding support for trusted
-keys.  Note that your reasoning for this is not documented at all in the
-trusted-encrypted keys documentation; it needs to be (email threads don't really
-matter), otherwise how would anyone know when/how to use this feature?
+https://lore.kernel.org/linux-security-module/162163367115.8379.8459012634106035341.stgit@sifl/
 
-- Eric
+This draft should incorporate all of the feedback from the original
+posting as well as a few smaller things I noticed while playing
+further with the code.  The big change is of course the selective
+auditing in the io_uring op servicing, but that has already been
+discussed quite a bit in the original thread so I won't go into
+detail here; the important part is that we found a way to move
+forward and this draft captures that.  For those of you looking to
+play with these patches, they are based on Linus' v5.14-rc5 tag and
+on my test system they boot and appear to function without problem;
+they pass the selinux-testsuite and audit-testsuite and I have not
+noticed any regressions in the normal use of the system.  If you want
+to get a copy of these patches straight from git you can use the
+"working-io_uring" branch in the repo below:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+
+Beyond the existing test suite tests mentioned above, I've cobbled
+together some very basic, very crude tests to exercise some of the
+things I care about from a LSM/audit perspective.  These tests are
+pretty awful (I'm not kidding), but they might be helpful for the
+other LSM/audit developers who want to test things:
+
+https://drop.paul-moore.com/90.kUgq
+
+There are currently two tests: 'iouring.2' and 'iouring.3';
+'iouring.1' was lost in a misguided and overzealous 'rm' command.
+The first test is standalone and basically tests the SQPOLL
+functionality while the second tests sharing io_urings across process
+boundaries and the credential/personality sharing mechanism.  The
+console output of both tests isn't particularly useful, the more
+interesting bits are in the audit and LSM specific logs.  The
+'iouring.2' command requires no special arguments to run but the
+'iouring.3' test is split into a "server" and "client"; the server
+should be run without argument:
+
+  % ./iouring.3s
+  >>> server started, pid = 11678
+  >>> memfd created, fd = 3
+  >>> io_uring created; fd = 5, creds = 1
+
+... while the client should be run with two arguments: the first is
+the PID of the server process, the second is the "memfd" fd number:
+
+  % ./iouring.3c 11678 3
+  >>> client started, server_pid = 11678 server_memfd = 3
+  >>> io_urings = 5 (server) / 5 (client)
+  >>> io_uring ops using creds = 1
+  >>> async op result: 36
+  >>> async op result: 36
+  >>> async op result: 36
+  >>> async op result: 36
+  >>> START file contents
+  What is this life if, full of care,
+  we have no time to stand and stare.
+  >>> END file contents
+
+The tests were hacked together from various sources online,
+attribution and links to additional info can be found in the test
+sources, but I expect these tests to die a fiery death in the not
+to distant future as I work to add some proper tests to the SELinux
+and audit test suites.
+
+As I believe these patches should spend a full -rcX cycle in
+linux-next, my current plan is to continue to solicit feedback on
+these patches while they undergo additional testing (next up is
+verification of the audit filter code for io_uring).  Assuming no
+critical issues are found on the mailing lists or during testing, I
+will post a proper patchset later with the idea of merging it into
+selinux/next after the upcoming merge window closes.
+
+Any comments, feedback, etc. are welcome.
+
+---
+
+Casey Schaufler (1):
+      Smack: Brutalist io_uring support with debug
+
+Paul Moore (8):
+      audit: prepare audit_context for use in calling contexts beyond
+             syscalls
+      audit,io_uring,io-wq: add some basic audit support to io_uring
+      audit: dev/test patch to force io_uring auditing
+      audit: add filtering for io_uring records
+      fs: add anon_inode_getfile_secure() similar to
+          anon_inode_getfd_secure()
+      io_uring: convert io_uring to the secure anon inode interface
+      lsm,io_uring: add LSM hooks to io_uring
+      selinux: add support for the io_uring access controls
+
+
+ fs/anon_inodes.c                    |  29 ++
+ fs/io-wq.c                          |   4 +
+ fs/io_uring.c                       |  69 +++-
+ include/linux/anon_inodes.h         |   4 +
+ include/linux/audit.h               |  26 ++
+ include/linux/lsm_hook_defs.h       |   5 +
+ include/linux/lsm_hooks.h           |  13 +
+ include/linux/security.h            |  16 +
+ include/uapi/linux/audit.h          |   4 +-
+ kernel/audit.h                      |   7 +-
+ kernel/audit_tree.c                 |   3 +-
+ kernel/audit_watch.c                |   3 +-
+ kernel/auditfilter.c                |  15 +-
+ kernel/auditsc.c                    | 483 +++++++++++++++++++-----
+ security/security.c                 |  12 +
+ security/selinux/hooks.c            |  34 ++
+ security/selinux/include/classmap.h |   2 +
+ security/smack/smack_lsm.c          |  64 ++++
+ 18 files changed, 678 insertions(+), 115 deletions(-)
