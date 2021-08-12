@@ -2,124 +2,166 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BD2C4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 16:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F196EC432BE
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 18:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A96F46109F
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 16:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D61406109D
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 18:58:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232800AbhHLQnp (ORCPT
+        id S234884AbhHLS7W (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Aug 2021 12:43:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232796AbhHLQno (ORCPT
+        Thu, 12 Aug 2021 14:59:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S234588AbhHLS7V (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Aug 2021 12:43:44 -0400
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D622C061756;
-        Thu, 12 Aug 2021 09:43:19 -0700 (PDT)
-Received: by mail-lf1-x12f.google.com with SMTP id t9so14624280lfc.6;
-        Thu, 12 Aug 2021 09:43:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dpI49aW8bFob7ItIxFv2U2BpOItSUGPsyoYWNOaVyAM=;
-        b=ITy3S46jRabnrnRf8obgqgBSxaRunH7J78b5tKf44HwsA5Io+wfq3pbWX0JjF72bL9
-         TfAots5d8TEKprTPj6EDJDaeVsbjLkF/9d9GbQ5g+UX5B3+dJRq4EctGFonH4/bL6oBr
-         Ab7cOLWHXJUaucIEAVe8SAH0aqjjpkBGWA8PYhE6C2hSKsT4pU7FMdk+Sharq4iSFqAd
-         IRKW5mVFUwLFa41iPkaIAjmTxANe+59DHw7dia4Qn4n+G1zvTZNb7+qv3PUXMQxsDqE1
-         8N2A3175tNUroquCz1TtK1F92qc/WkZ6kINP53/3oVEm5Opia4DSm/NKQ5FihqkW4gKv
-         b6iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dpI49aW8bFob7ItIxFv2U2BpOItSUGPsyoYWNOaVyAM=;
-        b=nEsYzFK1apWNBPac1Vc5sbCmfO2Qzbg+YJq94vj6cxAJl8cJKp7D3mnEwF+Be6HZ1R
-         v/pmkFB9hEk8ly7j60i7N7SsQ+BtULtD7uMIE19F28BFR4CLVwYCLHN2HzZ23WAborNB
-         vR2nN7wnuxjnu/z8G5q6qDQ5mXIoJ1veN1Uf5yXTSZXyhV6n7q1/DusJmAIThGsP01T9
-         nEhOoz3cEs41KmOtlVgSLRchekUxw+gjutcakd4oEZ/ZiD1M7wE8hQ2X5g/YRKdE2fYo
-         9rVkPKYkiGhHDE4NFSMeySmA+yRhedHejuGDrYcxR6d9qSHGYy6dCf0XCagIhq4ijwuH
-         rJIA==
-X-Gm-Message-State: AOAM531HiAkmgPkAHK1BAAW2cNxA4zr8fhpK3pqCFP96uM1Xq5/u7Nfn
-        JoE0a9OJdcdJd3TYmMYF9r27SCKHfRCc2u5SGMc=
-X-Google-Smtp-Source: ABdhPJybcpJaSqzu5QJPDPXQ5Q8CvHZje9xGjMSbNK+CgYQobtyo0YZMiNC2i7TWnMkNZU90T1MT4WBI/78//sGZSWE=
-X-Received: by 2002:a05:6512:1183:: with SMTP id g3mr3326832lfr.130.1628786597637;
- Thu, 12 Aug 2021 09:43:17 -0700 (PDT)
+        Thu, 12 Aug 2021 14:59:21 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 517E660200;
+        Thu, 12 Aug 2021 18:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1628794735;
+        bh=4j5w1bAhfwL043thWwHbrt8AtOIjqKgMLpSCAvsF/DM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SimV6NQ2HUs2ObVX/JcHfnmJnp/3j54BtO9QUC53vlsO171hYCohgpZ/jyNzVJBx1
+         VB5Q/L0LsqaijM0pdpD0PuRrFY7Ag6RDTneRTCkllRi4SLN5DVdcJ2fx+Oa90AVEmr
+         glaUhxPer2JtidZrhMew0ndS1tXnEOsbJzj4IO+xYGaMGwcDENU9Q1r/NBRpe5qWs2
+         7cMp3wh7kKsiDbBb38rkyL1KG7+w0x49qc+iXeRMZBLfOPuXlNaXwoNFKQALwwMtXp
+         7gLi6TLmntoQF41tS8Z/s8UM7pqNybygnGQXtgqbyi+4jPt9yJTsb5JbtgfRXRIdY3
+         2OIt55S3DsSAw==
+Date:   Thu, 12 Aug 2021 21:58:53 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        glin@suse.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v3 01/14] integrity: Introduce a Linux keyring for the
+ Machine Owner Key (MOK)
+Message-ID: <20210812185853.p5mgsgrftgwvt5fx@kernel.org>
+References: <20210812021855.3083178-1-eric.snowberg@oracle.com>
+ <20210812021855.3083178-2-eric.snowberg@oracle.com>
 MIME-Version: 1.0
-References: <db1c1de0-3672-4bae-ef45-c554379f36f4@omp.ru> <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
-In-Reply-To: <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
-From:   Igor Zhbanov <izh1979@gmail.com>
-Date:   Thu, 12 Aug 2021 19:43:10 +0300
-Message-ID: <CAEUiM9ObZD=miina1NsP8Ohtv=byO=33Kp2XaeF8_RB_R_uC1Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] NAX LSM: Add initial support support
-To:     THOBY Simon <Simon.THOBY@viveris.fr>
-Cc:     Igor Zhbanov <i.zhbanov@omp.ru>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210812021855.3083178-2-eric.snowberg@oracle.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Simon,
+On Wed, Aug 11, 2021 at 10:18:42PM -0400, Eric Snowberg wrote:
+> Many UEFI Linux distributions boot using shim.  The UEFI shim provides
+> what is called Machine Owner Keys (MOK). Shim uses both the UEFI Secure
+> Boot DB and MOK keys to validate the next step in the boot chain.  The
+> MOK facility can be used to import user generated keys.  These keys can
+> be used to sign an end-users development kernel build.  When Linux
+> boots, both UEFI Secure Boot DB and MOK keys get loaded in the Linux
+> .platform keyring.
+> 
+> Add a new Linux keyring called .mok.  This keyring shall contain just
 
-Thanks for thorough review. Will post the corrected version soon.
+I would consider ".machine" instead. It holds MOK keys but is not a
+MOK key.
 
-> > @@ -278,11 +279,11 @@ endchoice
-> >
-> >  config LSM
-> >       string "Ordered list of enabled LSMs"
-> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
-> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
-> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
-> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
-> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
-> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
->
-> I don't know the policy with regard to new LSMs, but enabling this one by default is maybe a bit violent?
-> That said, considering the default mode is SECURITY_NAX_MODE_LOG, this would just log kernel messages and
-> not break existing systems, so this shouldn't be a problem.
+> MOK keys and not the remaining keys in the platform keyring. This new
+> .mok keyring will be used in follow on patches.  Unlike keys in the
+> platform keyring, keys contained in the .mok keyring will be trusted
+> within the kernel if the end-user has chosen to do so.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+> v1: Initial version
+> v2: Removed destory keyring code
+> v3: Unmodified from v2
+> ---
+>  security/integrity/Makefile                   |  3 ++-
+>  security/integrity/digsig.c                   |  1 +
+>  security/integrity/integrity.h                |  3 ++-
+>  .../integrity/platform_certs/mok_keyring.c    | 21 +++++++++++++++++++
+>  4 files changed, 26 insertions(+), 2 deletions(-)
+>  create mode 100644 security/integrity/platform_certs/mok_keyring.c
+> 
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index 7ee39d66cf16..8e2e98cba1f6 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -9,7 +9,8 @@ integrity-y := iint.o
+>  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+>  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+>  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
+> +						  platform_certs/mok_keyring.o
+>  integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+>  				      platform_certs/load_uefi.o \
+>  				      platform_certs/keyring_handler.o
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index 3b06a01bd0fd..e07334504ef1 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -30,6 +30,7 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+>  	".ima",
+>  #endif
+>  	".platform",
+> +	".mok",
+>  };
+>  
+>  #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 547425c20e11..e0e17ccba2e6 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -151,7 +151,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>  #define INTEGRITY_KEYRING_EVM		0
+>  #define INTEGRITY_KEYRING_IMA		1
+>  #define INTEGRITY_KEYRING_PLATFORM	2
+> -#define INTEGRITY_KEYRING_MAX		3
+> +#define INTEGRITY_KEYRING_MOK		3
+> +#define INTEGRITY_KEYRING_MAX		4
+>  
+>  extern struct dentry *integrity_dir;
+>  
+> diff --git a/security/integrity/platform_certs/mok_keyring.c b/security/integrity/platform_certs/mok_keyring.c
+> new file mode 100644
+> index 000000000000..b1ee45b77731
+> --- /dev/null
+> +++ b/security/integrity/platform_certs/mok_keyring.c
+> @@ -0,0 +1,21 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * MOK keyring routines.
+> + *
+> + * Copyright (c) 2021, Oracle and/or its affiliates.
+> + */
+> +
+> +#include "../integrity.h"
+> +
+> +static __init int mok_keyring_init(void)
+> +{
+> +	int rc;
+> +
+> +	rc = integrity_init_keyring(INTEGRITY_KEYRING_MOK);
+> +	if (rc)
+> +		return rc;
+> +
+> +	pr_notice("MOK Keyring initialized\n");
+> +	return 0;
+> +}
+> +device_initcall(mok_keyring_init);
+> -- 
+> 2.18.4
+> 
+> 
 
-I've just oriended on landlock and lockdown. They are handled in the similar
-way. But, yes, by default NAX module doesn't block anything.
-If you suggest not to do that, I can remove it.
-
-> > +__setup("nax_mode=", setup_mode);
-> > +
-> > +static int __init setup_quiet(char *str)
-> > +{
-> > +     unsigned long val;
-> > +
-> > +     if (!locked && !kstrtoul(str, 0, &val))
-> > +             quiet = val ? 1 : 0;
->
-> The order of the kernel parameters will have an impact on NAX behavior.
->
-> "nax_mode=1 nax_locked=1" and "nax_locked=1 nax_mode=1" will end up with the same behavior.
-> in the first case the mode is enforced, in the second case it isn't (well unless you changed
->  the kernel configuration from the default) and it can't be enabled later either.
->
-> Is that desired?
-
-Yes. The idea is that on boot you can set-up the proper options then block
-further changing (especially turning the module off).
-Initially it was implemented for sysctl parameters, so, you can change
-something in init-scripts, then lock. Then, I've extended it to command-line
-parameters.
-I can ignore "locked" flag in setup_* functions to defer locking to sysctl
-parsing. (Unless our command-line is glued by the bootloader from several
-parts, so we want to lock it as early as possible...).
-
-Thanks.
+/Jarkko
