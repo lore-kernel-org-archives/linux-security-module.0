@@ -2,308 +2,622 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEC2C4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 22:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC0DC4320A
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 22:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C759060FC4
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 22:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 252D360C40
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 22:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232479AbhHLWhX (ORCPT
+        id S238347AbhHLWik (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Aug 2021 18:37:23 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:31964 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237804AbhHLWhV (ORCPT
+        Thu, 12 Aug 2021 18:38:40 -0400
+Received: from sonic307-16.consmr.mail.ne1.yahoo.com ([66.163.190.39]:37777
+        "EHLO sonic307-16.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234130AbhHLWik (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Aug 2021 18:37:21 -0400
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17CMFbfq024975;
-        Thu, 12 Aug 2021 22:36:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2021-07-09;
- bh=BMOIKK6jzjj0JiGDZ6NWY0dqw5h+oBGu0ZXYV3LXPIw=;
- b=QQtDafNVyTaFt8ZfwZry4HkoFsMG9CgOY2PvCMUZ9dZw9NJ3IctbFIe3KXUgXId9jWYH
- rGJ1gXPGqex0zm81pLF9ngogrqsZm9PDal4QwyWECtDARpBHkb5sM6DqRK0UT4CDXdBE
- TeuA9CoyDepWmtqJCR53TUHbzb/PrEEKQEawBcl2aVhJc791wZYyLQFEvHoBpE6OR9nY
- oswbOv2earsjJuMvupKjYxYK12DMyPtOC4DxDgbARNHsST6dZd+0x+JvYFOh+Sb3mrMy
- niNUCad/CGAuOEDyPIGu0QHsG4zObVPKFBKgRNWUPLd1KQirDyvvZdmcI6oKOruK7w1Y Gw== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2020-01-29;
- bh=BMOIKK6jzjj0JiGDZ6NWY0dqw5h+oBGu0ZXYV3LXPIw=;
- b=ZWo5P5Srip6ukCgHl7cX2YME4vZSwiEtGyuDxBP74z1SKzY594g+9JWlQjoYAGJMX0H1
- eqYR9NXz247xEIIlWl56qOIQPgFjKsyLjI/XwNXb9ud9LbKJf5buLY51WpzIMF8scqCA
- 2MKEPvtCJJmCf2iZhuT4xJERH9VWvhmZKS6LcvVabZHNjLm420yv7CtLy+W++Ag3HKdz
- YlzcrJ3nMW/7Nt+2urT5cXoU2hXZk9/skrI/zMsK2WTf+c3naNSiCqPW5hA7U0jxUKKk
- jxGSaCHp7imkdKGYDi5nVcfhzGpoi+KuxQQMM5M+j6k2g+qGQe+EIyYNSZXhMQn1KyRy vw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ad13v9mm0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Aug 2021 22:36:30 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17CMITV6084041;
-        Thu, 12 Aug 2021 22:36:29 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-        by userp3020.oracle.com with ESMTP id 3aa3xy5ymv-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Aug 2021 22:36:29 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KrP9VEq7STcb4A8q8IzwxZHlpzO2ntW1z16DFoBGrxTVV03mgjTtUYUyTaM/7pw66DZzY58pYKkUp+kjurXhizxPi4BcjmCoCj9f63c5Pe4/FdbxcjcRvQPRQN0nal6i+vTAP+Sftp+YpcqOZuXaNQazfbs1/Dxp+df1o0H4i1TEVL5V1rCza7OUHSLNLFM+t2KeVHfU6IqMQPClMA+wYNxSWvcy5KcQvUqbtToK/xLn0T21c1GdBsPfL05c6U/je65Xy/zB4Lm/vg6zNAlVD13fE1SAXd6h8NP7YeqtBsZvPk6XZBH11gBcr+DLPONm1hlEgkwofn3ahY3ACIPsxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BMOIKK6jzjj0JiGDZ6NWY0dqw5h+oBGu0ZXYV3LXPIw=;
- b=WHV6RQwGrO7KQd7S7cLZl8ywjDDK1vKRfkLdpKoExYONv43WqDqtKY2z0My7KlwyI1AcceJoxrrRnVj/FDKoG3NJw4wJShI+e+ro9ys/wPa0F6TS2HtvB4+S+oixtggq5ElROIbjYbukttHmjnnb3K0hGde+TOvYU9Hg+RTLUKGzTe469WRg8b09G1IYxwtym//wvV1YZF0f5m6ytLwK5KKmi2lY+spW81RNQh2RRXL357+Ol1boylKNKQjBeRyOIGGRN8jMygXvkZMijw6kmDQV+TGNU607dbFSJECiJHzKy9490GHxGLaRA33AQx1u9uQPAt1wZcHHvQCOGVDAZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BMOIKK6jzjj0JiGDZ6NWY0dqw5h+oBGu0ZXYV3LXPIw=;
- b=HGZwxKXa4g+gum2N3ivgCayU49ThgRIVrsbig4ezPyedPOfR8dEdmnRhBeF9pzpS6a1rS9s6eILRlcN2/NZCZe5ejnc454EZGcaHNp6UGCXzl7iXm+xleeFG7tn56lendX8UUU/13NV7BUaweRIxTFzz0L797miORmgsfDH4H3w=
-Authentication-Results: linux.ibm.com; dkim=none (message not signed)
- header.d=none;linux.ibm.com; dmarc=none action=none header.from=oracle.com;
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH2PR10MB4311.namprd10.prod.outlook.com (2603:10b6:610:79::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.17; Thu, 12 Aug
- 2021 22:36:27 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::bdce:cf4c:518c:fd15]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::bdce:cf4c:518c:fd15%6]) with mapi id 15.20.4394.023; Thu, 12 Aug 2021
- 22:36:27 +0000
-Content-Type: text/plain; charset=utf-8
-Subject: Re: [PATCH v3 01/14] integrity: Introduce a Linux keyring for the
- Machine Owner Key (MOK)
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <34b12d8d47564a182f0a29a9592e203b17ccdd69.camel@linux.ibm.com>
-Date:   Thu, 12 Aug 2021 16:36:17 -0600
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        pjones@redhat.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <915366E7-0B86-4F38-8AFD-EDA5FC1916D5@oracle.com>
-References: <20210812021855.3083178-1-eric.snowberg@oracle.com>
- <20210812021855.3083178-2-eric.snowberg@oracle.com>
- <34b12d8d47564a182f0a29a9592e203b17ccdd69.camel@linux.ibm.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-X-Mailer: Apple Mail (2.3273)
-X-ClientProxiedBy: SA9P223CA0003.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:806:26::8) To CH2PR10MB4150.namprd10.prod.outlook.com
- (2603:10b6:610:ac::13)
+        Thu, 12 Aug 2021 18:38:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628807892; bh=8qkBiGm+CMHsia/0VFbfZ560DIEBUk51sqx+1QrltPo=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=pmlydQ+E0+IR8XM0Z6KuNSGmXtu4ExOOnk4JNqlDbs6Rs1efIHkVjSYv4TZQq3/043epbrqhkVsQuB+Tqp9HrsA6QhkSn3kjImc91JSD0wp/2ghmwoJbhK5bDzkBbDaR6O4yjOMWnumZbMC2M0qKS9FhB9KOqvKWItry3C2GMq1oUH041T8In0n0xFSiRu5IYil7GIZp0gSpjldHLbUSy/fSXEmAF1KcIdsTDFYlOW6sqEnefcTGnRSQTiMX8pI6foZDlekdocKUIy0LoVvkU7cV+cG7dkbemr9IkM0ec8RTGK3ipTKFCsKCrXrw5mg8JguBqcpfV+R26gNuJ3PBLA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1628807892; bh=B9mkpkhFDSF38PtUISCt7F1nbSsLDBY4boxZLoknRZd=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=mqpUN1wQqQcsKFJBKzRKJTIf2nBD9lWB0LfSVWF7jIdeSfmVxJre2xCAcuagYLwDr/43BwNhfnec87vUDqR/ShivIX7wP+dBLIIz5mnbrjT/8ICA8kyuImqB9nbrTNJzTu6X07xvL2DWZVd/6GEZFbsw7Vuvvj4esefP7mi09dwJ6j0uGFRCulcx4bbFK4e7I4VO+LpXn5leRbwRe5ZRUe6VcrNPlhmxrTS2I0KEDvLGKs7M9THQHAmQeZpcHa574yHCs3GLDNDFLrIDCH/iSQqub4sRntEHz5EUNgo3dKTU2u3mIWto/s/9hC/Imn2a5Lf9RHrcjyrHPf50lyBqtA==
+X-YMail-OSG: AbnfKTMVM1mXVqUdaMdSRzCSsYaJ5v9zrpMqNNVBox07tTsTG3JZEVvn7BfM2j.
+ y_xQxiMYis1dtnwgqrPTCYVac1juO9fbN.tICoutL7KrHZQnY5hpZjzf1KQKT8d_wUhzfGnh98hc
+ w.l1E_ZNIjN73aBU8bdFvRyYRcTlVhBbSAgYBM51Uyy4Gli9k.s89KApfW2UDWJax29cnCihXFa_
+ Canykoh4zGj55mEglCC.h4vD7T3CfPMjMewRXjaNkSWrOSQREKj9lzNG9MWHHL2xIe_xx6nmGgTi
+ oR9yVr5hnb8pcxwtr3NyzTuIffwlN0HkO61H.1CldZi37W96IzI.peoJEZsWs_YH4rovnZJ0TXfp
+ AMTpJtKy5o07sTMe10nX3q6msfNqqAmepYlV92_kkuniLVov4N_lTxLTKuY4j1U8JwE5jDq.VfO3
+ UgLVAXXG.hxXjuE.e8k_ndeg.INQhBTEnTrli5amJhTzHs4vgDTPVGlAMu2IdYLj5_HejxFh46bK
+ o.otitufVZitU6_gBC5cd5GsL19v8a8B7b1xephseviT06NRXtmKitDYBGxHTFlqdv9CfYEBLBCk
+ xDIVHIIwWXNVu2nNF4mrH9o4hxvZp.ys.hAEiZY122eXR2UrpUTFtVc5HxjcfShEw_ZI5rwpTkgT
+ jDiZRrJGUkdAbuPVEu9GwI93zsrdKKzXCZHAZroiwVvk.lOdTBnRTNUJmbYpGZzFPQ3BPb.bT4on
+ smV4GO_PJfHTI8NqfXLNmYLRELK2VsuZwKlzZIbU9RPsLSu0S2OOFTxDeaVKONQnCFvVNO6.eKkY
+ qTz2.XZCzzIAjS6Gp_t2ETJIQPLj0G_FLFehjnMmjriAZny5odOkPIy6CHkhDAC7lYhO9dic9v.m
+ H6Vgs69jctRmLCQ8xKJmv1Ik3lzqfyVB5XLX9br.osIkgUJtMUl3cl2C8V5lJHCV7Mc.gZYN3ToJ
+ llK1wmlJvsY.Akzw1NO.DsXiJ8uuMEgZ8Xo7tVbNP0kufbnUA4LVP7PYht2wicDrDoebiV5Iflbo
+ a8KnMZhz52ZASOu9bpiciVQOkdYKQjUu7WNFEoU3_DbD1mmQwoylR4E.2IC5FExjvrhhzew6i4Su
+ 9.ymY9ffyCPE.dweZ.I1maRO0qgWsgtAPzVAdiVGgV826wVZb4CzAMiL3cE.t6QEx2XdfSTa3tlb
+ US.yL5lPbuKdDX4Y053hndCiSTjfYPWUdAYzec5z.4CuDb3hFcD8PdREAkI_ixpzzFBmykVZHMvq
+ TgmSJDRCGfFy8sAxlT_RWT9wIR05AxeSdEV06koJciSAXcI9D_d4mNGjZOg2ydCKnRuBLaRDVfjs
+ dOL8rILoJVChKfcKiu_e9mqr1VM_z5tCdrhaz_ah5fxDaqP2j9cb2VUMxQjmIwES2HfQmL60.Bzt
+ FH3m30_uVjy0mnoZRbwGJc7i643WsI69LaLuPoS1f9odMdFwWO0auTvd1P7Jh21q_IDDgOvfsdyd
+ zZUMuuz4LCxaKHvAYVAK5pwAywj0tTPoFIj03bZ_i.I0Ci9U1aoxbMIK6qg_xzWp7KlMjRQEvaBJ
+ DFHANIqpiu1h9XIMmT_0jA3AUIMz8kVpo8.Iqhgd7saePpqadhxwPMRvU3nRc9g7mQPFetU3NWyS
+ GQPY0wnsZxSHr7uWZoTNT67TOsCN6OhPtQFIx649lPidmRm3r1ju8aQdzhgtlsinr6og9IrO.FBp
+ GdiikD6Dcp60mRGuzbP6cbSpr1CBugxdXTCBd6uiGzKjSR7W2LhSxbnVijFPNzTIE1lK2msO1T8g
+ XFKFGHwCpbBnNYd6EpRgxsZ5T.FFAW7DYad3HO_br_xwSUfdBDC4SS.8R50Z2JMIrYb3Kh3SnpDQ
+ .Zlq.xKjo4fPdJRiSusTVZJL4IH1QNztivP3jgtuXrEvgTvVg_YYNfn3SXw3QR_nF_nmmVOlICUR
+ ys3LR1E16CGTNgj4ZHD11hN0KhzNTwLwOJWsCXLzLpwc1MrGazpogSr.BuSxzICRSK5czGRsbVO7
+ NlC6Z5Zh8sFfsYynQE6lDoFA.6byEzRszsI42v68fy.HlgOM9cip_reTK.33h03HaMH8lUVhCymB
+ q9Gz3ZOfkvOM7LOywRyK4xTea8XHSZXZ4xcv0b5qeYvVB0xfdqZ3ui.lZHY0f_ryT_oOzRmkBsay
+ 1xPchif9w5B4QyDzsUb1bqz2xea0sxB7ng3WUNnIB5MQHu35hzxbpeVm896FP2sIcJ6u1wVcMwBr
+ xgXQ2nhRa8kqR2nLsL7GxiowpJVAk8d7QQRXsvIBBxVaBx1_flAsgwnawlX.ymWdP5AnUfdVIgD9
+ 7
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Thu, 12 Aug 2021 22:38:12 +0000
+Received: by kubenode529.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 3e1d123009f6cf25958e08f45f1d9823;
+          Thu, 12 Aug 2021 22:38:08 +0000 (UTC)
+Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM
+ attributes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20210722004758.12371-1-casey@schaufler-ca.com>
+ <20210722004758.12371-23-casey@schaufler-ca.com>
+ <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
+Date:   Thu, 12 Aug 2021 15:38:07 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2606:b400:2001:92:8000::196] (2606:b400:8024:1010::17c6) by SA9P223CA0003.NAMP223.PROD.OUTLOOK.COM (2603:10b6:806:26::8) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.14 via Frontend Transport; Thu, 12 Aug 2021 22:36:21 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4e4c61be-0c41-46a8-988e-08d95de19f1c
-X-MS-TrafficTypeDiagnostic: CH2PR10MB4311:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CH2PR10MB43119189D2A76FB5708E27B387F99@CH2PR10MB4311.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 1rq1g8SmfnXcBBY9o+/WY7khuzVZ3pt3FkUpqZQJHW9d/LPKAAzNPnjEgcO8BGsKY1PummQZZixPOK3NbGTv9lHHqiE9Oz/a3YlT0l1WF6CKySGkj7hBmrRwTtJzdsVUMPMq0RATmZ33ymF71CrH02urP6STNTD8CpFseON2/oSPiSPXWr35oawRtOEZGNOf/mXt3XrmO+fU1AOXK9dazpg30uPrW1Wxph/ThxtBAhZsfWO8bedB2JfahIxTuC80pG/MgNUbkuXygSQp/I84FT465wwg67AUj6tPpQFarhRofGQlGjBLLqOn7pviW5NCjt8vMWFpiXTlB+h9hf10CM9n0rXqbJadVX3Ea+Cl9AGMMi0Mrszi9kmpuqpVnfo21SzLmEd+Gj//3dOY6Uh/+icyH3+WueNuBySowtsmBV+M3MWnvOSb/UaAR8II61Rat5KAlmHSZScJ34udZkYXQ6uvSqydhRldqX7ebYTn1bousJcz48t12dCuWEMohnODmh19snGMyKE9JxmnMvDDErOObBBPLYNvSbUJWtAaxGTu1BXhJFJZEU+FjOxC+F0M5h3tCUzuzArGkAeKBgZnCimQujznHsD86DY/RbLY58F8VKfvO1xnccjNXx471xuLtr1TeSe3HMAqSvgJ606DbkqF3vJc1SNdbegQEUB+Er0UrVAPfuednH9Z8tFrI1uuoOR68xXBKh67cyb/W8yWZQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(39860400002)(366004)(346002)(396003)(376002)(136003)(83380400001)(66476007)(66556008)(107886003)(66946007)(6486002)(86362001)(44832011)(2906002)(36756003)(33656002)(8936002)(8676002)(5660300002)(2616005)(478600001)(38100700002)(4326008)(52116002)(7416002)(6916009)(6666004)(53546011)(186003)(54906003)(316002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZXgzci9vbjdkR1dPd3U5azFwYjhpZVRkaGg0RER3UlJHV0F3TW15QkNJanlI?=
- =?utf-8?B?QmJXQVJQbUpmelROOExyaTBPbHJPWXZBaTkrZFMzS290M2twa09ib3M4b25Z?=
- =?utf-8?B?T2VVSmdrQWgxaDdkRFhBS1NXSUUxbGt6RXBXdTdkUUxpclhnVEVxM0kvQTlF?=
- =?utf-8?B?cSs3MW5zQ0R4UFdqNU5jTVh1eGZyVnNrdkxSaEVaSmVzTXhJVnVua1RscGdG?=
- =?utf-8?B?aE8ycVBiWFJzM3IveldncGZaWnROblBJUC93L3lOcERRaW11b0h1Y2l4YU5u?=
- =?utf-8?B?dHpXc3ljdjN5V1FmQVdrZjdSd2w2UWVuMWM3dkh2MjRwVWJOWUcvWHdpSHZM?=
- =?utf-8?B?SzQ3eFFSMXNwd2RjamE3SVdaQlc3TnVkTkVzbENQVkpac0I3M2s3ZWw1b0h3?=
- =?utf-8?B?a3l2eERuNVY5eTNEYi9vVGpSVXIzc1lGKzNwSE9PRGplN3Q0bzlDd3gzRGp6?=
- =?utf-8?B?dW1GeVh1SkJPZ1BpTW5QU1pHSGEzNW9mVnJ4dFlCdFRvQzFCUnFMeHBNYzZJ?=
- =?utf-8?B?ZlZTTGtyOWdWZkN4cnM5YUJqa1U4QXBrMnBnN2JPaGdLTG50NXRkYjdYZy8r?=
- =?utf-8?B?aGpFZWpWSDMwUklIcjc3TldvbE5SbURsYjRHRUNpWWdCU2tpb01KeE12bHpN?=
- =?utf-8?B?YXZ2QWY0UXhveStLaTlzMm5IMmorNVZvZFJPNVNLcVFhTXpYM1pVSFNHQUwy?=
- =?utf-8?B?MGR6aUtvRC9wdFNkWnNOTjBicTlSRTRqeVdzRmx6NERQU1lrSTkxT1NqOVlZ?=
- =?utf-8?B?Vyt5WnVWVmFOWHNhS1NtZlJITHYzV0NkSjFWaENFUUlLd043ZkkvUEthQTMr?=
- =?utf-8?B?ZDZxc2ZpRXBXa2FPSXloaGdYOGVydGc3VHRhWSt4dnI0NzVwRzhMUnVyNlBJ?=
- =?utf-8?B?OElPOUZkeTcyQXZqUnFzREkwQ2x1VGtYbUZ4TFpFaVk4OWg0NkR4bGlzdTlh?=
- =?utf-8?B?cHJUNlY3bjViVU5WWHJid0tpOCtrTkl2eW5JZ1NVRng4MkZyOEZndHRpN0ll?=
- =?utf-8?B?clg5L2Fnd0NqWXpYTjd4aWFPamVHWFp1ek1ta2ltaERmSnc5V0Z4UmhWYTFl?=
- =?utf-8?B?Y09JaUNrNlFoVUhQR0lYMFBROSt3NS9YSGZGckNaZVd0NmtjbWdNd2ZxWXhx?=
- =?utf-8?B?Rm9oMGxLbFB3ckJ2YTdSZ1lUQlNjVW05NmlGRk5tRVdnU1MzOUN4c1FJWEhQ?=
- =?utf-8?B?TXBPMG5qandlQm4vOW15QVhnZ1p4eDRGNlFaVVFZKzh4SzFOTVRneDZZTUJz?=
- =?utf-8?B?T0NNeG56N1VhQzJVck9hSEFjeE1sM1BMcWI2cWNSS3NRSFFiRGpTY1EvSEZS?=
- =?utf-8?B?NXhNSW04alVsNyttTDRDSFlOenI0d2l4Zm14ZXE0NXg3bTRRR1JtRm1wZU00?=
- =?utf-8?B?dWxtb3FqRG13cFd4enZ5OEFBMWMwRE44ak0vMVpWODZuRHhmbGhCMEZzc0pQ?=
- =?utf-8?B?NkFkdmF2NDVvZXlRTWd0ZkFpSnVOdWY0cmMyQ2hTVjVpZE9ocUJRbVdDditl?=
- =?utf-8?B?UUtXWGVicHVOcGw4WGJGSmdWNEF6MkZLYjllRDQ4amlIRGI5WVRwSU1iM2pO?=
- =?utf-8?B?ckorT0hTMUdSRExNUGRheVQ5enZrUmVNWXdzZGNId3hNS0FTRVFHcTMzLzlU?=
- =?utf-8?B?Wlh6eE5nbWhaVzkrOVVVL1BDeEVkckVnWFoyLzc2Ukl6emh5ZTR6UVVFQ2pB?=
- =?utf-8?B?NnkzWUdlOGVFZjl1a1JIN05YWDZ0c3g4UnhOQk9va01VWkgrWmw5U0FyTG5m?=
- =?utf-8?B?SUFySC84WnJmeEwxQjNuUDQwV05wWGZtY1c2OHBQZFRuNmhoYTNQYUlDQm11?=
- =?utf-8?Q?d0ouD7uf488sqqibwDt+hhg9EGbkW/T/Or68s=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e4c61be-0c41-46a8-988e-08d95de19f1c
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2021 22:36:26.9665
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gp/HCG8Ij8HINRLPm9fm/EBdPzlY89x4rRYNGk6QoZwI3biL6DAp5i5PNDmpIvPyG2YTDH2xHRzeMOndB80XZIFeTEMdczdslkhJZZLEwHY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4311
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10074 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0
- suspectscore=0 malwarescore=0 phishscore=0 adultscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108120141
-X-Proofpoint-ORIG-GUID: Iyjwnp5eB3j9Qhi996YGt1ThAGS4_8jb
-X-Proofpoint-GUID: Iyjwnp5eB3j9Qhi996YGt1ThAGS4_8jb
+In-Reply-To: <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.18850 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 8/12/2021 1:59 PM, Paul Moore wrote:
+> On Wed, Jul 21, 2021 at 9:12 PM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+>> Create a new audit record type to contain the subject information
+>> when there are multiple security modules that require such data.
+>> This record is linked with the same timestamp and serial number
+>> using the audit_alloc_local() mechanism.
+>> The record is produced only in cases where there is more than one
+>> security module with a process "context".
+>> In cases where this record is produced the subj=3D fields of
+>> other records in the audit event will be set to "subj=3D?".
+>>
+>> An example of the MAC_TASK_CONTEXTS (1420) record is:
+>>
+>>         type=3DUNKNOWN[1420]
+>>         msg=3Daudit(1600880931.832:113)
+>>         subj_apparmor=3D"=3Dunconfined"
+>>         subj_smack=3D"_"
+>>
+>> There will be a subj_$LSM=3D entry for each security module
+>> LSM that supports the secid_to_secctx and secctx_to_secid
+>> hooks. The BPF security module implements secid/secctx
+>> translation hooks, so it has to be considered to provide a
+>> secctx even though it may not actually do so.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> To: paul@paul-moore.com
+>> To: linux-audit@redhat.com
+>> To: rgb@redhat.com
+>> Cc: netdev@vger.kernel.org
+>> ---
+>>  drivers/android/binder.c                |  2 +-
+>>  include/linux/audit.h                   | 16 +++++
+>>  include/linux/security.h                | 16 ++++-
+>>  include/net/netlabel.h                  |  2 +-
+>>  include/net/scm.h                       |  2 +-
+>>  include/net/xfrm.h                      | 13 +++-
+>>  include/uapi/linux/audit.h              |  1 +
+>>  kernel/audit.c                          | 90 +++++++++++++++++++-----=
+-
+>>  kernel/auditfilter.c                    |  5 +-
+>>  kernel/auditsc.c                        | 27 ++++++--
+>>  net/ipv4/ip_sockglue.c                  |  2 +-
+>>  net/netfilter/nf_conntrack_netlink.c    |  4 +-
+>>  net/netfilter/nf_conntrack_standalone.c |  2 +-
+>>  net/netfilter/nfnetlink_queue.c         |  2 +-
+>>  net/netlabel/netlabel_unlabeled.c       | 21 +++---
+>>  net/netlabel/netlabel_user.c            | 14 ++--
+>>  net/netlabel/netlabel_user.h            |  6 +-
+>>  net/xfrm/xfrm_policy.c                  |  8 ++-
+>>  net/xfrm/xfrm_state.c                   | 18 +++--
+>>  security/integrity/ima/ima_api.c        |  6 +-
+>>  security/integrity/integrity_audit.c    |  5 +-
+>>  security/security.c                     | 46 ++++++++-----
+>>  security/smack/smackfs.c                |  3 +-
+>>  23 files changed, 221 insertions(+), 90 deletions(-)
+>>
+>> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+>> index 2c3a2348a144..3520caa0260c 100644
+>> --- a/drivers/android/binder.c
+>> +++ b/drivers/android/binder.c
+>> @@ -2722,7 +2722,7 @@ static void binder_transaction(struct binder_pro=
+c *proc,
+>>                  * case well anyway.
+>>                  */
+>>                 security_task_getsecid_obj(proc->tsk, &blob);
+>> -               ret =3D security_secid_to_secctx(&blob, &lsmctx);
+>> +               ret =3D security_secid_to_secctx(&blob, &lsmctx, LSMBL=
+OB_DISPLAY);
+>>                 if (ret) {
+>>                         return_error =3D BR_FAILED_REPLY;
+>>                         return_error_param =3D ret;
+>> diff --git a/include/linux/audit.h b/include/linux/audit.h
+>> index 97cd7471e572..85eb87f6f92d 100644
+>> --- a/include/linux/audit.h
+>> +++ b/include/linux/audit.h
+>> @@ -291,6 +291,7 @@ extern int  audit_alloc(struct task_struct *task);=
 
-> On Aug 12, 2021, at 3:31 PM, Mimi Zohar <zohar@linux.ibm.com> wrote:
->=20
-> On Wed, 2021-08-11 at 22:18 -0400, Eric Snowberg wrote:
->> Many UEFI Linux distributions boot using shim.  The UEFI shim provides
->> what is called Machine Owner Keys (MOK). Shim uses both the UEFI Secure
->> Boot DB and MOK keys to validate the next step in the boot chain.  The
->> MOK facility can be used to import user generated keys.  These keys can
->> be used to sign an end-users development kernel build.  When Linux
->> boots, both UEFI Secure Boot DB and MOK keys get loaded in the Linux
->> .platform keyring.
->>=20
->> Add a new Linux keyring called .mok.  This keyring shall contain just
->> MOK keys and not the remaining keys in the platform keyring. This new
->> .mok keyring will be used in follow on patches.  Unlike keys in the
->> platform keyring, keys contained in the .mok keyring will be trusted
->> within the kernel if the end-user has chosen to do so.
->>=20
->> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
->> ---
->> v1: Initial version
->> v2: Removed destory keyring code
->> v3: Unmodified from v2
->> ---
->> security/integrity/Makefile                   |  3 ++-
->> security/integrity/digsig.c                   |  1 +
->> security/integrity/integrity.h                |  3 ++-
->> .../integrity/platform_certs/mok_keyring.c    | 21 +++++++++++++++++++
->> 4 files changed, 26 insertions(+), 2 deletions(-)
->> create mode 100644 security/integrity/platform_certs/mok_keyring.c
->>=20
->> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
->> index 7ee39d66cf16..8e2e98cba1f6 100644
->> --- a/security/integrity/Makefile
->> +++ b/security/integrity/Makefile
->> @@ -9,7 +9,8 @@ integrity-y :=3D iint.o
->> integrity-$(CONFIG_INTEGRITY_AUDIT) +=3D integrity_audit.o
->> integrity-$(CONFIG_INTEGRITY_SIGNATURE) +=3D digsig.o
->> integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) +=3D digsig_asymmetric.o
->> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) +=3D platform_certs/plat=
-form_keyring.o
->> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) +=3D platform_certs/plat=
-form_keyring.o \
->> +						  platform_certs/mok_keyring.o
->> integrity-$(CONFIG_LOAD_UEFI_KEYS) +=3D platform_certs/efi_parser.o \
->> 				      platform_certs/load_uefi.o \
->> 				      platform_certs/keyring_handler.o
->> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
->> index 3b06a01bd0fd..e07334504ef1 100644
->> --- a/security/integrity/digsig.c
->> +++ b/security/integrity/digsig.c
->> @@ -30,6 +30,7 @@ static const char * const keyring_name[INTEGRITY_KEYRI=
-NG_MAX] =3D {
->> 	".ima",
->> #endif
->> 	".platform",
->> +	".mok",
->> };
->>=20
->> #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
->> diff --git a/security/integrity/integrity.h b/security/integrity/integri=
-ty.h
->> index 547425c20e11..e0e17ccba2e6 100644
->> --- a/security/integrity/integrity.h
->> +++ b/security/integrity/integrity.h
->> @@ -151,7 +151,8 @@ int integrity_kernel_read(struct file *file, loff_t =
-offset,
->> #define INTEGRITY_KEYRING_EVM		0
->> #define INTEGRITY_KEYRING_IMA		1
->> #define INTEGRITY_KEYRING_PLATFORM	2
->> -#define INTEGRITY_KEYRING_MAX		3
->> +#define INTEGRITY_KEYRING_MOK		3
->> +#define INTEGRITY_KEYRING_MAX		4
->>=20
->> extern struct dentry *integrity_dir;
->>=20
->> diff --git a/security/integrity/platform_certs/mok_keyring.c b/security/=
-integrity/platform_certs/mok_keyring.c
->> new file mode 100644
->> index 000000000000..b1ee45b77731
->> --- /dev/null
->> +++ b/security/integrity/platform_certs/mok_keyring.c
->> @@ -0,0 +1,21 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * MOK keyring routines.
->> + *
->> + * Copyright (c) 2021, Oracle and/or its affiliates.
->> + */
->> +
->> +#include "../integrity.h"
->> +
->> +static __init int mok_keyring_init(void)
+>>  extern void __audit_free(struct task_struct *task);
+>>  extern struct audit_context *audit_alloc_local(gfp_t gfpflags);
+>>  extern void audit_free_context(struct audit_context *context);
+>> +extern void audit_free_local(struct audit_context *context);
+>>  extern void __audit_syscall_entry(int major, unsigned long a0, unsign=
+ed long a1,
+>>                                   unsigned long a2, unsigned long a3);=
+
+>>  extern void __audit_syscall_exit(int ret_success, long ret_value);
+>> @@ -386,6 +387,19 @@ static inline void audit_ptrace(struct task_struc=
+t *t)
+>>                 __audit_ptrace(t);
+>>  }
+>>
+>> +static inline struct audit_context *audit_alloc_for_lsm(gfp_t gfp)
 >> +{
->> +	int rc;
+>> +       struct audit_context *context =3D audit_context();
 >> +
->> +	rc =3D integrity_init_keyring(INTEGRITY_KEYRING_MOK);
->> +	if (rc)
->> +		return rc;
+>> +       if (context)
+>> +               return context;
 >> +
->> +	pr_notice("MOK Keyring initialized\n");
->> +	return 0;
+>> +       if (lsm_multiple_contexts())
+>> +               return audit_alloc_local(gfp);
+>> +
+>> +       return NULL;
 >> +}
->> +device_initcall(mok_keyring_init);
->=20
-> The ordering of the patches in this patch set is not quite
-> right. =20
+> We don't want to do this, at least not as it is written above.  We
+> shouldn't have a function which abstracts away the creation of a local
+> audit_context.  Usage of a local audit_context should be explicit in
+> the caller, and if the caller's execution context is ambiguous enough
+> that it can require both a task_struct audit_context and a local
+> audit_context then we need to handle that on a case-by-case basis.
+> Hiding it like this is guaranteed to cause problems later.
 
-I will work on reordering the patches in the next round.
+OK. Please understand that *every case* where I've used audit_alloc_for_l=
+sm()
+is a case where I have *verified* that context may be NULL. I will make
+the change.
 
-> Please first introduce the new keyring with the new Kconfig,
-> new restriction, and loading the keys onto the new keyring.  Introduce
-> the builitin_secondary_and_ca_trusted restriction and linking the new
-> keyring to the secondary keyring.  Only after everything is in place,
-> define and use the UEFI mok variable(s).
->=20
-> Originally, I asked you to "Separate each **logical change** into a
-> separate patch."  After re-ordering the patches, see if merging some of
-> them together now makes sense.
+> I probably did a poor job of explaining what a local context is during
+> the last patchset; I'll try to do a better job here but also let me
+> say this as clear as I can ... if the "current" task struct is valid
+> for a given code path, *never* use a local audit context.
 
-I=E2=80=99ll see if merging some of them together makes sense.
+I probably did a poor job of demonstrating that I never use a local
+context where there's a valid current context.
 
-With the new Kconfig option, should the default be 'y' or =E2=80=99n' when =
-the secondary=20
-is defined?  Thanks.
+>   The local
+> audit context is a hack that is made necessary by the fact that we
+> have to audit things which happen outside the scope of an executing
+> task, e.g. the netfilter audit hooks, it should *never* be used when
+> there is a valid task_struct.
+
+In the existing audit code a "current context" is only needed for
+syscall events, so that's the only case where it's allocated. Would
+you suggest that I track down the non-syscall events that include
+subj=3D fields and add allocate a "current context" for them? I looked
+into doing that, and it wouldn't be simple.
+
+> It's the audit_context which helps bind multiple audit records into a
+> single event, creating a new, "local" audit_context destroys that
+> binding
+
+=2E.. if there's a current context. There often isn't. That's why I'm
+using a local context. There is not a "current" context available.
+
+>  as audit records created using that local audit_context have a
+> different timestamp from those records created using the current
+> task_struct's audit_context.
+
+(Weeps) I only introduce a local context where there is no current
+context available, so this is never a problem.
+
+> Hopefully that makes sense?
+
+Yes, it makes sense. Methinks you may believe that the current context
+is available more regularly than it actually is.
+
+I instrumented the audit event functions with:
+
+	WARN_ONCE(audit_context, "%s has context\n", __func__);
+	WARN_ONCE(!audit_context, "%s lacks context\n", __func__);
+
+I only used local contexts where the 2nd WARN_ONCE was hit.
+
+
+>>                                 /* Private API (for audit.c only) */
+>>  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
+>>  extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid=
+_t gid, umode_t mode);
+>> @@ -560,6 +574,8 @@ extern int audit_signals;
+>>  }
+>>  static inline void audit_free_context(struct audit_context *context)
+>>  { }
+>> +static inline void audit_free_local(struct audit_context *context)
+>> +{ }
+>>  static inline int audit_alloc(struct task_struct *task)
+>>  {
+>>         return 0;
+>> diff --git a/include/linux/security.h b/include/linux/security.h
+>> index 3e9743118fb9..b3cf68cf2bd6 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -182,6 +182,8 @@ struct lsmblob {
+>>  #define LSMBLOB_INVALID                -1      /* Not a valid LSM slo=
+t number */
+>>  #define LSMBLOB_NEEDED         -2      /* Slot requested on initializ=
+ation */
+>>  #define LSMBLOB_NOT_NEEDED     -3      /* Slot not requested */
+>> +#define LSMBLOB_DISPLAY                -4      /* Use the "display" s=
+lot */
+>> +#define LSMBLOB_FIRST          -5      /* Use the default "display" s=
+lot */
+>>
+>>  /**
+>>   * lsmblob_init - initialize an lsmblob structure
+>> @@ -248,6 +250,15 @@ static inline u32 lsmblob_value(const struct lsmb=
+lob *blob)
+>>         return 0;
+>>  }
+>>
+>> +static inline bool lsm_multiple_contexts(void)
+>> +{
+>> +#ifdef CONFIG_SECURITY
+>> +       return lsm_slot_to_name(1) !=3D NULL;
+>> +#else
+>> +       return false;
+>> +#endif
+>> +}
+>> +
+>>  /* These functions are in security/commoncap.c */
+>>  extern int cap_capable(const struct cred *cred, struct user_namespace=
+ *ns,
+>>                        int cap, unsigned int opts);
+>> @@ -578,7 +589,8 @@ int security_setprocattr(const char *lsm, const ch=
+ar *name, void *value,
+>>                          size_t size);
+>>  int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+>>  int security_ismaclabel(const char *name);
+>> -int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext =
+*cp);
+>> +int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext =
+*cp,
+>> +                            int display);
+>>  int security_secctx_to_secid(const char *secdata, u32 seclen,
+>>                              struct lsmblob *blob);
+>>  void security_release_secctx(struct lsmcontext *cp);
+>> @@ -1433,7 +1445,7 @@ static inline int security_ismaclabel(const char=
+ *name)
+>>  }
+>>
+>>  static inline int security_secid_to_secctx(struct lsmblob *blob,
+>> -                                          struct lsmcontext *cp)
+>> +                                          struct lsmcontext *cp, int =
+display)
+>>  {
+>>         return -EOPNOTSUPP;
+>>  }
+>> diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+>> index 73fc25b4042b..216cb1ffc8f0 100644
+>> --- a/include/net/netlabel.h
+>> +++ b/include/net/netlabel.h
+>> @@ -97,7 +97,7 @@ struct calipso_doi;
+>>
+>>  /* NetLabel audit information */
+>>  struct netlbl_audit {
+>> -       u32 secid;
+>> +       struct lsmblob lsmdata;
+>>         kuid_t loginuid;
+>>         unsigned int sessionid;
+>>  };
+> This chunk seems lost here, does it belong in another patch?
+
+Probably. I am getting a touch of patch-rot showing up.
+
+
+>> diff --git a/include/net/scm.h b/include/net/scm.h
+>> index b77a52f93389..f4d567d4885e 100644
+>> --- a/include/net/scm.h
+>> +++ b/include/net/scm.h
+>> @@ -101,7 +101,7 @@ static inline void scm_passec(struct socket *sock,=
+ struct msghdr *msg, struct sc
+>>                  * and the infrastructure will know which it is.
+>>                  */
+>>                 lsmblob_init(&lb, scm->secid);
+>> -               err =3D security_secid_to_secctx(&lb, &context);
+>> +               err =3D security_secid_to_secctx(&lb, &context, LSMBLO=
+B_DISPLAY);
+> Misplaced code change?
+
+Same here.
+
+
+>>                 if (!err) {
+>>                         put_cmsg(msg, SOL_SOCKET, SCM_SECURITY, contex=
+t.len,
+>> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+>> index cbff7c2a9724..a10fa01f7bf4 100644
+>> --- a/include/net/xfrm.h
+>> +++ b/include/net/xfrm.h
+>> @@ -660,13 +660,22 @@ struct xfrm_spi_skb_cb {
+>>  #define XFRM_SPI_SKB_CB(__skb) ((struct xfrm_spi_skb_cb *)&((__skb)->=
+cb[0]))
+>>
+>>  #ifdef CONFIG_AUDITSYSCALL
+>> -static inline struct audit_buffer *xfrm_audit_start(const char *op)
+>> +static inline struct audit_buffer *xfrm_audit_start(const char *op,
+>> +                                                   struct audit_conte=
+xt **lac)
+>>  {
+>> +       struct audit_context *context;
+>>         struct audit_buffer *audit_buf =3D NULL;
+>>
+>>         if (audit_enabled =3D=3D AUDIT_OFF)
+>>                 return NULL;
+>> -       audit_buf =3D audit_log_start(audit_context(), GFP_ATOMIC,
+>> +       context =3D audit_context();
+>> +       if (lac !=3D NULL) {
+>> +               if (lsm_multiple_contexts() && context =3D=3D NULL)
+>> +                       context =3D audit_alloc_local(GFP_ATOMIC);
+>> +               *lac =3D context;
+>> +       }
+>> +
+>> +       audit_buf =3D audit_log_start(context, GFP_ATOMIC,
+>>                                     AUDIT_MAC_IPSEC_EVENT);
+>>         if (audit_buf =3D=3D NULL)
+>>                 return NULL;
+> Related to the other comments around local audit_contexts, we don't
+> want to do this; use the existing audit_context, @lac in this case, so
+> that this audit record is bound to the other associated records into a
+> single audit event (all have the same timestamp).
+
+Hmm. This is clearly a problem. Looks like a change came in
+that I didn't see.
+
+>> diff --git a/kernel/audit.c b/kernel/audit.c
+>> index 841123390d41..cba63789a164 100644
+>> --- a/kernel/audit.c
+>> +++ b/kernel/audit.c
+>> @@ -386,10 +386,12 @@ void audit_log_lost(const char *message)
+>>  static int audit_log_config_change(char *function_name, u32 new, u32 =
+old,
+>>                                    int allow_changes)
+>>  {
+>> +       struct audit_context *context;
+>>         struct audit_buffer *ab;
+>>         int rc =3D 0;
+>>
+>> -       ab =3D audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONF=
+IG_CHANGE);
+>> +       context =3D audit_alloc_for_lsm(GFP_KERNEL);
+>> +       ab =3D audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANG=
+E);
+> We shouldn't need to do this for the reasons discussed up near the top
+> of this email (and elsewhere as well).
+
+Here and elsewhere, I only put audit_alloc_for_lsm() in because there
+are cases where audit_context() returns NULL. Really.
+
+>
+> I'm going to refrain from commenting on the other uses of
+> audit_alloc_for_lsm() in this patch unless there is something unique
+> to the code path, so if you don't see me comment about a use of
+> audit_alloc_for_lsm() you can assume it should be removed and the
+> existing audit_context used instead.
+>
+>> @@ -399,6 +401,7 @@ static int audit_log_config_change(char *function_=
+name, u32 new, u32 old,
+>>                 allow_changes =3D 0; /* Something weird, deny request =
+*/
+>>         audit_log_format(ab, " res=3D%d", allow_changes);
+>>         audit_log_end(ab);
+>> +       audit_free_local(context);
+> See my comment directly above regarding usage of
+> audit_alloc_for_lsm(), it obviously applies here too.
+>
+>> @@ -2128,6 +2136,36 @@ void audit_log_key(struct audit_buffer *ab, cha=
+r *key)
+>>                 audit_log_format(ab, "(null)");
+>>  }
+>>
+>> +static void audit_log_lsm(struct audit_context *context, struct lsmbl=
+ob *blob)
+> See my note below about moving this into audit_log_task_context(),
+
+Either works for me. This seemed consistent with the rest of the audit
+code, but I'm happy to change it if you like that better.
+
+>  but
+> if we really need to keep this as a separate function, let's consider
+> changing the name to something which indicates that it logs the LSM
+> data as *subject* fields.  How about audit_log_lsm_subj()?
+>
+>> +{
+>> +       struct audit_buffer *ab;
+>> +       struct lsmcontext lsmdata;
+>> +       bool sep =3D false;
+>> +       int error;
+>> +       int i;
+>> +
+>> +       ab =3D audit_log_start(context, GFP_ATOMIC, AUDIT_MAC_TASK_CON=
+TEXTS);
+>> +       if (!ab)
+>> +               return; /* audit_panic or being filtered */
+>> +
+>> +       for (i =3D 0; i < LSMBLOB_ENTRIES; i++) {
+>> +               if (blob->secid[i] =3D=3D 0)
+>> +                       continue;
+>> +               error =3D security_secid_to_secctx(blob, &lsmdata, i);=
+
+>> +               if (error && error !=3D -EINVAL) {
+>> +                       audit_panic("error in audit_log_lsm");
+>> +                       return;
+>> +               }
+>> +
+>> +               audit_log_format(ab, "%ssubj_%s=3D\"%s\"", sep ? " " :=
+ "",
+>> +                                lsm_slot_to_name(i), lsmdata.context)=
+;
+>> +               sep =3D true;
+> Since @i starts at zero, you can get rid of @sep by replacing it with @=
+i:
+>
+>   audit_log_format(ab, ..., (i ? " " : ""), ...);
+
+Clever.
+
+>
+>> +               security_release_secctx(&lsmdata);
+>> +       }
+>> +       audit_log_end(ab);
+>> +}
+>> @@ -2138,7 +2176,18 @@ int audit_log_task_context(struct audit_buffer =
+*ab)
+>>         if (!lsmblob_is_set(&blob))
+>>                 return 0;
+>>
+>> -       error =3D security_secid_to_secctx(&blob, &context);
+>> +       /*
+>> +        * If there is more than one security module that has a
+>> +        * subject "context" it's necessary to put the subject data
+>> +        * into a separate record to maintain compatibility.
+>> +        */
+>> +       if (lsm_multiple_contexts()) {
+>> +               audit_log_format(ab, " subj=3D?");
+>> +               audit_log_lsm(ab->ctx, &blob);
+>> +               return 0;
+>> +       }
+>> +
+>> +       error =3D security_secid_to_secctx(&blob, &context, LSMBLOB_FI=
+RST);
+> Instead of the lsm_multiple_contexts() case bailing on the rest of the
+> function with a return inside the if-block, let's made the code a bit
+> more robust by organizing it like this:
+
+Sure, why not?
+
+>
+>   int audit_log_task_context(ab)
+>   {
+>      /* common stuff at the start */
+>
+>      if (lsm_multiple_contexts()) {
+>        /* multi-LSM stuff */
+>      } else {
+>        /* single LSM stuff */
+>      }
+>
+>      /* common stuff at the end */
+>   }
+>
+> ... it also may make sense to just move the body of audit_log_lsm()
+> into audit_log_task_context() and do away with audit_log_lsm()
+> entirely; is it ever going to be called from anywhere else?
+>
+>> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+>> index 0e58a3ab56f5..01fdcbf468c0 100644
+>> --- a/kernel/auditsc.c
+>> +++ b/kernel/auditsc.c
+>> @@ -993,12 +993,11 @@ struct audit_context *audit_alloc_local(gfp_t gf=
+pflags)
+>>         context =3D audit_alloc_context(AUDIT_STATE_BUILD, gfpflags);
+>>         if (!context) {
+>>                 audit_log_lost("out of memory in audit_alloc_local");
+>> -               goto out;
+>> +               return NULL;
+>>         }
+>>         context->serial =3D audit_serial();
+>>         ktime_get_coarse_real_ts64(&context->ctime);
+>>         context->local =3D true;
+>> -out:
+>>         return context;
+>>  }
+> This chunk should be moved to 21/25 when audit_alloc_local() is first d=
+efined.
+
+True. I was trying to minimize the change to the original audit_alloc_loc=
+al()
+patch on the assumption that it was coming in for other reasons, but that=
+ hasn't
+happened.
+
+
+>> @@ -1019,6 +1018,13 @@ void audit_free_context(struct audit_context *c=
+ontext)
+>>  }
+>>  EXPORT_SYMBOL(audit_free_context);
+>>
+>> +void audit_free_local(struct audit_context *context)
+>> +{
+>> +       if (context && context->local)
+>> +               audit_free_context(context);
+>> +}
+>> +EXPORT_SYMBOL(audit_free_local);
+> If this is strictly necessary, and I don't think it is, it should also
+> be moved to patch 21/25 with the original definition of a local
+> audit_context.  However,  there really should be no reason why we have
+> to distinguish between a proper and local audtit_context when it comes
+> to free'ing the memory, just call audit_free_context() in both cases.
+>
+>> @@ -1036,7 +1042,7 @@ static int audit_log_pid_context(struct audit_co=
+ntext *context, pid_t pid,
+>>                          from_kuid(&init_user_ns, auid),
+>>                          from_kuid(&init_user_ns, uid), sessionid);
+>>         if (lsmblob_is_set(blob)) {
+>> -               if (security_secid_to_secctx(blob, &lsmctx)) {
+>> +               if (security_secid_to_secctx(blob, &lsmctx, LSMBLOB_FI=
+RST)) {
+> Misplaced code change?
+>
+> Actually, there are a lot of these below, I'm not going to comment on
+> all of them as I think you get the idea ... and I very well may be
+> wrong so I'll save you all of my wrongness in that case :)
+>
+>> diff --git a/security/security.c b/security/security.c
+>> index cb359e185d1a..5d7fd982f84a 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -2309,7 +2309,7 @@ int security_setprocattr(const char *lsm, const =
+char *name, void *value,
+>>                 hlist_for_each_entry(hp, &security_hook_heads.setproca=
+ttr,
+>>                                      list) {
+>>                         rc =3D hp->hook.setprocattr(name, value, size)=
+;
+>> -                       if (rc < 0)
+>> +                       if (rc < 0 && rc !=3D -EINVAL)
+>>                                 return rc;
+>>                 }
+> This really looks misplaced ... ?
+
+Yeah, you're not the first person to notice these bits of patch-rot.
+I have some clean-up to do.
+
+Thank you for the review.
+
 
