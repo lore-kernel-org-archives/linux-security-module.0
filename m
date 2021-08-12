@@ -2,153 +2,126 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F093C4338F
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B16E9C43216
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 00:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14E0B6104F
-	for <linux-security-module@archiver.kernel.org>; Wed, 11 Aug 2021 20:49:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900BF60F35
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 00:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231750AbhHKUuM (ORCPT
+        id S233117AbhHLAzZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 11 Aug 2021 16:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232111AbhHKUtJ (ORCPT
+        Wed, 11 Aug 2021 20:55:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58608 "EHLO
+        mx0b-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232704AbhHLAzY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 11 Aug 2021 16:49:09 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 487E0C061798
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:45 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id y9so3207745qtv.7
-        for <linux-security-module@vger.kernel.org>; Wed, 11 Aug 2021 13:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:date:message-id:in-reply-to:references:user-agent
-         :mime-version:content-transfer-encoding;
-        bh=W2ePed7b7Zeoarrg+9WSGsiLd7Tb2w8iYG/B7ulmbOM=;
-        b=Q08tdZC3zUhePwuBfcwpZb7XyB3p9/YOLKej65cWgZvCK44GhukGTCy7P4n4N52VJm
-         NNSuFNgtNQJscN9oPIk4FKvmUBUhDfiSiD4KkdPD1nSw1AsrnLmmez5MtLCE8H9m991N
-         UxIO0taVWsxssJtcZoIKlKCsv4Dstls0LYuB+5dHmvd2mFjEFMXJy0iphSS/e8PYzEmq
-         av80NkD/yLdr1S1l049acLbgfGhHZQIZzxFHmRq6EpT/4Fdv2p5gcoJdeLwykGHHNoQ/
-         4kvU03H9ff8x32JloScyj8/i7nmbLyVIwzvy1ozlMWUHXUzi5eDt5B/8/oJdnTZFUMFM
-         X8LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:date:message-id:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=W2ePed7b7Zeoarrg+9WSGsiLd7Tb2w8iYG/B7ulmbOM=;
-        b=ZihZ5kMquIiH5n+Kk7RR9mWXNcKEaBoAygMz4mNkuWImQL6HuZTil7cFbW5NKnIanJ
-         pnpmUAK+dBv1YQDKhEJn/+GS18+gE7Fq0pzL1qBLHp6T20qdXEF2sLijnRHMe3QW42X4
-         Y52s1UmjvQEEq6HYog4sBJz2Xrq9IzzoJHhYAT0/TrLCykM7IvDXVKNoU7oGoCeewFzv
-         nYwTKuRqKS2BhUrQQG4KvAapBWw7LLng+BP3BuUSuYshNRSpb3OTs0q///UcpsXHxri9
-         7p/NWz58zZCYh2OQrJIdzG7WHLbBfvMM3wuASLjPRj5S+uBh4kXYJUjkEezNldQS9T5a
-         GSHQ==
-X-Gm-Message-State: AOAM533qz0WQvbVH8BqbVZTs+K9KAzShrhOws+Y+TZATYY1ytG0ljg+K
-        WwfmfO62walc5KTxojc9XA94KPmGtggBfMc=
-X-Google-Smtp-Source: ABdhPJzPm7vS80oH9l1MxGpWYzzRAHNbELlSvXDE1HIUCPH+TxQcMwQ+AA8dFa6dTLqb4NNtLM2rUQ==
-X-Received: by 2002:ac8:7207:: with SMTP id a7mr625967qtp.32.1628714923930;
-        Wed, 11 Aug 2021 13:48:43 -0700 (PDT)
-Received: from localhost (pool-96-237-52-188.bstnma.fios.verizon.net. [96.237.52.188])
-        by smtp.gmail.com with ESMTPSA id c68sm178277qkf.48.2021.08.11.13.48.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Aug 2021 13:48:43 -0700 (PDT)
-Subject: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to
- anon_inode_getfd_secure()
-From:   Paul Moore <paul@paul-moore.com>
-To:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Date:   Wed, 11 Aug 2021 16:48:42 -0400
-Message-ID: <162871492283.63873.8743976556992924333.stgit@olly>
-In-Reply-To: <162871480969.63873.9434591871437326374.stgit@olly>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
-User-Agent: StGit/1.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+        Wed, 11 Aug 2021 20:55:24 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17C0Xi9q165976;
+        Wed, 11 Aug 2021 20:54:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=ULNYVhyMXQ6SJqEPuIb/V3Ar+77kio3M9soDEn4mVZI=;
+ b=U7vzE5v9UZZ45xrsck6jEvH7LjuhW/AIlkt6QO9HWq+MXbMHBhVbx9UM/7w4YTX7vZhI
+ 4hmxgbN0JetK1AXkuD6WJFss+1KlN1J26QS7kLYBKNmySgYwpclRLyJuMN8+ZKogCRa3
+ 8EI1LO/kmK56Z0Rz6OYRBtA3PlSJZPSMhutitZ5A31s92IkbBYNe7BmqUls7tv2pK4Mm
+ HAIWQUQVTgSsUdDn5oH2Gzpzks4f5aJBQpzihj/AxFGmy5cCca+GtABs5NAPwTXgk+4J
+ VXLJFA9IfsPKywQeMx2YezCCHX+mEYJrAqNomrLXSE3dHNiyAppYi+KGDJejY6yWcm34 8Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3abk4rb3nn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Aug 2021 20:54:45 -0400
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17C0jLs3019800;
+        Wed, 11 Aug 2021 20:54:44 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3abk4rb3n0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 11 Aug 2021 20:54:44 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17C0mr4b023293;
+        Thu, 12 Aug 2021 00:54:42 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06fra.de.ibm.com with ESMTP id 3abaq4bpt9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Aug 2021 00:54:42 +0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17C0seAc57409946
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Aug 2021 00:54:40 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC8B64C058;
+        Thu, 12 Aug 2021 00:54:39 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CF5AD4C044;
+        Thu, 12 Aug 2021 00:54:35 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.39.92])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Aug 2021 00:54:35 +0000 (GMT)
+Message-ID: <0e69a0aa394dd20347b06ae4e700aa17d52583ef.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] fscrypt: support trusted keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, kernel@pengutronix.de,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        David Howells <dhowells@redhat.com>,
+        linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 11 Aug 2021 20:54:34 -0400
+In-Reply-To: <YRQF09f8st95yrFZ@gmail.com>
+References: <20210806150928.27857-1-a.fatoum@pengutronix.de>
+         <20210809094408.4iqwsx77u64usfx6@kernel.org> <YRGVcaquAJiuc8bp@gmail.com>
+         <20210810180636.vqwaeftv7alsodgn@kernel.org> <YRLJmaafp941uOdA@gmail.com>
+         <20210810212140.sdq5dq2wy5uaj7h7@kernel.org> <YRLvPJehAeMiYb2Z@gmail.com>
+         <20210811001743.ofzkwdwa6rcjsf4d@kernel.org>
+         <d4f5c2593380c82ceebae2c8782a1c440b35f165.camel@linux.ibm.com>
+         <YRQF09f8st95yrFZ@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Bw0BKgjnxSvjPERnFY5J8y3TGYn8Lb-u
+X-Proofpoint-GUID: nknNgAnVYtbwy3IFx8trALR_Z1mI68X2
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-11_08:2021-08-11,2021-08-11 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 impostorscore=0 phishscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=999 mlxscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108120001
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Extending the secure anonymous inode support to other subsystems
-requires that we have a secure anon_inode_getfile() variant in
-addition to the existing secure anon_inode_getfd() variant.
+On Wed, 2021-08-11 at 10:16 -0700, Eric Biggers wrote:
 
-Thankfully we can reuse the existing __anon_inode_getfile() function
-and just wrap it with the proper arguments.
+> Neither of you actually answered my question, which is whether the support for
+> trusted keys in dm-crypt is a mistake.  I think you're saying that it is?  That
+> would imply that fscrypt shouldn't support trusted keys, but rather encrypted
+> keys -- which conflicts with Ahmad's patch which is adding support for trusted
+> keys.  Note that your reasoning for this is not documented at all in the
+> trusted-encrypted keys documentation; it needs to be (email threads don't really
+> matter), otherwise how would anyone know when/how to use this feature?
 
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+True, but all of the trusted-encrypted key examples in the
+documentation are "encrypted" type keys, encrypted/decrypted based on a
+"trusted" type key.  There are no examples of using the "trusted" key
+type directly.  Before claiming that adding "trusted" key support in
+dm-crypt was a mistake, we should ask Ahmad why he felt dm-crypt needed
+to directly support "trusted" type keys.
 
----
-v2:
-- no change
-v1:
-- initial draft
----
- fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
- include/linux/anon_inodes.h |    4 ++++
- 2 files changed, 33 insertions(+)
-
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index a280156138ed..e0c3e33c4177 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
- }
- EXPORT_SYMBOL_GPL(anon_inode_getfile);
- 
-+/**
-+ * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
-+ *                             !S_PRIVATE anon inode rather than reuse the
-+ *                             singleton anon inode and calls the
-+ *                             inode_init_security_anon() LSM hook.  This
-+ *                             allows for both the inode to have its own
-+ *                             security context and for the LSM to enforce
-+ *                             policy on the inode's creation.
-+ *
-+ * @name:    [in]    name of the "class" of the new file
-+ * @fops:    [in]    file operations for the new file
-+ * @priv:    [in]    private data for the new file (will be file's private_data)
-+ * @flags:   [in]    flags
-+ * @context_inode:
-+ *           [in]    the logical relationship with the new inode (optional)
-+ *
-+ * The LSM may use @context_inode in inode_init_security_anon(), but a
-+ * reference to it is not held.  Returns the newly created file* or an error
-+ * pointer.  See the anon_inode_getfile() documentation for more information.
-+ */
-+struct file *anon_inode_getfile_secure(const char *name,
-+				       const struct file_operations *fops,
-+				       void *priv, int flags,
-+				       const struct inode *context_inode)
-+{
-+	return __anon_inode_getfile(name, fops, priv, flags,
-+				    context_inode, true);
-+}
-+
- static int __anon_inode_getfd(const char *name,
- 			      const struct file_operations *fops,
- 			      void *priv, int flags,
-diff --git a/include/linux/anon_inodes.h b/include/linux/anon_inodes.h
-index 71881a2b6f78..5deaddbd7927 100644
---- a/include/linux/anon_inodes.h
-+++ b/include/linux/anon_inodes.h
-@@ -15,6 +15,10 @@ struct inode;
- struct file *anon_inode_getfile(const char *name,
- 				const struct file_operations *fops,
- 				void *priv, int flags);
-+struct file *anon_inode_getfile_secure(const char *name,
-+				       const struct file_operations *fops,
-+				       void *priv, int flags,
-+				       const struct inode *context_inode);
- int anon_inode_getfd(const char *name, const struct file_operations *fops,
- 		     void *priv, int flags);
- int anon_inode_getfd_secure(const char *name,
+Mimi
 
