@@ -2,134 +2,124 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67226C4338F
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 15:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BD2C4320A
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 16:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44D0C6056B
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 15:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A96F46109F
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 16:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236944AbhHLPgL (ORCPT
+        id S232800AbhHLQnp (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Aug 2021 11:36:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35640 "EHLO
+        Thu, 12 Aug 2021 12:43:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235158AbhHLPgC (ORCPT
+        with ESMTP id S232796AbhHLQno (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Aug 2021 11:36:02 -0400
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC61C0613D9
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Aug 2021 08:35:31 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GlrNw1RpnzMqK32;
-        Thu, 12 Aug 2021 17:35:28 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4GlrNv22RMzlh8Tf;
-        Thu, 12 Aug 2021 17:35:27 +0200 (CEST)
-Subject: Re: [RFC PATCH v2 5/9] fs: add anon_inode_getfile_secure() similar to
- anon_inode_getfd_secure()
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <162871492283.63873.8743976556992924333.stgit@olly>
- <1d19ca85-c6f9-7aa5-162a-f9728e0a8ccd@digikod.net>
- <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Message-ID: <5daa09d2-c4f8-3c57-5643-93d2df00d503@digikod.net>
-Date:   Thu, 12 Aug 2021 17:35:27 +0200
-User-Agent: 
+        Thu, 12 Aug 2021 12:43:44 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D622C061756;
+        Thu, 12 Aug 2021 09:43:19 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id t9so14624280lfc.6;
+        Thu, 12 Aug 2021 09:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dpI49aW8bFob7ItIxFv2U2BpOItSUGPsyoYWNOaVyAM=;
+        b=ITy3S46jRabnrnRf8obgqgBSxaRunH7J78b5tKf44HwsA5Io+wfq3pbWX0JjF72bL9
+         TfAots5d8TEKprTPj6EDJDaeVsbjLkF/9d9GbQ5g+UX5B3+dJRq4EctGFonH4/bL6oBr
+         Ab7cOLWHXJUaucIEAVe8SAH0aqjjpkBGWA8PYhE6C2hSKsT4pU7FMdk+Sharq4iSFqAd
+         IRKW5mVFUwLFa41iPkaIAjmTxANe+59DHw7dia4Qn4n+G1zvTZNb7+qv3PUXMQxsDqE1
+         8N2A3175tNUroquCz1TtK1F92qc/WkZ6kINP53/3oVEm5Opia4DSm/NKQ5FihqkW4gKv
+         b6iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dpI49aW8bFob7ItIxFv2U2BpOItSUGPsyoYWNOaVyAM=;
+        b=nEsYzFK1apWNBPac1Vc5sbCmfO2Qzbg+YJq94vj6cxAJl8cJKp7D3mnEwF+Be6HZ1R
+         v/pmkFB9hEk8ly7j60i7N7SsQ+BtULtD7uMIE19F28BFR4CLVwYCLHN2HzZ23WAborNB
+         vR2nN7wnuxjnu/z8G5q6qDQ5mXIoJ1veN1Uf5yXTSZXyhV6n7q1/DusJmAIThGsP01T9
+         nEhOoz3cEs41KmOtlVgSLRchekUxw+gjutcakd4oEZ/ZiD1M7wE8hQ2X5g/YRKdE2fYo
+         9rVkPKYkiGhHDE4NFSMeySmA+yRhedHejuGDrYcxR6d9qSHGYy6dCf0XCagIhq4ijwuH
+         rJIA==
+X-Gm-Message-State: AOAM531HiAkmgPkAHK1BAAW2cNxA4zr8fhpK3pqCFP96uM1Xq5/u7Nfn
+        JoE0a9OJdcdJd3TYmMYF9r27SCKHfRCc2u5SGMc=
+X-Google-Smtp-Source: ABdhPJybcpJaSqzu5QJPDPXQ5Q8CvHZje9xGjMSbNK+CgYQobtyo0YZMiNC2i7TWnMkNZU90T1MT4WBI/78//sGZSWE=
+X-Received: by 2002:a05:6512:1183:: with SMTP id g3mr3326832lfr.130.1628786597637;
+ Thu, 12 Aug 2021 09:43:17 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhRe3cgYuaV7w-BUwj_i=8_uuy3+5-8oA6QVsdXp3JgVtw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <db1c1de0-3672-4bae-ef45-c554379f36f4@omp.ru> <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
+In-Reply-To: <d97d7fdb-1676-9670-6cf5-2427f780ec6f@viveris.fr>
+From:   Igor Zhbanov <izh1979@gmail.com>
+Date:   Thu, 12 Aug 2021 19:43:10 +0300
+Message-ID: <CAEUiM9ObZD=miina1NsP8Ohtv=byO=33Kp2XaeF8_RB_R_uC1Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] NAX LSM: Add initial support support
+To:     THOBY Simon <Simon.THOBY@viveris.fr>
+Cc:     Igor Zhbanov <i.zhbanov@omp.ru>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi Simon,
 
-On 12/08/2021 16:32, Paul Moore wrote:
-> On Thu, Aug 12, 2021 at 5:32 AM Mickaël Salaün <mic@digikod.net> wrote:
->> On 11/08/2021 22:48, Paul Moore wrote:
->>> Extending the secure anonymous inode support to other subsystems
->>> requires that we have a secure anon_inode_getfile() variant in
->>> addition to the existing secure anon_inode_getfd() variant.
->>>
->>> Thankfully we can reuse the existing __anon_inode_getfile() function
->>> and just wrap it with the proper arguments.
->>>
->>> Signed-off-by: Paul Moore <paul@paul-moore.com>
->>>
->>> ---
->>> v2:
->>> - no change
->>> v1:
->>> - initial draft
->>> ---
->>>  fs/anon_inodes.c            |   29 +++++++++++++++++++++++++++++
->>>  include/linux/anon_inodes.h |    4 ++++
->>>  2 files changed, 33 insertions(+)
->>>
->>> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
->>> index a280156138ed..e0c3e33c4177 100644
->>> --- a/fs/anon_inodes.c
->>> +++ b/fs/anon_inodes.c
->>> @@ -148,6 +148,35 @@ struct file *anon_inode_getfile(const char *name,
->>>  }
->>>  EXPORT_SYMBOL_GPL(anon_inode_getfile);
->>>
->>> +/**
->>> + * anon_inode_getfile_secure - Like anon_inode_getfile(), but creates a new
->>> + *                             !S_PRIVATE anon inode rather than reuse the
->>> + *                             singleton anon inode and calls the
->>> + *                             inode_init_security_anon() LSM hook.  This
->>> + *                             allows for both the inode to have its own
->>> + *                             security context and for the LSM to enforce
->>> + *                             policy on the inode's creation.
->>> + *
->>> + * @name:    [in]    name of the "class" of the new file
->>> + * @fops:    [in]    file operations for the new file
->>> + * @priv:    [in]    private data for the new file (will be file's private_data)
->>> + * @flags:   [in]    flags
->>> + * @context_inode:
->>> + *           [in]    the logical relationship with the new inode (optional)
->>> + *
->>> + * The LSM may use @context_inode in inode_init_security_anon(), but a
->>> + * reference to it is not held.  Returns the newly created file* or an error
->>> + * pointer.  See the anon_inode_getfile() documentation for more information.
->>> + */
->>> +struct file *anon_inode_getfile_secure(const char *name,
->>> +                                    const struct file_operations *fops,
->>> +                                    void *priv, int flags,
->>> +                                    const struct inode *context_inode)
->>> +{
->>> +     return __anon_inode_getfile(name, fops, priv, flags,
->>> +                                 context_inode, true);
->>
->> This is not directly related to this patch but why using the "secure"
->> boolean in __anon_inode_getfile() and __anon_inode_getfd() instead of
->> checking that context_inode is not NULL? This would simplify the code,
->> remove this anon_inode_getfile_secure() wrapper and avoid potential
->> inconsistencies.
-> 
-> The issue is that it is acceptable for the context_inode to be either
-> valid or NULL for callers who request the "secure" code path.
-> 
-> Look at the SELinux implementation of the anonymous inode hook in
-> selinux_inode_init_security_anon() and you will see that in cases
-> where the context_inode is valid we simply inherit the label from the
-> given inode, whereas if context_inode is NULL we do a type transition
-> using the requesting task and the anonymous inode's "name".
-> 
+Thanks for thorough review. Will post the corrected version soon.
 
-Indeed.
+> > @@ -278,11 +279,11 @@ endchoice
+> >
+> >  config LSM
+> >       string "Ordered list of enabled LSMs"
+> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
+> > -     default "landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
+> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor,bpf" if DEFAULT_SECURITY_SMACK
+> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo,bpf" if DEFAULT_SECURITY_APPARMOR
+> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,tomoyo,bpf" if DEFAULT_SECURITY_TOMOYO
+> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,bpf" if DEFAULT_SECURITY_DAC
+> > +     default "nax,landlock,lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor,bpf"
+>
+> I don't know the policy with regard to new LSMs, but enabling this one by default is maybe a bit violent?
+> That said, considering the default mode is SECURITY_NAX_MODE_LOG, this would just log kernel messages and
+> not break existing systems, so this shouldn't be a problem.
 
-Acked-by: Mickaël Salaün <mic@linux.microsoft.com>
+I've just oriended on landlock and lockdown. They are handled in the similar
+way. But, yes, by default NAX module doesn't block anything.
+If you suggest not to do that, I can remove it.
+
+> > +__setup("nax_mode=", setup_mode);
+> > +
+> > +static int __init setup_quiet(char *str)
+> > +{
+> > +     unsigned long val;
+> > +
+> > +     if (!locked && !kstrtoul(str, 0, &val))
+> > +             quiet = val ? 1 : 0;
+>
+> The order of the kernel parameters will have an impact on NAX behavior.
+>
+> "nax_mode=1 nax_locked=1" and "nax_locked=1 nax_mode=1" will end up with the same behavior.
+> in the first case the mode is enforced, in the second case it isn't (well unless you changed
+>  the kernel configuration from the default) and it can't be enabled later either.
+>
+> Is that desired?
+
+Yes. The idea is that on boot you can set-up the proper options then block
+further changing (especially turning the module off).
+Initially it was implemented for sysctl parameters, so, you can change
+something in init-scripts, then lock. Then, I've extended it to command-line
+parameters.
+I can ignore "locked" flag in setup_* functions to defer locking to sysctl
+parsing. (Unless our command-line is glued by the bootloader from several
+parts, so we want to lock it as early as possible...).
+
+Thanks.
