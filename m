@@ -2,505 +2,216 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1C7C4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 21:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4229C4320E
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 21:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B557F60F35
-	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 21:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A2A610A4
+	for <linux-security-module@archiver.kernel.org>; Thu, 12 Aug 2021 21:32:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234166AbhHLVAj (ORCPT
+        id S236205AbhHLVcy (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 12 Aug 2021 17:00:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232814AbhHLVAi (ORCPT
+        Thu, 12 Aug 2021 17:32:54 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:14356 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235105AbhHLVcx (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 12 Aug 2021 17:00:38 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90169C0617AD
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Aug 2021 14:00:12 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id w5so14147727ejq.2
-        for <linux-security-module@vger.kernel.org>; Thu, 12 Aug 2021 14:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+HsAkzG0KbQu4HqDlrQg17A0XETgrWzgdJJglZ2doTQ=;
-        b=SyoV9uKa8cDgpg4IH2Nt4FQB6sgeK+4ZEegniL0vgAFl37sP4bd7TQmBGK+Tp1MxOO
-         N3Cg/X/Ebv8Ijjwwd8719g0vRF2fF9ruyIDI43nKim0KfLpSVpoh+H6qY8pKr3pg+x6c
-         zNY1339TCuLrmbweK7J4pw5i6XN8W8rmOVMjBht/1+SefMLFaRbfMcRMLDWuKppMhOGO
-         YyAKgLrlJwWPiz5aSqpqvActqM/CvFvV54OjEewuNh6jsYqklrYpQt+RWWHDF8NyHHVP
-         5EmMbJ4Jd7TjH/ADnRGoFh8K+QH8JW6QAJoKHFLpPj1w8Yz0acrPBDkt5Unw/DUrPJp/
-         unqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+HsAkzG0KbQu4HqDlrQg17A0XETgrWzgdJJglZ2doTQ=;
-        b=uB28PkC4uesc6ygqsSm0L7gMGihP6A48S21a7z0Os+28AJo0v41FqPQdP3RQnryn8I
-         PtNKPu6TUNInQ+vs17FeYnEztnaFKZxH5A+D99ZRpc9NBLqvquHUm55wqg8dKAh8+Q3i
-         NewkZ1/bb2drWmKFZ0UQbKpehKE8IEtueyGvLRARMBZESmXubjPXfuMqL4mNN+wNYpPk
-         ZGXXtqCfmAB9WUqtrwt0z5+padPGo95bypbcRTxhPTt1rBJrvdd3I2NQov3d6trm02M3
-         VEmk3ZumwBTM/2fOzhEaJk6zlCtK7KX4CWM4Wma852wntmXFifx+oKbgUNYuMLRygQoB
-         LJww==
-X-Gm-Message-State: AOAM531MiH1N41jwfmIpiDK/gHydj453yonrbcXu2PEs644XepL2CoIA
-        eNi+NNq4n8Zm5ns1aR/2ZYL1UXoHbFXYzUCYRHG8
-X-Google-Smtp-Source: ABdhPJyp9rQn46328pcjEFH2P5j9WTyFqzl+u4ni1mRT+7fxsE7esiw8ye7RC4ZXlMyJsBE40Z4obrchbb1stkrdWHk=
-X-Received: by 2002:a17:906:3915:: with SMTP id f21mr5598918eje.178.1628802010835;
- Thu, 12 Aug 2021 14:00:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210722004758.12371-1-casey@schaufler-ca.com> <20210722004758.12371-23-casey@schaufler-ca.com>
-In-Reply-To: <20210722004758.12371-23-casey@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 12 Aug 2021 16:59:59 -0400
-Message-ID: <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
-Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM attributes
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Aug 2021 17:32:53 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17CL5TNb120866;
+        Thu, 12 Aug 2021 17:31:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=u0xsSYJQyJ0pKqapSDVIcdNmCBCQOnYdQkQA/AZLa8o=;
+ b=OBqenXOTHUtbz9qSECe05pNAdkig/sX8T0NbbiUbmzSTh1nSnG3hWyX4nxpsIIONBpYG
+ PQFxtK71pdZjBOxYwPrEPhlzdXT6mg04VldzYekdnjZKC2bUFsis20Td2DH+miVxqnly
+ +RRUJOwksVQw4Uoi/mVuQps0uis9Vp6dRiI+/dZO07CRIFW+7WxGMId1MD1BUgCLXzVz
+ 4tpRVNvLCqiZ5JKkVvpPlZMTTJy5+TezEA+oO61LYALrvzVFp/bUgD7X5HNLTp2Ki87+
+ KDsQa7fgk6DQ8iGjsBTuDY9rIvidMCyZ9xJEadKaaHTdzm6eTpd63uCBryMSC/dplUxq LA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ad1r0t4r8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Aug 2021 17:31:57 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17CL5elI121740;
+        Thu, 12 Aug 2021 17:31:56 -0400
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ad1r0t4qc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Aug 2021 17:31:56 -0400
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17CLDnqG000400;
+        Thu, 12 Aug 2021 21:31:53 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma04fra.de.ibm.com with ESMTP id 3abujqv1uq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Aug 2021 21:31:53 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17CLVoL147186370
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Aug 2021 21:31:50 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3B45AE045;
+        Thu, 12 Aug 2021 21:31:50 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C1131AE0F3;
+        Thu, 12 Aug 2021 21:31:45 +0000 (GMT)
+Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.41.31])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Aug 2021 21:31:45 +0000 (GMT)
+Message-ID: <34b12d8d47564a182f0a29a9592e203b17ccdd69.camel@linux.ibm.com>
+Subject: Re: [PATCH v3 01/14] integrity: Introduce a Linux keyring for the
+ Machine Owner Key (MOK)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jarkko@kernel.org, jmorris@namei.org,
+        serge@hallyn.com
+Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        glin@suse.com, konrad.wilk@oracle.com
+Date:   Thu, 12 Aug 2021 17:31:44 -0400
+In-Reply-To: <20210812021855.3083178-2-eric.snowberg@oracle.com>
+References: <20210812021855.3083178-1-eric.snowberg@oracle.com>
+         <20210812021855.3083178-2-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: gJivHVAd2HzB5FFjlTLtaWnxR-z5BuH6
+X-Proofpoint-ORIG-GUID: h7ggsBwvhDe_uO6JXTyStSLk3sqkEY3M
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-12_06:2021-08-12,2021-08-12 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ priorityscore=1501 mlxscore=0 adultscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=999
+ impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2107140000 definitions=main-2108120137
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Jul 21, 2021 at 9:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->
-> Create a new audit record type to contain the subject information
-> when there are multiple security modules that require such data.
-> This record is linked with the same timestamp and serial number
-> using the audit_alloc_local() mechanism.
-> The record is produced only in cases where there is more than one
-> security module with a process "context".
-> In cases where this record is produced the subj= fields of
-> other records in the audit event will be set to "subj=?".
->
-> An example of the MAC_TASK_CONTEXTS (1420) record is:
->
->         type=UNKNOWN[1420]
->         msg=audit(1600880931.832:113)
->         subj_apparmor="=unconfined"
->         subj_smack="_"
->
-> There will be a subj_$LSM= entry for each security module
-> LSM that supports the secid_to_secctx and secctx_to_secid
-> hooks. The BPF security module implements secid/secctx
-> translation hooks, so it has to be considered to provide a
-> secctx even though it may not actually do so.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> To: paul@paul-moore.com
-> To: linux-audit@redhat.com
-> To: rgb@redhat.com
-> Cc: netdev@vger.kernel.org
+Hi Eric,
+
+On Wed, 2021-08-11 at 22:18 -0400, Eric Snowberg wrote:
+> Many UEFI Linux distributions boot using shim.  The UEFI shim provides
+> what is called Machine Owner Keys (MOK). Shim uses both the UEFI Secure
+> Boot DB and MOK keys to validate the next step in the boot chain.  The
+> MOK facility can be used to import user generated keys.  These keys can
+> be used to sign an end-users development kernel build.  When Linux
+> boots, both UEFI Secure Boot DB and MOK keys get loaded in the Linux
+> .platform keyring.
+> 
+> Add a new Linux keyring called .mok.  This keyring shall contain just
+> MOK keys and not the remaining keys in the platform keyring. This new
+> .mok keyring will be used in follow on patches.  Unlike keys in the
+> platform keyring, keys contained in the .mok keyring will be trusted
+> within the kernel if the end-user has chosen to do so.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 > ---
->  drivers/android/binder.c                |  2 +-
->  include/linux/audit.h                   | 16 +++++
->  include/linux/security.h                | 16 ++++-
->  include/net/netlabel.h                  |  2 +-
->  include/net/scm.h                       |  2 +-
->  include/net/xfrm.h                      | 13 +++-
->  include/uapi/linux/audit.h              |  1 +
->  kernel/audit.c                          | 90 +++++++++++++++++++------
->  kernel/auditfilter.c                    |  5 +-
->  kernel/auditsc.c                        | 27 ++++++--
->  net/ipv4/ip_sockglue.c                  |  2 +-
->  net/netfilter/nf_conntrack_netlink.c    |  4 +-
->  net/netfilter/nf_conntrack_standalone.c |  2 +-
->  net/netfilter/nfnetlink_queue.c         |  2 +-
->  net/netlabel/netlabel_unlabeled.c       | 21 +++---
->  net/netlabel/netlabel_user.c            | 14 ++--
->  net/netlabel/netlabel_user.h            |  6 +-
->  net/xfrm/xfrm_policy.c                  |  8 ++-
->  net/xfrm/xfrm_state.c                   | 18 +++--
->  security/integrity/ima/ima_api.c        |  6 +-
->  security/integrity/integrity_audit.c    |  5 +-
->  security/security.c                     | 46 ++++++++-----
->  security/smack/smackfs.c                |  3 +-
->  23 files changed, 221 insertions(+), 90 deletions(-)
->
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index 2c3a2348a144..3520caa0260c 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -2722,7 +2722,7 @@ static void binder_transaction(struct binder_proc *proc,
->                  * case well anyway.
->                  */
->                 security_task_getsecid_obj(proc->tsk, &blob);
-> -               ret = security_secid_to_secctx(&blob, &lsmctx);
-> +               ret = security_secid_to_secctx(&blob, &lsmctx, LSMBLOB_DISPLAY);
->                 if (ret) {
->                         return_error = BR_FAILED_REPLY;
->                         return_error_param = ret;
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index 97cd7471e572..85eb87f6f92d 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -291,6 +291,7 @@ extern int  audit_alloc(struct task_struct *task);
->  extern void __audit_free(struct task_struct *task);
->  extern struct audit_context *audit_alloc_local(gfp_t gfpflags);
->  extern void audit_free_context(struct audit_context *context);
-> +extern void audit_free_local(struct audit_context *context);
->  extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
->                                   unsigned long a2, unsigned long a3);
->  extern void __audit_syscall_exit(int ret_success, long ret_value);
-> @@ -386,6 +387,19 @@ static inline void audit_ptrace(struct task_struct *t)
->                 __audit_ptrace(t);
->  }
->
-> +static inline struct audit_context *audit_alloc_for_lsm(gfp_t gfp)
-> +{
-> +       struct audit_context *context = audit_context();
-> +
-> +       if (context)
-> +               return context;
-> +
-> +       if (lsm_multiple_contexts())
-> +               return audit_alloc_local(gfp);
-> +
-> +       return NULL;
-> +}
-
-We don't want to do this, at least not as it is written above.  We
-shouldn't have a function which abstracts away the creation of a local
-audit_context.  Usage of a local audit_context should be explicit in
-the caller, and if the caller's execution context is ambiguous enough
-that it can require both a task_struct audit_context and a local
-audit_context then we need to handle that on a case-by-case basis.
-Hiding it like this is guaranteed to cause problems later.
-
-I probably did a poor job of explaining what a local context is during
-the last patchset; I'll try to do a better job here but also let me
-say this as clear as I can ... if the "current" task struct is valid
-for a given code path, *never* use a local audit context.  The local
-audit context is a hack that is made necessary by the fact that we
-have to audit things which happen outside the scope of an executing
-task, e.g. the netfilter audit hooks, it should *never* be used when
-there is a valid task_struct.
-
-It's the audit_context which helps bind multiple audit records into a
-single event, creating a new, "local" audit_context destroys that
-binding as audit records created using that local audit_context have a
-different timestamp from those records created using the current
-task_struct's audit_context.
-
-Hopefully that makes sense?
-
->                                 /* Private API (for audit.c only) */
->  extern void __audit_ipc_obj(struct kern_ipc_perm *ipcp);
->  extern void __audit_ipc_set_perm(unsigned long qbytes, uid_t uid, gid_t gid, umode_t mode);
-> @@ -560,6 +574,8 @@ extern int audit_signals;
->  }
->  static inline void audit_free_context(struct audit_context *context)
->  { }
-> +static inline void audit_free_local(struct audit_context *context)
-> +{ }
->  static inline int audit_alloc(struct task_struct *task)
->  {
->         return 0;
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 3e9743118fb9..b3cf68cf2bd6 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -182,6 +182,8 @@ struct lsmblob {
->  #define LSMBLOB_INVALID                -1      /* Not a valid LSM slot number */
->  #define LSMBLOB_NEEDED         -2      /* Slot requested on initialization */
->  #define LSMBLOB_NOT_NEEDED     -3      /* Slot not requested */
-> +#define LSMBLOB_DISPLAY                -4      /* Use the "display" slot */
-> +#define LSMBLOB_FIRST          -5      /* Use the default "display" slot */
->
->  /**
->   * lsmblob_init - initialize an lsmblob structure
-> @@ -248,6 +250,15 @@ static inline u32 lsmblob_value(const struct lsmblob *blob)
->         return 0;
->  }
->
-> +static inline bool lsm_multiple_contexts(void)
-> +{
-> +#ifdef CONFIG_SECURITY
-> +       return lsm_slot_to_name(1) != NULL;
-> +#else
-> +       return false;
-> +#endif
-> +}
-> +
->  /* These functions are in security/commoncap.c */
->  extern int cap_capable(const struct cred *cred, struct user_namespace *ns,
->                        int cap, unsigned int opts);
-> @@ -578,7 +589,8 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
->                          size_t size);
->  int security_netlink_send(struct sock *sk, struct sk_buff *skb);
->  int security_ismaclabel(const char *name);
-> -int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp);
-> +int security_secid_to_secctx(struct lsmblob *blob, struct lsmcontext *cp,
-> +                            int display);
->  int security_secctx_to_secid(const char *secdata, u32 seclen,
->                              struct lsmblob *blob);
->  void security_release_secctx(struct lsmcontext *cp);
-> @@ -1433,7 +1445,7 @@ static inline int security_ismaclabel(const char *name)
->  }
->
->  static inline int security_secid_to_secctx(struct lsmblob *blob,
-> -                                          struct lsmcontext *cp)
-> +                                          struct lsmcontext *cp, int display)
->  {
->         return -EOPNOTSUPP;
->  }
-> diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-> index 73fc25b4042b..216cb1ffc8f0 100644
-> --- a/include/net/netlabel.h
-> +++ b/include/net/netlabel.h
-> @@ -97,7 +97,7 @@ struct calipso_doi;
->
->  /* NetLabel audit information */
->  struct netlbl_audit {
-> -       u32 secid;
-> +       struct lsmblob lsmdata;
->         kuid_t loginuid;
->         unsigned int sessionid;
+> v1: Initial version
+> v2: Removed destory keyring code
+> v3: Unmodified from v2
+> ---
+>  security/integrity/Makefile                   |  3 ++-
+>  security/integrity/digsig.c                   |  1 +
+>  security/integrity/integrity.h                |  3 ++-
+>  .../integrity/platform_certs/mok_keyring.c    | 21 +++++++++++++++++++
+>  4 files changed, 26 insertions(+), 2 deletions(-)
+>  create mode 100644 security/integrity/platform_certs/mok_keyring.c
+> 
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index 7ee39d66cf16..8e2e98cba1f6 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -9,7 +9,8 @@ integrity-y := iint.o
+>  integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
+>  integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
+>  integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
+> -integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o
+> +integrity-$(CONFIG_INTEGRITY_PLATFORM_KEYRING) += platform_certs/platform_keyring.o \
+> +						  platform_certs/mok_keyring.o
+>  integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+>  				      platform_certs/load_uefi.o \
+>  				      platform_certs/keyring_handler.o
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index 3b06a01bd0fd..e07334504ef1 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -30,6 +30,7 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
+>  	".ima",
+>  #endif
+>  	".platform",
+> +	".mok",
 >  };
-
-This chunk seems lost here, does it belong in another patch?
-
-> diff --git a/include/net/scm.h b/include/net/scm.h
-> index b77a52f93389..f4d567d4885e 100644
-> --- a/include/net/scm.h
-> +++ b/include/net/scm.h
-> @@ -101,7 +101,7 @@ static inline void scm_passec(struct socket *sock, struct msghdr *msg, struct sc
->                  * and the infrastructure will know which it is.
->                  */
->                 lsmblob_init(&lb, scm->secid);
-> -               err = security_secid_to_secctx(&lb, &context);
-> +               err = security_secid_to_secctx(&lb, &context, LSMBLOB_DISPLAY);
-
-Misplaced code change?
-
->                 if (!err) {
->                         put_cmsg(msg, SOL_SOCKET, SCM_SECURITY, context.len,
-> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-> index cbff7c2a9724..a10fa01f7bf4 100644
-> --- a/include/net/xfrm.h
-> +++ b/include/net/xfrm.h
-> @@ -660,13 +660,22 @@ struct xfrm_spi_skb_cb {
->  #define XFRM_SPI_SKB_CB(__skb) ((struct xfrm_spi_skb_cb *)&((__skb)->cb[0]))
->
->  #ifdef CONFIG_AUDITSYSCALL
-> -static inline struct audit_buffer *xfrm_audit_start(const char *op)
-> +static inline struct audit_buffer *xfrm_audit_start(const char *op,
-> +                                                   struct audit_context **lac)
->  {
-> +       struct audit_context *context;
->         struct audit_buffer *audit_buf = NULL;
->
->         if (audit_enabled == AUDIT_OFF)
->                 return NULL;
-> -       audit_buf = audit_log_start(audit_context(), GFP_ATOMIC,
-> +       context = audit_context();
-> +       if (lac != NULL) {
-> +               if (lsm_multiple_contexts() && context == NULL)
-> +                       context = audit_alloc_local(GFP_ATOMIC);
-> +               *lac = context;
-> +       }
+>  
+>  #ifdef CONFIG_IMA_KEYRINGS_PERMIT_SIGNED_BY_BUILTIN_OR_SECONDARY
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 547425c20e11..e0e17ccba2e6 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -151,7 +151,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
+>  #define INTEGRITY_KEYRING_EVM		0
+>  #define INTEGRITY_KEYRING_IMA		1
+>  #define INTEGRITY_KEYRING_PLATFORM	2
+> -#define INTEGRITY_KEYRING_MAX		3
+> +#define INTEGRITY_KEYRING_MOK		3
+> +#define INTEGRITY_KEYRING_MAX		4
+>  
+>  extern struct dentry *integrity_dir;
+>  
+> diff --git a/security/integrity/platform_certs/mok_keyring.c b/security/integrity/platform_certs/mok_keyring.c
+> new file mode 100644
+> index 000000000000..b1ee45b77731
+> --- /dev/null
+> +++ b/security/integrity/platform_certs/mok_keyring.c
+> @@ -0,0 +1,21 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * MOK keyring routines.
+> + *
+> + * Copyright (c) 2021, Oracle and/or its affiliates.
+> + */
 > +
-> +       audit_buf = audit_log_start(context, GFP_ATOMIC,
->                                     AUDIT_MAC_IPSEC_EVENT);
->         if (audit_buf == NULL)
->                 return NULL;
-
-Related to the other comments around local audit_contexts, we don't
-want to do this; use the existing audit_context, @lac in this case, so
-that this audit record is bound to the other associated records into a
-single audit event (all have the same timestamp).
-
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 841123390d41..cba63789a164 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -386,10 +386,12 @@ void audit_log_lost(const char *message)
->  static int audit_log_config_change(char *function_name, u32 new, u32 old,
->                                    int allow_changes)
->  {
-> +       struct audit_context *context;
->         struct audit_buffer *ab;
->         int rc = 0;
->
-> -       ab = audit_log_start(audit_context(), GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-> +       context = audit_alloc_for_lsm(GFP_KERNEL);
-> +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONFIG_CHANGE);
-
-We shouldn't need to do this for the reasons discussed up near the top
-of this email (and elsewhere as well).
-
-I'm going to refrain from commenting on the other uses of
-audit_alloc_for_lsm() in this patch unless there is something unique
-to the code path, so if you don't see me comment about a use of
-audit_alloc_for_lsm() you can assume it should be removed and the
-existing audit_context used instead.
-
-> @@ -399,6 +401,7 @@ static int audit_log_config_change(char *function_name, u32 new, u32 old,
->                 allow_changes = 0; /* Something weird, deny request */
->         audit_log_format(ab, " res=%d", allow_changes);
->         audit_log_end(ab);
-> +       audit_free_local(context);
-
-See my comment directly above regarding usage of
-audit_alloc_for_lsm(), it obviously applies here too.
-
-> @@ -2128,6 +2136,36 @@ void audit_log_key(struct audit_buffer *ab, char *key)
->                 audit_log_format(ab, "(null)");
->  }
->
-> +static void audit_log_lsm(struct audit_context *context, struct lsmblob *blob)
-
-See my note below about moving this into audit_log_task_context(), but
-if we really need to keep this as a separate function, let's consider
-changing the name to something which indicates that it logs the LSM
-data as *subject* fields.  How about audit_log_lsm_subj()?
-
+> +#include "../integrity.h"
+> +
+> +static __init int mok_keyring_init(void)
 > +{
-> +       struct audit_buffer *ab;
-> +       struct lsmcontext lsmdata;
-> +       bool sep = false;
-> +       int error;
-> +       int i;
+> +	int rc;
 > +
-> +       ab = audit_log_start(context, GFP_ATOMIC, AUDIT_MAC_TASK_CONTEXTS);
-> +       if (!ab)
-> +               return; /* audit_panic or being filtered */
+> +	rc = integrity_init_keyring(INTEGRITY_KEYRING_MOK);
+> +	if (rc)
+> +		return rc;
 > +
-> +       for (i = 0; i < LSMBLOB_ENTRIES; i++) {
-> +               if (blob->secid[i] == 0)
-> +                       continue;
-> +               error = security_secid_to_secctx(blob, &lsmdata, i);
-> +               if (error && error != -EINVAL) {
-> +                       audit_panic("error in audit_log_lsm");
-> +                       return;
-> +               }
-> +
-> +               audit_log_format(ab, "%ssubj_%s=\"%s\"", sep ? " " : "",
-> +                                lsm_slot_to_name(i), lsmdata.context);
-> +               sep = true;
-
-Since @i starts at zero, you can get rid of @sep by replacing it with @i:
-
-  audit_log_format(ab, ..., (i ? " " : ""), ...);
-
-> +               security_release_secctx(&lsmdata);
-> +       }
-> +       audit_log_end(ab);
+> +	pr_notice("MOK Keyring initialized\n");
+> +	return 0;
 > +}
+> +device_initcall(mok_keyring_init);
 
-> @@ -2138,7 +2176,18 @@ int audit_log_task_context(struct audit_buffer *ab)
->         if (!lsmblob_is_set(&blob))
->                 return 0;
->
-> -       error = security_secid_to_secctx(&blob, &context);
-> +       /*
-> +        * If there is more than one security module that has a
-> +        * subject "context" it's necessary to put the subject data
-> +        * into a separate record to maintain compatibility.
-> +        */
-> +       if (lsm_multiple_contexts()) {
-> +               audit_log_format(ab, " subj=?");
-> +               audit_log_lsm(ab->ctx, &blob);
-> +               return 0;
-> +       }
-> +
-> +       error = security_secid_to_secctx(&blob, &context, LSMBLOB_FIRST);
+The ordering of the patches in this patch set is not quite
+right.  Please first introduce the new keyring with the new Kconfig,
+new restriction, and loading the keys onto the new keyring.  Introduce
+the builitin_secondary_and_ca_trusted restriction and linking the new
+keyring to the secondary keyring.  Only after everything is in place,
+define and use the UEFI mok variable(s).
 
-Instead of the lsm_multiple_contexts() case bailing on the rest of the
-function with a return inside the if-block, let's made the code a bit
-more robust by organizing it like this:
+Originally, I asked you to "Separate each **logical change** into a
+separate patch."  After re-ordering the patches, see if merging some of
+them together now makes sense.
 
-  int audit_log_task_context(ab)
-  {
-     /* common stuff at the start */
+thanks,
 
-     if (lsm_multiple_contexts()) {
-       /* multi-LSM stuff */
-     } else {
-       /* single LSM stuff */
-     }
+Mimi
 
-     /* common stuff at the end */
-  }
-
-... it also may make sense to just move the body of audit_log_lsm()
-into audit_log_task_context() and do away with audit_log_lsm()
-entirely; is it ever going to be called from anywhere else?
-
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 0e58a3ab56f5..01fdcbf468c0 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -993,12 +993,11 @@ struct audit_context *audit_alloc_local(gfp_t gfpflags)
->         context = audit_alloc_context(AUDIT_STATE_BUILD, gfpflags);
->         if (!context) {
->                 audit_log_lost("out of memory in audit_alloc_local");
-> -               goto out;
-> +               return NULL;
->         }
->         context->serial = audit_serial();
->         ktime_get_coarse_real_ts64(&context->ctime);
->         context->local = true;
-> -out:
->         return context;
->  }
-
-This chunk should be moved to 21/25 when audit_alloc_local() is first defined.
-
-> @@ -1019,6 +1018,13 @@ void audit_free_context(struct audit_context *context)
->  }
->  EXPORT_SYMBOL(audit_free_context);
->
-> +void audit_free_local(struct audit_context *context)
-> +{
-> +       if (context && context->local)
-> +               audit_free_context(context);
-> +}
-> +EXPORT_SYMBOL(audit_free_local);
-
-If this is strictly necessary, and I don't think it is, it should also
-be moved to patch 21/25 with the original definition of a local
-audit_context.  However,  there really should be no reason why we have
-to distinguish between a proper and local audtit_context when it comes
-to free'ing the memory, just call audit_free_context() in both cases.
-
-> @@ -1036,7 +1042,7 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
->                          from_kuid(&init_user_ns, auid),
->                          from_kuid(&init_user_ns, uid), sessionid);
->         if (lsmblob_is_set(blob)) {
-> -               if (security_secid_to_secctx(blob, &lsmctx)) {
-> +               if (security_secid_to_secctx(blob, &lsmctx, LSMBLOB_FIRST)) {
-
-Misplaced code change?
-
-Actually, there are a lot of these below, I'm not going to comment on
-all of them as I think you get the idea ... and I very well may be
-wrong so I'll save you all of my wrongness in that case :)
-
-> diff --git a/security/security.c b/security/security.c
-> index cb359e185d1a..5d7fd982f84a 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2309,7 +2309,7 @@ int security_setprocattr(const char *lsm, const char *name, void *value,
->                 hlist_for_each_entry(hp, &security_hook_heads.setprocattr,
->                                      list) {
->                         rc = hp->hook.setprocattr(name, value, size);
-> -                       if (rc < 0)
-> +                       if (rc < 0 && rc != -EINVAL)
->                                 return rc;
->                 }
-
-This really looks misplaced ... ?
-
--- 
-paul moore
-www.paul-moore.com
