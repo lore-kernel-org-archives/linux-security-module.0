@@ -2,159 +2,157 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F4A4C432BE
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 13:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87C9C4320A
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 15:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 269D16103A
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 13:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9152260F51
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 15:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238811AbhHMNGL (ORCPT
+        id S241148AbhHMPcM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Aug 2021 09:06:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45852 "EHLO
+        Fri, 13 Aug 2021 11:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239515AbhHMNGL (ORCPT
+        with ESMTP id S241175AbhHMPcJ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Aug 2021 09:06:11 -0400
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EFB5C0617AE
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Aug 2021 06:05:44 -0700 (PDT)
-Received: by mail-wm1-x32b.google.com with SMTP id i10-20020a05600c354ab029025a0f317abfso9632897wmq.3
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Aug 2021 06:05:44 -0700 (PDT)
+        Fri, 13 Aug 2021 11:32:09 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1414C0613A3
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Aug 2021 08:31:42 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id hs10so19104234ejc.0
+        for <linux-security-module@vger.kernel.org>; Fri, 13 Aug 2021 08:31:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Az25A5x/PdwdJuehTHoxGPnJuAOFukArWqBYhfKoCuo=;
-        b=X7s8vsznwuq3sgmvKGpUFnXRXoWN2s9brvS4U9r3xbLD36jpVd5+zKXV7PzpkbkYEq
-         VmW3S1vKoOeQdwj1Y+UNbUhLU2cQr1v3DwfLtn4IS2E8BzjSjYrgr7/UpSbg7mDMmOKD
-         cSPGcDkNYyuRmLe+qVoQJRLQ5cjEdf7ar0MBJU0jC1fTKHffBLV/+OZiDNEfi4DupV/C
-         U0TeBHwRRcGIPNu7ZwasxZ60AZWqB7tUq6Gm6EGgHLS0P7RjJOHekpFABTLvI8+/L6wK
-         A3/NDW8b+oqSF+oK8QmHulDQKB3n94v3AnxBB6KsmExMKrp7YA1Rx2U95aN2m9FJzFDx
-         CNzg==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ve/K1nImq2PU8YYguMvzsx7Eg1JRHGri3AQYtcGqZkk=;
+        b=yjWfsCJmpRHMdECvxoy1+wh34Po30t6I/oXCEbyWS7BIbbCfOoQBeza1HXZ0175Q5h
+         wd4bKtWo2DFHC9PCzykH3CtPAmt/SR7UQFBo6SYODOkMSmnvrifQO8eHm1LCgwf+TcPn
+         ZzelAgq9MTK1WKvXsjO+Ix4yP/XTss7pxVSH7qo6SJagZ3/JVrj2r+A2q3CIunJwHa3x
+         8ULfp5ipsJJUoua+Dl0npdMrKyShecbC2R8dGcNtsCTocRawRkczyvKJ+InutgmVXVeq
+         zDtEzg3Gs7Q5/mR8O7X+N5SMmTOD2fZ/yD7Y2rnUJsmP/C4k1+AkrHJem/4tB1cuA4Ne
+         w9Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Az25A5x/PdwdJuehTHoxGPnJuAOFukArWqBYhfKoCuo=;
-        b=sOSzPAXc+m0F+Vx113EOsR3EHlsDRf0Js2Ky3eTU2pOFIXm8hiyt21iCy5gYZt+y4X
-         BHYRXeEAZgZHEwysLpsAyS+y8GLMu33iKdwCTszxXrSX0FFhvzdRQzzbyJyPg8iDQZPD
-         FybpCV42B7Je+x7irz7CqifSy6LIrSoSS8K6eEQQmlXSHJBMyWKAWxhowr8e3hMB8xca
-         YDmTxo3fBJs3uUOMGDxmwSRNkIz98opMJ03p0Az4lq8+nnaivbPHr6EX4oD37ZcbENIU
-         xOosf5kll0eOMWR6VAHsQQMs0io966QSi7Q1+BYOkpnOch6CFZoQ4YWSTS05jBYaXoYd
-         vyzg==
-X-Gm-Message-State: AOAM5304tzNaaNJKmeng4vCFYJFIgMsQpYWCPP2WxD3u8P5OHJ3nNa5+
-        SAw/+qnC3SbW2pRIHtC+G62iqg==
-X-Google-Smtp-Source: ABdhPJxqTD4RVXl09jnftd9ObEZ7XuwVakw71LGUpGiVyk7qUuDfTl6DEMDWZAt2+9HcAH8/TvV2Bw==
-X-Received: by 2002:a1c:1dc4:: with SMTP id d187mr2653893wmd.1.1628859942307;
-        Fri, 13 Aug 2021 06:05:42 -0700 (PDT)
-Received: from google.com (216.131.76.34.bc.googleusercontent.com. [34.76.131.216])
-        by smtp.gmail.com with ESMTPSA id u6sm1481782wrp.83.2021.08.13.06.05.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Aug 2021 06:05:41 -0700 (PDT)
-Date:   Fri, 13 Aug 2021 13:05:36 +0000
-From:   Andrew Scull <ascull@google.com>
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     linux-efi@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] virt: Add sev_secret module to expose confidential
- computing secrets
-Message-ID: <YRZuIIVIzMfgjtEl@google.com>
-References: <20210809190157.279332-1-dovmurik@linux.ibm.com>
- <20210809190157.279332-4-dovmurik@linux.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ve/K1nImq2PU8YYguMvzsx7Eg1JRHGri3AQYtcGqZkk=;
+        b=KX+Vl7XEqqg6ZTZAjCydRBppb/rfMapvvoam91cc2qS5TzXLpQt5tss3oaNBmNC9CS
+         JGDJNNoksl8Y2AxjaSGVM68oh1+kk65RuupYqUAJHgFsPv56/J9SBbkDkcp/BPzsJsn9
+         K7Ue9GeQrhCOkRReprSlrTlReIwXNgKqQNYoEe/VB1eciFhZs7h1t6Lbt3PHJr92Ihb6
+         kMKcXeIStyXuI7MTN6klafb/pJ5scc+6bFy9sBSZ5VQd+hdD1Fwef0/w7tHvuVUtrip7
+         uMAJWPKxcDyw87tx9RsWzRgJEH3yjgBXIfpa7Er+BWtriW059cmwOriUvv8/IdR72qjM
+         rKnA==
+X-Gm-Message-State: AOAM530IY/J6uiWw7bQ9ZhAZkh5wlrIJ0mM97EQhTHhCkYxlFAUr76RL
+        s0YXRZxC5dQj/blofBeHvb6ufAiu3hMCOw6GzLfX
+X-Google-Smtp-Source: ABdhPJzfrHtFxvKIOhIj5PBhYgIqJ6sQ5tzuGe8s7VbPSm9n5/yDFmEYvaONAeu2nk3S1lzGZWCurubpcxiodux0rLw=
+X-Received: by 2002:a17:906:779a:: with SMTP id s26mr3083213ejm.106.1628868701160;
+ Fri, 13 Aug 2021 08:31:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210809190157.279332-4-dovmurik@linux.ibm.com>
+References: <20210722004758.12371-1-casey@schaufler-ca.com>
+ <20210722004758.12371-23-casey@schaufler-ca.com> <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
+ <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
+In-Reply-To: <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 13 Aug 2021 11:31:30 -0400
+Message-ID: <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
+Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM attributes
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 09, 2021 at 07:01:57PM +0000, Dov Murik wrote:
-> The new sev_secret module exposes the confidential computing (coco)
-> secret area via securityfs interface.
-> 
-> When the module is loaded (and securityfs is mounted, typically under
-> /sys/kernel/security), a "coco/sev_secret" directory is created in
-> securityfs.  In it, a file is created for each secret entry.  The name
-> of each such file is the GUID of the secret entry, and its content is
-> the secret data.
-> 
-> This allows applications running in a confidential computing setting to
-> read secrets provided by the guest owner via a secure secret injection
-> mechanism (such as AMD SEV's LAUNCH_SECRET command).
-> 
-> Removing (unlinking) files in the "coco/sev_secret" directory will zero
-> out the secret in memory, and remove the filesystem entry.  If the
-> module is removed and loaded again, that secret will not appear in the
-> filesystem.
+On Thu, Aug 12, 2021 at 6:38 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> On 8/12/2021 1:59 PM, Paul Moore wrote:
+> > On Wed, Jul 21, 2021 at 9:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Create a new audit record type to contain the subject information
+> >> when there are multiple security modules that require such data.
 
-We've also been looking into a similar secret mechanism recently in the
-context of Android and protected KVM [1]. Our secrets would come from a
-different source, likely described as a reserved-memory node in the DT,
-but would need to be exposed to userspace in the same way as the SEV
-secrets. Originally I tried using a character device, but this approach
-with securityfs feels neater to me.
+...
 
-We're also looking to pass secrets from the bootloader to Linux, outside
-of any virtualization or confidential compute context (at least a far as
-I have understood the meaning of the term). Again, this feels like it
-would be exposed to userspace in the same way.
+> > The local
+> > audit context is a hack that is made necessary by the fact that we
+> > have to audit things which happen outside the scope of an executing
+> > task, e.g. the netfilter audit hooks, it should *never* be used when
+> > there is a valid task_struct.
+>
+> In the existing audit code a "current context" is only needed for
+> syscall events, so that's the only case where it's allocated. Would
+> you suggest that I track down the non-syscall events that include
+> subj= fields and add allocate a "current context" for them? I looked
+> into doing that, and it wouldn't be simple.
 
-It would be good to be able to share the parts that would be common. I
-expect that would mean the operations for a secret file and for a
-directory of secrets at a minimum. But it might also influence the paths
-in securityfs; I see, looking back, that the "coco" directory was added
-since the RFC but would a generalized "secret" subsystem make sense? Or
-would it be preferable for each case to define their own path?
+This is why the "local context" was created.  Prior to these stacking
+additions, and the audit container ID work, we never needed to group
+multiple audit records outside of a syscall context into a single
+audit event so passing a NULL context into audit_log_start() was
+reasonable.  The local context was designed as a way to generate a
+context for use in a local function scope to group multiple records,
+however, for reasons I'll get to below I'm now wondering if the local
+context approach is really workable ...
 
-[1] -- https://lwn.net/Articles/836693/
+> > Hopefully that makes sense?
+>
+> Yes, it makes sense. Methinks you may believe that the current context
+> is available more regularly than it actually is.
+>
+> I instrumented the audit event functions with:
+>
+>         WARN_ONCE(audit_context, "%s has context\n", __func__);
+>         WARN_ONCE(!audit_context, "%s lacks context\n", __func__);
+>
+> I only used local contexts where the 2nd WARN_ONCE was hit.
 
-> +static int sev_secret_unlink(struct inode *dir, struct dentry *dentry)
-> +{
-> +	struct sev_secret *s = sev_secret_get();
-> +	struct inode *inode = d_inode(dentry);
-> +	struct secret_entry *e = (struct secret_entry *)inode->i_private;
-> +	int i;
-> +
-> +	if (e) {
-> +		/* Zero out the secret data */
-> +		memzero_explicit(e->data, secret_entry_data_len(e));
+What does your audit config look like?  Both the kernel command line
+and the output of 'auditctl -l' would be helpful.
 
-Would there be a benefit in flushing these zeros?
+I'm beginning to suspect that you have the default
+we-build-audit-into-the-kernel-because-product-management-said-we-have-to-but-we-don't-actually-enable-it-at-runtime
+audit configuration that is de rigueur for many distros these days.
+If that is the case, there are many cases where you would not see a
+NULL current->audit_context simply because the config never allocated
+one, see kernel/auditsc.c:audit_alloc().  If that is the case, I'm
+honestly a little surprised we didn't realize that earlier, especially
+given all the work/testing that Richard has done with the audit
+container ID bits, but then again he surely had a proper audit config
+during his testing so it wouldn't have appeared.
 
-> +		e->guid = NULL_GUID;
-> +	}
-> +
-> +	inode->i_private = NULL;
-> +
-> +	for (i = 0; i < SEV_SECRET_NUM_FILES; i++)
-> +		if (s->fs_files[i] == dentry)
-> +			s->fs_files[i] = NULL;
-> +
-> +	/*
-> +	 * securityfs_remove tries to lock the directory's inode, but we reach
-> +	 * the unlink callback when it's already locked
-> +	 */
-> +	inode_unlock(dir);
-> +	securityfs_remove(dentry);
-> +	inode_lock(dir);
-> +
-> +	return 0;
-> +}
+Good times.
+
+Regardless, assuming that is the case we probably need to find an
+alternative to the local context approach as it currently works.  For
+reasons we already talked about, we don't want to use a local
+audit_context if there is the possibility for a proper
+current->audit_context, but we need to do *something* so that we can
+group these multiple events into a single record.
+
+Since this is just occurring to me now I need a bit more time to think
+on possible solutions - all good ideas are welcome - but the first
+thing that pops into my head is that we need to augment
+audit_log_end() to potentially generated additional, associated
+records similar to what we do on syscall exit in audit_log_exit().  Of
+course the audit_log_end() changes would be much more limited than
+audit_log_exit(), just the LSM subject and audit container ID info,
+and even then we might want to limit that to cases where the ab->ctx
+value is NULL and let audit_log_exit() handle it otherwise.  We may
+need to store the event type in the audit_buffer during
+audit_log_start() so that we can later use that in audit_log_end() to
+determine what additional records are needed.
+
+Regardless, let's figure out why all your current->audit_context
+values are NULL first (report back on your audit config please), I may
+be worrying about a hypothetical that isn't real.
+
+-- 
+paul moore
+www.paul-moore.com
