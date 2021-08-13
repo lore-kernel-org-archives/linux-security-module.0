@@ -2,157 +2,135 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87C9C4320A
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 15:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8994CC4320A
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 18:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9152260F51
-	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 15:31:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C0B9610FF
+	for <linux-security-module@archiver.kernel.org>; Fri, 13 Aug 2021 18:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241148AbhHMPcM (ORCPT
+        id S233041AbhHMS1x (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 13 Aug 2021 11:32:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51328 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241175AbhHMPcJ (ORCPT
+        Fri, 13 Aug 2021 14:27:53 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:9620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232611AbhHMS1w (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 13 Aug 2021 11:32:09 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1414C0613A3
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Aug 2021 08:31:42 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id hs10so19104234ejc.0
-        for <linux-security-module@vger.kernel.org>; Fri, 13 Aug 2021 08:31:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ve/K1nImq2PU8YYguMvzsx7Eg1JRHGri3AQYtcGqZkk=;
-        b=yjWfsCJmpRHMdECvxoy1+wh34Po30t6I/oXCEbyWS7BIbbCfOoQBeza1HXZ0175Q5h
-         wd4bKtWo2DFHC9PCzykH3CtPAmt/SR7UQFBo6SYODOkMSmnvrifQO8eHm1LCgwf+TcPn
-         ZzelAgq9MTK1WKvXsjO+Ix4yP/XTss7pxVSH7qo6SJagZ3/JVrj2r+A2q3CIunJwHa3x
-         8ULfp5ipsJJUoua+Dl0npdMrKyShecbC2R8dGcNtsCTocRawRkczyvKJ+InutgmVXVeq
-         zDtEzg3Gs7Q5/mR8O7X+N5SMmTOD2fZ/yD7Y2rnUJsmP/C4k1+AkrHJem/4tB1cuA4Ne
-         w9Fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ve/K1nImq2PU8YYguMvzsx7Eg1JRHGri3AQYtcGqZkk=;
-        b=KX+Vl7XEqqg6ZTZAjCydRBppb/rfMapvvoam91cc2qS5TzXLpQt5tss3oaNBmNC9CS
-         JGDJNNoksl8Y2AxjaSGVM68oh1+kk65RuupYqUAJHgFsPv56/J9SBbkDkcp/BPzsJsn9
-         K7Ue9GeQrhCOkRReprSlrTlReIwXNgKqQNYoEe/VB1eciFhZs7h1t6Lbt3PHJr92Ihb6
-         kMKcXeIStyXuI7MTN6klafb/pJ5scc+6bFy9sBSZ5VQd+hdD1Fwef0/w7tHvuVUtrip7
-         uMAJWPKxcDyw87tx9RsWzRgJEH3yjgBXIfpa7Er+BWtriW059cmwOriUvv8/IdR72qjM
-         rKnA==
-X-Gm-Message-State: AOAM530IY/J6uiWw7bQ9ZhAZkh5wlrIJ0mM97EQhTHhCkYxlFAUr76RL
-        s0YXRZxC5dQj/blofBeHvb6ufAiu3hMCOw6GzLfX
-X-Google-Smtp-Source: ABdhPJzfrHtFxvKIOhIj5PBhYgIqJ6sQ5tzuGe8s7VbPSm9n5/yDFmEYvaONAeu2nk3S1lzGZWCurubpcxiodux0rLw=
-X-Received: by 2002:a17:906:779a:: with SMTP id s26mr3083213ejm.106.1628868701160;
- Fri, 13 Aug 2021 08:31:41 -0700 (PDT)
+        Fri, 13 Aug 2021 14:27:52 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17DI3jOQ042063;
+        Fri, 13 Aug 2021 14:26:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=j1lczph9q4hxdvWvkJjwrPNCN+2CWHiDAOVh9v5sYiU=;
+ b=F1+hlBD2gBPPNoUXcTiipWWtJWpJU6FA9KmkHDnQOfBVoCgwR2Gvxv0+7AkkSRL9NLFb
+ IuJ4dAHIwl9hU6p2JZ9DKch49Qulh294Gwyy7a7ilsJyADL90YH1lcmLlXD/4gvvNNwR
+ RXvrl+7pTe27FIpzGMwC1DqD22gyKtJU/wF5/gTs6ux1Pxjfe7IVF6mLjqA6Iu53yZ7q
+ 5mfElFskMjqkkkLE/zBIazGY6BhvHp6ivganzgDRCP1gPbuBMmL6UOMLP9po7E1W9/lE
+ Q+s9FxubEmUypH5IIDwBtCWissidvLRObSxaa7VoV8Ap1VEMey3qVFtynTWRNk6ySgVt CA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3adsf3yww9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Aug 2021 14:26:26 -0400
+Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17DI3lvf042231;
+        Fri, 13 Aug 2021 14:26:26 -0400
+Received: from ppma01dal.us.ibm.com (83.d6.3fa9.ip4.static.sl-reverse.com [169.63.214.131])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3adsf3ywvr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Aug 2021 14:26:26 -0400
+Received: from pps.filterd (ppma01dal.us.ibm.com [127.0.0.1])
+        by ppma01dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17DIJkBu001449;
+        Fri, 13 Aug 2021 18:26:24 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma01dal.us.ibm.com with ESMTP id 3ackhs8q50-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 13 Aug 2021 18:26:24 +0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17DIQM5i30343530
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Aug 2021 18:26:22 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38BE8112061;
+        Fri, 13 Aug 2021 18:26:22 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 745E3112062;
+        Fri, 13 Aug 2021 18:26:19 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.211.76.133])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 13 Aug 2021 18:26:19 +0000 (GMT)
+Subject: Re: [PATCH v3 01/14] integrity: Introduce a Linux keyring for the
+ Machine Owner Key (MOK)
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>, dhowells@redhat.com,
+        dwmw2@infradead.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, jmorris@namei.org, serge@hallyn.com,
+        keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@hansenpartnership.com, pjones@redhat.com,
+        glin@suse.com, konrad.wilk@oracle.com
+References: <20210812021855.3083178-1-eric.snowberg@oracle.com>
+ <20210812021855.3083178-2-eric.snowberg@oracle.com>
+ <20210812185853.p5mgsgrftgwvt5fx@kernel.org>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <a3d7ce08-47e8-7287-772d-f7e789c47449@linux.vnet.ibm.com>
+Date:   Fri, 13 Aug 2021 14:26:18 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.0
 MIME-Version: 1.0
-References: <20210722004758.12371-1-casey@schaufler-ca.com>
- <20210722004758.12371-23-casey@schaufler-ca.com> <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
- <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
-In-Reply-To: <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 13 Aug 2021 11:31:30 -0400
-Message-ID: <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
-Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM attributes
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20210812185853.p5mgsgrftgwvt5fx@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NtaYsAueNdNnB6kwL7VEQdE3reAq6bwi
+X-Proofpoint-GUID: 33tuCCwIGg_cW1kX4YoburxLjhDz1bfR
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-13_06:2021-08-13,2021-08-13 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ mlxlogscore=999 adultscore=0 bulkscore=0 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 spamscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
+ definitions=main-2108130107
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 12, 2021 at 6:38 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> On 8/12/2021 1:59 PM, Paul Moore wrote:
-> > On Wed, Jul 21, 2021 at 9:12 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
-> >> Create a new audit record type to contain the subject information
-> >> when there are multiple security modules that require such data.
 
-...
+On 8/12/21 2:58 PM, Jarkko Sakkinen wrote:
+> On Wed, Aug 11, 2021 at 10:18:42PM -0400, Eric Snowberg wrote:
+>> Many UEFI Linux distributions boot using shim.  The UEFI shim provides
+>> what is called Machine Owner Keys (MOK). Shim uses both the UEFI Secure
+>> Boot DB and MOK keys to validate the next step in the boot chain.  The
+>> MOK facility can be used to import user generated keys.  These keys can
+>> be used to sign an end-users development kernel build.  When Linux
+>> boots, both UEFI Secure Boot DB and MOK keys get loaded in the Linux
+>> .platform keyring.
+>>
+>> Add a new Linux keyring called .mok.  This keyring shall contain just
+> I would consider ".machine" instead. It holds MOK keys but is not a
+> MOK key.
 
-> > The local
-> > audit context is a hack that is made necessary by the fact that we
-> > have to audit things which happen outside the scope of an executing
-> > task, e.g. the netfilter audit hooks, it should *never* be used when
-> > there is a valid task_struct.
->
-> In the existing audit code a "current context" is only needed for
-> syscall events, so that's the only case where it's allocated. Would
-> you suggest that I track down the non-syscall events that include
-> subj= fields and add allocate a "current context" for them? I looked
-> into doing that, and it wouldn't be simple.
+I agree with changing the name.
 
-This is why the "local context" was created.  Prior to these stacking
-additions, and the audit container ID work, we never needed to group
-multiple audit records outside of a syscall context into a single
-audit event so passing a NULL context into audit_log_start() was
-reasonable.  The local context was designed as a way to generate a
-context for use in a local function scope to group multiple records,
-however, for reasons I'll get to below I'm now wondering if the local
-context approach is really workable ...
+I believe the underlying source from where CA keys are loaded might vary 
+based on the architecture (".mok" is UEFI specific.). The key part is 
+that this new keyring should contain only CA keys which can be later 
+used to vouch for user keys loaded onto IMA or secondary keyring at 
+runtime. It would be good to have a "ca" in the name, like .xxxx-ca, 
+where xxxx can be machine, owner, or system. I prefer .system-ca.
 
-> > Hopefully that makes sense?
->
-> Yes, it makes sense. Methinks you may believe that the current context
-> is available more regularly than it actually is.
->
-> I instrumented the audit event functions with:
->
->         WARN_ONCE(audit_context, "%s has context\n", __func__);
->         WARN_ONCE(!audit_context, "%s lacks context\n", __func__);
->
-> I only used local contexts where the 2nd WARN_ONCE was hit.
+Thanks & Regards,
 
-What does your audit config look like?  Both the kernel command line
-and the output of 'auditctl -l' would be helpful.
+      - Nayna
 
-I'm beginning to suspect that you have the default
-we-build-audit-into-the-kernel-because-product-management-said-we-have-to-but-we-don't-actually-enable-it-at-runtime
-audit configuration that is de rigueur for many distros these days.
-If that is the case, there are many cases where you would not see a
-NULL current->audit_context simply because the config never allocated
-one, see kernel/auditsc.c:audit_alloc().  If that is the case, I'm
-honestly a little surprised we didn't realize that earlier, especially
-given all the work/testing that Richard has done with the audit
-container ID bits, but then again he surely had a proper audit config
-during his testing so it wouldn't have appeared.
-
-Good times.
-
-Regardless, assuming that is the case we probably need to find an
-alternative to the local context approach as it currently works.  For
-reasons we already talked about, we don't want to use a local
-audit_context if there is the possibility for a proper
-current->audit_context, but we need to do *something* so that we can
-group these multiple events into a single record.
-
-Since this is just occurring to me now I need a bit more time to think
-on possible solutions - all good ideas are welcome - but the first
-thing that pops into my head is that we need to augment
-audit_log_end() to potentially generated additional, associated
-records similar to what we do on syscall exit in audit_log_exit().  Of
-course the audit_log_end() changes would be much more limited than
-audit_log_exit(), just the LSM subject and audit container ID info,
-and even then we might want to limit that to cases where the ab->ctx
-value is NULL and let audit_log_exit() handle it otherwise.  We may
-need to store the event type in the audit_buffer during
-audit_log_start() so that we can later use that in audit_log_end() to
-determine what additional records are needed.
-
-Regardless, let's figure out why all your current->audit_context
-values are NULL first (report back on your audit config please), I may
-be worrying about a hypothetical that isn't real.
-
--- 
-paul moore
-www.paul-moore.com
