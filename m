@@ -2,226 +2,117 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09115C19F33
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Aug 2021 15:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BD1C4320A
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Aug 2021 21:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBBBB6103E
-	for <linux-security-module@archiver.kernel.org>; Wed, 18 Aug 2021 15:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B7F610FD
+	for <linux-security-module@archiver.kernel.org>; Wed, 18 Aug 2021 21:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238409AbhHRQAS (ORCPT
+        id S234145AbhHRWAL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Aug 2021 12:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43546 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239862AbhHRQAR (ORCPT
+        Wed, 18 Aug 2021 18:00:11 -0400
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com ([66.163.189.153]:34143
+        "EHLO sonic314-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S234121AbhHRWAL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Aug 2021 12:00:17 -0400
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc09])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579E7C0613CF
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Aug 2021 08:59:42 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4GqXf32BYBzMqJw7;
-        Wed, 18 Aug 2021 17:59:39 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4GqXf273nFzlh8TQ;
-        Wed, 18 Aug 2021 17:59:38 +0200 (CEST)
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     Alejandro Colomar <alx.manpages@gmail.com>,
-        "G . Branden Robinson" <g.branden.robinson@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Vincent Dagonneau <vincent.dagonneau@ssi.gouv.fr>,
-        landlock@lists.linux.dev, linux-man@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v4 4/4] landlock_restrict_self.2: Document new syscall
-Date:   Wed, 18 Aug 2021 17:59:31 +0200
-Message-Id: <20210818155931.484070-5-mic@digikod.net>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20210818155931.484070-1-mic@digikod.net>
-References: <20210818155931.484070-1-mic@digikod.net>
+        Wed, 18 Aug 2021 18:00:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1629323975; bh=lnmedOGXtnaTue3pxG43s+zb9gQCzOS0h/0CPflLdOs=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=SZPGj2+XUYJr/mcOJe0pqt+uULH18lX9SVsub85EzSNanCqt8cooOc6b1f2lXXrhNe4ZhLhGEYsD2Zdith9MagwqVWVDXew4ZDV7dYfHPTty2hhL6BcqXk++Eqzy+ffshrD8onZLrwWzL766w/rCvf2b5lHr3a6NkSMAz08hMNykC7SmHchOejHOsQTZ/TBaLbGE4dFs66pbsDdVwzT4nA1bfnswZi+ZGlac+1FLKtT5BH05HROK1waHwpGtER4hNIkOK1MBBeRnr4StzWPgWKh/4KaARCaROkLPSOf+hFFKheVF0txuNZIROPFAGx5WHNjCrcMguRV2zAb33Y+wAw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1629323975; bh=PPUkspLdV4rsG5XczA0CxsIibcnza0vLeB3MfL05NKY=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=PMbk5Vd1mHL1/9NR8tThjI5oDOkkp+G51EC7PjR6Y+rXsastzbBUVyiATLA4hHkThIygeD5uyNjFWh4N24Xly3MFb0H8pxOUDZuuyhTKiqh+D91I9vBFo2d1u/8Y6FSXNPNIqLKqWkyOl1a3XZOyw262/xyvO9LJQ6FOMVihG6pzM8xxcfzjY5VZ5K1bdbOQ2lVmlo5NhjccjN34pXsQK+Arm9paf0Ww/5shherT58m8kJUDtcQmftYxHFnfgi/4QDHWywBjyYxsXd9AEZVKSutW9uNqxbzJooHtB9RNSKYm5ZEKzwdozvxdNHJPLoXGefOTbFuLxU2pdrDElSrqjg==
+X-YMail-OSG: CYzPlzYVM1mqumdfHiUEKOjHeZuld4xAJebnywy4157IDApYdBbaZM5HdNK1_fP
+ YoTaKiVmblOuG.KqmVJhzOK599fBKEs4uLnjc641bVYNuH0CwpmTaICWv..GEn43__8GZC10Yr3e
+ mraB1IfiKDwSotkaIoTBjo4v.3QwdB00D_NrbRi8ypkIxJNRnCiqRJAsvr8TX8qnM9XTeA_eEQbC
+ q1hAi8DsdIemKAhuRn.XXa3fh9RCfndQ7Cbd8CSFdoQVMzJ2zQvScJJpheE4._usG9x3sda2lbbq
+ DaKBATJ.3CYcnGHzxdt6jiqxJZeScvNdefyRMJNlKaTrJgR.6jngAoSv0zgNah3gOoESr3FCvxpo
+ 2L3abdoKF8PD7UKbORiuRl1R_S8TLh3OkHcHX279VsSOilHfwKHX_0mPrW1MXU_dBEM42wiftchP
+ zUPBgF8l9gLd6Un6hxiseEHS088pwF7tYP777Xe0shEQq050JwLlfJ9S6MvT9g5.5sSDgNrmwtXz
+ bT_Ksu1hVCmD.OM9ewAqdVPHaAwnMUCmitTt2mZwYMy9kOseNPCv0BGDf9zonWq8eVV7Rd.OPDqy
+ TXe0rQpzGKEcHKLGuR_A7OKdJCGlgAQYj5Nx_CueIx38CjLyfe1vGoYxKZ0KQBrEBkKJD1ZT5nci
+ .Eck_Kp.nGc7qJlGDMytpuS2L02.JQD0kVTYwzsafzflFDlQlyMxazSbRKZQBrSFLPDhKYl1iKI.
+ Vptba50f7j6myo2NWKqVRzpahD.79S8rvvBXKPckdcyecXsryLMh_Nb8xIdRZWGJjfP45KG3SSJH
+ JdbIrBv337Y.IOUrk.6_9t9mHe.n50o7tckaCVpgnb2nfIcwjCEc8hGTo9.yYr2o5FVeA06Tkgeq
+ lcW_u2eA57OpR41Nld5i1kbJNTxD9_GKJfQiN.nt5G9X7FQAOHS1IvGqdC2JNMkVxcs4m8_iNQu1
+ BiESt36BjcjWVgLiJp1..7mv.kx8ZQcMQ78Z.jiSJiQJwsKgwCD9Qnfp4BPuz2X22sGuwjOF5xYY
+ 6dRSJKxK8GRnelaLGGmVNbH2.Hr8LTHqFnlVezg9TJJiK_Tz84nCzxrAVKLpOj823Vqi2in9t9UW
+ 7f2c15YMlxs8KWXK51uVsTf0Wjv5WBCU3RsLuFZ_BNsRGIwR_KDKYe3I8WEl9CR7OWjL3a0auqRC
+ e0TZLR5FTZbNXqZA4PPaCdzTGIDwWc5VMJAjLWeXLOCQFFUy7MtRD9UizrVjwL7GdtYCSnJ6Bc03
+ La6xCl8phRZNlEv4rEwz7ALjpnXUjDCSkdsFsUek.zSMfSifjg_gTYjtuYjo9OT9CGFgIUcqjzcG
+ jFkj2gYzUMdEpNPGrWPw_wU7XxcxD3LomxajqLxp.AUSjd81nxHHuQtYWXKvDp2HWu8.1Ua9BcuQ
+ 7NdG57bK7uWOBJhCeorMSNoHddhGG.hRugEoB4iaOTs_.EyzehdAgtWuUAjeu_vUtWbLgUm6wzen
+ bWbKuSeHXKBK7mv3yplPCHt6nfqEgrca3oMInMsNLMFA3iME1jo7ZEUkpR.XH2TWN81ls0dxBY1R
+ tq0k6WoVktaNliV10OCmMdr_ZD89_TCetKV1gT2EEJ82v.lIpGzUmkcRr2BtGwHLXZgoD4Q7_lT_
+ tQSpCC_L1m0Ms1jtjy4n7WFyY3QmYcOz65XNTfD5eOg18RuEvlD2fKUb3aFsco.tWFy5MYiyLSLU
+ xMzYzbggu7kZ1tnORKNDLN4xOKow_GGoLNajGA9LH31kkBrTuTdN0gZ9_uaPppVrHU9VNJ.fuK08
+ Be1ZhueH0pKTPn3x0YyfNBv2JsGnPhNU3fSWHt5Rf8yuVTYh9JMJ0v0hL.Ooy9vtXh9dV29khB3y
+ iHzbbwuZ8kM0czLfGUOUv1aYqp2FeicJ90.YI5.ovv7oMecBNjOoPmn4Euey0IsEyUGOppzuyI7U
+ 0hLfQbgZJfB5utG4I2ek_oZAcWOYrkPvs3BDWKqqWOkVg5MSPZ5PMeBOFfhxn8THqH_UvA1w3uxl
+ q0es2IMS7Hn5hUrbo3QTO6kX93fmZhQB5jScu0IwV4lLK7QQWlBt4S.S.8fQddYbxNBWaU.GYNgk
+ jRX_5NPSr_AT2jtHvd8..LaeulFxpsdyNZu6t0X3.v36N4Hp5OcPoGItdQs.gRC31xBa87W8yI5j
+ xzfW8PiNI3jBnXxhUeRCkDRKIliil5lDTFh6fiqFETyukGj.Mv0TNRAIPxCZxJOA8VDVzrjA54Zj
+ O7xBkS0kc6LR1heWHnxxV8Jct0fIXhP3p7LCIzRH5EGk98nTlK2LSK8aMnPRvavjfp1PgmoBpaN4
+ iPJ6E.5uw.AfVO_KKnKb6e9NVZm1wSJO04GL.pDVETrQi2D4r6j_aRw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Wed, 18 Aug 2021 21:59:35 +0000
+Received: by kubenode528.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 217b5544d85edfe7e42d0af03f2f1fbd;
+          Wed, 18 Aug 2021 21:59:32 +0000 (UTC)
+Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM
+ attributes
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20210722004758.12371-1-casey@schaufler-ca.com>
+ <20210722004758.12371-23-casey@schaufler-ca.com>
+ <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
+ <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
+ <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
+ <fba1a123-d6e5-dcb0-3d49-f60b26f65b29@schaufler-ca.com>
+ <CAHC9VhQxG+LXxgtczhH=yVdeh9mTO+Xhe=TeQ4eihjtkQ2=3Fw@mail.gmail.com>
+ <3ebad75f-1887-bb31-db23-353bfc9c0b4a@schaufler-ca.com>
+ <CAHC9VhQCN2_MsCoXfU7Z-syYHj2o8HaSECf5E62ZFcNZd9_4QA@mail.gmail.com>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <062ba5f9-e4e8-31f4-7815-826f44b35654@schaufler-ca.com>
+Date:   Wed, 18 Aug 2021 14:59:31 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQCN2_MsCoXfU7Z-syYHj2o8HaSECf5E62ZFcNZd9_4QA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Mailer: WebService/1.1.18850 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+On 8/16/2021 11:57 AM, Paul Moore wrote:
+> On Fri, Aug 13, 2021 at 5:47 PM Casey Schaufler <casey@schaufler-ca.com=
+> wrote:
+>> On 8/13/2021 1:43 PM, Paul Moore wrote:
+=2E..
+> Yeah, the thought occurred to me, but we are clearly already in the
+> maybe-the-assumptions-are-wrong stage so I'm not going to rely on that
+> being 100%.  We definitely need to track this down before we start
+> making to many more guesses about what is working and what is not.
 
-This is an adaptation of
-https://www.kernel.org/doc/html/v5.13/userspace-api/landlock.html
+I've been tracking down where the audit context isn't set where
+we'd expect it to be, I've identified 5 cases:
 
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20210818155931.484070-5-mic@digikod.net
----
+	1000	AUDIT_GET 		- Get Status
+	1001	AUDIT_SET 		- Set status enable/disable/auditd
+	1010	AUDIT_SIGNAL_INFO
+	1130	AUDIT_SERVICE_START
+	1131	AUDIT_SEVICE_STOP
 
-Changes since v2:
-* Add an EXAMPLES section referring to landlock(7).
-* Change list order in the SEE ALSO section.
-* Fix .IR and .BR use as explained by Alejandro Colomar.
+These are all events that relate to the audit system itself.
+It seems plausible that these really aren't syscalls and hence
+shouldn't be expected to have an audit_context. I will create a
+patch that treats these as the special cases I believe them to be.
 
-Changes since v1:
-* Replace all ".I" with ".IR", except when used for titles.
-* Append punctuation to ".IR" and ".BR" when it makes sense (requested
-  by Alejandro Colomar).
-* Cut lines according to the semantic newline rules (requested by
-  Alejandro Colomar).
-* Remove roman style from ".TP" section titles (requested by Alejandro
-  Colomar).
-* Add comma after "i.e." and "e.g.".
-* Add a "CONFORMING TO" section.
-* Replace "(2)" with "()" for the described syscall name.
----
- man2/landlock_restrict_self.2 | 133 ++++++++++++++++++++++++++++++++++
- 1 file changed, 133 insertions(+)
- create mode 100644 man2/landlock_restrict_self.2
-
-diff --git a/man2/landlock_restrict_self.2 b/man2/landlock_restrict_self.2
-new file mode 100644
-index 000000000000..4b10997e2fb6
---- /dev/null
-+++ b/man2/landlock_restrict_self.2
-@@ -0,0 +1,133 @@
-+.\" Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-+.\" Copyright © 2019-2020 ANSSI
-+.\" Copyright © 2021 Microsoft Corporation
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH LANDLOCK_RESTRICT_SELF 2 2021-06-27 Linux "Linux Programmer's Manual"
-+.SH NAME
-+landlock_restrict_self \- enforce a Landlock ruleset
-+.SH SYNOPSIS
-+.nf
-+.BR "#include <linux/landlock.h>" "  /* Definition of " LANDLOCK_* " constants */"
-+.BR "#include <sys/syscall.h>" "     /* Definition of " SYS_* " constants */"
-+.PP
-+.BI "int syscall(SYS_landlock_restrict_self, int " ruleset_fd ,
-+.BI "            __u32 " flags );
-+.SH DESCRIPTION
-+Once a Landlock ruleset is populated with the desired rules, the
-+.BR landlock_restrict_self ()
-+system call enables enforcing this ruleset on the calling thread.
-+See
-+.BR landlock (7)
-+for a global overview.
-+.PP
-+A thread can be restricted with multiple rulesets that are then composed
-+together to form the thread's Landlock domain.
-+This can be seen as a stack of rulesets but it is implemented in a more
-+efficient way.
-+A domain can only be updated in such a way that the constraints of each
-+past and future composed rulesets will restrict the thread and its future
-+children for their entire life.
-+It is then possible to gradually enforce tailored access control policies
-+with multiple independant rulesets coming from different sources
-+(e.g., init system configuration, user session policy,
-+built-in application policy).
-+However, most applications should only need one call to
-+.BR landlock_restrict_self ()
-+and they should avoid arbitrary numbers of such calls because of the
-+composed rulesets limit.
-+Instead, developers are encouraged to build a tailored ruleset thanks to
-+multiple calls to
-+.BR landlock_add_rule (2).
-+.PP
-+In order to enforce a ruleset, either the caller must have the
-+.B CAP_SYS_ADMIN
-+capability in its user namespace, or the thread must already have the
-+.I no_new_privs
-+bit set.
-+As for
-+.BR seccomp (2),
-+this avoids scenarios where unprivileged processes can affect the behavior
-+of privileged children (e.g., because of set-user-ID binaries).
-+If that bit was not already set by an ancestor of this thread,
-+the thread must make the following call:
-+.IP
-+.EX
-+prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+.EE
-+.PP
-+.I ruleset_fd
-+is a Landlock ruleset file descriptor obtained with
-+.BR landlock_create_ruleset (2)
-+and fully populated with a set of calls to
-+.BR landlock_add_rule (2).
-+.PP
-+.I flags
-+must be 0.
-+.SH RETURN VALUE
-+On success,
-+.BR landlock_restrict_self ()
-+returns 0.
-+.SH ERRORS
-+.BR landlock_restrict_self ()
-+can failed for the following reasons:
-+.TP
-+.B EOPNOTSUPP
-+Landlock is supported by the kernel but disabled at boot time.
-+.TP
-+.B EINVAL
-+.I flags
-+is not 0.
-+.TP
-+.B EBADF
-+.I ruleset_fd
-+is not a file descriptor for the current thread.
-+.TP
-+.B EBADFD
-+.I ruleset_fd
-+is not a ruleset file descriptor.
-+.TP
-+.B EPERM
-+.I ruleset_fd
-+has no read access to the underlying ruleset,
-+or the calling thread is not running with
-+.IR no_new_privs ,
-+or it doesn't have the
-+.B CAP_SYS_ADMIN
-+in its user namespace.
-+.TP
-+.B E2BIG
-+The maximum number of composed rulesets is reached for the calling thread.
-+This limit is currently 64.
-+.SH VERSIONS
-+Landlock was added in Linux 5.13.
-+.SH CONFORMING TO
-+This system call is Linux-specific.
-+.SH EXAMPLES
-+See
-+.BR landlock (7).
-+.SH SEE ALSO
-+.BR landlock_create_ruleset (2),
-+.BR landlock_add_rule (2),
-+.BR landlock (7)
--- 
-2.32.0
 
