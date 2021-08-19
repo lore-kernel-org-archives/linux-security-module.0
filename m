@@ -2,127 +2,219 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33ECC4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 19:31:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A338AC432BE
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 22:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA77610A5
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 19:31:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CF5B6109F
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 22:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233995AbhHSTcY (ORCPT
+        id S235878AbhHSWNM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Aug 2021 15:32:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40646 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230504AbhHSTcX (ORCPT
+        Thu, 19 Aug 2021 18:13:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38354 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235845AbhHSWNM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Aug 2021 15:32:23 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17JJGiEq125158;
-        Thu, 19 Aug 2021 15:31:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=IhMTpgaF+/XifSRpiET4PLlR+xw/gRZjXUzbqdSF69g=;
- b=hoAIyKJ1b4R8ErJcMVP5mfQgTpdeW8sgyA7/XjzwxcHfUbbNybHpGB6n0bzbPeuboL/I
- +bH5RDqL0KiLsK3LwFKchdcieQhr05Fw2OHH0iJRqO9W0aNQq0GeYWFZC30GHC0b5ygq
- ytpkSPq1lQI9LwHcnTrFkmtnvAc+FgapgofXxb1WJwTcTAKz1E9tfubDaepjVqrmTUQi
- pSe/tjmCRTH12sKK7mQpbJFD5BCdMwecd5sDARTa9/efp2TR5LW4VZUtEeeCUh3WBH7U
- /SkOqUz0qhr3bs939YvzXylGli/CuAw/oKeks00IyHCe86nEZVUU4onNHFpWJ0WGhWk/ RQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3agp2d9hhm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Aug 2021 15:31:33 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17JJH4Fx126559;
-        Thu, 19 Aug 2021 15:31:33 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3agp2d9hgd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Aug 2021 15:31:33 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17JJH1w3000800;
-        Thu, 19 Aug 2021 19:31:31 GMT
-Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
-        by ppma04ams.nl.ibm.com with ESMTP id 3ae5f8gp06-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Aug 2021 19:31:31 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17JJRtnZ58786272
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Aug 2021 19:27:55 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AFF5C52052;
-        Thu, 19 Aug 2021 19:31:28 +0000 (GMT)
-Received: from sig-9-65-206-165.ibm.com (unknown [9.65.206.165])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BCBB752069;
-        Thu, 19 Aug 2021 19:31:26 +0000 (GMT)
-Message-ID: <78dfd42fb6de3b3c373be66e38d021f145740c86.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
- function.
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     THOBY Simon <Simon.THOBY@viveris.fr>,
-        liqiong <liqiong@nfschina.com>
-Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 19 Aug 2021 15:31:25 -0400
-In-Reply-To: <ed27351e0574f58ee59a3024554b8b0c7293515f.camel@linux.ibm.com>
-References: <20210819101529.28001-1-liqiong@nfschina.com>
-         <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
-         <ed27351e0574f58ee59a3024554b8b0c7293515f.camel@linux.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
+        Thu, 19 Aug 2021 18:13:12 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00535C061575;
+        Thu, 19 Aug 2021 15:12:34 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id u22so15997038lfq.13;
+        Thu, 19 Aug 2021 15:12:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=0yCjIJExgQQYVjbdaN5b3gOfsGCqzkpLljx8eQh1o1Q=;
+        b=GMsBd3h7f6Z9cS8nn1r9s7ORbPrCo46fFuRHkOLi7SnwfhbG60XloTvOcI97685r6l
+         tEXCB7eupOEwftbsSEQjizi741djKtV9iNceTb+W2rS9XBNObkdYtSVz5LCKatQ6uh/E
+         9jAzeyLyofWqP2MOagMX9Rgf7AEsFnM90ewypEZ/fWzBNRsVFcQKpwbd/wV9Rwa6xHjQ
+         bv/LU9bo+JtCVmRFgEmxG0Plt1fgawBn56lY1vmc9M9fUtTBOxG9imQkVSdpwc4CVVSb
+         loEto9BY/qJCv6TLCsItVqrSsebW5JOTNyoo037l1aVa97nMYbB6hMPU/ONuK+qkBTc9
+         RW8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=0yCjIJExgQQYVjbdaN5b3gOfsGCqzkpLljx8eQh1o1Q=;
+        b=cfjEPEySX16kLWBtBu2o7H2vGtEUAvpZ4tc5Rfo0OVsWpBPjpYtblsOPyVccXxYfKZ
+         WVkMzsux1BYL6NebgMtJIG9q0YPeuqWfyAyWFYZA2rkIvDCEnmYxQAqfLFPGOGJ2Yv4Z
+         bUU7zhqFT8gdDjn/T3pdd2OqAvoSxrSN4ghnVqx83SlDKWizDEsAnJdt4UCYT5BOlD0x
+         gjFjrt+X5yHKF8uLYAJy4hXnVHrVstxmW1V7fNPzGUb+jSse7jsa5f6uTMqDMMPmeWRF
+         aPe2WVwSxeIt+ZShh/euS8mJIS2sX9nGuygwgXrBaix3fGJgLw+1U5YxB5+wmtXqnPji
+         ntCQ==
+X-Gm-Message-State: AOAM5306KvS7oCw1mNvgy88aYAu3ku2w7jsdI7D5z9xrKSPC5fHye+pz
+        s5y9b/g27RVn09nZog4jaHzr4wEb5vALdg==
+X-Google-Smtp-Source: ABdhPJxH5DFEDI1sc/2CWkqUrVIu874nMF1nkxVFFHn9sRxM3MfRcKAW98/vZbYbe0NUPseE2+9goQ==
+X-Received: by 2002:ac2:46e1:: with SMTP id q1mr12566075lfo.250.1629411153257;
+        Thu, 19 Aug 2021 15:12:33 -0700 (PDT)
+Received: from [192.168.8.182] ([109.197.205.90])
+        by smtp.gmail.com with ESMTPSA id j2sm381362ljc.49.2021.08.19.15.12.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Aug 2021 15:12:32 -0700 (PDT)
+To:     linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        THOBY Simon <Simon.THOBY@viveris.fr>,
+        linux-kernel@vger.kernel.org
+From:   Igor Zhbanov <izh1979@gmail.com>
+Subject: [PATCH v3 0/1] NAX (No Anonymous Execution) LSM
+Message-ID: <adc0e031-f02d-775c-1148-e808013c1b97@gmail.com>
+Date:   Fri, 20 Aug 2021 01:12:37 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: UIf0kseCI95q6VXNtSNaRFSTP6Cwb_pA
-X-Proofpoint-GUID: cblgJ_wtl42znVymjdXO0ZckUKX-P02K
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-19_07:2021-08-17,2021-08-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 spamscore=0
- bulkscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108190112
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-08-19 at 09:47 -0400, Mimi Zohar wrote:
-> On Thu, 2021-08-19 at 12:58 +0000, THOBY Simon wrote:
-> > Hi Liqiong,
-> > 
-> > On 8/19/21 12:15 PM, liqiong wrote:
-> > > When "ima_match_policy" is looping while "ima_update_policy" changs
-> > > the variable "ima_rules", then "ima_match_policy" may can't exit loop,
-> > > and kernel keeps printf "rcu_sched detected stall on CPU ...".
-> > > 
-> > > It occurs at boot phase, systemd-services are being checked within
-> > > "ima_match_policy,at the same time, the variable "ima_rules"
-> > > is changed by a service.
-> > 
-> > First off, thanks for finding and identifying this nasty bug.
-> 
-> Once the initial builtin policy rules have been replaced by a custom
-> policy, rules may only be appended by splicing the new rules with the
-> existing rules.  There should never be a problem reading the rules at
-> that point.   Does this problem occur before the builtin policy rules
-> have been replaced with a custom policy?
+[Overview]
 
-Yes, the problem is limited to transitioning from the builtin policy to
-the custom policy.   Adding a new lock around rcu code seems counter
-productive, especially since switching the policy rules happens once,
-normally during early boot before access to real root.  Please consider
-Simon's suggestion or finding some other solution.
+Fileless malware attacks are becoming more and more popular, and even
+ready-to-use frameworks are available [1], [2], [3]. They are based on
+running of the malware code from anonymous executable memory pages (which
+are not backed by an executable file or a library on a filesystem.) This
+allows effectively hiding malware presence in a system, making filesystem
+integrity checking tools unable to detect the intrusion.
 
-thanks,
+Typically, the malware first needs to intercept the execution flow (e.g.,
+by the means of ROP-based exploit). Then it needs to download the main
+part (in the form of normal executable or library) from its server,
+because it is hard to implement the entire exploit in ROP-based form.
+There are a number of security mechanisms that can ensure the integrity
+of the file-system, but we need to ensure the integrity of the code in
+memory too, to be sure, that only authorized code is running in the
+system.
 
-Mimi
+The proposed LSM is preventing the creation of anonymous executable pages
+for the processes. The LSM intercepts mmap() and mprotect() system calls
+and handles it similarly to SELinux handlers.
+
+The module allows to block the violating system call or to kill the
+violating process, depending on the settings, along with rate-limited
+logging.
+
+Currently, the module restricts ether all processes or only the
+privileged processes, depending on the settings. The privileged process
+is a process for which any of the following is true:
++ uid   == 0 && !issecure(SECURE_NOROOT)
++ euid  == 0 && !issecure(SECURE_NOROOT)
++ suid  == 0 && !issecure(SECURE_NOROOT)
++ cap_effective has any capability except of kernel.nax.allowed_caps
++ cap_permitted has any capability except of kernel.nax.allowed_caps
+
+Checking of uid/euid/suid is important because a process may call
+seteuid(0) to gain privileges (if SECURE_NO_SETUID_FIXUP secure bit
+is not set).
+
+The sysctl parameter kernel.nax.allowed_caps allows to define safe
+capabilities set for the privileged processes.
+
+[JIT]
+
+Because of blocked anonymous code execution, JIT-compiled code, some
+interpreters (which are using JIT) and libffi-based projects can be
+broken.
+
+Our observation shows that such processes are typically running by a
+user, so they will not be privileged, so they will be allowed to use
+anonymous executable pages.
+
+But for small embedded set-ups it could be possible to get rid of such
+processes at all, so the module could be enabled without further
+restrictions to protect both privileged and non-privileged processes.
+
+In addition, libffi can be modified not to use anonymous executable
+pages.
+
+[Similar implementations]
+
+Although SELinux could be used to enable similar functionality, this LSM
+is simpler. It could be used in set-ups, where SELinux would be overkill.
+
+There is also SARA LSM module, which solves similar task, but it is more
+complex.
+
+[Cooperation with other security mechanisms]
+
+NAX LSM is more useful in conjunction with IMA. IMA would be responsible
+for integrity checking of file-based executables and libraries, and
+NAX LSM would be responsible for preventing of anonymous code execution.
+
+Alternatively, NAX LSM can be used with read-only root file system,
+protected by dm-verity/fs-verity.
+
+[TODO]
+- Implement xattrs support for marking privileged binaries on a per-file
+  basis.
+- Store NAX attributes in the per-task LSM blob to implement special
+  launchers for the privileged processes, so all of the children processes
+  of such a launcher would be allowed to have anonymous executable pages
+  (but not to grandchildren).
+
+[Links]
+
+[1] https://blog.fbkcs.ru/elf-in-memory-execution/
+[2] https://magisterquis.github.io/2018/03/31/in-memory-only-elf-execution.html
+[3] https://www.prodefence.org/fireelf-fileless-linux-malware-framework/
+
+[Credits]
+
+Thanks to Mimi Zohar for consulting and to Simon Thoby for thorough review.
+
+[Changelog]
+
+V3
+- Fix memory leak in allowed_caps assigning code.
+- Protect allowed_caps updating with a spinlock.
+- Fix Kconfig options description.
+- Add example for allowed_caps value.
+- Fix typo in documentation.
+
+V2
+- Fixed typo in Kconfig.
+- Fixed "cap_effective" and "cap_permitted" parameters description in NAX.rst.
+- Added "nax_allowed_caps" setup parameter. Factored out capabilities parsing
+  logic.
+- Added parameter for checking all processes (not only privileged).
+- Added Kconfig parameter for setting allowed capabilities.
+- Updated nax_file_mprotect() to avoid calling of nax_mmap_file() to avoid
+  duplicated checks.
+- Protect allowed_caps with RCU.
+- Fixed all errors and most warning found by checkpatch.pl.
+- Updated the module documentation. Added description of the boot parameters to
+  kernel-parameters.
+- Updated commit message.
+
+V1:
+- Initial implementation.
+
+Igor Zhbanov (1):
+  NAX LSM: Add initial support
+
+ Documentation/admin-guide/LSM/NAX.rst         |  72 +++
+ Documentation/admin-guide/LSM/index.rst       |   1 +
+ .../admin-guide/kernel-parameters.rst         |   1 +
+ .../admin-guide/kernel-parameters.txt         |  32 ++
+ security/Kconfig                              |  11 +-
+ security/Makefile                             |   2 +
+ security/nax/Kconfig                          | 114 +++++
+ security/nax/Makefile                         |   4 +
+ security/nax/nax-lsm.c                        | 472 ++++++++++++++++++
+ 9 files changed, 704 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/NAX.rst
+ create mode 100644 security/nax/Kconfig
+ create mode 100644 security/nax/Makefile
+ create mode 100644 security/nax/nax-lsm.c
+
+-- 
+2.26.2
 
