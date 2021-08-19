@@ -6,154 +6,123 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D9BC4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 17:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B33ECC4320A
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 19:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD21610A6
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 17:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CA77610A5
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 19:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230058AbhHSRdo (ORCPT
+        id S233995AbhHSTcY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Aug 2021 13:33:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:32548 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229520AbhHSRdo (ORCPT
+        Thu, 19 Aug 2021 15:32:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40646 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230504AbhHSTcX (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Aug 2021 13:33:44 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17JH42Iq103525;
-        Thu, 19 Aug 2021 13:32:46 -0400
+        Thu, 19 Aug 2021 15:32:23 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17JJGiEq125158;
+        Thu, 19 Aug 2021 15:31:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
  from : to : cc : date : in-reply-to : references : content-type :
  mime-version : content-transfer-encoding; s=pp1;
- bh=VaGmT9pAZx7k7u/Cg6rHBBP9jFUURlyOyNSuOvjweGc=;
- b=hbub7qrUfmZrGW0KGAWYUK5Ks6BBulE9ry0FK4J/01+ycGy/dfF+gYgLydMAZXwrd9+e
- hx9ol1VqKHwI5SmcjJMGoqBskuxcuJCCZtfcoI2EV+DMM6KK4NjENMcTbezSWvYYciUi
- TnXXhMMm+h5yMEYP/gGz5NCoWobD0gIC95G76hhge8YCP4NHIMrUgcXdrUKmLp34V5o4
- 4vTwbncZN/wn4Vyaf9X8xeQ5MUpzmXWi+RbTe95BK8iyGqqOE0kr4RLI9zN6X+l+rspe
- x5jGYad7Z9e6+8e9n7aXXvmmOPWTf7kOt8Zt2/Vup2KN4Ed7YU44pyg/9u/RMZR9eNVE fg== 
+ bh=IhMTpgaF+/XifSRpiET4PLlR+xw/gRZjXUzbqdSF69g=;
+ b=hoAIyKJ1b4R8ErJcMVP5mfQgTpdeW8sgyA7/XjzwxcHfUbbNybHpGB6n0bzbPeuboL/I
+ +bH5RDqL0KiLsK3LwFKchdcieQhr05Fw2OHH0iJRqO9W0aNQq0GeYWFZC30GHC0b5ygq
+ ytpkSPq1lQI9LwHcnTrFkmtnvAc+FgapgofXxb1WJwTcTAKz1E9tfubDaepjVqrmTUQi
+ pSe/tjmCRTH12sKK7mQpbJFD5BCdMwecd5sDARTa9/efp2TR5LW4VZUtEeeCUh3WBH7U
+ /SkOqUz0qhr3bs939YvzXylGli/CuAw/oKeks00IyHCe86nEZVUU4onNHFpWJ0WGhWk/ RQ== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ahq5ds9q2-1
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3agp2d9hhm-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Aug 2021 13:32:46 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17JH6GE7119252;
-        Thu, 19 Aug 2021 13:32:45 -0400
-Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ahq5ds9pc-1
+        Thu, 19 Aug 2021 15:31:33 -0400
+Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17JJH4Fx126559;
+        Thu, 19 Aug 2021 15:31:33 -0400
+Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3agp2d9hgd-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Aug 2021 13:32:45 -0400
-Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
-        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17JHWhcc004868;
-        Thu, 19 Aug 2021 17:32:43 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma05fra.de.ibm.com with ESMTP id 3afwrhv47k-1
+        Thu, 19 Aug 2021 15:31:33 -0400
+Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
+        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17JJH1w3000800;
+        Thu, 19 Aug 2021 19:31:31 GMT
+Received: from b06avi18878370.portsmouth.uk.ibm.com (b06avi18878370.portsmouth.uk.ibm.com [9.149.26.194])
+        by ppma04ams.nl.ibm.com with ESMTP id 3ae5f8gp06-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Aug 2021 17:32:42 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17JHWeul54919648
+        Thu, 19 Aug 2021 19:31:31 +0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17JJRtnZ58786272
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Aug 2021 17:32:40 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4F89F11C058;
-        Thu, 19 Aug 2021 17:32:40 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4AB7811C052;
-        Thu, 19 Aug 2021 17:32:35 +0000 (GMT)
+        Thu, 19 Aug 2021 19:27:55 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AFF5C52052;
+        Thu, 19 Aug 2021 19:31:28 +0000 (GMT)
 Received: from sig-9-65-206-165.ibm.com (unknown [9.65.206.165])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 19 Aug 2021 17:32:35 +0000 (GMT)
-Message-ID: <e7e251000432cf7c475e19c56b0f438b92fec16e.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 00/12] Enroll kernel keys thru MOK
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id BCBB752069;
+        Thu, 19 Aug 2021 19:31:26 +0000 (GMT)
+Message-ID: <78dfd42fb6de3b3c373be66e38d021f145740c86.camel@linux.ibm.com>
+Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
+ function.
 From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        pjones@redhat.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        Patrick Uiterwijk <patrick@puiterwijk.org>
-Date:   Thu, 19 Aug 2021 13:32:34 -0400
-In-Reply-To: <91B1FE51-C6FC-4ADF-B05A-B1E59E20132E@oracle.com>
-References: <20210819002109.534600-1-eric.snowberg@oracle.com>
-         <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
-         <f76fcf41728fbdd65f2b3464df0821f248b2cba0.camel@linux.ibm.com>
-         <91B1FE51-C6FC-4ADF-B05A-B1E59E20132E@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        liqiong <liqiong@nfschina.com>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Thu, 19 Aug 2021 15:31:25 -0400
+In-Reply-To: <ed27351e0574f58ee59a3024554b8b0c7293515f.camel@linux.ibm.com>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+         <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
+         <ed27351e0574f58ee59a3024554b8b0c7293515f.camel@linux.ibm.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: aJAOsvngqjodT5zWjAyhG8qLCPdidYMl
-X-Proofpoint-ORIG-GUID: Wy9C5Qq0n4VkNUlS1-Sz5gxuIJvv7fZE
+X-Proofpoint-ORIG-GUID: UIf0kseCI95q6VXNtSNaRFSTP6Cwb_pA
+X-Proofpoint-GUID: cblgJ_wtl42znVymjdXO0ZckUKX-P02K
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-19_06:2021-08-17,2021-08-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 adultscore=0 suspectscore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108190100
+ definitions=2021-08-19_07:2021-08-17,2021-08-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ priorityscore=1501 lowpriorityscore=0 impostorscore=0 spamscore=0
+ bulkscore=0 adultscore=0 mlxlogscore=999 malwarescore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108190112
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-08-19 at 09:23 -0600, Eric Snowberg wrote:
-> > On Aug 19, 2021, at 7:10 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+On Thu, 2021-08-19 at 09:47 -0400, Mimi Zohar wrote:
+> On Thu, 2021-08-19 at 12:58 +0000, THOBY Simon wrote:
+> > Hi Liqiong,
 > > 
-> > On Thu, 2021-08-19 at 14:38 +0300, Jarkko Sakkinen wrote:
-> >> On Wed, 2021-08-18 at 20:20 -0400, Eric Snowberg wrote:
-> >>> Downstream Linux distros try to have a single signed kernel for each
-> >>> architecture.  Each end-user may use this kernel in entirely different
-> >>> ways.  Some downstream kernels have chosen to always trust platform keys
-> >>> within the Linux trust boundary for kernel module signing.  These
-> >>> kernels have no way of using digital signature base IMA appraisal.
-> >>> 
-> >>> This series introduces a new Linux kernel keyring containing the Machine
-> >>> Owner Keys (MOK) called .mok. It also adds a new MOK variable to shim.
-> >> 
-> >> I would name it as ".machine" because it is more "re-usable" name, e.g.
-> >> could be used for similar things as MOK. ".mok" is a bad name because
-> >> it binds directly to a single piece of user space software.
+> > On 8/19/21 12:15 PM, liqiong wrote:
+> > > When "ima_match_policy" is looping while "ima_update_policy" changs
+> > > the variable "ima_rules", then "ima_match_policy" may can't exit loop,
+> > > and kernel keeps printf "rcu_sched detected stall on CPU ...".
+> > > 
+> > > It occurs at boot phase, systemd-services are being checked within
+> > > "ima_match_policy,at the same time, the variable "ima_rules"
+> > > is changed by a service.
 > > 
-> > Nayna previously said,
-> >   "I believe the underlying source from where CA keys are loaded might vary 
-> >   based on the architecture (".mok" is UEFI specific.). The key part is 
-> >   that this new keyring should contain only CA keys which can be later 
-> >   used to vouch for user keys loaded onto IMA or secondary keyring at 
-> >   runtime. It would be good to have a "ca" in the name, like .xxxx-ca, 
-> >   where xxxx can be machine, owner, or system. I prefer .system-ca."
-> > 
-> > The CA keys on the MOK db is simply the first root of trust being
-> > defined, but other roots of trust are sure to follow.  For this reason,
-> > I agree naming the new keyring "mok" should be avoided.
+> > First off, thanks for finding and identifying this nasty bug.
 > 
-> As I said previously, I’m open to renaming, I just would like to have an 
-> agreement on the new name before changing everything.  The current proposed 
-> names I have heard are “.machine" and ".system-ca".  Is there a preference 
-> the maintainers feel is appropriate?  If so, please let me know and I’ll 
-> rename it. Thanks.
-> 
+> Once the initial builtin policy rules have been replaced by a custom
+> policy, rules may only be appended by splicing the new rules with the
+> existing rules.  There should never be a problem reading the rules at
+> that point.   Does this problem occur before the builtin policy rules
+> have been replaced with a custom policy?
 
-Jarkko, I think the emphasis should not be on "machine" from Machine
-Owner Key (MOK), but on "owner".  Whereas Nayna is focusing more on the
-"_ca" aspect of the name.   Perhaps consider naming it
-"system_owner_ca" or something along those lines.
+Yes, the problem is limited to transitioning from the builtin policy to
+the custom policy.   Adding a new lock around rcu code seems counter
+productive, especially since switching the policy rules happens once,
+normally during early boot before access to real root.  Please consider
+Simon's suggestion or finding some other solution.
 
 thanks,
 
 Mimi
-
 
