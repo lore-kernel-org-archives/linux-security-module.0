@@ -2,188 +2,180 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0949C4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 13:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FB3CC4338F
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 13:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9DF610FA
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 13:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAECD61101
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 13:11:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239588AbhHSNDd (ORCPT
+        id S236481AbhHSNMU (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Aug 2021 09:03:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239532AbhHSNDd (ORCPT
+        Thu, 19 Aug 2021 09:12:20 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40256 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232821AbhHSNMT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Aug 2021 09:03:33 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17FFAC061575
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Aug 2021 06:02:57 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id y144so7018951qkb.6
-        for <linux-security-module@vger.kernel.org>; Thu, 19 Aug 2021 06:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/uITF9PsXzVGX7hd3I0YUfetvnjHbmqb4UwwTMwonFI=;
-        b=MPi0hnE/ra70VrPe/cNO1Ormx0fhJ3InR0Y4lORCcGbpHnwdkrxn1VeXvH+TSBCUTU
-         v0oNczhQ45wov/kN+l3jtld33Kte9pDI7LQjdbpJ6VesA3zUtrn7vRlwd08l5CwfMpDU
-         GlQPWNOam5K6Fiq2V6Tbbttqwgpactcl62UgdWtN/WPmIXzluJIqO6nt1o0a/sj/A3Kb
-         Gxj3Qr4qTluQCE1kJnhok4GHfTTD2AXsJ1YntzkD+POopVeAhimTW2k9AryGeRJHHuhp
-         kdJHiN3MnWJN2tX98TIbuatikanJs4miyWRTUopfWqD7Nq7cZCv8w0OJZFNZnDNw+tSN
-         yv7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/uITF9PsXzVGX7hd3I0YUfetvnjHbmqb4UwwTMwonFI=;
-        b=E8EfS4WE6dc68hffhcF0QsyD7pjupStDJgLXfiEOkZxTDvCmgsZ4+TD6F6D62N1jz1
-         dtW5hWCy/fpV6Cn1KRWTCwwFnCieoF7IsWeXKAcsES26ZvkMuLiiMH+7ZYwR7wJR3JJq
-         FuAqQ6AWfqCHUI7oJ1D96qTHM1Fsgwqp+tIPX0mpRRvFK5qEo38TeFYl5LcpRVLcaw4W
-         4P5DThv2qBIJVCpoT7xK3iw1+1BdPelq1WQeJ44OiEdrt1Y+gdWQMReJiiNHpPWwlcnW
-         +a6LBEFMcUIrJ4enmwJo1PBL7hxqJsRwNL21z3Y3ZPQIDn/mlsb89R5fNm6NSy2Krv4g
-         3e8g==
-X-Gm-Message-State: AOAM533J0J++VYnyIBNeflADqceWBVnShQwbvJdoZIJDApevSP2e0u3g
-        Gui2SUHLoHGcjVTLbwqDXiTugxs2vG/AIG1/gAOQqg==
-X-Google-Smtp-Source: ABdhPJy5I18zBxQ1LGmdihiCjtGWvx+HuJJjQQGxxo70NaOSKWyTzogqPmmLqLM1CdEM2C4vIeoyMMoZ809yk2xCmpI=
-X-Received: by 2002:a37:dcc7:: with SMTP id v190mr3652195qki.445.1629378176061;
- Thu, 19 Aug 2021 06:02:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210809190157.279332-1-dovmurik@linux.ibm.com>
- <20210809190157.279332-4-dovmurik@linux.ibm.com> <YRZuIIVIzMfgjtEl@google.com>
- <CAMj1kXFC-cizTw2Tv40uZHdLArKtdMNxdQXWoPWSL-8qexdkLQ@mail.gmail.com>
-In-Reply-To: <CAMj1kXFC-cizTw2Tv40uZHdLArKtdMNxdQXWoPWSL-8qexdkLQ@mail.gmail.com>
-From:   Andrew Scull <ascull@google.com>
-Date:   Thu, 19 Aug 2021 14:02:44 +0100
-Message-ID: <CADcWuH0mP+e6GxkUGN3ni_Yu0z8YTn-mo677obH+p-OFCL+wOQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] virt: Add sev_secret module to expose confidential
- computing secrets
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Dov Murik <dovmurik@linux.ibm.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
+        Thu, 19 Aug 2021 09:12:19 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17JD7wsX172461;
+        Thu, 19 Aug 2021 09:11:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=dDGjYsd/CVMSln9MLaU3XeTFt8CR0J2fLgNHz0/y9iU=;
+ b=Am1bvbllx4lRnvkAwDYBAi4p9ZSpm9z2zER02tQyzSiDhfObeWIw2Bl/i7EibEuNqhWR
+ 1OhlQdRXhXSORwrb52ryW/U6WjzV83PtIqtUwot1aBh/QqbA/rVslIV7nBd2HWDyLCdQ
+ zA7Zvwppso6bjh6vB9q7euEVAhCjkkcfTKnqWaq3HSVvEkiMyybWaf4gKfSZr21mxSqP
+ b4zlXs0gNI/h88Pl30Fh6WzkjwaiXy8bF+XyaX0BYJUC3GLXODfcygMS556qhHPdeyN7
+ XjZO1bBjDXiQ1LTgA0nkCfNBGsgpYbDAAq0apw2oLiOs01JA6St9v4wUoOF/1fHirOPd LQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ahp9x34jb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Aug 2021 09:11:11 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17JD8Cwn173706;
+        Thu, 19 Aug 2021 09:11:10 -0400
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ahp9x34gw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Aug 2021 09:11:10 -0400
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17JD2YoE010440;
+        Thu, 19 Aug 2021 13:11:07 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma06fra.de.ibm.com with ESMTP id 3ae53hf6fm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Aug 2021 13:11:07 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17JD7ZVu59507028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Aug 2021 13:07:35 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2549A4060;
+        Thu, 19 Aug 2021 13:11:04 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D11EA405B;
+        Thu, 19 Aug 2021 13:11:00 +0000 (GMT)
+Received: from sig-9-65-206-165.ibm.com (unknown [9.65.206.165])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 19 Aug 2021 13:10:59 +0000 (GMT)
+Message-ID: <f76fcf41728fbdd65f2b3464df0821f248b2cba0.camel@linux.ibm.com>
+Subject: Re: [PATCH v4 00/12] Enroll kernel keys thru MOK
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com, Patrick Uiterwijk <patrick@puiterwijk.org>
+Date:   Thu, 19 Aug 2021 09:10:59 -0400
+In-Reply-To: <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
+References: <20210819002109.534600-1-eric.snowberg@oracle.com>
+         <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 2wmwyBdw65ZteOoftq2YdC1DS8zGBpNE
+X-Proofpoint-GUID: Ti_WZG0CEtbe1hd9y9wFkDYPxk2VybxS
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-19_04:2021-08-17,2021-08-19 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1011
+ impostorscore=0 bulkscore=0 adultscore=0 phishscore=0 mlxlogscore=999
+ suspectscore=0 priorityscore=1501 mlxscore=0 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108190076
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, 16 Aug 2021 at 10:57, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Fri, 13 Aug 2021 at 15:05, Andrew Scull <ascull@google.com> wrote:
-> >
-> > On Mon, Aug 09, 2021 at 07:01:57PM +0000, Dov Murik wrote:
-> > > The new sev_secret module exposes the confidential computing (coco)
-> > > secret area via securityfs interface.
-> > >
-> > > When the module is loaded (and securityfs is mounted, typically under
-> > > /sys/kernel/security), a "coco/sev_secret" directory is created in
-> > > securityfs.  In it, a file is created for each secret entry.  The name
-> > > of each such file is the GUID of the secret entry, and its content is
-> > > the secret data.
-> > >
-> > > This allows applications running in a confidential computing setting to
-> > > read secrets provided by the guest owner via a secure secret injection
-> > > mechanism (such as AMD SEV's LAUNCH_SECRET command).
-> > >
-> > > Removing (unlinking) files in the "coco/sev_secret" directory will zero
-> > > out the secret in memory, and remove the filesystem entry.  If the
-> > > module is removed and loaded again, that secret will not appear in the
-> > > filesystem.
-> >
-> > We've also been looking into a similar secret mechanism recently in the
-> > context of Android and protected KVM [1]. Our secrets would come from a
-> > different source, likely described as a reserved-memory node in the DT,
-> > but would need to be exposed to userspace in the same way as the SEV
-> > secrets. Originally I tried using a character device, but this approach
-> > with securityfs feels neater to me.
-> >
->
-> Agreed. I particularly like how deleting the file wipes the secret from memory.
->
-> > We're also looking to pass secrets from the bootloader to Linux, outside
-> > of any virtualization or confidential compute context (at least a far as
-> > I have understood the meaning of the term). Again, this feels like it
-> > would be exposed to userspace in the same way.
-> >
->
-> Indeed.
->
-> > It would be good to be able to share the parts that would be common. I
-> > expect that would mean the operations for a secret file and for a
-> > directory of secrets at a minimum. But it might also influence the paths
-> > in securityfs; I see, looking back, that the "coco" directory was added
-> > since the RFC but would a generalized "secret" subsystem make sense? Or
-> > would it be preferable for each case to define their own path?
-> >
->
-> I think we should avoid 'secret', to be honest. Even if protected KVM
-> is not riding the SEV/TDX wave, I think confidential computing is
-> still an accurate description of its semantics.
+On Thu, 2021-08-19 at 14:38 +0300, Jarkko Sakkinen wrote:
+> On Wed, 2021-08-18 at 20:20 -0400, Eric Snowberg wrote:
+> > Many UEFI Linux distributions boot using shim.  The UEFI shim provides
+> > what is called Machine Owner Keys (MOK).  Shim uses both the UEFI Secure
+> > Boot DB and MOK keys to validate the next step in the boot chain.  The
+> > MOK facility can be used to import user generated keys.  These keys can
+> > be used to sign an end-user development kernel build.  When Linux boots,
+> > pre-boot keys (both UEFI Secure Boot DB and MOK keys) get loaded in the
+> > Linux .platform keyring.  
+> > 
+> > Currently, pre-boot keys are not trusted within the Linux trust boundary
+> > [1]. These platform keys can only be used for kexec. If an end-user
+> > wants to use their own key within the Linux trust boundary, they must
+> > either compile it into the kernel themselves or use the insert-sys-cert
+> > script. Both options present a problem. Many end-users do not want to
+> > compile their own kernels. With the insert-sys-cert option, there are
+> > missing upstream changes [2].  Also, with the insert-sys-cert option,
+> > the end-user must re-sign their kernel again with their own key, and
+> > then insert that key into the MOK db. Another problem with
+> > insert-sys-cert is that only a single key can be inserted into a
+> > compressed kernel.
+> > 
+> > Having the ability to insert a key into the Linux trust boundary opens
+> > up various possibilities.  The end-user can use a pre-built kernel and
+> > sign their own kernel modules.  It also opens up the ability for an
+> > end-user to more easily use digital signature based IMA-appraisal.  To
+> > get a key into the ima keyring, it must be signed by a key within the
+> > Linux trust boundary.
+> 
+> As of today, I can use a prebuilt kernel, crate my own MOK key and sign
+> modules. What will be different?
 
-I agree that protected KVM fits with the ideas of confidential
-computing. It was the non-virtualization context that I was less
-certain about. For example, the Open Profile for DICE [2] starts with
-a hardware secret and derives, at each boot stage, a secret that is
-passed to the next stage. It's a process that applies both to a VM,
-matching confidential compute as I understand it, but also the host
-Linux, which is the part that I wasn't so clear on.
+The UEFI db and MOK keys are being loaded onto the .platform keyring,
+which is suppose to be limited to verifying the kexec kernel image
+signature.  With a downstream patch, kernel modules are being verified
+as well.
 
-[2] -- https://pigweed.googlesource.com/open-dice/+/refs/heads/main/docs/specification.md
+Initially Patrick Uiterwijk's "[PATCH 0/3] Load keys from TPM2 NV Index
+on IMA keyring" patch set attempted to define a new root of trust based
+on a key stored in the TPM.  This patch set is similarly attempting to
+define a new root of trust based on CA keys stored in the MOK db.
 
-> > [1] -- https://lwn.net/Articles/836693/
-> >
-> > > +static int sev_secret_unlink(struct inode *dir, struct dentry *dentry)
-> > > +{
-> > > +     struct sev_secret *s = sev_secret_get();
-> > > +     struct inode *inode = d_inode(dentry);
-> > > +     struct secret_entry *e = (struct secret_entry *)inode->i_private;
-> > > +     int i;
-> > > +
-> > > +     if (e) {
-> > > +             /* Zero out the secret data */
-> > > +             memzero_explicit(e->data, secret_entry_data_len(e));
-> >
-> > Would there be a benefit in flushing these zeros?
-> >
->
-> Do you mean cache clean+invalidate? Better to be precise here.
+The purpose of this patch set is to define a new, safe trust source
+parallel to the builtin keyring, without relying on a downstream patch.
+With the new root of trust, the end user could sign his own kernel
+modules, sign third party keys, and load keys onto the IMA keyring,
+which can be used for signing the IMA policy and other files.
 
-At least a clean, to have the zeros written back to memory from the
-cache, in order to overwrite the secret.
+> 
+> > Downstream Linux distros try to have a single signed kernel for each
+> > architecture.  Each end-user may use this kernel in entirely different
+> > ways.  Some downstream kernels have chosen to always trust platform keys
+> > within the Linux trust boundary for kernel module signing.  These
+> > kernels have no way of using digital signature base IMA appraisal.
+> > 
+> > This series introduces a new Linux kernel keyring containing the Machine
+> > Owner Keys (MOK) called .mok. It also adds a new MOK variable to shim.
+> 
+> I would name it as ".machine" because it is more "re-usable" name, e.g.
+> could be used for similar things as MOK. ".mok" is a bad name because
+> it binds directly to a single piece of user space software.
 
->
-> > > +             e->guid = NULL_GUID;
-> > > +     }
-> > > +
-> > > +     inode->i_private = NULL;
-> > > +
-> > > +     for (i = 0; i < SEV_SECRET_NUM_FILES; i++)
-> > > +             if (s->fs_files[i] == dentry)
-> > > +                     s->fs_files[i] = NULL;
-> > > +
-> > > +     /*
-> > > +      * securityfs_remove tries to lock the directory's inode, but we reach
-> > > +      * the unlink callback when it's already locked
-> > > +      */
-> > > +     inode_unlock(dir);
-> > > +     securityfs_remove(dentry);
-> > > +     inode_lock(dir);
-> > > +
-> > > +     return 0;
-> > > +}
+Nayna previously said,
+   "I believe the underlying source from where CA keys are loaded might vary 
+   based on the architecture (".mok" is UEFI specific.). The key part is 
+   that this new keyring should contain only CA keys which can be later 
+   used to vouch for user keys loaded onto IMA or secondary keyring at 
+   runtime. It would be good to have a "ca" in the name, like .xxxx-ca, 
+   where xxxx can be machine, owner, or system. I prefer .system-ca."
+
+The CA keys on the MOK db is simply the first root of trust being
+defined, but other roots of trust are sure to follow.  For this reason,
+I agree naming the new keyring "mok" should be avoided.
+
+thanks,
+
+Mimi
+
