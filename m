@@ -2,259 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C2EC4320E
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 00:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9CFC4320A
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 00:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3B42610E5
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 00:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29E47610D2
+	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 00:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235265AbhHSA0F (ORCPT
+        id S234783AbhHSAsR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 18 Aug 2021 20:26:05 -0400
-Received: from mx0a-00069f02.pphosted.com ([205.220.165.32]:30906 "EHLO
-        mx0a-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S234885AbhHSA0D (ORCPT
+        Wed, 18 Aug 2021 20:48:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234523AbhHSAsR (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 18 Aug 2021 20:26:03 -0400
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17J0H5bp000812;
-        Thu, 19 Aug 2021 00:22:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : content-type :
- mime-version; s=corp-2021-07-09;
- bh=2PJXkU1Y/Q24V+ECHBvDEgrn+MvquS6EKmsdYwwVkV4=;
- b=vm8rtFTerNXq2HM4ESfHYtIhFnNT+lWLHL3tcmKmIddNO/4kF/ocxqeCdiIvFZaw50TG
- 0UwojLlLyB1K3i5dLUd6RxukT/1vsuHJ+AiuNSRe0E8Wv4n2zjmhkJ0RByR7i9ngitO9
- ZmLqv28r7yK6aKttuGftmL6P5meDfJpQVF26pQ0EgooZJ9Q13VhPQ5xXhZ8VVNTQ+ZL7
- zymZsar5Kj4t+16/Fpb4r9bGIi1eAE3NAWTFot2m/20ztY/Nv7H3nO0nrffS34cCkqNN
- r96yWxkle7fTMbK/xpA4tZimdSXfi22ysB2OonHEYG9AmRmW+hXMahChCBO1PyLCX+fC Rg== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : content-type :
- mime-version; s=corp-2020-01-29;
- bh=2PJXkU1Y/Q24V+ECHBvDEgrn+MvquS6EKmsdYwwVkV4=;
- b=gx7zeQ1zevpgK8caIiNenacg+q/0Lsidh6RyKNXqa4ipLGWDWW54wQR4fL0VzJxMddgH
- EwEA3kwVqgMSKsh0rkLq5D3vJeML/PUBqGd82ry8qLS5TFD2WOUv7vnrgKX9dNtUox7e
- y3FM7KMvhxh6oQ7tMd9jwHwcvEuyZ2BMwXbRcrvy4KGpILi6XcUiiWMtT3RgV8WVAibo
- 9wCNMkBBKdcBVruyAuajps+azCTjCvr54IhBSEgxvhIe3fb6pChUlrY22Vqkio/DXFp5
- SATI+WUlUXvMhAjB8lhLxxLPsiFLXWO2ENq52/i/OunpHRkcIK3mVstq9klTJCDk9f46 LQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3agdnf4dn4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Aug 2021 00:22:01 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17J0Exbg007560;
-        Thu, 19 Aug 2021 00:22:00 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176])
-        by aserp3030.oracle.com with ESMTP id 3ae3vjf8rn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Aug 2021 00:22:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PU3TrF3P9oJsziGwKZNQsPKACWKcrMiRxoR+HLv2l7bzwQg5VEbRkI3rdJsP4MbP8+sYsw0aPZIfbHP0KmVyzb6w9+0iywU2jtsPWiTI6pSjPPnxXs9JEH4i0Teyf3jtWeQe5rVbYMVnQDxxRU1ZIYPVjPZB884/L5D0co64/MmW6ty3oHmeVf22GX4CgTb5iC5vss2nWZ8K4MuT7BNgKnxYFYzi+Wx63rDfhkVEMi7UGl2LAmkHtTpzmkdWCaRb927P81KAMTi2+hB+IZmVhJgi3O/tlbIlMqX7jdPEmz+nWYshr3+NOcdkOVV93yckbvvo2250Qe2szDSZOd7UtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2PJXkU1Y/Q24V+ECHBvDEgrn+MvquS6EKmsdYwwVkV4=;
- b=F7H+AYNnmfdVWVQbOGDpF4l9vpOiw4kesGHH0veehi/IRgPqI06cp7QoxpnNpN0AXlZpqGEQYB5tN09GgC1vZ2DgNw9nqgrGRsBLxnCWpZsXEfGpKXI5iJbesrOb2AzSME0N2mK+M9Ne72AcBSAc8sj2b6xEELMJCN5SGRDcms8XalcueCeCyHWeQ414w552RFYnG66l9QDVQljhbw9QA99IPyJDHw7b+IcLvvEFxObuTDs4EvRR1ARN5ksU0rHVokaFBb/LN7cczuY1gLlgo2nBeisrpcghLwhfIofK/fbnM2iBAAW2p/sAwWZnmMv6LezoxXnNEEMz1IHvXPSVXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+        Wed, 18 Aug 2021 20:48:17 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8A4BC061764
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Aug 2021 17:47:41 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id d11so8911326eja.8
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Aug 2021 17:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2PJXkU1Y/Q24V+ECHBvDEgrn+MvquS6EKmsdYwwVkV4=;
- b=zUosXViWkeY8zuKcC63AU019vZ0hMZ7lfwz7jKtqWLAjCkQvJvR153U9A4bvrogS1sBFBZIugmW/O3IUDXYGHKfq8eCoVG7YtQT6mQ6IAw0aVCdH5+kHHZHOj0rgqYGpAARCevEccF5JFt1k32CPJ/5LjGMXnL2mBXBN7BRvjUk=
-Authentication-Results: vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=none action=none header.from=oracle.com;
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH0PR10MB5116.namprd10.prod.outlook.com (2603:10b6:610:d9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4415.17; Thu, 19 Aug
- 2021 00:21:58 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::bdce:cf4c:518c:fd15]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::bdce:cf4c:518c:fd15%6]) with mapi id 15.20.4415.024; Thu, 19 Aug 2021
- 00:21:58 +0000
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-To:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        zohar@linux.ibm.com, dhowells@redhat.com, dwmw2@infradead.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        jarkko@kernel.org, jmorris@namei.org, serge@hallyn.com
-Cc:     eric.snowberg@oracle.com, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        nramas@linux.microsoft.com, lszubowi@redhat.com,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
-        konrad.wilk@oracle.com
-Subject: [PATCH v4 12/12] integrity: Only use mok keyring when uefi_check_trust_mok_keys is true
-Date:   Wed, 18 Aug 2021 20:21:09 -0400
-Message-Id: <20210819002109.534600-13-eric.snowberg@oracle.com>
-X-Mailer: git-send-email 2.18.4
-In-Reply-To: <20210819002109.534600-1-eric.snowberg@oracle.com>
-References: <20210819002109.534600-1-eric.snowberg@oracle.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SN4PR0401CA0025.namprd04.prod.outlook.com
- (2603:10b6:803:2a::11) To CH2PR10MB4150.namprd10.prod.outlook.com
- (2603:10b6:610:ac::13)
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=n3118yHZBGo6DRzRXBqG3ftlGaa+KyJKRgYLmI/eYAI=;
+        b=ODY/2RDrQWGsGpgT+Y2j7ZtLc8aOfrKuoS37Pp/TOPHfExYYe//wDgXm5uZEFPpNcE
+         blOCp9cFdhz+h+xkHnF2WqBNLkRcASpltA6eapWAtov8YirRNCm01ODgKigeNrjcuqKL
+         VZ3gvxXqcTLbziY64RDiO9PUXO8XM/rodECa1RBRIY3Qj8nUD7kUPo2tVHXtbKlqeeQB
+         3plvVKmJDK2Hc9OGSjyld8qr91VZVtR+F2F8B1jX1hJqGfx8eBDUREYZhWIMjOSrN4md
+         gAwo6QppkjT6UIU1WRoLqE4cdXjATrPzYEkC9vky3/aQ/d90PeUyEx1cM1eajc3rQy3M
+         TvUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=n3118yHZBGo6DRzRXBqG3ftlGaa+KyJKRgYLmI/eYAI=;
+        b=DaO6yvADPgUIWhbWUCmJ35475OVdHFkOa++qdOwOOgx42dYdb6bzdcWStDipZ8B5SG
+         CsgUe50fAFhadMV+aaT+H+5xoZVd25QnueyQ2zaR9g9ELkvR3u6xNryUAFlZGbJGlWMS
+         b9dK5cuOnrWSr31U9UGYubIeekLsBxCm/uprEIXD219kB82h+y6mjC42OvK5fneHVXOL
+         YMGvQ02GljFxtE48Sv8i4h1Bh7bN+iPxq6mRq1Cl3oGouGu0q4vOTCGSdhAkHbMaOh2X
+         na5e4oD4Marm1ptsGgwM9Oo7vAx4dsTVrepmymypEdUB/RKcKNlr/6j/cmVfNhwZqL4S
+         Ji5w==
+X-Gm-Message-State: AOAM5323MoCAlHPcyr03WpnBZmXRPEP5GrAC455NUUZYqvhOlaV9yLPS
+        0BDjyjEmbE5B9rN+DGFqpJUeKWVJlsMt7up8Zn/Y
+X-Google-Smtp-Source: ABdhPJxUhG6RMHG8hWBMBx9UdS8uXzdLCCmnu/rsRxmxhGzDLA3tVGwIkTsYw0JMOGWrJ57On2kUIZFxTiG1hRC+Pv4=
+X-Received: by 2002:a17:906:2755:: with SMTP id a21mr12347619ejd.488.1629334060204;
+ Wed, 18 Aug 2021 17:47:40 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.us.oracle.com (148.87.23.4) by SN4PR0401CA0025.namprd04.prod.outlook.com (2603:10b6:803:2a::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4436.19 via Frontend Transport; Thu, 19 Aug 2021 00:21:55 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fe690262-425a-4a03-bc68-08d962a75b5e
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5116:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CH0PR10MB5116A02B07AC67359DF981F887C09@CH0PR10MB5116.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5516;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: xQroZiACK2JTqF3CeNJ6IHyCVkoqAt06oISfuBK6AC6doDZya18AV4ihqpiFjMLdI0JvWCmXXIVEPakiswSYqFlzliw23elIEGX3OeMYo8Xb/GJrfeuVQs2WWbD7VjXOhGUXnI/Om1/tp6VtR21NrjCI4fDrET8trnJ6UPSkJQBBBnIJ5+SbZ/XIt3dzzPvf4ke3s869FGvxd0djhvjZJ/hQSE0LNNOh/btcFZdKfS3ai2XBqYU7CRfXwhNfn8MLcN+Jg25nKLGWZSmuabKEFaEgicpuCv69N3x1GGSWSK3qS4bacvluH4XLLuJqOGexBPJTa8Tr6QGcwfv49QwnhEc3Zaie+16lesJMos0yHdWWJnBoXtCDPEgaPDew9OcSMFowQgZ++BCYJlYYL/n/Zn9KEGZF3f1ekzlqUQI4nMbgOBKVcdK3JbxJ5jiHv3AeoVSZn6yes7IxyFIfoR1aClOmjj/fr/ntN1GWWlHYt57MkOxKmyQ9IVA+043DvJ0Z0Jql3LwtB1v8gypK3Zm9ne4OoxAPBYJgE6Oabqz/h3RTBMD0zosL/dP3qNYDr1JSuNKZO5nztJM8CqtSKfdG2+RuwX/FBMnVBw3JJRHqeshr6zEGaYILQBf1raqzpq4OjLY2j/IQRs7AGaHzvqiPGUaEpTIwxS1GFHOIMQrldS9MVYROgmveLivWeip2G2dXmXIZxkQ9Ydhu3SgKworfkIz6Is7vjpCYFL/7ohWppP8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(136003)(346002)(39860400002)(366004)(396003)(376002)(5660300002)(478600001)(6666004)(6486002)(66556008)(66476007)(83380400001)(86362001)(316002)(956004)(2616005)(38350700002)(66946007)(186003)(107886003)(38100700002)(52116002)(44832011)(7696005)(2906002)(26005)(36756003)(7416002)(921005)(8676002)(4326008)(1076003)(8936002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?qSgrN2G+f8nwQzDoummF/tb+x/wH0xeJwoIn70qb7r3xe9AIeJQd51bIsgot?=
- =?us-ascii?Q?UR6dH+LE2J9SZMRtTVgszAu4uzr8NF1v/O5+9fSamJiMR+WbmvK980dKjnn/?=
- =?us-ascii?Q?iyEXb5OoVYD9gsedu/VgMsOzGRxc3oPAkJJPzBg621dxnLi3lFjOoXVC8r8l?=
- =?us-ascii?Q?6Zigv5RGK/EBlrbJqO5Flg2KmcAJk3yhQDn7YjnlGvmp0mjAMrNtOHBhBL1U?=
- =?us-ascii?Q?BX7x3O4Ka9nqkcKV4GIudgmbKS8DWYmL8EsSduMfWoNQRp7706IP51+TUEaO?=
- =?us-ascii?Q?tUyWflZHgMvCgyDpIvz/EZkNQlZi/Ayx2wYeryIuMMK6kNAcaA3ZxpRKkTLz?=
- =?us-ascii?Q?rDWg0wCjb2PkOqddZO3tWwRmp30fewo0fXaNpQtOfTmWmsg69FMxDz62pueW?=
- =?us-ascii?Q?IiPp9XhOJDruOw7HR4m6usX0V697mtuMmB+IxKUYwR03FAg9V1EMjwAcGEUP?=
- =?us-ascii?Q?uCm59Y/sXodqYtCLR6bTG4th0wJJJpvfIIV0suHI7iSrT8yVkQW0G00Co/Vf?=
- =?us-ascii?Q?H7RCBODNKPPFEL2Noe/Uj/bMChs8S+isv9nxnYwJyT26myYW6uvrEM+TwnUZ?=
- =?us-ascii?Q?DLPTkFSM9Wfvw18MCriLkFQQS0M1+c49/5+JeO3D3Hn+Um62AJTtAsjeYJNb?=
- =?us-ascii?Q?pHff4HFWltsc5OHOKL4FQRYdASzDLEVO6YV73+GuCuoVZ/E9x7Ikqmp66aJs?=
- =?us-ascii?Q?rpu22OBSnlTvZwLg54HkYNeVZMekSDmflHkab/jsle6K+Jz6J6iTQxAz5Srz?=
- =?us-ascii?Q?asJWMDdqh2IXGN9u2v7OLR0Gs2e6vYgMCmdrIOXpx3HuESpc7dt5Y2lQq0wL?=
- =?us-ascii?Q?pN0FNgOt1//HECnGNBAIVGOige3qTAvJMcN27sThsWo9g4ARLdTkGsz7ba1s?=
- =?us-ascii?Q?088m3A9Vn2pq7vR6L5g6hA5h3+larSVjfvWQ35++BHSz/rxixyRIfnoRuqPU?=
- =?us-ascii?Q?C8RQq/v0AkfHbRiV38KhMc6a/iIly0M/9mZr5ZR+8u4BHqmypOJoWfYYgJLZ?=
- =?us-ascii?Q?9y34X1XjOLvYA8NuJXFI5W4xowCibrLs/ALtK6O/2mNVHJasjZIQE74x96do?=
- =?us-ascii?Q?wF5SUE0bl081nQ5Iee/ydC/qO6sRaFjm+LUXuAXM0JFPDdC3vBjifbmG/4Hl?=
- =?us-ascii?Q?AxdIM+8NGqVxJHl/vLSA16dUxeoNAmWZ3WaEGORHPN60g/poF+aDUxbvjmfW?=
- =?us-ascii?Q?shIg7+mC0hj1nHN0WZbB0pMLMQqd+01Cdq2DfbWn+khwwlvhoJnEIblepJ+Q?=
- =?us-ascii?Q?gkrKkM+945/HfvTLi0/kjV7A6La/xU2gHJsasJu10daAE2KRzc37woZ1BB3F?=
- =?us-ascii?Q?IkihzKrp6v+74rE3grey/+PA?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe690262-425a-4a03-bc68-08d962a75b5e
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Aug 2021 00:21:58.4469
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XbhlwtzHnSsO3IHDasEpmNZKXfEHGIWxeFjC8xyAF+cf8MHjotN/MReGZzqTSfQZJk0xAD2F4zRNIscJZ92Q03z8LbPyEXN0aD9ceQPL6A0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5116
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=10080 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 mlxscore=0
- malwarescore=0 mlxlogscore=999 spamscore=0 bulkscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
- definitions=main-2108190000
-X-Proofpoint-GUID: tswGBWOpeM21cxCuussnMHYJMnPApMQ6
-X-Proofpoint-ORIG-GUID: tswGBWOpeM21cxCuussnMHYJMnPApMQ6
+References: <20210722004758.12371-1-casey@schaufler-ca.com>
+ <20210722004758.12371-23-casey@schaufler-ca.com> <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
+ <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com> <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
+ <fba1a123-d6e5-dcb0-3d49-f60b26f65b29@schaufler-ca.com> <CAHC9VhQxG+LXxgtczhH=yVdeh9mTO+Xhe=TeQ4eihjtkQ2=3Fw@mail.gmail.com>
+ <3ebad75f-1887-bb31-db23-353bfc9c0b4a@schaufler-ca.com> <CAHC9VhQCN2_MsCoXfU7Z-syYHj2o8HaSECf5E62ZFcNZd9_4QA@mail.gmail.com>
+ <062ba5f9-e4e8-31f4-7815-826f44b35654@schaufler-ca.com>
+In-Reply-To: <062ba5f9-e4e8-31f4-7815-826f44b35654@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 18 Aug 2021 20:47:29 -0400
+Message-ID: <CAHC9VhT=QL5pKekaPB-=LDzU3hck9nXDiL5n1-upSqPg3gq=7w@mail.gmail.com>
+Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM attributes
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-With the introduction of uefi_check_trust_mok_keys, it signifies the end-
-user wants to trust the mok keyring as trusted keys.  If they have chosen 
-to trust the mok keyring, load the qualifying keys into it during boot, 
-then link it to the secondary keyring .  If the user has not chosen to 
-trust the mok keyring, it will be empty and not linked to the secondary 
-keyring.
+On Wed, Aug 18, 2021 at 5:59 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+> On 8/16/2021 11:57 AM, Paul Moore wrote:
+> > On Fri, Aug 13, 2021 at 5:47 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> On 8/13/2021 1:43 PM, Paul Moore wrote:
+> ...
+> > Yeah, the thought occurred to me, but we are clearly already in the
+> > maybe-the-assumptions-are-wrong stage so I'm not going to rely on that
+> > being 100%.  We definitely need to track this down before we start
+> > making to many more guesses about what is working and what is not.
+>
+> I've been tracking down where the audit context isn't set where
+> we'd expect it to be, I've identified 5 cases:
+>
+>         1000    AUDIT_GET               - Get Status
+>         1001    AUDIT_SET               - Set status enable/disable/auditd
+>         1010    AUDIT_SIGNAL_INFO
+>         1130    AUDIT_SERVICE_START
+>         1131    AUDIT_SEVICE_STOP
+>
+> These are all events that relate to the audit system itself.
+> It seems plausible that these really aren't syscalls and hence
+> shouldn't be expected to have an audit_context. I will create a
+> patch that treats these as the special cases I believe them to be.
 
-Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
----
-v4: Initial version
----
- security/integrity/digsig.c                      |  2 +-
- security/integrity/integrity.h                   |  5 +++++
- .../integrity/platform_certs/keyring_handler.c   |  2 +-
- security/integrity/platform_certs/mok_keyring.c  | 16 ++++++++++++++++
- 4 files changed, 23 insertions(+), 2 deletions(-)
+Yes, all but two of these could be considered to be audit subsystem
+control messages, but AUDIT_SERVICE_{START,STOP} I think definitely
+fall outside the audit subsystem control message category.  The
+AUDIT_SERVICE_{START,STOP} records are used to indicate when a
+service, e.g. NetworkManager, starts and stops; on my fedora test
+system they are generated by systemd since it manages service state on
+that system; a quick example is below, but I'm sure you've seen plenty
+of these already.
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index 0f14ffef9c43..fd255e5b6293 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -116,7 +116,7 @@ static int __init __integrity_init_keyring(const unsigned int id,
- 	} else {
- 		if (id == INTEGRITY_KEYRING_PLATFORM)
- 			set_platform_trusted_keys(keyring[id]);
--		if (id == INTEGRITY_KEYRING_MOK)
-+		if (id == INTEGRITY_KEYRING_MOK && trust_moklist())
- 			set_mok_trusted_keys(keyring[id]);
- 		if (id == INTEGRITY_KEYRING_IMA)
- 			load_module_cert(keyring[id]);
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index be56ba49dc19..57683fdea2af 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -287,9 +287,14 @@ static inline void __init add_to_platform_keyring(const char *source,
- 
- #ifdef CONFIG_INTEGRITY_MOK_KEYRING
- void __init add_to_mok_keyring(const char *source, const void *data, size_t len);
-+bool __init trust_moklist(void);
- #else
- static inline void __init add_to_mok_keyring(const char *source,
- 					     const void *data, size_t len)
- {
- }
-+static inline bool __init trust_moklist(void)
-+{
-+	return false;
-+}
- #endif
-diff --git a/security/integrity/platform_certs/keyring_handler.c b/security/integrity/platform_certs/keyring_handler.c
-index fc4ad85d9223..471bf103b444 100644
---- a/security/integrity/platform_certs/keyring_handler.c
-+++ b/security/integrity/platform_certs/keyring_handler.c
-@@ -82,7 +82,7 @@ __init efi_element_handler_t get_handler_for_db(const efi_guid_t *sig_type)
- __init efi_element_handler_t get_handler_for_mok(const efi_guid_t *sig_type)
- {
- 	if (efi_guidcmp(*sig_type, efi_cert_x509_guid) == 0) {
--		if (IS_ENABLED(CONFIG_INTEGRITY_MOK_KEYRING))
-+		if (IS_ENABLED(CONFIG_INTEGRITY_MOK_KEYRING) && trust_moklist())
- 			return add_to_mok_keyring;
- 		else
- 			return add_to_platform_keyring;
-diff --git a/security/integrity/platform_certs/mok_keyring.c b/security/integrity/platform_certs/mok_keyring.c
-index bcfab894a9dc..3dbb6d17e17d 100644
---- a/security/integrity/platform_certs/mok_keyring.c
-+++ b/security/integrity/platform_certs/mok_keyring.c
-@@ -8,6 +8,8 @@
- #include <linux/efi.h>
- #include "../integrity.h"
- 
-+bool trust_mok;
-+
- static __init int mok_keyring_init(void)
- {
- 	int rc;
-@@ -67,3 +69,17 @@ static __init bool uefi_check_trust_mok_keys(void)
- 	 */
- 	return (status == EFI_SUCCESS && (!(attr & EFI_VARIABLE_NON_VOLATILE)));
- }
-+
-+bool __init trust_moklist(void)
-+{
-+	static bool initialized;
-+
-+	if (!initialized) {
-+		initialized = true;
-+
-+		if (uefi_check_trust_mok_keys())
-+			trust_mok = true;
-+	}
-+
-+	return trust_mok;
-+}
+% ausearch -m SERVICE_START
+time->Wed Aug 18 20:13:00 2021
+type=SERVICE_START msg=audit(1629331980.779:1186): pid=1 uid=0 auid=4294967295 s
+es=4294967295 subj=system_u:system_r:init_t:s0 msg='unit=NetworkManager-dispatch
+er comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? re
+s=success'
+
+However, regardless of if the message is related to controlling the
+audit subsystem or not, we do want to be able to associate those
+records with other related records, e.g. SYSCALL records.  Looking at
+the message types you listed above, they are all records that are
+triggered by userspace via netlink messages; if you haven't already I
+would start poking along that code path to see if something looks
+awry.
+
+I just spent a few minutes tracing the code paths up from audit
+through netlink and then through the socket layer and I'm not seeing
+anything obvious where the path differs from any other syscall;
+current->audit_context *should* be valid just like any other syscall.
+However, I do have to ask, are you only seeing these audit records
+with a current->audit_context equal to NULL during early boot?
+
 -- 
-2.18.4
-
+paul moore
+www.paul-moore.com
