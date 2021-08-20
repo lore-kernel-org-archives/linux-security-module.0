@@ -2,134 +2,316 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0ACC4320A
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 19:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3359C432BE
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 20:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7EF61130
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 19:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBD1B610FF
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 20:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230484AbhHTTSG (ORCPT
+        id S238952AbhHTUV3 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Aug 2021 15:18:06 -0400
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com ([66.163.187.152]:44602
-        "EHLO sonic316-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S229927AbhHTTSF (ORCPT
+        Fri, 20 Aug 2021 16:21:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60346 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238868AbhHTUV2 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Aug 2021 15:18:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1629487047; bh=1fWpdU2CPrqbAaK2PNOscQqjqoYvb8KXohSh605eg0I=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=Y6wozYH4vVxEVD9CmY/HrXb4GrKCuFm2dRdif9i2IMHFemG+hfWprVlnrXBmQ/LRpSFJDHZklb2OgIbMVSS/cHRjiTyTf2MJ38Em3NLPNqq+zVwsvHSr3akPMraVJCOtoxb5Sft/Jwy3coE3D/srV2wnQhJC13iW5NjKA3+Bj/rvUgj7CGfz5BjuL0hRGvf2OwB+Z/96WM/TaxL/jluMzdA30NMo5RkAO2X1emt+mxUoEigkJj4jqDC9y8KxxUWKPHLTPA6rfhzovoaiuWQ340K6BE6+KAebZ9uQza4OoH6qjjFnbPehmUCEI87pIbO20cEZr2FNgtHYsahsB6Fmjw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1629487047; bh=gC3JD4Jy6EsHzx1dZfhaOh7UQBtJXYB3UERMRaF+2gP=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=PVFaMFAta8RYf4HYmyEWaACIJFm9b7ODzg5yEK6lQoYSM3qIYAZZqJKJdQChxZEw8+6Fw4rvgq45BrQG/VORicXsspm6nCfN88o69DGf0O9wtkAsNWUW2MxTQMLsNHtY1g+bcrap5GLNyZzWpChuFWjjvMqoEWSmJcuaHSEfI03lZwxmMQQGD213w1ucQXmabe8nKqnl+Nat+Djj713GpjCrzFx9XvLW9lAUMb3Uugw/GbfloUg26zTktdauhkl5rHEgFecLUL+/9IsE5XhdlA8CgkXoMxfYeizeoOOD1IQPOn/0RFq0G6bYOIlZiXDc61oKwLxMlaHLwho35+pEPA==
-X-YMail-OSG: hnN6PD4VM1mr09KKpedtL9GjzIyxwOB7jgriTMvep2GmgiVZHhK6bJQKzI0eFN1
- vN4GlKjezpWjFRq27_lk3bJZpUeMR3CZnvV3kImAL9zbGCso0pwSZbMpwr1ttNGeLfjTDq1Gbask
- eOMRNGZ33lg4eRnNPwfyg0Dia8WaCtaAxmq2KoxTFWqcLlgI2o5suDueElJaFng8yEFVlhez6fj6
- vxL5bSYnJmcJ1urGso67ossRmMGh5a_DFNBH3j4.l2KRF3rHSSdMZnxgvKEbJALHlSAxPx.2r5Xg
- v9ui6X8smEPL4V7JVEwJF_5jO.9qtN_7IToMysAAL1VR4QqW6Kr8iJq.FpfTmHPvfYZfJBbpxlaB
- C0BvnUKiaxQhwl7R2yIwpPTlWWGgIPO0JpSQyNU7bhQvezPnhlR741EUyUMp93M0E8KkmM3iUsGD
- MSFsjaJ0ZwrAKdOusrRcdN5gVFyAp44wpdl4KRWCpJc1GEMe8JP_NPCWQfk4BIuYeg2cQatYtGDv
- BvnCikQ0KIxrD3NaXBMPI6bFb2KtwaviVPq0U1SvCoi63dYJVc17VoGqY4CP.SU_Os6gsyKb.hEO
- AShMhsUvfHsrzCyZirirAYEwYuUVq00dERs2gxy42VQ0WpChKx8mc9K6My2H9noVgbbJY28lzc6i
- 4d4GSpbtfj2.436Rs8kiKOpMo_YbK1j6XqYx955ud36zhs5GLSxG.ukP0J4Z7_ggmPEiNAJq.llp
- fmMZ0C8WMy69GprYkFN8Sv6kruATDwZWkLmy_m1c9r44dljCHFRDdGRoiG21nsj_uQ8lxp0BlpWE
- .D2peEQoBHQg618XMb3ByEYYKyoAWEiJyIIIXq_qzBNbNe2pJKlbvehNbn3MLVwwoRUuXpQ_Qckh
- n837jxIYpoT3vM12swXPr07uflni.ApNjTNjxPSmEdLNE2b0dTHg0XOSbY4HckjIkb4199.DvXvo
- VANCpSKRd8RDgdx85_dpSQ2EJTYYq5sh6MlOPAVYBdhTyZlTObDAxgfIv8xtcBTAEhPCjUgsm_mV
- l.IaYP6iSUwmyQB1AbSExOVomM3MnykRnBFnNYaUkxkV5z_gLy3rdj.s9wyHxBIzdbixXuqvuDS8
- 1UFSs0qCvMEteh3QsnD6lLiSY0QIwP5IODiNbHdBlxbbHEZoH3MmHh8BTOMmYghIx._raGLBiXFu
- 78d1R68Qc39OuG2wZkc2.x_xddYuFrbCErK96xBWdHOiaOPDAFlXumip_gxpQg2gUIXPhc99N6Mv
- R6O4QsaC73ZJAHbDEFuZX0wDGLaGigde5GkDTnJE5Zsh942a5krSTWvqD4cehdCbIgejMX7.UDDE
- BvlFZv9rJdZteQQOiBXiPFCa0fR5qBYRSq91.l7qEMZ5UIwuhalg5uecJpFLykbSSsjg4OGf5XcN
- BsQfzY5M_lHehow1cps352I_VEANZRag42K.u.RSihNyJp2Fk61CuiX0ef5uiqfrIKy4nDyXieOU
- NPIOD5XFlAVJn7NnAtjNPyuJ7NQVcYNUwUpzhLcdJfmcuCi7O6SqN6MBsWjTOu9mOjpmJ43pJ2SZ
- Pc5XDsctjJ9RjXbcEpKzAXUd.c2YYB8zgDwfdFaA7ZcR56YNCPPJbv129.Hc9itXLKBsqj6t_QbD
- slrvCwVXKyNfjcT3jiEIFWMyWaB6S9JPhXphilq.GkWLmQqMmD.ToiWxvRLFHCZI2ETtjBtF3xXr
- cNpuVD3bWN0fkwFmvMdqeZ67._hO7h4EG.byjG8Mr.frOPK7gEjNqHLwXHnQNJorez4uQbsOjQvG
- 5lBkmiKzOr1YBagLX.oZ.q.HNQzDs92GrGHEWE.VFOMrQifv.gKOsjTDX3q6pRnbcjDKZSrymf3N
- HabX1_sTD6Vk02okr1LN9xWogXtyMs7m9ol7.KdP3dfoGuznIenhqwBy4HHDV8wFHo3aMHnB1zLW
- PV0w8IBGEkuz.oovXOeHIU0EgPIfBMwI9WKURiP91p9KsFcp.imbP_y41zY48walLQEJIVDbSzVT
- _WoQkPvYWd067VIAvjJgi4ft3KrkU.waqGfmFSmtK9SovGrlPCMzKrPsW12G_b26gQo8Uw_9AZn9
- YoMmvtCiB5e5MzWFPFY_RmZQoYGihlTcHu6RQ4ApsPuhwDLFdGD46ufbXkLFylIR47D1Yht0bFBH
- aUoEn_JV8w.rM_1iCyATHqumDp2UBL61bnJiqxF_1SnqvBSVcvs0JoDHcJE6j25UpJozgVeJ4Vk4
- kIZs.NHEnyTHK1P8a_qyfUnYNMLgx8.aU.IoUtKGjKPJ5k4fXEFN7Dmsj6upiafDGEtqE4fk6bux
- ZduacGQjUv5PUtNt1fcZfH2XM1Qswhx9LcDCzaVhZ6ghqqLGUBeww
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Aug 2021 19:17:27 +0000
-Received: by kubenode521.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID e2566f7fc6d27aefb1842d4ed1044ccd;
-          Fri, 20 Aug 2021 19:17:25 +0000 (UTC)
-Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM
- attributes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210722004758.12371-1-casey@schaufler-ca.com>
- <20210722004758.12371-23-casey@schaufler-ca.com>
- <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
- <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
- <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
- <fba1a123-d6e5-dcb0-3d49-f60b26f65b29@schaufler-ca.com>
- <CAHC9VhQxG+LXxgtczhH=yVdeh9mTO+Xhe=TeQ4eihjtkQ2=3Fw@mail.gmail.com>
- <3ebad75f-1887-bb31-db23-353bfc9c0b4a@schaufler-ca.com>
- <CAHC9VhQCN2_MsCoXfU7Z-syYHj2o8HaSECf5E62ZFcNZd9_4QA@mail.gmail.com>
- <062ba5f9-e4e8-31f4-7815-826f44b35654@schaufler-ca.com>
- <CAHC9VhT=QL5pKekaPB-=LDzU3hck9nXDiL5n1-upSqPg3gq=7w@mail.gmail.com>
- <f3137410-185a-3012-1e38-e05a175495cc@schaufler-ca.com>
- <6f219a4d-8686-e35a-6801-eb66f98c8032@schaufler-ca.com>
- <CAHC9VhSsJoEc=EDkUCrHr5Uid9DhsoininpvPVt+Ab6RsqieOQ@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <93d97b1e-d3ea-0fe0-f0c2-62db09d01889@schaufler-ca.com>
-Date:   Fri, 20 Aug 2021 12:17:24 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Fri, 20 Aug 2021 16:21:28 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40FFFC06175F
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Aug 2021 13:20:50 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id a21so9577579pfh.5
+        for <linux-security-module@vger.kernel.org>; Fri, 20 Aug 2021 13:20:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=90zs5aa37P7zEnS7CuHQxNNBqQQ4S3sRRs1VkdFPZqM=;
+        b=zA8Qvkux1azGsd3++zo4/iy/OVuHoTkPMngPmM4VtfmoWcdeHaC3B+hDR+nAmrcGJm
+         qmyXVTfQtxAXxAr3Aegoe0ZTVz3dDmGoybUfPP1D0Byc0X+uYAe8VS7WDZazdbIVtzKO
+         y6CnX2jyn0djdSrmSgRryoanDJcvOM88gQqTKuUWb2jFE6hEpftcrE/gUD1/Db7BkJno
+         S7M6oVetKv77Cs6TKECdUK/YJb3dNjWpiUgjZiFMtcrsA40edieVsb/GFnvZE2AjvbjQ
+         PvB5OQvgq0x0pqBoTIxjazVOB5wM/AHeMNfH7YNn5t8hy6p8mBlF67H75YCh62PB2WpP
+         nikQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=90zs5aa37P7zEnS7CuHQxNNBqQQ4S3sRRs1VkdFPZqM=;
+        b=cBr4UnrjlJt8MIfagW3U7q1n5JL6jyGhKV4NiyIJcsrDvYmAxnCaqely3zXzuRDPZD
+         C531oVz7dYUuB7dsJ8AU1pyK4+qZfYr8OnxdFXq0yI/iPlH3Jk5eP7VspxBfJT5MGHkt
+         TrAB5rriOVd3N3JO9bxxo7DdxWDd0w3zKchgEyV6SYdho3wWhb6qLcp+J+h1Ryt15Hdn
+         rOdhasv9mdoT70NNH19OVbZ7GB/s6lQmHMfDjoo027A/YYKl8Q+OX5EWdas1P4qnOmkT
+         J7+D+19Gl0Z74UzhxCBQwS3u5ifOl0VBxaSesieUgj2r63b3WhbLLFG/Lr2ea95y47wk
+         lvyQ==
+X-Gm-Message-State: AOAM530fHRe5XLYoJqCiCMiLFovLHKqkehlkgz6d0QN59TrJoT0pyG4/
+        Zo2NiTMrB/fERI/k5qbll/5Gr19OGDUEPpSVUzQpNg==
+X-Google-Smtp-Source: ABdhPJz8zzpWL7Z1D+zTgor8ZfiKg4yUUpcqc69JLsIJptQKuAv19W3FX1yAgX2IqeJplT7POkctdRg8GKolcohw/98=
+X-Received: by 2002:a63:db4a:: with SMTP id x10mr6433163pgi.30.1629490849582;
+ Fri, 20 Aug 2021 13:20:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAHC9VhSsJoEc=EDkUCrHr5Uid9DhsoininpvPVt+Ab6RsqieOQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+References: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de>
+ <CAJ+vNU23cXPmiqKcKH_WAgD-ea+=pEJzGK+q7zOy=v2o0XU7kA@mail.gmail.com> <2b48a848-d70b-9c43-5ca0-9ab72622ed12@pengutronix.de>
+In-Reply-To: <2b48a848-d70b-9c43-5ca0-9ab72622ed12@pengutronix.de>
+From:   Tim Harvey <tharvey@gateworks.com>
+Date:   Fri, 20 Aug 2021 13:20:38 -0700
+Message-ID: <CAJ+vNU225mgHHg00r67f1L6bEub+_h55hCBAMhCq2rd8kWU-qg@mail.gmail.com>
+Subject: Re: [PATCH 0/4] KEYS: trusted: Introduce support for NXP CAAM-based
+ trusted keys
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc:     David Gstir <david@sigma-star.at>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>, keyrings@vger.kernel.org,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        linux-security-module@vger.kernel.org,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        =?UTF-8?Q?Horia_Geant=C4=83?= <horia.geanta@nxp.com>,
+        Richard Weinberger <richard@nod.at>,
+        James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        David Howells <dhowells@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-crypto@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        linux-integrity@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-X-Mailer: WebService/1.1.18850 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/20/2021 12:06 PM, Paul Moore wrote:
-> On Thu, Aug 19, 2021 at 6:41 PM Casey Schaufler <casey@schaufler-ca.com=
-> wrote:
->> On 8/18/2021 5:56 PM, Casey Schaufler wrote:
->>> On 8/18/2021 5:47 PM, Paul Moore wrote:
->>>> ...
->>>> I just spent a few minutes tracing the code paths up from audit
->>>> through netlink and then through the socket layer and I'm not seeing=
-
->>>> anything obvious where the path differs from any other syscall;
->>>> current->audit_context *should* be valid just like any other syscall=
-=2E
->>>> However, I do have to ask, are you only seeing these audit records
->>>> with a current->audit_context equal to NULL during early boot?
->>> Nope. Sorry.
->> It looks as if all of the NULL audit_context cases are for either
->> auditd or systemd. Given what the events are, this isn't especially
->> surprising.
-> I think we may be back to the "early boot" theory.
+On Fri, Aug 20, 2021 at 9:20 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrot=
+e:
 >
-> Unless you explicitly enable audit on the kernel cmdline, e.g.
-> "audit=3D1", processes started before userspace enables audit will not
-> have a properly allocated audit_context; see the "if
-> (likely(!audit_ever_enabled))" check at the top of audit_alloc() for
-> the reason why.
+> Hello Tim,
 >
-> I could be wrong here, but I suspect if you add "audit=3D1" to your
-> kernel command line those remaining cases of NULL audit_contexts will
-> resolve themselves.  If not, we still have work to do ... well, I mean
-> we still have (different) work to do even if this solves the mystery,
-> it's just that we can now explain what you are seeing :)
+> On 20.08.21 17:39, Tim Harvey wrote:
+> > On Wed, Jul 21, 2021 at 9:49 AM Ahmad Fatoum <a.fatoum@pengutronix.de> =
+wrote:
+> >>
+> >> Series applies on top of
+> >> https://lore.kernel.org/linux-integrity/20210721160258.7024-1-a.fatoum=
+@pengutronix.de/T/#u
+> >>
+> >> v2 -> v3:
+> >>  - Split off first Kconfig preparation patch. It fixes a regression,
+> >>    so sent that out, so it can be applied separately (Sumit)
+> >>  - Split off second key import patch. I'll send that out separately
+> >>    as it's a development aid and not required within the CAAM series
+> >>  - add MAINTAINERS entry
+> >>
+> >> v1 -> v2:
+> >>  - Added new commit to make trusted key Kconfig option independent
+> >>    of TPM and added new Kconfig file for trusted keys
+> >>  - Add new commit for importing existing key material
+> >>  - Allow users to force use of kernel RNG (Jarkko)
+> >>  - Enforce maximum keymod size (Horia)
+> >>  - Use append_seq_(in|out)_ptr_intlen instead of append_seq_(in|out)_p=
+tr
+> >>    (Horia)
+> >>  - Make blobifier handle private to CAAM glue code file (Horia)
+> >>  - Extend trusted keys documentation for CAAM
+> >>  - Rebased and updated original cover letter:
+> >>
+> >> The Cryptographic Acceleration and Assurance Module (CAAM) is an IP co=
+re
+> >> built into many newer i.MX and QorIQ SoCs by NXP.
+> >>
+> >> Its blob mechanism can AES encrypt/decrypt user data using a unique
+> >> never-disclosed device-specific key.
+> >>
+> >> There has been multiple discussions on how to represent this within th=
+e kernel:
+> >>
+> >> The Cryptographic Acceleration and Assurance Module (CAAM) is an IP co=
+re
+> >> built into many newer i.MX and QorIQ SoCs by NXP.
+> >>
+> >> Its blob mechanism can AES encrypt/decrypt user data using a unique
+> >> never-disclosed device-specific key. There has been multiple
+> >> discussions on how to represent this within the kernel:
+> >>
+> >>  - [RFC] crypto: caam - add red blobifier
+> >>    Steffen implemented[1] a PoC sysfs driver to start a discussion on =
+how to
+> >>    best integrate the blob mechanism.
+> >>    Mimi suggested that it could be used to implement trusted keys.
+> >>    Trusted keys back then were a TPM-only feature.
+> >>
+> >>  - security/keys/secure_key: Adds the secure key support based on CAAM=
+.
+> >>    Udit added[2] a new "secure" key type with the CAAM as backend. The=
+ key
+> >>    material stays within the kernel only.
+> >>    Mimi and James agreed that this needs a generic interface, not spec=
+ific
+> >>    to CAAM. Mimi suggested trusted keys. Jan noted that this could ser=
+ve as
+> >>    basis for TEE-backed keys.
+> >>
+> >>  - [RFC] drivers: crypto: caam: key: Add caam_tk key type
+> >>    Franck added[3] a new "caam_tk" key type based on Udit's work. This=
+ time
+> >>    it uses CAAM "black blobs" instead of "red blobs", so key material =
+stays
+> >>    within the CAAM and isn't exposed to kernel in plaintext.
+> >>    James voiced the opinion that there should be just one user-facing =
+generic
+> >>    wrap/unwrap key type with multiple possible handlers.
+> >>    David suggested trusted keys.
+> >>
+> >>  - Introduce TEE based Trusted Keys support
+> >>    Sumit reworked[4] trusted keys to support multiple possible backend=
+s with
+> >>    one chosen at boot time and added a new TEE backend along with TPM.
+> >>    This now sits in Jarkko's master branch to be sent out for v5.13
+> >>
+> >> This patch series builds on top of Sumit's rework to have the CAAM as =
+yet another
+> >> trusted key backend.
+> >>
+> >> The CAAM bits are based on Steffen's initial patch from 2015. His work=
+ had been
+> >> used in the field for some years now, so I preferred not to deviate to=
+o much from it.
+> >>
+> >> This series has been tested with dmcrypt[5] on an i.MX6DL.
+> >>
+> >> Looking forward to your feedback.
+> >>
+> >> Cheers,
+> >> Ahmad
+> >>
+> >>  [1]: https://lore.kernel.org/linux-crypto/1447082306-19946-2-git-send=
+-email-s.trumtrar@pengutronix.de/
+> >>  [2]: https://lore.kernel.org/linux-integrity/20180723111432.26830-1-u=
+dit.agarwal@nxp.com/
+> >>  [3]: https://lore.kernel.org/lkml/1551456599-10603-2-git-send-email-f=
+ranck.lenormand@nxp.com/
+> >>  [4]: https://lore.kernel.org/lkml/1604419306-26105-1-git-send-email-s=
+umit.garg@linaro.org/
+> >>  [5]: https://lore.kernel.org/linux-integrity/20210122084321.24012-2-a=
+.fatoum@pengutronix.de/
+> >>
+> >> ---
+> >> To: Jarkko Sakkinen <jarkko@kernel.org>
+> >> To: "Horia Geant=C4=83" <horia.geanta@nxp.com>
+> >> To: Mimi Zohar <zohar@linux.ibm.com>
+> >> To: Aymen Sghaier <aymen.sghaier@nxp.com>
+> >> To: Herbert Xu <herbert@gondor.apana.org.au>
+> >> To: "David S. Miller" <davem@davemloft.net>
+> >> To: James Bottomley <jejb@linux.ibm.com>
+> >> Cc: David Howells <dhowells@redhat.com>
+> >> Cc: James Morris <jmorris@namei.org>
+> >> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> >> Cc: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+> >> Cc: Udit Agarwal <udit.agarwal@nxp.com>
+> >> Cc: Jan Luebbe <j.luebbe@pengutronix.de>
+> >> Cc: David Gstir <david@sigma-star.at>
+> >> Cc: Eric Biggers <ebiggers@kernel.org>
+> >> Cc: Richard Weinberger <richard@nod.at>
+> >> Cc: Franck LENORMAND <franck.lenormand@nxp.com>
+> >> Cc: Sumit Garg <sumit.garg@linaro.org>
+> >> Cc: linux-integrity@vger.kernel.org
+> >> Cc: keyrings@vger.kernel.org
+> >> Cc: linux-crypto@vger.kernel.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: linux-security-module@vger.kernel.org
+> >>
+> >> Ahmad Fatoum (4):
+> >>   KEYS: trusted: allow users to use kernel RNG for key material
+> >>   KEYS: trusted: allow trust sources to use kernel RNG for key materia=
+l
+> >>   crypto: caam - add in-kernel interface for blob generator
+> >>   KEYS: trusted: Introduce support for NXP CAAM-based trusted keys
+> >>
+> >>  Documentation/admin-guide/kernel-parameters.txt   |   8 +-
+> >>  Documentation/security/keys/trusted-encrypted.rst |  60 +++-
+> >>  MAINTAINERS                                       |   9 +-
+> >>  drivers/crypto/caam/Kconfig                       |   3 +-
+> >>  drivers/crypto/caam/Makefile                      |   1 +-
+> >>  drivers/crypto/caam/blob_gen.c                    | 230 +++++++++++++=
+++-
+> >>  include/keys/trusted-type.h                       |   2 +-
+> >>  include/keys/trusted_caam.h                       |  11 +-
+> >>  include/soc/fsl/caam-blob.h                       |  56 ++++-
+> >>  security/keys/trusted-keys/Kconfig                |  11 +-
+> >>  security/keys/trusted-keys/Makefile               |   2 +-
+> >>  security/keys/trusted-keys/trusted_caam.c         |  74 +++++-
+> >>  security/keys/trusted-keys/trusted_core.c         |  23 +-
+> >>  13 files changed, 477 insertions(+), 13 deletions(-)
+> >>  create mode 100644 drivers/crypto/caam/blob_gen.c
+> >>  create mode 100644 include/keys/trusted_caam.h
+> >>  create mode 100644 include/soc/fsl/caam-blob.h
+> >>  create mode 100644 security/keys/trusted-keys/trusted_caam.c
+> >>
+> >> base-commit: 97408d81ed533b953326c580ff2c3f1948b3fcee
+> >> --
+> >> git-series 0.9.1
+> >
+> > Ahmad,
+> >
+> > Thanks for your work!
+> >
+> > I've been asked to integrate the capability of using CAAM to
+> > blob/deblob data to an older 5.4 kernel such as NXP's downstream
+> > vendor kernel does [1] and I'm trying to understand how your series
+> > works. I'm not at all familiar with the Linux Key Management API's or
+> > trusted keys. Can you provide an example of how this can be used for
+> > such a thing?
+>
+> Here's an example with dm-crypt:
+>
+>   https://lore.kernel.org/linux-integrity/5d44e50e-4309-830b-79f6-f5d888b=
+1ef69@pengutronix.de/
+>
+> dm-crypt is a bit special at the moment, because it has direct support fo=
+r
+> trusted keys. For interfacing with other parts of the kernel like ecryptf=
+s
+> or EVM, you have to create encrypted keys rooted to the trusted keys and =
+use
+> those. The kernel documentation has an example:
+>
+>   https://www.kernel.org/doc/html/v5.13/security/keys/trusted-encrypted.h=
+tml
+>
+> If you backport this series, you can include the typo fix spotted by Davi=
+d.
+>
+> I'll send out a revised series, but given that a regression fix I want to
+> rebase on hasn't been picked up for 3 weeks now, I am not in a hurry.
+>
 
-Yup, adding "audit=3D1" to the command line appears to have gotten
-systemd an audit context. It looks like user space enabling audit
-doesn't assign an audit context to the existing systemd process.
+Ahmad,
 
+Thanks for the reference.
 
+I'm still trying to understand the keyctl integration with caam. For
+the 'data' param to keyctl you are using tings like 'new <len>' and
+'load <data>'. Where are these 'commands' identified?
+
+I may still be missing something. I'm using 4.14-rc6 with your series
+and seeing the following:
+# cat /proc/cmdline
+trusted.source=3Dcaam
+# keyctl add trusted mykey 'new 32' @s)# create new trusted key named
+'mykey' of 32 bytes in the session keyring
+480104283
+# keyctl print 480104283 # dump the key
+keyctl_read_alloc: Unknown error 126
+^^^ not clear what this is
+
+Best regards,
+
+Tim
