@@ -2,112 +2,207 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFA54C4320A
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 22:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2208CC4320A
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 10:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCEFB60FE8
-	for <linux-security-module@archiver.kernel.org>; Thu, 19 Aug 2021 22:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2E396112E
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 10:15:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233391AbhHSWlm (ORCPT
+        id S237319AbhHTKQY (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 19 Aug 2021 18:41:42 -0400
-Received: from sonic316-27.consmr.mail.ne1.yahoo.com ([66.163.187.153]:41672
-        "EHLO sonic316-27.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235700AbhHSWlm (ORCPT
+        Fri, 20 Aug 2021 06:16:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232572AbhHTKQY (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 19 Aug 2021 18:41:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1629412865; bh=7jt0xWDMthlYPRW/uJp7XcVm5GRd0EBJR4RWRBOHQPw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=m8bEcAU3opGLh7B5TErD/J8sM34ZUn8c3uFloK3c69SRKb9tevtcjAqCGvYSKA74kSUdDX2EKMmDzwile0NP/D5SWTAdMDuH1uNJwR1TahbPOi2DdWvpmJ3qqnMIQdhk5FAXT0EU6I/cQU2H34fvnzH5DAFFr/7MFOigqD11XQTgXA+Ba6CqgTCnDqFTDExfCdhNLiQd/+7sYaUdqMzt71vmQvo5pCpa0vMZ0kwcD07Ti6Xs0HuHzzL4UArCzyLkUKq7RHTlhEU7aSd6YnjPoi3UrVp//HDgcxhzo/c6oKChNRV5VVhNmfgAnhZT8jRSkFCIIg9Fro37XMyWcls8LQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1629412865; bh=XA8V7nvHBoL2lKIuZrbuSUNE84gzI5LEggzeoIKvBsc=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=Ic0h/OmUFTRo02/xonXFjEQg6Vy14Rzwcz2vLVHPJxkoSkn22pOAkWXKnyaLRqwRNheznSDTkOMKvt+FHTV/gjFnUa5puhF4EfskcTx7jl6JoIOkTD7nCEVCvKgLdQbX/R0scYWivj1gLNdIZFEjaMaA5kAq2/C914tjD7Pg1TTSWM/sQG/ykVblAZK3kQXIGOWbqfOevn4zMZFPctV6PN7dMrhvgJlmKWnMCVqvlxsNXAW94e1CnQ4cFOtUDoZIlZpI2b3EHVwOdwCxhJle0GcuD23Ghc5FRimlNb2hvhzyNj0iRssoMrayH/1W06QE++MBDU40QABi7YLWBhNL6w==
-X-YMail-OSG: FxVSaP8VM1lhA5u4uY_bmfAqZs4qM39hXjHnWxd4DtrFULL7D7TWAacPdQTZPk7
- Rd4NoOM6S9lZwW3YOFSRSj53.BO1WuMB0MbQwOw8nbvZXNtTF5SpkyK6bgPYnk7teUPz6aJm7HWn
- hrke3JpNVX6vRY.lvFyeuF1WvilLauMBzKnjEISHjnWspiu3iF2ylyFvPDE3ZNeCKJM1PzSWMwjY
- ljWJCAR_AonCvwZCrfULFCu4ZYdJOy1Bws1_HHa5z9Nw99kDNpHmxi4nn_xxF3ljjdil.8G72ahs
- a0n9WFntoURNVkk8jkGA4M5Ex9jM4pMcqU.eyvDQKydxBFcBsKJgVfq.b63SBT_owpX132SRTDPq
- FWQb63t4D2fhzW3Av6US7mPmuKwByZjWovXjp4YBnoh.68HsPPzBvGbYMOEdVgiADG7A8BTQd3Hn
- FufBeV8GSSQQMY2cyDagsNfl7LZcsiF2qw5UyPH09uyjvJ2_ujYYpMJCT0eMyHMjPPdTHLom4IpY
- pYOd5xNA9XpXwHWp_QpuULwKbpxHGqg1eNT16h40W8_W9QiA2cRBVDWVW7RSylEBR85jEq83E0Ph
- HmQajRu3NtMgBGrqASMkycFpl7TetKjVttann8_zjbnEDBAXYmhBdhbXn4PXhv3QIW9zjYRm1kqP
- lr9Z2oqnZZXwXs4gSseI.rOKKaz8SekGeMhCFYEtGXsM8ryARUBZ2o4UoU_4MIy3pQUDdtLG8S6X
- FOZ6EWeOB.tFVvNumFPZEZHr.xYA3xM9plhefElABLa.W8eulZXg1gTStcLWqSY9Rp.aDWn.aByy
- HxzYrYzNMmfCRVLNfWQ6aB7vTIgJoPdy6bp8xNzg_DHFXnq9lNcYYpQVVe04jWSTIliCIgdjdPuw
- 7FGAhQngRMaAls81lFhJwNf4ALoRWUD.9Pk9uJlfJzuTbMfaqw0925qoz04X9o7ikHsXTKEpDY2_
- u5pme127n6oJPBa_B5U_bxALlHXgQBUAshNanD4bzLQoK7jMb8QoglX1LaZKd76UzkwHcnHUDPUm
- b3KDbzt2n8PSqgZ7VMXmbaLu_p9jN22TECq8IwKMN7SdCi48BRK0JF50rYuHncd31GabLsjqFbWu
- PfSgsumI6a2rgkkmnAvO1gsQSMxFaZudPDxBSs2bU0hcJr6kYwYttyigbZttMpPzZfPsf5g3gc86
- N8WSmYkQAezmuE7PX69dbRTySZZzVx3g_cZ4fM1_V9kev6YyEvbOXDuAbDQoKRzD1IFCyMvYq.my
- okxpgU6P4PpivsAQxuWbz0dVTQy0qUbGVwJiRKgJVbypOtj.qbgV_cPXM5bB8NT.dcTEdykKGt94
- iNA3WgvCLBP7EeiMLy3F2FlI09YfJwCT4Lgv1b..pwrMp6htzzA9MCsDPjLW_cV3gcuWxP_lMxX5
- 3XzmFqd2A0ztdC6th1FnIOIRKrAcCiig0BW2TKBcfLdajfnzPEgmficGR38YR3y2Qdp7TLZqzjcS
- rnFrluU1mvHlap56fOEeBxC.ns5H3.e9_TVqYKBuGr2UzIiUwAeYd65mdFLNJXEPr6wbzl2Cnc8T
- w1OuaANjCZxy1ergq5gUOnmWiWainzgFU1i8nLMSbG9zH.qdnAVfHNdmYMi4NzWDdA2j55jy8Clf
- CKKaLW2hMC5naToSbuShpkQABWngSY8.mrYkW8XAsytHGB.7UAG4tnBOV1pYEWLL3U.5JdQK2n_d
- N50uBbUqNNLggdbIoB1DugtteBKfx0U8kEKTJd31FsvNa7jwEAktBICh8Fi.LG4gkBdVKkghdDnw
- omLo7I7F9NMS_fNtyFNANmuwh1OXkTTu9DaOytqh8mw696aUGCKyIt6Meg97zqSLGsxSAXBJigSv
- WBUa0QgR_nvE9ftmd9iSn7fWIbmniRshW3.jNM2B2EqsndBttgPYZQ86XfLSJDd98V0N6xbBuKvh
- Ip05tzDTcyqL4T6aSOJLmIfghQOg3ihfQyxxhqteltbynyEjmqM2PIKO9vjukSNgJ13noFs30cwP
- e1fDNW007Fe.zDf6jHtzwZHFLhrOR8HLAh61BfuE7hyPoRXgO4ayMtoUfqeCQTveQoWvoMpSfYDo
- awmm7sI9EmOgPTVtqPB1TW936ueD0ep2zgkOk8KnmL2RPmlk_hJIVfwLlNhAbgEZFY1xteEVkb.w
- XZUkz4NnBEr78gWhhY70NJ.8Cy0nI1rGG2ztUKFlyjqzxv5iUCaNbVi45WjUwxPABMv_LQYbY6pR
- QvhQF7_BVMG_Ay9Wm1mveznrvjdSMhGDXg.LdZH0tCtQNxZXs8TEspsuFNTF5_qIOYeTWE1yc2gA
- 187Omovxll2N9w_HVPeB.bT7nVVI.gN20nbXl51Saf5Pkbj.ABJtz3g--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Thu, 19 Aug 2021 22:41:05 +0000
-Received: by kubenode558.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID de3529738da60bdad851ca6afb1e6322;
-          Thu, 19 Aug 2021 22:41:01 +0000 (UTC)
-Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM
- attributes
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20210722004758.12371-1-casey@schaufler-ca.com>
- <20210722004758.12371-23-casey@schaufler-ca.com>
- <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
- <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com>
- <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
- <fba1a123-d6e5-dcb0-3d49-f60b26f65b29@schaufler-ca.com>
- <CAHC9VhQxG+LXxgtczhH=yVdeh9mTO+Xhe=TeQ4eihjtkQ2=3Fw@mail.gmail.com>
- <3ebad75f-1887-bb31-db23-353bfc9c0b4a@schaufler-ca.com>
- <CAHC9VhQCN2_MsCoXfU7Z-syYHj2o8HaSECf5E62ZFcNZd9_4QA@mail.gmail.com>
- <062ba5f9-e4e8-31f4-7815-826f44b35654@schaufler-ca.com>
- <CAHC9VhT=QL5pKekaPB-=LDzU3hck9nXDiL5n1-upSqPg3gq=7w@mail.gmail.com>
- <f3137410-185a-3012-1e38-e05a175495cc@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <6f219a4d-8686-e35a-6801-eb66f98c8032@schaufler-ca.com>
-Date:   Thu, 19 Aug 2021 15:41:00 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Fri, 20 Aug 2021 06:16:24 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 088E7C061575;
+        Fri, 20 Aug 2021 03:15:44 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id A7D22AE0DB1;
+        Fri, 20 Aug 2021 18:15:55 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lDbXKbdjmBrI; Fri, 20 Aug 2021 18:15:34 +0800 (CST)
+Received: from [172.30.18.174] (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id 2638CAE0DD4;
+        Fri, 20 Aug 2021 18:15:34 +0800 (CST)
+Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
+ function.
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+ <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
+From:   =?UTF-8?B?5p2O5Yqb55C8?= <liqiong@nfschina.com>
+Message-ID: <d385686b-ffa5-5794-2cf2-b87f2a471e78@nfschina.com>
+Date:   Fri, 20 Aug 2021 18:15:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <f3137410-185a-3012-1e38-e05a175495cc@schaufler-ca.com>
+In-Reply-To: <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Mailer: WebService/1.1.18850 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+Hi, Simon:
 
-On 8/18/2021 5:56 PM, Casey Schaufler wrote:
-> On 8/18/2021 5:47 PM, Paul Moore wrote:
->> ...
->> I just spent a few minutes tracing the code paths up from audit
->> through netlink and then through the socket layer and I'm not seeing
->> anything obvious where the path differs from any other syscall;
->> current->audit_context *should* be valid just like any other syscall.
->> However, I do have to ask, are you only seeing these audit records
->> with a current->audit_context equal to NULL during early boot?
-> Nope. Sorry.
+This solution is better then rwsem, a temp "ima_rules" variable should 
+can fix. I also have a another idea, with a little trick, default list
+can traverse to the new list, so we don't need care about the read side. 
 
-It looks as if all of the NULL audit_context cases are for either
-auditd or systemd. Given what the events are, this isn't especially
-surprising.
+here is the patch:
 
+@@ -918,8 +918,21 @@ void ima_update_policy(void)
+        list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
+
+        if (ima_rules != policy) {
++               struct list_head *prev_rules = ima_rules;
++               struct list_head *first = ima_rules->next;
+                ima_policy_flag = 0;
++
++               /*
++                * Make the previous list can traverse to new list,
++                * that is tricky, or there is a deadly loop whithin
++                * "list_for_each_entry_rcu(entry, ima_rules, list)"
++                *
++                * After update "ima_rules", restore the previous list.
++                */
++               prev_rules->next = policy->next;
+                ima_rules = policy;
++               syncchronize_rcu();
++               prev_rules->next = first;
+
+
+The side effect is the "ima_default_rules" will be changed a little while.
+But it make sense, the process should be checked again by the new policy.
+
+This patch has been tested, if will do, I can resubmit this patch.
+
+How about this ?
+
+----------
+Regards,
+liqiong
+
+在 2021年08月19日 20:58, THOBY Simon 写道:
+> Hi Liqiong,
+>
+> On 8/19/21 12:15 PM, liqiong wrote:
+>> When "ima_match_policy" is looping while "ima_update_policy" changs
+>> the variable "ima_rules", then "ima_match_policy" may can't exit loop,
+>> and kernel keeps printf "rcu_sched detected stall on CPU ...".
+>>
+>> It occurs at boot phase, systemd-services are being checked within
+>> "ima_match_policy,at the same time, the variable "ima_rules"
+>> is changed by a service.
+> First off, thanks for finding and identifying this nasty bug.
+>
+>> Signed-off-by: liqiong <liqiong@nfschina.com>
+>> ---
+>>  security/integrity/ima/ima_policy.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index fd5d46e511f1..7e71e643457c 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -217,6 +217,7 @@ static LIST_HEAD(ima_default_rules);
+>>  static LIST_HEAD(ima_policy_rules);
+>>  static LIST_HEAD(ima_temp_rules);
+>>  static struct list_head *ima_rules = &ima_default_rules;
+>> +static DECLARE_RWSEM(ima_rules_sem);
+>>  
+>>  static int ima_policy __initdata;
+>>  
+>> @@ -666,6 +667,7 @@ int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
+>>  	if (template_desc && !*template_desc)
+>>  		*template_desc = ima_template_desc_current();
+>>  
+>> +	down_read(&ima_rules_sem);
+>>  	rcu_read_lock();
+>>  	list_for_each_entry_rcu(entry, ima_rules, list) {
+>>  
+>> @@ -702,6 +704,7 @@ int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
+>>  			break;
+>>  	}
+>>  	rcu_read_unlock();
+>> +	up_read(&ima_rules_sem);
+>>  
+>>  	return action;
+>>  }
+>> @@ -919,7 +922,9 @@ void ima_update_policy(void)
+>>  
+>>  	if (ima_rules != policy) {
+>>  		ima_policy_flag = 0;
+>> +		down_write(&ima_rules_sem);
+>>  		ima_rules = policy;
+>> +		up_write(&ima_rules_sem);
+>>  
+>>  		/*
+>>  		 * IMA architecture specific policy rules are specified
+>>
+> Rather than introducing a new semaphore, I wonder if you couldn't have done something
+> like the following?
+>
+> @@ -674,13 +674,15 @@ int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
+>                      const char *func_data, unsigned int *allowed_algos)
+>  {
+>         struct ima_rule_entry *entry;
+> +       struct list_head *ima_rules_tmp;
+>         int action = 0, actmask = flags | (flags << 1);
+>
+>         if (template_desc && !*template_desc)
+>                 *template_desc = ima_template_desc_current();
+>
+>         rcu_read_lock();
+> -       list_for_each_entry_rcu(entry, ima_rules, list) {
+> +       ima_rules_tmp = rcu_dereference(ima_rules);
+> +       list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
+>
+>                 if (!(entry->action & actmask))
+>                         continue;
+> @@ -970,7 +972,7 @@ void ima_update_policy(void)
+>
+>         if (ima_rules != policy) {
+>                 ima_policy_flag = 0;
+> -               ima_rules = policy;
+> +               rcu_assign_pointer(ima_rules, policy);
+>
+>                 /*
+>                  * IMA architecture specific policy rules are specified
+>
+>
+> Also, ima_match_policy is not the only place where we iterate over ima_rules, maybe
+> this change should be applied to every function that perform a call the like of
+> "list_for_each_entry_rcu(entry, ima_rules_tmp, list)" ?
+>
+> All that being said, your change is quite small and I have no objection to it,
+> I was just wondering whether we could achieve the same effect without locks
+> with RCU.
+>
+> What do you think?
+>
+> Thanks,
+> Simon
+
+-- 
+李力琼<liqiong@nfschina.com>  13524287433
+上海市浦东新区海科路99号中科院上海高等研究院3号楼3楼
 
