@@ -2,250 +2,187 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175F9C4320A
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 17:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC854C4320A
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 18:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAAFA61053
-	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 17:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C996261051
+	for <linux-security-module@archiver.kernel.org>; Fri, 20 Aug 2021 18:37:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229940AbhHTRzA (ORCPT
+        id S234249AbhHTShw (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 20 Aug 2021 13:55:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234160AbhHTRy7 (ORCPT
+        Fri, 20 Aug 2021 14:37:52 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:26782 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S229927AbhHTShv (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 20 Aug 2021 13:54:59 -0400
-Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 28727C061575;
-        Fri, 20 Aug 2021 10:54:20 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by ha0.nfschina.com (Postfix) with ESMTP id 6DF53AE0DB1;
-        Sat, 21 Aug 2021 01:54:27 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from ha0.nfschina.com ([127.0.0.1])
-        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id BcXU23MVm0PP; Sat, 21 Aug 2021 01:54:06 +0800 (CST)
-Received: from [192.168.10.13] (unknown [112.3.220.165])
-        (Authenticated sender: liqiong@nfschina.com)
-        by ha0.nfschina.com (Postfix) with ESMTPA id E0D9CAE0D4F;
-        Sat, 21 Aug 2021 01:54:05 +0800 (CST)
-Message-ID: <6d60893c-63dc-394f-d43c-9ecab7b6d06e@nfschina.com>
-Date:   Sat, 21 Aug 2021 01:53:42 +0800
+        Fri, 20 Aug 2021 14:37:51 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17KIWaAw123077;
+        Fri, 20 Aug 2021 14:36:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=wuzUIU8KjfQ54EF54lX/CiPbBu8YyPftPw/seHB3IRI=;
+ b=LEQbwOtASKCUrd2nNr8HLXglnqVmAtvI2pNybnG0lcKwF64aFnvU+roMgZ9LB/HGKEFX
+ 8O99oGEE51Hepuy+fM1wdnXxPJbVc45p2O95FUeir0BCgHNxagQo8kecFqSSINsEok6s
+ qPVJoJ5S+Pji9UHxgu+/1mTvcXgk1s0H9HIox8F7ST1yL4vn4TysEZKulCF4W5bEV0UM
+ x4iX/5Q4bSrNC4htwwgjrKuTa3Dy7r6vK+GMjgQOxhH9W0nFm0q1VQiecXkYFRTRdS+F
+ U/Cmq6lAIaCXXRsoQFpl38yUywm4G57HPTPqHFxMHH2rdBpTsLP/dtUzj7uBkoJ+tekk rw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ahkacjv6u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Aug 2021 14:36:57 -0400
+Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17KIXH52124317;
+        Fri, 20 Aug 2021 14:36:57 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ahkacjv5w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Aug 2021 14:36:57 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17KIXUXt009972;
+        Fri, 20 Aug 2021 18:36:55 GMT
+Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
+        by ppma04wdc.us.ibm.com with ESMTP id 3ae5fg3hw4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 20 Aug 2021 18:36:54 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17KIarMd37290302
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Aug 2021 18:36:53 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C94D0B2066;
+        Fri, 20 Aug 2021 18:36:53 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EADA0B2065;
+        Fri, 20 Aug 2021 18:36:48 +0000 (GMT)
+Received: from [9.160.110.229] (unknown [9.160.110.229])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Aug 2021 18:36:48 +0000 (GMT)
+Subject: Re: [PATCH 3/3] virt: Add sev_secret module to expose confidential
+ computing secrets
+To:     Andrew Scull <ascull@google.com>, Ard Biesheuvel <ardb@kernel.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
+        linux-security-module@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dov Murik <dovmurik@linux.ibm.com>
+References: <20210809190157.279332-1-dovmurik@linux.ibm.com>
+ <20210809190157.279332-4-dovmurik@linux.ibm.com>
+ <YRZuIIVIzMfgjtEl@google.com>
+ <CAMj1kXFC-cizTw2Tv40uZHdLArKtdMNxdQXWoPWSL-8qexdkLQ@mail.gmail.com>
+ <CADcWuH0mP+e6GxkUGN3ni_Yu0z8YTn-mo677obH+p-OFCL+wOQ@mail.gmail.com>
+From:   Dov Murik <dovmurik@linux.ibm.com>
+Message-ID: <b3c65f9d-5fd3-22c5-cd23-481774d92222@linux.ibm.com>
+Date:   Fri, 20 Aug 2021 21:36:46 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.0.1
-Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
- function.
+In-Reply-To: <CADcWuH0mP+e6GxkUGN3ni_Yu0z8YTn-mo677obH+p-OFCL+wOQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-To:     THOBY Simon <Simon.THOBY@viveris.fr>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210819101529.28001-1-liqiong@nfschina.com>
- <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
- <d385686b-ffa5-5794-2cf2-b87f2a471e78@nfschina.com>
- <1f631c3d-5dce-e477-bfb3-05aa38836442@viveris.fr>
-From:   liqiong <liqiong@nfschina.com>
-In-Reply-To: <1f631c3d-5dce-e477-bfb3-05aa38836442@viveris.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9kbPMz4xAuUJD4vBYofJZIqKJOViYTrP
+X-Proofpoint-ORIG-GUID: b3ZcUyslaSKfRcKCznK32dCVOs4aM1z5
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-20_06:2021-08-20,2021-08-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 spamscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
+ impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108200103
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Simon,
 
-On 2021/8/20 21:23, THOBY Simon wrote:
-> Hi Liqiong,
->
-> On 8/20/21 12:15 PM, 李力琼 wrote:
->> Hi, Simon:
+
+On 19/08/2021 16:02, Andrew Scull wrote:
+> On Mon, 16 Aug 2021 at 10:57, Ard Biesheuvel <ardb@kernel.org> wrote:
 >>
->> This solution is better then rwsem, a temp "ima_rules" variable should
->> can fix. I also have a another idea, with a little trick, default list
->> can traverse to the new list, so we don't need care about the read side.
+>> On Fri, 13 Aug 2021 at 15:05, Andrew Scull <ascull@google.com> wrote:
+>>>
+>>> On Mon, Aug 09, 2021 at 07:01:57PM +0000, Dov Murik wrote:
+
+[...]
+
+>>>
+>>>> +static int sev_secret_unlink(struct inode *dir, struct dentry *dentry)
+>>>> +{
+>>>> +     struct sev_secret *s = sev_secret_get();
+>>>> +     struct inode *inode = d_inode(dentry);
+>>>> +     struct secret_entry *e = (struct secret_entry *)inode->i_private;
+>>>> +     int i;
+>>>> +
+>>>> +     if (e) {
+>>>> +             /* Zero out the secret data */
+>>>> +             memzero_explicit(e->data, secret_entry_data_len(e));
+>>>
+>>> Would there be a benefit in flushing these zeros?
+>>>
 >>
->> here is the patch:
+>> Do you mean cache clean+invalidate? Better to be precise here.
+> 
+> At least a clean, to have the zeros written back to memory from the
+> cache, in order to overwrite the secret.
+> 
+
+I agree, but not sure how to implement this:
+
+I see there's an arch_wb_cache_pmem exported function which internally
+(in arch/x86/lib/usercopy_64.c) calls clean_cache_range which seems to
+do what we want (assume the secret can be longer than the cache line).
+
+But arch_wb_cache_pmem is declared in include/linux/libnvdimm.h and
+guarded with #ifdef CONFIG_ARCH_HAS_PMEM_API -- both seem not related to
+what I'm trying to do.
+
+I see there's an exported clflush_cache_range for x86 -- but that's a
+clean+flush if I understand correctly.
+
+Suggestions on how to approach? I can copy the clean_cache_range
+implementation into the sev_secret module but hopefully there's a better
+way to reuse.  Maybe export clean_cache_range in x86?
+
+Since this is for SEV the solution can be x86-specific, but if there's a
+generic way I guess it's better (I think all of sev_secret module
+doesn't have x86-specific stuff).
+
+-Dov
+
+
 >>
->> @@ -918,8 +918,21 @@ void ima_update_policy(void)
->>          list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
->>
->>          if (ima_rules != policy) {
->> +               struct list_head *prev_rules = ima_rules;
->> +               struct list_head *first = ima_rules->next;
->>                  ima_policy_flag = 0;
->> +
->> +               /*
->> +                * Make the previous list can traverse to new list,
->> +                * that is tricky, or there is a deadly loop whithin
->> +                * "list_for_each_entry_rcu(entry, ima_rules, list)"
->> +                *
->> +                * After update "ima_rules", restore the previous list.
->> +                */
-> I think this could be rephrased to be a tad clearer, I am not quite sure
-> how I must interpret the first sentence of the comment.
-I got it,  how about this:
-  /*
-   * The previous list has to traverse to new list,
-   * Or there may be a deadly loop within
-   * "list_for_each_entry_rcu(entry, ima_rules, list)"
-   *
-   * That is tricky, after updated "ima_rules", restore the previous list.
-   */
->
->
->> +               prev_rules->next = policy->next;
->>                  ima_rules = policy;
->> +               syncchronize_rcu();
-> I'm a bit puzzled as you seem to imply in the mail this patch was tested,
-> but there is no 'syncchronize_rcu' (with two 'c') symbol in the kernel.
-> Was that a copy/paste error? Or maybe you forgot the 'not' in "This
-> patch has been tested"? These errors happen, and I am myself quite an
-> expert in doing them :)
-
-
-Sorry for the mistake, I copy/paste the patch and delete/edit some lines,
-have reviewed before sending, but not found. I have made a case to reproduce
-the error, dumping "ima_rules" and every item address of list in the error
-situaiton, I can watchthe "ima_rules" change, old list traversing to the 
-new list.
-And I have been doing a reboot test which found this bug. This patch 
-seems to work fine.
-
-
->
->> +               prev_rules->next = first;
->>
->>
->> The side effect is the "ima_default_rules" will be changed a little while.
->> But it make sense, the process should be checked again by the new policy.
->>
->> This patch has been tested, if will do, I can resubmit this patch.>
->> How about this ?
->
-> Correct me if I'm wrong, here is how I think I understand you patch.
-> We start with a situation like that (step 0):
-> ima_rules --> List entry 0 (head node) = ima_default_rules <-> List entry 1 <-> List entry 2 <-> ... <-> List entry 0
->
-> Then we decide to update the policy for the first time, so
-> 'ima_rules [&ima_default_rules] != policy [&ima_policy_rules]'.
-> We enter the condition.
-> First we copy the current value of ima_rules (&ima_default_rules)
-> to a temporary variable 'prev_rules'. We also create a pointer dubbed
-> 'first' to the entry 1 in the default list (step 1):
-> prev_rules -------------
->                         \/
-> ima_rules --> List entry 0 (head node) = ima_default_rules <-> List entry 1 <-> List entry 2 <-> ... <-> List entry 0
->                                                                     /\
-> first --------------------------------------------------------------
->
->
-> Then we update prev_rules->next to point to policy->next (step 2):
-> List entry 1 <-> List entry 2 <-> ... -> List entry 0
->   /\
-> first
-> 	(notice that list entry 0 no longer points backwards to 'list entry 1',
-> 	but I don't think there is any reverse iteration in IMA, so it should be
-> 	safe)
->
-> prev_rules -------------
->                         \/
-> ima_rules --> List entry 0 (head node) = ima_default_rules
->                         |
->                         |
->                         -------------------------------------------
->                                                                   \/
-> policy --> policy entry 0' (head node) = ima_policy_rules <-> policy entry 1' <-> policy entry 2' <-> .... <-> policy entry 0'
->
->
-> We then update ima_rules to point to ima_policy_rules (step 3):
-> List entry 1 <-> List entry 2 <-> ... -> List entry 0
->   /\
-> first
->
-> prev_rules -------------
->                         \/
-> ima_rules     List entry 0 (head node) = ima_default_rules
->       |                 |
->       |                 |
->       |                 ------------------------------------------
->       ---------------                                            |
->                     \/                                           \/
-> policy --> policy entry 0' (head node) = ima_policy_rules <-> policy entry 1' <-> policy entry 2' <-> .... <-> policy entry 0'
->                                                                     /\
-> first --------------------------------------------------------------
->
-> Then we run synchronize_rcu() to wait for any RCU reader to exit their loops (step 4).
->
-> Finally we update prev_rules->next to point back to the ima policy and fix the loop (step 5):
->
-> List entry 1 <-> List entry 2 <-> ... -> List entry 0
->   /\
-> first
->
-> prev_rules ---> List entry 0 (head node) = ima_default_rules <-> List entry 1 <-> List entry 2 <-> ... <-> List entry 0
->                                                                       /\
->                                                                   first (now useless)
-> ima_rules
->       |
->       |
->       |
->       ---------------
->                     \/
-> policy --> policy entry 0' (head node) = ima_policy_rules <-> policy entry 1' <-> policy entry 2' <-> .... <-> policy entry 0'
->
-> The goal is that readers should still be able to loop
-> (forward, as we saw that backward looping is temporarily broken)
-> while in steps 0-4.
-
-
-Yes, It's the workflow.
-
-
-> I'm not completely sure what would happen to a client that started iterating
-> over ima_rules right after step 2.
->
-> Wouldn't they be able to start looping through the new policy
-> as 'List entry 0 (head node) = ima_default_rules' points to ima_policy_rules?
-> And if they, wouldn't they loop until the write to 'ima_rule' at step 3 (admittedly
-> very shortly thereafter) completed?
-> And would the compiler be allowed to optimize the read to 'ima_rules' in the
-> list_for_each_entry() loop, thereby never reloading the new value for
-> 'ima_rules', and thus looping forever, just what we are trying to avoid?
-
-
-Yes,  "ima_rules" cache not update in time, It's a risk. I am not sure 
-if "WRITE_ONCE"
-can do this trick. How about:
-     WRITE_ONCE(prev_rules->next, policy->next);
-     WRITE_ONCE(ima_rules, policy);
-
-
-If can't fix the cache issue, maybe the "ima_rules_tmp" solution is the 
-best way.
-I will test it.
-
-
-> Overall, I'm tempted to say this is perhaps a bit too complex (at least,
-> my head tells me it is, but that may very well be because I'm terrible
-> at concurrency issues).
->
-> Honestly, in this case I think awaiting input from more experienced
-> kernel devs than I is the best path forward :-)
->
->> ----------
->> Regards,
->> liqiong
->>
-> Thanks,
-> Simon
+>>>> +             e->guid = NULL_GUID;
+>>>> +     }
+>>>> +
+>>>> +     inode->i_private = NULL;
+>>>> +
+>>>> +     for (i = 0; i < SEV_SECRET_NUM_FILES; i++)
+>>>> +             if (s->fs_files[i] == dentry)
+>>>> +                     s->fs_files[i] = NULL;
+>>>> +
+>>>> +     /*
+>>>> +      * securityfs_remove tries to lock the directory's inode, but we reach
+>>>> +      * the unlink callback when it's already locked
+>>>> +      */
+>>>> +     inode_unlock(dir);
+>>>> +     securityfs_remove(dentry);
+>>>> +     inode_lock(dir);
+>>>> +
+>>>> +     return 0;
+>>>> +}
