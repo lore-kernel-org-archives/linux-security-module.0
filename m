@@ -2,161 +2,170 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605A9C4338F
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 19:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739DAC432BE
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 20:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30693613CD
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 19:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 512C3613A6
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 20:48:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbhHWTWz (ORCPT
+        id S232701AbhHWUt0 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Aug 2021 15:22:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41648 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230192AbhHWTWy (ORCPT
+        Mon, 23 Aug 2021 16:49:26 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58840 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232486AbhHWUt0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Aug 2021 15:22:54 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD82CC061757
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Aug 2021 12:22:11 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id jz1so10330610qvb.13
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Aug 2021 12:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T6iKivFntL9jO7A0bCG8XT9/kFuKhYKYNxAQLHLMCA8=;
-        b=BSRfZn3mjcrNmw8pFTD0zSn1xAXWxcKMU9J2TF+jD2LkWw9I7AhfhljTQwfgv51OLf
-         mE/H3lpQQMB55BLYil6FkPi+0QlqRcAbP2GaIJFgcDsEvfHQE0nlkGDRpvRvr3qSYXp9
-         i0NnD/y0GbccrRSpP11Icq9wQ2gr/o0otdPKnjS8aYOI681yCT0GilYqs4683pADtHDn
-         jM0Ir2gvmWRo7/awhQZYFYC69CaNV02Evw6mk74Tiik+azOAb1lI5u4Chuycy89p0RWO
-         +rG2TqaSvk6TOtF9TPpgsCHa+YPl2YT29z3zUFDSNayYtOk3VdaquRQcmR37SY8L1Agp
-         6q9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T6iKivFntL9jO7A0bCG8XT9/kFuKhYKYNxAQLHLMCA8=;
-        b=NYJe+8yDMPMvpDZete6Hj7MUcebs1t2or3l5kEFlGxVQ1B/JDkMKkYyMrPq/Vswcz4
-         WsfXiuW0cUdZWBfYPWAi4B3lkZzJ8cghLFH569HoLiRp6nMLb/meWBUC9IUWTp8l0JDh
-         o4K2mAl92ekuxCel1o17PPXgLUlGx/v2Lvcb9KshKY+rcR8oQ2ryuyRFj5uhB+twpNwE
-         2mC/vdMqg6unP68ULRxrSdZdhgNMrqJzO3sLm9oHhLQ7PMaMQ2XXANmXeul49jGHpxUU
-         s4lEMEVW1V+JdK/eSFtd55Blrh0W6kc0xap30BNIPKxoBvBzH0EM6VO7UW1K+jv/YyLN
-         lm1Q==
-X-Gm-Message-State: AOAM530SH8EI/loGUCY6//yo1ruKA/yedjOt1Gp0i7qSAa1/Z8MjaesB
-        iucaOdC+fKA3+MlJleiZvOMGjd5TBVzB5J8M7aDynQ==
-X-Google-Smtp-Source: ABdhPJzSmsDDXrKpnjlCjqU/iSM5pI5Vk9qNwlyj24hp3zzEDN+2wjy9BTW6K99y21o6o3AvyFjVbWNT+e3EGt3wGKw=
-X-Received: by 2002:a05:6214:240b:: with SMTP id fv11mr33382976qvb.28.1629746530676;
- Mon, 23 Aug 2021 12:22:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210809190157.279332-1-dovmurik@linux.ibm.com>
- <20210809190157.279332-4-dovmurik@linux.ibm.com> <YRZuIIVIzMfgjtEl@google.com>
- <CAMj1kXFC-cizTw2Tv40uZHdLArKtdMNxdQXWoPWSL-8qexdkLQ@mail.gmail.com>
- <CADcWuH0mP+e6GxkUGN3ni_Yu0z8YTn-mo677obH+p-OFCL+wOQ@mail.gmail.com> <b3c65f9d-5fd3-22c5-cd23-481774d92222@linux.ibm.com>
-In-Reply-To: <b3c65f9d-5fd3-22c5-cd23-481774d92222@linux.ibm.com>
-From:   Andrew Scull <ascull@google.com>
-Date:   Mon, 23 Aug 2021 20:21:59 +0100
-Message-ID: <CADcWuH05vbFtJ1WYSs3d+_=TGzh-MitvAXp1__d1kGJJkvkWpQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] virt: Add sev_secret module to expose confidential
- computing secrets
-To:     Dov Murik <dovmurik@linux.ibm.com>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
+        Mon, 23 Aug 2021 16:49:26 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17NKXBs2071394;
+        Mon, 23 Aug 2021 16:48:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=GwgTHTWFp+4KtL2BdI3Wl8DT7iBBWIm4W/wc8D4PTzE=;
+ b=INslB6mZOffpznEJNq36CgJn68TFeAnnBAFZqt05nXE4MXnxQTyABaAtoLzY02pFuYje
+ ApRMLJHgOZWu+sDMo2gfn3hTrgVIlKgy9xkd9obzFIdSwvP7U6K5csDV+ZgdKc+vzcAk
+ gglkmB2ymHb8EErZVWm5oBL/S3oOdIaIWI4Y3k5e06ph1vAcPLEt0pi1Ql9K/vJbcBm2
+ RHIWKCTVTlHXstoLLU8AUjO7iXuWH0v9qhFm4v5sL1IrHCBXBRy1KZkFB5ZOaUIp0Ag4
+ vZBJ3zCfuXkkHaUm09m8kHpvNU30azqVJjMT6h/vtm8ITBm3ADSlOvqeAwxYecaBxgLH kw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3akejb88s1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Aug 2021 16:48:16 -0400
+Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17NKXGWM071753;
+        Mon, 23 Aug 2021 16:48:16 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3akejb88rr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Aug 2021 16:48:16 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17NKhIeQ029476;
+        Mon, 23 Aug 2021 20:48:15 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma01wdc.us.ibm.com with ESMTP id 3ajs4bbten-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 23 Aug 2021 20:48:15 +0000
+Received: from b03ledav002.gho.boulder.ibm.com (b03ledav002.gho.boulder.ibm.com [9.17.130.233])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17NKmDo021037374
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 23 Aug 2021 20:48:13 GMT
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9700E136051;
+        Mon, 23 Aug 2021 20:48:13 +0000 (GMT)
+Received: from b03ledav002.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 227F6136059;
+        Mon, 23 Aug 2021 20:48:12 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.211.127.29])
+        by b03ledav002.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon, 23 Aug 2021 20:48:11 +0000 (GMT)
+Subject: Re: [PATCH v4 00/12] Enroll kernel keys thru MOK
+To:     Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
         James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
+        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        pjones@redhat.com,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Patrick Uiterwijk <patrick@puiterwijk.org>
+References: <20210819002109.534600-1-eric.snowberg@oracle.com>
+ <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
+ <f76fcf41728fbdd65f2b3464df0821f248b2cba0.camel@linux.ibm.com>
+ <91B1FE51-C6FC-4ADF-B05A-B1E59E20132E@oracle.com>
+ <e7e251000432cf7c475e19c56b0f438b92fec16e.camel@linux.ibm.com>
+ <cedc77fefdf22b2cec086f3e0dd9cc698db9bca2.camel@kernel.org>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <bffb33a3-d5b5-f376-9d7d-706d38357d1a@linux.vnet.ibm.com>
+Date:   Mon, 23 Aug 2021 16:48:11 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
+MIME-Version: 1.0
+In-Reply-To: <cedc77fefdf22b2cec086f3e0dd9cc698db9bca2.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 9OXXfLd94kr_A6N6E9AMIXxONqEE6Oxv
+X-Proofpoint-ORIG-GUID: 58giprlgX9pWVHV4rPlSGeIWkMiItOtP
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-23_04:2021-08-23,2021-08-23 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 adultscore=0 bulkscore=0 mlxscore=0
+ impostorscore=0 clxscore=1011 mlxlogscore=999 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2107140000 definitions=main-2108230140
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, 20 Aug 2021 at 19:36, Dov Murik <dovmurik@linux.ibm.com> wrote:
->
->
->
-> On 19/08/2021 16:02, Andrew Scull wrote:
-> > On Mon, 16 Aug 2021 at 10:57, Ard Biesheuvel <ardb@kernel.org> wrote:
-> >>
-> >> On Fri, 13 Aug 2021 at 15:05, Andrew Scull <ascull@google.com> wrote:
-> >>>
-> >>> On Mon, Aug 09, 2021 at 07:01:57PM +0000, Dov Murik wrote:
->
-> [...]
->
-> >>>
-> >>>> +static int sev_secret_unlink(struct inode *dir, struct dentry *dentry)
-> >>>> +{
-> >>>> +     struct sev_secret *s = sev_secret_get();
-> >>>> +     struct inode *inode = d_inode(dentry);
-> >>>> +     struct secret_entry *e = (struct secret_entry *)inode->i_private;
-> >>>> +     int i;
-> >>>> +
-> >>>> +     if (e) {
-> >>>> +             /* Zero out the secret data */
-> >>>> +             memzero_explicit(e->data, secret_entry_data_len(e));
-> >>>
-> >>> Would there be a benefit in flushing these zeros?
-> >>>
-> >>
-> >> Do you mean cache clean+invalidate? Better to be precise here.
-> >
-> > At least a clean, to have the zeros written back to memory from the
-> > cache, in order to overwrite the secret.
-> >
->
-> I agree, but not sure how to implement this:
->
-> I see there's an arch_wb_cache_pmem exported function which internally
-> (in arch/x86/lib/usercopy_64.c) calls clean_cache_range which seems to
-> do what we want (assume the secret can be longer than the cache line).
->
-> But arch_wb_cache_pmem is declared in include/linux/libnvdimm.h and
-> guarded with #ifdef CONFIG_ARCH_HAS_PMEM_API -- both seem not related to
-> what I'm trying to do.
->
-> I see there's an exported clflush_cache_range for x86 -- but that's a
-> clean+flush if I understand correctly.
 
-This would be perfectly correct, the invalidation is just unnecessary.
+On 8/23/21 1:51 PM, Jarkko Sakkinen wrote:
+> On Thu, 2021-08-19 at 13:32 -0400, Mimi Zohar wrote:
+>> On Thu, 2021-08-19 at 09:23 -0600, Eric Snowberg wrote:
+>>>> On Aug 19, 2021, at 7:10 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>>
+>>>> On Thu, 2021-08-19 at 14:38 +0300, Jarkko Sakkinen wrote:
+>>>>> On Wed, 2021-08-18 at 20:20 -0400, Eric Snowberg wrote:
+>>>>>> Downstream Linux distros try to have a single signed kernel for each
+>>>>>> architecture.  Each end-user may use this kernel in entirely different
+>>>>>> ways.  Some downstream kernels have chosen to always trust platform keys
+>>>>>> within the Linux trust boundary for kernel module signing.  These
+>>>>>> kernels have no way of using digital signature base IMA appraisal.
+>>>>>>
+>>>>>> This series introduces a new Linux kernel keyring containing the Machine
+>>>>>> Owner Keys (MOK) called .mok. It also adds a new MOK variable to shim.
+>>>>> I would name it as ".machine" because it is more "re-usable" name, e.g.
+>>>>> could be used for similar things as MOK. ".mok" is a bad name because
+>>>>> it binds directly to a single piece of user space software.
+>>>> Nayna previously said,
+>>>>    "I believe the underlying source from where CA keys are loaded might vary
+>>>>    based on the architecture (".mok" is UEFI specific.). The key part is
+>>>>    that this new keyring should contain only CA keys which can be later
+>>>>    used to vouch for user keys loaded onto IMA or secondary keyring at
+>>>>    runtime. It would be good to have a "ca" in the name, like .xxxx-ca,
+>>>>    where xxxx can be machine, owner, or system. I prefer .system-ca."
+>>>>
+>>>> The CA keys on the MOK db is simply the first root of trust being
+>>>> defined, but other roots of trust are sure to follow.  For this reason,
+>>>> I agree naming the new keyring "mok" should be avoided.
+>>> As I said previously, I’m open to renaming, I just would like to have an
+>>> agreement on the new name before changing everything.  The current proposed
+>>> names I have heard are “.machine" and ".system-ca".  Is there a preference
+>>> the maintainers feel is appropriate?  If so, please let me know and I’ll
+>>> rename it. Thanks.
+>>>
+>> Jarkko, I think the emphasis should not be on "machine" from Machine
+>> Owner Key (MOK), but on "owner".  Whereas Nayna is focusing more on the
+>> "_ca" aspect of the name.   Perhaps consider naming it
+>> "system_owner_ca" or something along those lines.
+> What do you gain such overly long identifier? Makes no sense. What
+> is "ca aspect of the name" anyway?
 
-> Suggestions on how to approach? I can copy the clean_cache_range
-> implementation into the sev_secret module but hopefully there's a better
-> way to reuse.  Maybe export clean_cache_range in x86?
+As I mentioned previously, the main usage of this new keyring is that it 
+should contain only CA keys which can be later used to vouch for user 
+keys loaded onto secondary or IMA keyring at runtime. Having ca in the 
+name like .xxxx_ca, would make the keyring name self-describing. Since 
+you preferred .system, we can call it .system_ca.
 
-Exporting sounds much better than duplicating.
+Thanks & Regards,
 
-It looks like the clean-only instruction was added to x86 more
-recently and with persistent memory as the intended application.
+        - Nayna
 
-d9dc64f30 "x86/asm: Add support for the CLWB instruction" says:
-
-"This should be used in favor of clflushopt or clflush in cases where
-you require the cache line to be written to memory but plan to access
-the data cache line to be written to memory but plan to access the
-data"
-
-I don't expect the secret table would be accessed with such frequency
-that it would actually make a difference, but if it's just a quirk of
-history that the clean-only version isn't exported, now seems as good
-a time as any to change that!
-
-> Since this is for SEV the solution can be x86-specific, but if there's a
-> generic way I guess it's better (I think all of sev_secret module
-> doesn't have x86-specific stuff).
-
-arch_wb_cache_pmem is the closest to arch agnostic I've seen, but that
-has it own problems :/
