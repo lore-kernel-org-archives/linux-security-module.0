@@ -2,210 +2,234 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826F0C4338F
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Aug 2021 18:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED2CC4338F
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 03:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64E8461165
-	for <linux-security-module@archiver.kernel.org>; Sat, 21 Aug 2021 18:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D2BE6135F
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 03:04:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbhHUStY (ORCPT
+        id S233008AbhHWDFS (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Sat, 21 Aug 2021 14:49:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45508 "EHLO
+        Sun, 22 Aug 2021 23:05:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231674AbhHUStX (ORCPT
+        with ESMTP id S230401AbhHWDFQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Sat, 21 Aug 2021 14:49:23 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08BDDC061764;
-        Sat, 21 Aug 2021 11:48:43 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id u13-20020a17090abb0db0290177e1d9b3f7so16029357pjr.1;
-        Sat, 21 Aug 2021 11:48:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=L3yT1j4pbUZknzUyxpuqzNzLJ0XV1FOv6P3LRPoFRb8=;
-        b=kjYLTwX502hDBTrCam1tUMaCd/Kz8wuaC+UnL76keURQYfvliHzN4gYDwfxSwe+6gq
-         hJ8TAFliZFaj1kvBEa8XB0EAM+lTgR1wqDNK/w0rfXZxCdOY9MWPde+J2E6/wmOqeZRS
-         46KfTZcvHZ7PvL+i+xTWiEOgGUNDWOkyi+u4EODAowqYned0wvQoSwnpgT7/e6/Va0Rp
-         YCmDuHMYIJpHk1ONRUc67E0S/vdkFklbgrXnr8g27wMVg8EGiRQifOUnoCAfCsXeO4xN
-         30NAHXK/frPXF1XgN4o7EmBqH69mxcwfLu+fhnBl/zTc8GFPZ1OxBkBOLoGaFbdfAXpx
-         wzdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=L3yT1j4pbUZknzUyxpuqzNzLJ0XV1FOv6P3LRPoFRb8=;
-        b=oPdvM8hnmnIB2sBF9ooA7YlMwogMRrVkykhKNOAL36167wy637LqTRcx8o2fm7phYN
-         MTZZLdRpjI/L0mpXyucKI0aefIlKVxQBzBI8Bb+va/QLiXNVw+/GRentDBoeCwEBXLch
-         vJa4I8NB3I92zN0gPymq0PXp4aN+KCP0oNNquHbcz5hmGYYovU0uqP37mifD24F5gK19
-         6RAL1XxZ7qVetMa5AIRiBC1p7OqSMA2EeS8ufgiMOGvRK5z0IyeFV5ORcEod0bGGE0Hk
-         3qfS5FiuqpNQBv4RK6tz2S09cIHmYykRPjU8H1H0KpwnIvQEkqNK58JLvoO7qu0o97Oq
-         RsvA==
-X-Gm-Message-State: AOAM531eCbgoEjy76WrJ2WPIq/d2j0K/dzW1GsHX3GaBdCvyDfXtGf2b
-        Zi6GZ0oMTRKAinYfsWIRdGZouf6aSPs=
-X-Google-Smtp-Source: ABdhPJwaadqsaDwiJ3bj/J+WXvcrD0kg+M6rGpLk2rVA+Ar8Q2vk1q4kN7CmCJvzCp3RnC9Fe1W/EA==
-X-Received: by 2002:a17:903:20c4:b0:12d:c7de:3401 with SMTP id i4-20020a17090320c400b0012dc7de3401mr21782084plb.40.1629571722416;
-        Sat, 21 Aug 2021 11:48:42 -0700 (PDT)
-Received: from localhost ([2405:201:6014:d820:9cc6:d37f:c2fd:dc6])
-        by smtp.gmail.com with ESMTPSA id m28sm13462557pgl.9.2021.08.21.11.48.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Aug 2021 11:48:42 -0700 (PDT)
-From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
-To:     bpf@vger.kernel.org
-Cc:     Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Spencer Baugh <sbaugh@catern.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH bpf-next RFC v1 5/5] tools: testing: Add selftest for file local storage map
-Date:   Sun, 22 Aug 2021 00:18:24 +0530
-Message-Id: <20210821184824.2052643-6-memxor@gmail.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20210821184824.2052643-1-memxor@gmail.com>
-References: <20210821184824.2052643-1-memxor@gmail.com>
+        Sun, 22 Aug 2021 23:05:16 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9F501C061575;
+        Sun, 22 Aug 2021 20:04:33 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id 419EFAE0DA2;
+        Mon, 23 Aug 2021 11:04:17 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GYwI0yPOej4K; Mon, 23 Aug 2021 11:03:57 +0800 (CST)
+Received: from [172.30.18.174] (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id 212EBAE0DEE;
+        Mon, 23 Aug 2021 11:03:57 +0800 (CST)
+Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
+ function.
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        THOBY Simon <Simon.THOBY@viveris.fr>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+ <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
+ <d385686b-ffa5-5794-2cf2-b87f2a471e78@nfschina.com>
+ <1f631c3d-5dce-e477-bfb3-05aa38836442@viveris.fr>
+ <96037695de6125c701889c168550def278adfd4b.camel@linux.ibm.com>
+From:   =?UTF-8?B?5p2O5Yqb55C8?= <liqiong@nfschina.com>
+Message-ID: <f9798484-7090-0ddf-50a6-7c7c5bf0606c@nfschina.com>
+Date:   Mon, 23 Aug 2021 11:04:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <96037695de6125c701889c168550def278adfd4b.camel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-This adds a test case for verifying that file local storage map works as
-intended.
+Hi Mimi :
 
-Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
----
- .../bpf/prog_tests/test_local_storage.c       | 51 +++++++++++++++++++
- .../selftests/bpf/progs/local_storage.c       | 23 +++++++++
- 2 files changed, 74 insertions(+)
+The situation is a little different,'list_splice_init_rcu'
+don't change the list head. If "ima_rules" being changed,
+readers may can't reload the new value in time for cpu cache
+or compiler optimization. Defining "ima_rules" as a volatile 
+variable can fix, but It is inefficient.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_local_storage.c b/tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-index d2c16eaae367..154dee32320c 100644
---- a/tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-+++ b/tools/testing/selftests/bpf/prog_tests/test_local_storage.c
-@@ -24,6 +24,7 @@ static inline int sys_pidfd_open(pid_t pid, unsigned int flags)
- static unsigned int duration;
- 
- #define TEST_STORAGE_VALUE 0xbeefdead
-+#define DUMMY_STORAGE_VALUE 0xdeadbeef
- 
- struct storage {
- 	void *inode;
-@@ -111,6 +112,51 @@ static bool check_syscall_operations(int map_fd, int obj_fd)
- 	return true;
- }
- 
-+int test_file_local_storage(struct bpf_map *map)
-+{
-+	struct storage ls;
-+	int fd, ret;
-+
-+	fd = open("/dev/null", O_RDONLY);
-+	if (!ASSERT_GE(fd, 0, "open(/dev/null)"))
-+		return -errno;
-+
-+	ret = bpf_map_lookup_elem(bpf_map__fd(map), &fd, &ls);
-+	if (!ASSERT_OK(ret, "bpf_map_lookup_elem for file local storage"))
-+		goto end;
-+
-+	ASSERT_EQ(ls.value, DUMMY_STORAGE_VALUE, "file local value match");
-+
-+	ret = bpf_map_delete_elem(bpf_map__fd(map), &fd);
-+	if (!ASSERT_OK(ret, "bpf_map_delete_elem for file local storage"))
-+		goto end;
-+
-+	ret = bpf_map_lookup_elem(bpf_map__fd(map), &fd, &ls);
-+	if (!ASSERT_EQ(ret, -ENOENT, "bpf_map_lookup_elem should fail"))
-+		goto end;
-+
-+	memset(&ls, 0, sizeof(ls));
-+	ls.value = DUMMY_STORAGE_VALUE;
-+	ret = bpf_map_update_elem(bpf_map__fd(map), &fd, &ls, BPF_NOEXIST);
-+	if (!ASSERT_OK(ret, "bpf_map_update_elem for file local storage"))
-+		goto end;
-+
-+	ret = bpf_map_lookup_elem(bpf_map__fd(map), &fd, &ls);
-+	if (!ASSERT_OK(ret, "bpf_map_lookup_elem for file local storage"))
-+		goto end;
-+
-+	close(fd);
-+
-+	ret = bpf_map_lookup_elem(bpf_map__fd(map), &fd, &ls);
-+	if (!ASSERT_EQ(ret, -EBADF, "bpf_map_lookup_elem should fail"))
-+		return -EINVAL;
-+
-+	return 0;
-+end:
-+	close(fd);
-+	return ret;
-+}
-+
- void test_test_local_storage(void)
- {
- 	char tmp_dir_path[] = "/tmp/local_storageXXXXXX";
-@@ -167,6 +213,11 @@ void test_test_local_storage(void)
- 	/* Set the process being monitored to be the current process */
- 	skel->bss->monitored_pid = getpid();
- 
-+	/* Test file local storage */
-+	err = test_file_local_storage(skel->maps.file_storage_map);
-+	if (!ASSERT_OK(err, "test_file_local_storage"))
-+		goto close_prog_rmdir;
-+
- 	/* Move copy_of_rm to a new location so that it triggers the
- 	 * inode_rename LSM hook with a new_dentry that has a NULL inode ptr.
- 	 */
-diff --git a/tools/testing/selftests/bpf/progs/local_storage.c b/tools/testing/selftests/bpf/progs/local_storage.c
-index 95868bc7ada9..68561812f454 100644
---- a/tools/testing/selftests/bpf/progs/local_storage.c
-+++ b/tools/testing/selftests/bpf/progs/local_storage.c
-@@ -44,6 +44,13 @@ struct {
- 	__type(value, struct local_storage);
- } task_storage_map SEC(".maps");
- 
-+struct {
-+	__uint(type, BPF_MAP_TYPE_FILE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, struct local_storage);
-+} file_storage_map SEC(".maps");
-+
- SEC("lsm/inode_unlink")
- int BPF_PROG(unlink_hook, struct inode *dir, struct dentry *victim)
- {
-@@ -181,3 +188,19 @@ void BPF_PROG(exec, struct linux_binprm *bprm)
- 	storage->value = DUMMY_STORAGE_VALUE;
- 	bpf_spin_unlock(&storage->lock);
- }
-+
-+SEC("lsm/file_open")
-+int BPF_PROG(file_open, struct file *file)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct local_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	storage = bpf_file_storage_get(&file_storage_map, file, 0,
-+				       BPF_LOCAL_STORAGE_GET_F_CREATE);
-+	if (storage)
-+		storage->value = DUMMY_STORAGE_VALUE;
-+	return 0;
-+}
--- 
-2.33.0
+Maybe using a temporary ima_rules variable for every 
+"list_for_each_entry_rcu(entry, ima_rules, list)" loop is 
+a better solution to fix the "endless loop" bug. 
 
+Regards,
+
+liqiong
+
+在 2021年08月20日 23:48, Mimi Zohar 写道:
+> On Fri, 2021-08-20 at 13:23 +0000, THOBY Simon wrote:
+>> Hi Liqiong,
+>>
+>> On 8/20/21 12:15 PM, 李力琼 wrote:
+>>> Hi, Simon:
+>>>
+>>> This solution is better then rwsem, a temp "ima_rules" variable should 
+>>> can fix. I also have a another idea, with a little trick, default list
+>>> can traverse to the new list, so we don't need care about the read side. 
+>>>
+>>> here is the patch:
+>>>
+>>> @@ -918,8 +918,21 @@ void ima_update_policy(void)
+>>>         list_splice_tail_init_rcu(&ima_temp_rules, policy, synchronize_rcu);
+>>>
+>>>         if (ima_rules != policy) {
+>>> +               struct list_head *prev_rules = ima_rules;
+>>> +               struct list_head *first = ima_rules->next;
+>>>                 ima_policy_flag = 0;
+>>> +
+>>> +               /*
+>>> +                * Make the previous list can traverse to new list,
+>>> +                * that is tricky, or there is a deadly loop whithin
+>>> +                * "list_for_each_entry_rcu(entry, ima_rules, list)"
+>>> +                *
+>>> +                * After update "ima_rules", restore the previous list.
+>>> +                */
+>> I think this could be rephrased to be a tad clearer, I am not quite sure
+>> how I must interpret the first sentence of the comment.
+>>
+>>
+>>> +               prev_rules->next = policy->next;
+>>>                 ima_rules = policy;
+>>> +               syncchronize_rcu();
+>> I'm a bit puzzled as you seem to imply in the mail this patch was tested,
+>> but there is no 'syncchronize_rcu' (with two 'c') symbol in the kernel.
+>> Was that a copy/paste error? Or maybe you forgot the 'not' in "This
+>> patch has been tested"? These errors happen, and I am myself quite an
+>> expert in doing them :)
+>>
+>>> +               prev_rules->next = first;
+>>>
+>>>
+>>> The side effect is the "ima_default_rules" will be changed a little while.
+>>> But it make sense, the process should be checked again by the new policy.
+>>>
+>>> This patch has been tested, if will do, I can resubmit this patch.> 
+>>> How about this ?
+>> least
+>>
+>> Correct me if I'm wrong, here is how I think I understand you patch.
+>> We start with a situation like that (step 0):
+>> ima_rules --> List entry 0 (head node) = ima_default_rules <-> List entry 1 <-> List entry 2 <-> ... <-> List entry 0
+>>
+>> Then we decide to update the policy for the first time, so
+>> 'ima_rules [&ima_default_rules] != policy [&ima_policy_rules]'.
+>> We enter the condition.
+>> First we copy the current value of ima_rules (&ima_default_rules)
+>> to a temporary variable 'prev_rules'. We also create a pointer dubbed
+>> 'first' to the entry 1 in the default list (step 1):
+>> prev_rules -------------
+>>                        \/
+>> ima_rules --> List entry 0 (head node) = ima_default_rules <-> List entry 1 <-> List entry 2 <-> ... <-> List entry 0
+>>                                                                    /\
+>> first --------------------------------------------------------------
+>>
+>>
+>> Then we update prev_rules->next to point to policy->next (step 2):
+>> List entry 1 <-> List entry 2 <-> ... -> List entry 0
+>>  /\
+>> first
+>> 	(notice that list entry 0 no longer points backwards to 'list entry 1',
+>> 	but I don't think there is any reverse iteration in IMA, so it should be
+>> 	safe)
+>>
+>> prev_rules -------------
+>>                        \/
+>> ima_rules --> List entry 0 (head node) = ima_default_rules   
+>>                        |
+>>                        |
+>>                        -------------------------------------------
+>>                                                                  \/
+>> policy --> policy entry 0' (head node) = ima_policy_rules <-> policy entry 1' <-> policy entry 2' <-> .... <-> policy entry 0'
+>>
+>>
+>> We then update ima_rules to point to ima_policy_rules (step 3):
+>> List entry 1 <-> List entry 2 <-> ... -> List entry 0
+>>  /\
+>> first
+>>
+>> prev_rules -------------
+>>                        \/
+>> ima_rules     List entry 0 (head node) = ima_default_rules   
+>>      |                 |
+>>      |                 |
+>>      |                 ------------------------------------------
+>>      ---------------                                            |
+>>                    \/                                           \/
+>> policy --> policy entry 0' (head node) = ima_policy_rules <-> policy entry 1' <-> policy entry 2' <-> .... <-> policy entry 0'
+>>                                                   synchronize_rcu                 /\
+>> first --------------------------------------------------------------
+>>
+>> Then we run synchronize_rcu() to wait for any RCU reader to exit their loops (step 4).
+>>
+>> Finally we update prev_rules->next to point back to the ima policy and fix the loop (step 5):
+>>
+>> List entry 1 <-> List entry 2 <-> ... -> List entry 0
+>>  /\
+>> first
+>>
+>> prev_rules ---> List entry 0 (head node) = ima_default_rules <-> List entry 1 <-> List entry 2 <-> ... <-> List entry 0
+>>                                                                      /\
+>>                                                                  first (now useless)
+>> ima_rules        
+>>      |
+>>      |
+>>      |
+>>      ---------------
+>>                    \/
+>> policy --> policy entry 0' (head node) = ima_policy_rules <-> policy entry 1' <-> policy entry 2' <-> .... <-> policy entry 0'
+>>
+>> The goal is that readers should still be able to loop
+>> (forward, as we saw that backward looping is temporarily broken)
+>> while in steps 0-4.
+>>
+>> I'm not completely sure what would happen to a client that started iterating
+>> over ima_rules right after step 2.
+>>
+>> Wouldn't they be able to start looping through the new policy
+>> as 'List entry 0 (head node) = ima_default_rules' points to ima_policy_rules?
+>> And if they, wouldn't they loop until the write to 'ima_rule' at step 3 (admittedly
+>> very shortly thereafter) completed?
+>> And would the compiler be allowed to optimize the read to 'ima_rules' in the
+>> list_for_each_entry() loop, thereby never reloading the new value for
+>> 'ima_rules', and thus looping forever, just what we are trying to avoid?
+>>
+>> Overall, I'm tempted to say this is perhaps a bit too complex (at least,
+>> my head tells me it is, but that may very well be because I'm terrible
+>> at concurrency issues).
+>>
+>> Honestly, in this case I think awaiting input from more experienced
+>> kernel devs than I is the best path forward :-)
+> I'm far from an expert on RCU locking, but __list_splice_init_rcu()
+> provides an example of how to make sure there aren't any readers
+> traversing the list, before two lists are spliced together.   In our
+> case, after there aren't any readers, instead of splicing two lists
+> together, it should be safe to point to the new list.
+>
+> thanks,
+>
+> Mimi
+>
