@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92093C4338F
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 07:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E79C4320A
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 08:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0CE6135E
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 07:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6DA361378
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 08:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235190AbhHWHwk (ORCPT
+        id S235524AbhHWIHr (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Aug 2021 03:52:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50064 "EHLO
+        Mon, 23 Aug 2021 04:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235115AbhHWHwj (ORCPT
+        with ESMTP id S235382AbhHWIHo (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Aug 2021 03:52:39 -0400
+        Mon, 23 Aug 2021 04:07:44 -0400
 Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6C45CC061575;
-        Mon, 23 Aug 2021 00:51:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9FB54C061756;
+        Mon, 23 Aug 2021 01:07:01 -0700 (PDT)
 Received: from localhost (unknown [127.0.0.1])
-        by ha0.nfschina.com (Postfix) with ESMTP id 0D4A5AE0DBF;
-        Mon, 23 Aug 2021 15:51:40 +0800 (CST)
+        by ha0.nfschina.com (Postfix) with ESMTP id 68F21AE0DBF;
+        Mon, 23 Aug 2021 16:06:44 +0800 (CST)
 X-Virus-Scanned: amavisd-new at test.com
 Received: from ha0.nfschina.com ([127.0.0.1])
         by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zhEQyB8ywpuh; Mon, 23 Aug 2021 15:51:20 +0800 (CST)
+        with ESMTP id CqDcqiuiH_Vo; Mon, 23 Aug 2021 16:06:24 +0800 (CST)
 Received: from [172.30.18.174] (unknown [180.167.10.98])
         (Authenticated sender: liqiong@nfschina.com)
-        by ha0.nfschina.com (Postfix) with ESMTPA id 8AF07AE0DA2;
-        Mon, 23 Aug 2021 15:51:19 +0800 (CST)
+        by ha0.nfschina.com (Postfix) with ESMTPA id 33F56AE0DA2;
+        Mon, 23 Aug 2021 16:06:24 +0800 (CST)
 Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
  function.
-From:   =?UTF-8?B?5p2O5Yqb55C8?= <liqiong@nfschina.com>
+From:   liqiong <liqiong@nfschina.com>
 To:     Mimi Zohar <zohar@linux.ibm.com>,
         THOBY Simon <Simon.THOBY@viveris.fr>
 Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
@@ -53,8 +53,8 @@ References: <20210819101529.28001-1-liqiong@nfschina.com>
  <1f631c3d-5dce-e477-bfb3-05aa38836442@viveris.fr>
  <96037695de6125c701889c168550def278adfd4b.camel@linux.ibm.com>
  <f9798484-7090-0ddf-50a6-7c7c5bf0606c@nfschina.com>
-Message-ID: <0b0ca83f-9c5b-e4b0-f2c2-b389053479c7@nfschina.com>
-Date:   Mon, 23 Aug 2021 15:51:35 +0800
+Message-ID: <fee498ec-087c-b52d-102c-d29d98f9b794@nfschina.com>
+Date:   Mon, 23 Aug 2021 16:06:40 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
@@ -67,7 +67,21 @@ List-ID: <linux-security-module.vger.kernel.org>
 
 Hi Simon :
 
-Using a temporary ima_rules variable is not working for "ima_policy_next". void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos) { struct ima_rule_entry *entry = v; + struct list_head *ima_rules_tmp = rcu_dereference(ima_rules); rcu_read_lock(); entry = list_entry_rcu(entry->list.next, struct ima_rule_entry, list); rcu_read_unlock(); (*pos)++; - return (&entry->list == ima_rules) ? NULL : entry; + return (&entry->list == ima_rules_tmp) ? NULL : entry; }
+Using a temporary ima_rules variable is not working for "ima_policy_next". 
+
+ void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos)
+ {
+ 	struct ima_rule_entry *entry = v;
+-
++	struct list_head *ima_rules_tmp = rcu_dereference(ima_rules);
+ 	rcu_read_lock();
+ 	entry = list_entry_rcu(entry->list.next, struct ima_rule_entry, list);
+ 	rcu_read_unlock();
+ 	(*pos)++;
+ 
+-	return (&entry->list == ima_rules) ? NULL : entry;
++	return (&entry->list == ima_rules_tmp) ? NULL : entry;
+ }
 
 It seems no way to fix "ima_rules" change within this function, it will alway
 return a entry if "ima_rules" being changed.
@@ -75,6 +89,8 @@ return a entry if "ima_rules" being changed.
 Regrads,
 
 liqiong
+
+
 
 在 2021年08月23日 11:04, 李力琼 写道:
 > Hi Mimi :
