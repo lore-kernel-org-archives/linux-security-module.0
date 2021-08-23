@@ -6,128 +6,176 @@ X-Spam-Status: No, score=-7.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43472C4320E
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 12:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E7FC4338F
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 13:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26EA4613B3
-	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 12:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AA736137B
+	for <linux-security-module@archiver.kernel.org>; Mon, 23 Aug 2021 13:29:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236104AbhHWM5y (ORCPT
+        id S233737AbhHWNaO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 23 Aug 2021 08:57:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37126 "EHLO
+        Mon, 23 Aug 2021 09:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232574AbhHWM5y (ORCPT
+        with ESMTP id S230009AbhHWNaO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 23 Aug 2021 08:57:54 -0400
-Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D5B57C061575;
-        Mon, 23 Aug 2021 05:57:11 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by ha0.nfschina.com (Postfix) with ESMTP id B9F30AE0DA2;
-        Mon, 23 Aug 2021 20:56:51 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from ha0.nfschina.com ([127.0.0.1])
-        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id TjcJYbOzOmnU; Mon, 23 Aug 2021 20:56:33 +0800 (CST)
-Received: from [172.30.18.174] (unknown [180.167.10.98])
-        (Authenticated sender: liqiong@nfschina.com)
-        by ha0.nfschina.com (Postfix) with ESMTPA id B7245AE0DBF;
-        Mon, 23 Aug 2021 20:56:32 +0800 (CST)
-Subject: Re: [PATCH] ima: fix infinite loop within "ima_match_policy"
- function.
-To:     THOBY Simon <Simon.THOBY@viveris.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20210819101529.28001-1-liqiong@nfschina.com>
- <8d17f252-4a93-f430-3f25-e75556ab01e8@viveris.fr>
- <d385686b-ffa5-5794-2cf2-b87f2a471e78@nfschina.com>
- <1f631c3d-5dce-e477-bfb3-05aa38836442@viveris.fr>
- <96037695de6125c701889c168550def278adfd4b.camel@linux.ibm.com>
- <f9798484-7090-0ddf-50a6-7c7c5bf0606c@nfschina.com>
- <fee498ec-087c-b52d-102c-d29d98f9b794@nfschina.com>
- <cf715a40-b255-c688-578c-7f8bcd004ee3@viveris.fr>
-From:   liqiong <liqiong@nfschina.com>
-Message-ID: <0a30bfdf-4f51-fd2a-d32c-bb9f8c2de72c@nfschina.com>
-Date:   Mon, 23 Aug 2021 20:56:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 23 Aug 2021 09:30:14 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95382C061575
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Aug 2021 06:29:31 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[127.0.0.1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1mIA0k-00069J-F0; Mon, 23 Aug 2021 15:29:10 +0200
+Subject: Re: [PATCH 0/4] KEYS: trusted: Introduce support for NXP CAAM-based
+ trusted keys
+To:     Tim Harvey <tharvey@gateworks.com>
+Cc:     David Gstir <david@sigma-star.at>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Jan Luebbe <j.luebbe@pengutronix.de>, keyrings@vger.kernel.org,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        linux-security-module@vger.kernel.org,
+        Udit Agarwal <udit.agarwal@nxp.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
+        Richard Weinberger <richard@nod.at>,
+        James Morris <jmorris@namei.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        David Howells <dhowells@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        linux-crypto@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        linux-integrity@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+References: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de>
+ <CAJ+vNU23cXPmiqKcKH_WAgD-ea+=pEJzGK+q7zOy=v2o0XU7kA@mail.gmail.com>
+ <2b48a848-d70b-9c43-5ca0-9ab72622ed12@pengutronix.de>
+ <CAJ+vNU225mgHHg00r67f1L6bEub+_h55hCBAMhCq2rd8kWU-qg@mail.gmail.com>
+ <9200d46d-94a2-befd-e9b0-93036e56eb8a@pengutronix.de>
+ <CAJ+vNU19z0syr0oHOrSGxL0cVW+Kjv76kmp6uvGc2akHbtX0Nw@mail.gmail.com>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <fa530833-2bb9-f8f3-68c6-99423d29e2ca@pengutronix.de>
+Date:   Mon, 23 Aug 2021 15:29:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-In-Reply-To: <cf715a40-b255-c688-578c-7f8bcd004ee3@viveris.fr>
+In-Reply-To: <CAJ+vNU19z0syr0oHOrSGxL0cVW+Kjv76kmp6uvGc2akHbtX0Nw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Simon :
+Hello Tim,
 
-在 2021年08月23日 16:14, THOBY Simon 写道:
-> Hi Liqiong,
->
-> On 8/23/21 10:06 AM, liqiong wrote:
->> Hi Simon :
+On 20.08.21 23:19, Tim Harvey wrote:
+> On Fri, Aug 20, 2021 at 1:36 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
 >>
->> Using a temporary ima_rules variable is not working for "ima_policy_next". 
+>> On 20.08.21 22:20, Tim Harvey wrote:
+>>> On Fri, Aug 20, 2021 at 9:20 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
+>>>> On 20.08.21 17:39, Tim Harvey wrote:
+>>>>> Thanks for your work!
+>>>>>
+>>>>> I've been asked to integrate the capability of using CAAM to
+>>>>> blob/deblob data to an older 5.4 kernel such as NXP's downstream
+>>>>> vendor kernel does [1] and I'm trying to understand how your series
+>>>>> works. I'm not at all familiar with the Linux Key Management API's or
+>>>>> trusted keys. Can you provide an example of how this can be used for
+>>>>> such a thing?
+>>>>
+>>>> Here's an example with dm-crypt:
+>>>>
+>>>>   https://lore.kernel.org/linux-integrity/5d44e50e-4309-830b-79f6-f5d888b1ef69@pengutronix.de/
+>>>>
+>>>> dm-crypt is a bit special at the moment, because it has direct support for
+>>>> trusted keys. For interfacing with other parts of the kernel like ecryptfs
+>>>> or EVM, you have to create encrypted keys rooted to the trusted keys and use
+>>>> those. The kernel documentation has an example:
+>>>>
+>>>>   https://www.kernel.org/doc/html/v5.13/security/keys/trusted-encrypted.html
+>>>>
+>>>> If you backport this series, you can include the typo fix spotted by David.
+>>>>
+>>>> I'll send out a revised series, but given that a regression fix I want to
+>>>> rebase on hasn't been picked up for 3 weeks now, I am not in a hurry.
+>>>>
+>>> Thanks for the reference.
+>>>
+>>> I'm still trying to understand the keyctl integration with caam. For
+>>> the 'data' param to keyctl you are using tings like 'new <len>' and
+>>> 'load <data>'. Where are these 'commands' identified?
 >>
->>  void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos)
->>  {
->>  	struct ima_rule_entry *entry = v;
->> -
->> +	struct list_head *ima_rules_tmp = rcu_dereference(ima_rules);
->>  	rcu_read_lock();
->>  	entry = list_entry_rcu(entry->list.next, struct ima_rule_entry, list);
->>  	rcu_read_unlock();
->>  	(*pos)++;
->>  
->> -	return (&entry->list == ima_rules) ? NULL : entry;
->> +	return (&entry->list == ima_rules_tmp) ? NULL : entry;
->>  }
+>> Search for match_table_t in security/keys/trusted-keys/trusted_core.c
 >>
->> It seems no way to fix "ima_rules" change within this function, it will alway
->> return a entry if "ima_rules" being changed.
-> - I think rcu_dereference() should be called inside the RCU read lock
-> - Maybe we could cheat with:
-> 	return (&entry->list == &ima_policy_rules || &entry->list == &ima_default_rules) ? NULL : entry;
->   as that's the only two rulesets IMA ever use?
->   Admittedly, this is not as clean as previously, but it should work too.
->
-> The way I see it, the semaphore solution would not work here either,
-> as ima_policy_next() is called repeatedly as a seq_file
-> (it is set up in ima_fs.c) and we can't control the locking there:
-> we cannot lock across the seq_read() call (that cure could end up be
-> worse than the disease, deadlock-wise), so I fear we cannot protect
-> against a list update while a user is iterating with a lock.
->
-> So in both cases a cheat like "&entry->list == &ima_policy_rules || &entry->list == &ima_default_rules"
-> maybe need to be considered.
->
-> What do you think?
-
-Yes,  semaphore solution not work here,  splicing two list is a little complex.
-This solution is  simple and clear,  should  work.  I will work on that, test and 
-confirm  the patch. 
-
-"rcu_dereference() should be called inside the RCU read lock", I will correct this.
-
-Thanks for your help.
-
-
-Regrads,
-
-liqiong
-
->
->
->> Regrads,
+>>> I may still be missing something. I'm using 4.14-rc6 with your series
+>>> and seeing the following:
 >>
->> liqiong
-> Thanks,
-> Simon
+>> That's an odd version to backport stuff to..
+>>
+>>> # cat /proc/cmdline
+>>> trusted.source=caam
+>>> # keyctl add trusted mykey 'new 32' @s)# create new trusted key named
+>>> 'mykey' of 32 bytes in the session keyring
+>>> 480104283
+>>> # keyctl print 480104283 # dump the key
+>>> keyctl_read_alloc: Unknown error 126
+>>> ^^^ not clear what this is
+>>
+>> Not sure what returns -ENOKEY for you. I haven't been using trusted
+>> keys on v4.14, but you can try tracing the keyctl syscall.
+> 
+> yikes... that would be painful. I typo'd and meant 5.14-rc6 :) 
 
+^^
+
+> I'm working with mainline first to make sure I understand everything. If I
+> backport this it would be to 5.4 but that looks to be extremely
+> painful. It looks like there was a lot of activity around trusted keys
+> in 5.13.
+
+Ye. It used to be limited to TPM before that.
+
+> It works for a user keyring but not a session keyring... does that
+> explain anything?
+> # keyctl add trusted mykey 'new 32' @u
+> 941210782
+> # keyctl print 941210782
+> 83b7845cb45216496aead9ee2c6a406f587d64aad47bddc539d8947a247e618798d9306b36398b5dc2722a4c3f220a3a763ee175f6bd64758fdd49ca4db597e8ce328121b60edbba9b8d8d55056be896
+> # keyctl add trusted mykey 'new 32' @s
+> 310571960
+> # keyctl print 310571960
+> keyctl_read_alloc: Unknown error 126
+
+Both sequences work for me.
+
+My getty is started by systemd. I think systemd allocates a new session
+keyring for the getty that's inherited by the shell and the commands I run
+it in. If you don't do that, each command will get its own session key.
+ 
+> Sorry, I'm still trying to wrap my head around the differences in
+> keyrings and trusted vs user keys.
+
+No problem. HTH.
+
+Cheers,
+Ahmad
+
+> 
+> Tim
+> 
+
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
