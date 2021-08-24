@@ -2,80 +2,139 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFF3C432BE
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 09:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F46C4338F
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 09:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83752613A7
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 09:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7127A613A7
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 09:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235702AbhHXJZq (ORCPT
+        id S235604AbhHXJcM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Aug 2021 05:25:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235573AbhHXJZq (ORCPT
+        Tue, 24 Aug 2021 05:32:12 -0400
+Received: from condef-10.nifty.com ([202.248.20.75]:53812 "EHLO
+        condef-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235566AbhHXJcL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Aug 2021 05:25:46 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 243AEC061757;
-        Tue, 24 Aug 2021 02:25:02 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id i28so44100263lfl.2;
-        Tue, 24 Aug 2021 02:25:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=nwu918g+3reOoNHiDGpGGM+XCkkFZ7Cu/Ig0jIItvfw=;
-        b=Lr57Wy2KJTgCUeRM4bHwFMu7Ke8etSHc1lk02RrvSjf2U4InVLDe1sxJq78eO6Vdtd
-         ar34gui90itB4or/q84N5dcmhUfuNSw45RNOfj9LK8YnroKtieyeRYKX1N+MOx+6/PkE
-         uD/r/2FYFzB+gl+zAePH6ZzYeslStzjKQgyj6DCqifnxRL3Q2MHYd5zavy9Y6BxsMocZ
-         cv4B4EWw1nAnN6MLJwUP1bZ0WGUZp1ObAsSwmCkehP2dIg4Dazg6sXZMvNNcNA75/kvE
-         qu88iOhxLDE0cYDQ28oDViBp/DzvXvu1Jum5HNgy4FJQMksuFDSwMGmtVW2DWPKoDkFR
-         M1GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=nwu918g+3reOoNHiDGpGGM+XCkkFZ7Cu/Ig0jIItvfw=;
-        b=ks3mPfqsbwrBFjDZDszvOoKNPboxHlsiTMiA2db8CVD4t51ORxbefKpt+g5fTm59Ld
-         ++WietcwOad/5XJpgWCDkc8YpS6842fyrj0e4UlbtXBhRMwnanD8Xwatu+dvbVm7nrdf
-         fyM7LJwfdppms3mUeK1lEdqm2vdut+5nJLjFtWbdoGqU0ZD+YZ7k504Hnq8jsBONp9xU
-         RLk9rn/Ec0BPwqnECnp9mbD/x1+Gj+GhcPFD/QuYjdEgphAZlg9gMK2jsot/pLXYp5vS
-         eIyhwYULRGKF+PZAoNQ7SK78Aez5CTGCghgqbIl5Qid/EbUwxVBPW8XtlMTU+kXJzRsX
-         B3eQ==
-X-Gm-Message-State: AOAM5305dtdoYKk+y7kQpmnROxTnL9nlBWNFC7L4+0pBGfA/B1dv2y1l
-        uRC4rOjImDdm1m7XLWKq459BUglULwafcNGipAqxGJTvIeqFIQ==
-X-Google-Smtp-Source: ABdhPJzzel5RtGt0KjjRIGwGCq9I37ekbVhe3jegqxiKeo/+kCjRwrES3uP7IzflYkE0SJf9fuWwpbtzTtZaGucKiP4=
-X-Received: by 2002:a05:6512:1041:: with SMTP id c1mr28272075lfb.277.1629797100498;
- Tue, 24 Aug 2021 02:25:00 -0700 (PDT)
+        Tue, 24 Aug 2021 05:32:11 -0400
+Received: from conssluserg-05.nifty.com ([10.126.8.84])by condef-10.nifty.com with ESMTP id 17O9S3IG009642;
+        Tue, 24 Aug 2021 18:28:03 +0900
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id 17O9ReOO014183;
+        Tue, 24 Aug 2021 18:27:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com 17O9ReOO014183
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1629797261;
+        bh=U+ETojJLC46giLV0nmFB3HMfhm00P2uQEj6O7D2QdBQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=LX8dlc4V1V68ls3dBTGJ4wO/Sez/ReNhciPSQ4lZWQ8oxxcNUpDLIo7s37Kj5WMdn
+         jO3+uhXo0lc1d2rlSKkLZlB1gUyXAqHBpzxAaOv43LvIz4E8nBVQ2WkTIe0CKByeO9
+         scrXPIGG9zTWXTwSVdBUNt0qcoR4hgfgicIwSiEpprcLEAJSv7HJO+Hvxb+Wko1M91
+         gQPADHucP6kGL+lvTrR+oYFGoNLyQQy1HVM1FaEc81EzliCanhrrrohj4W7OwOveEh
+         NlPKcIeMcHX/vTsxwGZUpyvBove6xmssFJCroHkQjWjF1Qdrb9Hp1hcV5msK2RMAgw
+         dwvm1fPJaLYTQ==
+X-Nifty-SrcIP: [209.85.215.181]
+Received: by mail-pg1-f181.google.com with SMTP id r2so19209514pgl.10;
+        Tue, 24 Aug 2021 02:27:40 -0700 (PDT)
+X-Gm-Message-State: AOAM530uU8avtLPCqgC3QE/VgV+LDqLcgKCaVi/so8K+ph/lxn01qQJQ
+        X132Acb6LJeSsbWZmk+CxjvsLFvtZN4YzEeEULY=
+X-Google-Smtp-Source: ABdhPJxfShD1P0kCObeK6dJf5CZ3KcyG1O2nFtAivI0lNRJ/uey7BF+d+YEH+hMIPYM+yGSuVGc/qhLx0NySiCPwzSs=
+X-Received: by 2002:aa7:94ac:0:b0:3e0:f21a:e6ff with SMTP id
+ a12-20020aa794ac000000b003e0f21ae6ffmr37132148pfl.76.1629797260039; Tue, 24
+ Aug 2021 02:27:40 -0700 (PDT)
 MIME-Version: 1.0
-From:   Igor Zhbanov <izh1979@gmail.com>
-Date:   Tue, 24 Aug 2021 12:25:00 +0300
-Message-ID: <CAEUiM9O45SB1WM=L7XuMYQv0q8-Yq9hK_Sqc-4aC9TkXr6-hUw@mail.gmail.com>
-Subject: Writes to /proc/self/mem and file_mprotect() LSM hook
-To:     linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>
+References: <20210528180140.176257-1-masahiroy@kernel.org> <CAK7LNAQ5x55oCYRQbbC6fCE6qP5cp1Jdw+9SH-BNFuN=bqntFw@mail.gmail.com>
+In-Reply-To: <CAK7LNAQ5x55oCYRQbbC6fCE6qP5cp1Jdw+9SH-BNFuN=bqntFw@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 24 Aug 2021 18:27:03 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR3NR=u7D0qPVeLUSEiStDvbVUdj4VnFBJ_wHo1UMmcOg@mail.gmail.com>
+Message-ID: <CAK7LNAR3NR=u7D0qPVeLUSEiStDvbVUdj4VnFBJ_wHo1UMmcOg@mail.gmail.com>
+Subject: Re: [PATCH] security: remove unneeded subdir-$(CONFIG_...)
+To:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <kafai@fb.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf <bpf@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello,
+On Sat, Jul 31, 2021 at 3:02 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Sat, May 29, 2021 at 3:02 AM Masahiro Yamada <masahiroy@kernel.org> wrote:
+> >
+> > All of these are unneeded. The directories to descend are specified
+> > by obj-$(CONFIG_...).
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+>
+> Ping?
+>
 
-There are several ways to write data to write-protected page. For example,
-a process can write to /proc/self/mem to change read-only or even executable
-pages: https://offlinemark.com/2021/05/12/an-obscure-quirk-of-proc/
 
-In this case, the kernel code will map the physical page with another access
-mode and change the data (FOLL_FORCE flag will ignore the access check). The
-problem is that no security hooks are called in this case. For example, the
-file_mprotect() LSM hook was designed to intercept process' attempts to
-remap memory pages. Particularly SELinux and IMA controlling, if a process
-is trying to make a code page writable. And this method allows to bypass it.
 
-Therefore, my question is, should all page modifications that ignores the
-protection mode call LSM hook prior to temporarily remapping the page?
+Applied to linux-kbuild.
 
-Thanks.
+
+
+
+>
+>
+> > ---
+> >
+> >  security/Makefile | 11 -----------
+> >  1 file changed, 11 deletions(-)
+> >
+> > diff --git a/security/Makefile b/security/Makefile
+> > index 47e432900e24..18121f8f85cd 100644
+> > --- a/security/Makefile
+> > +++ b/security/Makefile
+> > @@ -4,16 +4,6 @@
+> >  #
+> >
+> >  obj-$(CONFIG_KEYS)                     += keys/
+> > -subdir-$(CONFIG_SECURITY_SELINUX)      += selinux
+> > -subdir-$(CONFIG_SECURITY_SMACK)                += smack
+> > -subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
+> > -subdir-$(CONFIG_SECURITY_APPARMOR)     += apparmor
+> > -subdir-$(CONFIG_SECURITY_YAMA)         += yama
+> > -subdir-$(CONFIG_SECURITY_LOADPIN)      += loadpin
+> > -subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
+> > -subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown
+> > -subdir-$(CONFIG_BPF_LSM)               += bpf
+> > -subdir-$(CONFIG_SECURITY_LANDLOCK)     += landlock
+> >
+> >  # always enable default capabilities
+> >  obj-y                                  += commoncap.o
+> > @@ -36,5 +26,4 @@ obj-$(CONFIG_BPF_LSM)                 += bpf/
+> >  obj-$(CONFIG_SECURITY_LANDLOCK)                += landlock/
+> >
+> >  # Object integrity file lists
+> > -subdir-$(CONFIG_INTEGRITY)             += integrity
+> >  obj-$(CONFIG_INTEGRITY)                        += integrity/
+> > --
+> > 2.27.0
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
