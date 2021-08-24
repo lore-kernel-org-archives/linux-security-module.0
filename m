@@ -2,136 +2,155 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94FCC4320E
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 14:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC9CC4320A
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 14:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B9D016127B
-	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 14:37:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E3861214
+	for <linux-security-module@archiver.kernel.org>; Tue, 24 Aug 2021 14:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237854AbhHXOiN (ORCPT
+        id S238053AbhHXOqN (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 24 Aug 2021 10:38:13 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:15730 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S237852AbhHXOiN (ORCPT
+        Tue, 24 Aug 2021 10:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53326 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238048AbhHXOqM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 24 Aug 2021 10:38:13 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17OEaQIV088398;
-        Tue, 24 Aug 2021 10:36:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=LscKHOmM4JXne0ldvl9TPd0dEiLHWZoKTEFyx0n/fFk=;
- b=Vt5FXLCTugPQWD9ChXt6LeboeDn2bqF/B+EuObl75hT2ljdFNqWEsUFjOmtuB8AepbA+
- wEmjaN2um8Z3RUgkRk79Dw5yXtfG+tIi1iybUnxkF7RM6Wn0MndCrVzC2LbYmNROndA+
- ZPb78OhAPtzrKssNQsfxKAjv0LFjnl/yN/dBNkmMuatOobejo6zAGalji0x+LG64+UfF
- JrxLeF8lk1Z7qs93J0nerCmF4Aak8+qohTz4jwMakuQ/zTU1eEuncTSctRAmzITG9bIT
- TFNgWJOKfqEltaEye4oRFsDHx4uY6TSOJX7lEmFHzHjeShMEVDr6r97FKW0LtlCr+6ZD QA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3amv09beb3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Aug 2021 10:36:43 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17OEacmN089288;
-        Tue, 24 Aug 2021 10:36:43 -0400
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3amv09bdt3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Aug 2021 10:36:43 -0400
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17OEXVaS004979;
-        Tue, 24 Aug 2021 14:34:18 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma04ams.nl.ibm.com with ESMTP id 3ajs48wbvr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 24 Aug 2021 14:34:17 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17OEYFQc54133198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 24 Aug 2021 14:34:15 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6709F42041;
-        Tue, 24 Aug 2021 14:34:15 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 622124204C;
-        Tue, 24 Aug 2021 14:34:10 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.88.64])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 24 Aug 2021 14:34:10 +0000 (GMT)
-Message-ID: <9526a4e0be9579a9e52064dd590a78c6496ee025.camel@linux.ibm.com>
-Subject: Re: [PATCH v4 00/12] Enroll kernel keys thru MOK
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Nayna <nayna@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        pjones@redhat.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        Patrick Uiterwijk <patrick@puiterwijk.org>
-Date:   Tue, 24 Aug 2021 10:34:09 -0400
-In-Reply-To: <bffb33a3-d5b5-f376-9d7d-706d38357d1a@linux.vnet.ibm.com>
-References: <20210819002109.534600-1-eric.snowberg@oracle.com>
-         <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
-         <f76fcf41728fbdd65f2b3464df0821f248b2cba0.camel@linux.ibm.com>
-         <91B1FE51-C6FC-4ADF-B05A-B1E59E20132E@oracle.com>
-         <e7e251000432cf7c475e19c56b0f438b92fec16e.camel@linux.ibm.com>
-         <cedc77fefdf22b2cec086f3e0dd9cc698db9bca2.camel@kernel.org>
-         <bffb33a3-d5b5-f376-9d7d-706d38357d1a@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: r_swUgDIao0jShx0mbE5bkkPhHhggCoq
-X-Proofpoint-GUID: SQpjP5z9YPQ9zB2BIjFB6bvDvc41h9gG
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-08-24_05:2021-08-24,2021-08-24 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 mlxlogscore=999 mlxscore=0 phishscore=0 clxscore=1015
- suspectscore=0 bulkscore=0 spamscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2107140000 definitions=main-2108240094
+        Tue, 24 Aug 2021 10:46:12 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18734C061764
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Aug 2021 07:45:28 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id q17so10210451edv.2
+        for <linux-security-module@vger.kernel.org>; Tue, 24 Aug 2021 07:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NGYM+nSaUU+WoSwLMVnhosx4OKbywoUeevoN8omCjXI=;
+        b=BxvjgvjbNilMABkl9WxzYlGQBlwXr04YXhsknOLaZtW6pJJWKhlCcsrKeXlX6fSSJA
+         HmnzGLbBoN/mUhddbrF9ZyTKg3IIvRk/dM48HAHMvuubC6hYB6ZCivpS6gg8ZGbfmJzH
+         kkv+V+3OZFj+AaKbrw5eJlufVExXMoBcfsf0TD/f6SZjjStYa2l5HQM2kkNcjOwb+Ydu
+         vTBYWEtk2e2lsVq33id7zV8IYdrMZmAFtz3fokDHsvA5l/0PnXgHfhPD2TAqCYukDr0k
+         1LDUhlyIjBfvrI8u8uHGVbj29n6den5MbS14s3q44VaQzjyR7HdfjkyYzwBJuiNtSA4R
+         vqHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NGYM+nSaUU+WoSwLMVnhosx4OKbywoUeevoN8omCjXI=;
+        b=ke4KoFcnh76zYCGZiKZd3ycTjQ3saRVj5Y4OLsX1AjYdaQi97VFRPj4o+UC1CjAvL1
+         /cEj42sa9W9DadrfnI4+UmNyDyk4YC+J59TA6Ow2jSOosBUnEYWe7yZWcHobsXNk0C5g
+         JGFWgVscJqFb5OGrXNZkxOWlpCQgk9rHnSm8CHExqMkiXcnu2F+TuoimK86pPhX31RcJ
+         NwtDA28ZSUBhxUDtvB6PnfsSluRqtRvg67P8/nAgrwUxafIaJYn06gTf5EOFzuZV1tcA
+         R3bhOjcbaTPMijgPFU+cqs9p/c+uLqwmGCozwsYl9Uf7lOYgFM4eqbIKv/v5x9/sMfa+
+         3Ngg==
+X-Gm-Message-State: AOAM530d7pvAsAGJCp7Nk3YMdcwMH9Gx56ZNJtCRH2QyqELh9JusaiCz
+        akvYFYzJ2FR2pCjWIWyLGQc9x/1fcYDjrrsCWcVh
+X-Google-Smtp-Source: ABdhPJzUQNFZ76OJidu5ZnOAPqidwPTAgucoSeldGoH3rBmrNnTDQK/YtmgsG9PpDDQGvmE36qPj2R6wKLqMgCCH3ZY=
+X-Received: by 2002:a05:6402:1246:: with SMTP id l6mr43168604edw.12.1629816326536;
+ Tue, 24 Aug 2021 07:45:26 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210722004758.12371-1-casey@schaufler-ca.com>
+ <20210722004758.12371-23-casey@schaufler-ca.com> <CAHC9VhTj2OJ7E6+iSBLNZaiPK-16UY0zSFJikpz+teef3JOosg@mail.gmail.com>
+ <ace9d273-3560-3631-33fa-7421a165b038@schaufler-ca.com> <CAHC9VhSSASAL1mVwDo1VS3HcEF7Yb3LTTaoajEtq1HsA-8R+xQ@mail.gmail.com>
+ <fba1a123-d6e5-dcb0-3d49-f60b26f65b29@schaufler-ca.com> <CAHC9VhQxG+LXxgtczhH=yVdeh9mTO+Xhe=TeQ4eihjtkQ2=3Fw@mail.gmail.com>
+ <3ebad75f-1887-bb31-db23-353bfc9c0b4a@schaufler-ca.com> <CAHC9VhQCN2_MsCoXfU7Z-syYHj2o8HaSECf5E62ZFcNZd9_4QA@mail.gmail.com>
+ <062ba5f9-e4e8-31f4-7815-826f44b35654@schaufler-ca.com> <CAHC9VhT=QL5pKekaPB-=LDzU3hck9nXDiL5n1-upSqPg3gq=7w@mail.gmail.com>
+ <f3137410-185a-3012-1e38-e05a175495cc@schaufler-ca.com> <6f219a4d-8686-e35a-6801-eb66f98c8032@schaufler-ca.com>
+ <CAHC9VhSsJoEc=EDkUCrHr5Uid9DhsoininpvPVt+Ab6RsqieOQ@mail.gmail.com>
+ <93d97b1e-d3ea-0fe0-f0c2-62db09d01889@schaufler-ca.com> <be20e3c8-a068-4aa2-be52-8601cf2d30a6@schaufler-ca.com>
+In-Reply-To: <be20e3c8-a068-4aa2-be52-8601cf2d30a6@schaufler-ca.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 24 Aug 2021 10:45:15 -0400
+Message-ID: <CAHC9VhT-MfsU-azbV4QQ-asQFqdCG8fAeB-BOV3MKAdtSOW8Nw@mail.gmail.com>
+Subject: Re: [PATCH v28 22/25] Audit: Add record for multiple process LSM attributes
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     casey.schaufler@intel.com, James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        Stephen Smalley <sds@tycho.nsa.gov>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On Fri, Aug 20, 2021 at 7:48 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > On 8/20/2021 12:06 PM, Paul Moore wrote:
+> >> Unless you explicitly enable audit on the kernel cmdline, e.g.
+> >> "audit=1", processes started before userspace enables audit will not
+> >> have a properly allocated audit_context; see the "if
+> >> (likely(!audit_ever_enabled))" check at the top of audit_alloc() for
+> >> the reason why.
+>
+> I found a hack-around that no one will like. I changed that check to be
+>
+> (likely(!audit_ever_enabled) && !lsm_multiple_contexts())
+>
+> It probably introduces a memory leak and/or performance degradation,
+> but it has the desired affect.
 
-> >> Jarkko, I think the emphasis should not be on "machine" from Machine
-> >> Owner Key (MOK), but on "owner".  Whereas Nayna is focusing more on the
-> >> "_ca" aspect of the name.   Perhaps consider naming it
-> >> "system_owner_ca" or something along those lines.
+I can't speak for everyone, but I know I don't like that as a solution
+;)  I imagine such a change would also draw the ire of the never-audit
+crowd and the distros themselves.  However, I understand the need to
+just get *something* in place so you can continue to test/develop;
+it's fine to keep that for now, but I'm going to be very disappointed
+if that line finds its way into the next posted patchset revision.
 
-> > What do you gain such overly long identifier? Makes no sense. What
-> > is "ca aspect of the name" anyway?
-> 
-> As I mentioned previously, the main usage of this new keyring is that it 
-> should contain only CA keys which can be later used to vouch for user 
-> keys loaded onto secondary or IMA keyring at runtime. Having ca in the 
-> name like .xxxx_ca, would make the keyring name self-describing. Since 
-> you preferred .system, we can call it .system_ca.
+I'm very much open to ideas but my gut feeling is that the end
+solution is going to be changes to audit_log_start() and
+audit_log_end().  In my mind the primary reason for this hunch is that
+support for multiple LSMs[*] needs to be transparent to the various
+callers in the kernel; this means the existing audit pattern of ...
 
-Sounds good to me.  Jarkko?
+  audit_log_start(...);
+  audit_log_format(...);
+  audit_log_end(...);
 
-thanks,
+... should be preserved and be unchanged from what it is now.  We've
+already talked in some general terms about what such changes might
+look like, but to summarize the previous discussions, I think we would
+need to think about the following things:
 
-Mimi
+* Adding a timestamp/serial field to the audit_buffer struct, it could
+even be in a union with the audit_context pointer as we would never
+need both at the same time: if the audit_context ptr is non-NULL you
+use that, otherwise you use the timestamp.  The audit_buffer timestamp
+would not eliminate the need for the timestamp info in the
+audit_context struct for what I hope are obvious reasons.
 
+* Additional logic in audit_log_end() to generate additional ancillary
+records for LSM labels.  This will likely mean storing the message
+"type" passed to audit_log_start() in the audit_record struct and
+using that information in audit_log_end() to decide if a LSM ancillary
+record is needed.  Logistically this would likely mean converting the
+existing audit_log_end() function into a static/private
+__audit_log_end() and converting audit_log_end() into something like
+this:
+
+  void audit_log_end(ab)
+  {
+    __audit_log_end(ab); // rm the ab cleanup from __audit_log_end
+    if (ab->anc_mlsm) {
+      // generate the multiple lsm record
+    }
+    audit_buffer_free(ab);
+  }
+
+* Something else that I'm surely forgetting :)
+
+At the end of all this we may find that the "local" audit_context
+concept is no longer needed.  It was originally created to deal with
+grouping ancillary records with non-syscall records into a single
+event; while what we are talking about above is different, I believe
+that our likely solution will also work to solve the original "local"
+audit_context use case as well.  We'll have to see how this goes.
+
+[*] I expect that the audit container ID work will have similar issues
+and need a similar solution, I'm surprised it hasn't come up yet.
+
+-- 
+paul moore
+www.paul-moore.com
