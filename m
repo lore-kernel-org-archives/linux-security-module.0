@@ -2,163 +2,175 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B59C432BE
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Aug 2021 09:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A9DCC4320A
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Aug 2021 11:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C14C6112D
-	for <linux-security-module@archiver.kernel.org>; Wed, 25 Aug 2021 09:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1594360F21
+	for <linux-security-module@archiver.kernel.org>; Wed, 25 Aug 2021 11:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239744AbhHYJj3 (ORCPT
+        id S239913AbhHYLqq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Aug 2021 05:39:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57596 "EHLO
+        Wed, 25 Aug 2021 07:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239954AbhHYJj1 (ORCPT
+        with ESMTP id S232199AbhHYLqq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Aug 2021 05:39:27 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D6BFC0612E7
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Aug 2021 02:38:41 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1mIpIL-0003oy-7B; Wed, 25 Aug 2021 11:34:05 +0200
-Subject: Re: [PATCH 0/4] KEYS: trusted: Introduce support for NXP CAAM-based
- trusted keys
-To:     Tim Harvey <tharvey@gateworks.com>
-Cc:     David Gstir <david@sigma-star.at>,
-        Aymen Sghaier <aymen.sghaier@nxp.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Jan Luebbe <j.luebbe@pengutronix.de>, keyrings@vger.kernel.org,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        linux-security-module@vger.kernel.org,
-        Udit Agarwal <udit.agarwal@nxp.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        =?UTF-8?Q?Horia_Geant=c4=83?= <horia.geanta@nxp.com>,
-        Richard Weinberger <richard@nod.at>,
-        James Morris <jmorris@namei.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        David Howells <dhowells@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        linux-crypto@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
-        linux-integrity@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-References: <cover.9fc9298fd9d63553491871d043a18affc2dbc8a8.1626885907.git-series.a.fatoum@pengutronix.de>
- <CAJ+vNU23cXPmiqKcKH_WAgD-ea+=pEJzGK+q7zOy=v2o0XU7kA@mail.gmail.com>
- <2b48a848-d70b-9c43-5ca0-9ab72622ed12@pengutronix.de>
- <CAJ+vNU225mgHHg00r67f1L6bEub+_h55hCBAMhCq2rd8kWU-qg@mail.gmail.com>
- <9200d46d-94a2-befd-e9b0-93036e56eb8a@pengutronix.de>
- <CAJ+vNU19z0syr0oHOrSGxL0cVW+Kjv76kmp6uvGc2akHbtX0Nw@mail.gmail.com>
- <fa530833-2bb9-f8f3-68c6-99423d29e2ca@pengutronix.de>
- <CAJ+vNU0iRTagc5_qvsG4jvt=B_wruj=1O2ZRixqWek8JTN=aeg@mail.gmail.com>
- <8b559c9c-a4c0-d335-5e54-40b9acc08707@pengutronix.de>
- <CAJ+vNU2q_KCi8nNv56s0ip7CZaAE=YgObwFUyzuGa_T1Ywp-wQ@mail.gmail.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <2b5b1722-7934-045e-1807-075278041ae7@pengutronix.de>
-Date:   Wed, 25 Aug 2021 11:34:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Wed, 25 Aug 2021 07:46:46 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E505BC061757;
+        Wed, 25 Aug 2021 04:45:58 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id 9AD0AAE0DC7;
+        Wed, 25 Aug 2021 19:45:17 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bZVhb-isVgmc; Wed, 25 Aug 2021 19:44:56 +0800 (CST)
+Received: from [172.30.18.174] (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id 6768FAE0D1B;
+        Wed, 25 Aug 2021 19:44:56 +0800 (CST)
+Subject: Re: [PATCH] ima: fix deadlock within RCU list of ima_rules
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+ <20210824085747.23604-1-liqiong@nfschina.com>
+ <e720e88e-ebfa-56df-6048-f2da0b8fa2a0@viveris.fr>
+ <3ba4da9d-fa7b-c486-0c48-67cee4d5de6d@nfschina.com>
+ <2c4f61ff68544b2627fc4a38ad1e4109184ec68a.camel@linux.ibm.com>
+ <d502623a-7a49-04f8-1672-6521ceef260b@nfschina.com>
+From:   liqiong <liqiong@nfschina.com>
+Message-ID: <5a032a1b-f763-a0e4-8ea2-803872bd7174@nfschina.com>
+Date:   Wed, 25 Aug 2021 19:45:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAJ+vNU2q_KCi8nNv56s0ip7CZaAE=YgObwFUyzuGa_T1Ywp-wQ@mail.gmail.com>
+In-Reply-To: <d502623a-7a49-04f8-1672-6521ceef260b@nfschina.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 24.08.21 17:23, Tim Harvey wrote:
-> On Tue, Aug 24, 2021 at 12:33 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->>
->> On 23.08.21 19:50, Tim Harvey wrote:
->>> On Mon, Aug 23, 2021 at 6:29 AM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->>>> On 20.08.21 23:19, Tim Harvey wrote:
->>>>> On Fri, Aug 20, 2021 at 1:36 PM Ahmad Fatoum <a.fatoum@pengutronix.de> wrote:
->>>>>> On 20.08.21 22:20, Tim Harvey wrote:
->>>>> It works for a user keyring but not a session keyring... does that
->>>>> explain anything?
->>>>> # keyctl add trusted mykey 'new 32' @u
->>>>> 941210782
->>>>> # keyctl print 941210782
->>>>> 83b7845cb45216496aead9ee2c6a406f587d64aad47bddc539d8947a247e618798d9306b36398b5dc2722a4c3f220a3a763ee175f6bd64758fdd49ca4db597e8ce328121b60edbba9b8d8d55056be896
->>>>> # keyctl add trusted mykey 'new 32' @s
->>>>> 310571960
->>>>> # keyctl print 310571960
->>>>> keyctl_read_alloc: Unknown error 126
->>>>
->>>> Both sequences work for me.
->>>>
->>>> My getty is started by systemd. I think systemd allocates a new session
->>>> keyring for the getty that's inherited by the shell and the commands I run
->>>> it in. If you don't do that, each command will get its own session key.
->>>>
->>>>> Sorry, I'm still trying to wrap my head around the differences in
->>>>> keyrings and trusted vs user keys.
->>>>
->>>> No problem. HTH.
+Hi Mimi,
+
+This copy may be better.
+
+
+subject: ima: fix deadlock when iterating over the init "ima_rules" list.
+
+
+
+When traversing back to head, the init "ima_rules" list can't exit
+iterating if "ima_rules" has been updated to "ima_policy_rules".
+It causes soft lockup and RCU stalls. So we can introduce a duplicate
+of "ima_rules" for each "ima_rules" list loop.
+
+Signed-off-by: liqiong <liqiong@nfschina.com>
+---
+ This problem can happen in practice: updating the IMA policy
+ in the boot process while systemd-services are being checked.
+
+ security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index fd5d46e511f1..e92b197bfd3c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+
+
+Regards,
+
+liqiong
+
+
+
+在 2021年08月25日 15:05, liqiong 写道:
+> Hi Mimi,
+>
+> Thanks for the advice，maybe i should trim the message,
+> here is a new copy:
+>
+>
+> subject: ima: fix deadlock when iterating over the init "ima_rules" list.
+>
+> The init "ima_rules" list can't traverse back to head, if "ima_rules"
+> is being updated to "ima_policy_rules". It causes soft lockup and RCU stalls.
+> So we can introduce a duplicate of "ima_rules" for each "ima_rules" list loop.
+>
+> Signed-off-by: liqiong <liqiong@nfschina.com>
+> ---
+>  This problem can happen in practice: updating the IMA policy
+>  in the boot process while systemd-services are being checked.
+>
+>  security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+>  1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+> index fd5d46e511f1..e92b197bfd3c 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+>
+>
+> Regards,
+>
+> liqiong
+>
+> 在 2021年08月24日 20:38, Mimi Zohar 写道:
+>> On Tue, 2021-08-24 at 20:09 +0800, liqiong wrote:
+>>> Hi Simon :
 >>>
->>> Ahmad,
+>>> ima: fix deadlock within RCU list of ima_rules.
 >>>
->>> Ok that explains it - my testing is using a very basic buildroot
->>> ramdisk rootfs. If I do a 'keyctl new_session' first I can use the
->>> system keyring fine as well.
+>> Before the following paragraph, an introductory sentence is needed. 
+>> Try adding a sentence to the affect that "ima_rules" initially points
+>> to the "ima_default_rules", but after loading a custom policy points to
+>> the "ima_policy_rules".   Then describe the bug at a high level,
+>> something like - transitioning to the "ima_policy_rules" isn't being
+>> done safely.
 >>
->> Great. Does this mean I can get your Tested-by: ? :)
+>> Followed by the details.
 >>
-> 
-> Absolutely,
-> 
-> For the series:
-> 
-> I tested this series on top of v5.14.rc-7 on a Gateworks
-> imx8mm-venice-gw73xx board with kernel param trusted.source=caam and
-> keyutils-1.6:
-> # keyctl new_session
-> 22544757
-> # keyctl add trusted mykey 'new 32' @s
-> 160701809
-> # keyctl print 160701809
-> 990e03aa4515aee420eede17e26a58d0c5568c8bd2c9c2ee2f22a0583181d20d4f65cf9cb1f944a3cc92c0e3184a44a29a7e511f0a55a6af11a70ac2b2924514002475e73ae09820042896b9ee00a5ec
-> 
-> Tested-By: Tim Harvey <tharvey@gateworks.com>
+>>> ima_match_policy() is looping on the policy ruleset while
+>>> ima_update_policy() updates the variable "ima_rules". This can
+>>> lead to a situation where ima_match_policy() can't exit the
+>>> 'list_for_each_entry_rcu' loop, causing RCU stalls
+>>> ("rcu_sched detected stall on CPU ...").
+>>>
+>>> This problem can happen in practice: updating the IMA policy
+>>> in the boot process while systemd-services are being checked.
+>>>
+>>> In addition to ima_match_policy(), other function with 
+>>> "list_for_each_entry_rcu" should happen too. Fix locking by 
+>>> introducing a duplicate of "ima_rules" for each 
+>>> "list_for_each_entry_rcu".
+>>>
+>>>
+>>> How about this commit message ?
+>>>
+>>> I have tested this patch in lab, we can reproduced this error case, 
+>>> have done reboot test many times. This patch should work. 
+>> The above comment doesn't belong in the commit message, but is a
+>> message to the reviewers/maintainers and goes after the patch
+>> descriptions three dashes line.
+>>
+>> thanks,
+>>
+>> Mimi
+>>
+>>
+>
 
-Thanks. I'll apply it to the whole series then.
-
-> One more question: I've got a user that wants to blob/deblob generic
-> data. They can use the caam_encap_blob/caam_decap_blob functions in
-> kernel code but could you give me a suggestion for how they could use
-> this in:
-> a) userspace code (using the keyctl syscall I assume)
-> b) userspace cmdline (via keyutils I assume)
-
-Trusted keys aren't disclosed to userspace in plain text, only in sealed
-form (bar vulnerabilities of course).
-
-Cheers,
-Ahmad
-
-> 
-> Many thanks,
-> 
-> Tim
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
