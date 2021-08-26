@@ -2,197 +2,105 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E749C43214
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 01:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A07C4320E
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 03:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D186610A7
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 01:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFAC4610D1
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 03:42:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235695AbhHZBff (ORCPT
+        id S235425AbhHZDnc (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Aug 2021 21:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52426 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235811AbhHZBfe (ORCPT
+        Wed, 25 Aug 2021 23:43:32 -0400
+Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:17988 "EHLO
+        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231720AbhHZDnc (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Aug 2021 21:35:34 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2481AC0613CF
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Aug 2021 18:34:48 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id x11so2624033ejv.0
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Aug 2021 18:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OdpPAw8AF8pl2PyKEL1hUSGpJT552rYtVLGch5FQNUg=;
-        b=s89enEjVtwLIczScDXvlL5in2XUoikWwI1bI+2XIGm2ig7sM5+jzPbFrXyNmfNdt2B
-         TDlubVQ+1eZq248F/C+SNj6f+K+RdXGRYLkkW5UKa6L2motdIlcnIwPZwir7Xi/cnEXH
-         XD0B8/HiUxBqhBHG2IY8riO83umDevioXM/2sMa2lTEKgVdF3YD0N9Tcz/70f50m1Coq
-         SQJ8qkY/a+ny0ogrYPNQKm7wO7kz1foyig/wKcNgz8MBzJjYWe9Z/YKJx9ausGyx+0Iw
-         aPO7Q9koxTNXa0W0ZJe7DARZulbU3i7KDNBRiWkzx777xyYYbk1YQlgkfNuV87hvcXeU
-         htBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OdpPAw8AF8pl2PyKEL1hUSGpJT552rYtVLGch5FQNUg=;
-        b=dmcQfrawryIUGGin6ehmFAL6SkNEmDRGNALzAsz2v+cBQogjpQh03507iOEn5SfBDO
-         RX9a54r3UxZY9MrRzYyMRwFLz1ptoq5NykCw4hTKzorp7TX8TIjMjSrjb8w92HSCpqiS
-         SeoLlu1ExjXY8V5oheN3n35Idqt/38tW596DQ48TycT6qf5WoGrY0inA5Wc6rkUkMfFv
-         9++yVCf1q/qll4i92DQbWSJWVvV/NM3bY/ZZ3t08Lm9wyyp+D5tCg3EfKMozyxA6J4Ub
-         C4JsgSHB5gPfFnHN1qSvtFvYFmFOePlFrYoS1O/8ErkuIkhna1e+JFAiywQLZz0EHbdw
-         xc7Q==
-X-Gm-Message-State: AOAM533rTYRFTkOC39SprxC7T4cBsiS5hVck+Fbel7n00E7qKdToZshU
-        9Y418HHZIgPYwPCPDdb1MYup5KCiTNszh6QnI86VZbzX8nBH
-X-Google-Smtp-Source: ABdhPJwkxAUzZb4BAOoTmtyvge3L60MS4GRf3O1WiYNyf8fZr3jqwYlcLQ7K6iZEQJc0kSAgJ9KIlKQXtyNl3hpd2NQ=
-X-Received: by 2002:a17:906:2cd6:: with SMTP id r22mr1559201ejr.398.1629941686387;
- Wed, 25 Aug 2021 18:34:46 -0700 (PDT)
+        Wed, 25 Aug 2021 23:43:32 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Um0c2GM_1629949362;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Um0c2GM_1629949362)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 26 Aug 2021 11:42:43 +0800
+To:     Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Subject: [PATCH] net: fix NULL pointer reference in cipso_v4_doi_free
+Message-ID: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
+Date:   Thu, 26 Aug 2021 11:42:42 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
-In-Reply-To: <20210826011639.GE490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 25 Aug 2021 21:34:35 -0400
-Message-ID: <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Wed, Aug 25, 2021 at 9:16 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> On 2021-08-24 16:57, Richard Guy Briggs wrote:
-> > On 2021-08-11 16:48, Paul Moore wrote:
-> > > Draft #2 of the patchset which brings auditing and proper LSM access
-> > > controls to the io_uring subsystem.  The original patchset was posted
-> > > in late May and can be found via lore using the link below:
-> > >
-> > > https://lore.kernel.org/linux-security-module/162163367115.8379.8459012634106035341.stgit@sifl/
-> > >
-> > > This draft should incorporate all of the feedback from the original
-> > > posting as well as a few smaller things I noticed while playing
-> > > further with the code.  The big change is of course the selective
-> > > auditing in the io_uring op servicing, but that has already been
-> > > discussed quite a bit in the original thread so I won't go into
-> > > detail here; the important part is that we found a way to move
-> > > forward and this draft captures that.  For those of you looking to
-> > > play with these patches, they are based on Linus' v5.14-rc5 tag and
-> > > on my test system they boot and appear to function without problem;
-> > > they pass the selinux-testsuite and audit-testsuite and I have not
-> > > noticed any regressions in the normal use of the system.  If you want
-> > > to get a copy of these patches straight from git you can use the
-> > > "working-io_uring" branch in the repo below:
-> > >
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-> > >
-> > > Beyond the existing test suite tests mentioned above, I've cobbled
-> > > together some very basic, very crude tests to exercise some of the
-> > > things I care about from a LSM/audit perspective.  These tests are
-> > > pretty awful (I'm not kidding), but they might be helpful for the
-> > > other LSM/audit developers who want to test things:
-> > >
-> > > https://drop.paul-moore.com/90.kUgq
-> > >
-> > > There are currently two tests: 'iouring.2' and 'iouring.3';
-> > > 'iouring.1' was lost in a misguided and overzealous 'rm' command.
-> > > The first test is standalone and basically tests the SQPOLL
-> > > functionality while the second tests sharing io_urings across process
-> > > boundaries and the credential/personality sharing mechanism.  The
-> > > console output of both tests isn't particularly useful, the more
-> > > interesting bits are in the audit and LSM specific logs.  The
-> > > 'iouring.2' command requires no special arguments to run but the
-> > > 'iouring.3' test is split into a "server" and "client"; the server
-> > > should be run without argument:
-> > >
-> > >   % ./iouring.3s
-> > >   >>> server started, pid = 11678
-> > >   >>> memfd created, fd = 3
-> > >   >>> io_uring created; fd = 5, creds = 1
-> > >
-> > > ... while the client should be run with two arguments: the first is
-> > > the PID of the server process, the second is the "memfd" fd number:
-> > >
-> > >   % ./iouring.3c 11678 3
-> > >   >>> client started, server_pid = 11678 server_memfd = 3
-> > >   >>> io_urings = 5 (server) / 5 (client)
-> > >   >>> io_uring ops using creds = 1
-> > >   >>> async op result: 36
-> > >   >>> async op result: 36
-> > >   >>> async op result: 36
-> > >   >>> async op result: 36
-> > >   >>> START file contents
-> > >   What is this life if, full of care,
-> > >   we have no time to stand and stare.
-> > >   >>> END file contents
-> > >
-> > > The tests were hacked together from various sources online,
-> > > attribution and links to additional info can be found in the test
-> > > sources, but I expect these tests to die a fiery death in the not
-> > > to distant future as I work to add some proper tests to the SELinux
-> > > and audit test suites.
-> > >
-> > > As I believe these patches should spend a full -rcX cycle in
-> > > linux-next, my current plan is to continue to solicit feedback on
-> > > these patches while they undergo additional testing (next up is
-> > > verification of the audit filter code for io_uring).  Assuming no
-> > > critical issues are found on the mailing lists or during testing, I
-> > > will post a proper patchset later with the idea of merging it into
-> > > selinux/next after the upcoming merge window closes.
-> > >
-> > > Any comments, feedback, etc. are welcome.
-> >
-> > Thanks for the tests.  I have a bunch of userspace patches to add to the
-> > last set I posted and these tests will help exercise them.  I also have
-> > one more kernel patch to post...  I'll dive back into that now.  I had
-> > wanted to post them before now but got distracted with AUDIT_TRIM
-> > breakage.
->
-> Please tell me about liburing.h that is needed for these.  There is one
-> in tools/io_uring/liburing.h but I don't think that one is right.
->
-> The next obvious one would be include/uapi/linux/io_uring.h
->
-> I must be missing something obvious here...
+In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
+failed, we sometime observe panic:
 
-You are looking for the liburing header files, the upstream is here:
--> https://github.com/axboe/liburing
+  BUG: kernel NULL pointer dereference, address:
+  ...
+  RIP: 0010:cipso_v4_doi_free+0x3a/0x80
+  ...
+  Call Trace:
+   netlbl_cipsov4_add_std+0xf4/0x8c0
+   netlbl_cipsov4_add+0x13f/0x1b0
+   genl_family_rcv_msg_doit.isra.15+0x132/0x170
+   genl_rcv_msg+0x125/0x240
 
-If you are on a RH/IBM based distro it is likely called liburing[-devel]:
+This is because in cipso_v4_doi_free() there is no check
+on 'doi_def->map.std' when 'doi_def->type' equal 1, which
+is possibe, since netlbl_cipsov4_add_std() haven't initialize
+it before alloc 'doi_def->map.std'.
 
-% dnf whatprovides */liburing.h
-Last metadata expiration check: 0:38:37 ago on Wed 25 Aug 2021 08:54:22 PM EDT.
-liburing-devel-2.0-2.fc35.i686 : Development files for Linux-native io_uring I/O
-                              : access library
-Repo        : rawhide
-Matched from:
-Filename    : /usr/include/liburing.h
+This patch just add the check to prevent panic happen for similar
+cases.
 
-liburing-devel-2.0-2.fc35.x86_64 : Development files for Linux-native io_uring
-                                : I/O access library
-Repo        : @System
-Matched from:
-Filename    : /usr/include/liburing.h
+Reported-by: Abaci <abaci@linux.alibaba.com>
+Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+---
 
-liburing-devel-2.0-2.fc35.x86_64 : Development files for Linux-native io_uring
-                                : I/O access library
-Repo        : rawhide
-Matched from:
-Filename    : /usr/include/liburing.h
+ net/ipv4/cipso_ipv4.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
+diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+index 099259f..7fbd0b5 100644
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -465,14 +465,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
+ 	if (!doi_def)
+ 		return;
+
+-	switch (doi_def->type) {
+-	case CIPSO_V4_MAP_TRANS:
+-		kfree(doi_def->map.std->lvl.cipso);
+-		kfree(doi_def->map.std->lvl.local);
+-		kfree(doi_def->map.std->cat.cipso);
+-		kfree(doi_def->map.std->cat.local);
+-		kfree(doi_def->map.std);
+-		break;
++	if (doi_def->map.std) {
++		switch (doi_def->type) {
++		case CIPSO_V4_MAP_TRANS:
++			kfree(doi_def->map.std->lvl.cipso);
++			kfree(doi_def->map.std->lvl.local);
++			kfree(doi_def->map.std->cat.cipso);
++			kfree(doi_def->map.std->cat.local);
++			kfree(doi_def->map.std);
++			break;
++		}
+ 	}
+ 	kfree(doi_def);
+ }
 -- 
-paul moore
-www.paul-moore.com
+1.8.3.1
+
