@@ -2,105 +2,130 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A07C4320E
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 03:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA43C4320E
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 08:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFAC4610D1
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 03:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900BB610A7
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 08:16:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235425AbhHZDnc (ORCPT
+        id S239817AbhHZIRC (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 25 Aug 2021 23:43:32 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:17988 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231720AbhHZDnc (ORCPT
+        Thu, 26 Aug 2021 04:17:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57572 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232992AbhHZIRC (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 25 Aug 2021 23:43:32 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R301e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Um0c2GM_1629949362;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Um0c2GM_1629949362)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 26 Aug 2021 11:42:43 +0800
-To:     Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Subject: [PATCH] net: fix NULL pointer reference in cipso_v4_doi_free
-Message-ID: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
-Date:   Thu, 26 Aug 2021 11:42:42 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:78.0)
- Gecko/20100101 Thunderbird/78.13.0
+        Thu, 26 Aug 2021 04:17:02 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF2F4C061757;
+        Thu, 26 Aug 2021 01:16:14 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id 8D16BAE0DC7;
+        Thu, 26 Aug 2021 16:15:23 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PqZdW8WS1aF3; Thu, 26 Aug 2021 16:15:03 +0800 (CST)
+Received: from [172.30.18.174] (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id 7B218AE0DB6;
+        Thu, 26 Aug 2021 16:15:03 +0800 (CST)
+From:   liqiong <liqiong@nfschina.com>
+Subject: Re: [PATCH] ima: fix deadlock within RCU list of ima_rules
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+ <20210824085747.23604-1-liqiong@nfschina.com>
+ <e720e88e-ebfa-56df-6048-f2da0b8fa2a0@viveris.fr>
+ <3ba4da9d-fa7b-c486-0c48-67cee4d5de6d@nfschina.com>
+ <2c4f61ff68544b2627fc4a38ad1e4109184ec68a.camel@linux.ibm.com>
+ <d502623a-7a49-04f8-1672-6521ceef260b@nfschina.com>
+ <5a032a1b-f763-a0e4-8ea2-803872bd7174@nfschina.com>
+ <eb9921ff-2d4b-136f-b7a7-924e61a0651b@viveris.fr>
+Message-ID: <1e464ae0-28e1-6511-ab89-52b5cd1a0841@nfschina.com>
+Date:   Thu, 26 Aug 2021 16:15:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
+In-Reply-To: <eb9921ff-2d4b-136f-b7a7-924e61a0651b@viveris.fr>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
-failed, we sometime observe panic:
+Hi Simon,
 
-  BUG: kernel NULL pointer dereference, address:
-  ...
-  RIP: 0010:cipso_v4_doi_free+0x3a/0x80
-  ...
-  Call Trace:
-   netlbl_cipsov4_add_std+0xf4/0x8c0
-   netlbl_cipsov4_add+0x13f/0x1b0
-   genl_family_rcv_msg_doit.isra.15+0x132/0x170
-   genl_rcv_msg+0x125/0x240
+Thanks for your help, your advice is clear, can i just use it,
+how about this:
 
-This is because in cipso_v4_doi_free() there is no check
-on 'doi_def->map.std' when 'doi_def->type' equal 1, which
-is possibe, since netlbl_cipsov4_add_std() haven't initialize
-it before alloc 'doi_def->map.std'.
 
-This patch just add the check to prevent panic happen for similar
-cases.
+The current IMA ruleset is identified by the variable "ima_rules",
+and the pointer starts pointing at the list "ima_default_rules".
+When loading a custom policy for the first time, the variable is
+updated to point to the list "ima_policy_rules" instead. That update
+isn't RCU-safe, and deadlocks are possible.
 
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+Introduce a temporary value for "ima_rules" when iterating over
+the ruleset to avoid the deadlocks.
+
+
+Signed-off-by: liqiong <liqiong@nfschina.com>
 ---
+ security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
- net/ipv4/cipso_ipv4.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index fd5d46e511f1..e92b197bfd3c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
 
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index 099259f..7fbd0b5 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -465,14 +465,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
- 	if (!doi_def)
- 		return;
 
--	switch (doi_def->type) {
--	case CIPSO_V4_MAP_TRANS:
--		kfree(doi_def->map.std->lvl.cipso);
--		kfree(doi_def->map.std->lvl.local);
--		kfree(doi_def->map.std->cat.cipso);
--		kfree(doi_def->map.std->cat.local);
--		kfree(doi_def->map.std);
--		break;
-+	if (doi_def->map.std) {
-+		switch (doi_def->type) {
-+		case CIPSO_V4_MAP_TRANS:
-+			kfree(doi_def->map.std->lvl.cipso);
-+			kfree(doi_def->map.std->lvl.local);
-+			kfree(doi_def->map.std->cat.cipso);
-+			kfree(doi_def->map.std->cat.local);
-+			kfree(doi_def->map.std);
-+			break;
-+		}
- 	}
- 	kfree(doi_def);
- }
--- 
-1.8.3.1
+
+Thanks
+
+liqiong
+
+在 2021年08月25日 20:03, THOBY Simon 写道:
+> Hi Liqiong,
+>
+> On 8/25/21 1:45 PM, liqiong wrote:
+>> Hi Mimi,
+>>
+>> This copy may be better.
+>>
+>>
+>> subject: ima: fix deadlock when iterating over the init "ima_rules" list.
+>>
+>>
+> As Mimi said, consider adding an introducing paragraph, like:
+> 'The current IMA ruleset is identified by the variable "ima_rules",
+> and the pointer starts pointing at the list "ima_default_rules". When
+> loading a custom policy for the first time, the variable is
+> updated to point to the list "ima_policy_rules" instead. That update
+> isn't RCU-safe, and deadlocks are possible.'
+>
+>> When traversing back to head, the init "ima_rules" list can't exit
+>> iterating if "ima_rules" has been updated to "ima_policy_rules".
+>> It causes soft lockup and RCU stalls. So we can introduce a duplicate
+>> of "ima_rules" for each "ima_rules" list loop.
+> Per the process (see 'Documentation/process/submitting-patches.rst'),
+> please prefer an imperative style (written in another paragraph):
+> 'Introduce a temporary value for "ima_rules" when iterating over the ruleset.'
+>
+>
+> Thanks,
+> Simon
 
