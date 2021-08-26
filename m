@@ -2,92 +2,84 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3528C41537
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 19:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08332C432BE
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 20:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB6936108D
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 19:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD96861002
+	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 20:27:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243419AbhHZTPD (ORCPT
+        id S234503AbhHZU2Z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Aug 2021 15:15:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243421AbhHZTPC (ORCPT
+        Thu, 26 Aug 2021 16:28:25 -0400
+Received: from mail.hallyn.com ([178.63.66.53]:39278 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229916AbhHZU2Z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Aug 2021 15:15:02 -0400
-Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C70C0613D9
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Aug 2021 12:14:14 -0700 (PDT)
-Received: by mail-ed1-x536.google.com with SMTP id y5so6212953edp.8
-        for <linux-security-module@vger.kernel.org>; Thu, 26 Aug 2021 12:14:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rx0FUZ0y/4cX/RB/wrUdWs+Xu2SixTxkAb51quz7jo8=;
-        b=gnWwUt3JdlTv8VP9sot3kjTMSbk6xwqrxgCgHZylW8hKKqckrTGkz0muKu4CBOEHn7
-         wG6JLCceDpcYIpIo5EF/oBtz+SiHUfn/Qa909EqNs0kW2jo1foPRy+rCIamGkla+QT9S
-         6ZM1JxJVo1tT6oeX8u3OUOeJJ6zaEf9Q28JJhmMaDgCglfm2bOtEn5qjrgtqpVaucGdZ
-         LI267o4R1RTs5O4tS2zWmwEQpTA9ZAmgRK5EU/B9I4xcBeINEDvGPQMGe0vPsT70C/HL
-         OVy77vIjlo6NdxsB4/rJ5nTmgISGdu1vTD12Avv/kDgks2NHFxXy86bmK5+2Y3hrWB1F
-         irSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rx0FUZ0y/4cX/RB/wrUdWs+Xu2SixTxkAb51quz7jo8=;
-        b=kOUoTTR5gqApFKQMIeBNbymkh0VQSqC9mMGafmZ43oTFvQstOVEtJa+8v1QBlL1ehe
-         8+lJ5FSsL5JJZD42k7Vhd0n+woML9THlW87Eq+XDh1EE5wD2+I0FkYBiM98hi+RFqhz7
-         zVIGWs86GS78jk5qMc88BTrCLdy+b3cxhhu8SjzsmQgPdTTkGZtK3XF8vXNflJSbKlIr
-         7sNy6PuMJLEOVIIZsYMpLe4eH94RYxxbFGogovYSRhfZv3zodMEsOn4kEnExQILIkwtu
-         fel2RIZqyqCRu/M4zH2T6RPyMWCBdlZBvPJmtZxsDWgPYfs7enmV7zb2l/RJQu7INbYJ
-         tkrg==
-X-Gm-Message-State: AOAM532TErvnIQ9B7y0055afR28g9QFfe3FpjESg0GyphY5hPcDt/yNp
-        ev7Ws6Gri0gNa7RQXbgyAqFj2Zwd7HOBsnVkII1m
-X-Google-Smtp-Source: ABdhPJwW5wBqVh+ZTgsyTSWJmX+Kmrj84VmvqS9Yc/10HktwgbbDnwLo41tBgtnkP5vc5wtH1HUiC5RxqSWTlGMKY1E=
-X-Received: by 2002:aa7:d9d2:: with SMTP id v18mr5927880eds.128.1630005252910;
- Thu, 26 Aug 2021 12:14:12 -0700 (PDT)
+        Thu, 26 Aug 2021 16:28:25 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id 9D1317E8; Thu, 26 Aug 2021 15:27:36 -0500 (CDT)
+Date:   Thu, 26 Aug 2021 15:27:36 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        Mimi Zohar <zohar@us.ibm.com>
+Subject: Re: [PATCH v1] efi: Don't use knowledge about efi_guid_t internals
+Message-ID: <20210826202736.GA29151@mail.hallyn.com>
+References: <20210209164506.54176-1-andriy.shevchenko@linux.intel.com>
+ <CAMj1kXGjoZ4qXxfB-2eH84k9Dg93cWs10DmDkZwv-C3_nKi_Ow@mail.gmail.com>
+ <YL5TN6oTtgggIFvv@smile.fi.intel.com>
+ <CAMj1kXFHG4G+KCv4KaL6XYtAPs99bsQ-0fik8oKv4GWDw2+GJg@mail.gmail.com>
+ <YSeueHLVPsfCO0ah@smile.fi.intel.com>
+ <CAMj1kXG6cZK+j-oEURuvLgntZxL-maUs0zk0UexHs3=S0wbLug@mail.gmail.com>
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com> <20210826163230.GF490529@madcap2.tricolour.ca>
-In-Reply-To: <20210826163230.GF490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 26 Aug 2021 15:14:02 -0400
-Message-ID: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXG6cZK+j-oEURuvLgntZxL-maUs0zk0UexHs3=S0wbLug@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> I'm getting:
->         # ./iouring.2
->         Kernel thread io_uring-sq is not running.
->         Unable to setup io_uring: Permission denied
->
->         # ./iouring.3s
->         >>> server started, pid = 2082
->         >>> memfd created, fd = 3
->         io_uring_queue_init: Permission denied
->
-> I have CONFIG_IO_URING=y set, what else is needed?
+On Thu, Aug 26, 2021 at 06:37:06PM +0200, Ard Biesheuvel wrote:
+> On Thu, 26 Aug 2021 at 17:08, Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> >
+> > On Thu, Jun 10, 2021 at 05:05:55PM +0200, Ard Biesheuvel wrote:
+> > > On Mon, 7 Jun 2021 at 19:11, Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Tue, Feb 09, 2021 at 05:51:45PM +0100, Ard Biesheuvel wrote:
+> > > > > On Tue, 9 Feb 2021 at 17:45, Andy Shevchenko
+> > > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > >
+> > > > > > When print GUIDs supply pointer to the efi_guid_t (guid_t) type rather
+> > > > > > its internal members.
+> > > > > >
+> > > > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > >
+> > > > > Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> > > >
+> > > > Thanks!
+> > > >
+> > > > Can we get this applied, please?
+> > >
+> > > Apologies, this one slipped behind the desk.
+> >
+> > Do I need to resend it?
+> >
+> 
+> No, but I need an ack from James or Serge as it targets security/
 
-I'm not sure how you tried to run those tests, but try running as root
-and with SELinux in permissive mode.
+It looks correct to me, based on Documentation/core-api/printk-formats.rst
+and existing examples.
 
--- 
-paul moore
-www.paul-moore.com
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
+thanks
+-serge
