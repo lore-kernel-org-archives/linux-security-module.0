@@ -2,116 +2,165 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044DEC4320A
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 19:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5B9C43216
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 20:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE84760FE6
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 19:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61A2D60FF2
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 20:45:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230474AbhH0Tu1 (ORCPT
+        id S231589AbhH0UqV (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Aug 2021 15:50:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229821AbhH0Tu1 (ORCPT
+        Fri, 27 Aug 2021 16:46:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:3742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S231570AbhH0UqU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Aug 2021 15:50:27 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05EF2C0613D9
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Aug 2021 12:49:38 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id h9so16189333ejs.4
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Aug 2021 12:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MarwsWWGC0vgeYe2TT0Bknreciph81Y5zQko1bbo3dg=;
-        b=VDp9L1aSEtB6Ja57TrDn9eWLnenyIwAPGW7I3DZLgoSo3HZ0yIzE269UHR381x5vj1
-         ysj2a3K4xBRAtql47MJkvyqD3biO5iHkTxq7LUxf8A7YxN2DAdkNqD3E0FwgSb+YvXNs
-         ge+kQcRBgUBgUxfo9Q/xTcK9QPgqQYaRBeGPxqZ83AwOcZXP0AOoTClsQ1FEe1Yl1ctC
-         VLfSCOhfKOcbp/nG0AlQCx7+XHBM0dihc955Q6L1ITt6cPmsqG6jKyITvbaDxCYaXjNm
-         QqLm8lse9PxFEpOgXgN88LgyE3rCEyQCUhUCK6eKot8KK/v9AKpN5zjuwgExd7flJ/iJ
-         nMsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MarwsWWGC0vgeYe2TT0Bknreciph81Y5zQko1bbo3dg=;
-        b=abEWYxuNHw187UesWAhlgTnSP+h8V5Y8ad5AJiJFayxJxtZJmqyzHS6MTxqb/83kjX
-         5q1nlIj1Qc9iyRlEaktf4wJ2WHaC0TViVc2btehgszUSOnJpGiNNTCay0HYefBkNk+50
-         fFNtzyx1CpmX1APAgJUrPZYtWzjf59mAys7NJeoNp2FdOt5EMexM3VKyZ+kQyZ7uAhWA
-         BUt5En0yiYOAWsOmgloW6jBdK2aQcSwNgv/NVReBEIW4isQKuxbrQ0G/NwrA90NxhHww
-         ns/jOT8P/FmKn8KweqPFZwj4M1ajpZQpnB//DEnTD+d6tDs8LImsjPqk5wfnlTJFnu2b
-         CkZg==
-X-Gm-Message-State: AOAM531sUfJC9umvb/ARUJt+AoNpwAcXfES10YkWMXabSukCnmHpNRYI
-        BWugawZsw4651KWFKj0siHkk0fxyyfQ1slIVPCIh
-X-Google-Smtp-Source: ABdhPJx8Cuhrg3SXaR2CWgIvHRns6qh4/y+RRqlTaCS2oPMgn9tWv4WqNnZLocutZJdvMikV0ssmc2A4ucAVfrKNtmY=
-X-Received: by 2002:a17:907:2a85:: with SMTP id fl5mr510228ejc.91.1630093774900;
- Fri, 27 Aug 2021 12:49:34 -0700 (PDT)
+        Fri, 27 Aug 2021 16:46:20 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 17RKcwUH175141;
+        Fri, 27 Aug 2021 16:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=V4Bn5zvUHai0GK9if0diH+c0ro46+dVK+RJfgxCxnD0=;
+ b=AT0KbGubyPbSknLxtnmiJHDDCRStB0x2euyH7EuqjQW9DcITZSX9RAp9Q2CA1foGcpWf
+ AE4Ar3pHD/i46SeWI4eNCCf8DGB00Sffj0y3usaqjOqQ1nzEhAMApue2rFeuYY54aiLI
+ LkV2hZccwthNMJrasQtwRwvcqSjo12Ak9e70/XYgq4MohAWMNlwpehaSQNadFBrHKe6K
+ lamm+h6XgzpsVHNgVAZH4H9xvub8aobDdr5ZsJxAUzz11hDqQRkBWu87WBMt59mNI/cC
+ Io881OjXqb45MSvsD1f+RbPNwAfb/VjPbuMJIMa+gDbWfoDZr+G/atpLk5dCkoAjELpm qQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3aq68k1pcq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Aug 2021 16:45:00 -0400
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 17RKfEhP180599;
+        Fri, 27 Aug 2021 16:44:59 -0400
+Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3aq68k1pc7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Aug 2021 16:44:59 -0400
+Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
+        by ppma03wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 17RKgLf6003118;
+        Fri, 27 Aug 2021 20:44:58 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma03wdc.us.ibm.com with ESMTP id 3ajs4ftd3r-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 27 Aug 2021 20:44:58 +0000
+Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 17RKivb618219340
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 27 Aug 2021 20:44:57 GMT
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEAFC28059;
+        Fri, 27 Aug 2021 20:44:57 +0000 (GMT)
+Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A866C28058;
+        Fri, 27 Aug 2021 20:44:54 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com (unknown [9.211.72.200])
+        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 27 Aug 2021 20:44:54 +0000 (GMT)
+Subject: Re: [PATCH v4 00/12] Enroll kernel keys thru MOK
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     keyrings@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, pjones@redhat.com,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        Patrick Uiterwijk <patrick@puiterwijk.org>
+References: <20210819002109.534600-1-eric.snowberg@oracle.com>
+ <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
+ <f76fcf41728fbdd65f2b3464df0821f248b2cba0.camel@linux.ibm.com>
+ <91B1FE51-C6FC-4ADF-B05A-B1E59E20132E@oracle.com>
+ <e7e251000432cf7c475e19c56b0f438b92fec16e.camel@linux.ibm.com>
+ <cedc77fefdf22b2cec086f3e0dd9cc698db9bca2.camel@kernel.org>
+ <bffb33a3-d5b5-f376-9d7d-706d38357d1a@linux.vnet.ibm.com>
+ <9526a4e0be9579a9e52064dd590a78c6496ee025.camel@linux.ibm.com>
+ <9067ff7142d097698b827f3c1630a751898a76bf.camel@kernel.org>
+ <bc37d1da3ef5aae16e69eeda25d6ce6fe6a51a77.camel@HansenPartnership.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+Message-ID: <10bc1017-2b45-43f3-ad91-d09310b24c2c@linux.vnet.ibm.com>
+Date:   Fri, 27 Aug 2021 16:44:53 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 MIME-Version: 1.0
-References: <162871480969.63873.9434591871437326374.stgit@olly>
- <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca>
-In-Reply-To: <20210827133559.GG490529@madcap2.tricolour.ca>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 Aug 2021 15:49:24 -0400
-Message-ID: <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <bc37d1da3ef5aae16e69eeda25d6ce6fe6a51a77.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: P8y2vFgMMz6mtKu6ZTA1-OA2iJE_cBk2
+X-Proofpoint-GUID: jmXS99QL71NUcQhSu-DO56SNSiN-arUK
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-08-27_06:2021-08-27,2021-08-27 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ malwarescore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ bulkscore=0 impostorscore=0 spamscore=0 mlxscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2107140000 definitions=main-2108270120
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 27, 2021 at 9:36 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2021-08-26 15:14, Paul Moore wrote:
-> > On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > I'm getting:
-> > >         # ./iouring.2
-> > >         Kernel thread io_uring-sq is not running.
-> > >         Unable to setup io_uring: Permission denied
-> > >
-> > >         # ./iouring.3s
-> > >         >>> server started, pid = 2082
-> > >         >>> memfd created, fd = 3
-> > >         io_uring_queue_init: Permission denied
-> > >
-> > > I have CONFIG_IO_URING=y set, what else is needed?
-> >
-> > I'm not sure how you tried to run those tests, but try running as root
-> > and with SELinux in permissive mode.
->
-> Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
-> thread io_uring-sq is not running." and I didn't get any URING records
-> with ausearch.  I don't know if any of this is expected.
 
-Now that I've written iouring.4, I would skip the others; while
-helpful at the time, they are pretty crap.
+On 8/25/21 6:27 PM, James Bottomley wrote:
+> On Thu, 2021-08-26 at 01:21 +0300, Jarkko Sakkinen wrote:
+>> On Tue, 2021-08-24 at 10:34 -0400, Mimi Zohar wrote:
+>>>>>> Jarkko, I think the emphasis should not be on "machine" from
+>>>>>> Machine Owner Key (MOK), but on "owner".  Whereas Nayna is
+>>>>>> focusing more on the "_ca" aspect of the name.   Perhaps
+>>>>>> consider naming it "system_owner_ca" or something along those
+>>>>>> lines.
+>>>>> What do you gain such overly long identifier? Makes no sense.
+>>>>> What is "ca aspect of the name" anyway?
+>>>> As I mentioned previously, the main usage of this new keyring is
+>>>> that it should contain only CA keys which can be later used to
+>>>> vouch for user keys loaded onto secondary or IMA keyring at
+>>>> runtime. Having ca in the  name like .xxxx_ca, would make the
+>>>> keyring name self-describing. Since you preferred .system, we can
+>>>> call it .system_ca.
+>>> Sounds good to me.  Jarkko?
+>>>
+>>> thanks,
+>>>
+>>> Mimi
+>> I just wonder what you exactly gain with "_ca"?
+> Remember, a CA cert is a self signed cert with the CA:TRUE basic
+> constraint.  Pretty much no secure boot key satisfies this (secure boot
+> chose deliberately NOT to use CA certificates, so they're all some type
+> of intermediate or leaf), so the design seems to be only to pick out
+> the CA certificates you put in the MOK keyring.  Adding the _ca suffix
+> may deflect some of the "why aren't all my MOK certificates in the
+> keyring" emails ...
 
-I have no idea what kernel you are running, but I'm going to assume
-you've applied the v2 patches (if not, you obviously need to do that
-<g>).  Beyond that you may need to set a filter for the
-io_uring_enter() syscall to force the issue; theoretically your audit
-userspace patches should allow a uring op specifically to be filtered
-but I haven't had a chance to try that yet so either the kernel or
-userspace portion could be broken.
 
-At this point if you are running into problems you'll probably need to
-spend some time debugging them, as I think you're the only person who
-has tested your audit userspace patches at this point (and the only
-one who has access to your latest bits).
+My understanding is the .system_ca keyring should not be restricted only 
+to self-signed CAs (Root CA). Any cert that can qualify as Root or 
+Intermediate CA with Basic Constraints CA:TRUE should be allowed. In 
+fact, the intermediate CA certificates closest to the leaf nodes would 
+be best.
 
--- 
-paul moore
-www.paul-moore.com
+Thanks for bringing up that adding the _ca suffix may deflect some of 
+the "why aren't all my MOK certificates in the keyring" emails.
+
+Thanks & Regards,
+
+     - Nayna
+
