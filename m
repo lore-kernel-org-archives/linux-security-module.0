@@ -2,142 +2,158 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBCCC4320A
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 01:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D55C4320E
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 06:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8499A61029
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 01:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75BC60FD8
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 06:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243929AbhH0BGS (ORCPT
+        id S233156AbhH0GnH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Aug 2021 21:06:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
+        Fri, 27 Aug 2021 02:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243853AbhH0BGS (ORCPT
+        with ESMTP id S230522AbhH0GnG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Aug 2021 21:06:18 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2827C061757;
-        Thu, 26 Aug 2021 18:05:26 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id m4so2910412pll.0;
-        Thu, 26 Aug 2021 18:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CJoF4Bgpjmz+E7bVdWY2k+bvCattJTFOGcI1X+RlV2A=;
-        b=Xw8hi+ZNH78UlcZDWdCmX6NKyyAA3smvcVS5KjVJWrErrTcr2LmjJL6ARgqTOrR15v
-         xLy0egSMc7lZTlT1MQQcSlhOwRjK8gjy3Wttkew03DA4S6VY7ytzQD+R1mAOBTMJT4j9
-         Ev1bjV8bwfvL4zmjLxRvRBef42hH6yB0Zlp5q6sd+P8mFlKpMtJfg7KsamNxPeEi6zkO
-         4oGveSMKQI5drBkNvkLTgifODCE3tNJhbQtsdkxMq67l6/xznsY8tvS2Hi6iSFW+hlbT
-         9eu/ZPcIzTLPZe9QRNFWxOXwB5DDDYFVZquqRhz2CjFrumFhGlZctUuf43irUiHYr+66
-         1Zcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=CJoF4Bgpjmz+E7bVdWY2k+bvCattJTFOGcI1X+RlV2A=;
-        b=UQAC7w9tf534eDFcXrK56sH9avGIp8MhSk4mWmghio8vYft7rUlVKaERIEB9N7OIIv
-         GF+rkc+MyjDujaIj6o5gwUrfY6iUSZFrJKmAsGpp1b6KXV23IIWZGJpynP7V64/UAnRw
-         +ya00KF0uA6B4fCrA6jk1lmW4yjB8R/qYag4oSYpMoDC7eDwLqtqJGWk2O9EuE4Rw8+/
-         9M+nrUI6u4wxaWppac0TNLWZ1jzK/rhKUPQ31Os/KvZyqIQiBVK164sLA15e9VHNF5No
-         F4C1dWvomKOAEwurX6ZMTmIckYzFRSDClToeJTaTqad3J8KzFtzZ+289NQ8hRW9b6Oa/
-         iuKg==
-X-Gm-Message-State: AOAM5309E2P6veNUJDAfbbaySWom8oSSCPb6KYKaiNWXLkZ9UqQanH7Z
-        Ye/x9ukfCJyfYBcuYmTegVM=
-X-Google-Smtp-Source: ABdhPJxOah0eBvELAOjhdzUXVYmB2Z/tYt7nhdTqVkdviWdPsuvJZFJ1Ehtt6xtuHJlfJ23Nay0SJA==
-X-Received: by 2002:a17:90a:b785:: with SMTP id m5mr20286683pjr.213.1630026326070;
-        Thu, 26 Aug 2021 18:05:26 -0700 (PDT)
-Received: from localhost ([2405:201:6014:d820:9cc6:d37f:c2fd:dc6])
-        by smtp.gmail.com with ESMTPSA id c15sm3975021pjr.22.2021.08.26.18.05.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Aug 2021 18:05:25 -0700 (PDT)
-Date:   Fri, 27 Aug 2021 06:35:23 +0530
-From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Spencer Baugh <sbaugh@catern.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v2 1/5] bpf: Implement file local storage
-Message-ID: <20210827010523.4mty6oqzeuvadaml@apollo.localdomain>
-References: <20210826133913.627361-1-memxor@gmail.com>
- <20210826133913.627361-2-memxor@gmail.com>
- <20210826222347.3bf5q5ehdfnrblir@ast-mbp.dhcp.thefacebook.com>
- <CACYkzJ6G-E6X2hxwQfwqJ6Hgm-CbiNnY6h+xZRhO1AuOUu0NJA@mail.gmail.com>
+        Fri, 27 Aug 2021 02:43:06 -0400
+Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 047E3C061757;
+        Thu, 26 Aug 2021 23:42:16 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by ha0.nfschina.com (Postfix) with ESMTP id EC8AAAE0DCB;
+        Fri, 27 Aug 2021 14:41:18 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from ha0.nfschina.com ([127.0.0.1])
+        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id bonB99NEQbAx; Fri, 27 Aug 2021 14:40:58 +0800 (CST)
+Received: from [172.30.18.174] (unknown [180.167.10.98])
+        (Authenticated sender: liqiong@nfschina.com)
+        by ha0.nfschina.com (Postfix) with ESMTPA id CFABBAE0DB0;
+        Fri, 27 Aug 2021 14:40:57 +0800 (CST)
+Subject: Re: [PATCH] ima: fix deadlock within RCU list of ima_rules
+To:     THOBY Simon <Simon.THOBY@viveris.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>
+Cc:     "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
+        "jmorris@namei.org" <jmorris@namei.org>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20210819101529.28001-1-liqiong@nfschina.com>
+ <20210824085747.23604-1-liqiong@nfschina.com>
+ <e720e88e-ebfa-56df-6048-f2da0b8fa2a0@viveris.fr>
+ <3ba4da9d-fa7b-c486-0c48-67cee4d5de6d@nfschina.com>
+ <2c4f61ff68544b2627fc4a38ad1e4109184ec68a.camel@linux.ibm.com>
+ <d502623a-7a49-04f8-1672-6521ceef260b@nfschina.com>
+ <5a032a1b-f763-a0e4-8ea2-803872bd7174@nfschina.com>
+ <eb9921ff-2d4b-136f-b7a7-924e61a0651b@viveris.fr>
+ <1e464ae0-28e1-6511-ab89-52b5cd1a0841@nfschina.com>
+ <3ef6906b-ccf1-0ab8-180b-b71568e22443@viveris.fr>
+From:   liqiong <liqiong@nfschina.com>
+Message-ID: <bd52af5b-6c69-73a1-e0b2-8d23f3d8db3a@nfschina.com>
+Date:   Fri, 27 Aug 2021 14:41:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACYkzJ6G-E6X2hxwQfwqJ6Hgm-CbiNnY6h+xZRhO1AuOUu0NJA@mail.gmail.com>
+In-Reply-To: <3ef6906b-ccf1-0ab8-180b-b71568e22443@viveris.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Fri, Aug 27, 2021 at 05:43:41AM IST, KP Singh wrote:
-> On Fri, Aug 27, 2021 at 12:23 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Thu, Aug 26, 2021 at 07:09:09PM +0530, Kumar Kartikeya Dwivedi wrote:
-> > > +BPF_CALL_2(bpf_file_storage_delete, struct bpf_map *, map, struct file *, file)
-> > > +{
-> > > +     if (!file)
-> > > +             return -EINVAL;
-> > > +
-> > > +     return file_storage_delete(file, map);
-> > > +}
-> >
-> > It's exciting to see that file local storage is coming to life.
-> >
->
-> +1 Thanks for your work!
->
-> > What is the reason you've copy pasted inode_local_storage implementation,
-> > but didn't copy any comments?
-> > They were relevant there and just as relevant here.
-> > For example in the above *_storage_delete, the inode version would say:
-> >
-> > /* This helper must only called from where the inode is guaranteed
-> >  * to have a refcount and cannot be freed.
-> >  */
-> >
-> > That comment highlights the important restriction.
-> > The 'file' pointer should have similar restriction, right?
-> > But files are trickier than inodes in terms of refcnt.
-> > They are more similar to sockets,
-> > the socket_local_storage is doing refcount_inc_not_zero() in similar
->
-> Even the task_local_storage checks if the task is refcounted and going to
-> be around while we do a get / delete.
->
-> > case to make sure socket doesn't disappear.
-> >
->
-> Agreed, I would prefer if we also revisit inode_local_storage
-> in this respect pretty much because of what Alexei said.
-> One could end up with an inode (e.g. by walking pointers) in an LSM hook
-> whose life-cycle is not guaranteed in the current context.
->
-> This is generally not that big a deal with inodes because they are
-> not as ephemeral as tasks, sockets and files.
->
-> e.g. your userspace "_fd_" version of the helper does the right thing
-> by grabbing a
-> reference to the file and then dropping it once the storage is updated.
->
+Hi Simon,
 
-Thank you both of you for the comments. I will revisit this and inode_storage
-and get back to you, soon.
+Thanks for you help, i may got it, here is the new commit message:
 
---
-Kartikeya
+
+The current IMA ruleset is identified by the variable "ima_rules"
+that default to "&ima_default_rules". When loading a custom policy
+for the first time, the variable is updated to "&ima_policy_rules"
+instead. That update isn't RCU-safe, and deadlocks are possible.
+Because some functions like ima_match_policy() may loop indefinitely
+over traversing the "ima_default_rules" as list_for_each_entry_rcu().
+
+When iterating over the default ruleset back to head, value of
+"&entry->list" is "&ima_default_rules", and "ima_rules" may have been
+updated to "&ima_policy_rules", the loop condition (&entry->list != ima_rules)
+stay alway true, traversing doesn't terminate, cause soft lockup and
+RCU stalls.
+
+Introduce a temporary value for "ima_rules" when iterating over
+the ruleset to avoid the deadlocks.
+
+
+Signed-off-by: liqiong <liqiong@nfschina.com>
+---
+ security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index fd5d46e511f1..e92b197bfd3c 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+
+
+Thanks
+
+liqiong
+
+在 2021年08月26日 17:01, THOBY Simon 写道:
+> Hi liqiong,
+>
+> On 8/26/21 10:15 AM, liqiong wrote:
+>> Hi Simon,
+>>
+>> Thanks for your help, your advice is clear, can i just use it,
+>> how about this:
+>>
+>>
+>> The current IMA ruleset is identified by the variable "ima_rules",
+>> and the pointer starts pointing at the list "ima_default_rules".
+> After reading it again, maybe
+> "The current IMA ruleset is identified by the variable "ima_rules",
+> that defaults to "&ima_default_rules".'?
+>
+>> When loading a custom policy for the first time, the variable is
+>> updated to point to the list "ima_policy_rules" instead. That update
+>> isn't RCU-safe, and deadlocks are possible.
+> I think what Mimi was trying to say is that you could add the high-level
+> overview above, but keep the details. Sorry if I wasn't clearer in my
+> earlier messages.
+>
+> Consider re-adding your previous paragraph
+> """
+> As a consequence, when traversing the ruleset, some functions like ima_match_policy()
+> may loop indefinitely over "ima_default_rules" as list_for_each_entry_rcu() doesn't
+> terminate (after the update, "ima_rules" no longer points to the list head, so the
+> loop condition stays always true), causing RCU stalls.
+> """
+> (note: I tweaked it above, feel free to fix it)
+>> Introduce a temporary value for "ima_rules" when iterating over
+>> the ruleset to avoid the deadlocks.
+> ... while keeping this a separate paragraph.
+>
+>>
+>> Signed-off-by: liqiong <liqiong@nfschina.com>
+>> ---
+>>  security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
+>>  1 file changed, 12 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index fd5d46e511f1..e92b197bfd3c 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>>
+>>
+>>
+>> Thanks
+>>
+>> liqiong
+
