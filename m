@@ -2,147 +2,102 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A34C4320E
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 10:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE57C4320E
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 13:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 683C061002
-	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 10:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 286F960234
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 13:36:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244964AbhH0Khw (ORCPT
+        id S245191AbhH0NhE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 27 Aug 2021 06:37:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244706AbhH0Khv (ORCPT
+        Fri, 27 Aug 2021 09:37:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26468 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232148AbhH0NhD (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 27 Aug 2021 06:37:51 -0400
-Received: from ha0.nfschina.com (unknown [IPv6:2400:dd01:100f:2:d63d:7eff:fe08:eb3f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 89C77C061757;
-        Fri, 27 Aug 2021 03:37:02 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by ha0.nfschina.com (Postfix) with ESMTP id EEDDAAE0DE1;
-        Fri, 27 Aug 2021 18:36:02 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from ha0.nfschina.com ([127.0.0.1])
-        by localhost (ha0.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id qrSRWxGQWKsl; Fri, 27 Aug 2021 18:35:38 +0800 (CST)
-Received: from localhost.localdomain (unknown [180.167.10.98])
-        (Authenticated sender: liqiong@nfschina.com)
-        by ha0.nfschina.com (Postfix) with ESMTPA id B8060AE0DB0;
-        Fri, 27 Aug 2021 18:35:37 +0800 (CST)
-From:   liqiong <liqiong@nfschina.com>
-To:     Simon.THOBY@viveris.fr, zohar@linux.ibm.com
-Cc:     dmitry.kasatkin@gmail.com, jmorris@namei.org, serge@hallyn.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liqiong@nfschina.com
-Subject: [PATCH] ima: fix deadlock when traversing "ima_default_rules".
-Date:   Fri, 27 Aug 2021 18:35:36 +0800
-Message-Id: <20210827103536.4149-1-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20210824085747.23604-1-liqiong@nfschina.com>
-References: <20210824085747.23604-1-liqiong@nfschina.com>
+        Fri, 27 Aug 2021 09:37:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630071374;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/NIYyavBh8XnOVQ6CtLDeu7aH39KozHfLZib7zDJx5I=;
+        b=ZbGngYsvRCvRP1wWmmr+1DGgZerdvd4RG/PchQI3zP9seNJBmeWtkjfUR1tBDxG7O3MVdi
+        LyFIHGUkbW3hR2hb/GEG3W6fVXWF9c6SzAwdajD4awmVU7qTjE0Q9IDdTxFYj6gsf8y7m8
+        gaS4Agr1Lau3ONJ2/XeIBipzkS8I8Hc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-151-kuszwh0aNLGhF1LuDxAjYg-1; Fri, 27 Aug 2021 09:36:11 -0400
+X-MC-Unique: kuszwh0aNLGhF1LuDxAjYg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E63E8190B2A3;
+        Fri, 27 Aug 2021 13:36:09 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 54051604CC;
+        Fri, 27 Aug 2021 13:36:02 +0000 (UTC)
+Date:   Fri, 27 Aug 2021 09:35:59 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
+ io_uring
+Message-ID: <20210827133559.GG490529@madcap2.tricolour.ca>
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <20210824205724.GB490529@madcap2.tricolour.ca>
+ <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca>
+ <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-The current IMA ruleset is identified by the variable "ima_rules"
-that default to "&ima_default_rules". When loading a custom policy
-for the first time, the variable is updated to "&ima_policy_rules"
-instead. That update isn't RCU-safe, and deadlocks are possible.
-Indeed, some functions like ima_match_policy() may loop indefinitely
-when traversing "ima_default_rules" with list_for_each_entry_rcu().
+On 2021-08-26 15:14, Paul Moore wrote:
+> On Thu, Aug 26, 2021 at 12:32 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > I'm getting:
+> >         # ./iouring.2
+> >         Kernel thread io_uring-sq is not running.
+> >         Unable to setup io_uring: Permission denied
+> >
+> >         # ./iouring.3s
+> >         >>> server started, pid = 2082
+> >         >>> memfd created, fd = 3
+> >         io_uring_queue_init: Permission denied
+> >
+> > I have CONFIG_IO_URING=y set, what else is needed?
+> 
+> I'm not sure how you tried to run those tests, but try running as root
+> and with SELinux in permissive mode.
 
-When iterating over the default ruleset back to head, if the list
-head is "ima_default_rules", and "ima_rules" have been updated to
-"&ima_policy_rules", the loop condition (&entry->list != ima_rules)
-stays always true, traversing won't terminate, causing a soft lockup
-and RCU stalls.
+Ok, they ran, including iouring.4.  iouring.2 claimed twice: "Kernel
+thread io_uring-sq is not running." and I didn't get any URING records
+with ausearch.  I don't know if any of this is expected.
 
-Introduce a temporary value for "ima_rules" when iterating over
-the ruleset to avoid the deadlocks.
+> paul moore
 
-Signed-off-by: liqiong <liqiong@nfschina.com>
-Reviewed-by: THOBY Simon <Simon.THOBY@viveris.fr>
----
- security/integrity/ima/ima_policy.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+- RGB
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index fd5d46e511f1..e92b197bfd3c 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -662,12 +662,14 @@ int ima_match_policy(struct user_namespace *mnt_userns, struct inode *inode,
- {
- 	struct ima_rule_entry *entry;
- 	int action = 0, actmask = flags | (flags << 1);
-+	struct list_head *ima_rules_tmp;
- 
- 	if (template_desc && !*template_desc)
- 		*template_desc = ima_template_desc_current();
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(entry, ima_rules, list) {
-+	ima_rules_tmp = rcu_dereference(ima_rules);
-+	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
- 
- 		if (!(entry->action & actmask))
- 			continue;
-@@ -919,8 +921,8 @@ void ima_update_policy(void)
- 
- 	if (ima_rules != policy) {
- 		ima_policy_flag = 0;
--		ima_rules = policy;
- 
-+		rcu_assign_pointer(ima_rules, policy);
- 		/*
- 		 * IMA architecture specific policy rules are specified
- 		 * as strings and converted to an array of ima_entry_rules
-@@ -1649,9 +1651,11 @@ void *ima_policy_start(struct seq_file *m, loff_t *pos)
- {
- 	loff_t l = *pos;
- 	struct ima_rule_entry *entry;
-+	struct list_head *ima_rules_tmp;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(entry, ima_rules, list) {
-+	ima_rules_tmp = rcu_dereference(ima_rules);
-+	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
- 		if (!l--) {
- 			rcu_read_unlock();
- 			return entry;
-@@ -1670,7 +1674,8 @@ void *ima_policy_next(struct seq_file *m, void *v, loff_t *pos)
- 	rcu_read_unlock();
- 	(*pos)++;
- 
--	return (&entry->list == ima_rules) ? NULL : entry;
-+	return (&entry->list == &ima_default_rules ||
-+		&entry->list == &ima_policy_rules) ? NULL : entry;
- }
- 
- void ima_policy_stop(struct seq_file *m, void *v)
-@@ -1872,6 +1877,7 @@ bool ima_appraise_signature(enum kernel_read_file_id id)
- 	struct ima_rule_entry *entry;
- 	bool found = false;
- 	enum ima_hooks func;
-+	struct list_head *ima_rules_tmp;
- 
- 	if (id >= READING_MAX_ID)
- 		return false;
-@@ -1879,7 +1885,8 @@ bool ima_appraise_signature(enum kernel_read_file_id id)
- 	func = read_idmap[id] ?: FILE_CHECK;
- 
- 	rcu_read_lock();
--	list_for_each_entry_rcu(entry, ima_rules, list) {
-+	ima_rules_tmp = rcu_dereference(ima_rules);
-+	list_for_each_entry_rcu(entry, ima_rules_tmp, list) {
- 		if (entry->action != APPRAISE)
- 			continue;
- 
--- 
-2.11.0
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
