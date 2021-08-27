@@ -2,123 +2,173 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2F8C4320E
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 22:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 049D3C432BE
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 00:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1B760E93
-	for <linux-security-module@archiver.kernel.org>; Thu, 26 Aug 2021 22:23:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF70960F4F
+	for <linux-security-module@archiver.kernel.org>; Fri, 27 Aug 2021 00:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243740AbhHZWYi (ORCPT
+        id S231249AbhH0AKQ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 26 Aug 2021 18:24:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
+        Thu, 26 Aug 2021 20:10:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230397AbhHZWYh (ORCPT
+        with ESMTP id S230522AbhH0AKP (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 26 Aug 2021 18:24:37 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D4C3C061757;
-        Thu, 26 Aug 2021 15:23:50 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id f11-20020a17090aa78b00b0018e98a7cddaso3394901pjq.4;
-        Thu, 26 Aug 2021 15:23:50 -0700 (PDT)
+        Thu, 26 Aug 2021 20:10:15 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECCCAC0613C1
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Aug 2021 17:09:26 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id h9so10031612ejs.4
+        for <linux-security-module@vger.kernel.org>; Thu, 26 Aug 2021 17:09:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xaQIpU4ZMMwUA7Ndi6CJ4AqebF8EXWibPj8+ffm/yqc=;
-        b=Vbg8eJJHQ1QUoW+pf2ex7W7sAFsnEa74GB0cxgEOZjjTrFkn6VDeeUC5yISmIizWsR
-         AgyY3DECx7pt8XJVeU4cW/q+9aSFG1oWp1UvQ/ccHlcH2T5wdNoOVZ4mffjyM8/N8xHa
-         0GWz/8emQz51R29zrjgXcBD1q0gPv+lfdAyQJtoLhyuwyvyP2XCEizHzyFj+9LcnEU0d
-         APKH78DBIL0wO3VbCnljs3VdCOcFqui6lcfRRFt7ViNHMCHIjML9TspVvsFJCqv5LtS3
-         SIhl9XeejaKCOmRLFQm9uHd+QY5MR3XDXOxhrBnuRcO7xnjeKJsCMljSlKXi2labA2m+
-         i/zg==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=hPyVKVcprvpzIUu+YVAu3LI+boeAeXeZuimDXv2TyLE=;
+        b=yjA7NUnjujxbObs4sjgZmfo7b3pB3prQMmeDhPe6kS3hWe4jZtMcLhlga3n4OwHmKY
+         lrqfPK/ZZXzcNGmHBZWe5WjZWajT5kLw66WD70QFFbNk9YWFp89oZvUVOcFPwBwNjVKp
+         AsrQW3Vxi0rAAa4Zg6nWVKh5wN/8A6xvIMKsWSUVle8r+Af9xTmiAVU4cQu8A4SH7K41
+         +UNpTAAKLPXIspTHwZW8dDwXY3D2CyBAmJtlplnTkQBRAnFDUDkHy+5hMKr+FsgS7TnM
+         bVBr0TW8StnIJZo6fWjK+Kzo4wh8NgP9fDMT5XoQW1psek9aASbN2Z8evdfZ6WEo58Vc
+         QVew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xaQIpU4ZMMwUA7Ndi6CJ4AqebF8EXWibPj8+ffm/yqc=;
-        b=awHQhT/McPMQnV1u5dwqF88f4FSjOlOMh1IzadyQdV6d3OVOVViibC8SFjFl6prRpk
-         nBcWm1dpFHwFzX9IZRjL3rmgs6fPXYWraCTu8qeMRM4hmL/BXGR3/X/7NuHQihKOB02H
-         7OiSviMElV2YwSz6+PK/qn3Hc6sqb9FxXpDZwYoCntw+EOfeP36tuiikUWve4Ye9v/JJ
-         q9GYrAJSsGNAWzE3i+0a+yjLih1GTWLaDS/YWXJdZ3ZHELdG82is6yqFLj17v1lcFgbl
-         9Mc7fXZcXnznyfAVhSQD6B1Aj0p7bJsZn48vuOYBB0aBAUZJZqV4wVuPMpytVA32Rm8q
-         pKGw==
-X-Gm-Message-State: AOAM533XfSfLRvHuWwhfIoWTy1t3AFCW5M5FAfFVnqQnuZMBBsNv4Swd
-        tmXkMLgklr5LDCvxO1q3R6mN7wl+A6w=
-X-Google-Smtp-Source: ABdhPJyjTgsGudf97CQYkPcimZnNHHZ1dTczlTn/OJ57ovMmuZC7SXHUMmlLvqry3E6+AN3WLNUlyw==
-X-Received: by 2002:a17:902:be08:b0:134:924:1733 with SMTP id r8-20020a170902be0800b0013409241733mr5677982pls.64.1630016629563;
-        Thu, 26 Aug 2021 15:23:49 -0700 (PDT)
-Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:500::5:2fa])
-        by smtp.gmail.com with ESMTPSA id g6sm3822427pjs.11.2021.08.26.15.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Aug 2021 15:23:49 -0700 (PDT)
-Date:   Thu, 26 Aug 2021 15:23:47 -0700
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc:     bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Spencer Baugh <sbaugh@catern.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 1/5] bpf: Implement file local storage
-Message-ID: <20210826222347.3bf5q5ehdfnrblir@ast-mbp.dhcp.thefacebook.com>
-References: <20210826133913.627361-1-memxor@gmail.com>
- <20210826133913.627361-2-memxor@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=hPyVKVcprvpzIUu+YVAu3LI+boeAeXeZuimDXv2TyLE=;
+        b=iJTiJmSLRjN+mnUGKetMDAUuxmPpmRGVhE0FljXWGRw5GvGcPFTwzensPGApZpkZ18
+         WMzZBtr0taflD16OTdZlQ6KXKcCESlrKGAqcKCoN/8qdj2OqbJS7tObSENqmEK/LYQwN
+         a5LCiZ4ABFzuc9pDqHwTLRXd5RGG2T+OKXvdbv6X/ptiX7xGXNP97VaupgZ0RafYLjQn
+         n/yyE1aASWvTh9DSXvr+Fip+qSZb8+LsunRACKXR2mz7xoMe/4pCMvaxyOoZ91voF8XH
+         VhFifw5iOIIAERFtjc3gM60mAOIpIyvBEsy6TcsPsAQf6Rn/DqP6o8KbN//WudnOvHPh
+         7UMA==
+X-Gm-Message-State: AOAM530r1jyDntNpOGucT/JZ4+d8zoAKZox/WXxS7pchs2ZGzTGnZlj2
+        DfsqhrCJkZ5BQ0mA5XFm+a9b64yPLlq6kMxV8XNx
+X-Google-Smtp-Source: ABdhPJwj37BNpQ6K0Yr3ao3caRv4TnSn8rfrzD0un5ailDcKqR5gpapeV8Ivz7J6l4VarTYBoAuasYZH+DRCpniyOlE=
+X-Received: by 2002:a17:907:a04d:: with SMTP id gz13mr6934484ejc.91.1630022965481;
+ Thu, 26 Aug 2021 17:09:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210826133913.627361-2-memxor@gmail.com>
+References: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
+In-Reply-To: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 26 Aug 2021 20:09:14 -0400
+Message-ID: <CAHC9VhRJtU48Zt7dUEaTvKRoO+ODki75rS-hdJ0HPBrPRmCfxQ@mail.gmail.com>
+Subject: Re: [PATCH] net: fix NULL pointer reference in cipso_v4_doi_free
+To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Aug 26, 2021 at 07:09:09PM +0530, Kumar Kartikeya Dwivedi wrote:
-> +BPF_CALL_2(bpf_file_storage_delete, struct bpf_map *, map, struct file *, file)
-> +{
-> +	if (!file)
-> +		return -EINVAL;
-> +
-> +	return file_storage_delete(file, map);
-> +}
+On Wed, Aug 25, 2021 at 11:42 PM =E7=8E=8B=E8=B4=87 <yun.wang@linux.alibaba=
+.com> wrote:
+> In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
+> failed, we sometime observe panic:
+>
+>   BUG: kernel NULL pointer dereference, address:
+>   ...
+>   RIP: 0010:cipso_v4_doi_free+0x3a/0x80
+>   ...
+>   Call Trace:
+>    netlbl_cipsov4_add_std+0xf4/0x8c0
+>    netlbl_cipsov4_add+0x13f/0x1b0
+>    genl_family_rcv_msg_doit.isra.15+0x132/0x170
+>    genl_rcv_msg+0x125/0x240
+>
+> This is because in cipso_v4_doi_free() there is no check
+> on 'doi_def->map.std' when 'doi_def->type' equal 1, which
+> is possibe, since netlbl_cipsov4_add_std() haven't initialize
+> it before alloc 'doi_def->map.std'.
+>
+> This patch just add the check to prevent panic happen for similar
+> cases.
+>
+> Reported-by: Abaci <abaci@linux.alibaba.com>
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+> ---
+>
+>  net/ipv4/cipso_ipv4.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
 
-It's exciting to see that file local storage is coming to life.
+Thanks for the problem report.  It's hard to say for certain due to
+the abbreviated backtrace without line number information, but it
+looks like the problem you are describing is happening when the
+allocation for doi_def->map.std fails near the top of
+netlbl_cipsov4_add_std() which causes the function to jump the
+add_std_failure target which ends up calling cipso_v4_doi_free().
 
-What is the reason you've copy pasted inode_local_storage implementation,
-but didn't copy any comments?
-They were relevant there and just as relevant here.
-For example in the above *_storage_delete, the inode version would say:
+  doi_def =3D kmalloc(sizeof(*doi_def), GFP_KERNEL);
+  if (doi_def =3D=3D NULL)
+    return -ENOMEM;
+  doi_def->map.std =3D kzalloc(sizeof(*doi_def->map.std), GFP_KERNEL);
+  if (doi_def->map.std =3D=3D NULL) {
+    ret_val =3D -ENOMEM;
+    goto add_std_failure;
+  }
+  ...
+  add_std_failure:
+    cipso_v4_doi_free(doi_def);
 
-/* This helper must only called from where the inode is guaranteed
- * to have a refcount and cannot be freed.
- */
+Since the doi_def allocation is not zero'd out, it is possible that
+the doi_def->type value could have a value of CIPSO_V4_MAP_TRANS when
+the doi_def->map.std allocation fails, causing the NULL pointer deref
+in cipso_v4_doi_free().  As this is the only case where we would see a
+problem like this, I suggest a better solution would be to change the
+if-block following the doi_def->map.std allocation to something like
+this:
 
-That comment highlights the important restriction.
-The 'file' pointer should have similar restriction, right?
-But files are trickier than inodes in terms of refcnt.
-They are more similar to sockets,
-the socket_local_storage is doing refcount_inc_not_zero() in similar
-case to make sure socket doesn't disappear.
+  doi_def->map.std =3D kzalloc(sizeof(*doi_def->map.std), GFP_KERNEL);
+  if (doi_def->map.std =3D=3D NULL) {
+    kfree(doi_def);
+    return -ENOMEM;
+  }
 
-May be socket_local_storage implementation should have been a base
-of copy-paste instead of inode_local_storage?
-Not paying attention to comments leads to this fundamental question:
-What analysis have you done to prove that this approach is correct vs
-life time of the file object?
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index 099259f..7fbd0b5 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -465,14 +465,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def=
+)
+>         if (!doi_def)
+>                 return;
+>
+> -       switch (doi_def->type) {
+> -       case CIPSO_V4_MAP_TRANS:
+> -               kfree(doi_def->map.std->lvl.cipso);
+> -               kfree(doi_def->map.std->lvl.local);
+> -               kfree(doi_def->map.std->cat.cipso);
+> -               kfree(doi_def->map.std->cat.local);
+> -               kfree(doi_def->map.std);
+> -               break;
+> +       if (doi_def->map.std) {
+> +               switch (doi_def->type) {
+> +               case CIPSO_V4_MAP_TRANS:
+> +                       kfree(doi_def->map.std->lvl.cipso);
+> +                       kfree(doi_def->map.std->lvl.local);
+> +                       kfree(doi_def->map.std->cat.cipso);
+> +                       kfree(doi_def->map.std->cat.local);
+> +                       kfree(doi_def->map.std);
+> +                       break;
+> +               }
+>         }
+>         kfree(doi_def);
+>  }
+> --
+> 1.8.3.1
+>
 
-The selftest hooks into lsm/file_open and lsm/file_fcntl.
-In these cases the file pointer is valid, but the file ptr
-can be accessed via walking pointers of other objects.
 
-See commit cf28f3bbfca0 ("bpf: Use get_file_rcu() instead of get_file() for task_file iterator")
-that fixes a tricky issue with file iterator.
-It highlights that it's pretty difficult to implement 'struct file' access
-correctly. Let's double down on the safety analysis of the file local storage.
+--=20
+paul moore
+www.paul-moore.com
