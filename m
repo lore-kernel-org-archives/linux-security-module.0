@@ -5,34 +5,34 @@ X-Spam-Level:
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3B0C432BE
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B962C432BE
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9287C610FA
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 882EC60525
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:01:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237054AbhH3MBw (ORCPT
+        id S237112AbhH3MCf (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 08:01:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49318 "EHLO mail.kernel.org"
+        Mon, 30 Aug 2021 08:02:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236825AbhH3MBf (ORCPT
+        id S237093AbhH3MB6 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 08:01:35 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7F7DC61152;
-        Mon, 30 Aug 2021 12:00:40 +0000 (UTC)
+        Mon, 30 Aug 2021 08:01:58 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C1B9760E73;
+        Mon, 30 Aug 2021 12:01:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630324841;
-        bh=SFG8IOlbFZnoTtqIdDO8ssZ4L+Hk0qejy2z2zZQNNcM=;
+        s=k20201202; t=1630324864;
+        bh=VJQlSAja63olDGOXvCp1iTN5hhfErRVWcbFQbXqP+1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tcfUX2me5YQ9OF7UgVIc048F1PGK3F0wA0jalUc9D7Bw0YJo0fgnoLUyegeEj+8pL
-         bGYcLGSEq08TSbSXr72COeMxsZVBM0fYwWBi50n4TKEj5O/zWgDz8nFjjxP64gW5Gt
-         MtQ0P/U6l2DFJ3j/FoySzeIk5Q/yTRKZR3fDVsL6PkW39POPeJBPV9y8aEpyi4RsjC
-         7RdrPv8tzJPlfaj6ndUc4RX4eJi7La316uxU3BoTPcaAkg/CwJhyMv4QkGi9gtq1ce
-         bHTZSFMCDEe3FpqRPOy5CDT7I1Bq49h0CT62Oy50uAbR/qopC8x+/QA1uHwedLbWJS
-         DziIGRVErwpeg==
+        b=eNtmbsfC4sZUQBnV9UZrMKmRUuro3XTWuMGCDc0jXvilpRz9fEslPvNzZsaqf1LuX
+         8JEojBNJN1GSyLuLqpQY6aT1xc+N1cAtGoBzOBiFZOY8zh5vPIe2aR4LjQlSd5zo2d
+         /Q2Ia1R6D5t0t/bU9Wyk6QxSftQJZmFq7nmuD/z5baQeA9T65gt6gEcHA8gE+kt3fF
+         1CXZzRzDzsZ1MrrOuyn765bot7KBixGyuG4Bcv+zp2Ix/19mZPVFK8DQh56oEDrQkI
+         s66sWreY2LU0xGo0Yg3bhAQNDKz4EVGqJ4a/5/ipsWFHwIR+HQohIQP1GC1U+tvgnn
+         YYlYkHkJvOAMg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?=E7=8E=8B=E8=B4=87?= <yun.wang@linux.alibaba.com>,
@@ -40,12 +40,12 @@ Cc:     =?UTF-8?q?=E7=8E=8B=E8=B4=87?= <yun.wang@linux.alibaba.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 7/8] net: fix NULL pointer reference in cipso_v4_doi_free
-Date:   Mon, 30 Aug 2021 08:00:30 -0400
-Message-Id: <20210830120031.1017977-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 2/3] net: fix NULL pointer reference in cipso_v4_doi_free
+Date:   Mon, 30 Aug 2021 08:01:00 -0400
+Message-Id: <20210830120101.1018298-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210830120031.1017977-1-sashal@kernel.org>
-References: <20210830120031.1017977-1-sashal@kernel.org>
+In-Reply-To: <20210830120101.1018298-1-sashal@kernel.org>
+References: <20210830120101.1018298-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -88,10 +88,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index e8b8dd1cb157..7372ba2659df 100644
+index e798e27b3c7d..918fd4bc5534 100644
 --- a/net/ipv4/cipso_ipv4.c
 +++ b/net/ipv4/cipso_ipv4.c
-@@ -480,14 +480,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
+@@ -551,14 +551,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
  	if (!doi_def)
  		return;
  
