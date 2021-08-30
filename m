@@ -2,178 +2,236 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE6BC4320E
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 18:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478A8C4320A
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 23:29:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A147760241
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 18:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A7060F5B
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 23:29:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231753AbhH3Sqb (ORCPT
+        id S237832AbhH3Xat (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 14:46:31 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36423 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231516AbhH3Sqa (ORCPT
+        Mon, 30 Aug 2021 19:30:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231783AbhH3Xat (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 14:46:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630349135;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=i7iUH7l5Sh0OpUsn92+ULA9isAZYjj/3KpoIKNS+nc0=;
-        b=Y1Bfj6zdquZRuaxwOY0yd0FwnqB6CVPSBvZ+JY3GeNb9D2nVRYjfFB7rI1f8WF1V+y4Hmo
-        3LkBx35FQTgDAqUR5lxFQxyYHHIflf7nOIDnfXQED7HhCUlW7QY7jJxtKRzYbHDJmxa0pk
-        UXx5r+xoZlI4/q4EBcRSv2hJQ505odE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-342-jnQEB5U4OBineMHHI0DrUA-1; Mon, 30 Aug 2021 14:45:33 -0400
-X-MC-Unique: jnQEB5U4OBineMHHI0DrUA-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 822448799EE;
-        Mon, 30 Aug 2021 18:45:31 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.8.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3255D2AF99;
-        Mon, 30 Aug 2021 18:45:26 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 93FA72241BF; Mon, 30 Aug 2021 14:45:25 -0400 (EDT)
-Date:   Mon, 30 Aug 2021 14:45:25 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
-        Bruce Fields <bfields@redhat.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
-        dgilbert@redhat.com, casey.schaufler@intel.com,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
-        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
- files
-Message-ID: <YS0nRQeuxEFppDxG@redhat.com>
-References: <20210708175738.360757-2-vgoyal@redhat.com>
- <20210709091915.2bd4snyfjndexw2b@wittgenstein>
- <20210709152737.GA398382@redhat.com>
- <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
- <20210709175947.GB398382@redhat.com>
- <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
- <20210712140247.GA486376@redhat.com>
- <20210712154106.GB18679@fieldses.org>
- <20210712174759.GA502004@redhat.com>
- <3d55ff30-c6cf-46c4-0e32-3b578099343d@schaufler-ca.com>
+        Mon, 30 Aug 2021 19:30:49 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17981C061575;
+        Mon, 30 Aug 2021 16:29:55 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id w7so13823822pgk.13;
+        Mon, 30 Aug 2021 16:29:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=Bl/EqOGe8tHTjO+T/8ceqa0CAuVYTtMirEWf4GGQqsk=;
+        b=LY9671ygDXbS2QGJtlkn+KFcHrzueY+fAjbEU6axnW/D66moMRFxqAaLaxyZTMuzJo
+         8rFkjL+YR5PMqHqGDfEkbKxzBlQbQ9VbktECJCRub1ithQx3ezRyBcTZcdpgiDm0YFY/
+         pXNQGDeItgRv+MkNl0Y8qHC6fZD+KjaGaQF4thrLjpZpcsD61j3elCGix1AP1mhd9VDE
+         /pon9sr/SKN9xuXHVV52mJYFuK4PGq7yk9Zw/YAKklBVdTsb3PYzzat5pTWdqFKcywyP
+         ryTKHX4sIfzKGtOFOjtjSkZ2RHYDN2aLBR9OTPYNTnuKin2L7cWtRnBIzb5Hfb7e/o1a
+         x2HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Bl/EqOGe8tHTjO+T/8ceqa0CAuVYTtMirEWf4GGQqsk=;
+        b=XGuUHNrkBPQXc3vK/dARFclloau+EKp4bEtG1gXptpTkeghsynYN+n5fQl/UiQuHvb
+         dU13ALFPlZ+6X8XGxujePXJPHJ4TUiQsGwG0s/nve4+7sxJMem7xhRwjLqK/oOxbK28m
+         mXqBqUKnJRaYH9ltaliM1mvBTbUegrF1MKuR4Ap/czhwPYPz4wj8ZnoWwis5BuHNdAr+
+         nBUEDCvBjfrVh0G0grYKFeO6N4tHH20NJuYa7d51UdADPKtU7H3QtBRRe/ZAv7t9Xey8
+         ixS4u+pksRYJ7zImfzFln97a2tORWtx/zYSHrbLw6ja+/fjUFPGu54bE0dDcqG7Ce/Ou
+         Nf4Q==
+X-Gm-Message-State: AOAM531zA9MbGxCnhze0GyloyaKhJcqAkQO9T1OXgo3eg6ltXFh8mL9J
+        NoLBvSNX4RjN7H+wRDN8mN3JmrjgCWc=
+X-Google-Smtp-Source: ABdhPJybzo656ysr1JRItaopY7MDX9+DbzGKU1I3mFij6OGILrfGprBjCsiONZXn3c7iPfTHWhj0PA==
+X-Received: by 2002:a63:f241:: with SMTP id d1mr23621896pgk.424.1630366194366;
+        Mon, 30 Aug 2021 16:29:54 -0700 (PDT)
+Received: from [192.168.1.194] ([50.39.237.102])
+        by smtp.gmail.com with ESMTPSA id c23sm18417102pgb.74.2021.08.30.16.29.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 Aug 2021 16:29:54 -0700 (PDT)
+Subject: Re: [PATCH v5 1/1] NAX LSM: Add initial support
+To:     Igor Zhbanov <izh1979@gmail.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        THOBY Simon <Simon.THOBY@viveris.fr>,
+        linux-kernel@vger.kernel.org
+References: <281927a3-7d3e-7aac-509d-9d3b1609b02b@gmail.com>
+ <624ae20f-b520-5b68-06a6-d0fa3713b9a1@gmail.com>
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <219ed9d8-9711-dfe0-c620-070976c1daac@gmail.com>
+Date:   Mon, 30 Aug 2021 16:29:51 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.12.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d55ff30-c6cf-46c4-0e32-3b578099343d@schaufler-ca.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+In-Reply-To: <624ae20f-b520-5b68-06a6-d0fa3713b9a1@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Jul 13, 2021 at 07:17:00AM -0700, Casey Schaufler wrote:
-> On 7/12/2021 10:47 AM, Vivek Goyal wrote:
-> > On Mon, Jul 12, 2021 at 11:41:06AM -0400, J. Bruce Fields wrote:
-> >> On Mon, Jul 12, 2021 at 10:02:47AM -0400, Vivek Goyal wrote:
-> >>> On Fri, Jul 09, 2021 at 04:10:16PM -0400, Bruce Fields wrote:
-> >>>> On Fri, Jul 9, 2021 at 1:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >>>>> nfs seems to have some issues.
-> >>>> I'm not sure what the expected behavior is for nfs.  All I have for
-> >>>> now is some generic troubleshooting ideas, sorry:
-> >>>>
-> >>>>> - I can set user.foo xattr on symlink and query it back using xattr name.
-> >>>>>
-> >>>>>   getfattr -h -n user.foo foo-link.txt
-> >>>>>
-> >>>>>   But when I try to dump all xattrs on this file, user.foo is being
-> >>>>>   filtered out it looks like. Not sure why.
-> >>>> Logging into the server and seeing what's set there could help confirm
-> >>>> whether it's the client or server that's at fault.  (Or watching the
-> >>>> traffic in wireshark; there are GET/SET/LISTXATTR ops that should be
-> >>>> easy to spot.)
-> >>>>
-> >>>>> - I can't set "user.foo" xattr on a device node on nfs and I get
-> >>>>>   "Permission denied". I am assuming nfs server is returning this.
-> >>>> Wireshark should tell you whether it's the server or client doing that.
-> >>>>
-> >>>> The RFC is https://datatracker.ietf.org/doc/html/rfc8276, and I don't
-> >>>> see any explicit statement about what the server should do in the case
-> >>>> of symlinks or device nodes, but I do see "Any regular file or
-> >>>> directory may have a set of extended attributes", so that was clearly
-> >>>> the assumption.  Also, NFS4ERR_WRONG_TYPE is listed as a possible
-> >>>> error return for the xattr ops.  But on a quick skim I don't see any
-> >>>> explicit checks in the nfsd code, so I *think* it's just relying on
-> >>>> the vfs for any file type checks.
-> >>> Hi Bruce,
-> >>>
-> >>> Thanks for the response. I am just trying to do set a user.foo xattr on
-> >>> a device node on nfs.
-> >>>
-> >>> setfattr -n "user.foo" -v "bar" /mnt/nfs/test-dev
-> >>>
-> >>> and I get -EACCESS.
-> >>>
-> >>> I put some printk() statements and EACCESS is being returned from here.
-> >>>
-> >>> nfs4_xattr_set_nfs4_user() {
-> >>>         if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
-> >>>                 if (!(cache.mask & NFS_ACCESS_XAWRITE)) {
-> >>>                         return -EACCES;
-> >>>                 }
-> >>>         }
-> >>> }
-> >>>
-> >>> Value of cache.mask=0xd at the time of error.
-> >> Looks like 0xd is what the server returns to access on a device node
-> >> with mode bits rw- for the caller.
-> >>
-> >> Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
-> >> checks" added the ACCESS_X* bits for regular files and directories but
-> >> not others.
-> >>
-> >> But you don't want to determine permission from the mode bits anyway,
-> >> you want it to depend on the owner,
-> > Thinking more about this part. Current implementation of my patch is
-> > effectively doing both the checks. It checks that you are owner or
-> > have CAP_FOWNER in xattr_permission() and then goes on to call
-> > inode_permission(). And that means file mode bits will also play a
-> > role. If caller does not have write permission on the file, it will
-> > be denied setxattr().
-> >
-> > If I don't call inode_permission(), and just return 0 right away for
-> > file owner (for symlinks and special files), then just being owner
-> > is enough to write user.* xattr. And then even security modules will
-> > not get a chance to block that operation.
-> 
-> That isn't going to fly. SELinux and Smack don't rely on ownership
-> as a criteria for access. Being the owner of a symlink conveys no
-> special privilege. The LSM must be consulted to determine if the
-> module's policy allows the access.
 
-Getting back to this thread after a while. Sorry got busy in other
-things.
 
-I noticed that if we skip calling inode_permission() for special files,
-then we will skip calling security_inode_permission() but we will
-still call security hooks for setxattr/getxattr/removexattr etc.
+On 8/21/21 2:47 AM, Igor Zhbanov wrote:
+> Add initial support for NAX (No Anonymous Execution), which is a Linux
+> Security Module that extends DAC by making impossible to make anonymous
+> and modified pages executable for privileged processes.
+>
+> Intercepts anonymous executable pages created with mmap() and mprotect()
+> system calls.
+>
+> Log violations (in non-quiet mode) and block the action or kill the
+> offending process, depending on the enabled settings.
+>
+> See Documentation/admin-guide/LSM/NAX.rst.
+>
+> Signed-off-by: Igor Zhbanov <izh1979@gmail.com>
+> ---
+>   Documentation/admin-guide/LSM/NAX.rst         |  72 +++
+>   Documentation/admin-guide/LSM/index.rst       |   1 +
+>   .../admin-guide/kernel-parameters.rst         |   1 +
+>   .../admin-guide/kernel-parameters.txt         |  32 ++
+>   security/Kconfig                              |  11 +-
+>   security/Makefile                             |   2 +
+>   security/nax/Kconfig                          | 113 +++++
+>   security/nax/Makefile                         |   4 +
+>   security/nax/nax-lsm.c                        | 472 ++++++++++++++++++
+>   9 files changed, 703 insertions(+), 5 deletions(-)
+>   create mode 100644 Documentation/admin-guide/LSM/NAX.rst
+>   create mode 100644 security/nax/Kconfig
+>   create mode 100644 security/nax/Makefile
+>   create mode 100644 security/nax/nax-lsm.c
+>
+> diff --git a/Documentation/admin-guide/LSM/NAX.rst b/Documentation/admin-guide/LSM/NAX.rst
+> new file mode 100644
+> index 000000000000..da54b3be4cda
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/NAX.rst
+> @@ -0,0 +1,72 @@
+> +=======
+> +NAX LSM
+> +=======
+> +
+> +:Author: Igor Zhbanov
+> +
+> +NAX (No Anonymous Execution) is a Linux Security Module that extends DAC
+> +by making impossible to make anonymous and modified pages executable for
+> +processes. The module intercepts anonymous executable pages created with
+> +mmap() and mprotect() system calls.
+> +
+> +To select it at boot time, add ``nax`` to ``security`` kernel command-line
+> +parameter.
+> +
+> +The following sysctl parameters are available:
+> +
+> +* ``kernel.nax.check_all``:
+> + - 0: Check all processes.
+> + - 1: Check only privileged processes. The privileged process is a process
+> +      for which any of the following is true:
+> +      - ``uid  == 0``
+> +      - ``euid == 0``
+> +      - ``suid == 0``
+> +      - ``cap_effective`` has any capability except for the ones allowed
+> +        in ``kernel.nax.allowed_caps``
+> +      - ``cap_permitted`` has any capability except for the ones allowed
+> +        in ``kernel.nax.allowed_caps``
+> +
+> + Checking of uid/euid/suid is important because a process may call seteuid(0)
+> + to gain privileges (if SECURE_NO_SETUID_FIXUP secure bit is not set).
+> +
+> +* ``kernel.nax.allowed_caps``:
+> +
+> + Hexadecimal number representing the set of capabilities a non-root
+> + process can possess without being considered "privileged" by NAX LSM.
+> +
+> + For the meaning of the capabilities bits and their value, please check
+> + ``include/uapi/linux/capability.h`` and ``capabilities(7)`` manual page.
+> +
+> + For example, ``CAP_SYS_PTRACE`` has a number 19. Therefore, to add it to
+> + allowed capabilities list, we need to set 19'th bit (2^19 or 1 << 19)
+> + or 80000 in hexadecimal form. Capabilities can be bitwise ORed.
+> +
+> +* ``kernel.nax.mode``:
+> +
+> + - 0: Only log errors (when enabled by ``kernel.nax.quiet``) (default mode)
+> + - 1: Forbid unsafe pages mappings (and log when enabled)
+> + - 2: Kill the violating process (and log when enabled)
+> +
+> +* ``kernel.nax.quiet``:
+> +
+> + - 0: Log violations (default)
+> + - 1: Be quiet
+> +
+> +* ``kernel.nax.locked``:
+> +
+> + - 0: Changing of the module's sysctl parameters is allowed
+> + - 1: Further changing of the module's sysctl parameters is forbidden
+> +
+> + Setting this parameter to ``1`` after initial setup during the system boot
+> + will prevent the module disabling at the later time.
+> +
+> +There are matching kernel command-line parameters (with the same values):
+> +
+> +- ``nax_allowed_caps``
+> +- ``nax_check_all``
+> +- ``nax_mode``
+> +- ``nax_quiet``
+> +- ``nax_locked``
+> +
+> +The ``nax_locked`` command-line parameter must be specified last to avoid
+> +premature setting locking.
 
-security_inode_setxattr()
-security_inode_getxattr()
-security_inode_removexattr()
 
-So LSMs will still get a chance whether to allow/disallow this operation
-or not.
+Is it common to have these types of restrictions for kernel command-line 
+parameters, in this case, kernel command-line parameter ordering?  Seems 
+like that would be prone for a lot of avoidable troubleshooting issues 
+and unnecessary usage questions.
 
-And skipping security_inode_permission() kind of makes sense that for
-special files, I am not writing to device. So taking permission from
-LSMs, will not make much sense.
+<big snip>
+.
+.
+.
 
-Thanks
-Vivek
+> +
+> +static void __init
+> +nax_init_sysctl(void)
+> +{
+> +	if (!register_sysctl_paths(nax_sysctl_path, nax_sysctl_table))
+> +		panic("NAX: sysctl registration failed.\n");
+> +}
+> +
+> +#else /* !CONFIG_SYSCTL */
+> +
+> +static inline void
+> +nax_init_sysctl(void)
+> +{
+> +
+> +}
+> +
+> +#endif /* !CONFIG_SYSCTL */
+> +
+> +static int __init setup_allowed_caps(char *str)
+> +{
+> +	if (locked)
+> +		return 1;
+> +
+> +	/* Do not allow trailing garbage or excessive length */
+> +	if (strlen(str) > ALLOWED_CAPS_HEX_LEN) {
 
+  a little nitpick, could strnlen() be used instead to define a max 
+length of the input 'str'?
+
+
+Regards,
+Jay
