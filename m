@@ -2,148 +2,111 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CB4C432BE
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 05:17:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDB6C432BE
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 10:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14C9060F44
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 05:17:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A48F0610A8
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 10:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230057AbhH3FSR (ORCPT
+        id S236068AbhH3KP2 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 01:18:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34688 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229936AbhH3FSR (ORCPT
+        Mon, 30 Aug 2021 06:15:28 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:52873 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S236287AbhH3KP0 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 01:18:17 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AF64C061575;
-        Sun, 29 Aug 2021 22:17:23 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id x16so6194660pll.2;
-        Sun, 29 Aug 2021 22:17:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OHHSVUC33opd0Qk264rfSpwjz98z3QDj3NJ2fck9jK8=;
-        b=ruFk5CbiFcmUIQIrV5qw73AqFPMx3QkbPlt3zAEW1e5XM6sllr8w3G28RQMdhsxuBW
-         h+mb3ituDPXuhZ296jtkzXZyR4QAj+s7WoxDRFUkSzr7IO4SxFjcoKjH40+DpX/18cuo
-         oZYbBwL5WM8VkXFZiOwJ2h+s2CEIRN/oX/KzYu/EBQ9r0iw1uOYh4iLjYuBWV8PU9YTr
-         klTMw+zI+dOAmkIqgOOygsgze7qCEjZanGDZ1XDj7swi5nMsBKi2ro+76XAlOTLw0Mbf
-         FJY6/6YEbOp11ZKeyk3K/3fdvbVLi5Ug9I0CXXnJTJ7EpSygyIo7BhUzqqDaKpIK2SxW
-         vDKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OHHSVUC33opd0Qk264rfSpwjz98z3QDj3NJ2fck9jK8=;
-        b=Cbnkq5v3jMK8GHM1HbsWfxN2G68qVft1tLODSrkmfRAEvIXv6uJDKdKHyfkfE3pcmK
-         M9z+/uyZW+VTz0kK2all7mJZIAfniL46X2dnqBqwndV2OnBGX+t+pSlosC2IZvSmS4mU
-         d6yYNddEfw5iXDEsIDWgur/pFLCbu6qfwTpde0+VzKA2iD2iX9TwTDW0czqlPVr210iV
-         o+8aMQnuxEEwYe2XADzkmPS2Sjw7+2dWa9I5aof0Hm5JLVWFzAFsW0wtHHC+ZBSTuIdg
-         jRZtHIWL13rBmA4e+wFcyXedJubmbyIXjO8iHFQ380NaPlO7e4GR6Ous4rHs7+HJXEII
-         6nGA==
-X-Gm-Message-State: AOAM533lQ14cyPQuxWeU38kGAPdDmdijzJ72CTNyTGoAkkE74W5amvxH
-        ZkJ0y0lX15HM2g22lx1dDZ8=
-X-Google-Smtp-Source: ABdhPJwKTedFwFlET8b1JDZJlQKbw55j+YsvPv9Q/fvHJFHKyEdzM5Fg3bAd/4SUr+hroX+2l9D34g==
-X-Received: by 2002:a17:902:a702:b029:12b:aa0f:d553 with SMTP id w2-20020a170902a702b029012baa0fd553mr20215149plq.3.1630300642337;
-        Sun, 29 Aug 2021 22:17:22 -0700 (PDT)
-Received: from localhost ([2405:201:6014:d820:9cc6:d37f:c2fd:dc6])
-        by smtp.gmail.com with ESMTPSA id y5sm15488462pgs.27.2021.08.29.22.17.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Aug 2021 22:17:21 -0700 (PDT)
-Date:   Mon, 30 Aug 2021 10:47:19 +0530
-From:   Kumar Kartikeya Dwivedi <memxor@gmail.com>
-To:     "Serge E. Hallyn" <serge@hallyn.com>
-Cc:     bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Spencer Baugh <sbaugh@catern.com>,
-        Pavel Emelyanov <ovzxemul@gmail.com>,
-        Alexander Mihalicyn <alexander@mihalicyn.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2 1/5] bpf: Implement file local storage
-Message-ID: <20210830051719.xfl4llkiarmvk4r2@apollo.localdomain>
-References: <20210826133913.627361-1-memxor@gmail.com>
- <20210826133913.627361-2-memxor@gmail.com>
- <20210830042346.GA26321@mail.hallyn.com>
+        Mon, 30 Aug 2021 06:15:26 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R431e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0UmZX2wj_1630318469;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0UmZX2wj_1630318469)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 30 Aug 2021 18:14:30 +0800
+Subject: Re: [PATCH] net: fix NULL pointer reference in cipso_v4_doi_free
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+To:     Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
+Message-ID: <1bf8b84c-416a-8f74-c9de-49f26afbfb84@linux.alibaba.com>
+Date:   Mon, 30 Aug 2021 18:14:29 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210830042346.GA26321@mail.hallyn.com>
+In-Reply-To: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 30, 2021 at 09:53:46AM IST, Serge E. Hallyn wrote:
-> On Thu, Aug 26, 2021 at 07:09:09PM +0530, Kumar Kartikeya Dwivedi wrote:
-> > +static struct bpf_local_storage_data *
-> > +file_storage_lookup(struct file *file, struct bpf_map *map, bool cacheit_lockit)
-> > +{
-> > +	struct bpf_local_storage *file_storage;
-> > +	struct bpf_local_storage_map *smap;
-> > +	struct bpf_storage_blob *bsb;
-> > +
-> > +	bsb = bpf_file(file);
-> > +	if (!bsb)
-> > +		return NULL;
-> > +
-> > +	file_storage = rcu_dereference(bsb->storage);
->
-> It's possible that I am (and the docs are) behind the times, or (very likely)
-> I'm missing something else, but Documentation/RCU/whatisRCU.rst says that
-> rcu_dereference result is only valid within a rcu read-side critical section.
->
-> Here it doesn't seem like you're in a rcu_read_unlock at all.  Will the
-> callers (bpf_map_ops->map_lookup_elem) be called that way?
->
+Just a ping... Should we fix this?
 
-This function will either be called from the BPF program, which is run under RCU
-protection, or from bpf_map_* bpf command, which also has rcu_read_lock
-protection (see map_copy_value, bpf_map_update_value in kernel/bpf/syscall.c
-called from map_lookup_elem, map_update_elem) when calling the map_ops.
+Regards,
+Michael Wang
 
-> > +	if (!file_storage)
-> > +		return NULL;
-> > +
-> > +	smap = (struct bpf_local_storage_map *)map;
-> > +	return bpf_local_storage_lookup(file_storage, smap, cacheit_lockit);
-> > +}
-> > +
-> > +void bpf_file_storage_free(struct file *file)
-> > +{
-> > +	struct bpf_local_storage *local_storage;
-> > +	struct bpf_local_storage_elem *selem;
-> > +	bool free_file_storage = false;
-> > +	struct bpf_storage_blob *bsb;
-> > +	struct hlist_node *n;
-> > +
-> > +	bsb = bpf_file(file);
-> > +	if (!bsb)
-> > +		return;
-> > +
-> > +	rcu_read_lock();
-> > +
-> > +	local_storage = rcu_dereference(bsb->storage);
->
-> Here you've called rcu_read_lock, but you use the result of it,
-> 'local_storage', after dropping the rcu_read_unlock, which whatisRCU.rst
-> explicitly calls out as a bug.
->
-
-It is only used without rcu_read_lock protection in one place, in the branch
-that depends on 'free_file_storage', at which point we are responsible for
-freeing the local_storage after unlinking the last storage element from its
-list and resetting the owner.
-
-> [...]
-
---
-Kartikeya
+On 2021/8/26 上午11:42, 王贇 wrote:
+> In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
+> failed, we sometime observe panic:
+> 
+>   BUG: kernel NULL pointer dereference, address:
+>   ...
+>   RIP: 0010:cipso_v4_doi_free+0x3a/0x80
+>   ...
+>   Call Trace:
+>    netlbl_cipsov4_add_std+0xf4/0x8c0
+>    netlbl_cipsov4_add+0x13f/0x1b0
+>    genl_family_rcv_msg_doit.isra.15+0x132/0x170
+>    genl_rcv_msg+0x125/0x240
+> 
+> This is because in cipso_v4_doi_free() there is no check
+> on 'doi_def->map.std' when 'doi_def->type' equal 1, which
+> is possibe, since netlbl_cipsov4_add_std() haven't initialize
+> it before alloc 'doi_def->map.std'.
+> 
+> This patch just add the check to prevent panic happen for similar
+> cases.
+> 
+> Reported-by: Abaci <abaci@linux.alibaba.com>
+> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+> ---
+> 
+>  net/ipv4/cipso_ipv4.c | 18 ++++++++++--------
+>  1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
+> index 099259f..7fbd0b5 100644
+> --- a/net/ipv4/cipso_ipv4.c
+> +++ b/net/ipv4/cipso_ipv4.c
+> @@ -465,14 +465,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
+>  	if (!doi_def)
+>  		return;
+> 
+> -	switch (doi_def->type) {
+> -	case CIPSO_V4_MAP_TRANS:
+> -		kfree(doi_def->map.std->lvl.cipso);
+> -		kfree(doi_def->map.std->lvl.local);
+> -		kfree(doi_def->map.std->cat.cipso);
+> -		kfree(doi_def->map.std->cat.local);
+> -		kfree(doi_def->map.std);
+> -		break;
+> +	if (doi_def->map.std) {
+> +		switch (doi_def->type) {
+> +		case CIPSO_V4_MAP_TRANS:
+> +			kfree(doi_def->map.std->lvl.cipso);
+> +			kfree(doi_def->map.std->lvl.local);
+> +			kfree(doi_def->map.std->cat.cipso);
+> +			kfree(doi_def->map.std->cat.local);
+> +			kfree(doi_def->map.std);
+> +			break;
+> +		}
+>  	}
+>  	kfree(doi_def);
+>  }
+> 
