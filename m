@@ -2,117 +2,178 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2BDC432BE
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 18:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE6BC4320E
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 18:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD51C60F3A
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 18:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A147760241
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 18:45:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238544AbhH3S2z (ORCPT
+        id S231753AbhH3Sqb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 14:28:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48740 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238250AbhH3S2v (ORCPT
+        Mon, 30 Aug 2021 14:46:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:36423 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231516AbhH3Sqa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 14:28:51 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8062C061575
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Aug 2021 11:27:57 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id t42so12852176pfg.12
-        for <linux-security-module@vger.kernel.org>; Mon, 30 Aug 2021 11:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=Mz42W/Lx43y6CcuCJpr6nNW2Lf79xV+Oh1YYCpvYFXY=;
-        b=jHyLx/jQQd0/go0ng9MmCROtCBvWRW1jJWRWt+5N4mZNdw08Art/r5RXbTKYhW02Pr
-         gFozWUjOdbvKOLi18vnhwKFINft1ClPa8tq2Z/AxacTNomYgirniezgc3vwvrZqMp3zU
-         HyARwx0oVGh80z/g7HDmifIWMmVsdHG6hDM5I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=Mz42W/Lx43y6CcuCJpr6nNW2Lf79xV+Oh1YYCpvYFXY=;
-        b=FHQcQZ6Ug/qb3dBMIvpkfzPq11I30UhHelwc5pGUbMncLznEH9LTpyJF74mRtnvMFb
-         6XtCud/YB/WUxk5y2mHMRGN+rgHX007HbnGs/+aMAFJ+LpV5RV7JYo98ZBVaUPpajCfJ
-         N+BPN98P50TLKaKO6EpjXCr1m9pnkbu3KGJ9TPlvQI/nD7mn6D30PvyaT95qksZDinIA
-         wYIWOyA+veaCiycuKIiFuCBtXEMi/tg43+td61fj390j8MKIXnGdSWsY36chiL1qf9RD
-         mY5UtcDfsuweq8gxUFAlK3Hw3Qw4Fcswaq91AR2ggLevBfupj6he/ZNeW/hpolM7trdF
-         vtBA==
-X-Gm-Message-State: AOAM531EcKSlZILmwlqJbUiINl7ltOo+eoErlGUp9DeIm9YnFBVMmFXY
-        8JGX7TSZkRtLffhecUDTstpCOA==
-X-Google-Smtp-Source: ABdhPJxxZJQIBMc6Dsq5ghhAjnvEVvZ5nNMfDKrV02lD/0HepnMIzBryoTQXACy/mPtWNDY4mhBYeg==
-X-Received: by 2002:aa7:80d1:0:b029:399:ce3a:d617 with SMTP id a17-20020aa780d10000b0290399ce3ad617mr24408847pfn.16.1630348077240;
-        Mon, 30 Aug 2021 11:27:57 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t23sm177071pjs.16.2021.08.30.11.27.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Aug 2021 11:27:56 -0700 (PDT)
-Date:   Mon, 30 Aug 2021 11:27:55 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        clang-built-linux@googlegroups.com, glider@google.com,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-security-module@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [GIT PULL] hardening updates for v5.15-rc1
-Message-ID: <202108301127.836C1F4D@keescook>
+        Mon, 30 Aug 2021 14:46:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630349135;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=i7iUH7l5Sh0OpUsn92+ULA9isAZYjj/3KpoIKNS+nc0=;
+        b=Y1Bfj6zdquZRuaxwOY0yd0FwnqB6CVPSBvZ+JY3GeNb9D2nVRYjfFB7rI1f8WF1V+y4Hmo
+        3LkBx35FQTgDAqUR5lxFQxyYHHIflf7nOIDnfXQED7HhCUlW7QY7jJxtKRzYbHDJmxa0pk
+        UXx5r+xoZlI4/q4EBcRSv2hJQ505odE=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-342-jnQEB5U4OBineMHHI0DrUA-1; Mon, 30 Aug 2021 14:45:33 -0400
+X-MC-Unique: jnQEB5U4OBineMHHI0DrUA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 822448799EE;
+        Mon, 30 Aug 2021 18:45:31 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.8.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3255D2AF99;
+        Mon, 30 Aug 2021 18:45:26 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 93FA72241BF; Mon, 30 Aug 2021 14:45:25 -0400 (EDT)
+Date:   Mon, 30 Aug 2021 14:45:25 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Bruce Fields <bfields@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, virtio-fs@redhat.com, dwalsh@redhat.com,
+        dgilbert@redhat.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        jack@suse.cz, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/1] xattr: Allow user.* xattr on symlink and special
+ files
+Message-ID: <YS0nRQeuxEFppDxG@redhat.com>
+References: <20210708175738.360757-2-vgoyal@redhat.com>
+ <20210709091915.2bd4snyfjndexw2b@wittgenstein>
+ <20210709152737.GA398382@redhat.com>
+ <710d1c6f-d477-384f-0cc1-8914258f1fb1@schaufler-ca.com>
+ <20210709175947.GB398382@redhat.com>
+ <CAPL3RVGKg4G5qiiHo7KYPcsWWgeoW=qNPOSQpd3Sv329jrWrLQ@mail.gmail.com>
+ <20210712140247.GA486376@redhat.com>
+ <20210712154106.GB18679@fieldses.org>
+ <20210712174759.GA502004@redhat.com>
+ <3d55ff30-c6cf-46c4-0e32-3b578099343d@schaufler-ca.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <3d55ff30-c6cf-46c4-0e32-3b578099343d@schaufler-ca.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi Linus,
+On Tue, Jul 13, 2021 at 07:17:00AM -0700, Casey Schaufler wrote:
+> On 7/12/2021 10:47 AM, Vivek Goyal wrote:
+> > On Mon, Jul 12, 2021 at 11:41:06AM -0400, J. Bruce Fields wrote:
+> >> On Mon, Jul 12, 2021 at 10:02:47AM -0400, Vivek Goyal wrote:
+> >>> On Fri, Jul 09, 2021 at 04:10:16PM -0400, Bruce Fields wrote:
+> >>>> On Fri, Jul 9, 2021 at 1:59 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >>>>> nfs seems to have some issues.
+> >>>> I'm not sure what the expected behavior is for nfs.  All I have for
+> >>>> now is some generic troubleshooting ideas, sorry:
+> >>>>
+> >>>>> - I can set user.foo xattr on symlink and query it back using xattr name.
+> >>>>>
+> >>>>>   getfattr -h -n user.foo foo-link.txt
+> >>>>>
+> >>>>>   But when I try to dump all xattrs on this file, user.foo is being
+> >>>>>   filtered out it looks like. Not sure why.
+> >>>> Logging into the server and seeing what's set there could help confirm
+> >>>> whether it's the client or server that's at fault.  (Or watching the
+> >>>> traffic in wireshark; there are GET/SET/LISTXATTR ops that should be
+> >>>> easy to spot.)
+> >>>>
+> >>>>> - I can't set "user.foo" xattr on a device node on nfs and I get
+> >>>>>   "Permission denied". I am assuming nfs server is returning this.
+> >>>> Wireshark should tell you whether it's the server or client doing that.
+> >>>>
+> >>>> The RFC is https://datatracker.ietf.org/doc/html/rfc8276, and I don't
+> >>>> see any explicit statement about what the server should do in the case
+> >>>> of symlinks or device nodes, but I do see "Any regular file or
+> >>>> directory may have a set of extended attributes", so that was clearly
+> >>>> the assumption.  Also, NFS4ERR_WRONG_TYPE is listed as a possible
+> >>>> error return for the xattr ops.  But on a quick skim I don't see any
+> >>>> explicit checks in the nfsd code, so I *think* it's just relying on
+> >>>> the vfs for any file type checks.
+> >>> Hi Bruce,
+> >>>
+> >>> Thanks for the response. I am just trying to do set a user.foo xattr on
+> >>> a device node on nfs.
+> >>>
+> >>> setfattr -n "user.foo" -v "bar" /mnt/nfs/test-dev
+> >>>
+> >>> and I get -EACCESS.
+> >>>
+> >>> I put some printk() statements and EACCESS is being returned from here.
+> >>>
+> >>> nfs4_xattr_set_nfs4_user() {
+> >>>         if (!nfs_access_get_cached(inode, current_cred(), &cache, true)) {
+> >>>                 if (!(cache.mask & NFS_ACCESS_XAWRITE)) {
+> >>>                         return -EACCES;
+> >>>                 }
+> >>>         }
+> >>> }
+> >>>
+> >>> Value of cache.mask=0xd at the time of error.
+> >> Looks like 0xd is what the server returns to access on a device node
+> >> with mode bits rw- for the caller.
+> >>
+> >> Commit c11d7fd1b317 "nfsd: take xattr bits into account for permission
+> >> checks" added the ACCESS_X* bits for regular files and directories but
+> >> not others.
+> >>
+> >> But you don't want to determine permission from the mode bits anyway,
+> >> you want it to depend on the owner,
+> > Thinking more about this part. Current implementation of my patch is
+> > effectively doing both the checks. It checks that you are owner or
+> > have CAP_FOWNER in xattr_permission() and then goes on to call
+> > inode_permission(). And that means file mode bits will also play a
+> > role. If caller does not have write permission on the file, it will
+> > be denied setxattr().
+> >
+> > If I don't call inode_permission(), and just return 0 right away for
+> > file owner (for symlinks and special files), then just being owner
+> > is enough to write user.* xattr. And then even security modules will
+> > not get a chance to block that operation.
+> 
+> That isn't going to fly. SELinux and Smack don't rely on ownership
+> as a criteria for access. Being the owner of a symlink conveys no
+> special privilege. The LSM must be consulted to determine if the
+> module's policy allows the access.
 
-Please pull these hardening updates for v5.15-rc1.
+Getting back to this thread after a while. Sorry got busy in other
+things.
 
-Thanks!
+I noticed that if we skip calling inode_permission() for special files,
+then we will skip calling security_inode_permission() but we will
+still call security hooks for setxattr/getxattr/removexattr etc.
 
--Kees
+security_inode_setxattr()
+security_inode_getxattr()
+security_inode_removexattr()
 
-The following changes since commit 2734d6c1b1a089fb593ef6a23d4b70903526fe0c:
+So LSMs will still get a chance whether to allow/disallow this operation
+or not.
 
-  Linux 5.14-rc2 (2021-07-18 14:13:49 -0700)
+And skipping security_inode_permission() kind of makes sense that for
+special files, I am not writing to device. So taking permission from
+LSMs, will not make much sense.
 
-are available in the Git repository at:
+Thanks
+Vivek
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-v5.15-rc1
-
-for you to fetch changes up to a8fc576d4af2f23a87a586424252df97f0ad0b06:
-
-  lib/test_stackinit: Add assigned initializers (2021-08-22 00:21:36 -0700)
-
-----------------------------------------------------------------
-hardening updates for v5.15-rc1
-
-- Expand lib/test_stackinit to include more initialization styles
-
-- Improve Kconfig for CLang's auto-var-init feature
-
-- Introduce support for GCC's zero-call-used-regs feature
-
-----------------------------------------------------------------
-Kees Cook (5):
-      hardening: Introduce CONFIG_ZERO_CALL_USED_REGS
-      hardening: Clarify Kconfig text for auto-var-init
-      lib/test_stackinit: Fix static initializer test
-      lib/test_stackinit: Allow building stand-alone
-      lib/test_stackinit: Add assigned initializers
-
- Makefile                   |   5 +
- lib/test_stackinit.c       | 253 +++++++++++++++++++++++++++++++++------------
- security/Kconfig.hardening |  71 +++++++++----
- 3 files changed, 242 insertions(+), 87 deletions(-)
-
--- 
-Kees Cook
