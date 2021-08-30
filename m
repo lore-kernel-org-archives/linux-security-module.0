@@ -2,95 +2,78 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0CBC4320E
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB53C432BE
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 14:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D38360525
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 921C060E98
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 14:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231531AbhH3Mna (ORCPT
+        id S237062AbhH3OSM (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 08:43:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51782 "EHLO
+        Mon, 30 Aug 2021 10:18:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229656AbhH3Mn3 (ORCPT
+        with ESMTP id S237014AbhH3OSM (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 08:43:29 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C15F8C061575;
-        Mon, 30 Aug 2021 05:42:35 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id n27so30848853eja.5;
-        Mon, 30 Aug 2021 05:42:35 -0700 (PDT)
+        Mon, 30 Aug 2021 10:18:12 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B4C1C061760
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Aug 2021 07:17:18 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id eb14so12653843edb.8
+        for <linux-security-module@vger.kernel.org>; Mon, 30 Aug 2021 07:17:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=/y2g9rn9wt5yjW/SBXP8IWmwro5UmCGX/CodZW4eBgc=;
-        b=Mr2kTkdxRbciqEVlRnoacRmau33ZNX+QAN06nGpXy8NgHRjI1as+Ygh4MtDznwyT09
-         No+0Ed5y1sQMIZJot7mDMO2Tm2QsAh+ZhNzls9dqp6p/nIRwyDMfMwrTzkQlnopxRfaC
-         GkCNQhySbi57TfU0YsxQgYPGCD5E3KF55++w/u3NxGfeHy0TU81QCmgZ71nb8MODj2lb
-         ReerPD83Z5pidzKRayYD3VYxq0c0Ymee3iknIihuaKEeACo7BVIhnM8780S5/gxkTKE2
-         QkgOXMoDAbAa/N6nczGr6m+26Ox01J+hLhv+FnHaIYK+jw/IyJLw4o0A68QJE5jQsstK
-         uhHQ==
+        bh=PhLhEsUAzqUuFfsscW0DyI/J5DCKBefy3mdhQUbyDaE=;
+        b=hFbYrNf1BGA7EbIY3/fCL9Gwx/Ffing14F//0+cYUzQSxvcwICcE7Rag0RErTv4j8x
+         q9/o2+bxiLl2n+HRA4/4O1H5rf+/a6V8NEMdoZBWeAE4L2jGfyOW33In6wKXESBD2ugj
+         VmnL/1Vwt88n+e0TK7fAlDd5mbzFDA9uc/GzempJs4v38wM0X4ntS7estZIVPC6H/DXH
+         V2z54eIRpliokdLYaqoir0M5ElAzRT598ozmmzG5Jjjw5SxnYxPpgIxITb8LP7AY3i/z
+         OAebGDHmhn3dch+Kl8AazkXAXXlLyYpwg2jy2CtTeqHvR8FSaVHeA8On6he08wk+xAos
+         7XLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/y2g9rn9wt5yjW/SBXP8IWmwro5UmCGX/CodZW4eBgc=;
-        b=pwqFLKdUScoEWxGFb9bBDX+UgYwpAcmyRzDorY5Nxyag9jTKOaUWtmA/+1nMLyRX2U
-         ScWgpDfCYPDDeRYeCqcnnGmJArHmeMP1KwZ5dj0DTIagniDEsGlqMtURTa6G0uILcbqU
-         WEbrhMrYt7ZXbR82eb3APGQYyxDkLCm5/kJ5pfn3z8k5hakOwX7ew8+aEXcgTqDZvQgP
-         kHrUp5UTL1ihBJ0brKLhyy8aZuccEMvMSUpC37j3H06rZYzGk2qWLUE6S/WyeftrkbxH
-         spla7IbfmlFlnqe5KV6EnIK+KRrk6oVrREH4NArIvBZMDSkOU49ulT4L0JogJU5hHQlg
-         4Frg==
-X-Gm-Message-State: AOAM5332qgILl4Vcgy8Klh3YtEolLhczjh2RCa+KluVEaFnrL837kKee
-        x2MmStkqN8RDhh7HzsalLfgs/aHQ71cfimOWQ4Y=
-X-Google-Smtp-Source: ABdhPJxLsU1VpQW2C5CLwFCRKDZxkKyXVnbDoc74eSqeDsOw9goTMJEktW3Hwcg/qINw7EDeyKOq6f2LeB5ngfp/vUQ=
-X-Received: by 2002:a17:906:a3c3:: with SMTP id ca3mr24873332ejb.337.1630327354264;
- Mon, 30 Aug 2021 05:42:34 -0700 (PDT)
+        bh=PhLhEsUAzqUuFfsscW0DyI/J5DCKBefy3mdhQUbyDaE=;
+        b=sXF/FGohKBA8+5OvBS8D/0hid3CIIZ491/uH9TfY7XJc/IC4Xm1U7PavJONX2xHTHb
+         G3cTqBn4XWxb29kp5lw+y/ViRFHrh4NjmKOgv2Ter9PY9F+CYWM97EbVCMYcELWDBHru
+         HlIIoWp/0jRQxwEYmeQjG0jCsD6IjNPCUVtjYvY0DUAEHSXoOdufkYGoUkTU5Lme79fu
+         wIMVl+PNBJz6bGQvmr0hJPWZOfwUBRLywJUIq7hbsNnPMCKMIEPEv5wXmA5fGyUA3rUD
+         jHpYyxR4YFEOh8n2EvJdKy4Hrrzcq23DQi5R16E9UuHf6eOb34iFt4OaPFql9jVzT9g0
+         ZMgA==
+X-Gm-Message-State: AOAM533Xah6d6PL2M1IdfhT37ikf8MQGwd4OWwd7VDNxm/A4cqchnGYn
+        xrl/SHA3/+duvuHlhrXs1dbrx+NTvaRWm4KNwxlu
+X-Google-Smtp-Source: ABdhPJz3FfrmGcwM4/D9ULldGgAIwmlxACn09R0XQcGjmp55gorvp0R5dA9e1PjiKQW+a0+PR6TSBRaUxTeBzYdN+TE=
+X-Received: by 2002:aa7:d9d2:: with SMTP id v18mr24947247eds.128.1630333036601;
+ Mon, 30 Aug 2021 07:17:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210830115942.1017300-1-sashal@kernel.org> <20210830115942.1017300-13-sashal@kernel.org>
-In-Reply-To: <20210830115942.1017300-13-sashal@kernel.org>
-From:   Dongliang Mu <mudongliangabcd@gmail.com>
-Date:   Mon, 30 Aug 2021 20:42:08 +0800
-Message-ID: <CAD-N9QUXXjEMtdDniuqcNSAtaOhKtHE=hLMchtCJgbvxQXdABQ@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.13 13/14] net: fix NULL pointer reference in cipso_v4_doi_free
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>,
-        Abaci <abaci@linux.alibaba.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
+References: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com> <18f0171e-0cc8-6ae6-d04a-a69a2a3c1a39@linux.alibaba.com>
+In-Reply-To: <18f0171e-0cc8-6ae6-d04a-a69a2a3c1a39@linux.alibaba.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 30 Aug 2021 10:17:05 -0400
+Message-ID: <CAHC9VhTEs9E+ZeGGp96NnOhmr-6MZLXf6ckHeG8w5jh3AfgKiQ@mail.gmail.com>
+Subject: Re: [PATCH v2] net: fix NULL pointer reference in cipso_v4_doi_free
+To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Mon, Aug 30, 2021 at 8:01 PM Sasha Levin <sashal@kernel.org> wrote:
+On Mon, Aug 30, 2021 at 6:28 AM =E7=8E=8B=E8=B4=87 <yun.wang@linux.alibaba.=
+com> wrote:
 >
-> From: =E7=8E=8B=E8=B4=87 <yun.wang@linux.alibaba.com>
->
-> [ Upstream commit 733c99ee8be9a1410287cdbb943887365e83b2d6 ]
->
-
-Hi Sasha,
-
-Michael Wang has sent a v2 patch [1] for this bug and it is merged
-into netdev/net-next.git. However, the v1 patch is already in the
-upstream tree.
-
-How do you guys handle such a issue?
-
-[1] https://lkml.org/lkml/2021/8/30/229
-
 > In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
 > failed, we sometime observe panic:
 >
@@ -105,51 +88,43 @@ How do you guys handle such a issue?
 >    genl_rcv_msg+0x125/0x240
 >
 > This is because in cipso_v4_doi_free() there is no check
-> on 'doi_def->map.std' when 'doi_def->type' equal 1, which
+> on 'doi_def->map.std' when doi_def->type got value 1, which
 > is possibe, since netlbl_cipsov4_add_std() haven't initialize
 > it before alloc 'doi_def->map.std'.
 >
-> This patch just add the check to prevent panic happen for similar
+> This patch just add the check to prevent panic happen in similar
 > cases.
 >
 > Reported-by: Abaci <abaci@linux.alibaba.com>
 > Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->  net/ipv4/cipso_ipv4.c | 18 ++++++++++--------
->  1 file changed, 10 insertions(+), 8 deletions(-)
->
-> diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-> index e0480c6cebaa..16bbd62db791 100644
-> --- a/net/ipv4/cipso_ipv4.c
-> +++ b/net/ipv4/cipso_ipv4.c
-> @@ -466,14 +466,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def=
-)
->         if (!doi_def)
->                 return;
->
-> -       switch (doi_def->type) {
-> -       case CIPSO_V4_MAP_TRANS:
-> -               kfree(doi_def->map.std->lvl.cipso);
-> -               kfree(doi_def->map.std->lvl.local);
-> -               kfree(doi_def->map.std->cat.cipso);
-> -               kfree(doi_def->map.std->cat.local);
-> -               kfree(doi_def->map.std);
-> -               break;
-> +       if (doi_def->map.std) {
-> +               switch (doi_def->type) {
-> +               case CIPSO_V4_MAP_TRANS:
-> +                       kfree(doi_def->map.std->lvl.cipso);
-> +                       kfree(doi_def->map.std->lvl.local);
-> +                       kfree(doi_def->map.std->cat.cipso);
-> +                       kfree(doi_def->map.std->cat.local);
-> +                       kfree(doi_def->map.std);
-> +                       break;
-> +               }
+>  net/netlabel/netlabel_cipso_v4.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+I see this was already merged, but it looks good to me, thanks for
+making those changes.
+
+> diff --git a/net/netlabel/netlabel_cipso_v4.c b/net/netlabel/netlabel_cip=
+so_v4.c
+> index baf2357..344c228 100644
+> --- a/net/netlabel/netlabel_cipso_v4.c
+> +++ b/net/netlabel/netlabel_cipso_v4.c
+> @@ -144,8 +144,8 @@ static int netlbl_cipsov4_add_std(struct genl_info *i=
+nfo,
+>                 return -ENOMEM;
+>         doi_def->map.std =3D kzalloc(sizeof(*doi_def->map.std), GFP_KERNE=
+L);
+>         if (doi_def->map.std =3D=3D NULL) {
+> -               ret_val =3D -ENOMEM;
+> -               goto add_std_failure;
+> +               kfree(doi_def);
+> +               return -ENOMEM;
 >         }
->         kfree(doi_def);
->  }
-> --
-> 2.30.2
+>         doi_def->type =3D CIPSO_V4_MAP_TRANS;
 >
+> --
+> 1.8.3.1
+
+--=20
+paul moore
+www.paul-moore.com
