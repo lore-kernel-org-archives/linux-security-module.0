@@ -2,216 +2,204 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CF4C4320E
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 17:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0E6C4320A
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 17:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1078A60F3A
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 17:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC7B604AC
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 17:41:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238254AbhH3Rlq (ORCPT
+        id S238324AbhH3Rmb (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 13:41:46 -0400
-Received: from mx0b-00069f02.pphosted.com ([205.220.177.32]:3160 "EHLO
-        mx0b-00069f02.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238247AbhH3Rlp (ORCPT
+        Mon, 30 Aug 2021 13:42:31 -0400
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com ([66.163.184.49]:45183
+        "EHLO sonic317-38.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S238220AbhH3Rm3 (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 13:41:45 -0400
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 17UGhbAV019528;
-        Mon, 30 Aug 2021 17:40:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2021-07-09;
- bh=wIwK4BR3I48F0fiFMkaf/e5RWAgJLQB6QYF/3GYy8zc=;
- b=Jh6NvgTKzGpPa93CypgEjRd3mMFVPzUSkkkqrnM7aDfE3MmMhYD04h8MGztgycX+xqVT
- mFVFcA2uJR9bxHoj85/N6wrEUrzkMIOBgI0hKru2NShLvuEW/7Dt5CWKHTZaF9cNdAbW
- cxOegdcy2LUhowdYfpPgj/8q9rKmt0FjqpLdx3aOCZOkx5mP97NZ747Yi7pAfnUr94eL
- HObSvm5Gii2ST7N44gu8lkw30Wgee0EWGIV/5t9GAtf/4VGCknW2h5YODVkI2uo3qTlP
- 0uUfgNWLexlcrz4xg3F/HdtviSZvbmoWKsBbkMtqkrr1mY3FpxIoGPbnvmIl5A3y6ZHO BQ== 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- subject : from : in-reply-to : date : cc : content-transfer-encoding :
- message-id : references : to : mime-version; s=corp-2020-01-29;
- bh=wIwK4BR3I48F0fiFMkaf/e5RWAgJLQB6QYF/3GYy8zc=;
- b=anKHZnnCCs0KYlnERYRIjh4b7/2qqMQA884U7E4OGWfvr5Nmdyv4pm+nZECcWZvztyXp
- fjAQ1L4mklZLYoySJNqw3ZMg4VWI14wpzrLM1PiX/1KFjLiWUTnmxEpMBuxksCnIqYRy
- s/msrS7dj6HCPUxACmZmzRd3ONwW9aigTGjyK7nWpuGLJSTXz2DxVA/CgsD9l4qpcSmq
- SGkpfvPAXwl18di2jCBEdtTPn81nC79XsQYQDEaNo9y1G3LPPgoYNBrq75S7vqglWqlv
- 3BHt7i5YZhWc2vksAjkQY8PIESEu/VSLVbtvdJ/PXx8yWPvVUGHUXLE/hHMyPWnMtYOL yg== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3arc1a28rf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Aug 2021 17:40:08 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.42/8.16.0.42) with SMTP id 17UHQSlY115612;
-        Mon, 30 Aug 2021 17:40:07 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2169.outbound.protection.outlook.com [104.47.58.169])
-        by userp3030.oracle.com with ESMTP id 3arpf2qqmw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Aug 2021 17:40:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=doX/O6AWgNuOnTifMWI4LxJ2D7yi0PdRjAU6FrvWjfGGD+bZvbtmxz/J9VLoG+1TQrwPQjXaJC2t3ss+Ajet/imkX1f92mFCJuL1EcQ6sEP9zzA5m0iKoQskxN+N5Q8W8PUJhdReHr4uQjb+vIVn7HqHJqqFUTpyMsuXBhwHYV9EG3EEdTXqAu1v0v30XgpcXinaMZOGPO4iFXcX5Vq0X/DuKSQ6HjF1LOaA+pnwbGSm5tujOLEF+psGej5JvCNapSy3HEkHDibGEoW/Rd0gvnwoVoVeLA0DhUtS2a0U5xC64ReVIyL2l8IYNbnbC/44WuCp4UsrfuCeKgkvfQMPYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wIwK4BR3I48F0fiFMkaf/e5RWAgJLQB6QYF/3GYy8zc=;
- b=hMxLeF0OzkIQpJmftirZQKYBZwfbZMspX2iCiEWOm0/ZIn4Zb64yL0bDYhgHYHn/EvFafCcEjsBDR/1gwlcFgpean4Ll2zthS8Px7Rp4dAS6Dho7aJlQQWfNkNyDlPgeWYkeqzo0RFtZFYkoXiTc3c1xQYt56NHERRG9lNGtKxUK38SfgkryHL9IFVipj/4TRkcXm9h9Llh4Q4ZDx7rynrn5n+0UUatbcBcyHwT6/K0+Bk0ooaqcJvrD8lPnjXG4+WelO91XZlkdwc3w3XLXXGG/c8QswFkq+5wmXINNCm42WjWo0bxR2iq2XZs+zYj6mnWsVp49ppJ9RxZSazayxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wIwK4BR3I48F0fiFMkaf/e5RWAgJLQB6QYF/3GYy8zc=;
- b=W/0xc7HbR85vntg55a1TB5dULnkSFIOwRN7jXSOogK9V/hazggEMZ9KvUHBJ82G95ri7nQ64LtaOoLhD1YvBZYK4PGNP3OvdeUT7wnsYvfRj4k/ODrl4P3mxDMZRYsufCkxY2//GSYDXKt9aKos6+m3S4+4EFPMkUsqzDonXekQ=
-Authentication-Results: linux.vnet.ibm.com; dkim=none (message not signed)
- header.d=none;linux.vnet.ibm.com; dmarc=none action=none
- header.from=oracle.com;
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com (2603:10b6:610:ac::13)
- by CH0PR10MB5115.namprd10.prod.outlook.com (2603:10b6:610:c4::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.20; Mon, 30 Aug
- 2021 17:40:02 +0000
-Received: from CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::340c:c4d9:1efa:5bc7]) by CH2PR10MB4150.namprd10.prod.outlook.com
- ([fe80::340c:c4d9:1efa:5bc7%6]) with mapi id 15.20.4457.024; Mon, 30 Aug 2021
- 17:40:02 +0000
-Content-Type: text/plain; charset=utf-8
-Subject: Re: [PATCH v4 00/12] Enroll kernel keys thru MOK
-From:   Eric Snowberg <eric.snowberg@oracle.com>
-In-Reply-To: <10bc1017-2b45-43f3-ad91-d09310b24c2c@linux.vnet.ibm.com>
-Date:   Mon, 30 Aug 2021 11:39:49 -0600
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, pjones@redhat.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        Patrick Uiterwijk <patrick@puiterwijk.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D07DE64F-FE8B-4020-8EC2-94C3C0F9920A@oracle.com>
-References: <20210819002109.534600-1-eric.snowberg@oracle.com>
- <fcb30226f378ef12cd8bd15938f0af0e1a3977a2.camel@kernel.org>
- <f76fcf41728fbdd65f2b3464df0821f248b2cba0.camel@linux.ibm.com>
- <91B1FE51-C6FC-4ADF-B05A-B1E59E20132E@oracle.com>
- <e7e251000432cf7c475e19c56b0f438b92fec16e.camel@linux.ibm.com>
- <cedc77fefdf22b2cec086f3e0dd9cc698db9bca2.camel@kernel.org>
- <bffb33a3-d5b5-f376-9d7d-706d38357d1a@linux.vnet.ibm.com>
- <9526a4e0be9579a9e52064dd590a78c6496ee025.camel@linux.ibm.com>
- <9067ff7142d097698b827f3c1630a751898a76bf.camel@kernel.org>
- <bc37d1da3ef5aae16e69eeda25d6ce6fe6a51a77.camel@HansenPartnership.com>
- <10bc1017-2b45-43f3-ad91-d09310b24c2c@linux.vnet.ibm.com>
-To:     Nayna <nayna@linux.vnet.ibm.com>, Mimi Zohar <zohar@linux.ibm.com>
-X-Mailer: Apple Mail (2.3273)
-X-ClientProxiedBy: BYAPR05CA0092.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::33) To CH2PR10MB4150.namprd10.prod.outlook.com
- (2603:10b6:610:ac::13)
+        Mon, 30 Aug 2021 13:42:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1630345295; bh=63tGWgI+91kZFLvxtV3AtuV+jYHX6c73k4KyOfXCONw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject:Reply-To; b=m48tD3xXUrfjx7+r1ALnguHUfE08MvFNc+crw47IKk1FPbyF1Dh2s4ZwjM9x3owroSJt0yStxemWNoVa4K/5/nFMBnDLvdaxsiiF1y7Bfxvrrz/FmZKaC6VuH603xoBaO6MabHZNPL9gPK1RlW5Mf3/7qd5/IgpC0tMf41yNFuiaV5j5JvV9WuFMYUbbwXGO5+YWT+aXkLJX8smSUn4WOqixGOU8fLWlFgtcy3Udbe68wPU/YmQoOq8oywLY8hJ9HuoWL8zwt32kU8DvGY8TBcwdUr7bsLRLtLbbtPIx4Ug93v3O5griDBcJN3GW5x0jEX1YspEuvJkN8hqxabKugA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1630345295; bh=TZQ50t//E90y1A1wAgklpP7i5tmD2Nnaxlb1IL7FWoN=; h=X-Sonic-MF:Subject:To:From:Date:From:Subject; b=DPcwZ7LEbKsUlOTC4zZlbkTiumeWiREeakRKa0HokC5Hs3YfXLJkBCsnsIDP52T6E1wOs0Y3/G0Fwc3beuIwBHdjG3ZCCVS/QvJkz+cYAc15L+2U9gCiUq0XH8uRxpYoI4vSy7OPLxrUJmgWal8LE0c7+j7kyqpI7+MHdU0l/U6GOdPzKfUaas67IAAZzrRFI6hi/SSPiicwgOC+yskvEi/QhqLLxIV6k8FOiBoJIl3vueWAxHB5iCOrR18aHPRPjmCwWNGzXG2Eklf8X9rF95qXESjMmFGBXsgq/i6LYhSdZIHzyL+PFbScLPnh7RfrK537yr1b5J4Cb3w5e5XLxw==
+X-YMail-OSG: rpdanEUVM1kM9AmM5ooEUWSLyY3bQWRdUHvdUp4TdcvE10AxpMkqU40Zcbq.HFs
+ 1vkhSCukI0I_H0PggDeo_HfIHtldDIuf58y.j9l3Wv2um1j7XrdwHcZagw.l0ngYp8FFzfRHx1kk
+ TJ_w44hhwl.fQoKXIg6GplwIQR2Jf1nQ0.TC4Ro4PhvOqWe6a4ynpZQxCDXLIS52HYYYButyB_xm
+ 1M.L3ytwCUtofWLm.B5iWgtpafHkVQeUaJ2LyWM5b8rc4DmJ4nRU92XmYPN45674Vnfmn33qcB8X
+ jqc6H9zNUR6W0nkN_R0eXjFfsle4dTjKEJPcebzaKECTbdAN35VGBbvKzSVH_AY0b3bnN4ZMMQG0
+ dGWDR0G3qA8WmViwKU7vWTHhxhLyDJAtLSTm3qbM1Oe0GkUvTGvZWB_uJMl8.7NIz9R6A_LqvhZ.
+ 16SDVSErmGIsQtNS4mxu0d7Gpc5wn1mKV0WMmRFWy6zqAsaqb2iXRonypuP6VJCLsZhktRyl_1vt
+ .l4.0qGxGlNiQY94koPBdVqwVyvsMpntCYTxusoeht_Umy4lh0s9LTZ_dkZk0j4hfNGv0DmnC.0j
+ EbRzXc00GnWYFkHYx_Ifz99_CFmTsBmMeS3kuLDKPNYYR6XVVTKatS8gTq6j3vCN7ki0nuNNT0Bu
+ dCn77nT5pEys09IgnvcQqB5BJHstmF_FpxUXxAx4dxvaENLDqCmdHa6SZzlleQTJn.Rf7j6XZ5ic
+ Y45ziRKML1j1nVsbgt25LFNuYVpVwusGwV4cZgASuAa1wj7H87gwBIcziI_pvBZceo7PWS0wRY4W
+ PfPiRlIGJZ7wFFgWwhSulo_uleF.52uF0lEZaOmADGNHddXmdFwDtQHRCSfxXmZk7qHyC4sK7Y7c
+ obnH74SPfUY8OYcjNvNmfpwUkl1KMiRC1idnTvEk6pMc7PyLpD0XSklkBCFiVV2wcULKbvJfjE81
+ phYRkugSR7D406Gd5fGb7dWE0OwKcseXhRD6MY1jTYZMjsQ0rgiKobHVvCEfKI68Z9xrm8YGCCmP
+ aNbZDoH9u4HFSFl8nm1T0yIvk1DEeeuesK5ISp1.rnto3TT3hIkmqEcvUpJyJO.5c7_JpiHUTHVB
+ FHTIAnLcgJEb8JMWp841DNFuGmn7h_ZkpMEfjyBAxswFmqhUA2S_Q4XfxJuPjFaa6TMBHjibqDM2
+ fWPO95B6aZHpHz_13I30yHiJo4bN12Ks_y01bHqg_T0zwzDff5B73gAg0e_fVi4Ai8AxjO34mL9R
+ KnTCEaJo2W2IviZq_mLVdifQuuJGJt82LitF4tqPGll9ggKjuRsMLmzE.inwmj7LIzPBJOmut4ts
+ Ipl6z5jPu4tlR3DEg7gptm38XeS3cZVfa1pzaXsU6poUiUNcZzIpvvZymH4EHdXNSxmp_p5Z24tN
+ 0.Kskn3Zc2CJTsdTYoBKyQRrMH9rfNv_9IUgn7mBHGnP3KK8HMNlaOdQKkRxXwyFde2yJckNFOSS
+ 9gIjih.OlN0rUe.r840.I8Yc2lJxDWX5RYK31axOhtxFghIxXupHkp9b91rFK47tDxxEkvKET1lu
+ c1zmdxD4pE35ivA1fMPWOvpuwJEFmA6W5bwVjDmAGsano0LSLoxyBapksKArTpkHGg8eAzTjn5rF
+ Evq6e7Tl.XQzv4p0po6EMvhHYng5TcgkRaxhid5WeJF6VhUifKSn3xX8vDIcCVRzfjVI1oNo5Juf
+ L3NoiOrFJZWQRudg1tizyzoHpeafCPfZsVj.jTzTAICoAnUri.rkpVaR7fJFMT0.pyuCLMXEvnZY
+ fygvySH9pjW2Kto7jK34R90730V9.GZLeLNKClbgIKpD0F8JuWgCD4vcwODqCeHumsWMF6MfU8mX
+ VMSdeZ3oHxP5.YI5WqMZyjJbwAHvBa.edWJKU9YUbgPf7uvYfF08YW4XdBVKw2jlDpytJP9fa70E
+ 8CHugm0PaJT9llehDD1sndAsipxxS9X2TPxDHC61k_xy89tWrxoA0NEyREsmKs_BAySZANFI5het
+ 6skiXeOK71LiW..6jAiMBRSRBsI8r5ezFlGEcmQ7TsNG9jpjEo8AW9DDlIAcBP_sgOqFKNxwksMc
+ 667zkwbicXc062M7AkSzoKGn7gEMd9I7WIcVW1DWA9KVLXJiyh9NmINf_jfu5EyYCP9AQYYU8uxR
+ tZPwOB3PGnxbQY7huybRXKUAbGJxU7RYYUG_0iVUOPwRZMpHBRBVkJBs.5Hlp2lcaJ5aeGB0MovG
+ UHjsUIMGUr6p2fBaR5VUmFC_23mGu_r8IVAwMKMcxxHbUqANkuH3oROWZ_0rN7NJWVlATTNlwOe9
+ tXUD9luptuBP8
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Mon, 30 Aug 2021 17:41:35 +0000
+Received: by kubenode521.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID a3d7a860b9579fd1561d3f4cd5329979;
+          Mon, 30 Aug 2021 17:41:31 +0000 (UTC)
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+To:     Christian Brauner <christian.brauner@ubuntu.com>,
+        David Howells <dhowells@redhat.com>
+Cc:     syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, dvyukov@google.com, jmorris@namei.org,
+        kafai@fb.com, kpsingh@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+References: <0000000000004e5ec705c6318557@google.com>
+ <0000000000008d2a0005ca951d94@google.com>
+ <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
+ <61bf6b11-80f8-839e-4ae7-54c2c6021ed5@schaufler-ca.com>
+ <89d0e012-4caf-4cda-3c4e-803a2c6ebc2b@schaufler-ca.com>
+ <20210830165733.emqlg3orflaqqfio@wittgenstein>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
+Date:   Mon, 30 Aug 2021 10:41:29 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.13.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from [IPv6:2606:b400:2001:91:8000::f0] (2606:b400:8024:1010::17c6) by BYAPR05CA0092.namprd05.prod.outlook.com (2603:10b6:a03:e0::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4478.10 via Frontend Transport; Mon, 30 Aug 2021 17:39:55 +0000
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 3092e5d4-40ac-4526-59d6-08d96bdd31ab
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5115:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CH0PR10MB5115245DF52E4A2A75A1D3E287CB9@CH0PR10MB5115.namprd10.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:9508;
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: OVu3Y23GaXBwwQWTQoYFgArpf7EsRW0hg0VcOsxchY5kGs/shqvKHb+cUw0rTgACsVofYFXKDs63aDHdkUfxXkt90YZ0ykFu6iMhlGn48FYiiMs9KCE3MvtXoPWMaueM8B4HEZfjsHZINVaFxojCPt2xdYr/1hk2cMcwTDZbDA+GSCvxjWEkOuzPLGZCCAPW1zfd7hEz9VChaTXVN98Inhgk1YM/4YvM7isFyreg/6oRx+ibC5jw2zHewDWeuSW7pd0ZuEXDl5owHhRC4IJTwDX3tKk9YpVpXEgBkN8+uqRgAirtxkmohN5UnuaiKlUyrMg01/G8thbVyCkwQwEjxW69Vb2MwDEFapydDUjMU9tTfgS33wuY2sFJ0HcD7AthYYyj9Hh5McytT/T8EG/+hXo886I7Q72iTL4AeLjQU29uhaeMxZHeHix4lSxYULTPTe6iS4ZobdYS4vOWUXQChwhTjSB7RgcAZXjN27BKVRAQDWTr1f4x3W7/NAoaE/XhfXcOEx2bC5JGptagt0EqdweHYVImruFAoAdjGFRnLnr0wWvbxkbfuXWfXiqAt8WC9AKAm8pJD9dg/wXIQFXhf5j+ydzkf+UffPBbztldKGX1Y+XJ5cu3yiC7vQhMSsOvItPLY3y0E0BP2jeL0LaycXj0TyxWlWizJE3c5lQexRScmjLKJspTicmFRVXrtJdhZ3pppjGoBbxmLC11l0mRyQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR10MB4150.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(366004)(33656002)(52116002)(7416002)(186003)(6666004)(36756003)(44832011)(53546011)(8676002)(508600001)(38100700002)(6486002)(8936002)(83380400001)(316002)(86362001)(66556008)(66476007)(110136005)(5660300002)(54906003)(2906002)(2616005)(4326008)(66946007)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M05EUFBwaWNWak1mTTh1VE5WZzR5M3UxMVV2bjV3MEcyZGxQU3pjWmdLYnJa?=
- =?utf-8?B?cTg4V2tFcC93cU9mclF1L1hHK3BHVEJxN3ZsVy8zeDVrbXJHSkVUczRnVDR0?=
- =?utf-8?B?RWRYL3l6SzFQUVNBanBEUTc2TEQrY2RTeUpOcE9SbEc5Z0l2aHo3dFY5bTR4?=
- =?utf-8?B?bkFZZ1djL1JtSU9STjVIZkRCQ1c0QzF1S3EwanFQSDh5WGpWTTRQN2NQaEs5?=
- =?utf-8?B?MDNyZ290VWpNWGRXRUczUE9ZWFR4aldHWmFsOGN4Rkl3dW5MeHhTQ2Y1enRL?=
- =?utf-8?B?N3Z2Q3JiZFUrVnc1OG5XY25ZUWVIbSszVzhqdW9ZYVJ3Z1ArS0tzWFJWQ0ZY?=
- =?utf-8?B?elF4bTkvcGw0cysrUmhQUm02MXdiaG83dVRuS3gxQUZCNzhWUTkyL09JMHhE?=
- =?utf-8?B?dHhzOVRFUXFqZFcrVytqd1ozS0lkRGorRlRqRVJuTkwvejUybU9oVHJza0g0?=
- =?utf-8?B?aG0zbkJFSFRMYVdleW9yN2RzN0I1Qkw2Q0RLWG1PRzYrRC92MjBtWkIvdHZo?=
- =?utf-8?B?NDcxd0dQNmd6TWdYQ0VmS3QwUHNiQ0hVdEFmMGFlK1I0QmFyN2QrQitYdTZh?=
- =?utf-8?B?SDkyKzgzcXVjNldEZFFDVDJGdUFXYmpTUFlJeHFreFU1R2RlOHZrZWxkL1hH?=
- =?utf-8?B?RVpxRkNmSk9HcTJqVXRVYTFuNEkwUE1GckhzbXhQcWVQMWphQlZEYkZFelRh?=
- =?utf-8?B?dnNDc0h6YkgyUDA5aWhJczdLN1cyV3lVMUZOUmhVcDVOSlZRVTRERGk3MTBh?=
- =?utf-8?B?N2xrOFVibkhrYWxvakRYZER0WG10ZCtSMTVrSysrUlY1ZVZSbXV4dGZWQlg3?=
- =?utf-8?B?elhJTEdXSUVnRjVEWUFZVDBNYWtoRWxkWXB5N3h1N08wNlM5am5JT1JqZTEr?=
- =?utf-8?B?c1YxMTRMMDh0RFlxWVpoSjV0eGVuRXltYVBuMmk3VWZveWN4LytFSHRPcjBp?=
- =?utf-8?B?TTkvbDZ5L291MW40SVZtQWZMMkJWcTNBRW1iVzBuMjd3Y3k1RTBzbjJzTEZs?=
- =?utf-8?B?Qkh4ZXBtM29ZWFJhdEdSYm1Cc2Z5ZTZSRkZoTnZ3TXR0aVJQeGZFS3JGeUhW?=
- =?utf-8?B?SFdZUVp3N29lcXdqdm9VTDVKYmJ5bnh1dmVibGxvZFFkTWtOSHl2UmN6QWNF?=
- =?utf-8?B?VXpnTkx4WDhiOHFQWFM2a0RlUEZtWlFYeFkrYW5La3RYN2NVT0VZNWJSMHU2?=
- =?utf-8?B?bHBrM3JReGpJeDU1WkxqWEo3VHowS2NScTBUWE55eXdTMDNBOUFoMUc1R1J5?=
- =?utf-8?B?THhUYzEwNlhvTWxJcGh1Y0xZR205ZXdkN3g0RzBNYjZDVkJ5MVFJM0JQWTdB?=
- =?utf-8?B?TzhtcXptL2d4WnYrM2R0VFAxRjZQOVdtSGZBbTkzWjVKbS9GbXNtWmc3MGw4?=
- =?utf-8?B?eUt6OGJjZU9SNHQvNUdHZEUzcEsvcTM0cUxOc05RL0xoVDV5R0RPbDRzUW9Z?=
- =?utf-8?B?T09qZHBJRTh0YmFNNEg5V1J4OTQzdkpCNklwcGx1NjNzMmh5K1o5MXpMQzVh?=
- =?utf-8?B?eU5zRU1HSmUyeVhrWGYwYXJIWnRLZDFuUGNncFNqalRUOWNpU1pUck5BM1Bq?=
- =?utf-8?B?TjRMbksxNkpuL25iY2oyeENzRnVWT0pxTmpsaFJGbG9Ma1kreWFmMm9GWEgz?=
- =?utf-8?B?bUYwNzFlNmszVzlmU1NFU1poVkZuRnZWd0dyYzVUdVhVbUVLcTZiTHMwS1FU?=
- =?utf-8?B?NkN4MGpDZkRuQmZIMVBUMkZUVUVBVUVXU0E3dkgzdTJ2aEJ3bUh5V01oYlBG?=
- =?utf-8?B?VTBMdzhTOHhoemkwMWdLQVJPei91NjhLeGJ1cGxNdHVydkN5UWdnMElOY3JX?=
- =?utf-8?B?SXdCSlgzcmFIaGlQMkF5dz09?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3092e5d4-40ac-4526-59d6-08d96bdd31ab
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR10MB4150.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2021 17:40:01.8408
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CZm+o5ipU4GcwVd3cRiMGNrd04QhK8GM6q13U7P/9RFhpxzC/dxMtW46IzJ4Tm2Hjnfd8/TnP9qMm760gP2FXIkZu0nPZ/XjfqEAvge5ZIk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5115
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10092 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 phishscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 suspectscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2107140000
- definitions=main-2108300118
-X-Proofpoint-GUID: 1Dh3sSc4eXh-bXHUFBlU0ZMLaaZbuV_6
-X-Proofpoint-ORIG-GUID: 1Dh3sSc4eXh-bXHUFBlU0ZMLaaZbuV_6
+In-Reply-To: <20210830165733.emqlg3orflaqqfio@wittgenstein>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Mailer: WebService/1.1.18924 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+On 8/30/2021 9:57 AM, Christian Brauner wrote:
+> On Mon, Aug 30, 2021 at 09:40:57AM -0700, Casey Schaufler wrote:
+>> On 8/30/2021 7:25 AM, Casey Schaufler wrote:
+>>> On 8/30/2021 5:23 AM, Christian Brauner wrote:
+>>>> On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
+>>>>> syzbot has bisected this issue to:
+>>>>>
+>>>>> commit 54261af473be4c5481f6196064445d2945f2bdab
+>>>>> Author: KP Singh <kpsingh@google.com>
+>>>>> Date:   Thu Apr 30 15:52:40 2020 +0000
+>>>>>
+>>>>>     security: Fix the default value of fs_context_parse_param hook
+>>>>>
+>>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+>>>>> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+>>>>> git tree:       upstream
+>>>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+>>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+>>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
+>>>>>
+>>>>> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+>>>>> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+>>>>>
+>>>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>>>> So ok, this seems somewhat clear now. When smack and 
+>>>> CONFIG_BPF_LSM=y
+>>>> is selected the bpf LSM will register NOP handlers including
+>>>>
+>>>> bpf_lsm_fs_context_fs_param()
+>>>>
+>>>> for the
+>>>>
+>>>> fs_context_fs_param
+>>>>
+>>>> LSM hook. The bpf LSM runs last, i.e. after smack according to:
+>>>>
+>>>> CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
+>>>>
+>>>> in the appended config. The smack hook runs and sets
+>>>>
+>>>> param->string = NULL
+>>>>
+>>>> then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
+>>>> parameter parser that this is not a security module option so it should
+>>>> proceed processing the parameter subsequently causing the crash because
+>>>> param->string is not allowed to be NULL (Which the vfs parameter parser
+>>>> verifies early in fsconfig().).
+>>> The security_fs_context_parse_param() function is incorrectly
+>>> implemented using the call_int_hook() macro. It should return
+>>> zero if any of the modules return zero. It does not follow the
+>>> usual failure model of LSM hooks. It could be argued that the
+>>> code was fine before the addition of the BPF hook, but it was
+>>> going to fail as soon as any two security modules provided
+>>> mount options.
+>>>
+>>> Regardless, I will have a patch later today. Thank you for
+>>> tracking this down.
+>> Here's my proposed patch. I'll tidy it up with a proper
+>> commit message if it looks alright to y'all. I've tested
+>> with Smack and with and without BPF.
+> Looks good to me.
+> On question, in contrast to smack, selinux returns 1 instead of 0 on
+> success. So selinux would cause an early return preventing other hooks
+> from running. Just making sure that this is intentional.
+>
+> Iirc, this would mean that selinux causes fsconfig() to return a
+> positive value to userspace which I think is a bug; likely in selinux.
+> So I think selinux should either return 0 or the security hook itself
+> needs to overwrite a positive value with a sensible errno that can be
+> seen by userspace.
 
-> On Aug 27, 2021, at 2:44 PM, Nayna <nayna@linux.vnet.ibm.com> wrote:
-> On 8/25/21 6:27 PM, James Bottomley wrote:
->>=20
->> Remember, a CA cert is a self signed cert with the CA:TRUE basic
->> constraint.  Pretty much no secure boot key satisfies this (secure boot
->> chose deliberately NOT to use CA certificates, so they're all some type
->> of intermediate or leaf), so the design seems to be only to pick out
->> the CA certificates you put in the MOK keyring.  Adding the _ca suffix
->> may deflect some of the "why aren't all my MOK certificates in the
->> keyring" emails ...
->=20
->=20
-> My understanding is the .system_ca keyring should not be restricted only
-> to self-signed CAs (Root CA). Any cert that can qualify as Root or
-> Intermediate CA with Basic Constraints CA:TRUE should be allowed. In
-> fact, the intermediate CA certificates closest to the leaf nodes would be
-> best.
+I think that I agree. The SELinux and Smack versions of the
+hook are almost identical except for setting rc to 1 in the
+SELinux case. And returning 1 makes no sense if you follow
+the callers back. David Howells wrote both the SELinux and
+Smack versions. David - why are they different? which is correct?
 
-With an intermediate containing CA:TRUE, the intermediate cert would not=20
-be self signed. Just for my clarification, does this mean I should remove
-the check that validates if it is self signed and instead somehow check if=
-=20
-the CA flag is set?  Wouldn=E2=80=99t this potentially allow improperly sig=
-ned certs=20
-into this new keyring?
-
+>
+>>
+>>  security/security.c | 14 +++++++++++++-
+>>  1 file changed, 13 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/security/security.c b/security/security.c
+>> index 09533cbb7221..3cf0faaf1c5b 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -885,7 +885,19 @@ int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
+>>  
+>>  int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>>  {
+>> -	return call_int_hook(fs_context_parse_param, -ENOPARAM, fc, param);
+>> +	struct security_hook_list *hp;
+>> +	int trc;
+>> +	int rc = -ENOPARAM;
+>> +
+>> +	hlist_for_each_entry(hp, &security_hook_heads.fs_context_parse_param,
+>> +			     list) {
+>> +		trc = hp->hook.fs_context_parse_param(fc, param);
+>> +		if (trc == 0)
+>> +			rc = 0;
+>> +		else if (trc != -ENOPARAM)
+>> +			return trc;
+>> +	}
+>> +	return rc;
+>>  }
+>>  
+>>  int security_sb_alloc(struct super_block *sb)
+> <snip>
