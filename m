@@ -2,120 +2,123 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EE7C4320E
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EE1C432BE
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 948306023F
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:05:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B4661155
+	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 12:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236822AbhH3MGI (ORCPT
+        id S229446AbhH3MYv (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 08:06:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48522 "EHLO mail.kernel.org"
+        Mon, 30 Aug 2021 08:24:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236796AbhH3MBP (ORCPT
+        id S231165AbhH3MYu (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 08:01:15 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 37A3961153;
-        Mon, 30 Aug 2021 12:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630324816;
-        bh=CzZISDsL8LcKYddiutUQBDR2My0YdbU/HzFGWbKeNMk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EFtqVSS19nlF1vdO75AVL4cJy5gbbBANZm9RMLCPjKhZCZUanCz1VtYzFcqkNKyEZ
-         yNrIoxp3MHmZbeiZ0dYLAGE5ls9kfsvvPs1NO3jJgIkr0Esr5YY7gaGPgMvYhKowAK
-         Cg9K1Jh4HwcglvMXpl38+G6s3sAZekkbm7Lq4Pdh5jZxoIF++E4J7x9KCTOClsZOw0
-         WrDVics/t6smTvlluHufLJgVI7jpJp0ojCsbXXP+rhOk0IKTHSLAwhpcoaZY8bFKIx
-         EHbduhS7L05HQj3Mzoh0PeqG6oZLSjlC6n4/5m4vTBSvj0lCxEbdh9G69GMWrOdGJl
-         lMPJEEQrXUNuQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?=E7=8E=8B=E8=B4=87?= <yun.wang@linux.alibaba.com>,
-        Abaci <abaci@linux.alibaba.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 10/11] net: fix NULL pointer reference in cipso_v4_doi_free
-Date:   Mon, 30 Aug 2021 08:00:01 -0400
-Message-Id: <20210830120002.1017700-10-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210830120002.1017700-1-sashal@kernel.org>
-References: <20210830120002.1017700-1-sashal@kernel.org>
+        Mon, 30 Aug 2021 08:24:50 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2B1B5610E6;
+        Mon, 30 Aug 2021 12:23:51 +0000 (UTC)
+Date:   Mon, 30 Aug 2021 14:23:48 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>
+Cc:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        casey@schaufler-ca.com, daniel@iogearbox.net, dhowells@redhat.com,
+        dvyukov@google.com, jmorris@namei.org, kafai@fb.com,
+        kpsingh@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+Message-ID: <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
+References: <0000000000004e5ec705c6318557@google.com>
+ <0000000000008d2a0005ca951d94@google.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0000000000008d2a0005ca951d94@google.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: 王贇 <yun.wang@linux.alibaba.com>
+On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 54261af473be4c5481f6196064445d2945f2bdab
+> Author: KP Singh <kpsingh@google.com>
+> Date:   Thu Apr 30 15:52:40 2020 +0000
+> 
+>     security: Fix the default value of fs_context_parse_param hook
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
+> 
+> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-[ Upstream commit 733c99ee8be9a1410287cdbb943887365e83b2d6 ]
+So ok, this seems somewhat clear now. When smack and 
+CONFIG_BPF_LSM=y
+is selected the bpf LSM will register NOP handlers including
 
-In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
-failed, we sometime observe panic:
+bpf_lsm_fs_context_fs_param()
 
-  BUG: kernel NULL pointer dereference, address:
-  ...
-  RIP: 0010:cipso_v4_doi_free+0x3a/0x80
-  ...
-  Call Trace:
-   netlbl_cipsov4_add_std+0xf4/0x8c0
-   netlbl_cipsov4_add+0x13f/0x1b0
-   genl_family_rcv_msg_doit.isra.15+0x132/0x170
-   genl_rcv_msg+0x125/0x240
+for the
 
-This is because in cipso_v4_doi_free() there is no check
-on 'doi_def->map.std' when 'doi_def->type' equal 1, which
-is possibe, since netlbl_cipsov4_add_std() haven't initialize
-it before alloc 'doi_def->map.std'.
+fs_context_fs_param
 
-This patch just add the check to prevent panic happen for similar
-cases.
+LSM hook. The bpf LSM runs last, i.e. after smack according to:
 
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/ipv4/cipso_ipv4.c | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
 
-diff --git a/net/ipv4/cipso_ipv4.c b/net/ipv4/cipso_ipv4.c
-index ca217a6f488f..c7a22bae3cc5 100644
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -466,14 +466,16 @@ void cipso_v4_doi_free(struct cipso_v4_doi *doi_def)
- 	if (!doi_def)
- 		return;
- 
--	switch (doi_def->type) {
--	case CIPSO_V4_MAP_TRANS:
--		kfree(doi_def->map.std->lvl.cipso);
--		kfree(doi_def->map.std->lvl.local);
--		kfree(doi_def->map.std->cat.cipso);
--		kfree(doi_def->map.std->cat.local);
--		kfree(doi_def->map.std);
--		break;
-+	if (doi_def->map.std) {
-+		switch (doi_def->type) {
-+		case CIPSO_V4_MAP_TRANS:
-+			kfree(doi_def->map.std->lvl.cipso);
-+			kfree(doi_def->map.std->lvl.local);
-+			kfree(doi_def->map.std->cat.cipso);
-+			kfree(doi_def->map.std->cat.local);
-+			kfree(doi_def->map.std);
-+			break;
-+		}
- 	}
- 	kfree(doi_def);
- }
--- 
-2.30.2
+in the appended config. The smack hook runs and sets
 
+param->string = NULL
+
+then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
+parameter parser that this is not a security module option so it should
+proceed processing the parameter subsequently causing the crash because
+param->string is not allowed to be NULL (Which the vfs parameter parser
+verifies early in fsconfig().).
+
+If you take the appended syzkaller config and additionally select
+kprobes you can observe this by registering bpf kretprobes for:
+security_fs_context_parse_param()
+smack_fs_context_parse_param()
+bpf_lsm_fs_context_parse_param()
+in different terminal windows and then running the syzkaller provided
+reproducer:
+
+root@f2-vm:~# bpftrace -e 'kretprobe:smack_fs_context_parse_param { printf("returned: %d\n", retval); }'
+Attaching 1 probe...
+returned: 0
+
+root@f2-vm:~# bpftrace -e 'kretprobe:bpf_lsm_fs_context_parse_param { printf("returned: %d\n", retval); }'
+Attaching 1 probe...
+returned: -519
+
+root@f2-vm:~# bpftrace -e 'kretprobe:security_fs_context_parse_param { printf("returned: %d\n", retval); }'
+Attaching 1 probe...
+returned: -519
+
+^^^^^
+This will ultimately tell the vfs to move on causing the crash because
+param->string is null at that point.
+
+Unless I missed something why that can't happen.
+
+Christian
