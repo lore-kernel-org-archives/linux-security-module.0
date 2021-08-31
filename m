@@ -2,123 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-20.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC7FC432BE
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 18:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97758C19F38
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 18:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6696F610C9
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 18:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8290D61057
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 18:58:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239133AbhHaSyR (ORCPT
+        id S236497AbhHaS7T (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Aug 2021 14:54:17 -0400
-Received: from sonic315-26.consmr.mail.ne1.yahoo.com ([66.163.190.152]:39990
-        "EHLO sonic315-26.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S238733AbhHaSyL (ORCPT
+        Tue, 31 Aug 2021 14:59:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43598 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239484AbhHaS7M (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Aug 2021 14:54:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1630435995; bh=TCQ44R1l5FTBy4S1XEpAtly0JNySReVb5ki+Z/19guw=; h=To:Cc:From:Subject:Date:References:From:Subject:Reply-To; b=Z51FRMRlRcd52Z5et07NoZQbNo8IzNHMIVH/4fbFk/hsLMFkOclOMnrKhWhliZOYTKSYNVgA9fF/dj/wzA1vaLCogpeKtcAbye7qO1l1d1rfvwT4a4l4cQF+O8/k33nX6ukYNjyx1EjVI9rJTbV3cE7K0ZXSf7JhKxjIfG78b1F+ecS3jUPpEIzi2BDCHgow7y2mKqJuGzbSB7DsDVu4EYC/Jv6t9QjaMU4pRzeiAtuFk39Q3MGxJvSfxjKSZE+rSvgIBl3HLSKHtPSyQk0t6D2gquGXhuic3mDVuj+dEaap59kIUUfB+poUTwbb5rWYA4t07f3lVsyRgsL0Uug5Tw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1630435995; bh=ZHUUKSHsKWr5GRX8VE6E6w9Q3Fjoktwtfi62sHeH0zc=; h=X-Sonic-MF:To:From:Subject:Date:From:Subject; b=fVjDuud/rtQNMChf3MoCWlEJiJtO6idBS40VLFPgz0fhl2tiVRLhh2oQl2fnmtfui8oSnQUoYA0wOfIohmdNICLKVuzdmOkV1wPKSVLWqZ7uHSLPOccFDmVs2a2AwCNbFkNMsOoXcwWS0Xp1xfVKqDnFS74J109HL6yjk6K7wqInpc0wHDWo/+ETt83wRsE0C2cI2eg5aMeIbLPAslphpJlkl68KVtE02mYvO/R60EVSgHq26n1PxBQb3kZUo9QkzaUv1dAkY5EdwUQUrSqRt3E9kQEPzoYEapJEZ+LnoHsqspWdStn4hIdicii0K44iPKVlIfGuUWx/YItYbZG2uQ==
-X-YMail-OSG: 26s7PvsVM1laeIIQP649umvkg5YfLJVG.BOYO4foePD2KSFr1t7Zp_jVOdwlQVd
- LsFaVCfMNqrr62vhDVxoZjnfzinlCPP4lItRce96whm.XN5iJ.1pJJApmy.YTyd8XojRnUT0lbN3
- rPbAnWpzytJqP8kLywdTt_.CD8eXnpuNcwfI.0QJ2_f97rkApMOS4qghvb4Ys4qMIs5TLHzr9PmC
- _gUl6Wzn5AdQpEtEtGfKZ9I5uP.u6l6J48AXmxaK4mQ4OUCYDBOd8FEM.nRyXnCCcTQe3hJ.fxtH
- 5S8clXUwrhuQGQrRr9UaGTw5vsb1lC6jmU5CgMTYxsQPWPzJzR1IIK98zjhXFp3rHaApz3338oyS
- XV5GawyfoRKR5Vy1pA5IkqC6sLFOCJLzjYNcyFa6Ltl9XEuDhUtjerie5xFJjKjclg7u3gsXZeb_
- QBfyh4L1FDsoV0AHuXHAbckqYxgT4kHxDVfvFxLIy7xqOO7gpHJagHNFMT5ge7oyYyaFa_VqQdTt
- bGf1hybsvdDzH2.06BaWKrSwriLl3Wf1TqWq5kATxlmH3U8igqg18E8UY9m2rEUlUgL0aezhrqfi
- zwulvFK.wZ8DTkOFab3OgutYFG_9RHNl82UJyLAbJjU_XNgZjRB5gBBC77PNdbeESC8MGFo2O7Li
- pcJfFjJ5JRFVYKCVOLKIPlSgHRzg62wFR3Rx8xSzAvgIGheRT1fLaWXxzbePc2TVvdc2Q.vbMIDd
- mosQqVtZkxWf1DWOFswsoqTSoBuAqqJ4Iss0QHtMjcVxhjS1v8qQw_Cusc3Hk10aHQGQjnY_vq_D
- TP9DvsCMs3cLZNZMk_XTFgYgJxCrRT_aLTx6GdSRBCxuKAyBxKkIFeMRtQnUuU46euL4VN89w0Eh
- yI2pUW2VRZNDeYxVGwuzAVcZjHuL0RSZFdPopXBQaKhc_.ptQHlWc5mR_d16Ga3S5XUgK6HLuOUD
- 2BY8o9uV9jmkqAgLAPbmkOqw7h6WS1H6tnHe6k9O4Gws4W8Hn83y1IroE2r6J_uqO7Tmn.3nS7BB
- jRWFTeDP6Ys3ts.9f6p97g1wfPhyN4wlAYJCapFyWpz1AO6arIR.dQJzOYbSsRQpfDINqCGkbomW
- KEb93mZhyuWboGbT04mCGLhrS2irquDCzFrHb.8TEJgOPzKg1lLsDJOpgCONH6W6cQi4Jb1kZU6v
- ar9jOlXnxEprUbKVg.0YLXYjorMQeW6tiaMmTGxMlXCRsn.KO_OLDNLUYBwC6zzT24tyT3oylZIO
- RodKaHNHVz.O5XHksaN1gF75i2Vu4R5lPuNFofly2EE9xb3rwNvWifJQHMHx1vx9ke4z6Wgf_gxZ
- 6jYav_ubdzx6zfuEWRiZMP1COB40W9D6wE8MMsdWZ._NI5m5g7.61Pt4RHjPotimddhEfHkILngP
- VN8m_TNpjtSX2_Fs03F5tEiJX2Td7wUKQJHF9ICTpQ6XLFJOpXBLGBMH6xzR9R2I3osQMqEyNADA
- 4M5TTAissAPuV.oUthmG2kRxI4ISfIsTBIG_dMNKAYCB1QkU_g0IOz5QsVp_Ip1zgcFOv2t4Ckec
- RV4oFcfMOoKJeAK4uhlLKukSjR2_luQwkyWvT9HMTAjiSvM1.0BQh93t6ulwYPvqw_bwjlmNZG_M
- EwrOksrfNrpG5JAtoqB02y4P5J.1vN4T8AT2jJttx5r1L3sUjdndN7TfzQZ49Qg_e5wDjlQ4xywe
- r3Jo81YGhil6flv4VHzA8l0mh6Q1Jg32uvE3gLm1o6fmQjwDl_EwaUTMq.pThD7e2gpQ5tqlxUSn
- k0HWpkAh.RXRhUa50DRPV6TJKlFmb0zpyoyQ2UgK1iGX5H2OxGy4DPJYO80ST7IhYiZx2OHcrGeH
- UXGOxLMKQOaNCdLL8jiv2vZUII6WklXT8lO5q2JB9CfWIgz4DcMsAwVUnyTH1lhClmalSHlGqA4q
- S8dnzG6nL8fbv.SDFqwxpDk_db5gNzzOmSzuNA2zBc4J69AJrhPxzTtBsiHPeTq.jS897KFya9EI
- BxhLPX0dTWucsEnfiZkdXSMYTzFlNSHdz3DLog3FaShmlILgoA1TMIPkQA6b.Dhw2gvz2z5hufVy
- Nhj5G8SpHflV5FxtRRzmnbEo.wqw73AGm3_RSLtQC.lFgejKJqNN3Qz.99_zO.kwAZxE_PpB6hsb
- 6YMIybjHS3GsmVQ4yRoW0Gb0uuucM.58hB_vDaw3IsLGaAQHr0QSPHmSRaexLZqFKBrHWmnyPLsU
- KnFPf080ysyHc6.4Z_iVUVglP.vCAzORHJB6r7i38iH8NjIvKgGcofPZr9YciRBAv5iGHUId_edl
- yLNouuUs4LiE-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 31 Aug 2021 18:53:15 +0000
-Received: by kubenode558.mail-prod1.omega.gq1.yahoo.com (VZM Hermes SMTP Server) with ESMTPA ID 0093693c11ca727932d726add9c44c47;
-          Tue, 31 Aug 2021 18:53:13 +0000 (UTC)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Austin Kim <austindh.kim@gmail.com>,
-        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Subject: [GIT PULL] Smack patches for v5.15
-Message-ID: <ff60d9aa-28b9-9c6d-f318-94dd51a95abd@schaufler-ca.com>
-Date:   Tue, 31 Aug 2021 11:53:12 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Tue, 31 Aug 2021 14:59:12 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E174C0617AD
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 11:58:17 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id e7so4124plh.8
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 11:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hja3k4ZIoHMyQ4VMtlG5szRRbScDh1UjpE02C2d4Keg=;
+        b=kicsjtll2NsAKBfjPi48UpmCfWsb4FJEcTRGcrE5uks4vHLsX71gqk79m8Us/tamin
+         XNurIf+3NS5RgfXBPJDOh5b+AFFP3+H7hsFSxfL9Vwb+FBInOrB3bUMzGzI4HG1pv0yo
+         qByPbg69R4mh1iyiutn783XwUDEuViZZh+wWLzAxV8KNPAXLYMLnMQ7ZIC5dBF/jJ0Uf
+         ATOJBlEbDfKr49CyoQE3NS/wdpgXRK43XqUolPGY7v+/2iaZWnEhp4NxfHpSzOq8tAFY
+         KPm7dvp3HOyllOHPqJ3OaYwVF710GR7FGM2+FU87sCMEW7HnJZYMbvATrp2kicNQo/Lp
+         wZIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hja3k4ZIoHMyQ4VMtlG5szRRbScDh1UjpE02C2d4Keg=;
+        b=eHSko3k0qsYjWHr4rHPQDURnMka65DfU21pWSCieRscd5RQaI4JYGXLPrS9xVFxXOF
+         pD9BUSO5Og+ejTOb2kXI2+sxcwAYpOR3R4EaFlhz5g2QACd6rWFqWH7o1On5x4X8QPy8
+         YqUgS104MoQHzya9WLMPDfjlgEFWvKPaxl0PgntM14z5tNyTVH4tths9aDbLfyke2Q/b
+         RrH1fEfSEs71pLccXjJTT9sC+XiRKKnUqezVPJD/5Nf1fanLXiXWa+ik7I4FVeLRaZrO
+         Al6B7QtxiW+cnT/tRCdsyPTN5tezxGJuT/WIZsGPst/7Uc0ARCFsbg9HoiGDXE/udTNs
+         O0dg==
+X-Gm-Message-State: AOAM531WcUGVvOh/sUz8jbcok2MDy54D7V3wVyPaN5qqDz1dNt+CIuD0
+        oXAMQankIpcSTRB+gd3HAzrjx4M/KCS6QtZWxna9uw==
+X-Google-Smtp-Source: ABdhPJwoE2JSRabTcXsiA1AgYUTphGBwkKAbOMuVGJ2LSP+gzTcAsVPbn/x852sYGDfXxMDArhTShQzlDIpbLKeNN64=
+X-Received: by 2002:a17:90a:708c:: with SMTP id g12mr7220358pjk.13.1630436296443;
+ Tue, 31 Aug 2021 11:58:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-References: <ff60d9aa-28b9-9c6d-f318-94dd51a95abd.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.18924 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20210616085118.1141101-1-omosnace@redhat.com> <CAPcyv4jvR8CT4rYODR5KUHNdiqMwQSwJZ+OkVf61kLT3JfjC_Q@mail.gmail.com>
+ <CAFqZXNtuH0329Xvcb415Kar-=o6wwrkFuiP8BZ_2OQhHLqkkAg@mail.gmail.com> <CAHC9VhTGECM2p+Q8n48aSdfJzY6XrpXQ5tcFurjWc4A3n8Qxjg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTGECM2p+Q8n48aSdfJzY6XrpXQ5tcFurjWc4A3n8Qxjg@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 31 Aug 2021 11:58:05 -0700
+Message-ID: <CAPcyv4i8YXo=xOL2vO67KLABQRDNAxzrzT=a1xtwtrts5pVPKw@mail.gmail.com>
+Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
+ lockdown checks
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
+        Linux Security Module list 
+        <linux-security-module@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        SElinux list <selinux@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        X86 ML <x86@kernel.org>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux-pm mailing list <linux-pm@vger.kernel.org>,
+        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hello Linus,
+On Tue, Aug 31, 2021 at 6:53 AM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Tue, Aug 31, 2021 at 5:09 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > On Sat, Jun 19, 2021 at 12:18 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > > On Wed, Jun 16, 2021 at 1:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> ...
+>
+> > > > diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
+> > > > index 2acc6173da36..c1747b6555c7 100644
+> > > > --- a/drivers/cxl/mem.c
+> > > > +++ b/drivers/cxl/mem.c
+> > > > @@ -568,7 +568,7 @@ static bool cxl_mem_raw_command_allowed(u16 opcode)
+> > > >         if (!IS_ENABLED(CONFIG_CXL_MEM_RAW_COMMANDS))
+> > > >                 return false;
+> > > >
+> > > > -       if (security_locked_down(LOCKDOWN_NONE))
+> > > > +       if (security_locked_down(current_cred(), LOCKDOWN_NONE))
+> > >
+> > > Acked-by: Dan Williams <dan.j.williams@intel.com>
+> > >
+> > > ...however that usage looks wrong. The expectation is that if kernel
+> > > integrity protections are enabled then raw command access should be
+> > > disabled. So I think that should be equivalent to LOCKDOWN_PCI_ACCESS
+> > > in terms of the command capabilities to filter.
+> >
+> > Yes, the LOCKDOWN_NONE seems wrong here... but it's a pre-existing bug
+> > and I didn't want to go down yet another rabbit hole trying to fix it.
+> > I'll look at this again once this patch is settled - it may indeed be
+> > as simple as replacing LOCKDOWN_NONE with LOCKDOWN_PCI_ACCESS.
+>
+> At this point you should be well aware of my distaste for merging
+> patches that have known bugs in them.  Yes, this is a pre-existing
+> condition, but it seems well within the scope of this work to address
+> it as well.
+>
+> This isn't something that is going to get merged while the merge
+> window is open, so at the very least you've got almost two weeks to
+> sort this out - please do that.
 
-Here is the Smack pull request for v5.15.
-
-There is a variable used only during start-up that's now marked __initdata
-and a change where the code was working by sheer luck that is now done
-properly. Both have been in next for several weeks and pass the Smack
-testsuite.
-
-Thank you.
-
---
-The following changes since commit 2734d6c1b1a089fb593ef6a23d4b70903526fe0c:
-
-  Linux 5.14-rc2 (2021-07-18 14:13:49 -0700)
-
-are available in the Git repository at:
-
-  https://github.com/cschaufler/smack-next tags/Smack-for-5.15
-
-for you to fetch changes up to bfc3cac0c76126995737f1b858d2cdb476be5b1d:
-
-  smack: mark 'smack_enabled' global variable as __initdata (2021-07-20 10:34:59 -0700)
-
-----------------------------------------------------------------
-Changes for v5.15
-	mark 'smack_enabled' global variable as __initdata
-	Fix wrong semantics in smk_access_entry()
-
-----------------------------------------------------------------
-Austin Kim (1):
-      smack: mark 'smack_enabled' global variable as __initdata
-
-Tianjia Zhang (1):
-      Smack: Fix wrong semantics in smk_access_entry()
-
- security/smack/smack.h        |  2 +-
- security/smack/smack_access.c | 17 ++++++++---------
- security/smack/smack_lsm.c    |  2 +-
- 3 files changed, 10 insertions(+), 11 deletions(-)
-
+Yes, apologies, I should have sent the fix shortly after noticing the
+problem. I'll get the CXL bug fix out of the way so Ondrej can move
+this along.
