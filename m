@@ -2,236 +2,125 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478A8C4320A
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 23:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59BCC432BE
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 00:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26A7060F5B
-	for <linux-security-module@archiver.kernel.org>; Mon, 30 Aug 2021 23:29:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6CC960FD9
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 00:09:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237832AbhH3Xat (ORCPT
+        id S234021AbhHaAKL (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 30 Aug 2021 19:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33016 "EHLO
+        Mon, 30 Aug 2021 20:10:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231783AbhH3Xat (ORCPT
+        with ESMTP id S233270AbhHaAKL (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 30 Aug 2021 19:30:49 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17981C061575;
-        Mon, 30 Aug 2021 16:29:55 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id w7so13823822pgk.13;
-        Mon, 30 Aug 2021 16:29:55 -0700 (PDT)
+        Mon, 30 Aug 2021 20:10:11 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4704EC061575;
+        Mon, 30 Aug 2021 17:09:17 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id n4so2437771plh.9;
+        Mon, 30 Aug 2021 17:09:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-transfer-encoding:content-language;
-        bh=Bl/EqOGe8tHTjO+T/8ceqa0CAuVYTtMirEWf4GGQqsk=;
-        b=LY9671ygDXbS2QGJtlkn+KFcHrzueY+fAjbEU6axnW/D66moMRFxqAaLaxyZTMuzJo
-         8rFkjL+YR5PMqHqGDfEkbKxzBlQbQ9VbktECJCRub1ithQx3ezRyBcTZcdpgiDm0YFY/
-         pXNQGDeItgRv+MkNl0Y8qHC6fZD+KjaGaQF4thrLjpZpcsD61j3elCGix1AP1mhd9VDE
-         /pon9sr/SKN9xuXHVV52mJYFuK4PGq7yk9Zw/YAKklBVdTsb3PYzzat5pTWdqFKcywyP
-         ryTKHX4sIfzKGtOFOjtjSkZ2RHYDN2aLBR9OTPYNTnuKin2L7cWtRnBIzb5Hfb7e/o1a
-         x2HA==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=rye1Edc0SeIqUbpKucA7grOHx1pZJ4Tkel88f4v1GRM=;
+        b=Fbr7W6eTdgdklCQCEFXMe/jCqXWM6sbLFZIHKAeMmJC2SdnHwsBjOw/yFLAD9fvH64
+         Bc3FkhLVOU5xCZMu4CnLpl9X/5hUS6JEDFxsx7IPPVKsgEyPg2NC9yE8nrcK46MmMcOX
+         JA9wH8z4KgI+U8wq0xvetFpXuDps2TcnVyPFs5v3RgX0hfTz4fzW/N/Xwy3KygxwbuOH
+         k8GvkitkrgxR38qbX3el54JTlS58ns4B9+byqK40g5qYXcGmewtUhLm3ya0G0zMglrOw
+         4xUCcOdThkzIl4Xk0K47carW5R2tALnySHPYfG/FaxxjZlg8AGFMjTG+HQ4S72b63ECo
+         V9cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Bl/EqOGe8tHTjO+T/8ceqa0CAuVYTtMirEWf4GGQqsk=;
-        b=XGuUHNrkBPQXc3vK/dARFclloau+EKp4bEtG1gXptpTkeghsynYN+n5fQl/UiQuHvb
-         dU13ALFPlZ+6X8XGxujePXJPHJ4TUiQsGwG0s/nve4+7sxJMem7xhRwjLqK/oOxbK28m
-         mXqBqUKnJRaYH9ltaliM1mvBTbUegrF1MKuR4Ap/czhwPYPz4wj8ZnoWwis5BuHNdAr+
-         nBUEDCvBjfrVh0G0grYKFeO6N4tHH20NJuYa7d51UdADPKtU7H3QtBRRe/ZAv7t9Xey8
-         ixS4u+pksRYJ7zImfzFln97a2tORWtx/zYSHrbLw6ja+/fjUFPGu54bE0dDcqG7Ce/Ou
-         Nf4Q==
-X-Gm-Message-State: AOAM531zA9MbGxCnhze0GyloyaKhJcqAkQO9T1OXgo3eg6ltXFh8mL9J
-        NoLBvSNX4RjN7H+wRDN8mN3JmrjgCWc=
-X-Google-Smtp-Source: ABdhPJybzo656ysr1JRItaopY7MDX9+DbzGKU1I3mFij6OGILrfGprBjCsiONZXn3c7iPfTHWhj0PA==
-X-Received: by 2002:a63:f241:: with SMTP id d1mr23621896pgk.424.1630366194366;
-        Mon, 30 Aug 2021 16:29:54 -0700 (PDT)
-Received: from [192.168.1.194] ([50.39.237.102])
-        by smtp.gmail.com with ESMTPSA id c23sm18417102pgb.74.2021.08.30.16.29.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Aug 2021 16:29:54 -0700 (PDT)
-Subject: Re: [PATCH v5 1/1] NAX LSM: Add initial support
-To:     Igor Zhbanov <izh1979@gmail.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        THOBY Simon <Simon.THOBY@viveris.fr>,
-        linux-kernel@vger.kernel.org
-References: <281927a3-7d3e-7aac-509d-9d3b1609b02b@gmail.com>
- <624ae20f-b520-5b68-06a6-d0fa3713b9a1@gmail.com>
-From:   J Freyensee <why2jjj.linux@gmail.com>
-Message-ID: <219ed9d8-9711-dfe0-c620-070976c1daac@gmail.com>
-Date:   Mon, 30 Aug 2021 16:29:51 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
- Gecko/20100101 Thunderbird/78.12.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=rye1Edc0SeIqUbpKucA7grOHx1pZJ4Tkel88f4v1GRM=;
+        b=NvmQM5bCPQjW/sPpZC/MR+OJDOhe2IoznIwfTpLOLL8DrU+bTsafJ83J47pxvv8q95
+         rplW/cqSCJpTMAmiaSPiU/g4yNgyhGA5bPgvCn6rKRdjkmCyVz4WZ1YnIvfEhnoCiwDE
+         lLpo5uMA/WYTzavOixTr6cmFGZ1NR8yeW7CDpD27LAPB/sDeAIN1QxzMTfT2kM1xt0Un
+         bR3rUnk5ADpU2kS04ym2jet4VTZEdLcf02XpMSyh4rgmabtZxZB4Dskz6Acf1LuzZzpq
+         Ztc8wwyu3zeIg8qB0RIOH4NhX1vNrP6EWcVXTdrs0JfIKqNOPTtuArhbsIlBId9XfltP
+         8oIg==
+X-Gm-Message-State: AOAM532Fj7pv01EBeBimBtXRCUp5prmoISwl4Uz1mmJEKYI8/yZuh0lH
+        GMWtn3heVu0KBnQsDpMTKlw9n9gWkiQACzLH
+X-Google-Smtp-Source: ABdhPJzWquIZ/pMVTygtstZuAxLRY2nee23NR8S92B3M4iXBBfKBubiL1WBOX3l2FVWRrVm2h2LJQg==
+X-Received: by 2002:a17:902:aa02:b0:134:b387:facc with SMTP id be2-20020a170902aa0200b00134b387faccmr1987824plb.22.1630368556768;
+        Mon, 30 Aug 2021 17:09:16 -0700 (PDT)
+Received: from raspberrypi ([210.183.35.240])
+        by smtp.gmail.com with ESMTPSA id 15sm15355062pfl.186.2021.08.30.17.09.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Aug 2021 17:09:16 -0700 (PDT)
+Date:   Tue, 31 Aug 2021 01:09:12 +0100
+From:   Austin Kim <austindh.kim@gmail.com>
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, austindh.kim@gmail.com
+Subject: [PATCH] apparmor: remove unused argument of aa_umount()
+Message-ID: <20210831000912.GA4588@raspberrypi>
 MIME-Version: 1.0
-In-Reply-To: <624ae20f-b520-5b68-06a6-d0fa3713b9a1@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
+The 'flags' argument in aa_umount() is not used,
+so it had better remove unused argument.
 
+Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+---
+ security/apparmor/include/mount.h | 2 +-
+ security/apparmor/lsm.c           | 2 +-
+ security/apparmor/mount.c         | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-On 8/21/21 2:47 AM, Igor Zhbanov wrote:
-> Add initial support for NAX (No Anonymous Execution), which is a Linux
-> Security Module that extends DAC by making impossible to make anonymous
-> and modified pages executable for privileged processes.
->
-> Intercepts anonymous executable pages created with mmap() and mprotect()
-> system calls.
->
-> Log violations (in non-quiet mode) and block the action or kill the
-> offending process, depending on the enabled settings.
->
-> See Documentation/admin-guide/LSM/NAX.rst.
->
-> Signed-off-by: Igor Zhbanov <izh1979@gmail.com>
-> ---
->   Documentation/admin-guide/LSM/NAX.rst         |  72 +++
->   Documentation/admin-guide/LSM/index.rst       |   1 +
->   .../admin-guide/kernel-parameters.rst         |   1 +
->   .../admin-guide/kernel-parameters.txt         |  32 ++
->   security/Kconfig                              |  11 +-
->   security/Makefile                             |   2 +
->   security/nax/Kconfig                          | 113 +++++
->   security/nax/Makefile                         |   4 +
->   security/nax/nax-lsm.c                        | 472 ++++++++++++++++++
->   9 files changed, 703 insertions(+), 5 deletions(-)
->   create mode 100644 Documentation/admin-guide/LSM/NAX.rst
->   create mode 100644 security/nax/Kconfig
->   create mode 100644 security/nax/Makefile
->   create mode 100644 security/nax/nax-lsm.c
->
-> diff --git a/Documentation/admin-guide/LSM/NAX.rst b/Documentation/admin-guide/LSM/NAX.rst
-> new file mode 100644
-> index 000000000000..da54b3be4cda
-> --- /dev/null
-> +++ b/Documentation/admin-guide/LSM/NAX.rst
-> @@ -0,0 +1,72 @@
-> +=======
-> +NAX LSM
-> +=======
-> +
-> +:Author: Igor Zhbanov
-> +
-> +NAX (No Anonymous Execution) is a Linux Security Module that extends DAC
-> +by making impossible to make anonymous and modified pages executable for
-> +processes. The module intercepts anonymous executable pages created with
-> +mmap() and mprotect() system calls.
-> +
-> +To select it at boot time, add ``nax`` to ``security`` kernel command-line
-> +parameter.
-> +
-> +The following sysctl parameters are available:
-> +
-> +* ``kernel.nax.check_all``:
-> + - 0: Check all processes.
-> + - 1: Check only privileged processes. The privileged process is a process
-> +      for which any of the following is true:
-> +      - ``uid  == 0``
-> +      - ``euid == 0``
-> +      - ``suid == 0``
-> +      - ``cap_effective`` has any capability except for the ones allowed
-> +        in ``kernel.nax.allowed_caps``
-> +      - ``cap_permitted`` has any capability except for the ones allowed
-> +        in ``kernel.nax.allowed_caps``
-> +
-> + Checking of uid/euid/suid is important because a process may call seteuid(0)
-> + to gain privileges (if SECURE_NO_SETUID_FIXUP secure bit is not set).
-> +
-> +* ``kernel.nax.allowed_caps``:
-> +
-> + Hexadecimal number representing the set of capabilities a non-root
-> + process can possess without being considered "privileged" by NAX LSM.
-> +
-> + For the meaning of the capabilities bits and their value, please check
-> + ``include/uapi/linux/capability.h`` and ``capabilities(7)`` manual page.
-> +
-> + For example, ``CAP_SYS_PTRACE`` has a number 19. Therefore, to add it to
-> + allowed capabilities list, we need to set 19'th bit (2^19 or 1 << 19)
-> + or 80000 in hexadecimal form. Capabilities can be bitwise ORed.
-> +
-> +* ``kernel.nax.mode``:
-> +
-> + - 0: Only log errors (when enabled by ``kernel.nax.quiet``) (default mode)
-> + - 1: Forbid unsafe pages mappings (and log when enabled)
-> + - 2: Kill the violating process (and log when enabled)
-> +
-> +* ``kernel.nax.quiet``:
-> +
-> + - 0: Log violations (default)
-> + - 1: Be quiet
-> +
-> +* ``kernel.nax.locked``:
-> +
-> + - 0: Changing of the module's sysctl parameters is allowed
-> + - 1: Further changing of the module's sysctl parameters is forbidden
-> +
-> + Setting this parameter to ``1`` after initial setup during the system boot
-> + will prevent the module disabling at the later time.
-> +
-> +There are matching kernel command-line parameters (with the same values):
-> +
-> +- ``nax_allowed_caps``
-> +- ``nax_check_all``
-> +- ``nax_mode``
-> +- ``nax_quiet``
-> +- ``nax_locked``
-> +
-> +The ``nax_locked`` command-line parameter must be specified last to avoid
-> +premature setting locking.
+diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
+index a710683b2496..9327456cda09 100644
+--- a/security/apparmor/include/mount.h
++++ b/security/apparmor/include/mount.h
+@@ -42,7 +42,7 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
+ 		 const struct path *path, const char *type, unsigned long flags,
+ 		 void *data);
+ 
+-int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags);
++int aa_umount(struct aa_label *label, struct vfsmount *mnt);
+ 
+ int aa_pivotroot(struct aa_label *label, const struct path *old_path,
+ 		 const struct path *new_path);
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+Index 0834ba6a8a2e..58ba3f0605d2 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -574,7 +574,7 @@ static int apparmor_sb_umount(struct vfsmount *mnt, int flags)
+ 
+ 	label = __begin_current_label_crit_section();
+ 	if (!unconfined(label))
+-		error = aa_umount(label, mnt, flags);
++		error = aa_umount(label, mnt);
+ 	__end_current_label_crit_section(label);
+ 
+ 	return error;
+diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+index aa6fcfde3051..e33de97839ec 100644
+--- a/security/apparmor/mount.c
++++ b/security/apparmor/mount.c
+@@ -610,7 +610,7 @@ static int profile_umount(struct aa_profile *profile, const struct path *path,
+ 			   AA_MAY_UMOUNT, &perms, info, error);
+ }
+ 
+-int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags)
++int aa_umount(struct aa_label *label, struct vfsmount *mnt)
+ {
+ 	struct aa_profile *profile;
+ 	char *buffer = NULL;
+-- 
+2.20.1
 
-
-Is it common to have these types of restrictions for kernel command-line 
-parameters, in this case, kernel command-line parameter ordering?  Seems 
-like that would be prone for a lot of avoidable troubleshooting issues 
-and unnecessary usage questions.
-
-<big snip>
-.
-.
-.
-
-> +
-> +static void __init
-> +nax_init_sysctl(void)
-> +{
-> +	if (!register_sysctl_paths(nax_sysctl_path, nax_sysctl_table))
-> +		panic("NAX: sysctl registration failed.\n");
-> +}
-> +
-> +#else /* !CONFIG_SYSCTL */
-> +
-> +static inline void
-> +nax_init_sysctl(void)
-> +{
-> +
-> +}
-> +
-> +#endif /* !CONFIG_SYSCTL */
-> +
-> +static int __init setup_allowed_caps(char *str)
-> +{
-> +	if (locked)
-> +		return 1;
-> +
-> +	/* Do not allow trailing garbage or excessive length */
-> +	if (strlen(str) > ALLOWED_CAPS_HEX_LEN) {
-
-  a little nitpick, could strnlen() be used instead to define a max 
-length of the input 'str'?
-
-
-Regards,
-Jay
