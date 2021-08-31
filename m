@@ -2,141 +2,87 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F8AC4320E
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 18:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF90C432BE
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 19:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE34B61057
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 18:59:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11F7E61074
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 19:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239708AbhHaTAm (ORCPT
+        id S240378AbhHaTQu (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Aug 2021 15:00:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43962 "EHLO
+        Tue, 31 Aug 2021 15:16:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239548AbhHaTAk (ORCPT
+        with ESMTP id S239694AbhHaTQq (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Aug 2021 15:00:40 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26E89C0617AF
-        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 11:59:44 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id mf2so937508ejb.9
-        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 11:59:43 -0700 (PDT)
+        Tue, 31 Aug 2021 15:16:46 -0400
+Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2491BC061575
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 12:15:50 -0700 (PDT)
+Received: by mail-ej1-x62a.google.com with SMTP id n27so1116112eja.5
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 12:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=K4O58ZgiMsf0cCMtsvw/t7AJFM1T3tlDvm3uUGsU/to=;
-        b=m/p6PQxMro/Ee7fR7WvozEwx71BnscpCpL2xs1XR6unVL7bfCWki5mm/DL8tzkxtlv
-         IgmDAUJlZv7+KUUNuYAb3NRkVROzdUIxdGRwwrqEOUO0vD6Cu/HZq+bSFieTd9983AeD
-         YktyhmMz20Tq1h8uROtJTQQFwlHuUy+Bds8+ZIoQqHDYDTRBZ7xIrXRop6SBBaMcqz3D
-         KSsC4i4L46l25F26x2rXCk4fmowpOEt5kNPUpUjO3ZN5jtoqzJulRjdNVM64Yw8ZBWOt
-         rXYGE77kjE3hfKV3j/NE4j8c0xfhsFszf/XJGAR6u3atTQlztdBXyq7sYYSIi6VfUO2y
-         mhuw==
+        bh=LRu3w/aDjbu6nLXcWdhVb0x5w4DgW1rHwaWns4vHGkU=;
+        b=GrVqDCWJ47WFtA6A/pcjE82vFKjlsZc9KXICG7aYWtOShZDbJ0baMSf/Dlzk/7vlSI
+         0XBAix2NF04DaYHYtpYbMeILbThYSlInegJ90RrRM4zDkW/tTN+FPIF9W/l5y+xT1ew3
+         UhGcbua7lKtiqp73fOVxDaKyLsxBXleFr0wDw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=K4O58ZgiMsf0cCMtsvw/t7AJFM1T3tlDvm3uUGsU/to=;
-        b=QCg+YGnoI6wGvRYd+Uy+9q9/9oaZzc52fqLmlQZqTs6HLCtPS16ymuPs+xBX71RwLi
-         lE8kSd1Zak4BJwhvOuoAcnNObv5uhW1oDGG4zqGSKcBD0Mnwli1/wsM70y9x10+wV4Zq
-         CVvqqx5LhTIG4El8fh9QUzVxCk/fiRj78x+CR1TESPN4TrMDCATwSKHLbGWJ2mBT2GCU
-         67plmCdqVseJL8y43XRZhZSq9RM6waBqOroyUBXIPTaN3WKjHjeOz5OWlf6J/R7Jkr75
-         nBHoaaT/SdIPZ0ghgdhdBxxmN2qP5T4QLnLJBzK7PlxSgj0tSUmh6DG37xznXsceccK0
-         m/dg==
-X-Gm-Message-State: AOAM5324jiOZaPpWR9jePwp/PKJIAaeZ0Cat95Td+XhvMVI8xHp73r+m
-        t8gcqkrZ1OSJLiQA7YeqmGu6b4cpcDDW9oFhMntk
-X-Google-Smtp-Source: ABdhPJynhzjWiT5WygcinC1v/vpSrVXtKhAajoj91Y8oOaAf641QOi9pajzp20JXEjTMXZ2nBzK8acBfiZKG6sYGsHg=
-X-Received: by 2002:a17:906:2cd6:: with SMTP id r22mr31706715ejr.398.1630436382385;
- Tue, 31 Aug 2021 11:59:42 -0700 (PDT)
+        bh=LRu3w/aDjbu6nLXcWdhVb0x5w4DgW1rHwaWns4vHGkU=;
+        b=Y4SjhZ8XG+fZm6FKb9YPj1E70gFXVa+BnUCwaflBJiomMMIZJRxHaVBXkMNauhgTuj
+         lQpKeXp54wdJpaKuy/V1buWtTpWVgaUB113RVIKDLgQnoTIvmiJ2SlX+s9Fj0n6DW464
+         gkpDUT4lPfKUN34qTn6p/EQTMvOkPlx89UAhI5/WTFnmqicBwGzbVHRVvjqUxDBw/5fH
+         p4rqTpqLBFLs2E+dZ2taph0cberVbOkMYmXPF/7gAMGt+87A253YtmjnkPvJmni4DdtJ
+         6Nsp0B9qagcmAeXNYRhxFsT11L6dLcIGLWPOkGvzCsx92LCn14aT7qTHhH//XUmYgpG3
+         oQzQ==
+X-Gm-Message-State: AOAM53252mE6NtiF7lAVyoMrBjX0tYlu8ozR8x7d3LO0HzOnfLhltZxP
+        dilA8GTD0Zx9wagEntNGlqKgCgh8EASqmT7htTVc3JGsvwpldnKV
+X-Google-Smtp-Source: ABdhPJwDXEk0fhlWloCFjxuKx6dWx6wpwmrkENdBVL0IulLdcZuW7RYsFEQG72VCjSxfpqJiUVnqdLeDbkbx/CG//+Q=
+X-Received: by 2002:a17:906:5855:: with SMTP id h21mr31467671ejs.230.1630437348629;
+ Tue, 31 Aug 2021 12:15:48 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210616085118.1141101-1-omosnace@redhat.com> <CAPcyv4jvR8CT4rYODR5KUHNdiqMwQSwJZ+OkVf61kLT3JfjC_Q@mail.gmail.com>
- <CAFqZXNtuH0329Xvcb415Kar-=o6wwrkFuiP8BZ_2OQhHLqkkAg@mail.gmail.com>
- <CAHC9VhTGECM2p+Q8n48aSdfJzY6XrpXQ5tcFurjWc4A3n8Qxjg@mail.gmail.com> <CAPcyv4i8YXo=xOL2vO67KLABQRDNAxzrzT=a1xtwtrts5pVPKw@mail.gmail.com>
-In-Reply-To: <CAPcyv4i8YXo=xOL2vO67KLABQRDNAxzrzT=a1xtwtrts5pVPKw@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 31 Aug 2021 14:59:31 -0400
-Message-ID: <CAHC9VhReGcV=cngDMmAcEiS2NpkXZQ6b09go9m0omzxLdrUQXg@mail.gmail.com>
-Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Linux Security Module list 
+References: <ff60d9aa-28b9-9c6d-f318-94dd51a95abd.ref@schaufler-ca.com> <ff60d9aa-28b9-9c6d-f318-94dd51a95abd@schaufler-ca.com>
+In-Reply-To: <ff60d9aa-28b9-9c6d-f318-94dd51a95abd@schaufler-ca.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 31 Aug 2021 12:15:37 -0700
+Message-ID: <CAADWXX9A-6R13VAekvzvWYGcy990nLxcyz1BiZyeBpKHivtCqg@mail.gmail.com>
+Subject: Re: [GIT PULL] Smack patches for v5.15
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Linux Security Module list 
         <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        X86 ML <x86@kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Austin Kim <austindh.kim@gmail.com>,
+        Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 31, 2021 at 2:58 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> On Tue, Aug 31, 2021 at 6:53 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Aug 31, 2021 at 5:09 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > > On Sat, Jun 19, 2021 at 12:18 AM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > On Wed, Jun 16, 2021 at 1:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > ...
-> >
-> > > > > diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-> > > > > index 2acc6173da36..c1747b6555c7 100644
-> > > > > --- a/drivers/cxl/mem.c
-> > > > > +++ b/drivers/cxl/mem.c
-> > > > > @@ -568,7 +568,7 @@ static bool cxl_mem_raw_command_allowed(u16 opcode)
-> > > > >         if (!IS_ENABLED(CONFIG_CXL_MEM_RAW_COMMANDS))
-> > > > >                 return false;
-> > > > >
-> > > > > -       if (security_locked_down(LOCKDOWN_NONE))
-> > > > > +       if (security_locked_down(current_cred(), LOCKDOWN_NONE))
-> > > >
-> > > > Acked-by: Dan Williams <dan.j.williams@intel.com>
-> > > >
-> > > > ...however that usage looks wrong. The expectation is that if kernel
-> > > > integrity protections are enabled then raw command access should be
-> > > > disabled. So I think that should be equivalent to LOCKDOWN_PCI_ACCESS
-> > > > in terms of the command capabilities to filter.
-> > >
-> > > Yes, the LOCKDOWN_NONE seems wrong here... but it's a pre-existing bug
-> > > and I didn't want to go down yet another rabbit hole trying to fix it.
-> > > I'll look at this again once this patch is settled - it may indeed be
-> > > as simple as replacing LOCKDOWN_NONE with LOCKDOWN_PCI_ACCESS.
-> >
-> > At this point you should be well aware of my distaste for merging
-> > patches that have known bugs in them.  Yes, this is a pre-existing
-> > condition, but it seems well within the scope of this work to address
-> > it as well.
-> >
-> > This isn't something that is going to get merged while the merge
-> > window is open, so at the very least you've got almost two weeks to
-> > sort this out - please do that.
+On Tue, Aug 31, 2021 at 11:53 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
 >
-> Yes, apologies, I should have sent the fix shortly after noticing the
-> problem. I'll get the CXL bug fix out of the way so Ondrej can move
-> this along.
+> Here is the Smack pull request for v5.15.
 
-Thanks Dan.
+Hmm. This went into my spambox.
 
--- 
-paul moore
-www.paul-moore.com
+I have no idea why. Everything looks ok as far as I can tell, although
+having a SPF record for the originating host might have helped.
+
+It also doesn't look like you are doing anything new wrt your email
+setup, even if that yahoo web mail thing might be a bit unusual.
+
+It *might* help to use "git://" instead of "https://" in case some
+spam logic thinks web links might be more suspicious, but who knows..
+
+Anyway, I've caught it and marked it not spam, but this is a note to
+let you know that something on the internet hates you and your emails.
+
+              Linus
