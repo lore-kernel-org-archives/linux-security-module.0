@@ -2,185 +2,149 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BB5C4320E
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 09:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B65C432BE
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 10:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5338761029
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 09:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254F360F92
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 10:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240611AbhHaJKi (ORCPT
+        id S241024AbhHaKec (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Aug 2021 05:10:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:56486 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S240514AbhHaJKh (ORCPT
+        Tue, 31 Aug 2021 06:34:32 -0400
+Received: from mail-il1-f198.google.com ([209.85.166.198]:39764 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241044AbhHaKeT (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Aug 2021 05:10:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630400982;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=KqIomsJD8qkvJRmtf6AOcHNJotQV38aV9t/Y65DfWRs=;
-        b=LxeTv/7ttnAXoIUrv1ZolVKo2n7VM5GwGdLLbSyK4qohl1T3uPogKI+XdYYnG/UjWcRKHX
-        BG/Ee/tZDGyg3Wz92TpFWxOW7j1IO2yzUUp7UrxCJkwLPaDqE6un2HANXZRqBSFSbsik5H
-        VjRUYjzyf+h45xCxcuI5Ds88+ti0jcg=
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
- [209.85.219.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-200-1xzgkXxVMjCiCLuPfck_Ng-1; Tue, 31 Aug 2021 05:09:41 -0400
-X-MC-Unique: 1xzgkXxVMjCiCLuPfck_Ng-1
-Received: by mail-yb1-f198.google.com with SMTP id q80-20020a25d953000000b0059a45a5f834so6864258ybg.22
-        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 02:09:40 -0700 (PDT)
+        Tue, 31 Aug 2021 06:34:19 -0400
+Received: by mail-il1-f198.google.com with SMTP id y8-20020a92c748000000b00224811cb945so10994046ilp.6
+        for <linux-security-module@vger.kernel.org>; Tue, 31 Aug 2021 03:33:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KqIomsJD8qkvJRmtf6AOcHNJotQV38aV9t/Y65DfWRs=;
-        b=LlRfuAIElczjbpKjvY1OKGJer+sveS/cSslXTdb564tODt/1G+EnBQXTHGkkT8ku0s
-         hrUIUJ3P2OkLhymADmSvOfoicxuVC6Oe9P0d7MsCF+VhtZFNSqRdqsrwTDKBoZBbekFB
-         2ruQhw+aLCGq+68htFC1cauOx9RKSHrImpT8pXlewrhUp/we3mtUSAw+Tstl5v9eV07H
-         R2ftKqutbcdnCDzur7PEBsZvn+aDeKjEU5czGloO7m0YCmb2U/9zVwoG6O7f/Ki+u+Zc
-         ns1l4LU6heuPL9D+vKI/QHQ9DarrzKqEsjsKgbAgPEoKwnZ7/KSxw/uy+6mCkgf1oUyY
-         ielA==
-X-Gm-Message-State: AOAM533RKmrdQq+gjCSFHBmYRaZjlLffsvZWMNzEADz0Vf3EjLhSykq+
-        Akm2BboPKsB/EyyXd+0itiKjoYIr1lFgVPL356MGDI6ZgwVEA8sQO9UWSiAxAL6U1nmoVMQZCu1
-        qeLEiz1eQ/69ECTpfbOmelZgMy1xZGrVWPBTJAlrxrxCb8+2wt4Fr
-X-Received: by 2002:a25:1d08:: with SMTP id d8mr29534393ybd.377.1630400980463;
-        Tue, 31 Aug 2021 02:09:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzoUYVGjsHQ1mAV96NVBWIdFVB3TZpqWc7BWtvr/Mg648rQQ+7P7WYMOAhTFTS/Li+BMqOUSleNc4ReksuZGrg=
-X-Received: by 2002:a25:1d08:: with SMTP id d8mr29534365ybd.377.1630400980209;
- Tue, 31 Aug 2021 02:09:40 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=tnQtiquwrcj+POtE1ovPDFm3cHHjlmHVPG4G/aqMhg4=;
+        b=tfVHSSjz/fWtzebHzF1lFhmIZow0nWQKaBTz3KROdukBAxtmBv+rJ1fDhe8s2ZjvHh
+         spy0AN/aHWtcmg8FgxkVRisaRV4Vb0K+BLCKP9kRjVXVzXHYFrPdeiPZ9nF8p1cYH/MN
+         suBv2y55TiWcqhRyAob1xb1+ZiwmsWRZ7R5v9zpk1VfWgfwuAwCTcr2mFovh15FTHhaw
+         GTpLywIMlG4GLAankeEHODjrNYCzDgOAUAz9Nk3yFPgcDmcjLlvfUj689f9pB/WqeuGy
+         M4UO+0ma/MtA6JmI6C+pJzqhsHQ6F65AnMZeaXTYQRwzvVNdHZbQf88Ubgv/akPuqyhA
+         K9lQ==
+X-Gm-Message-State: AOAM531xMXQWB7079PKIAQiok0VTUv9u5+znE6npIIT6EONaFJadnOeX
+        8PQchcwrRJmvWmHMMILO8hZ26UZHHvegAsgS9MrTR3Ox/aSf
+X-Google-Smtp-Source: ABdhPJx+7nuFkVm9OJPFEubbAGNlQpyf9/ZUPh2ZiCaN8J9vzEaL86R38LPxkOiWc6/fAAVetdqRJEzEpVcg99vHDqGt2Ysb8Mv2
 MIME-Version: 1.0
-References: <20210616085118.1141101-1-omosnace@redhat.com> <CAPcyv4jvR8CT4rYODR5KUHNdiqMwQSwJZ+OkVf61kLT3JfjC_Q@mail.gmail.com>
-In-Reply-To: <CAPcyv4jvR8CT4rYODR5KUHNdiqMwQSwJZ+OkVf61kLT3JfjC_Q@mail.gmail.com>
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-Date:   Tue, 31 Aug 2021 11:09:29 +0200
-Message-ID: <CAFqZXNtuH0329Xvcb415Kar-=o6wwrkFuiP8BZ_2OQhHLqkkAg@mail.gmail.com>
-Subject: Re: [PATCH v3] lockdown,selinux: fix wrong subject in some SELinux
- lockdown checks
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        James Morris <jmorris@namei.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        SElinux list <selinux@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        X86 ML <x86@kernel.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        linux-cxl@vger.kernel.org, linux-efi <linux-efi@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Linux-pm mailing list <linux-pm@vger.kernel.org>,
-        linux-serial@vger.kernel.org, bpf <bpf@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=omosnace@redhat.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
+X-Received: by 2002:a05:6e02:f08:: with SMTP id x8mr18891667ilj.92.1630406004366;
+ Tue, 31 Aug 2021 03:33:24 -0700 (PDT)
+Date:   Tue, 31 Aug 2021 03:33:24 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bae2cf05cad87aff@google.com>
+Subject: [syzbot] BUG: unable to handle kernel paging request in tomoyo_encode2
+From:   syzbot <syzbot+eee04f9a4a45fabcebef@syzkaller.appspotmail.com>
+To:     jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Sat, Jun 19, 2021 at 12:18 AM Dan Williams <dan.j.williams@intel.com> wrote:
-> On Wed, Jun 16, 2021 at 1:51 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> >
-> > Commit 59438b46471a ("security,lockdown,selinux: implement SELinux
-> > lockdown") added an implementation of the locked_down LSM hook to
-> > SELinux, with the aim to restrict which domains are allowed to perform
-> > operations that would breach lockdown.
-> >
-> > However, in several places the security_locked_down() hook is called in
-> > situations where the current task isn't doing any action that would
-> > directly breach lockdown, leading to SELinux checks that are basically
-> > bogus.
-> >
-> > To fix this, add an explicit struct cred pointer argument to
-> > security_lockdown() and define NULL as a special value to pass instead
-> > of current_cred() in such situations. LSMs that take the subject
-> > credentials into account can then fall back to some default or ignore
-> > such calls altogether. In the SELinux lockdown hook implementation, use
-> > SECINITSID_KERNEL in case the cred argument is NULL.
-> >
-> > Most of the callers are updated to pass current_cred() as the cred
-> > pointer, thus maintaining the same behavior. The following callers are
-> > modified to pass NULL as the cred pointer instead:
-> > 1. arch/powerpc/xmon/xmon.c
-> >      Seems to be some interactive debugging facility. It appears that
-> >      the lockdown hook is called from interrupt context here, so it
-> >      should be more appropriate to request a global lockdown decision.
-> > 2. fs/tracefs/inode.c:tracefs_create_file()
-> >      Here the call is used to prevent creating new tracefs entries when
-> >      the kernel is locked down. Assumes that locking down is one-way -
-> >      i.e. if the hook returns non-zero once, it will never return zero
-> >      again, thus no point in creating these files. Also, the hook is
-> >      often called by a module's init function when it is loaded by
-> >      userspace, where it doesn't make much sense to do a check against
-> >      the current task's creds, since the task itself doesn't actually
-> >      use the tracing functionality (i.e. doesn't breach lockdown), just
-> >      indirectly makes some new tracepoints available to whoever is
-> >      authorized to use them.
-> > 3. net/xfrm/xfrm_user.c:copy_to_user_*()
-> >      Here a cryptographic secret is redacted based on the value returned
-> >      from the hook. There are two possible actions that may lead here:
-> >      a) A netlink message XFRM_MSG_GETSA with NLM_F_DUMP set - here the
-> >         task context is relevant, since the dumped data is sent back to
-> >         the current task.
-> >      b) When adding/deleting/updating an SA via XFRM_MSG_xxxSA, the
-> >         dumped SA is broadcasted to tasks subscribed to XFRM events -
-> >         here the current task context is not relevant as it doesn't
-> >         represent the tasks that could potentially see the secret.
-> >      It doesn't seem worth it to try to keep using the current task's
-> >      context in the a) case, since the eventual data leak can be
-> >      circumvented anyway via b), plus there is no way for the task to
-> >      indicate that it doesn't care about the actual key value, so the
-> >      check could generate a lot of "false alert" denials with SELinux.
-> >      Thus, let's pass NULL instead of current_cred() here faute de
-> >      mieux.
-> >
-> > Improvements-suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Improvements-suggested-by: Paul Moore <paul@paul-moore.com>
-> > Fixes: 59438b46471a ("security,lockdown,selinux: implement SELinux lockdown")
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> [..]
-> > diff --git a/drivers/cxl/mem.c b/drivers/cxl/mem.c
-> > index 2acc6173da36..c1747b6555c7 100644
-> > --- a/drivers/cxl/mem.c
-> > +++ b/drivers/cxl/mem.c
-> > @@ -568,7 +568,7 @@ static bool cxl_mem_raw_command_allowed(u16 opcode)
-> >         if (!IS_ENABLED(CONFIG_CXL_MEM_RAW_COMMANDS))
-> >                 return false;
-> >
-> > -       if (security_locked_down(LOCKDOWN_NONE))
-> > +       if (security_locked_down(current_cred(), LOCKDOWN_NONE))
->
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
->
-> ...however that usage looks wrong. The expectation is that if kernel
-> integrity protections are enabled then raw command access should be
-> disabled. So I think that should be equivalent to LOCKDOWN_PCI_ACCESS
-> in terms of the command capabilities to filter.
+Hello,
 
-Yes, the LOCKDOWN_NONE seems wrong here... but it's a pre-existing bug
-and I didn't want to go down yet another rabbit hole trying to fix it.
-I'll look at this again once this patch is settled - it may indeed be
-as simple as replacing LOCKDOWN_NONE with LOCKDOWN_PCI_ACCESS.
+syzbot found the following issue on:
 
---
-Ondrej Mosnacek
-Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
+HEAD commit:    7d2a07b76933 Linux 5.14
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12dfff03300000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=113c5df900d8cf12
+dashboard link: https://syzkaller.appspot.com/bug?extid=eee04f9a4a45fabcebef
+compiler:       Debian clang version 11.0.1-2, GNU ld (GNU Binutils for Debian) 2.35.1
 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eee04f9a4a45fabcebef@syzkaller.appspotmail.com
+
+BUG: unable to handle page fault for address: 00000000001b7e20
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD 0 P4D 0 
+Oops: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 4861 Comm: systemd-udevd Not tainted 5.14.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:slab_alloc_node mm/slub.c:2943 [inline]
+RIP: 0010:slab_alloc mm/slub.c:2967 [inline]
+RIP: 0010:__kmalloc+0x1ab/0x390 mm/slub.c:4111
+Code: 84 11 01 00 00 48 83 78 10 00 0f 84 06 01 00 00 48 8b 7d 00 40 f6 c7 0f 0f 85 a7 01 00 00 45 84 c0 0f 84 a0 01 00 00 8b 45 28 <49> 8b 5c 05 00 48 89 d1 48 83 c1 08 4c 89 e8 65 48 0f c7 0f 0f 94
+RSP: 0018:ffffc90000e4f8e0 EFLAGS: 00010202
+RAX: 0000000000000020 RBX: 0000000000000d40 RCX: 0000000000000000
+RDX: 000000000083bf29 RSI: 0000000000000040 RDI: 0000000000054e70
+RBP: ffff888011041640 R08: dffffc0000000001 R09: fffffbfff1b74f1e
+R10: fffffbfff1b74f1e R11: 0000000000000000 R12: 0000000000000032
+R13: 00000000001b7e00 R14: 0000000000000032 R15: 0000000000000d40
+FS:  00007f39d836f8c0(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000001b7e20 CR3: 000000001caf9000 CR4: 00000000001506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ kmalloc include/linux/slab.h:596 [inline]
+ kzalloc include/linux/slab.h:721 [inline]
+ tomoyo_encode2+0x25a/0x560 security/tomoyo/realpath.c:45
+ tomoyo_encode security/tomoyo/realpath.c:80 [inline]
+ tomoyo_realpath_from_path+0x5c3/0x610 security/tomoyo/realpath.c:288
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x201/0x650 security/tomoyo/file.c:822
+ security_inode_getattr+0xc0/0x140 security/security.c:1333
+ vfs_getattr fs/stat.c:139 [inline]
+ vfs_fstat fs/stat.c:164 [inline]
+ __do_sys_newfstat fs/stat.c:404 [inline]
+ __se_sys_newfstat+0xba/0x820 fs/stat.c:401
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f39d71e12e2
+Code: 48 8b 05 b9 db 2b 00 64 c7 00 16 00 00 00 b8 ff ff ff ff c3 0f 1f 40 00 83 ff 01 77 33 48 63 fe b8 05 00 00 00 48 89 d6 0f 05 <48> 3d 00 f0 ff ff 77 06 f3 c3 0f 1f 40 00 48 8b 15 81 db 2b 00 f7
+RSP: 002b:00007ffd97de9338 EFLAGS: 00000246 ORIG_RAX: 0000000000000005
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f39d71e12e2
+RDX: 00007ffd97de9350 RSI: 00007ffd97de9350 RDI: 000000000000000e
+RBP: 00007ffd97de94f0 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000080000 R11: 0000000000000246 R12: 0000558889f0be90
+R13: 0000558889ef8010 R14: 0000558889efb450 R15: 00007ffd97de94b0
+Modules linked in:
+CR2: 00000000001b7e20
+----------------
+Code disassembly (best guess):
+   0:	84 11                	test   %dl,(%rcx)
+   2:	01 00                	add    %eax,(%rax)
+   4:	00 48 83             	add    %cl,-0x7d(%rax)
+   7:	78 10                	js     0x19
+   9:	00 0f                	add    %cl,(%rdi)
+   b:	84 06                	test   %al,(%rsi)
+   d:	01 00                	add    %eax,(%rax)
+   f:	00 48 8b             	add    %cl,-0x75(%rax)
+  12:	7d 00                	jge    0x14
+  14:	40 f6 c7 0f          	test   $0xf,%dil
+  18:	0f 85 a7 01 00 00    	jne    0x1c5
+  1e:	45 84 c0             	test   %r8b,%r8b
+  21:	0f 84 a0 01 00 00    	je     0x1c7
+  27:	8b 45 28             	mov    0x28(%rbp),%eax
+* 2a:	49 8b 5c 05 00       	mov    0x0(%r13,%rax,1),%rbx <-- trapping instruction
+  2f:	48 89 d1             	mov    %rdx,%rcx
+  32:	48 83 c1 08          	add    $0x8,%rcx
+  36:	4c 89 e8             	mov    %r13,%rax
+  39:	65 48 0f c7 0f       	cmpxchg16b %gs:(%rdi)
+  3e:	0f                   	.byte 0xf
+  3f:	94                   	xchg   %eax,%esp
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
