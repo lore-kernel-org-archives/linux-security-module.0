@@ -2,236 +2,146 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA44C4320E
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 07:26:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4DDC432BE
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 07:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A804961027
-	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 07:26:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A776460FE8
+	for <linux-security-module@archiver.kernel.org>; Tue, 31 Aug 2021 07:38:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239889AbhHaH1h (ORCPT
+        id S239840AbhHaHjZ (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 31 Aug 2021 03:27:37 -0400
-Received: from mail-eopbgr50126.outbound.protection.outlook.com ([40.107.5.126]:35332
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239824AbhHaH1g (ORCPT
+        Tue, 31 Aug 2021 03:39:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S239830AbhHaHjU (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 31 Aug 2021 03:27:36 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A0Iy9dDQeXBtVbIICL9sQTwuJY+rdEZEPUoJJtYhBOZI/lBDho+zaYhHWjtZr79js+y0Zrlm3AaYF0f1M4P4GQkQ9/lcwN286im5Xihzpro7Pxp7tKVaSyIo3QoYIjmhNa/cv/PZ8etKhi92vdxpEuf6jaW0XW0s711szQzoo9IUZ+ak4C0EI+QXGg22hJhwG5qNTGBvA/Xe+Fi1DaS/yDVv/J8UEk3y0XKGgwiB4UmjB26w64PDYQAlziFPxn697nmUYmNgwn2RaRaW4vCQTDJ+zfkm4hiZhsUPd+8OHQU1WAveVXYtCo6IBGPL27U8myKg51nO51t/fmTQpldDCQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V6s/UsXvRcWvtFM6cbxRrGuIdxNj5HYR1/+OqoAIQW4=;
- b=kM7YI6lnc4vX355ECvI84Jems+KQHnkfWGcxwWWh+MOCIdZi0NA4Ky62w6Z++EUhlnHUgTIkUGGsFFSsYuTzZa5DNTkryuoeh9htBXVE/5BeAHb03i/NRhrWylBeDBNXYk55yb0o1ZWSVNrpnIgcUQhDu57cPSTebgYGNPtKEC5LSgHYvDgoD89ezWdt1VtSuRN1WLRk0HpZ2AD9XBgFq1xSs1e+kdbd+KaWK6WEeukITciitxcASKC2A+cg0Mnbn4iqowV/hzamtuteZSVxgm9+TuDSHEIEjcnakpg3tSnp9ZArO3J9whbrnLcdOdF9gGnOmYJTxjp7fqjJUCkl2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=viveris.fr; dmarc=pass action=none header.from=viveris.fr;
- dkim=pass header.d=viveris.fr; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=viverislicensing.onmicrosoft.com;
- s=selector2-viverislicensing-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V6s/UsXvRcWvtFM6cbxRrGuIdxNj5HYR1/+OqoAIQW4=;
- b=vBqlKFXg1MpFzMgSbgBpZM6aTCVNkdPzzdxLtwWfLe2fYTAtgqhXGpVFd0bbGIStndAKKSk0LWRajGgi4K69OBmXVspzHkpooEawxG2nQS+l/gtiljidOo1LmBoLOd2pPTREbfaOUK4/zVQ0ztLmFcYTTqKblruv9Lwsw5WUfn8=
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- (2603:10a6:200:96::21) by AM0PR09MB4115.eurprd09.prod.outlook.com
- (2603:10a6:208:195::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4457.24; Tue, 31 Aug
- 2021 07:26:38 +0000
-Received: from AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432]) by AM4PR0902MB1748.eurprd09.prod.outlook.com
- ([fe80::84a0:780d:1c5c:4432%9]) with mapi id 15.20.4457.024; Tue, 31 Aug 2021
- 07:26:38 +0000
-From:   THOBY Simon <Simon.THOBY@viveris.fr>
-To:     J Freyensee <why2jjj.linux@gmail.com>,
-        Igor Zhbanov <izh1979@gmail.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/1] NAX LSM: Add initial support
-Thread-Topic: [PATCH v5 1/1] NAX LSM: Add initial support
-Thread-Index: AQHXlnGAzLReKMZ1V0uu/5KoZS8O5KuMwPiAgACFNYA=
-Date:   Tue, 31 Aug 2021 07:26:38 +0000
-Message-ID: <b5666cb1-b73f-d5e3-df5f-f7ec66ea65da@viveris.fr>
-References: <281927a3-7d3e-7aac-509d-9d3b1609b02b@gmail.com>
- <624ae20f-b520-5b68-06a6-d0fa3713b9a1@gmail.com>
- <219ed9d8-9711-dfe0-c620-070976c1daac@gmail.com>
-In-Reply-To: <219ed9d8-9711-dfe0-c620-070976c1daac@gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=viveris.fr;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0844d619-e83a-42e9-874f-08d96c50abea
-x-ms-traffictypediagnostic: AM0PR09MB4115:
-x-microsoft-antispam-prvs: <AM0PR09MB4115A2CC093C8EA424AF910094CC9@AM0PR09MB4115.eurprd09.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: zR57z2FT+RXeT+EcuRxrwCjJDj1g7Hh2DfB2gEGrkynSiJxFLfCystAl5KWYVwg02Gd0PR/L1ue6XkdN/WTFmux8fb+DAdzNt/MaWp7QBvQRSowlTsDeoxEgqwKEGER2pEQuEKFR3Q/Rm8elYq2cVUSUFg9QEsFJK7he6nmAQ9hitdZlp7LtCgUwzP+3Wd5iO0h8nlm19Vph0VVwmBtkXs9PfeOl2tbsfnK5qCEZuCOcT3XAviqmpYL+64yB7zgjwqJsZaRbgipTxGedRMSmw+hDpPSTLXarRsqpZNlhMv1pfFZcQn7NsLZchq77nBKIuw+XEHvrTbcojxd9dZXVGcPYntch2gm1XmFXXyzAHgL45wPS3PH8n67wyVkefzJRzxCrjTBZenuB7q86NCGMGjFloJVt5IxIDFC46nI82ex2mjdfETlTgplpJp1sgcloNCpJRhRXajOtWEcqBBTUCD7CiR9w+eKshdhETuuEzM94XD4pOVHw8QNpOPkobSgqdUZ1Qpg7N4Kft2v4U52Q5WwidcJmouidpmjY7h+fd2ZDBpeBYm2/99g4hV7iebtuHXOtPC+rIMyqElnZQ56gwdsYxIT9F7HeGLIJZKdyGdH7S6ym9Ws/JNFEa5taP+Gz0Oq/mBRqh5E37+oLu2mtpvCMp+PpCvmNoWh5Tp7IxImkM1N+INt1uQ6Lg985T5T5lLdi43ezGq1gueSOQ8dYTwWnLWZFDYbxKCG7+BIHDmdJgK4h33XMTBftsqQER10Xo0Cf2/1isNTn/NSb9zDWr0FAtyqoYnOt+se1LBsUMAan6vnBFkNAdzASvkUGk1KK
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM4PR0902MB1748.eurprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(136003)(396003)(39850400004)(376002)(346002)(366004)(31696002)(83380400001)(71200400001)(2906002)(38100700002)(26005)(6506007)(38070700005)(53546011)(122000001)(36756003)(31686004)(86362001)(2616005)(8936002)(6486002)(8676002)(91956017)(66476007)(186003)(110136005)(66946007)(6512007)(76116006)(316002)(5660300002)(508600001)(966005)(66446008)(64756008)(66556008)(45980500001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Tzd6TGRyVFBFZXJBckFoTDJscUgweThxOHV4SzZrajFNYnVwQVcyNGxCanVK?=
- =?utf-8?B?MWQzNzBDTUxEa0NnYllkQTJpZXZQeHY0dFQyQ3hhSmJ6MzZzQlRsZFRtSjJ5?=
- =?utf-8?B?d1IvZVp0YVJLelZyOVc4TFJwMmJnYjZ4U0hhNVl2MGFuUUo5WmNTRzltZU5C?=
- =?utf-8?B?MW42T21rWldRNlB1OGhNaWQ5dlVlZnR0QkN3Y2puNFV3UWU2RGsxa3cvREp0?=
- =?utf-8?B?ZTRSRGFwenJEQ0U5T0p3Z0tuYWMzWFNUZlBOdlF4Zi9HWFhSQ0RGTEdWdEZL?=
- =?utf-8?B?ajltdkRzUFFxTGNVbjMyL1NubEMwLytrZ0duR2h5QXdDYTNkQUhCeUNWOWM5?=
- =?utf-8?B?Ui8wMTJqb0t1VG1Nc3pHc2c2a3k5WFQ0WmF5REpnbXFNSjlBNEN6RFp6UW54?=
- =?utf-8?B?dkJSQkhGU3Q0eWdXci8zcW16anhXWW92T2FBY1F3bWpxeHZ3MHh1WnlKcjNG?=
- =?utf-8?B?U3RobitsNExxNXRXaE8zYkM2OGpncFg5QStBaE9QSWltN0tURFZMUDgxcm1r?=
- =?utf-8?B?Q2JZd3JiRDNzMTh2NzlVTFRIbzBUUThRblNtbVdSMmw2OVRhZUI4K1d5MmpW?=
- =?utf-8?B?bnYrUXJTQ0tqeGtpZ2JnMzQxTUgwa0pES0xNdGMyYWJXNFdaR1pWSHA5Z2JD?=
- =?utf-8?B?cHpjV0NZSmVONlp2U2M2bEoxV1ZWaDI0T2pqSkkzdHhBTWxuU09QYmtkRVpL?=
- =?utf-8?B?MFZ0TTVXa1NvUXNHZ25MQmwyM0cvV2RuUFVwSWhERmoreUxsVXo2dytQKzFj?=
- =?utf-8?B?WmdSTXJQR0o0RnpDckhqR1VmWVVvUjVPMktpSWJGbSs1cWdLcVZuRVVrZ1Zl?=
- =?utf-8?B?UUdwZzZ3cUdJSkduYnJRbjQ0TEtwTkRGcTQ3RFViUkc2bXMxd0pSZnJRS3oy?=
- =?utf-8?B?TGdEY2E5RDFHU2dtU1JzeG05OXNRcXZCb3hvS0dtNnlIdXIwT0dyMjdoRTcx?=
- =?utf-8?B?SVRUd1prWThubkFWRjVoZTVaR0V2Zk1KTi9TZDNsc2xPL2dzcGUwcWZITlkw?=
- =?utf-8?B?c2VnaCtpRmZXcmk1UmdTc2dyeW1CR25weW5oYnJ3OFlwVCtFelI5QnB6MlEy?=
- =?utf-8?B?TXhXbnBqaDhwY1ZXVklmNzZIL1VsMElWdXllbG1HblBGUjBQNTZkZndWTStB?=
- =?utf-8?B?UnhobzBVc29TcTJVT0pEZFJRQ1JBemlwMEMwV3dwb25EdUE1TmEzMHNFU3hw?=
- =?utf-8?B?VTdOWTQ0Smk5QUtHeGNxWGVpbVFVdEU3MXU3R0l3UFh5V3dvY0JSV1FLZFR5?=
- =?utf-8?B?NHZKYjg5UGk3SXdkcGFjYVI3aURWQ0xEZWM1M0pCY3FsbDhPQ1c2cDA5T2JN?=
- =?utf-8?B?M1hKalR1TitHcFBHeXFGejh5MGE0ZnpKNzVUSkx3eElKWUxVTE1EQ2N6OWJN?=
- =?utf-8?B?Qk4rUXUxakorTDhRSSs2U3RKNy9hQzg2a1d6aVBoTXVzTjhQeTlmdVRSSWxa?=
- =?utf-8?B?TTU2T2hWVzVQRlovSndBSC9kbHptWE5KaS9BWXptak9pd2RoNlcweDg2OWRo?=
- =?utf-8?B?ZklQVXdYMW11SXNreXByY29qTUFDSmUwZERFMXlsbW5kZnR2MTV6TWgyU0tR?=
- =?utf-8?B?dlh5VHY0aXJZb1JkdVJROTczUnNFZ0lXSG5ETFFCcWkxcUUzbXpEbGVJSWth?=
- =?utf-8?B?WVU3emZaTC9WbGhPOFJEcWtRY3gySkdjOWYxUzF1QnB3THc5QkVtY3NydmRT?=
- =?utf-8?B?OTgvVVYxMWdXYnhmaktQQ0JZMi9wUXA0NHpBN1pwMWZPU1MzZHFHYUxCSmhI?=
- =?utf-8?Q?Z8+CLI/VSVqWqJNNezKc+qExt0FOfeb08LgvKn2?=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8692A7148A36C348B46D2E462F8DCEA1@eurprd09.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 31 Aug 2021 03:39:20 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E09B560ED4;
+        Tue, 31 Aug 2021 07:38:20 +0000 (UTC)
+Date:   Tue, 31 Aug 2021 09:38:18 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        syzbot <syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com>,
+        andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, dvyukov@google.com, jmorris@namei.org,
+        kafai@fb.com, kpsingh@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        paul@paul-moore.com, selinux@vger.kernel.org,
+        songliubraving@fb.com, stephen.smalley.work@gmail.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        viro@zeniv.linux.org.uk, yhs@fb.com
+Subject: Re: [syzbot] general protection fault in legacy_parse_param
+Message-ID: <20210831073818.oojyjqyiogel7hll@wittgenstein>
+References: <0000000000004e5ec705c6318557@google.com>
+ <0000000000008d2a0005ca951d94@google.com>
+ <20210830122348.jffs5dmq6z25qzw5@wittgenstein>
+ <61bf6b11-80f8-839e-4ae7-54c2c6021ed5@schaufler-ca.com>
+ <89d0e012-4caf-4cda-3c4e-803a2c6ebc2b@schaufler-ca.com>
+ <20210830165733.emqlg3orflaqqfio@wittgenstein>
+ <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
 MIME-Version: 1.0
-X-OriginatorOrg: viveris.fr
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM4PR0902MB1748.eurprd09.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0844d619-e83a-42e9-874f-08d96c50abea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Aug 2021 07:26:38.6353
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 34bab81c-945c-43f1-ad13-592b97e11b40
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8zE+lI70XF6obV9WTjYAdqd1AZXHw/Z6PdoUwTW9BUPSRxDHc31KRSZgheTBybqlDq91Kaf1to3pXv57S0oBmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR09MB4115
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3354839e-5e7a-08c7-277a-9bbebfbfc0bc@schaufler-ca.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-T24gOC8zMS8yMSAxOjI5IEFNLCBKIEZyZXllbnNlZSB3cm90ZToNCj4gT24gOC8yMS8yMSAyOjQ3
-IEFNLCBJZ29yIFpoYmFub3Ygd3JvdGU6DQo+PiBBZGQgaW5pdGlhbCBzdXBwb3J0IGZvciBOQVgg
-KE5vIEFub255bW91cyBFeGVjdXRpb24pLCB3aGljaCBpcyBhIExpbnV4DQo+PiBTZWN1cml0eSBN
-b2R1bGUgdGhhdCBleHRlbmRzIERBQyBieSBtYWtpbmcgaW1wb3NzaWJsZSB0byBtYWtlIGFub255
-bW91cw0KPj4gYW5kIG1vZGlmaWVkIHBhZ2VzIGV4ZWN1dGFibGUgZm9yIHByaXZpbGVnZWQgcHJv
-Y2Vzc2VzLg0KPj4NCj4+IEludGVyY2VwdHMgYW5vbnltb3VzIGV4ZWN1dGFibGUgcGFnZXMgY3Jl
-YXRlZCB3aXRoIG1tYXAoKSBhbmQgbXByb3RlY3QoKQ0KPj4gc3lzdGVtIGNhbGxzLg0KPj4NCj4+
-IExvZyB2aW9sYXRpb25zIChpbiBub24tcXVpZXQgbW9kZSkgYW5kIGJsb2NrIHRoZSBhY3Rpb24g
-b3Iga2lsbCB0aGUNCj4+IG9mZmVuZGluZyBwcm9jZXNzLCBkZXBlbmRpbmcgb24gdGhlIGVuYWJs
-ZWQgc2V0dGluZ3MuDQo+Pg0KPj4gU2VlIERvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUvTFNNL05B
-WC5yc3QuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogSWdvciBaaGJhbm92IDxpemgxOTc5QGdtYWls
-LmNvbT4NCj4+IC0tLQ0KPj4gwqAgRG9jdW1lbnRhdGlvbi9hZG1pbi1ndWlkZS9MU00vTkFYLnJz
-dMKgwqDCoMKgwqDCoMKgwqAgfMKgIDcyICsrKw0KPj4gwqAgRG9jdW1lbnRhdGlvbi9hZG1pbi1n
-dWlkZS9MU00vaW5kZXgucnN0wqDCoMKgwqDCoMKgIHzCoMKgIDEgKw0KPj4gwqAgLi4uL2FkbWlu
-LWd1aWRlL2tlcm5lbC1wYXJhbWV0ZXJzLnJzdMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMSArDQo+
-PiDCoCAuLi4vYWRtaW4tZ3VpZGUva2VybmVsLXBhcmFtZXRlcnMudHh0wqDCoMKgwqDCoMKgwqDC
-oCB8wqAgMzIgKysNCj4+IMKgIHNlY3VyaXR5L0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAxMSArLQ0KPj4gwqAgc2Vj
-dXJpdHkvTWFrZWZpbGXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoCB8wqDCoCAyICsNCj4+IMKgIHNlY3VyaXR5L25heC9LY29uZmlnwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxMTMgKysrKysN
-Cj4+IMKgIHNlY3VyaXR5L25heC9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCA0ICsNCj4+IMKgIHNlY3VyaXR5L25heC9uYXgtbHNt
-LmPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgNDcyICsr
-KysrKysrKysrKysrKysrKw0KPj4gwqAgOSBmaWxlcyBjaGFuZ2VkLCA3MDMgaW5zZXJ0aW9ucygr
-KSwgNSBkZWxldGlvbnMoLSkNCj4+IMKgIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9u
-L2FkbWluLWd1aWRlL0xTTS9OQVgucnN0DQo+PiDCoCBjcmVhdGUgbW9kZSAxMDA2NDQgc2VjdXJp
-dHkvbmF4L0tjb25maWcNCj4+IMKgIGNyZWF0ZSBtb2RlIDEwMDY0NCBzZWN1cml0eS9uYXgvTWFr
-ZWZpbGUNCj4+IMKgIGNyZWF0ZSBtb2RlIDEwMDY0NCBzZWN1cml0eS9uYXgvbmF4LWxzbS5jDQo+
-Pg0KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUvTFNNL05BWC5yc3Qg
-Yi9Eb2N1bWVudGF0aW9uL2FkbWluLWd1aWRlL0xTTS9OQVgucnN0DQo+PiBuZXcgZmlsZSBtb2Rl
-IDEwMDY0NA0KPj4gaW5kZXggMDAwMDAwMDAwMDAwLi5kYTU0YjNiZTRjZGENCj4+IC0tLSAvZGV2
-L251bGwNCj4+ICsrKyBiL0RvY3VtZW50YXRpb24vYWRtaW4tZ3VpZGUvTFNNL05BWC5yc3QNCj4+
-IEBAIC0wLDAgKzEsNzIgQEANCj4+ICs9PT09PT09DQo+PiArTkFYIExTTQ0KPj4gKz09PT09PT0N
-Cj4+ICsNCj4+ICs6QXV0aG9yOiBJZ29yIFpoYmFub3YNCj4+ICsNCj4+ICtOQVggKE5vIEFub255
-bW91cyBFeGVjdXRpb24pIGlzIGEgTGludXggU2VjdXJpdHkgTW9kdWxlIHRoYXQgZXh0ZW5kcyBE
-QUMNCj4+ICtieSBtYWtpbmcgaW1wb3NzaWJsZSB0byBtYWtlIGFub255bW91cyBhbmQgbW9kaWZp
-ZWQgcGFnZXMgZXhlY3V0YWJsZSBmb3INCj4+ICtwcm9jZXNzZXMuIFRoZSBtb2R1bGUgaW50ZXJj
-ZXB0cyBhbm9ueW1vdXMgZXhlY3V0YWJsZSBwYWdlcyBjcmVhdGVkIHdpdGgNCj4+ICttbWFwKCkg
-YW5kIG1wcm90ZWN0KCkgc3lzdGVtIGNhbGxzLg0KPj4gKw0KPj4gK1RvIHNlbGVjdCBpdCBhdCBi
-b290IHRpbWUsIGFkZCBgYG5heGBgIHRvIGBgc2VjdXJpdHlgYCBrZXJuZWwgY29tbWFuZC1saW5l
-DQo+PiArcGFyYW1ldGVyLg0KPj4gKw0KPj4gK1RoZSBmb2xsb3dpbmcgc3lzY3RsIHBhcmFtZXRl
-cnMgYXJlIGF2YWlsYWJsZToNCj4+ICsNCj4+ICsqIGBga2VybmVsLm5heC5jaGVja19hbGxgYDoN
-Cj4+ICsgLSAwOiBDaGVjayBhbGwgcHJvY2Vzc2VzLg0KPj4gKyAtIDE6IENoZWNrIG9ubHkgcHJp
-dmlsZWdlZCBwcm9jZXNzZXMuIFRoZSBwcml2aWxlZ2VkIHByb2Nlc3MgaXMgYSBwcm9jZXNzDQo+
-PiArwqDCoMKgwqDCoCBmb3Igd2hpY2ggYW55IG9mIHRoZSBmb2xsb3dpbmcgaXMgdHJ1ZToNCj4+
-ICvCoMKgwqDCoMKgIC0gYGB1aWTCoCA9PSAwYGANCj4+ICvCoMKgwqDCoMKgIC0gYGBldWlkID09
-IDBgYA0KPj4gK8KgwqDCoMKgwqAgLSBgYHN1aWQgPT0gMGBgDQo+PiArwqDCoMKgwqDCoCAtIGBg
-Y2FwX2VmZmVjdGl2ZWBgIGhhcyBhbnkgY2FwYWJpbGl0eSBleGNlcHQgZm9yIHRoZSBvbmVzIGFs
-bG93ZWQNCj4+ICvCoMKgwqDCoMKgwqDCoCBpbiBgYGtlcm5lbC5uYXguYWxsb3dlZF9jYXBzYGAN
-Cj4+ICvCoMKgwqDCoMKgIC0gYGBjYXBfcGVybWl0dGVkYGAgaGFzIGFueSBjYXBhYmlsaXR5IGV4
-Y2VwdCBmb3IgdGhlIG9uZXMgYWxsb3dlZA0KPj4gK8KgwqDCoMKgwqDCoMKgIGluIGBga2VybmVs
-Lm5heC5hbGxvd2VkX2NhcHNgYA0KPj4gKw0KPj4gKyBDaGVja2luZyBvZiB1aWQvZXVpZC9zdWlk
-IGlzIGltcG9ydGFudCBiZWNhdXNlIGEgcHJvY2VzcyBtYXkgY2FsbCBzZXRldWlkKDApDQo+PiAr
-IHRvIGdhaW4gcHJpdmlsZWdlcyAoaWYgU0VDVVJFX05PX1NFVFVJRF9GSVhVUCBzZWN1cmUgYml0
-IGlzIG5vdCBzZXQpLg0KPj4gKw0KPj4gKyogYGBrZXJuZWwubmF4LmFsbG93ZWRfY2Fwc2BgOg0K
-Pj4gKw0KPj4gKyBIZXhhZGVjaW1hbCBudW1iZXIgcmVwcmVzZW50aW5nIHRoZSBzZXQgb2YgY2Fw
-YWJpbGl0aWVzIGEgbm9uLXJvb3QNCj4+ICsgcHJvY2VzcyBjYW4gcG9zc2VzcyB3aXRob3V0IGJl
-aW5nIGNvbnNpZGVyZWQgInByaXZpbGVnZWQiIGJ5IE5BWCBMU00uDQo+PiArDQo+PiArIEZvciB0
-aGUgbWVhbmluZyBvZiB0aGUgY2FwYWJpbGl0aWVzIGJpdHMgYW5kIHRoZWlyIHZhbHVlLCBwbGVh
-c2UgY2hlY2sNCj4+ICsgYGBpbmNsdWRlL3VhcGkvbGludXgvY2FwYWJpbGl0eS5oYGAgYW5kIGBg
-Y2FwYWJpbGl0aWVzKDcpYGAgbWFudWFsIHBhZ2UuDQo+PiArDQo+PiArIEZvciBleGFtcGxlLCBg
-YENBUF9TWVNfUFRSQUNFYGAgaGFzIGEgbnVtYmVyIDE5LiBUaGVyZWZvcmUsIHRvIGFkZCBpdCB0
-bw0KPj4gKyBhbGxvd2VkIGNhcGFiaWxpdGllcyBsaXN0LCB3ZSBuZWVkIHRvIHNldCAxOSd0aCBi
-aXQgKDJeMTkgb3IgMSA8PCAxOSkNCj4+ICsgb3IgODAwMDAgaW4gaGV4YWRlY2ltYWwgZm9ybS4g
-Q2FwYWJpbGl0aWVzIGNhbiBiZSBiaXR3aXNlIE9SZWQuDQo+PiArDQo+PiArKiBgYGtlcm5lbC5u
-YXgubW9kZWBgOg0KPj4gKw0KPj4gKyAtIDA6IE9ubHkgbG9nIGVycm9ycyAod2hlbiBlbmFibGVk
-IGJ5IGBga2VybmVsLm5heC5xdWlldGBgKSAoZGVmYXVsdCBtb2RlKQ0KPj4gKyAtIDE6IEZvcmJp
-ZCB1bnNhZmUgcGFnZXMgbWFwcGluZ3MgKGFuZCBsb2cgd2hlbiBlbmFibGVkKQ0KPj4gKyAtIDI6
-IEtpbGwgdGhlIHZpb2xhdGluZyBwcm9jZXNzIChhbmQgbG9nIHdoZW4gZW5hYmxlZCkNCj4+ICsN
-Cj4+ICsqIGBga2VybmVsLm5heC5xdWlldGBgOg0KPj4gKw0KPj4gKyAtIDA6IExvZyB2aW9sYXRp
-b25zIChkZWZhdWx0KQ0KPj4gKyAtIDE6IEJlIHF1aWV0DQo+PiArDQo+PiArKiBgYGtlcm5lbC5u
-YXgubG9ja2VkYGA6DQo+PiArDQo+PiArIC0gMDogQ2hhbmdpbmcgb2YgdGhlIG1vZHVsZSdzIHN5
-c2N0bCBwYXJhbWV0ZXJzIGlzIGFsbG93ZWQNCj4+ICsgLSAxOiBGdXJ0aGVyIGNoYW5naW5nIG9m
-IHRoZSBtb2R1bGUncyBzeXNjdGwgcGFyYW1ldGVycyBpcyBmb3JiaWRkZW4NCj4+ICsNCj4+ICsg
-U2V0dGluZyB0aGlzIHBhcmFtZXRlciB0byBgYDFgYCBhZnRlciBpbml0aWFsIHNldHVwIGR1cmlu
-ZyB0aGUgc3lzdGVtIGJvb3QNCj4+ICsgd2lsbCBwcmV2ZW50IHRoZSBtb2R1bGUgZGlzYWJsaW5n
-IGF0IHRoZSBsYXRlciB0aW1lLg0KPj4gKw0KPj4gK1RoZXJlIGFyZSBtYXRjaGluZyBrZXJuZWwg
-Y29tbWFuZC1saW5lIHBhcmFtZXRlcnMgKHdpdGggdGhlIHNhbWUgdmFsdWVzKToNCj4+ICsNCj4+
-ICstIGBgbmF4X2FsbG93ZWRfY2Fwc2BgDQo+PiArLSBgYG5heF9jaGVja19hbGxgYA0KPj4gKy0g
-YGBuYXhfbW9kZWBgDQo+PiArLSBgYG5heF9xdWlldGBgDQo+PiArLSBgYG5heF9sb2NrZWRgYA0K
-Pj4gKw0KPj4gK1RoZSBgYG5heF9sb2NrZWRgYCBjb21tYW5kLWxpbmUgcGFyYW1ldGVyIG11c3Qg
-YmUgc3BlY2lmaWVkIGxhc3QgdG8gYXZvaWQNCj4+ICtwcmVtYXR1cmUgc2V0dGluZyBsb2NraW5n
-Lg0KPiANCj4gDQo+IElzIGl0IGNvbW1vbiB0byBoYXZlIHRoZXNlIHR5cGVzIG9mIHJlc3RyaWN0
-aW9ucyBmb3Iga2VybmVsIGNvbW1hbmQtbGluZQ0KPiBwYXJhbWV0ZXJzLCBpbiB0aGlzIGNhc2Us
-IGtlcm5lbCBjb21tYW5kLWxpbmUgcGFyYW1ldGVyIG9yZGVyaW5nP8KgIFNlZW1zDQo+IGxpa2Ug
-dGhhdCB3b3VsZCBiZSBwcm9uZSBmb3IgYSBsb3Qgb2YgYXZvaWRhYmxlIHRyb3VibGVzaG9vdGlu
-ZyBpc3N1ZXMNCj4gYW5kIHVubmVjZXNzYXJ5IHVzYWdlIHF1ZXN0aW9ucy4NCg0KVGhpcyBwb2lu
-dCB3YXMgZGlzY3Vzc2VkIGluIHRoZSB2MSBvZiB0aGlzIHBhdGNoIChidXQgd2UgZGlkbid0IHJl
-YWxseSByZWFjaCBhbiBhZ3JlZW1lbnQgb25lIHdheSBvciBhbm90aGVyKToNCmh0dHBzOi8veC1s
-b3JlLmtlcm5lbC5vcmcvYWxsL2IxZjM2NTBjLWRmNDItYzVkNC00NWMwLWM3Nzk0Njc1OTkyNkB2
-aXZlcmlzLmZyLw0KDQo+IA0KPiA8YmlnIHNuaXA+DQo+IC4NCj4gLg0KPiAuDQo+IA0KPj4gKw0K
-Pj4gK3N0YXRpYyB2b2lkIF9faW5pdA0KPj4gK25heF9pbml0X3N5c2N0bCh2b2lkKQ0KPj4gK3sN
-Cj4+ICvCoMKgwqDCoCBpZiAoIXJlZ2lzdGVyX3N5c2N0bF9wYXRocyhuYXhfc3lzY3RsX3BhdGgs
-IG5heF9zeXNjdGxfdGFibGUpKQ0KPj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBwYW5pYygi
-TkFYOiBzeXNjdGwgcmVnaXN0cmF0aW9uIGZhaWxlZC5cbiIpOw0KPj4gK30NCj4+ICsNCj4+ICsj
-ZWxzZSAvKiAhQ09ORklHX1NZU0NUTCAqLw0KPj4gKw0KPj4gK3N0YXRpYyBpbmxpbmUgdm9pZA0K
-Pj4gK25heF9pbml0X3N5c2N0bCh2b2lkKQ0KPj4gK3sNCj4+ICsNCj4+ICt9DQo+PiArDQo+PiAr
-I2VuZGlmIC8qICFDT05GSUdfU1lTQ1RMICovDQo+PiArDQo+PiArc3RhdGljIGludCBfX2luaXQg
-c2V0dXBfYWxsb3dlZF9jYXBzKGNoYXIgKnN0cikNCj4+ICt7DQo+PiArwqDCoMKgwqAgaWYgKGxv
-Y2tlZCkNCj4+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIDE7DQo+PiArDQo+PiAr
-wqDCoMKgwqAgLyogRG8gbm90IGFsbG93IHRyYWlsaW5nIGdhcmJhZ2Ugb3IgZXhjZXNzaXZlIGxl
-bmd0aCAqLw0KPj4gK8KgwqDCoMKgIGlmIChzdHJsZW4oc3RyKSA+IEFMTE9XRURfQ0FQU19IRVhf
-TEVOKSB7DQo+IA0KPiDCoGEgbGl0dGxlIG5pdHBpY2ssIGNvdWxkIHN0cm5sZW4oKSBiZSB1c2Vk
-IGluc3RlYWQgdG8gZGVmaW5lIGEgbWF4DQo+IGxlbmd0aCBvZiB0aGUgaW5wdXQgJ3N0cic/DQo+
-IA0KPiANCj4gUmVnYXJkcywNCj4gSmF5DQoNCkhhdmUgYSBuaWNlIGRheSwNClNpbW9uDQo=
+On Mon, Aug 30, 2021 at 10:41:29AM -0700, Casey Schaufler wrote:
+> On 8/30/2021 9:57 AM, Christian Brauner wrote:
+> > On Mon, Aug 30, 2021 at 09:40:57AM -0700, Casey Schaufler wrote:
+> >> On 8/30/2021 7:25 AM, Casey Schaufler wrote:
+> >>> On 8/30/2021 5:23 AM, Christian Brauner wrote:
+> >>>> On Fri, Aug 27, 2021 at 07:11:18PM -0700, syzbot wrote:
+> >>>>> syzbot has bisected this issue to:
+> >>>>>
+> >>>>> commit 54261af473be4c5481f6196064445d2945f2bdab
+> >>>>> Author: KP Singh <kpsingh@google.com>
+> >>>>> Date:   Thu Apr 30 15:52:40 2020 +0000
+> >>>>>
+> >>>>>     security: Fix the default value of fs_context_parse_param hook
+> >>>>>
+> >>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=160c5d75300000
+> >>>>> start commit:   77dd11439b86 Merge tag 'drm-fixes-2021-08-27' of git://ano..
+> >>>>> git tree:       upstream
+> >>>>> final oops:     https://syzkaller.appspot.com/x/report.txt?x=150c5d75300000
+> >>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=110c5d75300000
+> >>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=2fd902af77ff1e56
+> >>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=d1e3b1d92d25abf97943
+> >>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126d084d300000
+> >>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16216eb1300000
+> >>>>>
+> >>>>> Reported-by: syzbot+d1e3b1d92d25abf97943@syzkaller.appspotmail.com
+> >>>>> Fixes: 54261af473be ("security: Fix the default value of fs_context_parse_param hook")
+> >>>>>
+> >>>>> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> >>>> So ok, this seems somewhat clear now. When smack and 
+> >>>> CONFIG_BPF_LSM=y
+> >>>> is selected the bpf LSM will register NOP handlers including
+> >>>>
+> >>>> bpf_lsm_fs_context_fs_param()
+> >>>>
+> >>>> for the
+> >>>>
+> >>>> fs_context_fs_param
+> >>>>
+> >>>> LSM hook. The bpf LSM runs last, i.e. after smack according to:
+> >>>>
+> >>>> CONFIG_LSM="landlock,lockdown,yama,safesetid,integrity,tomoyo,smack,bpf"
+> >>>>
+> >>>> in the appended config. The smack hook runs and sets
+> >>>>
+> >>>> param->string = NULL
+> >>>>
+> >>>> then the bpf NOP handler runs returning -ENOPARM indicating to the vfs
+> >>>> parameter parser that this is not a security module option so it should
+> >>>> proceed processing the parameter subsequently causing the crash because
+> >>>> param->string is not allowed to be NULL (Which the vfs parameter parser
+> >>>> verifies early in fsconfig().).
+> >>> The security_fs_context_parse_param() function is incorrectly
+> >>> implemented using the call_int_hook() macro. It should return
+> >>> zero if any of the modules return zero. It does not follow the
+> >>> usual failure model of LSM hooks. It could be argued that the
+> >>> code was fine before the addition of the BPF hook, but it was
+> >>> going to fail as soon as any two security modules provided
+> >>> mount options.
+> >>>
+> >>> Regardless, I will have a patch later today. Thank you for
+> >>> tracking this down.
+> >> Here's my proposed patch. I'll tidy it up with a proper
+> >> commit message if it looks alright to y'all. I've tested
+> >> with Smack and with and without BPF.
+> > Looks good to me.
+> > On question, in contrast to smack, selinux returns 1 instead of 0 on
+> > success. So selinux would cause an early return preventing other hooks
+> > from running. Just making sure that this is intentional.
+> >
+> > Iirc, this would mean that selinux causes fsconfig() to return a
+> > positive value to userspace which I think is a bug; likely in selinux.
+> > So I think selinux should either return 0 or the security hook itself
+> > needs to overwrite a positive value with a sensible errno that can be
+> > seen by userspace.
+> 
+> I think that I agree. The SELinux and Smack versions of the
+> hook are almost identical except for setting rc to 1 in the
+> SELinux case. And returning 1 makes no sense if you follow
+> the callers back. David Howells wrote both the SELinux and
+> Smack versions. David - why are they different? which is correct?
+
+The documentation for fs_context_parse_param notes:
+
+ * @fs_context_parse_param:
+ *	Userspace provided a parameter to configure a superblock.  The LSM may
+ *	reject it with an error and may use it for itself, in which case it
+ *	should return 0; otherwise it should return -ENOPARAM to pass it on to
+ *	the filesystem.
+ *	@fc indicates the filesystem context.
+ *	@param The parameter
+
+So we should simply make selinux return 0 on top of your patch when it
+has consumed the option.
