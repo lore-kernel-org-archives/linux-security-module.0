@@ -2,95 +2,113 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-21.3 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC35C432BE
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 09:30:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B957C432BE
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 09:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3551661053
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 09:30:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1673D60F3A
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 09:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243544AbhIAJbi (ORCPT
+        id S243587AbhIAJmA (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Sep 2021 05:31:38 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:51806 "EHLO
-        mail.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242467AbhIAJbh (ORCPT
+        Wed, 1 Sep 2021 05:42:00 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:34273 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S232817AbhIAJmA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Sep 2021 05:31:37 -0400
-Received: from localhost (cpc147930-brnt3-2-0-cust60.4-2.cable.virginm.net [86.15.196.61])
-        by mail.monkeyblade.net (Postfix) with ESMTPSA id AE0FA4CE6846B;
-        Wed,  1 Sep 2021 02:30:38 -0700 (PDT)
-Date:   Wed, 01 Sep 2021 10:30:33 +0100 (BST)
-Message-Id: <20210901.103033.925382819044968737.davem@davemloft.net>
-To:     yun.wang@linux.alibaba.com
+        Wed, 1 Sep 2021 05:42:00 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Umv2hQ-_1630489260;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Umv2hQ-_1630489260)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 01 Sep 2021 17:41:01 +0800
+Subject: Re: [PATCH v2] net: fix NULL pointer reference in cipso_v4_doi_free
+To:     David Miller <davem@davemloft.net>
 Cc:     paul@paul-moore.com, kuba@kernel.org, yoshfuji@linux-ipv6.org,
         dsahern@kernel.org, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: fix NULL pointer reference in cipso_v4_doi_free
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1ed31e79-809b-7ac9-2760-869570ac22ea@linux.alibaba.com>
 References: <84262e7b-fda6-9d7d-b0bd-1bb0e945e6f9@linux.alibaba.com>
-        <CAHC9VhRPUa-oD_85j6RcAVvp7sLZQEAGGapYYP1fEt7Ax5LMfA@mail.gmail.com>
-        <1ed31e79-809b-7ac9-2760-869570ac22ea@linux.alibaba.com>
-X-Mailer: Mew version 6.8 on Emacs 27.2
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-2022-jp
+ <CAHC9VhRPUa-oD_85j6RcAVvp7sLZQEAGGapYYP1fEt7Ax5LMfA@mail.gmail.com>
+ <1ed31e79-809b-7ac9-2760-869570ac22ea@linux.alibaba.com>
+ <20210901.103033.925382819044968737.davem@davemloft.net>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <6ca4a2d5-9a9c-1b14-85b4-1f4a0f743104@linux.alibaba.com>
+Date:   Wed, 1 Sep 2021 17:41:00 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
+MIME-Version: 1.0
+In-Reply-To: <20210901.103033.925382819044968737.davem@davemloft.net>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.6.2 (mail.monkeyblade.net [0.0.0.0]); Wed, 01 Sep 2021 02:30:40 -0700 (PDT)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: 王贇 <yun.wang@linux.alibaba.com>
-Date: Wed, 1 Sep 2021 09:51:28 +0800
 
+
+On 2021/9/1 下午5:30, David Miller wrote:
+> From: 王贇 <yun.wang@linux.alibaba.com>
+> Date: Wed, 1 Sep 2021 09:51:28 +0800
 > 
-> 
-> On 2021/8/31 下午9:48, Paul Moore wrote:
->> On Mon, Aug 30, 2021 at 10:42 PM 王贇 <yun.wang@linux.alibaba.com> wrote:
->>> On 2021/8/31 上午12:50, Paul Moore wrote:
->>> [SNIP]
->>>>>>> Reported-by: Abaci <abaci@linux.alibaba.com>
->>>>>>> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
->>>>>>> ---
->>>>>>>  net/netlabel/netlabel_cipso_v4.c | 4 ++--
->>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>>
+>> On 2021/8/31 下午9:48, Paul Moore wrote:
+>>> On Mon, Aug 30, 2021 at 10:42 PM 王贇 <yun.wang@linux.alibaba.com> wrote:
+>>>> On 2021/8/31 上午12:50, Paul Moore wrote:
+>>>> [SNIP]
+>>>>>>>> Reported-by: Abaci <abaci@linux.alibaba.com>
+>>>>>>>> Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
+>>>>>>>> ---
+>>>>>>>>  net/netlabel/netlabel_cipso_v4.c | 4 ++--
+>>>>>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> I see this was already merged, but it looks good to me, thanks for
+>>>>>>> making those changes.
 >>>>>>
->>>>>> I see this was already merged, but it looks good to me, thanks for
->>>>>> making those changes.
+>>>>>> FWIW it looks like v1 was also merged:
+>>>>>>
+>>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=733c99ee8b
 >>>>>
->>>>> FWIW it looks like v1 was also merged:
->>>>>
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git/commit/?id=733c99ee8b
+>>>>> Yeah, that is unfortunate, there was a brief discussion about that
+>>>>> over on one of the -stable patches for the v1 patch (odd that I never
+>>>>> saw a patchbot post for the v1 patch?).  Having both merged should be
+>>>>> harmless, but we want to revert the v1 patch as soon as we can.
+>>>>> Michael, can you take care of this?
 >>>>
->>>> Yeah, that is unfortunate, there was a brief discussion about that
->>>> over on one of the -stable patches for the v1 patch (odd that I never
->>>> saw a patchbot post for the v1 patch?).  Having both merged should be
->>>> harmless, but we want to revert the v1 patch as soon as we can.
->>>> Michael, can you take care of this?
+>>>> As v1 already merged, may be we could just goon with it?
+>>>>
+>>>> Actually both working to fix the problem, v1 will cover all the
+>>>> cases, v2 take care one case since that's currently the only one,
+>>>> but maybe there will be more in future.
 >>>
->>> As v1 already merged, may be we could just goon with it?
+>>> No.  Please revert v1 and stick with the v2 patch.  The v1 patch is in
+>>> my opinion a rather ugly hack that addresses the symptom of the
+>>> problem and not the root cause.
 >>>
->>> Actually both working to fix the problem, v1 will cover all the
->>> cases, v2 take care one case since that's currently the only one,
->>> but maybe there will be more in future.
->> 
->> No.  Please revert v1 and stick with the v2 patch.  The v1 patch is in
->> my opinion a rather ugly hack that addresses the symptom of the
->> problem and not the root cause.
->> 
->> It isn't your fault that both v1 and v2 were merged, but I'm asking
->> you to help cleanup the mess.  If you aren't able to do that please
->> let us know so that others can fix this properly.
+>>> It isn't your fault that both v1 and v2 were merged, but I'm asking
+>>> you to help cleanup the mess.  If you aren't able to do that please
+>>> let us know so that others can fix this properly.
+>>
+>> No problem I can help on that, just try to make sure it's not a
+>> meaningless work.
+>>
+>> So would it be fine to send out a v3 which revert v1 and apply v2?
 > 
-> No problem I can help on that, just try to make sure it's not a
-> meaningless work.
+> Please don't do things this way just send the relative change.
+
+Could you please check the patch:
+
+Revert "net: fix NULL pointer reference in cipso_v4_doi_free"
+
+see if that's the right way?
+
+Regards,
+Michael Wang
+
 > 
-> So would it be fine to send out a v3 which revert v1 and apply v2?
-
-Please don't do things this way just send the relative change.
-
-Thanks.
+> Thanks.
+> 
