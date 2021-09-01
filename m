@@ -2,154 +2,106 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE53C432BE
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 16:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1FDC4320E
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 19:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE1F161057
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 16:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DCDA61056
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 19:21:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245249AbhIAQ36 (ORCPT
+        id S231197AbhIATWR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Sep 2021 12:29:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57416 "EHLO
+        Wed, 1 Sep 2021 15:22:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245215AbhIAQ35 (ORCPT
+        with ESMTP id S231158AbhIATWQ (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Sep 2021 12:29:57 -0400
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [IPv6:2001:1600:4:17::8fa8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65EA8C061575
-        for <linux-security-module@vger.kernel.org>; Wed,  1 Sep 2021 09:29:00 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4H08dP5cbkzMqtqB;
-        Wed,  1 Sep 2021 18:28:57 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4H08dP2QBMzlhH3V;
-        Wed,  1 Sep 2021 18:28:57 +0200 (CEST)
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-Subject: Landlock news #1
-To:     landlock@lists.linux.dev
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>
-Message-ID: <2df4887a-1710-bba2-f49c-cd5b785bb565@digikod.net>
-Date:   Wed, 1 Sep 2021 18:30:09 +0200
-User-Agent: 
+        Wed, 1 Sep 2021 15:22:16 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64DFFC061764
+        for <linux-security-module@vger.kernel.org>; Wed,  1 Sep 2021 12:21:19 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id u14so1359847ejf.13
+        for <linux-security-module@vger.kernel.org>; Wed, 01 Sep 2021 12:21:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=G7waZP141l6RVzw3QCJzeAvHVAvzV7QKI02xHaEuqMY=;
+        b=KuLxFt0pQiPUfjI95nepnibmq64Kb0FvbTBGbWaCMNyL58vHsOAYuzc6Km3AIm+UZ+
+         AxzU3+7rvZWWxefgHOnzh5MLLzuGLlyoFPPrw9Ul4/ZBWun5QKZ2MsU3bg9otMOEWks4
+         V4JD0uMu3gQ6k8vOyiFSaKhpjxrRumXbnIT5tumYhEVr4Ykwf1q9qikfWVtsJvEP7t2Q
+         LMbXzRmMp07c773FqwlcUFjMxH/7mcCWfQoXkX6TKQq2bAM8gGx+2OPtY7tCOg1rt4e9
+         gETazcYiDzIx2op8V2Tw6YtQKlhMwGHY8eB+xEkqCeGw/ZPlcRhNufWazcopeXNEsVDX
+         BRGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=G7waZP141l6RVzw3QCJzeAvHVAvzV7QKI02xHaEuqMY=;
+        b=HuUZi6+c2ilsSeXhBlEkyI1u6RtLrmXQj5QYw3RTDL6s3dkMS6UGggDH4q2xG5lYnK
+         4Cttaa/bPMvk/T6QbHXG2/QMfQyiG3gLEUUghQ+GuktWBaA+utcepWY6Z2l0ftIvpLRC
+         RWkZFe7i1l7IvODBCecVXKmfmOUQOwKdjKH1dI69jIvvqhXvJsfcfMkacF0KHFzyTddR
+         Ilg/lRlAn40z3UHDe5oHBkMHTCKB/mZM1u04/PGDuE6lwcDRZ1ODMNoS3KrQb3VLu1+7
+         duRSjZpzFbFm+IGTtEORLiGwwd1nEKj8Heo7KTB8zYxyLzBijRN6LpEu0J4qSqDzKrLJ
+         0bxQ==
+X-Gm-Message-State: AOAM532/StneeFR9UMtXDpET6fn3JCw7CP54XXXG+k4eqYJuutJxeezT
+        jbj30NwSGAee9tXX0WWC9usbu1xjN87OM2lMueDW4JowVW+O
+X-Google-Smtp-Source: ABdhPJwMrws0ZJXM5KYsE7dIYrlyxtDTBxi6QrrhcjBLlBr8Y8LgOmFcwtA8cvyU9xh8mHyp4mp2LOKjQ+7fHgWM4ok=
+X-Received: by 2002:a17:906:b845:: with SMTP id ga5mr1224071ejb.106.1630524077778;
+ Wed, 01 Sep 2021 12:21:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <162871480969.63873.9434591871437326374.stgit@olly>
+ <20210824205724.GB490529@madcap2.tricolour.ca> <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca> <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+ <20210827133559.GG490529@madcap2.tricolour.ca> <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+ <20210828150356.GH490529@madcap2.tricolour.ca> <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+In-Reply-To: <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 1 Sep 2021 15:21:06 -0400
+Message-ID: <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to io_uring
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Hi,
+On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
+> On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > I did set a syscall filter for
+> >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
+> > and that yielded some records with a couple of orphans that surprised me
+> > a bit.
+>
+> Without looking too closely at the log you sent, you can expect URING
+> records without an associated SYSCALL record when the uring op is
+> being processed in the io-wq or sqpoll context.  In the io-wq case the
+> processing is happening after the thread finished the syscall but
+> before the execution context returns to userspace and in the case of
+> sqpoll the processing is handled by a separate kernel thread with no
+> association to a process thread.
 
-Landlock landed in Linux 5.13 and here is an overview of the ongoing
-developments.
+I spent some time this morning/afternoon playing with the io_uring
+audit filtering capability and with your audit userspace
+ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
+the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
+map the io_uring ops correctly), but I know you mentioned you have a
+number of fixes/improvements still as a work-in-progress there so I'm
+not too concerned.  The important part is that the kernel pieces look
+to be working correctly.
 
-User space
-----------
+As usual, if you notice anything awry while playing with the userspace
+changes please let me know.
 
-### Rust library
-
-This Rust library enables to manage Landlock in a best-effort way. It is
-still a work-in-progress, but we plan to release a new major version in
-the coming weeks, including documentation. Feedback is welcome!
-https://github.com/landlock-lsm/rust-landlock
-
-### Go library
-
-We are pleased to welcome Günther Noack and his Go library which enables
-to create sandboxes with Landlock. This will be useful for any projects
-developed in Go.
-https://github.com/landlock-lsm/go-landlock
-
-### Open Container Initiative Runtime Specification
-
-This project is intended to be a shared specification amongst container
-runtimes (e.g. Docker/runc). Thanks to H. Vetinari for bringing the
-subject and to Kailun Qin, Günther Noack, Konstantin Meskhidze, Aleksa
-Sarai, Akihiro Suda for working on this and giving feedback!
-https://github.com/opencontainers/runtime-spec/pull/1111
-
-### runc
-
-Bringing Landlock support to runc has started.
-https://github.com/opencontainers/runc/pull/3194
-
-### strace
-
-strace 5.13 (2021-07-19) now supports Landlock syscalls and especially
-their argument decoding. We can now easily debug programs using
-Landlock. Thanks to Eugene Syromyatnikov and Dmitry V. Levin!
-https://github.com/strace/strace/commit/7592a0eeab2588162c1741077053f8a052c8418f
-
-### glibc
-
-glibc 2.34 (2021-08-01) now includes Landlock system call IDs, which are
-required to properly use Landlock in C and C++ programs.
-https://sourceware.org/git/?p=glibc.git;a=commit;h=b1b4f7209ecaad4bf9a5d0d2ef1338409d364bac
-
-### musl libc
-
-A patch series is under review for musl libc to include Landlock system
-call IDs in this alternative libc.
-https://www.openwall.com/lists/musl/2021/07/10/12
-
-### Man Pages
-
-Four manual pages dedicated to Landlock are being reviewed by Alejandro
-Colomar and G. Branden Robinson. Thanks to them! This documentation is
-splitted into a general overview landlock(7) and one page per syscall.
-https://lore.kernel.org/linux-man/20210818155931.484070-1-mic@digikod.net/
-
-Conferences
------------
-
-I'm glad that two (complementary) Landlock talks have been accepted to
-the Open Source Summit and to the Linux Security Summit. I have given a
-few talks in the last years but Landlock has changed drastically since
-then (i.e. no more eBPF). These talks will unfortunately be virtual, but
-I'll still be available for questions. See you at the end of the month!
-
-### Open Source Summit 2021 - Sandboxing Applications with Landlock
-
-This talk focuses on the use of Landlock by user space, explaining the
-rationale behind the design, how backward and forward compatibility is
-handled, what features are currently available and what could come next.
-https://sched.co/lAVl
-
-### Linux Security Summit 2021 - Deep Dive into Landlock Internals
-
-This talk first explains the goal of Landlock and the related
-consequences. This will enable to explain the kernel implementation
-constraints, the choices that led to the current design, and the
-potential and limits of the current and future features.
-https://sched.co/ljRQ
-
-Roadmap (kernel-side)
----------------------
-
-Last but not least, here is an overview of the roadmap for Landlock.
-We'll add a proper dedicated page to the website soon: https://landlock.io
-
-Short term:
-* improve kernel performance for the current features;
-* add the ability to change the parent directory of files (see current
-Landlock limitations).
-
-Medium term:
-* add audit features to ease debugging;
-* extend filesystem access-control types to address the current limitations;
-* add the ability to follow a deny listing approach, which is required
-for some use cases.
-
-Long term:
-* add minimal network access-control types;
-* add the ability to create (file descriptor) capabilities compatible
-with Capsicum.
-
-Regards,
- Mickaël
+-- 
+paul moore
+www.paul-moore.com
