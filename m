@@ -2,86 +2,95 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04A5C432BE
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 21:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5B1C432BE
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 23:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C44F860724
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 21:05:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABBD360F4B
+	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 23:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232697AbhIAVGq (ORCPT
+        id S1345143AbhIAXRi (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Sep 2021 17:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37682 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232644AbhIAVGq (ORCPT
+        Wed, 1 Sep 2021 19:17:38 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10077 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1345132AbhIAXRi (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Sep 2021 17:06:46 -0400
-Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6FA5C061760
-        for <linux-security-module@vger.kernel.org>; Wed,  1 Sep 2021 14:05:48 -0700 (PDT)
-Received: by mail-ej1-x62e.google.com with SMTP id i21so2097339ejd.2
-        for <linux-security-module@vger.kernel.org>; Wed, 01 Sep 2021 14:05:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=LKn5XzdaATfmZVLMP/VINeiUy/AzHORm6uPxG+yEhjY=;
-        b=I6kG2+uED0WBYICuRYtClJPQpJYowajeSiGlVbz72hTscsmRNZ4ZkBzpTA/Uihx2xf
-         piR4BmgN37cHZbm4NvNnFMs9xbMCn9hOBbCAGQlAmKybwNgIBO1iLzDWtF2TWYr4GIf4
-         scv7XOCjJeefgeciyie0PJK9uCqIL6P4ezr3c0OQMHKQ/XGF03j3XwlUj57UcPmjrooE
-         R7RkHxBlC6/KQTl4jmccDFGRi6PbUANTsImnOKkf4LHo2vChl+oZ2v//7PRx+GQOFgIV
-         ApME318Wfxfm0bc97WrdNdGqQy+7/wM+zqqhgW1cxqeotJlVHGKI0toJJWlUh017ArMc
-         +4tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=LKn5XzdaATfmZVLMP/VINeiUy/AzHORm6uPxG+yEhjY=;
-        b=YnCgDBMlqenjZZMqxwDQ8HaxzkIInaLkeWruLgbr4MJ1BZa3C0/3g6QjUYq2st+HZV
-         7xPVA128F4dS/F5Btt/C9nDu5oZMaupRi0UzeO5z0CzJgI9LncOz1VbQqHZ7rHXcsUGs
-         SMaGMOIvE/9BVNy1YeOnusAVf49sBtm9kY/5k89HoRv7triQJcRyopWQjmHqAYlaJZMk
-         jyKmoPc59QLWTM5oivP/uRhjIANoEOon9r050mA63XTXnUZlWTWEnwckZRQSg2mbsWgR
-         Urj9jfJWkNxvesVzcNMbQzAV/srd4nofUD49OHt7hl9KPDPtogPzksCpllPC4O+hG8jj
-         D8+g==
-X-Gm-Message-State: AOAM5338KxUT+R1a3vd7cJ76ZeE+WhovaHh0LVCXfMb6SBofv4enmc7Y
-        lWmBNH3IK/ZTJvb/z5K2VsOmvRGLO+eikUoOTXdV
-X-Google-Smtp-Source: ABdhPJzsZbQ7ihen17WA7PbruLek6pI4Sopk016R3wrhgsKb0Uz973J+uyHJFnMARhklFMXXgJYZnYrsJDj6KlBHh/Q=
-X-Received: by 2002:a17:906:1d59:: with SMTP id o25mr1548975ejh.431.1630530347399;
- Wed, 01 Sep 2021 14:05:47 -0700 (PDT)
+        Wed, 1 Sep 2021 19:17:38 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10094"; a="279908024"
+X-IronPort-AV: E=Sophos;i="5.84,370,1620716400"; 
+   d="scan'208";a="279908024"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2021 16:16:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,370,1620716400"; 
+   d="scan'208";a="461137748"
+Received: from gupta-dev2.jf.intel.com (HELO gupta-dev2.localdomain) ([10.54.74.119])
+  by fmsmga007.fm.intel.com with ESMTP; 01 Sep 2021 16:16:40 -0700
+Date:   Wed, 1 Sep 2021 16:18:06 -0700
+From:   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
+        syzbot+3f91de0b813cc3d19a80@syzkaller.appspotmail.com,
+        netdev@vger.kernel.org
+Subject: [PATCH] smackfs: Fix use-after-free in netlbl_catmap_walk()
+Message-ID: <53d3eb4e5b3c6f2a0754a5be2b36c38adf32a1dd.1630537810.git.pawan.kumar.gupta@linux.intel.com>
 MIME-Version: 1.0
-References: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
- <18f0171e-0cc8-6ae6-d04a-a69a2a3c1a39@linux.alibaba.com> <7f239a0e-7a09-3dc0-43ce-27c19c7a309d@linux.alibaba.com>
- <4c000115-4069-5277-ce82-946f2fdb790a@linux.alibaba.com>
-In-Reply-To: <4c000115-4069-5277-ce82-946f2fdb790a@linux.alibaba.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 1 Sep 2021 17:05:36 -0400
-Message-ID: <CAHC9VhRBhCfX45V701rbGsvmOPQ4Nyp7dX2GA6NL8FxnA9akXg@mail.gmail.com>
-Subject: Re: [PATCH] Revert "net: fix NULL pointer reference in cipso_v4_doi_free"
-To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Tue, Aug 31, 2021 at 10:21 PM =E7=8E=8B=E8=B4=87 <yun.wang@linux.alibaba=
-.com> wrote:
->
-> Hi Paul, it confused me since it's the first time I face
-> such situation, but I just realized what you're asking is
-> actually this revert, correct?
+Syzkaller reported use-after-free bug as described in [1]. The bug is
+triggered when smk_set_cipso() tries to free stale category bitmaps
+while there are concurrent readers using those bitmaps.
 
-I believe DaveM already answered your question in the other thread,
-but if you are still unsure about the patch let me know.
+Wait for RCU grace period to finish before freeing the category bitmaps
+in smk_set_cipso(). This makes sure that there are no more readers using
+the stale bitmaps and freeing them is safe.
 
---=20
-paul moore
-www.paul-moore.com
+[1] https://lore.kernel.org/netdev/000000000000a814c505ca657a4e@google.com/
+
+Reported-by: syzbot+3f91de0b813cc3d19a80@syzkaller.appspotmail.com
+Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ security/smack/smackfs.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 3a75d2a8f517..9d853c0e55b8 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -831,6 +831,7 @@ static int smk_open_cipso(struct inode *inode, struct file *file)
+ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 				size_t count, loff_t *ppos, int format)
+ {
++	struct netlbl_lsm_catmap *old_cat;
+ 	struct smack_known *skp;
+ 	struct netlbl_lsm_secattr ncats;
+ 	char mapcatset[SMK_CIPSOLEN];
+@@ -920,9 +921,11 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 
+ 	rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
+ 	if (rc >= 0) {
+-		netlbl_catmap_free(skp->smk_netlabel.attr.mls.cat);
++		old_cat = skp->smk_netlabel.attr.mls.cat;
+ 		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
+ 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
++		synchronize_rcu();
++		netlbl_catmap_free(old_cat);
+ 		rc = count;
+ 		/*
+ 		 * This mapping may have been cached, so clear the cache.
+
+base-commit: 7d2a07b769330c34b4deabeed939325c77a7ec2f
+-- 
+2.31.1
+
