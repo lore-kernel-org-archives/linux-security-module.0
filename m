@@ -2,95 +2,79 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA5B1C432BE
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 23:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF5BC432BE
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 02:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABBD360F4B
-	for <linux-security-module@archiver.kernel.org>; Wed,  1 Sep 2021 23:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AF53610CC
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 02:37:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345143AbhIAXRi (ORCPT
+        id S233159AbhIBCiO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Wed, 1 Sep 2021 19:17:38 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10077 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1345132AbhIAXRi (ORCPT
+        Wed, 1 Sep 2021 22:38:14 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:38377 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S233145AbhIBCiN (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Wed, 1 Sep 2021 19:17:38 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10094"; a="279908024"
-X-IronPort-AV: E=Sophos;i="5.84,370,1620716400"; 
-   d="scan'208";a="279908024"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Sep 2021 16:16:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.84,370,1620716400"; 
-   d="scan'208";a="461137748"
-Received: from gupta-dev2.jf.intel.com (HELO gupta-dev2.localdomain) ([10.54.74.119])
-  by fmsmga007.fm.intel.com with ESMTP; 01 Sep 2021 16:16:40 -0700
-Date:   Wed, 1 Sep 2021 16:18:06 -0700
-From:   Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net, kuba@kernel.org,
-        syzbot+3f91de0b813cc3d19a80@syzkaller.appspotmail.com,
-        netdev@vger.kernel.org
-Subject: [PATCH] smackfs: Fix use-after-free in netlbl_catmap_walk()
-Message-ID: <53d3eb4e5b3c6f2a0754a5be2b36c38adf32a1dd.1630537810.git.pawan.kumar.gupta@linux.intel.com>
+        Wed, 1 Sep 2021 22:38:13 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R831e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0Umym6tP_1630550233;
+Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0Umym6tP_1630550233)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 02 Sep 2021 10:37:14 +0800
+Subject: Re: [PATCH] Revert "net: fix NULL pointer reference in
+ cipso_v4_doi_free"
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
+ <18f0171e-0cc8-6ae6-d04a-a69a2a3c1a39@linux.alibaba.com>
+ <7f239a0e-7a09-3dc0-43ce-27c19c7a309d@linux.alibaba.com>
+ <4c000115-4069-5277-ce82-946f2fdb790a@linux.alibaba.com>
+ <CAHC9VhRBhCfX45V701rbGsvmOPQ4Nyp7dX2GA6NL8FxnA9akXg@mail.gmail.com>
+From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
+Message-ID: <a53753dc-0cce-4f9a-cb97-fc790d30a234@linux.alibaba.com>
+Date:   Thu, 2 Sep 2021 10:37:13 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:78.0)
+ Gecko/20100101 Thunderbird/78.13.0
 MIME-Version: 1.0
+In-Reply-To: <CAHC9VhRBhCfX45V701rbGsvmOPQ4Nyp7dX2GA6NL8FxnA9akXg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Syzkaller reported use-after-free bug as described in [1]. The bug is
-triggered when smk_set_cipso() tries to free stale category bitmaps
-while there are concurrent readers using those bitmaps.
 
-Wait for RCU grace period to finish before freeing the category bitmaps
-in smk_set_cipso(). This makes sure that there are no more readers using
-the stale bitmaps and freeing them is safe.
 
-[1] https://lore.kernel.org/netdev/000000000000a814c505ca657a4e@google.com/
+On 2021/9/2 上午5:05, Paul Moore wrote:
+> On Tue, Aug 31, 2021 at 10:21 PM 王贇 <yun.wang@linux.alibaba.com> wrote:
+>>
+>> Hi Paul, it confused me since it's the first time I face
+>> such situation, but I just realized what you're asking is
+>> actually this revert, correct?
+> 
+> I believe DaveM already answered your question in the other thread,
+> but if you are still unsure about the patch let me know.
 
-Reported-by: syzbot+3f91de0b813cc3d19a80@syzkaller.appspotmail.com
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- security/smack/smackfs.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I do failed to get the point :-(
 
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index 3a75d2a8f517..9d853c0e55b8 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -831,6 +831,7 @@ static int smk_open_cipso(struct inode *inode, struct file *file)
- static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos, int format)
- {
-+	struct netlbl_lsm_catmap *old_cat;
- 	struct smack_known *skp;
- 	struct netlbl_lsm_secattr ncats;
- 	char mapcatset[SMK_CIPSOLEN];
-@@ -920,9 +921,11 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 
- 	rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
- 	if (rc >= 0) {
--		netlbl_catmap_free(skp->smk_netlabel.attr.mls.cat);
-+		old_cat = skp->smk_netlabel.attr.mls.cat;
- 		skp->smk_netlabel.attr.mls.cat = ncats.attr.mls.cat;
- 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
-+		synchronize_rcu();
-+		netlbl_catmap_free(old_cat);
- 		rc = count;
- 		/*
- 		 * This mapping may have been cached, so clear the cache.
+As I checked the:
+  https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git
 
-base-commit: 7d2a07b769330c34b4deabeed939325c77a7ec2f
--- 
-2.31.1
+both v1 and v2 are there with the same description and both code modification
+are applied.
 
+We want revert v1 but not in a revert patch style, then do you suggest
+send a normal patch to do the code revert?
+
+Regards,
+Michael Wang
+
+> 
