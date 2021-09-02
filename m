@@ -2,166 +2,171 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63899C83032
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 16:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C000CC83029
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 16:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F79E61245
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 16:12:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB7E60698
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 16:32:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235934AbhIBQNf (ORCPT
+        id S244016AbhIBQdH (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Sep 2021 12:13:35 -0400
-Received: from smtp-8fad.mail.infomaniak.ch ([83.166.143.173]:37969 "EHLO
-        smtp-8fad.mail.infomaniak.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S235417AbhIBQNf (ORCPT
+        Thu, 2 Sep 2021 12:33:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1345905AbhIBQdA (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Sep 2021 12:13:35 -0400
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4H0mD31NLPzMqGbq;
-        Thu,  2 Sep 2021 18:12:35 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4H0mD23qsNzlhMT5;
-        Thu,  2 Sep 2021 18:12:34 +0200 (CEST)
-Subject: Re: Landlock news #1
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-To:     landlock@lists.linux.dev
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        Linux Containers <containers@lists.linux.dev>,
-        gentoo-hardened@gentoo.org,
-        kernel-hardening <kernel-hardening@lists.openwall.com>,
-        linux-hardening@vger.kernel.org
-References: <2df4887a-1710-bba2-f49c-cd5b785bb565@digikod.net>
-Message-ID: <1dce0b82-0f01-bbdb-bc41-37870cb59c0d@digikod.net>
-Date:   Thu, 2 Sep 2021 18:13:52 +0200
-User-Agent: 
+        Thu, 2 Sep 2021 12:33:00 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E5C406023F;
+        Thu,  2 Sep 2021 16:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1630600321;
+        bh=B9mcUFqJNGZAURjFxYwd81UPlQdY2dl8ve7nusbvJp8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eIvtGjmucVVCDn0Og/6GBqZQgKZ0dZAC3GKI+qze5/utAM5fXeF/fSf01VNcQyViL
+         x5i9CS80x36maY4qAvas5xv9cl7hKuJ0isz/SNVRDu/jZiSfkzSmZ/wdCfzsn6SfbP
+         JOqGe5jeqkco3/aa+hgMCsmV6hX+LlNbzQT5EKwY=
+Date:   Thu, 2 Sep 2021 18:31:58 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     James Bottomley <jejb@linux.ibm.com>
+Cc:     Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org,
+        Borislav Petkov <bp@suse.de>,
+        Ashish Kalra <ashish.kalra@amd.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
+        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Allow access to confidential computing secret area
+ in SEV guests
+Message-ID: <YTD8fkAfjutR8G/o@kroah.com>
+References: <20210809190157.279332-1-dovmurik@linux.ibm.com>
+ <YTDKUe8rXrr0Zika@kroah.com>
+ <e6fb1d54605690cc1877d7140fc9346c22268111.camel@linux.ibm.com>
+ <YTDoS5XycY3gO4MM@kroah.com>
+ <6cb65cb3bd69ae69bde044f809525e478bdb8512.camel@linux.ibm.com>
+ <YTD3U70FCkXzNMrF@kroah.com>
+ <61212d923295203173b1a8c3c24b6dd19835c57e.camel@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <2df4887a-1710-bba2-f49c-cd5b785bb565@digikod.net>
-Content-Type: text/plain; charset=iso-8859-15
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61212d923295203173b1a8c3c24b6dd19835c57e.camel@linux.ibm.com>
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Because this newsletter includes container-related and security-related
-information, I'm relaying this to other appropriate mailing lists. If
-you want to get updates, you can subscribe by sending an email to
-landlock+subscribe@lists.linux.dev
+On Thu, Sep 02, 2021 at 09:19:13AM -0700, James Bottomley wrote:
+> On Thu, 2021-09-02 at 18:09 +0200, Greg KH wrote:
+> > On Thu, Sep 02, 2021 at 08:19:51AM -0700, James Bottomley wrote:
+> > > On Thu, 2021-09-02 at 17:05 +0200, Greg KH wrote:
+> > > > On Thu, Sep 02, 2021 at 07:35:10AM -0700, James Bottomley wrote:
+> > > > > On Thu, 2021-09-02 at 14:57 +0200, Greg KH wrote:
+> > > > > [...]
+> > > > > > Wait, why are you using securityfs for this?
+> > > > > > 
+> > > > > > securityfs is for LSMs to use. 
+> > > > > 
+> > > > > No it isn't ... at least not exclusively; we use it for non LSM
+> > > > > security purposes as well, like for the TPM BIOS log and for
+> > > > > IMA.  What makes you think we should start restricting
+> > > > > securityfs to LSMs only?  That's not been the policy up to now.
+> > > > 
+> > > > Well that was the original intent of the filesystem when it was
+> > > > created, but I guess it's really up to the LSM maintainers now
+> > > > what they want it for.
+> > > > 
+> > > > > >  If you want your own filesystem to play around with stuff
+> > > > > > like this, great, write your own, it's only 200 lines or less
+> > > > > > these days.  We used to do it all the time until people
+> > > > > > realized they should just use sysfs for driver stuff.
+> > > > > 
+> > > > > This is a security purpose (injected key retrieval), so
+> > > > > securityfs seems to be the best choice.  It's certainly
+> > > > > possible to create a new filesystem, but I really think things
+> > > > > with a security purpose should use securityfs so people know
+> > > > > where to look for them.
+> > > > 
+> > > > knowing where to look should not be an issue, as that should be
+> > > > documented in Documentation/ABI/ anyway, right?
+> > > > 
+> > > > It's just the overlap / overreach of using an existing filesystem
+> > > > for things that don't seem to be LSM-related that feels odd to
+> > > > me.
+> > > > 
+> > > > Why not just make a cocofs if those people want a filesystem
+> > > > interface?
+> > > > It's 200 lines or so these days, if not less, and that way you
+> > > > only mount what you actually need for the system.
+> > > 
+> > > Secrets transfer is actually broader than confidential computing,
+> > > although confidential computing is a first proposed use, so I think
+> > > cocofs would be too narrow.
+> > > 
+> > > > Why force this into securityfs if it doesn't have to be?
+> > > 
+> > > It's not being forced.  Secrets transfer is a security function in
+> > > the same way the bios log is.
+> > 
+> > Is the bios log in securityfs today?
+> 
+> Yes. It's under /sys/kernel/security/tpm0/  All the ima policy control
+> and its log is under /sys/kernel/security/ima/  that's why I think
+> declaring securityfs as being for anything security related is already
+> our de facto (if not de jure) policy.
+> 
+> > Anyway, it's up to the securityfs maintainer (i.e. not me), but
+> > personally, I think this should be a separate filesystem as that
+> > would probably make things easier in the long run...
+> 
+> I know Al likes this business of loads of separate filesystems, but
+> personally I'm not in favour.  For every one you do, you not only have
+> to document it all,
 
-Regards,
- Mickaël
+Wait, why would you not have to document your new files no matter what?
+That should not be an issue either way.
 
-On 01/09/2021 18:30, Mickaël Salaün wrote:
-> Hi,
-> 
-> Landlock landed in Linux 5.13 and here is an overview of the ongoing
-> developments.
-> 
-> User space
-> ----------
-> 
-> ### Rust library
-> 
-> This Rust library enables to manage Landlock in a best-effort way. It is
-> still a work-in-progress, but we plan to release a new major version in
-> the coming weeks, including documentation. Feedback is welcome!
-> https://github.com/landlock-lsm/rust-landlock
-> 
-> ### Go library
-> 
-> We are pleased to welcome Günther Noack and his Go library which enables
-> to create sandboxes with Landlock. This will be useful for any projects
-> developed in Go.
-> https://github.com/landlock-lsm/go-landlock
-> 
-> ### Open Container Initiative Runtime Specification
-> 
-> This project is intended to be a shared specification amongst container
-> runtimes (e.g. Docker/runc). Thanks to H. Vetinari for bringing the
-> subject and to Kailun Qin, Günther Noack, Konstantin Meskhidze, Aleksa
-> Sarai, Akihiro Suda for working on this and giving feedback!
-> https://github.com/opencontainers/runtime-spec/pull/1111
-> 
-> ### runc
-> 
-> Bringing Landlock support to runc has started.
-> https://github.com/opencontainers/runc/pull/3194
-> 
-> ### strace
-> 
-> strace 5.13 (2021-07-19) now supports Landlock syscalls and especially
-> their argument decoding. We can now easily debug programs using
-> Landlock. Thanks to Eugene Syromyatnikov and Dmitry V. Levin!
-> https://github.com/strace/strace/commit/7592a0eeab2588162c1741077053f8a052c8418f
-> 
-> ### glibc
-> 
-> glibc 2.34 (2021-08-01) now includes Landlock system call IDs, which are
-> required to properly use Landlock in C and C++ programs.
-> https://sourceware.org/git/?p=glibc.git;a=commit;h=b1b4f7209ecaad4bf9a5d0d2ef1338409d364bac
-> 
-> ### musl libc
-> 
-> A patch series is under review for musl libc to include Landlock system
-> call IDs in this alternative libc.
-> https://www.openwall.com/lists/musl/2021/07/10/12
-> 
-> ### Man Pages
-> 
-> Four manual pages dedicated to Landlock are being reviewed by Alejandro
-> Colomar and G. Branden Robinson. Thanks to them! This documentation is
-> splitted into a general overview landlock(7) and one page per syscall.
-> https://lore.kernel.org/linux-man/20210818155931.484070-1-mic@digikod.net/
-> 
-> Conferences
-> -----------
-> 
-> I'm glad that two (complementary) Landlock talks have been accepted to
-> the Open Source Summit and to the Linux Security Summit. I have given a
-> few talks in the last years but Landlock has changed drastically since
-> then (i.e. no more eBPF). These talks will unfortunately be virtual, but
-> I'll still be available for questions. See you at the end of the month!
-> 
-> ### Open Source Summit 2021 - Sandboxing Applications with Landlock
-> 
-> This talk focuses on the use of Landlock by user space, explaining the
-> rationale behind the design, how backward and forward compatibility is
-> handled, what features are currently available and what could come next.
-> https://sched.co/lAVl
-> 
-> ### Linux Security Summit 2021 - Deep Dive into Landlock Internals
-> 
-> This talk first explains the goal of Landlock and the related
-> consequences. This will enable to explain the kernel implementation
-> constraints, the choices that led to the current design, and the
-> potential and limits of the current and future features.
-> https://sched.co/ljRQ
-> 
-> Roadmap (kernel-side)
-> ---------------------
-> 
-> Last but not least, here is an overview of the roadmap for Landlock.
-> We'll add a proper dedicated page to the website soon: https://landlock.io
-> 
-> Short term:
-> * improve kernel performance for the current features;
-> * add the ability to change the parent directory of files (see current
-> Landlock limitations).
-> 
-> Medium term:
-> * add audit features to ease debugging;
-> * extend filesystem access-control types to address the current limitations;
-> * add the ability to follow a deny listing approach, which is required
-> for some use cases.
-> 
-> Long term:
-> * add minimal network access-control types;
-> * add the ability to create (file descriptor) capabilities compatible
-> with Capsicum.
-> 
-> Regards,
->  Mickaël
-> 
+> you also have to find a preferred mount point that
+> the distributions can agree on and also have them agree to enable the
+> mount for,
+
+You create that yourself, just like tracefs does, and set the standard
+right away, not an issue.
+
+> which often takes months of negotiation.
+
+Enabling it does take time, which is good because if they do not think
+it should be present because they do not want to use it, then it will
+not be, which means either they do not need your new feature, or you
+have not made it useful enough.
+
+So again, not an issue.
+And you can even mount it yourself from the kernel if you insist on it
+always being present.
+
+> Having fewer
+> filesystems grouped by common purpose which have agreed mount points
+> that distros actually mount seems a far easier approach to enablement.
+
+The issue is that random things gets added to those filesystems,
+exposing stuff that perhaps some systems do NOT want exposed to
+userspace.  Making it explicit as to what they have to mount to get
+access to that is a good thing because you have less of an "attack
+surface" and all of that.
+
+So again, this should not be an issue.  If coco stuff is so important
+that people need it, then having them have to add it to their init
+scripts just to mount the filesystem is not an issue as there are other
+userspace components of all of this mess that they had to install
+anyway.  Just make it part of the userspace tools that are going to be
+accessing these files because you have to get those onto the systems no
+matter what.
+
+greg k-h
