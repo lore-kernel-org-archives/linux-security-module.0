@@ -2,156 +2,148 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047ABC4320E
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 15:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532DFC432BE
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 15:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE7B9610CE
-	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 15:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A4F60F4B
+	for <linux-security-module@archiver.kernel.org>; Thu,  2 Sep 2021 15:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345764AbhIBPVR (ORCPT
+        id S239584AbhIBPXq (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 2 Sep 2021 11:21:17 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51184 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1345698AbhIBPVO (ORCPT
+        Thu, 2 Sep 2021 11:23:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:58217 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1345762AbhIBPXp (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 2 Sep 2021 11:21:14 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 182F3fF0001892;
-        Thu, 2 Sep 2021 11:19:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : reply-to : to : cc : date : in-reply-to : references : content-type
- : mime-version : content-transfer-encoding; s=pp1;
- bh=QbW4x9/Vy805LKx9h6xm30flkNXvZK4xKrhfq2rNVsM=;
- b=qDFtUTnOBAow20c+ML9I06QGddD08jvRtZAvSC152HkG2vxhVePGxTTQMz3r/8yZWsn7
- zVRfuHjo/IoToRA8mEtaoFa/zJave4+fktwcgLoaDxyq3dfD6gUYue6MmrhxntDXIscG
- zTKBoNo+7DV5tEptiNR0j2yLaTD6FF0nzgWCnVICLQYSc70NQhCTgPnoCdt7wWqsBuXh
- 5uSCiGwS7+6FSn3orWNg2HF9g4GEuPrI52zAnjgwOLoT39vASqoQotsYrq6cz1WxYLUF
- hY2RNfH9DIJ2DHz8WyFypNMISArR6a/YB/itw+f1KMsRDPvJO0zEC6HjvCROz4yah5Ww 5A== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3au0dy26kh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Sep 2021 11:19:57 -0400
-Received: from m0098409.ppops.net (m0098409.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 182F3gAC002344;
-        Thu, 2 Sep 2021 11:19:57 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3au0dy26jn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Sep 2021 11:19:57 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 182FIj8W002983;
-        Thu, 2 Sep 2021 15:19:55 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma02wdc.us.ibm.com with ESMTP id 3atdxc6ck8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 02 Sep 2021 15:19:55 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 182FJsfd34603420
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 2 Sep 2021 15:19:54 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2F9D778068;
-        Thu,  2 Sep 2021 15:19:54 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E6D978078;
-        Thu,  2 Sep 2021 15:19:52 +0000 (GMT)
-Received: from jarvis.int.hansenpartnership.com (unknown [9.211.89.117])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  2 Sep 2021 15:19:52 +0000 (GMT)
-Message-ID: <6cb65cb3bd69ae69bde044f809525e478bdb8512.camel@linux.ibm.com>
-Subject: Re: [PATCH 0/3] Allow access to confidential computing secret area
- in SEV guests
-From:   James Bottomley <jejb@linux.ibm.com>
-Reply-To: jejb@linux.ibm.com
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Dov Murik <dovmurik@linux.ibm.com>, linux-efi@vger.kernel.org,
-        Borislav Petkov <bp@suse.de>,
-        Ashish Kalra <ashish.kalra@amd.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        Tobin Feldman-Fitzthum <tobin@linux.ibm.com>,
-        Jim Cadden <jcadden@ibm.com>, linux-coco@lists.linux.dev,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 02 Sep 2021 08:19:51 -0700
-In-Reply-To: <YTDoS5XycY3gO4MM@kroah.com>
-References: <20210809190157.279332-1-dovmurik@linux.ibm.com>
-         <YTDKUe8rXrr0Zika@kroah.com>
-         <e6fb1d54605690cc1877d7140fc9346c22268111.camel@linux.ibm.com>
-         <YTDoS5XycY3gO4MM@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Thu, 2 Sep 2021 11:23:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630596166;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JjAGCB+wUR9bfmDDGweER9kazklYGOtSqRBC47EM9+I=;
+        b=JHAMoL74aaxWPfoL9cUN1ZsNXDHuXBj9he8Ntfa2RIsStT/3XLF38x2X3UxchjCkVrBpaV
+        00w6Fk8U5Jsw/yG3qPNg7EdH5PKgwi/o5g4tQkeDkp2WENGPplhLpCTqDQK5JPhfH6LUQu
+        IsmCakmiZ7Joo4TvelBfoWWSBW+/xo4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-246-pt0Vm-YRN3S039kDJd623Q-1; Thu, 02 Sep 2021 11:22:44 -0400
+X-MC-Unique: pt0Vm-YRN3S039kDJd623Q-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 157C8802C89;
+        Thu,  2 Sep 2021 15:22:43 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.8.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D17A60657;
+        Thu,  2 Sep 2021 15:22:39 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id C97D32281B4; Thu,  2 Sep 2021 11:22:38 -0400 (EDT)
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, dwalsh@redhat.com, dgilbert@redhat.com,
+        vgoyal@redhat.com, christian.brauner@ubuntu.com,
+        casey.schaufler@intel.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, tytso@mit.edu, miklos@szeredi.hu,
+        gscrivan@redhat.com, bfields@redhat.com,
+        stephen.smalley.work@gmail.com, agruenba@redhat.com,
+        david@fromorbit.com
+Subject: [PATCH v3 1/1] xattr: Allow user.* xattr on symlink and special files
+Date:   Thu,  2 Sep 2021 11:22:28 -0400
+Message-Id: <20210902152228.665959-2-vgoyal@redhat.com>
+In-Reply-To: <20210902152228.665959-1-vgoyal@redhat.com>
+References: <20210902152228.665959-1-vgoyal@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: X0BBfsUnrgBwFQKASWltwHcWwpPaUlmq
-X-Proofpoint-ORIG-GUID: av-NRex120oZ3yXsK5AxQ6f2yUdsz4KH
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-09-02_04:2021-09-02,2021-09-02 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0
- mlxscore=0 clxscore=1015 mlxlogscore=999 adultscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2108310000 definitions=main-2109020091
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-09-02 at 17:05 +0200, Greg KH wrote:
-> On Thu, Sep 02, 2021 at 07:35:10AM -0700, James Bottomley wrote:
-> > On Thu, 2021-09-02 at 14:57 +0200, Greg KH wrote:
-> > [...]
-> > > Wait, why are you using securityfs for this?
-> > > 
-> > > securityfs is for LSMs to use. 
-> > 
-> > No it isn't ... at least not exclusively; we use it for non LSM
-> > security purposes as well, like for the TPM BIOS log and for
-> > IMA.  What makes you think we should start restricting securityfs
-> > to LSMs only?  That's not been the policy up to now.
-> 
-> Well that was the original intent of the filesystem when it was
-> created, but I guess it's really up to the LSM maintainers now what
-> they want it for.
-> 
-> > >  If you want your own filesystem to play around with stuff like
-> > > this, great, write your own, it's only 200 lines or less these
-> > > days.  We used to do it all the time until people realized they
-> > > should just use sysfs for driver stuff.
-> > 
-> > This is a security purpose (injected key retrieval), so securityfs
-> > seems to be the best choice.  It's certainly possible to create a
-> > new filesystem, but I really think things with a security purpose
-> > should use securityfs so people know where to look for them.
-> 
-> knowing where to look should not be an issue, as that should be
-> documented in Documentation/ABI/ anyway, right?
-> 
-> It's just the overlap / overreach of using an existing filesystem for
-> things that don't seem to be LSM-related that feels odd to me.
-> 
-> Why not just make a cocofs if those people want a filesystem
-> interface?
-> It's 200 lines or so these days, if not less, and that way you only
-> mount what you actually need for the system.
+Currently user.* xattr are not allowed on symlink and special files.
 
-Secrets transfer is actually broader than confidential computing,
-although confidential computing is a first proposed use, so I think
-cocofs would be too narrow.
+man xattr and recent discussion suggested that primary reason for this
+restriction is how file permissions for symlinks and special files
+are little different from regular files and directories.
 
-> Why force this into securityfs if it doesn't have to be?
+For symlinks, they are world readable/writable and if user xattr were
+to be permitted, it will allow unpriviliged users to dump a huge amount
+of user.* xattrs on symlinks without any control. (I think quota control
+still works with symlinks, just that quota is not typically deployed).
 
-It's not being forced.  Secrets transfer is a security function in the
-same way the bios log is.
+For special files, permissions typically control capability to read/write
+from devices (and not necessarily from filesystem). So if a user can
+write to device (/dev/null), does not necessarily mean it should be allowed
+to write large number of user.* xattrs on the filesystem device node is
+residing in.
 
-James
+This patch proposes to relax the restrictions a bit and allow file owner
+or privileged user (CAP_FOWNER), to be able to read/write user.* xattrs
+on symlink and special files.
 
+Note, for special files, file mode bits represent permission to access
+device and not necessarily permission to read/write xattrs.
+Hence, inode_permission() is not called on special files and just
+being owner (or CAP_FOWNER) is enough to read/write user extended
+xattrs on special files.
+
+LSM will still get a chance to allow/deny this operation as xattr
+related security hooks are still called. (security_inode_setxattr(),
+security_inode_getxattr(), security_inode_removexattr(),
+security_inode_listxattr())
+
+virtiofs daemon has a need to store user.* xatrrs on all the files
+(including symlinks and special files), and currently that fails. This
+patch should help.
+
+Link: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+---
+ fs/xattr.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 5c8c5175b385..69be1681477f 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -120,13 +120,26 @@ xattr_permission(struct user_namespace *mnt_userns, struct inode *inode,
+ 	}
+ 
+ 	/*
+-	 * In the user.* namespace, only regular files and directories can have
+-	 * extended attributes. For sticky directories, only the owner and
+-	 * privileged users can write attributes.
++	 * In the user.* namespace, for symlinks and special files, only
++	 * the owner and priviliged users can read/write attributes.
++	 * For sticky directories, only the owner and privileged users can
++	 * write attributes.
+ 	 */
+ 	if (!strncmp(name, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN)) {
+-		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+-			return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
++		if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode)) {
++			if (!inode_owner_or_capable(mnt_userns, inode)) {
++				return (mask & MAY_WRITE) ? -EPERM : -ENODATA;
++			}
++			/*
++			 * This is special file and file mode bits represent
++			 * permission to access device and not
++			 * necessarily permission to read/write xattrs.
++			 * Hence do not call inode_permission() and return
++			 * success.
++			 */
++			if (!S_ISLNK(inode->i_mode))
++				return 0;
++		}
+ 		if (S_ISDIR(inode->i_mode) && (inode->i_mode & S_ISVTX) &&
+ 		    (mask & MAY_WRITE) &&
+ 		    !inode_owner_or_capable(mnt_userns, inode))
+-- 
+2.31.1
 
