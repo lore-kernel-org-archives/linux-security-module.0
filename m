@@ -2,104 +2,132 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69814C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Sep 2021 14:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92636C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Sep 2021 14:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D113610CC
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Sep 2021 14:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66633610E9
+	for <linux-security-module@archiver.kernel.org>; Fri,  3 Sep 2021 14:42:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241276AbhICOKA (ORCPT
+        id S1349488AbhICOns (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Sep 2021 10:10:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33694 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235169AbhICOJ7 (ORCPT
+        Fri, 3 Sep 2021 10:43:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:47972 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S235443AbhICOnr (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Sep 2021 10:09:59 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FF5C061575
-        for <linux-security-module@vger.kernel.org>; Fri,  3 Sep 2021 07:08:59 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id dm15so8157174edb.10
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Sep 2021 07:08:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=pLYrjeZgUDIctTaJL7OpU9VI62FrytQ5AqIStACCfm4=;
-        b=JCYi/P7OmIJld4751FVgpDj4P8gZPtf8wdoTI1uhkZqMS/P3Ma+HqKela7mJ1DYOSY
-         MCnv5p/GHzMcs+5kezvYFkb4RAmKVcDBpU5LqhPcq3Qk+N5gyHz0QO9ajw7/8gypIB0O
-         CxZhJpWIjEry+q5lYTaqaJN8a4kJbDs0OjyIL07sPC8c5vejJzGIrzJFW6dOqOvtQHWs
-         XzcuN+3NKmxnleEI1QZyVP+DDRLYWxBy0Tk8uUc++TitVzaLPslJ1vzN3XriSPR2u66b
-         VQEUOMKF/tGBz44/jMNY6LwKcFnKvC+wtaoP1skqpfdj/voSh+XKydxGHtOQzqScctWl
-         grYw==
+        Fri, 3 Sep 2021 10:43:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1630680167;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=EEFnIURrP2vwLaJ5HTfs71djy1e9bipR/GQhDMVx0Ic=;
+        b=bAVFNyI0pzLKjOzg9YZn5dAcZquxCmuGpAOOvvU82xAWDbIEc/XloCD6txfplO6ZlzHk1A
+        mf3MUDHV6FRvXTAOKDpL1RhjPKGHdWyLRWBSrVeV3aFfj267uiGySegfYJyfXqzo1Do/K0
+        7P8m424H/HTLE2Y9UdVKRcQAIB2Z7Tk=
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
+ [209.85.166.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-176-j_EYMf9LPCCvnKhr6UM_ag-1; Fri, 03 Sep 2021 10:42:46 -0400
+X-MC-Unique: j_EYMf9LPCCvnKhr6UM_ag-1
+Received: by mail-il1-f199.google.com with SMTP id z14-20020a92d18e0000b029022418b34bc9so3646860ilz.9
+        for <linux-security-module@vger.kernel.org>; Fri, 03 Sep 2021 07:42:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=pLYrjeZgUDIctTaJL7OpU9VI62FrytQ5AqIStACCfm4=;
-        b=cpo3aKb3hqz0EeEGmLPsjenAgoORA6l14nKB/2cwwwMbmYBa3Tp99TJSSXuc8KYk8U
-         Q/JHTxxHvZw5HfDef6HKqgUILMtC59JbVidQehex21ykCdP/UB5Mk2112e/6qa5KMp1W
-         l59cnIUSV2MV/ZmZ28w6Hqkyqxa7lpDSUWp1M6j3tY8l1jphuos3V1dfIkX5S+pEXyBu
-         3f6gVssb+TK+695mPgI2UFLC9JiVlYanWtq5DyamtT+htef4E5F5b9jrtANu00/wFPuB
-         OMN/9CFjcp7w0YkxX0kO3xVb1wequA9jBYXDKFzo3HpMc+aouh4HmnsEqPAyAbYVa8RC
-         m2sg==
-X-Gm-Message-State: AOAM532tojcdqfYP+U7B5ARQ32aNTlqo8v2XiQMCsow6T8DrmYLSHwnO
-        cgzzUtfNzsg5v4QXz0cmBnO9cEl6opErs3cHr6PQ
-X-Google-Smtp-Source: ABdhPJya8KPhv1kK2mrGoJlmdaCp8dyfIIWwx8ijfMBGM672W2xyF8JhviV8KK2qx6bDAK4GbDpiQMZlJ0AtWLHlmvA=
-X-Received: by 2002:a05:6402:cab:: with SMTP id cn11mr4262241edb.293.1630678138060;
- Fri, 03 Sep 2021 07:08:58 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=EEFnIURrP2vwLaJ5HTfs71djy1e9bipR/GQhDMVx0Ic=;
+        b=E/9mfXrVWL/M42uEAJVYmeykm7GUuw2JY+ed6KGL/AjcFEzsiifLV5S65WYLq2f6Cg
+         lIkGTs0m0tI+0hGCheOz4gP8zYXbwl7C0zSwHIAYFVzMKFQ28dfz7wMOlk0qQUuc9JKk
+         MW2tQVjvKbUAXKIvT2OyDdKsXKI670hSk8TX5tvtMK+t/fS622zkzU96zX2TyE6Yav4r
+         eBihNSu2aS769VTNMSwbynuWlgIh++Hzgc9aG5tBTM97cA4+jNbQhk4rboSctREmt4mw
+         PjZ9BTvgo2AnhkUrSLayL2M67SdF0WHPLtmGNoZ4J/nJnHOpWjekb7zq2hDphOySeOLv
+         w37Q==
+X-Gm-Message-State: AOAM531b6LPX4ulr8xHO7ksvVTjoyaE88kAm6qZ0U65FSy5urls5Z2Iv
+        ed1k96azRqeFZMKymgQkllAJPx+JiOIswjcgaaNWKIEik2i9OMBfIFznsJ5nF/rDbO1V8nuc7k6
+        j/MW4hyuNCzR5h27kgNcbdSQLk8XoqJbhGeswDYx1xho3NaKhjXTU
+X-Received: by 2002:a05:6e02:e53:: with SMTP id l19mr2910874ilk.108.1630680165300;
+        Fri, 03 Sep 2021 07:42:45 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw9AT6fUQTezOFBvhyEPkIypPYE9orVd8STwsCxlacI9c6iwGMMi7S2j+q9xU7COfmaPZaiMz+DVo3Ee2EyNoY=
+X-Received: by 2002:a05:6e02:e53:: with SMTP id l19mr2910849ilk.108.1630680165078;
+ Fri, 03 Sep 2021 07:42:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <c6864908-d093-1705-76ce-94d6af85e092@linux.alibaba.com>
- <18f0171e-0cc8-6ae6-d04a-a69a2a3c1a39@linux.alibaba.com> <7f239a0e-7a09-3dc0-43ce-27c19c7a309d@linux.alibaba.com>
- <4c000115-4069-5277-ce82-946f2fdb790a@linux.alibaba.com> <CAHC9VhRBhCfX45V701rbGsvmOPQ4Nyp7dX2GA6NL8FxnA9akXg@mail.gmail.com>
- <a53753dc-0cce-4f9a-cb97-fc790d30a234@linux.alibaba.com> <CAHC9VhR2c=HYdWmz-At0+7RexUBjQHktv3ypHmFU2jD5gDc2Cw@mail.gmail.com>
- <a732f080-1d72-d1ee-4eea-5266b5ad1447@linux.alibaba.com>
-In-Reply-To: <a732f080-1d72-d1ee-4eea-5266b5ad1447@linux.alibaba.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 3 Sep 2021 10:08:47 -0400
-Message-ID: <CAHC9VhStVwMMZ9ppLe+StNObBz91Y=55QqFFG+4wKcOahE8scA@mail.gmail.com>
-Subject: Re: [PATCH] Revert "net: fix NULL pointer reference in cipso_v4_doi_free"
-To:     =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20210902152228.665959-1-vgoyal@redhat.com> <YTDyE9wVQQBxS77r@redhat.com>
+ <CAHc6FU4ytU5eo4bmJcL6MW+qJZAtYTX0=wTZnv4myhDBv-qZHQ@mail.gmail.com> <CAHc6FU5quZWQtZ3fRfM_ZseUsweEbJA0aAkZvQEF5u9MJhrqdQ@mail.gmail.com>
+In-Reply-To: <CAHc6FU5quZWQtZ3fRfM_ZseUsweEbJA0aAkZvQEF5u9MJhrqdQ@mail.gmail.com>
+From:   Bruce Fields <bfields@redhat.com>
+Date:   Fri, 3 Sep 2021 10:42:34 -0400
+Message-ID: <CAPL3RVH9MDoDAdiZ-nm3a4BgmRyZJUc_PV_MpsEWiuh6QPi+pA@mail.gmail.com>
+Subject: Re: [PATCH 3/1] xfstests: generic/062: Do not run on newer kernels
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
+        Daniel Walsh <dwalsh@redhat.com>,
+        David Gilbert <dgilbert@redhat.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        LSM <linux-security-module@vger.kernel.org>,
+        selinux@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        stephen.smalley.work@gmail.com, Dave Chinner <david@fromorbit.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=bfields@redhat.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, Sep 2, 2021 at 10:31 PM =E7=8E=8B=E8=B4=87 <yun.wang@linux.alibaba.=
-com> wrote:
-> On 2021/9/3 =E4=B8=8A=E5=8D=8810:15, Paul Moore wrote:
-> [snip]
-> >> both v1 and v2 are there with the same description and both code modif=
-ication
-> >> are applied.
-> >>
-> >> We want revert v1 but not in a revert patch style, then do you suggest
-> >> send a normal patch to do the code revert?
+Well, we could also look at supporting trusted.* xattrs over NFS.  I
+don't know much about them, but it looks like it wouldn't be a lot of
+work to specify, especially now that we've already got user xattrs?
+We'd just write a new internet draft that refers to the existing
+user.* xattr draft for most of the details.
+
+--b.
+
+On Fri, Sep 3, 2021 at 2:56 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> On Fri, Sep 3, 2021 at 8:31 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+> > On Thu, Sep 2, 2021 at 5:47 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > xfstests: generic/062: Do not run on newer kernels
+> > >
+> > > This test has been written with assumption that setting user.* xattrs will
+> > > fail on symlink and special files. When newer kernels support setting
+> > > user.* xattrs on symlink and special files, this test starts failing.
 > >
-> > It sounds like DaveM wants you to create a normal (not a revert) patch
-> > that removes the v1 changes while leaving the v2 changes intact.  In
-> > the patch description you can mention that v1 was merged as a mistake
-> > and that v2 is the correct fix (provide commit IDs for each in your
-> > commit description using the usual 12-char hash snippet followed by
-> > the subject in parens-and-quotes).
+> > It's actually a good thing that this test case triggers for the kernel
+> > change you're proposing; that change should never be merged. The
+> > user.* namespace is meant for data with the same access permissions as
+> > the file data, and it has been for many years. We may have
+> > applications that assume the existing behavior. In addition, this
+> > change would create backwards compatibility problems for things like
+> > backups.
+> >
+> > I'm not convinced that what you're actually proposing (mapping
+> > security.selinux to a different attribute name) actually makes sense,
+> > but that's a question for the selinux folks to decide. Mapping it to a
+> > user.* attribute is definitely wrong though. The modified behavior
+> > would affect anybody, not only users of selinux and/or virtiofs. If
+> > mapping attribute names is actually the right approach, then you need
+> > to look at trusted.* xattrs, which exist specifically for this kind of
+> > purpose. You've noted that trusted.* xattrs aren't supported over nfs.
+> > That's unfortunate, but not an acceptable excuse for messing up user.*
+> > xattrs.
 >
-> Thanks for the kindly explain, I've sent:
->   [PATCH] net: remove the unnecessary check in cipso_v4_doi_free
+> Another possibility would be to make selinux use a different
+> security.* attribute for this nested selinux case. That way, the
+> "host" selinux would retain some control over the labels the "guest"
+> uses.
 >
-> Which actually revert the v1 and mentioned v2 fixed the root casue,
-> Would you please take a look see if that is helpful?
+> Thanks,
+> Andreas
+>
 
-That looks correct to me, acked.  Thanks.
-
---=20
-paul moore
-www.paul-moore.com
