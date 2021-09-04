@@ -2,115 +2,142 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23243C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Sep 2021 23:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3835C433F5
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Sep 2021 02:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8DD760F9C
-	for <linux-security-module@archiver.kernel.org>; Fri,  3 Sep 2021 23:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A41D660E8B
+	for <linux-security-module@archiver.kernel.org>; Sat,  4 Sep 2021 02:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233759AbhICXbt (ORCPT
+        id S235645AbhIDC2z (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Fri, 3 Sep 2021 19:31:49 -0400
-Received: from smtp-relay-canonical-0.canonical.com ([185.125.188.120]:47722
-        "EHLO smtp-relay-canonical-0.canonical.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244436AbhICXbt (ORCPT
+        Fri, 3 Sep 2021 22:28:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32896 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231389AbhIDC2z (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Fri, 3 Sep 2021 19:31:49 -0400
-Received: from [192.168.192.153] (unknown [50.45.173.99])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id F10574019F;
-        Fri,  3 Sep 2021 23:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1630711846;
-        bh=fSqoKAVb/v3yd5ZXv3SCjlXdU8zYK++3SwXEnF6fn20=;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-         In-Reply-To:Content-Type;
-        b=CatxpOv1jxLe27L85oUPSAbKK+LISLMaWnFnV2z479+ux2h6VWJ34z9EbxRrEn8Dd
-         gb4v0SWvCouewWv/KHH8I/GMPIMBie/6R/fd+0+mWMQmYgQgcgGHwIdRqM4wmA9ABB
-         sZXA0jW3/2PbOOq5FSMrlnwydp/43/qILtmEFuDED7eaT+/4appj9G1okDJHrfbNHi
-         RmP4Io2j4ZXeYgBxRjHDrjSlGrrPsT3jbV3Tz8NBYJJ7tJ0g/8IT5Afn/BrTs8MHby
-         LoPei/avjhbhblLlU/Ag6vxguvzd8IfS2C9xX8SaMnQEXLpyepFKugfQNeKigCNuRb
-         hbAogRnjTHCAQ==
-Subject: Re: [PATCH] apparmor: remove unused argument of aa_umount()
-To:     Austin Kim <austindh.kim@gmail.com>, jmorris@namei.org,
-        serge@hallyn.com
-Cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210831000912.GA4588@raspberrypi>
-From:   John Johansen <john.johansen@canonical.com>
-Organization: Canonical
-Message-ID: <4b68307a-26a8-c17b-bbf6-1fb9b88e7f9e@canonical.com>
-Date:   Fri, 3 Sep 2021 16:30:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Fri, 3 Sep 2021 22:28:55 -0400
+Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 638F7C061575;
+        Fri,  3 Sep 2021 19:27:54 -0700 (PDT)
+Received: by mail-pj1-x1031.google.com with SMTP id u11-20020a17090adb4b00b00181668a56d6so749827pjx.5;
+        Fri, 03 Sep 2021 19:27:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=I0YxCvUghet9DhkiuBhmPHLgPAw3XzzyXfrXY1VG23c=;
+        b=oni0LfF7wnSgMcsYp+GqcVd8hC4djLUJXjwH+/Jk9+BKPNa6I9jQdtqSx2d9YDBSEl
+         rIDtvRVOpVhSYIRAmrBmWFrUQ75jVh969uKlzH2N9By6yOqHrnp+NUHEEFS4h/ZX+kWJ
+         J4c9Us85LJNFvQlUwpsbDGFmwUJCwd5nqqzzIC3r1KvIOvKScEj+WBczPnj99D2DJX0g
+         FuhOgEliUZcFpedW2qvDNqC7+HqgS5khWLXBSibB05xlPqh3DkOXp736ZjN4QH8VXI6W
+         PxVKc5mpxOgZ7DgI6hmh0LA6f2g2vIVahmW2eJLrDZ0CuMGesYrs8YilDKviiXfFae5r
+         oB/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=I0YxCvUghet9DhkiuBhmPHLgPAw3XzzyXfrXY1VG23c=;
+        b=CGPWpn6D9cl78LcEVC+sKfQ1/evHmQkMwFtexK3mLcF7jyntApeeJq+0/NrWXsCKg9
+         OKz3AwnIIc03Gui5aVjuUGMNppSIOZ6oSAWknmpDyJ04ZCbzUuPrVkPMjhyDOXNnhZ3J
+         094ygPSS5HfwcGrn8snQMeojtTZN6YGpIQFS3OvyrdDi+6FIhCE1prpMEbGQhdS6SPrQ
+         yytslXsrykDfwzaZVeadhOi5BUH7V+yNeOF5jdTw8Y6B6cugIs75nJ9c1Wq4h78x4kdS
+         p1i+oBJ4AlUPleDqCj0jM5ZJERp9D4DksSm3mcQDATkxn073hYNtCHl6AVXlZcLm5/8X
+         mqZQ==
+X-Gm-Message-State: AOAM530j0dPzsGkTF02sCe5FnU3EBJXqJ02TYiwPgG61n6WDt9qodZyb
+        b7oCJKYpkKEkKILsyit2tNa+g+rtWDZeAlSkpnyk1rLr3vwwK/vt
+X-Google-Smtp-Source: ABdhPJxqa28GSmTg20NdRJcEvtdeBCqNvYfDe4D1JiXScdYQVWc2bJCXCyUs4MHSF9p33xGn1jxM8AwB3HlN45GaY0Q=
+X-Received: by 2002:a17:90b:3b4d:: with SMTP id ot13mr1974778pjb.67.1630722473874;
+ Fri, 03 Sep 2021 19:27:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20210831000912.GA4588@raspberrypi>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20210831000912.GA4588@raspberrypi> <4b68307a-26a8-c17b-bbf6-1fb9b88e7f9e@canonical.com>
+In-Reply-To: <4b68307a-26a8-c17b-bbf6-1fb9b88e7f9e@canonical.com>
+From:   Austin Kim <austindh.kim@gmail.com>
+Date:   Sat, 4 Sep 2021 11:27:44 +0900
+Message-ID: <CADLLry61wZLKeqLc=wzPV1rMe86dLDud96WXOB-r8wFKC6XPzw@mail.gmail.com>
+Subject: Re: [PATCH] apparmor: remove unused argument of aa_umount()
+To:     John Johansen <john.johansen@canonical.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 8/30/21 5:09 PM, Austin Kim wrote:
-> The 'flags' argument in aa_umount() is not used,
-> so it had better remove unused argument.
-> 
-> Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+2021=EB=85=84 9=EC=9B=94 4=EC=9D=BC (=ED=86=A0) =EC=98=A4=EC=A0=84 8:30, Jo=
+hn Johansen <john.johansen@canonical.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
+=B1:
+>
+> On 8/30/21 5:09 PM, Austin Kim wrote:
+> > The 'flags' argument in aa_umount() is not used,
+> > so it had better remove unused argument.
+> >
+> > Signed-off-by: Austin Kim <austindh.kim@gmail.com>
+>
+> looks good, I'll pull this into my tree
 
-looks good, I'll pull this into my tree
+Great, thanks!
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-> ---
->  security/apparmor/include/mount.h | 2 +-
->  security/apparmor/lsm.c           | 2 +-
->  security/apparmor/mount.c         | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/security/apparmor/include/mount.h b/security/apparmor/include/mount.h
-> index a710683b2496..9327456cda09 100644
-> --- a/security/apparmor/include/mount.h
-> +++ b/security/apparmor/include/mount.h
-> @@ -42,7 +42,7 @@ int aa_new_mount(struct aa_label *label, const char *dev_name,
->  		 const struct path *path, const char *type, unsigned long flags,
->  		 void *data);
->  
-> -int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags);
-> +int aa_umount(struct aa_label *label, struct vfsmount *mnt);
->  
->  int aa_pivotroot(struct aa_label *label, const struct path *old_path,
->  		 const struct path *new_path);
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> Index 0834ba6a8a2e..58ba3f0605d2 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -574,7 +574,7 @@ static int apparmor_sb_umount(struct vfsmount *mnt, int flags)
->  
->  	label = __begin_current_label_crit_section();
->  	if (!unconfined(label))
-> -		error = aa_umount(label, mnt, flags);
-> +		error = aa_umount(label, mnt);
->  	__end_current_label_crit_section(label);
->  
->  	return error;
-> diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
-> index aa6fcfde3051..e33de97839ec 100644
-> --- a/security/apparmor/mount.c
-> +++ b/security/apparmor/mount.c
-> @@ -610,7 +610,7 @@ static int profile_umount(struct aa_profile *profile, const struct path *path,
->  			   AA_MAY_UMOUNT, &perms, info, error);
->  }
->  
-> -int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags)
-> +int aa_umount(struct aa_label *label, struct vfsmount *mnt)
->  {
->  	struct aa_profile *profile;
->  	char *buffer = NULL;
-> 
-
+>
+> Acked-by: John Johansen <john.johansen@canonical.com>
+>
+> > ---
+> >  security/apparmor/include/mount.h | 2 +-
+> >  security/apparmor/lsm.c           | 2 +-
+> >  security/apparmor/mount.c         | 2 +-
+> >  3 files changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/security/apparmor/include/mount.h b/security/apparmor/incl=
+ude/mount.h
+> > index a710683b2496..9327456cda09 100644
+> > --- a/security/apparmor/include/mount.h
+> > +++ b/security/apparmor/include/mount.h
+> > @@ -42,7 +42,7 @@ int aa_new_mount(struct aa_label *label, const char *=
+dev_name,
+> >                const struct path *path, const char *type, unsigned long=
+ flags,
+> >                void *data);
+> >
+> > -int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags)=
+;
+> > +int aa_umount(struct aa_label *label, struct vfsmount *mnt);
+> >
+> >  int aa_pivotroot(struct aa_label *label, const struct path *old_path,
+> >                const struct path *new_path);
+> > diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> > Index 0834ba6a8a2e..58ba3f0605d2 100644
+> > --- a/security/apparmor/lsm.c
+> > +++ b/security/apparmor/lsm.c
+> > @@ -574,7 +574,7 @@ static int apparmor_sb_umount(struct vfsmount *mnt,=
+ int flags)
+> >
+> >       label =3D __begin_current_label_crit_section();
+> >       if (!unconfined(label))
+> > -             error =3D aa_umount(label, mnt, flags);
+> > +             error =3D aa_umount(label, mnt);
+> >       __end_current_label_crit_section(label);
+> >
+> >       return error;
+> > diff --git a/security/apparmor/mount.c b/security/apparmor/mount.c
+> > index aa6fcfde3051..e33de97839ec 100644
+> > --- a/security/apparmor/mount.c
+> > +++ b/security/apparmor/mount.c
+> > @@ -610,7 +610,7 @@ static int profile_umount(struct aa_profile *profil=
+e, const struct path *path,
+> >                          AA_MAY_UMOUNT, &perms, info, error);
+> >  }
+> >
+> > -int aa_umount(struct aa_label *label, struct vfsmount *mnt, int flags)
+> > +int aa_umount(struct aa_label *label, struct vfsmount *mnt)
+> >  {
+> >       struct aa_profile *profile;
+> >       char *buffer =3D NULL;
+> >
+>
