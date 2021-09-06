@@ -2,83 +2,85 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-7.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,T_TVD_FUZZY_SECURITIES,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50812C433EF
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Sep 2021 14:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF64C433EF
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Sep 2021 14:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 361C960F45
-	for <linux-security-module@archiver.kernel.org>; Mon,  6 Sep 2021 14:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4266C60F92
+	for <linux-security-module@archiver.kernel.org>; Mon,  6 Sep 2021 14:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243549AbhIFOk0 (ORCPT
+        id S243602AbhIFO4j (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 6 Sep 2021 10:40:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:26001 "EHLO
+        Mon, 6 Sep 2021 10:56:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([170.10.133.124]:37044 "EHLO
         us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S243421AbhIFOkW (ORCPT
+        by vger.kernel.org with ESMTP id S243586AbhIFO4i (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 6 Sep 2021 10:40:22 -0400
+        Mon, 6 Sep 2021 10:56:38 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1630939157;
+        s=mimecast20190719; t=1630940133;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=+z2oy7uRo+rUCluRBsFNUqB8lI2Md370z/AcYxkK4jA=;
-        b=dzn6PFHNUFHWYUP46l4Gh4mmFTiQCxPy3le4ZDQg3hKmXRPv76oHCWXPE0jcdmss9KB5EH
-        NJBd/9L1wL79MneU9YWnHy9HSWMp/mZIHDBFPKt/dWYqlz/pc+BDskkAtkjJ1KKPleR9rn
-        n18SdT2EyozbmiflQqF5owa6qK00UWs=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-153-HiEpGIKDOceeXCc1Jyi2mA-1; Mon, 06 Sep 2021 10:39:16 -0400
-X-MC-Unique: HiEpGIKDOceeXCc1Jyi2mA-1
-Received: by mail-wr1-f72.google.com with SMTP id y13-20020adfe6cd000000b00159694c711dso1252848wrm.17
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Sep 2021 07:39:16 -0700 (PDT)
+        bh=LuJQ3d86zOdSndkgpNKh8Y22Hrim56ARoO6+9G+J+AQ=;
+        b=MgG8y6zFwCDaMQwcj+PNVJcgsl9uW5tnqXVzmeQuFqviRGaQ1BV11tLruvfjAr/6TE/ZbX
+        xhm4aNPSVr92kcUoHWDH2Sbg5XbjJVr7V856Ht5234GlDDXG6Pxz5zPVvvNqEdV/7PAfEn
+        b1bIe0o0wd4dBda4/pM41K07fLHudhw=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-584-7Y8fgLEPPtSLGVl81NZDYg-1; Mon, 06 Sep 2021 10:55:32 -0400
+X-MC-Unique: 7Y8fgLEPPtSLGVl81NZDYg-1
+Received: by mail-wm1-f71.google.com with SMTP id k5-20020a7bc3050000b02901e081f69d80so2424622wmj.8
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Sep 2021 07:55:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+z2oy7uRo+rUCluRBsFNUqB8lI2Md370z/AcYxkK4jA=;
-        b=KyDk8AOMgn7mc4JVKn13d68oISrXGq4Bj2igWL+03AB5pA14OBSktpi3TQhI5Vfoqj
-         cj+x7ze8vgl/pG/2QCqFhwX8P8Mz1dy7WNT9+RoKoSHTDdCZR1iNq1aEpzH4FY0oPYDl
-         V+Vttvwra/XUW9+ZPP/kFKKdnL8+3jEaKyCC/wRkbNqJSZ7QL1pMg9CM6shgqEKUNO1Y
-         EyyhqvE7eXNsitCfhE4WJfCeLLxSyOZxtIIA70NMrvGEpA66cnTPAOaKHtvl+mCU+cUl
-         escSUeUWH2Ge9gOrH/YhB/9JtRlYW35rX2LRk1MadnyVYd2F+BNSO41yVvmk3LMRG2fq
-         V2iQ==
-X-Gm-Message-State: AOAM530B1U+La2ATP1fMTevImDQzc+kMgaZsy1zmWlZOPpA1NWY8zRXI
-        LA7jKRlXe1YNYMX/Xa9HNc912aNZhNCuDWBfbJzSnxi7LsctipbPTXtNuJodqKEnGVOblfyH73p
-        Q42S3veA+ejrdEJ2UgxqiEDTfLYCnePd123H/
-X-Received: by 2002:adf:d231:: with SMTP id k17mr13829226wrh.389.1630939155290;
-        Mon, 06 Sep 2021 07:39:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyeRatgQ0xCt0UI+SY5SQtyOXtLxDfFiIuJsWPUTO5VpZ73PMk33KS8HQ6FV/teH8sV8VDRwQ==
-X-Received: by 2002:adf:d231:: with SMTP id k17mr13829186wrh.389.1630939154987;
-        Mon, 06 Sep 2021 07:39:14 -0700 (PDT)
+        bh=LuJQ3d86zOdSndkgpNKh8Y22Hrim56ARoO6+9G+J+AQ=;
+        b=mhvfIMBE3FKbatL8pr/bGrMr2C254wr6XXsLFvF3o4dZUjlckev9aK0gdJyZS3Alft
+         Qgdp2U6KZPBVrCShwzt4JDjyjUTWtmTqAYQYBKWcbyNTiVv4JjJFh7X5R7bsINDzChb5
+         tinSkYj/Fopfameb/8GrNaXO2VhVT4mBpt46wXCvNQlhd1X4ybvBzEOf2ysui2COqRbM
+         gj4LaMmV5qohgnfYnoy58HXp434xSkZ6SOpYTo6OsjIsX3bM2IInSCOAJhv9/3G5RMmp
+         purQePP6+8ss+XoFFS1G1ZB5y1NrPq8WxzD2P9ml+j948pNfZ3QOKKqSIXJKs54abp3j
+         qXOQ==
+X-Gm-Message-State: AOAM5319N6k8l6l4XWSCMaCcxXWdiXQr2aL2KZqSo94ih75RJkqgj8lE
+        qEJJCyA4j/rCcBL9jt9omk5kPzfSHAtUS3jsf/qFVo0Xu9lg8gZvLW4m854kVX4B7Hwg8EOy74y
+        zUtfVhqgskigqY1kog32AlSzoCVYNNClsV6qL
+X-Received: by 2002:a7b:c1cf:: with SMTP id a15mr12111937wmj.85.1630940131319;
+        Mon, 06 Sep 2021 07:55:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx7G11soewZleZXFNlU6hNQkMzaIZ61i+xkpkLePDsamNTU1MoFcHYNhJ0ALCPN/xHIpE8IAg==
+X-Received: by 2002:a7b:c1cf:: with SMTP id a15mr12111916wmj.85.1630940131068;
+        Mon, 06 Sep 2021 07:55:31 -0700 (PDT)
 Received: from work-vm (cpc109021-salf6-2-0-cust453.10-2.cable.virginm.net. [82.29.237.198])
-        by smtp.gmail.com with ESMTPSA id u9sm8160923wrm.70.2021.09.06.07.39.13
+        by smtp.gmail.com with ESMTPSA id o5sm8023611wrw.17.2021.09.06.07.55.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Sep 2021 07:39:14 -0700 (PDT)
-Date:   Mon, 6 Sep 2021 15:39:12 +0100
+        Mon, 06 Sep 2021 07:55:30 -0700 (PDT)
+Date:   Mon, 6 Sep 2021 15:55:28 +0100
 From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, virtio-fs@redhat.com,
-        dwalsh@redhat.com, christian.brauner@ubuntu.com,
-        casey.schaufler@intel.com,
-        LSM <linux-security-module@vger.kernel.org>,
-        selinux@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Miklos Szeredi <miklos@szeredi.hu>, gscrivan@redhat.com,
-        "Fields, Bruce" <bfields@redhat.com>,
-        stephen.smalley.work@gmail.com, Dave Chinner <david@fromorbit.com>
+To:     Casey Schaufler <casey@schaufler-ca.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtio-fs@redhat.com, dwalsh@redhat.com,
+        christian.brauner@ubuntu.com, casey.schaufler@intel.com,
+        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        tytso@mit.edu, miklos@szeredi.hu, gscrivan@redhat.com,
+        bfields@redhat.com, stephen.smalley.work@gmail.com,
+        agruenba@redhat.com, david@fromorbit.com
 Subject: Re: [PATCH v3 0/1] Relax restrictions on user.* xattr
-Message-ID: <YTYoEDT+YOtCHXW0@work-vm>
+Message-ID: <YTYr4MgWnOgf/SWY@work-vm>
 References: <20210902152228.665959-1-vgoyal@redhat.com>
- <CAHc6FU4foW+9ZwTRis3DXSJSMAvdb4jXcq7EFFArYgX7FQ1QYg@mail.gmail.com>
+ <79dcd300-a441-cdba-e523-324733f892ca@schaufler-ca.com>
+ <YTEEPZJ3kxWkcM9x@redhat.com>
+ <YTENEAv6dw9QoYcY@redhat.com>
+ <3bca47d0-747d-dd49-a03f-e0fa98eaa2f7@schaufler-ca.com>
+ <YTEur7h6fe4xBJRb@redhat.com>
+ <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHc6FU4foW+9ZwTRis3DXSJSMAvdb4jXcq7EFFArYgX7FQ1QYg@mail.gmail.com>
+In-Reply-To: <1f33e6ef-e896-09ef-43b1-6c5fac40ba5f@schaufler-ca.com>
 User-Agent: Mutt/2.0.7 (2021-05-04)
 Authentication-Results: relay.mimecast.com;
         auth=pass smtp.auth=CUSA124A263 smtp.mailfrom=dgilbert@redhat.com
@@ -89,150 +91,110 @@ Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-* Andreas Gruenbacher (agruenba@redhat.com) wrote:
-> Hi,
+* Casey Schaufler (casey@schaufler-ca.com) wrote:
+> On 9/2/2021 1:06 PM, Vivek Goyal wrote:
+
+> >  If LSMs are not configured,
+> > then hiding the directory is the solution.
 > 
-> On Thu, Sep 2, 2021 at 5:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > This is V3 of the patch. Previous versions were posted here.
-> >
-> > v2: https://lore.kernel.org/linux-fsdevel/20210708175738.360757-1-vgoyal@redhat.com/
-> > v1: https://lore.kernel.org/linux-fsdevel/20210625191229.1752531-1-vgoyal@redhat.com/
-> >
-> > Changes since v2
-> > ----------------
-> > - Do not call inode_permission() for special files as file mode bits
-> >   on these files represent permissions to read/write from/to device
-> >   and not necessarily permission to read/write xattrs. In this case
-> >   now user.* extended xattrs can be read/written on special files
-> >   as long as caller is owner of file or has CAP_FOWNER.
-> >
-> > - Fixed "man xattr". Will post a patch in same thread little later. (J.
-> >   Bruce Fields)
-> >
-> > - Fixed xfstest 062. Changed it to run only on older kernels where
-> >   user extended xattrs are not allowed on symlinks/special files. Added
-> >   a new replacement test 648 which does exactly what 062. Just that
-> >   it is supposed to run on newer kernels where user extended xattrs
-> >   are allowed on symlinks and special files. Will post patch in
-> >   same thread (Ted Ts'o).
-> >
-> > Testing
-> > -------
-> > - Ran xfstest "./check -g auto" with and without patches and did not
-> >   notice any new failures.
-> >
-> > - Tested setting "user.*" xattr with ext4/xfs/btrfs/overlay/nfs
-> >   filesystems and it works.
-> >
-> > Description
-> > ===========
-> >
-> > Right now we don't allow setting user.* xattrs on symlinks and special
-> > files at all. Initially I thought that real reason behind this
-> > restriction is quota limitations but from last conversation it seemed
-> > that real reason is that permission bits on symlink and special files
-> > are special and different from regular files and directories, hence
-> > this restriction is in place. (I tested with xfs user quota enabled and
-> > quota restrictions kicked in on symlink).
-> >
-> > This version of patch allows reading/writing user.* xattr on symlink and
-> > special files if caller is owner or priviliged (has CAP_FOWNER) w.r.t inode.
+> It's not a solution at all. It's wishful thinking that
+> some admin is going to do absolutely everything right, will
+> never make a mistake and will never, ever, read the mount(2)
+> man page.
+
+That is why we run our virtiofsd with a sandbox setup and seccomp; and
+frankly anything we can or could turn on we would.
+
+> > So why that's not a solution and only relying on CAP_SYS_ADMIN is the
+> > solution. I don't understand that part.
 > 
-> the idea behind user.* xattrs is that they behave similar to file
-> contents as far as permissions go. It follows from that that symlinks
-> and special files cannot have user.* xattrs. This has been the model
-> for many years now and applications may be expecting these semantics,
-> so we cannot simply change the behavior. So NACK from me.
+> It comes back to your design, which is fundamentally flawed. You
+> can't store system security information in an attribute that can
+> be manipulated by untrusted entities. That's why we have system.*
+> xattrs. You want to have an attribute on the host that maps to a
+> security attribute on the guest. The host has to protect the attribute
+> on the guest with mechanisms of comparable strength as the guest's
+> mechanisms.
+
+Can you just explain this line to me a bit more: 
+> Otherwise you can't trust the guest with host data.
+
+Note we're not trying to trust the guest with the host data here;
+we're trying to allow the guest to store the data on the host, while
+trusting the host.
+
 > 
-> > Who wants to set user.* xattr on symlink/special files
-> > -----------------------------------------------------
-> > I have primarily two users at this point of time.
-> >
-> > - virtiofs daemon.
-> >
-> > - fuse-overlay. Giuseppe, seems to set user.* xattr attrs on unpriviliged
-> >   fuse-overlay as well and he ran into similar issue. So fuse-overlay
-> >   should benefit from this change as well.
-> >
-> > Why virtiofsd wants to set user.* xattr on symlink/special files
-> > ----------------------------------------------------------------
-> > In virtiofs, actual file server is virtiosd daemon running on host.
-> > There we have a mode where xattrs can be remapped to something else.
-> > For example security.selinux can be remapped to
-> > user.virtiofsd.securit.selinux on the host.
-> >
-> > This remapping is useful when SELinux is enabled in guest and virtiofs
-> > as being used as rootfs. Guest and host SELinux policy might not match
-> > and host policy might deny security.selinux xattr setting by guest
-> > onto host. Or host might have SELinux disabled and in that case to
-> > be able to set security.selinux xattr, virtiofsd will need to have
-> > CAP_SYS_ADMIN (which we are trying to avoid). Being able to remap
-> > guest security.selinux (or other xattrs) on host to something else
-> > is also better from security point of view.
-> >
-> > But when we try this, we noticed that SELinux relabeling in guest
-> > is failing on some symlinks. When I debugged a little more, I
-> > came to know that "user.*" xattrs are not allowed on symlinks
-> > or special files.
-> >
-> > So if we allow owner (or CAP_FOWNER) to set user.* xattr, it will
-> > allow virtiofs to arbitrarily remap guests's xattrs to something
-> > else on host and that solves this SELinux issue nicely and provides
-> > two SELinux policies (host and guest) to co-exist nicely without
-> > interfering with each other.
+> It's a real shame that CAP_SYS_ADMIN is so scary. The capability
+> mechanism as implemented today won't scale to the hundreds of individual
+> capabilities it would need to break CAP_SYS_ADMIN up. Maybe someday.
+> I'm not convinced that there isn't a way to accomplish what you're
+> trying to do without privilege, but this isn't it, and I don't know
+> what is. Sorry.
 > 
-> The fact that user.* xattrs don't work in this remapping scenario
-> should have told you that you're doing things wrong; the user.*
-> namespace seriously was never meant to be abused in this way.
+> > Also if directory is not hidden, unprivileged users can change file
+> > data and other metadata.
 > 
-> You may be able to get away with using trusted.* xattrs which support
-> roughly the kind of daemon use I think you're talking about here, but
-> I'm not sure selinux will be happy with labels that aren't fully under
-> its own control. I really wonder why this wasn't obvious enough.
+> I assumed that you've taken that into account. Are you saying that
+> isn't going to be done correctly either?
+> 
+> >  Why that's not a concern and why there is
+> > so much of focus only security xattr.
+> 
+> As with an NFS mount, the assumption is that UID 567 (or its magically
+> mapped equivalent) has the same access rights on both the server/host
+> and client/guest. I'm not worried about the mode bits because they are
+> presented consistently on both machines. If, on the other hand, an
+> attribute used to determine access is security.esprit on the guest and
+> user.security.esprit on the host, the unprivileged user on the host
+> can defeat the privilege requirements on the guest. That's why.
 
-It was; however in our use case it wasn't an issue in general, because
-the selinux instance that was setting the labels was inside an untrusted
-guest, as such it's labels on the host are themselves untrusted, and
-hence user. made some sense to the host - until we found out the
-restrictons on user. the hard way.
+We're OK with that; remember that the host can do wth it likes to the
+guest anyway - it can just go in and poke at the guests RAM if it wants
+to do something evil to the guest.
+We wouldn't suggest using a scheme like this once you have
+encrypted/protected guest RAM for example (SEV/TDX etc)
 
-The mapping code we have doesn't explicitly set user. - it's an
-arbitrary remapper that can map to anything you like, trusted. whatever,
-but user. feels (to us) like it's right for an untrusted guest.
+> >  If you were to block modification
+> > of file then you will have rely on LSMs.
+> 
+> No. We're talking about the semantics of the xattr namespaces.
+> LSMs can further constrain access to xattrs, but the basic rules
+> of access to the user.* and security.* attributes are different
+> in any case. This is by design.
 
-IMHO the real problem here is that the user/trusted/system/security
-'namespaces' are arbitrary hacks rather than a proper namespacing
-mechanism that allows you to create new (nested) namespaces and associate
-permissions with each one.
+I'm happy if you can suggest somewhere else to store the guests xattr
+data other than in one of the hosts xattr's - the challenge is doing
+that in a non-racy way, and making sure that the xattr's never get
+associated with the wrong file as seen by a guest.
 
-Each one carries with it some arbitrary baggage (trusted not working on
-NFS, user. having the special rules on symlinks etc).
+> >  And if LSMs are not configured,
+> > then we will rely on shared directory not being visible.
+> 
+> LSMs are not the problem. LSMs use security.* xattrs, which is why
+> they come up in the discussion.
+> 
+> > Can you please help me understand why hiding shared directory from
+> > unprivileged users is not a solution
+> 
+> Maybe you can describe the mechanism you use to "hide" a shared directory
+> on the host. If the filesystem is mounted on the host it seems unlikely
+> that you can provide a convincing argument for sufficient protection.
 
-Then every fs or application that trips over these arbitrary limits adds
-some hack to work around them in a different way to every other fs or
-app that's doing the same thing; (see 9p, overlayfs, fuse-overlayfs,
-crosvm etc etc all that do some level of renaming)
-
-What we really need is a namespace where you can do anything you like,
-but it's then limited by the security modules, so that I could allow
-user.virtiofsd.guest1 to be able to set labels on symlinks for example.
+Why? What can a guests fs mounted on the host, under one of the
+directories that's already typically used for container fs's do - it's
+already what fileservers, and existing container systems do.
 
 Dave
 
-> Thanks,
-> Andreas
-> 
+
+
+> >  (With both LSMs configured or
+> > not configured on host). That's a requirement for virtiofs anyway. 
+> > And if we agree on that, then I don't see why using "user.*" xattrs
+> > for storing guest sercurity attributes is a problem.
+> >
 > > Thanks
 > > Vivek
-> >
-> > Vivek Goyal (1):
-> >   xattr: Allow user.* xattr on symlink and special files
-> >
-> >  fs/xattr.c | 23 ++++++++++++++++++-----
-> >  1 file changed, 18 insertions(+), 5 deletions(-)
-> >
-> > --
-> > 2.31.1
 > >
 > 
 -- 
