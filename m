@@ -2,46 +2,37 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA8B1C4332F
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Sep 2021 22:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331D2C433EF
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Sep 2021 22:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB5866103D
-	for <linux-security-module@archiver.kernel.org>; Tue,  7 Sep 2021 22:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C5E460E77
+	for <linux-security-module@archiver.kernel.org>; Tue,  7 Sep 2021 22:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240862AbhIGWgP (ORCPT
+        id S1346933AbhIGWvs (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Tue, 7 Sep 2021 18:36:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347634AbhIGWe3 (ORCPT
+        Tue, 7 Sep 2021 18:51:48 -0400
+Received: from gate.crashing.org ([63.228.1.57]:34906 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1344396AbhIGWvs (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Tue, 7 Sep 2021 18:34:29 -0400
-Received: from bombadil.infradead.org (unknown [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D104EC061575;
-        Tue,  7 Sep 2021 15:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=bxPWNII6t/NMGO1fgxjyatCVjEuxKu/pncqEFjLY/38=; b=Ui1wNMHr1qisfggLyZY6EljOSh
-        DaWVRD0Q5qi69FfBZ0WLKQakWxLm4gU4vxPk6Vji1flAFMLNy3B8/CFNn8a6c+s1RGYuxcksZ7smS
-        P2L/f8NMosaY0ld2cM0fVt88682m9DlkZLwEHw2a6TRCaiGTmdQJ/gG7I0BNthhEkSM5jFJQs2aC5
-        wFPYstbOO8DYLPxymIfy2C+443vPwmfXCwFZneCHFvwBvTP5J8E2S3DB15J1DSGYw2mH/iu0RdJ+K
-        Gxs92jqjmNaQis/aeSs9pi+smE0kEve5rEiVsJvgfGc8QUaPRjEkCaVf/Xk04tgsm80VcTlluS4TP
-        2LnK2jdw==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1mNjea-004xPm-64; Tue, 07 Sep 2021 22:33:20 +0000
-Subject: Re: [PATCH] Revert "Enable '-Werror' by default for all kernel
- builds"
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Marco Elver <elver@google.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>, llvm@lists.linux.dev,
+        Tue, 7 Sep 2021 18:51:48 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id 187MgSFs013086;
+        Tue, 7 Sep 2021 17:42:29 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id 187MgRGq013085;
+        Tue, 7 Sep 2021 17:42:27 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Tue, 7 Sep 2021 17:42:27 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Marco Elver <elver@google.com>
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        llvm@lists.linux.dev,
         LSM List <linux-security-module@vger.kernel.org>,
         linux-toolchains@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -59,45 +50,35 @@ Cc:     Nick Desaulniers <ndesaulniers@google.com>, llvm@lists.linux.dev,
         Vlastimil Babka <vbabka@suse.cz>,
         Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20210907183843.33028-1-ndesaulniers@google.com>
- <CAHk-=whJOxDefgSA1_ojGbweRJGonWX9_nihA-=fbXFV1DhuxQ@mail.gmail.com>
- <CAKwvOdkuYoke=Sa8Qziveo9aSA2zaNWEcKW8LZLg+d3TPwHkoA@mail.gmail.com>
- <YTfkO2PdnBXQXvsm@elver.google.com>
- <CAHk-=wgPaQsEr+En=cqCqAC_sWmVP6x5rD2rmZRomH9EnTQL7Q@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <c8fb537f-26e5-b305-6bc5-06f0d27a4029@infradead.org>
-Date:   Tue, 7 Sep 2021 15:33:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgPaQsEr+En=cqCqAC_sWmVP6x5rD2rmZRomH9EnTQL7Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] Revert "Enable '-Werror' by default for all kernel builds"
+Message-ID: <20210907224227.GL1583@gate.crashing.org>
+References: <20210907183843.33028-1-ndesaulniers@google.com> <CAHk-=whJOxDefgSA1_ojGbweRJGonWX9_nihA-=fbXFV1DhuxQ@mail.gmail.com> <CAKwvOdkuYoke=Sa8Qziveo9aSA2zaNWEcKW8LZLg+d3TPwHkoA@mail.gmail.com> <YTfkO2PdnBXQXvsm@elver.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YTfkO2PdnBXQXvsm@elver.google.com>
+User-Agent: Mutt/1.4.2.3i
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 9/7/21 3:18 PM, Linus Torvalds wrote:
-> On Tue, Sep 7, 2021 at 3:14 PM Marco Elver <elver@google.com> wrote:
->>
->>
->>   config WERROR
->>          bool "Compile the kernel with warnings as errors"
->> -       default y
->> +       default COMPILE_TEST
-> 
-> That seems reasonable. It very much is about build-testing.
+On Wed, Sep 08, 2021 at 12:14:19AM +0200, Marco Elver wrote:
+> Here's a datapoint: I had to disable CONFIG_WERROR on a bunch of syzbot
+> instances which started failing because of -Werror [1], because syzbot's
+> time is better spent on fuzzing, and having the odd warning in some
+> subsystem penalize fuzzing of the entire kernel is not appropriate.
 
-That and 2 more things IMO:
+Similarly, I have to disable -Werror (which various archs and subsystems
+already use) whenever I test building the kernel with new toolchains.
+It is the biggest set of kernel patches I keep, already, since many
+years.
 
-a. having developers be responsible for build warnings, not just
-    build errors
+I actually have good hopes that a centralised -Werror thing will make
+this easier :-)
 
-b. having maintainers merge them more like they are build errors
-    and not just some warnings that can be overlooked.
+Maybe there can be an E=[01] kernel build flag to disable / enable
+CONFIG_WERROR?  Something that will override it for just that command.
+This would make life easier for many use cases, while at the same time
+not being something that people can "forget" they did.
 
-I don't see enough of a. or b.  :(
 
--- 
-~Randy
-
+Segher
