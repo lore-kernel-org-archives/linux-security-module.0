@@ -2,106 +2,221 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AD8C28B22
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 409C6C433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AE3B611B0
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 101B3611AD
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358124AbhIINLb (ORCPT
+        id S1357537AbhIINLa (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:11:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53482 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1357894AbhIINFS (ORCPT
+        Thu, 9 Sep 2021 09:11:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:10226 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1357700AbhIINEd (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Sep 2021 09:05:18 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C78446140B;
-        Thu,  9 Sep 2021 12:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188813;
-        bh=c8mMbslRw07pDGWvcxP/bclbgM7KISmdq3wlbBOK6+0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cCtvAWKmBxpj4zHxsdzGZmdUhw6+73m7il3fgS92ZxhhItGfd3DfMkw0aN1V1BL7v
-         h83SeWifIR0R/0TZAzRD9OIuw993wwwYxg0OQn0fcgFoZxH9NYk7oRKf49WWY6FsvS
-         DUepot6xFMBnFkyw1EHCAEmvCTWa299bhw4yrNWb7sBMnrpXggfEx6EfR8LT8fyHIQ
-         TfQRtKxWZU0E4pWi6wC0bDYqEdbk/cOG+CSfycq3aMUBAfDVIRYnus0lvl9uouK3O+
-         LaRq1JkobSObwvE5AHBAa9L8Oaoxxm94UjErCZCIVHbp5rYh7py0F3kmepN3osX5m8
-         C0O1jq99nqjJA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?=E7=8E=8B=E8=B4=87?= <yun.wang@linux.alibaba.com>,
-        Abaci <abaci@linux.alibaba.com>,
+        Thu, 9 Sep 2021 09:04:33 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 189CbkCV105296;
+        Thu, 9 Sep 2021 09:02:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=OhUvz1rIDq/zvu3gfwCdqIy5HpuMtMsqaNS5AaNDY5Q=;
+ b=YgVGRBvnnz94nX/tfynK/rLc6efTmYsqazPpQx3Q9AuTyv+TjRiOcTwYh3kunq37gM67
+ gJLGyB8xAxnaqE2JqFvUB1CNu5uYUweAoCIRdHyqoFpr0fgugnR6A5QHmFrwlcIaJ3Gi
+ GaOZ0YpoS5I6UKTS1sMWX1qGVWHG/Gp6pmPYtFkvdrRTz51KWqv29WeXTrvy1EOg2efm
+ mI6BRZsjsLM6V4ifz6AQagxrVrQAlbiUBwamEUIu45kh70ExJVLnvdnGLI745kO6Cr4N
+ lxaMEW0wNo6Es6IAMt6n3ClqvsaNDXcTlh0afejGnxo/88TEYOZvML1ky2s2r7WcV6Uv FA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ayh0pjr8g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Sep 2021 09:02:51 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 189CpeMa164946;
+        Thu, 9 Sep 2021 09:02:50 -0400
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ayh0pjr6x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Sep 2021 09:02:49 -0400
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 189CvMtv019188;
+        Thu, 9 Sep 2021 13:02:47 GMT
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
+        by ppma06ams.nl.ibm.com with ESMTP id 3axcnnww0s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 09 Sep 2021 13:02:47 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 189D2hLJ45351198
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 9 Sep 2021 13:02:44 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA0ADA406E;
+        Thu,  9 Sep 2021 13:02:43 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EF7F0A406D;
+        Thu,  9 Sep 2021 13:02:38 +0000 (GMT)
+Received: from sig-9-65-72-231.ibm.com (unknown [9.65.72.231])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu,  9 Sep 2021 13:02:38 +0000 (GMT)
+Message-ID: <96262181e8e94638866fb63caff58cce97c3dbf6.camel@linux.ibm.com>
+Subject: Re: [PATCH v5 00/12] Enroll kernel keys thru MOK
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     keyrings@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 58/59] net: fix NULL pointer reference in cipso_v4_doi_free
-Date:   Thu,  9 Sep 2021 07:58:59 -0400
-Message-Id: <20210909115900.149795-58-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909115900.149795-1-sashal@kernel.org>
-References: <20210909115900.149795-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Type: text/plain; charset=UTF-8
+        James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
+        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
+        scott.branden@broadcom.com, weiyongjun1@huawei.com,
+        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
+        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        lszubowi@redhat.com, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        pjones@redhat.com,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
+Date:   Thu, 09 Sep 2021 09:02:38 -0400
+In-Reply-To: <3685CAB2-43EB-47BA-80E8-C830D3339458@oracle.com>
+References: <20210907160110.2699645-1-eric.snowberg@oracle.com>
+         <7f9fb65a4ee20c337646a1fc887cd24365c2c59e.camel@kernel.org>
+         <b44726f2d71960d53b4860ccab71f02186295da9.camel@kernel.org>
+         <3685CAB2-43EB-47BA-80E8-C830D3339458@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: J1WBI8Sks0uyNDryCPgXY9F7m_x_uUQI
+X-Proofpoint-ORIG-GUID: Gg-7vQDukxKaWuD0bo7cP0Yfpq77aDrk
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
+ definitions=2021-09-09_04:2021-09-09,2021-09-09 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2109030001
+ definitions=main-2109090076
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: 王贇 <yun.wang@linux.alibaba.com>
+On Wed, 2021-09-08 at 16:25 -0600, Eric Snowberg wrote:
+> > On Sep 8, 2021, at 10:49 AM, Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > 
+> > On Wed, 2021-09-08 at 19:03 +0300, Jarkko Sakkinen wrote:
+> >> 
+> >>> Downstream Linux distros try to have a single signed kernel for each
+> >>> architecture.  Each end-user may use this kernel in entirely different
+> >>> ways.  Some downstream kernels have chosen to always trust platform keys
+> >>> within the Linux trust boundary for kernel module signing.  These
+> >>> kernels have no way of using digital signature base IMA appraisal.
+> >>> 
+> >>> This series introduces a new Linux kernel keyring containing the Machine
+> >>> Owner Keys (MOK) called .machine. It also adds a new MOK variable to shim.
+> >>> This variable allows the end-user to decide if they want to trust keys
+> >>> enrolled in the MOK within the Linux trust boundary.  By default,
+> >>> nothing changes; MOK keys are not trusted within the Linux kernel.  They
+> >>> are only trusted after the end-user makes the decision themselves.  The
+> >>> end-user would set this through mokutil using a new --trust-mok option
+> >>> [3]. This would work similar to how the kernel uses MOK variables to
+> >>> enable/disable signature validation as well as use/ignore the db.
+> >> 
+> >> OK, changes are described here (again speaking about trusting tho). The
+> >> motivation part is missing. The text before this is more like confusion
+> >> part. When you describe motivation to do something you should really be in
+> >> grass roots, e.g. "when you have this feature in the kernel, look, I can
+> >> do now this". It's not that hard. E.g. with an usage example it is quite
+> >> quick accomplish this.
+> > 
+> > The code changes overally make sense but this motivotional part is the
+> > problem. E.g. if you do a pull request, it is completely *unusable* in
+> > that context. In that case I would have to write something that should
+> > have been the cover letter. It's 12 patches, so it is perfectly sensible
+> > to ask a better one.
+> 
+> Would this be a more appropriate cover letter that includes a better
+> motivation?
+> 
+> Back in 2013 Linus requested a feature to allow end-users to have the 
+> ability "to add their own keys and sign modules they trust".  This was his 
+> *second* order outlined here [1].  There have been many attempts over the
+> years to solve this problem, all have been rejected.  Many distributions 
+> carry one of these rejected attempts. This series tries to solve this problem 
+> with a solution that takes into account all the problems brought up in the 
+> previous attempts.
 
-[ Upstream commit 733c99ee8be9a1410287cdbb943887365e83b2d6 ]
+Instead of making the reviewer look up the failed attempts, please
+summarize why they failed (e.g. all preboot firmware keys were
+trusted), and then continue, like below, with how this attempt differs.
 
-In netlbl_cipsov4_add_std() when 'doi_def->map.std' alloc
-failed, we sometime observe panic:
+> 
+> This series introduces a new Linux kernel keyring containing the Machine
+> Owner Keys (MOK) called .machine.
 
-  BUG: kernel NULL pointer dereference, address:
-  ...
-  RIP: 0010:cipso_v4_doi_free+0x3a/0x80
-  ...
-  Call Trace:
-   netlbl_cipsov4_add_std+0xf4/0x8c0
-   netlbl_cipsov4_add+0x13f/0x1b0
-   genl_family_rcv_msg_doit.isra.15+0x132/0x170
-   genl_rcv_msg+0x125/0x240
+Other archs will also want to allow loading "end-users" key.  Please
+prefix this paragraph with something like "On UEFI based systems".
 
-This is because in cipso_v4_doi_free() there is no check
-on 'doi_def->map.std' when 'doi_def->type' equal 1, which
-is possibe, since netlbl_cipsov4_add_std() haven't initialize
-it before alloc 'doi_def->map.std'.
+>  It also adds a new MOK variable to shim.
 
-This patch just add the check to prevent panic happen for similar
-cases.
+Replace "adds" with "defines".
 
-Reported-by: Abaci <abaci@linux.alibaba.com>
-Signed-off-by: Michael Wang <yun.wang@linux.alibaba.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netlabel/netlabel_cipso_v4.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> This variable allows the end-user to decide if they want to load keys
+> enrolled in the MOK within the Linux kernel.  By default, nothing changes; 
+> MOK keys are not loaded within the Linux kernel.  They are only loaded after
+> the end-user makes the decision themselves.  The end-user would set this 
+> through mokutil using a new --trust-mok option [2]. This would work similar 
+> to how the kernel uses MOK variables to enable/disable signature validation 
+> as well as use/ignore the db. Mimi has suggested that only CA keys be loaded 
+> into this keyring. All other certs will load into the platform keyring instead.
 
-diff --git a/net/netlabel/netlabel_cipso_v4.c b/net/netlabel/netlabel_cipso_v4.c
-index 3e3494c8d42f..28eda7a5267d 100644
---- a/net/netlabel/netlabel_cipso_v4.c
-+++ b/net/netlabel/netlabel_cipso_v4.c
-@@ -156,8 +156,8 @@ static int netlbl_cipsov4_add_std(struct genl_info *info,
- 		return -ENOMEM;
- 	doi_def->map.std = kzalloc(sizeof(*doi_def->map.std), GFP_KERNEL);
- 	if (doi_def->map.std == NULL) {
--		ret_val = -ENOMEM;
--		goto add_std_failure;
-+		kfree(doi_def);
-+		return -ENOMEM;
- 	}
- 	doi_def->type = CIPSO_V4_MAP_TRANS;
- 
--- 
-2.30.2
+Thank you for crediting me for limiting loading only the CA keys stored
+in the MOK db onto the "machine" keyring, but the limitation should be
+better integrated in the paragraph.
+
+> Secure Boot keys will never be loaded.  They will always be loaded into
+> the platform keyring.  If an end-user wanted to load one, they would
+> need to enroll it into the MOK.
+> 
+> Steps required by the end user:
+> 
+> Sign kernel module with user created key:
+> $ /usr/src/kernels/$(uname -r)/scripts/sign-file sha512 signing_key.priv \
+>     signing_key.x509 my_module.ko
+> 
+> Import the key into the MOK
+> $ mokutil --import signing_key.x509
+
+To differentiate this "signing_key" from others, perhaps name the file
+"machine_sigining_key" or "local_signing_key".
+
+thanks,
+
+Mimi
+
+> 
+> Setup the kernel to load MOK keys into the .machine keyring
+> $ mokutil —trust-mok
+> 
+> Then reboot, the MokManager will load and ask if you want to trust the MOK 
+> key and enroll the MOK into the MOKList.  Afterwards the signed kernel module 
+> will load.
+> 
+> I have included links to both the mokutil [2] and shim [3] changes I
+> have made to support this new functionality.
+> 
+> [1] https://marc.info/?l=linux-kernel&m=136185386310140&w=2
+> [2] https://github.com/esnowberg/mokutil/tree/0.3.0-mokvars-v2
+> [3] https://github.com/esnowberg/shim/tree/mokvars-v2
+
 
