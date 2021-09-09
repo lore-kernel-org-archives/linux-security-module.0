@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BEEC433F5
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D01C41535
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E94C61026
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E8C261059
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:20:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239649AbhIINUi (ORCPT
+        id S1354766AbhIINU6 (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:20:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54080 "EHLO mail.kernel.org"
+        Thu, 9 Sep 2021 09:20:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1358827AbhIINJo (ORCPT
+        id S1355434AbhIINNm (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Sep 2021 09:09:44 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 8DD30632B9;
-        Thu,  9 Sep 2021 12:01:13 +0000 (UTC)
+        Thu, 9 Sep 2021 09:13:42 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 52D8961504;
+        Thu,  9 Sep 2021 12:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188874;
+        s=k20201202; t=1631188920;
         bh=szX6G5SkYjqrpSOViwJuOIG2sbRiHaH5KfPb32e85l0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RssiTH08SVxX1G+aPdtylFr3HW+Y6CeRlqv+1xrBTD7vqD+XZGS5sC5Yf903KuoX1
-         UE3+8Lcbbonmh0G5i77VCXHUyrlBlKGSslnoR9ZH6MBpGbChhMGl8424uRn9cLcimK
-         RZP7Vj4EGHDbtJtNzx6Mh2P3P2mPyTEINbK8IfbaVrLDLFOg1e8XfKsmZEPQ4AxWHk
-         YTWPRL8Sedt5L9rF+y5u1oUf2O3Jz7gHv17qSXlr8BjgnDMnnEZfiGPDQjXXwmTykj
-         xl8UTiv4f/YEpRTKuakhiVEkLTXWYLSb9sQCdcU7BEBSEJmsTZe+nxVN4A1RSSJAlx
-         G95NrlyfMK8Vw==
+        b=E4F8FvfzrwjTNQh4WI+NfVkW6UxneWXnLNcGn195J+AOVY85lbvAu/1+MndjPYhtu
+         9jj4cbK+YwBOblIdjQZG1YvSuWsPgXgSk8iSdALw0qoo3Hbbqcftc7AJLOWRsklZ+o
+         wFDRcwdoDQ6SkKa9zuJtw2ITqjFgzsZQ3htzmB00Tu1oHjI9kY0c02mYb4RlNe2gEa
+         sX/9qSqFOGO+2phiTHOahtSCdmixFCbM7lSTVZXWsJWbvoAoXWgaOqLxfvXLPqg8aS
+         cqSfTTYoUWaxJdTNzerf656CVDW61Eoo+grzPqa5E+tjkLNCaPz1iSNHKwSGkZgWh4
+         ZBEnUpIwcVwVw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?=E7=8E=8B=E8=B4=87?= <yun.wang@linux.alibaba.com>,
@@ -40,12 +40,12 @@ Cc:     =?UTF-8?q?=E7=8E=8B=E8=B4=87?= <yun.wang@linux.alibaba.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 47/48] net: fix NULL pointer reference in cipso_v4_doi_free
-Date:   Thu,  9 Sep 2021 08:00:14 -0400
-Message-Id: <20210909120015.150411-47-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 35/35] net: fix NULL pointer reference in cipso_v4_doi_free
+Date:   Thu,  9 Sep 2021 08:01:16 -0400
+Message-Id: <20210909120116.150912-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909120015.150411-1-sashal@kernel.org>
-References: <20210909120015.150411-1-sashal@kernel.org>
+In-Reply-To: <20210909120116.150912-1-sashal@kernel.org>
+References: <20210909120116.150912-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
