@@ -2,108 +2,100 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C179C28B21
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD96BC433F5
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8698760E94
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:20:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B8A160F6C
+	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 13:46:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354033AbhIINU6 (ORCPT
+        id S239747AbhIINsE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Sep 2021 09:20:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35416 "EHLO mail.kernel.org"
+        Thu, 9 Sep 2021 09:48:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1358502AbhIINLR (ORCPT
+        id S1358439AbhIINpG (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Sep 2021 09:11:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C4057632D2;
-        Thu,  9 Sep 2021 12:01:23 +0000 (UTC)
+        Thu, 9 Sep 2021 09:45:06 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 33A2C6120A;
+        Thu,  9 Sep 2021 13:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188884;
-        bh=7wZnqVtzCaieeirAr59OTc2qWcSAp87QUfatIxHr23g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kBiQ14BxwkJ0mnE1Xv6vjZRtUl5sdREXGr78VrnJS7MKoLH6bBFVWTVN8X3a/ghmH
-         IZZA/6agNwt6aPsEUmEDDTgZCA6tx/Bg8zTaEMFrrb8XQUhj6rjprkwzwnnmGI+Mjz
-         3A/I/tmu+jB7z66zhaQDNwxHtdu4K/JNMGlXbNYw3AmKvjxxDW4DrrSDijE3eYfcLZ
-         jTCozuHxHiNhDTtU5PevsFTJSdYKNgaKfz17NlHXU9itGNgv2w7V8quxz55yJBZpt0
-         prVILBEDFsyYQjIhWGVwNgMz/yjrtGznzBlcQDnG631EZyidoRu1Yqpt1/zTieQp4I
-         IxotCI3m6OJvQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 06/35] Smack: Fix wrong semantics in smk_access_entry()
-Date:   Thu,  9 Sep 2021 08:00:47 -0400
-Message-Id: <20210909120116.150912-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909120116.150912-1-sashal@kernel.org>
-References: <20210909120116.150912-1-sashal@kernel.org>
+        s=k20201202; t=1631195036;
+        bh=idZqf3ls3/HkHNWsIFzESMREJZQWH8w+Xz30IeQkcbE=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NWE31h3VqH4BM7wuW7e9UHCznhisydulTuq9bvmjURcQtjv0O5lI547C9kwjpwPM6
+         Nwo5qP9XoUnwl0R0k4lau7cN9+tVu31smSsqRj22yXFtYwjcUmTEZGumqzNCyAQvH8
+         ElMcjPRcaC1HuqG8nR+EmRVgqN3ocVRyvkVajLs7nLqvnFnI2OeXUcWCg61//qlMw8
+         Btemw96tYM/EJjujPexiv5cs568ey4m9PfUf02ZeQylww6bvBZt2KPjfAe+811f7vZ
+         MeFjzPZoTvyIYX6l3bdO1aZgxvN/OpLd2EenEP3Gj6FFzTF0aXFIyqj2jobHJdRmDv
+         sjKoYTOk+/YmA==
+Message-ID: <82166554e7174b349bf45a7c25d2fcbbc84a4d64.camel@kernel.org>
+Subject: Re: [PATCH v5 02/12] integrity: Do not allow machine keyring
+ updates following init
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Eric Snowberg <eric.snowberg@oracle.com>, keyrings@vger.kernel.org,
+        linux-integrity@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        jmorris@namei.org, serge@hallyn.com
+Cc:     keescook@chromium.org, gregkh@linuxfoundation.org,
+        torvalds@linux-foundation.org, scott.branden@broadcom.com,
+        weiyongjun1@huawei.com, nayna@linux.ibm.com, ebiggers@google.com,
+        ardb@kernel.org, nramas@linux.microsoft.com, lszubowi@redhat.com,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
+        konrad.wilk@oracle.com
+Date:   Thu, 09 Sep 2021 16:43:54 +0300
+In-Reply-To: <20210907160110.2699645-3-eric.snowberg@oracle.com>
+References: <20210907160110.2699645-1-eric.snowberg@oracle.com>
+         <20210907160110.2699645-3-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.36.5-0ubuntu1 
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+On Tue, 2021-09-07 at 12:01 -0400, Eric Snowberg wrote:
+> The machine keyring is setup during init.  No additional keys should be
+> allowed to be added afterwards.  Leave the permission as read only.
+>=20
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+> v2: Initial version
+> v4: Unmodified from v2
+> v5: Rename to machine keyring
+> ---
+>  security/integrity/digsig.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> index 8c315be8ad99..5a75ac2c4dbe 100644
+> --- a/security/integrity/digsig.c
+> +++ b/security/integrity/digsig.c
+> @@ -140,7 +140,8 @@ int __init integrity_init_keyring(const unsigned int =
+id)
+>  		return -ENOMEM;
+> =20
+>  	restriction->check =3D restrict_link_to_ima;
+> -	perm |=3D KEY_USR_WRITE;
 
-[ Upstream commit 6d14f5c7028eea70760df284057fe198ce7778dd ]
+I would add here inline comment to say mostly the same as the commit
+message does.
 
-In the smk_access_entry() function, if no matching rule is found
-in the rust_list, a negative error code will be used to perform bit
-operations with the MAY_ enumeration value. This is semantically
-wrong. This patch fixes this issue.
+> +	if (id !=3D INTEGRITY_KEYRING_MACHINE)
+> +		perm |=3D KEY_USR_WRITE;
+> =20
+>  out:
+>  	return __integrity_init_keyring(id, perm, restriction);
 
-Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- security/smack/smack_access.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+I checked patch 01 but I lost the email somewhere. The keyring definition
+looks now sane.
 
-diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-index 0df316c62005..84f38b694242 100644
---- a/security/smack/smack_access.c
-+++ b/security/smack/smack_access.c
-@@ -90,23 +90,22 @@ int log_policy = SMACK_AUDIT_DENIED;
- int smk_access_entry(char *subject_label, char *object_label,
- 			struct list_head *rule_list)
- {
--	int may = -ENOENT;
- 	struct smack_rule *srp;
- 
- 	list_for_each_entry_rcu(srp, rule_list, list) {
- 		if (srp->smk_object->smk_known == object_label &&
- 		    srp->smk_subject->smk_known == subject_label) {
--			may = srp->smk_access;
--			break;
-+			int may = srp->smk_access;
-+			/*
-+			 * MAY_WRITE implies MAY_LOCK.
-+			 */
-+			if ((may & MAY_WRITE) == MAY_WRITE)
-+				may |= MAY_LOCK;
-+			return may;
- 		}
- 	}
- 
--	/*
--	 * MAY_WRITE implies MAY_LOCK.
--	 */
--	if ((may & MAY_WRITE) == MAY_WRITE)
--		may |= MAY_LOCK;
--	return may;
-+	return -ENOENT;
- }
- 
- /**
--- 
-2.30.2
+/Jarkko
 
