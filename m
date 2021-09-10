@@ -2,134 +2,133 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C73C433EF
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Sep 2021 01:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A17C433FE
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Sep 2021 09:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0E99611AD
-	for <linux-security-module@archiver.kernel.org>; Fri, 10 Sep 2021 01:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95BA56105A
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Sep 2021 09:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240862AbhIJBCR (ORCPT
+        id S232076AbhIJJrE (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Sep 2021 21:02:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57688 "EHLO
-        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S231649AbhIJBAa (ORCPT
+        Fri, 10 Sep 2021 05:47:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49964 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231916AbhIJJrE (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Sep 2021 21:00:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1631235554;
+        Fri, 10 Sep 2021 05:47:04 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7544EC061574
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Sep 2021 02:45:53 -0700 (PDT)
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1631267150;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=rEYBK0tEXu7q0azGTgiJfTmsZEZVrhulDelo/AmjQLo=;
-        b=STF4/ZihYH5UsMM77Y/fjcqhSui4izuSaZTxuWdtDJ/JBS1APiZ5KkzzTsHzsVT1JbwFhz
-        dOOuO/22ztR/xQW1aACqCGic/ijJecBszxuadVeEqVInI7uj6lgGJylfrOWRKRtkrwapuf
-        oTP4tmGXsJDagh7+4zeS+zpaLMdez/o=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-581-nO22jQVyOLC4bLxymQTwYg-1; Thu, 09 Sep 2021 20:59:13 -0400
-X-MC-Unique: nO22jQVyOLC4bLxymQTwYg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03CC11084685;
-        Fri, 10 Sep 2021 00:59:12 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9A4D819D9B;
-        Fri, 10 Sep 2021 00:59:01 +0000 (UTC)
-Date:   Thu, 9 Sep 2021 20:58:58 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com
-Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-audit@redhat.com, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
- io_uring
-Message-ID: <20210910005858.GL490529@madcap2.tricolour.ca>
-References: <20210824205724.GB490529@madcap2.tricolour.ca>
- <20210826011639.GE490529@madcap2.tricolour.ca>
- <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
- <20210826163230.GF490529@madcap2.tricolour.ca>
- <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
- <20210827133559.GG490529@madcap2.tricolour.ca>
- <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
- <20210828150356.GH490529@madcap2.tricolour.ca>
- <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
- <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=GSMPZEtXXftkUR1bNVazYlrnN54mxcZ7Ro8PEBPLCt8=;
+        b=42+q8/8i7jcb9ljp6C0qrKHZy8rJ51qwrElY09oZqJkpfr79x8DXkmpBQ0/sZ7LERM6MzE
+        1YFnxy20H15JZpEz9FWIn0SJFfF/ruoHeErgRGNtakYMaYSGvkzH9Hn9vchEKograT4zvK
+        8kNFXrqiJqK5b1/PI6QQZFJL1iwSEpzU09gtnWC60EI1/96wMCDdHSlpY2tM/SzcEbcqUj
+        xMTl9rAM9uNCIgdUZVzNQg59DDaDoGlcTi8XEnMJCR0/NcfJichl1+AqUXwvcEH2jdXGyZ
+        XqVmXZ5dwxjcCLTpKIvWLkuDs3dNasXoUrbgohNLdFXafalYLeLfOEtytMZocw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1631267150;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=GSMPZEtXXftkUR1bNVazYlrnN54mxcZ7Ro8PEBPLCt8=;
+        b=B/1ZqLDxuoMVeZIvWM27i8yzk8yQ2+OvY+lHOrW/lVruTsOvJTT+oYKXa1M+p5juwP0FAx
+        MOttZZdu8C6y0gAQ==
+To:     linux-security-module@vger.kernel.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] smack: Guard smack_ipv6_lock definition within a SMACK_IPV6_PORT_LABELING block
+Date:   Fri, 10 Sep 2021 11:45:44 +0200
+Message-Id: <20210910094544.3430125-1-bigeasy@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On 2021-09-01 15:21, Paul Moore wrote:
-> On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
-> > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > I did set a syscall filter for
-> > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
-> > > and that yielded some records with a couple of orphans that surprised me
-> > > a bit.
-> >
-> > Without looking too closely at the log you sent, you can expect URING
-> > records without an associated SYSCALL record when the uring op is
-> > being processed in the io-wq or sqpoll context.  In the io-wq case the
-> > processing is happening after the thread finished the syscall but
-> > before the execution context returns to userspace and in the case of
-> > sqpoll the processing is handled by a separate kernel thread with no
-> > association to a process thread.
-> 
-> I spent some time this morning/afternoon playing with the io_uring
-> audit filtering capability and with your audit userspace
-> ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
-> the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
-> map the io_uring ops correctly), but I know you mentioned you have a
-> number of fixes/improvements still as a work-in-progress there so I'm
-> not too concerned.  The important part is that the kernel pieces look
-> to be working correctly.
+The mutex smack_ipv6_lock is only used with the SMACK_IPV6_PORT_LABELING
+block but its definition is outside of the block. This leads to a
+defined-but-not-used warning on PREEMPT_RT.
 
-Ok, I have squashed and pushed the audit userspace support for iouring:
-	https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
-	https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
-There are test rpms for f35 here:
-	http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
+Moving smack_ipv6_lock down to the block where it is used where it used
+raises the question why is smk_ipv6_port_list read if nothing is added
+to it.
+Turns out, only smk_ipv6_port_check() is using it outside of an ifdef
+SMACK_IPV6_PORT_LABELING block. However two of three caller invoke
+smk_ipv6_port_check() from a ifdef block and only one is using
+__is_defined() macro which requires the function and smk_ipv6_port_list
+to be around.
 
-userspace v2 changelog:
-- check for watch before adding perm
-- update manpage to include filesystem filter
-- update support for the uring filter list: doc, -U op, op names
-- add support for the AUDIT_URINGOP record type
-- add uringop support to ausearch
-- add uringop support to aureport
-- lots of bug fixes
+Put the lock and list inside an ifdef SMACK_IPV6_PORT_LABELING block to
+avoid the warning regarding unused mutex. Extend the ifdef-block to also
+cover smk_ipv6_port_check(). Make smack_socket_connect() use ifdef
+instead of __is_defined() to avoid complains about missing function.
 
-"auditctl -a uring,always -S ..." will now throw an error and require
-"-U" instead.
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ security/smack/smack_lsm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-> As usual, if you notice anything awry while playing with the userspace
-> changes please let me know.
-
-Same for userspace...  I think I already see one mapping uring op names
-in ausearch...
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index cacbe75185194..fd9e6b54907ee 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -51,8 +51,10 @@
+ #define SMK_RECEIVING	1
+ #define SMK_SENDING	2
+=20
++#ifdef SMACK_IPV6_PORT_LABELING
+ static DEFINE_MUTEX(smack_ipv6_lock);
+ static LIST_HEAD(smk_ipv6_port_list);
++#endif
+ struct kmem_cache *smack_rule_cache;
+ int smack_enabled __initdata;
+=20
+@@ -2603,7 +2605,6 @@ static void smk_ipv6_port_label(struct socket *sock, =
+struct sockaddr *address)
+ 	mutex_unlock(&smack_ipv6_lock);
+ 	return;
+ }
+-#endif
+=20
+ /**
+  * smk_ipv6_port_check - check Smack port access
+@@ -2666,6 +2667,7 @@ static int smk_ipv6_port_check(struct sock *sk, struc=
+t sockaddr_in6 *address,
+=20
+ 	return smk_ipv6_check(skp, object, address, act);
+ }
++#endif
+=20
+ /**
+  * smack_inode_setsecurity - set smack xattrs
+@@ -2852,8 +2854,9 @@ static int smack_socket_connect(struct socket *sock, =
+struct sockaddr *sap,
+ 			rc =3D smk_ipv6_check(ssp->smk_out, rsp, sip,
+ 					    SMK_CONNECTING);
+ 		}
+-		if (__is_defined(SMACK_IPV6_PORT_LABELING))
++#ifdef SMACK_IPV6_PORT_LABELING
+ 			rc =3D smk_ipv6_port_check(sock->sk, sip, SMK_CONNECTING);
++#endif
+=20
+ 		return rc;
+ 	}
+--=20
+2.33.0
 
