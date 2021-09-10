@@ -2,159 +2,134 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D70C4332F
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 18:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C73C433EF
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Sep 2021 01:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB35604D1
-	for <linux-security-module@archiver.kernel.org>; Thu,  9 Sep 2021 18:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E99611AD
+	for <linux-security-module@archiver.kernel.org>; Fri, 10 Sep 2021 01:01:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243493AbhIISVe (ORCPT
+        id S240862AbhIJBCR (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Thu, 9 Sep 2021 14:21:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37734 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237172AbhIISVd (ORCPT
+        Thu, 9 Sep 2021 21:02:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com ([216.205.24.124]:57688 "EHLO
+        us-smtp-delivery-124.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S231649AbhIJBAa (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Thu, 9 Sep 2021 14:21:33 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.43/8.16.0.43) with SMTP id 189I33tg122533;
-        Thu, 9 Sep 2021 14:20:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=erHfOdx08EWozN6BnhI7jsS+xKpAJcbAaIAogHs1CRw=;
- b=TkuWp4tqSnI+l0GgQEAjPXwyptpn8gz6OFnovf7gUio7D2YrYd3c8SvPQtR12t48mjt/
- arT5M0nAku1J4d+mTnRuFCWaQGOSlUC2rQ3HZfGjntpq+3uXKc/2hvI2k2YdXvBcXUvA
- 7CzfgKK7Sbvz9+Nx2DvJUWscIcC+cAWlhfhsT2nWT5egvjE1flsDlrhYNv52FxsyLM6R
- 4o0DBMPf3Yxng1MhDQJZJvk48ZGZvy5XlU4l5zzcafLKN46qZ/jGIwW4jel0YocCz4Yv
- xZwB8Id+c8z5b+qsolnMs7xvU19t/b68iEp1CKBdd4dwBfIMWowxYuq8LX/ZsVK/0Wxp 2w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3ayq5fghq6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Sep 2021 14:20:04 -0400
-Received: from m0098416.ppops.net (m0098416.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 189IK4I4008389;
-        Thu, 9 Sep 2021 14:20:04 -0400
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3ayq5fghp8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Sep 2021 14:20:03 -0400
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 189IHUXj018851;
-        Thu, 9 Sep 2021 18:20:02 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma03ams.nl.ibm.com with ESMTP id 3ayfv2x9fk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Sep 2021 18:20:02 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 189IJxBN43516240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Sep 2021 18:19:59 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 938F5AE04D;
-        Thu,  9 Sep 2021 18:19:59 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8EB77AE051;
-        Thu,  9 Sep 2021 18:19:54 +0000 (GMT)
-Received: from sig-9-65-72-231.ibm.com (unknown [9.65.72.231])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Sep 2021 18:19:54 +0000 (GMT)
-Message-ID: <7552eec6c65807fe75127215e7996b76dd851653.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 07/12] KEYS: Introduce link restriction to include
- builtin, secondary and machine keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Eric Snowberg <eric.snowberg@oracle.com>
-Cc:     keyrings@vger.kernel.org,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>, keescook@chromium.org,
-        gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-        scott.branden@broadcom.com, weiyongjun1@huawei.com,
-        nayna@linux.ibm.com, ebiggers@google.com, ardb@kernel.org,
-        nramas@linux.microsoft.com, lszubowi@redhat.com,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James.Bottomley@HansenPartnership.com, pjones@redhat.com,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Date:   Thu, 09 Sep 2021 14:19:53 -0400
-In-Reply-To: <6BD395AE-2549-4E33-8F4F-34B3BDB0649A@oracle.com>
-References: <20210907160110.2699645-1-eric.snowberg@oracle.com>
-         <20210907160110.2699645-8-eric.snowberg@oracle.com>
-         <b8ba9facf525c60760b49da6cea50d701ad5613d.camel@linux.ibm.com>
-         <6BD395AE-2549-4E33-8F4F-34B3BDB0649A@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-16.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HVYllI259MEnBR5GmbORb38D8Sg3tAPG
-X-Proofpoint-ORIG-GUID: wj5YIQyOMzka2yoZyQh9bboKXSFnRQPV
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.391,18.0.790
- definitions=2021-09-09_06:2021-09-09,2021-09-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
- adultscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 clxscore=1015
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2109030001 definitions=main-2109090110
+        Thu, 9 Sep 2021 21:00:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1631235554;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=rEYBK0tEXu7q0azGTgiJfTmsZEZVrhulDelo/AmjQLo=;
+        b=STF4/ZihYH5UsMM77Y/fjcqhSui4izuSaZTxuWdtDJ/JBS1APiZ5KkzzTsHzsVT1JbwFhz
+        dOOuO/22ztR/xQW1aACqCGic/ijJecBszxuadVeEqVInI7uj6lgGJylfrOWRKRtkrwapuf
+        oTP4tmGXsJDagh7+4zeS+zpaLMdez/o=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-581-nO22jQVyOLC4bLxymQTwYg-1; Thu, 09 Sep 2021 20:59:13 -0400
+X-MC-Unique: nO22jQVyOLC4bLxymQTwYg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 03CC11084685;
+        Fri, 10 Sep 2021 00:59:12 +0000 (UTC)
+Received: from madcap2.tricolour.ca (unknown [10.3.128.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9A4D819D9B;
+        Fri, 10 Sep 2021 00:59:01 +0000 (UTC)
+Date:   Thu, 9 Sep 2021 20:58:58 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>, sgrubb@redhat.com
+Cc:     linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+        linux-audit@redhat.com, io-uring@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: Re: [RFC PATCH v2 0/9] Add LSM access controls and auditing to
+ io_uring
+Message-ID: <20210910005858.GL490529@madcap2.tricolour.ca>
+References: <20210824205724.GB490529@madcap2.tricolour.ca>
+ <20210826011639.GE490529@madcap2.tricolour.ca>
+ <CAHC9VhSADQsudmD52hP8GQWWR4+=sJ7mvNkh9xDXuahS+iERVA@mail.gmail.com>
+ <20210826163230.GF490529@madcap2.tricolour.ca>
+ <CAHC9VhTkZ-tUdrFjhc2k1supzW1QJpY-15pf08mw6=ynU9yY5g@mail.gmail.com>
+ <20210827133559.GG490529@madcap2.tricolour.ca>
+ <CAHC9VhRqSO6+MVX+LYBWHqwzd3QYgbSz3Gd8E756J0QNEmmHdQ@mail.gmail.com>
+ <20210828150356.GH490529@madcap2.tricolour.ca>
+ <CAHC9VhRgc_Fhi4c6L__butuW7cmSFJxTMxb+BBn6P-8Yt0ck_w@mail.gmail.com>
+ <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQD8hKekqosjGgWPxZFqS=EFy-_kQL5zAo1sg0MU=6n5A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-On Thu, 2021-09-09 at 12:03 -0600, Eric Snowberg wrote:
-> > On Sep 9, 2021, at 11:26 AM, Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > 
-> > Hi Eric,
-> > 
-> > The subject line above is too long.   According to
-> > Documentation/process/submitting-patches.rst the "the ``summary`` must
-> > be no more than 70-75 characters".
-> > 
-> > On Tue, 2021-09-07 at 12:01 -0400, Eric Snowberg wrote:
-> >> Introduce a new link restriction that includes the trusted builtin,
-> >> secondary and machine keys. The restriction is based on the key to be added
-> >> being vouched for by a key in any of these three keyrings.
-> >> 
-> >> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> >> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> >> ---
-> >> v3: Initial version
-> >> v4: moved code under CONFIG_INTEGRITY_MOK_KEYRING
-> >> v5: Rename to machine keyring
-> >> ---
-> >> certs/system_keyring.c        | 23 +++++++++++++++++++++++
-> >> include/keys/system_keyring.h |  6 ++++++
-> >> 2 files changed, 29 insertions(+)
-> >> 
-> >> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> >> index 08ea542c8096..955bd57815f4 100644
-> >> --- a/certs/system_keyring.c
-> >> +++ b/certs/system_keyring.c
-> >> @@ -99,6 +99,29 @@ void __init set_machine_trusted_keys(struct key *keyring)
-> >> {
-> >> 	machine_trusted_keys = keyring;
-> >> }
-> >> +
-> >> +/**
-> >> + * restrict_link_by_builtin_secondary_and_ca_trusted
-> > 
-> > Sorry for the patch churn.  With the keyring name change to ".machine",
-> > the restriction name should also reflect this change.
+On 2021-09-01 15:21, Paul Moore wrote:
+> On Sun, Aug 29, 2021 at 11:18 AM Paul Moore <paul@paul-moore.com> wrote:
+> > On Sat, Aug 28, 2021 at 11:04 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > I did set a syscall filter for
+> > >         -a exit,always -F arch=b64 -S io_uring_enter,io_uring_setup,io_uring_register -F key=iouringsyscall
+> > > and that yielded some records with a couple of orphans that surprised me
+> > > a bit.
+> >
+> > Without looking too closely at the log you sent, you can expect URING
+> > records without an associated SYSCALL record when the uring op is
+> > being processed in the io-wq or sqpoll context.  In the io-wq case the
+> > processing is happening after the thread finished the syscall but
+> > before the execution context returns to userspace and in the case of
+> > sqpoll the processing is handled by a separate kernel thread with no
+> > association to a process thread.
 > 
-> Yes, I can change that. Should it be renamed to 
-> restrict_link_by_builtin_secondary_and_machine_trusted? That seems a little
-> long though.  Thanks.
+> I spent some time this morning/afternoon playing with the io_uring
+> audit filtering capability and with your audit userspace
+> ghau-iouring-filtering.v1.0 branch it appears to work correctly.  Yes,
+> the userspace tooling isn't quite 100% yet (e.g. `auditctl -l` doesn't
+> map the io_uring ops correctly), but I know you mentioned you have a
+> number of fixes/improvements still as a work-in-progress there so I'm
+> not too concerned.  The important part is that the kernel pieces look
+> to be working correctly.
 
-The existing name is long too.  Not sure it makes much of a difference,
-but dropping "and" and/or "trusted" might help.
+Ok, I have squashed and pushed the audit userspace support for iouring:
+	https://github.com/rgbriggs/audit-userspace/commit/e8bd8d2ea8adcaa758024cb9b8fa93895ae35eea
+	https://github.com/linux-audit/audit-userspace/compare/master...rgbriggs:ghak-iouring-filtering.v2.1
+There are test rpms for f35 here:
+	http://people.redhat.com/~rbriggs/ghak-iouring/git-e8bd8d2-fc35/
 
-Mimi
+userspace v2 changelog:
+- check for watch before adding perm
+- update manpage to include filesystem filter
+- update support for the uring filter list: doc, -U op, op names
+- add support for the AUDIT_URINGOP record type
+- add uringop support to ausearch
+- add uringop support to aureport
+- lots of bug fixes
+
+"auditctl -a uring,always -S ..." will now throw an error and require
+"-U" instead.
+
+> As usual, if you notice anything awry while playing with the userspace
+> changes please let me know.
+
+Same for userspace...  I think I already see one mapping uring op names
+in ausearch...
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
 
