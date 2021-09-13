@@ -2,119 +2,114 @@ Return-Path: <linux-security-module-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5322FC433F5
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 07:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D77C4332F
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 09:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A44260F9F
-	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 07:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796E561004
+	for <linux-security-module@archiver.kernel.org>; Mon, 13 Sep 2021 09:33:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237711AbhIMHuG (ORCPT
+        id S238586AbhIMJeO (ORCPT
         <rfc822;linux-security-module@archiver.kernel.org>);
-        Mon, 13 Sep 2021 03:50:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37728 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237763AbhIMHtR (ORCPT
+        Mon, 13 Sep 2021 05:34:14 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:57012 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238444AbhIMJeO (ORCPT
         <rfc822;linux-security-module@vger.kernel.org>);
-        Mon, 13 Sep 2021 03:49:17 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBECAC061760
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Sep 2021 00:47:59 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1mPgh3-00024a-5u; Mon, 13 Sep 2021 09:47:57 +0200
-Subject: Re: [PATCH v3] KEYS: trusted: Fix trusted key backends when building
- as module
-To:     Andreas Rammhold <andreas@rammhold.de>,
-        James Bottomley <jejb@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210730012822.3460913-1-andreas@rammhold.de>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <0d42a11a-0117-49a9-d2c9-bc6cc405235d@pengutronix.de>
-Date:   Mon, 13 Sep 2021 09:47:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Mon, 13 Sep 2021 05:34:14 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 6F4DD1C0B7A; Mon, 13 Sep 2021 11:32:57 +0200 (CEST)
+Date:   Mon, 13 Sep 2021 11:32:56 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Elver <elver@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        llvm@lists.linux.dev,
+        LSM List <linux-security-module@vger.kernel.org>,
+        linux-toolchains@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vipin Sharma <vipinsh@google.com>,
+        Chris Down <chris@chrisdown.name>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert "Enable '-Werror' by default for all kernel
+ builds"
+Message-ID: <20210913093256.GA12225@amd>
+References: <20210907183843.33028-1-ndesaulniers@google.com>
+ <CAHk-=whJOxDefgSA1_ojGbweRJGonWX9_nihA-=fbXFV1DhuxQ@mail.gmail.com>
+ <CAKwvOdkuYoke=Sa8Qziveo9aSA2zaNWEcKW8LZLg+d3TPwHkoA@mail.gmail.com>
+ <YTfkO2PdnBXQXvsm@elver.google.com>
+ <CAHk-=wgPaQsEr+En=cqCqAC_sWmVP6x5rD2rmZRomH9EnTQL7Q@mail.gmail.com>
+ <c8fb537f-26e5-b305-6bc5-06f0d27a4029@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <20210730012822.3460913-1-andreas@rammhold.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Content-Disposition: inline
+In-Reply-To: <c8fb537f-26e5-b305-6bc5-06f0d27a4029@infradead.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Precedence: bulk
 List-ID: <linux-security-module.vger.kernel.org>
 
-Dear trusted key maintainers,
 
-On 30.07.21 03:28, Andreas Rammhold wrote:
-> Before this commit the kernel could end up with no trusted key sources
-> even though both of the currently supported backends (TPM and TEE) were
-> compiled as modules. This manifested in the trusted key type not being
-> registered at all.
-> 
-> When checking if a CONFIG_… preprocessor variable is defined we only
-> test for the builtin (=y) case and not the module (=m) case. By using
-> the IS_REACHABLE() macro we do test for both cases.
-> 
-> Fixes: 5d0682be3189 ("KEYS: trusted: Add generic trusted keys framework")
-> Signed-off-by: Andreas Rammhold <andreas@rammhold.de>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Does anyone intend to pick this up?
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
-Ahmad
+Hi!
 
+> >>  config WERROR
+> >>         bool "Compile the kernel with warnings as errors"
+> >>-       default y
+> >>+       default COMPILE_TEST
+> >
+> >That seems reasonable. It very much is about build-testing.
+>=20
+> That and 2 more things IMO:
+>=20
+> a. having developers be responsible for build warnings, not just
+>    build errors
+>=20
+> b. having maintainers merge them more like they are build errors
+>    and not just some warnings that can be overlooked.
+>=20
+> I don't see enough of a. or b.  :(
 
+Do we really want developers treat warnings as errors? When the code
+is okay but some random version of gcc dislikes it...
 
-> 
-> ---
-> 
-> v3:
-> * Fixed patch formatting
-> 
-> v2:
-> * Fixed commit message
-> * Switched from IS_DEFINED() to IS_REACHABLE()
-> 
->  security/keys/trusted-keys/trusted_core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/keys/trusted-keys/trusted_core.c b/security/keys/trusted-keys/trusted_core.c
-> index d5c891d8d353..5b35f1b87644 100644
-> --- a/security/keys/trusted-keys/trusted_core.c
-> +++ b/security/keys/trusted-keys/trusted_core.c
-> @@ -27,10 +27,10 @@ module_param_named(source, trusted_key_source, charp, 0);
->  MODULE_PARM_DESC(source, "Select trusted keys source (tpm or tee)");
->  
->  static const struct trusted_key_source trusted_key_sources[] = {
-> -#if defined(CONFIG_TCG_TPM)
-> +#if IS_REACHABLE(CONFIG_TCG_TPM)
->  	{ "tpm", &trusted_key_tpm_ops },
->  #endif
-> -#if defined(CONFIG_TEE)
-> +#if IS_REACHABLE(CONFIG_TEE)
->  	{ "tee", &trusted_key_tee_ops },
->  #endif
->  };
-> 
+Plus, there's question of stable. We already get ton of churn there
+("this fixes random warning"). WERROR will only encourage that...
 
+Best regards,
+								Pavel
+--=20
+http://www.livejournal.com/~pavelmachek
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAmE/GscACgkQMOfwapXb+vKf6wCeMl/kwYj5SUzbAi0/ynpYblZF
+888AoKqSN5XRNc1+75+8cGEAonrC2YAc
+=uY8f
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
